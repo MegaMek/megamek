@@ -54,10 +54,14 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      */
     private static final long serialVersionUID = -1277549123532227298L;
     boolean handledAmmoAndReport = false;
-    boolean detRangeShort = weapon.curMode().equals("Bearings-Only Short Detection Range");
-    boolean detRangeMedium = weapon.curMode().equals("Bearings-Only Medium Detection Range");
-    boolean detRangeLong = weapon.curMode().equals("Bearings-Only Long Detection Range");
-    boolean detRangeExtreme = weapon.curMode().equals("Bearings-Only Extreme Detection Range");
+    boolean detRangeShort = (weapon.curMode().equals(Weapon.Mode_CapMissile_Bearing_Short) 
+            || weapon.curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Short));
+    boolean detRangeMedium = (weapon.curMode().equals(Weapon.Mode_CapMissile_Bearing_Med) 
+            || weapon.curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Med));
+    boolean detRangeLong = (weapon.curMode().equals(Weapon.Mode_CapMissile_Bearing_Long) 
+            || weapon.curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Long));
+    boolean detRangeExtreme = (weapon.curMode().equals(Weapon.Mode_CapMissile_Bearing_Ext) 
+            || weapon.curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext));
 
     /**
      * This constructor may only be used for deserialization.

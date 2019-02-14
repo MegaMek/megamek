@@ -35,6 +35,7 @@ public class CLUAC2Prototype extends CLPrototypeUACWeapon {
         super();
         name = "Prototype Ultra Autocannon/2";
         setInternalName("CLUltraAC2Prototype");
+        shortName = "Ultra AC/2 (P)";
         heat = 1;
         damage = 2;
         rackSize = 2;

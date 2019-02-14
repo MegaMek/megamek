@@ -19,36 +19,36 @@ import megamek.common.weapons.lasers.LaserWeapon;
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
-public class ISLaserSmallPrimitive extends LaserWeapon {
+public class ISLaserPrimitiveMedium extends LaserWeapon {
     /**
      *
      */
-    private static final long serialVersionUID = -7637928016342153078L;
+    private static final long serialVersionUID = 1522567438781244152L;
 
-    public ISLaserSmallPrimitive() {
+    public ISLaserPrimitiveMedium() {
         super();
-        name = "Primitive Prototype Small Laser";
-        setInternalName(name);
-        addLookupName("ISSmall Laser Primitive");
-        addLookupName("ISSmallLaserPrimitive");
-        heat = 2;
-        damage = 3;
-        shortRange = 1;
-        mediumRange = 2;
-        longRange = 3;
-        extremeRange = 4;
-        waterShortRange = 1;
-        waterMediumRange = 2;
-        waterLongRange = 2;
-        waterExtremeRange = 4;
-        tonnage = 0.5;
-        criticals = 1;
-        flags = flags.or(F_NO_FIRES);
-        bv = 9;
-        cost = 11250;
-        shortAV = 3;
-        maxRange = RANGE_SHORT;
-        atClass = CLASS_POINT_DEFENSE;
+
+        this.name = "Primitive Prototype Medium Laser";
+        this.setInternalName(this.name);
+        this.addLookupName("IS Medium Laser Prototype");
+        this.addLookupName("ISMediumLaserPrototype");
+        this.shortName = "Medium Laser p";
+        this.heat = 5;
+        this.damage = 5;
+        this.shortRange = 3;
+        this.mediumRange = 6;
+        this.longRange = 9;
+        this.extremeRange = 12;
+        this.waterShortRange = 2;
+        this.waterMediumRange = 4;
+        this.waterLongRange = 6;
+        this.waterExtremeRange = 8;
+        this.tonnage = 1.0;
+        this.criticals = 1;
+        this.bv = 46;
+        this.cost = 40000;
+        this.shortAV = 5;
+        this.maxRange = RANGE_SHORT;
         //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
         //This to cover some of the back worlds in the Periphery.
         rulesRefs = "118, IO";

@@ -967,12 +967,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
-            if (!cs.getMapTileset().equals(tileSets.get(tileSetChoice.getSelectedIndex())) &&
+            String tileSetFileName = tileSets.get(tileSetChoice.getSelectedIndex()).getName();
+            if (!cs.getMapTileset().equals(tileSetFileName) &&
                     (clientgui != null) && (clientgui.bv != null))  {
                 clientgui.bv.clearShadowMap();
             }
-            cs.setMapTileset(tileSets.get(tileSetChoice.getSelectedIndex())
-                    .getName());
+            cs.setMapTileset(tileSetFileName);
         }
 
         ToolTipManager.sharedInstance().setInitialDelay(

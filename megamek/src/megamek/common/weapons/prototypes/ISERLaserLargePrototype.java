@@ -42,6 +42,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         name = "Prototype ER Large Laser";
         setInternalName("ISERLargeLaserPrototype");
         addLookupName("IS ER Large Laser Prototype");
+        shortName = "ER Large Laser (P)";
         toHitModifier = 1;
         flags = flags.or(F_PROTOTYPE);
         heat = 12;

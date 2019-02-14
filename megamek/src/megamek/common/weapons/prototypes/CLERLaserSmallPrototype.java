@@ -36,6 +36,7 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
         super();
         name = "Prototype ER Small Laser";
         setInternalName("CLERSmallLaserPrototype");
+        shortName = "ER Small Laser (P)";
         heat = 2;
         damage = 3;
         shortRange = 2;

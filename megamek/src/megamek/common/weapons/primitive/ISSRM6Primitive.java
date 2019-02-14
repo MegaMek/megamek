@@ -40,6 +40,7 @@ public class ISSRM6Primitive extends SRMWeapon {
         this.addLookupName("IS SRM-6 Primitive");
         this.addLookupName("ISSRM6p");
         this.addLookupName("IS SRM 6 Primitive");
+        this.shortName = "SRM/6p";
         this.heat = 4;
         this.rackSize = 6;
         this.shortRange = 3;

@@ -48,7 +48,7 @@ public class ISReengineeredLaserMedium extends ReengineeredLaserWeapon {
         tonnage = 2.5;
         criticals = 2;
         bv = 65;
-        cost = 10000;
+        cost = 100000;
         shortAV = 6;
         maxRange = RANGE_SHORT;
         rulesRefs = "89, IO";

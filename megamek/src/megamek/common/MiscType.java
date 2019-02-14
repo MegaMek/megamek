@@ -1952,6 +1952,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Prototype Improved Jump Jet";
         misc.setInternalName("ISPrototypeImprovedJumpJet");
+        misc.shortName = "Prototype Imp. Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.tankslots = 0;
@@ -1972,6 +1973,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Primitive Prototype Jump Jet";
         misc.setInternalName("ISPrototypeJumpJet");
+        misc.shortName = "Prototype Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.tankslots = 0;
@@ -2035,6 +2037,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Extended Jump Jet System";
         misc.setInternalName("ExtendedJumpJetSystem");
         misc.addLookupName("XJJ");
+        misc.shortName = "Extended Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 0;
@@ -2140,6 +2143,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Mech Mechanical Jump Boosters";
         misc.setInternalName(misc.name);
         misc.addLookupName("Jump Booster");
+        misc.shortName = "Jump Booster";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.bv = 0;
@@ -2162,6 +2166,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISPartialWing");
         misc.addLookupName("IS Partial Wing");
         misc.addLookupName("PartialWing");
+        misc.shortName = "Partial Wing";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 8;
         misc.spreadable = true;
@@ -2183,6 +2188,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Partial Wing (Clan)";
         misc.setInternalName("CLPartialWing");
         misc.addLookupName("Clan Partial Wing");
+        misc.shortName = "Partial Wing";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 6;
         misc.spreadable = true;
@@ -2202,6 +2208,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Protomech Partial Wing";
         misc.setInternalName("ProtoMechPartialWing");
+        misc.shortName = "Partial Wing";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_PROTOMECH_EQUIPMENT).or(F_PARTIAL_WING);
@@ -5214,6 +5221,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "C3 Emergency Master (C3EM)";
+        misc.shortName = "C3 Emergency Master";
         misc.setInternalName("ISC3EmergencyMaster");
         misc.addLookupName("Emergency C3 Master");
         misc.tonnage = 2;
@@ -5240,6 +5248,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Battle Armor C3 (BC3)";
         misc.setInternalName("BattleArmorC3");
         misc.addLookupName("IS BattleArmor C3");
+        misc.shortName = "BC3";
         misc.tonnage = .250;
         misc.criticals = 1;
         misc.cost = 62500;
@@ -5261,6 +5270,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISBC3i");
         misc.addLookupName("IS BC3i");
         misc.addLookupName("IS BattleArmor C3i");
+        misc.shortName = "BC3i";
         misc.tonnage = .350;
         misc.criticals = 1;
         misc.cost = 125000;
@@ -5442,6 +5452,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Mass");
         misc.addLookupName("Clan Mass");
         misc.addLookupName("CLMass");
+        misc.shortName = "MASS";
         misc.tonnage = 1.5;
         misc.criticals = 1;
         misc.bv = 9;
@@ -5884,6 +5895,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Ejection Seat (Industrial Mech)";
         misc.setInternalName(misc.name);
+        misc.shortName = "Ejection Seat";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 25000;
@@ -5906,6 +5918,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Ejection Seat (Support Vehicle)";
         misc.setInternalName(misc.name);
+        misc.shortName = "Ejection Seat";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.tankslots = 1;
         misc.cost = 25000;
@@ -6020,6 +6033,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Active Probe (Beagle) Prototype";
         misc.setInternalName(Sensor.BAPP);
         misc.addLookupName("Beagle Active Probe Prototype");
+        misc.shortName = "Active Probe (Beagle)(P)";
         misc.tonnage = 2.0;
         misc.criticals = 3;
         misc.cost = 600000;
@@ -6165,6 +6179,7 @@ public class MiscType extends EquipmentType {
         misc.name = "ECM Suite (Guardian) Prototype";
         misc.setInternalName("ISGuardianECMSuitePrototype");
         misc.addLookupName("IS Prototype Guardian ECM");
+        misc.shortName = "ECM Suite (Guardian) (P)";
         misc.tonnage = 2.0f;
         misc.criticals = 3;
         misc.cost = 1000000;
@@ -6267,6 +6282,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Electronic Warfare (EW) Equipment";
         misc.setInternalName(Sensor.EW_EQUIPMENT);
+        misc.shortName = "EW Equipment";
         misc.tonnage = 7.5;
         misc.criticals = 4;
         misc.cost = 500000;
@@ -6291,6 +6307,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Watchdog ECM Suite");
         misc.addLookupName("WatchdogECM");
         misc.addLookupName("CLWatchdogECM");
+        misc.shortName = "Watchdog CEWS";
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.cost = 500000;
@@ -6317,6 +6334,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Nova CEWS");
         misc.addLookupName("NovaCEWS");
         misc.addLookupName("CLNCEWS");
+        misc.shortName = "Nova CEWS";
         misc.tonnage = 1.5f;
         misc.criticals = 1;
         misc.cost = 1100000; // we assume that WOR had a typo there.
@@ -6387,6 +6405,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Prototype Remote Sensors/Dispenser";
         misc.setInternalName("ProtoTypeRemoteSensorDispenser");
         misc.addLookupName("Prototype Remote Sensor Dispenser");
+        misc.shortName = "Remote Sensors/Dispenser (P)";
         misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.hittable = true;
@@ -7861,6 +7880,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBlueShield() {
         MiscType misc = new MiscType();
         misc.name = "Blue Shield Particle Field Damper";
+        misc.shortName = "Blue Shield";
         misc.setInternalName(misc.name);
         misc.setModes(new String[] { "Off", "On" });
         misc.instantModeSwitch = false;
@@ -8428,6 +8448,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (1 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:1");
+        misc.shortName = "CommsGear:1t";
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.bv = 0;
@@ -8451,7 +8472,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Communications Equipment (2 ton)";
         misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:2");
+        misc.shortName = "CommsGear:2t";
         misc.tonnage = 2;
         misc.criticals = 2;
         misc.bv = 0;
@@ -8476,6 +8497,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (3 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:3");
+        misc.shortName = "CommsGear:3t";
         misc.tonnage = 3;
         misc.criticals = 3;
         misc.bv = 0;
@@ -8500,6 +8522,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (4 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:4");
+        misc.shortName = "CommsGear:4t";
         misc.tonnage = 4;
         misc.criticals = 4;
         misc.bv = 0;
@@ -8524,6 +8547,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (5 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:5");
+        misc.shortName = "CommsGear:5t";
         misc.tonnage = 5;
         misc.criticals = 5;
         misc.bv = 0;
@@ -8548,6 +8572,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (6 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:6");
+        misc.shortName = "CommsGear:6t";
         misc.tonnage = 6;
         misc.criticals = 6;
         misc.bv = 0;
@@ -8572,6 +8597,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (7 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:7");
+        misc.shortName = "CommsGear:7t";
         misc.tonnage = 7;
         misc.criticals = 7;
         misc.bv = 0;
@@ -8596,6 +8622,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (8 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:8");
+        misc.shortName = "CommsGear:8t";
         misc.tonnage = 8;
         misc.criticals = 8;
         misc.bv = 0;
@@ -8620,6 +8647,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (9 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:9");
+        misc.shortName = "CommsGear:9t";
         misc.tonnage = 9;
         misc.criticals = 9;
         misc.bv = 0;
@@ -8644,6 +8672,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (10 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:10");
+        misc.shortName = "CommsGear:10t";
         misc.tonnage = 10;
         misc.criticals = 10;
         misc.bv = 0;
@@ -8668,6 +8697,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (11 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:11");
+        misc.shortName = "CommsGear:11t";
         misc.tonnage = 11;
         misc.criticals = 11;
         misc.bv = 0;
@@ -8692,6 +8722,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (12 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:12");
+        misc.shortName = "CommsGear:12t";
         misc.tonnage = 12;
         misc.criticals = 12;
         misc.bv = 0;
@@ -8716,6 +8747,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (13 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:13");
+        misc.shortName = "CommsGear:13t";
         misc.tonnage = 13;
         misc.criticals = 13;
         misc.bv = 0;
@@ -8740,6 +8772,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (14 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:14");
+        misc.shortName = "CommsGear:14t";
         misc.tonnage = 14;
         misc.criticals = 14;
         misc.bv = 0;
@@ -8764,6 +8797,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Communications Equipment (15 ton)";
         misc.setInternalName(misc.name);
         misc.addLookupName("CommsGear:15");
+        misc.shortName = "CommsGear:15t";
         misc.tonnage = 15;
         misc.criticals = 15;
         misc.bv = 0;
@@ -9406,7 +9440,8 @@ public class MiscType extends EquipmentType {
         misc.name = "Mobile Hyperpulse Generators (Mobile HPG)";
         misc.setInternalName("ISMobileHPG");
         misc.addLookupName("ClanMobileHPG");
-        misc.tonnage = 50;
+        misc.shortName = "Mobile HPG";
+		misc.tonnage = 50;
         misc.criticals = 50;
         misc.cost = 1000000000;
         misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_SUPPORT_TANK_EQUIPMENT)
@@ -9429,6 +9464,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Mobile Hyperpulse Generators (Ground-Mobile HPG)";
         misc.setInternalName("ISGroundMobileHPG");
         misc.addLookupName("ClanGroundMobileHPG");
+        misc.shortName = "Ground-Mobile HPG";
         misc.tonnage = 12;
         misc.criticals = 12;
         misc.cost = 4000000000f;
@@ -9458,6 +9494,7 @@ public class MiscType extends EquipmentType {
         // TODO Game Rules
         misc.name = "RISC Emergency Coolant System";
         misc.setInternalName("ISRISCEmergencyCoolantSystem");
+        misc.shortName = "RISC Coolant System";
         misc.tonnage = 2;
         misc.criticals = 1;
         misc.cost = 460000;
@@ -9479,6 +9516,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "RISC Laser Pulse Module";
         misc.setInternalName("ISRISCLaserPulseModule");
+        misc.shortName = "RISC Laser Module";
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.tankslots = 0;
@@ -9501,8 +9539,9 @@ public class MiscType extends EquipmentType {
     public static MiscType createRISCSuperCooledMyomer() {
         MiscType misc = new MiscType();
 
-        misc.name = "Super-Cooled Myomer";
+        misc.name = "RISC Super-Cooled Myomer";
         misc.setInternalName("ISSuperCooledMyomer");
+        misc.shortName = "Super-Cooled Myomer";
         misc.tonnage = 0;
         misc.criticals = 6;
         misc.hittable = true;
@@ -10309,9 +10348,8 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("Hitch");
         misc.tonnage = 0;
         misc.cost = 0;
-        misc.criticals = 1; // not list in a chart but TM pg 98 mentions they
-                            // take 1 item slot.
-        misc.tankslots = 1;
+        misc.criticals = 0; // being errata'd to no slots.
+        misc.tankslots = 0;
         misc.flags = misc.flags.or(F_HITCH).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
@@ -10397,6 +10435,7 @@ public class MiscType extends EquipmentType {
         misc.name = "BattleMech Turret (Shoulder)";
         misc.setInternalName("ISShoulderTurret");
         misc.addLookupName("CLShoulderTurret");
+        misc.shortName = "Shoulder Turret";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
@@ -10415,6 +10454,7 @@ public class MiscType extends EquipmentType {
         misc.name = "BattleMech Turret (Head)";
         misc.setInternalName("ISHeadTurret");
         misc.addLookupName("CLHeadTurret");
+        misc.shortName = "Head Turret";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
@@ -10436,6 +10476,7 @@ public class MiscType extends EquipmentType {
         misc.name = "BattleMech Turret (Quad)";
         misc.setInternalName("ISQuadTurret");
         misc.addLookupName("CLQuadTurret");
+        misc.shortName ="Quad Turret";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
@@ -10459,6 +10500,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Vehicular Sponson Turret";
         misc.setInternalName("ISSponsonTurret");
         misc.addLookupName("CLSponsonTurret");
+        misc.shortName = "Sponson Turret";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
@@ -11365,6 +11407,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BAMechanicalJumpBooster");
         misc.addLookupName("ISMechanicalJumpBooster");
         misc.addLookupName("CLMechanicalJumpBooster");
+        misc.shortName = "Jump Booster";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_MECHANICAL_JUMP_BOOSTER).or(F_BA_EQUIPMENT);

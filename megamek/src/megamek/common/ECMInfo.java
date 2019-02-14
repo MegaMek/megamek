@@ -1,6 +1,6 @@
 /*
 * MegaMek -
-* Copyright (C) 2005 Nicholas Walczak (walczak@cs.umn.edu)
+* Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
 * Copyright (C) 2018 The MegaMek Team
 *
 * This program is free software; you can redistribute it and/or modify it under

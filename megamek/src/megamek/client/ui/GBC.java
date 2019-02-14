@@ -1,5 +1,7 @@
 /*
-* MegaMek - Copyright (C) 2019 - The MegaMek Team
+* MegaMek -
+* Copyright (C) 2008 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -194,4 +196,3 @@ public class GBC extends GridBagConstraints {
         return this;
     }
 }
-

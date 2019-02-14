@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common;
 
@@ -50,7 +50,7 @@ public interface IGame {
     public static int ILLUMINATED_FIRE = 1;
     public static int ILLUMINATED_FLARE = 2;
     public static int ILLUMINATED_LIGHT = 3;
-    
+
     public enum Phase {
         PHASE_UNKNOWN,
         PHASE_LOUNGE,
@@ -124,7 +124,7 @@ public interface IGame {
             }
             return null;
         }
-        
+
         /**
          * Returns true if this phase is simultaneous.
          *
@@ -469,7 +469,7 @@ public interface IGame {
      * Inserts a turn that will come directly after the current one
      */
     abstract void insertNextTurn(GameTurn turn);
-    
+
     /**
      * Inserts a turn after the specific index
      */
@@ -477,7 +477,7 @@ public interface IGame {
 
     /**
      * Swaps the turn at index 1 with the turn at index 2.
-     * 
+     *
      * @param index1
      * @param index2
      */
@@ -494,7 +494,7 @@ public interface IGame {
 
     /**
      * Sets the current turn index
-     * 
+     *
      * @param turnIndex
      *            The new turn index.
      * @param prevPlayerId
@@ -674,7 +674,7 @@ public interface IGame {
      * Returns the entity with the given id number, if any.
      */
     abstract Entity getEntity(int id);
-    
+
     /**
      * looks for an entity by id number even if out of the game
      */
@@ -684,7 +684,6 @@ public interface IGame {
      * Adds a collection of new Entities.  Only one GameEntityNewEvent is
      * created for the whole list.
      *
-     * @param ids  A collection of ids for each Entity to be added.
      * @param entities  The Entity objects to be added.
      */
     abstract void addEntities(List<Entity> entities);
@@ -692,7 +691,6 @@ public interface IGame {
     /**
      * Adds a new Entity to this Game object.
      *
-     * @param id        The id of the Entity to be added.
      * @param entity    The Entity to add.
      * @param genEvent  A flag that determiens wheher a GameEntityNewEvent is
      *                  generated.
@@ -702,17 +700,16 @@ public interface IGame {
     /**
      * Adds a new Entity to this Game object and generates a GameEntityNewEvent.
      *
-     * @param id  The id of the Entity to be added.
      * @param entity The Entity to add.
      **/
     void addEntity(Entity entity);
-    
+
     /**
      * Adds a new Entity.  The id parameter is ignored and addEntity(Entity)
      * is called instead.  This is just to maintain compatibility with the old
      * API.
-     *  
-     * @param id    Value that is ignored: the id is pulled from the passed 
+     *
+     * @param id    Value that is ignored: the id is pulled from the passed
      *               Entity
      * @param entity The Entity to add to the game.
      */
@@ -755,7 +752,7 @@ public interface IGame {
      * get the list of smokeclouds
      */
     abstract List<SmokeCloud> getSmokeCloudList();
-    
+
     /**
      * Remove a list of smoke clouds
      * @param cloudsToRemove
@@ -793,7 +790,7 @@ public interface IGame {
      * Returns a List of the active entities at the given coordinates.
      */
     abstract List<Entity> getEntitiesVector(Coords c);
-    
+
     /**
      * Returns a List of the active entities at the given coordinates.
      */
@@ -808,7 +805,7 @@ public interface IGame {
      * Determine if the given set of coordinates has a gun emplacement on the roof of a building.
      */
     abstract boolean hasRooftopGunEmplacement(Coords c);
-    
+
     /**
      * Returns a Target for an Accidental Fall From above, or null if no
      * possible target is there
@@ -831,7 +828,7 @@ public interface IGame {
      */
     abstract Iterator<Entity> getEnemyEntities(final Coords c,
             final Entity currentEntity);
-    
+
     /**
      * Returns an <code>Enumeration</code> of active enemy entities
      *
@@ -918,7 +915,7 @@ public interface IGame {
      * @param start the entity id to start at
      */
     abstract int getNextEntityNum(GameTurn turn, int start);
-    
+
     /**
      * Returns the entity id of the previous entity that can move during the
      * specified
@@ -985,7 +982,7 @@ public interface IGame {
      * Returns the number of remaining selectable Vehicles owned by a player.
      */
     abstract int getVehiclesLeft(int playerId);
-    
+
     /**
      * Returns the number of remaining selectable Mechs owned by a player.
      */
@@ -1002,7 +999,7 @@ public interface IGame {
      * Used when a turn is played out of order
      */
     abstract GameTurn removeFirstTurnFor(Entity entity);
-    
+
     /**
      * Removes any turns that can only be taken by the specified entity.  Useful
      * if the specified Entity is being removed from the game to ensure any
@@ -1084,7 +1081,7 @@ public interface IGame {
     abstract void addInitiativeRerollRequest(Team t);
 
     abstract void rollInitAndResolveTies();
-    
+
     abstract void handleInitiativeCompensation();
 
     abstract int getNoOfInitiativeRerollRequests();
@@ -1507,16 +1504,16 @@ public interface IGame {
     abstract PlanetaryConditions getPlanetaryConditions();
 
     abstract void setPlanetaryConditions(PlanetaryConditions conditions);
-    
+
     /**
      * Get a set of Coords illuminated by searchlights.
-     * 
+     *
      * Note: coords could be illuminated by other sources as well, it's likely
      * that IGame.isPositionIlluminated is desired unless the searchlighted hex
      * set is being sent to the client or server.
      */
     abstract HashSet<Coords> getIlluminatedPositions();
-    
+
     /**
      * Clear the set of searchlight illuminated hexes.
      */
@@ -1529,19 +1526,19 @@ public interface IGame {
 
     /**
      * Add a new hex to the collection of Coords illuminated by searchlights.
-     * 
+     *
      * @return True if a new hex was added, else false if the set already
      *      contained the input hex.
      */
     abstract boolean addIlluminatedPosition(Coords c);
-    
+
     /**
-     * Updates the map that maps a position to the list of Entity's in that 
+     * Updates the map that maps a position to the list of Entity's in that
      * position.
-     *  
+     *
      * @param e
      */
-    abstract void updateEntityPositionLookup(Entity e, 
+    abstract void updateEntityPositionLookup(Entity e,
             HashSet<Coords> oldPositions);
 
 }

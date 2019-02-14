@@ -1,16 +1,16 @@
-/**
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
+/*
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.client.ui.swing.widget;
 
@@ -107,7 +107,7 @@ public class BackGroundDrawer {
 
     /**
      * Tiling style is set to NO_TILING | VALIGN_CENTER | HALIGN_CENTER.
-     * 
+     *
      * @param mainImage image to draw by BackGroundDrawer.
      */
 
@@ -132,7 +132,7 @@ public class BackGroundDrawer {
 
     /**
      * Sets type of tiling.
-     * 
+     *
      * @param type Possible values: NO_TILING, TILING_BOTH, TILING_VERTICAL,
      *            TILING_HORIZONTAL.
      */
@@ -144,8 +144,8 @@ public class BackGroundDrawer {
 
     /**
      * Sets vertical align of tiling
-     * 
-     * @param type Must be VALIGN_TOP, VALIGN_CENTER, VALIGN_BOTTOM
+     *
+     * @param vAlign Must be VALIGN_TOP, VALIGN_CENTER, VALIGN_BOTTOM
      */
 
     public void setValign(int vAlign) {
@@ -156,8 +156,8 @@ public class BackGroundDrawer {
 
     /**
      * Sets horizontal align of tiling
-     * 
-     * @param type Must be HALIGN_LEFT, HALIGN_CENTER, HALIGN_RIGHT
+     *
+     * @param hAlign Must be HALIGN_LEFT, HALIGN_CENTER, HALIGN_RIGHT
      */
     public void setHalign(int hAlign) {
         hAlign &= HALIGN_SELECT_MASK;
@@ -193,7 +193,7 @@ public class BackGroundDrawer {
 
     /**
      * Draws image into Graphics with custom tiling type and alignment.
-     * 
+     *
      * @param g Graphics to which draw to.
      * @param width Width of the drawing area.
      * @param height Height of the drawing area.

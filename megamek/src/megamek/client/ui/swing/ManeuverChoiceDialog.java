@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.client.ui.swing;
 
@@ -42,13 +42,13 @@ import megamek.common.MovePath;
  * A (somewhat primitive) dialog that asks a question and lets the player select
  * from the available choices. The question string is tokenised on "\n". <p/>
  * Refactored from SingleChoiceDialog (which was based on Confirm)
- * 
+ *
  * @author suvarov454@sourceforge.net
  * @version $version: $
  */
 public class ManeuverChoiceDialog extends JDialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3093043054221558221L;
 
@@ -65,13 +65,11 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
 
     /**
      * Create and initialize the dialog.
-     * 
+     *
      * @param parent - the <code>Frame</code> that is locked by this dialog.
      * @param question - <code>String</code> displayed above the choices. The
      *            question string is tokenised on "\n".
      * @param choices - an array of <code>String</code>s to be displayed.
-     * @param isSingle - a <code>boolean</code> that identifies whether the
-     *            dialog is supposed to be a single choice dialog or support
      */
     private void initialize(JFrame parent, String question, String[] choices) {
         super.setResizable(false);
@@ -189,12 +187,11 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
      * Create a choice dialog. The player can choose any or all of the choices.
      * If no choices are passed in, this will be a very boring dialog, but it
      * will not suffer an exception.
-     * 
+     *
      * @param parent - the <code>Frame</code> that is locked by this dialog.
      * @param title - the title <code>String</code> for this dialog.
      * @param question - <code>String</code> displayed above the choices. The
      *            question string is tokenised on "\n".
-     * @param choices - an array of <code>String</code>s to be displayed.
      */
     public ManeuverChoiceDialog(JFrame parent, String title, String question) {
         super(parent, title, true);
@@ -221,7 +218,7 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
 
     /**
      * See if the player confirmed a choice.
-     * 
+     *
      * @return <code>true</code> if the player has confirmed a choice.
      *         <code>false</code> if the player canceled, if the player did
      *         not select a choice, or if no choices were available.
@@ -232,7 +229,7 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
 
     /**
      * Which choices did the player select?
-     * 
+     *
      * @return If no choices were available, if the player canceled, if the
      *         player did not select a choice, or if the player canceled the
      *         choice, a <code>null</code> value is returned, otherwise an
@@ -271,12 +268,12 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
 
         return retval[0];
     }
-    
-    public void checkPerformability(int velocity, int altitude, int ceiling, 
+
+    public void checkPerformability(int velocity, int altitude, int ceiling,
             boolean isVTOL, int distance, IGame game, MovePath mp) {
         for(int type = 0; type < ManeuverType.MAN_SIZE; type++ ) {
             checkboxes[type].setEnabled(
-                    ManeuverType.canPerform(type, velocity, altitude, ceiling, 
+                    ManeuverType.canPerform(type, velocity, altitude, ceiling,
                                             isVTOL, distance,game,mp));
         }
     }

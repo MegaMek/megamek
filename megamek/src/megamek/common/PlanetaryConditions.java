@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common;
 
@@ -187,7 +187,7 @@ public class PlanetaryConditions implements Serializable {
         }
         throw new IllegalArgumentException("Unknown fog condition");
     }
-    
+
     public String getWindDirDisplayableName() {
         return getWindDirDisplayableName(windDirection);
     }
@@ -524,7 +524,7 @@ public class PlanetaryConditions implements Serializable {
 
     /**
      * Planetary conditions on movement, except for gravity
-     * @param entity - the entity in question
+     * @param en - the entity in question
      * @return an <code>int</code> with the modifier to movement
      */
     public int getMovementMods(Entity en) {
@@ -815,7 +815,7 @@ public class PlanetaryConditions implements Serializable {
         lightConditions = type;
     }
 
-    
+
     /** @return The time of day lighting conditions (one of PlanetaryConditions.L_*). */
     public int getLight() {
         return lightConditions;
@@ -959,7 +959,7 @@ public class PlanetaryConditions implements Serializable {
         terrainAffected = conditions.terrainAffected;
         blowingSand = conditions.blowingSand;
         runOnce = conditions.runOnce;
-        
+
         if (runOnce) {
             setTempFromWeather();
             setWindFromWeather();

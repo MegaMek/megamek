@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common.util;
 
@@ -49,7 +49,7 @@ public class BoardUtilities {
     public static int getAmountElevationGenerators() {
         return 3 + elevationGenerators.size();
     }
-    
+
     /**
      * Combines one or more boards into one huge megaboard!
      *
@@ -627,6 +627,9 @@ public class BoardUtilities {
 
     /**
      * calculate the distance between two points
+     *
+     * @param p1
+     * @param p2
      */
     private static double distance(Point p1, Point p2) {
         double x = p1.x - p2.x;
@@ -1025,7 +1028,7 @@ public class BoardUtilities {
                         hex.addTerrain(tf.createTerrain(Terrains.SWAMP, 1));
                         hex.removeTerrain(Terrains.WATER);
                     }
-                    else if(!hex.containsTerrain(Terrains.BUILDING) 
+                    else if(!hex.containsTerrain(Terrains.BUILDING)
                             && !hex.containsTerrain(Terrains.PAVEMENT)
                             && !hex.containsTerrain(Terrains.ROAD)) {
                         hex.addTerrain(tf.createTerrain(Terrains.MUD, 1));
@@ -1563,25 +1566,25 @@ public class BoardUtilities {
      * @param entity Entity to evaluate
      * @return the Board.START_ constant representing the "opposite" edge
      */
-    public static CardinalEdge getClosestEdge(Entity entity) {        
+    public static CardinalEdge getClosestEdge(Entity entity) {
         int distanceToWest = entity.getPosition().getX();
         int distanceToEast = entity.getGame().getBoard().getWidth() - entity.getPosition().getX();
         int distanceToNorth = entity.getPosition().getY();
         int distanceToSouth = entity.getGame().getBoard().getHeight() - entity.getPosition().getY();
-        
+
         boolean closerWestThanEast = distanceToWest < distanceToEast;
         boolean closerNorthThanSouth = distanceToNorth < distanceToSouth;
-        
+
         int horizontalDistance = Math.min(distanceToWest, distanceToEast);
         int verticalDistance = Math.min(distanceToNorth, distanceToSouth);
-        
+
         if(horizontalDistance < verticalDistance) {
             return closerWestThanEast ? CardinalEdge.WEST : CardinalEdge.EAST;
         } else {
             return closerNorthThanSouth ? CardinalEdge.NORTH : CardinalEdge.SOUTH;
         }
     }
-    
+
     protected static class Point {
 
         public int x;

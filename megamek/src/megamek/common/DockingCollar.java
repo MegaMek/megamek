@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common;
 
@@ -20,7 +20,7 @@ import java.util.Vector;
 
 /**
  * Represents a docking collar with which a Jumpship can carry a DropShip
- * 
+ *
  */
 
 public class DockingCollar implements Transporter {
@@ -69,7 +69,7 @@ public class DockingCollar implements Transporter {
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
+     * @param docks
      *            - The weight of troops (in tons) this space can carry.
      */
     public DockingCollar(int docks) {
@@ -300,7 +300,7 @@ public class DockingCollar implements Transporter {
     public void setDamaged(boolean b) {
         damaged = b;
     }
-    
+
     @Override
     public int hardpointCost() {
         return 1;
@@ -310,16 +310,16 @@ public class DockingCollar implements Transporter {
     public void setGame(IGame game) {
         this.game = game;
     }
-    
+
     @Override
     public void resetTransporter() {
         troops = new Vector<Integer>();
         currentSpace = totalSpace;
     }
-    
+
     @Override
     public String toString() {
         return "dockingcollar";
     }
-    
+
 } // End package class TroopSpace implements Transporter

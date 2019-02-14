@@ -1,3 +1,17 @@
+/*
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.common.pathfinder;
 
 import java.util.ArrayList;
@@ -21,7 +35,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 
 /**
- * This class is intended to be used to find a (potentially long) legal path 
+ * This class is intended to be used to find a (potentially long) legal path
  * given a movement type from a particular hex to the specified board edge
  * @author NickAragua
  *
@@ -29,7 +43,7 @@ import megamek.common.MoveStep;
 public class BoardEdgePathFinder {
     // This is a map that will tell us if a particular coordinate has a move path to a particular edge
     Map<Integer, Map<Coords, MovePath>> edgePathCache;
-    
+
     // This is a map that will tell us the longest non-repeating path available to a particular coordinate
     // Useful in situations where a unit has no possible way to get from the deployment zone to the opposite edge
     // It is accumulated over multiple calls to findPathToEdge()
@@ -49,7 +63,7 @@ public class BoardEdgePathFinder {
         longestNonEdgePathCache = new HashMap<>();
         connectedPaths = new HashMap<>();
     }
-    
+
     /**
      * Figures out the "opposite" edge for the given entity.
      * @param entity Entity to evaluate
@@ -57,19 +71,19 @@ public class BoardEdgePathFinder {
      */
     private int determineOppositeEdge(Entity entity) {
         IBoard board = entity.getGame().getBoard();
-        
+
         // the easiest part is if the entity is supposed to start on a particular edge. Just return the opposite edge.
         int oppositeEdge = board.getOppositeEdge(entity.getStartingPos());
         if(oppositeEdge != Board.START_NONE) {
             return oppositeEdge;
         }
-        
+
         // otherwise, we determine which edge of the board is closest to current position (using math) and return the "opposite" edge.
         // the lesser of entity position x or y determines the opposite.
         // if they're even, pick one arbitrarily
-        
+
         int edge = Board.START_NONE;
-        
+
         // if x is closer to the west edge and less than the y coordinate, use east edge as opposite
         if(entity.getPosition().getX() < (board.getWidth() / 2) &&
                 entity.getPosition().getX() < entity.getPosition().getY()) {
@@ -81,7 +95,7 @@ public class BoardEdgePathFinder {
                 entity.getPosition().getX() > entity.getPosition().getY()) {
             edge = Board.START_E;
         }
-        
+
         // if y is closer to the north edge and greater than the x coordinate, use south edge as opposite
         else if(entity.getPosition().getY() < (board.getHeight() / 2) &&
                 entity.getPosition().getY() < entity.getPosition().getX()) {
@@ -95,7 +109,7 @@ public class BoardEdgePathFinder {
 
         return board.getOppositeEdge(edge);
     }
-    
+
     /**
      * Helper function to set the entity to an appropriate facing given the destination region
      * Changes the actual entity's facing.
@@ -123,10 +137,10 @@ public class BoardEdgePathFinder {
                 return 5;
             }
         }
-        
+
         return -1;
     }
-    
+
     /**
      * Helper function to directly the entity to an appropriate facing given the destination region
      * Changes the actual entity's facing.
@@ -136,46 +150,46 @@ public class BoardEdgePathFinder {
     private void setAppropriateFacing(Entity entity, int destinationRegion) {
         entity.setFacing(getAppropriateFacing(entity, destinationRegion));
     }
-    
+
     /**
      * Helper method that attempts to find a path that connects from the entity's current position
-     * to the path's desired edge. The reason being that a particular path may technically lead to an edge, 
+     * to the path's desired edge. The reason being that a particular path may technically lead to an edge,
      * but we cut the path generation short when it reaches another path that already goes to that edge.
-     * @param startingPath
+     * @param entity
      * @return
      */
     public MovePath findCombinedPath(Entity entity) {
         MovePath currentPath = null;
         MovePath connectedPath = new MovePath(entity.getGame(), entity);
-        
+
         int destinationRegion = determineOppositeEdge(entity);
         if(edgePathCache.containsKey(destinationRegion)) {
             currentPath = edgePathCache.get(destinationRegion).get(entity.getPosition());
         }
-        
+
         if(currentPath == null) {
             return this.findPathToEdge(entity);
         }
-        
+
         while(!isOnBoardEdge(currentPath, destinationRegion) && (connectedPath != null)) {
             if(edgePathCache.containsKey(destinationRegion)) {
                 connectedPath = edgePathCache.get(destinationRegion).get(currentPath.getFinalCoords());
             } else {
                 // this indicates that the end point of the current path does not go on to the desired edge
-                connectedPath = null;  
+                connectedPath = null;
             }
-            
-            // 
+
+            //
             if(currentPath != null) {
                 currentPath = joinPaths(entity, currentPath, connectedPath);
             }
         }
-        
+
         return currentPath;
     }
 
     /**
-     * Helper method that takes two paths and "joins" them together. 
+     * Helper method that takes two paths and "joins" them together.
      * The resulting path has all the steps of the starting path, a turn to get the unit to face in the direction of the second path,
      * and the rest of the second path starting from the intersection.
      * @param startingPath The beginning path
@@ -183,85 +197,85 @@ public class BoardEdgePathFinder {
      * @return Combined path
      */
     private MovePath joinPaths(Entity entity, MovePath startingPath, MovePath endingPath) {
-        
+
         // step 1: check if we've already found a path to the edge from these coordinates
         // this path may be "incomplete", but it's a good starting point.
         // the initial part of the path then is from the entity's current position
         // then, we find any path that "extends" the initial path and follow that (repeat until we reach the end)
-        
+
         MovePath joinedPath = new MovePath(entity.getGame(), entity);
         boolean intersected = false;
-        
+
         for(MoveStep step : startingPath.getStepVector()) {
             if(step.getPosition() == joinedPath.getFinalCoords()) {
                 matchFacingToPath(joinedPath, step);
                 intersected = true;
             }
-            
+
             if(intersected) {
                 joinedPath.addStep(step.getType());
             }
         }
-        
+
         intersected = false;
-        
+
         for(MoveStep step : endingPath.getStepVector()) {
             // this is the point where we intersect
             if(step.getPosition() == startingPath.getFinalCoords()) {
                 matchFacingToPath(joinedPath, step);
                 intersected = true;
             }
-            
+
             if(intersected) {
                 joinedPath.addStep(step.getType());
             }
         }
-        
+
         return joinedPath;
     }
-    
+
     /**
      * Helper function that, given a unit facing and a move step, adds turns to the given path until the facing of the path matches
      * the facing of the step.
-     * @param facing
-     * @param path
+     * @param initialPath
+     * @param interesectionStep
      */
     private void matchFacingToPath(MovePath initialPath, MoveStep intersectionStep) {
         // algorithm: from initial facing, two rotation paths: add and subtract one
         // until we reach the desired facing with either.
         // could probably be done with geometry instead, but I'm not *that* good with abstract math
-        
+
         int initialFacing = initialPath.getFinalFacing();
         int desiredFacing = intersectionStep.getFacing();
         int leftTurnFacing = initialFacing;
         int rightTurnFacing = initialFacing;
         int leftTurnCount = 0;
         int rightTurnCount = 0;
-        
+
         while((leftTurnFacing != desiredFacing) && (rightTurnFacing != desiredFacing)) {
             leftTurnFacing--;
             rightTurnFacing++;
             leftTurnCount++;
             rightTurnCount++;
-            
+
             // "wrap around" if we hit 0 from either edge
             if(leftTurnFacing < 0) {
                 leftTurnFacing = 5;
             }
-            
+
             if(rightTurnFacing > 5) {
                 rightTurnFacing = 0;
             }
         }
-        
+
         MoveStepType turnDirection = leftTurnCount > rightTurnCount ? MoveStepType.TURN_RIGHT : MoveStepType.TURN_LEFT;
         int turnCount = leftTurnCount > rightTurnCount ? rightTurnCount : leftTurnCount;
-        
+
         for(int count = 0; count < turnCount; count++) {
             initialPath.addStep(turnDirection);
         }
     }
-    
+
     /**
      * Invalidate all paths that go through this set of coordinates (because of a building or bridge collapse), or some other terrain change
      * either directly or by connecting to a path that goes through this set of coordinates.
@@ -271,27 +285,27 @@ public class BoardEdgePathFinder {
         // identify if this set of coordinates has a path that leads to an edge
         // loop through all paths in the path cache destined for the edge, and invalidate the ones that connect to the initial identified path
         // invalidate the first path
-        
+
         for(Map<Coords, MovePath> coordinatePaths : edgePathCache.values()) {
             MovePath directPath = coordinatePaths.get(coords);
-            
+
             if(directPath != null) {
-                // first, clear out all cached coordinate-path entries for this path 
+                // first, clear out all cached coordinate-path entries for this path
                 for(Coords pathCoords : directPath.getCoordsSet()) {
                     coordinatePaths.remove(pathCoords);
                 }
-                
+
                 // for each path that connects to this path, invalidate it
                 if(connectedPaths.containsKey(directPath)) {
                     for(MovePath connectedPath : connectedPaths.get(directPath)) {
-                        invalidatePaths(connectedPath.getStartCoords());                    
+                        invalidatePaths(connectedPath.getStartCoords());
                     }
                 }
             }
         }
     }
-    
-    /** 
+
+    /**
      * Finds a legal path for the given entity to the "opposite" board edge
      * Completely ignores movement risk
      * Mostly ignores movement cost
@@ -301,16 +315,16 @@ public class BoardEdgePathFinder {
      */
     public MovePath findPathToEdge(Entity entity) {
         int destinationRegion = determineOppositeEdge(entity);
-        
+
         // back up and restore the entity's original facing, as it's not nice to have side effects
         int originalFacing = entity.getFacing();
         setAppropriateFacing(entity, destinationRegion);
         MovePath pathToEdge = findPathToEdge(entity, destinationRegion);
         entity.setFacing(originalFacing);
-        
+
         return pathToEdge;
     }
-    
+
     /**
      * Finds a legal path for the given entity to the given board edge (please pass in a cardinal edge)
      * Completely ignores movement risk
@@ -326,44 +340,44 @@ public class BoardEdgePathFinder {
         } else {
             startPath.addStep(MoveStepType.CLIMB_MODE_ON);
         }
-        
+
         Comparator<MovePath> movePathComparator = new SortByDistanceToEdge(destinationRegion);
-        
+
         List<MovePath> candidates = new ArrayList<>();
         candidates.add(startPath);
-        
+
         // a collection of coordinates we've already visited, so we don't loop back.
         Set<Coords> visitedCoords = new HashSet<>();
         visitedCoords.add(startPath.getFinalCoords());
         longestNonEdgePathCache.put(entity.getPosition(), startPath);
-        
+
         while(!candidates.isEmpty()) {
             MovePath cachedPath = this.getCachedPathForCoordinates(candidates.get(0).getFinalCoords(), destinationRegion);
-            
+
             if(cachedPath != null || isOnBoardEdge(candidates.get(0), destinationRegion)) {
-                // if we've found a cached path and the length of the current candidate is 1 
-                // (it's always at least 1 due to adding the climb mode switch explicitly), 
+                // if we've found a cached path and the length of the current candidate is 1
+                // (it's always at least 1 due to adding the climb mode switch explicitly),
                 // then we should return the cached path instead
                 MovePath returnPath = ((candidates.get(0).length() == 1) && (cachedPath != null)) ? cachedPath : candidates.get(0);
-                
+
                 cacheGoodPath(returnPath, destinationRegion);
                 return returnPath;
             }
-            
+
             candidates.addAll(generateChildNodes(candidates.get(0), visitedCoords));
-            
+
             // if this path moved around more than the current 'longest path', store it, just in case
             if(candidates.get(0).getHexesMoved() > longestNonEdgePathCache.get(entity.getPosition()).getHexesMoved()) {
                 longestNonEdgePathCache.put(entity.getPosition(), candidates.get(0));
             }
-            
+
             candidates.remove(0);
             candidates.sort(movePathComparator);
         }
-        
+
         return null;
     }
-    
+
     /**
      * Gets the currently stored longest non-edge path from the given entity's current position
      * @param coords The coordinates to check
@@ -372,7 +386,7 @@ public class BoardEdgePathFinder {
     public MovePath getLongestNonEdgePath(Coords coords) {
         return longestNonEdgePathCache.get(coords);
     }
-    
+
     /**
      * Helper function that gets us a cached path for the given set of coordinates if they have a path cached
      * @param coords Coordinates to check
@@ -382,7 +396,7 @@ public class BoardEdgePathFinder {
     private MovePath getCachedPathForCoordinates(Coords coords, int destinationRegion) {
         return edgePathCache.containsKey(destinationRegion) ? edgePathCache.get(destinationRegion).get(coords) : null;
     }
-    
+
     /**
      * Helper function that tells us if the given set of coordinates have a path cached already
      * @param coords Coordinates to check
@@ -393,7 +407,7 @@ public class BoardEdgePathFinder {
     private boolean coordinatesHaveCachedPath(Coords coords, int destinationRegion) {
         return edgePathCache.containsKey(destinationRegion) && edgePathCache.get(destinationRegion).containsKey(coords);
     }
-    
+
     /**
      * Worker function that caches a path that gets to the destination region
      * @param path The path to cache
@@ -404,22 +418,22 @@ public class BoardEdgePathFinder {
         if(path.length() == 0) {
             return;
         }
-        
-        // first, attempt to connect this tributary to the trunk 
+
+        // first, attempt to connect this tributary to the trunk
         // a tributary is a smaller river that connects to a larger body of water (that's the trunk)
         MovePath trunk = getCachedPathForCoordinates(path.getFinalCoords(), destinationRegion);
         if(trunk != null) {
             if(!connectedPaths.containsKey(trunk)) {
                 connectedPaths.put(trunk, new ArrayList<>());
             }
-            
+
             //System.out.println("Next path connects to " + trunk.toString() + " at coordinates " + path.getFinalCoords().toString());
             connectedPaths.get(trunk).add(path);
         }
-        
+
         // cache the path for the set of coordinates if one doesn't yet exist
         Map<Coords, MovePath> coordinatePathMap;
-        
+
         if(!edgePathCache.containsKey(destinationRegion)) {
             coordinatePathMap = new HashMap<>();
             edgePathCache.put(destinationRegion, coordinatePathMap);
@@ -427,18 +441,18 @@ public class BoardEdgePathFinder {
         else {
             coordinatePathMap = edgePathCache.get(destinationRegion);
         }
-        
+
         // cache the path for the set of coordinates if one doesn't yet exist
         // or if the current path is better than the cached one
         for(Coords coords : path.getCoordsSet()) {
             if(!coordinatePathMap.containsKey(coords) ||
                     coordinatePathMap.get(coords).getMpUsed() > path.getMpUsed()) {
                 coordinatePathMap.put(coords, path);
-                
+
             }
         }
     }
-    
+
     /**
      * Function that generates all possible "legal" moves resulting from the given path
      * and updates the set of visited coordinates so we don't visit them again.
@@ -448,7 +462,7 @@ public class BoardEdgePathFinder {
      */
     private List<MovePath> generateChildNodes(MovePath parentPath, Set<Coords> visitedCoords) {
         List<MovePath> children = new ArrayList<>();
-        
+
         // the children of a move path are:
         //      turn left and step forward one
         //      step forward one
@@ -461,15 +475,15 @@ public class BoardEdgePathFinder {
         MovePath centerChild = parentPath.clone();
         centerChild.addStep(MoveStepType.FORWARDS);
         processChild(centerChild, children, visitedCoords);
-        
+
         MovePath rightChild = parentPath.clone();
         rightChild.addStep(MoveStepType.TURN_RIGHT);
         rightChild.addStep(MoveStepType.FORWARDS);
         processChild(rightChild, children, visitedCoords);
-        
+
         return children;
     }
-    
+
     /**
      * Helper function that handles logic related to potentially adding a generated child path
      * to the list of child paths.
@@ -480,10 +494,10 @@ public class BoardEdgePathFinder {
             children.add(child);
         }
     }
-    
+
     /**
      * A "light-weight" version of the logic found in "isMovementPossible" in MoveStep.java
-     * 
+     *
      * @param movePath The move path to process
      * @return Whether or not the given move path is "legal" in the context of this pathfinder.
      */
@@ -494,17 +508,17 @@ public class BoardEdgePathFinder {
         Coords src = movePath.getSecondLastStep().getPosition();
         IHex srcHex = board.getHex(src);
         Entity entity = movePath.getEntity();
-        
+
         boolean destinationInBounds = board.contains(dest);
         if(!destinationInBounds) {
             return false;
         }
 
-        // we only need to be able to legally move into the hex from the previous hex. 
+        // we only need to be able to legally move into the hex from the previous hex.
         // we don't care about stacking limits, remaining unit mp or other transient data
-        
+
         Building destinationBuilding = board.getBuildingAt(dest);
-        
+
         // quadvees are not considered "tracked" for the purposes of this exercise because they can transform
         boolean isTracked = entity.getMovementMode() == EntityMovementMode.TRACKED && !entity.hasETypeFlag(Entity.ETYPE_QUADVEE);
         boolean isHovercraft = entity.getMovementMode() == EntityMovementMode.HOVER;
@@ -513,54 +527,54 @@ public class BoardEdgePathFinder {
         // jumpers can clear higher objects than walkers and crawlers
         int maxUpwardElevationChange = Math.max(entity.getJumpMP(), entity.getMaxElevationChange());
         // jumpers can just hop down wherever they want
-        int maxDownwardElevationChange = entity.getJumpMP() > 0 ? 999 : entity.getMaxElevationDown(); 
+        int maxDownwardElevationChange = entity.getJumpMP() > 0 ? 999 : entity.getMaxElevationDown();
         int destHexElevation = calculateUnitElevationInHex(destHex, entity);
         int srcHexElevation = calculateUnitElevationInHex(srcHex, entity);
-        
+
         boolean destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
         boolean destinationHasBuildingOrBridge = destinationBuilding != null;
         boolean destinationHasBridge = destinationHasBuildingOrBridge && destHex.containsTerrain(Terrains.BRIDGE_CF);
         boolean destinationHasBuilding = destinationHasBuildingOrBridge && destHex.containsTerrain(Terrains.BLDG_CF);
-        
+
         // if we're going to step onto a bridge that will collapse, let's not consider going there
         boolean destinationHasWeakBridge =  destinationHasBridge && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
-                
+
         // if we're going to step onto a building that will collapse, let's not consider going there
         boolean destinationHasWeakBuilding = destinationHasBuilding && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
-                
+
         // this condition indicates that that we are unable to go to the destination because it's too high compared to the source
-        boolean goingUpTooHigh = destHexElevation - srcHexElevation > maxUpwardElevationChange; 
-        
+        boolean goingUpTooHigh = destHexElevation - srcHexElevation > maxUpwardElevationChange;
+
         // this condition indicates that we are unable to go to the destination because it's too low compared to the source
         boolean goingDownTooLow = srcHexElevation - destHexElevation > maxDownwardElevationChange;
-        
+
         // tanks cannot go into jungles or heavy woods unless there is a road
-        boolean tankIntoHeavyWoods = isTracked && 
+        boolean tankIntoHeavyWoods = isTracked &&
                 (destHex.terrainLevel(Terrains.JUNGLE) > 0 || destHex.terrainLevel(Terrains.WOODS) > 1) && !destHexHasRoad;
-        
+
         // hovercraft and wheeled units cannot go into jungles or woods unless there is a road
-        boolean weakTankIntoWoods = (isHovercraft || isWheeled) && 
+        boolean weakTankIntoWoods = (isHovercraft || isWheeled) &&
                 (destHex.terrainLevel(Terrains.JUNGLE) > 0 || destHex.terrainLevel(Terrains.WOODS) > 0) && !destHexHasRoad;
-        
+
         // wheeled tanks cannot go into rough terrain or rubble of any kind, or buildings for that matter
         // even if you level them they still turn to rubble. Additionally, they cannot go into deep snow.
         boolean wheeledTankRestriction = isWheeled &&
-                (destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE) 
+                (destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE)
                 || destHex.containsTerrain(Terrains.BLDG_CF) || (destHex.containsTerrain(Terrains.SNOW) && destHex.terrainLevel(Terrains.SNOW) > 1));
-        
+
         // tracked and wheeled tanks cannot go into water without a bridge
         boolean groundTankIntoWater = (isTracked || isWheeled) &&
                 destHex.containsTerrain(Terrains.WATER) && (destHex.depth() > 0) && !destHex.containsTerrain(Terrains.BRIDGE);
-        
+
         // naval units cannot go out of water
         boolean shipOutofWater = entity.isNaval() &&
                 (!destHex.containsTerrain(Terrains.WATER) || destHex.depth() < 1);
-        
+
         // for future expansion of this functionality, we may consider the possibility that a building or bridge
         // will be destroyed intentionally by the bot to make way for a unit to cross
         // for now, vehicles simply will not consider going through buildings as an option
         boolean tankGoingThroughBuilding = (isWheeled || isTracked || isHovercraft) && destinationHasBuilding;
-        
+
         return !destinationImpassable &&
                 !destinationHasWeakBridge &&
                 !destinationHasWeakBuilding &&
@@ -573,7 +587,7 @@ public class BoardEdgePathFinder {
                 !shipOutofWater &&
                 !tankGoingThroughBuilding;
     }
-    
+
     /**
      * Helper function that calculates the effective elevation for a unit standing there.
      * @param hex The hex to check
@@ -586,29 +600,29 @@ public class BoardEdgePathFinder {
         // We are a mech, which can hopping on top of some buildings
         // We are naval unit going under a bridge, in which case the height is the water level (naval units go on the surface, mostly)
         // We are non-naval going into water but not onto a bridge, in which case the height is the floor (mechs sink to the bottom)
-        
+
         int hexElevation = hex.getLevel();
-        
+
         if(entity.hasETypeFlag(Entity.ETYPE_MECH) && hex.containsTerrain(Terrains.BLDG_CF)) {
             hexElevation = hex.ceiling();
-        } else if(entity.isNaval() && hex.containsTerrain(Terrains.BRIDGE)) { 
+        } else if(entity.isNaval() && hex.containsTerrain(Terrains.BRIDGE)) {
             hexElevation = hex.getLevel();
         } else if(!entity.isSurfaceNaval() && hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.BRIDGE)) {
             hexElevation = hex.floor();
         }
-        
+
         return hexElevation;
     }
-    
+
     /**
      * Determines if the given move path ends on the given board edge
      * @param movePath The move path to check.
-     * @param edge The edge to check for.
+     * @param destinationRegion The edge to check for.
      * @return True or false.
      */
     private boolean isOnBoardEdge(MovePath movePath, int destinationRegion) {
         Coords coords = movePath.getFinalCoords();
-        
+
         switch(destinationRegion) {
         case Board.START_N:
             return coords.getY() == 0;
@@ -622,7 +636,7 @@ public class BoardEdgePathFinder {
             return false;
         }
     }
-    
+
     /**
      * Comparator implementation useful in comparing how much closer a given path is to the internal
      * "destination edge" than the other.
@@ -631,7 +645,7 @@ public class BoardEdgePathFinder {
      */
     private class SortByDistanceToEdge implements Comparator<MovePath> {
         private int targetRegion;
-        
+
         /**
          * Constructor - initializes the destination edge.
          * @param targetRegion Destination edge
@@ -639,17 +653,17 @@ public class BoardEdgePathFinder {
         public SortByDistanceToEdge(int targetRegion) {
             this.targetRegion = targetRegion;
         }
-        
+
         /**
          * compare the first move path to the second
-         * Favors paths that move closer to the destination edge first. 
+         * Favors paths that move closer to the destination edge first.
          * in case of tie, favors paths that cost less MP
          */
-        public int compare(MovePath first, MovePath second) {            
+        public int compare(MovePath first, MovePath second) {
             // normalize MP cost difference over max MP cost
             int costDifference = first.getMpUsed() - second.getMpUsed();
-            int distanceDifference; 
-            
+            int distanceDifference;
+
             switch(targetRegion) {
             // if we're heading south, the one with the bigger y coordinate is further along
             case Board.START_S:
@@ -671,7 +685,7 @@ public class BoardEdgePathFinder {
                 distanceDifference = 0;
                 break;
             }
-            
+
             return distanceDifference != 0 ? distanceDifference : costDifference;
         }
     }

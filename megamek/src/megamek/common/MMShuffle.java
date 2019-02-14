@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 /*
  * MMRoll.java
@@ -23,7 +23,7 @@ package megamek.common;
 /**
  * Subclass of the roll tracker for <code>Pool36Random</code> "entropy"
  * sources
- * 
+ *
  * @author Suvarov454
  */
 public class MMShuffle extends Roll {
@@ -46,8 +46,7 @@ public class MMShuffle extends Roll {
 
     /**
      * Create a new "roll" for this shuffle.
-     * 
-     * @param shuffleId - the <code>long</code> id for this shuffle.
+     *
      * @param first - the first <code>int</code> "roll"
      * @param second - the second <code>int</code> "roll"
      */
@@ -63,7 +62,7 @@ public class MMShuffle extends Roll {
 
     /**
      * Record when this "roll" is delt.
-     * 
+     *
      * @param delt - the <code>int</code> order of this "roll" in its shuffle
      */
     public void setDeal(int delt) {
@@ -74,7 +73,7 @@ public class MMShuffle extends Roll {
     /**
      * Get the value of the roll. This is the total of each of the rolls of each
      * virtual die.
-     * 
+     *
      * @return the <code>int</code> value of the roll.
      */
     @Override
@@ -85,7 +84,7 @@ public class MMShuffle extends Roll {
     /**
      * Get a <code>String</code> containing the roll for each of the virtual
      * dice.
-     * 
+     *
      * @return the <code>String</code> value of the roll.
      */
     @Override
@@ -110,7 +109,7 @@ public class MMShuffle extends Roll {
     /**
      * Get a <code>String</code> report that can be parsed to analyse the
      * roll.
-     * 
+     *
      * @return the <code>String</code> details of the roll.
      */
     @Override

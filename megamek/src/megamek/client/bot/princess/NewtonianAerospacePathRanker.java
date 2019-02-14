@@ -1,3 +1,17 @@
+/*
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.client.bot.princess;
 
 import java.util.Iterator;
@@ -17,13 +31,13 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 
 public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPathRanker {
-    
+
     public static final int REMAINS_ON_BOARD = -1;
-    
+
     public NewtonianAerospacePathRanker(Princess owningPrincess) {
         super(owningPrincess);
     }
-    
+
     /**
      * Find the closest enemy to a unit with a path that ends at the given position.
      */
@@ -58,9 +72,9 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             getOwner().methodEnd(PathRanker.class, METHOD_NAME);
         }
     }
-    
+
     /**
-     * Calculate the damage potential 
+     * Calculate the damage potential
      */
     @Override
     double calculateMyDamagePotential(MovePath path, Entity enemy,
@@ -73,14 +87,14 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         }
 
         // If I don't have LoS, I can't do damage. We're on a space map so this probably is unnecessary.
-        LosEffects losEffects = 
+        LosEffects losEffects =
         LosEffects.calculateLos(game, me.getId(), enemy, path.getFinalCoords(), enemy.getPosition(), false);
         if (!losEffects.canSee()) {
             return 0;
         }
 
         FiringPlan myFiringPlan;
-        
+
         FiringPlanCalculationParameters guess =
         new FiringPlanCalculationParameters.Builder()
           .buildGuess(path.getEntity(),
@@ -90,7 +104,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
                       FireControl.DOES_NOT_TRACK_HEAT,
                       null);
         myFiringPlan = getFireControl().determineBestFiringPlan(guess);
-        
+
         return myFiringPlan.getUtility();
     }
 
@@ -108,7 +122,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         try {
             EntityEvaluationResponse returnResponse =
                     new EntityEvaluationResponse();
-            
+
             Coords finalCoords = path.getFinalCoords();
             Coords closest = getClosestCoordsTo(enemy.getId(), finalCoords);
             if (closest == null) {
@@ -119,14 +133,14 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
                 range = 1;
             }
 
-            
+
             // placeholder logic:
             // if we are a spheroid, we can fire viably in any direction
             // if we are a fighter or aerodyne dropship, our most effective arc is forward
             // larger craft are usually bristling with weapons all around
             int arcToUse = ((IAero) path.getEntity()).isSpheroid() ? Compute.ARC_360 : Compute.ARC_NOSE;
             double vertexCoverage = 1.0;
-            
+
             // the idea here is that, if we have a limited firing arc, the target
             // will likely make an effort to move out of the arc, so it reduces our expected damage
             // we calculate the proportion by looking at the number of "enemy movable area" vertices
@@ -134,21 +148,21 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             if(arcToUse != Compute.ARC_360) {
                 int inArcVertexCount = 0;
                 ConvexBoardArea movableArea = getPathEnumerator().getUnitMovableAreas().get(enemy.getId());
-                
-                for(int vertexNum = 0; vertexNum < 6; vertexNum++) {                    
+
+                for(int vertexNum = 0; vertexNum < 6; vertexNum++) {
                     Coords vertex = movableArea.getVertexNum(vertexNum);
-                    
+
                     if(vertex != null && Compute.isInArc(finalCoords, path.getFinalFacing(), vertex, arcToUse)) {
                         inArcVertexCount++;
                     }
                 }
-                
+
                 vertexCoverage = inArcVertexCount / 6;
             }
-                
+
             double myDamageDiscount = Compute.oddsAbove(path.getEntity().getCrew().getGunnery()) / 100 * vertexCoverage;
-            
-            // my estimated damage is my max damage at the 
+
+            // my estimated damage is my max damage at the
             returnResponse.addToMyEstimatedDamage(
                         getMaxDamageAtRange(getFireControl(),
                                             path.getEntity(),
@@ -171,50 +185,50 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
-    
+
     /**
      * Estimates the sensor shadow modifier for a given path.
-     * Only checks adjacent hexes and doesn't attempt to count intervening craft  
+     * Only checks adjacent hexes and doesn't attempt to count intervening craft
      * also only counts friendly entites that have already moved
      * @param path The path to check
-     * @return 0 if there's no 
+     * @return 0 if there's no
      */
     int calculateSensorShadowMod(MovePath path) {
         if(!path.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
             return 0;
         }
-        
-        int sensorShadowMod = 0;        
+
+        int sensorShadowMod = 0;
         List<Coords> coordsToCheck = path.getFinalCoords().allAdjacent();
         coordsToCheck.add(path.getFinalCoords());
         for(Coords coords : coordsToCheck) {
             // if the coordinate contains a large craft within a certain mass of me, it will generate a sensor shadow
             Iterator<Entity> potentialShadowIter = path.getGame().getFriendlyEntities(coords, path.getEntity());
-                     
+
             while(potentialShadowIter.hasNext() && sensorShadowMod == 0) {
                 Entity potentialShadow = potentialShadowIter.next();
                 if(potentialShadow.isDone() &&
-                        potentialShadow.isLargeCraft() && 
+                        potentialShadow.isLargeCraft() &&
                         (potentialShadow.getWeight() - path.getEntity().getWeight() >= -WeaponAttackAction.STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
                     sensorShadowMod = 1;
                 }
             }
-            
+
             if(sensorShadowMod == 1) {
                 break;
             }
         }
-        
+
         return sensorShadowMod;
     }
-    
+
     /**
      * Tells me whether this path will result in me flying to a location
      * from which there is absolutely no way to remain on the board the following turn.
-     * 
+     *
      * We also take into account the possibility that we are intentionally trying to
      * a) retreat
-     * b) fly off a particular edge 
+     * b) fly off a particular edge
      * @param path The path to examine
      * @return 0 if we are A-Ok with it, .5 (maybe tune this) if we aren't looking to go off board
      */
@@ -222,20 +236,20 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
     protected double calculateOffBoardMod(MovePath path) {
         // step one: project given path's vector over the next turn.
         OffBoardDirection offBoardDirection = calculateOffBoardDirection(path.getEntity(), path.getFinalCoords(), path.getFinalVectors());
-        
+
         // if we want to flee the board from the edge in question, we're ok
         if(getOwner().isFallingBack(path.getEntity()) &&
                 (getOwner().getHomeEdge(path.getEntity()) == CardinalEdge.getCardinalEdge(offBoardDirection.getValue()))) {
             return 0.0;
         }
-        
+
         if(offBoardDirection == OffBoardDirection.NONE) {
             return 0.0;
         }
-                
+
         return .5;
     }
-    
+
     /**
      * Worker function that determines the direction in which the given entity will go off board
      * if it starts at the given coordinates with the given vectors.
@@ -249,7 +263,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         int availableThrust = entity.getRunMP();
         IBoard board = entity.getGame().getBoard();
         OffBoardDirection offBoardDirection = OffBoardDirection.NONE;
-        
+
         // step one: check if the position is out of bounds by more than the unit has available thrust
         if(nextCoords.getX() < -availableThrust) {
             offBoardDirection = OffBoardDirection.WEST;
@@ -260,27 +274,26 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         } else if(nextCoords.getY() > board.getHeight() + availableThrust) {
             offBoardDirection = OffBoardDirection.SOUTH;
         }
-        
+
         return offBoardDirection;
     }
-    
+
     /**
      * Whether entity will go off board if it starts at the given coordinates with the given vectors.
      * @param entity Entity to examine
-     * @param startingCoords Starting coordinates
-     * @param vectors Starting velocity vector
+     * @param coords Starting coordinates
      * @return Whether the entity will go off board or not.
      */
     public static boolean willFlyOffBoard(Entity entity, Coords coords) {
         OffBoardDirection offBoardDirection = calculateOffBoardDirection(entity, coords, entity.getVectors());
-        
+
         if(offBoardDirection == OffBoardDirection.NONE) {
             return false;
         }
-                
+
         return true;
     }
-    
+
     /**
      * Worker function that determines if a given enemy entity should be evaluated as if it has moved.
      */

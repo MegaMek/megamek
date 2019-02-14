@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common;
 
@@ -119,12 +119,12 @@ public class Building implements Serializable {
             this.playerId = playerId;
             this.pos = p;
         }
-        
+
         @Override
         public int hashCode() {
             return uuid.hashCode();
         }
-        
+
         @Override
         public boolean equals(Object o) {
             if (o instanceof DemolitionCharge) {
@@ -702,7 +702,7 @@ public class Building implements Serializable {
     /**
      * Override <code>Object#equals(Object)</code>.
      *
-     * @param other
+     * @param obj
      *            - the other <code>Object</code> to compare to this
      *            <code>Building</code>.
      * @return <code>true</code> if the other object is the same as this
@@ -723,7 +723,7 @@ public class Building implements Serializable {
         final Building other = (Building) obj;
         return (id == other.id);
     }
-    
+
     @Override
     public int hashCode() {
         return id;
@@ -805,11 +805,11 @@ public class Building implements Serializable {
         DemolitionCharge charge = new DemolitionCharge(playerId, damage, pos);
         demolitionCharges.add(charge);
     }
-    
+
     public void removeDemolitionCharge(DemolitionCharge charge) {
         demolitionCharges.remove(charge);
     }
-    
+
     public List<DemolitionCharge> getDemolitionCharges() {
         return demolitionCharges;
     }
@@ -890,7 +890,6 @@ public class Building implements Serializable {
      * Returns the percentage of damage done to the building for attacks against
      * infantry in the building from other units within the building.  TW pg175.
      *
-     * @param pos
      * @return
      */
     public double getInfDmgFromInside() {
@@ -906,7 +905,7 @@ public class Building implements Serializable {
                 return 0;
         }
     }
-    
+
     /**
      * Per page 172 of Total Warfare, this is the fraction of a weapon's damage that
      * passes through to infantry inside the building.

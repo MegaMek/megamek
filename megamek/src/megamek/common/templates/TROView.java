@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2018 - The MegaMek Team
+ * MegaMek - Copyright (C) 2019 - The MegaMek Team
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -136,7 +136,7 @@ public class TROView {
 
     /**
      * Uses the template and supplied {@link Entity} to generate a TRO document
-     * 
+     *
      * @return The generated document. Returns {@code null} if there was an error
      *         that prevented the document from being generated. Check logs for
      *         reason.
@@ -214,7 +214,7 @@ public class TROView {
 
     /**
      * Builds the fluff name for a system component.
-     * 
+     *
      * @param system
      *            The system component
      * @param fluff
@@ -328,7 +328,7 @@ public class TROView {
      * values are the same, in which case only a single value is used. If the values
      * do not match they are both (or all, in the case of tripod mech legs) given
      * separated by slashes.
-     * 
+     *
      * @param entity
      *            The entity to collect structure or armor values for
      * @param provider
@@ -587,7 +587,7 @@ public class TROView {
      * Used to determine whether system crits should be shown when detailing fixed
      * equipment in an omni unit. By default this is false, but mechs override it to
      * show some systems.
-     * 
+     *
      * @param entity
      *            The unit the TRO is for
      * @param index
@@ -604,7 +604,7 @@ public class TROView {
      * Used to show the name of fixed system critical slots in an omni unit. This is
      * only used for Mechs, and returns a default value of "Unknown System" for
      * other units.
-     * 
+     *
      * @param entity
      *            The unit the TRO is for
      * @param index
@@ -620,13 +620,11 @@ public class TROView {
      * the name can vary by unit type due to available space based on number of
      * columns, and in some cases the official TROs have different location names
      * than the ones used by MM.
-     * 
+     *
      * @param entity
      *            The entity the TRO is created for
      * @param mounted
      *            The mounted equipment
-     * @param rear
-     *            Whether the equipment is rear mounted
      * @return The location name to use in the table.
      */
     protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
@@ -638,7 +636,7 @@ public class TROView {
      * Formats {@link Transporter} to display as a row in an equipment table. Any
      * other than bays and troop space are skipped to avoid showing BA handles and
      * such.
-     * 
+     *
      * @param transporter
      *            The transporter to show.
      * @param loc
@@ -695,7 +693,7 @@ public class TROView {
 
     /**
      * Removes parenthetical and bracketed notes from a String
-     * 
+     *
      * @param str
      *            The String to process
      * @return The same String with notes removed
@@ -741,7 +739,7 @@ public class TROView {
 
     /**
      * Sets whether to include the fluff section when processing the template
-     * 
+     *
      * @param includeFluff
      *            Whether to include the fluff section
      */
@@ -750,7 +748,7 @@ public class TROView {
     }
 
     /**
-     * 
+     *
      * @return Whether the fluff section will be included when processing the
      *         template
      */

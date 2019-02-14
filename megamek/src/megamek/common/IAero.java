@@ -1,16 +1,17 @@
 /*
- * MegaMek - Copyright (C) 2017 - The MegaMek Team
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- */
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.common;
 
 import java.util.HashSet;
@@ -110,13 +111,13 @@ public interface IAero {
     int getSensorHits();
 
     int getFCSHits();
-    
+
     int getLandingGearPartialRepairs();
-    
+
     int getAvionicsMisreplaced();
-    
+
     int getAvionicsMisrepaired();
-    
+
     default int getClusterMods() {
         return -1 * (getFCSHits() + getSensorHits());
     }
@@ -140,9 +141,9 @@ public interface IAero {
     int getFuel();
 
     void setFuel(int gas);
-    
+
     int getCurrentFuel();
-    
+
     void setCurrentFuel(int gas);
 
     double getFuelPointsPerTon();
@@ -313,8 +314,8 @@ public interface IAero {
         // in which case, the movement is complete. We just need to allow the user to hit 'done'.
         if(((Entity) this).delta_distance > 0) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: aero has already moved");
-        // an airborne, aerodyne aero is considered to "stall" if it's not moving anywhere, 
-        // hovering, landing, or going off board 
+        // an airborne, aerodyne aero is considered to "stall" if it's not moving anywhere,
+        // hovering, landing, or going off board
         } else if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid()
                 && !((Entity) this).getGame().getBoard().inSpace() && !md.contains(MoveStepType.LAND)
                 && !md.contains(MoveStepType.VLAND) && !md.contains(MoveStepType.RETURN)
@@ -423,7 +424,7 @@ public interface IAero {
         if (!hasLifeSupport()) {
             roll.addModifier(+2, "No life support");
         }
-        
+
         // Landing Gear Partial Repairs, only apply if the landing gear isn't currently damaged
         if (getLandingGearMod(false) == 0) {
         	if (getLandingGearPartialRepairs() == 2) {
@@ -432,7 +433,7 @@ public interface IAero {
             roll.addModifier(getLandingGearPartialRepairs(), "landing gear misreplaced");
         	}
     	}
-        
+
         //Avionics Partial Repairs, only apply if the Avionics package isn't destroyed
         if (avihits < 3) {
         	if (getAvionicsMisrepaired() == 1) {
@@ -773,13 +774,13 @@ public interface IAero {
      * use the specified amount of fuel for this Aero. The amount may be
      * adjusted by certain game options
      *
-     * @param fuel
+     * @param fuelUsed
      *            The number of fuel points to use
      */
     default void useFuel(int fuelUsed) {
         setCurrentFuel(Math.max(0, getCurrentFuel() - fuelUsed));
     }
-    
+
     /**
      * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
      */

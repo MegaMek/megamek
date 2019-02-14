@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common;
 
@@ -69,8 +69,7 @@ public class BuildingTarget implements Targetable {
      *
      * @param coords - the <code>Coords</code> of the hext being targeted.
      * @param board  - the game's <code>Board</code> object.
-     * @param ignite - a <code>boolean</code> flag that indicates whether the
-     *               player is attempting to set the building on fire, or not.
+     * @param nType
      * @throws an <code>IllegalArgumentException</code> will be thrown if
      *            the given coordinates do not contain a building.
      */
@@ -128,7 +127,7 @@ public class BuildingTarget implements Targetable {
      *
      * @param coords - the <code>Coords</code> of the hext being targeted.
      * @param board  - the game's <code>Board</code> object.
-     * @param type   - an <code>int</code> value that indicates whether the
+     * @param nType  - an <code>int</code> value that indicates whether the
      *               player is attempting to set the building on fire, or not.
      * @throws an <code>IllegalArgumentException</code> will be thrown if
      *            the given coordinates do not contain a building.
@@ -224,7 +223,7 @@ public class BuildingTarget implements Targetable {
     public boolean isOffBoard() {
         return false;
     }
-    
+
     public boolean isAero() {
         return false;
     }
@@ -248,7 +247,7 @@ public class BuildingTarget implements Targetable {
     public int getAltitude() {
         return 0;
     }
-    
+
     public boolean isEnemyOf(Entity other) {
         return true;
     }

@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek - Copyright (C) 2019 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.client.ui.swing;
 
@@ -239,14 +239,13 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
      *            - the <code>Frame</code> that is locked by this dialog.
      * @param title
      *            - the title <code>String</code> for this dialog.
-     * @param question
-     *            - <code>String</code> displayed above the choices. The
-     *            question string is tokenised on "\n".
      * @param bombs
      *            - an array of <code>String</code>s the number of bombs of each
      *            type
-     * @param isSingle
-     *            - a <code>boolean</code> that identifies that
+     * @param spaceBomn
+     * @param bombDump
+     * @param limit
+     * @param numFighters
      */
     public BombPayloadDialog(JFrame parent, String title, int[] bombs,
             boolean spaceBomb, boolean bombDump, int limit, int numFighters) {

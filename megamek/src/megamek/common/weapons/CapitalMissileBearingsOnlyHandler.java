@@ -321,6 +321,61 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
         }
+        // Aero Sanity Handling
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            //New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow
+            //data from the 'real' toHit data of this bay handler
+            ToHitData autoHit = new ToHitData();
+            autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
+            int replaceReport;
+            for (int wId : weapon.getBayWeapons()) {
+                Mounted m = ae.getEquipment(wId);
+                if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+                    WeaponType bayWType = ((WeaponType) m.getType());
+                    if(bayWType instanceof Weapon) {
+                        replaceReport = vPhaseReport.size();
+                        WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
+                        AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
+                        bayWHandler.setAnnouncedEntityFiring(false);
+                        // This should always be true. Maybe there's a better way to write this?
+                        if (bayWHandler instanceof WeaponHandler) {
+                            WeaponHandler wHandler = (WeaponHandler) bayWHandler;
+                            wHandler.setParentBayHandler(this);
+                        }
+                        bayWHandler.handle(phase, vPhaseReport);
+                        if(vPhaseReport.size() > replaceReport) {
+                            //fix the reporting - is there a better way to do this
+                            if(vPhaseReport.size() > replaceReport) {
+                                Report currentReport = vPhaseReport.get(replaceReport);
+                                while(null != currentReport) {
+                                    vPhaseReport.remove(replaceReport);
+                                    if(currentReport.newlines > 0 || vPhaseReport.size() <= replaceReport) {
+                                        currentReport = null;
+                                    } else {
+                                        currentReport = vPhaseReport.get(replaceReport);
+                                    }
+                                }
+                                r = new Report(3115);
+                                r.indent(2);
+                                r.newlines = 1;
+                                r.subject = subjectId;
+                                r.add(bayWType.getName());
+                                if (entityTarget != null) {
+                                    r.addDesc(entityTarget);
+                                } else {
+                                    r.messageId = 3120;
+                                    r.add(target.getDisplayName(), true);
+                                }
+                                vPhaseReport.add(replaceReport, r);
+                            }
+                        }
+                    }
+                }
+            } // Handle the next weapon in the bay
+            Report.addNewline(vPhaseReport);
+            return false;
+        }
+        
         // Handle damage.
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();

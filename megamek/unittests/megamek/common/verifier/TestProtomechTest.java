@@ -244,8 +244,8 @@ public class TestProtomechTest {
         Protomech mockProto = mock(Protomech.class);
         when(mockProto.getWeight()).thenReturn(5.0);
         when(mockProto.hasMainGun()).thenReturn(false);
-        int max = TestProtomech.maxArmorFactor(5.0, false);
-        when(mockProto.getTotalArmor()).thenReturn(max + 1);
+        when(mockProto.getOArmor(anyInt())).thenAnswer(inv -> TestProtomech.maxArmorFactor(mockProto, inv.getArgument(0)) + 1);
+        when(mockProto.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
         TestProtomech test = new TestProtomech(mockProto, option, null);
         
         assertFalse(test.correctArmor(new StringBuffer()));

@@ -1023,12 +1023,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
         List<Entity> entities = clientgui.getClient().getGame()
                 .getEntitiesVector();
-        for (Entity other : entities) {        
+        for (Entity other : entities) {
             if (other.isSelectableThisTurn() && ce().canLoad(other, false)
                     // We can't depend on the transport id to be set because we sent a server update
                     // before loading on the client side, and the loaded unit may have been reset
                     // by the resulting update from the server.
-                    && !ce().getLoadedUnits().contains(other)) {
+                    && !ce().getLoadedUnits().contains(other)
+                    // If you want to load a trailer into a dropship or large support vee, do it in the lobby
+                    // The 'load' button should not allow trailers - that's what 'tow' is for.
+                    && !other.isTrailer()) {
                 choices.add(other);
             }
         }

@@ -1,16 +1,17 @@
 /*
- * MegaMek - Copyright (C) 2016 The MegaMek Team
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2016 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.client.ratgenerator;
 
@@ -40,7 +41,7 @@ import megamek.common.logging.LogLevel;
 
 /**
  * Describes the characteristics of a force. May be changed during generation.
- * 
+ *
  * @author Neoancient
  *
  */
@@ -152,11 +153,11 @@ public class ForceDescriptor {
      * Checks whether the chassis matches the unit type for this node of the force tree.
      * If a list of acceptable chassis has been assigned, checks whether the chassis is in the list.
      * unit type.
-     * 
+     *
      * @param cRec A unit chassis record
      * @return     Whether the chassis is of the correct unit type and is on the list of acceptable
      *             chassis if it exists.
-     *           
+     *
      */
     public boolean matches(ChassisRecord cRec) {
         if (cRec.getUnitType() != unitType) {
@@ -171,10 +172,10 @@ public class ForceDescriptor {
     /**
      * If a list of acceptable chassis, models, or variants has been assigned, checks whether
      * the model is among them.
-     * 
-     * @param cRec A unit model record
+     *
+     * @param mRec A unit model record
      * @return     Whether the model is on the list of acceptable chassis, variants, or models.
-     *           
+     *
      */
     public boolean matches(ModelRecord mRec) {
         if (chassis.size() > 0 && !chassis.contains(mRec.getChassis())) {
@@ -217,7 +218,7 @@ public class ForceDescriptor {
             if (null != formationType) {
                 //Simple leaf node (Lance, Star, etc.
                 if (null != generationRule) {
-                    //In cases like Novas and air lances the formation rules only apply to some of the units 
+                    //In cases like Novas and air lances the formation rules only apply to some of the units
                     if (!generateAndAssignFormation(subforces, generationRule.equals("chassis"), 0)) {
                         generateLance(subforces);
                         formationType = null;
@@ -278,11 +279,11 @@ public class ForceDescriptor {
      * to the subforces in the order provided. For leaf node, the unit is set. For non-final nodes,
      * the unit is added to either the model or chassis list depending on the provided grouping rule.
      * Any subforces that are not eligible for the formation are then generated.
-     * 
+     *
      * @param subs             The subforces to generate unit for. These need not be direct children of
      *                         <code>this</code>.
-     * @param generationRule   If true, any non-final subforce node will have the generated unit added to the
-     *                         chassis list instead of the model list.  
+     * @param chassis          If true, any non-final subforce node will have the generated unit added to the
+     *                         chassis list instead of the model list.
      * @param numGroups        The number of groups to pass on to formation generation; used to override
      *                         standard grouping constraints (e.g. matched pairs in fighter squadrons).
      * @return                 Whether the formation was successfully generated.
@@ -316,7 +317,7 @@ public class ForceDescriptor {
                             continue;
                         }
                         if (eligibleSubs.get(true).get(i).getSubforces().isEmpty()) {
-                            eligibleSubs.get(true).get(i).setUnit(list.get(i));                            
+                            eligibleSubs.get(true).get(i).setUnit(list.get(i));
                         } else if (chassis) {
                             eligibleSubs.get(true).get(i).getChassis().add(list.get(i).getChassis());
                         } else {
@@ -334,7 +335,7 @@ public class ForceDescriptor {
 
     /**
      * Translates <code>ForceDescriptor</code> list into parameters to pass to the formation builder.
-     * 
+     *
      * @param subs         A list of <ForceDescriptor</code> nodes.
      * @param networkMask  The type of C3 network that should be used in generating the formation.
      * @param numGroups    Overrides the default value for formation grouping constraints (e.g. some
@@ -360,7 +361,7 @@ public class ForceDescriptor {
         // Check for amount of C3 equipment generated and if certain thresholds are met regenerate the unit
         // with a valid network.
         List<MechSummary> unitList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
-        if (networkMask == ModelRecord.NETWORK_NONE) { 
+        if (networkMask == ModelRecord.NETWORK_NONE) {
             int c3m = 0;
             int c3s = 0;
             int c3i = 0;
@@ -426,12 +427,12 @@ public class ForceDescriptor {
      * The Nova formation is a composite of base type and battle armor. The formationType only applies to the
      * base unit type (Mek, vehicle, fighter). The BA must be eligible for mechanized and have at least
      * one omni among the base units per BA squad/point, excepting any BA with magnetic clamps.
-     * 
+     *
      * Though the rules in Campaign Operations only cover BA novas, the Hell's Horses vehicle/conventional infantry
      * nova formations require an adapted version of the Nova formation rules to work.
-     * 
+     *
      * This method generates and assigns infantry elements and returns the list of base elements.
-     * 
+     *
      * @param subs         A list of <ForceDescriptor</code> nodes.
      * @param networkMask  The type of C3 network that should be used in generating the formation.
      * @param numGroups    Overrides the default value for formation grouping constraints (e.g. some
@@ -505,7 +506,7 @@ public class ForceDescriptor {
      * as an entire formation. Some unit cohesion is attempted for certain unit types, such as building
      * vehicle lances out of the same model or pairing fighter chassis. The equipment rating has an
      * effect on unit cohesion, such that lower rated units are more likely to have mismatched equipment.
-     * 
+     *
      * @param subs The subforces that describe the indiviual elements of the lance
      */
     public void generateLance(List<ForceDescriptor> subs) {
@@ -547,10 +548,10 @@ public class ForceDescriptor {
         }
         int ratingLevel = getRatingLevel();
         int totalLevels = 5;
-        /*		
+        /*
          * 		Using the rating level relative to the total number of levels throws the results
          * 		off for ComStar, which should behave as A-B out of A-F rather than A-B out of A-B.
-         * 
+         *
          * 		int totalLevels = RATGenerator.getInstance().getFaction(faction.split(",")[0]).getRatingLevels().size();
          */
         int target = 12 - ratingLevel;
@@ -716,7 +717,7 @@ public class ForceDescriptor {
      * Assigns a specific model to this node of the force tree. If this is a leaf node it will be flagged
      * as an element. If it has child nodes, they will all be made up of the same model unless changed by
      * a rule at a lower level of organization.
-     * 
+     *
      * @param unit The unit to assign to this node.
      */
     public void setUnit(ModelRecord unit) {
@@ -762,7 +763,7 @@ public class ForceDescriptor {
             } else {
                 getModels().add(mRec.getKey());
             }
-        }		
+        }
     }
 
     public ModelRecord generate() {
@@ -823,7 +824,7 @@ public class ForceDescriptor {
             }
         };
 
-        DefaultMmLogger.getInstance().log(getClass(), "generate()", LogLevel.DEBUG, 
+        DefaultMmLogger.getInstance().log(getClass(), "generate()", LogLevel.DEBUG,
                 "Could not find unit for " + UnitType.getTypeDisplayableName(unitType));
         return null;
     }
@@ -905,7 +906,7 @@ public class ForceDescriptor {
                     }
                     setCo(coFound.getCo());
                     subforces.remove(coFound);
-                    subforces.add(0, coFound);												
+                    subforces.add(0, coFound);
                 }
                 if (xoPos != 0) {
                     /* If the XO is a field officer, the position is assigned to the first subforce that doesn't contain the CO
@@ -1103,12 +1104,6 @@ public class ForceDescriptor {
     /**
      * Calculates transport needs of the unit and generates enough dropships and jumpships to carry
      * the indicated portion of the unit.
-     *  
-     * @param dropship The ratio of dropships to the number required to transport the entire unit
-     *                 (e.g. 0.5 will carry at least half the units, and 1.2 will carry the entire unit
-     *                 with 20% excess capacity.
-     * @param jumpship The ratio of the number of jumpships to the number of docking collars needed by
-     *                 the entire unit, including the generated transports.
      */
     public ForceDescriptor assignTransport() {
         if ((getDropshipPct() <= 0) && (getJumpshipPct() <= 0) && (getCargo() <= 0)) {
@@ -1210,7 +1205,7 @@ public class ForceDescriptor {
     /**
      * Weight class can differ from the target once units are generated. Weight class is recalculated
      * based on actual units present and eschelon name is set.
-     * 
+     *
      * @return The weight class of this force node
      */
     public double recalcWeightClass() {
@@ -1451,7 +1446,7 @@ public class ForceDescriptor {
      * Translates between the rating codes used by the force generator and those used by the
      * RAT Generator. The force generator uses abbreviations to make the formation rules more
      * concise.
-     * 
+     *
      * @return The RATGenerator rating code corresponding to the same index as the force generator
      *         rating code.
      */
@@ -1566,7 +1561,7 @@ public class ForceDescriptor {
      * Because some eschelon names depend on knowing the actual weight class, we save a copy
      * of the possibilities for this node and defer selection until after the final weight class
      * determination.
-     * 
+     *
      * @param nameNodes
      */
     public void setNameNodes(List<ValueNode> nameNodes) {
@@ -1716,7 +1711,7 @@ public class ForceDescriptor {
 
     /**
      * Intended for debugging output. Shows description of current eschelon and all subforces
-     * 
+     *
      * @param indent   Prefix for the current eschelon
      * @param logLevel The level to pass to the logging utility
      */
@@ -1740,4 +1735,3 @@ public class ForceDescriptor {
         }
     }
 }
-

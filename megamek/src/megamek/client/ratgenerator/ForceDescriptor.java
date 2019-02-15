@@ -1454,7 +1454,8 @@ public class ForceDescriptor {
         FactionRecord fRec = getFactionRec();
         if ((null != fRec)
                 && !fRec.getRatingLevels().contains(rating)
-                && (getRatingLevel() >= 0)) {
+                && (getRatingLevel() >= 0)
+                && !fRec.getRatingLevels().isEmpty()) {
             return fRec.getRatingLevels().get(Math.min(getRatingLevel(), fRec.getRatingLevels().size() - 1));
         }
         return rating;

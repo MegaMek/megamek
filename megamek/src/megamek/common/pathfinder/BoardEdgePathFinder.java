@@ -239,7 +239,7 @@ public class BoardEdgePathFinder {
      * Helper function that, given a unit facing and a move step, adds turns to the given path until the facing of the path matches
      * the facing of the step.
      * @param initialPath
-     * @param interesectionStep
+     * @param intersectionStep
      */
     private void matchFacingToPath(MovePath initialPath, MoveStep intersectionStep) {
         // algorithm: from initial facing, two rotation paths: add and subtract one

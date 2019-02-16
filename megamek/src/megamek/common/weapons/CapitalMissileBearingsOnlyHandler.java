@@ -830,6 +830,52 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             return (int) Math.ceil(av);
     }
     
+    /**
+     * Calculate the damage per hit.
+     *
+     * @return an <code>int</code> representing the damage dealt per hit.
+     */
+    @Override
+    protected int calcDamagePerHit() {
+        AmmoType atype = (AmmoType) ammo.getType();
+        double toReturn = wtype.getDamage(nRange);
+        
+        //AR10 munitions
+        if (atype != null) {
+            if (atype.getAmmoType() == AmmoType.T_AR10) {
+                if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                    toReturn = 4;
+                } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                    toReturn = 3;
+                } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                    toReturn = 1000;
+                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                    toReturn = 100;
+                } else {
+                    toReturn = 2;
+                }
+            }
+            //Nuclear Warheads for non-AR10 missiles
+            if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                toReturn = 100;
+            } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                toReturn = 1000;
+            } 
+            nukeS2S = atype.hasFlag(AmmoType.F_NUCLEAR);
+        }
+        
+        // we default to direct fire weapons for anti-infantry damage
+        if (bDirect) {
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
+        }
+
+        if (bGlancing) {
+            toReturn = (int) Math.floor(toReturn / 2.0);
+        }
+
+        return (int) toReturn;
+    }
+    
     @Override
     protected int calcCapMissileAMSMod() {
         CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);

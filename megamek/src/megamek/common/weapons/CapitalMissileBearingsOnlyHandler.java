@@ -197,8 +197,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             vPhaseReport.addElement(r);
         }
         
-        //Point Defense fire vs Capital Missiles
-        
         // are we a glancing hit?  Check for this here, report it later
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
             if (roll == toHit.getValue()) {
@@ -207,6 +205,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 bGlancing = false;
             }
         }
+        
+        //Point Defense fire vs Capital Missiles
         
         // Set Margin of Success/Failure and check for Direct Blows
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -326,7 +326,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             reportMiss(vPhaseReport);
         }
         // Aero Sanity Handling
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY) && !bMissed) {
             //New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow
             //data from the 'real' toHit data of this bay handler
             ToHitData autoHit = new ToHitData();
@@ -727,6 +727,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      * Checks to see if this point defense/AMS bay can engage a capital missile
      * This should return true. Only when handling capital missile attacks can this be false.
      */
+    @Override
     protected boolean canEngageCapitalMissile(Mounted counter) {
         if (counter.getBayWeapons().size() < 2) {
             return false;
@@ -885,6 +886,39 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     @Override
     protected int getCapMissileAMSMod() {
         return CapMissileAMSMod;
+    }
+    
+    /**
+     * Calculate the starting armor value of a flight of Capital Missiles
+     * Used for Aero Sanity. This is done in calcAttackValue() otherwise
+     *
+     */
+    protected int initializeCapMissileArmor() {
+        int armor = 0;
+        for (int wId : weapon.getBayWeapons()) {
+            int curr_armor = 0;
+            Mounted bayW = ae.getEquipment(wId);
+            // check the currently loaded ammo
+            Mounted bayWAmmo = bayW.getLinked();
+            AmmoType atype = (AmmoType) bayWAmmo.getType();
+            WeaponType bayWType = ((WeaponType) bayW.getType());
+            if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
+                    && (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                            || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
+                curr_armor = 40;
+            } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
+                    && (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                            || atype.hasFlag(AmmoType.F_SANTA_ANNA))) {
+                curr_armor = 30;
+            } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
+                    && atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                curr_armor = 20;
+            } else {
+                curr_armor = bayWType.getMissileArmor();
+            }
+            armor = armor + curr_armor;
+        }
+        return armor;
     }
 
     @Override

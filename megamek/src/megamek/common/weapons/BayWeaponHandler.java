@@ -366,6 +366,7 @@ public class BayWeaponHandler extends WeaponHandler {
     }
 
     public boolean handleAeroSanity(IGame.Phase phase, Vector<Report> vPhaseReport) {
+        final String METHOD_NAME = "handleAeroSanity(Phase, vPhaseReport)";
         if (!cares(phase)) {
             return true;
         }
@@ -542,10 +543,14 @@ public class BayWeaponHandler extends WeaponHandler {
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
                     AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
                     bayWHandler.setAnnouncedEntityFiring(false);
-                    // This should always be true. Maybe there's a better way to write this?
+                    // This should always be true
                     if (bayWHandler instanceof WeaponHandler) {
                         WeaponHandler wHandler = (WeaponHandler) bayWHandler;
                         wHandler.setParentBayHandler(this);
+                    } else {
+                        logDebug(METHOD_NAME,
+                                "bayWHandler is not a weapon handler! How did you manage that?");
+                        continue;
                     }
                     bayWHandler.handle(phase, vPhaseReport);
                     if(vPhaseReport.size() > replaceReport) {

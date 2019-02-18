@@ -552,6 +552,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     
     @Override
     public boolean handleAeroSanity(IGame.Phase phase, Vector<Report> vPhaseReport) {
+        final String METHOD_NAME = "handleAeroSanity(Phase, vPhaseReport)";
         if (!cares(phase)) {
             return true;
         }
@@ -754,6 +755,10 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                     if (bayWHandler instanceof WeaponHandler) {
                         WeaponHandler wHandler = (WeaponHandler) bayWHandler;
                         wHandler.setParentBayHandler(this);
+                    } else {
+                        logDebug(METHOD_NAME,
+                                "bayWHandler is not a weapon handler! How did you manage that?");
+                        continue;
                     }
                     bayWHandler.handle(phase, vPhaseReport);
                     if(vPhaseReport.size() > replaceReport) {

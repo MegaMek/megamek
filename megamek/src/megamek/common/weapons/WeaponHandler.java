@@ -554,6 +554,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int reportSize = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
             int nCluster = calcnCluster();
+            int AMSHits = 0;
             if (ae.isCapitalFighter()) {
                 Vector<Report> throwAwayReport = new Vector<Report>();
                 // for capital scale fighters, each non-cluster weapon hits a
@@ -606,7 +607,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             while (vPhaseReport.size() > reportSize) {
                                 vPhaseReport.remove(vPhaseReport.size() - 1);
                             }
-                            int AMSHits = 0;
+                            AMSHits = 0;
                             Report r = new Report(3236);
                             r.subject = subjectId;
                             r.add(nweaponsHit);
@@ -642,7 +643,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             //If you're shooting at a target using single AMS
                             //Too many variables here as far as AMS numbers
                             //Just allow 1 missile to be shot down
-                            int AMSHits = 0;
+                            AMSHits = 0;
                             Report r = new Report(3236);
                             r.subject = subjectId;
                             r.add(nweaponsHit);

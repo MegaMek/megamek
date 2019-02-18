@@ -143,8 +143,8 @@ public class BayWeaponHandler extends WeaponHandler {
                 &&  target.getTargetType() != Targetable.TYPE_BUILDING)) 
         		|| game.getBoard().inSpace()
         		// Capital missile launchers should return the root handler...
-        		|| (wtype.getAtClass() == (19))
-        		|| (wtype.getAtClass() == (20))) {
+        		|| (wtype.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
+        		|| (wtype.getAtClass() == (WeaponType.CLASS_AR10))) {
             return super.handle(phase, vPhaseReport);
         }
 
@@ -366,6 +366,7 @@ public class BayWeaponHandler extends WeaponHandler {
     }
 
     public boolean handleAeroSanity(IGame.Phase phase, Vector<Report> vPhaseReport) {
+        final String METHOD_NAME = "handleAeroSanity(Phase, vPhaseReport)";
         if (!cares(phase)) {
             return true;
         }
@@ -462,7 +463,10 @@ public class BayWeaponHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
         }
 
-       //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
+        //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
+        
+        // Handle point defense fire. For cluster hit missile launchers, we'll report later.
+        CounterAV = calcCounterAV();
         
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
@@ -487,9 +491,48 @@ public class BayWeaponHandler extends WeaponHandler {
                 return false;
             }
         }
+        
+        //Report point defense effects
+        //Set up a cluster hits table modifier
+        double counterAVMod = getCounterAV();
+        //Report a failure due to overheating
+        if (pdOverheated
+                && (!(amsBayEngaged
+                        || amsBayEngagedCap
+                        || amsBayEngagedMissile
+                        || pdBayEngaged
+                        || pdBayEngagedCap
+                        || pdBayEngagedMissile))) {
+            r = new Report (3359);
+            r.subject = subjectId;
+            r.indent();
+            vPhaseReport.addElement(r);
+        } else if (pdOverheated) {
+            //Report a partial failure
+            r = new Report (3361);
+            r.subject = subjectId;
+            r.indent();
+            vPhaseReport.addElement(r);
+            //Halve the effectiveness of cluster hits modification
+            counterAVMod /= 2.0;
+        }
+        //Now report the effects, if any
+        //Missiles using the cluster hits table
+        if (amsBayEngaged || pdBayEngaged) {
+            r = new Report(3366);
+            r.indent();
+            r.subject = subjectId;
+            r.add((int) counterAVMod);
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        }
+        //Large missiles
 
         Report.addNewline(vPhaseReport);
-        toHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
+        //New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow
+        //data from the 'real' toHit data of this bay handler
+        ToHitData autoHit = new ToHitData();
+        autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
         int replaceReport;
         for (int wId : weapon.getBayWeapons()) {
             Mounted m = ae.getEquipment(wId);
@@ -498,8 +541,17 @@ public class BayWeaponHandler extends WeaponHandler {
                 if(bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
-                    AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(toHit, bayWaa, game, server);
+                    AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
                     bayWHandler.setAnnouncedEntityFiring(false);
+                    // This should always be true
+                    if (bayWHandler instanceof WeaponHandler) {
+                        WeaponHandler wHandler = (WeaponHandler) bayWHandler;
+                        wHandler.setParentBayHandler(this);
+                    } else {
+                        logError(METHOD_NAME,
+                                "bayWHandler " +  bayWHandler.getClass() + " is not a weapon handler! Cannot set parent bay handler.");
+                        continue;
+                    }
                     bayWHandler.handle(phase, vPhaseReport);
                     if(vPhaseReport.size() > replaceReport) {
                         //fix the reporting - is there a better way to do this

@@ -145,7 +145,11 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      */
     @Override
     protected void setAMSBayReportingFlag() {
-        amsBayEngaged = true;
+        if (isTbolt()) {
+            amsBayEngagedMissile = true;
+        } else {
+            amsBayEngaged = true;
+        }
     }
     
     /**
@@ -153,7 +157,17 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      */
     @Override
     protected void setPDBayReportingFlag() {
-        pdBayEngaged = true;
+        if (isTbolt()) {
+            pdBayEngagedMissile = true;
+        } else {
+            pdBayEngaged = true;
+        }
+    }
+    
+    //Check for Thunderbolt. We'll use this for single AMS resolution
+    @Override
+    protected boolean isTbolt() {
+        return wtype.hasFlag(WeaponType.F_LARGEMISSILE);
     }
 
     /*
@@ -214,6 +228,10 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
    
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+        
+        if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            return handleAeroSanity(phase, vPhaseReport);
+        }
 
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;

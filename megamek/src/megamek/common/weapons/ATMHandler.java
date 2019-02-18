@@ -36,6 +36,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -134,6 +135,7 @@ public class ATMHandler extends MissileWeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av = 0;
+        int counterAV = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
@@ -163,6 +165,11 @@ public class ATMHandler extends MissileWeaponHandler {
                 av = wtype.getRoundExtAV();
             }
         }
+        
+        //Point Defenses engage the missiles still aimed at us
+        counterAV = calcCounterAV();
+        av = av - counterAV;
+        
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
@@ -289,9 +296,18 @@ public class ATMHandler extends MissileWeaponHandler {
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
+        
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && entityTarget != null && entityTarget.isLargeCraft()) {
+            nMissilesModifier -= getAeroSanityAMSHitsMod();
+        }
 
         if (allShotsHit()) {
-            missilesHit = wtype.getRackSize();
+            // We want buildings and large craft to be able to affect this number with AMS
+            // treat as a Streak launcher (cluster roll 11) to make this happen
+            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                    nMissilesModifier, weapon.isHotLoaded(), true,
+                    isAdvancedAMS());
         } else {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()

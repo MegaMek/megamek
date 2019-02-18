@@ -146,6 +146,40 @@ public class WeaponHandler implements AttackHandler, Serializable {
         getLogger().log(getClass(), methodName, LogLevel.DEBUG, message);
     }
     
+    /**
+     * Write errors to the logs
+     *
+     * @param methodName Name of the method logging is coming from
+     * @param message Message to log
+     */
+    protected void logError(String methodName, String message) {
+        logError(methodName, message, null);
+    }
+
+    /**
+     * Write errors to the logs.
+     *
+     * @param methodName Name of the method logging is coming from
+     * @param message Message to log
+     * @param e The exception that caused the error
+     */
+    protected void logError(String methodName, String message, Throwable e) {
+        if (null != e) {
+            getLogger().log(getClass(), methodName, LogLevel.ERROR, message, e);
+        } else {
+            getLogger().log(getClass(), methodName, LogLevel.ERROR, message);
+        }
+    }
+
+    /**
+     * Write errors to the log.
+     * @param methodName Name of the method logging is coming from
+     * @param e The exception that caused the error
+     */
+    protected void logError(String methodName, Throwable e) {
+        getLogger().log(getClass(), methodName, LogLevel.ERROR, e);
+    }
+    
     protected MMLogger getLogger() {
         if (null == logger) {
             logger = DefaultMmLogger.getInstance();

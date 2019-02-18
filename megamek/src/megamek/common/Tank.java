@@ -3628,6 +3628,8 @@ public class Tank extends Entity {
                 case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
                 case EquipmentType.T_ARMOR_REFLECTIVE:
                 case EquipmentType.T_ARMOR_HARDENED:
+                case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
+                case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
                     usedSlots++;
                     break;
                 case EquipmentType.T_ARMOR_STEALTH_VEHICLE:
@@ -3643,7 +3645,26 @@ public class Tank extends Entity {
                 default:
                     break;
             }
-
+        } else {
+            for (int loc = 1; loc < locations(); loc++) {
+                switch (getArmorType(loc)) {
+                    case EquipmentType.T_ARMOR_HEAVY_FERRO:
+                        usedSlots += 2;
+                        break;
+                    case EquipmentType.T_ARMOR_FERRO_FIBROUS:
+                    case EquipmentType.T_ARMOR_LIGHT_FERRO:
+                    case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                    case EquipmentType.T_ARMOR_REFLECTIVE:
+                    case EquipmentType.T_ARMOR_STEALTH_VEHICLE:
+                    case EquipmentType.T_ARMOR_REACTIVE:
+                    case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
+                    case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
+                        usedSlots++;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         return availableSlots - usedSlots;
     }

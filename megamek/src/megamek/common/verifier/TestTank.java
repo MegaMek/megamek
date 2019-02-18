@@ -182,7 +182,9 @@ public class TestTank extends TestEntity {
             // For non-omnis, count up the weight of eq in the turret
             for (Mounted m : tank.getEquipment()) {
                 if ((m.getLocation() == tank.getLocTurret())
-                        && !(m.getType() instanceof AmmoType)) {
+                        && !(m.getType() instanceof AmmoType)
+                        // Skip any patchwork armor mounts
+                        && (EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
                     weight += m.getType().getTonnage(tank);
                 }
             }

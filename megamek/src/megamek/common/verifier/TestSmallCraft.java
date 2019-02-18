@@ -690,7 +690,7 @@ public class TestSmallCraft extends TestAero {
         }
         boolean lateralMatch = true;
         for (EquipmentType eq : leftFwd.keySet()) {
-            if (!rightFwd.containsKey(eq) || (leftFwd.get(eq) != rightFwd.get(eq))) {
+            if (!rightFwd.containsKey(eq) || !leftFwd.get(eq).equals(rightFwd.get(eq))) {
                 lateralMatch = false;
                 break;
             }
@@ -707,7 +707,7 @@ public class TestSmallCraft extends TestAero {
         }
         if (lateralMatch) {
             for (EquipmentType eq : leftAft.keySet()) {
-                if (!rightAft.containsKey(eq) || (leftAft.get(eq) != rightAft.get(eq))) {
+                if (!rightAft.containsKey(eq) || !leftAft.get(eq).equals(rightAft.get(eq))) {
                     lateralMatch = false;
                     break;
                 }

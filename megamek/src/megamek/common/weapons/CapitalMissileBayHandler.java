@@ -756,8 +756,8 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         WeaponHandler wHandler = (WeaponHandler) bayWHandler;
                         wHandler.setParentBayHandler(this);
                     } else {
-                        logDebug(METHOD_NAME,
-                                "bayWHandler is not a weapon handler! How did you manage that?");
+                        logError(METHOD_NAME,
+                                "bayWHandler " +  bayWHandler.getClass() + " is not a weapon handler! Cannot set parent bay handler.");
                         continue;
                     }
                     bayWHandler.handle(phase, vPhaseReport);

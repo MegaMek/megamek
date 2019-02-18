@@ -100,9 +100,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 r.add(target.getDisplayName(), true);
             }
             vPhaseReport.addElement(r);
-                
-        
-        
+
         // are we a glancing hit?  Check for this here, report it later
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {

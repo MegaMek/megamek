@@ -209,25 +209,22 @@ public class QuadMech extends Mech {
         return getWalkMP(gravity, ignoreheat);
     }
     
-    /**
+    /*
      * Normally Quads can't torso twist. Extended torso twist allows regular bipedal mech twisting
      */
     @Override
     public boolean canChangeSecondaryFacing() {
-    	if (hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST)) {
-    		return !isProne();
-    	}
-    	return false;
+    	return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !isProne();
     }
     
     @Override
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
-        if (hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST)) {
-            return (rotate == 0) || (rotate == 1) || (rotate == -1)
-            		|| (rotate == -5) || (rotate == 5);
+        if (canChangeSecondaryFacing()) {
+            return (rotate <= 1) || (rotate == 5);
         }
-        return rotate == 0;
+        else
+        	return rotate == 0;
     }
     
     @Override

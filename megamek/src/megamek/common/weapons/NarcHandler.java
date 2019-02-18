@@ -65,7 +65,7 @@ public class NarcHandler extends MissileWeaponHandler {
             // Or bay AMS if Aero Sanity is on
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                     : null;
-            if (entityTarget.isLargeCraft()) {
+            if (entityTarget != null && entityTarget.isLargeCraft()) {
                 if (getParentBayHandler() != null) {
                     WeaponHandler bayHandler = getParentBayHandler();
                     amsBayEngagedMissile = bayHandler.amsBayEngagedMissile;

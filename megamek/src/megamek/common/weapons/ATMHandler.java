@@ -298,7 +298,7 @@ public class ATMHandler extends MissileWeaponHandler {
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
-                && entityTarget.isLargeCraft()) {
+                && entityTarget != null && entityTarget.isLargeCraft()) {
             nMissilesModifier -= getAeroSanityAMSHitsMod();
         }
 

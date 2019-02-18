@@ -76,7 +76,7 @@ public class SRMAntiTSMHandler extends SRMHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                     : null;
-            if (entityTarget.isLargeCraft()) {
+            if (entityTarget != null && entityTarget.isLargeCraft()) {
                 nMissilesModifier -= getAeroSanityAMSHitsMod();
             }
         }

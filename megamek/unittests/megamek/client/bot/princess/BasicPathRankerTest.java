@@ -29,7 +29,6 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
-import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
@@ -38,11 +37,9 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
-import megamek.common.VTOL;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
 import org.junit.Assert;
@@ -55,6 +52,7 @@ import org.mockito.Mockito;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -415,6 +413,8 @@ public class BasicPathRankerTest {
         final IGame mockGame = Mockito.mock(IGame.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
         Mockito.when(mockGame.getOptions()).thenReturn(mockGameOptions);
+        Mockito.when(mockGame.getArtilleryAttacks()).thenReturn(Collections.emptyEnumeration());
+        Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
 
         final List<Entity> testEnemies = new ArrayList<>();
 

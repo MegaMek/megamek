@@ -1,26 +1,32 @@
 /*
- * MegaMek - Copyright (C) 2017 - The MegaMek Team
- *
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- */
+* MegaMek -
+* Copyright (C) 2017 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.common;
 
 /**
  * Implemented by any class that is subject to tech advancement (entities, equipment, systems, etc.)
- * 
+ *
  * @author Neoancient
  *
  */
 public interface ITechnology {
-    
+
     public static final int TECH_BASE_ALL  = 0;
     public static final int TECH_BASE_IS   = 1;
     public static final int TECH_BASE_CLAN = 2;
-    
+
     public static final int RATING_A = 0;
     public static final int RATING_B = 1;
     public static final int RATING_C = 2;
@@ -43,7 +49,7 @@ public interface ITechnology {
     public static final int DATE_NONE = -1;
     public static final int DATE_PS = 1950;
     public static final int DATE_ES = 2100;
-    
+
     //codes for recording which factions had access to technology at various points
     public static final int F_NONE = -1; // Indicates that factions should be ignored when calculating tech level.
     public static final int F_IS = 0;
@@ -93,34 +99,34 @@ public interface ITechnology {
     public static final int F_CWF = 44;
     public static final int F_CWX = 45;
     public static final int F_CWV = 46;
-    
+
     //display codes using values from IOps
     public static final String[] IO_FACTION_CODES = {
             "IS", "CC", "CF", "CP", "CS", "DC", "EI", "FC", "FR", "FS", "FW", "LC", "MC",
-            "MH", "OA", "TA", "TC", "TH", "RD", "RS", "RA", "RW", "WB", "Merc", "Per", 
+            "MH", "OA", "TA", "TC", "TH", "RD", "RS", "RA", "RW", "WB", "Merc", "Per",
             "Clan", "CBR", "CBS", "CCY", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMN",
-            "CNC", "CSF", "CSJ", "CSR", "CSV", "CSA", "CWM", "CWF", "CWX", "CWV" 
+            "CNC", "CSF", "CSJ", "CSR", "CSV", "CSA", "CWM", "CWF", "CWX", "CWV"
     };
-    
+
     //faction lookup names for MHQ
     public static final String[] MM_FACTION_CODES = {
             "IS", "CC", "CIR", "CDP", "CS", "DC", "CEI", "FC", "FRR", "FS", "FWL", "LA", "MOC",
             "MH", "OA", "TA", "TC", "TH", "RD", "ROS", "RA", "RWR", "WOB", "MERC", "Periphery",
             "CLAN", "CB", "CBS", "CCO", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMG",
-            "CNC", "CDS", "CSJ", "CSR", "CSV", "CSA", "CWI", "CW", "CWIE", "CWOV", 
+            "CNC", "CDS", "CSJ", "CSR", "CSV", "CSA", "CWI", "CW", "CWIE", "CWOV",
     };
-    
+
     boolean isClan();
     boolean isMixedTech();
     int getTechBase();
-    
+
     int getIntroductionDate();
     int getPrototypeDate();
     int getProductionDate();
     int getCommonDate();
     int getExtinctionDate();
     int getReintroductionDate();
-    
+
     int getTechRating();
     int getBaseAvailability(int era);
 
@@ -147,7 +153,7 @@ public interface ITechnology {
     default int getReintroductionDate(boolean clan) {
         return getReintroductionDate();
     }
-    
+
     public static int getTechEra(int year) {
         if (year < 2780) {
             return ERA_SL;
@@ -159,26 +165,26 @@ public interface ITechnology {
             return ERA_DA;
         }
     }
-    
+
     default int getTechLevel(int year, boolean clan) {
         return getSimpleLevel(year, clan).getCompoundTechLevel(clan);
     }
-    
+
     default int getTechLevel(int year) {
         return getTechLevel(year, isClan());
     }
-    
+
     default SimpleTechLevel getSimpleLevel(int year) {
         if (getSimpleLevel(year, true).compareTo(getSimpleLevel(year, false)) < 0) {
             return getSimpleLevel(year, true);
         }
         return getSimpleLevel(year, false);
     }
-    
+
     default SimpleTechLevel getSimpleLevel(int year, boolean clan) {
         return getSimpleLevel(year, clan, F_NONE);
     }
-    
+
     default SimpleTechLevel getSimpleLevel(int year, boolean clan, int faction) {
         if (isUnofficial()) {
             return SimpleTechLevel.UNOFFICIAL;
@@ -196,27 +202,27 @@ public interface ITechnology {
             return SimpleTechLevel.UNOFFICIAL;
         }
     }
-    
+
     /**
      * For non-era-based usage, provide a single tech level that does not vary with date.
-     * 
+     *
      * @return The base rules level of the equipment or unit.
      */
     SimpleTechLevel getStaticTechLevel();
-    
+
     default boolean isIntroLevel() {
         return getStaticTechLevel() == SimpleTechLevel.INTRO;
     }
-    
+
     default boolean isUnofficial() {
         return getStaticTechLevel() == SimpleTechLevel.UNOFFICIAL;
     }
-    
-    
+
+
     /**
      * Finds the lowest rules level the equipment qualifies for, for either IS or Clan faction
      * using it.
-     * 
+     *
      * @param clan - whether tech level is being calculated for a Clan faction
      * @return - the lowest tech level available to the item
      */
@@ -236,7 +242,7 @@ public interface ITechnology {
 
     /**
      * Finds the lowest rules level the equipment qualifies for regardless of faction using it.
-     * 
+     *
      * @return - the lowest tech level available to the item
      */
     default SimpleTechLevel findMinimumRulesLevel() {
@@ -259,7 +265,7 @@ public interface ITechnology {
                 && (getReintroductionDate(clan) == DATE_NONE
                 || year < getReintroductionDate(clan));
     }
-    
+
     default boolean isExtinct(int year, boolean clan, int faction) {
         // Tech that is lost but later recovered in the IS is not lost to ComStar.
         if ((F_CS == faction) && (getReintroductionDate(false) != DATE_NONE)) {
@@ -270,27 +276,27 @@ public interface ITechnology {
                 && (getReintroductionDate(clan) == DATE_NONE
                 || year < getReintroductionDate(clan, faction));
     }
-    
+
     default boolean isExtinct(int year) {
         return getExtinctionDate() != DATE_NONE
                 && getExtinctionDate() < year
                 && (getReintroductionDate() == DATE_NONE
-                || year < getReintroductionDate());        
+                || year < getReintroductionDate());
     }
-    
+
     default boolean isAvailableIn(int year, boolean clan) {
         return year >= getIntroductionDate(clan) && getIntroductionDate(clan) != DATE_NONE  && !isExtinct(year, clan);
     }
-    
+
     default boolean isAvailableIn(int year) {
         return year >= getIntroductionDate() && getIntroductionDate() != DATE_NONE && !isExtinct(year);
     }
-    
+
     default boolean isAvailableIn(int year, boolean clan, int faction) {
         return year >= getIntroductionDate(clan, faction)
                 && getIntroductionDate(clan, faction) != DATE_NONE  && !isExtinct(year, clan, faction);
     }
-    
+
     default boolean isLegal(int year, int techLevel, boolean mixedTech) {
         return isLegal(year, SimpleTechLevel.convertCompoundToSimple(techLevel),
                 TechConstants.isClan(techLevel), mixedTech);
@@ -329,7 +335,7 @@ public interface ITechnology {
                 return ITechnology.RATING_X;
             } else {
                 return getBaseAvailability(era);
-            }            
+            }
         } else {
             if (isClan()) {
                 if (era < ERA_CLAN) {
@@ -342,11 +348,11 @@ public interface ITechnology {
             }
         }
     }
-    
+
     default int calcYearAvailability(int year, boolean clanUse) {
         return calcYearAvailability(year, clanUse, -1);
     }
-    
+
     default int calcYearAvailability(int year, boolean clanUse, int faction) {
         if (!clanUse && !isClan() && (faction != F_CS) && (getTechEra(year) == ERA_SW)
                 && (getBaseAvailability(ERA_SW) >= RATING_E)
@@ -358,12 +364,12 @@ public interface ITechnology {
         }
         return calcEraAvailability(getTechEra(year), clanUse);
     }
-    
+
     /**
      * Adjusts base availability code for IS/Clan and IS extinction
-     * 
+     *
      * @param era - one of the ERA_* constants from EquipmentType
-     * @param clan - whether this should be calculated for a Clan faction rather than IS
+     * @param clanUse - whether this should be calculated for a Clan faction rather than IS
      * @return - The availability code for the faction in the era. The code for an IS faction
      *           during the SW era may be two values indicating availability before and after
      *           the extinction date.
@@ -379,15 +385,15 @@ public interface ITechnology {
         }
         return getRatingName(calcEraAvailability(era, clanUse));
     }
-    
+
     default String getTechRatingName() {
         return getRatingName(getTechRating());
     }
-    
+
     default String getEraAvailabilityName(int era) {
         return getEraAvailabilityName(era, isClan());
     }
-    
+
     default String getFullRatingName(boolean clanUse) {
         String rating = getRatingName(getTechRating());
         rating += "/";
@@ -398,17 +404,17 @@ public interface ITechnology {
         rating += getEraAvailabilityName(ERA_CLAN, clanUse);
         rating += "-";
         rating += getEraAvailabilityName(ERA_DA, clanUse);
-        return rating;        
+        return rating;
     }
-    
+
     default String getFullRatingName() {
         return getFullRatingName(isClan());
     }
-    
+
     default int calcEraAvailability(int era) {
         return calcEraAvailability(era, isClan());
     }
-    
+
     default int calcYearAvailability(int year) {
         return calcYearAvailability(year, isClan());
     }
@@ -419,7 +425,7 @@ public interface ITechnology {
         }
         return ratingNames[rating];
     }
-    
+
     public static String getDateRange(int startIncl, int endNonIncl) {
         if (startIncl == DATE_NONE) {
             return "-";
@@ -433,7 +439,7 @@ public interface ITechnology {
         }
         return sb.toString();
     }
-    
+
     default String getExperimentalRange(boolean clan) {
         return getDateRange(getPrototypeDate(clan), getProductionDate(clan));
     }
@@ -446,7 +452,7 @@ public interface ITechnology {
     default String getExtinctionRange(boolean clan) {
         return getDateRange(getExtinctionDate(clan), getReintroductionDate(clan));
     }
-    
+
     default String getExperimentalRange() {
         return getDateRange(getPrototypeDate(), getProductionDate());
     }

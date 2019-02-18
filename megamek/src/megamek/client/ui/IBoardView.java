@@ -1,16 +1,18 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.client.ui;
 
@@ -69,7 +71,7 @@ public interface IBoardView extends MechDisplayListener {
     public void centerOnHex(Coords position);
     public void centerOnPointRel(double xrel, double yrel);
     public double[] getVisibleArea();
-    
+
     public void stopSoftCentering();
 
     // it's a hack that the popup is Object, but we use this interface
@@ -112,10 +114,10 @@ public interface IBoardView extends MechDisplayListener {
      * @param coords the Coords.
      */
     public abstract void highlight(Coords coords);
-    
+
     /**
      * Sets the color of the highlight cursor.
-     * 
+     *
      * @param c  The color of the highlight cursor.
      */
     public abstract void setHighlightColor(Color c);
@@ -156,7 +158,7 @@ public interface IBoardView extends MechDisplayListener {
      * This method creates an image the size of the entire board (all
      * mapsheets), draws the hexes onto it, and returns that image.
      *
-     * @param drawOnlyBoard If true, no units are drawn, only the board
+     * @param ignoreUnits If true, no units are drawn, only the board
      * @return
      */
     public abstract BufferedImage getEntireBoardImage(boolean ignoreUnits);
@@ -168,7 +170,7 @@ public interface IBoardView extends MechDisplayListener {
     public abstract void selectEntity(Entity e);
 
     public void die();
-    
+
     /**
      * Returns true if the BoardView has an active chatter box else false.
      * @return

@@ -390,7 +390,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * Sets the parent handler for each sub-weapon handler called when looping through bay weapons
      * Used with Aero Sanity to pass counterAV through to the individual missile handler from the bay handler
      * 
-     * @param ah - The <code>AttackHandler</code> for the BayWeapon this individual weapon belongs to
+     * @param bh - The <code>AttackHandler</code> for the BayWeapon this individual weapon belongs to
      */ 
     protected void setParentBayHandler(WeaponHandler bh) {
         parentBayHandler = bh;

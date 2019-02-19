@@ -846,7 +846,7 @@ public class TestMech extends TestEntity {
     public double getArmoredComponentWeight() {
         double weight = 0.0;
 
-        for (int location = Mech.LOC_HEAD; location <= Mech.LOC_LLEG; location++) {
+        for (int location = Mech.LOC_HEAD; location < mech.locations(); location++) {
             for (int slot = 0; slot < mech.getNumberOfCriticals(location); slot++) {
                 CriticalSlot cs = mech.getCritical(location, slot);
                 if ((cs != null) && cs.isArmored()) {

@@ -4073,7 +4073,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
-        if ((null != game) || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        // Fix for #587. Only multiply if Aero Sanity is off
+        if ((null != game) && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage *= 10;
         }
         damage -= dealt; // We already dealt a bunch of damage, move on.
@@ -4084,7 +4085,8 @@ public class Aero extends Entity implements IAero, IBomber {
         int damPerHit = 5;
         for (int i = 0; i < hits; i++) {
             int loc = Compute.randomInt(4);
-            setArmor(getArmor(loc) - Math.max(damPerHit, damage), loc);
+            // Fix for #587. Apply in 5 point groups unless damage remainder is less.
+            setArmor(getArmor(loc) - Math.min(damPerHit, damage), loc);
             // We did too much damage, so we need to damage the SI, but we wont
             // reduce the SI below 1 here
             // unless the fighter is destroyed.

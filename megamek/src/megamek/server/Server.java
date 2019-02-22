@@ -2756,6 +2756,12 @@ public class Server implements Runnable {
                     if (currentSI > 0) {
                         a.setSI(currentSI);
                     }
+                    //Fix for #587. MHQ tracks fighters at standard scale and doesn't (currently)
+                    //track squadrons. Squadrons don't save to MUL either, so... only convert armor for JS/WS/SS?
+                    //Do we ever need to save capital fighter armor to the final MUL or entityStatus?
+                    if (!entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                        scale = 1;
+                    }
                     if (scale > 1) {
                         for (int loc = 0; loc < entity.locations(); loc++) {
                             int currentArmor = entity.getArmor(loc) / scale;

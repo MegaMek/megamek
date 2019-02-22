@@ -26845,9 +26845,10 @@ public class Server implements Runnable {
                     }
                     // also destroy any ECM or BAP in this location
                     for (Mounted misc : aero.getMisc()) {
-                        if (misc.getType().hasFlag(MiscType.F_ECM)
+                        if ((misc.getType().hasFlag(MiscType.F_ECM)
                             || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)
-                            || misc.getType().hasFlag(MiscType.F_BAP)) {
+                            || misc.getType().hasFlag(MiscType.F_BAP))
+                                && misc.getLocation() == loc) {
                             misc.setHit(true);
                         }
                     }

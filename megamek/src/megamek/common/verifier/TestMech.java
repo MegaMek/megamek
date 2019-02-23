@@ -232,11 +232,15 @@ public class TestMech extends TestEntity {
 
     @Override
     public double getWeightMisc() {
-        if (mech instanceof LandAirMech || mech instanceof QuadVee) {
-            // 10% of weight is conversion equipment
-            return Math.ceil(mech.getWeight() / 10);
+        // LAM/QuadVee equipment is 10% of mass, rounded up to whole number (15% for bimodal LAM).
+        // IO p. 113 (LAM), 134 (QV)
+        if (mech instanceof LandAirMech) {
+            return Math.ceil(mech.getWeight()) *
+                    (((LandAirMech) mech).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.15 : 0.1);
+        } else if (mech instanceof QuadVee) {
+            return Math.ceil(mech.getWeight() * 0.1);
         }
-        return 0.0f;
+        return 0.0;
     }
 
     @Override

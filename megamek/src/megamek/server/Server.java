@@ -34572,6 +34572,13 @@ public class Server implements Runnable {
         if (target instanceof FighterSquadron) {
             return;
         }
+        // If a squadron scores a kill, assign it randomly to one of the member fighters
+        if (attacker instanceof FighterSquadron) {
+            Entity killer = attacker.getLoadedUnits().get(Compute.randomInt(attacker.getLoadedUnits().size()));
+            if (killer != null) {
+                attacker = killer;
+            }
+        }
         if ((target.isDoomed() || target.getCrew().isDoomed())
             && !target.getGaveKillCredit() && (attacker != null)) {
             attacker.addKill(target);

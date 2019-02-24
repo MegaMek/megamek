@@ -4059,15 +4059,29 @@ public class Aero extends Entity implements IAero, IBomber {
         // actual Mounted equipment for MHQ resolution.
         for (Mounted weaponGroup : getWeaponList()) {
             int loc = weaponGroup.getLocation();
-            if (weaponGroup.isHit() || areWingsHit()) {
-                // Loop through and find all weapons with the same location as the group
-                
+            // Loop through and find all weapons with the same location as the group
+            if (areWingsHit()) {
                 // Handle both wings. If the weaponGroup has been hit, both wings were hit.
                 // Otherwise just the areWingsHit flag indicates that only 1 wing was hit.
                 if (loc == Aero.LOC_WINGS && weaponGroup.isHit()) {
                     for (Mounted weapon : weaponList) {
                         if (weapon.getLocation() == Aero.LOC_LWING || weapon.getLocation() == Aero.LOC_RWING) {
                             weapon.setHit(true);
+                            //Taharqa: We should also damage the critical slot, or
+                            //MM and MHQ won't remember that this weapon is damaged on the MUL
+                            //file
+                            for (int i = 0; i < getNumberOfCriticals(weapon.getLocation()); i++) {
+                                CriticalSlot slot1 = getCritical(weapon.getLocation(), i);
+                                if ((slot1 == null) ||
+                                        (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                    continue;
+                                }
+                                Mounted mounted = slot1.getMount();
+                                if (mounted.equals(weapon)) {
+                                    hitAllCriticals(weapon.getLocation(), i);
+                                    break;
+                                }
+                            }
                         }
                     }
                 } else {
@@ -4082,6 +4096,42 @@ public class Aero extends Entity implements IAero, IBomber {
                     for (Mounted weapon : weaponList) {
                         if (weapon.getLocation() == loc) {
                             weapon.setHit(true);
+                            //Taharqa: We should also damage the critical slot, or
+                            //MM and MHQ won't remember that this weapon is damaged on the MUL
+                            //file
+                            for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+                                CriticalSlot slot1 = getCritical(loc, i);
+                                if ((slot1 == null) ||
+                                        (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                    continue;
+                                }
+                                Mounted mounted = slot1.getMount();
+                                if (mounted.equals(weapon)) {
+                                    hitAllCriticals(loc, i);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (weaponGroup.isHit()) {
+                for (Mounted weapon : weaponList) {
+                    if (weapon.getLocation() == loc) {
+                        weapon.setHit(true);
+                        //Taharqa: We should also damage the critical slot, or
+                        //MM and MHQ won't remember that this weapon is damaged on the MUL
+                        //file
+                        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+                            CriticalSlot slot1 = getCritical(loc, i);
+                            if ((slot1 == null) ||
+                                    (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                continue;
+                            }
+                            Mounted mounted = slot1.getMount();
+                            if (mounted.equals(weapon)) {
+                                hitAllCriticals(loc, i);
+                                break;
+                            }
                         }
                     }
                 }

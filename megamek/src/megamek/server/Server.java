@@ -26824,6 +26824,10 @@ public class Server implements Runnable {
             case Aero.CRIT_WEAPON:
                 if (aero.isCapitalFighter()) {
                     boolean destroyAll = false;
+                    // Convert L/R wing location to wings, else wing weapons never get hit
+                    if (loc == Aero.LOC_LWING || loc == Aero.LOC_RWING) {
+                        loc = Aero.LOC_WINGS;
+                    }
                     if ((loc == Aero.LOC_NOSE) || (loc == Aero.LOC_AFT)) {
                         destroyAll = true;
                     }

@@ -26854,6 +26854,21 @@ public class Server implements Runnable {
                             || misc.getType().hasFlag(MiscType.F_BAP))
                                 && misc.getLocation() == loc) {
                             misc.setHit(true);
+                            //Taharqa: We should also damage the critical slot, or
+                            //MM and MHQ won't remember that this weapon is damaged on the MUL
+                            //file
+                            for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                                CriticalSlot slot1 = aero.getCritical(loc, i);
+                                if ((slot1 == null) ||
+                                        (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                    continue;
+                                }
+                                Mounted mounted = slot1.getMount();
+                                if (mounted.equals(misc)) {
+                                    aero.hitAllCriticals(loc, i);
+                                    break;
+                                }
+                            }
                         }
                     }
                     r = new Report(9152);

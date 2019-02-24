@@ -4055,7 +4055,40 @@ public class Aero extends Entity implements IAero, IBomber {
     // StratOps pg. 32 & 34
     @Override
     public void doDisbandDamage() {
-
+        // Damage Weapons. WeaponGroups are damaged, and this needs to match up with the fighter's
+        // actual Mounted equipment for MHQ resolution.
+        for (Mounted weaponGroup : getWeaponList()) {
+            int loc = weaponGroup.getLocation();
+            if (weaponGroup.isHit() || areWingsHit()) {
+                // Loop through and find all weapons with the same location as the group
+                
+                // Handle both wings. If the weaponGroup has been hit, both wings were hit.
+                // Otherwise just the areWingsHit flag indicates that only 1 wing was hit.
+                if (loc == Aero.LOC_WINGS && weaponGroup.isHit()) {
+                    for (Mounted weapon : weaponList) {
+                        if (weapon.getLocation() == Aero.LOC_LWING || weapon.getLocation() == Aero.LOC_RWING) {
+                            weapon.setHit(true);
+                        }
+                    }
+                } else {
+                    if (loc == Aero.LOC_WINGS) {
+                        int roll = Compute.d6();
+                        if (roll >= 4) {
+                            loc = Aero.LOC_RWING;
+                        } else {
+                            loc = Aero.LOC_LWING;
+                        }
+                    }
+                    for (Mounted weapon : weaponList) {
+                        if (weapon.getLocation() == loc) {
+                            weapon.setHit(true);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Now deal with armor and SI
         int dealt = 0;
 
         // Check for critical threshold and if so damage all armor on one facing

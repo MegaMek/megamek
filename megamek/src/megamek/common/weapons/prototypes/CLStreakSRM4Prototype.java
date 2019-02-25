@@ -30,6 +30,7 @@ public class CLStreakSRM4Prototype extends CLPrototypeStreakSRMWeapon {
         super();
         name = "Prototype Streak SRM 4";
         setInternalName("CLStreakSRM4Prototype");
+        shortName = "Streak SRM 4 (P)";
         heat = 3;
         rackSize = 4;
         shortRange = 3;

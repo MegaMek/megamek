@@ -17,13 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.KillerWhaleHandler;
-import megamek.common.weapons.TeleMissileHandler;
-import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -73,23 +66,5 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
             .setPrototypeFactions(F_TA)
             .setProductionFactions(F_TA)
             .setReintroductionFactions(F_FS,F_LC);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_TELE_MISSILE) && game.getBoard().inSpace()) {
-            return new TeleMissileHandler(toHit, waa, game, server);
-        }
-        return new KillerWhaleHandler(toHit, waa, game, server);
     }
 }

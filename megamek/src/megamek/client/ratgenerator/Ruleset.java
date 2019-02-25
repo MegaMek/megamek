@@ -312,7 +312,7 @@ public class Ruleset {
 
     public String getEschelonName(ForceDescriptor fd) {
         for (ForceNode fn : forceNodes) {
-            if (fn.matches(fd) && fn.getEschelon() == fd.getEschelon()) {
+            if (fn.matches(fd) && fn.getEschelon().equals(fd.getEschelon())) {
                 return fn.getEschelonName();
             }
         }
@@ -321,7 +321,7 @@ public class Ruleset {
 
     public CommanderNode getCoNode(ForceDescriptor fd) {
         for (ForceNode fn : forceNodes) {
-            if (fn.getEschelon() == fd.getEschelon() && fn.matches(fd)) {
+            if (fn.getEschelon().equals(fd.getEschelon()) && fn.matches(fd)) {
                 for (CommanderNode rn : fn.getCoNodes()) {
                     if (rn.matches(fd)) {
                         return rn;
@@ -334,7 +334,7 @@ public class Ruleset {
 
     public CommanderNode getXoNode(ForceDescriptor fd) {
         for (ForceNode fn : forceNodes) {
-            if (fn.getEschelon() == fd.getEschelon() && fn.matches(fd)) {
+            if (fn.getEschelon().equals(fd.getEschelon()) && fn.matches(fd)) {
                 for (CommanderNode rn : fn.getXoNodes()) {
                     if (rn.matches(fd)) {
                         return rn;

@@ -32,6 +32,7 @@ public class ISC3M extends TAGWeapon {
     public ISC3M() {
         super();
         name = "C3 Computer [Master]";
+        shortName = "C3 [Master]";
         setInternalName("ISC3MasterUnit");
         addLookupName("IS C3 Computer");
         addLookupName("ISC3MasterComputer");

@@ -1,16 +1,18 @@
 /*
- * MegaMek - Copyright (C) 2018 - The MegaMek Team
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- */
+* MegaMek -
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.common;
 
 import java.text.DecimalFormat;
@@ -18,7 +20,7 @@ import java.text.DecimalFormat;
 /**
  * Reinforced naval repair facility allows ship to expend thrust with docked unit. Only available
  * unpressurized. See TacOps 334-5 for rules.
- * 
+ *
  * @author Neoancient
  *
  */
@@ -39,18 +41,19 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
      * Create a new repair facility
      *
      * @param size   Maximum capacity in tons
-     * @param pressurized Whether the facility is pressurized
+     * @param doors
+     * @param bayNumber
      * @param facing The armor facing of the facility
      */
     public ReinforcedRepairFacility(double size, int doors, int bayNumber, int facing) {
         super(size, doors, bayNumber, facing, false);
     }
-    
+
     @Override
     public boolean isPressurized() {
         return false;
     }
-    
+
     @Override
     public String getType() {
         return "Naval Repair Facility (Reinforced)";
@@ -60,7 +63,7 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
     public double getWeight() {
         return Math.ceil(2 * totalSpace * 0.1) * 0.5;
     }
-    
+
     @Override
     public String toString() {
         return "reinforcedrepairfacility:"
@@ -69,7 +72,7 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
                 + bayNumber + FIELD_SEPARATOR
                 + FACING_PREFIX + getFacing();
     }
-    
+
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuilder sb = new StringBuilder("Reinforced Naval Repair Facility: ");

@@ -42,6 +42,7 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
         name = "Medium Pulse Laser (Recoverd Prototype)";
         setInternalName("ISMediumPulseLaserRecovered");
         addLookupName("IS Pulse Med Laser Recovered");
+        shortName = "Medium Pulse Laser (P)";
         flags = flags.or(F_PROTOTYPE);
         heat = 4;
         damage = 6;

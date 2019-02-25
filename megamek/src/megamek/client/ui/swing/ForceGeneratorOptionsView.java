@@ -1219,6 +1219,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private class GenerateTask extends SwingWorker<ForceDescriptor,Double> implements Ruleset.ProgressListener {
 
         private ForceDescriptor fd;
+
+        private final Object progressLock = new Object();
         private double progress = 0;
         private String message = "";
 
@@ -1251,15 +1253,19 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         @Override
         public void updateProgress(double progress, String message) {
-            this.progress += progress;
-            synchronized (this.message) {
+            int progressPercent;
+            synchronized (progressLock) {
+                this.progress += progress;
                 this.message = message;
+
+                progressPercent = Math.min((int)Math.round(this.progress * 100.0), 100);
             }
-            setProgress((int)Math.round(this.progress * 100));
+
+            setProgress(progressPercent);
         }
 
         public String getMessage() {
-            synchronized (message) {
+            synchronized (progressLock) {
                 return message;
             }
         }

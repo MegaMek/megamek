@@ -1,18 +1,19 @@
 /*
- * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright ������ 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.server;
 
@@ -446,7 +447,7 @@ public class Server extends SocketServer {
      * Stores a set of <code>Coords</code> that have changed during this phase.
      */
     private Set<Coords> hexUpdateSet = new LinkedHashSet<>();
-    
+
     private List<DemolitionCharge> explodingCharges = new ArrayList<>();
 
     /**
@@ -912,25 +913,25 @@ public class Server extends SocketServer {
         if (clientChecksum == null) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append(System.lineSeparator());
-                buf.append(System.lineSeparator());    
+                buf.append(System.lineSeparator());
             }
             buf.append("Client Checksum is null. Client may not have a jar file");
             System.out.println("ERROR: Client does not have a jar file");
-            needs = true; 
+            needs = true;
         // print message indicating server doesn't have jar file
         } else if (serverChecksum == null) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append(System.lineSeparator());
-                buf.append(System.lineSeparator());    
+                buf.append(System.lineSeparator());
             }
             buf.append("Server Checksum is null. Server may not have a jar file");
             System.out.println("ERROR: Server does not have a jar file");
-            needs = true; 
+            needs = true;
         // print message indicating a client/server checksum mismatch
         } else if (!clientChecksum.equals(serverChecksum)) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append(System.lineSeparator());
-                buf.append(System.lineSeparator());    
+                buf.append(System.lineSeparator());
             }
             buf.append("Client/Server checksum mismatch. Server reports: " + serverChecksum + ", Client reports: "
                     + clientChecksum);
@@ -1465,7 +1466,7 @@ public class Server extends SocketServer {
                 public boolean canConvert(Class cls) {
                     return (cls == Coords.class);
                 }
-                
+
                 @Override
                 public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
                     int x = 0, y = 0;
@@ -1489,7 +1490,7 @@ public class Server extends SocketServer {
                     }
                     return (foundX && foundY) ? new Coords(x, y) : null;
                 }
-                
+
                 @Override
                 public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
                     // Unused here
@@ -1809,11 +1810,11 @@ public class Server extends SocketServer {
         game.clearIlluminatedPositions();
         send(new Packet(Packet.COMMAND_CLEAR_ILLUM_HEXES));
     }
-    
+
     /*
      *  Called during the end phase. Checks each entity for ASEW effects counters and decrements them by 1 if > 0
      */
-    
+
     public void decrementASEWTurns() {
         for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
             final Entity entity = e.next();
@@ -1823,23 +1824,23 @@ public class Server extends SocketServer {
                 for (int loc = 0; loc < d.locations(); loc++) {
                     if (d.getASEWAffected(loc) > 0) {
                         d.setASEWAffected(loc, d.getASEWAffected(loc) - 1);
-                    } 
+                    }
                 }
             } else if ((entity.getEntityType() & Entity.ETYPE_JUMPSHIP) != 0) {
                 Jumpship j = (Jumpship) entity;
                 for (int loc = 0; loc < j.locations(); loc++) {
                     if (j.getASEWAffected(loc) > 0) {
                         j.setASEWAffected(loc, j.getASEWAffected(loc) - 1);
-                    } 
+                    }
                 }
             } else {
                 if (entity.getASEWAffected() > 0) {
                     entity.setASEWAffected(entity.getASEWAffected() - 1);
                 }
             }
-        }        
-    }    
-    
+        }
+    }
+
 
     /**
      * are we currently in a reporting phase
@@ -2609,7 +2610,7 @@ public class Server extends SocketServer {
                     tp.doEndPhaseChanges(vPhaseReport);
                 }
                 sendChangedHexes(hexUpdateSet);
-                
+
                 checkForObservers();
                 transmitAllPlayerUpdates();
                 entityAllUpdate();
@@ -2862,7 +2863,7 @@ public class Server extends SocketServer {
                     entity.loadAllWeapons();
                 }
             }
-            
+
             // if units were loaded in the chat lounge, I need to keep track of
             // it here because they can get dumped in the deployment phase
             if (entity.getLoadedUnits().size() > 0) {
@@ -3185,8 +3186,8 @@ public class Server extends SocketServer {
                     }
                 }
                 // Decrement the ASEWAffected counter
-                decrementASEWTurns();    
-                
+                decrementASEWTurns();
+
                 break;
             case PHASE_END_REPORT:
                 if (changePlayersTeam) {
@@ -3374,9 +3375,14 @@ public class Server extends SocketServer {
             nextTurn = game.changeToNextTurn();
             nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
         }
-        
+
+        boolean minefieldPhase = game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS;
+        boolean artyPhase = game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES;
+
         // if there aren't any more valid turns, end the phase
-        if (null == nextEntity) {
+        // note that some phases don't use entities
+        if (((null == nextEntity) && !minefieldPhase) ||
+                ((null == nextTurn) && minefieldPhase)) {
             endCurrentPhase();
             return;
         }
@@ -3398,9 +3404,7 @@ public class Server extends SocketServer {
             sendGhostSkipMessage(player);
         } else if ((null == game.getFirstEntity())
                 && (null != player)
-                && ((game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS)
-                        && (game.getPhase()
-                                != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES))) {
+                && !minefieldPhase && !artyPhase) {
             sendTurnErrorSkipMessage(player);
         }
     }
@@ -3623,7 +3627,7 @@ public class Server extends SocketServer {
 
         transmitAllPlayerUpdates();
     }
-    
+
     private Vector<GameTurn> checkTurnOrderStranded(TurnVectors team_order) {
         Vector<GameTurn> turns = new Vector<GameTurn>(team_order.getTotalTurns()
                 + team_order.getEvenTurns());
@@ -3698,8 +3702,8 @@ public class Server extends SocketServer {
         // Now, we collect everything into a single vector.
         Vector<GameTurn> turns = checkTurnOrderStranded(team_order);
 
-        
-        
+
+
         // add the turns (this is easy)
         while (team_order.hasMoreElements()) {
             Entity e = (Entity) team_order.nextElement();
@@ -4138,7 +4142,7 @@ public class Server extends SocketServer {
         } else {
             for (Enumeration<Team> i = game.getTeams(); i.hasMoreElements(); ) {
                 final Team team = i.nextElement();
-                
+
                 // Teams with no active players can be ignored
                 if (team.isObserverTeam()) {
                     continue;
@@ -4487,7 +4491,7 @@ public class Server extends SocketServer {
         // weird results for other loading, then the reason is probably this
         entityUpdate(loader.getId());
     }
-    
+
     /**
      * Have the loader tow the indicated unit. The unit being towed loses its
      * turn.
@@ -4503,7 +4507,7 @@ public class Server extends SocketServer {
             game.removeTurnFor(unit);
             send(createTurnVectorPacket());
         }
-        
+
         loader.towUnit(unit.getId());
 
         // set deployment round of the loadee to equal that of the loader
@@ -4513,7 +4517,7 @@ public class Server extends SocketServer {
         entityUpdate(unit.getId());
         entityUpdate(loader.getId());
     }
-    
+
     /**
      * Have the tractor drop the indicated trailer. This will also disconnect all
      * trailers that follow the one dropped.
@@ -4524,15 +4528,12 @@ public class Server extends SocketServer {
      *            - the <code>Targetable</code> unit being unloaded.
      * @param pos
      *            - the <code>Coords</code> for the unloaded unit.
-     * @param evacuation
-     *            - a <code>boolean</code> indicating whether this trailer is being
-     *            unloaded as a result of its carrying unit's destruction
      * @return <code>true</code> if the unit was successfully unloaded,
      *         <code>false</code> if the trailer isn't carried by tractor.
      */
     private boolean disconnectUnit(Entity tractor, Targetable unloaded,
             Coords pos) {
-        
+
         // We can only unload Entities.
         Entity trailer = null;
         if (unloaded instanceof Entity) {
@@ -4548,7 +4549,7 @@ public class Server extends SocketServer {
 
         // Unload the unit.
         tractor.disconnectUnit(trailer.getId());
-        
+
         // Update the tractor and all affected trailers.
         for (int id : trailerList) {
             entityUpdate(id);
@@ -5293,7 +5294,7 @@ public class Server extends SocketServer {
         return processSkid(entity, start, elevation, direction, distance,
                 step, moveType, false);
     }
-    
+
     /**
      * makes a unit skid or sideslip on the board
      *
@@ -6082,7 +6083,7 @@ public class Server extends SocketServer {
             r.indent();
             r.add(curPos.getBoardNum(), true);
             addReport(r);
-            
+
             if (flip && entity instanceof Tank) {
                 doVehicleFlipDamage((Tank)entity, flipDamage, direction < 3, skidDistance - 1);
             }
@@ -6163,7 +6164,7 @@ public class Server extends SocketServer {
         } else if (flip && entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE) {
             // QuadVees don't suffer stunned crew criticals; require PSR to avoid damage instead.
             PilotingRollData prd = entity.getBasePilotingRoll();
-            addReport(checkPilotAvoidFallDamage(entity, 1, prd));            
+            addReport(checkPilotAvoidFallDamage(entity, 1, prd));
         }
 
         // Clean up the entity if it has been destroyed.
@@ -6187,7 +6188,7 @@ public class Server extends SocketServer {
 
     /**
      * Roll on the failed vehicle manuever table.
-     * 
+     *
      * @param entity    The vehicle that failed the maneuver.
      * @param curPos    The coordinates of the hex in which the maneuver was attempted.
      * @param turnDirection The difference between the intended final facing and the starting facing
@@ -6252,7 +6253,7 @@ public class Server extends SocketServer {
         r.subject = entity.getId();
         r.newlines = 0;
         addReport(r);
-        
+
         r = new Report(1210);
         r.subject = entity.getId();
         roll += modifier;
@@ -6333,7 +6334,7 @@ public class Server extends SocketServer {
 
     private void doVehicleFlipDamage(Tank entity, int damage, boolean startRight, int flipCount) {
         HitData hit;
-        
+
         int index = flipCount % 4;
         // If there is no turret, we do side-side-bottom
         if (((Tank)entity).hasNoTurret()) {
@@ -6807,7 +6808,7 @@ public class Server extends SocketServer {
      */
     private Vector<Report> processLeaveMap(MovePath movePath,
                                            boolean flewOff, int returnable) {
-        Entity entity = movePath.getEntity();        
+        Entity entity = movePath.getEntity();
         Vector<Report> vReport = new Vector<Report>();
         Report r;
         // Unit has fled the battlefield.
@@ -7054,7 +7055,7 @@ public class Server extends SocketServer {
             entityUpdate(entity.getId());
             return;
         }
-        
+
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
@@ -7256,7 +7257,7 @@ public class Server extends SocketServer {
                             r.add(e.getPosition().getBoardNum());
                             vPhaseReport.addElement(r);
                             continueTurnFromPBS = true;
-                            
+
                             curFacing = entity.getFacing();
                             curPos = entity.getPosition();
                             mpUsed = step.getMpUsed();
@@ -7305,7 +7306,7 @@ public class Server extends SocketServer {
                 // likely reduced MP.
                 fellDuringMovement = checkMASCFailure(entity, md);
             }
-            
+
             if (firstStep) {
                 rollTarget = entity.checkGunningIt(overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -7338,7 +7339,7 @@ public class Server extends SocketServer {
                     }
                 }
             }
-            
+
             // Check for failed maneuver for overdrive on first step. The rules for overdrive do not
             // state this explicitly, but since combinining overdrive with gunning it requires two rolls
             // and gunning does state explicitly that the roll is made before movement, this
@@ -7377,7 +7378,7 @@ public class Server extends SocketServer {
 
             if (step.getType() == MoveStepType.CONVERT_MODE) {
                 entity.setConvertingNow(true);
-                
+
                 // Non-omni QuadVees converting to vehicle mode dump any riding BA in the
                 // starting hex if they fail to make an anti-mech check.
                 // http://bg.battletech.com/forums/index.php?topic=55263.msg1271423#msg1271423
@@ -8008,7 +8009,7 @@ public class Server extends SocketServer {
                 }
                 break;
             }
-            
+
             if (step.isVTOLBombingStep()) {
                 ((IBomber)entity).setVTOLBombTarget(step.getTarget(game));
             } else if (step.isStrafingStep() && (entity instanceof VTOL)) {
@@ -8102,7 +8103,7 @@ public class Server extends SocketServer {
                     }
                 }
             }
-            
+
             // If we have turned, check whether we have fulfilled any turn mode requirements.
             if ((step.getType() == MoveStepType.TURN_LEFT || step.getType() == MoveStepType.TURN_RIGHT)
                     && entity.usesTurnMode()) {
@@ -8126,7 +8127,7 @@ public class Server extends SocketServer {
                             } else {
                                 mpUsed = entity.getRunMPwithoutMASC();
                             }
-    
+
                             turnOver = true;
                             distance = entity.delta_distance;
                         } else {
@@ -8139,7 +8140,7 @@ public class Server extends SocketServer {
                     }
                 }
             }
-            
+
             if (step.getType() == MoveStepType.BOOTLEGGER) {
                 rollTarget = entity.getBasePilotingRoll();
                 entity.addPilotingModifierForTerrain(rollTarget);
@@ -8781,7 +8782,7 @@ public class Server extends SocketServer {
                 }
 
             } // End STEP_LOAD
-            
+
          // Handle towing units.
             if (step.getType() == MoveStepType.TOW) {
 
@@ -8799,7 +8800,7 @@ public class Server extends SocketServer {
                 // The moving unit should be able to tow the other
                 // unit and the other should be able to have a turn.
                 //FIXME: I know this check duplicates functions already performed when enabling the Tow button.
-                //This code made more sense as borrowed from "Load" where we actually rechecked the hex for the target unit. 
+                //This code made more sense as borrowed from "Load" where we actually rechecked the hex for the target unit.
                 //Do we need it here for safety, client/server sync or can this be further streamlined?
                 if (!entity.canTow(loaded.getId())) {
                     // Something is fishy in Denmark.
@@ -8958,7 +8959,7 @@ public class Server extends SocketServer {
                     send(createTurnVectorPacket());
                 }
             }
-            
+
             // Handle disconnecting trailers.
             if (step.getType() == MoveStepType.DISCONNECT) {
                 Targetable unloaded = step.getTarget(game);
@@ -8974,7 +8975,7 @@ public class Server extends SocketServer {
                                     + curPos.getBoardNum());
                 }
             }
-            
+
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
@@ -9090,7 +9091,7 @@ public class Server extends SocketServer {
 
                 // TODO: what if a building collapses into rubble?
             }
-            
+
             if (stepMoveType != EntityMovementType.MOVE_JUMP
                     && (step.getClearance() == 0
                         || (entity.getMovementMode() == EntityMovementMode.WIGE && step.getClearance() == 1)
@@ -9274,7 +9275,7 @@ public class Server extends SocketServer {
             doSkillCheckInPlace(entity,
                     entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
         }
-        
+
         if (entity.isAirborne() && entity.isAero()) {
 
             IAero a = (IAero) entity;
@@ -9739,7 +9740,7 @@ public class Server extends SocketServer {
                 entity.setConvertingNow(false);
                 r.messageId = 2454;
             } else {
-                // LAMs converting from fighter mode need to have the elevation set properly. 
+                // LAMs converting from fighter mode need to have the elevation set properly.
                 if (entity.isAero()) {
                     if (md.getFinalConversionMode() == EntityMovementMode.WIGE
                             && entity.getAltitude() > 0 && entity.getAltitude() <= 3) {
@@ -9782,7 +9783,7 @@ public class Server extends SocketServer {
             }
             addReport(r);
         }
-        
+
           // update entity's locations' exposure
         vPhaseReport.addAll(doSetLocationsExposure(entity,
                 game.getBoard().getHex(curPos), false, entity.getElevation()));
@@ -9831,7 +9832,7 @@ public class Server extends SocketServer {
                         r.subject = entity.getId();
                         vPhaseReport.add(r);
                     }
-    
+
                     if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
                         entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
@@ -9845,9 +9846,9 @@ public class Server extends SocketServer {
                         vPhaseReport.add(r);
                         vPhaseReport.addAll(crashVTOLorWiGE((Tank) entity));
                     } else {
-                        entity.setElevation(0);                                
+                        entity.setElevation(0);
                     }
-                    
+
                     // Check for stacking violations in the target hex
                     Entity violation = Compute.stackingViolation(game,
                             entity.getId(), entity.getPosition());
@@ -9878,19 +9879,19 @@ public class Server extends SocketServer {
                     }
                 } else if (!entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)
                         && !entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                    
+
                     // we didn't land, so we go to elevation 1 above the terrain
                     // features
                     // it might have been higher than one due to the extra MPs
                     // it can spend to stay higher during movement, but should
                     // end up at one
-                    
+
                     entity.setElevation(Math.min(entity.getElevation(),
                             1 + hex.maxTerrainFeatureElevation(
                             game.getBoard().inAtmosphere())));
                 }
             }
-            
+
             // If we've somehow gotten here as an airborne LAM with a destroyed side torso
             // (such as conversion while dropping), crash now.
             if (entity instanceof LandAirMech
@@ -9945,7 +9946,7 @@ public class Server extends SocketServer {
                         entity.getRemovalCondition()));
             }
         }
-        
+
         //If the entity is towing trailers, update the position of those trailers
         if (!entity.getAllTowedUnits().isEmpty()) {
             List<Integer> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
@@ -10032,12 +10033,12 @@ public class Server extends SocketServer {
             }
         }
     }
-    
+
     /**
      * Updates the position of any towed trailers.
      *
      * @param tractor    The Entity that is moving
-     * @param trailer    The current trailer being updated
+     * @param trainPath  The path all trailers are following?
      */
     private void processTrailerMovement(Entity tractor, List<Coords> trainPath) {
         for (int eId : tractor.getAllTowedUnits()) {
@@ -10101,11 +10102,11 @@ public class Server extends SocketServer {
             entityUpdate(eId);
         }
     }
-    
+
     /**
      * Flips the order of a tractor's towed trailers list by index and
-     * adds their starting coordinates to a list of hexes the tractor passed through 
-     * 
+     * adds their starting coordinates to a list of hexes the tractor passed through
+     *
      * @return  Returns the properly sorted list of all train coordinates
      */
     public List<Coords> initializeTrailerCoordinates(Entity tractor, List<Integer> allTowedTrailers) {
@@ -10123,13 +10124,13 @@ public class Server extends SocketServer {
                 trainCoords.add(c);
             }
         }
-        return trainCoords;    
+        return trainCoords;
     }
 
     /**
      * Checks whether the entity used MASC or a supercharger during movement, and if so checks for
      * and resolves any failures.
-     *  
+     *
      * @param entity  The unit using MASC/supercharger
      * @param md      The current <code>MovePath</code>
      * @return        Whether the unit failed the check
@@ -10230,8 +10231,8 @@ public class Server extends SocketServer {
 
     /**
      * LAMs or QuadVees converting from leg mode may force any carried infantry (including swarming)
-     * to fall into the current hex. A LAM may suffer damage. 
-     * 
+     * to fall into the current hex. A LAM may suffer damage.
+     *
      * @param carrier       The <code>Entity</code> making the conversion.
      * @param rider         The <code>Entity</code> possibly being forced off.
      * @param curPos        The coordinates of the hex where the conversion starts.
@@ -10272,7 +10273,7 @@ public class Server extends SocketServer {
             if (carrier.getSwarmAttackerId() == rider.getId()) {
                 rider.setDone(true);
                 carrier.setSwarmAttackerId(Entity.NONE);
-                rider.setSwarmTargetId(Entity.NONE);                
+                rider.setSwarmTargetId(Entity.NONE);
             } else if (!unloadUnit(carrier, rider, curPos, curFacing, 0)) {
                 logError("checkDropBAFromConverting(Entity,Entity,Coords,int,boolean,boolean,boolean)",
                         "Server was told to unload "
@@ -11057,7 +11058,7 @@ public class Server extends SocketServer {
      * @param missiles the <code>int</code> amount of missiles
      * @param areaEffect a <code>boolean</code> indicating whether the attack is from an
      *                   area effect weapon such as Arrow IV inferno, and partial cover should
-     *                   be ignored.                
+     *                   be ignored.
      */
     public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t,
                                                  int missiles, boolean areaEffect) {
@@ -11077,7 +11078,7 @@ public class Server extends SocketServer {
             int missiles, int called) {
         return deliverInfernoMissiles(ae, t, missiles, called, false);
     }
-    
+
     /**
      * deliver inferno missiles
      *
@@ -11088,7 +11089,7 @@ public class Server extends SocketServer {
      *                   inferno missiles (for called shots)
      * @param areaEffect a <code>boolean</code> indicating whether the attack is from an
      *                   area effect weapon such as Arrow IV inferno, and partial cover should
-     *                   be ignored.                
+     *                   be ignored.
      */
     public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t,
                 int missiles, int called, boolean areaEffect) {
@@ -11345,7 +11346,7 @@ public class Server extends SocketServer {
                             Protomech proto = (Protomech) te;
                             r = new Report(6305);
                             r.subject = te.getId();
-                            r.indent(2);            
+                            r.indent(2);
                             if (proto.isGlider()) {
                                 r.messageId = 6306;
                                 proto.setWingHits(proto.getWingHits() + 1);
@@ -13572,7 +13573,7 @@ public class Server extends SocketServer {
         // looks like mostly everything's okay
         processDeployment(entity, coords, nFacing, elevation, loadVector,
                           assaultDrop);
-        
+
         //Update Aero sensors for a space or atmospheric game
         if (entity.isAero()) {
             IAero a = (IAero) entity;
@@ -13678,7 +13679,7 @@ public class Server extends SocketServer {
         if (entity.isAero() && game.useVectorMove()) {
             IAero a = (IAero) entity;
             int[] v = {0, 0, 0, 0, 0, 0};
-            
+
             // if this is the entity's first time deploying, we want to respect the "velocity" setting from the lobby
             if(entity.wasNeverDeployed()) {
                 if (a.getCurrentVelocityActual() > 0) {
@@ -13691,7 +13692,7 @@ public class Server extends SocketServer {
                 for(int x = 0; x < 6; x++) {
                     v[(x + 3) % 6] = entity.getVector(x) / 2;
                 }
-                
+
                 entity.setVectors(v);
             }
         }
@@ -14199,7 +14200,7 @@ public class Server extends SocketServer {
             send(p);
         }
     }
-    
+
     /**
      * Determine which telemissile attack actions could be affected by AMS, and
      * assign AMS to those attacks.
@@ -14208,7 +14209,7 @@ public class Server extends SocketServer {
         final String METHOD_NAME = "assignTeleMissileAMS()";
         // Map target to a list of telemissile attacks directed at entities
         Hashtable<Entity, Vector<AttackAction>> htTMAttacks = new Hashtable<>();
-            
+
         //This should be impossible but just in case...
         if (!(taa instanceof TeleMissileAttackAction)) {
             logInfo(METHOD_NAME, "Attack Action is the wrong type!");
@@ -14216,7 +14217,7 @@ public class Server extends SocketServer {
 
         Entity target = (taa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) taa
                 .getTarget(game) : null;
-                
+
         //If a telemissile is still on the board and its original target is not....
         if (target == null) {
             logInfo(METHOD_NAME, "Telemissile has no target. AMS not assigned.");
@@ -14250,11 +14251,11 @@ public class Server extends SocketServer {
         Hashtable<Entity, Vector<WeaponHandler>> htAttacks = new Hashtable<>();
         // Keep track of each APDS, and which attacks it could affect
         Hashtable<Mounted, Vector<WeaponHandler>> apdsTargets = new Hashtable<>();
-        
+
         for (AttackHandler ah : game.getAttacksVector()) {
             WeaponHandler wh = (WeaponHandler) ah;
             WeaponAttackAction waa = wh.waa;
-            
+
             // for artillery attacks, the attacking entity
             // might no longer be in the game.
             //TODO: Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
@@ -14262,10 +14263,10 @@ public class Server extends SocketServer {
                 logInfo(METHOD_NAME, "Can't Assign AMS: Artillery firer is null!");
                 continue;
             }
-            
+
             Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
                     waa.getWeaponId());
-            
+
             // Only entities can have AMS. Arrow IV doesn't target an entity until later, so we have to ignore them
             if (!(waa instanceof ArtilleryAttackAction) && (Targetable.TYPE_ENTITY != waa.getTargetType())) {
                 continue;
@@ -14280,7 +14281,7 @@ public class Server extends SocketServer {
             if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
                 continue;
             }
-            
+
             // For Bearings-only Capital Missiles
             if (wh instanceof CapitalMissileBearingsOnlyHandler) {
                 ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
@@ -14308,7 +14309,7 @@ public class Server extends SocketServer {
                 Vector<WeaponHandler> v = htAttacks.get(target);
                 if (v == null) {
                     v = new Vector<WeaponHandler>();
-                    htAttacks.put(target, v);                    
+                    htAttacks.put(target, v);
                 }
                 v.addElement(wh);
                 // Keep track of what weapon attacks could be affected by APDS
@@ -14325,7 +14326,7 @@ public class Server extends SocketServer {
                         }
                         handlerList.add(wh);
                     }
-                
+
                 }
             } else {
                 Entity target = game.getEntity(waa.getTargetId());
@@ -14350,7 +14351,7 @@ public class Server extends SocketServer {
                         handlerList.add(wh);
                     }
                 }
-            }            
+            }
         }
 
         // Let each target assign its AMS
@@ -14387,7 +14388,7 @@ public class Server extends SocketServer {
                 targetedAttacks.add(targetedWAA);
             }
         }
-    	
+
     }
 
     /**
@@ -14617,18 +14618,18 @@ public class Server extends SocketServer {
         }
         return apdsCoords;
     }
-    
+
     /**
      * Called at the start and end of movement. Determines if an entity
-     * has been detected and/or had a firing solution calculated 
+     * has been detected and/or had a firing solution calculated
      */
     private void detectSpacecraft() {
         // Don't bother if we're not in space or if the game option isn't on
-        if (!game.getBoard().inSpace() 
+        if (!game.getBoard().inSpace()
                 || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             return;
         }
-        
+
         //Now, run the detection rolls
         for (Entity detector : game.getEntitiesVector()) {
             for (Entity target : game.getEntitiesVector()) {
@@ -14658,7 +14659,7 @@ public class Server extends SocketServer {
                 }
             }
         }
-        
+
         //Now, try to establish firing solutions on detected units
         ArrayList<Entity> detectedUnits = new ArrayList<>();
         for (Entity target : game.getEntitiesVector()) {
@@ -14666,12 +14667,12 @@ public class Server extends SocketServer {
                 detectedUnits.add(target);
             }
         }
-        
+
         // If no one is detected, there's nothing more to do
         if (detectedUnits.size() < 1) {
             return;
         }
-        
+
         //Now, run the detection rolls
         for (Entity detector : game.getEntitiesVector()) {
             for (Entity target : detectedUnits) {
@@ -14694,10 +14695,10 @@ public class Server extends SocketServer {
             }
         }
     }
-    
+
     /**
      * Called at the end of movement. Determines if an entity
-     * has moved beyond sensor range 
+     * has moved beyond sensor range
      */
     private void updateSpacecraftDetection() {
         // Don't bother if we're not in space or if the game option isn't on
@@ -15317,11 +15318,11 @@ public class Server extends SocketServer {
                 }
                 // Unofficial option to unjam UACs, ACs, and LACs like Rotary
                 // Autocannons
-                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) 
+                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
                         || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
                         || (wtype.getAmmoType() == AmmoType.T_AC)
                         || (wtype.getAmmoType() == AmmoType.T_AC_IMP)
-                        || (wtype.getAmmoType() == AmmoType.T_PAC) 
+                        || (wtype.getAmmoType() == AmmoType.T_PAC)
                         || (wtype.getAmmoType() == AmmoType.T_LAC))
                         && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
                     int roll = Compute.d6(2);
@@ -15884,7 +15885,7 @@ public class Server extends SocketServer {
             game.addPSR(new PilotingRollData(ae.getId(), 0, "Zweihander miss"));
         }
     }
-    
+
     /**
      * Handle a punch attack
      */
@@ -15904,9 +15905,9 @@ public class Server extends SocketServer {
         }
         final String armName = paa.getArm() == PunchAttackAction.LEFT ? "Left Arm"
                                                                       : "Right Arm";
-        
+
         final int armLoc = paa.getArm() == PunchAttackAction.LEFT ? Mech.LOC_LARM : Mech.LOC_RARM;
-        
+
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = paa.getArm() == PunchAttackAction.LEFT ? pr.damage
                                                             : pr.damageRight;
@@ -15924,7 +15925,7 @@ public class Server extends SocketServer {
                                  && (roll == toHit.getValue());
 
         Report r;
-        
+
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
@@ -15987,7 +15988,7 @@ public class Server extends SocketServer {
                 addReport(r);
             }
         }
-        
+
         // do we hit?
         if (roll < toHit.getValue()) {
             // nope
@@ -16013,11 +16014,11 @@ public class Server extends SocketServer {
                 }
 
             }
-            
-            if(paa.isZweihandering()) {  
+
+            if(paa.isZweihandering()) {
                 applyZweihanderSelfDamage(ae, true);
             }
-            
+
             return;
         }
 
@@ -16038,10 +16039,10 @@ public class Server extends SocketServer {
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
-            if(paa.isZweihandering()) {  
+            if(paa.isZweihandering()) {
                 applyZweihanderSelfDamage(ae, false);
             }
-            
+
             // And we're done!
             return;
         }
@@ -16168,7 +16169,7 @@ public class Server extends SocketServer {
         }
         addNewLines();
 
-        if(paa.isZweihandering()) {  
+        if(paa.isZweihandering()) {
             applyZweihanderSelfDamage(ae, false);
         }
         addNewLines();
@@ -17378,13 +17379,13 @@ public class Server extends SocketServer {
 
         Report r;
 
-        
+
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // restore club attack
         caa.getClub().restore();
-        
+
         // Shield bash causes 1 point of damage to the shield
         if (((MiscType) caa.getClub().getType()).isShield()) {
             ((Mech) ae).shieldAbsorptionDamage(1, caa.getClub().getLocation(),
@@ -17433,7 +17434,7 @@ public class Server extends SocketServer {
                 game.addPSR(new PilotingRollData(ae.getId(), 0,
                                                  "missed a flail/wrecking ball attack"));
             }
-            if(caa.isZweihandering()) {  
+            if(caa.isZweihandering()) {
                 applyZweihanderSelfDamage(ae, true);
             }
             return;
@@ -17466,7 +17467,7 @@ public class Server extends SocketServer {
                 r.subject = ae.getId();
                 addReport(r);
                 damage = 0;
-                if(caa.isZweihandering()) {  
+                if(caa.isZweihandering()) {
                     applyZweihanderSelfDamage(ae, true);
                 }
                 return;
@@ -17498,7 +17499,7 @@ public class Server extends SocketServer {
                             "missed a mace attack"));
                 }
             }
-            if(caa.isZweihandering()) {  
+            if(caa.isZweihandering()) {
                 applyZweihanderSelfDamage(ae, true);
             }
             return;
@@ -17573,7 +17574,7 @@ public class Server extends SocketServer {
                 }
 
             }
-            if(caa.isZweihandering()) {  
+            if(caa.isZweihandering()) {
                 applyZweihanderSelfDamage(ae, true);
             }
             return;
@@ -17596,7 +17597,7 @@ public class Server extends SocketServer {
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
-            if(caa.isZweihandering()) {  
+            if(caa.isZweihandering()) {
                 applyZweihanderSelfDamage(ae, false);
                 if (((MiscType) caa.getClub().getType())
                         .hasSubType(MiscType.S_CLUB)) {
@@ -17823,8 +17824,8 @@ public class Server extends SocketServer {
             addReport(r);
             ae.removeMisc(caa.getClub().getName());
         }
-        
-        if(caa.isZweihandering()) {  
+
+        if(caa.isZweihandering()) {
             applyZweihanderSelfDamage(ae, false);
             if (((MiscType) caa.getClub().getType())
                     .hasSubType(MiscType.S_CLUB)) {
@@ -17836,7 +17837,7 @@ public class Server extends SocketServer {
                 ae.removeMisc(caa.getClub().getName());
             }
         }
-        
+
         addNewLines();
 
         // if the target is an industrial mech, it needs to check for crits
@@ -18805,7 +18806,7 @@ public class Server extends SocketServer {
         r.add(target.getDisplayName());
         r.newlines = 1;
         addReport(r);
-        
+
         //If point defenses engaged the missile, handle that damage
         if (amsDamage > 0) {
             //Report the attack
@@ -18813,7 +18814,7 @@ public class Server extends SocketServer {
             r.newlines = 1;
             r.subject = te.getId();
             vPhaseReport.add(r);
-            
+
             //If the target's point defenses overheated, report that
             if (taa.getPDOverheated()) {
                 r = new Report(3361);
@@ -18821,13 +18822,13 @@ public class Server extends SocketServer {
                 r.subject = te.getId();
                 vPhaseReport.add(r);
             }
-            
+
             //Damage the missile
             HitData hit = tm.rollHitLocation(ToHitData.HIT_NORMAL,
                     tm.sideTable(te.getPosition(), true));
             addReport(damageEntity(ae, hit, amsDamage, false,
                     DamageType.NONE, false, false, false));
-            
+
             //If point defense fire destroys the missile, don't process a hit
             if (ae.isDoomed()) {
                 return;
@@ -19022,7 +19023,7 @@ public class Server extends SocketServer {
                                   boolean glancing, boolean throughFront) {
 
         Entity ae = (Entity)aero;
-        
+
         int damage = RamAttackAction.getDamageFor(aero, te);
         int damageTaken = RamAttackAction.getDamageTakenBy(aero, te);
         if (glancing) {
@@ -19112,10 +19113,10 @@ public class Server extends SocketServer {
 
         // Damage to Attacker
         int damageTaken;
-        
+
         if (airmechRam) {
             damage = AirmechRamAttackAction.getDamageFor(ae);
-            damageTaken = AirmechRamAttackAction.getDamageTakenBy(ae, te);            
+            damageTaken = AirmechRamAttackAction.getDamageTakenBy(ae, te);
         } else {
             damage = ChargeAttackAction.getDamageFor(ae, te, game.getOptions()
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), toHit.getMoS());
@@ -19342,7 +19343,7 @@ public class Server extends SocketServer {
             // move attacker and target, if possible
             Coords src = te.getPosition();
             Coords dest = src.translated(direction);
-    
+
             if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(),
                                             direction)) {
                 addNewLines();
@@ -19350,10 +19351,10 @@ public class Server extends SocketServer {
                         te.getId(), 2, "was charged")));
                 addReport(doEntityDisplacement(ae, ae.getPosition(), src, chargePSR));
             }
-    
+
             addNewLines();
         }
-        
+
         // if the target is an industrial mech, it needs to check for crits
         // at the end of turn
         if ((te instanceof Mech) && ((Mech) te).isIndustrial()) {
@@ -19402,7 +19403,7 @@ public class Server extends SocketServer {
         explodingCharges.clear();
         sendChangedBuildings(updatedBuildings);
     }
-    
+
     private void resolveLayExplosivesAttack(PhysicalResult pr, int lastEntityId) {
         final LayExplosivesAttackAction laa = (LayExplosivesAttackAction) pr.aaa;
         final Entity ae = game.getEntity(laa.getEntityId());
@@ -19822,7 +19823,7 @@ public class Server extends SocketServer {
         // HACK: to avoid automatic falls, displace from dest to dest
         addReport(doEntityDisplacement(ae, dest, dest, new PilotingRollData(
                 ae.getId(), 4, "executed death from above")));
-        
+
         // entity isn't DFAing any more
         ae.setDisplacementAttack(null);
 
@@ -21282,7 +21283,7 @@ public class Server extends SocketServer {
             return;
         }
 
-        // Must roll 8+ to survive...        
+        // Must roll 8+ to survive...
         r = new Report(5100);
         r.subject = entity.getId();
         r.newlines = 0;
@@ -21317,7 +21318,7 @@ public class Server extends SocketServer {
                     Protomech proto = (Protomech) entity;
                     r = new Report(6305);
                     r.subject = entity.getId();
-                    r.indent(2);            
+                    r.indent(2);
                     if (proto.isGlider()) {
                         r.messageId = 6306;
                         proto.setWingHits(proto.getWingHits() + 1);
@@ -22018,14 +22019,14 @@ public class Server extends SocketServer {
                 vPhaseReport.add(r);
             }
         }
-        
+
         // Glider protomechs without sufficient movement to stay airborne make forced landings.
         if ((entity instanceof Protomech) && ((Protomech)entity).isGlider()
                 && entity.isAirborneVTOLorWIGE() && (entity.getRunMP() < 4)) {
             vPhaseReport.addAll(landGliderPM((Protomech) entity, entity.getPosition(), entity.getElevation(),
                     entity.delta_distance));
         }
-        
+
         // non mechs and prone mechs can now return
         if (!entity.canFall()
             || (entity.isHullDown() && entity.canGoHullDown())) {
@@ -22394,10 +22395,10 @@ public class Server extends SocketServer {
                                     int origAltitude = e.getAltitude();
                                     e.setAltitude(e.getAltitude() - loss);
                                     //Reroll altitude loss with edge if the new altitude would result in a crash
-                                    if (e.getAltitude() <= 0 
+                                    if (e.getAltitude() <= 0
                                             //Don't waste the edge if it won't help
                                             && origAltitude > 1
-                                            && e.getCrew().hasEdgeRemaining() 
+                                            && e.getCrew().hasEdgeRemaining()
                                             && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS)) {
                                         loss = Compute.d6(1);
                                         //Report the edge use
@@ -22536,7 +22537,7 @@ public class Server extends SocketServer {
                 if (crew.isDead(pos)) {
                     r = createCrewTakeoverReport(en, pos, wasPilot, wasGunner);
                     if (null != r) {
-                        vDesc.addElement(r);                        
+                        vDesc.addElement(r);
                     }
                 }
                 if (Crew.DEATH > crew.getHits()) {
@@ -22581,11 +22582,11 @@ public class Server extends SocketServer {
         }
         return vDesc;
     }
-    
+
     /**
      * Convenience method that fills in a report showing that a crew member of a multicrew cockpit
      * has taken over for another incapacitated crew member.
-     * 
+     *
      * @param e         The <code>Entity</code> for the crew.
      * @param slot      The slot index of the crew member that was incapacitated.
      * @param wasPilot  Whether the crew member was the pilot before becoming incapacitated.
@@ -22617,7 +22618,7 @@ public class Server extends SocketServer {
 
     /**
      * resolves consciousness rolls for one entity
-     * 
+     *
      * @param e         The <code>Entity</code> that took damage
      * @param damage    The <code>int</code> damage taken by the pilot
      * @param crewPos   The <code>int</code> index of the crew member for multi crew cockpits, ingnored by
@@ -22748,7 +22749,7 @@ public class Server extends SocketServer {
             }
         }
     }
-    
+
     /**
      * Check whether any <code>Entity</code> with a cockpit command console has been scheduled to swap
      * roles between the two crew members.
@@ -23002,7 +23003,7 @@ public class Server extends SocketServer {
             return damageEntity(fighter, new_hit, damage, ammoExplosion, bFrag,
                                 damageIS, areaSatArty, throughFront, underWater, nukeS2S);
         }
-        
+
         // Battle Armor takes full damage to each trooper from area-effect.
         if (areaSatArty && (te instanceof BattleArmor)) {
             r = new Report(6044);
@@ -23157,7 +23158,7 @@ public class Server extends SocketServer {
             Protomech proto = (Protomech) te;
             r = new Report(6305);
             r.subject = te.getId();
-            r.indent(2);            
+            r.indent(2);
             if (proto.isGlider()) {
                 r.messageId = 6306;
                 proto.setWingHits(proto.getWingHits() + 1);
@@ -23216,7 +23217,7 @@ public class Server extends SocketServer {
             r.indent(2);
             vDesc.addElement(r);
         }
-        
+
         // Is the infantry in vacuum?
         if ((isPlatoon || isBattleArmor) && !te.isDestroyed() && !te.isDoomed()
             && game.getPlanetaryConditions().isVacuum()) {
@@ -23983,7 +23984,7 @@ public class Server extends SocketServer {
                 // further processing
                 if (te instanceof Aero) {
                     Aero a = (Aero) te;
-                    
+
                     // check for large craft ammo explosions here: damage vented through armor, excess
                     // dissipating, much like Tank CASE.
                     if (ammoExplosion && te.isLargeCraft()) {
@@ -24670,7 +24671,7 @@ public class Server extends SocketServer {
                         }
                     }
                 }
-                
+
             }
 
             // If damage remains, loop to next location; if not, be sure to stop
@@ -24790,7 +24791,7 @@ public class Server extends SocketServer {
     /**
      * Apply damage to an Entity carrying external battlearmor or protomech
      * when a location with a trooper present is hit.
-     * 
+     *
      * @param te             The carrying Entity
      * @param hit            The hit to resolve
      * @param damage         The amount of damage to be allocated
@@ -24811,7 +24812,7 @@ public class Server extends SocketServer {
             passengerDamage = 0;
         }
         passHit.setGeneralDamageType(hit.getGeneralDamageType());
-        
+
         if (passengerDamage > 0) {
             // Yup. Roll up some hit data for that passenger.
             r = new Report(6075);
@@ -26068,7 +26069,7 @@ public class Server extends SocketServer {
             reports.addElement(r);
             stealth.setMode("Off");
         }
-        
+
         // Handle equipment explosions.
         // Equipment explosions are secondary effects and
         // do not occur when loading from a scenario.
@@ -26082,7 +26083,7 @@ public class Server extends SocketServer {
         if (mounted.getBaseShotsLeft() > 0) {
             mounted.setShotsLeft(0);
         }
-        
+
         // LAMs that are part of a fighter squadron will need to have the squadron recalculate
         // the bomb loadout on a bomb bay critical.
         if (en.isPartOfFighterSquadron()
@@ -26130,7 +26131,7 @@ public class Server extends SocketServer {
                         }
                     }
                 }
-                
+
                 //First check whether this hit takes out the whole crew; for multi-crew cockpits
                 //we need to check the other critical positions (if any).
                 boolean allDead = true;
@@ -26614,7 +26615,7 @@ public class Server extends SocketServer {
                 r.subject = aero.getId();
                 if (fuelroll >= boomTarget) {
                     // A chance to reroll the explosion with edge
-                    if (aero.getCrew().hasEdgeRemaining() 
+                    if (aero.getCrew().hasEdgeRemaining()
                             && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
                         // Reporting this is funky because 9120 only has room for 2 choices. Replace it.
                         r = new Report(9123);
@@ -26819,7 +26820,7 @@ public class Server extends SocketServer {
                                 boomTarget = 10;
                                 r.choose(ammoRoll >= boomTarget);
                                 // A chance to reroll an explosion with edge
-                                if (aero.getCrew().hasEdgeRemaining() 
+                                if (aero.getCrew().hasEdgeRemaining()
                                         && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
                                         && ammoRoll >= boomTarget) {
                                     // Report 9156 doesn't offer the right choices. Replace it.
@@ -26878,7 +26879,7 @@ public class Server extends SocketServer {
                             int ammoroll = Compute.d6(2);
                             if (ammoroll >= 10) {
                                 // A chance to reroll an explosion with edge
-                                if (aero.getCrew().hasEdgeRemaining() 
+                                if (aero.getCrew().hasEdgeRemaining()
                                         && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
                                     aero.getCrew().decreaseEdge();
                                     r = new Report(6530);
@@ -26907,7 +26908,7 @@ public class Server extends SocketServer {
                         }
                     }
                     // If the weapon is explosive, use edge to roll up a new one
-                    if (aero.getCrew().hasEdgeRemaining() 
+                    if (aero.getCrew().hasEdgeRemaining()
                             && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
                             && (weapon.getType().isExplosive(weapon) && !weapon.isHit()
                                     && !weapon.isDestroyed())) {
@@ -27093,7 +27094,7 @@ public class Server extends SocketServer {
 
     /**
      * Selects random undestroyed bay and applies damage, destroying loaded units where applicable.
-     * 
+     *
      * @param aero           The unit that received the cargo critical.
      * @param damageCaused   The amount of damage applied by the hit that resulted in the cargo critical.
      * @param reports        Used to return any report generated while applying the critical.
@@ -27159,7 +27160,7 @@ public class Server extends SocketServer {
             r.subject = aero.getId();
             r.add(hitBay.getBayNumber());
             if (destroyed == (int) destroyed) {
-                r.add((int) destroyed); 
+                r.add((int) destroyed);
             } else {
                 r.add(String.valueOf(Math.ceil(destroyed * 2.0) / 2.0));
             }
@@ -27593,18 +27594,18 @@ public class Server extends SocketServer {
     /**
      * Makes any roll required when an AirMech lands and resolve any damage or
      * skidding resulting from a failed roll. Updates final position and elevation.
-     * 
+     *
      * @param en    the landing LAM
      * @param pos   the <code>Coords</code> of the landing hex
      * @param elevation    the elevation from which the landing is attempted (usually 1, but may be higher
      *                          if the unit is forced to land due to insufficient movement
-     * @param lastStep  the <code>MoveStep</code> just before the attempted landing                         
+     * @param lastStep  the <code>MoveStep</code> just before the attempted landing
      * @param distance  the distance the unit moved in the turn prior to landing
      */
     private Vector<Report> landAirMech(LandAirMech lam, Coords pos, int elevation,
             int distance) {
         Vector<Report> vDesc = new Vector<>();
-        
+
         lam.setPosition(pos);
         IHex hex = game.getBoard().getHex(pos);
         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -27619,19 +27620,19 @@ public class Server extends SocketServer {
         }
         return vDesc;
     }
-    
+
     private boolean crashAirMech(Entity en, PilotingRollData psr, Vector<Report> vDesc) {
         return crashAirMech(en, en.getPosition(), en.getElevation(), en.delta_distance,
                 psr, vDesc);
     }
-    
+
     private boolean crashAirMech(Entity en, Coords pos, int elevation, int distance,
             PilotingRollData psr, Vector<Report> vDesc) {
         MoveStep step = new MoveStep(null, MoveStepType.DOWN);
         step.setFromEntity(en, game);
         return crashAirMech(en, pos, elevation, distance, psr, step, vDesc);
     }
-    
+
     private boolean crashAirMech(Entity en, Coords pos, int elevation, int distance,
             PilotingRollData psr, MoveStep lastStep, Vector<Report> vDesc) {
         vDesc.addAll(doEntityFallsInto(en, elevation, pos, pos, psr, true, 0));
@@ -27639,21 +27640,21 @@ public class Server extends SocketServer {
                 || processSkid(en, pos, 0, 0, distance,
                         lastStep, en.moved, false);
     }
-    
+
     /**
      * Makes the landing roll required for a glider protomech and resolves any damage
      * resulting from a failed roll. Updates final position and elevation.
-     * 
+     *
      * @param en    the landing glider protomech
      */
     private Vector<Report> landGliderPM(Protomech en) {
         return landGliderPM(en, en.getPosition(), en.getElevation(), en.delta_distance);
     }
-    
+
     /**
      * Makes the landing roll required for a glider protomech and resolves any damage
      * resulting from a failed roll. Updates final position and elevation.
-     * 
+     *
      * @param en    the landing glider protomech
      * @param pos   the <code>Coords</code> of the landing hex
      * @param elevation    the elevation from which the landing is attempted (usually 1, but may be higher
@@ -27663,7 +27664,7 @@ public class Server extends SocketServer {
     private Vector<Report> landGliderPM(Protomech en, Coords pos, int startElevation,
             int distance) {
         Vector<Report> vDesc = new Vector<>();
-        
+
         en.setPosition(pos);
         IHex hex = game.getBoard().getHex(pos);
         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -27682,7 +27683,7 @@ public class Server extends SocketServer {
         }
         return vDesc;
     }
-    
+
     /**
      * Resolves the forced landing of one airborne {@code VTOL} or {@code WiGE}
      * in its current hex. As this method is only for internal use and not part
@@ -28219,7 +28220,7 @@ public class Server extends SocketServer {
             String reason, int target, int damage, boolean isCapital) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
-        
+
         //Telemissiles don't take critical hits
         if (a instanceof TeleMissile) {
             return vDesc;
@@ -28274,7 +28275,7 @@ public class Server extends SocketServer {
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
             int critMod, boolean rollNumber, boolean isCapital, int damage,
             boolean damagedByFire) {
-        
+
         if (en.hasQuirk("poor_work")) {
             critMod += 1;
         }
@@ -28993,15 +28994,15 @@ public class Server extends SocketServer {
             while (iter.hasMoreElements()) {
                 int mechWarriorId = iter.nextElement();
                 Entity mw = game.getEntity(mechWarriorId);
-                
+
                 // in some situations, a "picked up" mechwarrior won't actually exist
                 // probably this is brought about by picking up a mechwarrior in a previous MekHQ scenario
-                // then having the same unit get blown up in a subsequent scenario 
+                // then having the same unit get blown up in a subsequent scenario
                 // in that case, we simply move on
                 if(mw == null) {
                     continue;
                 }
-                
+
                 mw.setDestroyed(true);
                 // We can safely remove these, as they can't be targeted
                 game.removeEntity(mw.getId(), condition);
@@ -29126,7 +29127,7 @@ public class Server extends SocketServer {
                 }
 
             } // End unit-is-transported
-            
+
             // Is this unit towing some trailers?
             // If so, disconnect them
             if (!entity.getAllTowedUnits().isEmpty()) {
@@ -29135,7 +29136,7 @@ public class Server extends SocketServer {
                 Entity leadTrailer = game.getEntity(entity.getAllTowedUnits().get(0));
                 disconnectUnit(entity, leadTrailer, entity.getPosition());
             }
-            
+
             // Is this unit a trailer being towed? If so, disconnect it from its tractor
             if (entity.getTractor() != Entity.NONE) {
                 Entity tractor = game.getEntity(entity.getTractor());
@@ -29247,7 +29248,7 @@ public class Server extends SocketServer {
             logError(METHOD_NAME, "Called on destroyed equipment(" + mounted.getName() + ")");
             return vDesc;
         }
-        
+
         // Special case: LAM bomb bays explode the bomb stored there, which may involve going through a
         // launch weapon to the bomb ammo.
         if ((mounted.getType() instanceof MiscType)
@@ -29274,7 +29275,7 @@ public class Server extends SocketServer {
                 }
             }
         }
-        
+
         // Special case: discharged M- and B-pods shouldn't explode.
         if (((mounted.getType() instanceof MPodWeapon) || (mounted.getType() instanceof BPodWeapon))
             && (mounted.getLinked().getHittableShotsLeft() == 0)) {
@@ -29348,20 +29349,20 @@ public class Server extends SocketServer {
         // Inferno ammo causes heat buildup as well as the damage
         if ((mounted.getType() instanceof AmmoType)
                 && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM)
-                        || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM_IMP) 
-                        || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_IATM) 
+                        || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM_IMP)
+                        || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_IATM)
                         || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_MML))
                 && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_INFERNO)
                 && (mounted.getHittableShotsLeft() > 0)) {
             en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
         }
-        
+
         // Inferno bombs in LAM bomb bays
         if ((mounted.getType() instanceof BombType)
                 && (((BombType)mounted.getType()).getBombType() == BombType.B_INFERNO)) {
             en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
         }
-        
+
         // determine and deal damage
         int damage = mounted.getExplosionDamage();
 
@@ -29986,7 +29987,7 @@ public class Server extends SocketServer {
 
     private Vector<Report> checkPilotAvoidFallDamage(Entity entity, int fallHeight, PilotingRollData roll) {
         Vector<Report> reports = new Vector<>();
-        
+
         if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                 || entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             return reports;
@@ -31350,7 +31351,7 @@ public class Server extends SocketServer {
                             pos++;
                         }
                     }
-                    
+
                     // NC3 Checks
                     if (entity.hasNavalC3() && (C3iSet == false)) {
                         entity.setC3NetIdSelf();
@@ -31830,9 +31831,9 @@ public class Server extends SocketServer {
                 }
             }
         }
-        
+
         // during deployment this absolutely must be called before game.removeEntity(), otherwise the game hangs
-        // when a unit is removed. Cause unknown. 
+        // when a unit is removed. Cause unknown.
         send(createRemoveEntityPacket(ids, IEntityRemovalConditions.REMOVE_NEVER_JOINED));
 
         // Prevents deployment hanging. Only do this during deployment.
@@ -32575,9 +32576,9 @@ public class Server extends SocketServer {
     private static final String INVADER_ZIM_CALL = "What does the G stand for?";
 
     private static final String INVADER_ZIM_RESPONSE = "I dont know.";
-    
+
     private static final String WARGAMES_CALL = "Shall we play a game?";
-    
+
     private static final String WARGAMES_RESPONSE = "Let's play global thermonuclear war.";
 
     /**
@@ -33441,7 +33442,7 @@ public class Server extends SocketServer {
         boolean collapse = false;
 
         boolean basementCollapse = false;
-        
+
         boolean topFloorCollapse = false;
 
         if (checkBecauseOfDamage && (currentCF <= 0)) {
@@ -33742,8 +33743,8 @@ public class Server extends SocketServer {
      *            building
      * @param topFloor
      *            - A <code>boolean</code> indicating that only the top floor collapses
-     *              (from a WiGE flying over the top).            
-     *            
+     *              (from a WiGE flying over the top).
+     *
      */
     public void collapseBuilding(Building bldg,
             Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
@@ -34107,14 +34108,14 @@ public class Server extends SocketServer {
                 final int startingCF = curCF;
                 curCF -= Math.min(curCF, damage);
                 bldg.setCurrentCF(curCF, coords);
-                
+
                 r = new Report(6436, Report.PUBLIC);
                 r.indent(1);
                 String fontColorOpen = curCF <= 0 ? "<font color='C00000'>" : "";
                 String fontColorClose = curCF <= 0 ? "</font>" : "";
                 r.add(String.format("%s%s%s", fontColorOpen, curCF, fontColorClose));
                 vPhaseReport.add(r);
-                
+
                 final int damageThresh = (int) Math.ceil(bldg.getPhaseCF(coords) / 10.0);
 
                 // If the CF is zero, the building should fall.
@@ -35018,7 +35019,7 @@ public class Server extends SocketServer {
                         }
                         vDesc.addAll(damageCrew(entity, damage, crewPos));
                     }
-    
+
                     // If this is a skin of the teeth ejection...
                     if (skin_of_the_teeth && (entity.getCrew().getHits(crewPos) < 6)) {
                         Report.addNewline(vDesc);

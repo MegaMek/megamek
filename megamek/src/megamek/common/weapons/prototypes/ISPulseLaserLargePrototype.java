@@ -43,6 +43,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
         setInternalName("ISLargePulseLaserPrototype");
         addLookupName("IS Pulse Large Laser Prototype");
         addLookupName("IS Prototype Large Pulse Laser");
+        shortName = "Large Pulse Laser (P)";
         flags = flags.or(F_PROTOTYPE);
         heat = 10;
         damage = 9;

@@ -80,29 +80,29 @@ public class TestAero extends TestEntity {
      *
      */
     public static enum AeroArmor{
-        STANDARD(EquipmentType.T_ARMOR_STANDARD,0,false),   
-        CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM,1,true),
-        FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR,2,true),
-        CLAN_REACTIVE(EquipmentType.T_ARMOR_REACTIVE,1,true),
-        CLAN_REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE,1,true),
+        STANDARD(EquipmentType.T_ARMOR_STANDARD, 0, 0, false),   
+        CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 1, 1, true),
+        FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR, 2, 1, true),
+        CLAN_REACTIVE(EquipmentType.T_ARMOR_REACTIVE, 1, 1, true),
+        CLAN_REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE, 1, 1, true),
         ANTI_PENETRATIVE_ABLATION(
-                EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION,1,false),
+                EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION, 1, 1, false),
         BALLISTIC_REINFORCED(
-                EquipmentType.T_ARMOR_BALLISTIC_REINFORCED,2,false),
-        FERRO_ALUM(EquipmentType.T_ARMOR_ALUM,2,false),
-        FERRO_PROTO(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO,3,false),        
-        HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM,4,false),
-        LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM,1,false),
-        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER,0,false),        
-        REACTIVE(EquipmentType.T_ARMOR_REACTIVE,3,false),        
-        REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE,2,false),
-        STEALTH_VEHICLE(EquipmentType.T_ARMOR_STEALTH_VEHICLE,2,false);
+                EquipmentType.T_ARMOR_BALLISTIC_REINFORCED, 2, 1, false),
+        FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 2, 1, false),
+        FERRO_PROTO(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, 3, 1, false),        
+        HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM, 4, 2, false),
+        LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM, 1, 1, false),
+        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER, 0, 0, false),        
+        REACTIVE(EquipmentType.T_ARMOR_REACTIVE, 3, 1, false),        
+        REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE, 2, 1, false),
+        STEALTH_VEHICLE(EquipmentType.T_ARMOR_STEALTH_VEHICLE, 2, 1, false);
 
         /**
          * The type, corresponding to types defined in 
          * <code>EquipmentType</code>.
          */
-        public int type;
+        public final int type;
         
         /**
          * The number of spaces occupied by the armor type.  Armors that take 
@@ -110,16 +110,23 @@ public class TestAero extends TestEntity {
          * each wing, 3 takes up space in both wings and the aft, 4 takes up
          * space in each possible arc (nose, aft, left wing, right wing).
          */
-        public int space;
+        public final int space;
+        
+        /**
+         * The number of weapon spaces occupied by patchwork armor. Unlike standard armor, patchwork
+         * armor takes up slots in the location where it's used.
+         */
+        public final int patchworkSpace;
         
         /**
          * Denotes whether this armor is Clan or not.
          */
         public boolean isClan;
         
-        AeroArmor(int t, int s, boolean c){
+        private AeroArmor(int t, int s, int p, boolean c){
             type = t;
             space = s;
+            patchworkSpace = p;
             isClan = c;
         }
         
@@ -149,6 +156,7 @@ public class TestAero extends TestEntity {
             String name = EquipmentType.getArmorTypeName(type, isClan);
             return EquipmentType.get(name);
         }
+        
     }
     
     /**
@@ -286,31 +294,44 @@ public class TestAero extends TestEntity {
      * @param a  The aero in question
      * @return   Returns an int array, where each element corresponds to a 
      *           location and the value is the number of weapons the Aero can
-     *           have in that location
+     *           have in that location. Returns null if the space cannot be determined
+     *           due to illegal armor type value.
      */
-    public static int[] availableSpace(Aero a){
+    public static @Nullable int[] availableSpace(Aero a){
         // Keep track of the max space we have in each arc
         int slots = slotsPerArc(a);
         int availSpace[] = 
             { slots, slots, slots, slots };
         
-        // Get the armor type, to determine how much space it uses
-        AeroArmor armor = 
-                AeroArmor.getArmor(a.getArmorType(Aero.LOC_NOSE),
-                                   a.isClanArmor(Aero.LOC_NOSE));
-        
-        if (armor == null){            
-            return null;
-        }
-        // Remove space for each location until we've allocated the armor
-        int spaceUsedByArmor = armor.space;
-        int loc = (spaceUsedByArmor != 2) ? Aero.LOC_AFT : Aero.LOC_RWING;
-        while (spaceUsedByArmor > 0){
-            availSpace[loc]--;
-            spaceUsedByArmor--;
-            loc--;
-            if (loc < 0){
-                loc = Aero.LOC_AFT;
+        if (!a.hasPatchworkArmor()) {
+            // Get the armor type, to determine how much space it uses
+            AeroArmor armor = 
+                    AeroArmor.getArmor(a.getArmorType(Aero.LOC_NOSE),
+                                       a.isClanArmor(Aero.LOC_NOSE));
+            
+            if (armor == null){            
+                return null;
+            }
+            // Remove space for each location until we've allocated the armor
+            int spaceUsedByArmor = armor.space;
+            int loc = (spaceUsedByArmor != 2) ? Aero.LOC_AFT : Aero.LOC_RWING;
+            while (spaceUsedByArmor > 0){
+                availSpace[loc]--;
+                spaceUsedByArmor--;
+                loc--;
+                if (loc < 0){
+                    loc = Aero.LOC_AFT;
+                }
+            }
+        } else {
+            for (int loc = 0; loc < Aero.LOC_WINGS; loc++) {
+                AeroArmor armor = AeroArmor.getArmor(a.getArmorType(loc),
+                        a.isClanArmor(loc));
+                if (null == armor) {
+                    return null;
+                } else {
+                    availSpace[loc] -= armor.patchworkSpace;
+                }
             }
         }
         // Blue shield particle field dampener takes one slot in each arc.

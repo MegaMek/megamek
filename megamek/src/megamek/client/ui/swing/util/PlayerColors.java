@@ -96,7 +96,7 @@ public class PlayerColors {
     }
 
     public static Color getAdvColor(int colorIndex, int plrIndex) {
-        if (colorIndex > advancedColorRGBs.length) {
+        if (colorIndex >= advancedColorRGBs.length) {
             return getColor(plrIndex);
         }
         int colour = advancedColorRGBs[colorIndex];
@@ -106,7 +106,7 @@ public class PlayerColors {
     }
 
     public static int getAdvColorRGB(int colorIndex, int plrIndex) {
-        if (colorIndex > advancedColorRGBs.length) {
+        if (colorIndex >= advancedColorRGBs.length) {
             return getColorRGB(plrIndex);
         }
         return advancedColorRGBs[colorIndex];

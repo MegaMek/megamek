@@ -33,6 +33,7 @@ public class ISLaserPrimitiveLarge extends LaserWeapon {
         this.setInternalName(this.name);
         this.addLookupName("IS Large Laser Prototype");
         this.addLookupName("ISLargeLaserPrototype");
+        this.shortName = "Large Laser p";
         this.heat = 12;
         this.damage = 8;
         this.shortRange = 5;

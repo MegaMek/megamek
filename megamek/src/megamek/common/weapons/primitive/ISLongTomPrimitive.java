@@ -39,6 +39,7 @@ public class ISLongTomPrimitive extends ArtilleryWeapon {
         name = "Primitive Prototype Long Tom Artillery";
         setInternalName("ISPrimitiveLongTom");
         addLookupName("ISPrimitiveLongTomArtillery");
+        this.shortName = "Long Tom p";
         heat = 20;
         rackSize = 25;
         ammoType = AmmoType.T_LONG_TOM_PRIM;

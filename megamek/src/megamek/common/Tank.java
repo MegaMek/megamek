@@ -3312,6 +3312,22 @@ public class Tank extends Entity {
     public boolean canSpot() {
         return super.canSpot() && (getStunnedTurns() == 0);
     }
+    
+    /**
+     * Convenience function that determines if this tank can issue an "unjam weapon" command.
+     * @return True if there are any jammed weapons and the crew isn't stunned
+     */
+    public boolean canUnjamWeapon() {
+        return getJammedWeapons().size() > 0 && getStunnedTurns() <= 0;
+    }
+    
+    /** 
+     * Convenience function that determines if this tank can issue a "clear turret" command.
+     * @return True if there are any jammed turrets and the crew isn't stunned
+     */
+    public boolean canClearTurret() {
+        return (m_bTurretJammed || m_bDualTurretJammed) && getStunnedTurns() <= 0;
+    }
 
     public void addJammedWeapon(Mounted weapon) {
         jammedWeapons.add(weapon);
@@ -3612,6 +3628,8 @@ public class Tank extends Entity {
                 case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
                 case EquipmentType.T_ARMOR_REFLECTIVE:
                 case EquipmentType.T_ARMOR_HARDENED:
+                case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
+                case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
                     usedSlots++;
                     break;
                 case EquipmentType.T_ARMOR_STEALTH_VEHICLE:
@@ -3627,7 +3645,26 @@ public class Tank extends Entity {
                 default:
                     break;
             }
-
+        } else {
+            for (int loc = 1; loc < locations(); loc++) {
+                switch (getArmorType(loc)) {
+                    case EquipmentType.T_ARMOR_HEAVY_FERRO:
+                        usedSlots += 2;
+                        break;
+                    case EquipmentType.T_ARMOR_FERRO_FIBROUS:
+                    case EquipmentType.T_ARMOR_LIGHT_FERRO:
+                    case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                    case EquipmentType.T_ARMOR_REFLECTIVE:
+                    case EquipmentType.T_ARMOR_STEALTH_VEHICLE:
+                    case EquipmentType.T_ARMOR_REACTIVE:
+                    case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
+                    case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
+                        usedSlots++;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         return availableSlots - usedSlots;
     }

@@ -32,6 +32,7 @@ public class PrototypeRL20 extends PrototypeRLWeapon {
         name = "Prototype Rocket Launcher 20";
         setInternalName("RocketLauncher20Prototype");
         addLookupName("CLRocketLauncher20Prototype");
+        shortName = "RL/20 (P)";
         heat = 5;
         rackSize = 20;
         shortRange = 3;

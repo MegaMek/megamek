@@ -1,16 +1,18 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common.net;
 
@@ -116,7 +118,7 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Creates new client (connection from client to server) connection
-     * 
+     *
      * @param host target host
      * @param port target port
      * @param id connection ID
@@ -130,7 +132,7 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Creates new Server connection
-     * 
+     *
      * @param socket accepted socket
      * @param id connection ID
      */
@@ -142,7 +144,7 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Returns <code>true</code> if it's the Server connection
-     * 
+     *
      * @return <code>true</code> if it's the Server connection
      */
     public boolean isServer() {
@@ -150,8 +152,9 @@ public abstract class AbstractSocketConnection implements IConnection {
     }
 
     /**
+     *
      * Sets the type of the marshalling used to send packets
-     * 
+     *
      * @param marshallingType new marhalling type
      */
     protected void setMarshallingType(int marshallingType) {
@@ -163,7 +166,7 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Opens the connection
-     * 
+     *
      * @return <code>true</code> on success, <code>false</code> otherwise
      */
     public synchronized boolean open() {
@@ -205,14 +208,14 @@ public abstract class AbstractSocketConnection implements IConnection {
         }
         processConnectionEvent(new DisconnectedEvent(this));
     }
-    
+
     public boolean isClosed(){
-        return (socket == null) || socket.isClosed(); 
+        return (socket == null) || socket.isClosed();
     }
 
     /**
      * Returns the connection ID
-     * 
+     *
      * @return the connection ID
      */
     public int getId() {
@@ -221,7 +224,7 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Sets the connection ID
-     * 
+     *
      * @param id new connection ID Be careful with this...
      */
     public void setId(int id) {
@@ -236,6 +239,8 @@ public abstract class AbstractSocketConnection implements IConnection {
     }
 
     /**
+     *
+     *
      * Adds a packet to the send queue to be send on a seperate thread.
      */
     public synchronized void send(Packet packet) {
@@ -258,7 +263,7 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Returns <code>true</code> if there are pending packets
-     * 
+     *
      * @return <code>true</code> if there are pending packets
      */
     public synchronized boolean hasPending() {
@@ -267,7 +272,7 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Returns a very approximate count of how many bytes were sent
-     * 
+     *
      * @return a very approximate count of how many bytes were sent
      */
     public synchronized long bytesSent() {
@@ -276,7 +281,7 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Returns a very approximate count of how many bytes were received
-     * 
+     *
      * @return a very approximate count of how many bytes were received
      */
     public synchronized long bytesReceived() {
@@ -286,7 +291,7 @@ public abstract class AbstractSocketConnection implements IConnection {
     /**
      * Adds the specified connection listener to receive connection events from
      * connection.
-     * 
+     *
      * @param listener the connection listener.
      */
     public void addConnectionListener(ConnectionListener listener) {
@@ -295,7 +300,7 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Removes the specified connection listener.
-     * 
+     *
      * @param listener the connection listener.
      */
     public void removeConnectionListener(ConnectionListener listener) {
@@ -304,22 +309,22 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Reports receive exception to the <code>System.err</code>
-     * 
+     *
      * @param ex <code>Exception</code>
      * @param packet <code>Packet</code>
      */
     protected void reportSendException(Exception ex, SendPacket packet) {
         System.err.print(getConnectionTypeAbbrevation());
         System.err.print(" error sending command #");
-        System.err.print(packet.getCommand()); 
+        System.err.print(packet.getCommand());
         System.err.print(": ");
-        System.err.println(ex.getMessage()); 
+        System.err.println(ex.getMessage());
         reportLastCommands();
     }
 
     /**
      * Reports receive exception to the <code>System.err</code>
-     * 
+     *
      * @param ex <code>Exception</code>
      */
     protected void reportReceiveException(Exception ex) {
@@ -331,21 +336,19 @@ public abstract class AbstractSocketConnection implements IConnection {
     /**
      * Appends the receive exception report to the given
      * <code>StringBuffer</code>
-     * 
+     *
      * @param ex <code>Exception</code>
      */
     protected void reportReceiveException(Exception ex, StringBuffer buffer) {
         System.err.print(getConnectionTypeAbbrevation());
         System.err.print(" error reading command: ");
-        System.err.println(ex.getMessage()); 
+        System.err.println(ex.getMessage());
         reportLastCommands();
     }
 
     /**
      * Appends the last commands sent/received to the given
      * <code>StringBuffer</code>
-     * 
-     * @param buffer <code>StringBuffer</code> to add the report to
      */
     protected synchronized void reportLastCommands() {
         reportLastCommands(true);
@@ -358,8 +361,7 @@ public abstract class AbstractSocketConnection implements IConnection {
     /**
      * Appends the last commands sent or received to the given
      * <code>StringBuffer</code> dependig on the <code>sent</code> parameter
-     * 
-     * @param buffer <code>StringBuffer</code> to add the report to
+     *
      * @param sent indicates which commands (sent/received) should be reported
      */
     protected void reportLastCommands(boolean sent) {
@@ -367,7 +369,7 @@ public abstract class AbstractSocketConnection implements IConnection {
                 : debugLastFewCommandsReceived;
         System.err.print("    Last "); //$NON-NLS-1$
         System.err.print(buf.length());
-        System.err.print(" commands that were "); //$NON-NLS-1$ 
+        System.err.print(" commands that were "); //$NON-NLS-1$
         System.err.print(sent ? "sent" : "received"); //$NON-NLS-1$
         System.err.print(" (oldest first): "); //$NON-NLS-1$
         System.err.println(buf);
@@ -376,7 +378,7 @@ public abstract class AbstractSocketConnection implements IConnection {
     /**
      * Returns the the connection type abbrevation (client/server) that used in
      * the debug messages and so on.
-     * 
+     *
      * @return
      */
     protected String getConnectionTypeAbbrevation() {
@@ -385,7 +387,7 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Returns an input stream
-     * 
+     *
      * @return an input stream
      * @throws IOException
      */
@@ -395,7 +397,7 @@ public abstract class AbstractSocketConnection implements IConnection {
 
     /**
      * Returns an output stream
-     * 
+     *
      * @return an output stream
      * @throws IOException
      */
@@ -403,16 +405,16 @@ public abstract class AbstractSocketConnection implements IConnection {
         return socket.getOutputStream();
     }
 
-    
+
     protected int getSendBufferSize() throws SocketException{
         return socket.getSendBufferSize();
     }
-    
-    
+
+
     protected int getReceiveBufferSize() throws SocketException{
         return socket.getReceiveBufferSize();
     }
-        
+
     /**
      * Process all incoming data, blocking on the input stream until new input
      * is available.  This method should not be synchronized as it should only
@@ -494,14 +496,14 @@ public abstract class AbstractSocketConnection implements IConnection {
     /**
      * Reads a complete <code>NetworkPacket</code> must not block, must return
      * null instead
-     * 
+     *
      * @return the <code>NetworkPacket</code> that was sent.
      */
     protected abstract INetworkPacket readNetworkPacket() throws Exception;
 
     /**
      * Sends the data must not block for too long
-     * 
+     *
      * @param data data to send
      * @param zipped should the data be compressed
      * @throws Exception
@@ -515,7 +517,7 @@ public abstract class AbstractSocketConnection implements IConnection {
      */
     static class SendQueue {
 
-        private LinkedList<SendPacket> queue = 
+        private LinkedList<SendPacket> queue =
                 new LinkedList<SendPacket>();
         private boolean finished = false;
 
@@ -530,13 +532,13 @@ public abstract class AbstractSocketConnection implements IConnection {
 
         /**
          * Waits for a packet to appear in the queue and then returns it.
-         * 
+         *
          * @return the first available packet in the queue or null if none
          */
         public SendPacket getPacket() {
             if (!finished) {
                 return queue.poll();
-            } 
+            }
             return null;
         }
 
@@ -559,7 +561,7 @@ public abstract class AbstractSocketConnection implements IConnection {
     /**
      * Processes game events occurring on this connection by dispatching them to
      * any registered GameListener objects.unused
-     * 
+     *
      * @param event the game event.
      */
     protected void processConnectionEvent(ConnectionEvent event) {
@@ -629,21 +631,21 @@ public abstract class AbstractSocketConnection implements IConnection {
 
         /**
          * Returns data marshalling type
-         * 
+         *
          * @return data marshalling type
          */
         int getMarshallingType();
 
         /**
          * Returns packet data
-         * 
+         *
          * @return packet data
          */
         byte[] getData();
 
         /**
          * Returns <code>true</code> if data is compressed
-         * 
+         *
          * @return <code>true</code> if data is compressed
          */
         boolean isCompressed();

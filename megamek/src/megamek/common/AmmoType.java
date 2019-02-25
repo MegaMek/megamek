@@ -784,6 +784,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(base);
         base = AmmoType.createCLImprovedAC20Ammo();
         clanImprovedAcAmmo.add(base);
+        EquipmentType.addType(base);
         
         base = AmmoType.createCLPROAC2Ammo();
         clanProtoAcAmmo.add(base);

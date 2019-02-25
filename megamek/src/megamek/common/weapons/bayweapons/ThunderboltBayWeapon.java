@@ -49,7 +49,7 @@ public class ThunderboltBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
-        this.flags = flags.or(F_MISSILE);
+        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE);
         this.atClass = CLASS_THUNDERBOLT;
     }
     

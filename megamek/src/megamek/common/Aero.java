@@ -4055,90 +4055,7 @@ public class Aero extends Entity implements IAero, IBomber {
     // StratOps pg. 32 & 34
     @Override
     public void doDisbandDamage() {
-        // Damage Weapons. WeaponGroups are damaged, and this needs to match up with the fighter's
-        // actual Mounted equipment for MHQ resolution.
-        for (Mounted weaponGroup : getWeaponList()) {
-            int loc = weaponGroup.getLocation();
-            // Loop through and find all weapons with the same location as the group
-            if (areWingsHit()) {
-                // Handle both wings. If the weaponGroup has been hit, both wings were hit.
-                // Otherwise just the areWingsHit flag indicates that only 1 wing was hit.
-                if (loc == Aero.LOC_WINGS && weaponGroup.isHit()) {
-                    for (Mounted weapon : weaponList) {
-                        if (weapon.getLocation() == Aero.LOC_LWING || weapon.getLocation() == Aero.LOC_RWING) {
-                            weapon.setHit(true);
-                            //Taharqa: We should also damage the critical slot, or
-                            //MM and MHQ won't remember that this weapon is damaged on the MUL
-                            //file
-                            for (int i = 0; i < getNumberOfCriticals(weapon.getLocation()); i++) {
-                                CriticalSlot slot1 = getCritical(weapon.getLocation(), i);
-                                if ((slot1 == null) ||
-                                        (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                                    continue;
-                                }
-                                Mounted mounted = slot1.getMount();
-                                if (mounted.equals(weapon)) {
-                                    hitAllCriticals(weapon.getLocation(), i);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    if (loc == Aero.LOC_WINGS) {
-                        int roll = Compute.d6();
-                        if (roll >= 4) {
-                            loc = Aero.LOC_RWING;
-                        } else {
-                            loc = Aero.LOC_LWING;
-                        }
-                    }
-                    for (Mounted weapon : weaponList) {
-                        if (weapon.getLocation() == loc) {
-                            weapon.setHit(true);
-                            //Taharqa: We should also damage the critical slot, or
-                            //MM and MHQ won't remember that this weapon is damaged on the MUL
-                            //file
-                            for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-                                CriticalSlot slot1 = getCritical(loc, i);
-                                if ((slot1 == null) ||
-                                        (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                                    continue;
-                                }
-                                Mounted mounted = slot1.getMount();
-                                if (mounted.equals(weapon)) {
-                                    hitAllCriticals(loc, i);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if (weaponGroup.isHit()) {
-                for (Mounted weapon : weaponList) {
-                    if (weapon.getLocation() == loc) {
-                        weapon.setHit(true);
-                        //Taharqa: We should also damage the critical slot, or
-                        //MM and MHQ won't remember that this weapon is damaged on the MUL
-                        //file
-                        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-                            CriticalSlot slot1 = getCritical(loc, i);
-                            if ((slot1 == null) ||
-                                    (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                                continue;
-                            }
-                            Mounted mounted = slot1.getMount();
-                            if (mounted.equals(weapon)) {
-                                hitAllCriticals(loc, i);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
         
-        // Now deal with armor and SI
         int dealt = 0;
 
         // Check for critical threshold and if so damage all armor on one facing
@@ -4182,6 +4099,34 @@ public class Aero extends Entity implements IAero, IBomber {
                 setArmor(0, loc);
             }
             damage -= damPerHit;
+        }
+    }
+    
+    /**
+     * Damage a capital fighter's weapons. WeaponGroups are damaged by critical hits. 
+     * This matches up the individual fighter's weapons and critical slots and damages those
+     * for MHQ resolution
+     * @param loc - Int corresponding to the location struck
+     */
+    public void damageCapFighterWeapons(int loc) {
+        for (Mounted weapon : weaponList) {
+            if (weapon.getLocation() == loc) {
+                //Damage the weapon
+                weapon.setHit(true);
+                //Damage the critical slot
+                for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+                    CriticalSlot slot1 = getCritical(loc, i);
+                    if ((slot1 == null) ||
+                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                        continue;
+                    }
+                    Mounted mounted = slot1.getMount();
+                    if (mounted.equals(weapon)) {
+                        hitAllCriticals(loc, i);
+                        break;
+                    }
+                }
+            }
         }
     }
 

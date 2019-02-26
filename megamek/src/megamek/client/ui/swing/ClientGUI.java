@@ -158,8 +158,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public MegaMekController controller = null;
     // keep me
-    ChatterBox cb;
-    public ChatterBox2 cb2;
+    protected ChatterBox cb;
+    protected AccesibilityWindow aw;
     public BoardView1 bv;
     private Component bvc;
     public JDialog mechW;
@@ -300,7 +300,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public void systemMessage(String message) {
         cb.systemMessage(message);
-        cb2.addChatMessage("Megamek: " + message);
     }
     
     /**
@@ -409,6 +408,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             die();
         }
 
+        cb = new ChatterBox(this);
+
+        aw = new AccesibilityWindow(cb, this);
+        aw.setLocation(0, 0);
+        aw.addWindowListener(this);
+        aw.setSize(300, 300);
+        aw.setVisible(true);
+
         layoutFrame();
         menuBar.addActionListener(this);
         frame.addWindowListener(new WindowAdapter() {
@@ -419,9 +426,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 die();
             }
         });
-        cb2 = new ChatterBox2(this, bv, controller);
-        bv.addDisplayable(cb2);
-        bv.addKeyListener(cb2);
         uo = new UnitOverview(this);
         bv.addDisplayable(uo);
         int x;
@@ -532,9 +536,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         minimapW.setLocation(x, y);
         minimapW.addWindowListener(this);
         minimapW.add(minimap);
-        cb = new ChatterBox(this);
-        cb.setChatterBox2(cb2);
-        cb2.setChatterBox(cb);
         client.changePhase(IGame.Phase.PHASE_UNKNOWN);
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
         if (!MechSummaryCache.getInstance().isInitialized()) {

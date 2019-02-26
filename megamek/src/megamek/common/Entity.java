@@ -9074,11 +9074,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         String str = "Entity [" + getDisplayName() + ", " + getId() + "]: ";
         if (getPosition() != null) {
             str = str + "Location: (" + (getPosition().getX() + 1) + ", "
-                  + (getPosition().getY() + 1) + ") ";
+                    + (getPosition().getY() + 1) + ") Facing: "+ getFacingAsString();
         }
-        str = str + "Owner: " + owner.getName() + " Armor: " + getTotalArmor()
-              + "/" + getTotalOArmor() + " Internal Structure: "
-              + getTotalInternal() + "/" + getTotalOInternal();
+        str += " Movement: " + getMovementString(this.moved) + " " + this.delta_distance + " hexes. ";
+        str += " Owner: " + owner.getName() + " Armor: " + getTotalArmor()
+                + "/" + getTotalOArmor() + " Internal Structure: "
+                + getTotalInternal() + "/" + getTotalOInternal();
 
         if (!isActive()) {
             str += " Inactive";
@@ -9094,6 +9095,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         return str;
+    }
+
+    public String getFacingAsString() {
+        switch(getFacing()) {
+            case 0: return "N";
+            case 1: return "NE";
+            case 2: return "SE";
+            case 3: return "S";
+            case 4: return "SW";
+            case 5: return "NW";
+        }
+        return "Unk";
     }
 
     /**

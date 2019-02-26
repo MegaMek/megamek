@@ -11,7 +11,7 @@ import megamek.client.Client;
 import megamek.common.Entity;
 
 /**
- * @author dirk 
+ * @author arlith
  * This command exists to print entity information to the chat
  * window, it's primarily intended for vissually impaired users.
  */

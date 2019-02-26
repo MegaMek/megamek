@@ -26824,13 +26824,19 @@ public class Server implements Runnable {
             case Aero.CRIT_WEAPON:
                 if (aero.isCapitalFighter()) {
                     boolean destroyAll = false;
+                    // CRIT_WEAPON damages the capital fighter/squadron's weapon groups
+                    // Go ahead and map damage for the fighter's weapon criticals for MHQ
+                    // resolution.
+                    aero.damageCapFighterWeapons(loc);
+                    if ((loc == Aero.LOC_NOSE) || (loc == Aero.LOC_AFT)) {
+                        destroyAll = true;
+                    }
+                    
                     // Convert L/R wing location to wings, else wing weapons never get hit
                     if (loc == Aero.LOC_LWING || loc == Aero.LOC_RWING) {
                         loc = Aero.LOC_WINGS;
                     }
-                    if ((loc == Aero.LOC_NOSE) || (loc == Aero.LOC_AFT)) {
-                        destroyAll = true;
-                    }
+                    
                     if (loc == Aero.LOC_WINGS) {
                         if (aero.areWingsHit()) {
                             destroyAll = true;
@@ -26841,13 +26847,13 @@ public class Server implements Runnable {
                     for (Mounted weap : aero.getWeaponList()) {
                         if (weap.getLocation() == loc) {
                             if (destroyAll) {
-                                weap.setHit(true);
+                                weap.setHit(true);                                
                             } else {
                                 weap.setNWeapons(weap.getNWeapons() / 2);
                             }
                         }
                     }
-                    // also destroy any ECM or BAP in this location
+                    // also destroy any ECM or BAP in the location hit
                     for (Mounted misc : aero.getMisc()) {
                         if ((misc.getType().hasFlag(MiscType.F_ECM)
                             || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)

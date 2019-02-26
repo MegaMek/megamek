@@ -8916,4 +8916,5 @@ public abstract class Mech extends Entity {
     public int getSpriteDrawPriority() {
         return 6;
     }
+
 }

@@ -31,7 +31,7 @@ public class DeployCommand extends ClientCommand {
         super(
                 client,
                 "deploy",
-                "This command deploys a given unit to the specified hex. Usage: '#deploy unit x y facing' where unit is the unit id number and x and y are the coordinates of the hex, and facing is the direction it's looking in. #deploy without any options will provide legal deployment zones.");
+                "This command deploys a given unit to the specified hex. Usage: '#deploy unit x y facing' where unit is the unit id number and x and y are the coordinates of the hex, and facing is one of N, NE, SE, S, SW, NW to denote the direction it's looking in. #deploy without any options will provide legal deployment zones.");
     }
 
     /*

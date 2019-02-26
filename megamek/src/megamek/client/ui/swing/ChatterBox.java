@@ -64,8 +64,6 @@ public class ChatterBox implements KeyListener {
     public LinkedList<String> history;
     public int historyBookmark = -1;
 
-    private ChatterBox2 cb2;
-
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
         client.getGame().addGameListener(new GameListenerAdapter() {
@@ -131,8 +129,7 @@ public class ChatterBox implements KeyListener {
         butDone = new JButton(Messages.getString("ChatterBox.ImDone")); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        chatPanel = new JPanel(new BorderLayout());
-        chatPanel.setLayout(new GridBagLayout());
+        chatPanel = new JPanel(new GridBagLayout());
 
         playerChatSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
                 scrPlayers, new JScrollPane(chatArea));
@@ -236,7 +233,6 @@ public class ChatterBox implements KeyListener {
             historyBookmark--;
             fetchHistory();
         }
-        cb2.setMessage(inputField.getText()+ev.getKeyChar());
         moveToEnd();
     }
 
@@ -246,10 +242,8 @@ public class ChatterBox implements KeyListener {
     public void fetchHistory() {
         try {
             inputField.setText(history.get(historyBookmark));
-            cb2.setMessage(inputField.getText());
         } catch (IndexOutOfBoundsException ioobe) {
             inputField.setText(""); //$NON-NLS-1$
-            cb2.setMessage(""); //$NON-NLS-1$
             historyBookmark = -1;
         }
     }
@@ -264,10 +258,6 @@ public class ChatterBox implements KeyListener {
 
     public void setMessage(String message) {
         inputField.setText(message);
-    }
-
-    public void setChatterBox2(ChatterBox2 cb2) {
-        this.cb2 = cb2;
     }
 
 

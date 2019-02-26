@@ -155,7 +155,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 }
                 if (clientgui.bv.getChatterBoxActive()){
                     clientgui.bv.setChatterBoxActive(false);
-                    clientgui.cb2.clearMessage();
                 // Users can draw movement envelope during the movement phase 
                 // even if it's not their turn, so we always want to be able
                 // to clear.  MovementDisplay.clear() can handle this case

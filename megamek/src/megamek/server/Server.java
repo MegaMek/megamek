@@ -26847,7 +26847,7 @@ public class Server implements Runnable {
                     for (Mounted weap : aero.getWeaponList()) {
                         if (weap.getLocation() == loc) {
                             if (destroyAll) {
-                                weap.setHit(true);                                
+                                weap.setHit(true);
                             } else {
                                 weap.setNWeapons(weap.getNWeapons() / 2);
                             }

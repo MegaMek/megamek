@@ -4055,7 +4055,7 @@ public class Aero extends Entity implements IAero, IBomber {
     // StratOps pg. 32 & 34
     @Override
     public void doDisbandDamage() {
-        
+
         int dealt = 0;
 
         // Check for critical threshold and if so damage all armor on one facing

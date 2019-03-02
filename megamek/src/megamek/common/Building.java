@@ -718,7 +718,7 @@ public class Building implements Serializable {
         if(this == obj) {
             return true;
         }
-        if((null == obj) || (getClass() != obj.getClass())) {
+        if(!(obj instanceof Building)) {
             return false;
         }
         // True until we're talking about more than one Board per Game.

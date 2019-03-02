@@ -862,7 +862,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                 heat += 2;
             }
-            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
+            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)) {
                 heat += 12;
             }
             if (mtype.hasFlag(MiscType.F_NOVA)) {

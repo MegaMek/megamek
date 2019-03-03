@@ -1880,7 +1880,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             boolean hasLos = LosEffects.calculateLos(game, cen, target)
                     .canSee();
             // In double blind, we need to "spot" the target as well as LoS
-            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+            if (hasLos
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && !Compute.inVisualRange(game, ce(), target)
                     && !Compute.inSensorRange(game, ce(), target, null)) {
                 hasLos = false;

@@ -2756,6 +2756,12 @@ public class Server implements Runnable {
                     if (currentSI > 0) {
                         a.setSI(currentSI);
                     }
+                    //Fix for #587. MHQ tracks fighters at standard scale and doesn't (currently)
+                    //track squadrons. Squadrons don't save to MUL either, so... only convert armor for JS/WS/SS?
+                    //Do we ever need to save capital fighter armor to the final MUL or entityStatus?
+                    if (!entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                        scale = 1;
+                    }
                     if (scale > 1) {
                         for (int loc = 0; loc < entity.locations(); loc++) {
                             int currentArmor = entity.getArmor(loc) / scale;
@@ -26818,9 +26824,19 @@ public class Server implements Runnable {
             case Aero.CRIT_WEAPON:
                 if (aero.isCapitalFighter()) {
                     boolean destroyAll = false;
+                    // CRIT_WEAPON damages the capital fighter/squadron's weapon groups
+                    // Go ahead and map damage for the fighter's weapon criticals for MHQ
+                    // resolution.
+                    aero.damageCapFighterWeapons(loc);
                     if ((loc == Aero.LOC_NOSE) || (loc == Aero.LOC_AFT)) {
                         destroyAll = true;
                     }
+                    
+                    // Convert L/R wing location to wings, else wing weapons never get hit
+                    if (loc == Aero.LOC_LWING || loc == Aero.LOC_RWING) {
+                        loc = Aero.LOC_WINGS;
+                    }
+                    
                     if (loc == Aero.LOC_WINGS) {
                         if (aero.areWingsHit()) {
                             destroyAll = true;
@@ -26837,12 +26853,28 @@ public class Server implements Runnable {
                             }
                         }
                     }
-                    // also destroy any ECM or BAP in this location
+                    // also destroy any ECM or BAP in the location hit
                     for (Mounted misc : aero.getMisc()) {
-                        if (misc.getType().hasFlag(MiscType.F_ECM)
+                        if ((misc.getType().hasFlag(MiscType.F_ECM)
                             || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)
-                            || misc.getType().hasFlag(MiscType.F_BAP)) {
+                            || misc.getType().hasFlag(MiscType.F_BAP))
+                                && misc.getLocation() == loc) {
                             misc.setHit(true);
+                            //Taharqa: We should also damage the critical slot, or
+                            //MM and MHQ won't remember that this weapon is damaged on the MUL
+                            //file
+                            for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                                CriticalSlot slot1 = aero.getCritical(loc, i);
+                                if ((slot1 == null) ||
+                                        (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                    continue;
+                                }
+                                Mounted mounted = slot1.getMount();
+                                if (mounted.equals(misc)) {
+                                    aero.hitAllCriticals(loc, i);
+                                    break;
+                                }
+                            }
                         }
                     }
                     r = new Report(9152);
@@ -34564,6 +34596,13 @@ public class Server implements Runnable {
         // squadron
         if (target instanceof FighterSquadron) {
             return;
+        }
+        // If a squadron scores a kill, assign it randomly to one of the member fighters
+        if (attacker instanceof FighterSquadron) {
+            Entity killer = attacker.getLoadedUnits().get(Compute.randomInt(attacker.getLoadedUnits().size()));
+            if (killer != null) {
+                attacker = killer;
+            }
         }
         if ((target.isDoomed() || target.getCrew().isDoomed())
             && !target.getGaveKillCredit() && (attacker != null)) {

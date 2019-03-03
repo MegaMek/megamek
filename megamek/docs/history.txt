@@ -5,7 +5,9 @@ v0.45.4-SNAPSHOT
 + Data: New Sprites and Unit fixes.
 + PR #1258: Aero Sanity 2.0! Fixes a number of reporting bugs and adds full support for Advanced Point Defense, 
 	Glancing/Direct blows, S2S nuclear weapons and Bearings-Only Capital Missiles
-+ Issue #1272: Clan BA SRM missing Multi-Purpose Missiles 
++ Issue #1272: Clan BA SRM missing Multi-Purpose Missiles
++ Data: New Sprites and New Units.
++ Issue #1256: Magna Laser Rifle has range 0 instead of 2
 
 v0.45.3 (2019-02-12 0500 UTC)
 + PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.

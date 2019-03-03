@@ -9,6 +9,7 @@ v0.45.4-SNAPSHOT
 + Data: New Sprites and New Units.
 + Issue #1256: Magna Laser Rifle has range 0 instead of 2
 + Data: Fixing broken Protomeks in some RATs
++ PR #1278: Fix a soft-lock that would occur when using double-blind and the previous round's target would leave a unit's LOS
 
 v0.45.3 (2019-02-12 0500 UTC)
 + PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.

@@ -1,16 +1,18 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 /*
  * TechConstants.java
@@ -154,7 +156,7 @@ public class TechConstants {
      * because the options get stored as Strings instead of ints, but it's
      * easier to compare ints.
      *
-     * @param simpleLevel
+     * @param techLevel
      * @return
      */
     public static int getTechLevel(String techLevel) {
@@ -313,7 +315,7 @@ public class TechConstants {
         if ((equipmentTechlevel == T_ALL_IS) && !isClan(entityTechlevel)){
             return true;
         }
-        
+
         // IS box set can be in any IS
         if ((equipmentTechlevel == T_INTRO_BOXSET)
                 && ((entityTechlevel == T_IS_TW_NON_BOX)
@@ -326,7 +328,7 @@ public class TechConstants {
         }
 
         // IS TW stuff can be in any IS unit
-        if ((equipmentTechlevel == T_IS_TW_NON_BOX 
+        if ((equipmentTechlevel == T_IS_TW_NON_BOX
                     || equipmentTechlevel == T_TW_ALL
                     || equipmentTechlevel == T_IS_TW_ALL)
                 && ((entityTechlevel == T_IS_TW_ALL)
@@ -352,12 +354,12 @@ public class TechConstants {
                         || (entityTechlevel == T_IS_UNOFFICIAL) || (entityTechlevel == T_ALL))) {
             return true;
         }
-        
+
         // If the equipment is allowed to all clan and the entity is clan...
         if ((equipmentTechlevel == T_ALL_CLAN) && isClan(entityTechlevel)){
             return true;
         }
-        
+
         // clan advanced stuff can be in clan advanced or higher
         if ((equipmentTechlevel == T_CLAN_ADVANCED)
                 && ((entityTechlevel == T_CLAN_EXPERIMENTAL)
@@ -436,7 +438,7 @@ public class TechConstants {
     /**
      * Return the tech level of the given gyro. This is necessary because gyros
      * are systems and hence don't have MiscType entries.
-     * 
+     *
      * @param gyroType
      * @param isClan
      * @param year
@@ -523,7 +525,7 @@ public class TechConstants {
     /**
      * Return the tech level of the given cockpit. THis is necessary because
      * cockpits are systems and hence don't have MiscType entries.
-     * 
+     *
      * @param cockpitType
      * @param entityType
      * @param isClan
@@ -580,7 +582,7 @@ public class TechConstants {
                         return T_IS_EXPERIMENTAL;
                     } else if (year <= 2520) {
                         return T_IS_ADVANCED;
-                    } 
+                    }
                 case Mech.COCKPIT_PRIMITIVE_INDUSTRIAL:
                     if (isClan) {
                         return T_CLAN_UNOFFICIAL;
@@ -591,7 +593,7 @@ public class TechConstants {
                         return T_IS_EXPERIMENTAL;
                     } else if (year <= 2520) {
                         return T_IS_ADVANCED;
-                    } 
+                    }
                 case Mech.COCKPIT_INDUSTRIAL:
                     // Not sure how to handle the Adv. Fire Control One.
                     // With advanced Fire Control becomes Non-Box in 2491
@@ -736,7 +738,7 @@ public class TechConstants {
                  if (isClan) {
                          return T_CLAN_ADVANCED;
                      }
-     
+
                  if (year <= 2100) {
                      return T_IS_UNOFFICIAL;
                  } else if (year <= 2295) {

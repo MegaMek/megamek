@@ -43,6 +43,7 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
         setInternalName("ISMediumPulseLaserPrototype");
         addLookupName("IS Pulse Med Laser Prototype");
         addLookupName("IS Medium Pulse Laser Prototype");
+        shortName = "Medium Pulse Laser (P)";
         flags = flags.or(F_PROTOTYPE);
         heat = 4;
         damage = 6;

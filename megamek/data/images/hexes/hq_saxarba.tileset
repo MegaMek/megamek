@@ -80,44 +80,15 @@ super 10 "sand:*" "" "saxarba/base/base_sand_10.png"
 
 #MARS THEME WATER
 super * "water:0" "mars" "saxarba/theme_mars/water_anim_mars_0.gif"
-super * "water:1" "mars" "saxarba/theme_mars/water_anim_mars_1.gif"
-super * "water:2" "mars" "saxarba/theme_mars/water_anim_mars_2.gif"
-super * "water:3" "mars" "saxarba/theme_mars/water_anim_mars_3.gif"
-super * "water:4" "mars" "saxarba/theme_mars/water_anim_mars_4.gif"
-super * "water:*" "mars" "saxarba/theme_mars/water_anim_mars_4.gif"
 
 #LUNAR THEME WATER
 super * "water:0" "lunar" "saxarba/theme_lunar/water_lunar_0.png"
-super * "water:1" "lunar" "saxarba/theme_lunar/water_lunar_1.png"
-super * "water:2" "lunar" "saxarba/theme_lunar/water_lunar_2.png"
-super * "water:3" "lunar" "saxarba/theme_lunar/water_lunar_3.png"
-super * "water:4" "lunar" "saxarba/theme_lunar/water_lunar_4.png"
-super * "water:*" "lunar" "saxarba/theme_lunar/water_lunar_4.png"
 
 #VOLCANO THEME WATER
 super * "water:0" "volcano" "saxarba/theme_volcano/water_anim_volcano_0.gif"
-super * "water:1" "volcano" "saxarba/theme_volcano/water_anim_volcano_1.gif"
-super * "water:2" "volcano" "saxarba/theme_volcano/water_anim_volcano_2.gif"
-super * "water:3" "volcano" "saxarba/theme_volcano/water_anim_volcano_3.gif"
-super * "water:4" "volcano" "saxarba/theme_volcano/water_anim_volcano_4.gif"
-super * "water:*" "volcano" "saxarba/theme_volcano/water_anim_volcano_4.gif"
 
 #WATER
 super * "water:0" "" "saxarba/water/water_anim_0.gif"
-super * "water:1" "" "saxarba/water/water_anim_1.gif"
-super * "water:2" "" "saxarba/water/water_anim_2.gif"
-super * "water:3" "" "saxarba/water/water_anim_3.gif"
-super * "water:4" "" "saxarba/water/water_anim_4.gif"
-super * "water:*" "" "saxarba/water/water_anim_4.gif"
-
-#RAPIDS
-super * "rapids:1" "" "saxarba/water/rapids_anim.gif"
-super * "rapids:2" "" "saxarba/water/torrent_anim.gif"
-super * "rapids:*" "" "saxarba/water/torrent_anim.gif"
-
-#ICE
-super * "ice:1" "" "saxarba/misc/ice.png"
-super * "ice:*" "" "saxarba/misc/ice.png"
 
 #ELEVATOR
 super * "elevator:10" "" "saxarba/misc/elevator_10.png"
@@ -249,14 +220,29 @@ super * "planted_fields:5" "" "saxarba/misc/field_e.png"
 super * "planted_fields:6" "" "saxarba/misc/field_f.png"
 super * "planted_fields:*" "" "saxarba/misc/field_a.png;saxarba/misc/field_b.png;saxarba/misc/field_c.png;saxarba/misc/field_d.png;saxarba/misc/field_e.png;saxarba/misc/field_f.png"
 
+#GEYSER
+super * "geyser:1" "" "saxarba/misc/geyser_water_off.png"
+super * "geyser:2" "" "saxarba/misc/geyser_water_on.png"
+super * "geyser:3" "" "saxarba/misc/geyser_magma.png"
+super * "geyser:*" "" "saxarba/misc/geyser_magma.png"
+
 #FORTIFIED
 super * "fortified:*" "" "saxarba/misc/fortified.png"
 
 #HEAVY INDUSTRIAL
 super * "heavy_industrial:*" "" "saxarba/misc/heavy_industrial_a.png;saxarba/misc/heavy_industrial_b.png;saxarba/misc/heavy_industrial_c.png;saxarba/misc/heavy_industrial_d.png"
 
-#BRIDGES
-include "saxarba/BasicBridges.tileinc"
+#MARS THEME WATER
+super * "water:1" "mars" "saxarba/theme_mars/water_anim_mars_1.gif"
+
+#LUNAR THEME WATER
+super * "water:1" "lunar" "saxarba/theme_lunar/water_lunar_1.png"
+
+#VOLCANO THEME WATER
+super * "water:1" "volcano" "saxarba/theme_volcano/water_anim_volcano_1.gif"
+
+#WATER
+super * "water:1" "" "saxarba/water/water_anim_1.gif"
 
 #ROADS
 include "saxarba/BasicRoads.tileinc"
@@ -273,66 +259,124 @@ include "saxarba/FuelTanks.tileinc"
 super * "woods:1;fluff:12" "tropical" "saxarba/theme_tropical/orchard_tropical.png"
 super * "woods:1" "tropical" "saxarba/theme_tropical/woods_light_tropical_a.png;saxarba/theme_tropical/woods_light_tropical_b.png;saxarba/theme_tropical/woods_light_tropical_c.png;saxarba/theme_tropical/woods_light_tropical_d.png;saxarba/theme_tropical/woods_light_tropical_e.png;saxarba/theme_tropical/woods_light_tropical_f.png"
 super * "woods:2" "tropical" "saxarba/theme_tropical/woods_heavy_tropical_a.png;saxarba/theme_tropical/woods_heavy_tropical_b.png;saxarba/theme_tropical/woods_heavy_tropical_c.png;saxarba/theme_tropical/woods_heavy_tropical_d.png"
-super * "woods:3" "tropical" "saxarba/theme_tropical/woods_ultra_tropical.png"
 
 #SNOW THEME TREES
 super * "woods:1;fluff:12" "snow" "saxarba/theme_snow/orchard_snow.png"
 super * "woods:1" "snow" "saxarba/theme_snow/woods_light_snow_a.png;saxarba/theme_snow/woods_light_snow_b.png;saxarba/theme_snow/woods_light_snow_c.png;saxarba/theme_snow/woods_light_snow_d.png;saxarba/theme_snow/woods_light_snow_e.png;saxarba/theme_snow/woods_light_snow_f.png"
 super * "woods:2" "snow" "saxarba/theme_snow/woods_heavy_snow_a.png;saxarba/theme_snow/woods_heavy_snow_b.png;saxarba/theme_snow/woods_heavy_snow_c.png;saxarba/theme_snow/woods_heavy_snow_d.png"
-super * "woods:3" "snow" "saxarba/theme_snow/woods_ultra_snow.png"
 
 #LUNAR THEME TREES
 super * "woods:1;fluff:12" "lunar" "saxarba/theme_lunar/orchard_lunar.png"
 super * "woods:1" "lunar" "saxarba/theme_lunar/woods_light_lunar_a.png;saxarba/theme_lunar/woods_light_lunar_b.png;saxarba/theme_lunar/woods_light_lunar_c.png;saxarba/theme_lunar/woods_light_lunar_d.png;saxarba/theme_lunar/woods_light_lunar_e.png;saxarba/theme_lunar/woods_light_lunar_f.png"
 super * "woods:2" "lunar" "saxarba/theme_lunar/woods_heavy_lunar_a.png;saxarba/theme_lunar/woods_heavy_lunar_b.png;saxarba/theme_lunar/woods_heavy_lunar_c.png;saxarba/theme_lunar/woods_heavy_lunar_d.png"
-super * "woods:3" "lunar" "saxarba/theme_lunar/woods_ultra_lunar.png"
 
 #MARS THEME TREES
 super * "woods:1;fluff:12" "mars" "saxarba/theme_mars/orchard_mars.png"
 super * "woods:1" "mars" "saxarba/theme_mars/woods_light_mars_a.png;saxarba/theme_mars/woods_light_mars_b.png;saxarba/theme_mars/woods_light_mars_c.png;saxarba/theme_mars/woods_light_mars_d.png;saxarba/theme_mars/woods_light_mars_e.png;saxarba/theme_mars/woods_light_mars_f.png"
 super * "woods:2" "mars" "saxarba/theme_mars/woods_heavy_mars_a.png;saxarba/theme_mars/woods_heavy_mars_b.png;saxarba/theme_mars/woods_heavy_mars_c.png;saxarba/theme_mars/woods_heavy_mars_d.png"
-super * "woods:3" "mars" "saxarba/theme_mars/woods_ultra_mars.png"
 
 #GRASS THEME TREES
 super * "woods:1;fluff:12" "grass" "saxarba/theme_grass/orchard_grass.png"
 super * "woods:1" "grass" "saxarba/theme_grass/woods_light_grass_a.png;saxarba/theme_grass/woods_light_grass_b.png;saxarba/theme_grass/woods_light_grass_c.png;saxarba/theme_grass/woods_light_grass_d.png;saxarba/theme_grass/woods_light_grass_e.png;saxarba/theme_grass/woods_light_grass_f.png"
 super * "woods:2" "grass" "saxarba/theme_grass/woods_heavy_grass_a.png;saxarba/theme_grass/woods_heavy_grass_b.png;saxarba/theme_grass/woods_heavy_grass_c.png;saxarba/theme_grass/woods_heavy_grass_d.png"
-super * "woods:3" "grass" "saxarba/theme_grass/woods_ultra_grass.png"
 
 #VOLCANO THEME TREES
 super * "woods:1;fluff:12" "volcano" "saxarba/theme_volcano/orchard_volcano.png"
 super * "woods:1" "volcano" "saxarba/theme_volcano/woods_light_volcano_a.png;saxarba/theme_volcano/woods_light_volcano_b.png;saxarba/theme_volcano/woods_light_volcano_c.png;saxarba/theme_volcano/woods_light_volcano_d.png;saxarba/theme_volcano/woods_light_volcano_e.png;saxarba/theme_volcano/woods_light_volcano_f.png"
 super * "woods:2" "volcano" "saxarba/theme_volcano/woods_heavy_volcano_a.png;saxarba/theme_volcano/woods_heavy_volcano_b.png;saxarba/theme_volcano/woods_heavy_volcano_c.png;saxarba/theme_volcano/woods_heavy_volcano_d.png"
-super * "woods:3" "volcano" "saxarba/theme_volcano/woods_ultra_volcano.png"
 
 #WOODS
 super * "woods:1;fluff:12" "" "saxarba/vegetation/orchard.png"
 super * "woods:1" "" "saxarba/vegetation/woods_light_a.png;saxarba/vegetation/woods_light_b.png;saxarba/vegetation/woods_light_c.png;saxarba/vegetation/woods_light_d.png;saxarba/vegetation/woods_light_e.png;saxarba/vegetation/woods_light_f.png"
 super * "woods:2" "" "saxarba/vegetation/woods_heavy_a.png;saxarba/vegetation/woods_heavy_b.png;saxarba/vegetation/woods_heavy_c.png;saxarba/vegetation/woods_heavy_d.png"
-super * "woods:3" "" "saxarba/vegetation/woods_ultra.png"
-super * "woods:*" "" "saxarba/vegetation/woods_ultra.png"
 
 #LUNAR THEME JUNGLE
 super * "jungle:1" "lunar" "saxarba/theme_lunar/jungle_light_lunar_a.png;saxarba/theme_lunar/jungle_light_lunar_b.png;saxarba/theme_lunar/jungle_light_lunar_c.png;saxarba/theme_lunar/jungle_light_lunar_d.png;saxarba/theme_lunar/jungle_light_lunar_e.png;saxarba/theme_lunar/jungle_light_lunar_f.png"
 super * "jungle:2" "lunar" "saxarba/theme_lunar/jungle_heavy_lunar_a.png;saxarba/theme_lunar/jungle_heavy_lunar_b.png;saxarba/theme_lunar/jungle_heavy_lunar_c.png;saxarba/theme_lunar/jungle_heavy_lunar_d.png"
-super * "jungle:3" "lunar" "saxarba/theme_lunar/jungle_ultra_lunar.png"
 
 #VOLCANO THEME JUNGLE
 super * "jungle:1" "volcano" "saxarba/theme_volcano/jungle_light_volcano_a.png;saxarba/theme_volcano/jungle_light_volcano_b.png;saxarba/theme_volcano/jungle_light_volcano_c.png;saxarba/theme_volcano/jungle_light_volcano_d.png;saxarba/theme_volcano/jungle_light_volcano_e.png;saxarba/theme_volcano/jungle_light_volcano_f.png"
 super * "jungle:2" "volcano" "saxarba/theme_volcano/jungle_heavy_volcano_a.png;saxarba/theme_volcano/jungle_heavy_volcano_b.png;saxarba/theme_volcano/jungle_heavy_volcano_c.png;saxarba/theme_volcano/jungle_heavy_volcano_d.png"
-super * "jungle:3" "volcano" "saxarba/theme_volcano/jungle_ultra_volcano.png"
 
 #JUNGLE
 super * "jungle:1" "" "saxarba/vegetation/jungle_light_a.png;saxarba/vegetation/jungle_light_b.png;saxarba/vegetation/jungle_light_c.png;saxarba/vegetation/jungle_light_d.png;saxarba/vegetation/jungle_light_e.png;saxarba/vegetation/jungle_light_f.png"
 super * "jungle:2" "" "saxarba/vegetation/jungle_heavy_a.png;saxarba/vegetation/jungle_heavy_b.png;saxarba/vegetation/jungle_heavy_c.png;saxarba/vegetation/jungle_heavy_d.png"
+
+##Water over level 2 woods
+#MARS THEME WATER
+super * "water:2" "mars" "saxarba/theme_mars/water_anim_mars_2.gif"
+
+#LUNAR THEME WATER
+super * "water:2" "lunar" "saxarba/theme_lunar/water_lunar_2.png"
+
+#VOLCANO THEME WATER
+super * "water:2" "volcano" "saxarba/theme_volcano/water_anim_volcano_2.gif"
+
+#WATER
+super * "water:2" "" "saxarba/water/water_anim_2.gif"
+
+#TROPICAL THEME TREES
+super * "woods:3" "tropical" "saxarba/theme_tropical/woods_ultra_tropical.png"
+
+#SNOW THEME TREES
+super * "woods:3" "snow" "saxarba/theme_snow/woods_ultra_snow.png"
+
+#LUNAR THEME TREES
+super * "woods:3" "lunar" "saxarba/theme_lunar/woods_ultra_lunar.png"
+
+#MARS THEME TREES
+super * "woods:3" "mars" "saxarba/theme_mars/woods_ultra_mars.png"
+
+#GRASS THEME TREES
+super * "woods:3" "grass" "saxarba/theme_grass/woods_ultra_grass.png"
+
+#VOLCANO THEME TREES
+super * "woods:3" "volcano" "saxarba/theme_volcano/woods_ultra_volcano.png"
+
+#WOODS
+super * "woods:3" "" "saxarba/vegetation/woods_ultra.png"
+super * "woods:*" "" "saxarba/vegetation/woods_ultra.png"
+
+#LUNAR THEME JUNGLE
+super * "jungle:3" "lunar" "saxarba/theme_lunar/jungle_ultra_lunar.png"
+
+#VOLCANO THEME JUNGLE
+super * "jungle:3" "volcano" "saxarba/theme_volcano/jungle_ultra_volcano.png"
+
+#JUNGLE
 super * "jungle:3" "" "saxarba/vegetation/jungle_ultra.png"
 super * "jungle:*" "" "saxarba/vegetation/jungle_ultra.png"
 
-#GEYSER
-super * "geyser:1" "" "saxarba/misc/geyser_water_off.png"
-super * "geyser:2" "" "saxarba/misc/geyser_water_on.png"
-super * "geyser:3" "" "saxarba/misc/geyser_magma.png"
-super * "geyser:*" "" "saxarba/misc/geyser_magma.png"
+##Water over level 3 ultra heavy woods
+#MARS THEME WATER
+super * "water:3" "mars" "saxarba/theme_mars/water_anim_mars_3.gif"
+super * "water:4" "mars" "saxarba/theme_mars/water_anim_mars_4.gif"
+super * "water:*" "mars" "saxarba/theme_mars/water_anim_mars_4.gif"
+
+#LUNAR THEME WATER
+super * "water:3" "lunar" "saxarba/theme_lunar/water_lunar_3.png"
+super * "water:4" "lunar" "saxarba/theme_lunar/water_lunar_4.png"
+super * "water:*" "lunar" "saxarba/theme_lunar/water_lunar_4.png"
+
+#VOLCANO THEME WATER
+super * "water:3" "volcano" "saxarba/theme_volcano/water_anim_volcano_3.gif"
+super * "water:4" "volcano" "saxarba/theme_volcano/water_anim_volcano_4.gif"
+super * "water:*" "volcano" "saxarba/theme_volcano/water_anim_volcano_4.gif"
+
+#WATER
+super * "water:3" "" "saxarba/water/water_anim_3.gif"
+super * "water:4" "" "saxarba/water/water_anim_4.gif"
+super * "water:*" "" "saxarba/water/water_anim_4.gif"
+
+#The rapids & ice won't look good over some water/trees combination, not sure if there's a fix for this.
+#RAPIDS
+super * "rapids:1" "" "saxarba/water/rapids_anim.gif"
+super * "rapids:2" "" "saxarba/water/torrent_anim.gif"
+super * "rapids:*" "" "saxarba/water/torrent_anim.gif"
+
+#ICE
+super * "ice:1" "" "saxarba/misc/ice.png"
+super * "ice:*" "" "saxarba/misc/ice.png"
 
 #BUILDINGS
 #Standard buildings for mars and lunar and volcano themes
@@ -352,6 +396,9 @@ include "saxarba/BuildingsSClassNoArmor.tileinc"
 
 include "saxarba/BuildingsSClassArmor_noClassSpecified.tileinc"
 include "saxarba/BuildingsSClassNoArmor_noClassSpecified.tileinc"
+
+#BRIDGES
+include "saxarba/BasicBridges.tileinc"
 
 #REMAINS
 #FLUFF

@@ -44,6 +44,7 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
         this.setInternalName("ISSmallPulseLaserPrototype");
         this.addLookupName("IS Prototype Small Pulse Laser");
         this.addLookupName("ISSmall Pulse Laser Prototype");
+        shortName = "Small Pulse Laser (P)";
         this.heat = 2;
         this.damage = 3;
         this.infDamageClass = WeaponType.WEAPON_BURST_2D6;

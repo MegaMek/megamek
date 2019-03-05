@@ -1,3 +1,18 @@
+/*
+* MegaMek -
+* Copyright (C) 2014 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.common.pathfinder;
 
 import java.util.ArrayDeque;
@@ -19,10 +34,10 @@ import megamek.common.Tank;
 /**
  * Path finder that specialises in finding paths that can enter a single hex
  * multiple times. For example longest path searches.
- * 
+ *
  * @author Saginatio
- * 
- * 
+ *
+ *
  */
 public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     private boolean aero = false;
@@ -37,7 +52,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * Produces a path finder that searches for all paths that travel the max
      * distance ( since the last direction change ). This path finder also finds
      * (shorter) longest paths that require less mp to travel.
-     * 
+     *
      * @param maxMP - the maximal movement points available for an entity
      * @param stepType - if equal to MoveStepType.BACKWARDS, then searcher also
      *            includes backward steps. Otherwise only forward movement is
@@ -59,7 +74,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * Produces a path finder for aero units that searches for all paths that
      * travel the max distance. On a ground map this can be very computational
      * heavy.
-     * 
+     *
      * @param maxMP - the maximal thrust points available for an aero
      * @param game
      * @return a longest path finder for aeros
@@ -77,10 +92,10 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 
     /**
      * Comparator that sorts MovePaths based on lexicographical order of pairs:<br>
-     * 
-     * 
+     *
+     *
      * {@code ( movement points used; -(hexes moved) )}
-     * 
+     *
      */
     public static class MovePathMinMPMaxDistanceComparator extends MovePathMPCostComparator {
         @Override
@@ -97,10 +112,10 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     /**
      * Relaxer for longest path movement. Current implementation needs
      * Comparator that preserves MovePathMinMPMaxDistanceComparator contract.
-     * 
+     *
      * It adds a path to 'interesting' paths in a hex when candidate travelled
      * more hexes.
-     * 
+     *
      */
     static public class LongestPathRelaxer implements EdgeRelaxer<Deque<MovePath>, MovePath> {
         @Override
@@ -143,7 +158,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                     /*
                      * topMP should have less or equal 'movement points used'
                      * since it was taken from candidates priority queue earlier
-                     * 
+                     *
                      * Current implementation of doRelax() assumes that v is
                      * sorted in such way that this situation is impossible.
                      */
@@ -155,7 +170,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                         return null; //topMP path is longer and uses less or same mp.
                     }
                     if (topMP.getHexesMoved() == mpCandidate.getHexesMoved()) {
-                        //we want to preserve both forward and backward movements 
+                        //we want to preserve both forward and backward movements
                         //that end in the same spot with the same cost.
                         MoveStep topStep = topMP.getLastStep();
                         boolean topBackwards = topStep != null && topStep.isThisStepBackwards();
@@ -189,13 +204,13 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * {@code (hexes traveled; thrust used; 0-(hexes flown in a straight line) )}
      * <br/>
      * Works only with aeros.
-     * 
+     *
      */
     public static class AeroMultiPathComparator implements Comparator<MovePath> {
         /**
          * compares MovePaths based on lexicographical order of triples ( hexes
          * traveled; thrust used; 0-( hexes flown in a straight line ) )
-         * 
+         *
          */
         @Override
         public int compare(MovePath mp1, MovePath mp2) {
@@ -225,11 +240,11 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     /**
      * Relaxer for aero movement. Current implementation needs Comparator that
      * preserves AeroMultiPathComparator contract.
-     * 
+     *
      * It adds a path to 'interesting' paths in a hex when: candidate 1)traveled
      * more hexes or either 2a)thrust_used is less or 2b)straight_hexes_flown is
      * greater than current top of the stack.
-     * 
+     *
      */
     public static class AeroMultiPathRelaxer implements EdgeRelaxer<Deque<MovePath>, MovePath> {
         boolean inAthmosphere;
@@ -272,7 +287,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                  * in such way that this situation is impossible.
                  */
                 System.err.println(new IllegalStateException(
-                        "Top Move Path uses more MPs than Move Path Candidate."
+                        "Top Move Path uses more MPs than Move Path Candidate. "
                         + "while traveling the same distance"));
             }
 
@@ -348,7 +363,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     /**
      * Returns a map of all computed longest paths. This also includes paths
      * that are shorter but use strictly less movement points.
-     * 
+     *
      * @return a map of all computed shortest paths.
      */
     public List<MovePath> getAllComputedPathsUnordered() {
@@ -363,7 +378,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     /**
      * Returns a map of all computed longest paths. This only includes one
      * longest path to one Coords,Facing pair.
-     * 
+     *
      * @return a map of all computed shortest paths.
      */
     public List<MovePath> getLongestComputedPaths() {

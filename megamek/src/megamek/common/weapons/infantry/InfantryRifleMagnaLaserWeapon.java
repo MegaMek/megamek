@@ -40,6 +40,7 @@ public class InfantryRifleMagnaLaserWeapon extends InfantryWeapon {
 		cost = 1500;
 		bv = 1.33;
 		tonnage = .006;
+		infantryRange = 2;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.26;
 		rulesRefs = "273,TM";

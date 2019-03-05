@@ -18,13 +18,17 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
+import megamek.common.TargetRoll;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -125,7 +129,20 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
+        // Activate single AMS
         getAMSHitsMod(vPhaseReport);
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            // Or bay AMS if Aero Sanity is on
+            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                    : null;
+            if (entityTarget != null && entityTarget.isLargeCraft()) {
+                if (getParentBayHandler() != null) {
+                    WeaponHandler bayHandler = getParentBayHandler();
+                    amsBayEngagedMissile = bayHandler.amsBayEngagedMissile;
+                    pdBayEngagedMissile = bayHandler.pdBayEngagedMissile;
+                }
+            }
+        }
         bSalvo = true;
         // Report AMS/Pointdefense failure due to Overheating.
         if (pdOverheated 
@@ -187,7 +204,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         if (wtype.hasFlag(WeaponType.F_ANTI_SHIP)) {
             return 11;
         } else {
-            return 20;
+            return 0;
         }
     }
 

@@ -95,10 +95,4 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 (int) Math.floor((double) totalShots
                         / (double) weapon.getCurrentShots()));
     }
-    
-    //Check for Thunderbolt. We'll use this for single AMS resolution
-    protected boolean isTbolt() {
-        return false;
-    }
-    
 }

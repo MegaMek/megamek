@@ -1,5 +1,5 @@
 Clan Coyote Secondline ProtoMechs (WoRS)
-Boggart (Quad) 1, 1
+Boggart Ultraheavy ProtoMech (Standard), 1
 Sprite 2, 2
 Procyon 4, 3
 Procyon 2, 4
@@ -9,4 +9,4 @@ Roc (Standard), 5
 Gorgon 2, 4
 Satyr (Standard), 3
 Roc 2, 2
-#Basilisk (Quad), 1
+Basilisk ProtoMech (Quad) (Standard), 1

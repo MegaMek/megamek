@@ -784,6 +784,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(base);
         base = AmmoType.createCLImprovedAC20Ammo();
         clanImprovedAcAmmo.add(base);
+        EquipmentType.addType(base);
         
         base = AmmoType.createCLPROAC2Ammo();
         clanProtoAcAmmo.add(base);
@@ -1797,7 +1798,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for CLAN BA SRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,
+        munitions.add(new MunitionMutator("(Clan) Torpedo", 1, M_TORPEDO,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -1806,6 +1807,18 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2828, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false,false,false,false,false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),"230,TM"));
+        
+        munitions.add(new MunitionMutator("(Clan) Multi-Purpose", 1, M_MULTI_PURPOSE,
+                new TechAdvancement(TECH_BASE_CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true,false,false,false,false)
+                .setPrototypeFactions(F_CGS)
+                .setProductionFactions(F_CGS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "229, TW"));
  
         // Walk through both the base types and the
         // mutators, and create munition types.

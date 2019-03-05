@@ -1479,7 +1479,7 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public double getArmoredComponentWeight() {
-        return 0.0f;
+        return 0.0;
     }
 
     public static boolean usesKgStandard(Entity entity) {

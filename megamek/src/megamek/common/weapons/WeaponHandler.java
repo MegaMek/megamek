@@ -131,6 +131,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean amsBayEngagedMissile = false; //true if one or more AMS bays engages this attack. Used for reporting if this is a single large missile (thunderbolt, etc) attack.
     protected boolean pdBayEngagedMissile = false; // true if one or more point defense bays engages this attack. Used for reporting if this is a single large missile (thunderbolt, etc) attack.
     protected boolean advancedPD = false; //true if advanced StratOps game rule is on
+    protected WeaponHandler parentBayHandler = null; //Used for weapons bays when Aero Sanity is on
+    
+    protected boolean amsEngaged = false;
+    protected boolean apdsEngaged = false;
     
     /**
      * Write debug information to the logs.
@@ -140,6 +144,40 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected void logDebug(String methodName, String message) {
         getLogger().log(getClass(), methodName, LogLevel.DEBUG, message);
+    }
+    
+    /**
+     * Write errors to the logs
+     *
+     * @param methodName Name of the method logging is coming from
+     * @param message Message to log
+     */
+    protected void logError(String methodName, String message) {
+        logError(methodName, message, null);
+    }
+
+    /**
+     * Write errors to the logs.
+     *
+     * @param methodName Name of the method logging is coming from
+     * @param message Message to log
+     * @param e The exception that caused the error
+     */
+    protected void logError(String methodName, String message, Throwable e) {
+        if (null != e) {
+            getLogger().log(getClass(), methodName, LogLevel.ERROR, message, e);
+        } else {
+            getLogger().log(getClass(), methodName, LogLevel.ERROR, message);
+        }
+    }
+
+    /**
+     * Write errors to the log.
+     * @param methodName Name of the method logging is coming from
+     * @param e The exception that caused the error
+     */
+    protected void logError(String methodName, Throwable e) {
+        getLogger().log(getClass(), methodName, LogLevel.ERROR, e);
     }
     
     protected MMLogger getLogger() {
@@ -238,6 +276,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * a TeleMissile entity in the physical phase
      */
     protected void setPDBayReportingFlag() {
+    }
+    
+    /**
+     * Sets whether or not this weapon is considered a single, large missile for AMS resolution
+     */
+    protected boolean isTbolt() {
+        return false;
     }
     
     /**
@@ -365,6 +410,24 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */ 
     protected int getCounterAV() {
     	return CounterAV;
+    }
+    
+    /**
+     * Used with Aero Sanity mod
+     * Returns the handler for the BayWeapon this individual weapon belongs to
+     */ 
+    protected WeaponHandler getParentBayHandler() {
+        return parentBayHandler;
+    }
+    
+    /**
+     * Sets the parent handler for each sub-weapon handler called when looping through bay weapons
+     * Used with Aero Sanity to pass counterAV through to the individual missile handler from the bay handler
+     * 
+     * @param bh - The <code>AttackHandler</code> for the BayWeapon this individual weapon belongs to
+     */ 
+    protected void setParentBayHandler(WeaponHandler bh) {
+        parentBayHandler = bh;
     }
     
     /**
@@ -525,6 +588,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int reportSize = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
             int nCluster = calcnCluster();
+            int AMSHits = 0;
             if (ae.isCapitalFighter()) {
                 Vector<Report> throwAwayReport = new Vector<Report>();
                 // for capital scale fighters, each non-cluster weapon hits a
@@ -544,10 +608,23 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         while (vPhaseReport.size() > reportSize) {
                             vPhaseReport.remove(vPhaseReport.size() - 1);
                         }
-                        // nDamPerHit = 1;
                         hits = 0;
                         for (int i = 0; i < nweaponsHit; i++) {
                             hits += calcHits(throwAwayReport);
+                        }
+                        //Report point defense fire
+                        if (pdBayEngaged || amsBayEngaged) {
+                            Report r = new Report(3367);
+                            r.indent();
+                            r.subject = subjectId;
+                            r.add(getCounterAV());
+                            r.newlines = 0;
+                            vPhaseReport.addElement(r);
+                        } else if (amsEngaged) {
+                            Report r = new Report(3350);
+                            r.subject = entityTarget.getId();
+                            r.newlines = 0;
+                            vPhaseReport.add(r);
                         }
                         Report r = new Report(3325);
                         r.subject = subjectId;
@@ -557,6 +634,83 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         r.newlines = 0;
                         vPhaseReport.add(r);
                     } else {
+                        //If point defenses engage Large, single missiles
+                        if (pdBayEngagedMissile || amsBayEngagedMissile) {
+                            // remove the last reports because they showed the
+                            // number of shots that hit
+                            while (vPhaseReport.size() > reportSize) {
+                                vPhaseReport.remove(vPhaseReport.size() - 1);
+                            }
+                            AMSHits = 0;
+                            Report r = new Report(3236);
+                            r.subject = subjectId;
+                            r.add(nweaponsHit);
+                            vPhaseReport.add(r);
+                            r = new Report(3230);
+                            r.indent(1);
+                            r.subject = subjectId;
+                            vPhaseReport.add(r);
+                            for (int i = 0; i < nweaponsHit; i++) {
+                                int destroyRoll = Compute.d6();
+                                if (destroyRoll <= 3) {
+                                    r = new Report(3240);
+                                    r.subject = subjectId;
+                                    r.add("missile");
+                                    r.add(destroyRoll);
+                                    vPhaseReport.add(r);
+                                    AMSHits += 1;
+                                } else {
+                                    r = new Report(3241);
+                                    r.add("missile");
+                                    r.add(destroyRoll);
+                                    r.subject = subjectId;
+                                    vPhaseReport.add(r);                                
+                                }
+                            }
+                            nweaponsHit = nweaponsHit - AMSHits;
+                        } else if (amsEngaged || apdsEngaged) {
+                            // remove the last reports because they showed the
+                            // number of shots that hit
+                            while (vPhaseReport.size() > reportSize) {
+                                vPhaseReport.remove(vPhaseReport.size() - 1);
+                            }
+                            //If you're shooting at a target using single AMS
+                            //Too many variables here as far as AMS numbers
+                            //Just allow 1 missile to be shot down
+                            AMSHits = 0;
+                            Report r = new Report(3236);
+                            r.subject = subjectId;
+                            r.add(nweaponsHit);
+                            vPhaseReport.add(r);
+                            if (amsEngaged) {
+                                r = new Report(3230);
+                                r.indent(1);
+                                r.subject = subjectId;
+                                vPhaseReport.add(r);
+                            }
+                            if (apdsEngaged) {
+                                r = new Report(3231);
+                                r.indent(1);
+                                r.subject = subjectId;
+                                vPhaseReport.add(r);
+                            }
+                            int destroyRoll = Compute.d6();
+                            if (destroyRoll <= 3) {
+                                r = new Report(3240);
+                                r.subject = subjectId;
+                                r.add("missile");
+                                r.add(destroyRoll);
+                                vPhaseReport.add(r);
+                                AMSHits = 1;
+                            } else {
+                                r = new Report(3241);
+                                r.add("missile");
+                                r.add(destroyRoll);
+                                r.subject = subjectId;
+                                vPhaseReport.add(r);                                
+                            }
+                            nweaponsHit = nweaponsHit - AMSHits;
+                        }
                         nCluster = 1;
                         Report r = new Report(3325);
                         r.subject = subjectId;
@@ -1642,7 +1796,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
                 && target.getTargetType() == Targetable.TYPE_ENTITY
                 && ((Entity) target).isCapitalScale()
-                && !((Entity) target).isCapitalFighter()) {
+                && !((Entity) target).isCapitalFighter()
+                && !ae.isCapitalFighter()) {
             return true;
         }
         return false;

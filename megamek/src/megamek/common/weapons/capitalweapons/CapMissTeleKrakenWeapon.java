@@ -17,13 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.CapitalMissileHandler;
-import megamek.common.weapons.KrakenTHandler;
-import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -74,22 +67,5 @@ public class CapMissTeleKrakenWeapon extends CapitalMissileWeapon {
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_CS,F_DC)
             .setProductionFactions(F_DC);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
-     * megamek.server.Server)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        if (game.getBoard().inSpace()) {
-            return new KrakenTHandler(toHit, waa, game, server);
-        }
-        return new CapitalMissileHandler(toHit, waa, game, server);
     }
 }

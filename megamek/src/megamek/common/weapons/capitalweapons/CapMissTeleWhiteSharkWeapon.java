@@ -17,13 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.WhiteSharkHandler;
-import megamek.common.weapons.WhiteSharkTHandler;
-import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -74,22 +67,5 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
             .setPrototypeFactions(F_CS,F_DC)
             .setProductionFactions(F_DC);
 
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_TELE_MISSILE) && game.getBoard().inSpace())
-            return new WhiteSharkTHandler(toHit, waa, game, server);
-        return new WhiteSharkHandler(toHit, waa, game, server);
     }
 }

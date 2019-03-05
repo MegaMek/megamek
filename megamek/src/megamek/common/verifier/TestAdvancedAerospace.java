@@ -338,7 +338,7 @@ public class TestAdvancedAerospace extends TestAero {
         for (Bay bay : vessel.getTransportBays()) {
             max -= bay.hardpointCost();
         }
-        return max;
+        return Math.max(max, 0);
     }
     
     /**

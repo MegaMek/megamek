@@ -134,7 +134,7 @@ public class NavalRepairFacility extends Bay {
     
     @Override
     public int hardpointCost() {
-        return 2;
+        return (int) Math.ceil(totalSpace / 50000);
     }
     
     public static TechAdvancement techAdvancement() {

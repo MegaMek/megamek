@@ -35,6 +35,7 @@ public class CapMissWhiteSharkWeapon extends CapitalMissileWeapon {
         this.name = "Capital Missile Launcher (White Shark)";
         this.setInternalName(this.name);
         this.addLookupName("WhiteShark");
+        this.shortName = "White Shark";
         this.heat = 15;
         this.damage = 3;
         this.ammoType = AmmoType.T_WHITE_SHARK;

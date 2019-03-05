@@ -33,6 +33,7 @@ public class NAC35Weapon extends NavalACWeapon {
         this.name = "Naval Autocannon (NAC/35)";
         this.setInternalName(this.name);
         this.addLookupName("NAC35");
+        this.shortName = "NAC/35";
         this.heat = 120;
         this.damage = 35;
         this.rackSize = 35;

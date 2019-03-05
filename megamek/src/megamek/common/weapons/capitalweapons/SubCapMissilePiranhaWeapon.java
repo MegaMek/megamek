@@ -35,6 +35,7 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         name = "Sub-Capital Missile Launcher (Piranha)";
         setInternalName(name);
         addLookupName("Piranha");
+        this.shortName = "Piranha";
         heat = 9;
         damage = 3;
         ammoType = AmmoType.T_PIRANHA;

@@ -35,6 +35,7 @@ public class SubCapMissileSwordfishWeapon extends SubCapMissileWeapon {
 		this.name = "Sub-Capital Missile Launcher (Swordfish)";
 		this.setInternalName(this.name);
 		this.addLookupName("Swordfish");
+		this.shortName = "Swordfish";
 		this.heat = 15;
 		this.damage = 4;
 		this.ammoType = AmmoType.T_SWORDFISH;

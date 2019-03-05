@@ -70,8 +70,10 @@ public class PlanetaryConditions implements Serializable {
     public static final int WI_SIZE = windNames.length;
 
     //wind direction
-    private static String[] dirNames = { "North", "Northeast", "Southeast", "South","Southwest", "Northwest" };
+    private static String[] dirNames = { "RandomWindDirection", "North", "Northeast", "Southeast", "South", "Southwest", "Northwest" };
     public static final int DIR_SIZE = dirNames.length;
+    public static final int DIR_RANDOM = 0;
+    
 
     //atmospheric pressure
     public static final int ATMO_VACUUM   = 0;
@@ -102,7 +104,7 @@ public class PlanetaryConditions implements Serializable {
     private int weatherConditions = WE_NONE;
     private int oldWeatherConditions = WE_NONE;
     private int windStrength = WI_NONE;
-    private int windDirection = -1;
+    private int windDirection = DIR_RANDOM;
     private boolean shiftWindDirection = false;
     private boolean shiftWindStrength = false;
     private boolean isSleeting = false;
@@ -368,18 +370,18 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public void determineWind() {
-        if (windDirection == -1) {
+        if (windDirection == DIR_RANDOM) {
             // Initial wind direction. If using level 2 rules, this
             // will be the wind direction for the whole battle.
-            windDirection = Compute.d6(1) - 1;
+            windDirection = Compute.d6(1);
         } else if (shiftWindDirection) {
             // Wind direction changes on a roll of 1 or 6
             switch (Compute.d6()) {
                 case 1: // rotate clockwise
-                    windDirection = (windDirection + 1) % 6;
+                    windDirection = ((windDirection + 1) % 6) + 1;
                     break;
                 case 6: // rotate counter-clockwise
-                    windDirection = (windDirection + 5) % 6;
+                    windDirection = ((windDirection + 5) % 6) + 1;
             }
         }
         if (shiftWindStrength) {

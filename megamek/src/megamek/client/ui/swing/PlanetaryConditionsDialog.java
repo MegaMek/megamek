@@ -74,6 +74,9 @@ public class PlanetaryConditionsDialog extends JDialog implements
     private JComboBox<String> choMinWind = new JComboBox<String>();
     private JLabel labMaxWind = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labMaxWind"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JComboBox<String> cboWindDirection = new JComboBox<>();
+    private JLabel labWindDirection = new JLabel(
+            Messages.getString("PlanetaryConditionsDialog.labWindDirection"), SwingConstants.RIGHT);
     private JComboBox<String> choMaxWind = new JComboBox<String>();
     private JLabel labAtmosphere = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labAtmosphere"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -252,6 +255,16 @@ public class PlanetaryConditionsDialog extends JDialog implements
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(choWind, c);
         panOptions.add(choWind);
+        
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(labWindDirection, c);
+        panOptions.add(labWindDirection);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(cboWindDirection, c);
+        panOptions.add(cboWindDirection);
 
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
@@ -352,6 +365,12 @@ public class PlanetaryConditionsDialog extends JDialog implements
         choMinWind.setSelectedIndex(conditions.getMinWindStrength());
         choMaxWind.setSelectedIndex(conditions.getMaxWindStrength());
 
+        cboWindDirection.removeAllItems();
+        for(int i = 0; i < PlanetaryConditions.DIR_SIZE; i++) {
+            cboWindDirection.addItem(PlanetaryConditions.getWindDirDisplayableName(i));
+        }
+        cboWindDirection.setSelectedIndex(conditions.getWindDirection());
+
         choAtmosphere.removeAllItems();
         for (int i = 0; i < PlanetaryConditions.ATMO_SIZE; i++) {
             choAtmosphere.addItem(PlanetaryConditions
@@ -385,6 +404,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
         conditions.setLight(choLight.getSelectedIndex());
         conditions.setWeather(choWeather.getSelectedIndex());
         conditions.setWindStrength(choWind.getSelectedIndex());
+        conditions.setWindDirection(cboWindDirection.getSelectedIndex());
         conditions.setMinWindStrength(choMinWind.getSelectedIndex());
         conditions.setMaxWindStrength(choMaxWind.getSelectedIndex());
         conditions.setAtmosphere(choAtmosphere.getSelectedIndex());

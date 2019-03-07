@@ -13,6 +13,7 @@ v0.45.4-SNAPSHOT
 + Issue #587 PR #1273: Fixes for Post-Battle Handling of Capital Fighters.
 + PR #1280: Add proper labels for host dialog controls (Accessibility Support)
 + PR #1283: Rocket Launcher 1 through 5 turrets now have valid weapons
++ PR #1264: [Feature] Wind direction can now be set in the lobby
 
 v0.45.3 (2019-02-12 0500 UTC)
 + PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.

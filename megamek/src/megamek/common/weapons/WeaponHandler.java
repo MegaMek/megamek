@@ -1203,6 +1203,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         TagInfo info = new TagInfo(ae.getId(),
                                 target.getTargetType(), target, priority, false);
                         game.addTagInfo(info);
+                        
+                        ae.setSpotting(true);
+                        ae.setSpotTargetId(target.getTargetId());
+                        
                         r = new Report(3390);
                         r.subject = subjectId;
                         vPhaseReport.addElement(r);

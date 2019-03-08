@@ -1705,24 +1705,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     || (atype.getAmmoType() == AmmoType.T_NLRM) 
                     || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                     && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
-                boolean targetTagged = false;
-                // If this is an entity, we can see if it's tagged
-                if (te != null) {
-                    targetTagged = te.getTaggedBy() != -1;
-                } else { // Non entities will require us to look harder
-                    for (TagInfo ti : game.getTagInfo()) {
-                        if (target.getTargetId() == ti.target.getTargetId()) {
-                            targetTagged = true;
-                        }
-                    }
-                }
 
-                if (targetTagged) {
+                if (Compute.isTargetTagged(te, target, game)) {
                     toHit.addModifier(-1, "semiguided ignores spotter " + "movement & indirect fire penalties");
                 }
             } else if (!narcSpotter && (spotter != null)) {
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
-                if (spotter.isAttackingThisTurn() && !spotter.getCrew().hasActiveCommandConsole()) {
+                if (spotter.isAttackingThisTurn() && !spotter.getCrew().hasActiveCommandConsole() && 
+                        !Compute.isTargetTagged(te, target, game)) {
                     toHit.addModifier(1, "spotter is making an attack this turn");
                 }
             }

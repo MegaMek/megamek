@@ -861,9 +861,14 @@ public class Compute {
                 los.setTargetCover(LosEffects.COVER_NONE);
                 mods.append(Compute.getAttackerMovementModifier(game,
                                                                 other.getId()));
-                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole()) {
+                
+                // a spotter suffers a penalty if it's also making an attack this round
+                // unless it has a command console or has TAGged the target
+                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() && 
+                        (!isTargetTagged(null, target, game) || (taggedBy != -1))) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }
+                
                 // is this guy a better spotter?
                 if ((spotter == null)
                     || (mods.getValue() < bestMods.getValue())) {
@@ -876,6 +881,29 @@ public class Compute {
         return spotter;
     }
 
+    /**
+     * Worker function to determine if the target has been tagged.
+     * @param te The target entity to check, if any
+     * @param target The non-entity target to check
+     * @param game Game object
+     * @return Whether or not the given entity or other targetable is tagged.
+     */
+    public static boolean isTargetTagged(Entity te, Targetable target, IGame game) {
+        boolean targetTagged = false;
+        // If this is an entity, we can see if it's tagged
+        if (te != null) {
+            targetTagged = te.getTaggedBy() != -1;
+        } else { // Non entities will require us to look harder
+            for (TagInfo ti : game.getTagInfo()) {
+                if (target.getTargetId() == ti.target.getTargetId()) {
+                    targetTagged = true;
+                }
+            }
+        }
+        
+        return targetTagged;
+    }
+    
     public static ToHitData getImmobileMod(Targetable target) {
         return Compute.getImmobileMod(target, Entity.LOC_NONE,
                                       IAimingModes.AIM_MODE_NONE);

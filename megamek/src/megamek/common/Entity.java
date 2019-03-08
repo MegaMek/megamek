@@ -2586,7 +2586,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Returns this entity's unmodified running/flank mp.
      */
-    protected int getOriginalRunMP() {
+    public int getOriginalRunMP() {
         return (int) Math.ceil(getOriginalWalkMP() * 1.5);
     }
 

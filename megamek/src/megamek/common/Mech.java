@@ -1092,6 +1092,10 @@ public abstract class Mech extends Entity {
                 - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 
+    /**
+     * @return The mech's run MP without MASC or supercharger, but with any reduction
+     *         due to hardened armor.
+     */
     public int getOriginalRunMPwithoutMASC() {
         return super.getOriginalRunMP()
                 - (hasMPReducingHardenedArmor() ? 1 : 0);

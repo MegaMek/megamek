@@ -865,7 +865,7 @@ public class Compute {
                 // a spotter suffers a penalty if it's also making an attack this round
                 // unless it has a command console or has TAGged the target
                 if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() && 
-                        (!isTargetTagged(null, target, game) || (taggedBy != -1))) {
+                        (!isTargetTagged(attacker, target, game) || (taggedBy != -1))) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }
                 
@@ -883,26 +883,62 @@ public class Compute {
 
     /**
      * Worker function to determine if the target has been tagged.
-     * @param te The target entity to check, if any
      * @param target The non-entity target to check
      * @param game Game object
      * @return Whether or not the given entity or other targetable is tagged.
      */
-    public static boolean isTargetTagged(Entity te, Targetable target, IGame game) {
+    public static boolean isTargetTagged(Targetable target, IGame game) {
         boolean targetTagged = false;
+        
+        Entity te = null;
+        if(target instanceof Entity) {
+            te = (Entity) target;
+        }
+        
         // If this is an entity, we can see if it's tagged
         if (te != null) {
             targetTagged = te.getTaggedBy() != -1;
         } else { // Non entities will require us to look harder
             for (TagInfo ti : game.getTagInfo()) {
                 if (target.getTargetId() == ti.target.getTargetId()) {
-                    targetTagged = true;
+                    return true;
                 }
             }
         }
         
         return targetTagged;
     }
+    
+    /**
+     * Worker function to determine if the target has been tagged by the specific attacker.
+     * @param attacker The attacker.
+     * @param target The non-entity target to check
+     * @param game Game object
+     * @return Whether or not the given entity or other targetable is tagged by the specific attacker.
+     */
+    public static boolean isTargetTagged(Entity attacker, Targetable target, IGame game) {
+        boolean targetTagged = false;
+        
+        Entity te = null;
+        if(target instanceof Entity) {
+            te = (Entity) target;
+        }
+        
+        // If this is an entity, we can see if it's tagged
+        if (te != null) {
+            targetTagged = te.getTaggedBy() == attacker.getId();
+        } else { // Non entities will require us to look harder
+            for (TagInfo ti : game.getTagInfo()) {
+                if ((target.getTargetId() == ti.target.getTargetId()) &&
+                        (ti.attackerId == attacker.getId())) {
+                    return true;
+                }
+            }
+        }
+        
+        return targetTagged;
+    }
+    
     
     public static ToHitData getImmobileMod(Targetable target) {
         return Compute.getImmobileMod(target, Entity.LOC_NONE,

@@ -2813,25 +2813,30 @@ public class Server implements Runnable {
         if (!game.hasMoreTurns()) {
             return false;
         }
+        
         for (Iterator<Entity> e = game.getEntities(); e.hasNext();) {
             Entity entity = e.next();
             for (Mounted m : entity.getAmmo()) {
                 AmmoType atype = (AmmoType) m.getType();
-                if (((atype.getAmmoType() == AmmoType.T_LRM)
+                
+                // per errata, TAG will spot for LRMs and such
+                if ((atype.getAmmoType() == AmmoType.T_LRM)
                         || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                         || (atype.getAmmoType() == AmmoType.T_MML)
                         || (atype.getAmmoType() == AmmoType.T_NLRM)
-                        || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
-                        && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
+                        || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR)) {
                     return true;
                 }
+                
                 if (((atype.getAmmoType() == AmmoType.T_ARROW_IV)
-                        || (atype.getAmmoType() == AmmoType.T_LONG_TOM) || (atype
-                        .getAmmoType() == AmmoType.T_SNIPER))
+                        || (atype.getAmmoType() == AmmoType.T_LONG_TOM) 
+                        || (atype.getAmmoType() == AmmoType.T_SNIPER)
+                        || (atype.getAmmoType() == AmmoType.T_THUMPER))
                         && (atype.getMunitionType() == AmmoType.M_HOMING)) {
                     return true;
                 }
             }
+            
             for (Mounted b : entity.getBombs()) {
                 if (!b.isDestroyed()
                     && (b.getUsableShotsLeft() > 0)
@@ -2840,6 +2845,7 @@ public class Server implements Runnable {
                 }
             }
         }
+        
         // loop through all current attacks
         // if there are any that use homing ammo, we are playable
         // we need to do this because we might have a homing arty shot in flight

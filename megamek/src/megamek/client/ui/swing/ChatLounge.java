@@ -3206,7 +3206,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             boolean blindDrop = !player.equals(clientgui.getClient().getLocalPlayer()) && clientgui.getClient()
                     .getGame().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
             if (col == COL_BV) {
-                int bv = Math.round(bvs.get(row));
+                int bv = bvs.get(row);
                 if (blindDrop) {
                     bv = bv > 0 ? 9999 : 0;
                 }

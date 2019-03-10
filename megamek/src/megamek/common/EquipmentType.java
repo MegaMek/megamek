@@ -512,7 +512,7 @@ public class EquipmentType implements ITechnology {
      *            non null, non empty list of available mode names.
      */
     protected void setModes(String[] modes) {
-        assert ((modes != null) && (modes.length >= 0)) : "List of modes must not be null or empty";
+        assert ((modes != null) && (modes.length > 0)) : "List of modes must not be null or empty";
         Vector<EquipmentMode> newModes = new Vector<EquipmentMode>(modes.length);
         for (String mode : modes) {
             newModes.addElement(EquipmentMode.getMode(mode));

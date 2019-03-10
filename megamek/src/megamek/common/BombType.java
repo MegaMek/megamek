@@ -221,7 +221,7 @@ public class BombType extends AmmoType {
 		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_AAA));
 		bomb.addLookupName("AAAMissile Ammo");
 		bomb.damagePerShot = 20;
-		bomb.flags.or(AmmoType.F_OTHER_BOMB);
+		bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_AAA_MISSILE;
 		bomb.bombType = BombType.B_AAA;
@@ -253,7 +253,7 @@ public class BombType extends AmmoType {
 		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_AS));
 		bomb.addLookupName("ASMissile Ammo");
 		bomb.damagePerShot = 30;
-		bomb.flags.or(AmmoType.F_OTHER_BOMB);
+		bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_AS_MISSILE;
 		bomb.bombType = BombType.B_AS;
@@ -284,7 +284,7 @@ public class BombType extends AmmoType {
 		bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_ASEW));
 		bomb.addLookupName("ASEWMissile Ammo");
 		bomb.damagePerShot = 0;
-		bomb.flags.or(AmmoType.F_OTHER_BOMB);
+		bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_ASEW_MISSILE;
 		bomb.bombType = BombType.B_ASEW;
@@ -491,7 +491,7 @@ public class BombType extends AmmoType {
 		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_LAA));
 		bomb.addLookupName("LAAMissile Ammo");
 		bomb.damagePerShot = 6;
-		bomb.flags.or(AmmoType.F_OTHER_BOMB);
+		bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_LAA_MISSILE;
 		bomb.bombType = BombType.B_LAA;
@@ -517,7 +517,7 @@ public class BombType extends AmmoType {
 		bomb.setInternalName(BombType.getBombInternalName(BombType.B_RL));
 		bomb.addLookupName("RL 10 (Bomb)");
 		bomb.damagePerShot = 1;
-		bomb.flags.or(AmmoType.F_OTHER_BOMB);
+		bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 10;
 		bomb.ammoType = AmmoType.T_RL_BOMB;
 		bomb.bombType = BombType.B_RL;
@@ -545,7 +545,7 @@ public class BombType extends AmmoType {
 		bomb.addLookupName("ISTAGBomb");
 		bomb.addLookupName("TAGBomb");
 		bomb.damagePerShot = 0;
-		bomb.flags.or(AmmoType.F_OTHER_BOMB);
+		bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_BOMB;
 		bomb.bombType = BombType.B_TAG;

@@ -258,7 +258,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                 }
                 
                 boolean isOmniMounted = critName.endsWith(":OMNI");
-                critName.replace(":OMNI", "");
+                critName = critName.replace(":OMNI", "");
                 int facing = -1;
                 if (critName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;

@@ -187,7 +187,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // check if all legs are present & working
-        if (ae.isLocationBad(Mech.LOC_LLEG) || ae.isLocationBad(Mech.LOC_LLEG)
+        if (ae.isLocationBad(Mech.LOC_LLEG) || ae.isLocationBad(Mech.LOC_RLEG)
                 || (ae.entityIsQuad()
                         && (ae.isLocationBad(Mech.LOC_LARM)
                                 || ae.isLocationBad(Mech.LOC_RARM)))) {

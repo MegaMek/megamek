@@ -159,7 +159,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public MegaMekController controller = null;
     // keep me
     protected ChatterBox cb;
-    protected AccesibilityWindow aw;
+    protected AccessibilityWindow aw;
     public BoardView1 bv;
     private Component bvc;
     public JDialog mechW;
@@ -410,7 +410,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
         cb = new ChatterBox(this);
 
-        aw = new AccesibilityWindow(cb, this);
+        aw = new AccessibilityWindow(cb, this);
         aw.setLocation(0, 0);
         aw.addWindowListener(this);
         aw.setSize(300, 300);

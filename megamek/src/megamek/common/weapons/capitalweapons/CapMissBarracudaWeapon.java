@@ -35,6 +35,7 @@ public class CapMissBarracudaWeapon extends CapitalMissileWeapon {
         this.name = "Capital Missile Launcher (Barracuda)";
         this.setInternalName(this.name);
         this.addLookupName("Barracuda");
+        this.shortName = "Barracuda";
         this.heat = 10;
         this.damage = 2;
         this.ammoType = AmmoType.T_BARRACUDA;

@@ -1697,7 +1697,7 @@ public class MovePath implements Cloneable, Serializable {
 
         for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
-            if (step.getPosition() != finalPos) {
+            if (!step.getPosition().equals(finalPos)) {
                 priorPos = step.getPosition();
             }
         }

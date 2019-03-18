@@ -35,6 +35,7 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
         this.name = "Capital Missile Launcher (Killer Whale)";
         this.setInternalName(this.name);
         this.addLookupName("KillerWhale");
+        this.shortName = "Killer Whale";
         this.heat = 20;
         this.damage = 4;
         this.ammoType = AmmoType.T_KILLER_WHALE;

@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
-public class AccesibilityWindow extends JDialog implements KeyListener {
+public class AccessibilityWindow extends JDialog implements KeyListener {
 
     public static final int MAX_HISTORY = 10;
     Client client;
@@ -22,7 +22,7 @@ public class AccesibilityWindow extends JDialog implements KeyListener {
     public LinkedList<String> history;
     public int historyBookmark = -1;
 
-    public AccesibilityWindow(ChatterBox cb, ClientGUI clientgui) {
+    public AccessibilityWindow(ChatterBox cb, ClientGUI clientgui) {
         super(clientgui.getFrame(), Messages.getString("ClientGUI.ChatWindow"));
         client = clientgui.getClient();
         client.getGame().addGameListener(new GameListener() {

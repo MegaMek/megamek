@@ -219,12 +219,12 @@ public class QuadMech extends Mech {
     
     @Override
     public boolean isValidSecondaryFacing(int dir) {
-        int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
+            int rotate = Math.abs(dir - getFacing());
             return (rotate <= 1) || (rotate == 5);
+        } else {
+            return dir == getFacing();
         }
-        else
-        	return rotate == 0;
     }
     
     @Override

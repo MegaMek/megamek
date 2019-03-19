@@ -461,7 +461,7 @@ public class QuadVee extends QuadMech {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return true;
+        return !isProne();
     }
     
     /**
@@ -493,6 +493,25 @@ public class QuadVee extends QuadMech {
         }
         //Destroyed gyro limits to normal biped torso rotation
         return rotate <= 1 || rotate == 5;
+    }
+    
+    @Override
+    public int clipSecondaryFacing(int dir) {
+        if (isValidSecondaryFacing(dir)) {
+            return dir;
+        }
+        // can't twist while prone
+        if (!canChangeSecondaryFacing()) {
+            return getFacing();
+        }
+        final int rotate = (dir + (6 - getFacing())) % 6;
+        if ((rotate == 3) && isValidSecondaryFacing((getFacing() + 2) % 6)) {
+            // if the unit can still twist two hex sides (i.e. single gyro hit)
+            // and the area chosen was directly behind them, then just rotate one way
+            return (getFacing() + 2) % 6;
+        }
+        // otherwise, twist once in the appropriate direction
+        return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
     }
 
     /**

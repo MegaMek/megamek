@@ -232,11 +232,15 @@ public class TestMech extends TestEntity {
 
     @Override
     public double getWeightMisc() {
-        if (mech instanceof LandAirMech || mech instanceof QuadVee) {
-            // 10% of weight is conversion equipment
-            return Math.ceil(mech.getWeight() / 10);
+        // LAM/QuadVee equipment is 10% of mass, rounded up to whole number (15% for bimodal LAM).
+        // IO p. 113 (LAM), 134 (QV)
+        if (mech instanceof LandAirMech) {
+            return Math.ceil(mech.getWeight()) *
+                    (((LandAirMech) mech).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.15 : 0.1);
+        } else if (mech instanceof QuadVee) {
+            return Math.ceil(mech.getWeight() * 0.1);
         }
-        return 0.0f;
+        return 0.0;
     }
 
     @Override
@@ -735,7 +739,7 @@ public class TestMech extends TestEntity {
     public boolean correctMovement(StringBuffer buff) {
         // Mechanical Jump Boosts can be greater then Running as long as
         // the unit can handle the weight.
-        if ((mech.getJumpMP(false) > mech.getOriginalRunMPwithoutMASC())
+        if ((mech.getJumpMP(false) > mech.getOriginalRunMP())
                 && !mech.hasJumpBoosters()
                 && !mech.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             buff.append("Jump MP exceeds run MP\n");
@@ -846,7 +850,7 @@ public class TestMech extends TestEntity {
     public double getArmoredComponentWeight() {
         double weight = 0.0;
 
-        for (int location = Mech.LOC_HEAD; location <= Mech.LOC_LLEG; location++) {
+        for (int location = Mech.LOC_HEAD; location < mech.locations(); location++) {
             for (int slot = 0; slot < mech.getNumberOfCriticals(location); slot++) {
                 CriticalSlot cs = mech.getCritical(location, slot);
                 if ((cs != null) && cs.isArmored()) {

@@ -338,7 +338,7 @@ public class TestAdvancedAerospace extends TestAero {
         for (Bay bay : vessel.getTransportBays()) {
             max -= bay.hardpointCost();
         }
-        return max;
+        return Math.max(max, 0);
     }
     
     /**
@@ -902,7 +902,7 @@ public class TestAdvancedAerospace extends TestAero {
         boolean lateralMatch = true;
         // Forward weapons
         for (EquipmentType eq : leftFwd.keySet()) {
-            if (!rightFwd.containsKey(eq) || (leftFwd.get(eq) != rightFwd.get(eq))) {
+            if (!rightFwd.containsKey(eq) || !leftFwd.get(eq).equals(rightFwd.get(eq))) {
                 lateralMatch = false;
                 break;
             }
@@ -920,7 +920,7 @@ public class TestAdvancedAerospace extends TestAero {
         // Aft weapons
         if (lateralMatch) {
             for (EquipmentType eq : leftAft.keySet()) {
-                if (!rightAft.containsKey(eq) || (leftAft.get(eq) != rightAft.get(eq))) {
+                if (!rightAft.containsKey(eq) || !leftAft.get(eq).equals(rightAft.get(eq))) {
                     lateralMatch = false;
                     break;
                 }
@@ -937,7 +937,7 @@ public class TestAdvancedAerospace extends TestAero {
         // Broadside (warships)
         if (lateralMatch) {
             for (EquipmentType eq : leftBroad.keySet()) {
-                if (!rightBroad.containsKey(eq) || (leftBroad.get(eq) != rightBroad.get(eq))) {
+                if (!rightBroad.containsKey(eq) || !leftBroad.get(eq).equals(rightBroad.get(eq))) {
                     lateralMatch = false;
                     break;
                 }

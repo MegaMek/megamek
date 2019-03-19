@@ -49,8 +49,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      *
      */
     private static final long serialVersionUID = -4801130911083653548L;
-    boolean amsEngaged = false;
-    boolean apdsEngaged = false;
     boolean advancedAMS = false;
     boolean advancedPD = false;
     boolean multiAMS = false;
@@ -245,9 +243,18 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
+        
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && entityTarget != null && entityTarget.isLargeCraft()) {
+            nMissilesModifier -= getAeroSanityAMSHitsMod();
+        }
 
         if (allShotsHit()) {
-            missilesHit = wtype.getRackSize();
+            // We want buildings and large craft to be able to affect this number with AMS
+            // treat as a Streak launcher (cluster roll 11) to make this happen
+            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                    nMissilesModifier, weapon.isHotLoaded(), true,
+                    isAdvancedAMS());
         } else {
             if (ae instanceof BattleArmor) {
                 int shootingStrength = 1;
@@ -471,6 +478,31 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             return false;
         }
         return true;
+    }
+    
+    // Aero sanity reduces effectiveness of AMS bays with default cluster mods.
+    // This attempts to account for that, but might need some balancing...
+    protected double getAeroSanityAMSHitsMod() {
+        if (getParentBayHandler() != null) {
+            WeaponHandler bayHandler = getParentBayHandler();
+            double counterAVMod = (bayHandler.getCounterAV() / bayHandler.weapon.getBayWeapons().size());
+            //use this if point defenses engage the missiles
+            if (bayHandler.pdOverheated) {
+                //Halve the effectiveness
+                counterAVMod /= 2.0;
+            }
+            //Now report and apply the effect, if any
+            if (bayHandler.amsBayEngaged || bayHandler.pdBayEngaged) {
+                // Let's try to mimic reduced AMS effectiveness against higher munition attack values
+                // Set a minimum -4 (default AMS mod)
+                return Math.max((counterAVMod / calcDamagePerHit()),2);
+            }
+        } else if (getCounterAV() > 0) {
+            // Good for squadron missile fire. This may get divided up against too many missile racks to produce a result.
+            // Set a minimum -4 (default AMS mod)
+            return Math.max((getCounterAV() / nweaponsHit),4);
+        }
+        return 0;
     }
 
     protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
@@ -812,9 +844,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship, but is ignored for ground-to-air fire
         //It's also rare but possible for two hostile grounded dropships to shoot at each other with individual weapons
         //with this handler. They'll use the cluster table too.
+        //Don't use this if Aero Sanity is on...
         if (entityTarget != null 
-                && entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
-                && waa.isAirToAir(game) || (waa.isAirToGround(game) && !ae.usesWeaponBays())) {
+                && entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && (waa.isAirToAir(game) || (waa.isAirToGround(game) && !ae.usesWeaponBays()))) {
             nDamPerHit = attackValue;
         } else {
             //This is for all other targets in atmosphere
@@ -843,9 +877,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int id = vPhaseReport.size();
         int hits;
         if (game.getBoard().inSpace() 
-                || waa.isAirToAir(game)
-                || waa.isAirToGround(game)) {
-            // Ensures AMS state is properly updated
+                    || waa.isAirToAir(game)
+                    || waa.isAirToGround(game)) {
+            // Ensures single AMS state is properly updated
             getAMSHitsMod(new Vector<Report>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
             hits = aeroResults[0];
@@ -869,55 +903,60 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.indent();
                 vPhaseReport.addElement(r); 
             }
-            if (!bMissed && amsEngaged && !isTbolt() && !ae.isCapitalFighter()) {
-                // handle single AMS action against standard missiles
-                // Thunderbolts get handled by calcHits below
-                int amsRoll = Compute.d6();
-                r = new Report(3352);
-                r.subject = subjectId;
-                r.add(amsRoll);
-                vPhaseReport.add(r);
-                hits = Math.max(0, hits - amsRoll);
-            
-            // Report any AMS bay action against standard missiles.          
-            } else if (amsBayEngaged && (attackValue <= 0)) {
-                //use this if AMS counterfire destroys all the missiles
-                r = new Report(3356);
-                r.indent();
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-            } else if (amsBayEngaged) {
-                //use this if AMS counterfire destroys some of the missiles
-                CounterAV = getCounterAV();
-                r = new Report(3354);
-                r.indent();
-                r.add(CounterAV);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-                
-             // Report any Point Defense bay action against standard missiles.
- 
-            } else if (pdBayEngaged && (attackValue <= 0)) {
-                //use this if PD counterfire destroys all the missiles
-                r = new Report(3355);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-            } else if (pdBayEngaged) {
-                //use this if PD counterfire destroys some of the missiles
-                r = new Report(3353);
-                r.add(CounterAV);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-            } else if (amsBayEngagedMissile || pdBayEngagedMissile) {
-            //This is reported elsewhere. Don't do anything else.   
-            } else if (!bMissed && amsEngaged && isTbolt() && !ae.isCapitalFighter()) {
+            if (!bMissed && amsEngaged && isTbolt() && !ae.isCapitalFighter()) {
+                // Thunderbolts are destroyed by AMS 50% of the time whether Aero Sanity is on or not
                 hits = calcHits(vPhaseReport);
             } else if (!bMissed && nweaponsHit == 1)  {
                 r = new Report(3390);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             }
+            // This is for aero attacks as attack value. Does not apply if Aero Sanity is on
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                if (!bMissed && amsEngaged && !isTbolt() && !ae.isCapitalFighter()) {
+                    // handle single AMS action against standard missiles
+                    int amsRoll = Compute.d6();
+                    r = new Report(3352);
+                    r.subject = subjectId;
+                    r.add(amsRoll);
+                    vPhaseReport.add(r);
+                    hits = Math.max(0, hits - amsRoll);
+                }
+                // Report any AMS bay action against standard missiles.
+                if (amsBayEngaged && (attackValue <= 0)) {
+                    //use this if AMS counterfire destroys all the missiles
+                    r = new Report(3356);
+                    r.indent();
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
+                } else if (amsBayEngaged) {
+                    //use this if AMS counterfire destroys some of the missiles
+                    CounterAV = getCounterAV();
+                    r = new Report(3354);
+                    r.indent();
+                    r.add(CounterAV);
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
+                    
+                // Report any Point Defense bay action against standard missiles.
+     
+                } else if (pdBayEngaged && (attackValue <= 0)) {
+                    //use this if PD counterfire destroys all the missiles
+                    r = new Report(3355);
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
+                } else if (pdBayEngaged) {
+                    //use this if PD counterfire destroys some of the missiles
+                    r = new Report(3353);
+                    r.add(CounterAV);
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
+                } else if (amsBayEngagedMissile || pdBayEngagedMissile) {
+                //This is reported elsewhere. Don't do anything else.   
+                }
+            } 
         } else {
+            //If none of the above apply
             hits = calcHits(vPhaseReport);
         }
 
@@ -1083,15 +1122,18 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      * @return
      */
     protected boolean isAdvancedAMS() {
+        //Cluster hits calculation in Compute needs this to be on
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && getParentBayHandler() != null) {
+            WeaponHandler bayHandler = getParentBayHandler();
+            return advancedPD && (bayHandler.amsBayEngaged || bayHandler.pdBayEngaged);
+        }
         return advancedAMS && (amsEngaged || apdsEngaged);
     }
     
     //Check for Thunderbolt. We'll use this for single AMS resolution
     @Override
     protected boolean isTbolt() {
-        if (wtype.hasFlag(WeaponType.F_LARGEMISSILE)) {
-            return true;
-        }
-        return false;
+        return wtype.hasFlag(WeaponType.F_LARGEMISSILE);
     }
 }

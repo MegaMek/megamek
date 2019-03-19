@@ -17,13 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AR10Handler;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.TeleMissileHandler;
-import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -44,6 +37,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.setInternalName(this.name);
         this.addLookupName("AR10");
         this.addLookupName("CLAR10");
+        this.shortName = "AR10";
         this.heat = 20; // This should reflect the maximum possible heat
         this.damage = 2;
         this.ammoType = AmmoType.T_AR10;
@@ -75,23 +69,5 @@ public class AR10Weapon extends CapitalMissileWeapon {
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH)
             .setReintroductionFactions(F_FS,F_LC);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_TELE_MISSILE) && game.getBoard().inSpace()) {
-            return new TeleMissileHandler(toHit, waa, game, server);
-        }
-        return new AR10Handler(toHit, waa, game, server);
     }
 }

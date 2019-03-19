@@ -17,12 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.StingrayHandler;
-import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -42,6 +36,7 @@ public class SubCapMissileStingrayWeapon extends SubCapMissileWeapon {
         this.setInternalName(this.name);
         this.addLookupName("Stingray");
         this.addLookupName("CLStingray");
+        this.shortName = "Stingray";
         this.heat = 9;
         this.damage = 3;
         this.ammoType = AmmoType.T_STINGRAY;
@@ -70,18 +65,5 @@ public class SubCapMissileStingrayWeapon extends SubCapMissileWeapon {
             .setISApproximate(true, false, false, false, false)
             .setPrototypeFactions(F_WB)
             .setProductionFactions(F_WB);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new StingrayHandler(toHit, waa, game, server);
     }
 }

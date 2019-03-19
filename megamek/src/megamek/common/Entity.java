@@ -2586,7 +2586,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Returns this entity's unmodified running/flank mp.
      */
-    protected int getOriginalRunMP() {
+    public int getOriginalRunMP() {
         return (int) Math.ceil(getOriginalWalkMP() * 1.5);
     }
 
@@ -3600,7 +3600,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getTotalAmmoOfType(EquipmentType et) {
         int totalShotsLeft = 0;
         for (Mounted amounted : getAmmo()) {
-            if ((amounted.getType() == et) && !amounted.isDumping()) {
+            if (amounted.getType().equals(et) && !amounted.isDumping()) {
                 totalShotsLeft += amounted.getUsableShotsLeft();
             }
         }
@@ -3934,8 +3934,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         EquipmentType altBomb = EquipmentType.get(IBomber.ALT_BOMB_ATTACK);
         EquipmentType diveBomb = EquipmentType.get(IBomber.DIVE_BOMB_ATTACK);
         for (Mounted eq : equipmentList) {
-            if ((eq.getType() == spaceBomb) || (eq.getType() == altBomb)
-                    || (eq.getType() == diveBomb)) {
+            if (eq.getType().equals(spaceBomb) || eq.getType().equals(altBomb)
+                    || eq.getType().equals(diveBomb)) {
                 bombAttacksToRemove.add(eq);
             }
         }
@@ -5594,7 +5594,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public String getNewRoundNovaNetworkString() {
-        if ((newC3NetIdString == null) || (newC3NetIdString == "")) {
+        if ((newC3NetIdString == null) || newC3NetIdString.isEmpty()) {
             newC3NetIdString = getOriginalNovaC3NetId();
         }
         return newC3NetIdString;
@@ -13027,7 +13027,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     	} else {
     		movement.put(getMovementModeAsBattleForceString(), baseMove);
     		if (jumpMove > 0) {
-    			movement.put("j", (int)Math.round(jumpMove * 2));
+    			movement.put("j", jumpMove * 2);
     		}
     	}
     	int umu = getAllUMUCount();

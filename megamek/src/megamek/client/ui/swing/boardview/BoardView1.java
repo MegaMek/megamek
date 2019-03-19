@@ -4345,7 +4345,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         EntitySprite eSprite = entitySpriteIds.get(getIdAndLoc(ae.getId(),
                 ae.getSecondaryPositions().size() > 0 ? 0 : -1));
-        if (eSprite.onlyDetectedBySensors()) {
+        if (eSprite != null && eSprite.onlyDetectedBySensors()) {
             return;
         }
 

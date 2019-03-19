@@ -4073,7 +4073,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
-        if ((null != game) || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        // Fix for #587. Only multiply if Aero Sanity is off
+        if ((null != game) && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage *= 10;
         }
         damage -= dealt; // We already dealt a bunch of damage, move on.
@@ -4084,7 +4085,8 @@ public class Aero extends Entity implements IAero, IBomber {
         int damPerHit = 5;
         for (int i = 0; i < hits; i++) {
             int loc = Compute.randomInt(4);
-            setArmor(getArmor(loc) - Math.max(damPerHit, damage), loc);
+            // Fix for #587. Apply in 5 point groups unless damage remainder is less.
+            setArmor(getArmor(loc) - Math.min(damPerHit, damage), loc);
             // We did too much damage, so we need to damage the SI, but we wont
             // reduce the SI below 1 here
             // unless the fighter is destroyed.
@@ -4097,6 +4099,34 @@ public class Aero extends Entity implements IAero, IBomber {
                 setArmor(0, loc);
             }
             damage -= damPerHit;
+        }
+    }
+    
+    /**
+     * Damage a capital fighter's weapons. WeaponGroups are damaged by critical hits. 
+     * This matches up the individual fighter's weapons and critical slots and damages those
+     * for MHQ resolution
+     * @param loc - Int corresponding to the location struck
+     */
+    public void damageCapFighterWeapons(int loc) {
+        for (Mounted weapon : weaponList) {
+            if (weapon.getLocation() == loc) {
+                //Damage the weapon
+                weapon.setHit(true);
+                //Damage the critical slot
+                for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+                    CriticalSlot slot1 = getCritical(loc, i);
+                    if ((slot1 == null) ||
+                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                        continue;
+                    }
+                    Mounted mounted = slot1.getMount();
+                    if (mounted.equals(weapon)) {
+                        hitAllCriticals(loc, i);
+                        break;
+                    }
+                }
+            }
         }
     }
 

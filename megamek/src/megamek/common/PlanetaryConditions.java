@@ -70,8 +70,10 @@ public class PlanetaryConditions implements Serializable {
     public static final int WI_SIZE = windNames.length;
 
     //wind direction
-    private static String[] dirNames = { "North", "Northeast", "Southeast", "South","Southwest", "Northwest" };
+    private static String[] dirNames = { "North", "Northeast", "Southeast", "South", "Southwest", "Northwest", "RandomWindDirection" };
     public static final int DIR_SIZE = dirNames.length;
+    public static final int DIR_RANDOM = 6;
+    
 
     //atmospheric pressure
     public static final int ATMO_VACUUM   = 0;
@@ -102,7 +104,7 @@ public class PlanetaryConditions implements Serializable {
     private int weatherConditions = WE_NONE;
     private int oldWeatherConditions = WE_NONE;
     private int windStrength = WI_NONE;
-    private int windDirection = -1;
+    private int windDirection = DIR_RANDOM;
     private boolean shiftWindDirection = false;
     private boolean shiftWindStrength = false;
     private boolean isSleeting = false;
@@ -368,7 +370,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public void determineWind() {
-        if (windDirection == -1) {
+        if (windDirection == DIR_RANDOM) {
             // Initial wind direction. If using level 2 rules, this
             // will be the wind direction for the whole battle.
             windDirection = Compute.d6(1) - 1;

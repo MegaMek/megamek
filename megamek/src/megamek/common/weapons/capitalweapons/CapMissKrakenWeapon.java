@@ -17,13 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.CapitalMissileHandler;
-import megamek.common.weapons.TeleMissileHandler;
-import megamek.server.Server;
 
 /**
  * @author Ben Grills
@@ -42,6 +35,7 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
         this.name = "Capital Missile Launcher (Kraken)";
         this.setInternalName(this.name);
         this.addLookupName("Kraken");
+        this.shortName = "Kraken";
         this.heat = 50;
         this.damage = 10;
         this.ammoType = AmmoType.T_KRAKENM;
@@ -71,23 +65,5 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
         .setPrototypeFactions(F_CS,F_DC)
         .setProductionFactions(F_DC);
         
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_TELE_MISSILE) && game.getBoard().inSpace()) {
-            return new TeleMissileHandler(toHit, waa, game, server);
-        }
-        return new CapitalMissileHandler (toHit, waa, game, server);
     }
 }

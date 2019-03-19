@@ -17,7 +17,13 @@
  */
 package megamek.common.weapons.capitalweapons;
 
+import megamek.common.IGame;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.CapitalMissileHandler;
+import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -34,6 +40,19 @@ public abstract class SubCapMissileWeapon extends AmmoWeapon {
         capital = true;
         subCapital = true;
         flags = flags.or(F_AERO_WEAPON).or(F_MISSILE).andNot(F_PROTO_WEAPON);;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     */
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new CapitalMissileHandler(toHit, waa, game, server);
     }
     
     @Override

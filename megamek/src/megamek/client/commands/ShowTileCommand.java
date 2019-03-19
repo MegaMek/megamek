@@ -14,7 +14,7 @@ import megamek.common.options.OptionsConstants;
 /**
  * @author dirk
  *         This command exists to print tile information to the chat
- *         window, it's primarily intended for vissually impaired users.
+ *         window, it's primarily intended for visually impaired users.
  */
 
 public class ShowTileCommand extends ClientCommand {
@@ -23,7 +23,7 @@ public class ShowTileCommand extends ClientCommand {
         super(
                 client,
                 "tile",
-                "print the information about a tile into the chat window. Ussage: #tile 01 01 [dir1 ...] which would show the details for the hex numbered 01 01. The command can be followed with any number of directions (N,NE,SE,S,SW,NW) to list the tiles following those diretions.");
+                "print the information about a tile into the chat window. Usage: #tile 01 01 [dir1 ...] which would show the details for the hex numbered 01 01. The command can be followed with any number of directions (N,NE,SE,S,SW,NW) to list the tiles following those directions.");
     }
 
     /**

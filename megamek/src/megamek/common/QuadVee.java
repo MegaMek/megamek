@@ -470,7 +470,7 @@ public class QuadVee extends QuadMech {
     @Override
     public boolean isValidSecondaryFacing(int dir) {
         if (!canChangeSecondaryFacing()) {
-            return dir == 0;
+            return dir == getFacing();
         }
         //Turret rotation always works in vehicle mode.
         if (getConversionMode() == CONV_MODE_VEHICLE) {

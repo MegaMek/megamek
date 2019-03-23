@@ -9114,7 +9114,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * for visualy impaired users.
      *
      * @param loc the location
-     * @return a string descibing the status of the location.
+     * @return a string describing the status of the location.
      */
     public String statusToString(int loc) {
         if (loc == LOC_NONE) {

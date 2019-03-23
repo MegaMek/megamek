@@ -43,7 +43,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
-                systemEvent(e.getPlayer().getName() + "; " + e.getMessage());
+//                systemEvent(e.getPlayer().getName() + "; " + e.getMessage());
             }
 
             @Override
@@ -108,7 +108,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
             @Override
             public void gameEntityChange(GameEntityChangeEvent e) {
                 final Entity ent = e.getEntity();
-                systemEvent("Updated " + ent.getDisplayName() + " from player " + ent.getOwner().getName() + ". (unneeded?)");
+                systemEvent(e.toString());
             }
 
             @Override

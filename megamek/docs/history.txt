@@ -16,7 +16,9 @@ v0.45.4-SNAPSHOT
 + PR #1264: [Feature] Wind direction can now be set in the lobby
 + Issue #1095: [Errata] TAG now spots for indirect fire as well.
 + PR #1304: Don't overflow the primary monitor with MM splash screen.
++ Issue #1259: Extended Torso Twist Quirk not applying to Quads
 + Data: New Sprites
+
 
 v0.45.3 (2019-02-12 0500 UTC)
 + PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.

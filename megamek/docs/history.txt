@@ -18,6 +18,7 @@ v0.45.4-SNAPSHOT
 + PR #1304: Don't overflow the primary monitor with MM splash screen.
 + Issue #1259: Extended Torso Twist Quirk not applying to Quads
 + Data: New Sprites
++ Data: Adding Fan Council TROs 3048/3062/3063 by popular request.
 
 
 v0.45.3 (2019-02-12 0500 UTC)

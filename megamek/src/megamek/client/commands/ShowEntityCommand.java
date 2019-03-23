@@ -19,7 +19,7 @@ public class ShowEntityCommand extends ClientCommand {
         super(
                 client,
                 "entity",
-                "print the information about an entity into the chat window. Usage: #entity 5 whih would show the details for the entity numbered 5. Also #entity 5 0 would show location 0 of entity 5.");
+                "print the information about an entity into the chat window. Usage: #entity 5 which would show the details for the entity numbered 5. Also #entity 5 0 would show location 0 of entity 5.");
         // to be extended by adding /entity unit# loc# to list details on
         // locations.
     }

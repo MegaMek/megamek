@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.45.4-SNAPSHOT
+v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment
 + Data: New Sprites and Unit fixes.
 + PR #1258: Aero Sanity 2.0! Fixes a number of reporting bugs and adds full support for Advanced Point Defense, 

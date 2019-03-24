@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.45.5-SNAPSHOT
+
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment
 + Data: New Sprites and Unit fixes.
@@ -19,7 +21,6 @@ v0.45.4 (2019-03-24 1700 UTC)
 + Issue #1259: Extended Torso Twist Quirk not applying to Quads
 + Data: New Sprites
 + Data: Adding Fan Council TROs 3048/3062/3063 by popular request.
-
 
 v0.45.3 (2019-02-12 0500 UTC)
 + PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.

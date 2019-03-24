@@ -25,7 +25,7 @@ public abstract class ClientCommand {
     private String name;
     private String helpText;
 
-    /** Creates new ServerCommand */
+    /** Creates new ClientCommand */
     public ClientCommand(Client client, String name, String helpText) {
         this.client = client;
         this.name = name;

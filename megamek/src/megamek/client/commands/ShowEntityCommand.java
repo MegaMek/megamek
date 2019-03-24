@@ -40,6 +40,13 @@ public class ShowEntityCommand extends ClientCommand {
             for (Entity ent : getClient().getEntitiesVector()) {
                 list += ent.getId() + " " + ent.getOwner().getName() + "'s "
                         + ent.getDisplayName() + "\n";
+if (ent.getPosition() != null) {
+list += "Location: " + (ent.getPosition().getX() + 1) + ", " + (ent.getPosition().getY() + 1) + " \n";
+list += "Facing: " + ent.getFacingAsString() + "\n";
+}
+else {
+list += "Probably off-board.\n";
+}
             }
             return list;
         }

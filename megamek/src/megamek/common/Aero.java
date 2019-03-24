@@ -4229,7 +4229,7 @@ public class Aero extends Entity implements IAero, IBomber {
         if ((this instanceof Dropship) 
                 || (this instanceof Jumpship)
                 || (this instanceof Warship)
-                || (this instanceof SpaceStation)) {  		
+                || (this instanceof SpaceStation)) {
 
             ArrayList<Mounted> ams = new ArrayList<>();
             for (Mounted weapon : getWeaponBayList()) {

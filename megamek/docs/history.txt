@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-v0.45.4-SNAPSHOT
+v0.45.5-SNAPSHOT
+
+v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment
 + Data: New Sprites and Unit fixes.
 + PR #1258: Aero Sanity 2.0! Fixes a number of reporting bugs and adds full support for Advanced Point Defense, 
@@ -16,6 +18,9 @@ v0.45.4-SNAPSHOT
 + PR #1264: [Feature] Wind direction can now be set in the lobby
 + Issue #1095: [Errata] TAG now spots for indirect fire as well.
 + PR #1304: Don't overflow the primary monitor with MM splash screen.
++ Issue #1259: Extended Torso Twist Quirk not applying to Quads
++ Data: New Sprites
++ Data: Adding Fan Council TROs 3048/3062/3063 by popular request.
 
 v0.45.3 (2019-02-12 0500 UTC)
 + PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.

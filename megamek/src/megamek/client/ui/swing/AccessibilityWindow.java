@@ -33,7 +33,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
-                systemEvent("The player " + e.getPlayer().getName() + " has disconected.");
+                systemEvent("The player " + e.getPlayer().getName() + " has disconnected.");
             }
 
             @Override
@@ -53,12 +53,13 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                systemEvent("Phase change, it's now " + e.getNewPhase() + ". (unneeded?)");
+//                systemEvent("Phase change, it's now " + e.getNewPhase() + ". (unneeded?)");
             }
 
             @Override
             public void gameReport(GameReportEvent e) {
-                systemEvent("Report; " + e.getReport() + " (unneeded?)");
+System.out.println("Report received.");
+                systemEvent("Report: " + e.getReport());
             }
 
             @Override

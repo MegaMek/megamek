@@ -3860,6 +3860,13 @@ public class Aero extends Entity implements IAero, IBomber {
             toReturn += "FCS (" + getFCSHits() + ")";
             first = false;
         }
+        if (getCICHits() > 0) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "CIC (" + getCICHits() + ")";
+            first = false;
+        }
         if (isGearHit()) {
             if (!first) {
                 toReturn += ", ";

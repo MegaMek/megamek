@@ -105,6 +105,7 @@ public class UnitEditorDialog extends JDialog {
     CheckCritPanel flightStabilizerCrit;
     CheckCritPanel avionicsCrit;
     CheckCritPanel fcsCrit;
+    CheckCritPanel cicCrit;
     CheckCritPanel gearCrit;
     CheckCritPanel leftThrusterCrit;
     CheckCritPanel rightThrusterCrit;
@@ -863,10 +864,10 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.fill = GridBagConstraints.NONE;
             panSystem.add(new JLabel("<html><b>" + "CIC" + "</b><br></html>"),
                     gridBagConstraints);
-            fcsCrit = new CheckCritPanel(3, aero.getCICHits());
+            cicCrit = new CheckCritPanel(3, aero.getCICHits());
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
-            panSystem.add(fcsCrit, gridBagConstraints);
+            panSystem.add(cicCrit, gridBagConstraints);
         } else {
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy++;
@@ -1211,11 +1212,10 @@ public class UnitEditorDialog extends JDialog {
                 aero.setAvionicsHits(avionicsCrit.getHits());
             }
             if (null != fcsCrit) {
-                if (aero instanceof Jumpship) {
-                    aero.setCICHits(fcsCrit.getHits());
-                } else {
-                    aero.setFCSHits(fcsCrit.getHits());
-                }
+                aero.setFCSHits(fcsCrit.getHits());
+            }
+            if (null != cicCrit) {
+                aero.setCICHits(cicCrit.getHits());
             }
             if (null != engineCrit) {
                 aero.setEngineHits(engineCrit.getHits());

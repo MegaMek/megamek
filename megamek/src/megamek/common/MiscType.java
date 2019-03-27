@@ -1742,6 +1742,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createHydroFoilChassisModification());
         EquipmentType.addType(MiscType.createMonocycleModification());
         EquipmentType.addType(MiscType.createISOffRoadChassis());
+        EquipmentType.addType(MiscType.createOmniChassisMod());
         EquipmentType.addType(MiscType.createPropChassisModification());
         EquipmentType.addType(MiscType.createSnomobileChassis());
         EquipmentType.addType(MiscType.createSTOLChassisMod());
@@ -10022,6 +10023,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Combat Vehicle Chassis Mod [Environmental Sealing]";
         misc.setInternalName("Environmental Sealed Chassis");
+        misc.addLookupName("EnvironmentalSealingChassisMod");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
@@ -10045,6 +10047,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "SV Chassis Mod [Amphibious]";
         misc.setInternalName("AmphibiousChassis");
+        misc.addLookupName("AmphibiousChassisMod");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.tankslots = 0;
@@ -10066,6 +10069,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "SV Chassis Mod [Armored Chassis]";
         misc.setInternalName("Armored Chassis");
+        misc.addLookupName("ArmoredChassisMod");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
@@ -10134,6 +10138,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ISSVDuneBuggy");
         misc.addLookupName("ClanSVDuneBuggyChassis");
         misc.addLookupName("ClanSVDuneBuggy");
+        misc.addLookupName("DuneBuggyChassisMod");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.tankslots = 0;
@@ -10226,6 +10231,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ISOffRoad");
         misc.addLookupName("ClanOffRoadChassis");
         misc.addLookupName("CLOffRoad");
+        misc.addLookupName("OffroadChassisMod");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.tankslots = 0;
@@ -10243,13 +10249,36 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createOmniChassisMod() {
+        MiscType misc = new MiscType();
+        misc.name = "SV Chassis Mod [Omni]";
+        misc.setInternalName("OmniChassisMod");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.flags = misc.flags.or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
+        misc.bv = 0;
+        misc.rulesRefs = "122,TM";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+                .setISAdvancement(DATE_NONE, DATE_NONE, 3052)
+                .setClanAdvancement(2854, 2856, 2864).setClanApproximate(true)
+                .setPrototypeFactions(F_CCY, F_CSF).setProductionFactions(F_CCY, F_DC)
+                .setTechRating(RATING_E).setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
     public static MiscType createPropChassisModification() {
         MiscType misc = new MiscType();
         misc.name = "SV Chassis Mod [Propeller-Driven]";
         misc.setInternalName("PropChassisMod");
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.tankslots = 0;
-        misc.flags = misc.flags.andNot(F_FIGHTER_EQUIPMENT).or(F_CHASSIS_MODIFICATION).or(F_PROP);
+        misc.flags = misc.flags.andNot(F_FIGHTER_EQUIPMENT).or(F_CHASSIS_MODIFICATION).or(F_PROP)
+            .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.rulesRefs = "122,TM";
         // Setting this Pre-Spaceflight
@@ -10264,6 +10293,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "SV Chassis Mod [Snowmobile]";
         misc.setInternalName("SnowmobileChassis");
+        misc.addLookupName("SnowmobileChassisMod");
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.tonnage = 0;
         misc.criticals = 0;
@@ -10326,6 +10356,7 @@ public class MiscType extends EquipmentType {
         misc.name = "SV Chassis Mod [Tractor]";
         misc.setInternalName(misc.name);
         misc.addLookupName("Tractor");
+        misc.addLookupName("TractorChassisMod");
         misc.tonnage = 0; // accounted as part of the unit Construction
         misc.criticals = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
@@ -10368,6 +10399,7 @@ public class MiscType extends EquipmentType {
         misc.name = "SV Chassis Mod [Trailer]";
         misc.setInternalName(misc.name);
         misc.addLookupName("Trailer");
+        misc.addLookupName("TrailerChassisMod");
         misc.tonnage = 0; // accounted as part of the unit Construction
         misc.criticals = 0;
         misc.cost = 0; // Cost accounted as part of unit cost

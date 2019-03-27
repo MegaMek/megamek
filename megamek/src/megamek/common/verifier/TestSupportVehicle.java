@@ -17,10 +17,82 @@ package megamek.common.verifier;
 import megamek.common.Tank;
 import megamek.common.util.StringUtil;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 /**
  * Author: arlith
  */
 public class TestSupportVehicle extends TestTank {
+
+    /**
+     * Types of support vehicles used for determining compatibility with chassis mods and engine types.
+     * This is nearly identical with motive type, but there some differences in naval, rail, and aerospace
+     * units.
+     */
+    public enum SVType {
+        AIRSHIP,
+        FIXED_WING,
+        HOVERCRAFT,
+        NAVAL,
+        TRACKED,
+        VTOL,
+        WHEELED,
+        WIGE,
+        RAIL,
+        SATELLITE;
+
+        static Set<SVType> allBut(SVType type) {
+            return EnumSet.complementOf(EnumSet.of(type));
+        }
+
+        static Set<SVType> allBut(SVType first, SVType... rest) {
+            return EnumSet.complementOf(EnumSet.of(first, rest));
+        }
+    };
+
+    public enum ChassisModification {
+        AMPHIBIOUS ("AmphibiousChassisMod", SVType.allBut(SVType.HOVERCRAFT, SVType.NAVAL)),
+        ARMORED ("ArmoredChassisMod", SVType.allBut(SVType.AIRSHIP)),
+        BICYCLE ("BicycleChassisMod", EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED)),
+        CONVERTIBLE ("ConvertibleChassisMod", EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED), true),
+        DUNE_BUGGY ("DuneBuggyChassisMod", EnumSet.of(SVType.WHEELED)),
+        ENVIRONMENTAL_SEALING ("EnvironmentalSealingChassisMod", EnumSet.allOf(SVType.class)),
+        HYDROFOIL ("HydrofoilChassisMod", EnumSet.of(SVType.NAVAL)),
+        MONOCYCLE ("MonocycleChassisMod", EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED), true),
+        OFFROAD ("OffroadChassisMod", EnumSet.of(SVType.WHEELED)),
+        OMNI ("OmniChassisMod"),
+        PROP ("PropChassisMod", EnumSet.of(SVType.FIXED_WING)),
+        SNOWMOBILE ("SnowmobileChassisMod", EnumSet.of(SVType.WHEELED, SVType.TRACKED)),
+        STOL ("STOLChassisMod", EnumSet.of(SVType.FIXED_WING)),
+        SUBMERSIBLE ("SubmersibleChassisMod", EnumSet.of(SVType.NAVAL)),
+        TRACTOR ("TractorChassisMod", EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.NAVAL)),
+        TRAILER ("TrailerChassisMod", EnumSet.of(SVType.WHEELED, SVType.TRACKED)),
+        ULTRA_LIGHT ("UltraLightChassisMod", true),
+        VSTOL ("VSTOLChassisMod", EnumSet.of(SVType.FIXED_WING));
+
+        public final String eqTypeKey;
+        public final boolean smallOnly;
+        public final Set<SVType> allowedTypes;
+
+        ChassisModification(String eqTypeKey) {
+            this(eqTypeKey, EnumSet.allOf(SVType.class), false);
+        }
+
+        ChassisModification(String eqTypeKey, boolean smallOnly) {
+            this(eqTypeKey, EnumSet.allOf(SVType.class), smallOnly);
+        }
+
+        ChassisModification(String eqTypeKey, Set<SVType> allowedTypes) {
+            this(eqTypeKey, allowedTypes, false);
+        }
+
+        ChassisModification(String eqTypeKey, Set<SVType> allowedTypes, boolean smallOnly) {
+            this.eqTypeKey = eqTypeKey;
+            this.allowedTypes = allowedTypes;
+            this.smallOnly = smallOnly;
+        }
+    }
 
     /**
      * Gives the weight of a single point of armor at a particular BAR for a 

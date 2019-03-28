@@ -25,7 +25,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     public AccessibilityWindow(ChatterBox cb, ClientGUI clientgui) {
         super(clientgui.getFrame(), Messages.getString("ClientGUI.ChatWindow"));
         client = clientgui.getClient();
-        client.getGame().addGameListener(new GameListener() {
+        client.getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerConnected(GamePlayerConnectedEvent e) {
                 systemEvent("New player has connected. Their name is " + e.getPlayer().getName() + ".");
@@ -36,55 +36,10 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                 systemEvent("The player " + e.getPlayer().getName() + " has disconnected.");
             }
 
-            @Override
-            public void gamePlayerChange(GamePlayerChangeEvent e) {
-                //systemEvent("Player " + e.getPlayer().getName() + " is done. (unneeded?)");
-            }
-
-            @Override
-            public void gamePlayerChat(GamePlayerChatEvent e) {
-//                systemEvent(e.getPlayer().getName() + "; " + e.getMessage());
-            }
-
-            @Override
-            public void gameTurnChange(GameTurnChangeEvent e) {
-                //systemEvent("Turn change. (unneeded?)");
-            }
-
-            @Override
-            public void gamePhaseChange(GamePhaseChangeEvent e) {
-//                systemEvent("Phase change, it's now " + e.getNewPhase() + ". (unneeded?)");
-            }
-
-            @Override
-            public void gameReport(GameReportEvent e) {
-System.out.println("Report received.");
-                systemEvent("Report: " + e.getReport());
-            }
 
             @Override
             public void gameEnd(GameEndEvent e) {
                 systemEvent("The game ended. Goodbye.");
-            }
-
-            @Override
-            public void gameBoardNew(GameBoardNewEvent e) {
-                //systemEvent("new Board. (unneeded?)");
-            }
-
-            @Override
-            public void gameBoardChanged(GameBoardChangeEvent e) {
-                //systemEvent("Board changes. (unneeded?)");
-            }
-
-            @Override
-            public void gameSettingsChange(GameSettingsChangeEvent e) {
-                //systemEvent("Settigns changed. (unneeded?)");
-            }
-
-            @Override
-            public void gameMapQuery(GameMapQueryEvent e) {
-                systemEvent("Map Query. (unneeded?)");
             }
 
             @Override

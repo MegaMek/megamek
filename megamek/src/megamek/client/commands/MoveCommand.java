@@ -57,16 +57,17 @@ public class MoveCommand extends ClientCommand {
                 return "Move aborted, all movement data cleared.";
             } else if (args[1].equalsIgnoreCase("HELP")) {
                 return "Available commands:\n"
-                        + "#move ABORT = aborts planed move and deselect unit.\n"
+                        + "#move ABORT = aborts planned move and deselect unit.\n"
                         + "#move SELECT unitID = Selects thhe unit named unit ID for movement. This is a prerequisite for all commands listed after this.\n"
-                        + "#move COMMIT = comits the planed movement.\n"
+                        + "#move COMMIT = commits the planned movement.\n"
                         + "#move JUMP = clears all movement and starts jump movement. Eiether the entire move is a jump or the entire move is a walk. switching gears will cancel all planned movement (but leave the unit selected).\n"
-                        + "#move BACK [x y] = Start walking backwards, can be followed by a coordiate.\n"
-                        + "#move WALK [x y] = Start walking/running forwards, this is the default. Can be followed by a coordiate.\n"
-                        + "#move TURN [x y] = Starts turning towards target coordinate. Can be followed by a coordiate.\n"
+                        + "#move BACK [x y] = Start walking backwards, can be followed by a coordinate.\n"
+                        + "#move WALK [x y] = Start walking/running forwards, this is the default. Can be followed by a coordinate.\n"
+                        + "#move TURN [x y] = Starts turning towards target coordinate. Can be followed by a coordinate.\n"
                         + "#move CLIP = Clips to path to what is actually possible, and reports on what will happen if commited.\n"
                         + "#move GETUP = Attempt to stand up. Will require a piloting roll.\n"
-                        + "#move CAREFUL = Attempt to stand up. Will require a piloting roll.\n"
+                        + "#move CAREFUL = Attempt to stand up carefully. Will require a piloting roll.\n"
++ "#move PRONE = Drop prone.\n"
                         + "#move x y = move towards coordinate in the current gear. It will do pathfinding for least cost path. Note that the entity will try to move to each coordinate supplied in order.\n";
             } else if (args[1].equalsIgnoreCase("SELECT")) {
                 try {
@@ -121,7 +122,7 @@ public class MoveCommand extends ClientCommand {
                 } else if (args[1].equalsIgnoreCase("GETUP")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                         cmd.addStep(MoveStepType.GET_UP);
-                        return "Mech will try to stand up. this requieres a piloting roll.";
+                        return "Mech will try to stand up. this requirees a piloting roll.";
                     }
 
                     return "Trying to get up but the mech is not prone.";
@@ -129,7 +130,7 @@ public class MoveCommand extends ClientCommand {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown() && getClient().getGame().getOptions()
                             .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)) {
                         cmd.addStep(MoveStepType.CAREFUL_STAND);
-                        return "Mech will try to stand up. this requieres a piloting roll.";
+                        return "Mech will try to stand up carefully. this requirees a piloting roll.";
                     }
 
                     return "Trying to get up but the mech is not prone.";

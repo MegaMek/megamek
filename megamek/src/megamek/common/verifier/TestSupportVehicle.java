@@ -14,6 +14,7 @@
  */
 
 package megamek.common.verifier;
+import megamek.common.Engine;
 import megamek.common.Tank;
 import megamek.common.util.StringUtil;
 
@@ -26,9 +27,8 @@ import java.util.Set;
 public class TestSupportVehicle extends TestTank {
 
     /**
-     * Types of support vehicles used for determining compatibility with chassis mods and engine types.
-     * This is nearly identical with motive type, but there some differences in naval, rail, and aerospace
-     * units.
+     * Support vehicle categories for construction purposes. Most of these match with a particular movement
+     * mode, but the construction rules treat naval and rail units as single types.
      */
     public enum SVType {
         AIRSHIP,
@@ -51,6 +51,10 @@ public class TestSupportVehicle extends TestTank {
         }
     };
 
+    /**
+     * Additional construction data for chassis mods, used to determine whether they are legal for particular
+     * units.
+     */
     public enum ChassisModification {
         AMPHIBIOUS ("AmphibiousChassisMod", SVType.allBut(SVType.HOVERCRAFT, SVType.NAVAL)),
         ARMORED ("ArmoredChassisMod", SVType.allBut(SVType.AIRSHIP)),
@@ -58,6 +62,7 @@ public class TestSupportVehicle extends TestTank {
         CONVERTIBLE ("ConvertibleChassisMod", EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED), true),
         DUNE_BUGGY ("DuneBuggyChassisMod", EnumSet.of(SVType.WHEELED)),
         ENVIRONMENTAL_SEALING ("EnvironmentalSealingChassisMod", EnumSet.allOf(SVType.class)),
+        EXTERNAL_POWER_PICKUP ("ExternalPowerPickupChassisMod", EnumSet.of(SVType.RAIL)),
         HYDROFOIL ("HydrofoilChassisMod", EnumSet.of(SVType.NAVAL)),
         MONOCYCLE ("MonocycleChassisMod", EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED), true),
         OFFROAD ("OffroadChassisMod", EnumSet.of(SVType.WHEELED)),
@@ -66,8 +71,8 @@ public class TestSupportVehicle extends TestTank {
         SNOWMOBILE ("SnowmobileChassisMod", EnumSet.of(SVType.WHEELED, SVType.TRACKED)),
         STOL ("STOLChassisMod", EnumSet.of(SVType.FIXED_WING)),
         SUBMERSIBLE ("SubmersibleChassisMod", EnumSet.of(SVType.NAVAL)),
-        TRACTOR ("TractorChassisMod", EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.NAVAL)),
-        TRAILER ("TrailerChassisMod", EnumSet.of(SVType.WHEELED, SVType.TRACKED)),
+        TRACTOR ("TractorChassisMod", EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.NAVAL, SVType.RAIL)),
+        TRAILER ("TrailerChassisMod", EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.RAIL)),
         ULTRA_LIGHT ("UltraLightChassisMod", true),
         VSTOL ("VSTOLChassisMod", EnumSet.of(SVType.FIXED_WING));
 
@@ -91,6 +96,47 @@ public class TestSupportVehicle extends TestTank {
             this.eqTypeKey = eqTypeKey;
             this.allowedTypes = allowedTypes;
             this.smallOnly = smallOnly;
+        }
+    }
+
+    /**
+     * Additional construction data for engine types, used to determine which ones are available for which
+     * vehicle types.
+     */
+    public enum SVEngine {
+        STEAM (Engine.STEAM, EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.AIRSHIP, SVType.NAVAL)),
+        COMBUSTION (Engine.COMBUSTION_ENGINE),
+        BATTERY (Engine.BATTERY, true),
+        FUEL_CELL (Engine.FUEL_CELL, true),
+        SOLAR (Engine.SOLAR, EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.AIRSHIP, SVType.FIXED_WING,
+                SVType.NAVAL, SVType.WIGE), true),
+        FISSION (Engine.FISSION),
+        FUSION (Engine.NORMAL_ENGINE),
+        MAGLEV (Engine.MAGLEV, EnumSet.of(SVType.RAIL)),
+        EXTERNAL (Engine.NONE, EnumSet.of(SVType.RAIL), true);
+
+        /** The engine type constant used to create a new {@link Engine}. */
+        public final int engineType;
+        /** Fixed-wing must have prop chassis mod to use an electric engine */
+        public final boolean electric;
+        private final Set<SVType> allowedTypes;
+
+        SVEngine(int engineType) {
+            this(engineType, EnumSet.allOf(SVType.class), false);
+        }
+
+        SVEngine(int engineType, boolean electric) {
+            this(engineType, EnumSet.allOf(SVType.class), electric);
+        }
+
+        SVEngine(int engineType, Set<SVType> allowedTypes) {
+            this(engineType, allowedTypes, false);
+        }
+
+        SVEngine(int engineType, Set<SVType> allowedTypes, boolean electric) {
+            this.engineType = engineType;
+            this.allowedTypes = allowedTypes;
+            this.electric = electric;
         }
     }
 

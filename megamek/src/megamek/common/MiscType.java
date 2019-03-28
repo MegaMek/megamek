@@ -1739,6 +1739,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createConvertibleModification());
         EquipmentType.addType(MiscType.createISCVDuneBuggyChassis());
         EquipmentType.addType(MiscType.createEnvironmentalSealedChassis());
+        EquipmentType.addType(MiscType.createExternalPowerPickup());
         EquipmentType.addType(MiscType.createHydroFoilChassisModification());
         EquipmentType.addType(MiscType.createMonocycleModification());
         EquipmentType.addType(MiscType.createISOffRoadChassis());
@@ -10179,6 +10180,24 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(RATING_C);
         misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_D, RATING_C, RATING_C });
+        return misc;
+    }
+
+    public static MiscType createExternalPowerPickup() {
+        MiscType misc = new MiscType();
+        misc.name = "External Power Pickup";
+        misc.setInternalName("ExternalPowerPickupChassisMod");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
+        misc.bv = 0;
+        misc.rulesRefs = "243,TO";
+        misc.tankslots = 0;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(DATE_NONE, DATE_NONE, DATE_PS)
+            .setTechRating(RATING_B).setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_C });
         return misc;
     }
 

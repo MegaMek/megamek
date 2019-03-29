@@ -100,12 +100,9 @@ public class Dropship extends SmallCraft {
         return CrewType.VESSEL;
     }
 
+    //Docking Collar Stuff
     public boolean isDockCollarDamaged() {
         return dockCollarDamaged;
-    }
-    
-    public boolean isKFBoomDamaged() {
-        return kfBoomDamaged;
     }
     
     public int getCollarType() {
@@ -129,6 +126,19 @@ public class Dropship extends SmallCraft {
                 .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setTechRating(RATING_C)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    //KF Boom Stuff
+    public boolean isKFBoomDamaged() {
+        return kfBoomDamaged;
+    }
+    
+    public int getBoomType() {
+        return boomType;
+    }
+    
+    public void setBoomType(int boomType) {
+        this.boomType = boomType;
     }
 
     public String getCritDamageString() {

@@ -76,11 +76,20 @@ public class Dropship extends SmallCraft {
             "KF-Boom", "Prototype KF-Boom", "No Boom"
     };
     
+    //Likewise, you can have a prototype or standard K-F Boom
+    public static final int BOOM_STANDARD  = 0;
+    public static final int BOOM_PROTOTYPE = 1;
+    
+    private static final String[] BOOM_NAMES = {
+            "KF-Boom", "Prototype KF-Boom"
+    };
+    
     // what needs to go here?
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;
     private boolean kfBoomDamaged = false;
     private int collarType = COLLAR_STANDARD;
+    private int boomType = BOOM_STANDARD;
 
     @Override
     public int getUnitType() {

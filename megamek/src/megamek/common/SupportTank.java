@@ -126,41 +126,50 @@ public class SupportTank extends Tank {
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
+        return getConstructionTechAdvancement(getMovementMode(), getWeightClass());
+    }
+
+    public static TechAdvancement getConstructionTechAdvancement(EntityMovementMode movementMode, int weightClass) {
         /* Support vehicle dates and tech ratings are found in TM 120, 122. DA availability is assumed to
          * be the same as Clan invasion era. */
-        switch(getMovementMode()) {
-        case HOVER:
-            if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
-                return TA_HOVER_LARGE;
-            } else {
-                return TA_HOVER;
-            }
-        case NAVAL:
-        case HYDROFOIL:
-        case SUBMARINE:
-            return TA_NAVAL;
-        case TRACKED:
-            if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
-                return TA_TRACKED_LARGE;
-            } else {
-                return TA_TRACKED;
-            }
-        case WHEELED:
-            if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
-                return TA_WHEELED_LARGE;
-            } else if (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
-                return TA_WHEELED_MEDIUM;
-            } else {
+        switch(movementMode) {
+            case HOVER:
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_HOVER_LARGE;
+                } else {
+                    return TA_HOVER;
+                }
+            case NAVAL:
+            case HYDROFOIL:
+            case SUBMARINE:
+                return TA_NAVAL;
+            case TRACKED:
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_TRACKED_LARGE;
+                } else {
+                    return TA_TRACKED;
+                }
+            case WHEELED:
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_WHEELED_LARGE;
+                } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
+                    return TA_WHEELED_MEDIUM;
+                } else {
+                    return TA_WHEELED_SMALL;
+                }
+            case WIGE:
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_WIGE_LARGE;
+                } else {
+                    return TA_WIGE;
+                }
+            case RAIL:
+            case MAGLEV:
+                // TacOps gives a minimum tech rating of A but no availability data. Assuming A, the same
+                // as small wheeled. Maglev will be higher based on the required engine.
                 return TA_WHEELED_SMALL;
-            }
-        case WIGE:
-            if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
-                return TA_WIGE_LARGE;
-            } else {
-                return TA_WIGE;
-            }
-        default:
-            return TA_TRACKED; // average
+            default:
+                return TA_TRACKED; // average
         }
     }
 

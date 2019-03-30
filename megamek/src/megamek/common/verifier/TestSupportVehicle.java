@@ -14,8 +14,7 @@
  */
 
 package megamek.common.verifier;
-import megamek.common.Engine;
-import megamek.common.Tank;
+import megamek.common.*;
 import megamek.common.util.StringUtil;
 
 import java.util.EnumSet;
@@ -31,16 +30,22 @@ public class TestSupportVehicle extends TestTank {
      * mode, but the construction rules treat naval and rail units as single types.
      */
     public enum SVType {
-        AIRSHIP,
-        FIXED_WING,
-        HOVERCRAFT,
-        NAVAL,
-        TRACKED,
-        VTOL,
-        WHEELED,
-        WIGE,
-        RAIL,
-        SATELLITE;
+        AIRSHIP (EntityMovementMode.AIRSHIP),
+        FIXED_WING (EntityMovementMode.AERODYNE),
+        HOVERCRAFT (EntityMovementMode.HOVER),
+        NAVAL (EntityMovementMode.NAVAL),
+        TRACKED (EntityMovementMode.TRACKED),
+        VTOL (EntityMovementMode.VTOL),
+        WHEELED (EntityMovementMode.WHEELED),
+        WIGE (EntityMovementMode.WIGE),
+        RAIL (EntityMovementMode.RAIL),
+        SATELLITE (EntityMovementMode.STATION_KEEPING);
+
+        public final EntityMovementMode defaultMovementMode;
+
+        SVType(EntityMovementMode defaultMovementMode) {
+            this.defaultMovementMode = defaultMovementMode;
+        }
 
         static Set<SVType> allBut(SVType type) {
             return EnumSet.complementOf(EnumSet.of(type));
@@ -49,13 +54,13 @@ public class TestSupportVehicle extends TestTank {
         static Set<SVType> allBut(SVType first, SVType... rest) {
             return EnumSet.complementOf(EnumSet.of(first, rest));
         }
-    };
+    }
 
     /**
      * Additional construction data for chassis mods, used to determine whether they are legal for particular
      * units.
      */
-    public enum ChassisModification {
+    public enum ChassisModification implements ITechnologyDelegator {
         AMPHIBIOUS ("AmphibiousChassisMod", SVType.allBut(SVType.HOVERCRAFT, SVType.NAVAL)),
         ARMORED ("ArmoredChassisMod", SVType.allBut(SVType.AIRSHIP)),
         BICYCLE ("BicycleChassisMod", EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED)),
@@ -76,7 +81,7 @@ public class TestSupportVehicle extends TestTank {
         ULTRA_LIGHT ("UltraLightChassisMod", true),
         VSTOL ("VSTOLChassisMod", EnumSet.of(SVType.FIXED_WING));
 
-        public final String eqTypeKey;
+        public final MiscType equipment;
         public final boolean smallOnly;
         public final Set<SVType> allowedTypes;
 
@@ -93,9 +98,14 @@ public class TestSupportVehicle extends TestTank {
         }
 
         ChassisModification(String eqTypeKey, Set<SVType> allowedTypes, boolean smallOnly) {
-            this.eqTypeKey = eqTypeKey;
+            this.equipment = (MiscType) EquipmentType.get(eqTypeKey);
             this.allowedTypes = allowedTypes;
             this.smallOnly = smallOnly;
+        }
+
+        @Override
+        public ITechnology getTechSource() {
+            return equipment;
         }
     }
 
@@ -103,7 +113,7 @@ public class TestSupportVehicle extends TestTank {
      * Additional construction data for engine types, used to determine which ones are available for which
      * vehicle types.
      */
-    public enum SVEngine {
+    public enum SVEngine implements ITechnologyDelegator {
         STEAM (Engine.STEAM, EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.AIRSHIP, SVType.NAVAL)),
         COMBUSTION (Engine.COMBUSTION_ENGINE),
         BATTERY (Engine.BATTERY, true),
@@ -116,7 +126,7 @@ public class TestSupportVehicle extends TestTank {
         EXTERNAL (Engine.NONE, EnumSet.of(SVType.RAIL), true);
 
         /** The engine type constant used to create a new {@link Engine}. */
-        public final int engineType;
+        public final Engine engine;
         /** Fixed-wing must have prop chassis mod to use an electric engine */
         public final boolean electric;
         private final Set<SVType> allowedTypes;
@@ -134,11 +144,51 @@ public class TestSupportVehicle extends TestTank {
         }
 
         SVEngine(int engineType, Set<SVType> allowedTypes, boolean electric) {
-            this.engineType = engineType;
+            this.engine = new Engine(0, engineType, Engine.SUPPORT_VEE_ENGINE);
             this.allowedTypes = allowedTypes;
             this.electric = electric;
         }
+
+        @Override
+        public ITechnology getTechSource() {
+            return engine;
+        }
     }
+
+    /**
+     * Tech advancement data for structural components with variable tech levels (structure,
+     * armor, engine). This is assembled from the tables on TM, p. 122 and IO, p. 49, primitive construction
+     * rules (IO, p. 120-121) and a pending proposal to the rules committee for E.
+     */
+    public static final TechAdvancement[] TECH_LEVEL_TA = {
+            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_A)
+                    .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
+                    .setAvailability(ITechnology.RATING_A, ITechnology.RATING_A,
+                    ITechnology.RATING_A, ITechnology.RATING_A),
+            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_B)
+                    .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
+                    .setAvailability(ITechnology.RATING_B, ITechnology.RATING_B,
+                    ITechnology.RATING_B, ITechnology.RATING_A),
+            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_C)
+                    .setAdvancement(2250, 2300, 2305).setApproximate(true, false, false)
+                    .setPrototypeFactions(ITechnology.F_TA).setProductionFactions(ITechnology.F_TA)
+                    .setAvailability(ITechnology.RATING_C, ITechnology.RATING_B,
+                    ITechnology.RATING_B, ITechnology.RATING_B),
+            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_D)
+                    .setAdvancement(2420, 2430, 2435).setApproximate(true, true, false)
+                    .setPrototypeFactions(ITechnology.F_TH).setProductionFactions(ITechnology.F_TH)
+                    .setAvailability(ITechnology.RATING_C, ITechnology.RATING_C,
+                    ITechnology.RATING_C, ITechnology.RATING_B),
+            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_E)
+                    .setISAdvancement(2557, 2571, 3055).setClanAdvancement(2557, 2571, 2815)
+                    .setAvailability(ITechnology.RATING_D, ITechnology.RATING_F,
+                    ITechnology.RATING_D, ITechnology.RATING_C),
+            new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_F)
+                    .setISAdvancement(ITechnology.DATE_NONE, ITechnology.DATE_NONE, 3065).setISApproximate(false, false, true)
+                    .setClanAdvancement(2820, 2825, 2830).setClanApproximate(true, true, false)
+                    .setAvailability(ITechnology.RATING_E, ITechnology.RATING_E,
+                    ITechnology.RATING_D, ITechnology.RATING_C)
+    };
 
     /**
      * Gives the weight of a single point of armor at a particular BAR for a 

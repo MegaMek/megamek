@@ -111,14 +111,43 @@ public class FixedWingSupport extends ConvFighter {
 
     protected static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
     protected static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+    protected static final TechAdvancement TA_AIRSHIP_SUPPORT_SMALL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_A).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+    protected static final TechAdvancement TA_AIRSHIP_SUPPORT_MEDIUM = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+    // Availability missing from TO. Using medium
+    protected static final TechAdvancement TA_AIRSHIP_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+    // Availability missing from TO. Using similar values from other support vees.
+    // Also using early spaceflight for intro dates based on common sense.
+    protected static final TechAdvancement TA_SATELLITE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+        return getTechAdvancement(getMovementMode(), getWeightClass());
+    }
+
+    public static TechAdvancement getTechAdvancement(EntityMovementMode movementMode, int weightClass) {
+        if (movementMode.equals(EntityMovementMode.AIRSHIP)) {
+            if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                return TA_AIRSHIP_SUPPORT_LARGE;
+            } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
+                return TA_AIRSHIP_SUPPORT_MEDIUM;
+            } else {
+                return TA_AIRSHIP_SUPPORT_SMALL;
+            }
+        } else if (movementMode.equals(EntityMovementMode.STATION_KEEPING)) {
+            return TA_SATELLITE;
+        } else if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
             return TA_FIXED_WING_SUPPORT_LARGE;
         } else {
             return TA_FIXED_WING_SUPPORT;

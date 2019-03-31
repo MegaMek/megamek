@@ -70,6 +70,12 @@ public class Engine implements Serializable, ITechnology {
     public final static int STEAM = 10;
     public final static int BATTERY = 11;
     public final static int SOLAR = 12;
+
+    /** Keys for retrieving engine name from {@link Messages} */
+    private final static String[] TYPE_KEYS = {
+            "ICE", "Fusion", "XL", "XXL", "FuelCell", "Light", "Compact", "Fission", "None",
+            "MagLev", "Steam", "Battery", "Solar"
+    };
     
     //These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127
     //The other engine types are assumed to have a value of ) in the array
@@ -212,6 +218,7 @@ public class Engine implements Serializable, ITechnology {
             case MAGLEV:
             case BATTERY:
             case SOLAR:
+            case STEAM:
                 break;
             case COMPACT_ENGINE:
                 if (hasFlag(LARGE_ENGINE)) {
@@ -413,49 +420,15 @@ public class Engine implements Serializable, ITechnology {
 
     /**
      * Get the name of this engine, this is the localized name used in displays.
-     * The name of an Engine is based on it's type.
+     * The name of an Engine is based on its type.
      *
      * @return the engine name.
      */
     public String getShortEngineName() {
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.ICE");
-            case NORMAL_ENGINE:
-                return Integer.toString(engineRating);
-            case XL_ENGINE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.XL");
-            case LIGHT_ENGINE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Light");
-            case XXL_ENGINE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.XXL");
-            case COMPACT_ENGINE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Compact");
-            case FISSION:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Fission");
-            case FUEL_CELL:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.FuelCell");
-            case NONE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.None");
-            case STEAM:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Steam");
-            case BATTERY:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Battery");
-            case SOLAR:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Solar");
-            default:
-                return Messages.getString("Engine.invalid");
+        if (engineType < TYPE_KEYS.length) {
+            return String.format("%d%s", engineRating, Messages.getString("Engine." + TYPE_KEYS[engineType]));
+        } else {
+            return Messages.getString("Engine.invalid");
         }
     }
 

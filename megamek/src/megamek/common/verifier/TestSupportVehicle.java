@@ -15,8 +15,10 @@
 
 package megamek.common.verifier;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -30,20 +32,25 @@ public class TestSupportVehicle extends TestTank {
      * mode, but the construction rules treat naval and rail units as single types.
      */
     public enum SVType {
-        AIRSHIP (EntityMovementMode.AIRSHIP),
-        FIXED_WING (EntityMovementMode.AERODYNE),
-        HOVERCRAFT (EntityMovementMode.HOVER),
-        NAVAL (EntityMovementMode.NAVAL),
-        TRACKED (EntityMovementMode.TRACKED),
-        VTOL (EntityMovementMode.VTOL),
-        WHEELED (EntityMovementMode.WHEELED),
-        WIGE (EntityMovementMode.WIGE),
-        RAIL (EntityMovementMode.RAIL),
-        SATELLITE (EntityMovementMode.STATION_KEEPING);
+        AIRSHIP (300, EntityMovementMode.AIRSHIP),
+        FIXED_WING (200, EntityMovementMode.AERODYNE),
+        HOVERCRAFT (100, EntityMovementMode.HOVER),
+        NAVAL (300, EntityMovementMode.NAVAL),
+        TRACKED (200, EntityMovementMode.TRACKED),
+        VTOL (60, EntityMovementMode.VTOL),
+        WHEELED (160, EntityMovementMode.WHEELED),
+        WIGE (240, EntityMovementMode.WIGE),
+        RAIL (600, EntityMovementMode.RAIL),
+        SATELLITE (300, EntityMovementMode.STATION_KEEPING);
 
+        /** The maximum tonnage for a large support vehicle of this type; for airship this is the
+         *  maximum for a medium for now.
+         */
+        public final int maxTonnage;
         public final EntityMovementMode defaultMovementMode;
 
-        SVType(EntityMovementMode defaultMovementMode) {
+        SVType(int maxTonnage, EntityMovementMode defaultMovementMode) {
+            this.maxTonnage = maxTonnage;
             this.defaultMovementMode = defaultMovementMode;
         }
 
@@ -53,6 +60,44 @@ public class TestSupportVehicle extends TestTank {
 
         static Set<SVType> allBut(SVType first, SVType... rest) {
             return EnumSet.complementOf(EnumSet.of(first, rest));
+        }
+
+        /**
+         * Finds the enum value corresponding to a support vehicle based on movement mode.
+         *
+         * @param entity The support vehicle
+         * @return       The support vehicle type, or {@code null} if the entity's movement type is not
+         *               a valid one for a support vehicle.
+         */
+        public static @Nullable
+        SVType getVehicleType(Entity entity) {
+            switch (entity.getMovementMode()) {
+                case AIRSHIP:
+                    return AIRSHIP;
+                case AERODYNE:
+                    return FIXED_WING;
+                case HOVER:
+                    return HOVERCRAFT;
+                case TRACKED:
+                    return TRACKED;
+                case WHEELED:
+                    return WHEELED;
+                case NAVAL:
+                case HYDROFOIL:
+                case SUBMARINE:
+                    return NAVAL;
+                case VTOL:
+                    return VTOL;
+                case WIGE:
+                    return WIGE;
+                case RAIL:
+                case MAGLEV:
+                    return RAIL;
+                case STATION_KEEPING:
+                    return SATELLITE;
+                default:
+                    return null;
+            }
         }
     }
 
@@ -147,6 +192,22 @@ public class TestSupportVehicle extends TestTank {
             this.engine = new Engine(0, engineType, Engine.SUPPORT_VEE_ENGINE);
             this.allowedTypes = allowedTypes;
             this.electric = electric;
+        }
+
+        /**
+         * Finds the enum value corresponding to an {@link Engine}.
+         *
+         * @param engine The engine
+         * @return       The enum value for the engine, or {@code null} if it is not a valid SV engine type.
+         */
+        public @Nullable
+        static SVEngine getEngineType(Engine engine) {
+            for (SVEngine e : values()) {
+                if (e.engine.getEngineType() == engine.getEngineType()) {
+                    return e;
+                }
+            }
+            return null;
         }
 
         @Override

@@ -326,6 +326,17 @@ public class Engine implements Serializable, ITechnology {
             double weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
             weight = TestEntity.setPrecision(weight, 4);
+            // Fusion engines have a minimum weight of 0.25t at D+ and 0.5t at C. Fission engines have
+            // a minimum of 0.5t at all tech ratings.
+            if ((engineType == NORMAL_ENGINE) && (entity.getEngineTechRating() >= RATING_D)) {
+                weight = Math.max(weight, 0.25);
+            } else if ((engineType == NORMAL_ENGINE) || (engineType == FISSION)) {
+                weight = Math.max(weight, 0.5);
+            }
+            // Hovercraft have a minimum engine weight of 20% of the vehicle.
+            if (entity.getMovementMode().equals(EntityMovementMode.HOVER)) {
+                weight = Math.max(weight, entity.getWeight() * 0.2);
+            }
             roundWeight = TestEntity.Ceil.HALFTON;
             if (entity.getWeight() < 5) {
                 roundWeight = TestEntity.Ceil.KILO;

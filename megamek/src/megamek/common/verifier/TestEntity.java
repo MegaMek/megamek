@@ -498,11 +498,24 @@ public abstract class TestEntity implements TestEntityOption {
         }
     }
 
+    /**
+     * Gives subclasses a chance to exclude certain misc equipment if it is accounted for in a different
+     * category.
+     *
+     * @param misc The misc equipment type
+     * @return     Whether to include the equipment in the misc equipment category
+     * @see #getWeightMiscEquip()
+     */
+    protected boolean includeMiscEquip(MiscType misc) {
+        return true;
+    }
+
     public double getWeightMiscEquip() {
         double weightSum = 0.0;
         for (Mounted m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
-            if (mt.hasFlag(MiscType.F_ENDO_STEEL)
+            if (!includeMiscEquip(mt)
+                    || mt.hasFlag(MiscType.F_ENDO_STEEL)
                     || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
                     || mt.hasFlag(MiscType.F_ENDO_STEEL_PROTO)
                     || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)

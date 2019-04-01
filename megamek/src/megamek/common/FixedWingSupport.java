@@ -92,21 +92,55 @@ public class FixedWingSupport extends ConvFighter {
         initializeSI(getOriginalWalkMP());
     }
 
-
     @Override
     public boolean isVSTOL() {
-        if (hasWorkingMisc(MiscType.F_VSTOL_CHASSIS, -1)) {
-            return true;
-        }
-        return false;
+        return hasWorkingMisc(MiscType.F_VSTOL_CHASSIS);
     }
 
     @Override
     public boolean isSTOL() {
-        if (hasWorkingMisc(MiscType.F_STOL_CHASSIS, -1)) {
-            return true;
+        return hasWorkingMisc(MiscType.F_STOL_CHASSIS);
+    }
+
+    public boolean hasPropChassisMod() {
+        return hasWorkingMisc(MiscType.F_PROP);
+    }
+
+    /**
+     * The mass of each point of fuel in kg, based on weight class and engine tech rating.
+     */
+    private static final int[][] KG_PER_FUEL_POINT = {
+            {50, 30, 23, 15, 13, 10}, // small
+            {63, 38, 25, 20, 18, 15}, // medium
+            {83, 50, 35, 28, 23, 20} // large
+    };
+
+    /**
+     * While most aerospace units measure fuel weight in points per ton, support vehicles measure
+     * in kg per point.
+     *
+     * @return The mass of each point of fuel in kg.
+     */
+    public int kgPerFuelPoint() {
+        int kg = KG_PER_FUEL_POINT[getWeightClass() - EntityWeightClass.WEIGHT_SMALL_SUPPORT][getEngineTechRating()];
+        if (hasPropChassisMod() || getMovementMode().equals(EntityMovementMode.AIRSHIP)) {
+            kg = (int) Math.ceil(kg * 0.75);
         }
-        return false;
+        return kg;
+    }
+
+    @Override
+    public double getFuelTonnage() {
+        double weight = getOriginalFuel() * kgPerFuelPoint() / 1000.0;
+        if (getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            weight = Math.ceil(weight * 2.0) * 0.5;
+        }
+        return weight;
+    }
+
+    @Override
+    public double getFuelPointsPerTon() {
+        return 1000.0 / kgPerFuelPoint();
     }
 
     protected static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)

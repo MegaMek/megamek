@@ -375,11 +375,14 @@ public class TestSupportVehicle extends TestEntity {
          {.000, .000, .000, .063, .056, .052},};
 
     private final Entity supportVee;
+    /** Used by support tanks for calculation of turret weight */
+    private final TestTank testTank;
     
     public TestSupportVehicle(Entity sv, TestEntityOption options,
             String fileString) {
         super(options, sv.getEngine(), null, null);
         this.supportVee = sv;
+        testTank = sv instanceof Tank ? new TestTank((Tank) sv, options, fileString) : null;
     }
     
     @Override
@@ -478,8 +481,24 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double getWeightMisc() {
-        // TODO: turret weight
-        return 0;
+        return getTankWeightTurret()
+                + getTankWeightDualTurret();
+    }
+
+    public double getTankWeightTurret() {
+        if (null != testTank) {
+            return testTank.getTankWeightTurret();
+        } else {
+            return 0.0;
+        }
+    }
+
+    public double getTankWeightDualTurret() {
+        if (null != testTank) {
+            return testTank.getTankWeightDualTurret();
+        } else {
+            return 0.0;
+        }
     }
 
     @Override
@@ -498,7 +517,7 @@ public class TestSupportVehicle extends TestEntity {
                 if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
                         MiscType) && m.getLinkedBy().getType().
                         hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                    weight += ((MiscType)m.getLinkedBy().getType()).getTonnage(supportVee);
+                    weight += m.getLinkedBy().getType().getTonnage(supportVee);
                 }
             }
             return TestEntity.ceil(weight / 10, getWeightCeilingPowerAmp());
@@ -537,8 +556,13 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public String printWeightMisc() {
-        // TODO: turret weight
-        return "";
+        if (null != testTank) {
+            return testTank.printWeightMisc();
+        } else {
+            return getWeightPowerAmp() != 0 ? StringUtil.makeLength(
+                    "Power Amp:", getPrintSize() - 5)
+                    + TestEntity.makeWeightString(getWeightPowerAmp()) + "\n" : "";
+        }
     }
 
     @Override

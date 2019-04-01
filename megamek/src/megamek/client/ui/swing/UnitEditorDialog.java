@@ -45,6 +45,7 @@ import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Bay;
 import megamek.common.CriticalSlot;
+import megamek.common.DockingCollar;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.IArmorState;
@@ -113,6 +114,7 @@ public class UnitEditorDialog extends JDialog {
     CheckCritPanel dockCollarCrit;
     JSpinner[] bayDamage;
     CheckCritPanel[] bayDoorCrit;
+    JSpinner collarDamage;
     CheckCritPanel[] protoCrits;
 
     public UnitEditorDialog(JFrame parent, Entity m) {
@@ -1022,6 +1024,29 @@ public class UnitEditorDialog extends JDialog {
         		b++;
     		}
     	}
+        
+        if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            JSpinner collarCrit;
+            Vector<DockingCollar> collars = aero.getDockingCollars();
+            collarDamage = new JSpinner();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Docking Collars"
+                    + "</b><br></html>"), gridBagConstraints);
+            
+            int damagedCollars = 0;
+            for (DockingCollar nextDC : aero.getDockingCollars()) {
+                if (nextDC.isDamaged()) {
+                    damagedCollars ++;
+                }
+            }
+            collarCrit = new JSpinner(new SpinnerNumberModel(collars.size() - damagedCollars, 0, collars.size(), 1.0));
+            collarDamage = collarCrit;
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(collarCrit, gridBagConstraints);
+        }
     }
 
     private void btnOkayActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1273,6 +1298,28 @@ public class UnitEditorDialog extends JDialog {
         			}
             	b++;
             	}
+            }
+            // Jumpship Docking Collars
+            if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                JSpinner collarCrit = collarDamage;
+                Double damagedCollars = 0.0;
+                if (null != collarCrit) {
+                    damagedCollars = (aero.getDockingCollars().size() - (Double) collarCrit.getModel().getValue());
+                }
+                //if we don't have any damaged collars, undamage them all
+                if (damagedCollars == 0) {
+                    for (DockingCollar collar : aero.getDockingCollars()) {
+                        collar.setDamaged(false);
+                    }
+                }
+                //Otherwise, run through the list and damage one until the spinner value is satisfied
+                for (DockingCollar collar : aero.getDockingCollars()) {
+                    if (damagedCollars == 0) {
+                        break;
+                    }
+                    collar.setDamaged(true);
+                    damagedCollars --;
+                }
             }
         }
 

@@ -23,6 +23,7 @@ import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
 import java.math.BigInteger;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -377,12 +378,15 @@ public class TestSupportVehicle extends TestEntity {
     private final Entity supportVee;
     /** Used by support tanks for calculation of turret weight */
     private final TestTank testTank;
+    /** Used by fixed wing, airship, and satellite for some calculations and validation */
+    private final TestAero testAero;
     
     public TestSupportVehicle(Entity sv, TestEntityOption options,
             String fileString) {
         super(options, sv.getEngine(), null, null);
         this.supportVee = sv;
         testTank = sv instanceof Tank ? new TestTank((Tank) sv, options, fileString) : null;
+        testAero = sv instanceof Aero ? new TestAero((Aero) sv, options, fileString) : null;
     }
     
     @Override
@@ -619,11 +623,15 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double getWeightArmor() {
+        if (supportVee.hasPatchworkArmor()
+                || (supportVee.getArmorType(supportVee.firstArmorIndex()) != EquipmentType.T_ARMOR_STANDARD)) {
+            return super.getWeightArmor();
+        }
         int totalArmorPoints = 0;
         for (int loc = 0; loc < getEntity().locations(); loc++) {
             totalArmorPoints += getEntity().getOArmor(loc);
         }
-        int bar = getEntity().getBARRating(Tank.LOC_BODY);
+        int bar = getEntity().getBARRating(supportVee.firstArmorIndex());
         int techRating = getEntity().getArmorTechRating();
         double weight = totalArmorPoints * SV_ARMOR_WEIGHT[bar][techRating];
         if (getEntity().getWeight() < 5) {
@@ -631,6 +639,168 @@ public class TestSupportVehicle extends TestEntity {
         } else {
             return TestEntity.ceil(weight, Ceil.HALFTON);
         }
-        
+    }
+
+    /**
+     * @return The number of slots taken up by installed equipment
+     */
+    public int occupiedSlotCount() {
+        return getArmorSlots() + getAmmoSlots() + getWeaponSlots() + getMiscEquipSlots();
+    }
+
+    /**
+     * @return The number of slots taken up by armor
+     */
+    public int getArmorSlots() {
+        if (!supportVee.hasPatchworkArmor()) {
+            int at = supportVee.getArmorType(supportVee.firstArmorIndex());
+            if (at == EquipmentType.T_ARMOR_STANDARD) {
+                // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
+                if (supportVee.getBARRating(supportVee.firstArmorIndex()) == 10) {
+                    if (supportVee.getArmorTechRating() == ITechnology.RATING_E) {
+                        return 2; // IS FF
+                    } else if (supportVee.getArmorTechRating() == ITechnology.RATING_F) {
+                        return 1; // Clan FF
+                    }
+                }
+                return 0;
+            } else {
+                AdvancedSVArmor armor = AdvancedSVArmor.getArmor(at,
+                        TechConstants.isClan(supportVee.getArmorTechLevel(supportVee.firstArmorIndex())));
+                if (null != armor) {
+                    return armor.space;
+                } else {
+                    return 0;
+                }
+            }
+        } else {
+            int space = 0;
+            for (int loc = 0; loc < supportVee.locations(); loc++) {
+                AdvancedSVArmor armor = AdvancedSVArmor.getArmor(supportVee.getArmorType(loc),
+                        TechConstants.isClan(supportVee.getArmorTechLevel(loc)));
+                if (null != armor) {
+                    space += armor.patchworkSpace;
+                }
+            }
+            return space;
+        }
+    }
+
+    /**
+     * @return The number of slots taken up by weapons
+     */
+    public int getWeaponSlots() {
+        int slots = 0;
+        for (Mounted m : supportVee.getWeaponList()) {
+            slots += m.getType().getSupportVeeSlots(supportVee);
+        }
+        return slots;
+    }
+
+    /**
+     * @return The number of slots taken up by ammo.
+     */
+    public int getAmmoSlots() {
+        int slots = 0;
+        Set<String> foundAmmo = new HashSet<>();
+        for (Mounted ammo : supportVee.getAmmo()) {
+            // don't count oneshot ammo
+            if (ammo.isOneShotAmmo()) {
+                continue;
+            }
+            AmmoType at = (AmmoType) ammo.getType();
+            if (!foundAmmo.contains(at.getAmmoType() + ":" + at.getRackSize())) {
+                slots++;
+                foundAmmo.add(at.getAmmoType() + ":" + at.getRackSize());
+            }
+        }
+        return slots;
+    }
+
+    /**
+     * @return The number of slots taken by miscellaneous equipment.
+     */
+    public int getMiscEquipSlots() {
+        int slots = 0;
+        for (Mounted m : supportVee.getMisc()) {
+            slots += m.getType().getSupportVeeSlots(supportVee);
+        }
+        return slots;
+    }
+
+    public enum AdvancedSVArmor {
+        CLAN_FERRO_FIBROUS(EquipmentType.T_ARMOR_FERRO_FIBROUS, 1, 1, true),
+        CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 1, 1, true),
+        FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR, 2, 1, true),
+        CLAN_REACTIVE(EquipmentType.T_ARMOR_REACTIVE, 1, 1, true),
+        CLAN_REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE, 1, 1, true),
+        ANTI_PENETRATIVE_ABLATION(
+                EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION, 1, 1, false),
+        BALLISTIC_REINFORCED(
+                EquipmentType.T_ARMOR_BALLISTIC_REINFORCED, 2, 1, false),
+        FERRO_FIBROUS(EquipmentType.T_ARMOR_ALUM, 2, 1, false),
+        FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 2, 1, false),
+        FERRO_FIBROUS_PROTO(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO, 3, 1, false),
+        FERRO__ALUM_PROTO(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, 3, 1, false),
+        HEAVY_FERRO_FIBROUS(EquipmentType.T_ARMOR_HEAVY_FERRO, 4, 2, false),
+        LIGHT_FERRO_FIBROUS(EquipmentType.T_ARMOR_LIGHT_FERRO, 1, 1, false),
+        HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM, 4, 2, false),
+        LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM, 1, 1, false),
+        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER, 0, 0, false),
+        REACTIVE(EquipmentType.T_ARMOR_REACTIVE, 3, 1, false),
+        REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE, 2, 1, false),
+        STEALTH_VEHICLE(EquipmentType.T_ARMOR_STEALTH_VEHICLE, 2, 1, false);
+
+        public final int armorType;
+        /**
+         * The type, corresponding to types defined in
+         * <code>EquipmentType</code>.
+         */
+        public final EquipmentType eqType;
+
+        /**
+         * The number of spaces occupied by the armor type.  Armors that take
+         * up 1 space take up space in the aft, those with 2 take up space in
+         * each wing, 3 takes up space in both wings and the aft, 4 takes up
+         * space in each possible arc (nose, aft, left wing, right wing).
+         */
+        public final int space;
+
+        /**
+         * The number of weapon spaces occupied by patchwork armor. Unlike standard armor, patchwork
+         * armor takes up slots in the location where it's used.
+         */
+        public final int patchworkSpace;
+
+        /**
+         * Denotes whether this armor is Clan or not.
+         */
+        public boolean isClan;
+
+        AdvancedSVArmor(int at, int space, int patchworkSpace, boolean clan){
+            this.armorType = at;
+            eqType = EquipmentType.get(EquipmentType.getArmorTypeName(at, clan));
+            this.space = space;
+            this.patchworkSpace = patchworkSpace;
+            isClan = clan;
+        }
+
+        /**
+         * Given an armor type, return the <code>AeroArmor</code> instance that
+         * represents that type.
+         *
+         * @param at The armor type.
+         * @param c  Whether this armor type is Clan or not.
+         * @return   The <code>AeroArmor</code> that correspondes to the given
+         *              type or null if no match was found.
+         */
+        public static @Nullable AdvancedSVArmor getArmor(int at, boolean c){
+            for (AdvancedSVArmor a : values()){
+                if ((a.armorType == at) && (a.isClan == c)) {
+                    return a;
+                }
+            }
+            return null;
+        }
     }
 }

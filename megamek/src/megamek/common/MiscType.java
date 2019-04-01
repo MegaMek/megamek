@@ -6477,6 +6477,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 7.5;
         misc.cost = 550000;
         misc.criticals = 1;
+        misc.svslots = 2;
         misc.flags = misc.flags.or(F_HIRES_IMAGER).or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.bv = 0;
@@ -7656,6 +7657,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISSmallNavalCommScannerSuite() {
         MiscType misc = new MiscType();
         misc.tonnage = 100;
+        misc.svslots = 1;
         misc.cost = 50000000;
         misc.name = "Naval Comm-Scanner Suite (Small)";
         misc.setInternalName("ISSmallNavalCommScannerSuite");
@@ -7676,6 +7678,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISLargeNavalCommScannerSuite() {
         MiscType misc = new MiscType();
         misc.tonnage = 500;
+        misc.svslots = 1;
         misc.cost = 250000000;
         misc.name = "Naval Comm-Scanner Suite (Large)";
         misc.setInternalName("ISLargeNavalCommScannerSuite");

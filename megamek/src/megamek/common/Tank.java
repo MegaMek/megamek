@@ -3577,17 +3577,16 @@ public class Tank extends Entity {
         }
         // for ammo, each type of ammo takes one slots, regardless of
         // submunition type
-        Map<String, Boolean> foundAmmo = new HashMap<String, Boolean>();
+        Set<String> foundAmmo = new HashSet<>();
         for (Mounted ammo : getAmmo()) {
             // don't count oneshot ammo
-            if ((ammo.getLocation() == Entity.LOC_NONE)
-                    && (ammo.getBaseShotsLeft() == 1)) {
+            if (ammo.isOneShotAmmo()) {
                 continue;
             }
             AmmoType at = (AmmoType) ammo.getType();
-            if (foundAmmo.get(at.getAmmoType() + ":" + at.getRackSize()) == null) {
+            if (!foundAmmo.contains(at.getAmmoType() + ":" + at.getRackSize())) {
                 usedSlots++;
-                foundAmmo.put(at.getAmmoType() + ":" + at.getRackSize(), true);
+                foundAmmo.add(at.getAmmoType() + ":" + at.getRackSize());
             }
         }
         // if a tank has an infantry bay, add 1 slots (multiple bays take 1 slot

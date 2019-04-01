@@ -47,6 +47,10 @@ public class EquipmentType implements ITechnology {
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
+    /** Default value for support vehicle slot cost. Those that differ from mechs are assigned
+     * a value >= 0
+     */
+    public static final int MECH_SLOT_COST = -1;
 
     public static final int T_ARMOR_UNKNOWN = -1;
     public static final int T_ARMOR_STANDARD = 0;
@@ -158,6 +162,7 @@ public class EquipmentType implements ITechnology {
     protected double tonnage = 0;
     protected int criticals = 0;
     protected int tankslots = 1;
+    protected int svslots = MECH_SLOT_COST;
 
     protected boolean explosive = false;
     protected boolean hittable = true; // if false, reroll critical hits
@@ -322,6 +327,13 @@ public class EquipmentType implements ITechnology {
 
     public int getTankslots(Entity entity) {
         return tankslots;
+    }
+
+    public int getSupportVeeSlots(Entity entity) {
+        if (svslots == MECH_SLOT_COST) {
+            return getCriticals(entity);
+        }
+        return svslots;
     }
 
     public boolean isExplosive(Mounted mounted) {

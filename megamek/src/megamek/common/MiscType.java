@@ -463,10 +463,10 @@ public class MiscType extends EquipmentType {
                 }
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_MECH_EQUIPMENT)) {
-            if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
-                return Math.floor((entity.getWeight() * 0.05f) * 2.0f) / 2.0;
+            if (isClan()) {
+                return Math.ceil((entity.getWeight() * 0.05) * 2.0) / 2.0;
             } else {
-                return Math.floor((entity.getWeight() * 0.07f) * 2.0f) / 2.0;
+                return Math.ceil((entity.getWeight() * 0.07) * 2.0) / 2.0;
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_PROTOMECH_EQUIPMENT)) {
             return Math.ceil((entity.getWeight() / 5.0f) * 1000.0) / 1000.0;

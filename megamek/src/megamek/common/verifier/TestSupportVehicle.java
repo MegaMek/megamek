@@ -431,6 +431,14 @@ public class TestSupportVehicle extends TestEntity {
         return false;
     }
 
+    private double roundWeight(double val) {
+        if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            return round(val, Ceil.KILO);
+        } else {
+            return ceil(val, Ceil.HALFTON);
+        }
+    }
+
     @Override
     public double getWeightStructure() {
         double weight = supportVee.getWeight();
@@ -447,7 +455,7 @@ public class TestSupportVehicle extends TestEntity {
                 }
             }
         }
-        return weight;
+        return roundWeight(weight);
     }
 
     public double getFuelTonnage() {
@@ -475,7 +483,12 @@ public class TestSupportVehicle extends TestEntity {
                 weight += ((Bay) t).getWeight();
             }
         }
-        return weight;
+        if (supportVee instanceof FixedWingSupport) {
+            weight += ((FixedWingSupport) supportVee).getExtraCrewSeats() * 0.5;
+        } else {
+            weight += ((Tank) supportVee).getExtraCrewSeats() * 0.5;
+        }
+        return roundWeight(weight);
     }
 
     @Override
@@ -524,7 +537,7 @@ public class TestSupportVehicle extends TestEntity {
                     weight += m.getLinkedBy().getType().getTonnage(supportVee);
                 }
             }
-            return TestEntity.ceil(weight / 10, getWeightCeilingPowerAmp());
+            return roundWeight(weight / 10);
         }
         return 0.0;
     }
@@ -634,18 +647,15 @@ public class TestSupportVehicle extends TestEntity {
         int bar = getEntity().getBARRating(supportVee.firstArmorIndex());
         int techRating = getEntity().getArmorTechRating();
         double weight = totalArmorPoints * SV_ARMOR_WEIGHT[bar][techRating];
-        if (getEntity().getWeight() < 5) {
-            return TestEntity.floor(weight, Ceil.KILO);
-        } else {
-            return TestEntity.ceil(weight, Ceil.HALFTON);
-        }
+        return roundWeight(weight);
     }
 
     /**
      * @return The number of slots taken up by installed equipment
      */
     public int occupiedSlotCount() {
-        return getArmorSlots() + getAmmoSlots() + getWeaponSlots() + getMiscEquipSlots();
+        return getCrewSlots() + getArmorSlots() + getAmmoSlots()
+                + getWeaponSlots() + getMiscEquipSlots() + getTransportSlots();
     }
 
     /**
@@ -724,6 +734,47 @@ public class TestSupportVehicle extends TestEntity {
         int slots = 0;
         for (Mounted m : supportVee.getMisc()) {
             slots += m.getType().getSupportVeeSlots(supportVee);
+        }
+        return slots;
+    }
+
+    public int getCrewSlots() {
+        int firstClass = 0;
+        int secondClass = 0;
+        int steerage = 0;
+        int extraSeat = 0;
+        for (Transporter t : supportVee.getTransports()) {
+            if (t instanceof FirstClassQuartersCargoBay) {
+                firstClass++;
+            } else if ((t instanceof SecondClassQuartersCargoBay)
+                    || (t instanceof CrewQuartersCargoBay)) {
+                secondClass++;
+            } else if (t instanceof SteerageQuartersCargoBay) {
+                steerage++;
+            }
+        }
+        return (int) (Math.ceil(firstClass / 5.0) + Math.ceil(secondClass / 20.0) + Math.ceil(steerage / 50.0))
+                + (supportVee instanceof FixedWingSupport ?
+                    ((FixedWingSupport) supportVee).getExtraCrewSeats() :
+                    ((Tank) supportVee).getExtraCrewSeats());
+    }
+
+    /**
+     * Each distinct bay requires a slot, regardless of size. All {@link TroopSpace} is treated as a single
+     * bay.
+     *
+     * @return The number of slots required by transporters.
+     */
+    public int getTransportSlots() {
+        int slots = 0;
+        boolean foundTroopSpace = false;
+        for (Transporter t : supportVee.getTransports()) {
+            if ((t instanceof Bay) && !((Bay) t).isQuarters()) {
+                slots++;
+            } else if ((t instanceof TroopSpace) && !foundTroopSpace) {
+                slots++;
+                foundTroopSpace = true;
+            }
         }
         return slots;
     }

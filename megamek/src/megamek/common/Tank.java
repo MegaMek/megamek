@@ -141,6 +141,8 @@ public class Tank extends Entity {
     //If there is a cockpit command console, the tank does not suffer the effects of the first commander critical,
     //but the command console benefits are lost as the backup has to take command.
     private boolean usingConsoleCommander = false;
+    /** Vehicles can be constructed with seating for additional crew. This has no effect on play */
+    private int extraCrewSeats = 0;
 
     // set up some vars for what the critical effects would be
     private int potCrit = CRIT_NONE;
@@ -436,6 +438,17 @@ public class Tank extends Entity {
     
     public void setUsingConsoleCommander(boolean b) {
         usingConsoleCommander = b;
+    }
+
+    /**
+     * @return Additional seats beyond the minimum crew requirements
+     */
+    public int getExtraCrewSeats() {
+        return extraCrewSeats;
+    }
+
+    public void setExtraCrewSeats(int seats) {
+        this.extraCrewSeats = seats;
     }
 
     public boolean isDriverHitPS() {
@@ -3609,6 +3622,7 @@ public class Tank extends Entity {
                 usedSlots++;
             }
         }
+        usedSlots += extraCrewSeats;
         // different armor types take different amount of slots
         if (!hasPatchworkArmor()) {
             int type = getArmorType(1);

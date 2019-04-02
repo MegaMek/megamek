@@ -35,6 +35,8 @@ public class FixedWingSupport extends ConvFighter {
     private static String[] LOCATION_NAMES =
         { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Body" };
     private int[] barRating;
+    /** Vehicles can be constructed with seating for additional crew. This has no effect on play */
+    private int extraCrewSeats = 0;
 
     public FixedWingSupport() {
         super();
@@ -253,7 +255,17 @@ public class FixedWingSupport extends ConvFighter {
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
-    
+
+    /**
+     * @return Additional seats beyond the minimum crew requirements
+     */
+    public int getExtraCrewSeats() {
+        return extraCrewSeats;
+    }
+
+    public void setExtraCrewSeats(int seats) {
+        this.extraCrewSeats = seats;
+    }
     
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {

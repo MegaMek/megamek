@@ -192,7 +192,15 @@ public class TestTank extends TestEntity {
             weight = weight / 10.0f;
         }
 
-        return TestEntity.ceilMaxHalf(weight, getWeightCeilingTurret());
+        if (tank.isSupportVehicle()) {
+            if (getEntity().getWeight() < 5) {
+                return TestEntity.ceil(weight, Ceil.KILO);
+            } else {
+                return TestEntity.ceil(weight, Ceil.HALFTON);
+            }
+        } else {
+            return TestEntity.ceilMaxHalf(weight, getWeightCeilingTurret());
+        }
     }
 
     public double getTankWeightDualTurret() {
@@ -286,6 +294,21 @@ public class TestTank extends TestEntity {
     public String printWeightControls() {
         return StringUtil.makeLength("Controls:", getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightControls()) + "\n";
+    }
+
+    @Override
+    public double getWeightCarryingSpace() {
+        return super.getWeightCarryingSpace() + tank.getExtraCrewSeats() * 0.5;
+    }
+
+    public String printWeightCarryingSpace() {
+        if (tank.getExtraCrewSeats() > 0) {
+            return super.printWeightCarryingSpace()
+                    + StringUtil.makeLength("Combat Seats:", getPrintSize() - 5)
+                    + TestEntity.makeWeightString(tank.getExtraCrewSeats() * 0.5) + "\n";
+        } else {
+            return super.printWeightCarryingSpace();
+        }
     }
 
     public Tank getTank() {
@@ -504,6 +527,10 @@ public class TestTank extends TestEntity {
                 buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
                 buff.append(mount.getType().getTankslots(tank)).append("\n");
             }
+        }
+        if (tank.getExtraCrewSeats() > 0) {
+            buff.append(StringUtil.makeLength("Combat Crew Seats:", 30));
+            buff.append(tank.getExtraCrewSeats()).append("\n");
         }
         // different armor types take different amount of slots
         int armorSlots = 0;

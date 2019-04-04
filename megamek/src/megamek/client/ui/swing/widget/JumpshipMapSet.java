@@ -129,7 +129,8 @@ public class JumpshipMapSet implements DisplayMapSet{
         vLabels[10].setValue(getCriticalHitTally(t.getSensorHits(),3));
         vLabels[11].setValue(getCriticalHitTally(t.getLeftThrustHits(),3));
         vLabels[12].setValue(getCriticalHitTally(t.getRightThrustHits(),3));
-        vLabels[13].setValue(getCriticalHitTally(damagedCollars,t.getDockingCollars().size()));
+        //We want a different string for this one, in case there are 25 collars...
+        vLabels[13].setValue("" + "X " + "(" + damagedCollars + ")");
         vLabels[14].setValue(getCriticalHitTally(0,3)); //Placeholder
 
     }

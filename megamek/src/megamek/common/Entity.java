@@ -8573,6 +8573,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((next instanceof Bay) && ((Bay)next).isQuarters()) {
                 continue;
             }
+            if ((next instanceof DockingCollar) && ((DockingCollar)next).isDamaged()) {
+                continue;
+            }
             if (ishtml && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
                 result.append("<font color='red'>")
                     .append(next.getUnusedString())

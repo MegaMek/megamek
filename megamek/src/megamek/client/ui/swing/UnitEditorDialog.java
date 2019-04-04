@@ -1306,15 +1306,13 @@ public class UnitEditorDialog extends JDialog {
                 if (null != collarCrit) {
                     damagedCollars = (aero.getDockingCollars().size() - (Double) collarCrit.getModel().getValue());
                 }
-                //if we don't have any damaged collars, undamage them all
-                if (damagedCollars == 0) {
-                    for (DockingCollar collar : aero.getDockingCollars()) {
-                        collar.setDamaged(false);
-                    }
+                //First, reset damaged collars to undamaged. Otherwise you get weirdness when increasing the spinner value
+                for (DockingCollar collar : aero.getDockingCollars()) {
+                    collar.setDamaged(false);
                 }
                 //Otherwise, run through the list and damage one until the spinner value is satisfied
                 for (DockingCollar collar : aero.getDockingCollars()) {
-                    if (damagedCollars == 0) {
+                    if (damagedCollars <= 0) {
                         break;
                     }
                     collar.setDamaged(true);

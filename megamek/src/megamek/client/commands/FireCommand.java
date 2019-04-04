@@ -30,6 +30,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.EquipmentType;
 import megamek.common.actions.AbstractEntityAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.SearchlightAttackAction;
@@ -84,7 +85,8 @@ public class FireCommand extends ClientCommand {
 		    + "#fire COMMIT = executs the current fireing plan.\n"
 		    + "#fire LIST unitID = List targeting information for all weapons at the specified target. " +
 		    "This is currently the only way to get weapon IDs.\n"
-		    + "#fire TWIST heading = used for torso twisitng, the heading being to which direction (N, " +
+		    + "#fire INFO weaponID = display info for the selected weapon.\n"
+		    + "#fire TWIST heading = used for torso twisting, the heading being to which direction (N, " +
 		    "NE, SE, etc) to try and turn.\n"
    		    + "#fire FLIP = flip arms for the selected unit, if possible.\n"
 		    
@@ -147,7 +149,63 @@ public class FireCommand extends ClientCommand {
                         }
 
                         return "Invalid Target ID.";
-                    } else if (args[1].equalsIgnoreCase("TWIST")
+                    } else if (args[1].equalsIgnoreCase("INFO") && args.length > 2) {
+String str = "";
+try {
+int weaponNum = Integer.parseInt(args[2]);
+        Mounted mounted = ce().getEquipment(weaponNum);
+WeaponType wtype = (WeaponType) mounted.getType();
+str += "Weapon: "
++ mounted.getName()
++ "\n";
+str += "Location: " + ce().getLocationAbbr(mounted.getLocation());
+if (mounted.isSplit()) {
+str += " / " + ce().getLocationAbbr(mounted.getSecondLocation());
+}
+str += "\n";
+// determine shots left & total shots left
+if ((wtype.getAmmoType() != AmmoType.T_NA)
+                    && (!wtype.hasFlag(WeaponType.F_ONESHOT)
+                            || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))) {
+                int shotsLeft = 0;
+                if ((mounted.getLinked() != null)
+                    && !mounted.getLinked().isDumping()) {
+                    shotsLeft = mounted.getLinked().getUsableShotsLeft();
+                }
+EquipmentType typeUsed = null;
+                if (mounted.getLinked() != null) {
+                    typeUsed = mounted.getLinked().getType();
+                }
+
+                int totalShotsLeft = ce().getTotalMunitionsOfType(typeUsed);
+str += "Ammo: " + shotsLeft + " / " + totalShotsLeft + "\n";
+} else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+                int shotsLeft = 0;
+                int totalShots = 0;
+                for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
+                    shotsLeft += current.getUsableShotsLeft();
+                    totalShots++;
+                }
+str += "Ammo: " + shotsLeft + " / " + totalShots + "\n";
+}
+if (mounted.isRapidfire()) {
+str += Messages.getString("MechDisplay.rapidFire") + "\n";
+}
+if (mounted.isHotLoaded()) {
+str += Messages.getString("MechDisplay.isHotLoaded") + "\n";
+}
+if (wtype.hasModes()) {
+str += "Mode: " + mounted.curMode().getDisplayableName() + "\n";
+if (!mounted.pendingMode().equals("None")) {
+str += "Next Turn: " + mounted.pendingMode().getDisplayableName() + "\n";
+}
+}
+} catch (Exception e) {
+                    return "Not a valid weapon ID. " + e.toString();
+                }
+return str;
+}
+ else if (args[1].equalsIgnoreCase("TWIST")
                                && args.length > 2) {
                         torsoTwist(getDirection(args[2]));
                         return "Torso-twisted (or rotated turret). All attacks planned until now have been cleared.";

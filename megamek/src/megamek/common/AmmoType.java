@@ -1835,7 +1835,7 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE)
                 .setISApproximate(false,false,false,false,false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),"230,TM"));
-        
+
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(isBaLrmAmmos, munitions);

@@ -60,6 +60,7 @@ public class MoveCommand extends ClientCommand {
                         + "#move ABORT = aborts planned move and deselect unit.\n"
                         + "#move SELECT unitID = Selects thhe unit named unit ID for movement. This is a prerequisite for all commands listed after this.\n"
                         + "#move COMMIT = commits the planned movement.\n"
++ "#move INFO = DIsplay selected unit movement information.\n"
                         + "#move JUMP = clears all movement and starts jump movement. Eiether the entire move is a jump or the entire move is a walk. switching gears will cancel all planned movement (but leave the unit selected).\n"
                         + "#move BACK [x y] = Start walking backwards, can be followed by a coordinate.\n"
                         + "#move WALK [x y] = Start walking/running forwards, this is the default. Can be followed by a coordinate.\n"
@@ -82,7 +83,7 @@ public class MoveCommand extends ClientCommand {
                     return "Entity " + ce().toString()
                             + " selected for movement.";
                 } catch (Exception e) {
-                    return "Not an entity ID or valid number." + e.toString();
+                    return "Not an entity ID or valid number. " + e.toString();
                 }
             } else if (ce() != null) {
                 if (args[1].equalsIgnoreCase("JUMP")) {
@@ -134,7 +135,15 @@ public class MoveCommand extends ClientCommand {
                     }
 
                     return "Trying to get up but the mech is not prone.";
-                } else {
+                } else if (args[1].equalsIgnoreCase("INFO")) {
+String str = "";
+str+= "Movement info for " + ce().toString() + ":\n";
+str += "Walking: " + Integer.toString(ce().getWalkMP()) + "\n";
+str += "Running: " + ce().getRunMPasString() + "\n";
+str += "Jumping: " + Integer.toString(ce().getJumpMPWithTerrain()) + "\n";
+return str;
+}
+else {
                     target = new Coords(Integer.parseInt(args[1]) - 1, Integer
                             .parseInt(args[2]) - 1);
                 }

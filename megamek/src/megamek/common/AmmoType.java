@@ -1587,7 +1587,7 @@ public class AmmoType extends EquipmentType {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
                 .setISAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS,F_LC), "230,TM"));
@@ -1760,7 +1760,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS,F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), "230,TM"));
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL), "230,TM"));
      
        //TODO Mag Pulse See IO pg 62
         
@@ -2066,7 +2066,7 @@ public class AmmoType extends EquipmentType {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
                 .setISAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS,F_LC)
@@ -2318,7 +2318,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS,F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), "230,TM"));
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL), "230,TM"));
         
         //TODO Mag Pulse see IO pg 62        
         

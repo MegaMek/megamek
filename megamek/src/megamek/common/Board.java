@@ -1781,6 +1781,14 @@ public class Board implements Serializable, IBoard {
     }
 
     /**
+     * Gets every annotations on the map.
+     * @return A read-only map of per-hex annotations.
+     */
+    public Map<Coords, Collection<String>> getAnnotations() {
+        return Collections.unmodifiableMap(annotations);
+    }
+
+    /**
      * Gets the annotations associated with a hex.
      * @param x The X-Coordinate of the hex.
      * @param y The Y-Coordinate of the hex.

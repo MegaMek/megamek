@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.annotations.Nullable;
@@ -553,6 +554,12 @@ public interface IBoard {
      * @param s The description of the map; may be null.
      */
     public abstract void setDescription(@Nullable String s);
+
+    /**
+     * Gets every annotations on the map.
+     * @return A read-only map of per-hex annotations.
+     */
+    public abstract Map<Coords, Collection<String>> getAnnotations();
 
     /**
      * Gets the annotations associated with a hex.

@@ -894,6 +894,35 @@ public class Board implements Serializable, IBoard {
                         System.err.println("Board specified background image, " + "but path couldn't be found! Path: "
                                 + bgFile.getPath());
                     }
+                } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("description")) {
+                    st.nextToken();
+                    if (st.ttype == '"') {
+                        String d = getDescription();
+                        if (null == d) {
+                            setDescription(st.sval);
+                        } else {
+                            setDescription(d + "\n\n" + st.sval);
+                        }
+                    }
+                } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("note")) {
+                    st.nextToken();
+                    if (st.ttype == StreamTokenizer.TT_NUMBER) {
+                        int x, y, coordWidth = 100;
+                        int coords = (int)st.nval;
+                        if (coords > 9999) {
+                            coordWidth = 1000;
+                        }
+                        y = coords % coordWidth;
+                        coords /= coordWidth;
+                        x = coords;
+                        st.nextToken();
+                        Coords c = new Coords(x, y);
+                        if (st.ttype == '"') {
+                            Collection<String> a = new ArrayList<>(getAnnotations(c));
+                            a.add(st.sval);
+                            setAnnotations(c, a);
+                        }
+                    }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("end")) {
                     break;
                 }

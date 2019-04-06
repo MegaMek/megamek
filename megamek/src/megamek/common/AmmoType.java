@@ -1839,7 +1839,8 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(isBaLrmAmmos, munitions);
-
+        AmmoType.createMunitions(baSrmAmmos,  munitions);
+        
         // Create the munition types for clan BA LRM launchers.
         munitions.clear();
         munitions.add(new MunitionMutator("Multi-Purpose", 1, M_MULTI_PURPOSE,

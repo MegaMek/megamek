@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.45.5-SNAPSHOT
++ Issue #1315: add support for map annotations and description to .board files.
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

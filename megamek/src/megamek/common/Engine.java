@@ -194,7 +194,7 @@ public class Engine implements Serializable, ITechnology {
                 && (engineType != COMBUSTION_ENGINE) && (engineType != BATTERY)
                 && (engineType != FUEL_CELL) && (engineType != SOLAR)
                 && (engineType != FISSION) && (engineType != NORMAL_ENGINE)
-                && (engineType != NONE)) {
+                && (engineType != MAGLEV) && (engineType != NONE)) {
             problem.append("Invalid Engine type for support vehicle engines!");
             return false;
         }
@@ -457,37 +457,43 @@ public class Engine implements Serializable, ITechnology {
         }
         switch (engineType) {
             case COMBUSTION_ENGINE:
-                sb.append(" ICE"); //$NON-NLS-1$
+                sb.append(" ICE");
                 break;
             case NORMAL_ENGINE:
-                sb.append(" Fusion"); //$NON-NLS-1$
+                sb.append(" Fusion");
                 break;
             case XL_ENGINE:
-                sb.append(" XL"); //$NON-NLS-1$
+                sb.append(" XL");
                 break;
             case LIGHT_ENGINE:
-                sb.append(" Light"); //$NON-NLS-1$
+                sb.append(" Light");
                 break;
             case XXL_ENGINE:
-                sb.append(" XXL"); //$NON-NLS-1$
+                sb.append(" XXL");
                 break;
             case COMPACT_ENGINE:
-                sb.append(" Compact"); //$NON-NLS-1$
+                sb.append(" Compact");
                 break;
             case FUEL_CELL:
-                sb.append(" Fuel Cell"); //$NON-NLS-1$
+                sb.append(" Fuel Cell");
                 break;
             case FISSION:
-                sb.append(" Fission"); //$NON-NLS-1$
+                sb.append(" Fission");
+                break;
+            case STEAM:
+                sb.append(" Steam");
                 break;
             case BATTERY:
-                sb.append(" Battery"); //$NON-NLS-1$
+                sb.append(" Battery");
                 break;
             case SOLAR:
-                sb.append(" Solar");  //$NON-NLS-1$
+                sb.append(" Solar");
+                break;
+            case MAGLEV:
+                sb.append(" MagLev");
                 break;
             case NONE:
-                sb.append(" NONE"); //$NON-NLS-1$
+                sb.append(" NONE");
                 break;
             default:
                 return problem.toString();

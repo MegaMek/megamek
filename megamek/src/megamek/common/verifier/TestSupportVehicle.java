@@ -310,6 +310,22 @@ public class TestSupportVehicle extends TestEntity {
             return null;
         }
 
+        /**
+         * @param type The support vehicle type
+         * @return     Whether the engine is valid for the support vee.
+         */
+        public boolean isValidFor(SVType type) {
+            return allowedTypes.contains(type);
+        }
+
+        /**
+         * @param entity A support vehicle
+         * @return       Whether the engine is valid for the support vee.
+         */
+        public boolean isValidFor(Entity entity) {
+            return isValidFor(SVType.getVehicleType(entity));
+        }
+
         @Override
         public ITechnology getTechSource() {
             return engine;

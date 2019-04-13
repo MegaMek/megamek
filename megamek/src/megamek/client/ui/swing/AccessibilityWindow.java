@@ -1,7 +1,9 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.event.*;
 
@@ -14,17 +16,21 @@ import java.util.LinkedList;
 public class AccessibilityWindow extends JDialog implements KeyListener {
 
     public static final int MAX_HISTORY = 10;
+public static final String ACCESSIBLE_GUI_HACK = ".";
     Client client;
-
+IBoardView bv;
     JTextArea chatArea;
+private Coords selectedTarget;
     private JTextField inputField;
-
+private String[] args;
     public LinkedList<String> history;
     public int historyBookmark = -1;
 
     public AccessibilityWindow(ChatterBox cb, ClientGUI clientgui) {
         super(clientgui.getFrame(), Messages.getString("ClientGUI.ChatWindow"));
         client = clientgui.getClient();
+bv = clientgui.getBoardView();
+
         client.getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerConnected(GamePlayerConnectedEvent e) {
@@ -103,6 +109,14 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
         this.setVisible(true);
     }
 
+private void processAccessibleGUI() {
+args = inputField.getText().split(" ");
+if (args.length == 3) {
+                    selectedTarget = new Coords(Integer.parseInt(args[1]) - 1, Integer
+                            .parseInt(args[2]) - 1);
+bv.select(selectedTarget);
+}
+}
     private void systemEvent(String s) {
         chatArea.append(s + "\n");
     }
@@ -126,10 +140,14 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
             history.addFirst(inputField.getText());
             historyBookmark = -1;
 
-            if (!inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
-                client.sendChat(inputField.getText());
-            } else {
+            if (inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
                 systemEvent(client.runCommand(inputField.getText()));
+            } else if (inputField.getText().startsWith(ACCESSIBLE_GUI_HACK)) {
+processAccessibleGUI();
+systemEvent("Selected " + selectedTarget.toFriendlyString() + " in the GUI.");
+}
+else {
+                client.sendChat(inputField.getText());
             }
             inputField.setText(""); //$NON-NLS-1$
 

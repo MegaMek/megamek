@@ -58,7 +58,7 @@ public class SitrepCommand extends ClientCommand {
      * @param entityID ID of the entity needing a sitrep
      * @param showFriendly Whether to show friendly units
      * @param showHostile Whether to show hostile units
-     * @param hexRange Maximum distance
+     * @param maxHexRange Maximum distance
      * @return Sitrep string
      */
     private String buildUnitSitrep(int entityID, boolean showFriendly, boolean showHostile, int maxHexRange) {

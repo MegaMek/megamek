@@ -2,6 +2,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.Client;
 import megamek.client.ui.IBoardView;
+import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -18,7 +19,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     public static final int MAX_HISTORY = 10;
 public static final String ACCESSIBLE_GUI_HACK = ".";
     Client client;
-IBoardView bv;
+ClientGUI gui;
     JTextArea chatArea;
 private Coords selectedTarget;
     private JTextField inputField;
@@ -29,8 +30,7 @@ private String[] args;
     public AccessibilityWindow(ChatterBox cb, ClientGUI clientgui) {
         super(clientgui.getFrame(), Messages.getString("ClientGUI.ChatWindow"));
         client = clientgui.getClient();
-bv = clientgui.getBoardView();
-
+gui = clientgui;
         client.getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerConnected(GamePlayerConnectedEvent e) {
@@ -108,13 +108,13 @@ bv = clientgui.getBoardView();
 
         this.setVisible(true);
     }
-
+// Stolen in principle from the MapMenu.
 private void processAccessibleGUI() {
 args = inputField.getText().split(" ");
 if (args.length == 3) {
                     selectedTarget = new Coords(Integer.parseInt(args[1]) - 1, Integer
                             .parseInt(args[2]) - 1);
-bv.select(selectedTarget);
+((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, 1, 16);
 }
 }
     private void systemEvent(String s) {

@@ -1,6 +1,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.Messages;
@@ -11,6 +12,7 @@ import megamek.common.event.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
@@ -114,7 +116,10 @@ args = inputField.getText().split(" ");
 if (args.length == 3) {
                     selectedTarget = new Coords(Integer.parseInt(args[1]) - 1, Integer
                             .parseInt(args[2]) - 1);
-((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, 1, 16);
+// Cursor over the hex..
+((BoardView1) gui.bv).mouseAction(selectedTarget, BoardViewEvent.BOARD_HEX_CURSOR, InputEvent.BUTTON1_MASK);
+//CLick.
+((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, BoardViewEvent.BOARD_HEX_CLICKED, InputEvent.BUTTON1_MASK);
 }
 }
     private void systemEvent(String s) {

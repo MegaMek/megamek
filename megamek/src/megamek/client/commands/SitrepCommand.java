@@ -29,7 +29,7 @@ public class SitrepCommand extends ClientCommand {
         int entityID = Entity.NONE;
         
         if(args.length > 1) {
-            if(args[1] == "HELP") {
+            if(args[1].equalsIgnoreCase "HELP")) {
                 return "#sitrep [entityID] [friendly|hostile|all] [x] = Print out friendly, " +
                         "hostile or all units relative to the entity with the specified ID, optionally within [x] hexes only. " +
                         "By default, [x] is the entity's maximum weapons range. " +
@@ -38,8 +38,8 @@ public class SitrepCommand extends ClientCommand {
                 entityID = Integer.parseInt(args[1]);
                 
                 if(args.length > 2) {
-                    showFriendly = !args[2].equals("hostile");
-                    showHostile = !args[2].equals("friendly");
+                    showFriendly = !args[2].equalsIgnoreCase("hostile");
+                    showHostile = !args[2].equalsIgnoreCase("friendly");
                 }
                 
                 if(args.length > 3) {

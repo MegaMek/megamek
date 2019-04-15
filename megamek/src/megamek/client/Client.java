@@ -52,6 +52,7 @@ import megamek.client.commands.MoveCommand;
 import megamek.client.commands.RulerCommand;
 import megamek.client.commands.ShowEntityCommand;
 import megamek.client.commands.ShowTileCommand;
+import megamek.client.commands.SitrepCommand;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
@@ -248,6 +249,7 @@ public class Client implements IClientCommandHandler {
         registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
         registerCommand(new AssignNovaNetworkCommand(this));
+        registerCommand(new SitrepCommand(this));
 
         rsg = new RandomSkillsGenerator();
     }

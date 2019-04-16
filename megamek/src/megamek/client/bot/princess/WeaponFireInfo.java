@@ -413,6 +413,31 @@ public class WeaponFireInfo {
     }
     
     /**
+     * Compute the heat output by firing a given weapon.
+     * Contains special logic for bay weapons when using individual bay heat.
+     * TODO: Make some kind of assumption about variable-heat weapons?
+     * @param weapon The weapon to check.
+     * @return Generated heat.
+     */
+    int computeHeat(Mounted weapon) {
+     // bay weapons require special consideration, by looping through all weapons and adding up the damage
+        // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
+        // varies with distance to target.
+        if((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
+            int bayHeat = 0;
+            for(int weaponID : weapon.getBayWeapons()) {
+                Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
+                WeaponType weaponType = (WeaponType) bayWeapon.getType();
+                bayHeat += weaponType.getHeat();
+            }
+            
+            return bayHeat;
+        } else {
+            return ((WeaponType) weapon.getType()).getHeat();
+        }
+    }
+    
+    /**
      * Worker function to compute expected bomb damage given the shooter
      * @param shooter The unit making the attack.
      * @param weapon The weapon being used in the attack.
@@ -514,7 +539,7 @@ public class WeaponFireInfo {
             setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
             msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
 
-            setHeat(((WeaponType) getWeapon().getType()).getHeat());
+            setHeat(computeHeat(weapon));
             msg.append("\n\tHeat: ").append(getHeat());
 
             setExpectedDamageOnHit(computeExpectedDamage());

@@ -25,6 +25,8 @@ import megamek.common.util.StringUtil;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -160,11 +162,25 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
         if (size() == 0) {
             return "Empty FiringPlan!";
         }
+        
         StringBuilder description = new StringBuilder("Firing Plan for ").append(get(0).getShooter().getChassis())
-                                                                         .append(" at ")
-                                                                         .append(getTarget().getDisplayName())
-                                                                         .append("; ").append(Integer.toString(size()))
-                                                                         .append(" weapons fired ");
+                                                                         .append(" at ");
+        Set<Integer> targets = new HashSet<>();
+        // loop through all the targets for this firing plan, only show each target once.
+        for(WeaponFireInfo weaponFireInfo : this) {
+            if(!targets.contains(weaponFireInfo.getTarget().getTargetId())) {
+                description.append(weaponFireInfo.getTarget().getDisplayName()).append(", ");
+                targets.add(weaponFireInfo.getTarget().getTargetId());
+            }
+        }
+        
+        // chop off the last ", "
+        description.deleteCharAt(description.length() - 1);
+        description.deleteCharAt(description.length() - 1);
+        
+        description.append("; ").append(Integer.toString(size()))
+                                .append(" weapons fired ");
+        
         if (detailed) {
             for (WeaponFireInfo weaponFireInfo : this) {
                 description.append("\n\t\t").append(weaponFireInfo.getDebugDescription());

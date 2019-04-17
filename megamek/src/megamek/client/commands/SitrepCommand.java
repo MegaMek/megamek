@@ -28,8 +28,8 @@ public class SitrepCommand extends ClientCommand {
         int hexRange = DEFAULT_HEX_RANGE;
         int entityID = Entity.NONE;
         
-        if(args.length > 1) {
-            if(args[1].equalsIgnoreCase "HELP")) {
+        if (args.length > 1) {
+            if (args[1].equalsIgnoreCase("HELP")) {
                 return "#sitrep [entityID] [friendly|hostile|all] [x] = Print out friendly, " +
                         "hostile or all units relative to the entity with the specified ID, optionally within [x] hexes only. " +
                         "By default, [x] is the entity's maximum weapons range. " +
@@ -37,12 +37,12 @@ public class SitrepCommand extends ClientCommand {
             } else {
                 entityID = Integer.parseInt(args[1]);
                 
-                if(args.length > 2) {
+                if (args.length > 2) {
                     showFriendly = !args[2].equalsIgnoreCase("hostile");
                     showHostile = !args[2].equalsIgnoreCase("friendly");
                 }
                 
-                if(args.length > 3) {
+                if (args.length > 3) {
                     hexRange = Integer.parseInt(args[3]);
                 }
                 
@@ -63,35 +63,35 @@ public class SitrepCommand extends ClientCommand {
      */
     private String buildUnitSitrep(int entityID, boolean showFriendly, boolean showHostile, int maxHexRange) {
         Entity currentEntity = getClient().getEntity(entityID);
-        if(maxHexRange == DEFAULT_HEX_RANGE) {
+        if (maxHexRange == DEFAULT_HEX_RANGE) {
             maxHexRange = currentEntity.getMaxWeaponRange();
         }
         
-        if(currentEntity.getOwnerId() != getClient().getLocalPlayerNumber()) {
+        if (currentEntity.getOwnerId() != getClient().getLocalPlayerNumber()) {
             return String.format("Entity %d is not owned by player %s", entityID, getClient().getLocalPlayer());
         }
         
         StringBuilder retVal = new StringBuilder();
-        Map<Integer, List<Entity>> distanceBuckets = new HashMap<>();
+        Map <Integer, List<Entity>> distanceBuckets = new HashMap<>();
         int maxDistance = -1;
 
         // first we assemble the qualifying entities into buckets, sorted by distance
-        for(Entity entity : getClient().getEntitiesVector()) {
+        for (Entity entity : getClient().getEntitiesVector()) {
             boolean hostileEntity = entity.getOwner().isEnemyOf(getClient().getLocalPlayer());
             boolean displayEntity = (showFriendly && !hostileEntity) ||
                                     (showHostile && hostileEntity);
 
-            if(displayEntity && (entity.getId() != currentEntity.getId())) {
+            if (displayEntity && (entity.getId() != currentEntity.getId())) {
                 int distance = currentEntity.getPosition().distance(entity.getPosition());
-                if(distance > maxHexRange) {
+                if (distance > maxHexRange) {
                     continue;
                 }
                 
-                if(distance > maxDistance) {
+                if (distance > maxDistance) {
                     maxDistance = distance;
                 }
                 
-                if(!distanceBuckets.containsKey(distance)) {
+                if (!distanceBuckets.containsKey(distance)) {
                     distanceBuckets.put(distance, new ArrayList<>());
                 }
                 
@@ -101,12 +101,12 @@ public class SitrepCommand extends ClientCommand {
         
         // now we go through our buckets from lowest to highest, and output 
         // the contained entities.
-        for(int distance = 0; distance <= maxDistance; distance++) {
-            if(!distanceBuckets.containsKey(distance)) {
+        for (int distance = 0; distance <= maxDistance; distance++) {
+            if (!distanceBuckets.containsKey(distance)) {
                 continue;
             }
             
-            for(Entity entity : distanceBuckets.get(distance)) {
+            for (Entity entity : distanceBuckets.get(distance)) {
                 int direction = currentEntity.getPosition().degree(entity.getPosition());
                 
                 // entity name, id, status, distance, direction

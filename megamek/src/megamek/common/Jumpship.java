@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import megamek.common.options.OptionsConstants;
@@ -195,6 +196,37 @@ public class Jumpship extends Aero {
     @Override
     public int getBodyLocation() {
         return LOC_HULL;
+    }
+    
+    //Set up the correct grav deck to use
+    //We need several pieces of data about the deck to store in different places. Save that here
+    final class GravDeck {
+        private final int id; // id number
+        private final int size; // diameter, in meters
+        private final boolean damaged; // damaged or not?
+
+        private GravDeck(int id, int size, boolean damaged) {
+            this.id = id;
+            this.size = size;
+            this.damaged = damaged;
+        }
+
+        private int getId() {
+            return id;
+        }
+
+        private int getSize() {
+            return size;
+        }
+        
+        private boolean getDamaged() {
+            return damaged;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, size, damaged);
+        }
     }
 
     /**

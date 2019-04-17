@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
 v0.45.5-SNAPSHOT
++ Issue #1315: add support for map annotations and description to .board files.
++ PR #1323: implement "#sitrep" client command which can be used to display, in the console, a list of units near the entity with the given ID.
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

@@ -91,9 +91,9 @@ public class Jumpship extends Aero {
      *
      * This is a new approach for storing grav decks, which allows the size of each deck to be stored.  Previously,
      * we just stored the number of standard, large and huge grav decks, and could not specify the exact size of the
-     * deck.
+     * deck. Further new functionality tracks damage to each deck.
      */
-    private List<Integer> gravDecks = new ArrayList<>();
+    private List<GravDeck> gravDecks = new ArrayList<>();
 
     // station-keeping thrust and accumulated thrust
     private double stationThrust = 0.2;
@@ -201,18 +201,12 @@ public class Jumpship extends Aero {
     //Set up the correct grav deck to use
     //We need several pieces of data about the deck to store in different places. Save that here
     final class GravDeck {
-        private final int id; // id number
         private final int size; // diameter, in meters
-        private final boolean damaged; // damaged or not?
+        private boolean damaged; // damaged or not?
 
-        private GravDeck(int id, int size, boolean damaged) {
-            this.id = id;
+        private GravDeck(int size, boolean damaged) {
             this.size = size;
             this.damaged = damaged;
-        }
-
-        private int getId() {
-            return id;
         }
 
         private int getSize() {
@@ -222,10 +216,14 @@ public class Jumpship extends Aero {
         private boolean getDamaged() {
             return damaged;
         }
+        
+        private void setDamaged(boolean damaged) {
+            this.damaged = damaged;
+        }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id, size, damaged);
+            return Objects.hash(size, damaged);
         }
     }
 
@@ -244,7 +242,18 @@ public class Jumpship extends Aero {
      * @param size  The size in meters of the grav deck.
      */
     public void addGravDeck(int size) {
-        gravDecks.add(size);
+        addGravDeck(size, false);
+    }
+    
+    /**
+     * Adds a grav deck whose size in meters and damage status is specified.
+     *
+     * @param size  The size in meters of the grav deck.
+     * @param damaged  Has this deck taken a critical hit?
+     */
+    public void addGravDeck(int size, boolean damaged) {
+        GravDeck deck = new GravDeck(size, damaged);
+        gravDecks.add(deck);
     }
 
     /**
@@ -253,7 +262,7 @@ public class Jumpship extends Aero {
      *
      * @return
      */
-    public List<Integer> getGravDecks() {
+    public List<GravDeck> getGravDecks() {
         return gravDecks;
     }
 
@@ -265,7 +274,7 @@ public class Jumpship extends Aero {
      */
     public void setGravDeck(int n) {
         for (int i = 0; i < n; i++) {
-            gravDecks.add(GRAV_DECK_STANDARD_MAX / 2);
+            addGravDeck(GRAV_DECK_STANDARD_MAX / 2, false);
         }
     }
 
@@ -275,8 +284,8 @@ public class Jumpship extends Aero {
      */
     public int getGravDeck() {
         int count = 0;
-        for (int size : gravDecks) {
-            if (size < GRAV_DECK_STANDARD_MAX) {
+        for (GravDeck deck : gravDecks) {
+            if (deck.getSize() < GRAV_DECK_STANDARD_MAX) {
                 count++;
             }
         }
@@ -291,7 +300,7 @@ public class Jumpship extends Aero {
      */
     public void setGravDeckLarge(int n) {
         for (int i = 0; i < n; i++) {
-            gravDecks.add(GRAV_DECK_STANDARD_MAX + (GRAV_DECK_LARGE_MAX - GRAV_DECK_STANDARD_MAX) / 2);
+            addGravDeck(GRAV_DECK_STANDARD_MAX + (GRAV_DECK_LARGE_MAX - GRAV_DECK_STANDARD_MAX) / 2, false);
         }
     }
 
@@ -302,8 +311,8 @@ public class Jumpship extends Aero {
      */
     public int getGravDeckLarge() {
         int count = 0;
-        for (int size : gravDecks) {
-            if (size >= GRAV_DECK_STANDARD_MAX && size <= GRAV_DECK_LARGE_MAX) {
+        for (GravDeck deck : gravDecks) {
+            if (deck.getSize() >= GRAV_DECK_STANDARD_MAX && deck.getSize() <= GRAV_DECK_LARGE_MAX) {
                 count++;
             }
         }
@@ -318,7 +327,7 @@ public class Jumpship extends Aero {
      */
     public void setGravDeckHuge(int n) {
         for (int i = 0; i < n; i++) {
-            gravDecks.add(GRAV_DECK_LARGE_MAX + (GRAV_DECK_LARGE_MAX) / 2);
+            addGravDeck(GRAV_DECK_LARGE_MAX + (GRAV_DECK_LARGE_MAX) / 2, false);
         }
     }
 
@@ -329,8 +338,8 @@ public class Jumpship extends Aero {
      */
     public int getGravDeckHuge() {
         int count = 0;
-        for (int size : gravDecks) {
-            if (size > GRAV_DECK_LARGE_MAX) {
+        for (GravDeck deck : gravDecks) {
+            if (deck.getSize() > GRAV_DECK_LARGE_MAX) {
                 count++;
             }
         }

@@ -197,35 +197,6 @@ public class Jumpship extends Aero {
     public int getBodyLocation() {
         return LOC_HULL;
     }
-    
-    //Set up the correct grav deck to use
-    //We need several pieces of data about the deck to store in different places. Save that here
-    final class GravDeck {
-        private final int size; // diameter, in meters
-        private boolean damaged; // damaged or not?
-
-        private GravDeck(int size, boolean damaged) {
-            this.size = size;
-            this.damaged = damaged;
-        }
-
-        private int getSize() {
-            return size;
-        }
-        
-        private boolean getDamaged() {
-            return damaged;
-        }
-        
-        private void setDamaged(boolean damaged) {
-            this.damaged = damaged;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(size, damaged);
-        }
-    }
 
     /**
      * Get the number of grav decks on the ship.

@@ -19,20 +19,22 @@ import java.util.LinkedList;
 public class AccessibilityWindow extends JDialog implements KeyListener {
 
     public static final int MAX_HISTORY = 10;
-public static final String ACCESSIBLE_GUI_SHORTCUT = ".";
+    public static final String ACCESSIBLE_GUI_SHORTCUT = ".";
+
     Client client;
-ClientGUI gui;
+    ClientGUI gui;
     JTextArea chatArea;
-private Coords selectedTarget;
+
+    private Coords selectedTarget;
     private JTextField inputField;
-private String[] args;
+    private String[] args;
     public LinkedList<String> history;
     public int historyBookmark = -1;
 
     public AccessibilityWindow(ChatterBox cb, ClientGUI clientgui) {
         super(clientgui.getFrame(), Messages.getString("ClientGUI.ChatWindow"));
         client = clientgui.getClient();
-gui = clientgui;
+        gui = clientgui;
         client.getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerConnected(GamePlayerConnectedEvent e) {
@@ -43,7 +45,6 @@ gui = clientgui;
             public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
                 systemEvent("The player " + e.getPlayer().getName() + " has disconnected.");
             }
-
 
             @Override
             public void gameEnd(GameEndEvent e) {
@@ -108,19 +109,21 @@ gui = clientgui;
         cp.add(inputField, BorderLayout.SOUTH);
         inputField.addKeyListener(this);
     }
-// Stolen in principle from the MapMenu.
-private void processAccessibleGUI() {
-args = inputField.getText().split(" ");
-if (args.length == 3) {
-                    selectedTarget = new Coords(Integer.parseInt(args[1]) - 1, Integer
-                            .parseInt(args[2]) - 1);
-// Why don't constants work here?
-// Cursor over the hex.
-((BoardView1) gui.bv).mouseAction(selectedTarget, 3, InputEvent.BUTTON1_MASK);
-//CLick.
-((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, 1, InputEvent.BUTTON1_MASK);
-}
-}
+
+    // Stolen in principle from the MapMenu.
+    private void processAccessibleGUI() {
+        args = inputField.getText().split(" ");
+        if (args.length == 3) {
+            selectedTarget = new Coords(Integer.parseInt(args[1]) - 1,
+                Integer.parseInt(args[2]) - 1);
+            // Why don't constants work here?
+            // Cursor over the hex.
+            ((BoardView1) gui.bv).mouseAction(selectedTarget, 3, InputEvent.BUTTON1_MASK);
+            //CLick.
+            ((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, 1, InputEvent.BUTTON1_MASK);
+        }
+    }
+
     private void systemEvent(String s) {
         chatArea.append(s + "\n");
     }
@@ -147,10 +150,9 @@ if (args.length == 3) {
             if (inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
                 systemEvent(client.runCommand(inputField.getText()));
             } else if (inputField.getText().startsWith(ACCESSIBLE_GUI_SHORTCUT)) {
-processAccessibleGUI();
-systemEvent("Selected " + selectedTarget.toFriendlyString() + " in the GUI.");
-}
-else {
+                processAccessibleGUI();
+                systemEvent("Selected " + selectedTarget.toFriendlyString() + " in the GUI.");
+            } else {
                 client.sendChat(inputField.getText());
             }
             inputField.setText(""); //$NON-NLS-1$

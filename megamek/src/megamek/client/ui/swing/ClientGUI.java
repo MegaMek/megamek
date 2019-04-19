@@ -131,7 +131,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
     public static final String VIEW_LOS_SETTING = "viewLOSSetting"; //$NON-NLS-1$
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
-public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow"; //$NON-NLS-1$
+    public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_OUT = "viewZoomOut"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$
@@ -153,7 +153,7 @@ public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow"
     private CommonAboutDialog about;
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
-private AccessibilityWindow aw;
+    private AccessibilityWindow aw;
     private String helpFileName = 
             SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
                                                           Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
@@ -1299,15 +1299,17 @@ private AccessibilityWindow aw;
             frame.requestFocus();
         }
     }
+    
     /**
-     *Toggles the accessibility window
-       */
+     * Toggles the accessibility window
+     */
     private void toggleAccessibilityWindow() {
         aw.setVisible(!aw.isVisible());
         if (aw.isVisible()) {
-        frame.requestFocus();
-}
-}
+            frame.requestFocus();
+        }
+    }
+
     /**
      * Sets the visibility of the entity display window
      */

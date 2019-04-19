@@ -14,11 +14,16 @@
 
 package megamek.common;
 
-import java.util.Objects;
+import java.io.Serializable;
 
 // This class is for grav decks. It contains the size in meters and a status flag for damage
 
-public class GravDeck {
+public class GravDeck implements Serializable {
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2108041654790803725L;
     
     private int size; // diameter, in meters
     private boolean damaged; // has this grav deck taken a critical hit?
@@ -38,10 +43,5 @@ public class GravDeck {
     
     public void setDamaged(boolean damaged) {
         this.damaged = damaged;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(size, damaged);
     }
 }

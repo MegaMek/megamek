@@ -112,6 +112,7 @@ public class UnitEditorDialog extends JDialog {
     CheckCritPanel rightThrusterCrit;
     CheckCritPanel kfboomCrit;
     CheckCritPanel dockCollarCrit;
+    CheckCritPanel gravDeckCrit;
     JSpinner[] bayDamage;
     CheckCritPanel[] bayDoorCrit;
     JSpinner collarDamage;
@@ -958,9 +959,21 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.weightx = 1.0;
             panSystem.add(rightThrusterCrit, gridBagConstraints);
         }
+        
+        if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            Jumpship js = (Jumpship) aero;
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Grav Decks"
+                    + "</b><br></html>"), gridBagConstraints);
+            gravDeckCrit = new CheckCritPanel(js.getTotalGravDeck(), js.getTotalDamagedGravDeck());
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(gravDeckCrit, gridBagConstraints);
+        }
 
         if (aero instanceof Dropship) {
-
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
@@ -1299,14 +1312,17 @@ public class UnitEditorDialog extends JDialog {
             	b++;
             	}
             }
-            // Jumpship Docking Collars
+            // Jumpship Docking Collars and grav decks
             if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                Jumpship js = (Jumpship) aero;
                 JSpinner collarCrit = collarDamage;
+                CheckCritPanel deckCrit = gravDeckCrit;
                 Double damagedCollars = 0.0;
+                int damagedDecks = 0;
                 if (null != collarCrit) {
                     damagedCollars = (aero.getDockingCollars().size() - (Double) collarCrit.getModel().getValue());
                 }
-                //First, reset damaged collars to undamaged. Otherwise you get weirdness when increasing the spinner value
+                //First, reset damaged collars to undamaged. Otherwise you get weirdness when running this dialogue multiple times
                 for (DockingCollar collar : aero.getDockingCollars()) {
                     collar.setDamaged(false);
                 }
@@ -1317,6 +1333,19 @@ public class UnitEditorDialog extends JDialog {
                     }
                     collar.setDamaged(true);
                     damagedCollars --;
+                }
+                if (null != deckCrit) {
+                    damagedDecks = deckCrit.getHits();
+                }
+                //reset all grav decks to undamaged
+                for (int i = 0; i < js.getTotalGravDeck(); i++) {
+                    js.setGravDeckDamageFlag(i, 0);
+                }
+                if (damagedDecks > 0) {
+                    //loop through the grav decks from #1 and damage them
+                    for (int i = 0; i < damagedDecks; i++) {
+                        js.setGravDeckDamageFlag(i, 1);
+                    }
                 }
             }
         }

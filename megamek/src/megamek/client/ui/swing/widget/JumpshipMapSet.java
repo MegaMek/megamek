@@ -117,21 +117,24 @@ public class JumpshipMapSet implements DisplayMapSet{
         //now for the vitals
         //need some extra info for docking collars
         int damagedCollars = 0;
+        //We want a different string for this one, in case there are 25 collars...
+        String collarDamageString = "";
         for (DockingCollar collar : t.getDockingCollars()) {
             if (collar.isDamaged()) {
                 damagedCollars++;
             }
         }
-        //and some more info for Grav Decks
+        if (damagedCollars > 0) {
+            collarDamageString = ("" + "X " + "(" + damagedCollars + ")");
+        }
         vLabels[7].setValue(getCriticalHitTally(t.getAvionicsHits(),3));
         vLabels[8].setValue(getCriticalHitTally(t.getCICHits(),3));
         vLabels[9].setValue(getCriticalHitTally(t.getEngineHits(),t.getMaxEngineHits()));
         vLabels[10].setValue(getCriticalHitTally(t.getSensorHits(),3));
         vLabels[11].setValue(getCriticalHitTally(t.getLeftThrustHits(),3));
         vLabels[12].setValue(getCriticalHitTally(t.getRightThrustHits(),3));
-        //We want a different string for this one, in case there are 25 collars...
-        vLabels[13].setValue("" + "X " + "(" + damagedCollars + ")");
-        vLabels[14].setValue(getCriticalHitTally(0,3)); //Placeholder
+        vLabels[13].setValue(collarDamageString);
+        vLabels[14].setValue(getCriticalHitTally(t.getTotalDamagedGravDeck(),t.getTotalGravDeck()));
 
     }
 

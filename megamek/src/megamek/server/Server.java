@@ -27189,10 +27189,12 @@ public class Server implements Runnable {
                 if (js == null) {
                     break;
                 }
-                // Grave Deck hit
+                int choice = Compute.randomInt(js.getTotalGravDeck());
+                // Grav Deck hit
                 r = new Report(9195);
                 r.subject = aero.getId();
                 reports.add(r);
+                js.setGravDeckDamageFlag(choice, 1);
                 break;
             case Aero.CRIT_LIFE_SUPPORT:
                 // Life Support hit

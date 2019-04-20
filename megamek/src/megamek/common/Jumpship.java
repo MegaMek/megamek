@@ -215,6 +215,22 @@ public class Jumpship extends Aero {
     public int getTotalGravDeck() {
         return gravDecks.size();
     }
+    
+    /**
+     * Get the number of damaged grav decks on the ship.
+     * Used by JS/WS MapSet widget to display critical hits
+     *
+     * @return
+     */
+    public int getTotalDamagedGravDeck() {
+        int count = 0;
+        for (int hits : damagedGravDecks.values()) {
+            if (hits == 1) {
+                count ++;
+            }
+        }
+        return count;
+    }
 
     /**
      * Adds a grav deck whose size in meters is specified.
@@ -227,7 +243,6 @@ public class Jumpship extends Aero {
 
     /**
      * Get a list of all grav decks mounted on this ship. Returns the size in meters of the deck
-     * and whether or not the deck has taken a critical hit
      *
      * @return
      */
@@ -236,13 +251,11 @@ public class Jumpship extends Aero {
     }
     
     /**
-     * Adds a grav deck damage value that corresponds to the index of each deck size in meters
+     * Adds a grav deck damage value that maps to the index of each deck size in meters
      *
      */
-    public void initializeGravDeckDamage() {
-        for (int deck : getGravDecks()) {
-            damagedGravDecks.put(gravDecks.indexOf(deck), 0);
-        }
+    public void initializeGravDeckDamage(int size) {
+        damagedGravDecks.put(gravDecks.indexOf(size), 0);
     }
 
     /**
@@ -257,11 +270,11 @@ public class Jumpship extends Aero {
     /**
      * Sets the damage flag for the grav deck with the specified key to the specified value
      *
-     * @param key 
-     * @param value 0 (undamaged), 1 (damaged)
+     * @param key - the id of the deck to affect
+     * @param damaged - 0 (undamaged), 1 (damaged)
      */
     public void setGravDeckDamageFlag(int key, int damaged) {
-        damagedGravDecks.get(key);
+        damagedGravDecks.replace(key, damaged);
     }
 
     /**

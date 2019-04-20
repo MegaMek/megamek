@@ -284,6 +284,13 @@ public class Princess extends BotClient {
     FireControl getFireControl(Entity entity) {
         if(entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
             return fireControls.get(FireControlType.Infantry);
+        // some entities can shoot at multiple targets without undergoing too much penalty
+        // so let's get them doing that.
+        } else if(entity.getCrew().getCrewType().getMaxPrimaryTargets() > 1 ||
+                entity.hasQuirk(OptionsConstants.QUIRK_POS_MULTI_TRAC) ||
+                entity.hasAbility(OptionsConstants.GUNNERY_MULTI_TASKER) ||
+                entity.getCrew().getCrewType().getMaxPrimaryTargets() < 0) {
+            return fireControls.get(FireControlType.MultiTarget);
         }
         
         return fireControls.get(FireControlType.Basic);
@@ -601,9 +608,11 @@ public class Princess extends BotClient {
     
                     // Add expected damage from the chosen FiringPlan to the 
                     // damageMap for the target enemy.
-                    final Integer targetId = plan.getTarget().getTargetId();
-                    final Double newDamage = damageMap.get(targetId) + plan.getExpectedDamage();
-                    damageMap.replace(targetId,newDamage);
+                    for(WeaponFireInfo shot : plan) {
+                        int targetId = shot.getTarget().getTargetId();
+                        double newDamage = damageMap.get(targetId) + shot.getExpectedDamage();
+                        damageMap.replace(targetId, newDamage);
+                    }
     
                     // tell the game I want to fire
                     sendAttackData(shooter.getId(), plan.getEntityActionVector());
@@ -1608,6 +1617,9 @@ public class Princess extends BotClient {
         
         InfantryFireControl infantryFireControl = new InfantryFireControl(this);
         fireControls.put(FireControlType.Infantry, infantryFireControl);
+        
+        MultiTargetFireControl multiTargetFireControl = new MultiTargetFireControl(this);
+        fireControls.put(FireControlType.MultiTarget, multiTargetFireControl);
     }
 
     /**

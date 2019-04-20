@@ -191,6 +191,19 @@ public class Jumpship extends Aero {
                 .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
+    
+    public String getCritDamageString() {
+        String toReturn = super.getCritDamageString();
+        boolean first = toReturn.isEmpty();
+        if (getTotalDamagedGravDeck() > 0) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Grav Decks (" + getTotalDamagedGravDeck() + ")";
+            first = false;
+        }
+        return toReturn;
+    }
 
     @Override
     public CrewType defaultCrewType() {
@@ -254,8 +267,8 @@ public class Jumpship extends Aero {
      * Adds a grav deck damage value that maps to the index of each deck size in meters
      *
      */
-    public void initializeGravDeckDamage(int size) {
-        damagedGravDecks.put(gravDecks.indexOf(size), 0);
+    public void initializeGravDeckDamage(int index) {
+        damagedGravDecks.put(index, 0);
     }
 
     /**

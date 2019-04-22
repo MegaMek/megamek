@@ -80,10 +80,6 @@ public class Dropship extends SmallCraft {
     public static final int BOOM_STANDARD  = 0;
     public static final int BOOM_PROTOTYPE = 1;
     
-    private static final String[] BOOM_NAMES = {
-            "KF-Boom", "Prototype KF-Boom"
-    };
-    
     // what needs to go here?
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;

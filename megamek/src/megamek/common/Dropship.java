@@ -62,8 +62,7 @@ public class Dropship extends SmallCraft {
         }
         return 0;
     }
-  
-    
+
     /**
      * Primitive Dropships may be constructed with no docking collar, or with a pre-boom collar. 
      * 

@@ -148,6 +148,13 @@ public class Jumpship extends Aero {
         }
         return 0;
     }
+    
+    /**
+     * Primitive Jumpships may be constructed with standard docking collars, or with pre-boom collars. 
+     * 
+     */
+    public static final int COLLAR_STANDARD  = 0;
+    public static final int COLLAR_PROTOTYPE = 1;
 
     protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2300).setISApproximate(false, true)

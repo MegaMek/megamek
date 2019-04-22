@@ -29,6 +29,8 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -172,6 +174,11 @@ public class MoveStep implements Serializable {
     private ArrayList<Coords> crushedBuildingLocs = new ArrayList<Coords>();
 
     /**
+     * Global logging instance.
+     */
+    private MMLogger logger;
+
+    /**
      * Create a step of the given type.
      *
      * @param type - should match one of the MovePath constants, but this is not
@@ -303,6 +310,15 @@ public class MoveStep implements Serializable {
     public MoveStep(MovePath path, MoveStepType type, Minefield mf) {
         this(path, type);
         this.mf = mf;
+    }
+
+    /**
+     * Get the logging instance for this class.
+     * 
+     * @return The logger for this class.
+     */
+    private MMLogger getLogger() {
+        return null == logger ? logger = DefaultMmLogger.getInstance() : logger;
     }
 
     @Override
@@ -1321,7 +1337,7 @@ public class MoveStep implements Serializable {
     public void moveInDir(int dir) {
         position = position.translated(dir);
         if (!getGame().getBoard().contains(position)) {
-            throw new RuntimeException("Coordinate off the board.");
+            throw getLogger().error(getClass(), "moveInDir(int)", new RuntimeException("Coordinate off the board."));
         }
     }
 
@@ -3071,7 +3087,13 @@ public class MoveStep implements Serializable {
                 && destHex.containsTerrain(Terrains.WOODS)
                 && !isPavementStep) {
             mp--;
-        }
+
+            // Ensures that Infantry always pay at least 1 mp when 
+            // entering woods or jungle
+            if (mp <= 0) {
+                mp = 1;
+            }
+        }        
     }
 
     /**
@@ -3081,21 +3103,20 @@ public class MoveStep implements Serializable {
      * possible, just whether the <em>current</em> step is possible.
      */
     public boolean isMovementPossible(IGame game, Coords src, int srcEl) {
+        final String METHOD_NAME = "isMovementPossible(IGame,Coords,int)";
         final IHex srcHex = game.getBoard().getHex(src);
         final Coords dest = getPosition();
         final IHex destHex = game.getBoard().getHex(dest);
         final Entity entity = getEntity();
 
         if (null == dest) {
-            System.err.println("step has no position");
-            throw new IllegalStateException("Step has no position.");
+            throw getLogger().error(getClass(), METHOD_NAME, new IllegalStateException("Step has no position"));
         }
         if (src.distance(dest) > 1) {
             StringBuffer buf = new StringBuffer();
             buf.append("Coordinates ").append(src.toString()).append(" and ")
                     .append(dest.toString()).append(" are not adjacent.");
-            System.err.println(buf.toString());
-            throw new IllegalArgumentException(buf.toString());
+            throw getLogger().error(getClass(), METHOD_NAME, new IllegalArgumentException(buf.toString()));
         }
 
         // Assault dropping units cannot move

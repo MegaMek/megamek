@@ -154,7 +154,7 @@ public class Jumpship extends Aero {
      * 
      */
     public static final int COLLAR_STANDARD  = 0;
-    public static final int COLLAR_PROTOTYPE = 1;
+    public static final int COLLAR_NO_BOOM = 1;
 
     protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2300).setISApproximate(false, true)

@@ -28,8 +28,8 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     private Coords selectedTarget;
     private JTextField inputField;
     private String[] args;
-    public LinkedList<String> history;
-    public int historyBookmark = -1;
+    private LinkedList<String> history;
+    private int historyBookmark = -1;
 
     public AccessibilityWindow(ChatterBox cb, ClientGUI clientgui) {
         super(clientgui.getFrame(), Messages.getString("ClientGUI.ChatWindow"));
@@ -170,6 +170,10 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
         moveToEnd();
     }
 
+    /**
+     * Pull a bookmarked item from the history.
+     *
+     */
     public void fetchHistory() {
         try {
             inputField.setText(history.get(historyBookmark));

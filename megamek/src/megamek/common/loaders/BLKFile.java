@@ -1068,7 +1068,9 @@ public class BLKFile {
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new StandardSeatCargoBay(pbi.getSize(), pbi.getDoors()));
                 } else if (transporter.startsWith("dockingcollar", 0)) {
-                    e.addTransporter(new DockingCollar(1));
+                    String numbers = transporter.substring(13);
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new DockingCollar(1,pbi.getBayNumber()));
                 }
 
             } // Handle the next transportation component.

@@ -249,12 +249,12 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
 
         addTransports(a);
 
-        /*// get docking collars
+        // get docking collars (legacy BLK files)
         int docks = dataFile.getDataAsInt("docking_collar")[0];
         while (docks > 0) {
-            a.addTransporter(new DockingCollar(1),);
+            a.addTransporter(new DockingCollar(1, (a.getTransports().size() + 1)));
             docks--;
-        } */
+        }
         a.setArmorTonnage(a.getArmorWeight());
 
         return a;

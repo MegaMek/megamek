@@ -209,6 +209,13 @@ public class Jumpship extends Aero {
             toReturn += "Grav Decks (" + getTotalDamagedGravDeck() + ")";
             first = false;
         }
+        if (getTotalDamagedDockingCollars() > 0) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Docking Collars (" + getTotalDamagedDockingCollars() + ")";
+            first = false;
+        }
         return toReturn;
     }
 
@@ -225,6 +232,31 @@ public class Jumpship extends Aero {
     @Override
     public int getBodyLocation() {
         return LOC_HULL;
+    }
+    
+    /**
+     * Get the docking collar type used by the ship.
+     *
+     * @return
+     */
+    public int getDockingCollarType() {
+        return (isPrimitive() ? Jumpship.COLLAR_NO_BOOM : Jumpship.COLLAR_STANDARD);
+    }
+    
+    /**
+     * Get the number of damaged docking collars on the ship.
+     * Used by crit damage string on unit display
+     *
+     * @return
+     */
+    public int getTotalDamagedDockingCollars() {
+        int count = 0;
+        for (DockingCollar collar : getDockingCollars()) {
+            if (collar.isDamaged()) {
+                count ++;
+            }
+        }
+        return count;
     }
 
     /**

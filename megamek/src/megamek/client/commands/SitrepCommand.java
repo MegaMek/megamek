@@ -82,6 +82,9 @@ public class SitrepCommand extends ClientCommand {
                                     (showHostile && hostileEntity);
 
             if (displayEntity && (entity.getId() != currentEntity.getId())) {
+if (entity.isOffBoard() || !entity.isDeployed()) {
+continue;
+}
                 int distance = currentEntity.getPosition().distance(entity.getPosition());
                 if (distance > maxHexRange) {
                     continue;

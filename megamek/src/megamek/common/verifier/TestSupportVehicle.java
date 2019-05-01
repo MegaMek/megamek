@@ -229,6 +229,11 @@ public class TestSupportVehicle extends TestEntity {
             this.smallOnly = smallOnly;
         }
 
+        public boolean isValidFor(Entity sv) {
+            return sv.isSupportVehicle() && allowedTypes.contains(SVType.getVehicleType(sv))
+                    && (!smallOnly || (sv.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT));
+        }
+
         @Override
         public ITechnology getTechSource() {
             return equipment;

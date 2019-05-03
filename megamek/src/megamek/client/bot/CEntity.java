@@ -65,7 +65,7 @@ public class CEntity {
 
         public CEntity get(Entity es) {
             CEntity result = null;
-            if ((result = super.get(new Integer(es.getId()))) == null) {
+            if ((result = super.get(Integer.valueOf(es.getId()))) == null) {
                 result = new CEntity(es, tb);
                 this.put(result);
             }
@@ -73,7 +73,7 @@ public class CEntity {
         }
 
         public CEntity get(int id) {
-            return get(new Integer(id));
+            return get(Integer.valueOf(id));
         }
     }
 
@@ -1056,7 +1056,7 @@ public class CEntity {
     }
 
     public Integer getKey() {
-        return new Integer(entity.getId());
+        return Integer.valueOf(entity.getId());
     }
 
     public MoveOption.Table getAllMoves(Client client) {

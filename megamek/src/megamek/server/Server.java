@@ -1084,7 +1084,7 @@ public class Server implements Runnable {
                     break;
                 default:
                     send(connId, new Packet(Packet.COMMAND_ROUND_UPDATE,
-                                            new Integer(game.getRoundCount())));
+                                            Integer.valueOf(game.getRoundCount())));
                     send(connId, createBoardPacket());
                     send(connId, createAllReportsPacket(player));
 
@@ -1588,7 +1588,7 @@ public class Server implements Runnable {
             connectionIds.put(newId, conn);
 
             game.getPlayer(newId).setGhost(false);
-            send(newId, new Packet(Packet.COMMAND_LOCAL_PN, new Integer(newId)));
+            send(newId, new Packet(Packet.COMMAND_LOCAL_PN, Integer.valueOf(newId)));
         }
 
         // It's possible we have players not in the saved game, add 'em
@@ -1602,7 +1602,7 @@ public class Server implements Runnable {
             IPlayer newPlayer = addNewPlayer(newId, name);
             newPlayer.setObserver(true);
             connectionIds.put(newId,  conn);
-            send(newId, new Packet(Packet.COMMAND_LOCAL_PN, new Integer(newId)));
+            send(newId, new Packet(Packet.COMMAND_LOCAL_PN, Integer.valueOf(newId)));
         }
 
         // Ensure all clients are up-to-date on player info
@@ -1659,7 +1659,7 @@ public class Server implements Runnable {
      * Returns a connection, indexed by id
      */
     public IConnection getConnection(int connId) {
-        return connectionIds.get(new Integer(connId));
+        return connectionIds.get(Integer.valueOf(connId));
     }
 
     /**
@@ -3279,7 +3279,7 @@ public class Server implements Runnable {
      */
     private void incrementAndSendGameRound() {
         game.incrementRoundCount();
-        send(new Packet(Packet.COMMAND_ROUND_UPDATE, new Integer(
+        send(new Packet(Packet.COMMAND_ROUND_UPDATE, Integer.valueOf(
                 game.getRoundCount())));
     }
 
@@ -3831,7 +3831,7 @@ public class Server implements Runnable {
                 for (; playerProtos.hasNext(); ) {
                     Entity proto = playerProtos.next();
                     numPlayerProtos++;
-                    points.add(new Integer(proto.getUnitNumber()));
+                    points.add(Integer.valueOf(proto.getUnitNumber()));
                 }
                 int numProtoUnits = (int) Math.ceil(numPlayerProtos / 5.0);
                 if (!protosMoveEven) {
@@ -14144,7 +14144,7 @@ public class Server implements Runnable {
                         });
                 Vector<Integer> spotterIds = new Vector<Integer>();
                 while (spotters.hasNext()) {
-                    Integer id = new Integer(spotters.next().getId());
+                    Integer id = Integer.valueOf(spotters.next().getId());
                     spotterIds.addElement(id);
                 }
                 aaa.setSpotterIds(spotterIds);
@@ -32046,7 +32046,7 @@ public class Server implements Runnable {
      */
     private Packet createPlayerConnectPacket(int playerId) {
         final Object[] data = new Object[2];
-        data[0] = new Integer(playerId);
+        data[0] = Integer.valueOf(playerId);
         data[1] = getPlayer(playerId);
         return new Packet(Packet.COMMAND_PLAYER_ADD, data);
     }
@@ -32056,7 +32056,7 @@ public class Server implements Runnable {
      */
     private Packet createPlayerUpdatePacket(int playerId) {
         final Object[] data = new Object[2];
-        data[0] = new Integer(playerId);
+        data[0] = Integer.valueOf(playerId);
         data[1] = getPlayer(playerId);
         return new Packet(Packet.COMMAND_PLAYER_UPDATE, data);
     }
@@ -32089,7 +32089,7 @@ public class Server implements Runnable {
      */
     private Packet createPlayerDonePacket(int playerId) {
         Object[] data = new Object[2];
-        data[0] = new Integer(playerId);
+        data[0] = Integer.valueOf(playerId);
         data[1] = Boolean.valueOf(getPlayer(playerId).isDone());
         return new Packet(Packet.COMMAND_PLAYER_READY, data);
     }
@@ -32106,7 +32106,7 @@ public class Server implements Runnable {
      */
     private Packet createTurnIndexPacket(int playerId) {
         final Object[] data = new Object[3];
-        data[0] = new Integer(game.getTurnIndex());
+        data[0] = Integer.valueOf(game.getTurnIndex());
         data[1] = playerId;
         return new Packet(Packet.COMMAND_TURN, data);
     }
@@ -32153,7 +32153,7 @@ public class Server implements Runnable {
             Vector<UnitLocation> movePath) {
         final Entity entity = game.getEntity(entityId);
         final Object[] data = new Object[3];
-        data[0] = new Integer(entityId);
+        data[0] = Integer.valueOf(entityId);
         data[1] = entity;
         data[2] = movePath;
         return new Packet(Packet.COMMAND_ENTITY_UPDATE, data);
@@ -32311,7 +32311,7 @@ public class Server implements Runnable {
         }
         Object[] array = new Object[2];
         array[0] = entityIds;
-        array[1] = new Integer(condition);
+        array[1] = Integer.valueOf(condition);
         return new Packet(Packet.COMMAND_ENTITY_REMOVE, array);
     }
 
@@ -32321,8 +32321,8 @@ public class Server implements Runnable {
     private Packet createEndOfGamePacket() {
         Object[] array = new Object[3];
         array[0] = getDetailedVictoryReport();
-        array[1] = new Integer(game.getVictoryPlayerId());
-        array[2] = new Integer(game.getVictoryTeam());
+        array[1] = Integer.valueOf(game.getVictoryPlayerId());
+        array[2] = Integer.valueOf(game.getVictoryTeam());
         return new Packet(Packet.COMMAND_END_OF_GAME, array);
     }
 
@@ -32418,7 +32418,7 @@ public class Server implements Runnable {
 
     public void sendVisibilityIndicator(Entity e) {
         final Object[] data = new Object[6];
-        data[0] = new Integer(e.getId());
+        data[0] = Integer.valueOf(e.getId());
         data[1] = Boolean.valueOf(e.isEverSeenByEnemy());
         data[2] = Boolean.valueOf(e.isVisibleToEnemy());
         data[3] = Boolean.valueOf(e.isDetectedByEnemy());
@@ -32433,7 +32433,7 @@ public class Server implements Runnable {
     private Packet createAttackPacket(List<?> vector, int charges) {
         final Object[] data = new Object[2];
         data[0] = vector;
-        data[1] = new Integer(charges);
+        data[1] = Integer.valueOf(charges);
         return new Packet(Packet.COMMAND_ENTITY_ATTACK, data);
     }
 
@@ -32445,7 +32445,7 @@ public class Server implements Runnable {
         vector.addElement(ea);
         Object[] data = new Object[2];
         data[0] = vector;
-        data[1] = new Integer(charge);
+        data[1] = Integer.valueOf(charge);
         return new Packet(Packet.COMMAND_ENTITY_ATTACK, data);
     }
 
@@ -32530,7 +32530,7 @@ public class Server implements Runnable {
 
     // WOR
     public void send_Nova_Change(int ID, String net) {
-        Object[] data = {new Integer(ID), new String(net)};
+        Object[] data = {Integer.valueOf(ID), new String(net)};
         Packet packet = new Packet(Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE,
                                    data);
         send(packet);

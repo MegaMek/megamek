@@ -131,6 +131,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
     public static final String VIEW_LOS_SETTING = "viewLOSSetting"; //$NON-NLS-1$
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
+    public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_OUT = "viewZoomOut"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$
@@ -152,6 +153,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private CommonAboutDialog about;
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
+    private AccessibilityWindow aw;
     private String helpFileName = 
             SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
                                                           Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
@@ -423,6 +425,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         bv.addDisplayable(cb2);
         bv.addKeyListener(cb2);
         uo = new UnitOverview(this);
+        aw = new AccessibilityWindow(cb, this);
+        aw.setLocation(0, 0);
+        aw.addWindowListener(this);
+        aw.setSize(300, 300);
         bv.addDisplayable(uo);
         int x;
         int y;
@@ -767,6 +773,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             replacePlayer();
         } else if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
             toggleDisplay();
+        } else if (event.getActionCommand().equals(VIEW_ACCESSIBILITY_WINDOW)) {
+            toggleAccessibilityWindow();
         } else if (event.getActionCommand().equals(VIEW_MINI_MAP)) {
             toggleMap();
         } else if (event.getActionCommand().equals(VIEW_UNIT_OVERVIEW)) {
@@ -1288,6 +1296,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private void toggleDisplay() {
         mechW.setVisible(!mechW.isVisible());
         if (mechW.isVisible()) {
+            frame.requestFocus();
+        }
+    }
+    
+    /**
+     * Toggles the accessibility window
+     */
+    private void toggleAccessibilityWindow() {
+        aw.setVisible(!aw.isVisible());
+        if (aw.isVisible()) {
             frame.requestFocus();
         }
     }

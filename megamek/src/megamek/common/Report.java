@@ -235,7 +235,7 @@ public class Report implements Serializable {
     public void add(int data, boolean obscure) {
         if (obscure) {
             obscuredIndexes.put(Integer.valueOf(tagData.size()),
-                    new Boolean(true));
+                    Boolean.valueOf(true));
         }
         tagData.addElement(String.valueOf(data));
     }
@@ -279,7 +279,7 @@ public class Report implements Serializable {
     public void add(String data, boolean obscure) {
         if (obscure) {
             obscuredIndexes.put(Integer.valueOf(tagData.size()),
-                    new Boolean(true));
+                    Boolean.valueOf(true));
         }
         tagData.addElement(data);
     }

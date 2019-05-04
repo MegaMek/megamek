@@ -777,7 +777,7 @@ public class Client implements IClientCommandHandler {
      * Sends a "player done" message to the server.
      */
     public synchronized void sendDone(boolean done) {
-        send(new Packet(Packet.COMMAND_PLAYER_READY, new Boolean(done)));
+        send(new Packet(Packet.COMMAND_PLAYER_READY, Boolean.valueOf(done)));
         flushConn();
     }
 

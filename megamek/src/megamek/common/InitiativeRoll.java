@@ -54,7 +54,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         rolls.addElement(roll);
         originalRolls.addElement(roll);
         bonuses.addElement(bonus);
-        wasRollReplaced.addElement(new Boolean(false));
+        wasRollReplaced.addElement(Boolean.valueOf(false));
     }
 
     /**
@@ -64,7 +64,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         rolls.addElement(-1);
         originalRolls.addElement(-1);
         bonuses.addElement(0);
-        wasRollReplaced.addElement(new Boolean(false));
+        wasRollReplaced.addElement(Boolean.valueOf(false));
     }
 
     /**
@@ -75,7 +75,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         Integer roll = Integer.valueOf(Compute.d6(2));
         rolls.setElementAt(roll, size() - 1);
         bonuses.setElementAt(bonus, size() - 1);
-        wasRollReplaced.setElementAt(new Boolean(true), size() - 1);
+        wasRollReplaced.setElementAt(Boolean.valueOf(true), size() - 1);
     }
 
     public int size() {

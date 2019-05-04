@@ -367,7 +367,7 @@ public class GameOptions extends AbstractOptions {
                                 break;
 
                             case IOption.BOOLEAN:
-                                tempOption.setValue(new Boolean(value
+                                tempOption.setValue(Boolean.valueOf(value
                                         .toString()));
                                 break;
 

@@ -79,7 +79,7 @@ class PreferenceStore implements IPreferenceStore {
             return DOUBLE_DEFAULT;
         double ival = DOUBLE_DEFAULT;
         try {
-            ival = new Double(value).doubleValue();
+            ival = Double.valueOf(value).doubleValue();
         } catch (NumberFormatException e) {
         }
         return ival;
@@ -173,7 +173,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Double(oldValue), new Double(
+            firePropertyChangeEvent(name, Double.valueOf(oldValue), Double.valueOf(
                     value));
         }
     }

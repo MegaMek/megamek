@@ -396,9 +396,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                                 "CustomMechDialog.NetworkTooBig.message", new Object[] {//$NON-NLS-1$
                                         entity.getShortName(),
                                         chosen.getShortName(),
-                                        new Integer(entC3nodeCount),
-                                        new Integer(choC3nodeCount),
-                                        new Integer(Entity.MAX_C3_NODES) });
+                                        Integer.valueOf(entC3nodeCount),
+                                        Integer.valueOf(choC3nodeCount),
+                                        Integer.valueOf(Entity.MAX_C3_NODES) });
                 clientgui.doAlertDialog(Messages
                         .getString("CustomMechDialog.NetworkTooBig.title"), //$NON-NLS-1$
                         message);
@@ -1650,7 +1650,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
                 choC3.addItem(Messages
                         .getString(
-                                "CustomMechDialog.setCompanyMaster", new Object[] { new Integer(mNodes), new Integer(sNodes) })); //$NON-NLS-1$
+                                "CustomMechDialog.setCompanyMaster", new Object[] { Integer.valueOf(mNodes), Integer.valueOf(sNodes) })); //$NON-NLS-1$
 
                 if (entity.C3MasterIs(entity)) {
                     choC3.setSelectedIndex(listIndex);
@@ -1659,7 +1659,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
                 choC3.addItem(Messages
                         .getString(
-                                "CustomMechDialog.setIndependentMaster", new Object[] { new Integer(sNodes) })); //$NON-NLS-1$
+                                "CustomMechDialog.setIndependentMaster", new Object[] { Integer.valueOf(sNodes) })); //$NON-NLS-1$
                 if (entity.getC3Master() == null) {
                     choC3.setSelectedIndex(listIndex);
                 }
@@ -1670,7 +1670,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
                 choC3.addItem(Messages
                         .getString(
-                                "CustomMechDialog.setCompanyMaster1", new Object[] { new Integer(nodes) })); //$NON-NLS-1$
+                                "CustomMechDialog.setCompanyMaster1", new Object[] { Integer.valueOf(nodes) })); //$NON-NLS-1$
                 if (entity.C3MasterIs(entity)) {
                     choC3.setSelectedIndex(listIndex);
                 }
@@ -1678,7 +1678,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
                 choC3.addItem(Messages
                         .getString(
-                                "CustomMechDialog.setIndependentMaster", new Object[] { new Integer(nodes) })); //$NON-NLS-1$
+                                "CustomMechDialog.setIndependentMaster", new Object[] { Integer.valueOf(nodes) })); //$NON-NLS-1$
                 if (entity.getC3Master() == null) {
                     choC3.setSelectedIndex(listIndex);
                 }
@@ -1726,12 +1726,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     if (entity.onSameC3NetworkAs(e)) {
                         choC3.addItem(Messages
                                 .getString(
-                                        "CustomMechDialog.join1", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1) })); //$NON-NLS-1$
+                                        "CustomMechDialog.join1", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes - 1) })); //$NON-NLS-1$
                         choC3.setSelectedIndex(listIndex);
                     } else {
                         choC3.addItem(Messages
                                 .getString(
-                                        "CustomMechDialog.join2", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes) })); //$NON-NLS-1$
+                                        "CustomMechDialog.join2", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes) })); //$NON-NLS-1$
                     }
                     entityCorrespondance[listIndex++] = e.getId();
                 } else if (e.C3MasterIs(e) && e.hasC3MM()) {
@@ -1739,7 +1739,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     // *both* sub-masters AND slave units.
                     choC3.addItem(Messages
                             .getString(
-                                    "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes) })); //$NON-NLS-1$
+                                    "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes) })); //$NON-NLS-1$
                     entityCorrespondance[listIndex] = e.getId();
                     if (entity.C3MasterIs(e)) {
                         choC3.setSelectedIndex(listIndex);
@@ -1752,13 +1752,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 } else if (entity.C3MasterIs(e)) {
                     choC3.addItem(Messages
                             .getString(
-                                    "CustomMechDialog.connect1", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1) })); //$NON-NLS-1$
+                                    "CustomMechDialog.connect1", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes - 1) })); //$NON-NLS-1$
                     choC3.setSelectedIndex(listIndex);
                     entityCorrespondance[listIndex++] = e.getId();
                 } else {
                     choC3.addItem(Messages
                             .getString(
-                                    "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes) })); //$NON-NLS-1$
+                                    "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes) })); //$NON-NLS-1$
                     entityCorrespondance[listIndex++] = e.getId();
                 }
             }

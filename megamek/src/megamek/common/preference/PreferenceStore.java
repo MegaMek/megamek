@@ -192,7 +192,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Integer(oldValue), new Integer(
+            firePropertyChangeEvent(name, Integer.valueOf(oldValue), Integer.valueOf(
                     value));
         }
     }

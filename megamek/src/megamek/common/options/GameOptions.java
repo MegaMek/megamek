@@ -372,7 +372,7 @@ public class GameOptions extends AbstractOptions {
                                 break;
 
                             case IOption.INTEGER:
-                                tempOption.setValue(new Integer(value
+                                tempOption.setValue(Integer.valueOf(value
                                         .toString()));
                                 break;
 

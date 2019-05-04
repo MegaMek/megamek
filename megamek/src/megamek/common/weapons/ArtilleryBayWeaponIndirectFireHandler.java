@@ -188,7 +188,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                         public Targetable targ = target;
 
                         public boolean accept(Entity entity) {
-                            Integer id = new Integer(entity.getId());
+                            Integer id = Integer.valueOf(entity.getId());
                             if ((player == entity.getOwnerId())
                                     && spottersBefore.contains(id)
                                     && !(LosEffects.calculateLos(game,

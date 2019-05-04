@@ -195,7 +195,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
 
     protected void addOption(IBasicOptionGroup group, String name,
             int defaultValue) {
-        addOption(group, name, IOption.INTEGER, new Integer(defaultValue));
+        addOption(group, name, IOption.INTEGER, Integer.valueOf(defaultValue));
     }
 
     protected void addOption(IBasicOptionGroup group, String name,

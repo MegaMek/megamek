@@ -2049,11 +2049,11 @@ class DesignType extends HMPType {
 
     private DesignType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static DesignType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -2072,11 +2072,11 @@ class ArmorType extends HMPType {
 
     private ArmorType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static ArmorType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -2092,11 +2092,11 @@ class EngineType extends HMPType {
 
     private EngineType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static EngineType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -2110,11 +2110,11 @@ class HeatSinkType extends HMPType {
 
     private HeatSinkType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static HeatSinkType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -2130,11 +2130,11 @@ class ChassisType extends HMPType {
 
     private ChassisType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static ChassisType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -2149,11 +2149,11 @@ class InternalStructureType extends HMPType {
 
     private InternalStructureType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static InternalStructureType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -2166,11 +2166,11 @@ class TechType extends HMPType {
 
     private TechType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static TechType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -2184,11 +2184,11 @@ class MyomerType extends HMPType {
 
     private MyomerType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static MyomerType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -2212,11 +2212,11 @@ class WeaponLocation extends HMPType {
 
     private WeaponLocation(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static WeaponLocation getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 
 }

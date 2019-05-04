@@ -586,7 +586,7 @@ public class HmvFile implements IMechLoader {
         if (null != prevCount) {
             weaponCount += prevCount.intValue();
         }
-        equipmentAtLocation.put(equipmentType, new Integer(weaponCount));
+        equipmentAtLocation.put(equipmentType, Integer.valueOf(weaponCount));
     }
 
     private void addEquipment(Tank tank, HMVWeaponLocation weaponLocation, int location) throws Exception {
@@ -1288,11 +1288,11 @@ class HMVEngineType extends HMVType {
 
     private HMVEngineType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static HMVEngineType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -1308,11 +1308,11 @@ class HMVArmorType extends HMVType {
 
     private HMVArmorType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static HMVArmorType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -1325,11 +1325,11 @@ class HMVTechType extends HMVType {
 
     private HMVTechType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static HMVTechType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -1346,13 +1346,13 @@ class HMVMovementType extends HMVType {
 
     private HMVMovementType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static HMVMovementType getType(int i) {
         // Only pay attention to the movement type bits.
         i &= 1016;
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 
 }
@@ -1369,11 +1369,11 @@ class HMVWeaponLocation extends HMVType {
 
     private HMVWeaponLocation(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static HMVWeaponLocation getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }
 
@@ -1385,10 +1385,10 @@ class HMVStructureType extends HMVType {
 
     private HMVStructureType(String name, int id) {
         super(name, id);
-        types.put(new Integer(id), this);
+        types.put(Integer.valueOf(id), this);
     }
 
     public static HMVStructureType getType(int i) {
-        return types.get(new Integer(i));
+        return types.get(Integer.valueOf(i));
     }
 }

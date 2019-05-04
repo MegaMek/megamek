@@ -95,7 +95,7 @@ class PreferenceStore implements IPreferenceStore {
             return FLOAT_DEFAULT;
         float ival = FLOAT_DEFAULT;
         try {
-            ival = new Float(value).floatValue();
+            ival = Float.parseFloat(value);
         } catch (NumberFormatException e) {
         }
         return ival;
@@ -183,7 +183,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Float(oldValue), new Float(value));
+            firePropertyChangeEvent(name, Float.valueOf(oldValue), Float.valueOf(value));
         }
     }
 

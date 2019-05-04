@@ -377,7 +377,7 @@ public class GameOptions extends AbstractOptions {
                                 break;
 
                             case IOption.FLOAT:
-                                tempOption.setValue(new Float(value
+                                tempOption.setValue(Float.valueOf(value
                                         .toString()));
                                 break;
                         }

@@ -150,7 +150,7 @@ public class PilotMapSet implements DisplayMapSet {
         getNewYCoord();
         advantagesR = new PMSimpleLabel[N_ADV];
         for (int i = 0; i < advantagesR.length; i++) {
-            advantagesR[i] = createLabel(new Integer(i).toString(), fm, 10, getNewYCoord());
+            advantagesR[i] = createLabel(Integer.valueOf(i).toString(), fm, 10, getNewYCoord());
             content.addArea(advantagesR[i]);
         }
         // DO NOT PLACE ANY MORE LABELS BELOW HERE. They will get

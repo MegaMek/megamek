@@ -1198,7 +1198,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                             Compute.oddsAbove(
                                                     toHitLeft.getValue(),
                                                     ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
-                                    new Integer(damageLeft) });
+                                    Integer.valueOf(damageLeft) });
         }
 
         // If we can hit with the right arm, get
@@ -1214,7 +1214,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                             Compute.oddsAbove(
                                                     toHitRight.getValue(),
                                                     ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
-                                    new Integer(damageRight) });
+                                    Integer.valueOf(damageRight) });
         }
 
         // Allow the player to cancel or choose which arm(s) to use.

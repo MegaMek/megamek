@@ -6,6 +6,8 @@
       <module name="megamek_main" target="1.8" />
       <module name="megamek_test" target="1.8" />
       <module name="MegaMek_test" target="1.8" />
+      <module name="MegaMekRoot_main" target="1.8" />
+      <module name="MegaMekRoot_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

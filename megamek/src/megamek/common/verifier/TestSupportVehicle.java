@@ -229,9 +229,48 @@ public class TestSupportVehicle extends TestEntity {
             this.smallOnly = smallOnly;
         }
 
-        public boolean isValidFor(Entity sv) {
+        /**
+         * Checks for compatibility with a support vehicle type and weight class
+         *
+         * @param sv The support vehicle
+         * @return   Whether the mod is valid for the vehicle
+         */
+        public boolean validFor(Entity sv) {
             return sv.isSupportVehicle() && allowedTypes.contains(SVType.getVehicleType(sv))
                     && (!smallOnly || (sv.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT));
+        }
+
+        /**
+         * Checks for compatibility between different chassis modifications
+         *
+         * @param other Another chassis mod
+         * @return      Whether this chassis mod can be installed on the same vehicle as another mod.
+         */
+        public boolean compatibleWith(ChassisModification other) {
+            switch (this) {
+                case ARMORED:
+                    return other != ULTRA_LIGHT;
+                case ULTRA_LIGHT:
+                    return other != ARMORED;
+                case BICYCLE:
+                    return other != MONOCYCLE;
+                case MONOCYCLE:
+                    return other != BICYCLE;
+                case SNOWMOBILE:
+                    return other != DUNE_BUGGY
+                            && other != AMPHIBIOUS
+                            && other != OFFROAD;
+                case DUNE_BUGGY:
+                    return other != SNOWMOBILE
+                            && other != AMPHIBIOUS
+                            && other != OFFROAD;
+                case AMPHIBIOUS:
+                case OFFROAD:
+                    return other != SNOWMOBILE
+                            && other != DUNE_BUGGY;
+                default:
+                    return true;
+            }
         }
 
         @Override

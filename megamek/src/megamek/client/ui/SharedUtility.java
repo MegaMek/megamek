@@ -333,7 +333,7 @@ public class SharedUtility {
                     && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString(
                         "MovementDisplay.FireMoving",
-                        new Object[] { new Integer(8) }));
+                        new Object[] { Integer.valueOf(8) }));
             }
 
             // check for magma

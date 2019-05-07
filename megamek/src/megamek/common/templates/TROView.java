@@ -357,7 +357,8 @@ public class TROView {
                     if ((locs[i] < entity.locations())
                             && ((!provider.apply(entity, locs[i]).equals(provider.apply(entity, locs[0])))
                                     || !entity.hasETypeFlag(Entity.ETYPE_MECH))) {
-                        val = Arrays.stream(locs).mapToObj(l -> String.valueOf(provider.apply(entity, l)))
+                        val = Arrays.stream(locs).filter(l -> l < entity.locations())
+                                .mapToObj(l -> String.valueOf(provider.apply(entity, l)))
                                 .collect(Collectors.joining("/"));
                         break;
                     }

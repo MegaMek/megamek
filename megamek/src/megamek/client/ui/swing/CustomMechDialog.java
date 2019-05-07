@@ -504,21 +504,21 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         if (isAero || isLAM || isShip) {
             IAero a = (IAero) entity;
-            fldStartVelocity.setText(new Integer(a.getCurrentVelocity())
+            fldStartVelocity.setText(Integer.valueOf(a.getCurrentVelocity())
                     .toString());
             fldStartVelocity.addActionListener(this);
 
-            fldStartAltitude.setText(new Integer(entity.getAltitude()).toString());
+            fldStartAltitude.setText(Integer.valueOf(entity.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
             
             fuel = a.getFuel();
-            fldCurrentFuel.setText(new Integer(a.getCurrentFuel())
+            fldCurrentFuel.setText(Integer.valueOf(a.getCurrentFuel())
                     .toString());
             fldCurrentFuel.addActionListener(this);
         }
 
         if (isVTOL || isLAM || isGlider) {
-            fldStartHeight.setText(new Integer(entity.getElevation()).toString());
+            fldStartHeight.setText(Integer.valueOf(entity.getElevation()).toString());
             fldStartHeight.addActionListener(this);
         }
         if (isWiGE) {

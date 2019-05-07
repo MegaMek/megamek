@@ -52,7 +52,7 @@ public class GAAttack extends GA {
         for (int i = 0; i < target_array.size(); i++) {
             Entity entity = target_array.get(i);
             if (entity.isEnemyOf(attacker.entity) && entity.isDeployed()) {
-                temp.add(new Integer(i));
+                temp.add(Integer.valueOf(i));
             }
         }
         targets = new CEntity.Table(tb);
@@ -117,7 +117,7 @@ public class GAAttack extends GA {
             Entity en = target_array.get(k);
             CEntity enemy = null;
             result[k] = 0;
-            if ((enemy = targets.get(new Integer(en.getId()))) != null) {
+            if ((enemy = targets.get(Integer.valueOf(en.getId()))) != null) {
                 result[k] = getThreadUtility(enemy);
                 enemy.resetPossibleDamage();
             }

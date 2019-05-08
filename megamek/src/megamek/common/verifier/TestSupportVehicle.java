@@ -711,6 +711,13 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     /**
+     * @return   The total slot space
+     */
+    public int totalSlotCount() {
+        return 5 + (int) Math.floor(supportVee.getWeight() / 10.0);
+    }
+
+    /**
      * @return The number of slots taken up by installed equipment
      */
     public int occupiedSlotCount() {

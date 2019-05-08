@@ -90,6 +90,11 @@ public class FixedWingSupport extends ConvFighter {
     }
 
     @Override
+    public boolean isSupportVehicle() {
+        return true;
+    }
+
+    @Override
     public void autoSetSI() {
         initializeSI(getOriginalWalkMP());
     }

@@ -182,7 +182,7 @@ public class TestAdvancedAerospace extends TestAero {
      */
     public static double maxArmorWeight(Jumpship vessel){
         // max armor tonnage is based on SI weight, which is vessel mass * SI / 1000
-        if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP) && !vessel.isPrimitive()) {
+        if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             // SI weight / 50
             return floor(vessel.get0SI() * vessel.getWeight() / 50000.0, Ceil.HALFTON);
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {

@@ -57,7 +57,7 @@ public class SmallCraftDropshipTROView extends AeroTROView {
         setModelData("usesWeaponBays", aero.usesWeaponBays());
         if (aero.usesWeaponBays()) {
             final int nameWidth = addWeaponBays(aero.isSpheroid() ? SPHEROID_ARCS : AERODYNE_ARCS);
-            setModelData("formatBayRow",
+            setModelData("formatWeaponBayRow",
                     new FormatTableRowMethod(new int[] { nameWidth, 5, 8, 8, 8, 8, 12 },
                             new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
                                     Justification.CENTER, Justification.CENTER, Justification.CENTER,

@@ -126,11 +126,10 @@ public class TestAdvancedAerospace extends TestAero {
             }
             // Deal with potential rounding errors
             ppt = Math.round(ppt * 10.0) / 10.0;
-            if (!vessel.isPrimitive()) {
-                return ppt;
-            } else {
-                return ppt * EquipmentType.armorPointMultipliers[type];
+            if (type == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
+                ppt *= EquipmentType.armorPointMultipliers[EquipmentType.T_ARMOR_PRIMITIVE_AERO];
             }
+            return ppt;
         }
         
         /**
@@ -165,15 +164,14 @@ public class TestAdvancedAerospace extends TestAero {
         if (null == a) {
             return 0;
         }
-        if (!vessel.isPrimitive()) {
-            return (int)(Math.floor(a.pointsPerTon(vessel) * maxArmorWeight(vessel))
-                    + Math.round(vessel.get0SI() / 10.0) * 6);
-        } else {
-            // The ppt and the extra armor for SI are added together before the 0.66 primitive
-            // multiplier is applied.
-            return (int) (0.66 * (Math.floor(CapitalArmor.STANDARD.pointsPerTon(vessel) * maxArmorWeight(vessel))
-                    + Math.round(vessel.get0SI() / 10.0) * 6));
+        // The ship gets a number of armor points equal to 10% of the SI, rounded normally.
+        double freeSI = Math.round(vessel.get0SI() / 10.0);
+        // Primitive jumpships have the free SI armor reduced, but the fractional amount is
+        // added to the value calculated from the max armor tonnage before truncating.
+        if (vessel.isPrimitive()) {
+            freeSI *= 0.66;
         }
+        return (int) Math.floor(a.pointsPerTon(vessel) * maxArmorWeight(vessel) + freeSI);
     }
     
     /**

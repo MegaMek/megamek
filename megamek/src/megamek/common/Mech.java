@@ -4998,7 +4998,7 @@ public abstract class Mech extends Entity {
                 // Ammo with no matching weapons counts 0, unless it's a coolant
                 // pod
                 // because coolant pods have no matching weapon
-                if (key.equals(new Integer(AmmoType.T_COOLANT_POD).toString()
+                if (key.equals(Integer.valueOf(AmmoType.T_COOLANT_POD).toString()
                         + "1")) {
                     ammoBV += ammo.get(key);
                 }
@@ -6567,7 +6567,7 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
         sb.append(newLine);
 
-        Double tonnage = new Double(weight);
+        Double tonnage = Double.valueOf(weight);
         sb.append("Mass:").append(tonnage.intValue()).append(newLine);
         sb.append("Engine:");
         if(hasEngine()) {
@@ -8857,9 +8857,9 @@ public abstract class Mech extends Entity {
                         && crit.isHittable()
                         && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
                         && (crit.getIndex() == Mech.SYSTEM_ENGINE)) {
-                        vCriticals.put(new Integer(loc),
+                        vCriticals.put(Integer.valueOf(loc),
                                 new LinkedList<CriticalSlot>());
-                        vCriticals.get(new Integer(loc)).add(crit);
+                        vCriticals.get(Integer.valueOf(loc)).add(crit);
                         found = true;
                         break;
                     }
@@ -8872,9 +8872,9 @@ public abstract class Mech extends Entity {
                             && crit.isHittable()
                             && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
                             && (crit.getIndex() == Mech.SYSTEM_ENGINE)) {
-                            vCriticals.put(new Integer(loc),
+                            vCriticals.put(Integer.valueOf(loc),
                                     new LinkedList<CriticalSlot>());
-                            vCriticals.get(new Integer(loc)).add(crit);
+                            vCriticals.get(Integer.valueOf(loc)).add(crit);
                             break;
                         }
                     }

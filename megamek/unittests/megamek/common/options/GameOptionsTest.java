@@ -70,7 +70,7 @@ public class GameOptionsTest {
                     break;
 
                 case IOption.FLOAT:
-                    io.setValue(new Float(""+count));
+                    io.setValue(Float.valueOf(""+count));
                     break;
             }
             
@@ -103,7 +103,7 @@ public class GameOptionsTest {
                     }
                     break;
                 case IOption.FLOAT:
-                    assertEquals(new Float(""+count), io.floatValue(), 0.0f);
+                    assertEquals(Float.valueOf(""+count), io.floatValue(), 0.0f);
                     break;
             }
             

@@ -341,7 +341,7 @@ public class MechSummaryCache {
         File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
         ObjectOutputStream wr = new ObjectOutputStream(
                 new BufferedOutputStream(new FileOutputStream(unit_cache_path)));
-        Integer length = new Integer(m_data.length);
+        Integer length = Integer.valueOf(m_data.length);
         wr.writeObject(length);
         for (MechSummary element : m_data) {
             wr.writeObject(element);

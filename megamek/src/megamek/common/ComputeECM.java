@@ -145,17 +145,17 @@ public class ComputeECM {
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)
                 && !ent.isLargeCraft()) {
                 vEnemyECMCoords.addElement(entPos);
-                vEnemyECMRanges.addElement(new Integer(ent.getECMRange()));
+                vEnemyECMRanges.addElement(Integer.valueOf(ent.getECMRange()));
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)
                 && !ent.isLargeCraft()) {
                 vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                vFriendlyECCMRanges.addElement(Integer.valueOf(ent.getECMRange()));
             }
             if (!ent.isEnemyOf(ae) && ent.hasBAP(false) && (entPos != null)) {
                 vFriendlyBAPCoords.addElement(entPos);
-                vFriendlyBAPRanges.addElement(new Integer(ent.getBAPRange()));
-                vFriendlyBAPFacings.addElement(new Integer(ent.getFacing()));
+                vFriendlyBAPRanges.addElement(Integer.valueOf(ent.getBAPRange()));
+                vFriendlyBAPFacings.addElement(Integer.valueOf(ent.getFacing()));
             }
     
             // TODO: do docked dropships give ECM benefit?
@@ -268,17 +268,17 @@ public class ComputeECM {
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)
                 && ent.isLargeCraft()) {
                 vEnemyECMCoords.addElement(entPos);
-                vEnemyECMRanges.addElement(new Integer(ent.getECMRange()));
+                vEnemyECMRanges.addElement(Integer.valueOf(ent.getECMRange()));
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)
                 && !ent.isLargeCraft()) {
                 vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                vFriendlyECCMRanges.addElement(Integer.valueOf(ent.getECMRange()));
             }
             if (!ent.isEnemyOf(ae) && ent.hasBAP(false) && (entPos != null)) {
                 vFriendlyBAPCoords.addElement(entPos);
-                vFriendlyBAPRanges.addElement(new Integer(ent.getBAPRange()));
-                vFriendlyBAPFacings.addElement(new Integer(ent.getFacing()));
+                vFriendlyBAPRanges.addElement(Integer.valueOf(ent.getBAPRange()));
+                vFriendlyBAPFacings.addElement(Integer.valueOf(ent.getFacing()));
     
             }
             // TODO: do docked dropships give ECM benefit?

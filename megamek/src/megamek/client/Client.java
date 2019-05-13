@@ -52,6 +52,7 @@ import megamek.client.commands.MoveCommand;
 import megamek.client.commands.RulerCommand;
 import megamek.client.commands.ShowEntityCommand;
 import megamek.client.commands.ShowTileCommand;
+import megamek.client.commands.SitrepCommand;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
@@ -248,6 +249,7 @@ public class Client implements IClientCommandHandler {
         registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
         registerCommand(new AssignNovaNetworkCommand(this));
+        registerCommand(new SitrepCommand(this));
 
         rsg = new RandomSkillsGenerator();
     }
@@ -570,7 +572,7 @@ public class Client implements IClientCommandHandler {
      * Send mode-change data to the server
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip), new Integer(nMode) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nEquip), Integer.valueOf(nMode) };
         send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
     }
 
@@ -578,7 +580,7 @@ public class Client implements IClientCommandHandler {
      * Send mount-facing-change data to the server
      */
     public void sendMountFacingChange(int nEntity, int nEquip, int nFacing) {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip), new Integer(nFacing) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nEquip), Integer.valueOf(nFacing) };
         send(new Packet(Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE, data));
     }
 
@@ -586,7 +588,7 @@ public class Client implements IClientCommandHandler {
      * Send called shot change data to the server
      */
     public void sendCalledShotChange(int nEntity, int nEquip) {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nEquip) };
         send(new Packet(Packet.COMMAND_ENTITY_CALLEDSHOTCHANGE, data));
     }
 
@@ -594,7 +596,7 @@ public class Client implements IClientCommandHandler {
      * Send system mode-change data to the server
      */
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
-        Object[] data = { new Integer(nEntity), new Integer(nSystem), new Integer(nMode) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nSystem), Integer.valueOf(nMode) };
         send(new Packet(Packet.COMMAND_ENTITY_SYSTEMMODECHANGE, data));
     }
 
@@ -602,7 +604,7 @@ public class Client implements IClientCommandHandler {
      * Send mode-change data to the server
      */
     public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo) {
-        Object[] data = { new Integer(nEntity), new Integer(nWeapon), new Integer(nAmmo) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nWeapon), Integer.valueOf(nAmmo) };
         send(new Packet(Packet.COMMAND_ENTITY_AMMOCHANGE, data));
     }
 
@@ -610,7 +612,7 @@ public class Client implements IClientCommandHandler {
      * Send sensor-change data to the server
      */
     public void sendSensorChange(int nEntity, int nSensor) {
-        Object[] data = { new Integer(nEntity), new Integer(nSensor) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nSensor) };
         send(new Packet(Packet.COMMAND_ENTITY_SENSORCHANGE, data));
     }
 
@@ -618,7 +620,7 @@ public class Client implements IClientCommandHandler {
      * Send sinks-change data to the server
      */
     public void sendSinksChange(int nEntity, int activeSinks) {
-        Object[] data = { new Integer(nEntity), new Integer(activeSinks) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(activeSinks) };
         send(new Packet(Packet.COMMAND_ENTITY_SINKSCHANGE, data));
     }
 
@@ -626,7 +628,7 @@ public class Client implements IClientCommandHandler {
      * Send activate hidden data to the server
      */
     public void sendActivateHidden(int nEntity, IGame.Phase phase) {
-        Object[] data = { new Integer(nEntity), phase };
+        Object[] data = { Integer.valueOf(nEntity), phase };
         send(new Packet(Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN, data));
     }
 
@@ -636,7 +638,7 @@ public class Client implements IClientCommandHandler {
     public void moveEntity(int id, MovePath md) {
         Object[] data = new Object[2];
 
-        data[0] = new Integer(id);
+        data[0] = Integer.valueOf(id);
         data[1] = md;
 
         send(new Packet(Packet.COMMAND_ENTITY_MOVE, data));
@@ -676,15 +678,15 @@ public class Client implements IClientCommandHandler {
         int packetCount = 6 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
-        data[index++] = new Integer(id);
+        data[index++] = Integer.valueOf(id);
         data[index++] = c;
-        data[index++] = new Integer(nFacing);
-        data[index++] = new Integer(elevation);
-        data[index++] = new Integer(loadedUnits.size());
-        data[index++] = new Boolean(assaultDrop);
+        data[index++] = Integer.valueOf(nFacing);
+        data[index++] = Integer.valueOf(elevation);
+        data[index++] = Integer.valueOf(loadedUnits.size());
+        data[index++] = Boolean.valueOf(assaultDrop);
 
         for (Entity ent : loadedUnits) {
-            data[index++] = new Integer(ent.getId());
+            data[index++] = Integer.valueOf(ent.getId());
         }
 
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY, data));
@@ -775,7 +777,7 @@ public class Client implements IClientCommandHandler {
      * Sends a "player done" message to the server.
      */
     public synchronized void sendDone(boolean done) {
-        send(new Packet(Packet.COMMAND_PLAYER_READY, new Boolean(done)));
+        send(new Packet(Packet.COMMAND_PLAYER_READY, Boolean.valueOf(done)));
         flushConn();
     }
 
@@ -1170,7 +1172,7 @@ public class Client implements IClientCommandHandler {
      * @param net
      */
     public void sendNovaChange(int ID, String net) {
-        Object[] data = { new Integer(ID), new String(net) };
+        Object[] data = { Integer.valueOf(ID), new String(net) };
         Packet packet = new Packet(Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE, data);
         send(packet);
     }
@@ -1580,11 +1582,11 @@ public class Client implements IClientCommandHandler {
      */
     private void checkDuplicateNamesDuringAdd(Entity entity) {
         if (duplicateNameHash.get(entity.getShortName()) == null) {
-            duplicateNameHash.put(entity.getShortName(), new Integer(1));
+            duplicateNameHash.put(entity.getShortName(), Integer.valueOf(1));
         } else {
             int count = duplicateNameHash.get(entity.getShortName()).intValue();
             count++;
-            duplicateNameHash.put(entity.getShortName(), new Integer(count));
+            duplicateNameHash.put(entity.getShortName(), Integer.valueOf(count));
             entity.duplicateMarker = count;
             entity.generateShortName();
             entity.generateDisplayName();
@@ -1635,7 +1637,7 @@ public class Client implements IClientCommandHandler {
                         }
                     }
                 }
-                duplicateNameHash.put(removedEntity.getShortNameRaw(), new Integer(count - 1));
+                duplicateNameHash.put(removedEntity.getShortNameRaw(), Integer.valueOf(count - 1));
 
             } else if (count != null) {
                 duplicateNameHash.remove(removedEntity.getShortNameRaw());

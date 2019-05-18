@@ -208,6 +208,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            bMissed = true;
         }
         //use this if PD counterfire destroys all the Capital missiles
         if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
@@ -215,6 +216,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            bMissed = true;
         }
 
         // Any necessary PSRs, jam checks, etc.
@@ -701,6 +703,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            return false;
         }
         //use this if PD counterfire destroys all the Capital missiles
         if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
@@ -708,6 +711,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            return false;
         }
 
         //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)

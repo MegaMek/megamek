@@ -187,6 +187,23 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
             t.setOmni(true);
         }
         t.setArmorTonnage(t.getArmorWeight());
+
+        if (dataFile.exists("baseChassisTurretWeight")) {
+            t.setBaseChassisTurretWeight(dataFile.getDataAsDouble("baseChassisTurretWeight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisTurret2Weight")) {
+            t.setBaseChassisTurret2Weight(dataFile.getDataAsDouble("baseChassisTurret2Weight")[0]);
+        }
+
+        if (dataFile.exists("hasNoControlSystems")) {
+            t.setHasNoControlSystems(true);
+        }
+
+        if (dataFile.exists("baseChassisFireConWeight")) {
+            t.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
+        }
+
         return t;
     }
 }

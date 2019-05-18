@@ -16,9 +16,6 @@
  * BLkFile.java
  *
  * Created on April 6, 2002, 2:06 AM
- */
-
-/**
  *
  * @author njrkrynn
  * @version
@@ -139,7 +136,7 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        if ((armor.length < 4) || (armor.length > 5)) {
+        if ((armor.length < 4) || (armor.length > 6)) {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
@@ -188,6 +185,19 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
             t.setOmni(true);
         }
         t.setArmorTonnage(t.getArmorWeight());
+
+        if (dataFile.exists("baseChassisTurretWeight")) {
+            t.setBaseChassisTurretWeight(dataFile.getDataAsDouble("baseChassisTurretWeight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisTurret2Weight")) {
+            t.setBaseChassisTurret2Weight(dataFile.getDataAsDouble("baseChassisTurret2Weight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisFireConWeight")) {
+            t.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
+        }
+
         return t;
     }
 }

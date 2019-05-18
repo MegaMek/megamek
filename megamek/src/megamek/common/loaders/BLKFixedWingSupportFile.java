@@ -194,6 +194,11 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         // support vees need equipment for this
         a.autoSetMaxBombPoints();
         a.setArmorTonnage(a.getArmorWeight());
+
+        if (dataFile.exists("baseChassisFireConWeight")) {
+            a.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
+        }
+
         return a;
     }
 

@@ -887,6 +887,11 @@ public class BLKFile {
             }
         }
 
+        if (t.isSupportVehicle() && t.isOmni()) {
+            blk.writeBlockData("baseChassisFireConWeight",
+                    t.getBaseChassisFireConWeight());
+        }
+
         if (t instanceof Tank) {
             Tank tank = (Tank) t;
             if (tank.hasNoControlSystems()) {

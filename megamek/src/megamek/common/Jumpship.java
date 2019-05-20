@@ -58,11 +58,23 @@ public class Jumpship extends Aero {
     private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
             "Aft", "Aft Left Side", "Aft Right Side", "Hull" };
 
+    //K-F Drive Stuff
+    private int original_kf_integrity = 0;
     private int kf_integrity = 0;
     private int sail_integrity = 0;
+    private int original_helium_tankage = 0;
+    private int helium_tankage = 0;
+    private boolean driveCoilHit = false;
+    private boolean fieldInitiatorHit = false;
+    private boolean chargingSystemHit = false;
+    private boolean driveControllerHit = false;
+    private boolean lfBatteryHit = false;
     private boolean sail = true;
     private int driveCoreType = DRIVE_CORE_STANDARD;
     private int jumpRange = 30; // Primitive jumpships can have a reduced range
+    
+    // lithium fusion
+    boolean hasLF = false;
 
     // crew and passengers
     private int nCrew = 0;
@@ -75,9 +87,6 @@ public class Jumpship extends Aero {
     // lifeboats and escape pods
     private int lifeBoats = 0;
     private int escapePods = 0;
-
-    // lithium fusion
-    boolean hasLF = false;
 
     // Battlestation
     private boolean isBattleStation = false;
@@ -575,13 +584,97 @@ public class Jumpship extends Aero {
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
-
+    
+    //Methods for dealing with the K-F Drive, Sail and L-F Battery
+    
+    //Set the current KF Drive integrity
     public void setKFIntegrity(int kf) {
         kf_integrity = kf;
     }
-
+    
+    //Return the current KF Drive integrity
     public int getKFIntegrity() {
         return kf_integrity;
+    }
+    
+    //Set the original/undamaged KF Drive integrity
+    public void setOKFIntegrity(int kf) {
+        original_kf_integrity = kf;
+    }
+    
+    //Return the original/undamaged KF Drive integrity
+    public int getOKFIntegrity() {
+        return original_kf_integrity;
+    }
+    
+    //Set the original/undamaged integrity of the KF Drive helium tanks
+    public void setOKFHeliumTankIntegrity(int ht) {
+        original_helium_tankage = ht;
+    }
+    
+    //Return the original/undamaged KF Drive helium tank integrity
+    public int getOKFHeliumTankIntegrity() {
+        return original_helium_tankage;
+    }
+    
+    //Set the current integrity of the KF Drive helium tanks
+    public void setKFHeliumTankIntegrity(int ht) {
+        helium_tankage = ht;
+    }
+    
+    //Return the current KF Drive helium tank integrity
+    public int getKFHeliumTankIntegrity() {
+        return helium_tankage;
+    }
+    
+    //Record a hit on the KF Drive Coil
+    public void setKFDriveCoilHit(boolean hit) {
+        driveCoilHit = hit;
+    }
+    
+    //Return the status of the KF Drive Coil
+    public boolean getKFDriveCoilHit() {
+        return driveCoilHit;
+    }
+    
+    //Record a hit on the KF Field Initiator
+    public void setKFFieldInitiatorHit(boolean hit) {
+        fieldInitiatorHit = hit;
+    }
+    
+    //Return the status of the KF Field Initiator
+    public boolean getKFFieldInitiatorHit() {
+        return fieldInitiatorHit;
+    }
+    
+    //Record a hit on the KF Charging System
+    public void setKFChargingSystemHit(boolean hit) {
+        chargingSystemHit = hit;
+    }
+    
+    //Return the status of the KF Charging System
+    public boolean getKFChargingSystemHit() {
+        return chargingSystemHit;
+    }
+    
+    //Record a hit on the KF Drive Controller
+    public void setKFDriveControllerHit(boolean hit) {
+        driveControllerHit = hit;
+    }
+    
+    //Return the status of the KF Drive Controller
+    public boolean getKFDriveControllerHit() {
+        return driveControllerHit;
+    }
+    
+    //Return the status of the LF Battery
+    public boolean getLFBatteryHit() {
+        return lfBatteryHit;
+    }
+    
+    //Record a hit on the LF Battery
+    public void setLFBatteryHit(boolean hit) {
+        lfBatteryHit = hit;
     }
 
     public void setSailIntegrity(int sail) {

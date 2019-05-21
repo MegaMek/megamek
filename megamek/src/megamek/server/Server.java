@@ -27109,11 +27109,38 @@ public class Server implements Runnable {
                 js.setCICHits(js.getCICHits() + 1);
                 break;
             case Aero.CRIT_KF_DRIVE:
-                if (js == null) {
+                //Per SO construction rules, stations have no KF drive, therefore they can't take a hit there...
+                if (js == null || js instanceof SpaceStation) {
                     break;
                 }
                 // KF Drive hit
-                r = new Report(9190);
+                //Randomize the component struck - probabilities taken from the old BattleSpace record sheets
+                switch (Compute.d6(2)) {
+                case 2:
+                    //Drive Coil Hit
+                    break;
+                case 3:
+                case 11:
+                    //Charging System Hit
+                    break;
+                case 5:
+                    //Field Initiator Hit
+                    break;
+                case 4:
+                case 6:
+                case 7:
+                case 8:
+                    //Helium Tank Hit
+                    break;
+                case 9:
+                    //Drive Controller Hit
+                    break;
+                case 10:
+                case 12:
+                    //LF Battery Hit - if you don't have one, treat as helium tank
+                    break;
+                }
+                r = new Report(9186);
                 r.subject = aero.getId();
                 reports.add(r);
                 js.setKFIntegrity(js.getKFIntegrity() - 1);

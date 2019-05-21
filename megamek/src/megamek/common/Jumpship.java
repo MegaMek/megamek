@@ -62,7 +62,6 @@ public class Jumpship extends Aero {
     private int original_kf_integrity = 0;
     private int kf_integrity = 0;
     private int sail_integrity = 0;
-    private int original_helium_tankage = 0;
     private int helium_tankage = 0;
     private boolean driveCoilHit = false;
     private boolean fieldInitiatorHit = false;
@@ -607,22 +606,12 @@ public class Jumpship extends Aero {
         return original_kf_integrity;
     }
     
-    //Set the original/undamaged integrity of the KF Drive helium tanks
-    public void setOKFHeliumTankIntegrity(int ht) {
-        original_helium_tankage = ht;
-    }
-    
-    //Return the original/undamaged KF Drive helium tank integrity
-    public int getOKFHeliumTankIntegrity() {
-        return original_helium_tankage;
-    }
-    
-    //Set the current integrity of the KF Drive helium tanks
+    //Set the 2/3 Original KF Drive integrity representing the helium tanks
     public void setKFHeliumTankIntegrity(int ht) {
         helium_tankage = ht;
     }
     
-    //Return the current KF Drive helium tank integrity
+    //Return the 2/3 Original KF Drive integrity representing the helium tanks
     public int getKFHeliumTankIntegrity() {
         return helium_tankage;
     }

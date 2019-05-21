@@ -41,8 +41,8 @@ public class WarshipMapSet implements DisplayMapSet{
     
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[7];
-    private PMSimpleLabel[] labels = new PMSimpleLabel[15];
-    private PMValueLabel[] vLabels = new PMValueLabel[15];
+    private PMSimpleLabel[] labels = new PMSimpleLabel[17];
+    private PMValueLabel[] vLabels = new PMValueLabel[17];
     private Vector<BackGroundDrawer>  bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
 
@@ -126,6 +126,15 @@ public class WarshipMapSet implements DisplayMapSet{
         if (damagedCollars > 0) {
             collarDamageString = ("" + "X " + "(" + damagedCollars + ")");
         }
+        //We want a different string for these too
+        String kfDamageString = "";
+        if (t.getKFDriveDamage() > 0) {
+            kfDamageString = ("" + t.getKFIntegrity() + " / " + t.getOKFIntegrity());
+        }
+        String sailDamageString = "";
+        if (t.getSailIntegrity() < t.getOSailIntegrity()) {
+            sailDamageString = ("" + t.getSailIntegrity() + " / " + t.getOSailIntegrity());
+        }
         vLabels[7].setValue(getCriticalHitTally(t.getAvionicsHits(),3));
         vLabels[8].setValue(getCriticalHitTally(t.getCICHits(),3));
         vLabels[9].setValue(getCriticalHitTally(t.getEngineHits(),t.getMaxEngineHits()));
@@ -134,6 +143,8 @@ public class WarshipMapSet implements DisplayMapSet{
         vLabels[12].setValue(getCriticalHitTally(t.getRightThrustHits(),3));
         vLabels[13].setValue(collarDamageString);
         vLabels[14].setValue(getCriticalHitTally(t.getTotalDamagedGravDeck(),t.getTotalGravDeck()));
+        vLabels[15].setValue(kfDamageString);
+        vLabels[16].setValue(sailDamageString);
 
     }
 
@@ -164,6 +175,10 @@ public class WarshipMapSet implements DisplayMapSet{
         content.addArea(vLabels[13]);
         content.addArea(labels[14]);
         content.addArea(vLabels[14]);
+        content.addArea(labels[15]);
+        content.addArea(vLabels[15]);
+        content.addArea(labels[16]);
+        content.addArea(vLabels[16]);
 
     }
 
@@ -199,6 +214,8 @@ public class WarshipMapSet implements DisplayMapSet{
         labels[12] = WidgetUtils.createLabel("R Thrust:", fm, Color.white,90,225); //$NON-NLS-1$
         labels[13] = WidgetUtils.createLabel("Collars:", fm, Color.white,90,240); //$NON-NLS-1$
         labels[14] = WidgetUtils.createLabel("Grav Decks:", fm, Color.white,90,255); //$NON-NLS-1$
+        labels[15] = WidgetUtils.createLabel("K-F Drive:", fm, Color.white,10,270); //$NON-NLS-1$
+        labels[16] = WidgetUtils.createLabel("Jump Sail:", fm, Color.white,90,270); //$NON-NLS-1$
 
         //Value labels for all parts of mek
         //front
@@ -221,6 +238,8 @@ public class WarshipMapSet implements DisplayMapSet{
         vLabels[12] = WidgetUtils.createValueLabel(130, 225, "", fm); //$NON-NLS-1$
         vLabels[13] = WidgetUtils.createValueLabel(130, 240, "", fm); //$NON-NLS-1$
         vLabels[14] = WidgetUtils.createValueLabel(130, 255, "", fm); //$NON-NLS-1$
+        vLabels[15] = WidgetUtils.createValueLabel(40, 270, "", fm); //$NON-NLS-1$
+        vLabels[16] = WidgetUtils.createValueLabel(130, 270, "", fm); //$NON-NLS-1$
 
     }
 

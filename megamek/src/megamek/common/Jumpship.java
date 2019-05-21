@@ -61,13 +61,16 @@ public class Jumpship extends Aero {
     //K-F Drive Stuff
     private int original_kf_integrity = 0;
     private int kf_integrity = 0;
+    private int original_sail_integrity = 0;
     private int sail_integrity = 0;
     private int helium_tankage = 0;
+    private boolean heliumTankHit = false;
     private boolean driveCoilHit = false;
     private boolean fieldInitiatorHit = false;
     private boolean chargingSystemHit = false;
     private boolean driveControllerHit = false;
     private boolean lfBatteryHit = false;
+    private boolean isKFDriveDamaged = false;
     private boolean sail = true;
     private int driveCoreType = DRIVE_CORE_STANDARD;
     private int jumpRange = 30; // Primitive jumpships can have a reduced range
@@ -606,6 +609,22 @@ public class Jumpship extends Aero {
         return original_kf_integrity;
     }
     
+    //Return the damage taken to the KF Drive
+    public int getKFDriveDamage() {
+        return (getOKFIntegrity() - getKFIntegrity());
+    }
+    
+    //Is any part of the KF Drive damaged?  Used by MHQ for repairs.
+    public boolean isKFDriveDamaged() {
+        return (getKFDriveDamage() > 0 
+                || getKFHeliumTankHit() 
+                || getKFDriveCoilHit() 
+                || getKFDriveControllerHit() 
+                || getLFBatteryHit() 
+                || getKFChargingSystemHit()
+                || getKFFieldInitiatorHit());
+    }
+    
     //Set the 2/3 Original KF Drive integrity representing the helium tanks
     public void setKFHeliumTankIntegrity(int ht) {
         helium_tankage = ht;
@@ -614,6 +633,16 @@ public class Jumpship extends Aero {
     //Return the 2/3 Original KF Drive integrity representing the helium tanks
     public int getKFHeliumTankIntegrity() {
         return helium_tankage;
+    }
+    
+    //Record a hit on the KF Drive Helium Tank
+    public void setKFHeliumTankHit(boolean hit) {
+        heliumTankHit = hit;
+    }
+    
+    //Return the status of the KF Drive Helium Tank
+    public boolean getKFHeliumTankHit() {
+        return heliumTankHit;
     }
     
     //Record a hit on the KF Drive Coil
@@ -665,11 +694,28 @@ public class Jumpship extends Aero {
     public void setLFBatteryHit(boolean hit) {
         lfBatteryHit = hit;
     }
+    
+    //Set the original/undamaged Jump Sail integrity
+    public void setOSailIntegrity(int sail) {
+        original_sail_integrity = sail;
+    }
+    
+    //Return the original/undamaged Jump Sail integrity
+    public int getOSailIntegrity() {
+        return original_sail_integrity;
+    }
+    
+    //Return the damage taken to the Jump Sail
+    public int getSailDamage() {
+        return (getOSailIntegrity() - getSailIntegrity());
+    }
 
+    //Set the current integrity of the jump sail
     public void setSailIntegrity(int sail) {
         sail_integrity = sail;
     }
-
+    
+    //Return the current integrity of the jump sail
     public int getSailIntegrity() {
         return sail_integrity;
     }
@@ -690,11 +736,13 @@ public class Jumpship extends Aero {
 
     public void initializeSailIntegrity() {
         int integrity = 1 + (int) Math.ceil((30.0 + (weight / 7500.0)) / 20.0);
+        setOSailIntegrity(integrity);
         setSailIntegrity(integrity);
     }
 
     public void initializeKFIntegrity() {
         int integrity = (int) Math.ceil(1.2 + (getJumpDriveWeight() / 60000.0));
+        setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
     }
 

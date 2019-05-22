@@ -27109,7 +27109,7 @@ public class Server implements Runnable {
                 js.setCICHits(js.getCICHits() + 1);
                 break;
             case Aero.CRIT_KF_DRIVE:
-                //Per SO construction rules, stations have no KF drive, therefore they can't take a hit there...
+                //Per SO construction rules, stations have no KF drive, therefore they can't take a hit to it...
                 if (js == null || js instanceof SpaceStation) {
                     break;
                 }
@@ -27118,32 +27118,66 @@ public class Server implements Runnable {
                 switch (Compute.d6(2)) {
                 case 2:
                     //Drive Coil Hit
+                    r = new Report(9186);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                    js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
+                    js.setKFDriveCoilHit(true);
                     break;
                 case 3:
                 case 11:
                     //Charging System Hit
+                    r = new Report(9187);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                    js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
+                    js.setKFChargingSystemHit(true);
                     break;
                 case 5:
                     //Field Initiator Hit
+                    r = new Report(9190);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                    js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
+                    js.setKFFieldInitiatorHit(true);
                     break;
                 case 4:
                 case 6:
                 case 7:
                 case 8:
                     //Helium Tank Hit
+                    r = new Report(9189);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                    js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
+                    js.setKFHeliumTankHit(true);
                     break;
                 case 9:
                     //Drive Controller Hit
+                    r = new Report(9191);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                    js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
+                    js.setKFDriveControllerHit(true);
                     break;
                 case 10:
                 case 12:
                     //LF Battery Hit - if you don't have one, treat as helium tank
+                    if (js.hasLF()) {
+                        r = new Report(9188);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
+                        js.setLFBatteryHit(true);
+                    } else {
+                        r = new Report(9189);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
+                        js.setKFHeliumTankHit(true);
+                    }
                     break;
                 }
-                r = new Report(9186);
-                r.subject = aero.getId();
-                reports.add(r);
-                js.setKFIntegrity(js.getKFIntegrity() - 1);
                 break;
             case Aero.CRIT_GRAV_DECK:
                 if (js == null) {

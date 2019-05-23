@@ -786,6 +786,7 @@ public class Jumpship extends Aero {
         int integrity = (int) Math.ceil(1.2 + (getJumpDriveWeight() / 60000.0));
         setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
+        setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
 
     public boolean canJump() {

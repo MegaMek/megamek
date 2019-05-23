@@ -107,6 +107,7 @@ public class Warship extends Jumpship {
         int integrity = (int) Math.ceil(2 + getJumpDriveWeight() / 25000.0);
         setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
+        setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
     
     // broadside weapon arcs

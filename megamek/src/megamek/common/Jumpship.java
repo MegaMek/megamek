@@ -227,6 +227,48 @@ public class Jumpship extends Aero {
             toReturn += "Docking Collars (" + getTotalDamagedDockingCollars() + ")";
             first = false;
         }
+        if (getKFDriveCoilHit()) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "K-F Drive Coil";
+            first = false;
+        }
+        if (getKFDriveControllerHit()) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "K-F Drive Controller";
+            first = false;
+        }
+        if (getKFHeliumTankHit()) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "K-F Helium Tank";
+            first = false;
+        }
+        if (getKFFieldInitiatorHit()) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "K-F Field Initiator";
+            first = false;
+        }
+        if (getKFChargingSystemHit()) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "K-F Charging System";
+            first = false;
+        }
+        if (getLFBatteryHit()) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "L-F Battery";
+            first = false;
+        }
         return toReturn;
     }
 

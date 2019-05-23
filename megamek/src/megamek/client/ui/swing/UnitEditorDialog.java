@@ -1007,7 +1007,7 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
-            panSystem.add(new JLabel("<html><b>" + "K-F Drive"
+            panSystem.add(new JLabel("<html><b>" + "K-F Drive Integrity"
                     + "</b><br></html>"), gridBagConstraints);
             kfDriveCrit = new JSpinner(new SpinnerNumberModel(js.getKFIntegrity(), 0, js.getOKFIntegrity(), 1.0));
             kfDamage = kfDriveCrit;
@@ -1113,7 +1113,7 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
-            panSystem.add(new JLabel("<html><b>" + "Jump Sail"
+            panSystem.add(new JLabel("<html><b>" + "Jump Sail Integrity"
                     + "</b><br></html>"), gridBagConstraints);
             sailCrit = new JSpinner(new SpinnerNumberModel(js.getSailIntegrity(), 0, js.getOSailIntegrity(), 1.0));
             sailDamage = sailCrit;

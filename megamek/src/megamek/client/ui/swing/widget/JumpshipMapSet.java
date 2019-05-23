@@ -223,7 +223,7 @@ public class JumpshipMapSet implements DisplayMapSet{
         labels[13] = WidgetUtils.createLabel("Collars:", fm, Color.white,90,240); //$NON-NLS-1$
         labels[14] = WidgetUtils.createLabel("Grav Decks:", fm, Color.white,90,255); //$NON-NLS-1$
         labels[15] = WidgetUtils.createLabel("K-F Drive:", fm, Color.white,10,270); //$NON-NLS-1$
-        labels[16] = WidgetUtils.createLabel("Jump Sail:", fm, Color.white,90,270); //$NON-NLS-1$
+        labels[16] = WidgetUtils.createLabel("Jump Sail:", fm, Color.white,10,285); //$NON-NLS-1$
 
         //Value labels for all parts of the ship
         //front
@@ -246,8 +246,8 @@ public class JumpshipMapSet implements DisplayMapSet{
         vLabels[12] = WidgetUtils.createValueLabel(130, 225, "", fm); //$NON-NLS-1$
         vLabels[13] = WidgetUtils.createValueLabel(130, 240, "", fm); //$NON-NLS-1$
         vLabels[14] = WidgetUtils.createValueLabel(130, 255, "", fm); //$NON-NLS-1$
-        vLabels[15] = WidgetUtils.createValueLabel(40, 270, "", fm); //$NON-NLS-1$
-        vLabels[16] = WidgetUtils.createValueLabel(130, 270, "", fm); //$NON-NLS-1$
+        vLabels[15] = WidgetUtils.createValueLabel(60, 270, "", fm); //$NON-NLS-1$
+        vLabels[16] = WidgetUtils.createValueLabel(60, 285, "", fm); //$NON-NLS-1$
     }
 
     private void setBackGround() {

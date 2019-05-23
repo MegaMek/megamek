@@ -116,6 +116,14 @@ public class UnitEditorDialog extends JDialog {
     JSpinner[] bayDamage;
     CheckCritPanel[] bayDoorCrit;
     JSpinner collarDamage;
+    JSpinner kfDamage;
+    CheckCritPanel driveCoilCrit;
+    CheckCritPanel chargingSystemCrit;
+    CheckCritPanel fieldInitiatorCrit;
+    CheckCritPanel driveControllerCrit;
+    CheckCritPanel heliumTankCrit;
+    CheckCritPanel lfBatteryCrit;
+    JSpinner sailDamage;
     CheckCritPanel[] protoCrits;
 
     public UnitEditorDialog(JFrame parent, Entity m) {
@@ -960,8 +968,9 @@ public class UnitEditorDialog extends JDialog {
             panSystem.add(rightThrusterCrit, gridBagConstraints);
         }
         
-        if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+        if (aero instanceof Jumpship) {
             Jumpship js = (Jumpship) aero;
+            //Grav Decks
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
@@ -971,6 +980,146 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(gravDeckCrit, gridBagConstraints);
+            
+            //Docking Collars
+            JSpinner collarCrit;
+            Vector<DockingCollar> collars = aero.getDockingCollars();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Docking Collars"
+                    + "</b><br></html>"), gridBagConstraints);
+            
+            int damagedCollars = 0;
+            for (DockingCollar nextDC : aero.getDockingCollars()) {
+                if (nextDC.isDamaged()) {
+                    damagedCollars ++;
+                }
+            }
+            collarCrit = new JSpinner(new SpinnerNumberModel(collars.size() - damagedCollars, 0, collars.size(), 1.0));
+            collarDamage = collarCrit;
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(collarCrit, gridBagConstraints);
+            
+            //K-F Drive Integrity
+            JSpinner kfDriveCrit;
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "K-F Drive"
+                    + "</b><br></html>"), gridBagConstraints);
+            kfDriveCrit = new JSpinner(new SpinnerNumberModel(js.getKFIntegrity(), 0, js.getOKFIntegrity(), 1.0));
+            kfDamage = kfDriveCrit;
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(kfDriveCrit, gridBagConstraints);
+            
+            //K-F Drive Components
+            //Drive Coil
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Drive Coil"
+                    + "</b><br></html>"), gridBagConstraints);
+            int driveCoilHits = 0;
+            if (js.getKFDriveCoilHit()) {
+                driveCoilHits = 1;
+            }
+            driveCoilCrit = new CheckCritPanel(1, driveCoilHits);
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(driveCoilCrit, gridBagConstraints);
+            
+            //Charging System
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Charging System"
+                    + "</b><br></html>"), gridBagConstraints);
+            int chargingSystemHits = 0;
+            if (js.getKFChargingSystemHit()) {
+                chargingSystemHits = 1;
+            }
+            chargingSystemCrit = new CheckCritPanel(1, chargingSystemHits);
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(chargingSystemCrit, gridBagConstraints);
+            
+            //Field Initiator
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Field Initiator"
+                    + "</b><br></html>"), gridBagConstraints);
+            int fieldInitiatorHits = 0;
+            if (js.getKFFieldInitiatorHit()) {
+                fieldInitiatorHits = 1;
+            }
+            fieldInitiatorCrit = new CheckCritPanel(1, fieldInitiatorHits);
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(fieldInitiatorCrit, gridBagConstraints);
+            
+            //Drive Controller
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Drive Controller"
+                    + "</b><br></html>"), gridBagConstraints);
+            int driveControllerHits = 0;
+            if (js.getKFDriveControllerHit()) {
+                driveControllerHits = 1;
+            }
+            driveControllerCrit = new CheckCritPanel(1, driveControllerHits);
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(driveControllerCrit, gridBagConstraints);
+            
+            //Helium Tank
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Helium Tank"
+                    + "</b><br></html>"), gridBagConstraints);
+            int heliumTankHits = 0;
+            if (js.getKFHeliumTankHit()) {
+                heliumTankHits = 1;
+            }
+            heliumTankCrit = new CheckCritPanel(1, heliumTankHits);
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(heliumTankCrit, gridBagConstraints);
+            
+            //LF Battery
+            if (js.hasLF()) {
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy++;
+                gridBagConstraints.weightx = 0.0;
+                panSystem.add(new JLabel("<html><b>" + "L-F Battery"
+                        + "</b><br></html>"), gridBagConstraints);
+                int lfBatteryHits = 0;
+                if (js.getLFBatteryHit()) {
+                    lfBatteryHits = 1;
+                }
+                lfBatteryCrit = new CheckCritPanel(1, lfBatteryHits);
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.weightx = 1.0;
+                panSystem.add(lfBatteryCrit, gridBagConstraints);
+            }
+            
+            //Jump Sail Integrity
+            JSpinner sailCrit;
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Jump Sail"
+                    + "</b><br></html>"), gridBagConstraints);
+            sailCrit = new JSpinner(new SpinnerNumberModel(js.getSailIntegrity(), 0, js.getOSailIntegrity(), 1.0));
+            sailDamage = sailCrit;
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(sailCrit, gridBagConstraints);
         }
 
         if (aero instanceof Dropship) {
@@ -1037,29 +1186,6 @@ public class UnitEditorDialog extends JDialog {
         		b++;
     		}
     	}
-        
-        if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            JSpinner collarCrit;
-            Vector<DockingCollar> collars = aero.getDockingCollars();
-            collarDamage = new JSpinner();
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy++;
-            gridBagConstraints.weightx = 0.0;
-            panSystem.add(new JLabel("<html><b>" + "Docking Collars"
-                    + "</b><br></html>"), gridBagConstraints);
-            
-            int damagedCollars = 0;
-            for (DockingCollar nextDC : aero.getDockingCollars()) {
-                if (nextDC.isDamaged()) {
-                    damagedCollars ++;
-                }
-            }
-            collarCrit = new JSpinner(new SpinnerNumberModel(collars.size() - damagedCollars, 0, collars.size(), 1.0));
-            collarDamage = collarCrit;
-            gridBagConstraints.gridx = 1;
-            gridBagConstraints.weightx = 1.0;
-            panSystem.add(collarCrit, gridBagConstraints);
-        }
     }
 
     private void btnOkayActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1312,8 +1438,8 @@ public class UnitEditorDialog extends JDialog {
             	b++;
             	}
             }
-            // Jumpship Docking Collars and grav decks
-            if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            // Jumpship Docking Collars, KF Drive, Sail and Grav Decks
+            if (aero instanceof Jumpship) {
                 Jumpship js = (Jumpship) aero;
                 JSpinner collarCrit = collarDamage;
                 CheckCritPanel deckCrit = gravDeckCrit;
@@ -1346,6 +1472,33 @@ public class UnitEditorDialog extends JDialog {
                     for (int i = 0; i < damagedDecks; i++) {
                         js.setGravDeckDamageFlag(i, 1);
                     }
+                }
+                //KF Drive and Sail
+                if (null != kfDamage) {
+                    double kfIntegrity = (double) kfDamage.getModel().getValue();
+                    js.setKFIntegrity((int) kfIntegrity);
+                }
+                if (null != chargingSystemCrit) {
+                    js.setKFChargingSystemHit(chargingSystemCrit.getHits() > 0);
+                }
+                if (null != driveCoilCrit) {
+                    js.setKFDriveCoilHit(driveCoilCrit.getHits() > 0);
+                }
+                if (null != driveControllerCrit) {
+                    js.setKFDriveControllerHit(driveControllerCrit.getHits() > 0);
+                }
+                if (null != fieldInitiatorCrit) {
+                    js.setKFFieldInitiatorHit(fieldInitiatorCrit.getHits() > 0);
+                }
+                if (null != heliumTankCrit) {
+                    js.setKFHeliumTankHit(heliumTankCrit.getHits() > 0);
+                }
+                if (null != lfBatteryCrit) {
+                    js.setLFBatteryHit(lfBatteryCrit.getHits() > 0);
+                }
+                if (null != sailDamage) {
+                    double sailIntegrity = (double) sailDamage.getModel().getValue();
+                    js.setSailIntegrity((int) sailIntegrity);
                 }
             }
         }

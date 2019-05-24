@@ -658,8 +658,7 @@ public class Jumpship extends Aero {
     
     //Is any part of the KF Drive damaged?  Used by MHQ for repairs.
     public boolean isKFDriveDamaged() {
-        return (getKFDriveDamage() > 0 
-                || getKFHeliumTankHit() 
+        return (getKFHeliumTankHit() 
                 || getKFDriveCoilHit() 
                 || getKFDriveControllerHit() 
                 || getLFBatteryHit() 

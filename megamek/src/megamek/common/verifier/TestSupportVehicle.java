@@ -22,9 +22,7 @@ import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
 import java.math.BigInteger;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Author: arlith
@@ -433,7 +431,43 @@ public class TestSupportVehicle extends TestEntity {
          {.000, .000, .056, .045, .040, .037},
          {.000, .000, .000, .051, .045, .042},
          {.000, .000, .000, .057, .051, .047},
-         {.000, .000, .000, .063, .056, .052},};
+         {.000, .000, .000, .063, .056, .052}};
+
+    /**
+     * Filters all vehicle armor according to given tech constraints. Standard armor is treated as basic
+     * support vehicle armor.
+     *
+     * @param techManager
+     * @return
+     */
+    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
+        if (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
+            return Collections.singletonList(EquipmentType.get(EquipmentType.armorNames[EquipmentType.T_ARMOR_STANDARD]));
+        }
+        List<EquipmentType> retVal = new ArrayList<>();
+        for (int at = 0; at < EquipmentType.armorNames.length; at++) {
+            if (at == EquipmentType.T_ARMOR_PATCHWORK) {
+                continue;
+            }
+            String name = EquipmentType.getArmorTypeName(at, techManager.useClanTechBase());
+            EquipmentType eq = EquipmentType.get(name);
+            if ((null != eq)
+                    && eq.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)
+                    && techManager.isLegal(eq)) {
+                retVal.add(eq);
+            }
+            if (techManager.useMixedTech()) {
+                name = EquipmentType.getArmorTypeName(at, !techManager.useClanTechBase());
+                EquipmentType eq2 = EquipmentType.get(name);
+                if ((null != eq2) && (eq != eq2)
+                        && eq2.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)
+                        && techManager.isLegal(eq2)) {
+                    retVal.add(eq2);
+                }
+            }
+        }
+        return retVal;
+    }
 
     private final Entity supportVee;
     /** Used by support tanks for calculation of turret weight */

@@ -12554,6 +12554,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
+     * Sets the barrier armor rating for support vehicles. Has no effect on other unit types.
+     * @param rating
+     */
+    public void setBARRating(int rating) {}
+
+    /**
      * does this entity have an armored chassis?
      *
      * @return

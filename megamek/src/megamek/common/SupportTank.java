@@ -41,6 +41,7 @@ public class SupportTank extends Tank {
         barRating[loc] = rating;
     }
 
+    @Override
     public void setBARRating(int rating) {
         for (int i = 0; i < locations(); i++) {
             barRating[i] = rating;

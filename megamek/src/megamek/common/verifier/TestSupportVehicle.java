@@ -469,6 +469,64 @@ public class TestSupportVehicle extends TestEntity {
         return retVal;
     }
 
+    /**
+     * The maximum number of armor points a support vehicle is computed by multiplying the total tonnage by a factor
+     * determined by the vehicle type and adding four.
+     *
+     * @param vee The support vehicle
+     * @return    The maximum number of armor points. If the entity cannot be identified as a support vehicle, returns 0.
+     */
+    public static int maxArmorFactor(Entity vee) {
+        SVType type = SVType.getVehicleType(vee);
+        if (null == type) {
+            return 0;
+        }
+        double factor = 0;
+        switch (type) {
+            case AIRSHIP:
+            case NAVAL:
+                if (vee.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    factor = 0.05;
+                } else {
+                    factor = 0.334;
+                }
+                break;
+            case WIGE:
+            case RAIL:
+            case SATELLITE:
+                factor = 0.5;
+                break;
+            case FIXED_WING:
+            case HOVERCRAFT:
+            case VTOL:
+                factor = 1.0;
+                break;
+            case TRACKED:
+            case WHEELED:
+                factor = 2.0;
+                break;
+        }
+        return 4 + (int) (vee.getWeight() * factor);
+    }
+
+    /**
+     * Calculates the weight of each point of armor. For standard SV armor this is based on the tech and BAR
+     * ratings. For advanced armors this is the reciprocal of the number of points per ton.
+     *
+     * @param vee The support vehicle
+     * @return    The weight of each armor point in tons, rounded to the kilogram.
+     */
+    public static double armorWeightPerPoint(Entity vee) {
+        final int at = vee.getArmorType(vee.firstArmorIndex());
+        if (at == EquipmentType.T_ARMOR_STANDARD) {
+            return SV_ARMOR_WEIGHT[vee.getBARRating(vee.firstArmorIndex())][vee.getArmorTechRating()];
+        } else {
+            final double ppt = 16.0 * EquipmentType.getArmorPointMultiplier(
+                    at, vee.getArmorTechLevel(vee.firstArmorIndex()));
+            return round(1.0 / ppt, Ceil.KILO);
+        }
+    }
+
     private final Entity supportVee;
     /** Used by support tanks for calculation of turret weight */
     private final TestTank testTank;

@@ -10643,6 +10643,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             double armorWeight = points / armorPerTon;
             armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
             return armorWeight;
+        } else if (isSupportVehicle()
+                    && getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
+            double total = getTotalOArmor()
+                    * EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()), getArmorTechRating());
+            if (getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+                return Math.round(total * 1000.0) / 1000.0;
+            } else {
+                return Math.ceil(total * 2.0) / 2.0;
+            }
         } else {
             double total = 0;
             for (int loc = 0; loc < locations(); loc++) {

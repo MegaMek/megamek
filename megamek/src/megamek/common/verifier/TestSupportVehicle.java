@@ -417,23 +417,6 @@ public class TestSupportVehicle extends TestEntity {
     };
 
     /**
-     * Gives the weight of a single point of armor at a particular BAR for a 
-     * given tech level.
-     */
-    public static final double[][] SV_ARMOR_WEIGHT = 
-        {{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-         {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-         {.040, .025, .016, .013, .012, .011},
-         {.060, .038, .024, .019, .017, .016},
-         {.000, .050, .032, .026, .023, .021},
-         {.000, .063, .040, .032, .028, .026},
-         {.000, .000, .048, .038, .034, .032},
-         {.000, .000, .056, .045, .040, .037},
-         {.000, .000, .000, .051, .045, .042},
-         {.000, .000, .000, .057, .051, .047},
-         {.000, .000, .000, .063, .056, .052}};
-
-    /**
      * Filters all vehicle armor according to given tech constraints. Standard armor is treated as basic
      * support vehicle armor.
      *
@@ -519,7 +502,8 @@ public class TestSupportVehicle extends TestEntity {
     public static double armorWeightPerPoint(Entity vee) {
         final int at = vee.getArmorType(vee.firstArmorIndex());
         if (at == EquipmentType.T_ARMOR_STANDARD) {
-            return SV_ARMOR_WEIGHT[vee.getBARRating(vee.firstArmorIndex())][vee.getArmorTechRating()];
+            return EquipmentType.getSupportVehicleArmorWeightPerPoint(vee.getBARRating(vee.firstArmorIndex()),
+                    vee.getArmorTechRating());
         } else {
             final double ppt = 16.0 * EquipmentType.getArmorPointMultiplier(
                     at, vee.getArmorTechLevel(vee.firstArmorIndex()));
@@ -798,7 +782,7 @@ public class TestSupportVehicle extends TestEntity {
         }
         int bar = getEntity().getBARRating(supportVee.firstArmorIndex());
         int techRating = getEntity().getArmorTechRating();
-        double weight = totalArmorPoints * SV_ARMOR_WEIGHT[bar][techRating];
+        double weight = totalArmorPoints * EquipmentType.getSupportVehicleArmorWeightPerPoint(bar, techRating);
         return roundWeight(weight);
     }
 

@@ -30,10 +30,13 @@ import java.util.Vector;
 
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.autocannons.HVACWeapon;
+import megamek.common.weapons.bayweapons.MMLBayWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.Server;
+
+import javax.print.attribute.SupportedValuesAttribute;
 
 /**
  * Represents any type of equipment mounted on a mechs, excluding systems and
@@ -801,6 +804,38 @@ public class EquipmentType implements ITechnology {
             return 0.075;
         }
         return 0.05;
+    }
+
+    /**
+     * Gives the weight of a single point of armor at a particular BAR for a
+     * given tech level.
+     */
+    private static final double[][] SV_ARMOR_WEIGHT =
+            {{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+                    {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+                    {.040, .025, .016, .013, .012, .011},
+                    {.060, .038, .024, .019, .017, .016},
+                    {.000, .050, .032, .026, .023, .021},
+                    {.000, .063, .040, .032, .028, .026},
+                    {.000, .000, .048, .038, .034, .032},
+                    {.000, .000, .056, .045, .040, .037},
+                    {.000, .000, .000, .051, .045, .042},
+                    {.000, .000, .000, .057, .051, .047},
+                    {.000, .000, .000, .063, .056, .052}};
+
+    /**
+     * `Lookup method for the weight of a point of support vehicle armor.
+     *
+     * @param bar        The armor's barrier armor rating
+     * @param techRating The armor's tech rating (0-5 corresponds to A-F)
+     * @return           The weight of a point of armor in tons. Returns 0.0 for invalid value.
+     */
+    public static double getSupportVehicleArmorWeightPerPoint(int bar, int techRating) {
+        if ((bar >= 0) && (techRating >= 0)
+                && (bar < SV_ARMOR_WEIGHT.length) && (techRating < SV_ARMOR_WEIGHT[bar].length)) {
+            return SV_ARMOR_WEIGHT[bar][techRating];
+        }
+        return 0.0;
     }
     
     /* Armor and structure are stored as integers and standard uses a generic MiscType that

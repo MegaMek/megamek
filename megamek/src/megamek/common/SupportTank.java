@@ -69,15 +69,6 @@ public class SupportTank extends Tank {
         return true;
     }
 
-    @Override
-    public double getArmorWeight() {
-        if (!hasPatchworkArmor() && getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
-            return getTotalOArmor()
-                * EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()), getArmorTechRating());
-        }
-        return super.getArmorWeight();
-    }
-
     /*
      * (non-Javadoc)
      *

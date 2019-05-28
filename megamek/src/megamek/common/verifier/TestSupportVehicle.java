@@ -772,18 +772,7 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double getWeightArmor() {
-        if (supportVee.hasPatchworkArmor()
-                || (supportVee.getArmorType(supportVee.firstArmorIndex()) != EquipmentType.T_ARMOR_STANDARD)) {
-            return super.getWeightArmor();
-        }
-        int totalArmorPoints = 0;
-        for (int loc = 0; loc < getEntity().locations(); loc++) {
-            totalArmorPoints += getEntity().getOArmor(loc);
-        }
-        int bar = getEntity().getBARRating(supportVee.firstArmorIndex());
-        int techRating = getEntity().getArmorTechRating();
-        double weight = totalArmorPoints * EquipmentType.getSupportVehicleArmorWeightPerPoint(bar, techRating);
-        return roundWeight(weight);
+        return supportVee.getLabArmorTonnage();
     }
 
     /**

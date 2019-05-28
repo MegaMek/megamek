@@ -10634,15 +10634,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return The armor weight in tons.
      */
     public double getArmorWeight() {
-        if (!hasPatchworkArmor()) {
-            // this roundabout method is actually necessary to avoid rounding
-            // weirdness. Yeah, it's dumb.
-            double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
-                    armorType[0], armorTechLevel[0]);
-            double points = getTotalOArmor();
-            double armorWeight = points / armorPerTon;
-            armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
-            return armorWeight;
+        if (hasPatchworkArmor()) {
+            double total = 0;
+            for (int loc = 0; loc < locations(); loc++) {
+                total += getArmorWeight(loc);
+            }
+            return Math.ceil(total * 2.0) / 2.0;
         } else if (isSupportVehicle()
                     && getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
             double total = getTotalOArmor()
@@ -10653,11 +10650,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return Math.ceil(total * 2.0) / 2.0;
             }
         } else {
-            double total = 0;
-            for (int loc = 0; loc < locations(); loc++) {
-                total += getArmorWeight(loc);
-            }
-            return Math.ceil(total * 2.0) / 2.0;
+            // this roundabout method is actually necessary to avoid rounding
+            // weirdness. Yeah, it's dumb.
+            double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
+                    armorType[0], armorTechLevel[0]);
+            double points = getTotalOArmor();
+            double armorWeight = points / armorPerTon;
+            armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
+            return armorWeight;
         }
     }
 
@@ -14379,6 +14379,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getLabTotalArmorPoints() {
+        if (isSupportVehicle() && (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD)
+            && !hasPatchworkArmor()) {
+            return (int) Math.floor(armorTonnage
+                    / EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()),
+                    getArmorTechRating()));
+        }
         double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
                 armorType[0], armorTechLevel[0]);
         return (int) Math.floor(armorPerTon * armorTonnage);

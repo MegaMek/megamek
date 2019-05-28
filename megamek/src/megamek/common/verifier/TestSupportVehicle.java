@@ -811,9 +811,9 @@ public class TestSupportVehicle extends TestEntity {
                 // Support vehicle armor takes slots like ferro-fibrous at BAR 10/TL E/F
                 if (supportVee.getBARRating(supportVee.firstArmorIndex()) == 10) {
                     if (supportVee.getArmorTechRating() == ITechnology.RATING_E) {
-                        return 2; // IS FF
+                        return AdvancedSVArmor.FERRO_FIBROUS.space;
                     } else if (supportVee.getArmorTechRating() == ITechnology.RATING_F) {
-                        return 1; // Clan FF
+                        return AdvancedSVArmor.CLAN_FERRO_FIBROUS.space;
                     }
                 }
                 return 0;
@@ -953,23 +953,19 @@ public class TestSupportVehicle extends TestEntity {
         public final EquipmentType eqType;
 
         /**
-         * The number of spaces occupied by the armor type.  Armors that take
-         * up 1 space take up space in the aft, those with 2 take up space in
-         * each wing, 3 takes up space in both wings and the aft, 4 takes up
-         * space in each possible arc (nose, aft, left wing, right wing).
+         * The number of spaces occupied by the armor type.
          */
         public final int space;
 
         /**
-         * The number of weapon spaces occupied by patchwork armor. Unlike standard armor, patchwork
-         * armor takes up slots in the location where it's used.
+         * The number of weapon spaces occupied by patchwork armor.
          */
         public final int patchworkSpace;
 
         /**
          * Denotes whether this armor is Clan or not.
          */
-        public boolean isClan;
+        public final boolean isClan;
 
         AdvancedSVArmor(int at, int space, int patchworkSpace, boolean clan){
             this.armorType = at;
@@ -980,12 +976,12 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         /**
-         * Given an armor type, return the <code>AeroArmor</code> instance that
+         * Given an armor type, return the <code>AdvancedSVArmor</code> instance that
          * represents that type.
          *
          * @param at The armor type.
          * @param c  Whether this armor type is Clan or not.
-         * @return   The <code>AeroArmor</code> that correspondes to the given
+         * @return   The <code>AdvancedSVArmor</code> that correspondes to the given
          *              type or null if no match was found.
          */
         public static @Nullable AdvancedSVArmor getArmor(int at, boolean c){

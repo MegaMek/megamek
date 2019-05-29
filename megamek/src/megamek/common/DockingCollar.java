@@ -70,12 +70,12 @@ public class DockingCollar implements Transporter {
     /**
      * Create a Jumpship collar that can carry one dropship
      *
-     * @param docks - Capacity. A collar can always carry one dropship.
-     * @param collarNumber - the Id of this collar, used for tracking in MHQ 
+     * @param docks Capacity. A collar can always carry one dropship.
+     * @param collarNumber the Id of this collar, used for tracking in MHQ 
      */
     public DockingCollar(int docks, int collarNumber) {
-        totalSpace = 1;
-        currentSpace = 1;
+        totalSpace = docks;
+        currentSpace = docks;
         this.collarNumber = collarNumber;
     }
 

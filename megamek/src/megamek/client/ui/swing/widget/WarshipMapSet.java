@@ -124,16 +124,16 @@ public class WarshipMapSet implements DisplayMapSet{
             }
         }
         if (damagedCollars > 0) {
-            collarDamageString = ("" + "X " + "(" + damagedCollars + ")");
+            collarDamageString = String.format("X (%d)", damagedCollars);
         }
         //We want a different string for these too
         String kfDamageString = "";
         if (t.getKFDriveDamage() > 0) {
-            kfDamageString = ("" + t.getKFIntegrity() + " / " + t.getOKFIntegrity());
+            kfDamageString = String.format("%d / %d", t.getKFIntegrity(), t.getOKFIntegrity());
         }
         String sailDamageString = "";
         if (t.getSailIntegrity() < t.getOSailIntegrity()) {
-            sailDamageString = ("" + t.getSailIntegrity() + " / " + t.getOSailIntegrity());
+            sailDamageString = String.format("%d / %d", t.getSailIntegrity(), t.getOSailIntegrity());
         }
         vLabels[7].setValue(getCriticalHitTally(t.getAvionicsHits(),3));
         vLabels[8].setValue(getCriticalHitTally(t.getCICHits(),3));

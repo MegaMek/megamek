@@ -1443,10 +1443,10 @@ public class UnitEditorDialog extends JDialog {
                 Jumpship js = (Jumpship) aero;
                 JSpinner collarCrit = collarDamage;
                 CheckCritPanel deckCrit = gravDeckCrit;
-                Double damagedCollars = 0.0;
+                double damagedCollars = 0.0;
                 int damagedDecks = 0;
                 if (null != collarCrit) {
-                    damagedCollars = (aero.getDockingCollars().size() - (Double) collarCrit.getModel().getValue());
+                    damagedCollars = (aero.getDockingCollars().size() - (double) collarCrit.getModel().getValue());
                 }
                 //First, reset damaged collars to undamaged. Otherwise you get weirdness when running this dialogue multiple times
                 for (DockingCollar collar : aero.getDockingCollars()) {

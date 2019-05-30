@@ -8168,6 +8168,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return null;
     }
     
+    @Nullable
     public DockingCollar getCollarById(int collarNumber) {
         //TODO: Change transports to a map or other indexed data structure to avoid
         // linear-time algorithm.

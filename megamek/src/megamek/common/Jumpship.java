@@ -208,70 +208,67 @@ public class Jumpship extends Aero {
                 .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
-    
-    public StringBuilder testCritDamageString() {
-        
-    }
+
     public String getCritDamageString() {
-        String toReturn = super.getCritDamageString();
-        boolean first = toReturn.isEmpty();
+        StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
+        boolean first = toReturn.length() == 0;
         if (getTotalDamagedGravDeck() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Grav Decks (" + getTotalDamagedGravDeck() + ")";
+            toReturn.append(String.format("Grav Decks (%d)", getTotalDamagedGravDeck()));
             first = false;
         }
         if (getTotalDamagedDockingCollars() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Docking Collars (" + getTotalDamagedDockingCollars() + ")";
+            toReturn.append(String.format("Docking Collars (%d)", getTotalDamagedDockingCollars()));
             first = false;
         }
         if (getKFDriveCoilHit()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "K-F Drive Coil";
+            toReturn.append("K-F Drive Coil");
             first = false;
         }
         if (getKFDriveControllerHit()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "K-F Drive Controller";
+            toReturn.append("K-F Drive Controller");
             first = false;
         }
         if (getKFHeliumTankHit()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "K-F Helium Tank";
+            toReturn.append("K-F Helium Tank");
             first = false;
         }
         if (getKFFieldInitiatorHit()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "K-F Field Initiator";
+            toReturn.append("K-F Field Initiator");
             first = false;
         }
         if (getKFChargingSystemHit()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "K-F Charging System";
+            toReturn.append("K-F Charging System");
             first = false;
         }
         if (getLFBatteryHit()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "L-F Battery";
+            toReturn.append("L-F Battery");
             first = false;
         }
-        return toReturn;
+        return toReturn.toString();
     }
 
     @Override

@@ -137,23 +137,23 @@ public class Dropship extends SmallCraft {
     }
 
     public String getCritDamageString() {
-        String toReturn = super.getCritDamageString();
-        boolean first = toReturn.isEmpty();
+        StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
+        boolean first = toReturn.length() == 0;
         if (isDockCollarDamaged()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Docking Collar";
+            toReturn.append("Docking Collar");
             first = false;
         }
         if (isKFBoomDamaged()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "K-F Boom";
+            toReturn.append("K-F Boom");
             first = false;
         }
-        return toReturn;
+        return toReturn.toString();
     }
 
     @Override

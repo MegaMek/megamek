@@ -70,7 +70,6 @@ public class Jumpship extends Aero {
     private boolean chargingSystemHit = false;
     private boolean driveControllerHit = false;
     private boolean lfBatteryHit = false;
-    private boolean isKFDriveDamaged = false;
     private boolean sail = true;
     private int driveCoreType = DRIVE_CORE_STANDARD;
     private int jumpRange = 30; // Primitive jumpships can have a reduced range

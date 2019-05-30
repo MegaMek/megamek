@@ -308,7 +308,7 @@ public class Jumpship extends Aero {
         int count = 0;
         for (DockingCollar collar : getDockingCollars()) {
             if (collar.isDamaged()) {
-                count ++;
+                count++;
             }
         }
         return count;
@@ -333,7 +333,7 @@ public class Jumpship extends Aero {
         int count = 0;
         for (int hits : damagedGravDecks.values()) {
             if (hits == 1) {
-                count ++;
+                count++;
             }
         }
         return count;

@@ -209,6 +209,9 @@ public class Jumpship extends Aero {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
     
+    public StringBuilder testCritDamageString() {
+        
+    }
     public String getCritDamageString() {
         String toReturn = super.getCritDamageString();
         boolean first = toReturn.isEmpty();
@@ -289,7 +292,7 @@ public class Jumpship extends Aero {
     /**
      * Get the docking collar type used by the ship.
      *
-     * @return
+     * @return the docking collar type
      */
     public int getDockingCollarType() {
         return (isPrimitive() ? Jumpship.COLLAR_NO_BOOM : Jumpship.COLLAR_STANDARD);
@@ -299,7 +302,7 @@ public class Jumpship extends Aero {
      * Get the number of damaged docking collars on the ship.
      * Used by crit damage string on unit display
      *
-     * @return
+     * @return the number of damaged docking collars
      */
     public int getTotalDamagedDockingCollars() {
         int count = 0;
@@ -314,7 +317,7 @@ public class Jumpship extends Aero {
     /**
      * Get the number of grav decks on the ship.
      *
-     * @return
+     * @return the total number of grav decks
      */
     public int getTotalGravDeck() {
         return gravDecks.size();
@@ -324,7 +327,7 @@ public class Jumpship extends Aero {
      * Get the number of damaged grav decks on the ship.
      * Used by JS/WS MapSet widget to display critical hits
      *
-     * @return
+     * @return the number of damaged grav decks
      */
     public int getTotalDamagedGravDeck() {
         int count = 0;
@@ -348,7 +351,7 @@ public class Jumpship extends Aero {
     /**
      * Get a list of all grav decks mounted on this ship. Returns the size in meters of the deck
      *
-     * @return
+     * @return a list of grav deck diameters, in meters
      */
     public List<Integer> getGravDecks() {
         return gravDecks;
@@ -365,7 +368,7 @@ public class Jumpship extends Aero {
     /**
      * Gets the damage flag for the grav deck with the specified key
      *
-     * @return
+     * @return the damage status for the deck 0 (undamaged) or 1 (damaged)
      */
     public int getGravDeckDamageFlag(int key) {
         return damagedGravDecks.get(key);
@@ -395,7 +398,7 @@ public class Jumpship extends Aero {
 
     /**
      * Get the number of standard grav decks
-     * @return
+     * @return the number of 0-99 meter grav decks installed
      */
     public int getGravDeck() {
         int count = 0;
@@ -422,7 +425,7 @@ public class Jumpship extends Aero {
     /**
      * Get the number of large grav decks.
      *
-     * @return
+     * @return the number of 100-249 meter grav decks installed
      */
     public int getGravDeckLarge() {
         int count = 0;
@@ -449,7 +452,7 @@ public class Jumpship extends Aero {
     /**
      * Get the number of huge grav decks.
      *
-     * @return
+     * @return the number of 250 meter and larger grav decks installed
      */
     public int getGravDeckHuge() {
         int count = 0;

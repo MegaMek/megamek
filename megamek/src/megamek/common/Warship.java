@@ -107,6 +107,7 @@ public class Warship extends Jumpship {
         int integrity = (int) Math.ceil(2 + getJumpDriveWeight() / 25000.0);
         setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
+        //Helium Tanks make up about 2/3 of the drive core.
         setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
     

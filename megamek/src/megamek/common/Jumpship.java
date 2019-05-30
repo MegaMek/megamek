@@ -665,12 +665,12 @@ public class Jumpship extends Aero {
                 || getKFFieldInitiatorHit());
     }
     
-    //Set the 2/3 Original KF Drive integrity representing the helium tanks
+    //Set the portion of the total drive integrity represented by the helium tanks
     public void setKFHeliumTankIntegrity(int ht) {
         helium_tankage = ht;
     }
     
-    //Return the 2/3 Original KF Drive integrity representing the helium tanks
+    //Used by MHQ when repairing the helium tanks. Allows restoration of up to 2/3 of the total drive integrity
     public int getKFHeliumTankIntegrity() {
         return helium_tankage;
     }
@@ -784,6 +784,7 @@ public class Jumpship extends Aero {
         int integrity = (int) Math.ceil(1.2 + (getJumpDriveWeight() / 60000.0));
         setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
+        //Helium Tanks make up about 2/3 of the drive core. 
         setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
 

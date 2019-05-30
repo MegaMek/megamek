@@ -1287,8 +1287,7 @@ public abstract class Mech extends Entity {
     public int getPartialWingJumpBonus(Mounted mount) {
         int bonus = 0;
         if (game != null) {
-            if ((getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)
-                    || (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)) {
+            if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
                     case PlanetaryConditions.ATMO_VACUUM:
                         bonus = 0;
@@ -1312,9 +1311,7 @@ public abstract class Mech extends Entity {
                     default:
                         bonus = 2;
                 }
-            }
-            if ((getWeightClass() == EntityWeightClass.WEIGHT_HEAVY)
-                    || (getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT)) {
+            } else {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
                     case PlanetaryConditions.ATMO_VACUUM:
                         bonus = 0;
@@ -1339,8 +1336,7 @@ public abstract class Mech extends Entity {
                 }
             }
         } else {
-            if ((getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)
-                    || (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)) {
+            if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
                 bonus = 2;
             } else {
                 bonus = 1;

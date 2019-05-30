@@ -110,7 +110,7 @@ public class Jumpship extends Aero {
      *
      * Stores the number of hits on each grav deck by the index value from the list gravDecks
      */
-    private Map<Integer,Integer> damagedGravDecks = new HashMap<Integer,Integer>();
+    private Map<Integer,Integer> damagedGravDecks = new HashMap<>();
 
     // station-keeping thrust and accumulated thrust
     private double stationThrust = 0.2;

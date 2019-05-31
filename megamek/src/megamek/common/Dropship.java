@@ -143,14 +143,14 @@ public class Dropship extends SmallCraft {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append("Docking Collar");
+            toReturn.append(Messages.getString("Dropship.collarDamageString"));
             first = false;
         }
         if (isKFBoomDamaged()) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append("K-F Boom");
+            toReturn.append(Messages.getString("Dropship.kfBoomDamageString"));
             first = false;
         }
         return toReturn.toString();

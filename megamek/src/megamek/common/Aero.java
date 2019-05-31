@@ -3843,49 +3843,56 @@ public class Aero extends Entity implements IAero, IBomber {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append(String.format("Sensors (%d)", getSensorHits()));
+            toReturn.append(String.format(Messages.getString("Aero.sensorDamageString"), getSensorHits()));
             first = false;
         }
         if (getAvionicsHits() > 0) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append(String.format("Avionics (%d)", getAvionicsHits()));
+            toReturn.append(String.format(Messages.getString("Aero.avionicsDamageString"), getAvionicsHits()));
             first = false;
         }
         if (getFCSHits() > 0) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append(String.format("FCS (%d)", getFCSHits()));
+            toReturn.append(String.format(Messages.getString("Aero.fcsDamageString"), getFCSHits()));
             first = false;
         }
         if (getCICHits() > 0) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append(String.format("CIC (%d)", getCICHits()));
+            toReturn.append(String.format(Messages.getString("Aero.cicDamageString"), getCICHits()));
             first = false;
         }
         if (isGearHit()) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append("Landing Gear");
+            toReturn.append(Messages.getString("Aero.landingGearDamageString"));
+            first = false;
+        }
+        if (!hasLifeSupport()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Aero.lifeSupportDamageString"));
             first = false;
         }
         if (getLeftThrustHits() > 0) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append(String.format("Left Thruster (%d)", getLeftThrustHits()));
+            toReturn.append(String.format(Messages.getString("Aero.leftThrusterDamageString"), getLeftThrustHits()));
             first = false;
         }
         if (getRightThrustHits() > 0) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append(String.format("Right Thruster (%d)", getRightThrustHits()));
+            toReturn.append(String.format(Messages.getString("Aero.rightThrusterDamageString"), getRightThrustHits()));
             first = false;
         }
         // Cargo bays and bay doors for large craft
@@ -3894,14 +3901,14 @@ public class Aero extends Entity implements IAero, IBomber {
         	    if (!first) {
                     toReturn.append(", ");
                 }
-        	toReturn.append(String.format("%s Bay # %d", next.getType(), next.getBayNumber()));
+        	toReturn.append(String.format(Messages.getString("Aero.bayDamageString"), next.getType(), next.getBayNumber()));
         	first = false;
         	}
         	if (next.getCurrentDoors() < next.getDoors()) {
         	    if (!first) {
                     toReturn.append(", ");
                 }
-        	toReturn.append(String.format("%s Bay # %d Doors (%d)", next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
+        	toReturn.append(String.format(Messages.getString("Aero.bayDoorDamageString"), next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
         	first = false;
         	}
         }

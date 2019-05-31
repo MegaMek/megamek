@@ -216,56 +216,56 @@ public class Jumpship extends Aero {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append(String.format("Grav Decks (%d)", getTotalDamagedGravDeck()));
+            toReturn.append(String.format(Messages.getString("Jumpship.gravDeckDamageString"), getTotalDamagedGravDeck()));
             first = false;
         }
         if (getTotalDamagedDockingCollars() > 0) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append(String.format("Docking Collars (%d)", getTotalDamagedDockingCollars()));
+            toReturn.append(String.format(Messages.getString("Jumpship.dockingCollarsDamageString"), getTotalDamagedDockingCollars()));
             first = false;
         }
         if (getKFDriveCoilHit()) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append("K-F Drive Coil");
+            toReturn.append(Messages.getString("Jumpship.driveCoilDamageString"));
             first = false;
         }
         if (getKFDriveControllerHit()) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append("K-F Drive Controller");
+            toReturn.append(Messages.getString("Jumpship.driveControllerDamageString"));
             first = false;
         }
         if (getKFHeliumTankHit()) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append("K-F Helium Tank");
+            toReturn.append(Messages.getString("Jumpship.heliumTankDamageString"));
             first = false;
         }
         if (getKFFieldInitiatorHit()) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append("K-F Field Initiator");
+            toReturn.append(Messages.getString("Jumpship.fieldInitiatorDamageString"));
             first = false;
         }
         if (getKFChargingSystemHit()) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append("K-F Charging System");
+            toReturn.append(Messages.getString("Jumpship.chargingSystemDamageString"));
             first = false;
         }
         if (getLFBatteryHit()) {
             if (!first) {
                 toReturn.append(", ");
             }
-            toReturn.append("L-F Battery");
+            toReturn.append(Messages.getString("Jumpship.lfBatteryDamageString"));
             first = false;
         }
         return toReturn.toString();

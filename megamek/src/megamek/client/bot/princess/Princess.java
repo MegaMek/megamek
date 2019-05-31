@@ -610,7 +610,8 @@ public class Princess extends BotClient {
                     // damageMap for the target enemy.
                     for(WeaponFireInfo shot : plan) {
                         int targetId = shot.getTarget().getTargetId();
-                        double newDamage = damageMap.get(targetId) + shot.getExpectedDamage();
+                        double existingTargetDamage = damageMap.containsKey(targetId) ? damageMap.get(targetId) : 0;
+                        double newDamage = existingTargetDamage + shot.getExpectedDamage();
                         damageMap.replace(targetId, newDamage);
                     }
     

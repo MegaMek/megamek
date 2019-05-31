@@ -3894,14 +3894,14 @@ public class Aero extends Entity implements IAero, IBomber {
         	    if (!first) {
                     toReturn.append(", ");
                 }
-        	toReturn.append(String.format("%d Bay # %d", next.getType(), next.getBayNumber()));
+        	toReturn.append(String.format("%s Bay # %d", next.getType(), next.getBayNumber()));
         	first = false;
         	}
         	if (next.getCurrentDoors() < next.getDoors()) {
         	    if (!first) {
                     toReturn.append(", ");
                 }
-        	toReturn.append(String.format("%d Bay # %d Doors (%d)", next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
+        	toReturn.append(String.format("%s Bay # %d Doors (%d)", next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
         	first = false;
         	}
         }

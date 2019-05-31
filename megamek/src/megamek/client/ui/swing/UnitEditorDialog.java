@@ -53,6 +53,7 @@ import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
+import megamek.common.Messages;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
@@ -170,14 +171,14 @@ public class UnitEditorDialog extends JDialog {
 
         getContentPane().add(panMain, BorderLayout.CENTER);
 
-        JButton butOK = new JButton("OK");
+        JButton butOK = new JButton(Messages.getString("Okay"));
         butOK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnOkayActionPerformed(evt);
                 setVisible(false);
             }
         });
-        JButton butCancel = new JButton("Cancel");
+        JButton butCancel = new JButton(Messages.getString("Cancel"));
         butCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 setVisible(false);

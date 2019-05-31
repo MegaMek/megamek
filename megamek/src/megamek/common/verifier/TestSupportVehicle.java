@@ -772,7 +772,7 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double getWeightArmor() {
-        return supportVee.getLabArmorTonnage();
+        return supportVee.getArmorWeight();
     }
 
     /**

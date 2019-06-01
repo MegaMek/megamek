@@ -79,7 +79,7 @@ class PreferenceStore implements IPreferenceStore {
             return DOUBLE_DEFAULT;
         double ival = DOUBLE_DEFAULT;
         try {
-            ival = new Double(value).doubleValue();
+            ival = Double.valueOf(value).doubleValue();
         } catch (NumberFormatException e) {
         }
         return ival;
@@ -95,7 +95,7 @@ class PreferenceStore implements IPreferenceStore {
             return FLOAT_DEFAULT;
         float ival = FLOAT_DEFAULT;
         try {
-            ival = new Float(value).floatValue();
+            ival = Float.parseFloat(value);
         } catch (NumberFormatException e) {
         }
         return ival;
@@ -173,7 +173,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Double(oldValue), new Double(
+            firePropertyChangeEvent(name, Double.valueOf(oldValue), Double.valueOf(
                     value));
         }
     }
@@ -183,7 +183,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Float(oldValue), new Float(value));
+            firePropertyChangeEvent(name, Float.valueOf(oldValue), Float.valueOf(value));
         }
     }
 
@@ -192,7 +192,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Integer(oldValue), new Integer(
+            firePropertyChangeEvent(name, Integer.valueOf(oldValue), Integer.valueOf(
                     value));
         }
     }
@@ -202,7 +202,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Long(oldValue), new Long(value));
+            firePropertyChangeEvent(name, Long.valueOf(oldValue), Long.valueOf(value));
         }
     }
 
@@ -220,7 +220,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(
+            firePropertyChangeEvent(name, Boolean.valueOf(oldValue), Boolean.valueOf(
                     value));
         }
     }

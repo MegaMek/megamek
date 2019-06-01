@@ -379,19 +379,11 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 }
             }
 
-            // we check if the step would take us off board - the addStep method throws an exception if it does,
-            // which is expensive, so we save a little time
             if (backwardsStep &&
                     mp.getGame().getBoard().contains(mp.getFinalCoords().translated((mp.getFinalFacing() + 3) % 6))) {
-                if(mp.getGame().getBoard().contains(mp.getFinalCoords().translated((mp.getEntity().getFacing() + 3) % 6))) {
-                    result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
-                } else {
-                    int alpha = 1;
-                }
+                result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
             } else if(mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
-                if(mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getEntity().getFacing()))) {
-                    result.add(mp.clone().addStep(MoveStepType.FORWARDS));
-                }
+                result.add(mp.clone().addStep(MoveStepType.FORWARDS));
             }
 
             addUpAndDown(result, last, entity, mp);
@@ -424,7 +416,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         }
     }
 
-    /**
+     /**
      * Creates a new instance of MovePathFinder. Sets DestinationMap to
      * {@link MovePathDestinationMap} and adds {@link MovePathLegalityFilter}.
      * Rest of the methods needed by AbstractPathFinder have to be passed as a

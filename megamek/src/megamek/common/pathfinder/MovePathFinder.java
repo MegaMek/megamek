@@ -415,74 +415,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         }
     }
 
-    /**
-     * Functional Interface for {@link #getAdjacent(MovePath)}
-     */
-    public static class NextStepsAeroAdjacencyMap extends NextStepsAdjacencyMap {
-        //this class is not tested, yet.
-
-        public NextStepsAeroAdjacencyMap(MoveStepType stepType) {
-            super(stepType);
-        }
-
-        /**
-         * Extends the result produced by
-         * {@linkNextStepsAdjacencyMap#getAdjacent(megamek.common.MovePath)}
-         * with manoeuvres for Aero
-         *
-         * @see NextStepsAdjacencyMap#getAdjacent(megamek.common.MovePath)
-         */
-        @Override
-        public Collection<MovePath> getAdjacent(MovePath mp) {
-        	// These steps are terminal, and shouldn't have anything after them
-            if (mp.contains(MoveStepType.RETURN)
-                    || mp.contains(MoveStepType.OFF)) {
-                return new ArrayList<MovePath>();
-            }
-
-            Collection<MovePath> result = new ArrayList<MovePath>();
-            MoveStep lastStep = mp.getLastStep();
-
-            // if we haven't done anything else yet, and we are an aerodyne unit on a ground map with atmosphere,
-            // we can attempt to accelerate or decelerate
-            if(mp.isOnAtmosphericGroundMap() &&
-            		!UnitType.isSpheroidDropship(mp.getEntity())) {
-            	if(!mp.containsAnyOther(MoveStepType.ACC)) {
-            		result.add(mp.clone().addStep(MoveStepType.ACC));
-            	}
-            	// we also don't want to bother decelerating to 0 on ground maps, as that'll just crash our aircraft
-            	else if(!mp.containsAnyOther(MoveStepType.DEC) &&
-            			mp.getFinalVelocityLeft() > 1) {
-            		result.add(mp.clone().addStep(MoveStepType.DEC));
-            	}
-            }
-
-            // we can move forward if we have some velocity left
-            if(mp.getFinalVelocityLeft() > 0) {
-            	result.add(mp.clone().addStep(MoveStepType.FORWARDS));
-            }
-
-        	// we can turn if we can turn. very philosophical.
-        	if(lastStep != null && lastStep.canAeroTurn(lastStep.getGame())) {
-        		result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
-        		result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
-        	}
-
-            // we can fly off of edge of board if we're at the edge of the board
-            Coords c = mp.getFinalCoords();
-            IGame game = mp.getEntity().getGame();
-            if (((c.getX() == 0) || (c.getY() == 0)
-                    || (c.getX() == (game.getBoard().getWidth() - 1))
-                    || (c.getY() == (game.getBoard().getHeight() - 1)))
-                && (mp.getFinalVelocity() > 0)) {
-                result.add(mp.clone().addStep(MoveStepType.RETURN));
-            }
-
-            return result;
-        }
-    }
-
-    /**
+     /**
      * Creates a new instance of MovePathFinder. Sets DestinationMap to
      * {@link MovePathDestinationMap} and adds {@link MovePathLegalityFilter}.
      * Rest of the methods needed by AbstractPathFinder have to be passed as a

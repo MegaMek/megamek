@@ -8,6 +8,7 @@ v0.45.5-SNAPSHOT
 	This should be most noticeable with dropships and other large spacecraft.
 + PR #1331: Infantry with "forest ranger" SPA is no longer able to move through woods for free.
 + Issue #1356: Partial Wing won't work on Ultralight Battlemech.
++ PR #1358: Princess properly operates really slow aircraft on ground maps and can actually drop thunder bombs now.
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

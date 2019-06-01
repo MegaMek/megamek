@@ -36238,7 +36238,8 @@ public class Server implements Runnable {
         r.choose(roll >= psr.getValue());
         addReport(r);
 
-        if (game.getBoard().inAtmosphere()) {
+        // if we are on an atmospheric map or the entity is off the map for some reason
+        if (game.getBoard().inAtmosphere() || entity.getPosition() == null) {
             // then just remove the entity
             // TODO: for this and when the unit scatters off the board, we
             // should really still apply damage

@@ -63,6 +63,7 @@ import megamek.common.SmallCraft;
 import megamek.common.SmallCraftBay;
 import megamek.common.Tank;
 import megamek.common.VTOL;
+import megamek.common.options.OptionsConstants;
 
 /**
  *
@@ -1025,97 +1026,99 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.weightx = 1.0;
             panSystem.add(kfDriveCrit, gridBagConstraints);
             
-            //K-F Drive Components
+            //K-F Drive Components (Optional)
             //Drive Coil
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy++;
-            gridBagConstraints.weightx = 0.0;
-            panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.driveCoil")
-                    + "</b><br></html>"), gridBagConstraints);
-            int driveCoilHits = 0;
-            if (js.getKFDriveCoilHit()) {
-                driveCoilHits = 1;
-            }
-            driveCoilCrit = new CheckCritPanel(1, driveCoilHits);
-            gridBagConstraints.gridx = 1;
-            gridBagConstraints.weightx = 1.0;
-            panSystem.add(driveCoilCrit, gridBagConstraints);
-            
-            //Charging System
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy++;
-            gridBagConstraints.weightx = 0.0;
-            panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.chargingSystem")
-                    + "</b><br></html>"), gridBagConstraints);
-            int chargingSystemHits = 0;
-            if (js.getKFChargingSystemHit()) {
-                chargingSystemHits = 1;
-            }
-            chargingSystemCrit = new CheckCritPanel(1, chargingSystemHits);
-            gridBagConstraints.gridx = 1;
-            gridBagConstraints.weightx = 1.0;
-            panSystem.add(chargingSystemCrit, gridBagConstraints);
-            
-            //Field Initiator
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy++;
-            gridBagConstraints.weightx = 0.0;
-            panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.fieldInitiator")
-                    + "</b><br></html>"), gridBagConstraints);
-            int fieldInitiatorHits = 0;
-            if (js.getKFFieldInitiatorHit()) {
-                fieldInitiatorHits = 1;
-            }
-            fieldInitiatorCrit = new CheckCritPanel(1, fieldInitiatorHits);
-            gridBagConstraints.gridx = 1;
-            gridBagConstraints.weightx = 1.0;
-            panSystem.add(fieldInitiatorCrit, gridBagConstraints);
-            
-            //Drive Controller
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy++;
-            gridBagConstraints.weightx = 0.0;
-            panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.driveController")
-                    + "</b><br></html>"), gridBagConstraints);
-            int driveControllerHits = 0;
-            if (js.getKFDriveControllerHit()) {
-                driveControllerHits = 1;
-            }
-            driveControllerCrit = new CheckCritPanel(1, driveControllerHits);
-            gridBagConstraints.gridx = 1;
-            gridBagConstraints.weightx = 1.0;
-            panSystem.add(driveControllerCrit, gridBagConstraints);
-            
-            //Helium Tank
-            gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy++;
-            gridBagConstraints.weightx = 0.0;
-            panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.heliumTank")
-                    + "</b><br></html>"), gridBagConstraints);
-            int heliumTankHits = 0;
-            if (js.getKFHeliumTankHit()) {
-                heliumTankHits = 1;
-            }
-            heliumTankCrit = new CheckCritPanel(1, heliumTankHits);
-            gridBagConstraints.gridx = 1;
-            gridBagConstraints.weightx = 1.0;
-            panSystem.add(heliumTankCrit, gridBagConstraints);
-            
-            //LF Battery
-            if (js.hasLF()) {
+            if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE)) {
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
-                panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.lfBattery")
+                panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.driveCoil")
                         + "</b><br></html>"), gridBagConstraints);
-                int lfBatteryHits = 0;
-                if (js.getLFBatteryHit()) {
-                    lfBatteryHits = 1;
+                int driveCoilHits = 0;
+                if (js.getKFDriveCoilHit()) {
+                    driveCoilHits = 1;
                 }
-                lfBatteryCrit = new CheckCritPanel(1, lfBatteryHits);
+                driveCoilCrit = new CheckCritPanel(1, driveCoilHits);
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.weightx = 1.0;
-                panSystem.add(lfBatteryCrit, gridBagConstraints);
+                panSystem.add(driveCoilCrit, gridBagConstraints);
+                
+                //Charging System
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy++;
+                gridBagConstraints.weightx = 0.0;
+                panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.chargingSystem")
+                        + "</b><br></html>"), gridBagConstraints);
+                int chargingSystemHits = 0;
+                if (js.getKFChargingSystemHit()) {
+                    chargingSystemHits = 1;
+                }
+                chargingSystemCrit = new CheckCritPanel(1, chargingSystemHits);
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.weightx = 1.0;
+                panSystem.add(chargingSystemCrit, gridBagConstraints);
+                
+                //Field Initiator
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy++;
+                gridBagConstraints.weightx = 0.0;
+                panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.fieldInitiator")
+                        + "</b><br></html>"), gridBagConstraints);
+                int fieldInitiatorHits = 0;
+                if (js.getKFFieldInitiatorHit()) {
+                    fieldInitiatorHits = 1;
+                }
+                fieldInitiatorCrit = new CheckCritPanel(1, fieldInitiatorHits);
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.weightx = 1.0;
+                panSystem.add(fieldInitiatorCrit, gridBagConstraints);
+                
+                //Drive Controller
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy++;
+                gridBagConstraints.weightx = 0.0;
+                panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.driveController")
+                        + "</b><br></html>"), gridBagConstraints);
+                int driveControllerHits = 0;
+                if (js.getKFDriveControllerHit()) {
+                    driveControllerHits = 1;
+                }
+                driveControllerCrit = new CheckCritPanel(1, driveControllerHits);
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.weightx = 1.0;
+                panSystem.add(driveControllerCrit, gridBagConstraints);
+                
+                //Helium Tank
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy++;
+                gridBagConstraints.weightx = 0.0;
+                panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.heliumTank")
+                        + "</b><br></html>"), gridBagConstraints);
+                int heliumTankHits = 0;
+                if (js.getKFHeliumTankHit()) {
+                    heliumTankHits = 1;
+                }
+                heliumTankCrit = new CheckCritPanel(1, heliumTankHits);
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.weightx = 1.0;
+                panSystem.add(heliumTankCrit, gridBagConstraints);
+                
+                //LF Battery
+                if (js.hasLF()) {
+                    gridBagConstraints.gridx = 0;
+                    gridBagConstraints.gridy++;
+                    gridBagConstraints.weightx = 0.0;
+                    panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.lfBattery")
+                            + "</b><br></html>"), gridBagConstraints);
+                    int lfBatteryHits = 0;
+                    if (js.getLFBatteryHit()) {
+                        lfBatteryHits = 1;
+                    }
+                    lfBatteryCrit = new CheckCritPanel(1, lfBatteryHits);
+                    gridBagConstraints.gridx = 1;
+                    gridBagConstraints.weightx = 1.0;
+                    panSystem.add(lfBatteryCrit, gridBagConstraints);
+                }
             }
             
             //Jump Sail Integrity

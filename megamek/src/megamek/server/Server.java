@@ -27113,70 +27113,71 @@ public class Server implements Runnable {
                 if (js == null || js instanceof SpaceStation) {
                     break;
                 }
-                // KF Drive hit
-                //Randomize the component struck - probabilities taken from the old BattleSpace record sheets
-                switch (Compute.d6(2)) {
-                case 2:
-                    //Drive Coil Hit
-                    r = new Report(9186);
-                    r.subject = aero.getId();
-                    reports.add(r);
-                    js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
-                    js.setKFDriveCoilHit(true);
-                    break;
-                case 3:
-                case 11:
-                    //Charging System Hit
-                    r = new Report(9187);
-                    r.subject = aero.getId();
-                    reports.add(r);
-                    js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
-                    js.setKFChargingSystemHit(true);
-                    break;
-                case 5:
-                    //Field Initiator Hit
-                    r = new Report(9190);
-                    r.subject = aero.getId();
-                    reports.add(r);
-                    js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
-                    js.setKFFieldInitiatorHit(true);
-                    break;
-                case 4:
-                case 6:
-                case 7:
-                case 8:
-                    //Helium Tank Hit
-                    r = new Report(9189);
-                    r.subject = aero.getId();
-                    reports.add(r);
-                    js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
-                    js.setKFHeliumTankHit(true);
-                    break;
-                case 9:
-                    //Drive Controller Hit
-                    r = new Report(9191);
-                    r.subject = aero.getId();
-                    reports.add(r);
-                    js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
-                    js.setKFDriveControllerHit(true);
-                    break;
-                case 10:
-                case 12:
-                    //LF Battery Hit - if you don't have one, treat as helium tank
-                    if (js.hasLF()) {
-                        r = new Report(9188);
+                // KF Drive hit - damage the drive integrity
+                js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
+                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE)) {
+                    //Randomize the component struck - probabilities taken from the old BattleSpace record sheets
+                    switch (Compute.d6(2)) {
+                    case 2:
+                        //Drive Coil Hit
+                        r = new Report(9186);
                         r.subject = aero.getId();
                         reports.add(r);
-                        js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
-                        js.setLFBatteryHit(true);
-                    } else {
+                        js.setKFDriveCoilHit(true);
+                        break;
+                    case 3:
+                    case 11:
+                        //Charging System Hit
+                        r = new Report(9187);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFChargingSystemHit(true);
+                        break;
+                    case 5:
+                        //Field Initiator Hit
+                        r = new Report(9190);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFFieldInitiatorHit(true);
+                        break;
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                        //Helium Tank Hit
                         r = new Report(9189);
                         r.subject = aero.getId();
                         reports.add(r);
-                        js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
                         js.setKFHeliumTankHit(true);
+                        break;
+                    case 9:
+                        //Drive Controller Hit
+                        r = new Report(9191);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFDriveControllerHit(true);
+                        break;
+                    case 10:
+                    case 12:
+                        //LF Battery Hit - if you don't have one, treat as helium tank
+                        if (js.hasLF()) {
+                            r = new Report(9188);
+                            r.subject = aero.getId();
+                            reports.add(r);
+                            js.setLFBatteryHit(true);
+                        } else {
+                            r = new Report(9189);
+                            r.subject = aero.getId();
+                            reports.add(r);
+                            js.setKFHeliumTankHit(true);
+                        }
+                        break;
                     }
-                    break;
+                } else {
+                    //Just report the standard KF hit, per SO rules
+                    r = new Report(9194);
+                    r.subject = aero.getId();
+                    reports.add(r);
                 }
                 break;
             case Aero.CRIT_GRAV_DECK:

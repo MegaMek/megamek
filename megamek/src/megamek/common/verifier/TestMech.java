@@ -1506,16 +1506,15 @@ public class TestMech extends TestEntity {
                     torso = torso && mech.locationIsTorso(m.getSecondLocation());
                 }
                 if (!mech.isSuperHeavy() && !torso) {
-                    buff.append("IHGauss can only be mounted in torso location.\n");
+                    buff.append("Improved Heavy Gauss can only be mounted in a torso location.\n");
                     illegal = true;
                 }
                 if (!mech.hasEngine() || (!mech.getEngine().isFusion()
                         && (mech.getEngine().getEngineType() != Engine.FISSION))) {
-                    buff.append("IHGauss requires a fusion or fission engine.\n");
+                    buff.append("Improved Heavy Gauss requires a fusion or fission engine.\n");
                     illegal = true;
                 }
-            }
-            if (m.getType().hasFlag(WeaponType.F_FLAMER)
+            } else if (m.getType().hasFlag(WeaponType.F_FLAMER)
                     && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA)
                     && (!mech.hasEngine() || (!mech.getEngine().isFusion()
                             && (mech.getEngine().getEngineType() != Engine.FISSION)))) {

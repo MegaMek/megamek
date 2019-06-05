@@ -105,6 +105,7 @@ public class MechTROView extends TROView {
         }
         if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
             final LandAirMech lam = (LandAirMech) mech;
+            final int mode = lam.getConversionMode();
             setModelData("lamConversionMass", testMech.getWeightMisc());
             if (lam.getLAMType() == LandAirMech.LAM_STANDARD) {
                 setModelData("airmechCruise", lam.getAirMechCruiseMP());
@@ -116,13 +117,16 @@ public class MechTROView extends TROView {
             lam.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
             setModelData("safeThrust", lam.getWalkMP());
             setModelData("maxThrust", lam.getRunMP());
+            lam.setConversionMode(mode);
         } else if (mech.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
             final QuadVee qv = (QuadVee) mech;
+            final int mode = qv.getConversionMode();
             qv.setConversionMode(QuadVee.CONV_MODE_VEHICLE);
             setModelData("qvConversionMass", testMech.getWeightMisc());
             setModelData("qvType", Messages.getString("MovementType." + qv.getMovementModeAsString()));
             setModelData("qvCruise", qv.getWalkMP());
             setModelData("qvFlank", qv.getRunMPasString());
+            qv.setConversionMode(mode);
         }
         setModelData("rightArmActuators", countArmActuators(Mech.LOC_RARM));
         setModelData("leftArmActuators", countArmActuators(Mech.LOC_LARM));

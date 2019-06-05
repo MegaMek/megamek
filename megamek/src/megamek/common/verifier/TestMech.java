@@ -1315,6 +1315,10 @@ public class TestMech extends TestEntity {
                                 || (((WeaponType)m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY))) {
                     buff.append("LAMs cannot mount heavy gauss rifles.\n");
                     illegal = true;
+                } else if ((m.getType() instanceof MiscType)
+                        && m.getType().hasFlag(MiscType.F_CLUB)) {
+                    buff.append("LAMs cannot be constructed with physical weapons.\n");
+                    illegal = true;
                 } else if (m.getType().isSpreadable()) {
                     if (spread.containsKey(m.getType())) {
                         spread.get(m.getType()).add(m.getLocation());

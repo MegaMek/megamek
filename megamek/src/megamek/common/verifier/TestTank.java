@@ -713,6 +713,27 @@ public class TestTank extends TestEntity {
             }
         }
         
+        for (Mounted m : tank.getWeaponList()) {
+            if (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
+                if ((m.getLocation() == Tank.LOC_TURRET)
+                        || (m.getLocation() == Tank.LOC_TURRET_2)) {
+                    buff.append("Improved Heavy Gauss cannot be mounted in a turret.\n");
+                    illegal = true;
+                }
+                if (!tank.hasEngine() || (!tank.getEngine().isFusion()
+                        && (tank.getEngine().getEngineType() != Engine.FISSION))) {
+                    buff.append("Improved Heavy Gauss requires a fusion or fission engine.\n");
+                    illegal = true;
+                }
+            } else if (m.getType().hasFlag(WeaponType.F_FLAMER)
+                    && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA)
+                    && (!tank.hasEngine() || (!tank.getEngine().isFusion()
+                            && (tank.getEngine().getEngineType() != Engine.FISSION)))) {
+                buff.append("Standard flamers require a fusion or fission engine.\n");
+                illegal = true;
+            }
+        }
+        
         if ((tank.getMovementMode() == EntityMovementMode.VTOL)
                 || (tank.getMovementMode() == EntityMovementMode.WIGE)
                 || (tank.getMovementMode() == EntityMovementMode.HOVER)) {

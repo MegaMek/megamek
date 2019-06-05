@@ -1494,16 +1494,42 @@ public class TestMech extends TestEntity {
                 }
             }
         }
+        
+        for (Mounted m : mech.getWeaponList()) {
+            if (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
+                boolean torso = mech.locationIsTorso(m.getLocation());
+                if (m.getSecondLocation() != Entity.LOC_NONE) {
+                    torso = torso && mech.locationIsTorso(m.getSecondLocation());
+                }
+                if (!mech.isSuperHeavy() && !torso) {
+                    buff.append("IHGauss can only be mounted in torso location.\n");
+                    illegal = true;
+                }
+                if (!mech.hasEngine() || (!mech.getEngine().isFusion()
+                        && (mech.getEngine().getEngineType() != Engine.FISSION))) {
+                    buff.append("IHGauss requires a fusion or fission engine.\n");
+                    illegal = true;
+                }
+            }
+            if (m.getType().hasFlag(WeaponType.F_FLAMER)
+                    && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA)
+                    && (!mech.hasEngine() || (!mech.getEngine().isFusion()
+                            && (mech.getEngine().getEngineType() != Engine.FISSION)))) {
+                buff.append("Standard flamers require a fusion or fission engine.\n");
+                illegal = true;
+            }
+            if ((m.getType().hasFlag(WeaponType.F_TASER)
+                    || m.getType().hasFlag(WeaponType.F_HYPER))
+                    && !(mech.hasEngine() && mech.getEngine().isFusion())) {
+                buff.append(m.getType().getName()).append(" needs fusion engine\n");
+                illegal = true;
+            }
+        }
 
-		if (mech.hasWorkingWeapon(WeaponType.F_TASER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
-			buff.append("Mek Taser needs fusion engine\n");
-			illegal = true;
-		}
-
-		if (mech.hasWorkingWeapon(WeaponType.F_HYPER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
-			buff.append("RISC Hyper Laser needs fusion engine\n");
-			illegal = true;
-		}
+        if (mech.hasWorkingWeapon(WeaponType.F_HYPER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
+            buff.append("RISC Hyper Laser needs fusion engine\n");
+            illegal = true;
+        }
         
         if (mech.hasFullHeadEject()) {
             if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)

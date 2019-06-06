@@ -1266,11 +1266,13 @@ public abstract class Mech extends Entity {
                 }
             }
         }
+        // Medium shield reduces jump mp by 1/shield
+        jump -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
 
         if (hasModularArmor() && !ignoremodulararmor) {
             jump--;
         }
-
+        
         if (gravity) {
             return Math.max(applyGravityEffectsOnMP(jump), 0);
         }

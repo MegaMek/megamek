@@ -1509,17 +1509,6 @@ public class TestMech extends TestEntity {
                     buff.append("Improved Heavy Gauss can only be mounted in a torso location.\n");
                     illegal = true;
                 }
-                if (!mech.hasEngine() || (!mech.getEngine().isFusion()
-                        && (mech.getEngine().getEngineType() != Engine.FISSION))) {
-                    buff.append("Improved Heavy Gauss requires a fusion or fission engine.\n");
-                    illegal = true;
-                }
-            } else if (m.getType().hasFlag(WeaponType.F_FLAMER)
-                    && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA)
-                    && (!mech.hasEngine() || (!mech.getEngine().isFusion()
-                            && (mech.getEngine().getEngineType() != Engine.FISSION)))) {
-                buff.append("Standard flamers require a fusion or fission engine.\n");
-                illegal = true;
             }
             if ((m.getType().hasFlag(WeaponType.F_TASER)
                     || m.getType().hasFlag(WeaponType.F_HYPER))

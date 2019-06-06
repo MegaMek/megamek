@@ -57,6 +57,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
     private ClientGUI client;
     private JFrame frame;
     private PlanetaryConditions conditions;
+    private int currentWeather;
     public PlanetaryConditions getConditions() {
         return conditions;
     }
@@ -145,6 +146,23 @@ public class PlanetaryConditionsDialog extends JDialog implements
             @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
+            }
+        });
+
+        choWeather.addItemListener(e -> {
+            int index = choWeather.getSelectedIndex();
+            if (currentWeather != index && 
+                    (index == PlanetaryConditions.WE_LIGHT_HAIL ||
+                     index == PlanetaryConditions.WE_HEAVY_HAIL ||
+                     index == PlanetaryConditions.WE_LIGHT_SNOW || 
+                     index == PlanetaryConditions.WE_SLEET ||
+                     index == PlanetaryConditions.WE_SNOW_FLURRIES ||
+                     index == PlanetaryConditions.WE_HEAVY_SNOW ||
+                     index == PlanetaryConditions.WE_ICE_STORM || 
+                     index == PlanetaryConditions.WE_BLIZZARD ||
+                     index == PlanetaryConditions.WE_MOD_SNOW)) {
+                currentWeather = index;
+                conditions.setRunOnce(false);
             }
         });
 
@@ -301,6 +319,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
                     .addItem(PlanetaryConditions.getWeatherDisplayableName(i));
         }
         choWeather.setSelectedIndex(conditions.getWeather());
+        currentWeather = conditions.getWeather();
 
         choWind.removeAllItems();
         choMinWind.removeAllItems();
@@ -365,7 +384,6 @@ public class PlanetaryConditionsDialog extends JDialog implements
         conditions.setGravity(Float.parseFloat(fldGrav.getText()));
         conditions.setEMI(cEMI.isSelected());
         conditions.setTerrainAffected(cTerrainAffected.isSelected());
-        conditions.setRunOnce(true);
 
         if (client != null) {
             send();
@@ -418,6 +436,25 @@ public class PlanetaryConditionsDialog extends JDialog implements
                                 Messages
                                         .getString("PlanetaryConditionsDialog.NumberFormatError"),
                                 JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int weather = currentWeather = choWeather.getSelectedIndex();
+            if (temper >= 30 && (weather == PlanetaryConditions.WE_LIGHT_HAIL ||
+                    weather == PlanetaryConditions.WE_HEAVY_HAIL ||
+                    weather == PlanetaryConditions.WE_LIGHT_SNOW || 
+                    weather == PlanetaryConditions.WE_SLEET ||
+                    weather == PlanetaryConditions.WE_SNOW_FLURRIES ||
+                    weather == PlanetaryConditions.WE_HEAVY_SNOW ||
+                    weather == PlanetaryConditions.WE_ICE_STORM || 
+                    weather == PlanetaryConditions.WE_BLIZZARD ||
+                    weather == PlanetaryConditions.WE_MOD_SNOW)) {
+                JOptionPane
+                        .showMessageDialog(
+                            frame, 
+                            Messages.getString("PlanetaryConditionsDialog.EnterValidTemperatureExtreme"), 
+                            Messages.getString("PlanetaryConditionsDialog.NumberFormatError"), 
+                            JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -482,7 +519,6 @@ public class PlanetaryConditionsDialog extends JDialog implements
             }
 
             // can't combine certain weather conditions with certain atmospheres
-            int weather = choWeather.getSelectedIndex();
             if ((atmo == PlanetaryConditions.ATMO_VACUUM
                     || atmo == PlanetaryConditions.ATMO_TRACE
                     || atmo == PlanetaryConditions.ATMO_THIN)

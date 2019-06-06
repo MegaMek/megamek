@@ -379,9 +379,10 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 }
             }
 
-            if (backwardsStep) {
+            if (backwardsStep &&
+                    mp.getGame().getBoard().contains(mp.getFinalCoords().translated((mp.getFinalFacing() + 3) % 6))) {
                 result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
-            } else {
+            } else if(mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
                 result.add(mp.clone().addStep(MoveStepType.FORWARDS));
             }
 

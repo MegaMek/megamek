@@ -150,19 +150,20 @@ public class PlanetaryConditionsDialog extends JDialog implements
         });
 
         choWeather.addActionListener(e -> {
-            int index = choWeather.getSelectedIndex();
-            if (currentWeather != index && 
-                    (index == PlanetaryConditions.WE_LIGHT_HAIL ||
-                     index == PlanetaryConditions.WE_HEAVY_HAIL ||
-                     index == PlanetaryConditions.WE_LIGHT_SNOW || 
-                     index == PlanetaryConditions.WE_SLEET ||
-                     index == PlanetaryConditions.WE_SNOW_FLURRIES ||
-                     index == PlanetaryConditions.WE_HEAVY_SNOW ||
-                     index == PlanetaryConditions.WE_ICE_STORM || 
-                     index == PlanetaryConditions.WE_BLIZZARD ||
-                     index == PlanetaryConditions.WE_MOD_SNOW)) {
-                currentWeather = index;
-                conditions.setRunOnce(false);
+            int weather = choWeather.getSelectedIndex();
+            if (currentWeather != weather && 
+                    (weather == PlanetaryConditions.WE_LIGHT_HAIL ||
+                     weather == PlanetaryConditions.WE_HEAVY_HAIL ||
+                     weather == PlanetaryConditions.WE_LIGHT_SNOW || 
+                     weather == PlanetaryConditions.WE_SLEET ||
+                     weather == PlanetaryConditions.WE_SNOW_FLURRIES ||
+                     weather == PlanetaryConditions.WE_HEAVY_SNOW ||
+                     weather == PlanetaryConditions.WE_ICE_STORM || 
+                     weather == PlanetaryConditions.WE_BLIZZARD ||
+                     weather == PlanetaryConditions.WE_MOD_SNOW)) {
+                currentWeather = weather;
+                conditions.setRunOnce(false);                
+                updateForm();
             }
         });
 
@@ -367,7 +368,10 @@ public class PlanetaryConditionsDialog extends JDialog implements
     }
 
     private void setConditions() {
+            setConditions(true);
+    }
 
+    private void setConditions(boolean shouldSendToClient) {
         // make the changes to the planetary conditions
         conditions.setLight(choLight.getSelectedIndex());
         conditions.setWeather(choWeather.getSelectedIndex());
@@ -385,155 +389,170 @@ public class PlanetaryConditionsDialog extends JDialog implements
         conditions.setEMI(cEMI.isSelected());
         conditions.setTerrainAffected(cTerrainAffected.isSelected());
 
-        if (client != null) {
+        if (client != null && shouldSendToClient) {
             send();
         }
+    }
+
+    private void updateForm() {
+        if (!validateForm()) {
+            return;
+        }
+
+        setConditions(false);
+        conditions.alterConditions(conditions);
+        refreshConditions();
     }
 
     private void send() {
         client.getClient().sendPlanetaryConditions(conditions);
     }
 
+    private boolean validateForm() {
+        // check for reasonable values and some conditionals
+        int temper = 25;
+        float grav = (float) 1.0;
+        try {
+            temper = Integer.parseInt(fldTemp.getText());
+        } catch (NumberFormatException er) {
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.EnterValidTemperature"),
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.NumberFormatError"),
+                            JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        try {
+            grav = Float.parseFloat(fldGrav.getText());
+        } catch (NumberFormatException er) {
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.EnterValidGravity"),
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.NumberFormatError"),
+                            JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if ((temper > 200) || (temper < -200)) {
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.EnterValidTemperature"),
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.NumberFormatError"),
+                            JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        int weather = currentWeather = choWeather.getSelectedIndex();
+        if (temper >= 30 && (weather == PlanetaryConditions.WE_LIGHT_HAIL ||
+                weather == PlanetaryConditions.WE_HEAVY_HAIL ||
+                weather == PlanetaryConditions.WE_LIGHT_SNOW || 
+                weather == PlanetaryConditions.WE_SLEET ||
+                weather == PlanetaryConditions.WE_SNOW_FLURRIES ||
+                weather == PlanetaryConditions.WE_HEAVY_SNOW ||
+                weather == PlanetaryConditions.WE_ICE_STORM || 
+                weather == PlanetaryConditions.WE_BLIZZARD ||
+                weather == PlanetaryConditions.WE_MOD_SNOW)) {
+            JOptionPane
+                    .showMessageDialog(
+                        frame, 
+                        Messages.getString("PlanetaryConditionsDialog.EnterValidTemperatureExtreme"), 
+                        Messages.getString("PlanetaryConditionsDialog.NumberFormatError"), 
+                        JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if ((grav < 0.1) || (grav > 10.0)) {
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.EnterValidGravity"),
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.NumberFormatError"),
+                            JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        //make sure that the minimum and maximum wind conditions fall within the actual
+        if(choWind.getSelectedIndex() < choMinWind.getSelectedIndex()) {
+            choMinWind.setSelectedIndex(choWind.getSelectedIndex());
+        }
+        if(choWind.getSelectedIndex() > choMaxWind.getSelectedIndex()) {
+            choMaxWind.setSelectedIndex(choWind.getSelectedIndex());
+        }
+
+        // can't combine certain wind conditions with certain atmospheres
+        int wind = choWind.getSelectedIndex();
+        int atmo = choAtmosphere.getSelectedIndex();
+        if ((atmo == PlanetaryConditions.ATMO_VACUUM)
+                && (wind > PlanetaryConditions.WI_NONE)) {
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.VacuumWind"),
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.Incompatible"),
+                            JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if ((atmo == PlanetaryConditions.ATMO_TRACE)
+                && (wind > PlanetaryConditions.WI_STORM)) {
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.TraceWind"),
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.Incompatible"),
+                            JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if ((atmo == PlanetaryConditions.ATMO_THIN)
+                && (wind > PlanetaryConditions.WI_TORNADO_F13)) {
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.ThinWind"),
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.Incompatible"),
+                            JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        // can't combine certain weather conditions with certain atmospheres
+        if ((atmo == PlanetaryConditions.ATMO_VACUUM
+                || atmo == PlanetaryConditions.ATMO_TRACE
+                || atmo == PlanetaryConditions.ATMO_THIN)
+                && (weather > PlanetaryConditions.WE_NONE)) {
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.VacuumWeather"),
+                            Messages
+                                    .getString("PlanetaryConditionsDialog.Incompatible"),
+                            JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butOkay) {
-            // check for reasonable values and some conditionals
-            int temper = 25;
-            float grav = (float) 1.0;
-            try {
-                temper = Integer.parseInt(fldTemp.getText());
-            } catch (NumberFormatException er) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.EnterValidTemperature"),
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.NumberFormatError"),
-                                JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            try {
-                grav = Float.parseFloat(fldGrav.getText());
-            } catch (NumberFormatException er) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.EnterValidGravity"),
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.NumberFormatError"),
-                                JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if ((temper > 200) || (temper < -200)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.EnterValidTemperature"),
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.NumberFormatError"),
-                                JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            int weather = currentWeather = choWeather.getSelectedIndex();
-            if (temper >= 30 && (weather == PlanetaryConditions.WE_LIGHT_HAIL ||
-                    weather == PlanetaryConditions.WE_HEAVY_HAIL ||
-                    weather == PlanetaryConditions.WE_LIGHT_SNOW || 
-                    weather == PlanetaryConditions.WE_SLEET ||
-                    weather == PlanetaryConditions.WE_SNOW_FLURRIES ||
-                    weather == PlanetaryConditions.WE_HEAVY_SNOW ||
-                    weather == PlanetaryConditions.WE_ICE_STORM || 
-                    weather == PlanetaryConditions.WE_BLIZZARD ||
-                    weather == PlanetaryConditions.WE_MOD_SNOW)) {
-                JOptionPane
-                        .showMessageDialog(
-                            frame, 
-                            Messages.getString("PlanetaryConditionsDialog.EnterValidTemperatureExtreme"), 
-                            Messages.getString("PlanetaryConditionsDialog.NumberFormatError"), 
-                            JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if ((grav < 0.1) || (grav > 10.0)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.EnterValidGravity"),
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.NumberFormatError"),
-                                JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            //make sure that the minimum and maximum wind conditions fall within the actual
-            if(choWind.getSelectedIndex() < choMinWind.getSelectedIndex()) {
-                choMinWind.setSelectedIndex(choWind.getSelectedIndex());
-            }
-            if(choWind.getSelectedIndex() > choMaxWind.getSelectedIndex()) {
-                choMaxWind.setSelectedIndex(choWind.getSelectedIndex());
-            }
-
-            // can't combine certain wind conditions with certain atmospheres
-            int wind = choWind.getSelectedIndex();
-            int atmo = choAtmosphere.getSelectedIndex();
-            if ((atmo == PlanetaryConditions.ATMO_VACUUM)
-                    && (wind > PlanetaryConditions.WI_NONE)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.VacuumWind"),
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.Incompatible"),
-                                JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if ((atmo == PlanetaryConditions.ATMO_TRACE)
-                    && (wind > PlanetaryConditions.WI_STORM)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.TraceWind"),
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.Incompatible"),
-                                JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if ((atmo == PlanetaryConditions.ATMO_THIN)
-                    && (wind > PlanetaryConditions.WI_TORNADO_F13)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.ThinWind"),
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.Incompatible"),
-                                JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // can't combine certain weather conditions with certain atmospheres
-            if ((atmo == PlanetaryConditions.ATMO_VACUUM
-                    || atmo == PlanetaryConditions.ATMO_TRACE
-                    || atmo == PlanetaryConditions.ATMO_THIN)
-                    && (weather > PlanetaryConditions.WE_NONE)) {
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.VacuumWeather"),
-                                Messages
-                                        .getString("PlanetaryConditionsDialog.Incompatible"),
-                                JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
+            if (!validateForm()) return;
             setConditions();
             setVisible(false);
         } else if (e.getSource() == butCancel) {

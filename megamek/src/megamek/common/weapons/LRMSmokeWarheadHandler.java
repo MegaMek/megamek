@@ -96,6 +96,17 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
             }
             server.deliverMissileSmoke(center, smokeType, vPhaseReport);
         }
+        
+        for (int dir = 0; dir <= 5; dir++) {
+            Coords tempcoords = coords.translated(dir);
+            if (!game.getBoard().contains(tempcoords)) {
+                continue;
+            }
+            if (coords.equals(tempcoords)) {
+                continue;
+            }
+            server.deliverMissileSmoke(tempcoords, smokeType, vPhaseReport);
+        }
         return true;
     }
 }

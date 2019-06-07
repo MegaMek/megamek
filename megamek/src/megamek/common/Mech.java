@@ -1266,11 +1266,13 @@ public abstract class Mech extends Entity {
                 }
             }
         }
+        // Medium shield reduces jump mp by 1/shield
+        jump -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
 
         if (hasModularArmor() && !ignoremodulararmor) {
             jump--;
         }
-
+        
         if (gravity) {
             return Math.max(applyGravityEffectsOnMP(jump), 0);
         }
@@ -1287,8 +1289,7 @@ public abstract class Mech extends Entity {
     public int getPartialWingJumpBonus(Mounted mount) {
         int bonus = 0;
         if (game != null) {
-            if ((getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)
-                    || (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)) {
+            if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
                     case PlanetaryConditions.ATMO_VACUUM:
                         bonus = 0;
@@ -1312,9 +1313,7 @@ public abstract class Mech extends Entity {
                     default:
                         bonus = 2;
                 }
-            }
-            if ((getWeightClass() == EntityWeightClass.WEIGHT_HEAVY)
-                    || (getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT)) {
+            } else {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
                     case PlanetaryConditions.ATMO_VACUUM:
                         bonus = 0;
@@ -1339,8 +1338,7 @@ public abstract class Mech extends Entity {
                 }
             }
         } else {
-            if ((getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)
-                    || (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)) {
+            if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
                 bonus = 2;
             } else {
                 bonus = 1;

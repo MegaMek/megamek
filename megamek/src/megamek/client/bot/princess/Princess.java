@@ -609,9 +609,10 @@ public class Princess extends BotClient {
                     // Add expected damage from the chosen FiringPlan to the 
                     // damageMap for the target enemy.
                     for(WeaponFireInfo shot : plan) {
-                        int targetId = shot.getTarget().getTargetId();
-                        double newDamage = damageMap.get(targetId) + shot.getExpectedDamage();
-                        damageMap.replace(targetId, newDamage);
+                        Integer targetId = shot.getTarget().getTargetId();
+                        double existingTargetDamage = damageMap.getOrDefault(targetId, 0.0);
+                        double newDamage = existingTargetDamage + shot.getExpectedDamage();
+                        damageMap.put(targetId, newDamage);
                     }
     
                     // tell the game I want to fire

@@ -605,6 +605,8 @@ public class WeaponType extends EquipmentType {
     
     // Fusillade works like a one-shot weapon but has a second round.
     public static final BigInteger F_DOUBLE_ONESHOT = BigInteger.valueOf(1).shiftLeft(68);
+    // ER flamers do half damage in heat mode
+    public static final BigInteger F_ER_FLAMER = BigInteger.valueOf(1).shiftLeft(69);
     
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;

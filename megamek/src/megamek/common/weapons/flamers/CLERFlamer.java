@@ -36,6 +36,7 @@ public class CLERFlamer extends FlamerWeapon {
         name = "ER Flamer";
         setInternalName("CLERFlamer");
         addLookupName("CL ER Flamer");
+        flags = flags.or(WeaponType.F_ER_FLAMER);
         heat = 4;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;

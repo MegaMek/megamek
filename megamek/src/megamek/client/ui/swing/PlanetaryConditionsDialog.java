@@ -149,7 +149,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
             }
         });
 
-        choWeather.addItemListener(e -> {
+        choWeather.addActionListener(e -> {
             int index = choWeather.getSelectedIndex();
             if (currentWeather != index && 
                     (index == PlanetaryConditions.WE_LIGHT_HAIL ||

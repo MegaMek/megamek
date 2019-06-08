@@ -4014,7 +4014,7 @@ public class Compute {
                     }
                     break;
                 case ARC_HEXSIDE_0:
-                    if ((fa >= 330) && (fa <= 30)) {
+                    if ((fa >= 330) || (fa <= 30)) {
                         return true;
                     }
                     break;

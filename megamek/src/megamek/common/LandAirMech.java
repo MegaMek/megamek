@@ -2108,18 +2108,4 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             }
         }
     }
-    
-    /**
-     * Override of Entity's getBadCriticals which translates the given location
-     * to its aero equivalent if the LAM is in fighter mode.
-     */
-    @Override
-    public int getBadCriticals(int type, int index, int loc) {
-        if(getConversionMode() == CONV_MODE_FIGHTER) {
-            return(super.getBadCriticals(type, index, getAeroLocation(loc)));
-        } else {
-            return(super.getBadCriticals(type,  index, loc));
-        }
-    }
-
 }

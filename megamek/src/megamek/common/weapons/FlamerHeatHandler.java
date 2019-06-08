@@ -68,7 +68,7 @@ public class FlamerHeatHandler extends WeaponHandler {
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                     .getCover(), Compute.targetSideTable(ae, entityTarget,
-                    weapon.getCalledShot().getCall()))) {
+                            weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg,
                         hits, nCluster, bldgAbsorbs);
@@ -79,7 +79,7 @@ public class FlamerHeatHandler extends WeaponHandler {
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(r);
-            
+
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
@@ -87,13 +87,13 @@ public class FlamerHeatHandler extends WeaponHandler {
             if (wtype.hasFlag(WeaponType.F_ER_FLAMER)) {
                 heatDamage = Math.max(1,  heatDamage / 2);
             }
-           if (entityTarget.getArmor(hit) > 0 && 
+            if (entityTarget.getArmor(hit) > 0 && 
                     ((entityTarget.getArmorType(hit.getLocation()) == 
-                        EquipmentType.T_ARMOR_HEAT_DISSIPATING) ||
-                     (entityTarget.getArmorType(hit.getLocation()) == 
-                        EquipmentType.T_ARMOR_REFLECTIVE))){
-               
-               int actual = Math.max(heatDamage,  heatDamage / 2);
+                    EquipmentType.T_ARMOR_HEAT_DISSIPATING) ||
+                            (entityTarget.getArmorType(hit.getLocation()) == 
+                            EquipmentType.T_ARMOR_REFLECTIVE))){
+
+                int actual = Math.max(heatDamage,  heatDamage / 2);
                 entityTarget.heatFromExternal += actual;
                 r.add(actual);
                 r.choose(true);

@@ -520,20 +520,19 @@ public class MiscType extends EquipmentType {
             weaponWeight /= 10;
             return Math.ceil(weaponWeight * 2.0f) / 2.0f;
         } else if (hasFlag(F_SPONSON_TURRET)) {
-            double weaponWeight = 0;
             /* The sponson turret mechanism is equal to 10% of the weight of all mounted weapons, rounded
              * up to the half ton. Since the turrets come in pairs, splitting the weight between them
              * may result in a quarter-ton result for a single turret, but the overall unit weight will
              * be correct.
              */
+            double weaponWeight = 0;
             for (Mounted m : entity.getWeaponList()) {
                 if (m.isSponsonTurretMounted()) {
                     weaponWeight += m.getType().getTonnage(entity);
                 }
             }
             weaponWeight /= 10.0;
-            return Math.ceil(weaponWeight * 2.0) / 4.0;
-
+            return Math.ceil(weaponWeight * 2.0) / 2.0 / entity.countWorkingMisc(MiscType.F_SPONSON_TURRET);
         } else if (hasFlag(F_PINTLE_TURRET)) {
             double weaponWeight = 0;
             // 5% of linked weapons' weight

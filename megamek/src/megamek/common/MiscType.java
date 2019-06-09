@@ -1473,7 +1473,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createFieldKitchen());
 
         EquipmentType.addType(MiscType.createImprovedJumpJet());
-        EquipmentType.addType(MiscType.createVehicluarJumpJet());
+        EquipmentType.addType(MiscType.createVehicularJumpJet());
         EquipmentType.addType(MiscType.createJumpBooster());
         EquipmentType.addType(MiscType.createFerroFibrousPrototype());
         EquipmentType.addType(MiscType.createFerroAlumPrototype());
@@ -1989,7 +1989,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createVehicluarJumpJet() {
+    public static MiscType createVehicularJumpJet() {
         MiscType misc = new MiscType();
 
         misc.name = "Jump Jet";

@@ -2002,11 +2002,11 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_STANDARD;
         misc.bv = 0;
         misc.rulesRefs = "348,TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2650,3083)
-                .setApproximate(false, true).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_CHH).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_X, RATING_F, RATING_E)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(2650, 3083, DATE_NONE, 2840, 3083)
+            .setApproximate(false, true, false, false, true).setPrototypeFactions(F_TH)
+            .setProductionFactions(F_CHH).setTechRating(RATING_E)
+            .setAvailability(RATING_E, RATING_X, RATING_F, RATING_E)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

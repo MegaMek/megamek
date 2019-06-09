@@ -1473,7 +1473,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createFieldKitchen());
 
         EquipmentType.addType(MiscType.createImprovedJumpJet());
-        EquipmentType.addType(MiscType.createVehicluarJumpJet());
+        EquipmentType.addType(MiscType.createVehicularJumpJet());
         EquipmentType.addType(MiscType.createJumpBooster());
         EquipmentType.addType(MiscType.createFerroFibrousPrototype());
         EquipmentType.addType(MiscType.createFerroAlumPrototype());
@@ -1989,7 +1989,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createVehicluarJumpJet() {
+    public static MiscType createVehicularJumpJet() {
         MiscType misc = new MiscType();
 
         misc.name = "Jump Jet";
@@ -2002,11 +2002,11 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_STANDARD;
         misc.bv = 0;
         misc.rulesRefs = "348,TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2650,3083)
-                .setApproximate(false, true).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_CHH).setTechRating(RATING_E)
-                .setAvailability(RATING_E, RATING_X, RATING_F, RATING_E)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(2650, 3083, DATE_NONE, 2840, 3083)
+            .setApproximate(false, true, false, false, true).setPrototypeFactions(F_TH)
+            .setProductionFactions(F_CHH).setTechRating(RATING_E)
+            .setAvailability(RATING_E, RATING_X, RATING_F, RATING_E)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

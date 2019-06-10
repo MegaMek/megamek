@@ -83,6 +83,11 @@ public class Dropship extends SmallCraft {
     private int collarType = COLLAR_STANDARD;
 
     @Override
+    public boolean tracksHeatBuildup() {
+        return false;
+    }
+
+    @Override
     public int getUnitType() {
         return UnitType.DROPSHIP;
     }

@@ -104,6 +104,11 @@ public class Jumpship extends Aero {
     }
 
     @Override
+    public boolean tracksHeatBuildup() {
+        return false;
+    }
+
+    @Override
     public int getUnitType() {
         return UnitType.JUMPSHIP;
     }

@@ -84,6 +84,7 @@ public class AeroGroundPathFinder {
 
         try {
             aeroGroundPaths = new ArrayList<MovePath>();
+            visitedCoords.clear();
 
             // if we're out of control, then we can't actually do anything
             if(((IAero) startingEdge.getEntity()).isOutControlTotal()) {
@@ -416,6 +417,6 @@ public class AeroGroundPathFinder {
             }
         }
 
-        return newHexVisited;
+        return !newHexVisited;
     }
 }

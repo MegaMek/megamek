@@ -1,0 +1,157 @@
+Version:1.0
+Omni-Corvis
+B
+
+Config:Biped
+TechBase:Clan
+Era:2864
+Source:Succession Wars
+Rules Level:2
+
+Mass:50
+Engine:250 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:15
+RA Armor:15
+LT Armor:16
+RT Armor:16
+CT Armor:24
+HD Armor:8
+LL Armor:20
+RL Armor:20
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:5
+LRM 20, Right Arm
+LRM 20, Left Arm
+Narc, Right Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Narc-capable
+Clan Ammo LRM-20 (Clan) Narc-capable
+Clan Ammo LRM-20 (Clan) Narc-capable
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Narc-capable
+Clan Ammo LRM-20 (Clan) Narc-capable
+Clan Ammo LRM-20 (Clan) Narc-capable
+-Empty-
+
+Left Torso:
+CLMG
+CLMG
+Clan Machine Gun Ammo - Half
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLNarcBeacon
+ISNarc Pods
+ISNarc Pods
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Niles Industriplex Alpha
+primaryFactory:Tokasha, Niles
+systemmodel:CHASSIS:Model MH-50
+systemmodel:ARMOR:Compound H17/1 Ferro-Fibrous
+systemmodel:TARGETING:Version Gamma-V TTS
+

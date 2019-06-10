@@ -30,6 +30,7 @@ import megamek.common.Mech;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
@@ -67,7 +68,7 @@ public class FlamerHeatHandler extends WeaponHandler {
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                     .getCover(), Compute.targetSideTable(ae, entityTarget,
-                    weapon.getCalledShot().getCall()))) {
+                            weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg,
                         hits, nCluster, bldgAbsorbs);
@@ -78,25 +79,31 @@ public class FlamerHeatHandler extends WeaponHandler {
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(r);
-            
+
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
+            int heatDamage = wtype.getDamage();
+            if (wtype.hasFlag(WeaponType.F_ER_FLAMER)) {
+                heatDamage = Math.max(1,  heatDamage / 2);
+            }
             if (entityTarget.getArmor(hit) > 0 && 
                     ((entityTarget.getArmorType(hit.getLocation()) == 
-                        EquipmentType.T_ARMOR_HEAT_DISSIPATING) ||
-                     (entityTarget.getArmorType(hit.getLocation()) == 
-                        EquipmentType.T_ARMOR_REFLECTIVE))){
-                entityTarget.heatFromExternal += 1;
-                r.add(1);
+                    EquipmentType.T_ARMOR_HEAT_DISSIPATING) ||
+                            (entityTarget.getArmorType(hit.getLocation()) == 
+                            EquipmentType.T_ARMOR_REFLECTIVE))){
+
+                int actual = Math.max(heatDamage,  heatDamage / 2);
+                entityTarget.heatFromExternal += actual;
+                r.add(actual);
                 r.choose(true);
                 r.messageId=3406;
-                r.add(2);
+                r.add(heatDamage);
                 r.add(EquipmentType.armorNames
                         [entityTarget.getArmorType(hit.getLocation())]);
             } else {
-                entityTarget.heatFromExternal += 2;
-                r.add(2);
+                entityTarget.heatFromExternal += heatDamage;
+                r.add(heatDamage);
                 r.choose(true);
             }                        
             vPhaseReport.addElement(r);

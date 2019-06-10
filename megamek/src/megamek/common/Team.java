@@ -84,7 +84,7 @@ public final class Team extends TurnOrdered {
     }
     
     public void cacheObversverStatus() {
-        ObserverTeam = new Boolean(true);
+        ObserverTeam = Boolean.valueOf(true);
         for (int i = 0; i < players.size(); i++) {
             if (!players.get(i).isObserver()) {
                 ObserverTeam = false;

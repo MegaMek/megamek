@@ -578,12 +578,12 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             if (m.hasDoubleHeatSinks()) {
                 sinksR.append(Messages.getString(
                         "MechDisplay.activeSinksTextDouble", //$NON-NLS-1$
-                        new Object[]{new Integer(sinks),
-                                     new Integer(sinks * 2)}));
+                        new Object[]{Integer.valueOf(sinks),
+                                     Integer.valueOf(sinks * 2)}));
             } else {
                 sinksR.append(Messages.getString(
                         "MechDisplay.activeSinksTextSingle", //$NON-NLS-1$
-                        new Object[]{new Integer(sinks)}));
+                        new Object[]{Integer.valueOf(sinks)}));
             }
 
             boolean hasTSM = false;

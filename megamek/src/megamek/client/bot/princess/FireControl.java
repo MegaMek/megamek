@@ -80,14 +80,14 @@ import megamek.common.weapons.missiles.MMLWeapon;
  */
 public class FireControl {
 
-    private static final double DAMAGE_UTILITY = 1.0;
-    private static final double CRITICAL_UTILITY = 10.0;
-    private static final double KILL_UTILITY = 50.0;
-    private static final double OVERHEAT_DISUTILITY = 5.0;
-    private static final double OVERHEAT_DISUTILITY_AERO = 50.0; // Aeros *really* don't want to overheat.
-    private static final double EJECTED_PILOT_DISUTILITY = 1000.0;
-    private static final double CIVILIAN_TARGET_DISUTILITY = 250.0;
-    private static final double TARGET_HP_FRACTION_DEALT_UTILITY = -30.0;
+    protected static final double DAMAGE_UTILITY = 1.0;
+    protected static final double CRITICAL_UTILITY = 10.0;
+    protected static final double KILL_UTILITY = 50.0;
+    protected static final double OVERHEAT_DISUTILITY = 5.0;
+    protected static final double OVERHEAT_DISUTILITY_AERO = 50.0; // Aeros *really* don't want to overheat.
+    protected static final double EJECTED_PILOT_DISUTILITY = 1000.0;
+    protected static final double CIVILIAN_TARGET_DISUTILITY = 250.0;
+    protected static final double TARGET_HP_FRACTION_DEALT_UTILITY = -30.0;
     static final int DOES_NOT_TRACK_HEAT = 999;
 
     private static final double TARGET_POTENTIAL_DAMAGE_UTILITY = 1.0;
@@ -246,7 +246,8 @@ public class FireControl {
      */
     public enum FireControlType {
         Basic, 
-        Infantry
+        Infantry,
+        MultiTarget
     }
     
     protected final Princess owner;
@@ -1295,7 +1296,7 @@ public class FireControl {
         firingPlan.setUtility(utility);
     }
 
-    private double calcStrategicBuildingTargetUtility(final Targetable target) {
+    protected double calcStrategicBuildingTargetUtility(final Targetable target) {
         if (!(target instanceof BuildingTarget)) {
             return 0;
         }
@@ -1309,7 +1310,7 @@ public class FireControl {
         return 0;
     }
 
-    private double calcPriorityUnitTargetUtility(final Targetable target) {
+    protected double calcPriorityUnitTargetUtility(final Targetable target) {
         if (!(target instanceof Entity)) {
             return 0;
         }
@@ -1321,7 +1322,7 @@ public class FireControl {
         return 0;
     }
 
-    private double calcCivilianTargetDisutility(final Targetable target) {
+    protected double calcCivilianTargetDisutility(final Targetable target) {
         if (!(target instanceof Entity)) {
             return 0;
         }
@@ -1338,7 +1339,7 @@ public class FireControl {
         return CIVILIAN_TARGET_DISUTILITY;
     }
 
-    private double calcCommandUtility(final Targetable target) {
+    protected double calcCommandUtility(final Targetable target) {
         if (!(target instanceof Entity)) {
             return 0;
         }
@@ -1432,7 +1433,7 @@ public class FireControl {
      * value. This is mostly here to not clutter up the utility calculation
      * method with all this extra math.
      */
-    private double calcTargetPotentialDamageMultiplier(final Targetable target) {
+    protected double calcTargetPotentialDamageMultiplier(final Targetable target) {
         final double target_damage = calcTargetPotentialDamage(target);
         if (0.0 == target_damage) { // Do not calculate for zero damage units.
             return 1.0;
@@ -1870,7 +1871,7 @@ public class FireControl {
         return myPlan;
     }
 
-    private int calcHeatTolerance(final Entity entity,
+    protected int calcHeatTolerance(final Entity entity,
                                   @Nullable Boolean isAero) {
 
         // If the unit doesn't track heat, we won't worry about it.
@@ -1878,8 +1879,13 @@ public class FireControl {
             return DOES_NOT_TRACK_HEAT;
         }
 
-        final int baseTolerance = entity.getHeatCapacity() - entity.getHeat();
+        int baseTolerance = entity.getHeatCapacity() - entity.getHeat();
 
+        // if we've got a combat computer, we get an automatic
+        if(entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
+            baseTolerance += 4;
+        }
+        
         if (null == isAero) {
             isAero = entity.isAero();
         }
@@ -1888,7 +1894,7 @@ public class FireControl {
         if (isAero) {
             return baseTolerance;
         }
-
+        
         return baseTolerance + 5; // todo add Heat Tolerance to Behavior Settings.
     }
 
@@ -2239,7 +2245,7 @@ public class FireControl {
      * @param game    The game being played.
      * @return A list of potential targets.
      */
-    private List<Targetable> getTargetableEnemyEntities(final Entity shooter,
+    protected List<Targetable> getTargetableEnemyEntities(final Entity shooter,
                                                         final IGame game,
                                                         final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
@@ -2403,8 +2409,7 @@ public class FireControl {
         if (null == plan) {
             return;
         }
-        final Targetable target = plan.getTarget();
-
+        
         // Loading ammo for all my weapons.
         for (final WeaponFireInfo info : plan) {
             final Mounted currentWeapon = info.getWeapon();
@@ -2418,7 +2423,7 @@ public class FireControl {
                 continue;
             }
 
-            final Mounted mountedAmmo = getPreferredAmmo(shooter, target, weaponType);
+            final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), weaponType);
             // Log failures.
             if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
                 owner.log(getClass(), "loadAmmo(Entity, Targetable)", LogLevel.WARNING,

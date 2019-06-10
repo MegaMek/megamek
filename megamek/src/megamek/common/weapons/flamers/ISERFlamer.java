@@ -37,6 +37,7 @@ public class ISERFlamer extends FlamerWeapon {
         setInternalName(name);
         addLookupName("IS ER Flamer");
         addLookupName("ISERFlamer");
+        flags = flags.or(WeaponType.F_ER_FLAMER);
         heat = 4;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;

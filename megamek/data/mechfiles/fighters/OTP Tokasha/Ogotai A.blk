@@ -1,0 +1,119 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Ogotai
+</Name>
+
+<Model>
+A
+</Model>
+
+<year>
+2874
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+8
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+12
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech>
+0
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+56
+41
+41
+38
+</armor>
+
+<Nose Equipment>
+
+CLMediumPulseLaser
+CLSRM6
+Clan Ammo SRM-6 (Clan) Artemis-capable
+CLArtemisIV
+CLCASE
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+CLMediumPulseLaser
+CLSRM6
+Clan Ammo SRM-6 (Clan) Artemis-capable
+CLArtemisIV
+CLCASE
+
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+
+CLMediumPulseLaser
+CLSRM6
+Clan Ammo SRM-6 (Clan) Artemis-capable
+CLArtemisIV
+CLCASE
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+</Aft Equipment>
+
+<source>
+TRO Golden Century
+</source>
+
+<tonnage>
+45.0
+</tonnage>
+

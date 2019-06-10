@@ -1,0 +1,120 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Goth
+</Name>
+
+<Model>
+Prime
+</Model>
+
+<year>
+2872
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+19
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+480
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+74
+54
+54
+48
+</armor>
+
+<Nose Equipment>
+
+CLLargePulseLaser
+CLERMediumLaser
+CLERMediumLaser
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+CLLRM15
+Clan Ammo LRM-15 (Clan) Artemis-capable
+CLArtemisIV
+CLSmallPulseLaser
+CLCASE
+
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+
+CLLRM15
+Clan Ammo LRM-15 (Clan) Artemis-capable
+CLArtemisIV
+CLSmallPulseLaser
+CLCASE
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+CLERMediumLaser
+CLERMediumLaser
+
+</Aft Equipment>
+
+<source>
+TRO Golden Century
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

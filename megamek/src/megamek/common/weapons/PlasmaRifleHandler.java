@@ -65,8 +65,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                 nCluster, bldgAbsorbs);
-        if (!missed
-                && ((entityTarget instanceof Mech) || (entityTarget instanceof Aero))) {
+        if (!missed && entityTarget.tracksHeatBuildup()) {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);

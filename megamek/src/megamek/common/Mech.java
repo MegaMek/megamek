@@ -1832,6 +1832,11 @@ public abstract class Mech extends Entity {
         }
         return sinksUnderwater;
     }
+    
+    @Override
+    public boolean tracksHeatBuildup() {
+        return true;
+    }
 
     /**
      * Returns the name of the type of movement used. This is mech-specific.

@@ -58,7 +58,7 @@ public class FlamerHeatHandler extends WeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        if ((entityTarget instanceof Mech)
+        if ((entityTarget.tracksHeatBuildup())
                 && game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
             // heat
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),

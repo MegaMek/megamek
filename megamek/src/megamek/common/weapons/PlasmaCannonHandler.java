@@ -72,6 +72,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      *      entityTarget, Vector<Report> vPhaseReport, HitData hit, Building
      *      bldg, int hits, int nCluster, int bldgAbsorbs)
      */
+    @Override
     protected void handlePartialCoverHit(Entity entityTarget,
             Vector<Report> vPhaseReport, HitData hit, Building bldg, int hits,
             int nCluster, int bldgAbsorbs) {
@@ -215,7 +216,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
 
-        if ((entityTarget instanceof Mech) || (entityTarget instanceof Aero)) {
+        if (entityTarget.tracksHeatBuildup()) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(),
                     waa.getAimingMode(), toHit.getCover());

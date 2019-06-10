@@ -3352,6 +3352,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         return mod;
     }
+    
+    /**
+     * Used to identify an Entity that tracks heat buildup (Mechs, ASFs, and small craft).
+     * 
+     * @return Whether the unit tracks heat buildup.
+     */
+    public boolean tracksHeatBuildup() {
+        return false;
+    }
 
     /**
      * Creates a new mount for this equipment and adds it in.

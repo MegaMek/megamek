@@ -1,0 +1,113 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Issedone
+</Name>
+
+<Model>
+B
+</Model>
+
+<year>
+2871
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech>
+0
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+44
+23
+23
+30
+</armor>
+
+<Nose Equipment>
+
+CLERMediumLaser
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+CLLRM10
+CLLRM10 Ammo
+CLCASE
+
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+
+CLLRM10
+CLLRM10 Ammo
+CLCASE
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+CLERMediumLaser
+
+</Aft Equipment>
+
+<source>
+TRO Golden Century
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+

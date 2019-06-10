@@ -1,0 +1,164 @@
+Version:1.0
+Minsk
+MNK-101
+
+Config:Biped
+TechBase:Mixed (Clan Chassis)
+Era:2830
+Source:Succession Wars
+Rules Level:4
+
+Mass:70
+Engine:210 Fusion (Clan) Engine
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:22
+RA Armor:22
+LT Armor:22
+RT Armor:22
+CT Armor:33
+HD Armor:9
+LL Armor:28
+RL Armor:28
+RTL Armor:8
+RTR Armor:8
+RTC Armor:9
+
+Weapons:9
+Gauss Rifle, Left Arm
+Gauss Rifle, Right Arm
+SRM 6, Left Torso
+Small Pulse Laser, Left Torso
+Machine Gun, Left Torso
+LRM 10, Left Torso
+SRM 6, Right Torso
+Small Pulse Laser, Right Torso
+Machine Gun, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo
+Clan Ferro-Fibrous
+Clan Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo
+Clan Ferro-Fibrous
+Clan Endo Steel
+
+Left Torso:
+CLSRM6
+Clan Ammo SRM-6
+CLSmallPulseLaser
+CLMG
+CLLRM10
+Clan Ammo LRM-10
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Right Torso:
+CLSRM6
+Clan Ammo SRM-6
+CLSmallPulseLaser
+CLMG
+Clan Machine Gun Ammo - Full
+BeagleActiveProbe
+BeagleActiveProbe
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Gauss Ammo
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+systemmanufacturer:CHASSIS:Starcorp
+systemmodel:CHASSIS:100+
+systemmanufacturer:ARMOR:Arcadia
+systemmodel:ARMOR:Compound Delta VII Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Arcadian Communications 
+systemmodel:COMMUNICATIONS:Pauley-Bronson Z
+systemmanufacturer:TARGETING:Eden Microelectronics
+systemmodel:TARGETING:Wasat Aggressor Type B with Active Probe
+

@@ -10802,8 +10802,10 @@ public class Server implements Runnable {
      */
 
     public void deliverMissileSmoke(Coords coords, int smokeType, Vector<Report> vPhaseReport) {
-        Report r = new Report(5185, Report.PUBLIC);
+        Report r = new Report(5183, Report.PUBLIC);
         r.indent(2);
+        //Report either light or heavy smoke, as appropriate
+        r.choose(smokeType == SmokeCloud.SMOKE_LIGHT);
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, smokeType, 3);

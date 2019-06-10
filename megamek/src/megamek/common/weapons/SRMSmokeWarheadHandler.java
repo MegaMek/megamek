@@ -90,7 +90,7 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
         // Handle munitions.
         if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
             int damage = wtype.getRackSize() * calcDamagePerHit();
-            int radius = (int) Math.round(damage / 10.0);
+            int radius = (int) Math.ceil(damage / 10.0);
             int smokeType = SmokeCloud.SMOKE_LIGHT;
             if (damage > 5) {
                 smokeType = SmokeCloud.SMOKE_HEAVY;
@@ -101,13 +101,9 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
             if (radius > 1) {
                 for (int dir = 0; dir <= 5; dir++) {
                     Coords tempcoords = coords.translated(dir);
-                    if (!game.getBoard().contains(tempcoords)) {
-                        continue;
+                    if (game.getBoard().contains(tempcoords)) {
+                        server.deliverMissileSmoke(tempcoords, smokeType, vPhaseReport);
                     }
-                    if (coords.equals(tempcoords)) {
-                        continue;
-                    }
-                    server.deliverMissileSmoke(tempcoords, smokeType, vPhaseReport);
                 }
             }
         }

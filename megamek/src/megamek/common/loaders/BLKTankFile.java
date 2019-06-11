@@ -34,14 +34,52 @@ import megamek.common.Tank;
 import megamek.common.util.BuildingBlock;
 
 public class BLKTankFile extends BLKFile implements IMechLoader {
+    
+    private boolean superheavy = false;
+    
     public BLKTankFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
+    @Override
+    protected int defaultVGLFacing(int location, boolean rearFacing) {
+        if (superheavy) {
+            switch (location) {
+                case SuperHeavyTank.LOC_FRONTRIGHT:
+                    return 1;
+                case SuperHeavyTank.LOC_REARRIGHT:
+                    return 2;
+                case SuperHeavyTank.LOC_REAR:
+                    return 2;
+                case SuperHeavyTank.LOC_REARLEFT:
+                    return 4;
+                case SuperHeavyTank.LOC_FRONTLEFT:
+                    return 4;
+                case SuperHeavyTank.LOC_FRONT:
+                case SuperHeavyTank.LOC_TURRET:
+                case SuperHeavyTank.LOC_TURRET_2:
+                default:
+                    return 0;
+            }
+        } else {
+            switch (location) {
+                case Tank.LOC_RIGHT:
+                    return 2;
+                case Tank.LOC_REAR:
+                    return 3;
+                case Tank.LOC_LEFT:
+                    return 5;
+                case Tank.LOC_FRONT:
+                case Tank.LOC_TURRET:
+                case Tank.LOC_TURRET_2:
+                default:
+                    return 0;
+            }
+        }
+    }
+
+    @Override
     public Entity getEntity() throws EntityLoadingException {
-
-        boolean superheavy = false;
-
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
         }

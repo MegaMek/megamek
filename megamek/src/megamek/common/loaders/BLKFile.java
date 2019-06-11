@@ -99,6 +99,19 @@ public class BLKFile {
     public static final int SOLAR = 12;
     
     private static final String COMSTAR_BAY = "c*";
+    
+    /**
+     * If a vehicular grenade launcher does not have a facing provided, assign a default facing.
+     * For vehicles this is determined by location. For protomechs the only legal location is
+     * the torso, but it may be mounted rear-facing.
+     * 
+     * @param location The location where the VGL is mounted.
+     * @param rear     Whether the VGL is rear-facing.
+     * @return         The facing to assign to the VGL.
+     */
+    protected int defaultVGLFacing(int location, boolean rear) {
+        return rear ? 3 : 0;
+    }
 
     protected void loadEquipment(Entity t, String sName, int nLoc)
             throws EntityLoadingException {
@@ -174,9 +187,8 @@ public class BLKFile {
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
-                            // If no facing specified, assume front
                             if (facing == -1) {
-                                mount.setFacing(0);
+                                mount.setFacing(defaultVGLFacing(nLoc, false));
                             } else {
                                 mount.setFacing(facing);
                             }

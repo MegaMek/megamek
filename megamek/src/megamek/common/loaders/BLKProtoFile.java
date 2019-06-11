@@ -31,8 +31,10 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
+import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestProtomech;
 
@@ -165,9 +167,15 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         } else {
             prefix = "IS ";
         }
+        
+        boolean rearMount = false;
 
         for (String element : saEquip) {
             String equipName = element.trim();
+            if (equipName.startsWith("(R) ")) {
+                rearMount = true;
+                equipName = equipName.substring(4);
+            }
 
             // ProtoMech Ammo comes in non-standard amounts.
             int ammoIndex = equipName.indexOf(" (");
@@ -201,7 +209,12 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                     if (ammoIndex > 0) {
                         t.addEquipment(etype, Protomech.LOC_BODY, false, shotsCount);
                     } else if (TestProtomech.requiresSlot(etype)) {
-                        t.addEquipment(etype, nLoc);
+                        Mounted mount = t.addEquipment(etype, nLoc);
+                        // Need to set facing for VGLs
+                        if ((etype instanceof WeaponType)
+                                && etype.hasFlag(WeaponType.F_VGL)) {
+                            mount.setFacing(defaultVGLFacing(nLoc, rearMount));
+                        }
                     } else {
                         t.addEquipment(etype, Protomech.LOC_BODY);
                     }

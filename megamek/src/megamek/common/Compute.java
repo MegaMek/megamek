@@ -111,6 +111,11 @@ public class Compute {
     public static final int ARC_AFT_WPL = 47;
     public static final int ARC_LEFT_BROADSIDE_WPL = 48;
     public static final int ARC_RIGHT_BROADSIDE_WPL = 49;
+    
+    /** Lookup table for vehicular grenade launcher firing arc from facing */
+    private static final int[] VGL_FIRING_ARCS = { ARC_VGL_FRONT, ARC_VGL_RF, ARC_VGL_RR,
+            ARC_VGL_REAR, ARC_VGL_LR, ARC_VGL_LF
+    };
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
@@ -3749,6 +3754,16 @@ public class Compute {
             fa += 360;
         }
         return (fa > 330) || (fa < 30);
+    }
+    
+    /**
+     * Converts the facing of a vehicular grenade launcher to the corresponding firing arc.
+     * 
+     * @param facing The VGL facing returned by {@link Mounted#getFacing()}
+     * @return       The firing arc
+     */
+    public static int firingArcFromVGLFacing(int facing) {
+        return VGL_FIRING_ARCS[facing % 6];
     }
 
     public static boolean isInArc(Coords src, int facing, Targetable target,

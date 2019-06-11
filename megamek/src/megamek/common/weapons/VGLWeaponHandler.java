@@ -64,6 +64,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
      * @return a <code>boolean</code> value indicating whether this should be
      * kept or not
      */
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
@@ -75,9 +76,13 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
         AmmoType atype = (AmmoType) ammo.getType();
         int facing = weapon.getFacing();
         ArrayList<Coords> affectedCoords = new ArrayList<Coords>(3);
-        affectedCoords.add(ae.getPosition().translated(ae.getFacing() + facing));
-        affectedCoords.add(ae.getPosition().translated((ae.getFacing() + facing + 1) % 6));
-        affectedCoords.add(ae.getPosition().translated((ae.getFacing() + facing + 5) % 6));
+        int af = ae.getFacing();
+        if (ae.isSecondaryArcWeapon(ae.getEquipmentNum(weapon))) {
+            af = ae.getSecondaryFacing();
+        }
+        affectedCoords.add(ae.getPosition().translated(af + facing));
+        affectedCoords.add(ae.getPosition().translated((af + facing + 1) % 6));
+        affectedCoords.add(ae.getPosition().translated((af + facing + 5) % 6));
         
         Report r = new Report(3117);
         r.indent();

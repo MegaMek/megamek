@@ -802,17 +802,17 @@ public class Tank extends Entity {
         if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
             switch (mounted.getFacing()) {
                 case 0:
-                    return Compute.ARC_HEXSIDE_0;
+                    return Compute.ARC_VGL_FRONT;
                 case 1:
-                    return Compute.ARC_HEXSIDE_1;
+                    return Compute.ARC_VGL_RF;
                 case 2:
-                    return Compute.ARC_HEXSIDE_2;
+                    return Compute.ARC_VGL_RR;
                 case 3:
-                    return Compute.ARC_HEXSIDE_3;
+                    return Compute.ARC_VGL_REAR;
                 case 4:
-                    return Compute.ARC_HEXSIDE_4;
+                    return Compute.ARC_VGL_LR;
                 case 5:
-                    return Compute.ARC_HEXSIDE_5;
+                    return Compute.ARC_VGL_LF;
             }
         }
         switch (mounted.getLocation()) {

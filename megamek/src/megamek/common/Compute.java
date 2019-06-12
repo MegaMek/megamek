@@ -92,12 +92,12 @@ public class Compute {
     public static final int ARC_PINTLE_TURRET_RIGHT = 29;
     public static final int ARC_PINTLE_TURRET_FRONT = 30;
     public static final int ARC_PINTLE_TURRET_REAR = 31;
-    public static final int ARC_HEXSIDE_0 = 32;
-    public static final int ARC_HEXSIDE_1 = 33;
-    public static final int ARC_HEXSIDE_2 = 34;
-    public static final int ARC_HEXSIDE_3 = 35;
-    public static final int ARC_HEXSIDE_4 = 36;
-    public static final int ARC_HEXSIDE_5 = 37;
+    public static final int ARC_VGL_FRONT = 32;
+    public static final int ARC_VGL_RF = 33;
+    public static final int ARC_VGL_RR = 34;
+    public static final int ARC_VGL_REAR = 35;
+    public static final int ARC_VGL_LR = 36;
+    public static final int ARC_VGL_LF = 37;
     //Expanded arcs for Waypoint Launched Capital Missiles
     public static final int ARC_NOSE_WPL = 38;
     public static final int ARC_LWING_WPL = 39;
@@ -111,6 +111,11 @@ public class Compute {
     public static final int ARC_AFT_WPL = 47;
     public static final int ARC_LEFT_BROADSIDE_WPL = 48;
     public static final int ARC_RIGHT_BROADSIDE_WPL = 49;
+    
+    /** Lookup table for vehicular grenade launcher firing arc from facing */
+    private static final int[] VGL_FIRING_ARCS = { ARC_VGL_FRONT, ARC_VGL_RF, ARC_VGL_RR,
+            ARC_VGL_REAR, ARC_VGL_LR, ARC_VGL_LF
+    };
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
@@ -3755,6 +3760,16 @@ public class Compute {
         }
         return (fa > 330) || (fa < 30);
     }
+    
+    /**
+     * Converts the facing of a vehicular grenade launcher to the corresponding firing arc.
+     * 
+     * @param facing The VGL facing returned by {@link Mounted#getFacing()}
+     * @return       The firing arc
+     */
+    public static int firingArcFromVGLFacing(int facing) {
+        return VGL_FIRING_ARCS[facing % 6];
+    }
 
     public static boolean isInArc(Coords src, int facing, Targetable target,
                                   int arc) {
@@ -4018,36 +4033,18 @@ public class Compute {
                         return true;
                     }
                     break;
-                case ARC_HEXSIDE_0:
-                    if ((fa >= 330) && (fa <= 30)) {
-                        return true;
-                    }
-                    break;
-                case ARC_HEXSIDE_1:
-                    if ((fa >= 30) && (fa <= 90)) {
-                        return true;
-                    }
-                    break;
-                case ARC_HEXSIDE_2:
-                    if ((fa >= 90) && (fa <= 150)) {
-                        return true;
-                    }
-                    break;
-                case ARC_HEXSIDE_3:
-                    if ((fa >= 150) && (fa <= 210)) {
-                        return true;
-                    }
-                    break;
-                case ARC_HEXSIDE_4:
-                    if ((fa >= 210) && (fa <= 270)) {
-                        return true;
-                    }
-                    break;
-                case ARC_HEXSIDE_5:
-                    if ((fa >= 270) && (fa <= 330)) {
-                        return true;
-                    }
-                    break;
+                case ARC_VGL_FRONT:
+                    return (fa >= 270) || (fa <= 90);
+                case ARC_VGL_RF:
+                    return (fa >= 330) || (fa <= 150);
+                case ARC_VGL_RR:
+                    return (fa >= 30) && (fa <= 210);
+                case ARC_VGL_REAR:
+                    return (fa >= 90) && (fa <= 270);
+                case ARC_VGL_LR:
+                    return (fa >= 150) && (fa <= 330);
+                case ARC_VGL_LF:
+                    return (fa >= 210) || (fa <= 30);
             }
         }
         // if we got here then no matches

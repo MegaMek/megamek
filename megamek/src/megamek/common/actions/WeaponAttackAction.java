@@ -2233,7 +2233,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         if (weapon.getType().hasFlag(WeaponType.F_VGL)) {
-            Coords c = ae.getPosition().translated(weapon.getFacing());
+            int facing = weapon.getFacing();
+            if (ae.isSecondaryArcWeapon(ae.getEquipmentNum(weapon))) {
+                facing = (facing + ae.getSecondaryFacing()) % 6;
+            }
+            Coords c = ae.getPosition().translated(facing);
             if ((target instanceof HexTarget) && target.getPosition().equals(c)) {
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                         "Vehicular " + "grenade launchers automatically hit all units in "

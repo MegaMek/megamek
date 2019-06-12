@@ -83,7 +83,7 @@ public class Dropship extends SmallCraft {
     private int collarType = COLLAR_STANDARD;
 
     @Override
-    public boolean tracksHeatBuildup() {
+    public boolean tracksHeat() {
         return false;
     }
 

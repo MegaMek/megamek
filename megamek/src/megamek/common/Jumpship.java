@@ -104,7 +104,7 @@ public class Jumpship extends Aero {
     }
 
     @Override
-    public boolean tracksHeatBuildup() {
+    public boolean tracksHeat() {
         return false;
     }
 

@@ -1834,7 +1834,7 @@ public abstract class Mech extends Entity {
     }
     
     @Override
-    public boolean tracksHeatBuildup() {
+    public boolean tracksHeat() {
         return true;
     }
 

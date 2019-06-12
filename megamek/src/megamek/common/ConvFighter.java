@@ -51,7 +51,7 @@ public class ConvFighter extends Aero {
     }
     
     @Override
-    public boolean tracksHeatBuildup() {
+    public boolean tracksHeat() {
         return false;
     }
 

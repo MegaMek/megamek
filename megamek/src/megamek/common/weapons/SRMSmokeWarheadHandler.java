@@ -94,6 +94,7 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
             if (damage > 5) {
                 smokeType = SmokeCloud.SMOKE_HEAVY;
             }
+            
             server.deliverMissileSmoke(center, smokeType, vPhaseReport);
         }
         return true;

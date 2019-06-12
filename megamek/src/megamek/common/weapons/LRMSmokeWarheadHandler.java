@@ -90,22 +90,11 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
         // Handle munitions.
         if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
             int damage = wtype.getRackSize() * calcDamagePerHit();
-            int radius = (int) Math.ceil(damage / 10.0);
             int smokeType = SmokeCloud.SMOKE_LIGHT;
             if (damage > 5) {
                 smokeType = SmokeCloud.SMOKE_HEAVY;
             }
             server.deliverMissileSmoke(center, smokeType, vPhaseReport);
-            //Now handle the radius for larger racks. According to the rules on TOp371, you shouldn't be able to 
-            //have a radius larger than 2 with an LRM20.
-            if (radius > 1) {
-                for (int dir = 0; dir <= 5; dir++) {
-                    Coords tempcoords = coords.translated(dir);
-                    if (game.getBoard().contains(tempcoords)) {
-                        server.deliverMissileSmoke(tempcoords, smokeType, vPhaseReport);
-                    }
-                }
-            }
         }
         return true;
     }

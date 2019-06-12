@@ -6,6 +6,7 @@ v0.46.0-rc1
 + PR #1359, 1364, 1365: Multiple fixes preventing bot freezes in "edge" cases
 + Issue #1353: Battle Armor Heavy Flamer only raise 2 heat per hit
 + Issue #1297: LRM5 smoke rounds says 'heavy smoke' on the report.
++ Issue #1090: VGL Unable to Fire - Out of Arc
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

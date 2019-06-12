@@ -134,6 +134,15 @@ public interface Targetable extends Serializable {
                 getTargetType() == TYPE_HEX_BOMB;
     }
 
+    /**
+     * Used to identify an target that tracks heat buildup (Mechs, ASFs, and small craft).
+     * 
+     * @return Whether the target tracks heat buildup.
+     */
+    default boolean tracksHeat() {
+        return false;
+    }
+    
     @Override
     int hashCode();
 }

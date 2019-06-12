@@ -787,7 +787,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    public boolean tracksHeatBuildup() {
+    public boolean tracksHeat() {
         return true;
     }
 

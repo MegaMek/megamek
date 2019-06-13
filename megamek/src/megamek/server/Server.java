@@ -11167,7 +11167,7 @@ public class Server implements Runnable {
                     vPhaseReport.addElement(r);
                 }
                 vPhaseReport.addAll(tryClearHex(t.getPosition(), missiles * 4,
-                                                ae.getId()));
+                                                attId));
                 tryIgniteHex(t.getPosition(), attId, false, true,
                              new TargetRoll(0, "inferno"), -1, vPhaseReport);
                 break;

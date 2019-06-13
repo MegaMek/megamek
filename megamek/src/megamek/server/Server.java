@@ -11337,9 +11337,12 @@ public class Server implements Runnable {
                     te.heatFromExternal += 2 * missiles;
                     Report.addNewline(vPhaseReport);
                 } else if (te instanceof ConvFighter) {
-                    // CFs take damage to SI. Other aerospace units ignore infernos.
-                    int siDamage = missiles / 3;
-                    if (siDamage > 0) {
+                    // CFs take a point SI damage for every three missiles that hit.
+                    // Use the heatFromExternal field to carry the remainder in case of multiple inferno hits.
+                    te.heatFromExternal += missiles;
+                    if (te.heatFromExternal >= 3) {
+                        int siDamage = te.heatFromExternal / 3;
+                        te.heatFromExternal %= 3;
                         final ConvFighter ftr = (ConvFighter) te;
                         int remaining = Math.max(0,  ftr.getSI() - siDamage);
                         r = new Report(9146);

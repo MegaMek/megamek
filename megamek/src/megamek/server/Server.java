@@ -11395,7 +11395,8 @@ public class Server implements Runnable {
                     }
                     vPhaseReport.addAll(coverDamageReports);
                     Report.addNewline(vPhaseReport);
-                } else if (te instanceof Aero) {
+                } else if (te.tracksHeat()) {
+                    // ASFs and small craft
                     r = new Report(3400);
                     r.add(2 * missiles);
                     r.subject = te.getId();
@@ -11404,18 +11405,37 @@ public class Server implements Runnable {
                     vPhaseReport.add(r);
                     te.heatFromExternal += 2 * missiles;
                     Report.addNewline(vPhaseReport);
+                } else if (te instanceof ConvFighter) {
+                    // CFs take damage to SI. Other aerospace units ignore infernos.
+                    int siDamage = missiles / 3;
+                    if (siDamage > 0) {
+                        final ConvFighter ftr = (ConvFighter) te;
+                        int remaining = Math.max(0,  ftr.getSI() - siDamage);
+                        r = new Report(9146);
+                        r.subject = te.getId();
+                        r.indent(2);
+                        r.add(siDamage);
+                        r.add(remaining);
+                        vPhaseReport.add(r);
+                        ftr.setSI(remaining);
+                        te.damageThisPhase += siDamage;
+                        if (remaining <= 0) {
+                            vPhaseReport.addAll(destroyEntity(te,
+                                    "Structural Integrity Collapse"));
+                            ftr.setSI(0);
+                            if (null != ae) {
+                                creditKill(te, ae);
+                            }
+                        }
+                    }
                 } else if (te instanceof Tank) {
-                    boolean targetIsSupportVee = (te instanceof SupportTank)
-                                                 || (te instanceof LargeSupportTank)
-                                                 || (te instanceof SupportVTOL);
                     int direction = Compute.targetSideTable(ae, te, called);
                     while (missiles-- > 0) {
                         HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL,
                                                          direction);
                         int critRollMod = 0;
-                        if (!targetIsSupportVee
-                            || (te.hasArmoredChassis() && (te.getBARRating(hit
-                                                                                   .getLocation()) > 9))) {
+                        if (!te.isSupportVehicle()
+                            || (te.hasArmoredChassis() && (te.getBARRating(hit.getLocation()) > 9))) {
                             critRollMod -= 2;
                         }
                         if ((te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED)
@@ -11510,8 +11530,7 @@ public class Server implements Runnable {
                         creditKill(te, ae);
                         Report.addNewline(vPhaseReport);
                     }
-                } else {
-                    // gun emplacements
+                } else if (te instanceof GunEmplacement){
                     int direction = Compute.targetSideTable(ae, te, called);
                     while (missiles-- > 0) {
                         HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL,

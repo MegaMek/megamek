@@ -11116,6 +11116,10 @@ public class Server implements Runnable {
         IHex hex = game.getBoard().getHex(t.getPosition());
         Report r;
         Vector<Report> vPhaseReport = new Vector<Report>();
+        int attId = Entity.NONE;
+        if (null != ae) {
+            attId = ae.getId();
+        }
         switch (t.getTargetType()) {
             case Targetable.TYPE_HEX_ARTILLERY:
                 // used for BA inferno explosion
@@ -11145,7 +11149,7 @@ public class Server implements Runnable {
                                                                         .getBuildingAt(t.getPosition()), 2 * missiles,
                                                                     t.getPosition());
                     for (Report report : vBuildingReport) {
-                        report.subject = ae.getId();
+                        report.subject = attId;
                     }
                     vPhaseReport.addAll(vBuildingReport);
                 }
@@ -11157,14 +11161,14 @@ public class Server implements Runnable {
                 if ((h != null) && h.hasTerrainfactor()) {
                     r = new Report(3384);
                     r.indent(2);
-                    r.subject = ae.getId();
+                    r.subject = attId;
                     r.add(t.getPosition().getBoardNum());
                     r.add(missiles * 4);
                     vPhaseReport.addElement(r);
                 }
                 vPhaseReport.addAll(tryClearHex(t.getPosition(), missiles * 4,
                                                 ae.getId()));
-                tryIgniteHex(t.getPosition(), ae.getId(), false, true,
+                tryIgniteHex(t.getPosition(), attId, false, true,
                              new TargetRoll(0, "inferno"), -1, vPhaseReport);
                 break;
             case Targetable.TYPE_BLDG_IGNITE:
@@ -11173,7 +11177,7 @@ public class Server implements Runnable {
                                                                     .getBuildingAt(t.getPosition()), 2 * missiles,
                                                                 t.getPosition());
                 for (Report report : vBuildingReport) {
-                    report.subject = ae.getId();
+                    report.subject = attId;
                 }
                 vPhaseReport.addAll(vBuildingReport);
 
@@ -11207,7 +11211,7 @@ public class Server implements Runnable {
                 if ((te instanceof Mech) && (!areaEffect)) {
                     // Bug #1585497: Check for partial cover
                     int m = missiles;
-                    LosEffects le = LosEffects.calculateLos(game, ae.getId(), t);
+                    LosEffects le = LosEffects.calculateLos(game, attId, t);
                     int cover = le.getTargetCover();
                     Vector<Report> coverDamageReports = new Vector<Report>();
                     int heatDamage = 0;

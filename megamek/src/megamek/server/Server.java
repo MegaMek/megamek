@@ -11384,11 +11384,11 @@ public class Server implements Runnable {
                                                          ToHitData.SIDE_FRONT);
                         if (hit.getLocation() == Protomech.LOC_NMISS) {
                             Protomech proto = (Protomech) te;
-                            r = new Report(6305);
+                            r = new Report(6035);
                             r.subject = te.getId();
                             r.indent(2);
                             if (proto.isGlider()) {
-                                r.messageId = 6306;
+                                r.messageId = 6036;
                                 proto.setWingHits(proto.getWingHits() + 1);
                             }
                             vPhaseReport.add(r);

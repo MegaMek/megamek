@@ -234,6 +234,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             //Unofficial option for artillery dropships
             if (!atype.canAeroUse()
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)
+                    && atype.getTechBase() == techBase
                     && (atype.getAmmoType() == AmmoType.T_ARROW_IV
                         || atype.getAmmoType() == AmmoType.T_LONG_TOM
                         || atype.getAmmoType() == AmmoType.T_SNIPER

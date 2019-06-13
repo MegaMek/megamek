@@ -11359,6 +11359,12 @@ public class Server implements Runnable {
                             }
                         }
                     }
+                } else if (te instanceof Aero) {
+                    // Large craft ignore infernos
+                    r = new Report(1242);
+                    r.subject = te.getId();
+                    r.indent(2);
+                    vPhaseReport.add(r);
                 } else if (te instanceof Tank) {
                     int direction = Compute.targetSideTable(ae, te, called);
                     while (missiles-- > 0) {

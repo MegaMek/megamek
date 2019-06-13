@@ -232,13 +232,13 @@ public class BayMunitionsChoicePanel extends JPanel {
         
         private boolean includeMunition(AmmoType atype) {
             //Unofficial option for artillery dropships
-            if (!atype.canAeroUse() && 
-                    (atype.getAmmoType() == AmmoType.T_ARROW_IV 
-                    || atype.getAmmoType() == AmmoType.T_LONG_TOM
-                    || atype.getAmmoType() == AmmoType.T_SNIPER
-                    || atype.getAmmoType() == AmmoType.T_THUMPER
-                    || atype.getAmmoType() == AmmoType.T_CRUISE_MISSILE)
-                    && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS )) {
+            if (!atype.canAeroUse()
+                    && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)
+                    && (atype.getAmmoType() == AmmoType.T_ARROW_IV
+                        || atype.getAmmoType() == AmmoType.T_LONG_TOM
+                        || atype.getAmmoType() == AmmoType.T_SNIPER
+                        || atype.getAmmoType() == AmmoType.T_THUMPER
+                        || atype.getAmmoType() == AmmoType.T_CRUISE_MISSILE)) {
                 return true;
             }
             if (!atype.canAeroUse()
@@ -298,6 +298,15 @@ public class BayMunitionsChoicePanel extends JPanel {
                 return Messages.getString("CustomMechDialog.Artemis"); //$NON-NLS-1$
             }
             
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)) {
+                if (atype.getAmmoType() == AmmoType.T_ARROW_IV
+                        || atype.getAmmoType() == AmmoType.T_LONG_TOM
+                        || atype.getAmmoType() == AmmoType.T_SNIPER
+                        || atype.getAmmoType() == AmmoType.T_THUMPER
+                        || atype.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
+                    return atype.getShortName(); //$NON-NLS-1$
+                }
+            }
             return Messages.getString("CustomMechDialog.StandardMunition"); //$NON-NLS-1$
         }
         

@@ -11405,6 +11405,30 @@ public class Server implements Runnable {
                     vPhaseReport.add(r);
                     te.heatFromExternal += 2 * missiles;
                     Report.addNewline(vPhaseReport);
+                } else if (te instanceof GunEmplacement){
+                    int direction = Compute.targetSideTable(ae, te, called);
+                    while (missiles-- > 0) {
+                        HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL,
+                                                         direction);
+                        vPhaseReport.addAll(damageEntity(te, hit, 2));
+                    }
+                } else if ((te instanceof Tank) || te.isSupportVehicle()) {
+                    int direction = Compute.targetSideTable(ae, te, called);
+                    while (missiles-- > 0) {
+                        HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL,
+                                                         direction);
+                        int critRollMod = 0;
+                        if (!te.isSupportVehicle()
+                            || (te.hasArmoredChassis() && (te.getBARRating(hit.getLocation()) > 9))) {
+                            critRollMod -= 2;
+                        }
+                        if ((te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED)
+                            && (te.getArmor(hit.getLocation()) > 0)) {
+                            critRollMod -= 2;
+                        }
+                        vPhaseReport.addAll(criticalEntity(te, hit.getLocation(),
+                                                           hit.isRear(), critRollMod, 0, true));
+                    }
                 } else if (te instanceof ConvFighter) {
                     // CFs take a point SI damage for every three missiles that hit.
                     // Use the heatFromExternal field to carry the remainder in case of multiple inferno hits.
@@ -11431,29 +11455,12 @@ public class Server implements Runnable {
                             }
                         }
                     }
-                } else if (te instanceof Aero) {
+                } else if (te.isLargeCraft()) {
                     // Large craft ignore infernos
                     r = new Report(1242);
                     r.subject = te.getId();
                     r.indent(2);
                     vPhaseReport.add(r);
-                } else if (te instanceof Tank) {
-                    int direction = Compute.targetSideTable(ae, te, called);
-                    while (missiles-- > 0) {
-                        HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL,
-                                                         direction);
-                        int critRollMod = 0;
-                        if (!te.isSupportVehicle()
-                            || (te.hasArmoredChassis() && (te.getBARRating(hit.getLocation()) > 9))) {
-                            critRollMod -= 2;
-                        }
-                        if ((te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED)
-                            && (te.getArmor(hit.getLocation()) > 0)) {
-                            critRollMod -= 2;
-                        }
-                        vPhaseReport.addAll(criticalEntity(te, hit.getLocation(),
-                                                           hit.isRear(), critRollMod, 0, true));
-                    }
                 } else if (te instanceof Protomech) {
                     te.heatFromExternal += missiles;
                     while (te.heatFromExternal >= 3) {
@@ -11538,13 +11545,6 @@ public class Server implements Runnable {
                         vPhaseReport.addAll(destroyEntity(te, "damage", false));
                         creditKill(te, ae);
                         Report.addNewline(vPhaseReport);
-                    }
-                } else if (te instanceof GunEmplacement){
-                    int direction = Compute.targetSideTable(ae, te, called);
-                    while (missiles-- > 0) {
-                        HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL,
-                                                         direction);
-                        vPhaseReport.addAll(damageEntity(te, hit, 2));
                     }
                 }
         }

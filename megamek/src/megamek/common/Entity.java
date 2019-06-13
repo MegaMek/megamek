@@ -3352,7 +3352,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         return mod;
     }
-    
+
     /**
      * Creates a new mount for this equipment and adds it in.
      */

@@ -84,6 +84,8 @@ public class Dropship extends SmallCraft {
 
     @Override
     public boolean tracksHeat() {
+        // While large craft perform heat calculations, they are not considered heat-tracking units
+        // because they cannot generate more heat than they can dissipate in the same turn.
         return false;
     }
 

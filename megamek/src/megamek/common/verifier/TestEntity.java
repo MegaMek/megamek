@@ -862,7 +862,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                 heat += 2;
             }
-            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
+            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)) {
                 heat += 12;
             }
             if (mtype.hasFlag(MiscType.F_NOVA)) {
@@ -1345,6 +1345,23 @@ public abstract class TestEntity implements TestEntityOption {
                 hasHarjelIII = true;
             }
         }
+        if ((isMech() || isTank() || isAero())
+                && (!getEntity().hasEngine()
+                        || (!getEntity().getEngine().isFusion()
+                                && (getEntity().getEngine().getEngineType() != Engine.FISSION)))) {
+            for (Mounted m : getEntity().getWeaponList()) {
+                if (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
+                    buff.append("Improved Heavy Gauss requires a fusion or fission engine.\n");
+                    illegal = true;
+                } else if (m.getType().hasFlag(WeaponType.F_FLAMER)
+                        && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA)
+                        && (!getEntity().hasEngine() || (!getEntity().getEngine().isFusion()
+                                && (getEntity().getEngine().getEngineType() != Engine.FISSION)))) {
+                    buff.append("Standard flamers require a fusion or fission engine.\n");
+                    illegal = true;
+                }
+            }
+        }        
 
         if (minesweeperCount > 1) {
             buff.append("Unit has more than one minesweeper!\n");

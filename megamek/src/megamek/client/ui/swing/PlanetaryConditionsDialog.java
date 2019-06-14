@@ -31,6 +31,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -74,6 +75,9 @@ public class PlanetaryConditionsDialog extends JDialog implements
     private JComboBox<String> choMinWind = new JComboBox<String>();
     private JLabel labMaxWind = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labMaxWind"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JComboBox<String> cboWindDirection = new JComboBox<>();
+    private JLabel labWindDirection = new JLabel(
+            Messages.getString("PlanetaryConditionsDialog.labWindDirection"), SwingConstants.RIGHT);
     private JComboBox<String> choMaxWind = new JComboBox<String>();
     private JLabel labAtmosphere = new JLabel(
             Messages.getString("PlanetaryConditionsDialog.labAtmosphere"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -204,74 +208,15 @@ public class PlanetaryConditionsDialog extends JDialog implements
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 1.0;
         c.weighty = 0.0;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labTemp, c);
-        panOptions.add(labTemp);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(fldTemp, c);
-        panOptions.add(fldTemp);
-
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labGrav, c);
-        panOptions.add(labGrav);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(fldGrav, c);
-        panOptions.add(fldGrav);
-
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labLight, c);
-        panOptions.add(labLight);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(choLight, c);
-        panOptions.add(choLight);
-
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labWeather, c);
-        panOptions.add(labWeather);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(choWeather, c);
-        panOptions.add(choWeather);
-
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labWind, c);
-        panOptions.add(labWind);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(choWind, c);
-        panOptions.add(choWind);
-
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labAtmosphere, c);
-        panOptions.add(labAtmosphere);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(choAtmosphere, c);
-        panOptions.add(choAtmosphere);
-
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labFog, c);
-        panOptions.add(labFog);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(choFog, c);
-        panOptions.add(choFog);
+        
+        addLabelControlPair(c, labTemp, fldTemp);
+        addLabelControlPair(c, labGrav, fldGrav);
+        addLabelControlPair(c, labLight, choLight);
+        addLabelControlPair(c, labWeather, choWeather);
+        addLabelControlPair(c, labWind, choWind);
+        addLabelControlPair(c, labWindDirection, cboWindDirection);
+        addLabelControlPair(c, labAtmosphere, choAtmosphere);
+        addLabelControlPair(c, labFog, choFog);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
@@ -320,6 +265,23 @@ public class PlanetaryConditionsDialog extends JDialog implements
 
     }
 
+    /**
+     * Worker method that adds a label - control pair to the UI (e.g. wind - wind dropdown)
+     * @param c GridBagConstraints to use
+     * @param label The label to add
+     * @param valueControl The textbox or dropdown to add
+     */
+    private void addLabelControlPair(GridBagConstraints c, JLabel label, JComponent valueControl) {
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        panOptions.add(label, c);
+        label.setLabelFor(valueControl);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        panOptions.add(valueControl, c);
+    }
+    
     public void update(PlanetaryConditions planetConditions) {
         conditions = (PlanetaryConditions) planetConditions.clone();
         refreshConditions();
@@ -351,6 +313,12 @@ public class PlanetaryConditionsDialog extends JDialog implements
         choWind.setSelectedIndex(conditions.getWindStrength());
         choMinWind.setSelectedIndex(conditions.getMinWindStrength());
         choMaxWind.setSelectedIndex(conditions.getMaxWindStrength());
+
+        cboWindDirection.removeAllItems();
+        for(int i = 0; i < PlanetaryConditions.DIR_SIZE; i++) {
+            cboWindDirection.addItem(PlanetaryConditions.getWindDirDisplayableName(i));
+        }
+        cboWindDirection.setSelectedIndex(conditions.getWindDirection());
 
         choAtmosphere.removeAllItems();
         for (int i = 0; i < PlanetaryConditions.ATMO_SIZE; i++) {
@@ -385,6 +353,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
         conditions.setLight(choLight.getSelectedIndex());
         conditions.setWeather(choWeather.getSelectedIndex());
         conditions.setWindStrength(choWind.getSelectedIndex());
+        conditions.setWindDirection(cboWindDirection.getSelectedIndex());
         conditions.setMinWindStrength(choMinWind.getSelectedIndex());
         conditions.setMaxWindStrength(choMaxWind.getSelectedIndex());
         conditions.setAtmosphere(choAtmosphere.getSelectedIndex());

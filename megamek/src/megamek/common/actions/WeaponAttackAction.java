@@ -1705,24 +1705,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     || (atype.getAmmoType() == AmmoType.T_NLRM) 
                     || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                     && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
-                boolean targetTagged = false;
-                // If this is an entity, we can see if it's tagged
-                if (te != null) {
-                    targetTagged = te.getTaggedBy() != -1;
-                } else { // Non entities will require us to look harder
-                    for (TagInfo ti : game.getTagInfo()) {
-                        if (target.getTargetId() == ti.target.getTargetId()) {
-                            targetTagged = true;
-                        }
-                    }
-                }
 
-                if (targetTagged) {
+                if (Compute.isTargetTagged(target, game)) {
                     toHit.addModifier(-1, "semiguided ignores spotter " + "movement & indirect fire penalties");
                 }
             } else if (!narcSpotter && (spotter != null)) {
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
-                if (spotter.isAttackingThisTurn() && !spotter.getCrew().hasActiveCommandConsole()) {
+                if (spotter.isAttackingThisTurn() && !spotter.getCrew().hasActiveCommandConsole() && 
+                        !Compute.isTargetTagged(target, game)) {
                     toHit.addModifier(1, "spotter is making an attack this turn");
                 }
             }
@@ -2243,7 +2233,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         if (weapon.getType().hasFlag(WeaponType.F_VGL)) {
-            Coords c = ae.getPosition().translated(weapon.getFacing());
+            int facing = weapon.getFacing();
+            if (ae.isSecondaryArcWeapon(ae.getEquipmentNum(weapon))) {
+                facing = (facing + ae.getSecondaryFacing()) % 6;
+            }
+            Coords c = ae.getPosition().translated(facing);
             if ((target instanceof HexTarget) && target.getPosition().equals(c)) {
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                         "Vehicular " + "grenade launchers automatically hit all units in "

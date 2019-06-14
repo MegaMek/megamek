@@ -713,6 +713,15 @@ public class TestTank extends TestEntity {
             }
         }
         
+        for (Mounted m : tank.getWeaponList()) {
+            if ((((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
+                    && ((m.getLocation() == Tank.LOC_TURRET)
+                        || (m.getLocation() == Tank.LOC_TURRET_2))) {
+                buff.append("Improved Heavy Gauss cannot be mounted in a turret.\n");
+                illegal = true;
+            }
+        }
+        
         if ((tank.getMovementMode() == EntityMovementMode.VTOL)
                 || (tank.getMovementMode() == EntityMovementMode.WIGE)
                 || (tank.getMovementMode() == EntityMovementMode.HOVER)) {

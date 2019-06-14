@@ -12,4 +12,5 @@ Thumbs.db
 /.project
 /build/
 /out/
+/.vscode
 /.idea/

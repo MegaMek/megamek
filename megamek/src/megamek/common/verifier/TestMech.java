@@ -739,7 +739,7 @@ public class TestMech extends TestEntity {
     public boolean correctMovement(StringBuffer buff) {
         // Mechanical Jump Boosts can be greater then Running as long as
         // the unit can handle the weight.
-        if ((mech.getJumpMP(false) > mech.getOriginalRunMPwithoutMASC())
+        if ((mech.getJumpMP(false) > mech.getOriginalRunMP())
                 && !mech.hasJumpBoosters()
                 && !mech.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             buff.append("Jump MP exceeds run MP\n");
@@ -1315,6 +1315,10 @@ public class TestMech extends TestEntity {
                                 || (((WeaponType)m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY))) {
                     buff.append("LAMs cannot mount heavy gauss rifles.\n");
                     illegal = true;
+                } else if ((m.getType() instanceof MiscType)
+                        && m.getType().hasFlag(MiscType.F_CLUB)) {
+                    buff.append("LAMs cannot be constructed with physical weapons.\n");
+                    illegal = true;
                 } else if (m.getType().isSpreadable()) {
                     if (spread.containsKey(m.getType())) {
                         spread.get(m.getType()).add(m.getLocation());
@@ -1494,16 +1498,30 @@ public class TestMech extends TestEntity {
                 }
             }
         }
+        
+        for (Mounted m : mech.getWeaponList()) {
+            if (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
+                boolean torso = mech.locationIsTorso(m.getLocation());
+                if (m.getSecondLocation() != Entity.LOC_NONE) {
+                    torso = torso && mech.locationIsTorso(m.getSecondLocation());
+                }
+                if (!mech.isSuperHeavy() && !torso) {
+                    buff.append("Improved Heavy Gauss can only be mounted in a torso location.\n");
+                    illegal = true;
+                }
+            }
+            if ((m.getType().hasFlag(WeaponType.F_TASER)
+                    || m.getType().hasFlag(WeaponType.F_HYPER))
+                    && !(mech.hasEngine() && mech.getEngine().isFusion())) {
+                buff.append(m.getType().getName()).append(" needs fusion engine\n");
+                illegal = true;
+            }
+        }
 
-		if (mech.hasWorkingWeapon(WeaponType.F_TASER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
-			buff.append("Mek Taser needs fusion engine\n");
-			illegal = true;
-		}
-
-		if (mech.hasWorkingWeapon(WeaponType.F_HYPER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
-			buff.append("RISC Hyper Laser needs fusion engine\n");
-			illegal = true;
-		}
+        if (mech.hasWorkingWeapon(WeaponType.F_HYPER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
+            buff.append("RISC Hyper Laser needs fusion engine\n");
+            illegal = true;
+        }
         
         if (mech.hasFullHeadEject()) {
             if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)

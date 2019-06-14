@@ -36,6 +36,7 @@ public class SubCapMissileMantaRayWeapon extends SubCapMissileWeapon {
         this.setInternalName(this.name);
         this.addLookupName("MantaRay");
         this.addLookupName("Manta Ray");
+        this.shortName = "Manta Ray";
         this.heat = 21;
         this.damage = 5;
         this.ammoType = AmmoType.T_MANTA_RAY;

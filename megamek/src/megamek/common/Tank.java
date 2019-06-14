@@ -800,20 +800,7 @@ public class Tank extends Entity {
         }
         // VGLs base arc on their facing
         if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
-            switch (mounted.getFacing()) {
-                case 0:
-                    return Compute.ARC_HEXSIDE_0;
-                case 1:
-                    return Compute.ARC_HEXSIDE_1;
-                case 2:
-                    return Compute.ARC_HEXSIDE_2;
-                case 3:
-                    return Compute.ARC_HEXSIDE_3;
-                case 4:
-                    return Compute.ARC_HEXSIDE_4;
-                case 5:
-                    return Compute.ARC_HEXSIDE_5;
-            }
+            return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
         switch (mounted.getLocation()) {
             case LOC_BODY:

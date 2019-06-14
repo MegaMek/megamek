@@ -92,12 +92,12 @@ public class Compute {
     public static final int ARC_PINTLE_TURRET_RIGHT = 29;
     public static final int ARC_PINTLE_TURRET_FRONT = 30;
     public static final int ARC_PINTLE_TURRET_REAR = 31;
-    public static final int ARC_HEXSIDE_0 = 32;
-    public static final int ARC_HEXSIDE_1 = 33;
-    public static final int ARC_HEXSIDE_2 = 34;
-    public static final int ARC_HEXSIDE_3 = 35;
-    public static final int ARC_HEXSIDE_4 = 36;
-    public static final int ARC_HEXSIDE_5 = 37;
+    public static final int ARC_VGL_FRONT = 32;
+    public static final int ARC_VGL_RF = 33;
+    public static final int ARC_VGL_RR = 34;
+    public static final int ARC_VGL_REAR = 35;
+    public static final int ARC_VGL_LR = 36;
+    public static final int ARC_VGL_LF = 37;
     //Expanded arcs for Waypoint Launched Capital Missiles
     public static final int ARC_NOSE_WPL = 38;
     public static final int ARC_LWING_WPL = 39;
@@ -111,6 +111,11 @@ public class Compute {
     public static final int ARC_AFT_WPL = 47;
     public static final int ARC_LEFT_BROADSIDE_WPL = 48;
     public static final int ARC_RIGHT_BROADSIDE_WPL = 49;
+    
+    /** Lookup table for vehicular grenade launcher firing arc from facing */
+    private static final int[] VGL_FIRING_ARCS = { ARC_VGL_FRONT, ARC_VGL_RF, ARC_VGL_RR,
+            ARC_VGL_REAR, ARC_VGL_LR, ARC_VGL_LF
+    };
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
@@ -861,9 +866,14 @@ public class Compute {
                 los.setTargetCover(LosEffects.COVER_NONE);
                 mods.append(Compute.getAttackerMovementModifier(game,
                                                                 other.getId()));
-                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole()) {
+                
+                // a spotter suffers a penalty if it's also making an attack this round
+                // unless it has a command console or has TAGged the target
+                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() && 
+                        (!isTargetTagged(attacker, target, game) || (taggedBy != -1))) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }
+                
                 // is this guy a better spotter?
                 if ((spotter == null)
                     || (mods.getValue() < bestMods.getValue())) {
@@ -876,6 +886,65 @@ public class Compute {
         return spotter;
     }
 
+    /**
+     * Worker function to determine if the target has been tagged.
+     * @param target The non-entity target to check
+     * @param game Game object
+     * @return Whether or not the given entity or other targetable is tagged.
+     */
+    public static boolean isTargetTagged(Targetable target, IGame game) {
+        boolean targetTagged = false;
+        
+        Entity te = null;
+        if(target instanceof Entity) {
+            te = (Entity) target;
+        }
+        
+        // If this is an entity, we can see if it's tagged
+        if (te != null) {
+            targetTagged = te.getTaggedBy() != -1;
+        } else { // Non entities will require us to look harder
+            for (TagInfo ti : game.getTagInfo()) {
+                if (target.getTargetId() == ti.target.getTargetId()) {
+                    return true;
+                }
+            }
+        }
+        
+        return targetTagged;
+    }
+    
+    /**
+     * Worker function to determine if the target has been tagged by the specific attacker.
+     * @param attacker The attacker.
+     * @param target The non-entity target to check
+     * @param game Game object
+     * @return Whether or not the given entity or other targetable is tagged by the specific attacker.
+     */
+    public static boolean isTargetTagged(Entity attacker, Targetable target, IGame game) {
+        boolean targetTagged = false;
+        
+        Entity te = null;
+        if(target instanceof Entity) {
+            te = (Entity) target;
+        }
+        
+        // If this is an entity, we can see if it's tagged
+        if (te != null) {
+            targetTagged = te.getTaggedBy() == attacker.getId();
+        } else { // Non entities will require us to look harder
+            for (TagInfo ti : game.getTagInfo()) {
+                if ((target.getTargetId() == ti.target.getTargetId()) &&
+                        (ti.attackerId == attacker.getId())) {
+                    return true;
+                }
+            }
+        }
+        
+        return targetTagged;
+    }
+    
+    
     public static ToHitData getImmobileMod(Targetable target) {
         return Compute.getImmobileMod(target, Entity.LOC_NONE,
                                       IAimingModes.AIM_MODE_NONE);
@@ -1999,8 +2068,9 @@ public class Compute {
 
         } // End attacker-is-Protomech
 
-        // Is the shoulder destroyed?
-        else {
+        // only mechs have arm actuators - for those, we check whether
+        // there is arm actuator damage
+        else if(attacker instanceof Mech) {
             // split weapons need to account for arm actuator hits, too
             // see bug 1363690
             // we don't need to specifically check for weapons split between
@@ -2018,23 +2088,27 @@ public class Compute {
                     default:
                 }
             }
-            if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                         Mech.ACTUATOR_SHOULDER, location) > 0) {
-                mods.addModifier(4, "shoulder actuator destroyed");
-            } else {
-                // no shoulder hits, add other arm hits
-                int actuatorHits = 0;
+            
+            // only arms can have damaged arm actuators
+            if(location == Mech.LOC_LARM || location == Mech.LOC_RARM) {
                 if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                             Mech.ACTUATOR_UPPER_ARM, location) > 0) {
-                    actuatorHits++;
-                }
-                if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                             Mech.ACTUATOR_LOWER_ARM, location) > 0) {
-                    actuatorHits++;
-                }
-                if (actuatorHits > 0) {
-                    mods.addModifier(actuatorHits, actuatorHits
-                                                   + " destroyed arm actuators");
+                                             Mech.ACTUATOR_SHOULDER, location) > 0) {
+                    mods.addModifier(4, "shoulder actuator destroyed");
+                } else {
+                    // no shoulder hits, add other arm hits
+                    int actuatorHits = 0;
+                    if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                 Mech.ACTUATOR_UPPER_ARM, location) > 0) {
+                        actuatorHits++;
+                    }
+                    if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                 Mech.ACTUATOR_LOWER_ARM, location) > 0) {
+                        actuatorHits++;
+                    }
+                    if (actuatorHits > 0) {
+                        mods.addModifier(actuatorHits, actuatorHits
+                                                       + " destroyed arm actuators");
+                    }
                 }
             }
         }
@@ -3686,6 +3760,16 @@ public class Compute {
         }
         return (fa > 330) || (fa < 30);
     }
+    
+    /**
+     * Converts the facing of a vehicular grenade launcher to the corresponding firing arc.
+     * 
+     * @param facing The VGL facing returned by {@link Mounted#getFacing()}
+     * @return       The firing arc
+     */
+    public static int firingArcFromVGLFacing(int facing) {
+        return VGL_FIRING_ARCS[facing % 6];
+    }
 
     public static boolean isInArc(Coords src, int facing, Targetable target,
                                   int arc) {
@@ -3949,36 +4033,18 @@ public class Compute {
                         return true;
                     }
                     break;
-                case ARC_HEXSIDE_0:
-                    if ((fa >= 330) && (fa <= 30)) {
-                        return true;
-                    }
-                    break;
-                case ARC_HEXSIDE_1:
-                    if ((fa >= 30) && (fa <= 90)) {
-                        return true;
-                    }
-                    break;
-                case ARC_HEXSIDE_2:
-                    if ((fa >= 90) && (fa <= 150)) {
-                        return true;
-                    }
-                    break;
-                case ARC_HEXSIDE_3:
-                    if ((fa >= 150) && (fa <= 210)) {
-                        return true;
-                    }
-                    break;
-                case ARC_HEXSIDE_4:
-                    if ((fa >= 210) && (fa <= 270)) {
-                        return true;
-                    }
-                    break;
-                case ARC_HEXSIDE_5:
-                    if ((fa >= 270) && (fa <= 330)) {
-                        return true;
-                    }
-                    break;
+                case ARC_VGL_FRONT:
+                    return (fa >= 270) || (fa <= 90);
+                case ARC_VGL_RF:
+                    return (fa >= 330) || (fa <= 150);
+                case ARC_VGL_RR:
+                    return (fa >= 30) && (fa <= 210);
+                case ARC_VGL_REAR:
+                    return (fa >= 90) && (fa <= 270);
+                case ARC_VGL_LR:
+                    return (fa >= 150) && (fa <= 330);
+                case ARC_VGL_LF:
+                    return (fa >= 210) || (fa <= 30);
             }
         }
         // if we got here then no matches

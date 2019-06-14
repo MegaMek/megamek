@@ -88,6 +88,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem filePrint;
     private JMenuItem viewMiniMap;
     private JMenuItem viewMekDisplay;
+    private JMenuItem viewAccessibilityWindow;
     private JMenuItem viewZoomIn;
     private JMenuItem viewZoomOut;
     private JCheckBoxMenuItem toggleIsometric;
@@ -356,6 +357,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewMekDisplay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
                 getToolkit().getMenuShortcutKeyMask()));
         menu.add(viewMekDisplay);
+        viewAccessibilityWindow = new JMenuItem(Messages.getString("CommonMenuBar.viewAccessibilityWindow")); //$NON-NLS-1$
+        viewAccessibilityWindow.addActionListener(this);
+        viewAccessibilityWindow.setActionCommand(ClientGUI.VIEW_ACCESSIBILITY_WINDOW);
+        menu.add(viewAccessibilityWindow);
         viewMiniMap = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewMiniMap")); //$NON-NLS-1$
         viewMiniMap.addActionListener(this);

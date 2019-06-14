@@ -19,11 +19,11 @@ import static megamek.common.Compute.d6;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.DisplayMode;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,7 +31,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.MediaTracker;
-import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -301,6 +300,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         quitB.setActionCommand("quit"); //$NON-NLS-1$
         quitB.addActionListener(actionListener);
 
+        // Use the current monitor so we don't "overflow" computers whose primary
+        // displays aren't as large as their secondary displays.
+        DisplayMode currentMonitor = frame.getGraphicsConfiguration().getDevice().getDisplayMode();
+
         String splashFilename;
         if (skinSpec.hasBackgrounds()) {
             splashFilename = skinSpec.backgrounds.get(0);
@@ -316,23 +319,11 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             }
             // Check for multi-resolutioned splash image
             if (skinSpec.backgrounds.size() > 2) {
-                // Determine largest monitor size
-                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                GraphicsDevice[] gs = ge.getScreenDevices();
-                double maxWidth = 0;
-                for (int i = 0; i < gs.length; i++)
-                {
-                    Rectangle b = gs[i].getDefaultConfiguration().getBounds();
-                    if (b.getWidth() > maxWidth)
-                    {   // Update the max size found on this monitor
-                        maxWidth = b.getWidth();
-                    }
-                }
-                // If the largest size is over FHD, use the third image
-                if (maxWidth > 1920) {
+                // If the current monitor size is over FHD, use the third image
+                if (currentMonitor.getWidth() > 1920) {
                     splashFilename = skinSpec.backgrounds.get(2);
                 // If we have a low-rez version, and the resolution is below HD+ (1600x900)...
-                } else if ((skinSpec.backgrounds.size() > 3) && (maxWidth < 1600)) {
+                } else if ((skinSpec.backgrounds.size() > 3) && (currentMonitor.getWidth() < 1600)) {
                     splashFilename = skinSpec.backgrounds.get(3);
                 }
             }
@@ -364,15 +355,17 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());
         int height = metrics.getHeight();
-        Dimension textDim =  new Dimension(width+50,height+10);
+        Dimension textDim =  new Dimension(width+50, height+10);
 
-        Dimension splashDim = new Dimension((int)(imgSplash.getWidth(frame) * 0.3), 25);
-        Dimension minButtonDim;
-        if (textDim.getWidth() > splashDim.getWidth()) {
+        // Strive for no more than ~90% of the screen and use golden ratio to make
+        // the button width "look" reasonable.
+        int imageWidth = imgSplash.getWidth(frame);
+        int maximumWidth = (int)(0.9 * currentMonitor.getWidth()) - imageWidth;
+        Dimension minButtonDim = new Dimension((int)(maximumWidth / 1.618), 25);
+        if (textDim.getWidth() > minButtonDim.getWidth()) {
             minButtonDim = textDim;
-        } else {
-            minButtonDim = splashDim;
         }
+
         hostB.setPreferredSize(minButtonDim);
         connectB.setPreferredSize(minButtonDim);
         botB.setPreferredSize(minButtonDim);

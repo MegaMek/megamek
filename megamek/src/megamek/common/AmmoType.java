@@ -1587,7 +1587,7 @@ public class AmmoType extends EquipmentType {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
                 .setISAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS,F_LC), "230,TM"));
@@ -1760,7 +1760,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS,F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), "230,TM"));
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL), "230,TM"));
      
        //TODO Mag Pulse See IO pg 62
         
@@ -1798,7 +1798,7 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for CLAN BA SRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,
+        munitions.add(new MunitionMutator("(Clan) Torpedo", 1, M_TORPEDO,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -1807,6 +1807,18 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2828, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false,false,false,false,false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),"230,TM"));
+        
+        munitions.add(new MunitionMutator("(Clan) Multi-Purpose", 1, M_MULTI_PURPOSE,
+                new TechAdvancement(TECH_BASE_CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+                .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true,false,false,false,false)
+                .setPrototypeFactions(F_CGS)
+                .setProductionFactions(F_CGS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "229, TW"));
  
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1827,7 +1839,8 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(isBaLrmAmmos, munitions);
-
+        AmmoType.createMunitions(baSrmAmmos,  munitions);
+        
         // Create the munition types for clan BA LRM launchers.
         munitions.clear();
         munitions.add(new MunitionMutator("Multi-Purpose", 1, M_MULTI_PURPOSE,
@@ -2054,7 +2067,7 @@ public class AmmoType extends EquipmentType {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
                 .setISAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS,F_LC)
@@ -2306,7 +2319,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS,F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), "230,TM"));
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL), "230,TM"));
         
         //TODO Mag Pulse see IO pg 62        
         

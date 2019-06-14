@@ -65,7 +65,7 @@ public class CEntity {
 
         public CEntity get(Entity es) {
             CEntity result = null;
-            if ((result = super.get(new Integer(es.getId()))) == null) {
+            if ((result = super.get(Integer.valueOf(es.getId()))) == null) {
                 result = new CEntity(es, tb);
                 this.put(result);
             }
@@ -73,7 +73,7 @@ public class CEntity {
         }
 
         public CEntity get(int id) {
-            return get(new Integer(id));
+            return get(Integer.valueOf(id));
         }
     }
 
@@ -427,10 +427,10 @@ public class CEntity {
                 // Anti-Mech attacks are difficult to set up and have bad
                 // odds most of the time. This means they have little
                 // strategic impact.
-                if ((weapon.getInternalName() == Infantry.SWARM_MEK)
-                        || (weapon.getInternalName() == Infantry.LEG_ATTACK)
-                        || (weapon.getInternalName() == Infantry.SWARM_MEK)
-                        || (weapon.getInternalName() == Infantry.STOP_SWARM)) {
+                if (weapon.getInternalName().equals(Infantry.SWARM_MEK)
+                        || weapon.getInternalName().equals(Infantry.LEG_ATTACK)
+                        || weapon.getInternalName().equals(Infantry.SWARM_MEK)
+                        || weapon.getInternalName().equals(Infantry.STOP_SWARM)) {
                     continue;
                 }
 
@@ -1056,7 +1056,7 @@ public class CEntity {
     }
 
     public Integer getKey() {
-        return new Integer(entity.getId());
+        return Integer.valueOf(entity.getId());
     }
 
     public MoveOption.Table getAllMoves(Client client) {
@@ -1544,7 +1544,7 @@ public class CEntity {
             }
 
             // IS plasma rifle
-            if (wt.getInternalName() == "ISPlasmaRifle") {
+            if (wt.getInternalName().equals("ISPlasmaRifle")) {
 
                 damage_value = 12.0;
 
@@ -1555,7 +1555,7 @@ public class CEntity {
             }
 
             // Clan plasma cannon
-            if (wt.getInternalName() == "CLPlasmaCannon") {
+            if (wt.getInternalName().equals("CLPlasmaCannon")) {
 
                 damage_value = 10.5;
 
@@ -1958,8 +1958,11 @@ public class CEntity {
 
     @Override
     public boolean equals(Object obj) {
-        if ((obj instanceof Entity) || (obj instanceof CEntity)) {
-            return obj.hashCode() == hashCode();
+        if (obj instanceof Entity) {
+            return ((Entity)obj).getId() == entity.getId();
+        }
+        if (obj instanceof CEntity) {
+            return ((CEntity)obj).entity.getId() == entity.getId();
         }
         return false;
     }

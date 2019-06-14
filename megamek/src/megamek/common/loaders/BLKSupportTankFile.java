@@ -38,6 +38,23 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
+    protected int defaultVGLFacing(int location, boolean rearFacing) {
+        switch (location) {
+            case SupportTank.LOC_RIGHT:
+                return rearFacing ? 2 : 1;
+            case SupportTank.LOC_REAR:
+                return 3;
+            case SupportTank.LOC_LEFT:
+                return rearFacing ? 4 : 5;
+            case SupportTank.LOC_FRONT:
+            case SupportTank.LOC_TURRET:
+            default:
+                return 0;
+        }
+    }
+    
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         SupportTank t = new SupportTank();

@@ -241,7 +241,7 @@ public class AeroTROView extends TROView {
             final Map<String, Object> ammoEntry = new HashMap<>();
             ammoEntry.put("name", aList.get(0).getType().getName().replaceAll("\\s+Ammo", ""));
             ammoEntry.put("shots", aList.stream().mapToInt(Mounted::getUsableShotsLeft).sum());
-            ammoEntry.put("tonnage", aList.stream().mapToDouble(m -> m.getType().getTonnage(aero)).sum());
+            ammoEntry.put("tonnage", aList.stream().mapToDouble(m -> m.getAmmoCapacity()).sum());
             ammo.add(ammoEntry);
         }
         setModelData("ammo", ammo);

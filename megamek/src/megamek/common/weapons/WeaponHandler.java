@@ -32,6 +32,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentMode;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
+import megamek.common.IAero;
 import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.ITerrain;
@@ -734,7 +735,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 bSalvo = false;
                 if (nweapons > 1) {
                     nweaponsHit = Compute.missilesHit(nweapons,
-                            ((Aero) ae).getClusterMods());
+                            ((IAero) ae).getClusterMods());
                     //If point defenses engage Large, single missiles
                     if (pdBayEngagedMissile || amsBayEngagedMissile) {
                         int AMSHits = 0;
@@ -1203,6 +1204,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         TagInfo info = new TagInfo(ae.getId(),
                                 target.getTargetType(), target, priority, false);
                         game.addTagInfo(info);
+                        
+                        ae.setSpotting(true);
+                        ae.setSpotTargetId(target.getTargetId());
+                        
                         r = new Report(3390);
                         r.subject = subjectId;
                         vPhaseReport.addElement(r);

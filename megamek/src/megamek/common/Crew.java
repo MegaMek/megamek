@@ -941,7 +941,14 @@ public class Crew implements Serializable {
      * @return a string description of the gunnery skills when using RPG
      */
     public String getGunneryRPG() {
-        return "" + gunneryL + "(L)/" + gunneryM + "(M)/" + gunneryB + "(B)";
+        return new StringBuilder()
+            .append(Arrays.toString(gunneryL))
+            .append("(L)/")
+            .append(Arrays.toString(gunneryM))
+            .append("(M)/")
+            .append(Arrays.toString(gunneryB))
+            .append("(B)")
+            .toString();
     }
 
     /**

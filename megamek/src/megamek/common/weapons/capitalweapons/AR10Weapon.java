@@ -37,6 +37,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.setInternalName(this.name);
         this.addLookupName("AR10");
         this.addLookupName("CLAR10");
+        this.shortName = "AR10";
         this.heat = 20; // This should reflect the maximum possible heat
         this.damage = 2;
         this.ammoType = AmmoType.T_AR10;

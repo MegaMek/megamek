@@ -3344,7 +3344,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing,
             int elevation) {
-        Integer entityId = new Integer(entity.getId());
+        Integer entityId = Integer.valueOf(entity.getId());
         List<Integer> spriteKey = getIdAndLoc(entityId, -1);
         EntitySprite sprite = entitySpriteIds.get(spriteKey);
         IsometricSprite isoSprite = isometricSpriteIds.get(spriteKey);
@@ -3441,7 +3441,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * to prevent annoying ConcurrentModificationExceptions
      */
     public void redrawEntity(Entity entity, Entity oldEntity) {
-        Integer entityId = new Integer(entity.getId());
+        Integer entityId = Integer.valueOf(entity.getId());
         if (oldEntity == null) {
             oldEntity = entity;
         }
@@ -4345,7 +4345,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         EntitySprite eSprite = entitySpriteIds.get(getIdAndLoc(ae.getId(),
                 ae.getSecondaryPositions().size() > 0 ? 0 : -1));
-        if (eSprite.onlyDetectedBySensors()) {
+        if (eSprite != null && eSprite.onlyDetectedBySensors()) {
             return;
         }
 
@@ -4552,32 +4552,32 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (!le.canSee()) {
                 message.append(Messages.getString("BoardView1.LOSBlocked",
                                                   new Object[]{ //$NON-NLS-1$
-                                                                new Integer(c1.distance(c2))}));
+                                                                Integer.valueOf(c1.distance(c2))}));
                 ToHitData thd = le.losModifiers(game);
                 message.append("\t" + thd.getDesc() + "\n");
             } else {
                 message.append(Messages.getString("BoardView1.LOSNotBlocked",
                                                   new Object[]{ //$NON-NLS-1$
-                                                                new Integer(c1.distance(c2))}));
+                                                                Integer.valueOf(c1.distance(c2))}));
                 if (le.getHeavyWoods() > 0) {
                     message.append(Messages.getString(
                             "BoardView1.HeavyWoods", new Object[]{ //$NON-NLS-1$
-                                                                   new Integer(le.getHeavyWoods())}));
+                                                                   Integer.valueOf(le.getHeavyWoods())}));
                 }
                 if (le.getLightWoods() > 0) {
                     message.append(Messages.getString(
                             "BoardView1.LightWoods", new Object[]{ //$NON-NLS-1$
-                                                                   new Integer(le.getLightWoods())}));
+                                                                   Integer.valueOf(le.getLightWoods())}));
                 }
                 if (le.getLightSmoke() > 0) {
                     message.append(Messages.getString(
                             "BoardView1.LightSmoke", new Object[]{ //$NON-NLS-1$
-                                                                   new Integer(le.getLightSmoke())}));
+                                                                   Integer.valueOf(le.getLightSmoke())}));
                 }
                 if (le.getHeavySmoke() > 0) {
                     message.append(Messages.getString(
                             "BoardView1.HeavySmoke", new Object[]{ //$NON-NLS-1$
-                                                                   new Integer(le.getHeavySmoke())}));
+                                                                   Integer.valueOf(le.getHeavySmoke())}));
                 }
                 if (le.isTargetCover() && le.canSee()) {
                     message.append(Messages
@@ -5938,7 +5938,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             } else {
                 txt.append(Messages.getString(
                         "BoardView1.ArtilleryAdjustment", //$NON-NLS-1$
-                        new Object[]{new Integer(amod)}));
+                        new Object[]{Integer.valueOf(amod)}));
                 txt.append("<br>"); //$NON-NLS-1$
             }
         }

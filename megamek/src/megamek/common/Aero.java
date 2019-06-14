@@ -786,6 +786,11 @@ public class Aero extends Entity implements IAero, IBomber {
         podHeatSinks = hs;
     }
 
+    @Override
+    public boolean tracksHeat() {
+        return true;
+    }
+
     public void setLeftThrustHits(int hits) {
         leftThrustHits = hits;
     }

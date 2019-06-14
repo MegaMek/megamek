@@ -104,7 +104,14 @@ public class Jumpship extends Aero {
     }
 
     @Override
+    public boolean tracksHeat() {
+        return false;
+    }
+
+    @Override
     public int getUnitType() {
+        // While large craft perform heat calculations, they are not considered heat-tracking units
+        // because they cannot generate more heat than they can dissipate in the same turn.
         return UnitType.JUMPSHIP;
     }
 

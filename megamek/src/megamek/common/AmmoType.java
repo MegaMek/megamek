@@ -5801,7 +5801,7 @@ public class AmmoType extends EquipmentType {
         .setTechRating(RATING_C)
         .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
         .setISAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
+        .setISApproximate(true, false, false,false, false)
         .setPrototypeFactions(F_CSJ)
         .setProductionFactions(F_CSJ);
         return ammo;

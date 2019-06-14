@@ -3176,7 +3176,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             
             if ((ae instanceof LandAirMech) && (ae.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)
-                    && usesAmmo && ammo != null && !((AmmoType)ammo.getType()).canAeroUse()) {
+                    && usesAmmo && ammo != null && !((AmmoType)ammo.getType()).canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
                 return "cannot use this ammunition in fighter mode.";
             }
 

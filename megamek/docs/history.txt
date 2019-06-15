@@ -17,6 +17,7 @@ v0.45.5-SNAPSHOT
 + Data: New units from TP:Tokasha, OTP:Fronc Reaches and Vega 3039
 + Issue #1090: VGL Unable to Fire - Out of Arc
 + Issue #1375: Heat damage not correctly applied to all unit types
++ PR #1385: Lack of deployment zone for entity no longer causes deployment turn to be ignored when loading MUL.
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

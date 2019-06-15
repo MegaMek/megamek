@@ -632,7 +632,7 @@ public class MULParser {
                     Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE));
             entity.setStartingPos(deployZone);
         } catch (Exception e) {
-            entity.setDeployRound(Board.START_NONE);
+            entity.setStartingPos(Board.START_NONE);
         }
 
 

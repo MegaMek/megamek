@@ -49,7 +49,6 @@ public class ArtilleryBayWeaponDialog extends JDialog implements ActionListener,
     private static final long serialVersionUID = -2650223403068443256L;
     
     private boolean confirm = false;
-    private int limit;
     private int[] weapons;
 
     private JPanel panButtons = new JPanel();
@@ -57,8 +56,8 @@ public class ArtilleryBayWeaponDialog extends JDialog implements ActionListener,
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
     @SuppressWarnings("rawtypes")
-    private JComboBox[] b_choices;
-    private JLabel[] b_labels;
+    private JComboBox[] a_choices;
+    private JLabel[] a_labels;
     private JLabel description;
 
     /**
@@ -88,23 +87,15 @@ public class ArtilleryBayWeaponDialog extends JDialog implements ActionListener,
         c.gridy = 0;
         c.insets = new Insets(5, 5, 5, 5);
 
-        description = new JLabel();
-        if (numFighters != 0) {
-            description.setText(Messages
-                    .getString("BombPayloadDialog.SquadronBombDesc"));
-        } else {
-            description.setText(Messages
-                    .getString("BombPayloadDialog.FighterBombDesc"));
-        }
-        add(description,c);
+        description = new JLabel(Messages.getString("ArtilleryBayWeaponDialog.title"));
 
         c.gridwidth = 1;
         c.gridheight = 1;
         c.gridx = 1;
         c.gridy = 1;
 
-        b_choices = new JComboBox[bombs.length];
-        b_labels = new JLabel[bombs.length];
+        a_choices = new JComboBox[weapons.length];
+        a_labels = new JLabel[weapons.length];
         //initialize the bomb choices
         for(int i = 0; i< bombs.length; i++) {
             b_choices[i] = new JComboBox<String>();
@@ -232,7 +223,7 @@ public class ArtilleryBayWeaponDialog extends JDialog implements ActionListener,
     public ArtilleryBayWeaponDialog(JFrame parent, String title, int[] bombs,
             boolean spaceBomb, boolean bombDump, int limit, int numFighters) {
         super(parent, title, true);
-        initialize(parent, title, bombs, spaceBomb, bombDump, limit, numFighters);
+        initialize(parent, title, bombs);
     }
 
     public void actionPerformed(ActionEvent e) {

@@ -50,7 +50,7 @@ public class ArtilleryBayWeaponDialog extends JDialog implements ActionListener,
     
     private boolean confirm = false;
     private int limit;
-    private int[] bombs;
+    private int[] weapons;
 
     private JPanel panButtons = new JPanel();
     private JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
@@ -62,38 +62,20 @@ public class ArtilleryBayWeaponDialog extends JDialog implements ActionListener,
     private JLabel description;
 
     /**
-     * Keeps track of the number of fighters in the squadron, 0 implies a
-     * single fighter not in a squadron squadron.
-     */
-    private double numFighters;
-
-    /**
      * Create and initialize the dialog.
      *
      * @param parent
      *            - the <code>Frame</code> that is locked by this dialog.
      * @param title
      *            - the title <code>String</code> for this dialog.
-     * @param b
-     *            The bomb choice list
-     * @param spaceBomb
-     *            Flag for whether or not this is space bombing
-     * @param bombDump
-     *
-     * @param lim
-     *
-     * @param numFighters
-     *            The number of fighters in a squadron, 0 implies a single
-     *            fighter not in a squadron.
+     * @param wid
+     *            The ids of the bay weapons available as choices
      */
     @SuppressWarnings("unchecked")
-    private void initialize(JFrame parent, String title, int[] b,
-            boolean spaceBomb, boolean bombDump, int lim, int numFighters) {
+    private void initialize(JFrame parent, String title, int[] wid) {
         super.setResizable(false);
 
-        this.numFighters = numFighters;
-        bombs = b;
-        limit = lim;
+        weapons = wid;
 
         GridBagLayout gridbag = new GridBagLayout();
         setLayout(gridbag);

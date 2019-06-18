@@ -740,10 +740,18 @@ public class Server implements Runnable {
             getGame().addGameListener(listener);
         }
 
+        List<Integer> orphanEntities = new ArrayList<>();
+                
         // reattach the transient fields and ghost the players
         for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
             Entity ent = e.next();
             ent.setGame(game);
+            
+            if(ent.getOwner() == null) {
+                orphanEntities.add(ent.getId());
+                continue;
+            }
+            
             if (ent instanceof Mech) {
                 ((Mech) ent).setBAGrabBars();
                 ((Mech) ent).setProtomechClampMounts();
@@ -752,6 +760,9 @@ public class Server implements Runnable {
                 ((Tank) ent).setBAGrabBars();
             }
         }
+        
+        game.removeEntities(orphanEntities, IEntityRemovalConditions.REMOVE_UNKNOWN);
+        
         game.setOutOfGameEntitiesVector(game.getOutOfGameEntitiesVector());
         for (Enumeration<IPlayer> e = game.getPlayers(); e.hasMoreElements(); ) {
             IPlayer p = e.nextElement();

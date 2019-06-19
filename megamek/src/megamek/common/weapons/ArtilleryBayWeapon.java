@@ -84,6 +84,8 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
                     && bayWAmmo.curMode().equals("Homing")) {
                 useHoming = true;
             }
+            //We only need to get this information for the first weapon in the bay to return the right handler
+            break;
         }
         if (useHoming) {
             if (game.getPhase() == IGame.Phase.PHASE_FIRING) {

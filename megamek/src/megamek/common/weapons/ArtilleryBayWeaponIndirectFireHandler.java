@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -92,6 +93,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
     @Override
     protected void useAmmo() {
         final String METHOD_NAME = "useAmmo()";
+        nweaponsHit = weapon.getBayWeapons().size();
         for (int wId : weapon.getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
             // check the currently loaded ammo
@@ -103,15 +105,26 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
 
             int shots = bayW.getCurrentShots();
-            for (int i = 0; i < shots; i++) {
-                if (null == bayWAmmo
-                        || bayWAmmo.getUsableShotsLeft() < 1) {
-                    // try loading something else
-                    ae.loadWeaponWithSameAmmo(bayW);
-                    bayWAmmo = bayW.getLinked();
-                }
-                if (null != bayWAmmo) {
+            //if this option is on, we may have odd amounts of ammo in multiple bins. Only fire rounds that we have.
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)) {
+                if (bayWAmmo.getUsableShotsLeft() < 1) {
+                    nweaponsHit--;                    
+                } else if (null != bayWAmmo) {
                     bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
+                }
+            } else {
+                //By default rules, we have just one ammo bin with at least 10 shots for each weapon in the bay,
+                //so we'll track ammo normally and need to resolve attacks for all bay weapons.
+                for (int i = 0; i < shots; i++) {
+                    if (null == bayWAmmo
+                            || bayWAmmo.getUsableShotsLeft() < 1) {
+                        // try loading something else
+                        ae.loadWeaponWithSameAmmo(bayW);
+                        bayWAmmo = bayW.getLinked();
+                    }
+                    if (null != bayWAmmo) {
+                        bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
+                    }
                 }
             }
         }
@@ -336,6 +349,8 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             addHeat();
         }
         
+        //We're going to need to resolve several weapon hits with calls to server
+        List<Coords> targets = new ArrayList<Coords>();
         if (!bMissed) {
             if (!isFlak) {
                 r = new Report(3190);
@@ -356,11 +371,12 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                             game.getRoundCount(), game.getPlayer(aaa
                                     .getPlayerId()), artyMsg));
-
+            //Damage effects can hit the same hex multiple times, so duplicates are ok
+            while (nweaponsHit > 0) {
+                targets.add(targetPos);
+                nweaponsHit--;
+            }
         } else {
-            // direct fire artillery only scatters by one d6
-            // we do this here to avoid duplicating handle()
-            // in the ArtilleryWeaponDirectFireHandler
             Coords origPos = targetPos;
             int moF = toHit.getMoS();
             if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)) {
@@ -372,36 +388,43 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     moF = moF + 2;
                 }
             }
-            targetPos = Compute.scatterDirectArty(targetPos, moF);
-            if (game.getBoard().contains(targetPos)) {
-                // misses and scatters to another hex
-                if (!isFlak) {
-                    r = new Report(3195);
-                    artyMsg = "Artillery missed here on round "
-                            + game.getRoundCount() + ", fired by "
-                            + game.getPlayer(aaa.getPlayerId()).getName();
-                    game.getBoard().addSpecialHexDisplay(
-                            origPos,
-                            new SpecialHexDisplay(
-                                    SpecialHexDisplay.Type.ARTILLERY_HIT, game
-                                            .getRoundCount(), game
-                                            .getPlayer(aaa.getPlayerId()),
-                                    artyMsg));
+            while (nweaponsHit > 0) {
+                targetPos = Compute.scatterDirectArty(targetPos, moF);
+                if (game.getBoard().contains(targetPos)) {
+                    targets.add(targetPos);
+                    // misses and scatters to another hex
+                    if (!isFlak) {
+                        r = new Report(3195);
+                        artyMsg = "Artillery missed here on round "
+                                + game.getRoundCount() + ", fired by "
+                                + game.getPlayer(aaa.getPlayerId()).getName();
+                        game.getBoard().addSpecialHexDisplay(
+                                origPos,
+                                new SpecialHexDisplay(
+                                        SpecialHexDisplay.Type.ARTILLERY_HIT, game
+                                                .getRoundCount(), game
+                                                .getPlayer(aaa.getPlayerId()),
+                                                artyMsg));
+                    } else {
+                        r = new Report(3192);
+                    }
+                    r.subject = subjectId;
+                    r.add(targetPos.getBoardNum());
+                    vPhaseReport.addElement(r);
                 } else {
-                    r = new Report(3192);
+                    // misses and scatters off-board
+                    if (isFlak) {
+                        r = new Report(3193);
+                    } else {
+                        r = new Report(3200);
+                    }
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
                 }
-                r.subject = subjectId;
-                r.add(targetPos.getBoardNum());
-                vPhaseReport.addElement(r);
-            } else {
-                // misses and scatters off-board
-                if (isFlak) {
-                    r = new Report(3193);
-                } else {
-                    r = new Report(3200);
-                }
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
+            nweaponsHit--;
+            }
+            //If we managed to land everything off the board, stop
+            if (targets.isEmpty()) {
                 return !bMissed;
             }
         }

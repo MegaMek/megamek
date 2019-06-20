@@ -3842,68 +3842,82 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public String getCritDamageString() {
-        String toReturn = "";
+        StringBuilder toReturn = new StringBuilder();
         boolean first = true;
         if (getSensorHits() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Sensors (" + getSensorHits() + ")";
+            toReturn.append(String.format(Messages.getString("Aero.sensorDamageString"), getSensorHits()));
             first = false;
         }
         if (getAvionicsHits() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Avionics (" + getAvionicsHits() + ")";
+            toReturn.append(String.format(Messages.getString("Aero.avionicsDamageString"), getAvionicsHits()));
             first = false;
         }
         if (getFCSHits() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "FCS (" + getFCSHits() + ")";
+            toReturn.append(String.format(Messages.getString("Aero.fcsDamageString"), getFCSHits()));
+            first = false;
+        }
+        if (getCICHits() > 0) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(String.format(Messages.getString("Aero.cicDamageString"), getCICHits()));
             first = false;
         }
         if (isGearHit()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Landing Gear";
+            toReturn.append(Messages.getString("Aero.landingGearDamageString"));
+            first = false;
+        }
+        if (!hasLifeSupport()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Aero.lifeSupportDamageString"));
             first = false;
         }
         if (getLeftThrustHits() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Left Thruster (" + getLeftThrustHits() + ")";
+            toReturn.append(String.format(Messages.getString("Aero.leftThrusterDamageString"), getLeftThrustHits()));
             first = false;
         }
         if (getRightThrustHits() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Right Thruster (" + getRightThrustHits() + ")";
+            toReturn.append(String.format(Messages.getString("Aero.rightThrusterDamageString"), getRightThrustHits()));
             first = false;
         }
         // Cargo bays and bay doors for large craft
         for (Bay next : getTransportBays()) {
         	if (next.getBayDamage() > 0) {
-        		if (!first) {
-        			toReturn += ", ";
-        		}
-        	toReturn += next.getType() + " Bay # " + next.getBayNumber();
+        	    if (!first) {
+                    toReturn.append(", ");
+                }
+        	toReturn.append(String.format(Messages.getString("Aero.bayDamageString"), next.getType(), next.getBayNumber()));
         	first = false;
         	}
         	if (next.getCurrentDoors() < next.getDoors()) {
-        		if (!first) {
-        			toReturn += ", ";
-        		}
-        	toReturn += next.getType() + " Bay #" + next.getBayNumber() + " Doors (" + (next.getDoors() - next.getCurrentDoors()) + ")";
+        	    if (!first) {
+                    toReturn.append(", ");
+                }
+        	toReturn.append(String.format(Messages.getString("Aero.bayDoorDamageString"), next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
         	first = false;
         	}
         }
-        return toReturn;
+        return toReturn.toString();
     }
 
     @Override
@@ -4234,7 +4248,7 @@ public class Aero extends Entity implements IAero, IBomber {
         if ((this instanceof Dropship) 
                 || (this instanceof Jumpship)
                 || (this instanceof Warship)
-                || (this instanceof SpaceStation)) {  		
+                || (this instanceof SpaceStation)) {
 
             ArrayList<Mounted> ams = new ArrayList<>();
             for (Mounted weapon : getWeaponBayList()) {

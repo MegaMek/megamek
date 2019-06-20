@@ -27154,23 +27154,87 @@ public class Server implements Runnable {
                 js.setCICHits(js.getCICHits() + 1);
                 break;
             case Aero.CRIT_KF_DRIVE:
-                if (js == null) {
+                //Per SO construction rules, stations have no KF drive, therefore they can't take a hit to it...
+                if (js == null || js instanceof SpaceStation) {
                     break;
                 }
-                // KF Drive hit
-                r = new Report(9190);
-                r.subject = aero.getId();
-                reports.add(r);
-                js.setKFIntegrity(js.getKFIntegrity() - 1);
+                // KF Drive hit - damage the drive integrity
+                js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
+                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE)) {
+                    //Randomize the component struck - probabilities taken from the old BattleSpace record sheets
+                    switch (Compute.d6(2)) {
+                    case 2:
+                        //Drive Coil Hit
+                        r = new Report(9186);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFDriveCoilHit(true);
+                        break;
+                    case 3:
+                    case 11:
+                        //Charging System Hit
+                        r = new Report(9187);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFChargingSystemHit(true);
+                        break;
+                    case 5:
+                        //Field Initiator Hit
+                        r = new Report(9190);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFFieldInitiatorHit(true);
+                        break;
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                        //Helium Tank Hit
+                        r = new Report(9189);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFHeliumTankHit(true);
+                        break;
+                    case 9:
+                        //Drive Controller Hit
+                        r = new Report(9191);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFDriveControllerHit(true);
+                        break;
+                    case 10:
+                    case 12:
+                        //LF Battery Hit - if you don't have one, treat as helium tank
+                        if (js.hasLF()) {
+                            r = new Report(9188);
+                            r.subject = aero.getId();
+                            reports.add(r);
+                            js.setLFBatteryHit(true);
+                        } else {
+                            r = new Report(9189);
+                            r.subject = aero.getId();
+                            reports.add(r);
+                            js.setKFHeliumTankHit(true);
+                        }
+                        break;
+                    }
+                } else {
+                    //Just report the standard KF hit, per SO rules
+                    r = new Report(9194);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                }
                 break;
             case Aero.CRIT_GRAV_DECK:
                 if (js == null) {
                     break;
                 }
-                // Grave Deck hit
+                int choice = Compute.randomInt(js.getTotalGravDeck());
+                // Grav Deck hit
                 r = new Report(9195);
                 r.subject = aero.getId();
                 reports.add(r);
+                js.setGravDeckDamageFlag(choice, 1);
                 break;
             case Aero.CRIT_LIFE_SUPPORT:
                 // Life Support hit

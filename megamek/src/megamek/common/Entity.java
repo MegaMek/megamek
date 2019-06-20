@@ -8167,6 +8167,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return null;
     }
+    
+    @Nullable
+    public DockingCollar getCollarById(int collarNumber) {
+        //TODO: Change transports to a map or other indexed data structure to avoid
+        // linear-time algorithm.
+        for (Transporter next : transports) {
+            if (next instanceof DockingCollar) {
+                if (((DockingCollar) next).getCollarNumber() == collarNumber) {
+                    return (DockingCollar) next;
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * @return only entities in ASF Bays
@@ -8571,6 +8585,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
             if ((next instanceof Bay) && ((Bay)next).isQuarters()) {
+                continue;
+            }
+            if ((next instanceof DockingCollar) && ((DockingCollar)next).isDamaged()) {
                 continue;
             }
             if (ishtml && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {

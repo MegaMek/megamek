@@ -26,7 +26,6 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Mech;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -58,7 +57,7 @@ public class FlamerHeatHandler extends WeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        if ((entityTarget instanceof Mech)
+        if ((entityTarget.tracksHeat())
                 && game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
             // heat
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),

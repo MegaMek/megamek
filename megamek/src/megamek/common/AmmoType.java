@@ -192,7 +192,7 @@ public class AmmoType extends EquipmentType {
     public static final BigInteger F_TELE_MISSILE = BigInteger.valueOf(1)
             .shiftLeft(10); // Tele-Missile
     public static final BigInteger F_CAP_MISSILE = BigInteger.valueOf(1)
-            .shiftLeft(11); // Tele-Missile
+            .shiftLeft(11); // Other Capital-Missile
     public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1)
             .shiftLeft(12); // can
     // be
@@ -213,6 +213,14 @@ public class AmmoType extends EquipmentType {
     //For tag, rl pods, missiles and the like
     public static final BigInteger F_OTHER_BOMB = BigInteger.valueOf(1)
             .shiftLeft(16);
+    
+    //Used by MHQ for loading ammo bins
+    public static final BigInteger F_CRUISE_MISSILE = BigInteger.valueOf(1)
+            .shiftLeft(17);
+    
+    //Used by MHQ for loading ammo bins
+    public static final BigInteger F_SCREEN = BigInteger.valueOf(1)
+            .shiftLeft(18);
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -3627,6 +3635,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 75;
         ammo.cost = 20000;
         ammo.tonnage = 25;
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
         ammo.rulesRefs = "284,TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
@@ -3648,6 +3657,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 129;
         ammo.cost = 50000;
         ammo.tonnage = 35;
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
         ammo.rulesRefs = "284,TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
@@ -3669,6 +3679,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 191;
         ammo.cost = 90000;
         ammo.tonnage = 45;
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
         ammo.rulesRefs = "284,TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
@@ -3690,6 +3701,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 285;
         ammo.cost = 140000;
         ammo.tonnage = 60;
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
         ammo.rulesRefs = "284,TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
@@ -5859,12 +5871,12 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
         .setIntroLevel(false)
         .setUnofficial(false)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
-        .setClanAdvancement(3055, 3060, 3070, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CSJ)
-        .setProductionFactions(F_CSJ);
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+        .setISAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CC)
+        .setProductionFactions(F_CC);
         return ammo;
     }
     
@@ -11570,6 +11582,7 @@ public class AmmoType extends EquipmentType {
                 ammo.tonnage = 10.0;
                 ammo.bv = 20;
                 ammo.cost = 10000;
+                ammo.flags = ammo.flags.or(F_SCREEN);
                 ammo.rulesRefs = "237,TM";
                 ammo.techAdvancement.setTechBase(TECH_BASE_IS)
                     .setIntroLevel(false)

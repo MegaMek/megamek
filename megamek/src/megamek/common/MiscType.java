@@ -11812,11 +11812,14 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BOMB_BAY).or(F_MECH_EQUIPMENT);
         misc.explosive = true;
+        misc.rulesRefs = "110,IO";
 
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, 3071, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+        // Not listed in IO; this an amalgam of bimodal and standard LAM values.
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684, DATE_NONE, 3085)
+            .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2825)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

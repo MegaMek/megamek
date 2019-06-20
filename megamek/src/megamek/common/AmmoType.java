@@ -5810,12 +5810,12 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
         .setIntroLevel(false)
         .setUnofficial(false)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
-        .setClanAdvancement(3055, 3060, 3070, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CSJ)
-        .setProductionFactions(F_CSJ);
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+        .setISAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CC)
+        .setProductionFactions(F_CC);
         return ammo;
     }
     

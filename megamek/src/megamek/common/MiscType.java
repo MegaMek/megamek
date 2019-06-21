@@ -1403,6 +1403,29 @@ public class MiscType extends EquipmentType {
 
         return returnBV;
     }
+    
+    @Override
+    public int getHeat() {
+        if (hasFlag(F_NULLSIG)
+                || hasFlag(F_VOIDSIG)) {
+            return 10;
+        } else if (hasFlag(F_MOBILE_HPG) && hasFlag(F_MECH_EQUIPMENT)) {
+            // Ground mobile HPG
+            return 20;
+        } else if (hasFlag(F_MOBILE_HPG)) {
+            // Large craft HPG
+            return 40;
+        } else if (hasFlag(F_CHAMELEON_SHIELD)) {
+            return 6;
+        } else if (hasFlag(F_VIRAL_JAMMER_DECOY)
+                || hasFlag(F_VIRAL_JAMMER_HOMING)) {
+            return 12;
+        } else if (hasFlag(F_RISC_LASER_PULSE_MODULE)
+                || hasFlag(F_NOVA)) {
+            return 2;
+        }
+        return 0;
+    }
 
     /**
      * Add all the types of misc eq we can create to the list

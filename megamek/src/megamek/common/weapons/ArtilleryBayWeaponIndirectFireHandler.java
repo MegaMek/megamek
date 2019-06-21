@@ -352,13 +352,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         //In the case of misses, we'll need to hit multiple hexes
         List<Coords> targets = new ArrayList<Coords>();
         if (!bMissed) {
-            if (!isFlak) {
-                r = new Report(3190);
-            } else {
-                r = new Report(3191);
-            }
+            r = new Report(3199);
             r.subject = subjectId;
+            r.add(nweaponsHit);
             r.add(targetPos.getBoardNum());
+            r.add(atype.getShortName());
             // Mine clearance has its own report which will get added
             if (!mineClear) {
                 vPhaseReport.addElement(r);
@@ -383,37 +381,42 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     moF = moF + 2;
                 }
             }
+            //We're only going to display one missed shot hex on the board, at the intended target
+            artyMsg = "Artillery missed here on round "
+                    + game.getRoundCount() + ", fired by "
+                    + game.getPlayer(aaa.getPlayerId()).getName();
+            game.getBoard().addSpecialHexDisplay(
+                    origPos,
+                    new SpecialHexDisplay(
+                            SpecialHexDisplay.Type.ARTILLERY_HIT, game
+                                    .getRoundCount(), game
+                                    .getPlayer(aaa.getPlayerId()),
+                                    artyMsg));
             while (nweaponsHit > 0) {
+                //We'll generate a new report and scatter for each weapon fired
                 targetPos = Compute.scatterDirectArty(targetPos, moF);
                 if (game.getBoard().contains(targetPos)) {
                     targets.add(targetPos);
                     // misses and scatters to another hex
                     if (!isFlak) {
-                        r = new Report(3195);
-                        artyMsg = "Artillery missed here on round "
-                                + game.getRoundCount() + ", fired by "
-                                + game.getPlayer(aaa.getPlayerId()).getName();
-                        game.getBoard().addSpecialHexDisplay(
-                                origPos,
-                                new SpecialHexDisplay(
-                                        SpecialHexDisplay.Type.ARTILLERY_HIT, game
-                                                .getRoundCount(), game
-                                                .getPlayer(aaa.getPlayerId()),
-                                                artyMsg));
+                        r = new Report(3202);
+                        r.subject = subjectId;
+                        r.newlines = 1;
+                        r.add(atype.getShortName());
+                        r.add(targetPos.getBoardNum());
+                        vPhaseReport.addElement(r);
                     } else {
                         r = new Report(3192);
+                        r.subject = subjectId;
+                        r.newlines = 1;
+                        r.add(targetPos.getBoardNum());
+                        vPhaseReport.addElement(r);
                     }
-                    r.subject = subjectId;
-                    r.add(targetPos.getBoardNum());
-                    vPhaseReport.addElement(r);
                 } else {
                     // misses and scatters off-board
-                    if (isFlak) {
-                        r = new Report(3193);
-                    } else {
-                        r = new Report(3200);
-                    }
+                    r = new Report(3200);
                     r.subject = subjectId;
+                    r.newlines = 1;
                     vPhaseReport.addElement(r);
                 }
             nweaponsHit--;

@@ -737,11 +737,12 @@ public class SharedUtility {
                 if(game.getBoard().onGround()) {
                     steps = 16;
                 }
-                while(steps > 0) {
+                while(steps > 0 &&
+                        game.getBoard().contains(md.getFinalCoords())) {
                     md.addStep(MoveStepType.FORWARDS);
                     steps--;
                 }
-                if (!game.getBoard().contains(md.getLastStep().getPosition())) {
+                if (!game.getBoard().contains(md.getFinalCoords())) {
                     md.removeLastStep();
                     if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
                         //Telemissiles shouldn't get a return option

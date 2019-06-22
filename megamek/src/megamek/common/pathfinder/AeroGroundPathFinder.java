@@ -334,7 +334,11 @@ public class AeroGroundPathFinder {
                 firstTurn = false;
             }
 
-            straightLine.addStep(MoveStepType.FORWARDS);
+            if(straightLine.nextForwardStepOffBoard()) {
+                break;
+            } else {
+                straightLine.addStep(MoveStepType.FORWARDS);
+            }
         }
 
         return retval;

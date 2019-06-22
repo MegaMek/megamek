@@ -14,8 +14,11 @@
 
 package megamek.common.weapons;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BombType;
@@ -35,6 +38,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
@@ -403,6 +407,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
                 allowed.add(ti);
             }
         }
+        
         if (allowed.size() == 0) {
             aaa.setTargetId(newTarget.getTargetId());
             aaa.setTargetType(newTarget.getTargetType());
@@ -410,44 +415,17 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no tag in 8 hex radius of target hex");
         } else {
-            // find the TAG hit with the most shots left, and closest
-            int bestDistance = Integer.MAX_VALUE;
-            TagInfo targetTag = allowed.firstElement();
-            for (TagInfo ti : allowed) {
-                int distance = tc.distance(newTarget.getPosition());
-
-                // higher # of shots left
-                if (ti.shots > targetTag.shots) {
-                    bestDistance = distance;
-                    targetTag = ti;
-                    continue;
-                }
-                // same # of shots left
-                if (ti.shots == targetTag.shots) {
-                    // higher priority
-                    if (ti.priority > targetTag.priority) {
-                        bestDistance = distance;
-                        targetTag = ti;
-                        continue;
-                    }
-                    // same priority and closer
-                    if ((ti.priority == targetTag.priority)
-                            && (bestDistance > distance)) {
-                        bestDistance = distance;
-                        targetTag = ti;
-                    }
-                }
+          //The player gets to select the target
+            List<String> targetDescriptions = new ArrayList<String>();
+            for (TagInfo target : allowed) {
+                targetDescriptions.add(target.target.getDisplayName());
             }
-
-            // if the best TAG has no shots left
-            if (targetTag.shots == 0) {
-                game.clearTagInfoShots(ae, tc);
-            }
-
-            targetTag.shots--;
-            target = targetTag.target;
+            int choice = server.processTAGTargetCFR(ae.getOwnerId(), targetDescriptions);
+            newTarget = allowed.get(choice).target;
+            target = newTarget;
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
+            server.assignAMS();
         }
     }
 

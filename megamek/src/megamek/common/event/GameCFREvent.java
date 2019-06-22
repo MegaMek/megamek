@@ -65,6 +65,16 @@ public class GameCFREvent extends GameEvent {
     private Coords telemissileTargetCoords;
     
     /**
+     * List of descriptions for tagged targets within range.
+     */
+    private List<String> tagTargets;
+    
+    /**
+     * Original target coords for an artillery homing warhead.
+     */
+    private Coords artyHomingTargetCoords;
+    
+    /**
      * Construct game event
      */
     public GameCFREvent(Object source, int t) {
@@ -169,5 +179,21 @@ public class GameCFREvent extends GameEvent {
     
     public void setTeleguidedMissileCoords(Coords tc) {
         telemissileTargetCoords = tc;
+    }
+
+    public List<String> getTAGTargetDescriptions() {
+        return tagTargets;
+    }
+    
+    public void setTAGTargets(List<String> newTargetDescriptions) {
+        tagTargets = newTargetDescriptions;
+    }
+    
+    public Coords getArtyHomingTargetCoords() {
+        return artyHomingTargetCoords;
+    }
+    
+    public void setArtyHomingTargetCoords(Coords tc) {
+        artyHomingTargetCoords = tc;
     }
 }

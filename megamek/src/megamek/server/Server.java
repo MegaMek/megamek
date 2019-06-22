@@ -10494,6 +10494,44 @@ public class Server implements Runnable {
             }
         }
     }
+    
+    public int processTAGTargetCFR(int playerId, List<String> targetDescriptions) {
+        final String METHOD_NAME = "processTAGTargetCFR(Entity, Entity)";
+        sendTAGTargetCFR(playerId, targetDescriptions);
+        while (true) {
+            synchronized (cfrPacketQueue) {
+                try {
+                    while (cfrPacketQueue.isEmpty()) {
+                        cfrPacketQueue.wait();
+                    }
+                } catch (InterruptedException e) {
+                    return 0;
+                }
+                // Get the packet, if there's something to get
+                ReceivedPacket rp;
+                if (cfrPacketQueue.size() > 0) {
+                    rp = cfrPacketQueue.poll();
+                    int cfrType = rp.packet.getIntValue(0);
+                    // Make sure we got the right type of response
+                    if (cfrType != Packet.COMMAND_CFR_TAG_TARGET) {
+                        getLogger().error(getClass(), METHOD_NAME,
+                                "Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet, " + "received: " + cfrType);
+                        continue;
+                    }
+                    // Check packet came from right ID
+                    if (rp.connId != playerId) {
+                        getLogger().error(getClass(), METHOD_NAME,
+                                "Exected a " + "COMMAND_CFR_TAG_TARGET CFR packet " + "from player  " + playerId
+                                + " but instead it came from player " + rp.connId);
+                        continue;
+                    }
+                    return (int)rp.packet.getData()[1];
+                } else { // If no packets, wait again
+                    continue;
+                }
+            }
+        }
+    }
 
     /**
      * If an aero unit takes off in the same turn that other units loaded, then
@@ -13536,6 +13574,12 @@ public class Server implements Runnable {
         // Send target descriptions to Client
         send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
                 new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetDescriptions}));
+    }
+    
+    private void sendTAGTargetCFR(int playerId, List<String> targetDescriptions) {
+        // Send target descriptions to Client
+        send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+                new Object[] { Packet.COMMAND_CFR_TAG_TARGET, targetDescriptions}));
     }
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,

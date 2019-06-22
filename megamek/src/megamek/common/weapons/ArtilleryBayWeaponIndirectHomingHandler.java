@@ -26,6 +26,7 @@ import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.TagInfo;
 import megamek.common.TargetRoll;
@@ -94,6 +95,11 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             aaa.decrementTurnsTilHit();
             return true;
         }
+        
+        Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
+        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
+                .getType();
+        
         Entity entityTarget;
         if (game.getPhase() == IGame.Phase.PHASE_OFFBOARD) {
             convertHomingShotToEntityTarget();

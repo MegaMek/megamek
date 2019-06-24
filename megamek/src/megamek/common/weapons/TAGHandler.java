@@ -92,6 +92,7 @@ public class TAGHandler extends WeaponHandler {
             // per errata, being painted by a TAG also spots the target for indirect fire
             ae.setSpotting(true);
             ae.setSpotTargetId(entityTarget.getId());
+            ae.setSpottingWithoutPenalty //allows the unit to not suffer the penalty
             
             Report r = new Report(3188);
             r.subject = subjectId;

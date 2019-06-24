@@ -18,14 +18,11 @@ package megamek.common;
  * Represents a standard support vehicle crew seat.
  */
 
-public final class StandardSeatCargoBay extends Bay {
+public class StandardSeatCargoBay extends Bay {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 4161027191694822726L;
 
-    private double weight = 0;
+    protected double weight = 0;
 
     /**
      * The default constructor is only for serialization.
@@ -84,7 +81,7 @@ public final class StandardSeatCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "standardseats:" + weight + ":" + doors;
+        return "standardseats:" + currentSpace + ":" + doors;
     }
 
 }

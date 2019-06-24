@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2019 - The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,21 +11,19 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
- * Represents an external or exposed support vehicle crew seat.
+ * Support vehicle ejection seats.
  */
+public final class EjectionSeatCargoBay extends StandardSeatCargoBay {
 
-public final class PillionSeatCargoBay extends StandardSeatCargoBay {
-
-    private static final long serialVersionUID = 145634308684637504L;
+    private static final long serialVersionUID = 8916801835963112628L;
 
     /**
      * The default constructor is only for serialization.
      */
-    protected PillionSeatCargoBay() {
+    protected EjectionSeatCargoBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
@@ -37,24 +35,34 @@ public final class PillionSeatCargoBay extends StandardSeatCargoBay {
      *
      * @param space The number of seats
      */
-    public PillionSeatCargoBay(double space) {
+    public EjectionSeatCargoBay(double space) {
         super(space);
-        weight = space * 0.025;
+        weight = space * 0.1;
     }
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Seating (Pillion) - " + currentSpace;
+        return "Seating (Ejection) - " + currentSpace;
     }
 
     @Override
     public String getType() {
-        return "Pillion Seats";
+        return "Ejection Seats";
     }
 
     @Override
     public String toString() {
-        return "pillionseats:" + currentSpace + ":" + doors;
+        return "ejectionseats:" + currentSpace + ":" + doors;
     }
 
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return EjectionSeatCargoBay.techAdvancement();
+    }
+
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setTechRating(RATING_B).setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE);
+    }
 }

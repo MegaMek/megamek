@@ -354,6 +354,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private boolean evading = false;
 
     public boolean spotting;
+    public boolean spottingWithoutPenalty; // the unit has spotted for LRM indirect fire but suffers no penalty for it
+
     private boolean clearingMinefield = false;
     protected int killerId = Entity.NONE;
     private int offBoardDistance = 0;
@@ -6085,6 +6087,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         setDisplacementAttack(null);
         setFindingClub(false);
         setSpotting(false);
+	setSpottingWithoutPenalty(false);
         spotTargetId = Entity.NONE;
         setClearingMinefield(false);
         setUnjammingRAC(false);
@@ -9063,6 +9066,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setSpotting(boolean spotting) {
         this.spotting = spotting;
     }
+    
+    //spottingWithoutPenalty
+    public boolean isSpottingWithoutPenalty() {
+        return spottingWithoutPenalty;
+    }//isSpottingWithoutPenalty
+
+    public void setSpottingWithoutPenalty(boolean spottingWithoutPenalty) {
+        this.spottingWithoutPenalty = spottingWithoutPenalty;
+    }//setSpottingWithoutPenalty
 
     /**
      * Um, basically everything can spot for LRM indirect fire.

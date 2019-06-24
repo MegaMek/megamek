@@ -750,12 +750,6 @@ public class MiscType extends EquipmentType {
             }
             return TestEntity.ceil(weight, roundWeight);
 
-        } else if (hasFlag(F_EJECTION_SEAT)) {
-            if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
-                return .1f;
-            } else {
-                return .5f;
-            }
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
             double weight = 2;
             for (Mounted mount : entity.getMisc()) {
@@ -5905,7 +5899,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Ejection Seat (Industrial Mech)";
         misc.setInternalName(misc.name);
         misc.shortName = "Ejection Seat";
-        misc.tonnage = TONNAGE_VARIABLE;
+        misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.cost = 25000;
         misc.flags = misc.flags.or(F_EJECTION_SEAT).or(F_MECH_EQUIPMENT);
@@ -5928,7 +5922,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Ejection Seat (Support Vehicle)";
         misc.setInternalName(misc.name);
         misc.shortName = "Ejection Seat";
-        misc.tonnage = TONNAGE_VARIABLE;
+        misc.tonnage = 0.1; // M/L SVs round all kg-scale equipment up to the half ton at the end of the calculation.
         misc.tankslots = 1;
         misc.cost = 25000;
         misc.flags = misc.flags.or(F_EJECTION_SEAT).or(F_SUPPORT_TANK_EQUIPMENT);

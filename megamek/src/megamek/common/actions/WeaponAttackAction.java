@@ -788,7 +788,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // if we're spotting for indirect fire, add +1 (no penalty with second pilot in command console)
-        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
+	// also no penalty if the unit will not suffer the penalty by the other means.
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole() && !ae.isSpottingWithoutPenalty()) {
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
 

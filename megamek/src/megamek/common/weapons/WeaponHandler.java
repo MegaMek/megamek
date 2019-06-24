@@ -1207,6 +1207,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         
                         ae.setSpotting(true);
                         ae.setSpotTargetId(target.getTargetId());
+			ae.setSpottingWithoutPenalty(true); //allows the unit to not suffer the penalty
                         
                         r = new Report(3390);
                         r.subject = subjectId;

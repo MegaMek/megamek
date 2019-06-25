@@ -34406,10 +34406,6 @@ public class Server implements Runnable {
                 }
             }
         } else if (critroll == 11) {
-            r = new Report(3830);
-            r.type = Report.PUBLIC;
-            r.indent(1);
-            r.add(bldg.getName());
             int boom = 0;
             for (GunEmplacement gun : guns) {
                 for (Mounted ammo : gun.getAmmo()) {
@@ -34422,6 +34418,16 @@ public class Server implements Runnable {
                     }
                 }
             }
+            // if boom is still zero then we found no (explosive) ammo
+            // alter the reported message to suit that situation
+            if (boom === 0) {
+                r = new Report(5105);
+            } else {
+                r = new Report(3830);
+            }
+            r.type = Report.PUBLIC;
+            r.indent(1);
+            r.add(bldg.getName());
             boom = (int) Math.floor(bldg.getDamageToScale() * boom);
             r.add(boom);
             int curCF = bldg.getCurrentCF(coords);

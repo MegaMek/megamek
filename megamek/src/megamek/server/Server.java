@@ -34420,7 +34420,7 @@ public class Server implements Runnable {
             }
             // if boom is still zero then we found no (explosive) ammo
             // alter the reported message to suit that situation
-            if (boom === 0) {
+            if (boom == 0) {
                 r = new Report(5105);
             } else {
                 r = new Report(3830);

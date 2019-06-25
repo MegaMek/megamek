@@ -31,7 +31,7 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
      * 
      */
     public CapMissKrakenWeapon() {
-        super(); 
+        super();
         this.name = "Capital Missile Launcher (Kraken)";
         this.setInternalName(this.name);
         this.addLookupName("Kraken");

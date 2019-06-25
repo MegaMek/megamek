@@ -42,15 +42,23 @@ public final class CrewQuartersCargoBay extends Bay {
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param weight The weight of troops (in tons) this space can carry.
      */
-    public CrewQuartersCargoBay(double space, int doors) {
-        totalSpace = (int)space/7;
-        weight = space;
-        currentSpace = (int)space/7;
+    public CrewQuartersCargoBay(double weight, int doors) {
+        totalSpace = (int) weight/7;
+        this.weight = weight;
+        currentSpace = (int) weight/7;
         this.doors = doors;
         currentdoors = doors;
+    }
+
+    /**
+     * Create space for certain number of crew/passengers
+     *
+     * @param space The number of crew or passengers to accomodate
+     */
+    public CrewQuartersCargoBay(int space) {
+        this(space * 7, 0);
     }
 
     /**
@@ -65,9 +73,7 @@ public final class CrewQuartersCargoBay extends Bay {
     @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
-        boolean result = false;
-
-        return result;
+        return false;
     }
 
     @Override

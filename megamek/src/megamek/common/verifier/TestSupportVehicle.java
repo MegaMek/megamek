@@ -376,7 +376,7 @@ public class TestSupportVehicle extends TestEntity {
 
     /**
      * Tech advancement data for structural components with variable tech levels (structure,
-     * armor, engine). This is assembled from the tables on TM, p. 122 and IO, p. 49, primitive construction
+     * armor, engine). This is assembled from the table on TM, p. 122 and IO, p. 49, primitive construction
      * rules (IO, p. 120-121) and a pending proposal to the rules committee for E.
      */
     public static final TechAdvancement[] TECH_LEVEL_TA = {
@@ -385,11 +385,11 @@ public class TestSupportVehicle extends TestEntity {
                     .setAvailability(ITechnology.RATING_A, ITechnology.RATING_A,
                     ITechnology.RATING_A, ITechnology.RATING_A),
             new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_B)
-                    .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
+                    .setAdvancement(ITechnology.DATE_PS, ITechnology.DATE_PS, ITechnology.DATE_PS)
                     .setAvailability(ITechnology.RATING_B, ITechnology.RATING_B,
                     ITechnology.RATING_B, ITechnology.RATING_A),
             new TechAdvancement(ITechnology.TECH_BASE_ALL).setTechRating(ITechnology.RATING_C)
-                    .setAdvancement(2250, 2300, 2305).setApproximate(true, false, false)
+                    .setAdvancement(ITechnology.DATE_ES, ITechnology.DATE_ES, ITechnology.DATE_ES)
                     .setPrototypeFactions(ITechnology.F_TA).setProductionFactions(ITechnology.F_TA)
                     .setAvailability(ITechnology.RATING_C, ITechnology.RATING_B,
                     ITechnology.RATING_B, ITechnology.RATING_B),

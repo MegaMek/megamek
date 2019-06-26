@@ -2152,9 +2152,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 case Packet.COMMAND_CFR_TAG_TARGET:
                     List<String> TAGTargetDescriptions = evt.getTAGTargetDescriptions();
                     //Set up the selection pane
-                    i18nString = "TeleMissileTargetDialog.message"; //$NON-NLS-1$;
+                    i18nString = "TAGTargetDialog.message"; //$NON-NLS-1$;
                     msg = Messages.getString(i18nString);
-                    i18nString = "TeleMissileTargetDialog.title"; //$NON-NLS-1$
+                    i18nString = "TAGTargetDialog.title"; //$NON-NLS-1$
                     title = Messages.getString(i18nString);
                     input = (String) JOptionPane.showInputDialog(frame, msg,
                             title, JOptionPane.QUESTION_MESSAGE, null,

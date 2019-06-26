@@ -17,7 +17,6 @@ package megamek.common.event;
 
 import java.util.List;
 
-import megamek.common.Coords;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.net.Packet;
 
@@ -60,19 +59,9 @@ public class GameCFREvent extends GameEvent {
     private List<String> telemissileTargets;
     
     /**
-     * Original target coords for a bearings-only teleguided missile.
-     */
-    private Coords telemissileTargetCoords;
-    
-    /**
      * List of descriptions for tagged targets within range.
      */
     private List<String> tagTargets;
-    
-    /**
-     * Original target coords for an artillery homing warhead.
-     */
-    private Coords artyHomingTargetCoords;
     
     /**
      * Construct game event
@@ -109,6 +98,9 @@ public class GameCFREvent extends GameEvent {
                 break;
             case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
                 evtName += " assigning teleguided missile targets: " + telemissileTargets;
+                break;
+            case Packet.COMMAND_CFR_TAG_TARGET:
+                evtName += " assigning homing artillery targets: " + tagTargets;
         }
         return evtName;
     }
@@ -172,14 +164,6 @@ public class GameCFREvent extends GameEvent {
     public void setTeleguidedMissileTargets(List<String> newTargetDescriptions) {
         telemissileTargets = newTargetDescriptions;
     }
-    
-    public Coords getTelemissileTargetCoords() {
-        return telemissileTargetCoords;
-    }
-    
-    public void setTeleguidedMissileCoords(Coords tc) {
-        telemissileTargetCoords = tc;
-    }
 
     public List<String> getTAGTargetDescriptions() {
         return tagTargets;
@@ -187,13 +171,5 @@ public class GameCFREvent extends GameEvent {
     
     public void setTAGTargets(List<String> newTargetDescriptions) {
         tagTargets = newTargetDescriptions;
-    }
-    
-    public Coords getArtyHomingTargetCoords() {
-        return artyHomingTargetCoords;
-    }
-    
-    public void setArtyHomingTargetCoords(Coords tc) {
-        artyHomingTargetCoords = tc;
     }
 }

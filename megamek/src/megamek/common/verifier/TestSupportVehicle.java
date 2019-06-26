@@ -870,25 +870,62 @@ public class TestSupportVehicle extends TestEntity {
         return slots;
     }
 
-    public int getCrewSlots() {
+    public static final int INDEX_FIRST_CLASS = 0;
+    public static final int INDEX_SECOND_CLASS = 1;
+    public static final int INDEX_STD_CREW = 2;
+    public static final int INDEX_STEERAGE = 3;
+    /**
+     * Calculates capacity of quarters above the minimum crew requirement. Only quarters above the minimum
+     * crew requirement take up equipment slots. Second class quarters are considered passenger accomodations
+     * and always count toward slots. Others are assigned to the least bulky type first.
+     *
+     * @param sv A support vehicle
+     * @return   An array of the count of each type of quarters that require slots. See INDEX_* constants for
+     *           indices.
+     */
+    public static int[] extraCrewQuartersCount(Entity sv) {
         int firstClass = 0;
-        int secondClass = 0;
+        int stdCrew = 0;
         int steerage = 0;
-        int extraSeat = 0;
-        for (Transporter t : supportVee.getTransports()) {
+        int[] retVal = { 0, 0, 0, 0 };
+        for (Transporter t : sv.getTransports()) {
             if (t instanceof FirstClassQuartersCargoBay) {
-                firstClass++;
-            } else if ((t instanceof SecondClassQuartersCargoBay)
-                    || (t instanceof CrewQuartersCargoBay)) {
-                secondClass++;
+                firstClass += ((Bay) t).getCapacity();
+            } else if (t instanceof SecondClassQuartersCargoBay) {
+                retVal[INDEX_SECOND_CLASS] += ((Bay) t).getCapacity();
+            } else if (t instanceof CrewQuartersCargoBay) {
+                stdCrew += ((Bay) t).getCapacity();
             } else if (t instanceof SteerageQuartersCargoBay) {
-                steerage++;
+                steerage += ((Bay) t).getCapacity();
             }
         }
-        return (int) (Math.ceil(firstClass / 5.0) + Math.ceil(secondClass / 20.0) + Math.ceil(steerage / 50.0))
-                + (supportVee instanceof FixedWingSupport ?
-                    ((FixedWingSupport) supportVee).getExtraCrewSeats() :
-                    ((Tank) supportVee).getExtraCrewSeats());
+        int extraCrew = firstClass + stdCrew + steerage - Compute.getFullCrewSize(sv);
+        if ((extraCrew > 0) && (steerage > 0)) {
+            retVal[INDEX_STEERAGE] = Math.min(extraCrew, steerage);
+            extraCrew -= retVal[INDEX_STEERAGE];
+        }
+        if ((extraCrew > 0) && (stdCrew > 0)) {
+            retVal[INDEX_STD_CREW] = Math.min(extraCrew, stdCrew);
+            extraCrew -= retVal[INDEX_STD_CREW];
+        }
+        if ((extraCrew > 0) && (firstClass > 0)) {
+            retVal[INDEX_FIRST_CLASS] = Math.min(extraCrew, firstClass);
+        }
+        return retVal;
+    }
+
+    /**
+     * Calculates the number of equipment slots taken up by crew quarters. Quarters for minimum crew
+     * do not take up slots.
+     *
+     * @return The number of equipment slots required by crew quarters.
+     */
+    public int getCrewSlots() {
+        int[] excess = extraCrewQuartersCount(getEntity());
+        return (int) Math.ceil(excess[INDEX_FIRST_CLASS] / 5.0)
+                + (int) Math.ceil(excess[INDEX_SECOND_CLASS] / 20.0)
+                + (int) Math.ceil(excess[INDEX_STD_CREW] / 20.0)
+                + (int) Math.ceil(excess[INDEX_STEERAGE] / 50.0);
     }
 
     /**

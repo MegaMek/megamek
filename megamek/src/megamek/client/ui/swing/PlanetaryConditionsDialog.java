@@ -371,7 +371,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
             setConditions(true);
     }
 
-    private void setConditions(boolean shouldSendToClient) {
+    private void setConditions(boolean shouldSendToServer) {
         // make the changes to the planetary conditions
         conditions.setLight(choLight.getSelectedIndex());
         conditions.setWeather(choWeather.getSelectedIndex());
@@ -389,7 +389,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
         conditions.setEMI(cEMI.isSelected());
         conditions.setTerrainAffected(cTerrainAffected.isSelected());
 
-        if (client != null && shouldSendToClient) {
+        if (client != null && shouldSendToServer) {
             send();
         }
     }

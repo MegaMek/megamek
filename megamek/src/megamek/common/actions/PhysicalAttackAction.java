@@ -215,7 +215,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             //but if it spots by TAG it doesn't.
             boolean isSpotByTag = false;//temporal boolean flag
             
-            //search through tagInfoForTurn and see if the 
+            //search through tagInfoForTurn and see if the entity has successfuly designated TAG on something.
             Vector<TagInfo> tmpTagInfoForTurn = game.getTagInfo();
             for (int i = 0; i < tmpTagInfoForTurn.size(); i++){
                 TagInfo tmpInfo = tmpTagInfoForTurn.elementAt(i);

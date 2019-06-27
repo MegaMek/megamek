@@ -212,7 +212,23 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // if we're spotting for indirect fire, add +1
         if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
-            toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
+            
+            //but if it spots by TAG it doesn't.
+            boolean isSpotByTag = false;//temporal boolean flag
+            
+            //search through tagInfoForTurn and see if the 
+            Vector<TagInfo> tmpTagInfoForTurn = game.getTagInfoForTurn;
+            for ( int i = 0; i < tagInfoForTurn.size(); i++){
+                TagInfo tmpInfo = tmpTagInfoForTurn.elementAt(i);
+                if (tmpInfo.attackerId == attackerID){
+                    isSpotByTag = true;
+                    break;
+                }
+            }
+            
+            if(!isSpotByTag){
+                toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
+            }
         }
 
         // target immobile

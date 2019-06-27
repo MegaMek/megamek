@@ -232,14 +232,13 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         int hits = 1;
         int nCluster = 1;       
         if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
+            //Any AMS/Point Defense fire against homing rounds?
+            hits = handleAMS(vPhaseReport);
             if (aaa.getCoords() != null) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
            
         }
-        
-        //Any AMS/Point Defense fire against homing rounds?
-        hits = handleAMS(vPhaseReport);
         
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.

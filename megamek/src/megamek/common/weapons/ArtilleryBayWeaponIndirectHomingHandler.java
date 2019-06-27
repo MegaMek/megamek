@@ -233,14 +233,13 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         int hits = 1;
         int nCluster = 1;        
         if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
+            //Any AMS/Point Defense fire against homing missiles? (Copperheads don't count)
+            hits = handleAMS(vPhaseReport, atype.getAmmoType());
             if (aaa.getCoords() != null) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
 
         }
-        
-        //Any AMS/Point Defense fire against homing missiles (Copperheads don't count)?
-        hits = handleAMS(vPhaseReport, atype.getAmmoType());
 
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
@@ -342,13 +341,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
     }
 
     /**
-     * Find the tagged entity for this attack Each TAG will attract a number of
-     * shots up to its priority number (mode setting) When all the TAGs are used
-     * up, the shots fired are reset. So if you leave them all on 1-shot, then
-     * homing attacks will be evenly split, however many shots you fire.
-     * Priority setting is to allocate more homing attacks to a more important
-     * target as decided by player. TAGs fired by the enemy aren't eligible, nor
-     * are TAGs fired at a target on a different map sheet.
+     * Find the tagged entity for this attack 
+     * Uses a CFR to let the player choose from eligible TAGs
      */
     protected void convertHomingShotToEntityTarget() {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
@@ -412,8 +406,14 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             target = newTarget;
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no tag in 8 hex radius of target hex");
+        } else if (allowed.size() == 1) {
+            //Just use target 0...
+            newTarget = allowed.get(0).target;
+            target = newTarget;
+            aaa.setTargetId(target.getTargetId());
+            aaa.setTargetType(target.getTargetType());
         } else {
-          //The player gets to select the target
+            //The player gets to select the target
             List<String> targetDescriptions = new ArrayList<String>();
             for (TagInfo target : allowed) {
                 targetDescriptions.add(target.target.getDisplayName());
@@ -423,7 +423,6 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             target = newTarget;
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
-            server.assignAMS();
         }
     }
 

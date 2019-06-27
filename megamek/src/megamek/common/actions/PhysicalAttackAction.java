@@ -211,14 +211,13 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         }
 
         // if we're spotting for indirect fire, add +1
-        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
-            
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {           
             //but if it spots by TAG it doesn't.
             boolean isSpotByTag = false;//temporal boolean flag
             
             //search through tagInfoForTurn and see if the 
-            Vector<TagInfo> tmpTagInfoForTurn = game.getTagInfoForTurn;
-            for ( int i = 0; i < tagInfoForTurn.size(); i++){
+            Vector<TagInfo> tmpTagInfoForTurn = game.getTagInfo();
+            for (int i = 0; i < tmpTagInfoForTurn.size(); i++){
                 TagInfo tmpInfo = tmpTagInfoForTurn.elementAt(i);
                 if (tmpInfo.attackerId == attackerID){
                     isSpotByTag = true;

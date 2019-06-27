@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BombType;
@@ -38,7 +37,6 @@ import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
@@ -99,10 +97,6 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             aaa.decrementTurnsTilHit();
             return true;
         }
-        
-        Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
         
         Entity entityTarget;
         if (game.getPhase() == IGame.Phase.PHASE_OFFBOARD) {
@@ -210,10 +204,14 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         if (missReported) {
             bMissed = true;
         }
-        nDamPerHit = wtype.getRackSize();
 
+        Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
+        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
+                .getType();
+        nDamPerHit = atype.getRackSize();
+        
         // copperhead gets 10 damage less than standard
-        if (((AmmoType) ammo.getType()).getAmmoType() != AmmoType.T_ARROW_IV) {
+        if (atype != null && atype.getAmmoType() != AmmoType.T_ARROW_IV) {
             nDamPerHit -= 10;
         }
 
@@ -225,7 +223,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
 
-            // Works out fire setting, AMS shots, and whether continuation is
+            // Works out fire setting and whether continuation is
             // necessary.
             if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport)) {
@@ -241,8 +239,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
 
         }
         
-        //Any AMS/Point Defense fire against homing rounds?
-        hits = handleAMS(vPhaseReport);
+        //Any AMS/Point Defense fire against homing missiles (Copperheads don't count)?
+        hits = handleAMS(vPhaseReport, atype.getAmmoType());
 
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
@@ -471,11 +469,11 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         pdBayEngaged = true;
     }
     
-    protected int handleAMS(Vector<Report> vPhaseReport) {
+    protected int handleAMS(Vector<Report> vPhaseReport, int ammotype) {
         
         int hits = 1;
-        if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV
-                || ((AmmoType) ammo.getType()).getAmmoType() == BombType.B_HOMING) {
+        if (ammotype == AmmoType.T_ARROW_IV
+                || ammotype == BombType.B_HOMING) {
 
             //this has to be called here or it fires before the TAG shot and we have no target
             server.assignAMS();

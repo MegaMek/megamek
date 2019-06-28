@@ -1139,7 +1139,7 @@ public abstract class TestEntity implements TestEntityOption {
         }
         int useIntroYear = getEntity().getYear() + getIntroYearMargin();
         if (getEntity().isOmni()) {
-            int introDate = Entity.getOmniAdvancement()
+            int introDate = Entity.getOmniAdvancement(getEntity())
                     .getIntroductionDate(getEntity().isClan() || getEntity().isMixedTech());
             if (useIntroYear < introDate) {
                 retVal = true;

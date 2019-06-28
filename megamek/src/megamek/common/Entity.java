@@ -1221,6 +1221,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             .setPrototypeFactions(F_CCY, F_CSF).setProductionFactions(F_CCY, F_DC)
             .setTechRating(RATING_E).setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    // This is not in the rules anywhere, but is implied by the existence of the Badger and Bandit
+    // tanks used by Wolf's Dragoons and sold to the merc market as early as 3008.
+    private static final TechAdvancement TA_OMNIVEHICLE = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(3008, DATE_NONE, 3052).setISApproximate(true)
+            .setClanAdvancement(2854, 2856, 2864).setClanApproximate(true)
+            .setPrototypeFactions(F_CCY, F_CSF, F_MERC).setProductionFactions(F_CCY, F_DC)
+            .setTechRating(RATING_E).setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected final static TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, 3075, 3080).setApproximate(false, false, true)
             .setTechRating(RATING_A)
@@ -1239,7 +1247,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     public static TechAdvancement getOmniAdvancement() {
-        return new TechAdvancement(TA_OMNI);
+        return getOmniAdvancement(null);
+    }
+    
+    public static TechAdvancement getOmniAdvancement(Entity en) {
+        if (en instanceof Tank) {
+            return new TechAdvancement(TA_OMNIVEHICLE);
+        } else {
+            return new TechAdvancement(TA_OMNI);
+        }
     }
 
     public static TechAdvancement getPatchworkArmorAdvancement() {

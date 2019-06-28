@@ -230,113 +230,116 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
                 return false;
             }
         }
-        int hits = 1;
-        int nCluster = 1;        
-        if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
-            //Any AMS/Point Defense fire against homing missiles? (Copperheads don't count)
-            hits = handleAMS(vPhaseReport, atype.getAmmoType());
-            if (aaa.getCoords() != null) {
-                toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
-            }
-
-        }
-
-        // The building shields all units from a certain amount of damage.
-        // The amount is based upon the building's CF at the phase's start.
-        int bldgAbsorbs = 0;
-        if (targetInBuilding && (bldg != null)) {
-            bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
-        }
-        if ((bldg != null) && (bldgAbsorbs > 0)) {
-            // building absorbs some damage
-            r = new Report(6010);
-            if (entityTarget != null) {
-                r.subject = entityTarget.getId();
-            }
-            r.add(bldgAbsorbs);
-            vPhaseReport.addElement(r);
-            Vector<Report> buildingReport = server.damageBuilding(bldg,
-                    nDamPerHit, target.getPosition());
-            if (entityTarget != null) {
-                for (Report report : buildingReport) {
-                    report.subject = entityTarget.getId();
+        
+        while (nweaponsHit > 0) {
+            int hits = 1;
+            int nCluster = 1;        
+            if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
+                //Any AMS/Point Defense fire against homing missiles? (Copperheads don't count)
+                hits = handleAMS(vPhaseReport, atype.getAmmoType());
+                if (aaa.getCoords() != null) {
+                    toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
                 }
             }
-            vPhaseReport.addAll(buildingReport);
-        }
-        nDamPerHit -= bldgAbsorbs;
 
-        // Make sure the player knows when his attack causes no damage.
-        if (nDamPerHit == 0) {
-            r = new Report(3365);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-            return false;
-        }
-        if (!bMissed && (entityTarget != null)) {
-            handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, bldgAbsorbs);
-            server.creditKill(entityTarget, ae);
-        } else if (!bMissed && // The attack is targeting a specific building
-                (target.getTargetType() == Targetable.TYPE_BLDG_TAG)){
-            r = new Report(3390);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-            vPhaseReport.addAll(server.damageBuilding(bldg,
-                    nDamPerHit, target.getPosition()));
-        } else if (!bMissed){ // Hex is targeted, need to report a hit
-            r = new Report(3390);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-
-        Coords coords = target.getPosition();
-        int ratedDamage = 5; // splash damage is 5 from all launchers
-        
-        //If AMS shoots down a missile, it shouldn't deal any splash damage
-        if (hits == 0) {
-            ratedDamage = 0;
-        }
-        
-        bldg = null;
-        bldg = game.getBoard().getBuildingAt(coords);
-        bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
-        bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-        // assumption: homing artillery splash damage is area effect.
-        // do damage to woods, 2 * normal damage (TW page 112)
-        handleClearDamage(vPhaseReport, bldg, ratedDamage * 2, false);
-        ratedDamage -= bldgAbsorbs;
-        if (ratedDamage > 0) {
-            for (Entity entity : game.getEntitiesVector(coords)) {
-                if (!bMissed) {
-                    if (entity == entityTarget) {
-                        continue; // don't splash the target unless missile
-                        // missed
+            // The building shields all units from a certain amount of damage.
+            // The amount is based upon the building's CF at the phase's start.
+            int bldgAbsorbs = 0;
+            if (targetInBuilding && (bldg != null)) {
+                bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+            }
+            if ((bldg != null) && (bldgAbsorbs > 0)) {
+                // building absorbs some damage
+                r = new Report(6010);
+                if (entityTarget != null) {
+                    r.subject = entityTarget.getId();
+                }
+                r.add(bldgAbsorbs);
+                vPhaseReport.addElement(r);
+                Vector<Report> buildingReport = server.damageBuilding(bldg,
+                        nDamPerHit, target.getPosition());
+                if (entityTarget != null) {
+                    for (Report report : buildingReport) {
+                        report.subject = entityTarget.getId();
                     }
                 }
-                toHit.setSideTable(entity.sideTable(aaa.getCoords()));
-                HitData hit = entity.rollHitLocation(toHit.getHitTable(),
-                        toHit.getSideTable(), waa.getAimedLocation(),
-                        waa.getAimingMode(), toHit.getCover());
-                hit.setAttackerId(getAttackerId());
-                // BA gets damage to all troopers
-                if (entity instanceof BattleArmor) {
-                    BattleArmor ba = (BattleArmor) entity;
-                    for (int loc = 1; loc <= ba.getTroopers(); loc++) {
-                        hit.setLocation(loc);
+                vPhaseReport.addAll(buildingReport);
+            }
+            nDamPerHit -= bldgAbsorbs;
+
+            // Make sure the player knows when his attack causes no damage.
+            if (nDamPerHit == 0) {
+                r = new Report(3365);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+                return false;
+            }
+            if (!bMissed && (entityTarget != null)) {
+                handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+                        nCluster, bldgAbsorbs);
+                server.creditKill(entityTarget, ae);
+            } else if (!bMissed && // The attack is targeting a specific building
+                    (target.getTargetType() == Targetable.TYPE_BLDG_TAG)){
+                r = new Report(3390);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+                vPhaseReport.addAll(server.damageBuilding(bldg,
+                        nDamPerHit, target.getPosition()));
+            } else if (!bMissed){ // Hex is targeted, need to report a hit
+                r = new Report(3390);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            }
+
+            Coords coords = target.getPosition();
+            int ratedDamage = 5; // splash damage is 5 from all launchers
+
+            //If AMS shoots down a missile, it shouldn't deal any splash damage
+            if (hits == 0) {
+                ratedDamage = 0;
+            }
+
+            bldg = null;
+            bldg = game.getBoard().getBuildingAt(coords);
+            bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
+            bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+            // assumption: homing artillery splash damage is area effect.
+            // do damage to woods, 2 * normal damage (TW page 112)
+            handleClearDamage(vPhaseReport, bldg, ratedDamage * 2, false);
+            ratedDamage -= bldgAbsorbs;
+            if (ratedDamage > 0) {
+                for (Entity entity : game.getEntitiesVector(coords)) {
+                    if (!bMissed) {
+                        if (entity == entityTarget) {
+                            continue; // don't splash the target unless missile
+                            // missed
+                        }
+                    }
+                    toHit.setSideTable(entity.sideTable(aaa.getCoords()));
+                    HitData hit = entity.rollHitLocation(toHit.getHitTable(),
+                            toHit.getSideTable(), waa.getAimedLocation(),
+                            waa.getAimingMode(), toHit.getCover());
+                    hit.setAttackerId(getAttackerId());
+                    // BA gets damage to all troopers
+                    if (entity instanceof BattleArmor) {
+                        BattleArmor ba = (BattleArmor) entity;
+                        for (int loc = 1; loc <= ba.getTroopers(); loc++) {
+                            hit.setLocation(loc);
+                            vPhaseReport.addAll(server.damageEntity(entity, hit,
+                                    ratedDamage, false, DamageType.NONE, false,
+                                    true, throughFront, underWater));
+                        }
+                    } else {
                         vPhaseReport.addAll(server.damageEntity(entity, hit,
-                                ratedDamage, false, DamageType.NONE, false,
-                                true, throughFront, underWater));
+                                ratedDamage, false, DamageType.NONE, false, true,
+                                throughFront, underWater));
                     }
-                } else {
-                    vPhaseReport.addAll(server.damageEntity(entity, hit,
-                            ratedDamage, false, DamageType.NONE, false, true,
-                            throughFront, underWater));
+                    server.creditKill(entity, ae);
                 }
-                server.creditKill(entity, ae);
             }
+            Report.addNewline(vPhaseReport);
+            nweaponsHit--;
         }
-        Report.addNewline(vPhaseReport);
         return false;
     }
 

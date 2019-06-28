@@ -344,7 +344,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
      * Find the tagged entity for this attack 
      * Uses a CFR to let the player choose from eligible TAGs
      */
-    protected void convertHomingShotToEntityTarget() {
+    public void convertHomingShotToEntityTarget() {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
 
         final Coords tc = target.getPosition();

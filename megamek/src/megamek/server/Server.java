@@ -238,6 +238,9 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
+import megamek.common.weapons.ArtilleryBayWeaponDirectHomingHandler;
+import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
+import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
@@ -14402,10 +14405,17 @@ public class Server implements Runnable {
             // For all other types of homing artillery
             if (waa instanceof ArtilleryAttackAction) {
                 // This will pick our TAG target back up and assign it to the waa
-                if (waa.isHomingShot() && wh instanceof ArtilleryWeaponIndirectHomingHandler) {
+                if (waa.isHomingShot() && 
+                        (wh instanceof ArtilleryWeaponIndirectHomingHandler 
+                                || wh instanceof ArtilleryWeaponDirectHomingHandler)) {
                     ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
                     hh.convertHomingShotToEntityTarget();
-                }
+                } else if (waa.isHomingShot() && 
+                        (wh instanceof ArtilleryBayWeaponIndirectHomingHandler 
+                                || wh instanceof ArtilleryBayWeaponDirectHomingHandler)) {
+                    ArtilleryBayWeaponIndirectHomingHandler hh = (ArtilleryBayWeaponIndirectHomingHandler) wh;
+                    hh.convertHomingShotToEntityTarget();
+                } 
 
                 Entity target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
                         .getTarget(game) : null;

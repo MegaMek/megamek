@@ -238,9 +238,7 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
-import megamek.common.weapons.ArtilleryBayWeaponDirectHomingHandler;
 import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
-import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
@@ -14388,13 +14386,26 @@ public class Server implements Runnable {
             if (wh.roll < wh.toHit.getValue()) {
                 continue;
             }
-
-            // Can only use AMS versus missiles.
-            if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
+            
+            // Can only use AMS versus missiles. Artillery Bays might be firing Arrow IV homing missiles,
+            // but lack the flag
+            boolean isHomingMissile = false;
+            if (wh instanceof ArtilleryWeaponIndirectHomingHandler
+                    || wh instanceof ArtilleryBayWeaponIndirectHomingHandler) {
+                Mounted ammoUsed = game.getEntity(waa.getEntityId()).getEquipment(waa.getAmmoId());
+                AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
+                        .getType();
+                if (atype != null 
+                        && (atype.getAmmoType() == AmmoType.T_ARROW_IV || atype.getAmmoType() == BombType.B_HOMING)) {
+                    isHomingMissile = true;
+                }
+            }
+            if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)
+                    || !isHomingMissile) {
                 continue;
             }
 
-            // For Bearings-only Capital Missiles
+            // For Bearings-only Capital Missiles, don't assign during the offboard phase
             if (wh instanceof CapitalMissileBearingsOnlyHandler) {
                 ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
                 if (aaa.getTurnsTilHit() > 0 || game.getPhase() != IGame.Phase.PHASE_FIRING) {
@@ -14402,20 +14413,19 @@ public class Server implements Runnable {
                 }
             }
 
-            // For all other types of homing artillery
+            // For Arrow IV homing artillery and bearings-only capital missiles
             if (waa instanceof ArtilleryAttackAction) {
                 // This will pick our TAG target back up and assign it to the waa
-                if (waa.isHomingShot() && 
-                        (wh instanceof ArtilleryWeaponIndirectHomingHandler 
-                                || wh instanceof ArtilleryWeaponDirectHomingHandler)) {
+                if (isHomingMissile && wh instanceof ArtilleryWeaponIndirectHomingHandler) {
                     ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
                     hh.convertHomingShotToEntityTarget();
-                } else if (waa.isHomingShot() && 
-                        (wh instanceof ArtilleryBayWeaponIndirectHomingHandler 
-                                || wh instanceof ArtilleryBayWeaponDirectHomingHandler)) {
+                } else if (isHomingMissile && wh instanceof ArtilleryBayWeaponIndirectHomingHandler) {
                     ArtilleryBayWeaponIndirectHomingHandler hh = (ArtilleryBayWeaponIndirectHomingHandler) wh;
                     hh.convertHomingShotToEntityTarget();
-                } 
+                } else if (wh instanceof CapitalMissileBearingsOnlyHandler) {
+                    CapitalMissileBearingsOnlyHandler cmh = (CapitalMissileBearingsOnlyHandler) wh;
+                    cmh.convertHexTargetToEntityTarget(vPhaseReport);
+                }
 
                 Entity target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
                         .getTarget(game) : null;

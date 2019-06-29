@@ -14401,7 +14401,7 @@ public class Server implements Runnable {
                 }
             }
             if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)
-                    || !isHomingMissile) {
+                    && !isHomingMissile) {
                 continue;
             }
 
@@ -14413,76 +14413,42 @@ public class Server implements Runnable {
                 }
             }
 
-            // For Arrow IV homing artillery and bearings-only capital missiles
+            // For Arrow IV homing artillery
+            Entity target = null;
             if (waa instanceof ArtilleryAttackAction) {
-                // This will pick our TAG target back up and assign it to the waa
-                if (isHomingMissile && wh instanceof ArtilleryWeaponIndirectHomingHandler) {
-                    ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
-                    hh.convertHomingShotToEntityTarget();
-                } else if (isHomingMissile && wh instanceof ArtilleryBayWeaponIndirectHomingHandler) {
-                    ArtilleryBayWeaponIndirectHomingHandler hh = (ArtilleryBayWeaponIndirectHomingHandler) wh;
-                    hh.convertHomingShotToEntityTarget();
-                } else if (wh instanceof CapitalMissileBearingsOnlyHandler) {
-                    CapitalMissileBearingsOnlyHandler cmh = (CapitalMissileBearingsOnlyHandler) wh;
-                    cmh.convertHexTargetToEntityTarget(vPhaseReport);
-                }
-
-                Entity target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
-                        .getTarget(game) : null;
+                target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                    .getTarget(game) : null;
 
                 // In case our target really is null.
                 if (target == null) {
                     continue;
                 }
-
-                Vector<WeaponHandler> v = htAttacks.get(target);
-                if (v == null) {
-                    v = new Vector<WeaponHandler>();
-                    htAttacks.put(target, v);
-                }
-                v.addElement(wh);
-                // Keep track of what weapon attacks could be affected by APDS
-                if (apdsCoords.containsKey(target.getPosition())) {
-                    for (Mounted apds : apdsCoords.get(target.getPosition())) {
-                        // APDS only affects attacks against friendly units
-                        if (target.isEnemyOf(apds.getEntity())) {
-                            continue;
-                        }
-                        Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
-                        if (handlerList == null) {
-                            handlerList = new Vector<>();
-                            apdsTargets.put(apds, handlerList);
-                        }
-                        handlerList.add(wh);
-                    }
-
-                }
             } else {
-                Entity target = game.getEntity(waa.getTargetId());
-                Vector<WeaponHandler> v = htAttacks.get(target);
-                if (v == null) {
-                    v = new Vector<WeaponHandler>();
-                    htAttacks.put(target, v);
-                }
-                v.addElement(wh);
-                // Keep track of what weapon attacks could be affected by APDS
-                if (apdsCoords.containsKey(target.getPosition())) {
-                    for (Mounted apds : apdsCoords.get(target.getPosition())) {
-                        // APDS only affects attacks against friendly units
-                        if (target.isEnemyOf(apds.getEntity())) {
-                            continue;
-                        }
-                        Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
-                        if (handlerList == null) {
-                            handlerList = new Vector<>();
-                            apdsTargets.put(apds, handlerList);
-                        }
-                        handlerList.add(wh);
+                target = game.getEntity(waa.getTargetId());
+            }
+            Vector<WeaponHandler> v = htAttacks.get(target);
+            if (v == null) {
+                v = new Vector<WeaponHandler>();
+                htAttacks.put(target, v);
+            }
+            v.addElement(wh);
+            // Keep track of what weapon attacks could be affected by APDS
+            if (apdsCoords.containsKey(target.getPosition())) {
+                for (Mounted apds : apdsCoords.get(target.getPosition())) {
+                    // APDS only affects attacks against friendly units
+                    if (target.isEnemyOf(apds.getEntity())) {
+                        continue;
                     }
+                    Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
+                    if (handlerList == null) {
+                        handlerList = new Vector<>();
+                        apdsTargets.put(apds, handlerList);
+                    }
+                    handlerList.add(wh);
                 }
             }
         }
-
+        
         // Let each target assign its AMS
         for (Entity e : htAttacks.keySet()) {
             Vector<WeaponHandler> vAttacks = htAttacks.get(e);

@@ -33,6 +33,7 @@ import megamek.common.MechWarrior;
 import megamek.common.RangeType;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.TagInfo;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;

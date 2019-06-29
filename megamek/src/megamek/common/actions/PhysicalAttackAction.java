@@ -215,7 +215,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 	        //also see if the entity has successfuly designated TAG on something and suffers no penalty of spotting for indirect fire.
             boolean isSpotByTag = false;            
 	        for (TagInfo tmpInfo : game.getTagInfo()) {
-                if (tmpInfo.attackerId == attackerId) {
+                if (tmpInfo.attackerId == ae.getId()) {
                 isSpotByTag = true;
                 break;
                 }

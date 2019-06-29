@@ -48,6 +48,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
      */
     private static final long serialVersionUID = -7243477723032010917L;
     boolean advancedPD = false;
+    boolean advancedAMS = false;
     boolean multiAMS = false;
 
     /**
@@ -59,6 +60,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+        advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
         multiAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS);
     }
 
@@ -215,6 +217,10 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         // copperhead gets 10 damage less than standard
         if (atype != null && atype.getAmmoType() != AmmoType.T_ARROW_IV) {
             nDamPerHit -= 10;
+        }
+        
+        if (bGlancing) {
+            nDamPerHit /= 2;
         }
 
         // Do we need some sort of special resolution (minefields, artillery,
@@ -624,11 +630,11 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
      */
     @Override
     protected boolean checkPDConditions() {
-        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         if ((target == null) 
                 || target.getTargetType() != Targetable.TYPE_ENTITY 
                 || !advancedPD
-                || waa.getCounterEquipment().isEmpty()) {
+                || !advancedAMS
+                || waa.getCounterEquipment() == null) {
             return false;
         }
         return true;

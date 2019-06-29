@@ -20,7 +20,6 @@ import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
-import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -236,8 +235,10 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         
         //this has to be called here or it triggers before the TAG shot and we have no entityTarget
         //mounting AMS
-        server.assignAMS();
-        
+        if (atype != null 
+                && atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+            server.assignAMS();
+        }
         while (nweaponsHit > 0) {
             int hits = 1;
             int nCluster = 1;        

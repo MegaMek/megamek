@@ -52,6 +52,7 @@ import megamek.common.LandAirMech;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
+import megamek.common.Messages;
 import megamek.common.MinefieldTarget;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -305,7 +306,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         final Mounted weapon = ae.getEquipment(weaponId);
 
         if (!(weapon.getType() instanceof WeaponType)) {
-            return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Not a weapon");
+            return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.NotAWeapon"));
         }
         
         

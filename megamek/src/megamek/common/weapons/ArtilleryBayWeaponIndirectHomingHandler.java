@@ -118,13 +118,19 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-
+        
+        //Determine what ammo we're firing for reporting and (later) damage
+        Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
+        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
+                .getType();
         // Report weapon attack and its to-hit value.
-        Report r = new Report(3115);
+        Report r = new Report(3124);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
         r.add(wtype.getName());
+        r.add(nweaponsHit);
+        r.add(atype.getShortName());
         if (entityTarget != null) {
             r.addDesc(entityTarget);
         } else {
@@ -209,9 +215,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             bMissed = true;
         }
 
-        Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
+        //Set up the damage
         nDamPerHit = atype.getRackSize();
         
         // copperhead gets 10 damage less than standard

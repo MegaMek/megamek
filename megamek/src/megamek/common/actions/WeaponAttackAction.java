@@ -443,7 +443,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 AmmoType bAmmo = bayWAmmo != null ? (AmmoType) bayWAmmo.getType() : null;
                 
                 //If we're using optional rules and firing Arrow Homing missiles from a bay...
-                isHoming = (bAmmo.getAmmoType() == AmmoType.T_ARROW_IV && bAmmo.getMunitionType() == AmmoType.M_HOMING);
+                isHoming = bAmmo.getMunitionType() == AmmoType.M_HOMING;
 
                 mLinker = bayW.getLinkedBy();
                 bApollo = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()

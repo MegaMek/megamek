@@ -144,6 +144,7 @@ public class SupportVTOL extends VTOL {
         return fuelTonnage;
     }
 
+    @Override
     public void setFuelTonnage(double fuel) {
         fuelTonnage = fuel;
     }

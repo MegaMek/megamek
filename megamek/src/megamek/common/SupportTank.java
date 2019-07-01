@@ -262,12 +262,6 @@ public class SupportTank extends Tank {
     //Support Vee Engine Information
     public double getBaseChassisValue() {
         switch (movementMode) {
-            /*case AIRSHIP:
-                if (getWeight() < 5) {
-                    return 0.2f;
-                } else {
-                    return 0.25f;
-                }*/
             case HOVER:
                 if (getWeight() < 5) {
                     return 0.2;
@@ -277,17 +271,7 @@ public class SupportTank extends Tank {
                     return 0.3;
                 }
             case NAVAL:
-                if (getWeight() < 5) {
-                    return 0.12;
-                } else {
-                    return 0.15;
-                }
             case HYDROFOIL:
-                if (getWeight() < 5) {
-                    return 0.12;
-                } else {
-                    return 0.15;
-                }
             case SUBMARINE:
                 if (getWeight() < 5) {
                     return 0.12;
@@ -326,12 +310,12 @@ public class SupportTank extends Tank {
     //Support Vee Engine Information
     public double getBaseEngineValue() {
         switch (movementMode) {
-            /*case AIRSHIP:
+            case AIRSHIP:
                 if (getWeight() < 5) {
-                    return 0.005f;
+                    return 0.005;
                 } else {
-                    return 0.008f;
-                }*/
+                    return 0.008;
+                }
             case HOVER:
                 if (getWeight() < 5) {
                     return 0.0025;
@@ -341,17 +325,7 @@ public class SupportTank extends Tank {
                     return 0.008;
                 }
             case NAVAL:
-                if (getWeight() <5) {
-                    return 0.004;
-                } else {
-                    return 0.007;
-                }
             case HYDROFOIL:
-                if (getWeight() <5) {
-                    return 0.004;
-                } else {
-                    return 0.007;
-                }
             case SUBMARINE:
                 if (getWeight() < 5) {
                     return 0.004;
@@ -393,6 +367,7 @@ public class SupportTank extends Tank {
         return fuelTonnage;
     }
 
+    @Override
     public void setFuelTonnage(double fuel) {
         fuelTonnage = fuel;
     }

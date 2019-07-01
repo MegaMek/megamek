@@ -125,13 +125,17 @@ public class FixedWingSupport extends ConvFighter {
 
     /**
      * While most aerospace units measure fuel weight in points per ton, support vehicles measure
-     * in kg per point.
+     * in kg per point. Vehicles that do not require fuel return 0.
      *
      * @return The mass of each point of fuel in kg.
      */
     public int kgPerFuelPoint() {
         int kg = KG_PER_FUEL_POINT[getWeightClass() - EntityWeightClass.WEIGHT_SMALL_SUPPORT][getEngineTechRating()];
         if (hasPropChassisMod() || getMovementMode().equals(EntityMovementMode.AIRSHIP)) {
+            if (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION)
+                    || (getEngine().getEngineType() == Engine.SOLAR)) {
+                return 0;
+            }
             kg = (int) Math.ceil(kg * 0.75);
         }
         return kg;

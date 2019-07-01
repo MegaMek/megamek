@@ -166,6 +166,11 @@ public class Tank extends Entity {
      */
     private boolean hasNoControlSystems = false;
 
+    /**
+     * Alternate fuel for ICEs that affects operating range
+     */
+    private boolean alcoholNatGasFueled = false;
+
     public CrewType defaultCrewType() {
         return CrewType.CREW;
     }
@@ -4138,12 +4143,80 @@ public class Tank extends Entity {
     }
 
     /**
-     * Returns a Support units fuel allotment.
-     * 
+     * Returns the mass of the fuel, which is used for calculating operating range.
+     * For combat vehicles this is considered part of the engine weight. For support vehicles it is in
+     * addition to the engine weight.
+     *
      * @return fuel tonnage
      */
     public double getFuelTonnage() {
-        return 0;
+        if (hasEngine()) {
+            // For combat vehicles the fuel tonnage is 10% of the engine.
+            return getEngine().getWeightEngine(this) * 0.1;
+        }
+        return 0.0;
+    }
+
+    /**
+     * Sets the fuel mass for support vehicles. Has no effect on combat vehicles.
+     *
+     * @param fuel The mass of the fuel in tons
+     */
+    public void setFuelTonnage(double fuel) {
+        // do nothing
+    }
+
+    /**
+     * Calculates the operating range of the vehicle based on engine type and fuel mass.
+     * Vehicles that do not require fuel report an operating range of {@code Integer.MAX_VALUE}.
+     *
+     * @return The vehicle's operating range in km
+     */
+    public int operatingRange() {
+        if (getFuelTonnage() <= 0) {
+            return 0;
+        }
+        double fuelUnit = fuelTonnagePer100km();
+        if (fuelUnit > 0) {
+            return (int) (getFuelTonnage() / fuelUnit * 100);
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Calculates fuel mass based on engine type and mass. Engines that do not require allocating
+     * fuel mass return a value of 0.0.
+     *
+     * @return The fuel mass required for every 100 km of vehicle range.
+     */
+    public double fuelTonnagePer100km() {
+        if (!hasEngine()) {
+            return 0.0;
+        }
+        switch (getEngine().getEngineType()) {
+            case Engine.STEAM:
+                return getEngine().getWeightEngine(this) * 0.03;
+            case Engine.COMBUSTION_ENGINE:
+                if (isAlcoholOrNaturalGasFueled()) {
+                    return getEngine().getWeightEngine(this) * 0.0125;
+                } else {
+                    return getEngine().getWeightEngine(this) * 0.01;
+                }
+            case Engine.BATTERY:
+                return getEngine().getWeightEngine(this) * 0.05;
+            case Engine.FUEL_CELL:
+                return getEngine().getWeightEngine(this) * 0.015;
+            default:
+                return 0.0;
+        }
+    }
+
+    public boolean isAlcoholOrNaturalGasFueled() {
+        return alcoholNatGasFueled;
+    }
+
+    public void setAlcoholOrNaturalGasFueled(boolean fuel) {
+        alcoholNatGasFueled = fuel;
     }
 
     /**

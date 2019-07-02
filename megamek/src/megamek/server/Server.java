@@ -6987,6 +6987,10 @@ public class Server implements Runnable {
         // Handle any picked up MechWarriors
         for (Integer mechWarriorId : entity.getPickedUpMechWarriors()) {
             Entity mw = game.getEntity(mechWarriorId.intValue());
+            
+            if(mw == null) {
+            	continue;
+            }
 
             // Is the MechWarrior an enemy?
             int condition = IEntityRemovalConditions.REMOVE_IN_RETREAT;

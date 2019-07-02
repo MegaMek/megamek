@@ -23,6 +23,8 @@ v0.45.5-SNAPSHOT
 + MegaMekLab Issue #314: Fixed availability ratings for inner sphere LMG and ammo
 + Issue #1249: Industrial TSM now applies 2x damage to appropriate melee attacks
 + Issue #1352: Changing Planetary Conditions prior to starting a new game causes a -40C without input
++ Issue #1400: Fleeing while carrying a non-existent mechwarrior no longer causes a soft-lock
++ Data: Corsair fighter once again shows proper sprite
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

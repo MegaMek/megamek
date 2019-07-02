@@ -42,6 +42,7 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
         name = "Medium Pulse Laser (Recoverd Prototype)";
         setInternalName("ISMediumPulseLaserRecovered");
         addLookupName("IS Pulse Med Laser Recovered");
+        shortName = "Medium Pulse Laser (P)";
         flags = flags.or(F_PROTOTYPE);
         heat = 4;
         damage = 6;
@@ -54,7 +55,7 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
         waterMediumRange = 3;
         waterLongRange = 4;
         waterExtremeRange = 6;
-        tonnage = 2.0f;
+        tonnage = 2.0;
         criticals = 1;
         bv = 48;
         cost = 240000;

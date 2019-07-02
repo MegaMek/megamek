@@ -94,6 +94,7 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
             if (damage > 5) {
                 smokeType = SmokeCloud.SMOKE_HEAVY;
             }
+            
             server.deliverMissileSmoke(center, smokeType, vPhaseReport);
         }
         return true;

@@ -24,6 +24,10 @@ STM-OA
 3098
 </year>
 
+<originalBuildYear>
+3098
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 10
@@ -89,6 +96,12 @@ ISTargeting Computer:OMNI
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3145 Lyran Commonwealth - Early Republic

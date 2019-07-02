@@ -46,7 +46,7 @@ public class ISTHBLB2XAC extends LBXACWeapon {
         this.mediumRange = 18;
         this.longRange = 27;
         this.extremeRange = 36;
-        this.tonnage = 6.0f;
+        this.tonnage = 6.0;
         this.criticals = 4;
         this.bv = 40;
         this.cost = 200000;

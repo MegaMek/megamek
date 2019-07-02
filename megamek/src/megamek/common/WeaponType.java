@@ -260,11 +260,14 @@ import megamek.common.weapons.missiles.ISMRM30OS;
 import megamek.common.weapons.missiles.ISMRM40;
 import megamek.common.weapons.missiles.ISMRM40IOS;
 import megamek.common.weapons.missiles.ISMRM40OS;
+/*
+ * See note below.
 import megamek.common.weapons.missiles.ISRL1;
 import megamek.common.weapons.missiles.ISRL2;
 import megamek.common.weapons.missiles.ISRL3;
 import megamek.common.weapons.missiles.ISRL4;
 import megamek.common.weapons.missiles.ISRL5;
+*/
 import megamek.common.weapons.missiles.ISThunderBolt10;
 import megamek.common.weapons.missiles.ISThunderBolt15;
 import megamek.common.weapons.missiles.ISThunderBolt20;
@@ -284,6 +287,7 @@ import megamek.common.weapons.mortars.ISVehicularGrenadeLauncher;
 import megamek.common.weapons.other.CLAMS;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.CLFluidGun;
+import megamek.common.weapons.other.CLFussilade;
 import megamek.common.weapons.other.CLLaserAMS;
 import megamek.common.weapons.other.CLNarc;
 import megamek.common.weapons.other.CLNarcIOS;
@@ -310,7 +314,6 @@ import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.CLEnhancedPPC;
 import megamek.common.weapons.ppc.CLImprovedPPC;
 import megamek.common.weapons.ppc.CLPlasmaCannon;
-import megamek.common.weapons.ppc.CLPlasmaRifle;
 import megamek.common.weapons.ppc.ISERPPC;
 import megamek.common.weapons.ppc.ISKinsSlaughterPPC;
 import megamek.common.weapons.ppc.ISHeavyPPC;
@@ -326,9 +329,9 @@ import megamek.common.weapons.primitive.ISLRM10Primitive;
 import megamek.common.weapons.primitive.ISLRM15Primitive;
 import megamek.common.weapons.primitive.ISLRM20Primitive;
 import megamek.common.weapons.primitive.ISLRM5Primitive;
-import megamek.common.weapons.primitive.ISLaserMediumPrimitive;
+import megamek.common.weapons.primitive.ISLaserPrimitiveMedium;
 import megamek.common.weapons.primitive.ISLaserPrimitiveLarge;
-import megamek.common.weapons.primitive.ISLaserSmallPrimitive;
+import megamek.common.weapons.primitive.ISLaserPrimitiveSmall;
 import megamek.common.weapons.primitive.ISLongTomPrimitive;
 import megamek.common.weapons.primitive.ISPPCPrimitive;
 import megamek.common.weapons.primitive.ISSRM2Primitive;
@@ -376,12 +379,18 @@ import megamek.common.weapons.srms.CLSRM5OS;
 import megamek.common.weapons.srms.CLSRM6;
 import megamek.common.weapons.srms.CLSRM6IOS;
 import megamek.common.weapons.srms.CLSRM6OS;
+import megamek.common.weapons.srms.CLSRT1;
+import megamek.common.weapons.srms.CLSRT1OS;
 import megamek.common.weapons.srms.CLSRT2;
 import megamek.common.weapons.srms.CLSRT2IOS;
 import megamek.common.weapons.srms.CLSRT2OS;
+import megamek.common.weapons.srms.CLSRT3;
+import megamek.common.weapons.srms.CLSRT3OS;
 import megamek.common.weapons.srms.CLSRT4;
 import megamek.common.weapons.srms.CLSRT4IOS;
 import megamek.common.weapons.srms.CLSRT4OS;
+import megamek.common.weapons.srms.CLSRT5;
+import megamek.common.weapons.srms.CLSRT5OS;
 import megamek.common.weapons.srms.CLSRT6;
 import megamek.common.weapons.srms.CLSRT6IOS;
 import megamek.common.weapons.srms.CLSRT6OS;
@@ -428,6 +437,7 @@ import megamek.common.weapons.tag.CLLightTAG;
 import megamek.common.weapons.tag.CLTAG;
 import megamek.common.weapons.tag.ISLightTAG;
 import megamek.common.weapons.tag.ISTAG;
+import megamek.common.weapons.unofficial.CLPlasmaRifle;
 import megamek.common.weapons.unofficial.CLRAC10;
 import megamek.common.weapons.unofficial.CLRAC20;
 import megamek.common.weapons.unofficial.ISAC10i;
@@ -593,6 +603,11 @@ public class WeaponType extends EquipmentType {
     //Hyper-Laser
     public static final BigInteger F_HYPER = BigInteger.valueOf(1).shiftLeft(67);
     
+    // Fusillade works like a one-shot weapon but has a second round.
+    public static final BigInteger F_DOUBLE_ONESHOT = BigInteger.valueOf(1).shiftLeft(68);
+    // ER flamers do half damage in heat mode
+    public static final BigInteger F_ER_FLAMER = BigInteger.valueOf(1).shiftLeft(69);
+    
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
     public static final int RANGE_MED = RangeType.RANGE_MEDIUM;
@@ -751,6 +766,7 @@ public class WeaponType extends EquipmentType {
     public WeaponType() {
     }
 
+    @Override
     public int getHeat() {
         return heat;
     }
@@ -1138,11 +1154,11 @@ public class WeaponType extends EquipmentType {
     public static void initializeTypes() {
         // Laser types
         EquipmentType.addType(new ISLaserMedium());
-        EquipmentType.addType(new ISLaserMediumPrimitive());
+        EquipmentType.addType(new ISLaserPrimitiveMedium());
         EquipmentType.addType(new ISLaserLarge());
         EquipmentType.addType(new ISLaserPrimitiveLarge());
         EquipmentType.addType(new ISLaserSmall());
-        EquipmentType.addType(new ISLaserSmallPrimitive());
+        EquipmentType.addType(new ISLaserPrimitiveSmall());
         EquipmentType.addType(new ISPulseLaserLarge());
         EquipmentType.addType(new ISPulseLaserLargePrototype());
         EquipmentType.addType(new ISXPulseLaserLarge());
@@ -1471,18 +1487,27 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISSRT2OS());
         EquipmentType.addType(new ISSRT4OS());
         EquipmentType.addType(new ISSRT6OS());
+        EquipmentType.addType(new CLSRT1());
         EquipmentType.addType(new CLSRT2());
+        EquipmentType.addType(new CLSRT3());
         EquipmentType.addType(new CLSRT4());
+        EquipmentType.addType(new CLSRT5());
         EquipmentType.addType(new CLSRT6());
+        EquipmentType.addType(new CLSRT1OS());        
         EquipmentType.addType(new CLSRT2OS());
+        EquipmentType.addType(new CLSRT3OS());
         EquipmentType.addType(new CLSRT4OS());
+        EquipmentType.addType(new CLSRT5OS());
         EquipmentType.addType(new CLSRT6OS());
         // RLs
+        /*
+         * This is a duplicate of the ISBARL, and not available for mechs.
         EquipmentType.addType(new ISRL1());
         EquipmentType.addType(new ISRL2());
         EquipmentType.addType(new ISRL3());
         EquipmentType.addType(new ISRL4());
         EquipmentType.addType(new ISRL5());
+        */
         EquipmentType.addType(new RocketLauncher10());
         EquipmentType.addType(new RocketLauncher15());
         EquipmentType.addType(new RocketLauncher20());
@@ -1500,7 +1525,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLIATM6());
         EquipmentType.addType(new CLIATM9());
         EquipmentType.addType(new CLIATM12());
-//        EquipmentType.addType(new CLFussilade());
+        EquipmentType.addType(new CLFussilade());
         // MRMs
         EquipmentType.addType(new ISMRM1());
         EquipmentType.addType(new ISMRM2());

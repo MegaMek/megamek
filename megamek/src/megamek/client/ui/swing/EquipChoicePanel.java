@@ -396,9 +396,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                                 "CustomMechDialog.NetworkTooBig.message", new Object[] {//$NON-NLS-1$
                                         entity.getShortName(),
                                         chosen.getShortName(),
-                                        new Integer(entC3nodeCount),
-                                        new Integer(choC3nodeCount),
-                                        new Integer(Entity.MAX_C3_NODES) });
+                                        Integer.valueOf(entC3nodeCount),
+                                        Integer.valueOf(choC3nodeCount),
+                                        Integer.valueOf(Entity.MAX_C3_NODES) });
                 clientgui.doAlertDialog(Messages
                         .getString("CustomMechDialog.NetworkTooBig.title"), //$NON-NLS-1$
                         message);
@@ -1082,6 +1082,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     } else {
                         shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
                     }
+                    // Protomechs are limited to the number of shots allocated in construction
+                } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    shotsPerTon = m.getBaseShotsLeft();
                 }
                 for (int i = 0; i <= shotsPerTon; i += stepSize){
                     m_num_shots.addItem(i);
@@ -1100,6 +1103,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         // BA always have a certain number of shots per slot
                         if (entity instanceof BattleArmor){
                             shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
+                            // Protomechs are limited to number of shots added during construction
+                        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                            shotsPerTon = m.getBaseShotsLeft();
                         }
                         for (int i = 0; i <= shotsPerTon; i++){
                             m_num_shots.addItem(i);
@@ -1119,11 +1125,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     }});
 
 
-                int loc;
+                int loc = m.getLocation();
                 boolean isOneShot = false;
-                if (m.getLocation() == Entity.LOC_NONE) {
+                if (loc == Entity.LOC_NONE) {
                     // oneshot weapons don't have a location of their own
+                    // some weapons (e.g. fusillade) use the one-shot mechanic but have an extra reload
+                    // which is chained to the first
                     Mounted linkedBy = m.getLinkedBy();
+                    while (linkedBy.getLinkedBy() != null) {
+                        linkedBy = linkedBy.getLinkedBy();
+                    }
                     loc = linkedBy.getLocation();
                     isOneShot = linkedBy.isOneShot();
                 } else {
@@ -1293,9 +1304,15 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 ammoBins = new JComboBox<>();
                 matchingAmmoBins = new ArrayList<>();
                 
-                for(Mounted ammoBin : weapon.getEntity().getAmmo()) {
-                    if(((WeaponType) weapon.getType()).getAmmoType() == ((AmmoType) ammoBin.getType()).getAmmoType()) {
-                        matchingAmmoBins.add(ammoBin);
+                if (m_mounted.isOneShot()) {
+                    // One-shot weapons can only access their own bin
+                    matchingAmmoBins.add(m_mounted.getLinked());
+                } else {
+                    for(Mounted ammoBin : weapon.getEntity().getAmmo()) {
+                        if((ammoBin.getLocation() != Entity.LOC_NONE)
+                            && ((WeaponType) weapon.getType()).getAmmoType() == ((AmmoType) ammoBin.getType()).getAmmoType()) {
+                            matchingAmmoBins.add(ammoBin);
+                        }
                     }
                 }
                 
@@ -1362,7 +1379,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              * Common functionality that applies the panel's current ammo bin choice to the panel's weapon.
              */
             public void applyChoice() {
-                m_mounted.setLinked(matchingAmmoBins.get(ammoBins.getSelectedIndex()));
+                entity.loadWeapon(m_mounted, matchingAmmoBins.get(ammoBins.getSelectedIndex()));
             }
         }
 
@@ -1633,7 +1650,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
                 choC3.addItem(Messages
                         .getString(
-                                "CustomMechDialog.setCompanyMaster", new Object[] { new Integer(mNodes), new Integer(sNodes) })); //$NON-NLS-1$
+                                "CustomMechDialog.setCompanyMaster", new Object[] { Integer.valueOf(mNodes), Integer.valueOf(sNodes) })); //$NON-NLS-1$
 
                 if (entity.C3MasterIs(entity)) {
                     choC3.setSelectedIndex(listIndex);
@@ -1642,7 +1659,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
                 choC3.addItem(Messages
                         .getString(
-                                "CustomMechDialog.setIndependentMaster", new Object[] { new Integer(sNodes) })); //$NON-NLS-1$
+                                "CustomMechDialog.setIndependentMaster", new Object[] { Integer.valueOf(sNodes) })); //$NON-NLS-1$
                 if (entity.getC3Master() == null) {
                     choC3.setSelectedIndex(listIndex);
                 }
@@ -1653,7 +1670,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
                 choC3.addItem(Messages
                         .getString(
-                                "CustomMechDialog.setCompanyMaster1", new Object[] { new Integer(nodes) })); //$NON-NLS-1$
+                                "CustomMechDialog.setCompanyMaster1", new Object[] { Integer.valueOf(nodes) })); //$NON-NLS-1$
                 if (entity.C3MasterIs(entity)) {
                     choC3.setSelectedIndex(listIndex);
                 }
@@ -1661,7 +1678,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
                 choC3.addItem(Messages
                         .getString(
-                                "CustomMechDialog.setIndependentMaster", new Object[] { new Integer(nodes) })); //$NON-NLS-1$
+                                "CustomMechDialog.setIndependentMaster", new Object[] { Integer.valueOf(nodes) })); //$NON-NLS-1$
                 if (entity.getC3Master() == null) {
                     choC3.setSelectedIndex(listIndex);
                 }
@@ -1709,12 +1726,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     if (entity.onSameC3NetworkAs(e)) {
                         choC3.addItem(Messages
                                 .getString(
-                                        "CustomMechDialog.join1", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1) })); //$NON-NLS-1$
+                                        "CustomMechDialog.join1", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes - 1) })); //$NON-NLS-1$
                         choC3.setSelectedIndex(listIndex);
                     } else {
                         choC3.addItem(Messages
                                 .getString(
-                                        "CustomMechDialog.join2", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes) })); //$NON-NLS-1$
+                                        "CustomMechDialog.join2", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes) })); //$NON-NLS-1$
                     }
                     entityCorrespondance[listIndex++] = e.getId();
                 } else if (e.C3MasterIs(e) && e.hasC3MM()) {
@@ -1722,7 +1739,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     // *both* sub-masters AND slave units.
                     choC3.addItem(Messages
                             .getString(
-                                    "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes) })); //$NON-NLS-1$
+                                    "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes) })); //$NON-NLS-1$
                     entityCorrespondance[listIndex] = e.getId();
                     if (entity.C3MasterIs(e)) {
                         choC3.setSelectedIndex(listIndex);
@@ -1735,13 +1752,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 } else if (entity.C3MasterIs(e)) {
                     choC3.addItem(Messages
                             .getString(
-                                    "CustomMechDialog.connect1", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes - 1) })); //$NON-NLS-1$
+                                    "CustomMechDialog.connect1", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes - 1) })); //$NON-NLS-1$
                     choC3.setSelectedIndex(listIndex);
                     entityCorrespondance[listIndex++] = e.getId();
                 } else {
                     choC3.addItem(Messages
                             .getString(
-                                    "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), new Integer(nodes) })); //$NON-NLS-1$
+                                    "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes) })); //$NON-NLS-1$
                     entityCorrespondance[listIndex++] = e.getId();
                 }
             }

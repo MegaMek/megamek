@@ -228,13 +228,20 @@ public class OptionsConstants {
     
       //EDGE 
     public static final String EDGE = "edge"; //$NON-NLS$ 
-    //different edge triggers 
+    //different edge triggers
+    //Mech Triggers
     public static final String EDGE_WHEN_HEADHIT= "edge_when_headhit"; //$NON-NLS$ 
     public static final String EDGE_WHEN_TAC= "edge_when_tac"; //$NON-NLS$ 
     public static final String EDGE_WHEN_KO= "edge_when_ko"; //$NON-NLS$ 
     public static final String EDGE_WHEN_EXPLOSION= "edge_when_explosion"; //$NON-NLS$ 
     public static final String EDGE_WHEN_MASC_FAILS= "edge_when_masc_fails"; //$NON-NLS$
-     
+    //Aero Triggers
+    public static final String EDGE_WHEN_AERO_ALT_LOSS= "edge_when_aero_alt_loss"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_EXPLOSION= "edge_when_aero_explosion"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_KO= "edge_when_aero_ko"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_LUCKY_CRIT= "edge_when_aero_lucky_crit"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_NUKE_CRIT= "edge_when_aero_nuke_crit"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_UNIT_CARGO_LOST= "edge_when_aero_unit_cargo_lost"; //$NON-NLS$
 
     // Manei Domini
     public static final String MD_PAIN_SHUNT = "artificial_pain_shunt"; // $NON-NLS$
@@ -489,6 +496,7 @@ public class OptionsConstants {
     public static final String ADVAERORULES_AA_MOVE_MOD= "aa_move_mod";  //$NON-NLS$
     public static final String ADVAERORULES_ALLOW_LARGE_SQUADRONS= "allow_large_squadrons";  //$NON-NLS$
     public static final String ADVAERORULES_SINGLE_NO_CAP= "single_no_cap";  //$NON-NLS$
+    public static final String ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE= "expanded_kf_drive_damage";  //$NON-NLS$
 
     public static final String INIT_INF_MOVE_EVEN= "inf_move_even";  //$NON-NLS$
     public static final String INIT_INF_DEPLOY_EVEN= "inf_deploy_even";  //$NON-NLS$

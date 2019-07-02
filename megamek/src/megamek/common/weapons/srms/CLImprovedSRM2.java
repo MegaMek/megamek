@@ -41,7 +41,7 @@ public class CLImprovedSRM2 extends SRMWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 1.0f;
+        tonnage = 1.0;
         criticals = 1;
         bv = 28;
         flags = flags.or(F_NO_FIRES);
@@ -50,6 +50,7 @@ public class CLImprovedSRM2 extends SRMWeapon {
         shortAV = 2;
         maxRange = RANGE_SHORT;
         rulesRefs = "96, IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
             .setClanAdvancement(2815, 2817, 2819, 2828, 3080)

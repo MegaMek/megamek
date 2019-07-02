@@ -38,7 +38,7 @@ public class CapitalMDBayWeapon extends AmmoBayWeapon {
         this.shortRange = 12;
         this.mediumRange = 24;
         this.longRange = 40;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_CAPITAL_MD;

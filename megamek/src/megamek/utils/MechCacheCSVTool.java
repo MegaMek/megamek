@@ -57,7 +57,7 @@ public class MechCacheCSVTool {
                     "Equipment (multiple entries)\n");
             fout.write(csvLine.toString());
             for (MechSummary mech : mechs){
-                if (mech.getUnitType().equals("Infantry") || (mech.getUnitType().equals("Gun Emplacement"))){
+                if (mech.getUnitType().equals("Gun Emplacement")){
                     continue;
                 }
                 

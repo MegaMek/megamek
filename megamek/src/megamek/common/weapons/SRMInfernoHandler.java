@@ -230,9 +230,21 @@ public class SRMInfernoHandler extends SRMHandler {
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
+        
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                    : null;
+            if (entityTarget != null && entityTarget.isLargeCraft()) {
+                nMissilesModifier -= getAeroSanityAMSHitsMod();
+            }
+        }
 
         if (allShotsHit()) {
-            missilesHit = wtype.getRackSize();
+            // We want buildings and large craft to be able to affect this number with AMS
+            // treat as a Streak launcher (cluster roll 11) to make this happen
+            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                    nMissilesModifier, weapon.isHotLoaded(), true,
+                    isAdvancedAMS());
         } else {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()

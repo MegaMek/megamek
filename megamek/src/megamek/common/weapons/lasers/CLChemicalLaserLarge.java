@@ -44,7 +44,7 @@ public class CLChemicalLaserLarge extends CLChemicalLaserWeapon {
         waterMediumRange = 6;
         waterLongRange = 9;
         waterExtremeRange = 12;
-        tonnage = 5.0f;
+        tonnage = 5.0;
         criticals = 2;
         bv = 99;
         cost = 75000;

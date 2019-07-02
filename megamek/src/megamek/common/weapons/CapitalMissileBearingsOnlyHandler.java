@@ -54,10 +54,14 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      */
     private static final long serialVersionUID = -1277549123532227298L;
     boolean handledAmmoAndReport = false;
-    boolean detRangeShort = weapon.curMode().equals("Bearings-Only Short Detection Range");
-    boolean detRangeMedium = weapon.curMode().equals("Bearings-Only Medium Detection Range");
-    boolean detRangeLong = weapon.curMode().equals("Bearings-Only Long Detection Range");
-    boolean detRangeExtreme = weapon.curMode().equals("Bearings-Only Extreme Detection Range");
+    boolean detRangeShort = (weapon.curMode().equals(Weapon.Mode_CapMissile_Bearing_Short) 
+            || weapon.curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Short));
+    boolean detRangeMedium = (weapon.curMode().equals(Weapon.Mode_CapMissile_Bearing_Med) 
+            || weapon.curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Med));
+    boolean detRangeLong = (weapon.curMode().equals(Weapon.Mode_CapMissile_Bearing_Long) 
+            || weapon.curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Long));
+    boolean detRangeExtreme = (weapon.curMode().equals(Weapon.Mode_CapMissile_Bearing_Ext) 
+            || weapon.curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext));
 
     /**
      * This constructor may only be used for deserialization.
@@ -193,8 +197,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             vPhaseReport.addElement(r);
         }
         
-        //Point Defense fire vs Capital Missiles
-        
         // are we a glancing hit?  Check for this here, report it later
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
             if (roll == toHit.getValue()) {
@@ -203,6 +205,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 bGlancing = false;
             }
         }
+        
+        //Point Defense fire vs Capital Missiles
         
         // Set Margin of Success/Failure and check for Direct Blows
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -301,6 +305,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            return false;
         }
         //use this if PD counterfire destroys all the Capital missiles
         if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
@@ -308,6 +313,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            return false;
         }
 
         // Any necessary PSRs, jam checks, etc.
@@ -321,6 +327,61 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
         }
+        // Aero Sanity Handling
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY) && !bMissed) {
+            //New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow
+            //data from the 'real' toHit data of this bay handler
+            ToHitData autoHit = new ToHitData();
+            autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
+            int replaceReport;
+            for (int wId : weapon.getBayWeapons()) {
+                Mounted m = ae.getEquipment(wId);
+                if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+                    WeaponType bayWType = ((WeaponType) m.getType());
+                    if(bayWType instanceof Weapon) {
+                        replaceReport = vPhaseReport.size();
+                        WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
+                        AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
+                        bayWHandler.setAnnouncedEntityFiring(false);
+                        // This should always be true. Maybe there's a better way to write this?
+                        if (bayWHandler instanceof WeaponHandler) {
+                            WeaponHandler wHandler = (WeaponHandler) bayWHandler;
+                            wHandler.setParentBayHandler(this);
+                        }
+                        bayWHandler.handle(phase, vPhaseReport);
+                        if(vPhaseReport.size() > replaceReport) {
+                            //fix the reporting - is there a better way to do this
+                            if(vPhaseReport.size() > replaceReport) {
+                                Report currentReport = vPhaseReport.get(replaceReport);
+                                while(null != currentReport) {
+                                    vPhaseReport.remove(replaceReport);
+                                    if(currentReport.newlines > 0 || vPhaseReport.size() <= replaceReport) {
+                                        currentReport = null;
+                                    } else {
+                                        currentReport = vPhaseReport.get(replaceReport);
+                                    }
+                                }
+                                r = new Report(3115);
+                                r.indent(2);
+                                r.newlines = 1;
+                                r.subject = subjectId;
+                                r.add(bayWType.getName());
+                                if (entityTarget != null) {
+                                    r.addDesc(entityTarget);
+                                } else {
+                                    r.messageId = 3120;
+                                    r.add(target.getDisplayName(), true);
+                                }
+                                vPhaseReport.add(replaceReport, r);
+                            }
+                        }
+                    }
+                }
+            } // Handle the next weapon in the bay
+            Report.addNewline(vPhaseReport);
+            return false;
+        }
+        
         // Handle damage.
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
@@ -668,6 +729,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      * Checks to see if this point defense/AMS bay can engage a capital missile
      * This should return true. Only when handling capital missile attacks can this be false.
      */
+    @Override
     protected boolean canEngageCapitalMissile(Mounted counter) {
         if (counter.getBayWeapons().size() < 2) {
             return false;
@@ -771,6 +833,52 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             return (int) Math.ceil(av);
     }
     
+    /**
+     * Calculate the damage per hit.
+     *
+     * @return an <code>int</code> representing the damage dealt per hit.
+     */
+    @Override
+    protected int calcDamagePerHit() {
+        AmmoType atype = (AmmoType) ammo.getType();
+        double toReturn = wtype.getDamage(nRange);
+        
+        //AR10 munitions
+        if (atype != null) {
+            if (atype.getAmmoType() == AmmoType.T_AR10) {
+                if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                    toReturn = 4;
+                } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                    toReturn = 3;
+                } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                    toReturn = 1000;
+                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                    toReturn = 100;
+                } else {
+                    toReturn = 2;
+                }
+            }
+            //Nuclear Warheads for non-AR10 missiles
+            if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                toReturn = 100;
+            } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                toReturn = 1000;
+            } 
+            nukeS2S = atype.hasFlag(AmmoType.F_NUCLEAR);
+        }
+        
+        // we default to direct fire weapons for anti-infantry damage
+        if (bDirect) {
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
+        }
+
+        if (bGlancing) {
+            toReturn = (int) Math.floor(toReturn / 2.0);
+        }
+
+        return (int) toReturn;
+    }
+    
     @Override
     protected int calcCapMissileAMSMod() {
         CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
@@ -780,6 +888,39 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     @Override
     protected int getCapMissileAMSMod() {
         return CapMissileAMSMod;
+    }
+    
+    /**
+     * Calculate the starting armor value of a flight of Capital Missiles
+     * Used for Aero Sanity. This is done in calcAttackValue() otherwise
+     *
+     */
+    protected int initializeCapMissileArmor() {
+        int armor = 0;
+        for (int wId : weapon.getBayWeapons()) {
+            int curr_armor = 0;
+            Mounted bayW = ae.getEquipment(wId);
+            // check the currently loaded ammo
+            Mounted bayWAmmo = bayW.getLinked();
+            AmmoType atype = (AmmoType) bayWAmmo.getType();
+            WeaponType bayWType = ((WeaponType) bayW.getType());
+            if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
+                    && (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                            || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
+                curr_armor = 40;
+            } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
+                    && (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                            || atype.hasFlag(AmmoType.F_SANTA_ANNA))) {
+                curr_armor = 30;
+            } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
+                    && atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                curr_armor = 20;
+            } else {
+                curr_armor = bayWType.getMissileArmor();
+            }
+            armor = armor + curr_armor;
+        }
+        return armor;
     }
 
     @Override

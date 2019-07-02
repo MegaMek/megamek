@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,59 +20,82 @@ Centaur
 4
 </Model>
 
-<Tonnage>
-5
-</Tonnage>
+<year>
+3071
+</year>
+
+<originalBuildYear>
+3071
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 6
 </cruiseMP>
 
-<Armor>
+<jumpingMP>
+0
+</jumpingMP>
+
+<engine_type>
+0
+</engine_type>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 4
 10
 2
 2
 6
 3
-</Armor>
+</armor>
 
-<Main Gun Equipment>
-CLAPGaussRifle
+<Body Equipment>
+Clan Ammo SRM-1 (20)
+CLMyomerBooster
 CLAPGaussRifle Ammo (13)
-</Main Gun Equipment>
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
 CLSRM1
 CLSRM1
-CLSRM1 Ammo (20)
-CLMyomerBooster
 </Torso Equipment>
 
-<type>
-Clan
-</type>
+<Right Arm Equipment>
+</Right Arm Equipment>
 
-<year>
-3071
-</year>
+<Left Arm Equipment>
+</Left Arm Equipment>
 
-<internal_type>
-0
-</internal_type>
+<Legs Equipment>
+</Legs Equipment>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
+<Main Gun Equipment>
+CLAPGaussRifle
+</Main Gun Equipment>
 
 <source>
 TRO 3060 - Jihad
 </source>
+
+<tonnage>
+5.0
+</tonnage>
+

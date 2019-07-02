@@ -40,10 +40,10 @@ Aerodyne
 smallcraftbay:4.0:2:1
 cargobay:362.5:1:2
 cargobay:362.0:1:3
-megamek.common.DockingCollar@2eef28b
-megamek.common.DockingCollar@6dd80ce0
 1stclassquarters:50.0:0
 crewquarters:175.0:0
+dockingcollar
+dockingcollar
 </transporters>
 
 <SafeThrust>
@@ -109,6 +109,9 @@ ISERLargeLaser
 (B) ISLargePulseLaser
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 1
 </structural_integrity>
@@ -132,10 +135,6 @@ TRO 3057R - Clan Invasion
 <grav_decks>
 50
 </grav_decks>
-
-<docking_collar>
-2
-</docking_collar>
 
 <crew>
 50

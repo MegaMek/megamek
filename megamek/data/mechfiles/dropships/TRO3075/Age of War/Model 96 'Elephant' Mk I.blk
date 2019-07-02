@@ -45,7 +45,7 @@ heavyvehiclebay:8.0:2:4
 steeragequarters:125.0:0
 crewquarters:259.0:0
 1stclassquarters:70.0:0
-infantrybay:4.0:1:5:Jump
+infantrybay:4.0:1:9:Jump
 </transporters>
 
 <SafeThrust>
@@ -97,7 +97,6 @@ PPC
 (B) Medium Laser
 Medium Laser
 Large Laser
-ISNavalTugAdaptor
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -158,6 +157,10 @@ IS Ammo LRM-10 Artemis-capable:24
 ISArtemisIV
 </Aft Equipment>
 
+<Hull Equipment>
+ISNavalTugAdaptor
+</Hull Equipment>
+
 <structural_integrity>
 25
 </structural_integrity>
@@ -169,6 +172,10 @@ TRO 3075 - Star League
 <tonnage>
 15000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 229

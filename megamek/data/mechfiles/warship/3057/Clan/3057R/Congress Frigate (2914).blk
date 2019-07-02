@@ -44,7 +44,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:430.0:0
 crewquarters:1491.0:0
-cargobay:400.0:1:4
+cargobay:400.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -79,15 +79,14 @@ cargobay:400.0:1:4
 75
 72
 72
-72
 75
+72
 72
 </armor>
 
 <Nose Equipment>
 (B) Capital Missile Launcher (Killer Whale)
 Ammo Killer Whale:10
-ISSmallNavalCommScannerSuite
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -106,7 +105,6 @@ Ammo NAC/10:70
 (B) Naval Autocannon (NAC/30)
 Naval Autocannon (NAC/30)
 Ammo NAC/30:50
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -128,6 +126,11 @@ Ammo NAC/30:25
 (B) CLERLargeLaser
 CLERLargeLaser
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISSmallNavalCommScannerSuite
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/10)

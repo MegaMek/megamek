@@ -48,6 +48,19 @@ public class TestBattleArmor extends TestEntity {
      * Keeps track of the number of free MP a Quad BA gets.
      */
     public static int QUAD_FREE_MP = 2;
+    
+    /**
+     * Base chassis weight by suit weight class for Inner Sphere suits
+     */
+    public static double CHASSIS_WEIGHT_IS[] = { 0.08, 0.1, 0.175, 0.3, 0.55 };
+    /**
+     * Base chassis weight by suit weight class for Clan suits
+     */
+    public static double CHASSIS_WEIGHT_CLAN[] = { 0.13, 0.15, 0.25, 0.4, 0.7 };
+    /**
+     * Weight for additional ground MP by suit weight class
+     */
+    public static double ADDITIONAL_GROUND_MP_WEIGHT[] = { 0.025, 0.03, 0.04, 0.08, 0.16 };
 
     /**
      * BattleArmor can have a variable number of shots per slot of ammo, this
@@ -234,16 +247,18 @@ public class TestBattleArmor extends TestEntity {
     }
 
     public enum BAMotiveSystems {
-        BA_JUMP ("BAJumpJet", EntityMovementMode.INF_JUMP),
-        BA_VTOL ("BAVTOL", EntityMovementMode.VTOL),
-        BA_UMU ("BAUMU", EntityMovementMode.INF_UMU);
+        BA_JUMP ("BAJumpJet", EntityMovementMode.INF_JUMP, new int[] { 25, 25, 50, 125, 250 }),
+        BA_VTOL ("BAVTOL", EntityMovementMode.VTOL, new int[] { 30, 40, 60 }),
+        BA_UMU ("BAUMU", EntityMovementMode.INF_UMU, new int[] { 45, 45, 85, 160, 250});
 
-        private String internalName;
-        private EntityMovementMode mode;
+        private final String internalName;
+        private final EntityMovementMode mode;
+        private final int[] weightsKg;
         
-        BAMotiveSystems(String internalName, EntityMovementMode mode) {
+        BAMotiveSystems(String internalName, EntityMovementMode mode, int[] weights) {
             this.internalName = internalName;
             this.mode = mode;
+            this.weightsKg = weights;
         }
         
         public String getName() {
@@ -269,6 +284,15 @@ public class TestBattleArmor extends TestEntity {
                 }
             }
             return null;
+        }
+        
+        /**
+         * @param weightClass The EntityWeightClass index for the suit
+         * @return            The mass of the motive system per MP
+         * @throws IndexOutOfBoundsException if the weight class is not in the range allowed by the suit 
+         */
+        public double getWeight(int weightClass) {
+        	return weightsKg[weightClass] / 1000.0;
         }
 
     }
@@ -472,14 +496,21 @@ public class TestBattleArmor extends TestEntity {
     public boolean isAdvancedAerospace() {
         return false;
     }
+    
+    @Override
+    public boolean isProtomech() {
+        return false;
+    }
 
     @Override
     public double getWeightControls() {
         return 0;
     }
 
-    @Override
-    public double getWeightMisc() {
+    /**
+     * @return The weight of the turret mount, or zero if there isn't one.
+     */
+    public double getWeightTurret() {
         int turret = ba.getTurretCapacity();
         if (turret > 0) {
             double weight = turret * 0.01 + 0.03;
@@ -494,6 +525,11 @@ public class TestBattleArmor extends TestEntity {
     }
 
     @Override
+    public double getWeightMisc() {
+    	return getWeightTurret();
+    }
+
+    @Override
     public double getWeightHeatSinks() {
         return 0;
     }
@@ -502,88 +538,45 @@ public class TestBattleArmor extends TestEntity {
     public double getWeightEngine() {
         return 0;
     }
-
-    @Override
-    public double getWeightStructure() {
-        double tons = 0;
-
+    
+    public double getWeightChassis() {
+    	if (ba.isClan()
+    			&& !((ba.getWeightClass() > EntityWeightClass.WEIGHT_ULTRA_LIGHT)
+    					&& (ba.isClanExoWithoutHarjel()))) {
+    		return CHASSIS_WEIGHT_CLAN[ba.getWeightClass()];
+    	} else {
+    		return CHASSIS_WEIGHT_IS[ba.getWeightClass()];
+    	}
+    }
+    
+    public double getWeightGroundMP() {
         int walkMP = ba.getOriginalWalkMP();
         if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
             walkMP -= QUAD_FREE_MP;
         } else {
             walkMP -= BIPED_FREE_MP;
         }
-        int jumpMP = ba.getOriginalJumpMP();
-        switch (ba.getWeightClass()) {
-            case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
-                if (ba.isClan() && ba.isClanExoWithoutHarjel()) {
-                    tons += 0.13;
-                } else {
-                    tons += 0.08;
-                }
-                tons += walkMP * .025;
-                if (ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                    tons += jumpMP * .045;
-                } else if (ba.getMovementMode() == EntityMovementMode.VTOL) {
-                    tons += jumpMP * .03;
-                } else {
-                    tons += jumpMP * .025;
-                }
-                break;
-            case EntityWeightClass.WEIGHT_LIGHT:
-                if (ba.isClan()) {
-                    tons += 0.15;
-                } else {
-                    tons += 0.1;
-                }
-                tons += walkMP * .03;
-                if (ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                    tons += jumpMP * .045;
-                } else if (ba.getMovementMode() == EntityMovementMode.VTOL) {
-                    tons += jumpMP * .04;
-                } else {
-                    tons += jumpMP * .025;
-                }
-                break;
-            case EntityWeightClass.WEIGHT_MEDIUM:
-                if (ba.isClan()) {
-                    tons += 0.25;
-                } else {
-                    tons += 0.175;
-                }
-                tons += walkMP * .04;
-                if (ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                    tons += jumpMP * .085;
-                } else if (ba.getMovementMode() == EntityMovementMode.VTOL) {
-                    tons += jumpMP * .06;
-                } else {
-                    tons += jumpMP * .05;
-                }
-                break;
-            case EntityWeightClass.WEIGHT_HEAVY:
-                if (ba.isClan()) {
-                    tons += 0.4;
-                } else {
-                    tons += 0.3;
-                }
-                tons += walkMP * .08;
-                if (ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-                    tons += jumpMP * .16;
-                } else {
-                    tons += jumpMP * .125;
-                }
-                break;
-            case EntityWeightClass.WEIGHT_ASSAULT:
-                if (ba.isClan()) {
-                    tons += 0.7;
-                } else {
-                    tons += 0.55;
-                }
-                tons += walkMP * .16;
-                tons += jumpMP * .25;
-                break;
+        if (walkMP > 0) {
+        	return ADDITIONAL_GROUND_MP_WEIGHT[ba.getWeightClass()] * walkMP;
+        } else {
+        	return 0;
         }
-        return tons;
+    }
+    
+    public double getWeightSecondaryMotiveSystem() {
+    	int jumpMP = ba.getOriginalJumpMP();
+    	if (ba.getMovementMode() == EntityMovementMode.VTOL) {
+    		return jumpMP * BAMotiveSystems.BA_VTOL.getWeight(ba.getWeightClass());
+    	} else if (ba.getMovementMode() == EntityMovementMode.INF_UMU) {
+    		return jumpMP * BAMotiveSystems.BA_UMU.getWeight(ba.getWeightClass());
+    	} else {
+    		return jumpMP * BAMotiveSystems.BA_JUMP.getWeight(ba.getWeightClass());
+    	}
+    }
+
+    @Override
+    public double getWeightStructure() {
+    	return getWeightChassis() + getWeightGroundMP() + getWeightSecondaryMotiveSystem();
     }
 
     @Override
@@ -883,12 +876,19 @@ public class TestBattleArmor extends TestEntity {
                 correct = false;
             }
 
-            if ((m.getType() instanceof AmmoType)
-                    && (m.getBaseShotsLeft() > NUM_SHOTS_PER_CRIT)) {
-                buff.append(m.getName() + "has " + m.getBaseShotsLeft()
-                        + " shots, but BattleArmor may only have at most "
-                        + NUM_SHOTS_PER_CRIT + " shots per slot.\n");
-                correct = false;
+            if (m.getType() instanceof AmmoType) {
+                final int maxShots;
+                if (((AmmoType) m.getType()).getAmmoType() != AmmoType.T_BA_TUBE) {
+                    maxShots = NUM_SHOTS_PER_CRIT;
+                } else {
+                    maxShots = NUM_SHOTS_PER_CRIT_TA;
+                }
+                if (m.getBaseShotsLeft() > maxShots) {
+                    buff.append(m.getName()).append(" has ").append(m.getBaseShotsLeft())
+                        .append(" shots, but BattleArmor may only have at most ")
+                        .append(maxShots).append(" shots per slot.\n");
+                    correct = false;
+                }
             }
 
             // Ensure that jump boosters are mounted in the body
@@ -975,7 +975,7 @@ public class TestBattleArmor extends TestEntity {
         for (int t = 0; t <= ba.getTroopers(); t++) {
             for (int loc = 0; loc < BattleArmor.MOUNT_NUM_LOCS; loc++) {
                 if (critsUsed[t][loc] > ba.getNumCrits(loc)) {
-                    buff.append(ba.getBaMountLocAbbr(loc) + " of "
+                    buff.append(BattleArmor.getBaMountLocAbbr(loc) + " of "
                             + ba.getLocationAbbr(t) + " has "
                             + critsUsed[t][loc]
                             + " used criticals, but only has "
@@ -987,7 +987,7 @@ public class TestBattleArmor extends TestEntity {
                 }
                 if (numAMWeapons[t][loc] > 
                         ba.getNumAllowedAntiMechWeapons(loc)) {
-                    buff.append(ba.getBaMountLocAbbr(loc) + " of "
+                    buff.append(BattleArmor.getBaMountLocAbbr(loc) + " of "
                             + ba.getLocationAbbr(t) + " has "
                             + numAMWeapons[t][loc]
                             + " anti-mech weapons, but only "
@@ -997,7 +997,7 @@ public class TestBattleArmor extends TestEntity {
                 }
                 if (numAPWeapons[t][loc] > ba
                         .getNumAllowedAntiPersonnelWeapons(loc, t)) {
-                    buff.append(ba.getBaMountLocAbbr(loc) + " of "
+                    buff.append(BattleArmor.getBaMountLocAbbr(loc) + " of "
                             + ba.getLocationAbbr(t) + " has "
                             + numAPWeapons[t][loc]
                             + " anti-personnel weapons, but only "

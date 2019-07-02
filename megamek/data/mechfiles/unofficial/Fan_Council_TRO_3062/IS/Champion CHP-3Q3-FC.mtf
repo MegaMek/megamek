@@ -1,0 +1,153 @@
+Version:1.0
+Champion
+CHP-3Q3-FC
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3058
+Source:TRO 3062 - Clan Invasion
+Rules Level:5
+
+Mass:60
+Engine:300 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:18
+RA Armor:18
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+LL Armor:25
+RL Armor:25
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:6
+ER Large Laser, Left Arm
+LB 10-X AC, Right Arm
+Streak SRM 6, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERLargeLaser
+ISERLargeLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISStreakSRM6
+ISStreakSRM6
+IS Streak SRM 6 Ammo
+IS Streak SRM 6 Ammo
+ISCASE
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+IS LB 10-X Cluster Ammo
+ISCASE
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

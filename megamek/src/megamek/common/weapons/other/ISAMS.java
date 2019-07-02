@@ -50,7 +50,7 @@ public class ISAMS extends AmmoWeapon {
         maxRange = RANGE_SHORT;
         shortAV = 3;
         ammoType = AmmoType.T_AMS;
-        tonnage = 0.5f;
+        tonnage = 0.5;
         criticals = 1;
         bv = 32;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)

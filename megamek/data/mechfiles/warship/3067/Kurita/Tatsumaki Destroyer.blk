@@ -44,7 +44,7 @@ dockingcollar
 1stclassquarters:400.0:0
 crewquarters:1400.0:0
 2ndclassquarters:756.0:0
-cargobay:54793.0:1:3
+cargobay:54793.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -79,8 +79,8 @@ cargobay:54793.0:1:3
 70
 70
 70
-70
 60
+70
 70
 </armor>
 
@@ -224,6 +224,9 @@ ISArtemisIV
 ISAMS Ammo:36
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <Left Broadsides Equipment>
 (B) Naval PPC (Medium)
 Naval PPC (Medium)
@@ -338,8 +341,4 @@ TRO3067 - Clan Invasion
 <escape_pod>
 45
 </escape_pod>
-
-<history>
-The ship as built in the TRO is tons underweight. Increasing Cargo space to use all available weight.
-</history>
 

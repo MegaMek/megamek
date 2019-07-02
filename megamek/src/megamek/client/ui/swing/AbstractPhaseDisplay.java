@@ -53,6 +53,7 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.event.GameVictoryEvent;
+import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 import megamek.common.util.MegaMekFile;
@@ -64,7 +65,17 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
      *
      */
     private static final long serialVersionUID = 4421205210788230341L;
-
+    
+    /**
+     * Write debug information to the logs.
+     *
+     * @param methodName Name of the method logging is coming from
+     * @param message Message to log
+     */
+    protected void logDebug(String methodName, String message) {
+        DefaultMmLogger.getInstance().debug(getClass(), methodName, message);
+    }
+    
     public static final int DONE_BUTTON_WIDTH = 125;
     // Distraction implementation.
     protected DistractableAdapter distracted = new DistractableAdapter();

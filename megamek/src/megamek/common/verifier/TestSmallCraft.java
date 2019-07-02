@@ -47,10 +47,11 @@ public class TestSmallCraft extends TestAero {
     public static final int ARC_LWING = SmallCraft.LOC_LWING;
     public static final int ARC_RWING = SmallCraft.LOC_RWING;
     public static final int ARC_AFT = SmallCraft.LOC_AFT;
+    public static final int ARC_NONE = SmallCraft.LOC_HULL;
     public static final int ARC_FWD_LEFT = SmallCraft.LOC_LWING;
     public static final int ARC_FWD_RIGHT = SmallCraft.LOC_RWING;
-    public static final int ARC_AFT_LEFT = SmallCraft.LOC_LWING + 3;
-    public static final int ARC_AFT_RIGHT = SmallCraft.LOC_RWING + 3;
+    public static final int ARC_AFT_LEFT = SmallCraft.LOC_LWING + 4;
+    public static final int ARC_AFT_RIGHT = SmallCraft.LOC_RWING + 4;
     
     private final SmallCraft smallCraft;
 
@@ -171,7 +172,7 @@ public class TestSmallCraft extends TestAero {
      *           allotment
      */
     public static double[] extraSlotCost(SmallCraft sc) {
-        int arcs = sc.isSpheroid()? 6 : 4;
+        int arcs = sc.isSpheroid()? 7 : 5;
         int weaponsPerArc[] = new int[arcs];
         double weaponTonnage[] = new double[arcs];
         boolean hasNC3 = sc.hasWorkingMisc(MiscType.F_NAVAL_C3);
@@ -689,7 +690,7 @@ public class TestSmallCraft extends TestAero {
         }
         boolean lateralMatch = true;
         for (EquipmentType eq : leftFwd.keySet()) {
-            if (!rightFwd.containsKey(eq) || (leftFwd.get(eq) != rightFwd.get(eq))) {
+            if (!rightFwd.containsKey(eq) || !leftFwd.get(eq).equals(rightFwd.get(eq))) {
                 lateralMatch = false;
                 break;
             }
@@ -706,7 +707,7 @@ public class TestSmallCraft extends TestAero {
         }
         if (lateralMatch) {
             for (EquipmentType eq : leftAft.keySet()) {
-                if (!rightAft.containsKey(eq) || (leftAft.get(eq) != rightAft.get(eq))) {
+                if (!rightAft.containsKey(eq) || !leftAft.get(eq).equals(rightAft.get(eq))) {
                     lateralMatch = false;
                     break;
                 }

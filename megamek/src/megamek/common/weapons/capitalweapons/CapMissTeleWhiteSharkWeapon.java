@@ -17,13 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.WhiteSharkHandler;
-import megamek.common.weapons.WhiteSharkTHandler;
-import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -42,6 +35,7 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
         this.name = "Tele-operated Missile (White Shark-T)";
         this.setInternalName(this.name);
         this.addLookupName("WhiteSharkT");
+        this.shortName = "White Shark T";
         String[] modeStrings = { "Normal", "Tele-Operated" };
         setModes(modeStrings);
         setInstantModeSwitch(false);
@@ -52,7 +46,7 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
         this.mediumRange = 24;
         this.longRange = 36;
         this.extremeRange = 48;
-        this.tonnage = 130.0f;
+        this.tonnage = 130.0;
         this.bv = 692;
         this.cost = 145000;
         this.flags = flags.or(F_MISSILE);
@@ -74,22 +68,5 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
             .setPrototypeFactions(F_CS,F_DC)
             .setProductionFactions(F_DC);
 
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_TELE_MISSILE) && game.getBoard().inSpace())
-            return new WhiteSharkTHandler(toHit, waa, game, server);
-        return new WhiteSharkHandler(toHit, waa, game, server);
     }
 }

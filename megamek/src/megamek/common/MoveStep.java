@@ -29,6 +29,8 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -172,6 +174,11 @@ public class MoveStep implements Serializable {
     private ArrayList<Coords> crushedBuildingLocs = new ArrayList<Coords>();
 
     /**
+     * Global logging instance.
+     */
+    private MMLogger logger;
+
+    /**
      * Create a step of the given type.
      *
      * @param type - should match one of the MovePath constants, but this is not
@@ -185,7 +192,8 @@ public class MoveStep implements Serializable {
             isCarefulPath = path.isCareful();
         }
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
+                || (type == MoveStepType.DISCONNECT)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -208,7 +216,8 @@ public class MoveStep implements Serializable {
         targetType = target.getTargetType();
         targetPos = pos;
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
+                || (type == MoveStepType.DISCONNECT)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -228,7 +237,8 @@ public class MoveStep implements Serializable {
         targetId = target.getTargetId();
         targetType = target.getTargetType();
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
+                || (type == MoveStepType.DISCONNECT)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -262,7 +272,8 @@ public class MoveStep implements Serializable {
         this(path, type);
         launched = targets;
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
+                || (type == MoveStepType.DISCONNECT)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -299,6 +310,15 @@ public class MoveStep implements Serializable {
     public MoveStep(MovePath path, MoveStepType type, Minefield mf) {
         this(path, type);
         this.mf = mf;
+    }
+
+    /**
+     * Get the logging instance for this class.
+     * 
+     * @return The logger for this class.
+     */
+    private MMLogger getLogger() {
+        return null == logger ? logger = DefaultMmLogger.getInstance() : logger;
     }
 
     @Override
@@ -375,6 +395,10 @@ public class MoveStep implements Serializable {
                 return "Evade";
             case CONVERT_MODE:
                 return "ConvMode";
+            case TOW:
+                return "Tow";
+            case DISCONNECT:
+                return "Disconnect";
             case THRUST:
                 return "Thrust";
             case YAW:
@@ -465,8 +489,7 @@ public class MoveStep implements Serializable {
         IHex destHex = game.getBoard().getHex(getPosition());
 
         // Check for pavement movement.
-        if (Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(),
-                this)) {
+        if (!entity.isAirborne() && Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(), this)) {
             setPavementStep(true);
         } else {
             setPavementStep(false);
@@ -748,12 +771,15 @@ public class MoveStep implements Serializable {
         }
         switch (getType()) {
             case UNLOAD:
+            case DISCONNECT:
                 // Infantry in immobilized transporters get
                 // a special "unload stranded" game turn.
+                // So do trailers on an immobilized tractor
                 hasEverUnloaded = true;
                 setMp(0);
                 break;
             case LOAD:
+            case TOW:
                 setMp(1);
                 break;
             case MOUNT:
@@ -762,8 +788,7 @@ public class MoveStep implements Serializable {
             case TURN_LEFT:
             case TURN_RIGHT:
                 // Check for pavement movement.
-                if (Compute.canMoveOnPavement(game, prev.getPosition(),
-                        getPosition(), this)) {
+                if (!entity.isAirborne() && Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(), this)) {
                     setPavementStep(true);
                 } else {
                     setPavementStep(false);
@@ -1311,9 +1336,6 @@ public class MoveStep implements Serializable {
      */
     public void moveInDir(int dir) {
         position = position.translated(dir);
-        if (!getGame().getBoard().contains(position)) {
-            throw new RuntimeException("Coordinate off the board.");
-        }
     }
 
     /**
@@ -1509,7 +1531,7 @@ public class MoveStep implements Serializable {
             legal = false;
         } else if (hasEverUnloaded && (type != MoveStepType.UNLOAD)
                 && (type != MoveStepType.LAUNCH) && (type != MoveStepType.DROP)
-                && (type != MoveStepType.UNDOCK)
+                && (type != MoveStepType.UNDOCK) && (type != MoveStepType.DISCONNECT)
                 && (getAltitude() == 0)) {
             // Can't be after unloading BA/inf
             legal = false;
@@ -2615,6 +2637,32 @@ public class MoveStep implements Serializable {
                 }
             }
         }
+        
+        // Is the entity trying to drop a trailer?
+        if (stepType == MoveStepType.DISCONNECT) {
+            
+            // If this isn't the first step, trailer position isn't updated by Server.processTrailerMovement()
+            // before this step, so they don't drop off in the right place
+            if (!isFirstStep()) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            } else {
+                movementType = EntityMovementType.MOVE_WALK;
+            }
+
+            // Can't unload units into prohibited terrain
+            // or into stacking violation.
+            Targetable target = getTarget(game);
+            if (target instanceof Entity) {
+                Entity other = (Entity) target;
+                if ((null != Compute.stackingViolation(game, other, curPos,
+                        entity)) || other.isLocationProhibited(curPos, getElevation())) {
+                    movementType = EntityMovementType.MOVE_ILLEGAL;
+                }
+            } else {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
+        
+        }
 
         if (stepType == MoveStepType.SHAKE_OFF_SWARMERS) {
             if ((getMp() == 0) || !(entity instanceof Tank)) {
@@ -2779,6 +2827,7 @@ public class MoveStep implements Serializable {
                 setTurning(true);
                 break;
             case UNLOAD:
+            case DISCONNECT:
                 // Unloading must be the last step.
                 setUnloaded(true);
                 break;
@@ -2944,7 +2993,7 @@ public class MoveStep implements Serializable {
                     if ((destHex.terrainLevel(Terrains.WATER) == 1) && !isAmphibious) {
                         mp++;
                     } else if ((destHex.terrainLevel(Terrains.WATER) > 1) && !isAmphibious) {
-                        if (getEntity().getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FROGMAN)
+                        if (getEntity().hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
                                 && ((entity instanceof Mech) || (entity instanceof Protomech))) {
                             mp += 2;
                         } else {
@@ -2981,7 +3030,7 @@ public class MoveStep implements Serializable {
                             || (moveMode == EntityMovementMode.HOVER))) {
                 delta_e *= 2;
             }
-            if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+            if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 mp += delta_e - 1;
             } else {
                 mp += delta_e;
@@ -3035,7 +3084,13 @@ public class MoveStep implements Serializable {
                 && destHex.containsTerrain(Terrains.WOODS)
                 && !isPavementStep) {
             mp--;
-        }
+
+            // Ensures that Infantry always pay at least 1 mp when 
+            // entering woods or jungle
+            if (mp <= 0) {
+                mp = 1;
+            }
+        }        
     }
 
     /**
@@ -3045,21 +3100,20 @@ public class MoveStep implements Serializable {
      * possible, just whether the <em>current</em> step is possible.
      */
     public boolean isMovementPossible(IGame game, Coords src, int srcEl) {
+        final String METHOD_NAME = "isMovementPossible(IGame,Coords,int)";
         final IHex srcHex = game.getBoard().getHex(src);
         final Coords dest = getPosition();
         final IHex destHex = game.getBoard().getHex(dest);
         final Entity entity = getEntity();
 
         if (null == dest) {
-            System.err.println("step has no position");
-            throw new IllegalStateException("Step has no position.");
+            throw getLogger().error(getClass(), METHOD_NAME, new IllegalStateException("Step has no position"));
         }
         if (src.distance(dest) > 1) {
             StringBuffer buf = new StringBuffer();
             buf.append("Coordinates ").append(src.toString()).append(" and ")
                     .append(dest.toString()).append(" are not adjacent.");
-            System.err.println(buf.toString());
-            throw new IllegalArgumentException(buf.toString());
+            throw getLogger().error(getClass(), METHOD_NAME, new IllegalArgumentException(buf.toString()));
         }
 
         // Assault dropping units cannot move
@@ -3222,6 +3276,18 @@ public class MoveStep implements Serializable {
             }
 
         } // End STEP_LOAD-checks
+        
+        // The entity is trying to tow. Check for a valid move.
+        if (type == MoveStepType.TOW) {
+
+            // Find the unit being towed.
+            Entity other = game.getEntity(entity.getTowing());
+
+            // The moving unit should be able to tow the other unit.
+            if (!entity.canTow(other.getId())) {
+                return false;
+            }
+        } // End STEP_TOW-checks
 
         // mechs dumping ammo can't run
         boolean bDumping = false;
@@ -3329,13 +3395,14 @@ public class MoveStep implements Serializable {
             }
 
             // Can't move out of a hex with an enemy unit unless we started
-            // there, BUT we're allowed to turn, unload, or go prone.
+            // there, BUT we're allowed to turn, unload/Disconnect, or go prone.
             if (Compute.isEnemyIn(game, entity, src, false,
                     entity instanceof Mech, srcEl)
                     && !src.equals(entity.getPosition())
                     && (type != MoveStepType.TURN_LEFT)
                     && (type != MoveStepType.TURN_RIGHT)
                     && (type != MoveStepType.UNLOAD)
+                    && (type != MoveStepType.DISCONNECT)
                     && (type != MoveStepType.GO_PRONE)) {
                 return false;
             }
@@ -3344,11 +3411,24 @@ public class MoveStep implements Serializable {
             // Dropship unless infantry
             // or a VTOL at high enough elevation
             if (!(entity instanceof Infantry)) {
+                boolean validRoadTrain = false;
                 for (Entity inHex : game.getEntitiesVector(src)) {
                     if (inHex.equals(entity)) {
                         continue;
                     }
+                    
+                    //ignore the first trailer behind a non-superheavy tractor
+                    //which can be in the same hex
+                    if (!entity.getAllTowedUnits().isEmpty() && !entity.isSuperHeavy()) {
+                        Entity firstTrailer = game.getEntity(entity.getAllTowedUnits().get(0));
+                        if (inHex.equals(firstTrailer)) {
+                            validRoadTrain = true;
+                        }
+                    }
+                    
                     if ((inHex instanceof LargeSupportTank)
+                            || (!entity.getAllTowedUnits().isEmpty() && !validRoadTrain)
+                            || (!inHex.getAllTowedUnits().isEmpty())
                             || ((inHex instanceof Dropship)
                             && !inHex.isAirborne() && !inHex
                             .isSpaceborne())) {
@@ -3375,8 +3455,9 @@ public class MoveStep implements Serializable {
         // or when flying. Naval movement does not have the pavement
         // exemption.
         if (entity.isLocationProhibited(dest, getElevation())
-                // Units in prohibited terran should still be able to unload
+                // Units in prohibited terran should still be able to unload/disconnect
                 && (type != MoveStepType.UNLOAD)
+                && (type != MoveStepType.DISCONNECT)
                 // Should allow vertical takeoffs
                 && (type != MoveStepType.VTAKEOFF)
                 // QuadVees can convert to vehicle mode even if they cannot enter the terrain
@@ -3413,6 +3494,24 @@ public class MoveStep implements Serializable {
                 }
             }
         }
+        
+        //If we're a land train with mixed motive types, use the most restrictive type
+        //to determine terrain restrictions
+        if (!entity.getAllTowedUnits().isEmpty()
+                && (type != MoveStepType.LOAD
+                    && type != MoveStepType.UNLOAD
+                    && type != MoveStepType.TOW
+                    && type != MoveStepType.DISCONNECT)) {
+            boolean prohibitedByTrailer = false;
+            //Add up the trailers
+            for (int id : entity.getAllTowedUnits()) {
+                Entity tr = game.getEntity(id);
+                prohibitedByTrailer = tr.isLocationProhibited(dest, getElevation());
+                if (prohibitedByTrailer) {
+                    return false;
+                }
+            }
+        }
 
         // Jumping into a building hex below the roof ends the move
         // assume this applies also to sylph vtol movement
@@ -3430,14 +3529,15 @@ public class MoveStep implements Serializable {
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
                 && (movementType != EntityMovementType.MOVE_VTOL_RUN)
                 && (movementType != EntityMovementType.MOVE_VTOL_SPRINT)
-                // Units in prohibited terran should still be able to unload
+                // Units in prohibited terran should still be able to unload/disconnect
                 && (type != MoveStepType.UNLOAD)
+                && (type != MoveStepType.DISCONNECT)
                 // Should allow vertical takeoffs
                 && (type != MoveStepType.VTAKEOFF)
                 // QuadVees can still convert to vehicle mode in prohibited terrain, but cannot leave
                 && (type != MoveStepType.CONVERT_MODE)
                 && entity.isLocationProhibited(src, getElevation()) && !isPavementStep()) {
-            // System.err.println("in restriced terrain");
+            // System.err.println("in restricted terrain");
             return false;
         }
         if (type == MoveStepType.UP) {

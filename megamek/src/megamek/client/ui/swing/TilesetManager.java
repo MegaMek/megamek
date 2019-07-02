@@ -1,17 +1,18 @@
 /*
- * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 /*
  * TilesetManager.java
@@ -111,10 +112,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     private Image minefieldSign;
     private Image nightFog;
-    
+
     /** An opaque hex shape used to limit draw operations to the exact hex shape. */
     private Image hexMask;
-    
+
     private Image artilleryAutohit;
     private Image artilleryAdjusted;
     private Image artilleryIncoming;
@@ -453,7 +454,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         started = true;
     }
-    
+
     public synchronized void reloadImage(Entity en) {
         if (en.getSecondaryPositions().isEmpty()) {
             loadImage(en, -1);
@@ -559,7 +560,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     /**
      * Get the camo pattern for the given player.
      *
-     * @param player - the <code>Player</code> whose camo pattern is needed.
+     * @param entity - the <code>Entity</code> whose camo pattern is needed.
      * @return The <code>Image</code> of the player's camo pattern. This value
      *         will be <code>null</code> if the player has selected no camo
      *         pattern or if there was an error loading it.

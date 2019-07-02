@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -72,6 +71,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      *      entityTarget, Vector<Report> vPhaseReport, HitData hit, Building
      *      bldg, int hits, int nCluster, int bldgAbsorbs)
      */
+    @Override
     protected void handlePartialCoverHit(Entity entityTarget,
             Vector<Report> vPhaseReport, HitData hit, Building bldg, int hits,
             int nCluster, int bldgAbsorbs) {
@@ -215,7 +215,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
 
-        if ((entityTarget instanceof Mech) || (entityTarget instanceof Aero)) {
+        if (entityTarget.tracksHeat()) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(),
                     waa.getAimingMode(), toHit.getCover());
@@ -280,7 +280,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if ((target instanceof Mech) || (target instanceof Aero)) {
+        if (target.tracksHeat()) {
             return 0;
         }
         int toReturn = 1;
@@ -290,8 +290,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             if (bDirect) {
                 toReturn += toHit.getMoS() / 3;
             }
-            if (((Entity) target).getCrew().getOptions()
-                    .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+            if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 toReturn = Math.max(toReturn / 2, 1);
             }
         } else if (bDirect) {
@@ -310,7 +309,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcnCluster() {
-        if ((target instanceof Mech) || (target instanceof Aero)) {
+        if (target.tracksHeat()) {
             bSalvo = false;
             return 1;
         }
@@ -330,7 +329,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             return 1;
         }
-        if ((target instanceof Mech) || (target instanceof Aero)) {
+        if (target.tracksHeat()) {
             return 1;
         }
         if ((target instanceof BattleArmor)

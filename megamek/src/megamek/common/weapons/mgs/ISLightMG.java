@@ -49,7 +49,7 @@ public class ISLightMG extends MGWeapon {
         this.mediumRange = 4;
         this.longRange = 6;
         this.extremeRange = 8;
-        this.tonnage = 0.5f;
+        this.tonnage = 0.5;
         this.criticals = 1;
         this.bv = 5;
         this.cost = 5000;
@@ -60,7 +60,7 @@ public class ISLightMG extends MGWeapon {
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_B)
-            .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+            .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
             .setISAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_CC)

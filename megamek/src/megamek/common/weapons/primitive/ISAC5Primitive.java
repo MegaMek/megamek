@@ -43,6 +43,7 @@ public class ISAC5Primitive extends ACWeapon {
         addLookupName("AutoCannon/5 Primitive");
         addLookupName("ISAC5p");
         addLookupName("IS Autocannon/5 Primitive");
+        this.shortName = "AC/5p";
         ammoType = AmmoType.T_AC_PRIMITIVE;
         heat = 1;
         damage = 5;
@@ -52,7 +53,7 @@ public class ISAC5Primitive extends ACWeapon {
         mediumRange = 12;
         longRange = 18;
         extremeRange = 24;
-        tonnage = 8.0f;
+        tonnage = 8.0;
         criticals = 4;
         bv = 70;
         cost = 125000;

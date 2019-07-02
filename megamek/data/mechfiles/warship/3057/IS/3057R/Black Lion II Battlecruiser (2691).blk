@@ -80,9 +80,9 @@ crewquarters:1568.0:0
 151
 168
 168
-168
-168
 151
+168
+168
 </armor>
 
 <Nose Equipment>
@@ -169,6 +169,9 @@ Ammo NAC/20:25
 (B) Capital Missile Launcher (Barracuda)
 Ammo Barracuda:10
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/20)

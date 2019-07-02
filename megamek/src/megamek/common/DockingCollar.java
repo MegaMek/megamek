@@ -1,16 +1,18 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common;
 
@@ -20,7 +22,7 @@ import java.util.Vector;
 
 /**
  * Represents a docking collar with which a Jumpship can carry a DropShip
- * 
+ *
  */
 
 public class DockingCollar implements Transporter {
@@ -38,6 +40,7 @@ public class DockingCollar implements Transporter {
     /* package */Vector<Integer> troops = new Vector<Integer>();
 
     private boolean damaged = false;
+    private int collarNumber = 0;
 
     transient IGame game;
 
@@ -65,16 +68,15 @@ public class DockingCollar implements Transporter {
     // Public constructors and methods.
 
     /**
-     * Create a space for the given tonnage of troops. For this class, only the
-     * weight of the troops (and their equipment) are considered; if you'd like
-     * to think that they are stacked like lumber, be my guest.
+     * Create a Jumpship collar that can carry one dropship
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param docks Capacity. A collar can always carry one dropship.
+     * @param collarNumber the Id of this collar, used for tracking in MHQ 
      */
-    public DockingCollar(int docks) {
-        totalSpace = 1;
-        currentSpace = 1;
+    public DockingCollar(int docks, int collarNumber) {
+        totalSpace = docks;
+        currentSpace = docks;
+        this.collarNumber = collarNumber;
     }
 
     // Type is Docking Collar
@@ -91,6 +93,7 @@ public class DockingCollar implements Transporter {
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
      */
+    @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
         boolean result = false;
@@ -128,6 +131,7 @@ public class DockingCollar implements Transporter {
      *            <code>IllegalArgumentException</code> exception will be
      *            thrown.
      */
+    @Override
     public void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
@@ -166,6 +170,7 @@ public class DockingCollar implements Transporter {
      *         returned <code>List</code> is independant from the under- lying
      *         data structure; modifying one does not affect the other.
      */
+    @Override
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
         Vector<Entity> loaded = new Vector<Entity>();
@@ -206,6 +211,7 @@ public class DockingCollar implements Transporter {
      * @return <code>true</code> if the unit was contained in this space,
      *         <code>false</code> otherwise.
      */
+    @Override
     public boolean unload(Entity unit) {
 
         // can we unload?
@@ -230,10 +236,12 @@ public class DockingCollar implements Transporter {
      *
      * @return A <code>String</code> meant for a human.
      */
+    @Override
     public String getUnusedString() {
         return "Dropship - " + currentSpace + " units";
     }
 
+    @Override
     public double getUnused() {
         return currentSpace;
     }
@@ -251,6 +259,7 @@ public class DockingCollar implements Transporter {
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
      */
+    @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         return false;
     }
@@ -271,16 +280,18 @@ public class DockingCollar implements Transporter {
      *         location. This value will be <code>null</code> if no unit is
      *         transported on the outside at that location.
      */
+    @Override
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
         return null;
     }
 
+    @Override
     public final List<Entity> getExternalUnits() {
         ArrayList<Entity> rv = new ArrayList<Entity>(1);
         return rv;
     }
 
-    public int getCargoMpReduction() {
+    public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
 
@@ -291,23 +302,30 @@ public class DockingCollar implements Transporter {
     public void setDamaged(boolean b) {
         damaged = b;
     }
-    
+
+    @Override
     public int hardpointCost() {
         return 1;
     }
 
+    @Override
     public void setGame(IGame game) {
         this.game = game;
     }
-    
+
+    @Override
     public void resetTransporter() {
         troops = new Vector<Integer>();
         currentSpace = totalSpace;
     }
-    
+
     @Override
     public String toString() {
         return "dockingcollar";
     }
     
-} // End package class TroopSpace implements Transporter
+    public int getCollarNumber() {
+        return collarNumber;
+    }
+
+} // End package class DockingCollar implements Transporter

@@ -25,12 +25,14 @@
  */
 package megamek.common.loaders;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.DockingCollar;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.IArmorState;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
 import megamek.common.TechConstants;
@@ -44,6 +46,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Warship a = new Warship();
@@ -202,6 +205,10 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
                 a.addGravDeck(Integer.parseInt(t));
             }
         }
+        // Add a damage tracker value for each grav deck
+        for (int i = 0; i < a.getTotalGravDeck(); i++) {
+            a.initializeGravDeckDamage(i);
+        }
 
         // Switch older files with standard armor to capital
         int at = EquipmentType.T_ARMOR_AEROSPACE;
@@ -219,6 +226,13 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {
             a.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
+        }
+        
+        //Warships should always be military craft
+        if (dataFile.exists("designtype")) {
+            a.setDesignType(dataFile.getDataAsInt("designtype")[0]);
+        } else {
+            a.setDesignType(Aero.MILITARY);
         }
 
         if (dataFile.exists("overview")) {
@@ -250,8 +264,9 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         for (int i = 0; i < armor.length; i++) {
             a.initializeArmor(armor[i], i);
         }
-        a.initializeArmor(0, Warship.LOC_LBS);
-        a.initializeArmor(0, Warship.LOC_RBS);
+        a.initializeArmor(IArmorState.ARMOR_NA, Warship.LOC_HULL);
+        a.initializeArmor(IArmorState.ARMOR_NA, Warship.LOC_LBS);
+        a.initializeArmor(IArmorState.ARMOR_NA, Warship.LOC_RBS);
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();
@@ -272,10 +287,10 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
 
         addTransports(a);
 
-        // get docking collars
+        // get docking collars (legacy BLK files)
         int docks = dataFile.getDataAsInt("docking_collar")[0];
         while (docks > 0) {
-            a.addTransporter(new DockingCollar(1));
+            a.addTransporter(new DockingCollar(1, (a.getTransports().size() + 1)));
             docks--;
         }
         a.setArmorTonnage(a.getArmorWeight());

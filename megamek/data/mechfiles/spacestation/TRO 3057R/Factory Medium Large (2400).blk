@@ -13,7 +13,7 @@ SpaceStation
 </UnitType>
 
 <Name>
-Factory - Medium/Large 
+Factory - Medium/Large
 </Name>
 
 <Model>
@@ -32,16 +32,20 @@ Factory - Medium/Large
 IS Level 3
 </type>
 
+<designtype>
+0
+</designtype>
+
 <motion_type>
 Aerodyne
 </motion_type>
 
 <transporters>
 smallcraftbay:12.0:2:1
-cargobay:8175.5:2:2
 crewquarters:735.0:0
 1stclassquarters:2940.0:0
-navalrepairpressurized:24000.0:1:3:f0
+navalrepairpressurized:24000.0:1:5:f0
+cargobay:8176.5:2:4
 </transporters>
 
 <SafeThrust>
@@ -65,11 +69,11 @@ navalrepairpressurized:24000.0:1:3:f0
 </engine_type>
 
 <armor_type>
-42
+40
 </armor_type>
 
 <armor_tech>
-5
+1
 </armor_tech>
 
 <armor>
@@ -116,6 +120,9 @@ Small Laser
 Small Laser
 Small Laser
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 1
@@ -168,8 +175,4 @@ TRO3057r -
 <escape_pod>
 20
 </escape_pod>
-
-<history>
-Earlier era version of the Medium factory. Small lasers for Pulse, also the Repair Facility represents the Factory itself since no stats are developed for them.
-</history>
 

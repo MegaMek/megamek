@@ -42,7 +42,7 @@ public class ISImprovedNarc extends NarcWeapon {
         this.mediumRange = 9;
         this.longRange = 15;
         this.extremeRange = 18;
-        this.tonnage = 5.0f;
+        this.tonnage = 5.0;
         this.criticals = 3;
         this.bv = 75;
         this.cost = 250000;

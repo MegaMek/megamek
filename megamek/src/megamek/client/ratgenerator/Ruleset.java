@@ -166,11 +166,16 @@ public class Ruleset {
 
         buildForceTree(fd, l, 0.05);
         fd.generateUnits(l, 0.5);
-        l.updateProgress(0, "Finalizing formation");
+        if (null != l) {
+            l.updateProgress(0, "Finalizing formation");
+        }
         fd.recalcWeightClass();
         fd.assignCommanders();
         fd.assignPositions();
-        l.updateProgress(0.05, "Finalizing formation");
+        
+        if (null != l) {
+            l.updateProgress(0.05, "Finalizing formation");
+        }
         fd.loadEntities(l, 0.4);
         //      fd.assignBloodnames();
 
@@ -307,7 +312,7 @@ public class Ruleset {
 
     public String getEschelonName(ForceDescriptor fd) {
         for (ForceNode fn : forceNodes) {
-            if (fn.matches(fd) && fn.getEschelon() == fd.getEschelon()) {
+            if (fn.matches(fd) && fn.getEschelon().equals(fd.getEschelon())) {
                 return fn.getEschelonName();
             }
         }
@@ -316,7 +321,7 @@ public class Ruleset {
 
     public CommanderNode getCoNode(ForceDescriptor fd) {
         for (ForceNode fn : forceNodes) {
-            if (fn.getEschelon() == fd.getEschelon() && fn.matches(fd)) {
+            if (fn.getEschelon().equals(fd.getEschelon()) && fn.matches(fd)) {
                 for (CommanderNode rn : fn.getCoNodes()) {
                     if (rn.matches(fd)) {
                         return rn;
@@ -329,7 +334,7 @@ public class Ruleset {
 
     public CommanderNode getXoNode(ForceDescriptor fd) {
         for (ForceNode fn : forceNodes) {
-            if (fn.getEschelon() == fd.getEschelon() && fn.matches(fd)) {
+            if (fn.getEschelon().equals(fd.getEschelon()) && fn.matches(fd)) {
                 for (CommanderNode rn : fn.getXoNodes()) {
                     if (rn.matches(fd)) {
                         return rn;

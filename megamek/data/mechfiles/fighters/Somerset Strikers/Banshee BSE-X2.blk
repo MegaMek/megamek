@@ -24,13 +24,20 @@ BSE-X2
 3050
 </year>
 
+<originalBuildYear>
+3050
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
 
 <motion_type>
-None
+Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -77,6 +84,12 @@ Medium Laser
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 Somerset Stikers
 </source>
@@ -84,8 +97,4 @@ Somerset Stikers
 <tonnage>
 50.0
 </tonnage>
-
-<history>
-This unit is a complete Hack and only barely represents the actual unit. Which is a crazy hybrid Fighter/Conv. Fighter.  This is built as ASF and kinda matches the original.
-<\history>
 

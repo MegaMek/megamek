@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,13 +16,28 @@ ProtoMech
 Delphyne
 </Name>
 
-<model>
+<Model>
 2
-</model>
+</Model>
 
-<Tonnage>
-9
-</Tonnage>
+<year>
+3067
+</year>
+
+<originalBuildYear>
+3067
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -32,18 +47,37 @@ Delphyne
 5
 </jumpingMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 6
 16
 4
 4
 10
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ammo SRM-3 (20)
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
 CLSRM3
 CLSRM3
-CLSRM3 Ammo (20)
 </Torso Equipment>
 
 <Right Arm Equipment>
@@ -54,30 +88,14 @@ CLERMicroLaser
 CLERMicroLaser
 </Left Arm Equipment>
 
-<type>
-Clan
-</type>
-
-<year>
-3067
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
+<Legs Equipment>
+</Legs Equipment>
 
 <source>
 TRO 3075 - Civil War
 </source>
+
+<tonnage>
+9.0
+</tonnage>
+

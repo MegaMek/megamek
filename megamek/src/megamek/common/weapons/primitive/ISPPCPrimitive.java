@@ -33,6 +33,7 @@ public class ISPPCPrimitive extends PPCWeapon {
         addLookupName("Particle Cannon Primitive");
         addLookupName("IS PPCp");
         addLookupName("ISPPCp");
+        this.shortName = "PPCp";
         heat = 15;
         damage = 10;
         minimumRange = 3;
@@ -44,7 +45,7 @@ public class ISPPCPrimitive extends PPCWeapon {
         waterMediumRange = 7;
         waterLongRange = 10;
         waterExtremeRange = 14;
-        tonnage = 7.0f;
+        tonnage = 7.0;
         criticals = 3;
         bv = 176;
         cost = 200000;

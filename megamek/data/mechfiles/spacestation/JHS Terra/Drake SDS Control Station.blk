@@ -41,7 +41,7 @@ navalrepairunpressurized:5000.0:1:1:f0
 smallcraftbay:4.0:2:2
 cargobay:3820.5:1:3
 1stclassquarters:140.0:0
-crewquarters:637.0:0
+crewquarters:665.0:0
 </transporters>
 
 <SafeThrust>
@@ -82,7 +82,6 @@ crewquarters:637.0:0
 </armor>
 
 <Nose Equipment>
-ISLargeNavalCommScannerSuite
 (B) Sub-Capital Missile Launcher (Swordfish)
 Ammo Swordfish:20
 (B) ISERLargeLaser
@@ -104,7 +103,6 @@ ISAntiMissileSystem
 ISAMS Ammo:48
 (B) Screen Launcher
 Ammo Screen:20
-DirectTacticalAnalysisSystem
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -199,6 +197,11 @@ ISMediumPulseLaser
 Ammo Screen:20
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+ISLargeNavalCommScannerSuite
+DirectTacticalAnalysisSystem
+</Hull Equipment>
+
 <structural_integrity>
 1
 </structural_integrity>
@@ -220,7 +223,7 @@ JHS:Terra - Jihad
 </grav_decks>
 
 <crew>
-113
+115
 </crew>
 
 <officers>
@@ -228,7 +231,7 @@ JHS:Terra - Jihad
 </officers>
 
 <gunners>
-12
+14
 </gunners>
 
 <passengers>

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,9 +20,24 @@ Hydra
 2
 </Model>
 
-<Tonnage>
-6
-</Tonnage>
+<year>
+3066
+</year>
+
+<originalBuildYear>
+3066
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -32,44 +47,54 @@ Hydra
 3
 </jumpingMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 2
 5
 1
 1
 3
 2
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Streak SRM 5 Ammo (10)
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
 
 <Main Gun Equipment>
 CLStreakSRM5
-CLStreakSRM5 Ammo (10)
 </Main Gun Equipment>
-
-<type>
-Clan
-</type>
-
-<year>
-3066
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
 
 <source>
 TRO 3060 - Civil War
 </source>
+
+<tonnage>
+6.0
+</tonnage>
+

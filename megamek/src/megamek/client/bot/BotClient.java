@@ -235,6 +235,19 @@ public abstract class BotClient extends Client {
 
     protected abstract void calculateDeployment();
 
+    protected void initTargeting() { }
+    
+    /**
+     * Calculates the targeting/offboard turn
+     * This includes firing TAG and non-direct-fire artillery
+     * Does nothing in this implementation.
+     */
+    protected void calculateTargetingOffBoardTurn() {
+        sendAttackData(game.getFirstEntityNum(getMyTurn()),
+                new Vector<>(0));
+        sendDone(true);
+    }
+    
     @Nullable
     protected abstract PhysicalOption calculatePhysicalTurn();
     
@@ -256,6 +269,11 @@ public abstract class BotClient extends Client {
     protected abstract Vector<Coords> calculateArtyAutoHitHexes();
 
     protected abstract void checkMoral();
+
+    @Override
+    protected boolean keepGameLog() {
+        return false;
+    }
 
     /**
      * Helper function that determines which of this bot's entities are stranded inside immobilized transports. 
@@ -367,14 +385,18 @@ public abstract class BotClient extends Client {
                     break;
                 case PHASE_PHYSICAL:
                     break;
+                case PHASE_TARGETING:
+                    initTargeting();
+                    break;
                 case PHASE_END_REPORT:
                     // Check if stealth armor should be switched on/off
                     // Kinda cheap leaving this until the end phase, players
                     // can't do this
                     toggleStealth();
                     endOfTurnProcessing();
-                case PHASE_INITIATIVE_REPORT:
+                    // intentional fallthrough: all reports must click "done", otherwise the game never moves on.
                 case PHASE_TARGETING_REPORT:
+                case PHASE_INITIATIVE_REPORT:
                 case PHASE_MOVEMENT_REPORT:
                 case PHASE_OFFBOARD_REPORT:
                 case PHASE_FIRING_REPORT:
@@ -489,9 +511,7 @@ public abstract class BotClient extends Client {
                        || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
                 // Send a "no attack" to clear the game turn, if any.
                 // TODO: Fix for real arty stuff
-                sendAttackData(game.getFirstEntityNum(getMyTurn()),
-                               new Vector<>(0));
-                sendDone(true);
+                calculateTargetingOffBoardTurn();
             }
         } catch (Throwable t) {
             t.printStackTrace();
@@ -889,7 +909,7 @@ public abstract class BotClient extends Client {
             return 0;
         }
         int potentialDmg = (int) Math.ceil((double) building.getCurrentCF(coords) / 10);
-        boolean aptGunnery = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        boolean aptGunnery = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
         double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), aptGunnery) / 100);
         return potentialDmg * oddsTakeDmg;
     }
@@ -909,8 +929,7 @@ public abstract class BotClient extends Client {
      */
     private static float getDeployDamage(IGame g, WeaponAttackAction waa, List<ECMInfo> allECMInfo) {
         Entity attacker = g.getEntity(waa.getEntityId());
-        boolean naturalAptGunnery = attacker.getCrew().getOptions()
-                                            .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        boolean naturalAptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
         ToHitData hitData = waa.toHit(g, allECMInfo);
         if (hitData.getValue() > 12) {

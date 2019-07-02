@@ -54,7 +54,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
         waterMediumRange = 10;
         waterLongRange = 18;
         waterExtremeRange = 20;
-        tonnage = 8.0f;
+        tonnage = 8.0;
         criticals = 6;
         bv = 596;
         cost = 750000;

@@ -30,19 +30,21 @@ public class CLStreakSRM4Prototype extends CLPrototypeStreakSRMWeapon {
         super();
         name = "Prototype Streak SRM 4";
         setInternalName("CLStreakSRM4Prototype");
+        shortName = "Streak SRM 4 (P)";
         heat = 3;
         rackSize = 4;
         shortRange = 3;
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 3.0f;
+        tonnage = 3.0;
         criticals = 2;
         bv = 39;
         cost = 60000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
         rulesRefs = "97,IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setIntroLevel(false)
             .setUnofficial(false)

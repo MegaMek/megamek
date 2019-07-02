@@ -11,3 +11,5 @@ Thumbs.db
 /.classpath
 /.project
 /build/
+/out/
+/.vscode

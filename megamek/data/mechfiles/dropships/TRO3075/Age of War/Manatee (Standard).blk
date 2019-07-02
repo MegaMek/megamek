@@ -43,7 +43,7 @@ mechbay:1.0:1
 mechbay:1.0:1
 2ndclassquarters:0.0:0
 steeragequarters:65.0:0
-cargobay:360.5:1:1
+cargobay:360.5:1:7
 </transporters>
 
 <SafeThrust>
@@ -111,6 +111,9 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 10
 </structural_integrity>
@@ -162,9 +165,4 @@ TRO 3075 - Age of War
 <escape_pod>
 2
 </escape_pod>
-
-<history>
-The TRO weights for the engines are wrong per IO construction rules. Reduced cargo weight to bring them to legal.
-</history>
-
 

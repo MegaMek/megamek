@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,30 +20,69 @@ Shilone
 SL-18
 </Model>
 
-<Tonnage>
-65
-</Tonnage>
+<year>
+3068
+</year>
+
+<originalBuildYear>
+3068
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 63
 48
 48
 38
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISMML7
 ISMML7
 ISMML7
 ISERLargeLaser
-IS Ammo MML-7 LRM
-IS Ammo MML-7 LRM
-IS Ammo MML-7 SRM
-IS Ammo MML-7 SRM
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -58,42 +97,21 @@ ISERMediumLaser
 ISMML7
 </Aft Equipment>
 
-<heatsinks>
-20
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-3068
-</year>
+<Fuselage Equipment>
+IS Ammo MML-7 LRM
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
+IS Ammo MML-7 SRM
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Jihad
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+65.0
+</tonnage>
 
-<armor_type>
-19
-</armor_type>
-
-<engine_type>				
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

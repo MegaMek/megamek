@@ -34,6 +34,7 @@ import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.lrms.ExtendedLRMWeapon;
 import megamek.server.Server;
 
@@ -264,19 +265,30 @@ public class LRMHandler extends MissileWeaponHandler {
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
+        
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && entityTarget != null && entityTarget.isLargeCraft()) {
+            nMissilesModifier -= getAeroSanityAMSHitsMod();
+        }
 
         int rackSize = wtype.getRackSize();
         boolean minRangeELRMAttack = false;
         
         // ELRMs only hit with half their rack size rounded up at minimum range.
+        // Ignore this for space combat. 1 hex is 18km across.
         if (wtype instanceof ExtendedLRMWeapon
+                && !game.getBoard().inSpace()
                 && (nRange <= wtype.getMinimumRange())) {
             rackSize = rackSize / 2 + rackSize % 2;
             minRangeELRMAttack = true;
         }
         
         if (allShotsHit()) {
-            missilesHit = rackSize;
+            // We want buildings and large craft to be able to affect this number with AMS
+            // treat as a Streak launcher (cluster roll 11) to make this happen
+            missilesHit = Compute.missilesHit(rackSize,
+                    nMissilesModifier, weapon.isHotLoaded(), true,
+                    isAdvancedAMS());
         } else {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(rackSize

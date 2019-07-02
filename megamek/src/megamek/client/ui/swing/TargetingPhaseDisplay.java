@@ -1058,13 +1058,25 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
         if ((target != null) && (weaponId != -1)) {
             ToHitData toHit;
+            Mounted m = ce().getEquipment(weaponId);
 
+            int targetDistance = ce().getPosition().distance(target.getPosition()); 
+            boolean isArtilleryAttack = ((WeaponType) m.getType()).hasFlag(WeaponType.F_ARTILLERY);            
+            
             toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(),
                     cen, target, weaponId, Entity.LOC_NONE, 0, false);
+            
+            String flightTimeText = ""; 
+            if(isArtilleryAttack) {
+                ArtilleryAttackAction aaa = new ArtilleryAttackAction(ce().getId(), target.getTargetType(),
+                        target.getTargetId(), weaponId, clientgui.getClient().getGame());
+                flightTimeText = String.format("(%d turns)", aaa.getTurnsTilHit());
+            }
+            
             clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
             clientgui.mechD.wPan.wRangeR
-                    .setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
-            Mounted m = ce().getEquipment(weaponId);
+                    .setText(String.format("%d %s", targetDistance, flightTimeText)); //$NON-NLS-1$
+            
             IGame game = clientgui.getClient().getGame();
             int distance = Compute.effectiveDistance(game, ce(),
                     target);
@@ -1093,10 +1105,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                                 + " ("
                                 + Compute.oddsAbove(
                                         toHit.getValue(),
-                                        ce().getCrew()
-                                                .getOptions()
-                                                .booleanOption(
-                                                        OptionsConstants.PILOT_APTITUDE_GUNNERY))
+                                        ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY))
                                 + "%)"); //$NON-NLS-1$ //$NON-NLS-2$
                 setFireEnabled(true);
             }

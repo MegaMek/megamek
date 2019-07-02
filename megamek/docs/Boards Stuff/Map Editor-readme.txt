@@ -217,6 +217,19 @@ board files by hand.  This reference is just for creating a different editor.
     specific coordinates.  Any coordinates with no data will be filled in with
     level 0, clear terrain.
     
+  The "description" Keyword
+    A human-readable description of the map can be given with the "description"
+    keyword. Each entry is a new paragraph in the description. The format goes:
+        description "quoted text for the description"
+        
+  The "note" Keyword
+    Certain hexes may have interesting features that should be called out,
+    especially to users who are visually impaired. The "note" keyword allows
+    annotations to be applied per hex. The format goes:
+        note <coordinates> "quoted text for the annotation"
+        
+    Each hex can have multiple annotations.
+    
 The graphics for maps are stored in tileset files.  These are located in the
 data/images/hexes directory.  The default tileset is called "atmospheric.tileset".  
 Image files should be located in a subdirectory off of the data/images/hexes directory.

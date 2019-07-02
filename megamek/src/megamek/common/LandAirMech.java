@@ -709,18 +709,18 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
 
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        if (hasAbility(OptionsConstants.MD_VDNI)
+                && !hasAbility(OptionsConstants.MD_BVDNI)) {
             roll.addModifier(-1, "VDNI");
         }
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Mech.COCKPIT_SMALL)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                && !hasAbility(OptionsConstants.MD_BVDNI)) {
             roll.addModifier(1, "Small Cockpit");
         }
 
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             roll.addModifier(1, "cramped cockpit");
         }
 
@@ -2108,5 +2108,4 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             }
         }
     }
-
 }

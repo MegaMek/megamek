@@ -24,6 +24,10 @@ S 2772 Airplane
 2463
 </year>
 
+<originalBuildYear>
+2463
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,12 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+troopspace:1.5
+cargobay:8.5:1:1
+1stclassquarters:50.0:5
+</transporters>
 
 <SafeThrust>
 2
@@ -60,16 +70,8 @@ Aerodyne
 22
 15
 15
-12	
+12
 </armor>
-
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
 
 <Nose Equipment>
 </Nose Equipment>
@@ -80,23 +82,28 @@ Aerodyne
 <Right Wing Equipment>
 </Right Wing Equipment>
 
-<Body Equipment>
-</Body Equipment>
-
 <Aft Equipment>
 </Aft Equipment>
 
-<transporters>
-troopspace:1.5
-cargobay:8.5:1
-1stclassquarters:50:5
-</transporters>
+<Wings Equipment>
+</Wings Equipment>
+
+<Body Equipment>
+</Body Equipment>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
 
 <source>
 TRO Vehicle Annex (r) - Age of War
 </source>
 
 <tonnage>
-130
+130.0
 </tonnage>
 

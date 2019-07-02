@@ -41,7 +41,7 @@ public class SubCapLaserWeapon2 extends SubCapLaserWeapon {
         this.mediumRange = 22;
         this.longRange = 33;
         this.extremeRange = 44;
-        this.tonnage = 200.0f;
+        this.tonnage = 200.0;
         this.bv = 354;
         this.cost = 335000;
         this.shortAV = 2;

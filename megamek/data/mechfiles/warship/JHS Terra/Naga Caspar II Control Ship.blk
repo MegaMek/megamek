@@ -42,8 +42,8 @@ smallcraftbay:6.0:1:2
 navalrepairpressurized:82500.0:9:3:f0
 1stclassquarters:510.0:0
 2ndclassquarters:252.0:0
-crewquarters:2275.0:0
-cargobay:51513.5:1:4
+crewquarters:2310.0:0
+cargobay:51478.5:1:7
 </transporters>
 
 <SafeThrust>
@@ -78,8 +78,8 @@ cargobay:51513.5:1:4
 28
 32
 32
-32
 28
+32
 32
 </armor>
 
@@ -107,7 +107,6 @@ ISArtemisIV
 ISArtemisIV
 (B) Screen Launcher
 Ammo Screen:40
-ISLargeNavalCommScannerSuite
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -161,7 +160,6 @@ Ammo White Shark:20
 </Right Front Side Equipment>
 
 <Aft Equipment>
-ISMobileHPG
 (B) Capital Missile Launcher (Barracuda)
 Ammo Barracuda:10
 (B) Sub-Capital Laser (SCL/1)
@@ -189,7 +187,6 @@ ISAntiMissileSystem
 ISAMS Ammo:72
 (B) Screen Launcher
 Ammo Screen:20
-CasparIIDroneControlSystem
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -239,6 +236,12 @@ ISArtemisIV
 (B) Sub-Capital Laser (SCL/2)
 Sub-Capital Laser (SCL/2)
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISLargeNavalCommScannerSuite
+ISMobileHPG
+CasparIIDroneControlSystem
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/10)
@@ -337,7 +340,7 @@ JHSTerra - Civil War
 </grav_decks>
 
 <crew>
-478
+483
 </crew>
 
 <officers>
@@ -345,7 +348,7 @@ JHSTerra - Civil War
 </officers>
 
 <gunners>
-75
+80
 </gunners>
 
 <passengers>
@@ -367,8 +370,4 @@ JHSTerra - Civil War
 <escape_pod>
 10
 </escape_pod>
-
-<history>
-A fair amount of issues with this ship in the TRO. Warships can only mount one repair bay, so I've merged them into one big bay. Also the ship was very overweight with the repair bays, removed Cargo space to make them fit.
-</history>
 

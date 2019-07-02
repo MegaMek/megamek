@@ -26,8 +26,10 @@ import megamek.common.Mech;
 import megamek.common.NarcPod;
 import megamek.common.Protomech;
 import megamek.common.Report;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -59,7 +61,20 @@ public class NarcHandler extends MissileWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         bSalvo = true;
         getAMSHitsMod(vPhaseReport);
-        calcCounterAV();
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            // Or bay AMS if Aero Sanity is on
+            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                    : null;
+            if (entityTarget != null && entityTarget.isLargeCraft()) {
+                if (getParentBayHandler() != null) {
+                    WeaponHandler bayHandler = getParentBayHandler();
+                    amsBayEngagedMissile = bayHandler.amsBayEngagedMissile;
+                    pdBayEngagedMissile = bayHandler.pdBayEngagedMissile;
+                }
+            }
+        } else {
+            calcCounterAV();
+        }
         // Report AMS/Pointdefense failure due to Overheating.
         if (pdOverheated 
                 && (!(amsBayEngaged

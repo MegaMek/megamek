@@ -42,7 +42,7 @@ cargobay:1.0:1:2
 1stclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:20.0:0
-battlearmorbay:3.0:1:1
+battlearmorbay:3.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -107,6 +107,9 @@ ISAntiMissileSystem
 ISERMediumLaser
 ISERMediumLaser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 9

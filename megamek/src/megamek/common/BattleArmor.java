@@ -295,7 +295,7 @@ public class BattleArmor extends Infantry {
         return MOUNT_LOC_NAMES;
     }
 
-    public String getBaMountLocAbbr(int loc) {
+    public static String getBaMountLocAbbr(int loc) {
         if (loc == MOUNT_LOC_NONE) {
             return "None";
         }
@@ -317,7 +317,7 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public int locations() {
-        int retVal = Math.round(getTroopers());
+        int retVal = getTroopers();
         if (retVal == 0) {
             // Return one more than the maximum number of men in the unit.
             if (!isInitialized) {
@@ -352,7 +352,12 @@ public class BattleArmor extends Infantry {
         // Construction complete.
         isInitialized = true;
     }
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.BATTLE_ARMOR;
+    }
+
     protected static final TechAdvancement[] TA_BATTLEARMOR = {
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
                 .setClanAdvancement(2710, DATE_NONE, 3058).setPrototypeFactions(F_TH)

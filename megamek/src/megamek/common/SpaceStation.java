@@ -16,6 +16,8 @@
  */
 package megamek.common;
 
+import java.text.NumberFormat;
+
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -31,37 +33,13 @@ public class SpaceStation extends Jumpship {
     // This only affects cost, but may have an effect in a large-scale strategic setting.
     private boolean modular = false;
     
-    //ASEW Missile Effects, per location
-    //Values correspond to Locations, inherited from Jumpship: NOS,FLS,FRS,AFT,ALS,ARS
-    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
-    
-    
-    /*
-     * Sets the number of rounds a specified firing arc is affected by an ASEW missile
-     * @param arc - integer representing the desired firing arc
-     * @param turns - integer specifying the number of end phases that the effects last through
-     * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
-     * Space Stations should use the same method as Jumpships, but because Warships have a different number of arcs
-     * we run into problems if this isn't explicitly specified here.
-     */
     @Override
-    public void setASEWAffected(int arc, int turns) {
-        asewAffectedTurns[arc] = turns;
-    }
-    
-    /*
-     * Returns the number of rounds a specified firing arc is affected by an ASEW missile
-     * @param arc - integer representing the desired firing arc
-     * Also an override to prevent issues with Warships having a different number of arcs
-     */
-    @Override
-    public int getASEWAffected(int arc) {
-        return asewAffectedTurns[arc];
+    public int getUnitType() {
+        return UnitType.SPACE_STATION;
     }
     
     public SpaceStation() {
         super();
-        setDesignType(Aero.CIVILIAN); // Affects number of facing changes allowed in a turn
         setDriveCoreType(DRIVE_CORE_NONE);
         setSail(false);
     }
@@ -193,9 +171,73 @@ public class SpaceStation extends Jumpship {
 
         costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
         cost = Math.round(cost * weightMultiplier);
-
+        addCostDetails(cost, costs);
         return cost;
 
+    }
+
+    private void addCostDetails(double cost, double[] costs) {
+        bvText = new StringBuffer();
+        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
+                "Structural Integrity", "Engine", "Engine Control Unit",
+                "Attitude Thrusters", "Docking Collars",
+                "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
+                "Bays", "HPG", "Weapons/Equipment", "Weight Multiplier" };
+
+        NumberFormat commafy = NumberFormat.getInstance();
+
+        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append(startTable);
+        // find the maximum length of the columns.
+        for (int l = 0; l < left.length; l++) {
+
+            if (l == 18) {
+                getWeaponsAndEquipmentCost(true);
+            } else {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(left[l]);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                if (costs[l] == 0) {
+                    bvText.append("N/A");
+                } else if (costs[l] < 0) {
+                    bvText.append("x ");
+                    bvText.append(commafy.format(-costs[l]));
+                } else {
+                    bvText.append(commafy.format(costs[l]));
+
+                }
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
+        }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Cost:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(commafy.format(cost));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
     }
 
     /**

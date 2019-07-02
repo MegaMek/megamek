@@ -234,8 +234,8 @@ public class Report implements Serializable {
      */
     public void add(int data, boolean obscure) {
         if (obscure) {
-            obscuredIndexes.put(new Integer(tagData.size()),
-                    new Boolean(true));
+            obscuredIndexes.put(Integer.valueOf(tagData.size()),
+                    Boolean.valueOf(true));
         }
         tagData.addElement(String.valueOf(data));
     }
@@ -278,8 +278,8 @@ public class Report implements Serializable {
      */
     public void add(String data, boolean obscure) {
         if (obscure) {
-            obscuredIndexes.put(new Integer(tagData.size()),
-                    new Boolean(true));
+            obscuredIndexes.put(Integer.valueOf(tagData.size()),
+                    Boolean.valueOf(true));
         }
         tagData.addElement(data);
     }
@@ -327,7 +327,7 @@ public class Report implements Serializable {
      * @return true if the data value was marked obscured
      */
     public boolean isValueObscured(int index) {
-        if (obscuredIndexes.get(new Integer(index)) == null) {
+        if (obscuredIndexes.get(Integer.valueOf(index)) == null) {
             return false;
         }
         return true;

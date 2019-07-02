@@ -71,11 +71,13 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     // the best damage enemies could expect were I not here. Used to determine 
     // whether they will target me.
     private Map<Integer, Double> bestDamageByEnemies;
-
+    
     public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
         final String METHOD_NAME = "BasicPathRanker(Princess)";
+        
         bestDamageByEnemies = new TreeMap<>();
+        
         getOwner().log(
                 getClass(),
                 METHOD_NAME,
@@ -164,10 +166,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             EntityEvaluationResponse returnResponse =
                     new EntityEvaluationResponse();
 
-            //Airborne aeros always move after other units, and would require an 
+            //Airborne aeros on ground maps always move after other units, and would require an 
             // entirely different evaluation
             //TODO (low priority) implement a way to see if I can dodge aero units
-            if (enemy.isAero() && enemy.isAirborne()) {
+            if (enemy.isAirborneAeroOnGroundMap()) {
                 return returnResponse;
             }
             
@@ -589,6 +591,21 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 expectedDamageTaken += eval.getEstimatedEnemyDamage();
             }
 
+            // if we're not in the air, we may get hit by friendly artillery
+            if(!path.getEntity().isAirborne() && !path.getEntity().isAirborneVTOLorWIGE()) {
+                double friendlyArtilleryDamage = 0;
+                Map<Coords, Double> artyDamage = getOwner().getPathRankerState().getIncomingFriendlyArtilleryDamage();
+                
+                if(!artyDamage.containsKey(path.getFinalCoords())) {
+                    friendlyArtilleryDamage = ArtilleryTargetingControl.evaluateIncomingArtilleryDamage(path.getFinalCoords(), getOwner());
+                    artyDamage.put(path.getFinalCoords(), friendlyArtilleryDamage);
+                } else {
+                    friendlyArtilleryDamage = artyDamage.get(path.getFinalCoords());
+                }
+                
+                expectedDamageTaken += friendlyArtilleryDamage;
+            }
+            
             calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
 
             // If I cannot kick because I am a clan unit and "No physical 
@@ -622,12 +639,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                    .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
             utility += braveryMod;
 
-            //noinspection StatementWithEmptyBody
-            if (path.getEntity().isAero() && !path.getEntity().isSpaceborne()) {
-                // No idea what original implementation was meant to be.
-
-            } else {
-
+            // the only critters not subject to aggression and herding mods are
+            // airborne aeros on ground maps, as they move incredibly fast
+            if (!path.getEntity().isAirborneAeroOnGroundMap()) {
                 // The further I am from a target, the lower this path ranks 
                 // (weighted by Hyper Aggression.
                 utility -= calculateAggressionMod(movingUnit, pathCopy, game,
@@ -669,7 +683,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     protected boolean evaluateAsMoved(Entity enemy) {
         // Aerospace units on ground maps can go pretty much anywhere they want, so it's
         // somewhat pointless to try to predict their movement.
-        return !enemy.isSelectableThisTurn() || enemy.isImmobile() || (enemy.isAero() && enemy.isAirborne());
+        return !enemy.isSelectableThisTurn() || enemy.isImmobile() || enemy.isAirborneAeroOnGroundMap();
     }
     
     /**

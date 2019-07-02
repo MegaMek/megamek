@@ -283,6 +283,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE, false); //$NON-NLS-1$
 
         IBasicOptionGroup initiative = addGroup("initiative"); //$NON-NLS-1$
         addOption(initiative, OptionsConstants.INIT_INF_MOVE_EVEN, false); //$NON-NLS-1$
@@ -367,17 +368,17 @@ public class GameOptions extends AbstractOptions {
                                 break;
 
                             case IOption.BOOLEAN:
-                                tempOption.setValue(new Boolean(value
+                                tempOption.setValue(Boolean.valueOf(value
                                         .toString()));
                                 break;
 
                             case IOption.INTEGER:
-                                tempOption.setValue(new Integer(value
+                                tempOption.setValue(Integer.valueOf(value
                                         .toString()));
                                 break;
 
                             case IOption.FLOAT:
-                                tempOption.setValue(new Float(value
+                                tempOption.setValue(Float.valueOf(value
                                         .toString()));
                                 break;
                         }

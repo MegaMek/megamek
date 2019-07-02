@@ -97,7 +97,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_HIP, legLoc)) {
             damage = 0;
         }
-        if ((entity.heat >= 9) && ((Mech) entity).hasTSM()) {
+        if (((entity.heat >= 9) && ((Mech) entity).hasTSM()) ||
+                ((Mech) entity).hasIndustrialTSM()) {
             multiplier *= 2.0f;
         }
 
@@ -108,7 +109,7 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         int toReturn = (int) Math.floor(damage * multiplier);
         toReturn = (int) Math.round(toReturn * talonMultiplier);
-        toReturn += entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+        toReturn += entity.modifyPhysicalDamageForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(legLoc) == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);
@@ -187,7 +188,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // check if all legs are present & working
-        if (ae.isLocationBad(Mech.LOC_LLEG) || ae.isLocationBad(Mech.LOC_LLEG)
+        if (ae.isLocationBad(Mech.LOC_LLEG) || ae.isLocationBad(Mech.LOC_RLEG)
                 || (ae.entityIsQuad()
                         && (ae.isLocationBad(Mech.LOC_LARM)
                                 || ae.isLocationBad(Mech.LOC_RARM)))) {

@@ -39,7 +39,7 @@ public class ISLAC20 extends LACWeapon {
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
-        tonnage = 9.0f;
+        tonnage = 9.0;
         criticals = 6;
         bv = 118;
         cost = 325000;

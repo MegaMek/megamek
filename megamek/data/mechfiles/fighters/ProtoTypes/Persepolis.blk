@@ -24,6 +24,10 @@ Persepolis
 3082
 </year>
 
+<originalBuildYear>
+3082
+</originalBuildYear>
+
 <type>
 Clan Level 3
 </type>
@@ -31,6 +35,9 @@ Clan Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -74,30 +81,29 @@ Aerodyne
 <Nose Equipment>
 CLERLargeLaser
 CLERLargeLaser
-CLCASE
-CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
 CLStreakLRM20
-Clan Streak LRM 20 Ammo
-Clan Streak LRM 20 Ammo
-CLCASE
-CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLStreakLRM20
-Clan Streak LRM 20 Ammo
-Clan Streak LRM 20 Ammo
-CLCASE
-CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLCASE
-CLCASE
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Streak LRM 20 Ammo
+Clan Streak LRM 20 Ammo
+Clan Streak LRM 20 Ammo
+Clan Streak LRM 20 Ammo
+CLCASE
+</Fuselage Equipment>
 
 <source>
 TRO Prototypes - Jihad

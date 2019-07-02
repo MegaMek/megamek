@@ -49,7 +49,7 @@ public class CLImprovedHeavyLaserMedium extends LaserWeapon {
         waterMediumRange = 4;
         waterLongRange = 6;
         waterExtremeRange = 8;
-        tonnage = 1.0f;
+        tonnage = 1.0;
         criticals = 2;
         bv = 93;
         cost = 150000;

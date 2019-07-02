@@ -74,10 +74,12 @@ public class MechView {
     private boolean isGunEmplacement;
     private boolean isAero;
     private boolean isConvFighter;
+    @SuppressWarnings("unused")
     private boolean isFixedWingSupport;
     private boolean isSquadron;
     private boolean isSmallCraft;
     private boolean isJumpship;
+    @SuppressWarnings("unused")
     private boolean isSpaceStation;
 
     private List<ViewElement> sHead = new ArrayList<>();
@@ -678,19 +680,16 @@ public class MechView {
                     continue;
                 }
                 // skip broadsides on warships
-                if ((entity instanceof Warship)
-                        && ((loc == Warship.LOC_LBS) || (loc == Warship.LOC_RBS))) {
+                if (isJumpship && (loc >= Jumpship.LOC_HULL)) {
+                    continue;
+                }
+                if (isSmallCraft && (loc >= SmallCraft.LOC_HULL)) {
                     continue;
                 }
                 // skip the "Wings" location
-                if (!a.isLargeCraft() && (loc == Aero.LOC_WINGS)) {
+                if (!a.isLargeCraft() && (loc >= Aero.LOC_WINGS)) {
                     continue;
                 }
-                // Skip the "Body" location on fixed-wing support vees.
-                if (isFixedWingSupport && (loc == FixedWingSupport.LOC_BODY)) {
-                    continue;
-                }
-
                 String[] row = { entity.getLocationName(loc), "", "" };
                 if (IArmorState.ARMOR_NA != entity.getArmor(loc)) {
                     row[1] = renderArmor(entity.getArmor(loc),

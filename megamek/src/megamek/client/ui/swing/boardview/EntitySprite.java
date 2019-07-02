@@ -12,14 +12,17 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.Transparency;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Compute;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
@@ -420,8 +423,12 @@ class EntitySprite extends Sprite {
             }
 
             // Transporting
-            if ((entity.getLoadedUnits()).size() > 0) {
+            if (entity.getLoadedUnits().size() > 0) {
                 stStr.add(new Status(Color.YELLOW, "T", SMALL));
+            }
+            
+            if (entity.getAllTowedUnits().size() > 0) {
+                stStr.add(new Status(Color.YELLOW, "TOWING"));
             }
 
             // Hidden, Unseen Unit
@@ -810,6 +817,9 @@ class EntitySprite extends Sprite {
                 entity.getOwner().getName());
         
         // Pilot Info
+        //put everything in table to allow for a pilot photo in second column
+        addToTT("PilotStart",BR);
+        
         // Nickname > Name > "Pilot"
         for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
             String pnameStr = "Pilot";
@@ -828,8 +838,8 @@ class EntitySprite extends Sprite {
             if (entity.getCrew().getSlotCount() > 1) {
                 pnameStr += " (" + entity.getCrew().getCrewType().getRoleName(i) + ")";
             }
-    
-            addToTT("Pilot", BR,
+            
+            addToTT("Pilot", NOBR,
                     pnameStr, 
                     entity.getCrew().getGunnery(i), 
                     entity.getCrew().getPiloting(i));
@@ -860,6 +870,22 @@ class EntitySprite extends Sprite {
                 addToTT("InfSpec", BR, Infantry.getSpecializationName(spec));
             }
         }
+        
+        //add portrait?
+        if(null != entity.getCrew()) {
+            String category = entity.getCrew().getPortraitCategory(0);
+            String file = entity.getCrew().getPortraitFileName(0);
+            if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT) &&
+                    (null != category) && (null != file)) {
+                String imagePath = Configuration.portraitImagesDir() + "/" + category + file;
+                File f = new File(imagePath);
+                if(f.exists()) {
+                    addToTT("PilotPortrait",BR,imagePath);
+                }
+            }
+        }
+        
+        addToTT("PilotEnd",NOBR);
 
         // Unit movement ability
         if (thisGunEmp == null) {
@@ -1023,6 +1049,16 @@ class EntitySprite extends Sprite {
         if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                 || bv.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             addToTT("Sensors", BR, entity.getSensorDesc());
+        }
+        
+        // Towing
+        if (entity.getAllTowedUnits().size() > 0) {
+            String unitList = entity.getAllTowedUnits().stream()
+                    .map(id -> entity.getGame().getEntity(id).getDisplayName())
+                    .collect(Collectors.joining(", "));
+            if (unitList.length() > 1) {
+                addToTT("Towing", BR, unitList);
+            }
         }
 
         // Weapon List

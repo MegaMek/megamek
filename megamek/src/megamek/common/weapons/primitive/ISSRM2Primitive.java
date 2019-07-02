@@ -40,13 +40,14 @@ public class ISSRM2Primitive extends SRMWeapon {
         addLookupName("IS SRM-2 Primitive");
         addLookupName("ISSRM2p");
         addLookupName("IS SRM 2 Primitive");
+        this.shortName = "SRM/2p";
         heat = 2;
         rackSize = 2;
         shortRange = 3;
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 1.0f;
+        tonnage = 1.0;
         criticals = 1;
         bv = 21;
         flags = flags.or(F_NO_FIRES);

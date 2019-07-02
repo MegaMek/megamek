@@ -14,6 +14,7 @@
 package megamek.common.weapons.lrms;
 
 import megamek.common.AmmoType;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -37,9 +38,18 @@ public abstract class LRTWeapon extends MissileWeapon {
     public LRTWeapon() {
         super();
         ammoType = AmmoType.T_LRM_TORPEDO;
-        flags = flags.andNot(F_AERO_WEAPON);
-    }
+        flags = flags.or(F_PROTO_WEAPON).andNot(F_AERO_WEAPON);
 
+    }
+    
+    @Override
+    public double getTonnage(Entity entity, int location) {
+        if ((entity != null) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            return getRackSize() * 0.2;
+        } else {
+            return super.getTonnage(entity, location);
+        }
+    }
     /*
      * (non-Javadoc)
      *

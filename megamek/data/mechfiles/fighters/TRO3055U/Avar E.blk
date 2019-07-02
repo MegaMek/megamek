@@ -24,6 +24,10 @@ E
 3063
 </year>
 
+<originalBuildYear>
+3063
+</originalBuildYear>
+
 <type>
 Clan Level 3
 </type>
@@ -31,6 +35,9 @@ Clan Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 10
@@ -78,12 +85,6 @@ Aerodyne
 <Nose Equipment>
 CLHeavyLargeLaser:OMNI
 CLActiveProbe:OMNI
-Clan Streak SRM 4 Ammo:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -100,6 +101,14 @@ CLSRM2 (IOS):OMNI
 CLSRM2 (IOS):OMNI
 CLSRM2 (IOS):OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Streak SRM 4 Ammo:OMNI
+CLCASE
+</Fuselage Equipment>
 
 <source>
 TRO 3055u - Civil War

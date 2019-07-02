@@ -92,7 +92,6 @@ import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.BattleArmorHandlesTank;
 import megamek.common.Bay;
 import megamek.common.Board;
@@ -102,8 +101,8 @@ import megamek.common.ClampMountTank;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.DockingCollar;
-import megamek.common.Dropship;
 import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
@@ -118,15 +117,17 @@ import megamek.common.LAMPilot;
 import megamek.common.LandAirMech;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
+import megamek.common.ProtomechClampMount;
 import megamek.common.QuirksHandler;
 import megamek.common.RangeType;
 import megamek.common.Tank;
+import megamek.common.TankTrailerHitch;
 import megamek.common.TechConstants;
 import megamek.common.Transporter;
-import megamek.common.UnitType;
 import megamek.common.WeaponType;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityNewEvent;
@@ -1951,7 +1952,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     unitClass += Messages.getString("ChatLounge.6"); //$NON-NLS-1$
                 }
             }
-            Integer piloting = new Integer(entity.getCrew().getPiloting());
+            Integer piloting = entity.getCrew().getPiloting();
             String advantages = (crewAdvCount > 0 ? " <" + crewAdvCount //$NON-NLS-1$
                     + Messages.getString("ChatLounge.advs") : ""); //$NON-NLS-1$
             String maneiDomini = (isManeiDomini ? Messages.getString("ChatLounge.md") : ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1967,7 +1968,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     new Object[] { entity.getOwner().getName(), gunnery, piloting, advantages, maneiDomini, unitClass,
                             posQuirks, negQuirks, offBoard, deployRound, hidden });
         } else {
-            Integer piloting = new Integer(entity.getCrew().getPiloting());
+            Integer piloting = entity.getCrew().getPiloting();
             String advantages = (crewAdvCount > 0 ? " <" + crewAdvCount //$NON-NLS-1$
                     + Messages.getString("ChatLounge.advs") : ""); //$NON-NLS-1$ //$NON-NLS-2$
             String maneiDomini = (isManeiDomini ? Messages.getString("ChatLounge.md") : ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1975,7 +1976,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     + Messages.getString("ChatLounge.pquirk") : ""); //$NON-NLS-1$ //$NON-NLS-2$
             String negQuirks = (negQuirkCount > 0 ? " <" + negQuirkCount //$NON-NLS-1$
                     + Messages.getString("ChatLounge.nquirk") : ""); //$NON-NLS-1$
-            Integer battleValue = new Integer(entity.calculateBattleValue());
+            Integer battleValue = entity.calculateBattleValue();
             String hidden = ((entity.isHidden()) ? Messages.getString("ChatLounge.hidden") : ""); //$NON-NLS-1$
             String offBoard = ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""); //$NON-NLS-1$ //$NON-NLS-2$
             String deployRound = ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") //$NON-NLS-1$
@@ -3205,7 +3206,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             boolean blindDrop = !player.equals(clientgui.getClient().getLocalPlayer()) && clientgui.getClient()
                     .getGame().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
             if (col == COL_BV) {
-                int bv = Math.round(bvs.get(row));
+                int bv = bvs.get(row);
                 if (blindDrop) {
                     bv = bv > 0 ? 9999 : 0;
                 }
@@ -3642,18 +3643,34 @@ public class ChatLounge extends AbstractPhaseDisplay
                 int id = Integer.parseInt(stLoad.nextToken());
                 int bayNumber = Integer.parseInt(stLoad.nextToken());
                 Entity loadingEntity = clientgui.getClient().getEntity(id);
+                boolean loadRear = false;
+                if (stLoad.hasMoreTokens()) {
+                    loadRear = Boolean.parseBoolean(stLoad.nextToken());
+                }
 
                 double capacity;
                 boolean hasEnoughCargoCapacity = false;
                 String errorMessage = "";
                 if (bayNumber != -1) {
-                    Bay bay = loadingEntity.getBayById(bayNumber);
-                    double loadSize = entities.stream().mapToDouble(e -> bay.spaceForUnit(e)).sum();
-                    capacity = bay.getUnused();
-                    hasEnoughCargoCapacity = loadSize <= capacity;
-                    errorMessage = Messages.getString("LoadingBay.baytoomany") + // $NON-NLS-2$
-                            " " + (int) bay.getUnusedSlots()
-                            + bay.getDefaultSlotDescription() + ".";
+                    Transporter bay = loadingEntity.getBayById(bayNumber);
+                    if (null != bay) {
+                        double loadSize = entities.stream().mapToDouble(e -> ((Bay) bay).spaceForUnit(e)).sum();
+                        capacity = bay.getUnused();
+                        hasEnoughCargoCapacity = loadSize <= capacity;
+                        errorMessage = Messages.getString("LoadingBay.baytoomany") + // $NON-NLS-2$
+                                " " + (int) ((Bay) bay).getUnusedSlots()
+                                + ((Bay) bay).getDefaultSlotDescription() + ".";
+                        // We're also using bay number to distinguish between front and rear locations
+                        // for protomech mag clamp systems
+                    } else if (loadingEntity.hasETypeFlag(Entity.ETYPE_MECH)
+                            && entities.get(0).hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                        capacity = 1;
+                        hasEnoughCargoCapacity = entities.size() == 1;
+                        errorMessage = Messages.getString("LoadingBay.protostoomany");
+                    } else {
+                        hasEnoughCargoCapacity = false;
+                        errorMessage = Messages.getString("LoadingBay.bayNumberNotFound", new Object[] {bayNumber});
+                    }
                 } else {
                     HashMap<Long, Double> capacities, counts;
                     capacities = new HashMap<Long, Double>();
@@ -3680,6 +3697,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                                 // transporters....
                                 boolean hasTroopSpace = false;
                                 for (Transporter t : loadingEntity.getTransports()) {
+                                    if (t instanceof TankTrailerHitch) {
+                                        continue;
+                                    }
                                     double loadWeight = e.getWeight();
                                     if (potentialLoad.containsKey(t)) {
                                         loadWeight += potentialLoad.get(t);
@@ -3705,6 +3725,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                         } else if ((entityType & Entity.ETYPE_PROTOMECH) != 0) {
                             entityType = Entity.ETYPE_PROTOMECH;
                             unitSize = 1;
+                            // Loading using mag clamps; user can specify front or rear.
+                            // Make use of bayNumber field
+                            if ((loaderType & Entity.ETYPE_MECH) != 0) {
+                                bayNumber = loadRear? 1 : 0;
+                            }
                         } else if ((entityType & Entity.ETYPE_DROPSHIP) != 0) {
                             entityType = Entity.ETYPE_DROPSHIP;
                             unitSize = 1;
@@ -3723,7 +3748,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
                         Double count = counts.get(entityType);
                         if (count == null) {
-                            count = new Double(0);
+                            count = 0.0;
                         }
                         count = count + unitSize;
                         counts.put(entityType, count);
@@ -3934,6 +3959,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             boolean allDropships = true;
             boolean allInfantry = true;
             boolean allBattleArmor = true;
+            boolean allProtomechs = true;
             boolean allSameEntityType = true;
             boolean hasMGs = false;
             boolean hasSearchlight = false;
@@ -3956,15 +3982,10 @@ public class ChatLounge extends AbstractPhaseDisplay
                     sameSide = false;
                 }
                 prevOwnerId = en.getOwnerId();
-                if (!(en instanceof Dropship)) {
-                    allDropships = false;
-                }
-                if (!(en instanceof Infantry)) {
-                    allInfantry = false;
-                }
-                if (!(en instanceof BattleArmor)) {
-                    allBattleArmor = false;
-                }
+                allDropships &= en.hasETypeFlag(Entity.ETYPE_DROPSHIP);
+                allInfantry &= en.hasETypeFlag(Entity.ETYPE_INFANTRY);
+                allBattleArmor &= en.hasETypeFlag(Entity.ETYPE_BATTLEARMOR);
+                allProtomechs &= en.hasETypeFlag(Entity.ETYPE_PROTOMECH);
                 if ((prevEntity != null) && !en.getClass().equals(prevEntity.getClass()) && !allInfantry) {
                     allSameEntityType = false;
                 }
@@ -4075,12 +4096,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                     boolean canLoad = false;
                     boolean allHaveMagClamp = true;
                     for (Entity b : entities) {
-                        if (!(b instanceof BattleArmor)) {
-                            continue;
-                        }
-                        BattleArmor ba = (BattleArmor) b;
-                        if (!ba.hasMagneticClamps()) {
-                            allHaveMagClamp = false;
+                        if (b.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
+                                || b.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                            allHaveMagClamp &= b.hasWorkingMisc(MiscType.F_MAGNETIC_CLAMP);
                         }
                     }
                     for (Entity loader : clientgui.getClient().getGame().getEntitiesVector()) {
@@ -4091,7 +4109,10 @@ public class ChatLounge extends AbstractPhaseDisplay
                         }
                         boolean loadable = true;
                         for (Entity en : entities) {
-                            if (!loader.canLoad(en, false) || (loader.getId() == en.getId())) {
+                            if (!loader.canLoad(en, false) 
+                                    || (loader.getId() == en.getId())
+                                    //TODO: support edge case where a support vee with an internal vehicle bay can load trailer internally
+                                    || (loader.canTow(en.getId()))) {
                                 loadable = false;
                                 break;
                             }
@@ -4136,6 +4157,42 @@ public class ChatLounge extends AbstractPhaseDisplay
                                         menuItem.setEnabled((isOwner || isBot) && allUnloaded);
                                         menuClamp.add(menuItem);
                                     }
+                                }
+                            } else if (allProtomechs && allHaveMagClamp
+                                    && loader.hasETypeFlag(Entity.ETYPE_MECH)) {
+                                Transporter front = null;
+                                Transporter rear = null;
+                                for (Transporter t : loader.getTransports()) {
+                                    if (t instanceof ProtomechClampMount) {
+                                        if (((ProtomechClampMount) t).isRear()) {
+                                            rear = t;
+                                        } else {
+                                            front = t;
+                                        }
+                                    }
+                                }
+                                Entity en = entities.firstElement();
+                                if ((front != null) && front.canLoad(en)
+                                        && ((en.getWeightClass() < EntityWeightClass.WEIGHT_SUPER_HEAVY)
+                                                || (rear == null) || rear.getLoadedUnits().isEmpty())) {
+                                    menuItem = new JMenuItem("Onto Front");
+                                    menuItem.setActionCommand("LOAD|" + loader.getId() + ":0");
+                                    menuItem.addActionListener(this);
+                                    menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+                                    subMenu.add(menuItem);
+                                }
+                                boolean frontUltra = (front != null)
+                                        && front.getLoadedUnits().stream()
+                                        .anyMatch(l -> l.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
+                                if ((rear != null) && rear.canLoad(en) && !frontUltra) {
+                                    menuItem = new JMenuItem("Onto Rear");
+                                    menuItem.setActionCommand("LOAD|" + loader.getId() + ":1");
+                                    menuItem.addActionListener(this);
+                                    menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+                                    subMenu.add(menuItem);
+                                }
+                                if (subMenu.getItemCount() > 0) {
+                                    menuClamp.add(subMenu);
                                 }
                             } else if (allInfantry) {
                                 menuItem = new JMenuItem(loader.getShortName());
@@ -4260,8 +4317,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                         }
                         // only swap your own pilots and with the same unit and crew type
                         if ((swapper.getOwnerId() == entity.getOwnerId()) && (swapper.getId() != entity.getId())
-                                && (UnitType.determineUnitTypeCode(swapper) == UnitType
-                                        .determineUnitTypeCode(entity))
+                                && (swapper.getUnitType() == entity.getUnitType())
                                 && swapper.getCrew().getCrewType() == entity.getCrew().getCrewType()) {
                             canSwap = true;
                             menuItem = new JMenuItem(swapper.getShortName());

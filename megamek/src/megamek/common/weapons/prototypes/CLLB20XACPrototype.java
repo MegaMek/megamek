@@ -34,6 +34,7 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
         super();
         name = "Prototype LB 20-X Autocannon";
         setInternalName("CLLBXAC20Prototype");
+        shortName = "LB 20-X (P)";
         heat = 6;
         damage = 20;
         rackSize = 20;
@@ -41,7 +42,7 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 14.0f;
+        tonnage = 14.0;
         criticals = 12;
         bv = 237;
         cost = 600000;
@@ -49,6 +50,7 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
         medAV = 20;
         maxRange = RANGE_MED;
         rulesRefs = "97, IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
         .setTechRating(RATING_F)

@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
@@ -63,7 +64,7 @@ public class MovePath implements Cloneable, Serializable {
         CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
         SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
         RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
-        CONVERT_MODE, BOOTLEGGER;
+        CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT;
     }
 
     public static class Key {
@@ -410,6 +411,13 @@ public class MovePath implements Cloneable, Serializable {
         if (shouldMechanicalJumpCauseFallDamage()) {
             step.setDanger(true);
         }
+       
+        // If a tractor connects a new trailer this round, it can't do anything but add more trailers
+        // This prevents the tractor from moving before its MP, stacking limitations and prohibited terrain can be updated by its trailers
+        // It makes sense, too. You can't just connect a trailer and drive off with it in <10 seconds. 
+        if (contains(MoveStepType.TOW) && !(step.getType() == MoveStepType.TOW)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+        }
         
         // If the new step is legal and is a different position than
         // the previous step, then update the older steps, letting
@@ -527,7 +535,7 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // Can't move out of a hex with an enemy unit unless we started
-        // there, BUT we're allowed to turn, unload, or go prone.
+        // there, BUT we're allowed to turn, unload/disconnect, or go prone.
         Coords pos = getEntity().getPosition();
         boolean isMech = getEntity() instanceof Mech;
         int elev = getEntity().getElevation();
@@ -554,10 +562,11 @@ public class MovePath implements Cloneable, Serializable {
                     }
                     continue;
                 }
-                // We've returned, only following 4 types are legal
+                // We've returned, only following 5 types are legal
                 if ((step.getType() != MovePath.MoveStepType.TURN_LEFT)
                         && (step.getType() != MovePath.MoveStepType.TURN_RIGHT)
                         && (step.getType() != MovePath.MoveStepType.UNLOAD)
+                        && (step.getType() != MovePath.MoveStepType.DISCONNECT)
                         && (step.getType() != MovePath.MoveStepType.GO_PRONE)) {
                     // we only need to identify the first illegal move
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -1688,7 +1697,7 @@ public class MovePath implements Cloneable, Serializable {
 
         for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
-            if (step.getPosition() != finalPos) {
+            if (!step.getPosition().equals(finalPos)) {
                 priorPos = step.getPosition();
             }
         }

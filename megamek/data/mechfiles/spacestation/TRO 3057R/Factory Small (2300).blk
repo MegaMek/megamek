@@ -13,12 +13,8 @@ SpaceStation
 </UnitType>
 
 <Name>
-Factory - Small 
+Factory - Small
 </Name>
-
-<source>
-TRO3057r - 
-</source>
 
 <Model>
 (2300)
@@ -36,6 +32,10 @@ TRO3057r -
 IS Level 3
 </type>
 
+<designtype>
+0
+</designtype>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -44,7 +44,7 @@ Aerodyne
 smallcraftbay:2.0:2:1
 crewquarters:329.0:0
 1stclassquarters:240.0:0
-cargobay:1197.5:1:2
+cargobay:1197.5:1:4
 </transporters>
 
 <SafeThrust>
@@ -68,7 +68,7 @@ cargobay:1197.5:1:2
 </engine_type>
 
 <armor_type>
-42
+40
 </armor_type>
 
 <armor_tech>
@@ -102,12 +102,15 @@ cargobay:1197.5:1:2
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 1
 </structural_integrity>
 
 <source>
-TRO3057R - Star League
+TRO3057r -
 </source>
 
 <tonnage>
@@ -153,8 +156,4 @@ TRO3057R - Star League
 <escape_pod>
 4
 </escape_pod>
-
-<docking_collar>
-0
-</docking_collar>
 

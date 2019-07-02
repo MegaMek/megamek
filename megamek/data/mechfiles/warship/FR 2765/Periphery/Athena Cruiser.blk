@@ -41,7 +41,7 @@ smallcraftbay:22.0:5:1
 infantrybay:4.0:1:2:Motorized
 crewquarters:1680.0:0
 1stclassquarters:3500.0:0
-cargobay:11937.0:1:3
+cargobay:11937.0:1:5
 </transporters>
 
 <SafeThrust>
@@ -76,9 +76,9 @@ cargobay:11937.0:1:3
 70
 68
 68
-68
-68
 70
+68
+68
 </armor>
 
 <Nose Equipment>
@@ -204,6 +204,9 @@ Capital Missile Launcher (White Shark)
 Ammo White Shark:200
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <Left Broadsides Equipment>
 (B) Naval Laser 55
 Naval Laser 55
@@ -231,7 +234,7 @@ Naval Laser 55
 </structural_integrity>
 
 <source>
-FR2765-P - Star League
+FR2765:Periphery- Star League
 </source>
 
 <tonnage>
@@ -282,8 +285,4 @@ FR2765-P - Star League
 <escape_pod>
 100
 </escape_pod>
-
-<history>
-The Athena as built in the TRO is 14,380 tons overweight. Reducing the Cargo to make it legal.
-</history>
 

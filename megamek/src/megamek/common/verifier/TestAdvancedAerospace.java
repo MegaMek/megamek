@@ -126,11 +126,10 @@ public class TestAdvancedAerospace extends TestAero {
             }
             // Deal with potential rounding errors
             ppt = Math.round(ppt * 10.0) / 10.0;
-            if (!vessel.isPrimitive()) {
-                return ppt;
-            } else {
-                return ppt * EquipmentType.armorPointMultipliers[type];
+            if (type == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
+                ppt *= EquipmentType.armorPointMultipliers[EquipmentType.T_ARMOR_PRIMITIVE_AERO];
             }
+            return ppt;
         }
         
         /**
@@ -165,15 +164,14 @@ public class TestAdvancedAerospace extends TestAero {
         if (null == a) {
             return 0;
         }
-        if (!vessel.isPrimitive()) {
-            return (int)(Math.floor(a.pointsPerTon(vessel) * maxArmorWeight(vessel))
-                    + Math.round(vessel.get0SI() / 10.0) * 6);
-        } else {
-            // The ppt and the extra armor for SI are added together before the 0.66 primitive
-            // multiplier is applied.
-            return (int) (0.66 * (Math.floor(CapitalArmor.STANDARD.pointsPerTon(vessel) * maxArmorWeight(vessel))
-                    + Math.round(vessel.get0SI() / 10.0) * 6));
+        // The ship gets a number of armor points equal to 10% of the SI, rounded normally.
+        double freeSI = Math.round(vessel.get0SI() / 10.0);
+        // Primitive jumpships have the free SI armor reduced, but the fractional amount is
+        // added to the value calculated from the max armor tonnage before truncating.
+        if (vessel.isPrimitive()) {
+            freeSI *= 0.66;
         }
+        return (int) Math.floor(a.pointsPerTon(vessel) * maxArmorWeight(vessel) + freeSI);
     }
     
     /**
@@ -181,15 +179,16 @@ public class TestAdvancedAerospace extends TestAero {
      *   
      */
     public static double maxArmorWeight(Jumpship vessel){
-        if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP) && !vessel.isPrimitive()) {
+        // max armor tonnage is based on SI weight, which is vessel mass * SI / 1000
+        if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             // SI weight / 50
             return floor(vessel.get0SI() * vessel.getWeight() / 50000.0, Ceil.HALFTON);
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             // SI weight / 3 + 60
-            return floor(vessel.get0SI() * vessel.getWeight() / 300.0 + 60, Ceil.HALFTON);
+            return floor(vessel.get0SI() * vessel.getWeight() / 3000.0 + 60, Ceil.HALFTON);
         } else {
             // SI weight / 12
-            return floor(vessel.get0SI() * vessel.getWeight() / 1800.0, Ceil.HALFTON);
+            return floor(vessel.get0SI() * vessel.getWeight() / 12000.0, Ceil.HALFTON);
         }
     }
     
@@ -213,9 +212,8 @@ public class TestAdvancedAerospace extends TestAero {
      */
     public static double[] extraSlotCost(Jumpship vessel) {
         int slotsPerArc = 12;
-        int arcs = 6;
+        int arcs = vessel.locations();
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
-            arcs = 8;
             slotsPerArc = 20;
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             slotsPerArc = 20;
@@ -335,11 +333,11 @@ public class TestAdvancedAerospace extends TestAero {
      * @return       The maximum number of docking hardpoints (collars) that can be mounted on the ship.
      */
     public static int getMaxDockingHardpoints(Jumpship vessel) {
-        int max = (int) Math.floor(vessel.getWeight() / 5000);
+        int max = (int) Math.floor(vessel.getWeight() / 50000);
         for (Bay bay : vessel.getTransportBays()) {
             max -= bay.hardpointCost();
         }
-        return max;
+        return Math.max(max, 0);
     }
     
     /**
@@ -903,7 +901,7 @@ public class TestAdvancedAerospace extends TestAero {
         boolean lateralMatch = true;
         // Forward weapons
         for (EquipmentType eq : leftFwd.keySet()) {
-            if (!rightFwd.containsKey(eq) || (leftFwd.get(eq) != rightFwd.get(eq))) {
+            if (!rightFwd.containsKey(eq) || !leftFwd.get(eq).equals(rightFwd.get(eq))) {
                 lateralMatch = false;
                 break;
             }
@@ -921,7 +919,7 @@ public class TestAdvancedAerospace extends TestAero {
         // Aft weapons
         if (lateralMatch) {
             for (EquipmentType eq : leftAft.keySet()) {
-                if (!rightAft.containsKey(eq) || (leftAft.get(eq) != rightAft.get(eq))) {
+                if (!rightAft.containsKey(eq) || !leftAft.get(eq).equals(rightAft.get(eq))) {
                     lateralMatch = false;
                     break;
                 }
@@ -938,7 +936,7 @@ public class TestAdvancedAerospace extends TestAero {
         // Broadside (warships)
         if (lateralMatch) {
             for (EquipmentType eq : leftBroad.keySet()) {
-                if (!rightBroad.containsKey(eq) || (leftBroad.get(eq) != rightBroad.get(eq))) {
+                if (!rightBroad.containsKey(eq) || !leftBroad.get(eq).equals(rightBroad.get(eq))) {
                     lateralMatch = false;
                     break;
                 }

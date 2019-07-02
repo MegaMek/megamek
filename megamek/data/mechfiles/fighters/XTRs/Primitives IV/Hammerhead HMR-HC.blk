@@ -24,6 +24,10 @@ HMR-HC
 2485
 </year>
 
+<originalBuildYear>
+2485
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -76,6 +83,12 @@ Large Laser
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 XTRO Primitives IV - Age of War

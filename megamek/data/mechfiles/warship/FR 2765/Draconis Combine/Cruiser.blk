@@ -77,9 +77,9 @@ cargobay:37419.0:1:6
 64
 58
 58
-58
-58
 52
+58
+58
 </armor>
 
 <Nose Equipment>
@@ -173,6 +173,9 @@ Naval Autocannon (NAC/10)
 Naval Autocannon (NAC/10)
 Ammo NAC/10:60
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/10)

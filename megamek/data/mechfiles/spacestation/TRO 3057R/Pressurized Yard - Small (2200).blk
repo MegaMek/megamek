@@ -32,6 +32,10 @@ Pressurized Yard - Small
 IS Level 3
 </type>
 
+<designtype>
+0
+</designtype>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -101,6 +105,9 @@ cargobay:36430.0:1:7
 
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 1

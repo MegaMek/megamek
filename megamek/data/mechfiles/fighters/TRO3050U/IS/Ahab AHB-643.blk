@@ -24,6 +24,10 @@ AHB-643
 3067
 </year>
 
+<originalBuildYear>
+3067
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -71,20 +78,26 @@ Medium Laser
 
 <Left Wing Equipment>
 MRM 40
-IS MRM 40 Ammo
 RL10
 RL10
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 MRM 40
-IS MRM 40 Ammo
 RL10
 RL10
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS MRM 40 Ammo
+IS MRM 40 Ammo
+</Fuselage Equipment>
 
 <source>
 TRO 3050u - Civil War

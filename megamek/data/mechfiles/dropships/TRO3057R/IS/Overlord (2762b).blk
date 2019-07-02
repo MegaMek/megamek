@@ -41,7 +41,7 @@ mechbay:36.0:6
 2ndclassquarters:0.0:0
 1stclassquarters:80.0:0
 crewquarters:245.0:0
-cargobay:982.5:2:2
+cargobay:982.5:2:5
 </transporters>
 
 <SafeThrust>
@@ -138,6 +138,9 @@ ISArtemisIV
 (B) ISERPPC
 ISERPPC
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 18

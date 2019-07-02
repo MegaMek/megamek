@@ -25,11 +25,13 @@
  */
 package megamek.common.loaders;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.IArmorState;
 import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
@@ -40,18 +42,11 @@ import megamek.common.util.BuildingBlock;
 
 public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
 
-    // armor locatioms
-    public static final int NOSE = 0;
-    public static final int FLS = 1;
-    public static final int FRS = 2;
-    public static final int ALS = 3;
-    public static final int ARS = 4;
-    public static final int AFT = 5;
-
     public BLKSpaceStationFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         SpaceStation a = new SpaceStation();
@@ -195,6 +190,10 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                 a.addGravDeck(Integer.parseInt(t));
             }
         }
+        // Add a damage tracker value for each grav deck
+        for (int i = 0; i < a.getTotalGravDeck(); i++) {
+            a.initializeGravDeckDamage(i);
+        }
 
         // Switch older files with standard armor to capital
         int at = EquipmentType.T_ARMOR_AEROSPACE;
@@ -213,6 +212,13 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         } else {
             a.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
+        
+        // Affects number of facing changes allowed in a turn. Default to Civilian
+        if (dataFile.exists("designtype")) {
+            a.setDesignType(dataFile.getDataAsInt("designtype")[0]);
+        } else {
+            a.setDesignType(Aero.CIVILIAN);
+        }
 
         if (!dataFile.exists("armor")) {
             throw new EntityLoadingException("Could not find armor block.");
@@ -227,6 +233,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         for (int i = 0; i < armor.length; i++) {
             a.initializeArmor(armor[i], i);
         }
+        a.initializeArmor(IArmorState.ARMOR_NA, SpaceStation.LOC_HULL);
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();

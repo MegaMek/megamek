@@ -32,6 +32,10 @@ Bastion System Defense Station
 IS Level 3
 </type>
 
+<designtype>
+1
+</designtype>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -43,7 +47,7 @@ navalrepairpressurized:30000.0:1:3:f0
 navalrepairpressurized:30000.0:1:4:f3
 crewquarters:3479.0:0
 1stclassquarters:920.0:0
-cargobay:125475.0:1:5
+cargobay:125475.0:1:7
 </transporters>
 
 <SafeThrust>
@@ -316,6 +320,9 @@ Small Laser
 Small Laser
 Small Laser
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 1

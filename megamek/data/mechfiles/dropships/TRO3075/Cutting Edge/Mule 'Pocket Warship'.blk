@@ -40,7 +40,7 @@ Spheroid
 asfbay:6.0:1:1
 1stclassquarters:40.0:0
 crewquarters:126.0:0
-cargobay:371.5:1:2
+cargobay:371.5:1:4
 </transporters>
 
 <SafeThrust>
@@ -126,6 +126,9 @@ Medium Laser
 (B) Large Laser
 Medium Laser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 10

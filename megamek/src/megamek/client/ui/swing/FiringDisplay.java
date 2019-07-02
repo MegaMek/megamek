@@ -1875,12 +1875,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         setFireEnabled(false);
         IGame game = clientgui.getClient().getGame();
         // allow spotting
-        if ((ce() != null) && ce().canSpot() && (target != null)
+        if ((ce() != null) && !ce().isSpotting() && ce().canSpot() && (target != null)
                 && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) { //$NON-NLS-1$)
             boolean hasLos = LosEffects.calculateLos(game, cen, target)
                     .canSee();
             // In double blind, we need to "spot" the target as well as LoS
-            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+            if (hasLos
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && !Compute.inVisualRange(game, ce(), target)
                     && !Compute.inSensorRange(game, ce(), target, null)) {
                 hasLos = false;
@@ -1955,8 +1956,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(true);
             } else {
-                boolean natAptGunnery = ce().getCrew().getOptions()
-                        .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+                boolean natAptGunnery = ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString()
                         + " ("
                         + Compute.oddsAbove(toHit.getValue(), natAptGunnery)
@@ -2318,17 +2318,14 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     private void updateClearTurret() {
         setFireClearTurretEnabled((ce() instanceof Tank)
-                && (((Tank) ce()).isTurretJammed(((Tank) ce()).getLocTurret()) || ((Tank) ce())
-                        .isTurretJammed(((Tank) ce()).getLocTurret2()))
-                && (attacks.size() == 0)
-                && !(((Tank) ce()).getStunnedTurns() > 0));
+                && ((Tank) ce()).canClearTurret()
+                && (attacks.size() == 0));
     }
 
     private void updateClearWeaponJam() {
         setFireClearWeaponJamEnabled((ce() instanceof Tank)
-                && (((Tank) ce()).getJammedWeapons().size() != 0)
-                && (attacks.size() == 0)
-                && !(((Tank) ce()).getStunnedTurns() > 0));
+                && ((Tank) ce()).canUnjamWeapon()
+                && (attacks.size() == 0));
     }
 
     private void updateStrafe() {

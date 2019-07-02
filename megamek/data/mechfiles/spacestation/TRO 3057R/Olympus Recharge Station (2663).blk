@@ -32,6 +32,10 @@ Olympus Recharge Station
 IS Level 3
 </type>
 
+<designtype>
+1
+</designtype>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -72,11 +76,11 @@ cargobay:943875.0:1:8
 </engine_type>
 
 <armor_type>
-42
+41
 </armor_type>
 
 <armor_tech>
-5
+1
 </armor_tech>
 
 <armor>
@@ -261,6 +265,9 @@ Small Laser
 Small Laser
 Small Laser
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 1

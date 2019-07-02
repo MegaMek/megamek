@@ -35,7 +35,7 @@ public class CLStreakSRM5 extends StreakSRMWeapon {
         this.mediumRange = 8;
         this.longRange = 12;
         this.extremeRange = 16;
-        this.tonnage = 2.5f;
+        this.tonnage = 2.5;
         this.criticals = 0;
         this.bv = 99;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 

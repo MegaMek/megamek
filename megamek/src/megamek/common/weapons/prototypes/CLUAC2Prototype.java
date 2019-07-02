@@ -35,6 +35,7 @@ public class CLUAC2Prototype extends CLPrototypeUACWeapon {
         super();
         name = "Prototype Ultra Autocannon/2";
         setInternalName("CLUltraAC2Prototype");
+        shortName = "Ultra AC/2 (P)";
         heat = 1;
         damage = 2;
         rackSize = 2;
@@ -43,7 +44,7 @@ public class CLUAC2Prototype extends CLPrototypeUACWeapon {
         mediumRange = 17;
         longRange = 25;
         extremeRange = 34;
-        tonnage = 7.0f;
+        tonnage = 7.0;
         criticals = 4;
         bv = 56;
         cost = 120000;

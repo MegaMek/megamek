@@ -32,6 +32,10 @@ Alliance Space Station
 IS Level 3
 </type>
 
+<designtype>
+1
+</designtype>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -201,6 +205,9 @@ ISERMediumLaser
 ISERMediumLaser
 ISERMediumLaser
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 1

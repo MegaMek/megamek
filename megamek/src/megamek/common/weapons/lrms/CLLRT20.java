@@ -40,7 +40,7 @@ public class CLLRT20 extends LRTWeapon {
         this.waterMediumRange = 14;
         this.waterLongRange = 21;
         this.waterExtremeRange = 28;
-        this.tonnage = 5.0f;
+        this.tonnage = 5.0;
         this.criticals = 4;
         this.bv = 220;
         this.cost = 250000;

@@ -36,6 +36,7 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
         super();
         name = "Prototype ER Small Laser";
         setInternalName("CLERSmallLaserPrototype");
+        shortName = "ER Small Laser (P)";
         heat = 2;
         damage = 3;
         shortRange = 2;
@@ -46,7 +47,7 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
         waterMediumRange = 2;
         waterLongRange = 3;
         waterExtremeRange = 4;
-        tonnage = 0.5f;
+        tonnage = 0.5;
         criticals = 1;
         flags = flags.or(F_NO_FIRES);
         bv = 17;

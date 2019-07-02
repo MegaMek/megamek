@@ -40,13 +40,14 @@ public class ISSRM4Primitive extends SRMWeapon {
         this.addLookupName("IS SRM-4 Primitive");
         this.addLookupName("ISSRM4p");
         this.addLookupName("IS SRM 4 Primitive");
+        this.shortName = "SRM/4p";
         this.heat = 3;
         this.rackSize = 4;
         this.shortRange = 3;
         this.mediumRange = 6;
         this.longRange = 9;
         this.extremeRange = 12;
-        this.tonnage = 2.0f;
+        this.tonnage = 2.0;
         this.criticals = 1;
         this.bv = 39;
         this.cost = 60000;

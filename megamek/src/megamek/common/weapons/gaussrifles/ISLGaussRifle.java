@@ -51,7 +51,7 @@ public class ISLGaussRifle extends GaussWeapon {
         this.mediumRange = 17;
         this.longRange = 25;
         this.extremeRange = 34;
-        this.tonnage = 12.0f;
+        this.tonnage = 12.0;
         this.criticals = 5;
         this.bv = 159;
         this.cost = 275000;

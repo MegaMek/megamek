@@ -32,6 +32,10 @@ Olympus Recharge Station
 IS Level 3
 </type>
 
+<designtype>
+1
+</designtype>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -42,13 +46,13 @@ asfbay:6.0:2:2
 navalrepairpressurized:50000.0:1:3:f0
 navalrepairpressurized:50000.0:1:4:f4
 navalrepairpressurized:50000.0:1:5:f5
-crewquarters:1918.0:0
 1stclassquarters:1720.0:0
 dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:944012.0:1:6
+crewquarters:1946.0:0
+cargobay:943984.0:1:8
 </transporters>
 
 <SafeThrust>
@@ -72,7 +76,7 @@ cargobay:944012.0:1:6
 </engine_type>
 
 <armor_type>
-42
+13
 </armor_type>
 
 <armor_tech>
@@ -80,12 +84,12 @@ cargobay:944012.0:1:6
 </armor_tech>
 
 <armor>
-10
-10
-10
-10
-10
-10
+15
+15
+15
+15
+15
+15
 </armor>
 
 <Nose Equipment>
@@ -262,6 +266,9 @@ ISLaserAntiMissileSystem
 ISLaserAntiMissileSystem
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 1
 </structural_integrity>
@@ -284,7 +291,7 @@ TRO3057r - Jihad
 </grav_decks>
 
 <crew>
-362
+365
 </crew>
 
 <officers>
@@ -292,7 +299,7 @@ TRO3057r - Jihad
 </officers>
 
 <gunners>
-11
+14
 </gunners>
 
 <passengers>

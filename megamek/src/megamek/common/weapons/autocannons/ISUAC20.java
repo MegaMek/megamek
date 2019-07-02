@@ -42,7 +42,7 @@ public class ISUAC20 extends UACWeapon {
         mediumRange = 7;
         longRange = 10;
         extremeRange = 14;
-        tonnage = 15.0f;
+        tonnage = 15.0;
         criticals = 10;
         bv = 281;
         cost = 480000;

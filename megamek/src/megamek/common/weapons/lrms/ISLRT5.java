@@ -42,7 +42,7 @@ public class ISLRT5 extends LRTWeapon {
         waterMediumRange = 14;
         waterLongRange = 21;
         waterExtremeRange = 28;
-        tonnage = 2.0f;
+        tonnage = 2.0;
         criticals = 1;
         bv = 45;
         cost = 30000;

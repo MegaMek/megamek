@@ -44,7 +44,10 @@ public class Aero extends Entity implements IAero, IBomber {
     public static final int LOC_LWING = 1;
     public static final int LOC_RWING = 2;
     public static final int LOC_AFT = 3;
+    /** Location used for capital fighters and squadrons **/
     public static final int LOC_WINGS = 4;
+    /** Location used for equipment not allocated to a firing arc **/
+    public static final int LOC_FUSELAGE = 5;
 
     // ramming angles
     public static final int RAM_TOWARD_DIR = 0;
@@ -94,10 +97,10 @@ public class Aero extends Entity implements IAero, IBomber {
     // this needs to be larger, it is too easy to go over when you get to
     // warships
     // and bombs and such
-    private static final int[] NUM_OF_SLOTS = { 100, 100, 100, 100, 100, 100 };
+    private static final int[] NUM_OF_SLOTS = { 100, 100, 100, 100, 100, 100, 100 };
 
-    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings" };
+    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG", "FSLG" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Fuselage" };
 
     @Override
     public String[] getLocationAbbrs() {
@@ -118,7 +121,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int structIntegrity;
     private int orig_structIntegrity;
     // set up damage threshold
-    protected int damThresh[] = { 0, 0, 0, 0, 0 };
+    protected int damThresh[] = { 0, 0, 0, 0, 0, 0 };
     // set up an int for what the critical effect would be
     private int potCrit = CRIT_NONE;
 
@@ -212,7 +215,12 @@ public class Aero extends Entity implements IAero, IBomber {
         // need to set altitude to something different than entity
         altitude = 5;
     }
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.AERO;
+    }
+
     protected static final TechAdvancement TA_ASF = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
@@ -320,7 +328,7 @@ public class Aero extends Entity implements IAero, IBomber {
             engineLoss = 1;
         }
         j = Math.max(0, j - (engineHits * engineLoss));
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if ((null != game) && gravity) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
@@ -357,7 +365,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getCurrentThrust() {
         int j = getOriginalWalkMP();
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
@@ -378,7 +386,12 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public int locations() {
-        return 5;
+        return 6;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_FUSELAGE;
     }
 
     @Override
@@ -771,6 +784,11 @@ public class Aero extends Entity implements IAero, IBomber {
 
     public void setPodHeatSinks(int hs) {
         podHeatSinks = hs;
+    }
+
+    @Override
+    public boolean tracksHeat() {
+        return true;
     }
 
     public void setLeftThrustHits(int hits) {
@@ -2624,14 +2642,14 @@ public class Aero extends Entity implements IAero, IBomber {
             prd.addModifier(1, "Modular Armor");
         }
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        if (hasAbility(OptionsConstants.MD_VDNI)
+                && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Aero.COCKPIT_SMALL)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(1, "Small Cockpit");
         }
 
@@ -2642,7 +2660,7 @@ public class Aero extends Entity implements IAero, IBomber {
         if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY) && !game.getBoard().inSpace()) {
             prd.addModifier(+1, "atmospheric flight instability");
         }
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             prd.addModifier(1, "cramped cockpit");
         }
 
@@ -2768,7 +2786,9 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public void setThresh(int val, int loc) {
-        damThresh[loc] = val;
+        if (loc < damThresh.length) {
+            damThresh[loc] = val;
+        }
     }
 
     public void initializeThresh(int loc) {
@@ -2788,8 +2808,10 @@ public class Aero extends Entity implements IAero, IBomber {
             } else {
                 return 2;
             }
+        } else if (loc < damThresh.length) {
+            return damThresh[loc];
         }
-        return damThresh[loc];
+        return 0;
     }
 
     /**
@@ -3820,68 +3842,82 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public String getCritDamageString() {
-        String toReturn = "";
+        StringBuilder toReturn = new StringBuilder();
         boolean first = true;
         if (getSensorHits() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Sensors (" + getSensorHits() + ")";
+            toReturn.append(String.format(Messages.getString("Aero.sensorDamageString"), getSensorHits()));
             first = false;
         }
         if (getAvionicsHits() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Avionics (" + getAvionicsHits() + ")";
+            toReturn.append(String.format(Messages.getString("Aero.avionicsDamageString"), getAvionicsHits()));
             first = false;
         }
         if (getFCSHits() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "FCS (" + getFCSHits() + ")";
+            toReturn.append(String.format(Messages.getString("Aero.fcsDamageString"), getFCSHits()));
+            first = false;
+        }
+        if (getCICHits() > 0) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(String.format(Messages.getString("Aero.cicDamageString"), getCICHits()));
             first = false;
         }
         if (isGearHit()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Landing Gear";
+            toReturn.append(Messages.getString("Aero.landingGearDamageString"));
+            first = false;
+        }
+        if (!hasLifeSupport()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Aero.lifeSupportDamageString"));
             first = false;
         }
         if (getLeftThrustHits() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Left Thruster (" + getLeftThrustHits() + ")";
+            toReturn.append(String.format(Messages.getString("Aero.leftThrusterDamageString"), getLeftThrustHits()));
             first = false;
         }
         if (getRightThrustHits() > 0) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Right Thruster (" + getRightThrustHits() + ")";
+            toReturn.append(String.format(Messages.getString("Aero.rightThrusterDamageString"), getRightThrustHits()));
             first = false;
         }
         // Cargo bays and bay doors for large craft
         for (Bay next : getTransportBays()) {
         	if (next.getBayDamage() > 0) {
-        		if (!first) {
-        			toReturn += ", ";
-        		}
-        	toReturn += next.getType() + " Bay # " + next.getBayNumber();
+        	    if (!first) {
+                    toReturn.append(", ");
+                }
+        	toReturn.append(String.format(Messages.getString("Aero.bayDamageString"), next.getType(), next.getBayNumber()));
         	first = false;
         	}
         	if (next.getCurrentDoors() < next.getDoors()) {
-        		if (!first) {
-        			toReturn += ", ";
-        		}
-        	toReturn += next.getType() + " Bay #" + next.getBayNumber() + " Doors (" + (next.getDoors() - next.getCurrentDoors()) + ")";
+        	    if (!first) {
+                    toReturn.append(", ");
+                }
+        	toReturn.append(String.format(Messages.getString("Aero.bayDoorDamageString"), next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
         	first = false;
         	}
         }
-        return toReturn;
+        return toReturn.toString();
     }
 
     @Override
@@ -4056,7 +4092,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
-        if ((null != game) || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        // Fix for #587. Only multiply if Aero Sanity is off
+        if ((null != game) && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage *= 10;
         }
         damage -= dealt; // We already dealt a bunch of damage, move on.
@@ -4067,7 +4104,8 @@ public class Aero extends Entity implements IAero, IBomber {
         int damPerHit = 5;
         for (int i = 0; i < hits; i++) {
             int loc = Compute.randomInt(4);
-            setArmor(getArmor(loc) - Math.max(damPerHit, damage), loc);
+            // Fix for #587. Apply in 5 point groups unless damage remainder is less.
+            setArmor(getArmor(loc) - Math.min(damPerHit, damage), loc);
             // We did too much damage, so we need to damage the SI, but we wont
             // reduce the SI below 1 here
             // unless the fighter is destroyed.
@@ -4080,6 +4118,34 @@ public class Aero extends Entity implements IAero, IBomber {
                 setArmor(0, loc);
             }
             damage -= damPerHit;
+        }
+    }
+    
+    /**
+     * Damage a capital fighter's weapons. WeaponGroups are damaged by critical hits. 
+     * This matches up the individual fighter's weapons and critical slots and damages those
+     * for MHQ resolution
+     * @param loc - Int corresponding to the location struck
+     */
+    public void damageCapFighterWeapons(int loc) {
+        for (Mounted weapon : weaponList) {
+            if (weapon.getLocation() == loc) {
+                //Damage the weapon
+                weapon.setHit(true);
+                //Damage the critical slot
+                for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+                    CriticalSlot slot1 = getCritical(loc, i);
+                    if ((slot1 == null) ||
+                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                        continue;
+                    }
+                    Mounted mounted = slot1.getMount();
+                    if (mounted.equals(weapon)) {
+                        hitAllCriticals(loc, i);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -4182,7 +4248,7 @@ public class Aero extends Entity implements IAero, IBomber {
         if ((this instanceof Dropship) 
                 || (this instanceof Jumpship)
                 || (this instanceof Warship)
-                || (this instanceof SpaceStation)) {  		
+                || (this instanceof SpaceStation)) {
 
             ArrayList<Mounted> ams = new ArrayList<>();
             for (Mounted weapon : getWeaponBayList()) {
@@ -4292,10 +4358,7 @@ public class Aero extends Entity implements IAero, IBomber {
                     hasSpacecraftThermal = true;
                 }
                 //Only military craft get ESM, which detects active radar
-                //FIXME: Since JS/WS/SS construction is not yet implemented, this is hacked together.
-                if (getDesignType() == Aero.MILITARY 
-                        || hasETypeFlag(Entity.ETYPE_SPACE_STATION)
-                        || hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+                if (getDesignType() == Aero.MILITARY) {
                     if (!hasESM) {
                         getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
                         hasESM = true;

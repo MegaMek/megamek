@@ -46,7 +46,7 @@ public class CLMG extends MGWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 4;
-        this.tonnage = 0.25f;
+        this.tonnage = 0.25;
         this.criticals = 1;
         this.bv = 5;
         this.cost = 5000;

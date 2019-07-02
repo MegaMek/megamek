@@ -77,8 +77,8 @@ cargobay:18635.0:1:5
 180
 150
 150
-139
 120
+139
 139
 </armor>
 
@@ -159,6 +159,9 @@ ISLBXAC10
 IS LB 10-X Cluster Ammo:50
 IS LB 10-X AC Ammo:40
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval PPC (Heavy)

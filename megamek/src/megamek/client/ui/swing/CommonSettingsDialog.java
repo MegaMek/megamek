@@ -196,6 +196,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox showMapHexPopup;
     private JCheckBox showWpsinTT;
     private JCheckBox showArmorMiniVisTT;
+    private JCheckBox showPilotPortraitTT;
     private JCheckBox chkAntiAliasing;
     private JComboBox<String> defaultWeaponSortOrder;
     private JTextField tooltipDelay;
@@ -498,6 +499,11 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(showArmorMiniVisTT);
         comps.add(row);
         
+        showPilotPortraitTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showPilotPortraitTT")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(showPilotPortraitTT);
+        comps.add(row);
+        
         // Horizontal Line and Spacer
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -731,6 +737,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         tooltipDistSupression.setText(Integer.toString(gs.getTooltipDistSuppression()));
         showWpsinTT.setSelected(gs.getShowWpsinTT());
         showArmorMiniVisTT.setSelected(gs.getshowArmorMiniVisTT());
+        showPilotPortraitTT.setSelected(gs.getshowPilotPortraitTT());
 
         defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
 
@@ -895,6 +902,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setShowMapHexPopup(showMapHexPopup.isSelected());
         gs.setShowWpsinTT(showWpsinTT.isSelected());
         gs.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
+        gs.setshowPilotPortraitTT(showPilotPortraitTT.isSelected());
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
         gs.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
         gs.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
@@ -959,12 +967,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
-            if (!cs.getMapTileset().equals(tileSets.get(tileSetChoice.getSelectedIndex())) &&
+            String tileSetFileName = tileSets.get(tileSetChoice.getSelectedIndex()).getName();
+            if (!cs.getMapTileset().equals(tileSetFileName) &&
                     (clientgui != null) && (clientgui.bv != null))  {
                 clientgui.bv.clearShadowMap();
             }
-            cs.setMapTileset(tileSets.get(tileSetChoice.getSelectedIndex())
-                    .getName());
+            cs.setMapTileset(tileSetFileName);
         }
 
         ToolTipManager.sharedInstance().setInitialDelay(

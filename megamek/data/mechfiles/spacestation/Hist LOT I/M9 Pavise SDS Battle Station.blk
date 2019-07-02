@@ -32,6 +32,10 @@ M9 SDS Battle Station
 IS Level 4
 </type>
 
+<designtype>
+1
+</designtype>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -203,8 +207,6 @@ ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
-ImprovedCasparDroneControlSystem
-ISLargeNavalCommScannerSuite
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -532,7 +534,6 @@ ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
-AutoTacticalAnalysisComputer
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -752,6 +753,12 @@ ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ImprovedCasparDroneControlSystem
+ISLargeNavalCommScannerSuite
+AutoTacticalAnalysisComputer
+</Hull Equipment>
 
 <structural_integrity>
 1

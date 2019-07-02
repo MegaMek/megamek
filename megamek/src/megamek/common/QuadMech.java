@@ -234,6 +234,10 @@ public class QuadMech extends Mech {
                 mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
+        // VGLs base arc on their facing
+        if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+            return Compute.firingArcFromVGLFacing(mounted.getFacing());
+        }
         // rear mounted?
         if (mounted.isRearMounted()) {
             return Compute.ARC_REAR;
@@ -319,7 +323,7 @@ public class QuadMech extends Mech {
             roll.addModifier(-2, "Quad bonus");
         }
 
-        if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
+        if (hasAbility(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
             roll.addModifier(-1, "Animal Mimicry");
         }
 

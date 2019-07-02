@@ -43,7 +43,7 @@ public class ISLaserMedium extends LaserWeapon {
         this.waterMediumRange = 4;
         this.waterLongRange = 6;
         this.waterExtremeRange = 8;
-        this.tonnage = 1.0f;
+        this.tonnage = 1.0;
         this.criticals = 1;
         this.bv = 46;
         this.cost = 40000;

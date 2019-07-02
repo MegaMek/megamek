@@ -504,21 +504,21 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         if (isAero || isLAM || isShip) {
             IAero a = (IAero) entity;
-            fldStartVelocity.setText(new Integer(a.getCurrentVelocity())
+            fldStartVelocity.setText(Integer.valueOf(a.getCurrentVelocity())
                     .toString());
             fldStartVelocity.addActionListener(this);
 
-            fldStartAltitude.setText(new Integer(entity.getAltitude()).toString());
+            fldStartAltitude.setText(Integer.valueOf(entity.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
             
             fuel = a.getFuel();
-            fldCurrentFuel.setText(new Integer(a.getCurrentFuel())
+            fldCurrentFuel.setText(Integer.valueOf(a.getCurrentFuel())
                     .toString());
             fldCurrentFuel.addActionListener(this);
         }
 
         if (isVTOL || isLAM || isGlider) {
-            fldStartHeight.setText(new Integer(entity.getElevation()).toString());
+            fldStartHeight.setText(Integer.valueOf(entity.getElevation()).toString());
             fldStartHeight.addActionListener(this);
         }
         if (isWiGE) {
@@ -1197,14 +1197,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             if (entity instanceof BattleArmor) {
                 // have to reset internals because of dermal armor option
-                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
                     ((BattleArmor) entity).setInternal(2);
                 } else {
                     ((BattleArmor) entity).setInternal(1);
                 }
             } else if (entity instanceof Infantry) {
                 // need to reset armor on conventional infantry
-                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
                     entity.initializeArmor(
                             entity.getOInternal(Infantry.LOC_INFANTRY),
                             Infantry.LOC_INFANTRY);

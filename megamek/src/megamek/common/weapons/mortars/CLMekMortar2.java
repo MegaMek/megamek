@@ -42,7 +42,7 @@ public class CLMekMortar2 extends MekMortarWeapon {
         bv = 14;
         heat = 2;
         criticals = 1;
-        tonnage = 2.5f;
+        tonnage = 2.5;
         cost = 15000;
         rulesRefs = "324,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

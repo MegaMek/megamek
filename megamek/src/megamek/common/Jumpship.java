@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ public class Jumpship extends Aero {
     public static final int LOC_FRS = 2;
     public static final int LOC_ALS = 4;
     public static final int LOC_ARS = 5;
+    public static final int LOC_HULL = 6;
 
     public static final int GRAV_DECK_STANDARD_MAX = 100;
     public static final int GRAV_DECK_LARGE_MAX = 250;
@@ -52,15 +54,28 @@ public class Jumpship extends Aero {
     // given for primitive assumes a 30ly range, but the final value has to be computed.
     private static double[] DRIVE_CORE_WEIGHT_PCT = { 0.95, 0.4525, 0.5, 0.0, 0.95 };
 
-    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side",
-            "Aft Right Side" };
+    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
+            "Aft", "Aft Left Side", "Aft Right Side", "Hull" };
 
+    //K-F Drive Stuff
+    private int original_kf_integrity = 0;
     private int kf_integrity = 0;
+    private int original_sail_integrity = 0;
     private int sail_integrity = 0;
+    private int helium_tankage = 0;
+    private boolean heliumTankHit = false;
+    private boolean driveCoilHit = false;
+    private boolean fieldInitiatorHit = false;
+    private boolean chargingSystemHit = false;
+    private boolean driveControllerHit = false;
+    private boolean lfBatteryHit = false;
     private boolean sail = true;
     private int driveCoreType = DRIVE_CORE_STANDARD;
     private int jumpRange = 30; // Primitive jumpships can have a reduced range
+    
+    // lithium fusion
+    boolean hasLF = false;
 
     // crew and passengers
     private int nCrew = 0;
@@ -73,9 +88,6 @@ public class Jumpship extends Aero {
     // lifeboats and escape pods
     private int lifeBoats = 0;
     private int escapePods = 0;
-
-    // lithium fusion
-    boolean hasLF = false;
 
     // Battlestation
     private boolean isBattleStation = false;
@@ -91,6 +103,13 @@ public class Jumpship extends Aero {
      * deck.
      */
     private List<Integer> gravDecks = new ArrayList<>();
+    
+    /**
+     * Keep track of all of the grav decks and their damage status
+     *
+     * Stores the number of hits on each grav deck by the index value from the list gravDecks
+     */
+    private Map<Integer,Integer> damagedGravDecks = new HashMap<>();
 
     // station-keeping thrust and accumulated thrust
     private double stationThrust = 0.2;
@@ -98,13 +117,31 @@ public class Jumpship extends Aero {
 
     public Jumpship() {
         super();
-        damThresh = new int[] { 0, 0, 0, 0, 0, 0 };
+        damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0 };
     }
-    
-    
+
+    @Override
+    public boolean tracksHeat() {
+        return false;
+    }
+
+    @Override
+    public int getUnitType() {
+        // While large craft perform heat calculations, they are not considered heat-tracking units
+        // because they cannot generate more heat than they can dissipate in the same turn.
+        return UnitType.JUMPSHIP;
+    }
+
     //ASEW Missile Effects, per location
     //Values correspond to Locations: NOS,FLS,FRS,AFT,ALS,ARS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
+    
+    /*
+     * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
+     */
+    protected int[] getAsewAffectedTurns() {
+        return asewAffectedTurns;
+    }
     
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
@@ -113,7 +150,9 @@ public class Jumpship extends Aero {
      * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
      */
     public void setASEWAffected(int arc, int turns) {
-        asewAffectedTurns[arc] = turns;
+        if (arc < getAsewAffectedTurns().length) {
+            getAsewAffectedTurns()[arc] = turns;
+        }
     }
     
     /*
@@ -121,8 +160,18 @@ public class Jumpship extends Aero {
      * @param arc - integer representing the desired firing arc
      */
     public int getASEWAffected(int arc) {
-        return asewAffectedTurns[arc];
+        if (arc < getAsewAffectedTurns().length) {
+            return getAsewAffectedTurns()[arc];
+        }
+        return 0;
     }
+    
+    /**
+     * Primitive Jumpships may be constructed with standard docking collars, or with pre-boom collars. 
+     * 
+     */
+    public static final int COLLAR_STANDARD  = 0;
+    public static final int COLLAR_NO_BOOM = 1;
 
     protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2300).setISApproximate(false, true)
@@ -154,7 +203,10 @@ public class Jumpship extends Aero {
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
-
+    
+    /**
+     * Tech advancement data for the jump sail
+     */
     public static TechAdvancement getJumpSailTA() {
         return new TechAdvancement(TECH_BASE_ALL)
                 .setAdvancement(2200, 2300, 2325)
@@ -164,22 +216,131 @@ public class Jumpship extends Aero {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
+    public String getCritDamageString() {
+        StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
+        boolean first = toReturn.length() == 0;
+        if (getTotalDamagedGravDeck() > 0) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(String.format(Messages.getString("Jumpship.gravDeckDamageString"), getTotalDamagedGravDeck()));
+            first = false;
+        }
+        if (getTotalDamagedDockingCollars() > 0) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(String.format(Messages.getString("Jumpship.dockingCollarsDamageString"), getTotalDamagedDockingCollars()));
+            first = false;
+        }
+        if (getKFDriveCoilHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.driveCoilDamageString"));
+            first = false;
+        }
+        if (getKFDriveControllerHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.driveControllerDamageString"));
+            first = false;
+        }
+        if (getKFHeliumTankHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.heliumTankDamageString"));
+            first = false;
+        }
+        if (getKFFieldInitiatorHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.fieldInitiatorDamageString"));
+            first = false;
+        }
+        if (getKFChargingSystemHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.chargingSystemDamageString"));
+            first = false;
+        }
+        if (getLFBatteryHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.lfBatteryDamageString"));
+            first = false;
+        }
+        return toReturn.toString();
+    }
+
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }
     
     @Override
     public int locations() {
-        return 6;
+        return 7;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_HULL;
+    }
+    
+    /**
+     * Get the docking collar type used by the ship.
+     *
+     * @return the docking collar type
+     */
+    public int getDockingCollarType() {
+        return (isPrimitive() ? Jumpship.COLLAR_NO_BOOM : Jumpship.COLLAR_STANDARD);
+    }
+    
+    /**
+     * Get the number of damaged docking collars on the ship.
+     * Used by crit damage string on unit display
+     *
+     * @return the number of damaged docking collars
+     */
+    public int getTotalDamagedDockingCollars() {
+        int count = 0;
+        for (DockingCollar collar : getDockingCollars()) {
+            if (collar.isDamaged()) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
      * Get the number of grav decks on the ship.
      *
-     * @return
+     * @return the total number of grav decks
      */
     public int getTotalGravDeck() {
         return gravDecks.size();
+    }
+    
+    /**
+     * Get the number of damaged grav decks on the ship.
+     * Used by JS/WS MapSet widget to display critical hits
+     *
+     * @return the number of damaged grav decks
+     */
+    public int getTotalDamagedGravDeck() {
+        int count = 0;
+        for (int hits : damagedGravDecks.values()) {
+            if (hits == 1) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
@@ -192,13 +353,39 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Get a list of all grav decks mounted on this ship, where each value
-     * represents the size in meters of the grav deck.
+     * Get a list of all grav decks mounted on this ship. Returns the size in meters of the deck
      *
-     * @return
+     * @return a list of grav deck diameters, in meters
      */
     public List<Integer> getGravDecks() {
         return gravDecks;
+    }
+    
+    /**
+     * Adds a grav deck damage value that maps to the index of each deck size in meters
+     *
+     */
+    public void initializeGravDeckDamage(int index) {
+        damagedGravDecks.put(index, 0);
+    }
+
+    /**
+     * Gets the damage flag for the grav deck with the specified key
+     *
+     * @return the damage status for the deck 0 (undamaged) or 1 (damaged)
+     */
+    public int getGravDeckDamageFlag(int key) {
+        return damagedGravDecks.get(key);
+    }
+    
+    /**
+     * Sets the damage flag for the grav deck with the specified key to the specified value
+     *
+     * @param key - the id of the deck to affect
+     * @param damaged - 0 (undamaged), 1 (damaged)
+     */
+    public void setGravDeckDamageFlag(int key, int damaged) {
+        damagedGravDecks.replace(key, damaged);
     }
 
     /**
@@ -209,18 +396,18 @@ public class Jumpship extends Aero {
      */
     public void setGravDeck(int n) {
         for (int i = 0; i < n; i++) {
-            gravDecks.add(GRAV_DECK_STANDARD_MAX / 2);
+            addGravDeck(GRAV_DECK_STANDARD_MAX / 2);
         }
     }
 
     /**
      * Get the number of standard grav decks
-     * @return
+     * @return the number of 0-99 meter grav decks installed
      */
     public int getGravDeck() {
         int count = 0;
-        for (int size : gravDecks) {
-            if (size < GRAV_DECK_STANDARD_MAX) {
+        for (int deck : gravDecks) {
+            if (deck < GRAV_DECK_STANDARD_MAX) {
                 count++;
             }
         }
@@ -235,19 +422,19 @@ public class Jumpship extends Aero {
      */
     public void setGravDeckLarge(int n) {
         for (int i = 0; i < n; i++) {
-            gravDecks.add(GRAV_DECK_STANDARD_MAX + (GRAV_DECK_LARGE_MAX - GRAV_DECK_STANDARD_MAX) / 2);
+            addGravDeck(GRAV_DECK_STANDARD_MAX + (GRAV_DECK_LARGE_MAX - GRAV_DECK_STANDARD_MAX) / 2);
         }
     }
 
     /**
      * Get the number of large grav decks.
      *
-     * @return
+     * @return the number of 100-249 meter grav decks installed
      */
     public int getGravDeckLarge() {
         int count = 0;
-        for (int size : gravDecks) {
-            if (size >= GRAV_DECK_STANDARD_MAX && size <= GRAV_DECK_LARGE_MAX) {
+        for (int deck : gravDecks) {
+            if (deck >= GRAV_DECK_STANDARD_MAX && deck <= GRAV_DECK_LARGE_MAX) {
                 count++;
             }
         }
@@ -262,19 +449,19 @@ public class Jumpship extends Aero {
      */
     public void setGravDeckHuge(int n) {
         for (int i = 0; i < n; i++) {
-            gravDecks.add(GRAV_DECK_LARGE_MAX + (GRAV_DECK_LARGE_MAX) / 2);
+            addGravDeck(GRAV_DECK_LARGE_MAX + (GRAV_DECK_LARGE_MAX) / 2);
         }
     }
 
     /**
      * Get the number of huge grav decks.
      *
-     * @return
+     * @return the number of 250 meter and larger grav decks installed
      */
     public int getGravDeckHuge() {
         int count = 0;
-        for (int size : gravDecks) {
-            if (size > GRAV_DECK_LARGE_MAX) {
+        for (int deck : gravDecks) {
+            if (deck > GRAV_DECK_LARGE_MAX) {
                 count++;
             }
         }
@@ -447,19 +634,135 @@ public class Jumpship extends Aero {
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
-
+    
+    //Methods for dealing with the K-F Drive, Sail and L-F Battery
+    
+    //Set the current KF Drive integrity
     public void setKFIntegrity(int kf) {
         kf_integrity = kf;
     }
-
+    
+    //Return the current KF Drive integrity
     public int getKFIntegrity() {
         return kf_integrity;
     }
+    
+    //Set the original/undamaged KF Drive integrity
+    public void setOKFIntegrity(int kf) {
+        original_kf_integrity = kf;
+    }
+    
+    //Return the original/undamaged KF Drive integrity
+    public int getOKFIntegrity() {
+        return original_kf_integrity;
+    }
+    
+    //Return the damage taken to the KF Drive
+    public int getKFDriveDamage() {
+        return (getOKFIntegrity() - getKFIntegrity());
+    }
+    
+    //Is any part of the KF Drive damaged?  Used by MHQ for repairs.
+    public boolean isKFDriveDamaged() {
+        return (getKFHeliumTankHit() 
+                || getKFDriveCoilHit() 
+                || getKFDriveControllerHit() 
+                || getLFBatteryHit() 
+                || getKFChargingSystemHit()
+                || getKFFieldInitiatorHit());
+    }
+    
+    //Set the portion of the total drive integrity represented by the helium tanks
+    public void setKFHeliumTankIntegrity(int ht) {
+        helium_tankage = ht;
+    }
+    
+    //Used by MHQ when repairing the helium tanks. Allows restoration of up to 2/3 of the total drive integrity
+    public int getKFHeliumTankIntegrity() {
+        return helium_tankage;
+    }
+    
+    //Record a hit on the KF Drive Helium Tank
+    public void setKFHeliumTankHit(boolean hit) {
+        heliumTankHit = hit;
+    }
+    
+    //Return the status of the KF Drive Helium Tank
+    public boolean getKFHeliumTankHit() {
+        return heliumTankHit;
+    }
+    
+    //Record a hit on the KF Drive Coil
+    public void setKFDriveCoilHit(boolean hit) {
+        driveCoilHit = hit;
+    }
+    
+    //Return the status of the KF Drive Coil
+    public boolean getKFDriveCoilHit() {
+        return driveCoilHit;
+    }
+    
+    //Record a hit on the KF Field Initiator
+    public void setKFFieldInitiatorHit(boolean hit) {
+        fieldInitiatorHit = hit;
+    }
+    
+    //Return the status of the KF Field Initiator
+    public boolean getKFFieldInitiatorHit() {
+        return fieldInitiatorHit;
+    }
+    
+    //Record a hit on the KF Charging System
+    public void setKFChargingSystemHit(boolean hit) {
+        chargingSystemHit = hit;
+    }
+    
+    //Return the status of the KF Charging System
+    public boolean getKFChargingSystemHit() {
+        return chargingSystemHit;
+    }
+    
+    //Record a hit on the KF Drive Controller
+    public void setKFDriveControllerHit(boolean hit) {
+        driveControllerHit = hit;
+    }
+    
+    //Return the status of the KF Drive Controller
+    public boolean getKFDriveControllerHit() {
+        return driveControllerHit;
+    }
+    
+    //Return the status of the LF Battery
+    public boolean getLFBatteryHit() {
+        return lfBatteryHit;
+    }
+    
+    //Record a hit on the LF Battery
+    public void setLFBatteryHit(boolean hit) {
+        lfBatteryHit = hit;
+    }
+    
+    //Set the original/undamaged Jump Sail integrity
+    public void setOSailIntegrity(int sail) {
+        original_sail_integrity = sail;
+    }
+    
+    //Return the original/undamaged Jump Sail integrity
+    public int getOSailIntegrity() {
+        return original_sail_integrity;
+    }
+    
+    //Return the damage taken to the Jump Sail
+    public int getSailDamage() {
+        return (getOSailIntegrity() - getSailIntegrity());
+    }
 
+    //Set the current integrity of the jump sail
     public void setSailIntegrity(int sail) {
         sail_integrity = sail;
     }
-
+    
+    //Return the current integrity of the jump sail
     public int getSailIntegrity() {
         return sail_integrity;
     }
@@ -480,12 +783,16 @@ public class Jumpship extends Aero {
 
     public void initializeSailIntegrity() {
         int integrity = 1 + (int) Math.ceil((30.0 + (weight / 7500.0)) / 20.0);
+        setOSailIntegrity(integrity);
         setSailIntegrity(integrity);
     }
 
     public void initializeKFIntegrity() {
         int integrity = (int) Math.ceil(1.2 + (getJumpDriveWeight() / 60000.0));
+        setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
+        //Helium Tanks make up about 2/3 of the drive core. 
+        setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
 
     public boolean canJump() {
@@ -1727,17 +2034,17 @@ public class Jumpship extends Aero {
         int driveIdx = 0;
         double driveCosts = 0;
         // Drive Coil
-        driveCost[driveIdx++] += 60000000 + (75000000 * getDocks());
+        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks());
         // Initiator
-        driveCost[driveIdx++] += 25000000 + (5000000 * getDocks());
+        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks());
         // Controller
-        driveCost[driveIdx++] += 50000000;
+        driveCost[driveIdx++] += 50000000.0;
         // Tankage
-        driveCost[driveIdx++] += 50000 * getKFIntegrity();
+        driveCost[driveIdx++] += 50000.0 * getKFIntegrity();
         // Sail
-        driveCost[driveIdx++] += 50000 * (30 + (weight / 7500));
+        driveCost[driveIdx++] += 50000.0 * (30 + (weight / 7500.0));
         // Charging System
-        driveCost[driveIdx++] += 500000 + (200000 * getDocks()); 
+        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks()); 
         
         for (int i = 0; i < driveIdx; i++) {
             driveCosts += driveCost[i];
@@ -1811,9 +2118,73 @@ public class Jumpship extends Aero {
 
         costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
         cost = Math.round(cost * weightMultiplier);
-
+        addCostDetails(cost, costs);
         return cost;
 
+    }
+
+    private void addCostDetails(double cost, double[] costs) {
+        bvText = new StringBuffer();
+        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
+                "Structural Integrity", "Engine", "Engine Control Unit",
+                "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
+                "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
+                "Bays", "HPG", "Weapons/Equipment", "Weight Multiplier" };
+
+        NumberFormat commafy = NumberFormat.getInstance();
+
+        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append(startTable);
+        // find the maximum length of the columns.
+        for (int l = 0; l < left.length; l++) {
+
+            if (l == 20) {
+                getWeaponsAndEquipmentCost(true);
+            } else {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(left[l]);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                if (costs[l] == 0) {
+                    bvText.append("N/A");
+                } else if (costs[l] < 0) {
+                    bvText.append("x ");
+                    bvText.append(commafy.format(-costs[l]));
+                } else {
+                    bvText.append(commafy.format(costs[l]));
+
+                }
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
+        }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Cost:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(commafy.format(cost));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
     }
 
     @Override

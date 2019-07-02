@@ -38,11 +38,11 @@ Aerodyne
 
 <transporters>
 asfbay:2.0:1:1
-infantrybay:1.0:0:2
+infantrybay:1.0:0:2:Foot
 2ndclassquarters:0.0:0
 1stclassquarters:70.0:0
 crewquarters:231.0:0
-cargobay:467.5:1:3
+cargobay:467.5:1:6
 </transporters>
 
 <SafeThrust>
@@ -148,6 +148,9 @@ ISArtemisIV
 (B) ISMediumPulseLaser
 ISMediumPulseLaser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 16

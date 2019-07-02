@@ -82,8 +82,8 @@ cargobay:50.0:0:7
 91
 101
 101
-101
 91
+101
 101
 </armor>
 
@@ -160,6 +160,9 @@ Ammo NAC/20:30
 (B) Capital Missile Launcher (Barracuda)
 Ammo Barracuda:10
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Laser 55

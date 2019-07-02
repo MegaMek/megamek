@@ -24,6 +24,10 @@ MNG-8L
 3081
 </year>
 
+<originalBuildYear>
+3081
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -74,17 +81,12 @@ Aerodyne
 <Nose Equipment>
 ISPlasmaRifle
 ISPlasmaRifle
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
 SRM 6
-IS Ammo SRM-6
-IS Ammo SRM-6
 ISSmallPulseLaser
 </Nose Equipment>
 
 <Left Wing Equipment>
 LRM 15
-IS Ammo LRM-15
 ISERMediumLaser
 ISERMediumLaser
 SRM 6
@@ -92,7 +94,6 @@ SRM 6
 
 <Right Wing Equipment>
 LRM 15
-IS Ammo LRM-15
 ISERMediumLaser
 ISERMediumLaser
 SRM 6
@@ -101,8 +102,20 @@ SRM 6
 <Aft Equipment>
 ISERMediumLaser
 ISERMediumLaser
-IS Ammo LRM-15
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+IS Ammo SRM-6
+IS Ammo SRM-6
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo LRM-15
+</Fuselage Equipment>
 
 <source>
 TRO 3085 - Jihad

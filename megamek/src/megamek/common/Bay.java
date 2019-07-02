@@ -1,16 +1,18 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- */
+* MegaMek -
+* Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common;
 
@@ -28,10 +30,10 @@ public class Bay implements Transporter, ITechnology {
     // Private attributes and helper functions.
 
     private static final long serialVersionUID = -9056450317468016272L;
-    
+
     public final static String FIELD_SEPARATOR = ":";
     public final static String FACING_PREFIX = "f";
-    
+
     int doors = 1;
     int doorsNext = 1;
     int currentdoors = doors;
@@ -77,7 +79,8 @@ public class Bay implements Transporter, ITechnology {
      *
      * @param space
      *            - The weight of troops (in tons) this space can carry.
-     * @param bayNumber2
+     * @param doors
+     * @param bayNumber
      */
     public Bay(double space, int doors, int bayNumber) {
         totalSpace = space;
@@ -87,17 +90,17 @@ public class Bay implements Transporter, ITechnology {
         this.bayNumber = bayNumber;
         damage = 0;
     }
-    
+
     /**
      * Bay damage to unit transport bays is tracked by number of cubicles/units. Damage
      * to cargo bays is tracked by cargo tonnage.
-     * 
+     *
      * @return The reduction of bay capacity due to damage.
      */
     public double getBayDamage() {
     	return damage;
     }
-    
+
     /**
      * Bay damage to unit transport bays is tracked by number of cubicles/units. Damage
      * to cargo bays is tracked by cargo tonnage.
@@ -107,7 +110,7 @@ public class Bay implements Transporter, ITechnology {
     public void setBayDamage(double damage) {
     	this.damage = Math.min(damage, totalSpace);
     }
-    
+
     // the starting number of doors for the bay.
     public int getDoors() {
         return doors;
@@ -122,11 +125,11 @@ public class Bay implements Transporter, ITechnology {
     public int getCurrentDoors() {
         return currentdoors;
     }
-    
+
     public void setCurrentDoors(int d) {
     	currentdoors = d;
     }
-    
+
     // for setting doors after this launch
     public void setDoorsNext(int d) {
         doorsNext = d;
@@ -144,11 +147,11 @@ public class Bay implements Transporter, ITechnology {
         unloadedThisTurn = 0;
         loadedThisTurn = 0;
     }
-    
+
     /**
      * Most bay types track space by individual units. Infantry bays have variable space requirements
      * and must track by cubicle tonnage.
-     * 
+     *
      * @param unit The unit to load/unload.
      * @return     The amount of bay space taken up by the unit.
      */
@@ -162,7 +165,7 @@ public class Bay implements Transporter, ITechnology {
         currentSpace = totalSpace;
         resetCounts();
     }
-    
+
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
@@ -186,7 +189,7 @@ public class Bay implements Transporter, ITechnology {
         if (currentdoors <= loadedThisTurn) {
             result = false;
         }
-        
+
         // Return our result.
         return result;
     }
@@ -197,7 +200,7 @@ public class Bay implements Transporter, ITechnology {
      *
      * @return
      */
-    
+
     // can't load, launch or recover into a damaged bay, but you can unload it
     public boolean canUnloadUnits() {
         return currentdoors > unloadedThisTurn;
@@ -330,7 +333,7 @@ public class Bay implements Transporter, ITechnology {
         return numDoorsString() + "  - " + getUnused()
                 + (getUnused() > 1 ? " units" : " unit");
     }
-    
+
     protected String numDoorsString() {
         return "(" + getCurrentDoors()
             + ((getCurrentDoors() == 1)?" door":" doors") + ")";
@@ -348,7 +351,7 @@ public class Bay implements Transporter, ITechnology {
     public double getUnused() {
         return currentSpace - damage;
     }
-    
+
     /**
      * @return The amount of unused space in the bay expressed in slots. For most bays this is the
      *         same as the the unused space, but bays for units that can take up a variable amount
@@ -358,7 +361,7 @@ public class Bay implements Transporter, ITechnology {
     public double getUnusedSlots() {
         return currentSpace;
     }
-    
+
     /**
      * @return A String that describes the default slot type. Only meaningful for bays with variable
      *         space requirements (like infantry).
@@ -413,7 +416,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     @Override
-    public int getCargoMpReduction() {
+    public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
 
@@ -432,22 +435,22 @@ public class Bay implements Transporter, ITechnology {
 
     // destroy a door
     public void destroyDoor() {
-    	if (getCurrentDoors() > 0) 
+    	if (getCurrentDoors() > 0)
     		setCurrentDoors(getCurrentDoors() - 1);
     }
-    
+
     // restore a door
     public void restoreDoor() {
     	if (getCurrentDoors() < getDoors()) {
     		setCurrentDoors(getCurrentDoors() + 1);
     	}
     }
-    
+
     // restore all doors
     public void restoreAllDoors() {
     	setCurrentDoors(getDoors());
     }
-    
+
     public int getNumberUnloadedThisTurn() {
         return unloadedThisTurn;
     }
@@ -460,7 +463,7 @@ public class Bay implements Transporter, ITechnology {
     public double getWeight() {
         return totalSpace;
     }
-    
+
     /**
      * @param clan  Whether the bay is installed in a Clan unit. Needed for infantry bays.
      * @return      The number of additional crew provided by the bay. This includes transport bays only;
@@ -481,11 +484,11 @@ public class Bay implements Transporter, ITechnology {
     public double getCapacity() {
         return totalSpace;
     }
-    
+
     public int getBayNumber() {
         return bayNumber;
     }
-    
+
     /**
      * Some bays (dropshuttle and repair facility) have a maximum number per armor facing.
      * @return The facing of the bay, or Entity.LOC_NONE if the bay does not require a facing.
@@ -497,14 +500,13 @@ public class Bay implements Transporter, ITechnology {
     /**
      * Sets the armor facing for the bay, if the bay type requires it. If not required by the bay
      * type, does nothing.
-     * 
-     * @param value The location to use for the facing.
+     *
+     * @param facing The location to use for the facing.
      */
     public void setFacing(int facing) {
         // do nothing by default
     }
 
-    
     @Override
     public int hardpointCost() {
         return 0;
@@ -514,7 +516,7 @@ public class Bay implements Transporter, ITechnology {
     public void setGame(IGame game) {
         this.game = game;
     }
-    
+
     // Use cargo/infantry for default tech advancement
     public static TechAdvancement techAdvancement() {
         return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
@@ -522,7 +524,7 @@ public class Bay implements Transporter, ITechnology {
                 .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     public TechAdvancement getTechAdvancement() {
         return Bay.techAdvancement();
     }
@@ -618,7 +620,7 @@ public class Bay implements Transporter, ITechnology {
     public boolean isQuarters() {
         return false;
     }
-    
+
     /**
      * @return true if this bay represents cargo capacity rather than unit transport or crew quarters.
      */

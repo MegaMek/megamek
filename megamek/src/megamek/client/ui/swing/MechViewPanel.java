@@ -39,6 +39,7 @@ import javax.swing.SwingConstants;
 import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.common.Entity;
 import megamek.common.MechView;
+import megamek.common.templates.TROView;
 
 
 public class MechViewPanel extends JPanel {
@@ -114,6 +115,25 @@ public class MechViewPanel extends JPanel {
     public void setMech(Entity entity, MechView mechView){
         reset();        
         txtMek.setText(mechView.getMechReadout());
+        txtMek.setCaretPosition(0);
+        Image image = FluffImageHelper.getFluffImage(entity);
+        icon = null;
+        if(null != image) {
+            // We don't want this window to be too big, so scale large images
+            if (image.getWidth(this) > DEFAULT_WIDTH)
+            {
+                double aspect_ratio = (float)image.getWidth(this) / image.getHeight(this);
+                image = image.getScaledInstance(DEFAULT_WIDTH, 
+                        (int)(DEFAULT_WIDTH/aspect_ratio), Image.SCALE_FAST);
+            }            
+            icon = new ImageIcon(image);
+            lblMek.setIcon(icon);
+        }  
+    }
+    
+    public void setMech(Entity entity, TROView troView){
+        reset();
+        txtMek.setText(troView.processTemplate());
         txtMek.setCaretPosition(0);
         Image image = FluffImageHelper.getFluffImage(entity);
         icon = null;

@@ -116,7 +116,6 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     private JPanel panPassword = new JPanel();
     private JLabel labPass = new JLabel(Messages.getString("GameOptionsDialog.Password")); //$NON-NLS-1$
     private JTextField texPass = new JTextField(15);
-
     private JPanel panButtons = new JPanel();
     private JButton butSave = new JButton(Messages.getString("GameOptionsDialog.Save")); //$NON-NLS-1$
     private JButton butLoad = new JButton(Messages.getString("GameOptionsDialog.Load")); //$NON-NLS-1$
@@ -331,6 +330,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         JPanel panText = new JPanel();
         JLabel lblSearch = new JLabel(Messages.getString("GameOptionsDialog.Search") + ":");
         txtSearch = new JTextField("");
+	lblSearch.setLabelFor(txtSearch);
         lblSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
         txtSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
@@ -772,7 +772,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
 
     private void setupPassword() {
         panPassword.setLayout(new BorderLayout());
-
+	labPass.setLabelFor(texPass);
         panPassword.add(labPass, BorderLayout.WEST);
         panPassword.add(texPass, BorderLayout.CENTER);
     }

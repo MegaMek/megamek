@@ -14,7 +14,9 @@
 package megamek.client.bot.princess;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.common.Coords;
@@ -542,6 +544,36 @@ public class BotGeometry {
         }
     }
 
+    /**
+     * Gets all hexes that form a larger hex around the given coordinates with the given "radius".
+     * @param coords The coordinates around which we want to draw the donut
+     * @param radius The donut's radius. 0 returns a single hex.
+     * @return
+     */
+    public static Set<Coords> getHexDonut(Coords coords, int radius) { 
+        Set<Coords> retval = new HashSet<>();
+        
+        // algorithm outline: travel to the southwest a number of hexes equal to the radius
+        // then, "draw" the hex sides in sequence, moving north first to draw the west side, 
+        // then rotating clockwise and moving northeast to draw the northwest side and so on, until we circle around. 
+        // the length of a hex side is equivalent to the radius
+        Coords currentHex = coords.translated(4, radius);
+        retval.add(currentHex);
+        
+        if(radius == 0) {
+            return retval;
+        }
+        
+        for(int direction = 0; direction < 6; direction++) {
+            for(int translation = 0; translation < radius; translation++) {
+                currentHex = currentHex.translated(direction);
+                retval.add(currentHex);
+            }
+        }
+        
+        return retval;
+    }
+    
     /**
      * runs a series of self tests to make sure geometry is done correctly
      */

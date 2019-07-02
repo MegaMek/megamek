@@ -145,6 +145,9 @@ Naval Laser 45
 Medium Laser
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <Left Broadsides Equipment>
 (B) Naval PPC (Medium)
 Naval PPC (Medium)
@@ -212,6 +215,3 @@ TRO3075 - Star League
 30
 </escape_pod>
 
-<history>
-The ship in the TRO has too many doors, and 1 point of armor too much. Reduced the doors and 1 point of armor off the nose to make it legal.
-</history>

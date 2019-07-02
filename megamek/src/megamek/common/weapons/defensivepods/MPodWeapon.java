@@ -47,7 +47,7 @@ public abstract class MPodWeapon extends AmmoWeapon {
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
-        tonnage = 1.0f;
+        tonnage = 1.0;
         criticals = 1;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_BALLISTIC)
                 .or(F_ONESHOT).or(F_M_POD);

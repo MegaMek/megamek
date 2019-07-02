@@ -43,7 +43,7 @@ cargobay:300.0:2:2
 1stclassquarters:100.0:0
 crewquarters:210.0:0
 steeragequarters:0.0:0
-cargobay:1288.0:2:3
+cargobay:1288.0:2:7
 </transporters>
 
 <SafeThrust>
@@ -95,8 +95,6 @@ ISArtemisIV
 ISERLargeLaser
 Medium Laser
 Medium Laser
-ISMobileHPG
-ISSmallNavalCommScannerSuite
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -147,6 +145,11 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
+<Hull Equipment>
+ISMobileHPG
+ISSmallNavalCommScannerSuite
+</Hull Equipment>
+
 <structural_integrity>
 30
 </structural_integrity>
@@ -158,6 +161,10 @@ H:Liberation of Terra II - Star League
 <tonnage>
 8400.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 44

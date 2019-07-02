@@ -33,6 +33,7 @@ public class NAC10Weapon extends NavalACWeapon {
         this.name = "Naval Autocannon (NAC/10)";
         this.setInternalName(this.name);
         this.addLookupName("NAC10");
+        this.shortName = "NAC/10";
         this.heat = 30;
         this.damage = 10;
         this.rackSize = 10;
@@ -40,7 +41,7 @@ public class NAC10Weapon extends NavalACWeapon {
         this.mediumRange = 22;
         this.longRange = 33;
         this.extremeRange = 44;
-        this.tonnage = 2000.0f;
+        this.tonnage = 2000.0;
         this.bv = 1896;
         this.cost = 2000000;
         this.shortAV = 10;

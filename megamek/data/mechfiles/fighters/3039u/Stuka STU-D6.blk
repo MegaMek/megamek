@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,51 +20,32 @@ Stuka
 STU-D6
 </Model>
 
-<Tonnage>
-100
-</Tonnage>
+<year>
+3051
+</year>
+
+<originalBuildYear>
+3051
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-84
-54
-54
-56
-</Armor>
-
-<Nose Equipment>
-SRM 6
-SRM 6
-Medium Laser
-IS Ammo SRM-6
-IS Ammo SRM-6
-IS Ammo SRM-6
-IS Ammo SRM-6
-</Nose Equipment>
-
-<Left Wing Equipment>
-LRM 20
-Large Laser
-Large Laser
-IS Ammo LRM-20
-IS Ammo LRM-20
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-LRM 20
-Large Laser
-Large Laser
-IS Ammo LRM-20
-IS Ammo LRM-20
-</Right Wing Equipment>
-
-<Aft Equipment>
-Medium Laser
-Medium Laser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 20
@@ -78,30 +59,59 @@ Medium Laser
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+2
+</engine_type>
 
-<year>
-3051
-</year>
+<armor>
+84
+54
+54
+56
+</armor>
+
+<Nose Equipment>
+SRM 6
+SRM 6
+Medium Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+LRM 20
+Large Laser
+Large Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+LRM 20
+Large Laser
+Large Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-6
+IS Ammo SRM-6
+IS Ammo SRM-6
+IS Ammo SRM-6
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Clan Invasion
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+100.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

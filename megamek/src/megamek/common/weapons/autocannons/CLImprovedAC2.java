@@ -44,7 +44,7 @@ public class CLImprovedAC2 extends ACWeapon {
         mediumRange = 8;
         longRange = 16;
         extremeRange = 32;
-        tonnage = 5.0f;
+        tonnage = 5.0;
         criticals = 1;
         bv = 37;
         cost = 75000;

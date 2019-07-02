@@ -39,7 +39,7 @@ public class ISSRM2 extends SRMWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 1.0f;
+        tonnage = 1.0;
         criticals = 1;
         bv = 21;
         flags = flags.or(F_NO_FIRES);
@@ -47,6 +47,7 @@ public class ISSRM2 extends SRMWeapon {
         shortAV = 2;
         maxRange = RANGE_SHORT;
         rulesRefs = "229,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)
         	.setUnofficial(false)

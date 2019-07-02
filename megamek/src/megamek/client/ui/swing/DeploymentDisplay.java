@@ -43,6 +43,7 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
+import megamek.common.ProtomechClampMount;
 import megamek.common.Terrains;
 import megamek.common.Transporter;
 import megamek.common.VTOL;
@@ -759,19 +760,19 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                 SharedUtility.getDisplayArray(choices), null);
                 Entity other = (Entity) SharedUtility.getTargetPicked(choices, input);
                 if (!(other instanceof Infantry)) {
-                    Vector<Integer> bayChoices = new Vector<Integer>();
+                    List<Integer> bayChoices = new ArrayList<>();
                     for (Transporter t : ce().getTransports()) {
                         if (t.canLoad(other) && (t instanceof Bay)) {
                             bayChoices.add(((Bay) t).getBayNumber());
                         }
                     }
-                    String[] retVal = new String[bayChoices.size()];
-                    int i = 0;
-                    for (Integer bn : bayChoices) {
-                        retVal[i++] = bn.toString() + " (Free Slots: "
-                                + (int) ce().getBayById(bn).getUnused() + ")";
-                    }
                     if ((bayChoices.size() > 1) && !(other instanceof Infantry)) {
+                        String[] retVal = new String[bayChoices.size()];
+                        int i = 0;
+                        for (Integer bn : bayChoices) {
+                            retVal[i++] = bn.toString() + " (Free Slots: "
+                                    + (int) ce().getBayById(bn).getUnused() + ")";
+                        }
                         String title = Messages.getString("DeploymentDisplay." + //$NON-NLS-1$
                                 "loadUnitBayNumberDialog.title"); //$NON-NLS-1$
                         String msg = Messages.getString("DeploymentDisplay." + //$NON-NLS-1$
@@ -787,6 +788,39 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         // We need to update the entity here so that the server
                         // knows about our target bay
                         client.sendUpdateEntity(other);
+                    } else if (other.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                        bayChoices = new ArrayList<>();
+                        for (Transporter t : ce().getTransports()) {
+                            if ((t instanceof ProtomechClampMount)
+                                        && t.canLoad(other)) {
+                                bayChoices.add(((ProtomechClampMount) t).isRear()? 1 : 0);
+                            }
+                        }
+                        if (bayChoices.size() > 1) {
+                            String[] retVal = new String[bayChoices.size()];
+                            int i = 0;
+                            for (Integer bn : bayChoices) {
+                                retVal[i++] = bn > 0?
+                                        Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
+                                            Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
+                            }
+                            String bayString = (String) JOptionPane
+                                    .showInputDialog(
+                                            clientgui,
+                                            Messages.getString(
+                                                    "MovementDisplay.loadProtoClampMountDialog.message",
+                                                    new Object[]{ce().getShortName()}), //$NON-NLS-1$
+                                            Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"), //$NON-NLS-1$
+                                            JOptionPane.QUESTION_MESSAGE, null, retVal,
+                                            null);
+                            other.setTargetBay(bayString.equals(Messages
+                                    .getString("MovementDisplay.loadProtoClampMountDialog.front"))? 0 : 1);
+                            // We need to update the entity here so that the server knows
+                            // about our target bay
+                            clientgui.getClient().sendUpdateEntity(other);
+                        } else {
+                            other.setTargetBay(-1); // Safety set!
+                        }
                     } else if (other != null) {
                         other.setTargetBay(-1); // Safety set!
                     }
@@ -989,8 +1023,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
         List<Entity> entities = clientgui.getClient().getGame()
                 .getEntitiesVector();
-        for (Entity other : entities) {        
-            if (other.isSelectableThisTurn() && ce().canLoad(other, false)) {
+        for (Entity other : entities) {
+            if (other.isSelectableThisTurn() && ce().canLoad(other, false)
+                    // We can't depend on the transport id to be set because we sent a server update
+                    // before loading on the client side, and the loaded unit may have been reset
+                    // by the resulting update from the server.
+                    && !ce().getLoadedUnits().contains(other)
+                    // If you want to load a trailer into a dropship or large support vee, do it in the lobby
+                    // The 'load' button should not allow trailers - that's what 'tow' is for.
+                    && !other.isTrailer()) {
                 choices.add(other);
             }
         }

@@ -32,6 +32,10 @@ Alliance Space Station
 IS Level 3
 </type>
 
+<designtype>
+1
+</designtype>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -48,7 +52,7 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:67464.0:1:4
+cargobay:67464.0:1:8
 </transporters>
 
 <SafeThrust>
@@ -189,6 +193,9 @@ Medium Laser
 Medium Laser
 Medium Laser
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 1

@@ -41,7 +41,7 @@ Aerodyne
 1stclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:20.0:0
-cargobay:3.5:1:1
+cargobay:3.5:1:5
 </transporters>
 
 <SafeThrust>
@@ -82,7 +82,6 @@ cargobay:3.5:1:1
 <Nose Equipment>
 ISLargePulseLaser
 ISERLargeLaser
-BeagleActiveProbe
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -97,6 +96,10 @@ ISMediumPulseLaser
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Hull Equipment>
+BeagleActiveProbe
+</Hull Equipment>
 
 <structural_integrity>
 11

@@ -32,15 +32,19 @@ import java.io.StreamTokenizer;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.Building.BasementType;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.util.MegaMekFile;
@@ -140,6 +144,16 @@ public class Board implements Serializable, IBoard {
      * Option to turn have roads auto-exiting to pavement.
      */
     private boolean roadsAutoExit = true;
+
+    /**
+     * A description of the map.
+     */
+    private String description;
+
+    /**
+     * Per-hex annotations on the map.
+     */
+    private Map<Coords, Collection<String>> annotations = new HashMap<>();
 
     /**
      * Creates a new board with zero as its width and height parameters.
@@ -879,6 +893,35 @@ public class Board implements Serializable, IBoard {
                     } else {
                         System.err.println("Board specified background image, " + "but path couldn't be found! Path: "
                                 + bgFile.getPath());
+                    }
+                } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("description")) {
+                    st.nextToken();
+                    if (st.ttype == '"') {
+                        String d = getDescription();
+                        if (null == d) {
+                            setDescription(st.sval);
+                        } else {
+                            setDescription(d + "\n\n" + st.sval);
+                        }
+                    }
+                } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("note")) {
+                    st.nextToken();
+                    if (st.ttype == StreamTokenizer.TT_NUMBER) {
+                        int x, y, coordWidth = 100;
+                        int coords = (int)st.nval;
+                        if (coords > 9999) {
+                            coordWidth = 1000;
+                        }
+                        y = coords % coordWidth;
+                        coords /= coordWidth;
+                        x = coords;
+                        st.nextToken();
+                        Coords c = new Coords(x, y);
+                        if (st.ttype == '"') {
+                            Collection<String> a = new ArrayList<>(getAnnotations(c));
+                            a.add(st.sval);
+                            setAnnotations(c, a);
+                        }
                     }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("end")) {
                     break;
@@ -1718,5 +1761,62 @@ public class Board implements Serializable, IBoard {
 
     public boolean hasBoardBackground() {
         return (backgroundPaths != null) && backgroundPaths.size() > 0;
+    }
+
+    /**
+     * Gets the description of the map.
+     * @return The description of the map, if one exists, otherwise null.
+     */
+    @Nullable
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description of the map.
+     * @param s The description of the map; may be null.
+     */
+    public void setDescription(@Nullable String s) {
+        description = s;
+    }
+
+    /**
+     * Gets every annotations on the map.
+     * @return A read-only map of per-hex annotations.
+     */
+    public Map<Coords, Collection<String>> getAnnotations() {
+        return Collections.unmodifiableMap(annotations);
+    }
+
+    /**
+     * Gets the annotations associated with a hex.
+     * @param x The X-Coordinate of the hex.
+     * @param y The Y-Coordinate of the hex.
+     * @return A collection of annotations for the hex.
+     */
+    public Collection<String> getAnnotations(int x, int y) {
+        return getAnnotations(new Coords(x, y));
+    }
+
+    /**
+     * Gets the annotations associated with a hex.
+     * @param c Coordinates of the hex.
+     * @return A collection of annotations for the hex.
+     */
+    public Collection<String> getAnnotations(Coords c) {
+        return annotations.getOrDefault(c, Collections.emptyList());
+    }
+
+    /**
+     * Sets annotations on a given hex.
+     * @param c Coordinates of the hex to apply the annotations to.
+     * @param a A collection of annotations to assign to the hex. This may be null.
+     */
+    public void setAnnotations(Coords c, @Nullable Collection<String> a) {
+        if (null == a || a.isEmpty()) {
+            annotations.remove(c);
+        } else {
+            annotations.put(c, a);
+        }
     }
 }

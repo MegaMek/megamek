@@ -102,14 +102,10 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             return true;
         }
         
-        Entity entityTarget;
-        if (game.getPhase() == IGame.Phase.PHASE_OFFBOARD) {
-            convertHomingShotToEntityTarget();
-            entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
-                    .getTarget(game) : null;
-        } else {
-            entityTarget = (Entity) target;
-        }
+        convertHomingShotToEntityTarget();
+        Entity entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
+                .getTarget(game) : null;
+                
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding

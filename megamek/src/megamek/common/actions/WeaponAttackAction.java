@@ -2930,7 +2930,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
-        if (game.getOptions().booleanOption("tacops_tank_crews") && (ae instanceof Tank) && ae.isUnjammingRAC()
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS) && (ae instanceof Tank) && ae.isUnjammingRAC()
                 && (ae.getCrew().getSize() == 1)) {
             return "Vehicles with only 1 crewman may not take other actions while unjamming";
         }

@@ -91,7 +91,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
             return;
         } else {
             //See indirect flight times table, TO p181
-            if (distance <= 17)
+            if (distance <= Board.DEFAULT_BOARD_HEIGHT)
                 turnsTilHit = 0;
             else if (distance <= (8 * Board.DEFAULT_BOARD_HEIGHT))
                 turnsTilHit = 1;

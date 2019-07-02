@@ -24,6 +24,7 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
+import megamek.common.Board;
 import megamek.common.BombType;
 import megamek.common.CalledShot;
 import megamek.common.Compute;
@@ -384,6 +385,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                                     || (game.getPhase() == IGame.Phase.PHASE_FIRING));
         
+        boolean isCruiseMissile = weapon.getType().hasFlag(WeaponType.F_CRUISE_MISSILE);
+        
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
                 && ((((te.getMovementMode() == EntityMovementMode.VTOL)
@@ -443,7 +446,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 AmmoType bAmmo = bayWAmmo != null ? (AmmoType) bayWAmmo.getType() : null;
                 
                 //If we're using optional rules and firing Arrow Homing missiles from a bay...
-                isHoming = bAmmo.getMunitionType() == AmmoType.M_HOMING;
+                isHoming = bAmmo != null && bAmmo.getMunitionType() == AmmoType.M_HOMING;
+                
+                //If the artillery bay is firing cruise missiles, they have some special rules
+                //It is possible to combine cruise missiles and other artillery in a bay, so
+                //set this to true if any of the weapons are cruise missile launchers.
+                if (bayW.getType().hasFlag(WeaponType.F_CRUISE_MISSILE)) {
+                    isCruiseMissile = true;
+                }
 
                 mLinker = bayW.getLinkedBy();
                 bApollo = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
@@ -485,7 +495,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         String reason = WeaponAttackAction.toHitIsImpossible(game, ae, target, swarmPrimaryTarget, swarmSecondaryTarget,
                 weapon, atype, wtype, ttype, exchangeSwarmTarget, usesAmmo, te, isTAG, isInferno, isAttackerInfantry,
                 isIndirect, attackerId, weaponId, isArtilleryIndirect, ammo, isArtilleryFLAK, targetInBuilding,
-                isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile);
+                isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile, isCruiseMissile);
         if (reason != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
         }
@@ -2869,7 +2879,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             boolean exchangeSwarmTarget, boolean usesAmmo, Entity te, boolean isTAG, boolean isInferno,
             boolean isAttackerInfantry, boolean isIndirect, int attackerId, int weaponId, boolean isArtilleryIndirect,
             Mounted ammo, boolean isArtilleryFLAK, boolean targetInBuilding, boolean isArtilleryDirect,
-            boolean isTargetECMAffected, boolean isStrafing, boolean isBearingsOnlyMissile) {
+            boolean isTargetECMAffected, boolean isStrafing, boolean isBearingsOnlyMissile, boolean isCruiseMissile) {
         boolean isHoming = false;
         ToHitData toHit = null;
 
@@ -4249,10 +4259,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Handle direct artillery attacks.
         if (isArtilleryDirect) {
-            if (wtype.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
+            if (isCruiseMissile) {
                 return "Cruise Missiles can't be fired directly";
             }
-            if (distance > 17) {
+            if (distance > Board.DEFAULT_BOARD_HEIGHT) {
                 return "Direct artillery attack at range >17 hexes.";
             }
             if (isHoming) {
@@ -4267,7 +4277,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (boardRange > wtype.getLongRange()) {
                 return "Indirect artillery attack out of range";
             }
-            if (((distance <= 17) && !ae.isAirborne()) && !(losMods.getValue() == TargetRoll.IMPOSSIBLE)) {
+            if (((distance <= Board.DEFAULT_BOARD_HEIGHT) && !ae.isAirborne()) && !(losMods.getValue() == TargetRoll.IMPOSSIBLE)) {
                 return "Cannot fire indirectly at range <=17 hexes unless no LOS.";
             }
             if (ae.isAirborne() && (ae.getAltitude() >= 10)) {

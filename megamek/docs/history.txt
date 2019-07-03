@@ -25,6 +25,7 @@ v0.45.5-SNAPSHOT
 + Issue #1352: Changing Planetary Conditions prior to starting a new game causes a -40C without input
 + Issue #1400: Fleeing while carrying a non-existent mechwarrior no longer causes a soft-lock
 + Data: Corsair fighter once again shows proper sprite
++ PR #1401: Improved bot behavior using field gun infantry.
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

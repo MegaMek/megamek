@@ -94,9 +94,12 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
             .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
             double utility = braveryMod;
             
-            // The further I am from a target, the lower this path ranks 
-            // (weighted by Hyper Aggression.
-            utility -= calculateAggressionMod(movingUnit, pathCopy, game, formula);
+            // If an infantry unit is not in range to do damage,
+            // then we want it to move closer. Otherwise, let's avoid charging up to unmoved units,
+            // that's not going to end well.
+            if(maximumDamageDone <= 0) {
+            	utility -= calculateAggressionMod(movingUnit, pathCopy, game, formula);
+            }
             
             // The further I am from my teammates, the lower this path 
             // ranks (weighted by Herd Mentality).
@@ -151,23 +154,26 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
                 range = 1;
             }
 
-            // for infantry, facing doesn't matter (unless you're using "dig in" rules, but we're not there yet)
+            MovePath blankEnemyPath = new MovePath(getOwner().getGame(), enemy);
+            
+            // for infantry, facing doesn't matter because you rotate for free
+            // (unless you're using "dig in" rules, but we're not there yet)
             returnResponse.addToMyEstimatedDamage(
-                        getMaxDamageAtRange(getFireControl(),
-                                            path.getEntity(),
-                                            range,
-                                            useExtremeRange,
-                                            useLOSRange) * damageDiscount);
+                        ((InfantryFireControl) getFireControl()).getMaxDamageAtRange(
+							path,
+							blankEnemyPath,
+							range,
+							useExtremeRange,
+							useLOSRange) * damageDiscount);
 
             //in general if an enemy can end its position in range, it can hit me
             returnResponse.addToEstimatedEnemyDamage(
-                    getMaxDamageAtRange((InfantryFireControl) getFireControl(),
-                                        enemy,
-                                        path,
-                                        range,
-                                        useExtremeRange,
-                                        useLOSRange)
-                                                     * damageDiscount);
+            		((InfantryFireControl) getFireControl()).getMaxDamageAtRange(
+            				blankEnemyPath,
+            				path,
+            				range,
+            				useExtremeRange,
+            				useLOSRange) * damageDiscount);
             
             //It is especially embarrassing if the enemy can move behind or flank me and then kick me
             if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
@@ -179,12 +185,5 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
-    }
-    
-    double getMaxDamageAtRange(InfantryFireControl fireControl, Entity shooter, MovePath movePath,
-            int range, boolean useExtremeRange,
-            boolean useLOSRange) {
-        return fireControl.getMaxDamageAtRange(shooter, movePath, range, useExtremeRange,
-                                    useLOSRange);
     }
 }

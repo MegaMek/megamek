@@ -45,6 +45,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
@@ -3612,8 +3613,18 @@ public class Compute {
      *
      * @return the <code>int</code> ID of weapon mode
      */
-
     public static int spinUpCannon(IGame cgame, WeaponAttackAction atk) {
+    	return spinUpCannon(cgame, atk, Compute.d6(2));
+    }
+    
+    /**
+     * If this is an ultra or rotary cannon, lets see about 'spinning it up' for
+     * extra damage
+     *
+     * @return the <code>int</code> ID of weapon mode
+     */
+
+    public static int spinUpCannon(IGame cgame, WeaponAttackAction atk, int spinupThreshold) {
 
         int threshold = 12;
         int test, final_spin;
@@ -3625,11 +3636,13 @@ public class Compute {
         shooter = atk.getEntity(cgame);
         weapon = shooter.getEquipment(atk.getWeaponId());
         wtype = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
+        
+        boolean rapidAC = (wtype.getAmmoType() == AmmoType.T_AC) && cgame.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC);
 
         if (!((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-              || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) || (wtype
-                                                                              .getAmmoType() == AmmoType.T_AC_ROTARY)
-        )) {
+              || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) 
+              || (wtype.getAmmoType() == AmmoType.T_AC_ROTARY)
+              || rapidAC)) {
             return 0;
         }
 
@@ -3637,7 +3650,7 @@ public class Compute {
         threshold = atk.toHit(cgame).getValue();
 
         // Set the weapon to single shot mode
-        weapon.setMode("Single");
+        weapon.setMode(rapidAC ? "" : Weapon.Mode_AC_Single);
         final_spin = 0;
 
         // If weapon can't hit target, exit the function with the weapon on
@@ -3648,17 +3661,18 @@ public class Compute {
         }
 
         // Set a random 2d6 roll
-        test = Compute.d6(2);
+        test = spinupThreshold;
 
         // If random roll is >= to-hit + 1, then set double-spin
         if (test >= (threshold + 1)) {
             final_spin = 1;
             if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
                 || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
-                weapon.setMode("Ultra");
-            }
-            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                weapon.setMode("2-shot");
+                weapon.setMode(Weapon.Mode_UAC_Ultra);
+            } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                weapon.setMode(Weapon.Mode_RAC_TwoShot);
+            } else if (rapidAC) {
+            	weapon.setMode(Weapon.Mode_AC_Rapid);
             }
         }
 
@@ -3668,13 +3682,13 @@ public class Compute {
             // If random roll is >= to-hit + 2 then set to quad-spin
             if (test >= (threshold + 2)) {
                 final_spin = 2;
-                weapon.setMode("4-shot");
+                weapon.setMode(Weapon.Mode_RAC_FourShot);
             }
 
             // If random roll is >= to-hit + 3 then set to six-spin
             if (test >= (threshold + 3)) {
                 final_spin = 3;
-                weapon.setMode("6-shot");
+                weapon.setMode(Weapon.Mode_RAC_SixShot);
             }
         }
         return final_spin;

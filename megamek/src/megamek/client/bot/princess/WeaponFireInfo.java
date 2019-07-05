@@ -63,6 +63,7 @@ public class WeaponFireInfo {
     private IGame game;
     private EntityState shooterState = null;
     private EntityState targetState = null;
+    private Integer updatedFiringMode = null;
     private final Princess owner;
 
     /**
@@ -489,7 +490,7 @@ public class WeaponFireInfo {
      * @param shooterPath The path the attacker has moved.
      * @param assumeUnderFlightPath If TRUE, aero units will not check to make sure the target is under their flight
      *                              path.
-     * @param guess Set TRUE to esitmate the chance to hit rather than doing the full calculation.
+     * @param guess Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     void initDamage(@Nullable final MovePath shooterPath,
                     final boolean assumeUnderFlightPath,
@@ -522,6 +523,8 @@ public class WeaponFireInfo {
 
             // If we can't hit, set everything zero and return..
             if (12 < getToHit().getValue()) {
+            	// todo: if weapon capable of indirect fire, switch mode to indirect and try again
+            	
                 owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
                                                                       .append(getToHit().getValue()).toString());
                 setProbabilityToHit(0);
@@ -532,13 +535,21 @@ public class WeaponFireInfo {
                 setExpectedDamageOnHit(0);
                 return;
             }
-
+            
             if (getShooterState().hasNaturalAptGun()) {
                 msg.append("\n\tAttacker has Natural Aptitude Gunnery");
             }
             setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
             msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
 
+            // now that we've calculated hit odds, if we're shooting
+            // a weapon capable of rapid fire, it's time to decide whether we're going to spin it up
+            String currentFireMode = getWeapon().curMode().getName();
+            int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinupThreshold());
+            if(!currentFireMode.equals(getWeapon().curMode().getName())) {
+            	setUpdatedFiringMode(spinMode);
+            }
+            
             setHeat(computeHeat(weapon));
             msg.append("\n\tHeat: ").append(getHeat());
 
@@ -647,5 +658,17 @@ public class WeaponFireInfo {
                 + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
                 + ", Kill Prob: " + LOG_PER.format(getKillProbability());
 
+    }
+
+    /**
+     * The updated firing mode, if any of the weapon involved in this attack.
+     * Null if no update required.
+     */
+    public Integer getUpdatedFiringMode() {
+    	return updatedFiringMode;
+    }
+    
+    public void setUpdatedFiringMode(int mode) {
+    	updatedFiringMode = mode;
     }
 }

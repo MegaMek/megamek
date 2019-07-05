@@ -545,7 +545,7 @@ public class WeaponFireInfo {
             // now that we've calculated hit odds, if we're shooting
             // a weapon capable of rapid fire, it's time to decide whether we're going to spin it up
             String currentFireMode = getWeapon().curMode().getName();
-            int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getBehaviorSettings().getHyperAggressionIndex() + 2);
+            int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinupThreshold());
             if(!currentFireMode.equals(getWeapon().curMode().getName())) {
             	setUpdatedFiringMode(spinMode);
             }

@@ -1869,10 +1869,6 @@ public class FireControl {
         
         return myPlan;
     }
-
-    protected void goToRapidFire(WeaponFireInfo shoot) {
-    	
-    }
     
     protected int calcHeatTolerance(final Entity entity,
                                   @Nullable Boolean isAero) {

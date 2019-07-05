@@ -3614,7 +3614,7 @@ public class Compute {
      * @return the <code>int</code> ID of weapon mode
      */
     public static int spinUpCannon(IGame cgame, WeaponAttackAction atk) {
-    	return spinUpCannon(cgame, atk, Compute.d6(2));
+    	return spinUpCannon(cgame, atk, Compute.d6(2) - 1);
     }
     
     /**
@@ -3627,12 +3627,13 @@ public class Compute {
     public static int spinUpCannon(IGame cgame, WeaponAttackAction atk, int spinupThreshold) {
 
         int threshold = 12;
-        int test, final_spin;
+        int final_spin;
         Entity shooter;
         Mounted weapon;
         WeaponType wtype = new WeaponType();
 
         // Double check this is an Ultra or Rotary cannon
+        // or a standard AC with the TacOps rapid fire rule turned on
         shooter = atk.getEntity(cgame);
         weapon = shooter.getEquipment(atk.getWeaponId());
         wtype = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
@@ -3660,11 +3661,8 @@ public class Compute {
             return final_spin;
         }
 
-        // Set a random 2d6 roll
-        test = spinupThreshold;
-
         // If random roll is >= to-hit + 1, then set double-spin
-        if (test >= (threshold + 1)) {
+        if (spinupThreshold >= threshold) {
             final_spin = 1;
             if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
                 || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
@@ -3680,13 +3678,13 @@ public class Compute {
         if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
 
             // If random roll is >= to-hit + 2 then set to quad-spin
-            if (test >= (threshold + 2)) {
+            if (spinupThreshold >= (threshold + 1)) {
                 final_spin = 2;
                 weapon.setMode(Weapon.Mode_RAC_FourShot);
             }
 
             // If random roll is >= to-hit + 3 then set to six-spin
-            if (test >= (threshold + 3)) {
+            if (spinupThreshold >= (threshold + 2)) {
                 final_spin = 3;
                 weapon.setMode(Weapon.Mode_RAC_SixShot);
             }

@@ -35,6 +35,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.Weapon;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -523,7 +524,18 @@ public class WeaponFireInfo {
 
             // If we can't hit, set everything zero and return..
             if (12 < getToHit().getValue()) {
-            	// todo: if weapon capable of indirect fire, switch mode to indirect and try again
+            	// if we are able to switch the weapon to indirect fire mode, do so and try again
+            	if(!getWeapon().curMode().equals(Weapon.Mode_Missile_Indirect)) {
+	            	int indirectMode = getWeapon().setMode(Weapon.Mode_Missile_Indirect);
+            	
+	            	// this will be the case if the weapon is able to switch to indirect fire mode
+	            	if(indirectMode > -1) {
+	            		setUpdatedFiringMode(indirectMode);
+	            		initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
+	            		getWeapon().setMode(""); // make sure to reset the weapon firing mode
+	            		return;
+	            	}
+            	}
             	
                 owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
                                                                       .append(getToHit().getValue()).toString());

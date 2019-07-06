@@ -69,6 +69,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
@@ -2249,6 +2250,15 @@ public class FireControl {
                                                         final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
+        boolean shooterHasIDF = false;
+
+        for(Mounted weapon : shooter.getWeaponList()) {
+        	if(weapon.getType().hasModeType(Weapon.Mode_Missile_Indirect)) {
+        		shooterHasIDF = true;
+        		break;
+        	}
+        }
+        
         // Go through every unit in the game.
         for (final Entity entity : game.getEntitiesVector()) {
 
@@ -2261,7 +2271,9 @@ public class FireControl {
 
                 final LosEffects effects =
                         LosEffects.calculateLos(game, shooter.getId(), entity);
-                if (effects.canSee()) {
+                
+                // if we're in LOS or we have IDF capability
+                if (effects.canSee() || shooterHasIDF) {
                     targetableEnemyList.add(entity);
                 }
             }

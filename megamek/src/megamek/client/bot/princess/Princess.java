@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -552,7 +553,7 @@ public class Princess extends BotClient {
         try {
             // get the first entity that can act this turn make sure weapons 
             // are loaded
-            final Entity shooter = game.getFirstEntity(getMyTurn());
+            final Entity shooter = getEntityToFire(fireControlState);//ame.getFirstEntity(getMyTurn());
 
             // Forego firing if 
             // a) hidden, 
@@ -580,7 +581,6 @@ public class Princess extends BotClient {
                 }
             }
             
-            // TODO: Make hidden units spot since they can't do anything else
             if(shooter.isHidden()) {
                 skipFiring = true;
                 log(getClass(), METHOD_NAME, LogLevel.INFO, "Hidden unit skips firing.");
@@ -624,7 +624,13 @@ public class Princess extends BotClient {
                     }
     
                     // tell the game I want to fire
-                    sendAttackData(shooter.getId(), plan.getEntityActionVector());
+                    Vector<EntityAction> actions = plan.getEntityActionVector();
+                    EntityAction spotAction = getFireControl(shooter).getSpotAction(plan, shooter, fireControlState);
+                	if(spotAction != null) {
+                		actions.add(spotAction);
+                	}
+                    
+                    sendAttackData(shooter.getId(), actions);
                     return;
                 } else {
                     log(getClass(), METHOD_NAME, LogLevel.INFO,
@@ -636,6 +642,14 @@ public class Princess extends BotClient {
             // if I have decided to skip firing, let's consider unjamming some weapons or turrets anyway
             if(skipFiring) {
                 Vector<EntityAction> unjamPlan = getFireControl(shooter).getUnjamWeaponPlan(shooter);
+                
+                if(unjamPlan.size() == 0) {
+                	EntityAction spotAction = getFireControl(shooter).getSpotAction(null, shooter, fireControlState);
+                	if(spotAction != null) {
+                		unjamPlan.add(spotAction);
+                	}
+                }
+                
                 sendAttackData(shooter.getId(), unjamPlan);
                 return;
             }
@@ -854,6 +868,41 @@ public class Princess extends BotClient {
         }
     }
 
+    /**
+     * Gets an entity eligible to fire from a list contained in the fire control state.
+     */
+    Entity getEntityToFire(FireControlState fireControlState) {
+    	if(fireControlState.getOrderedFiringEntities().size() == 0) {
+    		initFiringEntities(fireControlState);
+    	}
+    	
+    	Entity entityToReturn = fireControlState.getOrderedFiringEntities().getFirst();
+    	fireControlState.getOrderedFiringEntities().removeFirst();
+    	return entityToReturn;
+    }
+    
+    /**
+     * Sorts firing entities to ensure that entities that can do indirect fire go after
+     * entities that cannot, so that IDF units go after spotting units.
+     */
+    private void initFiringEntities(FireControlState fireControlState) {
+    	List<Entity> myEntities = game.getPlayerEntities(this.getLocalPlayer(), true);
+    	fireControlState.clearOrderedFiringEntities();
+    	
+    	for(Entity entity : myEntities) {
+    		// if you can't fire, you can't fire.
+    		if(!game.getTurn().isValidEntity(entity, game, false)) {
+    			continue;
+    		}
+    		
+    		if(getFireControl(entity).entityCanIndirectFireMissile(fireControlState, entity)) {
+    			fireControlState.getOrderedFiringEntities().addLast(entity);
+    		} else {
+    			fireControlState.getOrderedFiringEntities().addFirst(entity);
+    		}
+    	}
+    }
+    
     /**
      * Loops through the list of entities controlled by this Princess instance 
      * and decides which should be moved first.
@@ -1407,11 +1456,12 @@ public class Princess extends BotClient {
             final List<Targetable> potentialTargets =
                     FireControl.getAllTargetableEnemyEntities(getLocalPlayer(),
                                                               getGame(),
-                                                              fireControlState);
+                                                              getFireControlState());
             for (final Targetable target : potentialTargets) {
                 damageMap.put(target.getTargetId(), 0d);
             }
 
+            getFireControlState().clearTransientData();
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }

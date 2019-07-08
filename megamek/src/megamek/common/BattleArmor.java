@@ -702,9 +702,11 @@ public class BattleArmor extends Infantry {
                 }
                 break;
             case Tank.LOC_REAR:
-                if ((getInternal(5) > 0) && (getInternal(6) > 0)) {
+                //These troopers only exist when you have Clan and CS/WoB units, so we need
+                //to ensure the array is large enough before checking whether they're dead.
+                if (((locations() >= 6) && (getInternal(5) > 0)) && ((locations() >= 7) && (getInternal(6) > 0))) {
                     loc = Compute.randomInt(2) + 5;
-                } else if (getInternal(5) > 0) {
+                } else if ((locations() >= 6) && (getInternal(5) > 0)) {
                     loc = 5;
                 } else {
                     loc = 6;

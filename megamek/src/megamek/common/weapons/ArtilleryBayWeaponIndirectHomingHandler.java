@@ -117,8 +117,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         
         //Determine what ammo we're firing for reporting and (later) damage
         Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
+        final AmmoType atype = (AmmoType) ammoUsed.getType();
         // Report weapon attack and its to-hit value.
         Report r = new Report(3124);
         r.indent();

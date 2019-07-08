@@ -443,7 +443,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     //At present, all weapons below using mLinker use ammo, so this won't be a problem
                     continue;
                 }
-                AmmoType bAmmo = bayWAmmo != null ? (AmmoType) bayWAmmo.getType() : null;
+                AmmoType bAmmo = (AmmoType) bayWAmmo.getType();
                 
                 //If we're using optional rules and firing Arrow Homing missiles from a bay...
                 isHoming = bAmmo != null && bAmmo.getMunitionType() == AmmoType.M_HOMING;
@@ -751,7 +751,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
             }
             toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
-            if ((te != null) && te.isAirborne()) {
+            if (te.isAirborne()) {
                 if (te.getAltitude() > 3) {
                     if (te.getAltitude() > 9) {
                         toHit.addModifier(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.AeroTooHighForFlak"));

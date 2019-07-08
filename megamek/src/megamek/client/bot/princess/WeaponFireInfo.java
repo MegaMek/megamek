@@ -35,6 +35,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.Weapon;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -63,6 +64,7 @@ public class WeaponFireInfo {
     private IGame game;
     private EntityState shooterState = null;
     private EntityState targetState = null;
+    private Integer updatedFiringMode = null;
     private final Princess owner;
 
     /**
@@ -489,7 +491,7 @@ public class WeaponFireInfo {
      * @param shooterPath The path the attacker has moved.
      * @param assumeUnderFlightPath If TRUE, aero units will not check to make sure the target is under their flight
      *                              path.
-     * @param guess Set TRUE to esitmate the chance to hit rather than doing the full calculation.
+     * @param guess Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     void initDamage(@Nullable final MovePath shooterPath,
                     final boolean assumeUnderFlightPath,
@@ -522,6 +524,19 @@ public class WeaponFireInfo {
 
             // If we can't hit, set everything zero and return..
             if (12 < getToHit().getValue()) {
+            	// if we are able to switch the weapon to indirect fire mode, do so and try again
+            	if(!getWeapon().curMode().equals(Weapon.Mode_Missile_Indirect)) {
+	            	int indirectMode = getWeapon().setMode(Weapon.Mode_Missile_Indirect);
+            	
+	            	// this will be the case if the weapon is able to switch to indirect fire mode
+	            	if(indirectMode > -1) {
+	            		setUpdatedFiringMode(indirectMode);
+	            		initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
+	            		getWeapon().setMode(""); // make sure to reset the weapon firing mode
+	            		return;
+	            	}
+            	}
+            	
                 owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
                                                                       .append(getToHit().getValue()).toString());
                 setProbabilityToHit(0);
@@ -532,13 +547,21 @@ public class WeaponFireInfo {
                 setExpectedDamageOnHit(0);
                 return;
             }
-
+            
             if (getShooterState().hasNaturalAptGun()) {
                 msg.append("\n\tAttacker has Natural Aptitude Gunnery");
             }
             setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
             msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
 
+            // now that we've calculated hit odds, if we're shooting
+            // a weapon capable of rapid fire, it's time to decide whether we're going to spin it up
+            String currentFireMode = getWeapon().curMode().getName();
+            int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinupThreshold());
+            if(!currentFireMode.equals(getWeapon().curMode().getName())) {
+            	setUpdatedFiringMode(spinMode);
+            }
+            
             setHeat(computeHeat(weapon));
             msg.append("\n\tHeat: ").append(getHeat());
 
@@ -647,5 +670,17 @@ public class WeaponFireInfo {
                 + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
                 + ", Kill Prob: " + LOG_PER.format(getKillProbability());
 
+    }
+
+    /**
+     * The updated firing mode, if any of the weapon involved in this attack.
+     * Null if no update required.
+     */
+    public Integer getUpdatedFiringMode() {
+    	return updatedFiringMode;
+    }
+    
+    public void setUpdatedFiringMode(int mode) {
+    	updatedFiringMode = mode;
     }
 }

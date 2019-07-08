@@ -69,6 +69,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
@@ -1621,6 +1622,12 @@ public class FireControl {
 
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
+        	// respect restriction on manual AMS firing.
+        	if(!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
+        			weapon.getType().hasFlag(WeaponType.F_AMS)) {
+        		continue;
+        	}
+        	
             final WeaponFireInfo shoot = buildWeaponFireInfo(shooter,
                                                              shooterState,
                                                              target,
@@ -1628,20 +1635,6 @@ public class FireControl {
                                                              weapon,
                                                              game,
                                                              true);
-
-            // If zero move infantry unit that moved, don't include any weapons
-            if ((shooter instanceof Infantry)
-                && (0 == shooter.getWalkMP())
-                && !(EntityMovementType.MOVE_NONE == shooterState.getMovementType())) {
-                continue;
-            }
-
-            //If infantry field gun unit that moved, don't include field guns
-            if ((shooter instanceof Infantry)
-                && !(EntityMovementType.MOVE_NONE == shooterState.getMovementType())
-                && (Infantry.LOC_FIELD_GUNS == shoot.getWeapon().getLocation())) {
-                continue;
-            }
 
             if (0 < shoot.getProbabilityToHit()) {
                 myPlan.add(shoot);
@@ -1843,6 +1836,13 @@ public class FireControl {
 
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
+        	// respect restriction on manual AMS firing.
+        	if(!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
+        			weapon.getType().hasFlag(WeaponType.F_AMS)) {
+        		continue;
+        	}
+        	
+        	
             final double toHitThreshold = ammoConservation.get(weapon);
             final WeaponFireInfo shoot = buildWeaponFireInfo(shooter, target, weapon, game, false);
             if ((shoot.getProbabilityToHit() > toHitThreshold)) {
@@ -1870,7 +1870,7 @@ public class FireControl {
         
         return myPlan;
     }
-
+    
     protected int calcHeatTolerance(final Entity entity,
                                   @Nullable Boolean isAero) {
 
@@ -2250,6 +2250,15 @@ public class FireControl {
                                                         final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
+        boolean shooterHasIDF = false;
+
+        for(Mounted weapon : shooter.getWeaponList()) {
+        	if(weapon.getType().hasModeType(Weapon.Mode_Missile_Indirect)) {
+        		shooterHasIDF = true;
+        		break;
+        	}
+        }
+        
         // Go through every unit in the game.
         for (final Entity entity : game.getEntitiesVector()) {
 
@@ -2262,7 +2271,9 @@ public class FireControl {
 
                 final LosEffects effects =
                         LosEffects.calculateLos(game, shooter.getId(), entity);
-                if (effects.canSee()) {
+                
+                // if we're in LOS or we have IDF capability
+                if (effects.canSee() || shooterHasIDF) {
                     targetableEnemyList.add(entity);
                 }
             }

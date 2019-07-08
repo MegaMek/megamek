@@ -31,7 +31,11 @@ public class ServerHelper {
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
                 && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)
                 && !te.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-            te_hex = game.getBoard().getHex(te.getPosition());
+        	
+        	if(te_hex == null) {
+        		te_hex = game.getBoard().getHex(te.getPosition());
+        	}
+        	
             if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS) && !te_hex.containsTerrain(Terrains.JUNGLE)
                     && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE)
                     && !te_hex.containsTerrain(Terrains.SWAMP) && !te_hex.containsTerrain(Terrains.BUILDING)

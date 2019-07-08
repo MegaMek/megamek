@@ -854,20 +854,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
         }
         for (Mounted m : getEntity().getMisc()) {
-            MiscType mtype = (MiscType)m.getType();
-            // mobile HPGs count as energy weapons for construction purposes
-            if (mtype.hasFlag(MiscType.F_MOBILE_HPG)) {
-                heat += 20;
-            }
-            if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                heat += 2;
-            }
-            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)) {
-                heat += 12;
-            }
-            if (mtype.hasFlag(MiscType.F_NOVA)) {
-                heat += 2;
-            }
+            heat += m.getType().getHeat();
         }
         if (getEntity().hasStealth()) {
             heat += 10;
@@ -1152,7 +1139,7 @@ public abstract class TestEntity implements TestEntityOption {
         }
         int useIntroYear = getEntity().getYear() + getIntroYearMargin();
         if (getEntity().isOmni()) {
-            int introDate = Entity.getOmniAdvancement()
+            int introDate = Entity.getOmniAdvancement(getEntity())
                     .getIntroductionDate(getEntity().isClan() || getEntity().isMixedTech());
             if (useIntroYear < introDate) {
                 retVal = true;

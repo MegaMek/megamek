@@ -91,6 +91,7 @@ public class Princess extends BotClient {
     private PathRankerState pathRankerState;
     private ArtilleryTargetingControl atc;
     
+    private Integer spinupThreshold = null;
     
     private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
@@ -274,6 +275,8 @@ public class Princess extends BotClient {
                                        Integer.parseInt(y) - 1);
             getStrategicBuildingTargets().add(coords);
         }
+        
+        spinupThreshold = null;
     }
 
     /**
@@ -608,11 +611,16 @@ public class Princess extends BotClient {
     
                     // Add expected damage from the chosen FiringPlan to the 
                     // damageMap for the target enemy.
+                    // while we're looping through all the shots anyway, send any firing mode changes
                     for(WeaponFireInfo shot : plan) {
                         Integer targetId = shot.getTarget().getTargetId();
                         double existingTargetDamage = damageMap.getOrDefault(targetId, 0.0);
                         double newDamage = existingTargetDamage + shot.getExpectedDamage();
                         damageMap.put(targetId, newDamage);
+                        
+                        if(shot.getUpdatedFiringMode() != null) {
+                        	super.sendModeChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()), shot.getUpdatedFiringMode());
+                        }
                     }
     
                     // tell the game I want to fire
@@ -1790,6 +1798,24 @@ public class Princess extends BotClient {
 
     IHonorUtil getHonorUtil() {
         return honorUtil;
+    }
+    
+    /**
+     * Lazy-loaded calculation of the "to-hit target number" threshold for
+     * spinning up a rapid fire autocannon.
+     */
+    public int getSpinupThreshold() {
+        if(spinupThreshold == null) {
+    	// we start spinning up the cannon at 11+ TN at highest aggression levels
+        // dropping it down to 6+ TN at the lower aggression levels
+        	spinupThreshold = Math.min(11, Math.max(getBehaviorSettings().getHyperAggressionIndex() + 2, 6));
+        }
+        
+        return spinupThreshold;
+    }
+    
+    public void resetSpinupThreshold() {
+    	spinupThreshold = null;
     }
 
     @Override

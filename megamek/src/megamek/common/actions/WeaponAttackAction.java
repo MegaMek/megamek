@@ -2314,7 +2314,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         ToHitData losMods = los.losModifiers(game, eistatus, ae.isUnderwater());
-        // toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.")gunnery skill");
         ToHitData toHit = new ToHitData(0, Messages.getString("WeaponAttackAction.BaseToHit"));
 
         // taser feedback

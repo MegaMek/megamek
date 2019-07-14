@@ -1395,6 +1395,12 @@ public class Server implements Runnable {
             sFile = sFile.replace(".gz", "");
         }
         XStream xstream = new XStream();
+
+        // This will make save games much smaller
+        // by using a more efficient means of referencing
+        // objects in the XML graph
+        xstream.setMode(XStream.ID_REFERENCES);
+
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav")) {
             sFinalFile = sFile + ".sav";
@@ -1479,6 +1485,10 @@ public class Server implements Runnable {
         IGame newGame;
         try(InputStream is = new GZIPInputStream(new FileInputStream(f))) {
             XStream xstream = new XStream();
+
+            // This mirrors the settings is saveGame
+            xstream.setMode(XStream.ID_REFERENCES);
+
             xstream.registerConverter(new Converter() {
                 @SuppressWarnings("rawtypes")
                 @Override

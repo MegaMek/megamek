@@ -628,20 +628,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private Vector<IPlayer> entityDetectedBy = new Vector<IPlayer>();
 
     /**
-     * Contains all entities that have been detected by this entity's sensors.
+     * Contains the ids of all entities that have been detected by this entity's sensors.
      * Used for double-blind on space maps - SO p117
      *
-     * Entities need only be cleared from this when they move out of range
+     * Entities need only be cleared from this when they move out of range,
+     * are destroyed, or move off the board
      */
-    public Vector<Entity> sensorContacts = new Vector<Entity>();
+    public Set<Integer> sensorContacts = new HashSet<Integer>();
 
     /**
-     * Contains all entities that this entity has established a firing solution on.
+     * Contains the ids of all entities that this entity has established a firing solution on.
      * Used for double-blind on space maps - SO p117
      *
-     * Entities need only be cleared from this when they move out of range
+     * Entities need only be cleared from this when they move out of range,
+     * are destroyed, or move off the board
      */
-    public Vector<Entity> firingSolutions = new Vector<Entity>();
+    public Set<Integer> firingSolutions = new HashSet<Integer>();
 
     /**
      * Whether this entity is captured or not.

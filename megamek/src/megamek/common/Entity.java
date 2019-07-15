@@ -15583,7 +15583,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param targetId the ID number of the target entity to check for
      * @return true if the entity's sensorContacts set contains the passed-in target ID
      */
-    public boolean isSensorContact(int targetId) {
+    public boolean hasSensorContactFor(int targetId) {
         return sensorContacts.contains(targetId);
     }
     
@@ -15625,7 +15625,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param targetId the ID number of the target entity to check for
      * @return true if the entity's firingSolutions set contains the passed-in target ID
      */
-    public boolean isFiringSolution(int targetId) {
+    public boolean hasFiringSolutionFor(int targetId) {
         return firingSolutions.contains(targetId);
     }
     

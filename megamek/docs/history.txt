@@ -29,6 +29,7 @@ v0.45.5-SNAPSHOT
 + PR #1404: Princess can now use rapid-fire autocannons; will respect "no AMS as weapon" setting
 + PR #1405: Introduced Princess capability for indirect fire at spotted units
 + Issue #1407: Attacks on transported battle armor no longer cause soft lock
++ PR #1412: Switch to XStream's ID_REFERENCES mode for save games, shrinking their size considerably.
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

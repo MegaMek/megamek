@@ -15567,5 +15567,90 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         return 1;
     }
-
+    
+    
+    //Getters and setters for sensor contacts and firing solutions. Currently only used in space combat
+    /**
+     * Retrieves the IDs of all entities that this entity has detected with sensors
+     * @return the contents of this entity's sensorContacts set
+     */
+    public Set<Integer> getSensorContacts() {
+        return sensorContacts;
+    }
+    
+    /**
+     * Checks the sensorContacts set for a specific target's ID number
+     * @param targetId the ID number of the target entity to check for
+     * @return true if the entity's sensorContacts set contains the passed-in target ID
+     */
+    public boolean isSensorContact(int targetId) {
+        return sensorContacts.contains(targetId);
+    }
+    
+    /**
+     * Adds the specified target entity's ID to this entity's sensorContacts
+     * @param targetId the ID number of the target entity to add
+     */
+    public void addSensorContact(int targetId) {
+        sensorContacts.add(targetId);
+    }
+    
+    /**
+     * Removes the specified target entity's ID from this entity's sensorContacts
+     * @param targetId the ID number of the target entity to remove
+     */
+    public void removeSensorContact(int targetId) {
+        sensorContacts.remove(targetId);
+    }
+    
+    /**
+     * Empties this entity's sensorContacts
+     * Used when it dies or moves offboard
+     * @param targetId the ID number of the target entity to remove
+     */
+    public void clearSensorContacts() {
+        sensorContacts.clear();
+    }
+    
+    /**
+     * Retrieves the IDs of all entities that this entity has established firing solutions on
+     * @return the contents of this entity's firingSolutions set
+     */
+    public Set<Integer> getFiringSolutions() {
+        return firingSolutions;
+    }
+    
+    /**
+     * Checks the firingSolutions set for a specific target's ID number
+     * @param targetId the ID number of the target entity to check for
+     * @return true if the entity's firingSolutions set contains the passed-in target ID
+     */
+    public boolean isFiringSolution(int targetId) {
+        return firingSolutions.contains(targetId);
+    }
+    
+    /**
+     * Adds the specified target entity's ID to this entity's firingSolutions
+     * @param targetId the ID number of the target entity to add
+     */
+    public void addFiringSolution(int targetId) {
+        firingSolutions.add(targetId);
+    }
+    
+    /**
+     * Removes the specified target entity's ID from this entity's firingSolutions
+     * @param targetId the ID number of the target entity to remove
+     */
+    public void removeFiringSolution(int targetId) {
+        firingSolutions.remove(targetId);
+    }
+    
+    /**
+     * Empties this entity's firingSolutions
+     * Used when it dies or moves offboard
+     * @param targetId the ID number of the target entity to remove
+     */
+    public void clearFiringSolutions() {
+        firingSolutions.clear();
+    }
 }

@@ -4092,7 +4092,7 @@ public class Compute {
                 && target.getTargetType() == Targetable.TYPE_ENTITY
                 && game.getBoard().inSpace()) {
             Entity te = (Entity) target;
-            return hasAnyFiringSolution(game, te);
+            return hasAnyFiringSolution(game, te.getId());
         }
         boolean teIlluminated = false;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -4172,12 +4172,12 @@ public class Compute {
      * Used for sensor return icons on board
      *
      * @param game - the current game
-     * @param target - the target we're looking for
+     * @param targetId - the ID# of the target entity we're looking for
      */
-    public static boolean isSensorContact(IGame game, Entity target) {
+    public static boolean isAnySensorContact(IGame game, int targetId) {
         for (Entity detector : game.getEntitiesVector()) {
-            if (detector.sensorContacts.contains(target)) {
-                target.addBeenDetectedBy(detector.getOwner());
+            if (detector.hasSensorContactFor(targetId)) {
+                game.getEntity(targetId).addBeenDetectedBy(detector.getOwner());
                 return true;
             }
         }
@@ -4187,15 +4187,11 @@ public class Compute {
     /**
      * Checks to see if target entity has already appeared on @detector's sensors
      * Used with Naval C3 to determine if @detector can fire weapons at @target
-     *
-     * @param game - the current game
      * @param detector - the entity making a sensor scan
+     * @param targetId - the entity id of the scan target
      */
-    public static boolean hasSensorContact(IGame game, Entity detector, Entity target) {
-        if (detector.sensorContacts.contains(target)) {
-            return true;
-        }
-        return false;
+    public static boolean hasSensorContact(Entity detector, int targetId) {
+        return detector.hasSensorContactFor(targetId);
     }
 
     /**
@@ -4203,28 +4199,14 @@ public class Compute {
      * Used for visibility
      *
      * @param game - the current game
-     * @param target - the target we're firing at
+     * @param targetId - the ID # of the target we're firing at
      */
-    public static boolean hasAnyFiringSolution(IGame game, Entity target) {
+    public static boolean hasAnyFiringSolution(IGame game, int targetId) {
         for (Entity detector : game.getEntitiesVector()) {
-            if (detector.firingSolutions.contains(target)) {
-                target.addBeenSeenBy(detector.getOwner());
+            if (detector.hasFiringSolutionFor(targetId)) {
+                game.getEntity(targetId).addBeenSeenBy(detector.getOwner());
                 return true;
             }
-        }
-        return false;
-    }
-
-    /**
-     * Checks to see if target entity has already had a firing solution established by @detector
-     * Used to determine if @detector can fire weapons at @target
-     *
-     * @param game - the current game
-     * @param detector - the entity making a sensor scan
-     */
-    public static boolean hasFiringSolution(IGame game, Entity detector, Entity target) {
-        if (detector.firingSolutions.contains(target)) {
-            return true;
         }
         return false;
     }

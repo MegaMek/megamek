@@ -238,6 +238,7 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
+import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
@@ -1395,6 +1396,12 @@ public class Server implements Runnable {
             sFile = sFile.replace(".gz", "");
         }
         XStream xstream = new XStream();
+
+        // This will make save games much smaller
+        // by using a more efficient means of referencing
+        // objects in the XML graph
+        xstream.setMode(XStream.ID_REFERENCES);
+
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav")) {
             sFinalFile = sFile + ".sav";
@@ -1479,6 +1486,10 @@ public class Server implements Runnable {
         IGame newGame;
         try(InputStream is = new GZIPInputStream(new FileInputStream(f))) {
             XStream xstream = new XStream();
+
+            // This mirrors the settings is saveGame
+            xstream.setMode(XStream.ID_REFERENCES);
+
             xstream.registerConverter(new Converter() {
                 @SuppressWarnings("rawtypes")
                 @Override
@@ -6920,6 +6931,10 @@ public class Server implements Runnable {
         // Handle any picked up MechWarriors
         for (Integer mechWarriorId : entity.getPickedUpMechWarriors()) {
             Entity mw = game.getEntity(mechWarriorId.intValue());
+            
+            if(mw == null) {
+            	continue;
+            }
 
             // Is the MechWarrior an enemy?
             int condition = IEntityRemovalConditions.REMOVE_IN_RETREAT;
@@ -10494,6 +10509,44 @@ public class Server implements Runnable {
             }
         }
     }
+    
+    public int processTAGTargetCFR(int playerId, List<String> targetDescriptions) {
+        final String METHOD_NAME = "processTAGTargetCFR(Entity, Entity)";
+        sendTAGTargetCFR(playerId, targetDescriptions);
+        while (true) {
+            synchronized (cfrPacketQueue) {
+                try {
+                    while (cfrPacketQueue.isEmpty()) {
+                        cfrPacketQueue.wait();
+                    }
+                } catch (InterruptedException e) {
+                    return 0;
+                }
+                // Get the packet, if there's something to get
+                ReceivedPacket rp;
+                if (cfrPacketQueue.size() > 0) {
+                    rp = cfrPacketQueue.poll();
+                    int cfrType = rp.packet.getIntValue(0);
+                    // Make sure we got the right type of response
+                    if (cfrType != Packet.COMMAND_CFR_TAG_TARGET) {
+                        getLogger().error(getClass(), METHOD_NAME,
+                                "Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet, " + "received: " + cfrType);
+                        continue;
+                    }
+                    // Check packet came from right ID
+                    if (rp.connId != playerId) {
+                        getLogger().error(getClass(), METHOD_NAME,
+                                "Exected a " + "COMMAND_CFR_TAG_TARGET CFR packet " + "from player  " + playerId
+                                + " but instead it came from player " + rp.connId);
+                        continue;
+                    }
+                    return (int)rp.packet.getData()[1];
+                } else { // If no packets, wait again
+                    continue;
+                }
+            }
+        }
+    }
 
     /**
      * If an aero unit takes off in the same turn that other units loaded, then
@@ -13537,6 +13590,12 @@ public class Server implements Runnable {
         send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
                 new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetDescriptions}));
     }
+    
+    private void sendTAGTargetCFR(int playerId, List<String> targetDescriptions) {
+        // Send target descriptions to Client
+        send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+                new Object[] { Packet.COMMAND_CFR_TAG_TARGET, targetDescriptions}));
+    }
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,
             Coords src, Coords dest, int elev) {
@@ -14341,13 +14400,26 @@ public class Server implements Runnable {
             if (wh.roll < wh.toHit.getValue()) {
                 continue;
             }
-
-            // Can only use AMS versus missiles.
-            if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
+            
+            // Can only use AMS versus missiles. Artillery Bays might be firing Arrow IV homing missiles,
+            // but lack the flag
+            boolean isHomingMissile = false;
+            if (wh instanceof ArtilleryWeaponIndirectHomingHandler
+                    || wh instanceof ArtilleryBayWeaponIndirectHomingHandler) {
+                Mounted ammoUsed = game.getEntity(waa.getEntityId()).getEquipment(waa.getAmmoId());
+                AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
+                        .getType();
+                if (atype != null 
+                        && (atype.getAmmoType() == AmmoType.T_ARROW_IV || atype.getAmmoType() == BombType.B_HOMING)) {
+                    isHomingMissile = true;
+                }
+            }
+            if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)
+                    && !isHomingMissile) {
                 continue;
             }
 
-            // For Bearings-only Capital Missiles
+            // For Bearings-only Capital Missiles, don't assign during the offboard phase
             if (wh instanceof CapitalMissileBearingsOnlyHandler) {
                 ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
                 if (aaa.getTurnsTilHit() > 0 || game.getPhase() != IGame.Phase.PHASE_FIRING) {
@@ -14355,70 +14427,42 @@ public class Server implements Runnable {
                 }
             }
 
-            // For all other types of homing artillery
+            // For Arrow IV homing artillery
+            Entity target = null;
             if (waa instanceof ArtilleryAttackAction) {
-                // This will pick our TAG target back up and assign it to the waa
-                if (waa.isHomingShot() && wh instanceof ArtilleryWeaponIndirectHomingHandler) {
-                    ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
-                    hh.convertHomingShotToEntityTarget();
-                }
-
-                Entity target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
-                        .getTarget(game) : null;
+                target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                    .getTarget(game) : null;
 
                 // In case our target really is null.
                 if (target == null) {
                     continue;
                 }
-
-                Vector<WeaponHandler> v = htAttacks.get(target);
-                if (v == null) {
-                    v = new Vector<WeaponHandler>();
-                    htAttacks.put(target, v);
-                }
-                v.addElement(wh);
-                // Keep track of what weapon attacks could be affected by APDS
-                if (apdsCoords.containsKey(target.getPosition())) {
-                    for (Mounted apds : apdsCoords.get(target.getPosition())) {
-                        // APDS only affects attacks against friendly units
-                        if (target.isEnemyOf(apds.getEntity())) {
-                            continue;
-                        }
-                        Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
-                        if (handlerList == null) {
-                            handlerList = new Vector<>();
-                            apdsTargets.put(apds, handlerList);
-                        }
-                        handlerList.add(wh);
-                    }
-
-                }
             } else {
-                Entity target = game.getEntity(waa.getTargetId());
-                Vector<WeaponHandler> v = htAttacks.get(target);
-                if (v == null) {
-                    v = new Vector<WeaponHandler>();
-                    htAttacks.put(target, v);
-                }
-                v.addElement(wh);
-                // Keep track of what weapon attacks could be affected by APDS
-                if (apdsCoords.containsKey(target.getPosition())) {
-                    for (Mounted apds : apdsCoords.get(target.getPosition())) {
-                        // APDS only affects attacks against friendly units
-                        if (target.isEnemyOf(apds.getEntity())) {
-                            continue;
-                        }
-                        Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
-                        if (handlerList == null) {
-                            handlerList = new Vector<>();
-                            apdsTargets.put(apds, handlerList);
-                        }
-                        handlerList.add(wh);
+                target = game.getEntity(waa.getTargetId());
+            }
+            Vector<WeaponHandler> v = htAttacks.get(target);
+            if (v == null) {
+                v = new Vector<WeaponHandler>();
+                htAttacks.put(target, v);
+            }
+            v.addElement(wh);
+            // Keep track of what weapon attacks could be affected by APDS
+            if (apdsCoords.containsKey(target.getPosition())) {
+                for (Mounted apds : apdsCoords.get(target.getPosition())) {
+                    // APDS only affects attacks against friendly units
+                    if (target.isEnemyOf(apds.getEntity())) {
+                        continue;
                     }
+                    Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
+                    if (handlerList == null) {
+                        handlerList = new Vector<>();
+                        apdsTargets.put(apds, handlerList);
+                    }
+                    handlerList.add(wh);
                 }
             }
         }
-
+        
         // Let each target assign its AMS
         for (Entity e : htAttacks.keySet()) {
             Vector<WeaponHandler> vAttacks = htAttacks.get(e);

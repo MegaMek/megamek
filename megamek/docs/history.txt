@@ -22,6 +22,19 @@ v0.45.5-SNAPSHOT
 + PR #1354: Support for detailed large craft parts (K-F boom, grav deck, CIC, etc)
 + MegaMekLab Issue #314: Fixed availability ratings for inner sphere LMG and ammo
 + Issue #1249: Industrial TSM now applies 2x damage to appropriate melee attacks
++ Issue #1352: Changing Planetary Conditions prior to starting a new game causes a -40C without input
++ Issue #1400: Fleeing while carrying a non-existent mechwarrior no longer causes a soft-lock
++ Data: Corsair fighter once again shows proper sprite
++ PR #1401: Improved bot behavior using field gun infantry.
++ PR #1404: Princess can now use rapid-fire autocannons; will respect "no AMS as weapon" setting
++ PR #1405: Introduced Princess capability for indirect fire at spotted units
++ Issue #1407: Attacks on transported battle armor no longer cause soft lock
++ PR #1412: Switch to XStream's ID_REFERENCES mode for save games, shrinking their size considerably.
++ PR #1409: Dropship artillery bays now fully functional
+	Dropships can optionally load/fire alternate artillery munitions
+	Copperhead ammo functions as homing rounds
++ Issue #1351: When a homing round lands, the firing player will now get asked which tagged unit gets clobbered.
++ PR #1406: Princess can now spot units for indirect fire
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

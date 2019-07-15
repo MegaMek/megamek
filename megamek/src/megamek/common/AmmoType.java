@@ -503,6 +503,67 @@ public class AmmoType extends EquipmentType {
                         || (munitionType == M_ARTEMIS_V_CAPABLE);
         }
     }
+    
+    /**
+     * Aerospace units cannot use specialty munitions except Artemis and LBX cluster (but not standard).
+     * ATM ER and HE rounds are considered standard munitions. AR10 missiles are designed for aerospace
+     * units and all munition types are available.
+     * 
+     * @param option True if unofficial game option allowing alternate muntions for artillery bays is enabled
+     * 
+     * @return true if the munition can be used by aerospace units
+     */
+    public boolean canAeroUse(boolean option) {
+        if (option) {
+            switch (ammoType) {
+                case T_AC_LBX:
+                case T_SBGAUSS:
+                    return munitionType == M_CLUSTER;
+                case T_ATM:
+                case T_IATM:
+                    return (munitionType == M_STANDARD)
+                            || (munitionType == M_HIGH_EXPLOSIVE)
+                            || (munitionType == M_EXTENDED_RANGE);
+                case T_AR10:
+                    return true;
+                case T_ARROW_IV:
+                    return (munitionType == M_FLARE)
+                            || (munitionType == M_CLUSTER)
+                            || (munitionType == M_HOMING)
+                            || (munitionType == M_INFERNO_IV)
+                            || (munitionType == M_LASER_INHIB)
+                            || (munitionType == M_SMOKE)
+                            || (munitionType == M_FASCAM)
+                            || (munitionType == M_DAVY_CROCKETT_M)
+                            || (munitionType == M_VIBRABOMB_IV)
+                            || (munitionType == M_STANDARD);
+                case T_LONG_TOM:
+                    return (munitionType == M_FLARE)
+                            || (munitionType == M_CLUSTER)
+                            || (munitionType == M_HOMING)
+                            || (munitionType == M_FLECHETTE)
+                            || (munitionType == M_SMOKE)
+                            || (munitionType == M_FASCAM)
+                            || (munitionType == M_DAVY_CROCKETT_M)
+                            || (munitionType == M_STANDARD);
+                case T_SNIPER:
+                case T_THUMPER:
+                    return (munitionType == M_FLARE)
+                            || (munitionType == M_CLUSTER)
+                            || (munitionType == M_HOMING)
+                            || (munitionType == M_FLECHETTE)
+                            || (munitionType == M_SMOKE)
+                            || (munitionType == M_FASCAM)
+                            || (munitionType == M_STANDARD);
+                default:
+                    return (munitionType == M_STANDARD)
+                            || (munitionType == M_ARTEMIS_CAPABLE)
+                            || (munitionType == M_ARTEMIS_V_CAPABLE);
+            } 
+        } else {
+           return canAeroUse();
+        }
+    }
 
     /**
      * Returns the first usable ammo type for the given oneshot launcher

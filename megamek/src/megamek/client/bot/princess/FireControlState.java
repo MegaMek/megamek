@@ -1,8 +1,12 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import megamek.common.Entity;
 import megamek.common.Targetable;
 
 /**
@@ -11,9 +15,13 @@ import megamek.common.Targetable;
  */
 public class FireControlState {
     private List<Targetable> additionalTargets;
+    private Map<Integer, Boolean> entityIDFStates;
+    private LinkedList<Entity> orderedFiringEntities;
     
     public FireControlState() {
         additionalTargets = new ArrayList<>();
+        entityIDFStates = new HashMap<>();
+        orderedFiringEntities = new LinkedList<>();
     }
     
     /**
@@ -31,5 +39,30 @@ public class FireControlState {
      */
     public void setAdditionalTargets(List<Targetable> value) {
         additionalTargets = value;
+    }
+    
+    public void clearEntityIDFStates() {
+    	entityIDFStates.clear();
+    }
+    
+    /**
+     * Accessor for the data structure containing a mapping between entities and whether or not
+     * they have indirect fire capability as in LRMs.
+     */
+    public Map<Integer, Boolean> getEntityIDFStates() {
+    	return entityIDFStates;
+    }
+    
+    public LinkedList<Entity> getOrderedFiringEntities() {
+    	return orderedFiringEntities;
+    }
+    
+    public void clearOrderedFiringEntities() {
+    	this.orderedFiringEntities.clear();
+    }
+    
+    public void clearTransientData() {
+    	clearEntityIDFStates();
+    	clearOrderedFiringEntities();
     }
 }

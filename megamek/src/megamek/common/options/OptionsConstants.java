@@ -496,6 +496,7 @@ public class OptionsConstants {
     public static final String ADVAERORULES_AA_MOVE_MOD= "aa_move_mod";  //$NON-NLS$
     public static final String ADVAERORULES_ALLOW_LARGE_SQUADRONS= "allow_large_squadrons";  //$NON-NLS$
     public static final String ADVAERORULES_SINGLE_NO_CAP= "single_no_cap";  //$NON-NLS$
+    public static final String ADVAERORULES_AERO_ARTILLERY_MUNITIONS= "aero_artillery_munitions"; //$NON-NLS$
     public static final String ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE= "expanded_kf_drive_damage";  //$NON-NLS$
 
     public static final String INIT_INF_MOVE_EVEN= "inf_move_even";  //$NON-NLS$

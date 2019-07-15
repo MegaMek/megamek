@@ -26,6 +26,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RACHandler;
 import megamek.common.weapons.UltraWeaponHandler;
+import megamek.common.weapons.Weapon;
 import megamek.server.Server;
 
 /**
@@ -41,8 +42,8 @@ public abstract class RACWeapon extends UACWeapon {
     public RACWeapon() {
         super();
         ammoType = AmmoType.T_AC_ROTARY;
-        String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot",
-                "5-shot", "6-shot" };
+        String[] modeStrings = { Mode_AC_Single, Mode_RAC_TwoShot, Mode_RAC_ThreeShot, 
+        		Mode_RAC_FourShot, Mode_RAC_FiveShot, Mode_RAC_SixShot };
         setModes(modeStrings);
         // explosive when jammed
         explosive = true;
@@ -63,10 +64,10 @@ public abstract class RACWeapon extends UACWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
                 waa.getWeaponId());
-        if (weapon.curMode().equals("6-shot")
-                || weapon.curMode().equals("5-shot")
-                || weapon.curMode().equals("4-shot")
-                || weapon.curMode().equals("3-shot")) {
+        if (weapon.curMode().equals(Mode_RAC_SixShot)
+                || weapon.curMode().equals(Mode_RAC_FiveShot)
+                || weapon.curMode().equals(Mode_RAC_FourShot)
+                || weapon.curMode().equals(Mode_RAC_ThreeShot)) {
             return new RACHandler(toHit, waa, game, server);
         } else {
             return new UltraWeaponHandler(toHit, waa, game, server);

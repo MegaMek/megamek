@@ -470,6 +470,25 @@ public class EquipmentType implements ITechnology {
     public boolean hasModes() {
         return (modes != null) && (!modes.isEmpty());
     }
+    
+    /**
+     * Simple way to check if a piece of equipment has a specific usage/firing mode
+     * @param modeType The name of the mode to check.
+     * @return True or false.
+     */
+    public boolean hasModeType(String modeType) {
+    	if(!hasModes()) {
+    		return false;
+    	}
+    	
+    	for(EquipmentMode mode : modes) {
+    		if(mode.getName().equals(modeType)) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    }
 
     /**
      * @return the number of modes that this type of equipment can be in or

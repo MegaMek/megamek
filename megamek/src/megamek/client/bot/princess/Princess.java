@@ -553,7 +553,7 @@ public class Princess extends BotClient {
         try {
             // get the first entity that can act this turn make sure weapons 
             // are loaded
-            final Entity shooter = getEntityToFire(fireControlState);//ame.getFirstEntity(getMyTurn());
+            final Entity shooter = getEntityToFire(fireControlState);
 
             // Forego firing if 
             // a) hidden, 

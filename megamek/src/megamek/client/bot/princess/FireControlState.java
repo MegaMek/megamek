@@ -52,19 +52,17 @@ public class FireControlState {
     public Map<Integer, Boolean> getEntityIDFStates() {
     	return entityIDFStates;
     }
-
-	public LinkedList<Entity> getOrderedFiringEntities() {
-		return orderedFiringEntities;
-	}
-
-	public void clearOrderedFiringEntities() {
-		this.orderedFiringEntities.clear();
-	}
-	
-	public void clearTransientData() {
-		clearEntityIDFStates();
-		clearOrderedFiringEntities();
-	}
-
-	
+    
+    public LinkedList<Entity> getOrderedFiringEntities() {
+    	return orderedFiringEntities;
+    }
+    
+    public void clearOrderedFiringEntities() {
+    	this.orderedFiringEntities.clear();
+    }
+    
+    public void clearTransientData() {
+    	clearEntityIDFStates();
+    	clearOrderedFiringEntities();
+    }
 }

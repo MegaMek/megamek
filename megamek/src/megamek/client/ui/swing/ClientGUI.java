@@ -2149,6 +2149,28 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         //Just pick the first target in the list, or server will be left waiting indefinitely.
                         client.sendTelemissileTargetCFRResponse(0);
                     }
+                case Packet.COMMAND_CFR_TAG_TARGET:
+                    List<String> TAGTargetDescriptions = evt.getTAGTargetDescriptions();
+                    //Set up the selection pane
+                    i18nString = "TAGTargetDialog.message"; //$NON-NLS-1$;
+                    msg = Messages.getString(i18nString);
+                    i18nString = "TAGTargetDialog.title"; //$NON-NLS-1$
+                    title = Messages.getString(i18nString);
+                    input = (String) JOptionPane.showInputDialog(frame, msg,
+                            title, JOptionPane.QUESTION_MESSAGE, null,
+                            TAGTargetDescriptions.toArray(), TAGTargetDescriptions.get(0));
+                    if (input != null) {
+                        for (int i = 0; i < TAGTargetDescriptions.size(); i++) {
+                            if (input.equals(TAGTargetDescriptions.get(i))) {
+                                client.sendTAGTargetCFRResponse(i);
+                                break;
+                            }
+                        }
+                    } else {
+                        //If input IS null, as in the case of pressing the close or cancel buttons...
+                        //Just pick the first target in the list, or server will be left waiting indefinitely.
+                        client.sendTAGTargetCFRResponse(0);
+                    }
             }
         }
     };

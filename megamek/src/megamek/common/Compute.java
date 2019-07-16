@@ -4272,18 +4272,24 @@ public class Compute {
     }
 
     /**
-     * Checks to see if an entity has passed out of range of a previously established firing solution
+     * Updates an entity's firingSolutions, removing any objects that no longer meet criteria for being
+     * tracked as targets. Also, if the detecting entity no longer meets criteria for having firing solutions,
+     * empty the list. We wouldn't want a dead ship to be providing NC3 data, now would we...
      */
-    public static void removeFiringSolution(Entity detector) {
-        Vector<Entity> toRemove = new Vector<Entity>();
-        //If the detector is dead, has no position, or has flown offboard, remove everything
+    public static void updateFiringSolutions(IGame game, Entity detector) {
+        List<Integer> toRemove = new ArrayList<Integer>();
+        //Flush the detecting unit's firing solutions if any of these conditions applies
         if (detector.isDestroyed()
+                || detector.isDoomed()
+                || detector.getTransportId() != Entity.NONE
+                || detector.isPartOfFighterSquadron()
                 || detector.isOffBoard()
                 || detector.getPosition() == null) {
-            detector.firingSolutions.removeAllElements();
+            detector.clearFiringSolutions();
             return;
         }
-        for (Entity target : detector.firingSolutions) {
+        for (int id : detector.getSensorContacts()) {
+            Entity target = game.getEntity(id);
             //If the target is dead, has no position or has flown offboard, remove it
             if (target.isDestroyed()
                     || target.isOffBoard()
@@ -4315,8 +4321,8 @@ public class Compute {
             }
         }
         if (toRemove.size() >= 1) {
-            for (Entity e : toRemove) {
-                detector.firingSolutions.remove(e);
+            for (int entId : toRemove) {
+                detector.removeFiringSolution(entId);
             }
         }
     }

@@ -4290,33 +4290,33 @@ public class Compute {
         }
         for (int id : detector.getSensorContacts()) {
             Entity target = game.getEntity(id);
-            //If the target is dead, has no position or has flown offboard, remove it
+            //The target should be removed if it's off the board for any of these reasons
             if (target.isDestroyed()
+                    || target.isDoomed()
+                    || target.getTransportId() != Entity.NONE
+                    || target.isPartOfFighterSquadron()
                     || target.isOffBoard()
                     || target.getPosition() == null) {
-                toRemove.add(target);
+                toRemove.add(id);
                 continue;
             }
             Coords targetPos = target.getPosition();
             int distance = detector.getPosition().distance(targetPos);
             //Per SO p119, optical firing solutions are lost if the target moves beyond 1/10 max range
-            if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
-                if (distance > Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE) {
-                    toRemove.add(target);
-                }
-            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
-                if (distance > Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE) {
-                    toRemove.add(target);
-                }
+            if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL
+                    && distance > Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE) {
+                    toRemove.add(id);
+            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL
+                    && distance > Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE) {
+                    toRemove.add(id);
             //For ASF sensors, make sure we're using the space range of 555...
-            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-                if (distance > Sensor.ASF_RADAR_MAX_RANGE) {
-                    toRemove.add(target);
-                }
-            }else {
+            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR
+                    && distance > Sensor.ASF_RADAR_MAX_RANGE) {
+                    toRemove.add(id);
+            } else {
                 //Radar firing solutions are only lost if the target moves out of range
                 if (distance > detector.getActiveSensor().getRangeByBracket()) {
-                    toRemove.add(target);
+                    toRemove.add(id);
                 }
             }
         }
@@ -4328,34 +4328,45 @@ public class Compute {
     }
 
     /**
-     * Checks to see if an entity has passed out of range of a previously established sensor lock
+     * Updates an entity's sensorContacts, removing any objects that no longer meet criteria for being
+     * tracked. Also, if the detecting entity no longer meets criteria for having sensor contacts,
+     * empty the list. We wouldn't want a dead ship to be providing sensor data, now would we...
      */
-    public static void removeSensorContact(Entity detector) {
-        Vector<Entity> toRemove = new Vector<Entity>();
-        //If the detector is dead, has no position, or has flown offboard, remove everything
+    public static void removeSensorContact(IGame game, Entity detector) {
+        List<Integer> toRemove = new ArrayList<Integer>();
+        //Flush the detecting unit's sensor contacts if any of these conditions applies
         if (detector.isDestroyed()
+                || detector.isDoomed()
+                || detector.getTransportId() != Entity.NONE
+                || detector.isPartOfFighterSquadron()
                 || detector.isOffBoard()
                 || detector.getPosition() == null) {
-            detector.firingSolutions.removeAllElements();
+            detector.clearSensorContacts();
             return;
         }
-        for (Entity target : detector.sensorContacts) {
-            //If the target is dead, has no position or has flown offboard, remove it
+        for (int id : detector.getSensorContacts()) {
+            Entity target = game.getEntity(id);
+            //The target should be removed if it's off the board for any of these reasons
             if (target.isDestroyed()
+                    || target.isDoomed()
+                    || target.getTransportId() != Entity.NONE
+                    || target.isPartOfFighterSquadron()
                     || target.isOffBoard()
                     || target.getPosition() == null) {
-                toRemove.add(target);
+                toRemove.add(id);
                 continue;
             }
+            //And now calculate whether or not the target has moved out of range. Per SO p117-119,
+            //sensor contacts remain tracked on the plotting board until this occurs.
             Coords targetPos = target.getPosition();
             int distance = detector.getPosition().distance(targetPos);
             if (distance > detector.getActiveSensor().getRangeByBracket()) {
-                toRemove.add(target);
+                toRemove.add(id);
             }
         }
         if (toRemove.size() >= 1) {
-            for (Entity e : toRemove) {
-                detector.sensorContacts.remove(e);
+            for (int entId : toRemove) {
+                detector.removeSensorContact(entId);
             }
         }
     }
@@ -4410,7 +4421,7 @@ public class Compute {
             rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
         }
 
-        if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
+        if (ae instanceof Aero) {
             Aero aero = (Aero) ae;
             //Account for sensor damage
             if (aero.isAeroSensorDestroyed()) {
@@ -4509,7 +4520,7 @@ public class Compute {
             rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
         }
 
-        if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
+        if (ae instanceof Aero) {
             Aero aero = (Aero) ae;
             //Account for sensor damage
             if (aero.isAeroSensorDestroyed()) {
@@ -4610,7 +4621,7 @@ public class Compute {
                 && target.getTargetType() == Targetable.TYPE_ENTITY
                 && game.getBoard().inSpace()) {
             Entity te = (Entity) target;
-            return isSensorContact(game, te);
+            return hasSensorContact(ae, te.getId());
         }
 
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {

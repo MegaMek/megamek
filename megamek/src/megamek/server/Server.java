@@ -14741,13 +14741,31 @@ public class Server implements Runnable {
 
         //Now, run the detection rolls
         for (Entity detector : game.getEntitiesVector()) {
+            //Don't process for invalid units
+            //in the case of squadrons and transports, we want the 'host'
+            //unit, not the component entities
+            if (detector.getPosition() == null
+                    || detector.isDestroyed()
+                    || detector.isDoomed()
+                    || detector.isOffBoard()
+                    || detector.isPartOfFighterSquadron()
+                    || detector.getTransportId() != Entity.NONE) {
+                continue;
+            }
             for (Entity target : game.getEntitiesVector()) {
                 //Once a target is detected, we don't need to detect it again
-                if (Compute.hasSensorContact(game, detector, target)) {
+                if (detector.hasSensorContactFor(target.getId())) {
                     continue;
                 }
-                //Don't process for units with no position
-                if ((detector.getPosition() == null) || (target.getPosition() == null)) {
+                //Don't process for invalid units
+                //in the case of squadrons and transports, we want the 'host'
+                //unit, not the component entities
+                if (target.getPosition() == null
+                        || target.isDestroyed()
+                        || target.isDoomed()
+                        || target.isOffBoard()
+                        || target.isPartOfFighterSquadron()
+                        || target.getTransportId() != Entity.NONE) {
                     continue;
                 }
                 // Only process for enemy units
@@ -14756,41 +14774,45 @@ public class Server implements Runnable {
                 }
                 //If we successfully detect the enemy, add it to the appropriate detector's sensor contacts list
                 if (Compute.calcSensorContact(game, detector, target)) {
-                    detector.sensorContacts.add(target);
+                    detector.addSensorContact(target.getId());
                     //If detector is part of a C3 network, share the contact
                     if (detector.hasNavalC3()) {
                         for (Entity c3NetMate : game.getEntitiesVector()) {
                             if (c3NetMate != detector && c3NetMate.onSameC3NetworkAs(detector)) {
-                                c3NetMate.sensorContacts.add(target);
+                                c3NetMate.addSensorContact(target.getId());
                             }
                         }
                     }
                 }
             }
         }
-
-        //Now, try to establish firing solutions on detected units
-        ArrayList<Entity> detectedUnits = new ArrayList<>();
-        for (Entity target : game.getEntitiesVector()) {
-            if (Compute.isSensorContact(game, target)) {
-                detectedUnits.add(target);
-            }
-        }
-
-        // If no one is detected, there's nothing more to do
-        if (detectedUnits.size() < 1) {
-            return;
-        }
-
-        //Now, run the detection rolls
+        //Now, run the firing solution calculations
         for (Entity detector : game.getEntitiesVector()) {
-            for (Entity target : detectedUnits) {
+            //Don't process for invalid units
+            //in the case of squadrons and transports, we want the 'host'
+            //unit, not the component entities
+            if (detector.getPosition() == null
+                    || detector.isDestroyed()
+                    || detector.isDoomed()
+                    || detector.isOffBoard()
+                    || detector.isPartOfFighterSquadron()
+                    || detector.getTransportId() != Entity.NONE) {
+                continue;
+            }
+            for (int targetId : detectedUnits) {
                 //if we already have a firing solution, no need to process a new one
-                if (Compute.hasFiringSolution(game, detector, target)) {
+                if (detector.hasFiringSolutionFor(game, targetId)) {
                     continue;
                 }
-                //Don't process for units with no position
-                if ((detector.getPosition() == null) || (target.getPosition() == null)) {
+                //Don't process for invalid units
+                //in the case of squadrons and transports, we want the 'host'
+                //unit, not the component entities
+                if (target.getPosition() == null
+                        || target.isDestroyed()
+                        || target.isDoomed()
+                        || target.isOffBoard()
+                        || target.isPartOfFighterSquadron()
+                        || target.getTransportId() != Entity.NONE) {
                     continue;
                 }
                 // Only process for enemy units

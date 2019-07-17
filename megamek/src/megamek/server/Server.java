@@ -14799,9 +14799,10 @@ public class Server implements Runnable {
                     || detector.getTransportId() != Entity.NONE) {
                 continue;
             }
-            for (int targetId : detectedUnits) {
+            for (int targetId : detector.getSensorContacts()) {
+                Entity target = game.getEntity(targetId);
                 //if we already have a firing solution, no need to process a new one
-                if (detector.hasFiringSolutionFor(game, targetId)) {
+                if (detector.hasFiringSolutionFor(targetId)) {
                     continue;
                 }
                 //Don't process for invalid units
@@ -14821,7 +14822,7 @@ public class Server implements Runnable {
                 }
                 //If we successfully lock up the enemy, add it to the appropriate detector's firing solutions list
                 if (Compute.calcFiringSolution(game, detector, target)) {
-                    detector.firingSolutions.add(target);
+                    detector.addFiringSolution(targetId);
                 }
             }
         }
@@ -14839,8 +14840,8 @@ public class Server implements Runnable {
         }
         //Run through our list of units and remove any entities from the plotting board that have moved out of range
         for (Entity detector : game.getEntitiesVector()) {
-            Compute.removeFiringSolution(detector);
-            Compute.removeSensorContact(detector);
+            Compute.updateFiringSolutions(game, detector);
+            Compute.updateSensorContacts(game, detector);
         }
     }
 

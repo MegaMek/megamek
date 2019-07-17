@@ -14808,7 +14808,8 @@ public class Server implements Runnable {
                 //Don't process for invalid units
                 //in the case of squadrons and transports, we want the 'host'
                 //unit, not the component entities
-                if (target.getPosition() == null
+                if (target == null
+                        || target.getPosition() == null
                         || target.isDestroyed()
                         || target.isDoomed()
                         || target.isOffBoard()

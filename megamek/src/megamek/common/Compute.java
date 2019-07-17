@@ -4288,7 +4288,7 @@ public class Compute {
             detector.clearFiringSolutions();
             return;
         }
-        for (int id : detector.getSensorContacts()) {
+        for (int id : detector.getFiringSolutions()) {
             Entity target = game.getEntity(id);
             //The target should be removed if it's off the board for any of these reasons
             if (target.isDestroyed()
@@ -4332,7 +4332,7 @@ public class Compute {
      * tracked. Also, if the detecting entity no longer meets criteria for having sensor contacts,
      * empty the list. We wouldn't want a dead ship to be providing sensor data, now would we...
      */
-    public static void removeSensorContact(IGame game, Entity detector) {
+    public static void updateSensorContacts(IGame game, Entity detector) {
         List<Integer> toRemove = new ArrayList<Integer>();
         //Flush the detecting unit's sensor contacts if any of these conditions applies
         if (detector.isDestroyed()

@@ -2150,7 +2150,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         client.sendTelemissileTargetCFRResponse(0);
                     }
                 case Packet.COMMAND_CFR_TAG_TARGET:
-                    List<String> TAGTargetDescriptions = evt.getTAGTargetDescriptions();
+                    List<Integer> TAGTargets = evt.getTAGTargets();
+                    List<String> TAGTargetDescriptions = new ArrayList<String>();
+                    for (int id : TAGTargets) {
+                        Targetable tgt = client.getGame().getEntity(id);
+                        if (tgt != null) {
+                            TAGTargetDescriptions.add(ent.getShortName());
+                        }
+                    }
                     //Set up the selection pane
                     i18nString = "TAGTargetDialog.message"; //$NON-NLS-1$;
                     msg = Messages.getString(i18nString);
@@ -2158,10 +2165,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     title = Messages.getString(i18nString);
                     input = (String) JOptionPane.showInputDialog(frame, msg,
                             title, JOptionPane.QUESTION_MESSAGE, null,
-                            TAGTargetDescriptions.toArray(), TAGTargetDescriptions.get(0));
+                            TAGTargetDescriptions.toArray(), TAGTargets.get(0));
                     if (input != null) {
-                        for (int i = 0; i < TAGTargetDescriptions.size(); i++) {
-                            if (input.equals(TAGTargetDescriptions.get(i))) {
+                        for (int i = 0; i < TAGTargets.size(); i++) {
+                            if (input.equals(TAGTargets.get(i))) {
                                 client.sendTAGTargetCFRResponse(i);
                                 break;
                             }

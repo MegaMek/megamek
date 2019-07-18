@@ -4420,6 +4420,10 @@ public class Compute {
             outOfVisualRange = Sensor.ASF_RADAR_MAX_RANGE;
             rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
         }
+        
+        if (distance > outOfVisualRange) {
+            return false;
+        }
 
         if (ae instanceof Aero) {
             Aero aero = (Aero) ae;
@@ -4431,26 +4435,19 @@ public class Compute {
             }
         }
 
-        //If using active radar, targets at 1/10 max range are automatically detected
+        //Targets at 1/10 max range are automatically detected
         if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
             autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
         } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
             autoVisualRange = Sensor.LC_RADAR_AUTOSPOT_RANGE;
-        }
-
-        //If using thermal/optical sensors, we can only establish a firing solution at 1/10 max range
-        if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
-            outOfVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
+        } else if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
+            autoVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
         } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
-            outOfVisualRange = Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE;
+            autoVisualRange = Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE;
         }
 
         if (distance <= autoVisualRange) {
             return true;
-        }
-
-        if (distance > outOfVisualRange) {
-            return false;
         }
 
         //Apply Sensor Geek SPA, if present

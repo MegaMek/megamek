@@ -15606,7 +15606,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Empties this entity's sensorContacts
      * Used when it dies or moves offboard
-     * @param targetId the ID number of the target entity to remove
      */
     public void clearSensorContacts() {
         sensorContacts.clear();
@@ -15648,7 +15647,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Empties this entity's firingSolutions
      * Used when it dies or moves offboard
-     * @param targetId the ID number of the target entity to remove
      */
     public void clearFiringSolutions() {
         firingSolutions.clear();

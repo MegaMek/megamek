@@ -59,9 +59,9 @@ public class GameCFREvent extends GameEvent {
     private List<String> telemissileTargets;
     
     /**
-     * List of descriptions for tagged targets within range.
+     * List of Target IDs for tagged targets within range.
      */
-    private List<String> tagTargets;
+    private List<Integer> tagTargets;
     
     /**
      * Construct game event
@@ -165,11 +165,11 @@ public class GameCFREvent extends GameEvent {
         telemissileTargets = newTargetDescriptions;
     }
 
-    public List<String> getTAGTargetDescriptions() {
+    public List<Integer> getTAGTargets() {
         return tagTargets;
     }
     
-    public void setTAGTargets(List<String> newTargetDescriptions) {
-        tagTargets = newTargetDescriptions;
+    public void setTAGTargets(List<Integer> newTargets) {
+        tagTargets = newTargets;
     }
 }

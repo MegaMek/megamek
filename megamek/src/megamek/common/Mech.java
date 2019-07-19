@@ -4765,7 +4765,7 @@ public abstract class Mech extends Entity {
                     
                     // first element in the the ArrayList is BV, second is heat
                     // if same BV, lower heat first
-                    if(obj1BV == obj2BV) {
+                    if(obj1BV.equals(obj2BV)) {
                         Double obj1Heat = (Double) obj1.get(1);
                         Double obj2Heat = (Double) obj2.get(1);
                         

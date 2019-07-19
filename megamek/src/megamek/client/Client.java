@@ -1472,6 +1472,7 @@ public class Client implements IClientCommandHandler {
                 break;
             case Packet.COMMAND_CFR_TAG_TARGET:
                 cfrEvt.setTAGTargets((List<Integer>)c.getObject(1));
+                cfrEvt.setTAGTargetTypes((List<Integer>)c.getObject(2));
                 break;
             }
             game.processGameEvent(cfrEvt);

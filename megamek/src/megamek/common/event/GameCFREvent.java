@@ -64,6 +64,11 @@ public class GameCFREvent extends GameEvent {
     private List<Integer> tagTargets;
     
     /**
+     * List of Targetable object types for tagged targets within range.
+     */
+    private List<Integer> tagTargetTypes;
+    
+    /**
      * Construct game event
      */
     public GameCFREvent(Object source, int t) {
@@ -171,5 +176,13 @@ public class GameCFREvent extends GameEvent {
     
     public void setTAGTargets(List<Integer> newTargets) {
         tagTargets = newTargets;
+    }
+    
+    public List<Integer> getTAGTargetTypes() {
+        return tagTargetTypes;
+    }
+    
+    public void setTAGTargetTypes(List<Integer> targetTypes) {
+        tagTargetTypes = targetTypes;
     }
 }

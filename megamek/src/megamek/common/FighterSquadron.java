@@ -214,7 +214,7 @@ public class FighterSquadron extends Aero implements IAero {
         }
         int vel = getCurrentVelocity();
         int vmod = vel - (2 * getWalkMP());
-        if (vmod > 0) {
+        if (!getGame().getBoard().inSpace() && (vmod > 0)) {
             prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
         }
 

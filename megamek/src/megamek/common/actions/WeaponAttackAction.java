@@ -3851,7 +3851,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             //Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
             if (ae.hasNavalC3()) {
                 for (Entity en : game.getEntitiesVector()) {
-                    if (en != ae && !en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.hasFiringSolution(game, en, te)) {
+                    if (en != ae && !en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && ae.hasFiringSolutionFor(te.getId())) {
                         networkFiringSolution = true;
                         break;
                     }
@@ -3859,7 +3859,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             if (!networkFiringSolution) {
                 //If we don't check for target type here, we can't fire screens and missiles at hexes...
-                if (!Compute.hasFiringSolution(game, ae, te) && target.getTargetType() == Targetable.TYPE_ENTITY) {
+                if (!ae.hasFiringSolutionFor(te.getId()) && target.getTargetType() == Targetable.TYPE_ENTITY) {
                     return Messages.getString("WeaponAttackAction.NoFiringSolution");
                 }
             }

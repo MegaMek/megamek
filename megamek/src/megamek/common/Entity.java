@@ -15597,10 +15597,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     
     /**
      * Removes the specified target entity's ID from this entity's sensorContacts
-     * @param targetId the ID number of the target entity to remove
+     * @param targetIds the ID number of the target entity to remove
      */
-    public void removeSensorContact(int targetId) {
-        sensorContacts.remove(targetId);
+    public void removeSensorContact(Collection<Integer> targetIds) {
+        sensorContacts.removeAll(targetIds);
     }
     
     /**
@@ -15638,10 +15638,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     
     /**
      * Removes the specified target entity's ID from this entity's firingSolutions
-     * @param targetId the ID number of the target entity to remove
+     * @param targetIds the ID number of the target entity to remove
      */
-    public void removeFiringSolution(int targetId) {
-        firingSolutions.remove(targetId);
+    public void removeFiringSolution(Collection<Integer> targetIds) {
+        firingSolutions.removeAll(targetIds);
     }
     
     /**

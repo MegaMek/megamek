@@ -2152,13 +2152,20 @@ public class Aero extends Entity implements IAero, IBomber {
 
             // sort the heat-using weapons by modified BV
             Collections.sort(heatBVs, (obj1, obj2) -> {
+                Double obj1BV = (Double) obj1.get(0); // BV
+                Double obj2BV = (Double) obj2.get(0); // BV
+                
                 // first element in the the ArrayList is BV, second is heat
                 // if same BV, lower heat first
-                if (obj1.get(0).equals(obj2.get(0))) {
-                    return (int) Math.ceil((Double) obj1.get(1) - (Double) obj2.get(1));
+                if(obj1BV.equals(obj2BV)) {
+                    Double obj1Heat = (Double) obj1.get(1);
+                    Double obj2Heat = (Double) obj2.get(1);
+                    
+                    return Double.compare(obj1Heat, obj2Heat);
                 }
+                
                 // higher BV first
-                return (int) Math.ceil((Double) obj2.get(0) - (Double) obj1.get(0));
+                return Double.compare(obj2BV, obj1BV);
             });
 
             // count heat-generating weapons at full modified BV until

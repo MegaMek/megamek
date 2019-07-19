@@ -94,6 +94,7 @@ import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.Targetable;
 import megamek.common.WeaponOrderHandler;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -2151,11 +2152,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     }
                 case Packet.COMMAND_CFR_TAG_TARGET:
                     List<Integer> TAGTargets = evt.getTAGTargets();
+                    List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
                     List<String> TAGTargetDescriptions = new ArrayList<String>();
                     for (int id : TAGTargets) {
-                        Targetable tgt = client.getGame().getEntity(id);
+                        int nType = TAGTargetTypes.get(TAGTargets.indexOf(id));
+                        Targetable tgt = client.getGame().getTarget(nType, id);
                         if (tgt != null) {
-                            TAGTargetDescriptions.add(ent.getShortName());
+                            TAGTargetDescriptions.add(tgt.getDisplayName());
                         }
                     }
                     //Set up the selection pane

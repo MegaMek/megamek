@@ -4176,7 +4176,7 @@ public class Compute {
      */
     public static boolean isAnySensorContact(IGame game, int targetId) {
         for (Entity detector : game.getEntitiesVector()) {
-            if (detector.hasSensorContactFor(targetId)) {
+            if (detector.hasSensorContactFor(targetId) && game.getEntity(targetId) != null) {
                 game.getEntity(targetId).addBeenDetectedBy(detector.getOwner());
                 return true;
             }
@@ -4203,7 +4203,7 @@ public class Compute {
      */
     public static boolean hasAnyFiringSolution(IGame game, int targetId) {
         for (Entity detector : game.getEntitiesVector()) {
-            if (detector.hasFiringSolutionFor(targetId)) {
+            if (detector.hasFiringSolutionFor(targetId) && game.getEntity(targetId) != null) {
                 game.getEntity(targetId).addBeenSeenBy(detector.getOwner());
                 return true;
             }
@@ -4291,12 +4291,13 @@ public class Compute {
         for (int id : detector.getFiringSolutions()) {
             Entity target = game.getEntity(id);
             //The target should be removed if it's off the board for any of these reasons
-            if (target.isDestroyed()
+            if (target == null
+                    || target.getPosition() == null
+                    || target.isDestroyed()
                     || target.isDoomed()
                     || target.getTransportId() != Entity.NONE
                     || target.isPartOfFighterSquadron()
-                    || target.isOffBoard()
-                    || target.getPosition() == null) {
+                    || target.isOffBoard()) {
                 toRemove.add(id);
                 continue;
             }
@@ -4320,11 +4321,7 @@ public class Compute {
                 }
             }
         }
-        if (toRemove.size() >= 1) {
-            for (int entId : toRemove) {
-                detector.removeFiringSolution(entId);
-            }
-        }
+        detector.removeFiringSolution(toRemove);
     }
 
     /**
@@ -4335,24 +4332,25 @@ public class Compute {
     public static void updateSensorContacts(IGame game, Entity detector) {
         List<Integer> toRemove = new ArrayList<Integer>();
         //Flush the detecting unit's sensor contacts if any of these conditions applies
-        if (detector.isDestroyed()
+        if (detector.getPosition() == null
+                || detector.isDestroyed()
                 || detector.isDoomed()
                 || detector.getTransportId() != Entity.NONE
                 || detector.isPartOfFighterSquadron()
-                || detector.isOffBoard()
-                || detector.getPosition() == null) {
+                || detector.isOffBoard()) {
             detector.clearSensorContacts();
             return;
         }
         for (int id : detector.getSensorContacts()) {
             Entity target = game.getEntity(id);
             //The target should be removed if it's off the board for any of these reasons
-            if (target.isDestroyed()
+            if (target == null
+                    || target.getPosition() == null
+                    || target.isDestroyed()
                     || target.isDoomed()
                     || target.getTransportId() != Entity.NONE
                     || target.isPartOfFighterSquadron()
-                    || target.isOffBoard()
-                    || target.getPosition() == null) {
+                    || target.isOffBoard()) {
                 toRemove.add(id);
                 continue;
             }
@@ -4364,11 +4362,7 @@ public class Compute {
                 toRemove.add(id);
             }
         }
-        if (toRemove.size() >= 1) {
-            for (int entId : toRemove) {
-                detector.removeSensorContact(entId);
-            }
-        }
+        detector.removeSensorContact(toRemove);
     }
 
 

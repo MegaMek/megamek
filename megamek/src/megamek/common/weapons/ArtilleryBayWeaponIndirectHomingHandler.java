@@ -432,11 +432,13 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             aaa.setTargetType(target.getTargetType());
         } else {
             //The player gets to select the target
-            List<String> targetDescriptions = new ArrayList<String>();
+            List<Integer> targetIds = new ArrayList<Integer>();
+            List<Integer> targetTypes = new ArrayList<Integer>();
             for (TagInfo target : allowed) {
-                targetDescriptions.add(target.target.getDisplayName());
+                targetIds.add(target.target.getTargetId());
+                targetTypes.add(target.target.getTargetType());
             }
-            int choice = server.processTAGTargetCFR(ae.getOwnerId(), targetDescriptions);
+            int choice = server.processTAGTargetCFR(ae.getOwnerId(), targetIds, targetTypes);
             newTarget = allowed.get(choice).target;
             target = newTarget;
             aaa.setTargetId(target.getTargetId());

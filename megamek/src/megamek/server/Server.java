@@ -10473,7 +10473,7 @@ public class Server implements Runnable {
     }
 
     public int processTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
-        final String METHOD_NAME = "processTeleguidedMissileCFR(Entity, Entity)";
+        final String METHOD_NAME = "processTeleguidedMissileCFR()";
         sendTeleguidedMissileCFR(playerId, targetDescriptions);
         while (true) {
             synchronized (cfrPacketQueue) {
@@ -10510,9 +10510,9 @@ public class Server implements Runnable {
         }
     }
     
-    public int processTAGTargetCFR(int playerId, List<String> targetDescriptions) {
-        final String METHOD_NAME = "processTAGTargetCFR(Entity, Entity)";
-        sendTAGTargetCFR(playerId, targetDescriptions);
+    public int processTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes) {
+        final String METHOD_NAME = "processTAGTargetCFR()";
+        sendTAGTargetCFR(playerId, targetIds, targetTypes);
         while (true) {
             synchronized (cfrPacketQueue) {
                 try {
@@ -13591,10 +13591,10 @@ public class Server implements Runnable {
                 new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetDescriptions}));
     }
     
-    private void sendTAGTargetCFR(int playerId, List<String> targetDescriptions) {
+    private void sendTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes) {
         // Send target descriptions to Client
         send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                new Object[] { Packet.COMMAND_CFR_TAG_TARGET, targetDescriptions}));
+                new Object[] { Packet.COMMAND_CFR_TAG_TARGET, targetIds, targetTypes}));
     }
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,

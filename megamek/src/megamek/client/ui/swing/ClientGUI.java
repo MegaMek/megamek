@@ -2168,10 +2168,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     title = Messages.getString(i18nString);
                     input = (String) JOptionPane.showInputDialog(frame, msg,
                             title, JOptionPane.QUESTION_MESSAGE, null,
-                            TAGTargetDescriptions.toArray(), TAGTargets.get(0));
+                            TAGTargetDescriptions.toArray(), TAGTargetDescriptions.get(0));
                     if (input != null) {
-                        for (int i = 0; i < TAGTargets.size(); i++) {
-                            if (input.equals(TAGTargets.get(i))) {
+                        for (int i = 0; i < TAGTargetDescriptions.size(); i++) {
+                            if (input.equals(TAGTargetDescriptions.get(i))) {
                                 client.sendTAGTargetCFRResponse(i);
                                 break;
                             }

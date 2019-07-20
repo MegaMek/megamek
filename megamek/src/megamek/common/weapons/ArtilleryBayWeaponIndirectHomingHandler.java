@@ -129,8 +129,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         if (entityTarget != null) {
             r.addDesc(entityTarget);
         } else {
-            r.messageId = 3120;
             r.add(target.getDisplayName(), true);
+            r.add("no owner");
         }
         vPhaseReport.addElement(r);
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {

@@ -94,6 +94,7 @@ import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.Targetable;
 import megamek.common.WeaponOrderHandler;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -2150,7 +2151,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         client.sendTelemissileTargetCFRResponse(0);
                     }
                 case Packet.COMMAND_CFR_TAG_TARGET:
-                    List<String> TAGTargetDescriptions = evt.getTAGTargetDescriptions();
+                    List<Integer> TAGTargets = evt.getTAGTargets();
+                    List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
+                    List<String> TAGTargetDescriptions = new ArrayList<String>();
+                    for (int id : TAGTargets) {
+                        int nType = TAGTargetTypes.get(TAGTargets.indexOf(id));
+                        Targetable tgt = client.getGame().getTarget(nType, id);
+                        if (tgt != null) {
+                            TAGTargetDescriptions.add(tgt.getDisplayName());
+                        }
+                    }
                     //Set up the selection pane
                     i18nString = "TAGTargetDialog.message"; //$NON-NLS-1$;
                     msg = Messages.getString(i18nString);

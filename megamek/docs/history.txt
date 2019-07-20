@@ -35,6 +35,8 @@ v0.45.5-SNAPSHOT
 	Copperhead ammo functions as homing rounds
 + Issue #1351: When a homing round lands, the firing player will now get asked which tagged unit gets clobbered.
 + PR #1406: Princess can now spot units for indirect fire
++ PR #1413: Performance and functionality improvements for space sensors
++ PR #1414: Fix for edge case in BV calculations when two different weapons have almost identical BVs
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

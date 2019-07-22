@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,6 +62,7 @@ import megamek.common.Transporter;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
+import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.DefaultMmLogger;
@@ -205,6 +205,58 @@ public class Princess extends BotClient {
 
     boolean getFleeBoard() {
         return fleeBoard;
+    }
+    
+    /**
+     * Picks a tag target based on the data contained within the given GameCFREvent
+     * Expects the event to have some tag targets and tag target types.
+     */
+    protected int pickTagTarget(GameCFREvent evt) {
+        List<Integer> TAGTargets = evt.getTAGTargets();
+        List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
+        Map<Coords, Integer> tagTargetHexes = new HashMap<>(); // maps coordinates to target index
+        
+        // Algorithm:
+        // get a list of the hexes being tagged
+        // figure out how much damage a hit to each of the tagged hexes will do (relatively)
+        // pick the one which will result in the best damage
+        
+        // get list of targetable hexes
+        for (int tagIndex = 0; tagIndex < TAGTargets.size(); tagIndex++) {
+            int nType = TAGTargetTypes.get(tagIndex);
+            Targetable tgt = getGame().getTarget(nType, TAGTargets.get(tagIndex));
+            if (tgt != null && !tagTargetHexes.containsKey(tgt.getPosition())) {
+                tagTargetHexes.put(tgt.getPosition(), tagIndex);
+            }
+        }
+        
+        Entity arbitraryEntity = getArbitraryEntity();
+        if(arbitraryEntity == null) {
+            return 0;
+        }
+        
+        double maxDamage = -Double.MAX_VALUE;
+        Coords maxDamageHex = null;
+        
+        // invoke ArtilleryTargetingControl.calculateDamageValue
+        for(Coords targetHex : tagTargetHexes.keySet()) {
+            // a note on parameters:
+            // we don't care about exact damage value since we're just comparing them relative to one another
+            //  note: technically we should, 
+            // we don't care about specific firing entity, we just want one on our side
+            //      since we only use it to determine friendlyness 
+            double currentDamage = getArtilleryTargetingControl().calculateDamageValue(10, targetHex, arbitraryEntity, game, this);
+            if(currentDamage > maxDamage) {
+                maxDamage = currentDamage;
+                maxDamageHex = targetHex;
+            }
+        }
+        
+        if(maxDamageHex != null) {
+            return tagTargetHexes.get(maxDamageHex);
+        } else {
+            return 0;
+        }
     }
 
     boolean getForcedWithdrawal() {

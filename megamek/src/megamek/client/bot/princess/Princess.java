@@ -876,6 +876,12 @@ public class Princess extends BotClient {
     		initFiringEntities(fireControlState);
     	}
     	
+    	//if, even after initializing entities, we have no valid entities
+    	//we'll let the game determine 
+    	if(fireControlState.getOrderedFiringEntities().size() == 0) {
+    	    return game.getFirstEntity(getMyTurn());
+    	}
+    	
     	Entity entityToReturn = fireControlState.getOrderedFiringEntities().getFirst();
     	fireControlState.getOrderedFiringEntities().removeFirst();
     	return entityToReturn;
@@ -890,8 +896,8 @@ public class Princess extends BotClient {
     	fireControlState.clearOrderedFiringEntities();
     	
     	for(Entity entity : myEntities) {
-    		// if you can't fire, you can't fire.
-    		if(!game.getTurn().isValidEntity(entity, game, false)) {
+    	    // if you can't fire, you can't fire.
+    		if(!getMyTurn().isValidEntity(entity, game)) {
     			continue;
     		}
     		

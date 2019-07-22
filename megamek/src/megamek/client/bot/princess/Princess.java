@@ -235,7 +235,7 @@ public class Princess extends BotClient {
             return 0;
         }
         
-        double maxDamage = -999;
+        double maxDamage = -Double.MAX_VALUE;
         Coords maxDamageHex = null;
         
         // invoke ArtilleryTargetingControl.calculateDamageValue

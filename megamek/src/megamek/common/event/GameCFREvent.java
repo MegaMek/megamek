@@ -59,6 +59,11 @@ public class GameCFREvent extends GameEvent {
     private List<Integer> telemissileTargets;
     
     /**
+     * List of toHit values for the possible telemissile targets.
+     */
+    private List<Integer> tmToHitValues;
+    
+    /**
      * List of Target IDs for tagged targets within range.
      */
     private List<Integer> tagTargets;
@@ -168,6 +173,14 @@ public class GameCFREvent extends GameEvent {
     
     public void setTeleguidedMissileTargets(List<Integer> newTargetIds) {
         telemissileTargets = newTargetIds;
+    }
+    
+    public List<Integer> getTmToHitValues() {
+        return tmToHitValues;
+    }
+    
+    public void setTmToHitValues(List<Integer> toHitValues) {
+        tmToHitValues = toHitValues;
     }
 
     public List<Integer> getTAGTargets() {

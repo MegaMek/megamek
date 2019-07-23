@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.46.0-rc1
+v0.46.0-rc.1 (2019-07-23 0300 UTC)
 + PR #1331: Infantry with "forest ranger" SPA is no longer able to move through woods for free.
 + Issue #1356: Partial Wing won't work on Ultralight Battlemech.
 + PR #1359, 1364, 1365: Multiple fixes preventing bot freezes in "edge" cases

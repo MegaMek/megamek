@@ -540,12 +540,12 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
         //If we're using tele-operated missiles, the player gets to select the target
         if (weapon.getType() instanceof TeleOperatedMissileBayWeapon) {
-            List<String> targetDescriptions = new ArrayList<String>();
+            List<Integer> targetIds = new ArrayList<Integer>();
             for (Aero target : targets) {
                 setToHit(target);
-                targetDescriptions.add(target.getDisplayName() + ": Needs " + toHit.getValue() + " to hit.");
+                targetIds.add(target.getId());
             }
-            int choice = server.processTeleguidedMissileCFR(ae.getOwnerId(), targetDescriptions);
+            int choice = server.processTeleguidedMissileCFR(ae.getOwnerId(), targetIds);
             newTarget = targets.get(choice);
             target = newTarget;
             aaa.setTargetId(target.getTargetId());

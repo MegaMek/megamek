@@ -10472,9 +10472,9 @@ public class Server implements Runnable {
         }
     }
 
-    public int processTeleguidedMissileCFR(int playerId, List<Integer> targetIds) {
+    public int processTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues) {
         final String METHOD_NAME = "processTeleguidedMissileCFR()";
-        sendTeleguidedMissileCFR(playerId, targetIds);
+        sendTeleguidedMissileCFR(playerId, targetIds, toHitValues);
         while (true) {
             synchronized (cfrPacketQueue) {
                 try {
@@ -13585,14 +13585,14 @@ public class Server implements Runnable {
                                 hidden.getId(), target.getId() }));
     }
 
-    private void sendTeleguidedMissileCFR(int playerId, List<Integer> targetIds) {
-        // Send target descriptions to Client
+    private void sendTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues) {
+        // Send target id numbers and to-hit values to Client
         send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetIds}));
+                new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetIds, toHitValues}));
     }
     
     private void sendTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes) {
-        // Send target descriptions to Client
+        // Send target id numbers and type identifiers to Client
         send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
                 new Object[] { Packet.COMMAND_CFR_TAG_TARGET, targetIds, targetTypes}));
     }

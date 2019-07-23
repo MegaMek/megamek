@@ -54,9 +54,9 @@ public class GameCFREvent extends GameEvent {
     private List<WeaponAttackAction> waas;
 
     /**
-     * List of descriptions for targets of a teleguided missile.
+     * List of Target IDs for targets of a teleguided missile.
      */
-    private List<String> telemissileTargets;
+    private List<Integer> telemissileTargets;
     
     /**
      * List of Target IDs for tagged targets within range.
@@ -162,12 +162,12 @@ public class GameCFREvent extends GameEvent {
         this.targetId = targetId;
     }
 
-    public List<String> getTelemissileTargetDescriptions() {
+    public List<Integer> getTelemissileTargetIds() {
         return telemissileTargets;
     }
     
-    public void setTeleguidedMissileTargets(List<String> newTargetDescriptions) {
-        telemissileTargets = newTargetDescriptions;
+    public void setTeleguidedMissileTargets(List<Integer> newTargetIds) {
+        telemissileTargets = newTargetIds;
     }
 
     public List<Integer> getTAGTargets() {

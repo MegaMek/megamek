@@ -2129,7 +2129,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     }
                     break;
                 case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
-                    List<String> targetDescriptions = evt.getTelemissileTargetDescriptions();
+                    List<Integer> targetIds = evt.getTelemissileTargetIds();
+                    List<Integer> toHitValues = evt.getTmToHitValues();
+                    List<String> targetDescriptions = new ArrayList<String>();
+                    for (int id : targetIds) {
+                        Entity tgt = client.getGame().getEntity(id);
+                        int th = toHitValues.get(targetIds.indexOf(id));
+                        if (tgt != null) {
+                            targetDescriptions.add(String.format(Messages.getString("TeleMissileTargetDialog.targets"), tgt.getDisplayName(), th));
+                        }
+                    }
                     //Set up the selection pane
                     String i18nString = "TeleMissileTargetDialog.message"; //$NON-NLS-1$;
                     msg = Messages.getString(i18nString);

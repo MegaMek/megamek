@@ -27,6 +27,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import megamek.client.ui.Messages;
+import megamek.common.IGame;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Ask for the velocity setting for a teleoperated missile.
@@ -42,10 +44,14 @@ public class TeleMissileSettingDialog extends JDialog implements ActionListener 
     private JTextField fldSetting = new JTextField("50", 2); //$NON-NLS-1$
     private int setting;
     private JFrame frame;
+    private int minimumVelocity = 1;
+    private int maxVelocity = getGame().getOptions().intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
+    private IGame game;
 
-    public TeleMissileSettingDialog(JFrame p) {
+    public TeleMissileSettingDialog(JFrame p, IGame game) {
         super(p, Messages.getString("SetTeleMissileVolcityDialog.title"), true); //$NON-NLS-1$
         super.setResizable(false);
+        this.game = game;
         frame = p;
         butOk.addActionListener(this);
         JLabel labMessage = new JLabel(Messages
@@ -79,6 +85,10 @@ public class TeleMissileSettingDialog extends JDialog implements ActionListener 
     public int getSetting() {
         return setting;
     }
+    
+    private IGame getGame() {
+        return game;
+    }
 
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(butOk)) {
@@ -97,12 +107,12 @@ public class TeleMissileSettingDialog extends JDialog implements ActionListener 
                                         .getString("SetTeleMissileVolcityDialog.error.title"), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
                 return;
             }
-            if ((setting < 1) || (setting > 50)) {
+            if ((setting < minimumVelocity) || (setting > maxVelocity)) {
                 JOptionPane
                         .showMessageDialog(
                                 frame,
-                                Messages
-                                        .getString("SetTeleMissileVelocityDialog.error.message"), //$NON-NLS-1$
+                                String.format(Messages
+                                        .getString("SetTeleMissileVelocityDialog.error.message"), maxVelocity), //$NON-NLS-1$
                                 Messages
                                         .getString("SetTeleMissileVolcityDialog.error.title"), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
                 return;

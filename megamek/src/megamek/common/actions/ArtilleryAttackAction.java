@@ -25,6 +25,7 @@ import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.WeaponType;
+import megamek.common.options.OptionsConstants;
 
 /**
  * ArtilleryAttackAction Holds the data needed for an artillery attack in
@@ -92,7 +93,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
                 || (wType.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
                 || (wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE))
                 && (distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)) {
-            this.launchVelocity = wType.extremeRange;
+            this.launchVelocity = game.getOptions().intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
             turnsTilHit = (int) (distance / launchVelocity);
             return;
         }

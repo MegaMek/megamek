@@ -45,13 +45,14 @@ public class TeleMissileSettingDialog extends JDialog implements ActionListener 
     private int setting;
     private JFrame frame;
     private int minimumVelocity = 1;
-    private int maxVelocity = getGame().getOptions().intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
+    private int maxVelocity = 50;
     private IGame game;
 
     public TeleMissileSettingDialog(JFrame p, IGame game) {
         super(p, Messages.getString("SetTeleMissileVolcityDialog.title"), true); //$NON-NLS-1$
         super.setResizable(false);
         this.game = game;
+        maxVelocity = game.getOptions().intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
         frame = p;
         butOk.addActionListener(this);
         JLabel labMessage = new JLabel(Messages

@@ -2136,7 +2136,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         Entity tgt = client.getGame().getEntity(id);
                         int th = toHitValues.get(targetIds.indexOf(id));
                         if (tgt != null) {
-                            targetDescriptions.add(String.format(Messages.getString("TeleMissileTargetDialog.targets"), tgt.getDisplayName(), th));
+                            targetDescriptions.add(String.format(Messages.getString("TeleMissileTargetDialog.target"), tgt.getDisplayName(), th));
                         }
                     }
                     //Set up the selection pane

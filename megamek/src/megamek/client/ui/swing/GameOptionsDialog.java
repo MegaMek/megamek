@@ -46,11 +46,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
@@ -71,7 +69,6 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.utils.MegaMekXmlUtil;
-import mekhq.campaign.CampaignOptions;
 
 /**
  * Responsible for displaying the current game options and allowing the user to
@@ -126,9 +123,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
     
-    private JSpinner spnDropshipPercent = new JSpinner(new SpinnerNumberModel(options.getDropshipContractPercent(), 0.0, CampaignOptions.MAXIMUM_DROPSHIP_EQUIPMENT_PERCENT, 0.1));
-    spnDropshipPercent.setEditor(new JSpinner.NumberEditor(spnDropshipPercent, "0.0"));
-    ((JSpinner.NumberEditor) spnDropshipPercent.getEditor()).getTextField().setEditable(false);
+    private int minCmVelocity = 1;
+    private int maxCmVelocity = 500;
 
     /**
      * When the OK button is pressed, the options can be saved to a file; this
@@ -485,6 +481,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 optionComp.setEditable(editable);
             } else {
                 optionComp.setEditable(false);
+            }
+        } else if (option.getName().equals(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY)) {
+            if (option.intValue() < minCmVelocity) {
+                //Set to the minimum velocity if under
+                option.setValue(minCmVelocity);
+            } else if (option.intValue() > maxCmVelocity) {
+                //Set to the maximum velocity if over
+                option.setValue(maxCmVelocity);
             }
         } else if (option.getName().equals(OptionsConstants.RPG_BEGIN_SHUTDOWN)) {
             if ((options.getOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)).booleanValue()) {

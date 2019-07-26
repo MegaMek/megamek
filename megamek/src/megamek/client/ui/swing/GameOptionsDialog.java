@@ -68,6 +68,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.utils.MegaMekXmlUtil;
 
 /**
@@ -122,9 +123,6 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     private JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults")); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-    
-    private int minCmVelocity = 1;
-    private int maxCmVelocity = 500;
 
     /**
      * When the OK button is pressed, the options can be saved to a file; this
@@ -483,12 +481,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 optionComp.setEditable(false);
             }
         } else if (option.getName().equals(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY)) {
-            if (option.intValue() < minCmVelocity) {
+            if (option.intValue() < CapitalMissileBayWeapon.CAPITAL_MISSILE_MIN_VELOCITY) {
                 //Set to the minimum velocity if under
-                option.setValue(minCmVelocity);
-            } else if (option.intValue() > maxCmVelocity) {
+                option.setValue(CapitalMissileBayWeapon.CAPITAL_MISSILE_MIN_VELOCITY);
+            } else if (option.intValue() > CapitalMissileBayWeapon.CAPITAL_MISSILE_MAX_VELOCITY) {
                 //Set to the maximum velocity if over
-                option.setValue(maxCmVelocity);
+                option.setValue(CapitalMissileBayWeapon.CAPITAL_MISSILE_MAX_VELOCITY);
             }
         } else if (option.getName().equals(OptionsConstants.RPG_BEGIN_SHUTDOWN)) {
             if ((options.getOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)).booleanValue()) {

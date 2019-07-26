@@ -330,19 +330,14 @@ public interface IGame {
     abstract void setBoard(IBoard board);
 
     /**
-     * Return an enumeration of teams in the game
+     * Return a list of teams in the game
      */
-    abstract Enumeration<Team> getTeams();
+    abstract List<Team> getTeams();
 
     /**
      * Return the current number of teams in the game.
      */
     abstract int getNoOfTeams();
-
-    /**
-     * Return the immutable vector of teams
-     */
-    abstract List<Team> getTeamsVector();
 
     /**
      * Return a players team Note: may return null if player has no team

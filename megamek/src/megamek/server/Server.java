@@ -3657,7 +3657,7 @@ public class Server implements Runnable {
         } else {
             // Roll for initative on the teams.
             TurnOrdered.rollInitiative(
-                    game.getTeamsVector(),
+                    game.getTeams(),
                     game.getOptions().booleanOption(
                             OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION)
                     && !game.shouldDeployThisRound());
@@ -3935,8 +3935,7 @@ public class Server implements Runnable {
                 nTeams);
         Hashtable<Team, int[]> evenTrackers = new Hashtable<Team, int[]>(nTeams);
         int numTeamsMoving = 0;
-        for (Enumeration<Team> loop = game.getTeams(); loop.hasMoreElements(); ) {
-            final Team team = loop.nextElement();
+        for (Team team : game.getTeams()) {
             allTeamTurns.put(team, team.determineTeamOrder(game));
 
             // Track both the number of times we've checked the team for
@@ -3954,7 +3953,7 @@ public class Server implements Runnable {
 
         // Now, generate the global order of all teams' turns.
         TurnVectors team_order = TurnOrdered.generateTurnOrder(
-                game.getTeamsVector(), game);
+                game.getTeams(), game);
 
         // Now, we collect everything into a single vector.
         List<GameTurn> turns = checkTurnOrderStranded(team_order);
@@ -4176,8 +4175,7 @@ public class Server implements Runnable {
                 }
             }
         } else {
-            for (Enumeration<Team> i = game.getTeams(); i.hasMoreElements(); ) {
-                final Team team = i.nextElement();
+            for (Team team : game.getTeams()) {
 
                 // Teams with no active players can be ignored
                 if (team.isObserverTeam()) {
@@ -12218,9 +12216,7 @@ public class Server implements Runnable {
      * @param mf The <code>Minefield</code> to be revealed
      */
     private void revealMinefield(Minefield mf) {
-        Enumeration<Team> teams = game.getTeams();
-        while (teams.hasMoreElements()) {
-            Team team = teams.nextElement();
+        for (Team team : game.getTeams()) {
             revealMinefield(team, mf);
         }
     }
@@ -12248,12 +12244,11 @@ public class Server implements Runnable {
      * LOS. If so, then it reveals the mine
      */
     private void checkForRevealMinefield(Minefield mf, Entity layer) {
-        Enumeration<Team> teams = game.getTeams();
         // loop through each team and determine if they can see the mine, then
         // loop through players on team
         // and reveal the mine
-        while (teams.hasMoreElements()) {
-            Team team = teams.nextElement();
+        for (Team team : game.getTeams()) {
+
             boolean canSee = false;
 
             // the players own team can always see the mine
@@ -14000,9 +13995,7 @@ public class Server implements Runnable {
             int teamId = player.getTeam();
 
             if (teamId != IPlayer.TEAM_NONE) {
-                Enumeration<Team> teams = game.getTeams();
-                while (teams.hasMoreElements()) {
-                    Team team = teams.nextElement();
+                for (Team team : game.getTeams()) {
                     if (team.getId() == teamId) {
                         Enumeration<IPlayer> players = team.getPlayers();
                         while (players.hasMoreElements()) {
@@ -37287,8 +37280,7 @@ public class Server implements Runnable {
         int damage_bonus = Math.max(0, game.getPlanetaryConditions()
                                            .getWindStrength() - PlanetaryConditions.WI_MOD_GALE);
         // cycle through each team and damage 1d6 airborne VTOL/WIGE
-        for (Enumeration<Team> loop = game.getTeams(); loop.hasMoreElements(); ) {
-            Team team = loop.nextElement();
+        for (Team team : game.getTeams()) {
             Vector<Integer> airborne = team.getAirborneVTOL();
             if (airborne.size() > 0) {
                 // how many units are affected

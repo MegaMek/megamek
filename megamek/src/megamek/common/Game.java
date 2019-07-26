@@ -346,8 +346,8 @@ public class Game implements Serializable, IGame {
     /**
      * Return an enumeration of teams in the game
      */
-    public Enumeration<Team> getTeams() {
-        return teams.elements();
+    public List<Team> getTeams() {
+        return Collections.unmodifiableList(teams);
     }
 
     /**
@@ -355,14 +355,6 @@ public class Game implements Serializable, IGame {
      */
     public int getNoOfTeams() {
         return teams.size();
-    }
-
-    /**
-     * This returns a clone of the vector of teams. Each element is one of the
-     * teams in the game.
-     */
-    public List<Team> getTeamsVector() {
-        return Collections.unmodifiableList(teams);
     }
 
     /**

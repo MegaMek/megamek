@@ -1761,9 +1761,7 @@ public class Tank extends Entity {
                         tagBV += atype.getBV(this);
                     } else if ((tmpP.getTeam() != IPlayer.TEAM_NONE)
                             && (game != null)) {
-                        for (Enumeration<Team> e = game.getTeams(); e
-                                .hasMoreElements();) {
-                            Team m = e.nextElement();
+                        for (Team m : game.getTeams()) {
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
                                     tagBV += atype.getBV(this);

@@ -40,7 +40,7 @@ public class EnemyCmdrDestroyedVictory implements IVictoryConditions, Serializab
         // score is 1.0 when enemy commanders are dead
         boolean victory = false;
         HashSet<Integer> doneTeams = new HashSet<Integer>();
-        for (IPlayer player : game.getPlayersVector()) {
+        for (IPlayer player : game.getPlayers()) {
             boolean killedAll = true;
             int team = player.getTeam();
             if (team != IPlayer.TEAM_NONE) {
@@ -49,7 +49,7 @@ public class EnemyCmdrDestroyedVictory implements IVictoryConditions, Serializab
                 // skip if already dealt with this team
                 doneTeams.add(team);
             }
-            for (IPlayer enemyPlayer : game.getPlayersVector()) {
+            for (IPlayer enemyPlayer : game.getPlayers()) {
                 if (enemyPlayer.equals(player) ||
                         (team != IPlayer.TEAM_NONE && team == enemyPlayer.getTeam()))
                     continue;

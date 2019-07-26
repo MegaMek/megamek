@@ -385,9 +385,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         // can't be more teams than players.
         StringBuffer buff;
         if (clientgui != null) {
-            Enumeration<IPlayer> loop = clientgui.getClient().getGame().getPlayers();
-            while (loop.hasMoreElements()) {
-                IPlayer player = loop.nextElement();
+            for (IPlayer player : clientgui.getClient().getGame().getPlayers()) {
                 int team = player.getTeam();
                 if (en.isNarcedBy(team) && !player.isObserver()) {
                     buff = new StringBuffer(

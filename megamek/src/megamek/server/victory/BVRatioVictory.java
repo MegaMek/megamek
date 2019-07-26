@@ -44,7 +44,7 @@ public class BVRatioVictory extends AbstractBVVictory {
         VictoryResult vr = new VictoryResult(true);
         // now check for detailed victory conditions...
         HashSet<Integer> doneTeams = new HashSet<Integer>();
-        for (IPlayer player : game.getPlayersVector()) {
+        for (IPlayer player : game.getPlayers()) {
             if (player.isObserver())
                 continue;
             int fbv = 0;

@@ -74,7 +74,7 @@ public class LoadGameCommand extends ServerCommand {
         // Keep track of the current id to name mapping
         Map<String, Integer> nameToIdMap = new HashMap<>();
         Map<Integer, String> idToNameMap = new HashMap<>();
-        for (IPlayer p: server.getGame().getPlayersVector()) {
+        for (IPlayer p: server.getGame().getPlayers()) {
             nameToIdMap.put(p.getName(), p.getId());
             idToNameMap.put(p.getId(), p.getName());
         }

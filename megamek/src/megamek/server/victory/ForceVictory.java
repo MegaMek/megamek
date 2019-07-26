@@ -39,7 +39,7 @@ public class ForceVictory implements IVictoryConditions, Serializable {
         }
         int victoryPlayerId = game.getVictoryPlayerId();
         int victoryTeam = game.getVictoryTeam();
-        List<IPlayer> players = game.getPlayersVector();
+        List<IPlayer> players = game.getPlayers();
         boolean forceVictory = true;
 
         // Individual victory.

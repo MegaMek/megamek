@@ -46,7 +46,7 @@ public class ChatProcessor {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
-            for (IPlayer p : bot.getGame().getPlayersVector()) {
+            for (IPlayer p : bot.getGame().getPlayers()) {
                 if (p.getName().equals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/defeat");
@@ -72,7 +72,7 @@ public class ChatProcessor {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
-            for (IPlayer p : bot.getGame().getPlayersVector()) {
+            for (IPlayer p : bot.getGame().getPlayers()) {
                 if (p.getName().equals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/victory");
@@ -106,11 +106,10 @@ public class ChatProcessor {
         }
         String name = st.nextToken().trim();
         // who is the message from?
-        Enumeration<IPlayer> e = bot.getGame().getPlayers();
-        IPlayer p = null;
-        while (e.hasMoreElements()) {
-            p = e.nextElement();
+        IPlayer player = null;
+        for (IPlayer p : bot.getGame().getPlayers()) {
             if (name.equalsIgnoreCase(p.getName())) {
+                player = p;
                 break;
             }
         }
@@ -120,11 +119,11 @@ public class ChatProcessor {
                 bot.sendChat("/allowTeamChange");
             }
             return;
-        } else if (p == null) {
+        } else if (player == null) {
             return;
         }
         if (bot instanceof TestBot) {
-            additionalTestBotCommands(st, (TestBot) bot, p);
+            additionalTestBotCommands(st, (TestBot) bot, player);
         } else if (bot instanceof Princess) {
             additionalPrincessCommands(ge, (Princess) bot);
         }
@@ -190,9 +189,7 @@ public class ChatProcessor {
     }
 
     private IPlayer getPlayer(IGame game, String playerName) {
-        Enumeration<IPlayer> players = game.getPlayers();
-        while (players.hasMoreElements()) {
-            IPlayer testPlayer = players.nextElement();
+        for (IPlayer testPlayer : game.getPlayers()) {
             if (playerName.equalsIgnoreCase(testPlayer.getName())) {
                 return testPlayer;
             }

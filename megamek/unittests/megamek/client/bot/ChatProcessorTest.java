@@ -13,7 +13,9 @@
  */
 package megamek.client.bot;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -93,12 +95,12 @@ public class ChatProcessorTest {
         Mockito.when(mockBotPlayerVGer.isEnemyOf(mockHumanPlayerKirk)).thenReturn(true);
         Mockito.when(mockBotPlayerVGer.getTeam()).thenReturn(1);
 
-        final Vector<IPlayer> playerVector = new Vector<>(4);
+        final List<IPlayer> playerVector = new ArrayList<>(4);
         playerVector.add(mockHumanPlayerDave);
         playerVector.add(mockBotPlayerHal);
         playerVector.add(mockHumanPlayerKirk);
         playerVector.add(mockBotPlayerVGer);
-        Mockito.when(MOCK_GAME.getPlayersVector()).thenReturn(playerVector);
+        Mockito.when(MOCK_GAME.getPlayers()).thenReturn(playerVector);
 
         mockBotHal = Mockito.mock(BotClient.class);
         Mockito.when(mockBotHal.getLocalPlayer()).thenReturn(mockBotPlayerHal);

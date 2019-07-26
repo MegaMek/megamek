@@ -68,7 +68,7 @@ public class JoinTeamCommand extends ServerCommand {
             } else if (teamId == IPlayer.TEAM_NONE){
                 teamString = " go lone wolf!  ";
             }
-            for (IPlayer p : server.getGame().getPlayersVector()){
+            for (IPlayer p : server.getGame().getPlayers()){
                 if (p.getId() != player.getId()){
                     server.sendServerChat(p.getId(), player.getName()
                             + " wants to " + teamString
@@ -78,7 +78,7 @@ public class JoinTeamCommand extends ServerCommand {
             
             server.requestTeamChange(teamId, player);
             
-            for (IPlayer p : server.getGame().getPlayersVector()){
+            for (IPlayer p : server.getGame().getPlayers()){
                 p.setAllowTeamChange(false);
             }
             player.setAllowTeamChange(true);

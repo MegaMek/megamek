@@ -9366,7 +9366,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // If team vision, see if any players on team can see
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
-            for (IPlayer teammate : game.getPlayersVector()) {
+            for (IPlayer teammate : game.getPlayers()) {
                 if ((teammate.getTeam() == p.getTeam())
                         && entitySeenBy.contains(teammate)) {
                     return true;
@@ -9438,7 +9438,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // If team vision, see if any players on team can see
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
-            for (IPlayer teammate : game.getPlayersVector()) {
+            for (IPlayer teammate : game.getPlayers()) {
                 if ((teammate.getTeam() == p.getTeam())
                         && entityDetectedBy.contains(teammate)) {
                     return true;

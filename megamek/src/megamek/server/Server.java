@@ -697,8 +697,7 @@ public class Server implements Runnable {
         game.removeEntities(orphanEntities, IEntityRemovalConditions.REMOVE_UNKNOWN);
         
         game.setOutOfGameEntitiesVector(game.getOutOfGameEntitiesVector());
-        for (Enumeration<IPlayer> e = game.getPlayers(); e.hasMoreElements(); ) {
-            IPlayer p = e.nextElement();
+        for (IPlayer p : game.getPlayers()) {
             p.setGame(game);
             p.setGhost(true);
         }
@@ -889,8 +888,7 @@ public class Server implements Runnable {
      * @return the <code>String</code> new playername
      */
     private String correctDupeName(String oldName) {
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            IPlayer player = i.nextElement();
+        for (IPlayer player : game.getPlayers()) {
             if (player.getName().equals(oldName)) {
                 // We need to correct it.
                 String newName = oldName;
@@ -988,8 +986,7 @@ public class Server implements Runnable {
         }
 
         // check if they're connecting with the same name as a ghost player
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            IPlayer player = i.nextElement();
+        for (IPlayer player : game.getPlayers()) {
             if (player.getName().equals(name)) {
                 if (player.isGhost()) {
                     returning = true;
@@ -1152,7 +1149,7 @@ public class Server implements Runnable {
         int team = IPlayer.TEAM_UNASSIGNED;
         if (game.getPhase() == Phase.PHASE_LOUNGE) {
             team = IPlayer.TEAM_NONE;
-            for (IPlayer p : game.getPlayersVector()) {
+            for (IPlayer p : game.getPlayers()) {
                 if (p.getTeam() > team) {
                     team = p.getTeam();
                 }
@@ -1161,10 +1158,10 @@ public class Server implements Runnable {
         }
         IPlayer newPlayer = new Player(connId, name);
         int colorInd = newPlayer.getColorIndex();
-        Enumeration<IPlayer> players = game.getPlayers();
-        while (players.hasMoreElements()
-               && (colorInd < IPlayer.colorNames.length)) {
-            final IPlayer p = players.nextElement();
+        for (IPlayer p : game.getPlayers()) {
+            if (colorInd >= IPlayer.colorNames.length) {
+                break;
+            }
             if (p.getId() == newPlayer.getId()) {
                 continue;
             }
@@ -1205,8 +1202,7 @@ public class Server implements Runnable {
 
         // make sure colorIndex is unique
         boolean[] colorUsed = new boolean[IPlayer.colorNames.length];
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer otherPlayer = i.nextElement();
+        for (IPlayer otherPlayer : game.getPlayers()) {
             if (otherPlayer.getId() != playerId) {
                 colorUsed[otherPlayer.getColorIndex()] = true;
             }
@@ -1285,8 +1281,7 @@ public class Server implements Runnable {
      * observers during the lounge phase.
      */
     public void checkForObservers() {
-        for (Enumeration<IPlayer> e = game.getPlayers(); e.hasMoreElements(); ) {
-            IPlayer p = e.nextElement();
+        for (IPlayer p : game.getPlayers()) {
             p.setObserver((game.getEntitiesOwnedBy(p) < 1)
                           && (game.getPhase() != IGame.Phase.PHASE_LOUNGE));
         }
@@ -1304,9 +1299,7 @@ public class Server implements Runnable {
 
         // remove ghosts
         ArrayList<IPlayer> ghosts = new ArrayList<IPlayer>();
-        for (Enumeration<IPlayer> players = game.getPlayers(); players
-                .hasMoreElements(); ) {
-            IPlayer p = players.nextElement();
+        for (IPlayer p : game.getPlayers()) {
             if (p.isGhost()) {
                 ghosts.add(p);
             } else {
@@ -1564,12 +1557,12 @@ public class Server implements Runnable {
        // Keep track of which ids are used
         Set<Integer> usedPlayerIds = new HashSet<>();
         Set<String> currentPlayerNames = new HashSet<>();
-        for (IPlayer p : game.getPlayersVector()) {
+        for (IPlayer p : game.getPlayers()) {
             currentPlayerNames.add(p.getName());
         }
         // Map the old connection Id to new value
         Map<Integer,Integer> connIdRemapping = new HashMap<>();
-        for (IPlayer p : game.getPlayersVector()) {
+        for (IPlayer p : game.getPlayers()) {
             // Check to see if this player was already connected
             Integer oldId = nameToIdMap.get(p.getName());
             if ((oldId != null) && (oldId != p.getId())) {
@@ -1895,8 +1888,7 @@ public class Server implements Runnable {
         if (isReportingPhase()) {
             return;
         }
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
+        for (IPlayer player : game.getPlayers()) {
             player.setDone(false);
         }
         transmitAllPlayerDones();
@@ -1910,8 +1902,7 @@ public class Server implements Runnable {
         /*
          * if (isReportingPhase()) { return; }
          */
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
+        for (IPlayer player : game.getPlayers()) {
 
             player.setDone(game.getEntitiesOwnedBy(player) <= 0);
 
@@ -1960,9 +1951,7 @@ public class Server implements Runnable {
         addReport(r);
 
         // Show player BVs
-        Enumeration<IPlayer> players = game.getPlayers();
-        while (players.hasMoreElements()) {
-            IPlayer player = players.nextElement();
+        for (IPlayer player : game.getPlayers()) {
             // Players who started the game as observers get ignored
             if (player.getInitialBV() == 0) {
                 continue;
@@ -2065,10 +2054,8 @@ public class Server implements Runnable {
             vAllUnits.addElement(i.nextElement());
         }
 
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-
-            // Record the player.
-            IPlayer p = i.nextElement();
+        for (IPlayer p : game.getPlayers()) {
+            // record the player
             sb.append("++++++++++ ").append(p.getName()).append(" ++++++++++");
             sb.append(CommonConstants.NL);
 
@@ -2122,9 +2109,7 @@ public class Server implements Runnable {
             game.setVictoryTeam(victor.getTeam());
         }
 
-        Vector<IPlayer> playersVector = game.getPlayersVector();
-        for (int i = 0; i < playersVector.size(); i++) {
-            IPlayer player = playersVector.elementAt(i);
+        for (IPlayer player : game.getPlayers()) {
             player.setAdmitsDefeat(false);
         }
     }
@@ -2184,8 +2169,7 @@ public class Server implements Runnable {
      */
     private void checkReady() {
         // check if all active players are done
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
+        for (IPlayer player : game.getPlayers()) {
             if (!player.isGhost() && !player.isObserver() && !player.isDone()) {
                 return;
             }
@@ -2507,10 +2491,8 @@ public class Server implements Runnable {
                 resetActivePlayersDone();
                 setIneligible(phase);
 
-                Enumeration<IPlayer> e = game.getPlayers();
                 List<GameTurn> turns = new ArrayList<>();
-                while (e.hasMoreElements()) {
-                    IPlayer p = e.nextElement();
+                for (IPlayer p : game.getPlayers()) {
                     if (p.hasMinefields() && game.getBoard().onGround()) {
                         GameTurn gt = new GameTurn(p.getId());
                         turns.add(gt);
@@ -2534,15 +2516,11 @@ public class Server implements Runnable {
                 resetActivePlayersDone();
                 setIneligible(phase);
 
-                Enumeration<IPlayer> players = game.getPlayers();
                 List<GameTurn> turns2 = new ArrayList<>();
 
                 // Walk through the players of the game, and add
                 // a turn for all players with artillery weapons.
-                while (players.hasMoreElements()) {
-
-                    // Get the next player.
-                    final IPlayer p = players.nextElement();
+                for (IPlayer p : game.getPlayers()) {
 
                     // Does the player have any artillery-equipped units?
                     EntitySelector playerArtySelector = new EntitySelector() {
@@ -2646,9 +2624,7 @@ public class Server implements Runnable {
             case PHASE_INITIATIVE_REPORT:
                 autoSave();
                 // Show player BVs
-                Enumeration<IPlayer> players2 = game.getPlayers();
-                while (players2.hasMoreElements()) {
-                    IPlayer player = players2.nextElement();
+                for (IPlayer player : game.getPlayers()) {
                     // Players who started the game as observers get ignored
                     if (player.getInitialBV() == 0) {
                         continue;
@@ -2865,9 +2841,8 @@ public class Server implements Runnable {
      * Calculates all players initial BV, should only be called at start of game
      */
     public void calculatePlayerBVs() {
-        for (Enumeration<IPlayer> players = game.getPlayers(); players
-                .hasMoreElements(); ) {
-            players.nextElement().setInitialBV();
+        for (IPlayer player : game.getPlayers()) {
+            player.setInitialBV();
         }
     }
 
@@ -2988,10 +2963,8 @@ public class Server implements Runnable {
                 break;
             case PHASE_SET_ARTYAUTOHITHEXES:
                 sendSpecialHexDisplayPackets();
-                Enumeration<IPlayer> e = game.getPlayers();
                 boolean mines = false;
-                while (e.hasMoreElements() && !mines) {
-                    IPlayer p = e.nextElement();
+                for (IPlayer p : game.getPlayers()) {
                     if (p.hasMinefields()) {
                         mines = true;
                     }
@@ -3009,9 +2982,7 @@ public class Server implements Runnable {
             case PHASE_DEPLOYMENT:
                 game.clearDeploymentThisRound();
                 game.checkForCompleteDeployment();
-                Enumeration<IPlayer> pls = game.getPlayers();
-                while (pls.hasMoreElements()) {
-                    IPlayer p = pls.nextElement();
+                for (IPlayer p : game.getPlayers()) {
                     p.adjustStartingPosForReinforcements();
                 }
 
@@ -3149,9 +3120,7 @@ public class Server implements Runnable {
                 }
 
                 sendSpecialHexDisplayPackets();
-                for (Enumeration<IPlayer> i = game.getPlayers(); i
-                        .hasMoreElements(); ) {
-                    IPlayer player = i.nextElement();
+                for (IPlayer player : game.getPlayers()) {
                     int connId = player.getId();
                     send(connId, createArtilleryPacket(player));
                 }
@@ -3164,9 +3133,7 @@ public class Server implements Runnable {
                 // possible
                 resolveOnlyWeaponAttacks(); // should only be TAG at this point
                 handleAttacks();
-                for (Enumeration<IPlayer> i = game.getPlayers(); i
-                        .hasMoreElements(); ) {
-                    IPlayer player = i.nextElement();
+                for (IPlayer player : game.getPlayers()) {
                     int connId = player.getId();
                     send(connId, createArtilleryPacket(player));
                 }
@@ -3581,7 +3548,7 @@ public class Server implements Runnable {
             return false;
         }
 
-        for (IPlayer player : game.getPlayersVector()) {
+        for (IPlayer player : game.getPlayers()) {
 
             if ((player.getId() == game.getVictoryPlayerId())
                 || ((player.getTeam() == game.getVictoryTeam()) && (game
@@ -3814,9 +3781,7 @@ public class Server implements Runnable {
             evenMask += GameTurn.CLASS_PROTOMECH;
         }
         // Reset all of the Players' turn category counts
-        for (Enumeration<IPlayer> loop = game.getPlayers(); loop
-                .hasMoreElements(); ) {
-            final IPlayer player = loop.nextElement();
+        for (IPlayer player : game.getPlayers()) {
             player.resetEvenTurns();
             player.resetMultiTurns();
             player.resetOtherTurns();
@@ -4185,7 +4150,7 @@ public class Server implements Runnable {
                 // If there is only one non-observer player, list
                 // them as the 'team', and use the team initiative
                 if (team.getNonObserverSize() == 1) {
-                    final IPlayer player = team.getNonObserverPlayers().nextElement();
+                    final IPlayer player = team.getNonObserverPlayers().get(0);
                     r = new Report(1015, Report.PUBLIC);
                     r.add(Server.getColorForPlayer(player));
                     r.add(team.getInitiative().toString());
@@ -4196,9 +4161,7 @@ public class Server implements Runnable {
                     r.add(IPlayer.teamNames[team.getId()]);
                     r.add(team.getInitiative().toString());
                     addReport(r);
-                    for (Enumeration<IPlayer> j = team.getNonObserverPlayers(); j
-                            .hasMoreElements(); ) {
-                        final IPlayer player = j.nextElement();
+                    for (IPlayer player : team.getNonObserverPlayers()) {
                         r = new Report(1015, Report.PUBLIC);
                         r.indent();
                         r.add(player.getName());
@@ -7909,9 +7872,8 @@ public class Server implements Runnable {
                 entity.setSpotlightState(SearchOn);
                 if (doBlind()) { // if doubleblind, we may need to filter the
                     // players that receive this messgae
-                    Vector<IPlayer> playersVector = game.getPlayersVector();
                     Vector<IPlayer> vCanSee = whoCanSee(entity);
-                    for (IPlayer p : playersVector) {
+                    for (IPlayer p : game.getPlayers()) {
                         if (vCanSee.contains(p)) { // Player sees the unit
                             sendServerChat(p.getId(),
                                     entity.getDisplayName()
@@ -10390,7 +10352,7 @@ public class Server implements Runnable {
                     } else {
                         firstPacket = false;
                         // Notify other clients, so they can display a message
-                        for (IPlayer p : game.getPlayersVector()) {
+                        for (IPlayer p : game.getPlayers()) {
                             if (p.getId() == hidden.getOwnerId()) {
                                 continue;
                             }
@@ -12189,9 +12151,7 @@ public class Server implements Runnable {
         }
         game.removeMinefield(mf);
 
-        Enumeration<IPlayer> players = game.getPlayers();
-        while (players.hasMoreElements()) {
-            IPlayer player = players.nextElement();
+        for (IPlayer player : game.getPlayers()) {
             removeMinefield(player, mf);
         }
     }
@@ -12228,9 +12188,7 @@ public class Server implements Runnable {
      * @param mf   The <code>Minefield</code> to be revealed
      */
     private void revealMinefield(Team team, Minefield mf) {
-        Enumeration<IPlayer> players = team.getPlayers();
-        while (players.hasMoreElements()) {
-            IPlayer player = players.nextElement();
+        for (IPlayer player : team.getPlayers()) {
             if (!player.containsMinefield(mf)) {
                 player.addMinefield(mf);
                 send(player.getId(), new Packet(
@@ -13997,9 +13955,7 @@ public class Server implements Runnable {
             if (teamId != IPlayer.TEAM_NONE) {
                 for (Team team : game.getTeams()) {
                     if (team.getId() == teamId) {
-                        Enumeration<IPlayer> players = team.getPlayers();
-                        while (players.hasMoreElements()) {
-                            IPlayer teamPlayer = players.nextElement();
+                        for (IPlayer teamPlayer : team.getPlayers()) {
                             if (teamPlayer.getId() != player.getId()) {
                                 send(teamPlayer.getId(), new Packet(
                                         Packet.COMMAND_DEPLOY_MINEFIELDS,
@@ -14297,7 +14253,7 @@ public class Server implements Runnable {
         Packet p = createAttackPacket(vector, 0);
         if (game.isPhaseSimultaneous()) {
             // Update attack only to player who declared it & observers
-            for (IPlayer player : game.getPlayersVector()) {
+            for (IPlayer player : game.getPlayers()) {
                 if (player.canSeeAll() || player.isObserver()
                     || (entity.getOwnerId() == player.getId())) {
                     send(player.getId(), p);
@@ -30812,7 +30768,6 @@ public class Server implements Runnable {
 
         // If we're doing double blind, be careful who can see it...
         if (doBlind()) {
-            Vector<IPlayer> playersVector = game.getPlayersVector();
             Vector<IPlayer> vCanSee;
             if (updateVisibility) {
                 vCanSee = whoCanSee(eTarget, true, losCache);
@@ -30845,14 +30800,13 @@ public class Server implements Runnable {
             // send an entity delete to everyone else
             pack = createRemoveEntityPacket(nEntityID,
                                             eTarget.getRemovalCondition());
-            for (int x = 0; x < playersVector.size(); x++) {
-                if (!vCanSee.contains(playersVector.elementAt(x))) {
-                    IPlayer p = playersVector.elementAt(x);
+            for (IPlayer p : game.getPlayers()) {
+                if (!vCanSee.contains(p)) {
                     send(p.getId(), pack);
                 }
             }
 
-            entityUpdateLoadedUnits(eTarget, vCanSee, playersVector);
+            entityUpdateLoadedUnits(eTarget, vCanSee, game.getPlayers());
         } else {
             // But if we're not, then everyone can see.
             send(createEntityPacket(nEntityID, movePath));
@@ -30866,10 +30820,10 @@ public class Server implements Runnable {
      * @param loader        An Entity being updated that is transporting units that should
      *                      also send an update
      * @param vCanSee       The list of Players who can see the loader.
-     * @param playersVector The list of all Players
+     * @param players       The list of all Players
      */
     private void entityUpdateLoadedUnits(Entity loader,
-                                         Vector<IPlayer> vCanSee, Vector<IPlayer> playersVector) {
+                                         Vector<IPlayer> vCanSee, List<IPlayer> players) {
         Packet pack;
 
         // In double-blind, the client may not know about the loaded units,
@@ -30884,13 +30838,12 @@ public class Server implements Runnable {
             // send an entity delete to everyone else
             pack = createRemoveEntityPacket(eLoaded.getId(),
                                             eLoaded.getRemovalCondition());
-            for (int x = 0; x < playersVector.size(); x++) {
-                if (!vCanSee.contains(playersVector.elementAt(x))) {
-                    IPlayer p = playersVector.elementAt(x);
+            for (IPlayer p : players) {
+                if (!vCanSee.contains(p)) {
                     send(p.getId(), pack);
                 }
             }
-            entityUpdateLoadedUnits(eLoaded, vCanSee, playersVector);
+            entityUpdateLoadedUnits(eLoaded, vCanSee, players);
         }
     }
 
@@ -30936,9 +30889,7 @@ public class Server implements Runnable {
         }
 
         // Deal with players who can see all.
-        for (Enumeration<IPlayer> p = game.getPlayers(); p.hasMoreElements();) {
-            IPlayer player = p.nextElement();
-
+        for (IPlayer player : game.getPlayers()) {
             if (player.canSeeAll() && !vCanSee.contains(player)) {
                 vCanSee.addElement(player);
             }
@@ -31033,9 +30984,7 @@ public class Server implements Runnable {
      * Adds teammates of a player to the Vector. Utility function for whoCanSee.
      */
     private void addTeammates(Vector<IPlayer> vector, IPlayer player) {
-        Vector<IPlayer> playersVector = game.getPlayersVector();
-        for (int j = 0; j < playersVector.size(); j++) {
-            IPlayer p = playersVector.elementAt(j);
+        for (IPlayer p : game.getPlayers()) {
             if (!player.isEnemyOf(p) && !vector.contains(p)) {
                 vector.addElement(p);
             }
@@ -31046,9 +30995,7 @@ public class Server implements Runnable {
      * Adds observers to the Vector. Utility function for whoCanSee.
      */
     private void addObservers(Vector<IPlayer> vector) {
-        Vector<IPlayer> playersVector = game.getPlayersVector();
-        for (int j = 0; j < playersVector.size(); j++) {
-            IPlayer p = playersVector.elementAt(j);
+        for (IPlayer p : game.getPlayers()) {
             if (p.isObserver() && !vector.contains(p)) {
                 vector.addElement(p);
             }
@@ -31063,9 +31010,7 @@ public class Server implements Runnable {
         // If double-blind is in effect, filter each players' list individually,
         // and then quit out...
         if (doBlind()) {
-            Vector<IPlayer> playersVector = game.getPlayersVector();
-            for (int x = 0; x < playersVector.size(); x++) {
-                IPlayer p = playersVector.elementAt(x);
+            for (IPlayer p : game.getPlayers()) {
                 send(p.getId(), createFilteredEntitiesPacket(p, null));
             }
             return;
@@ -32196,9 +32141,7 @@ public class Server implements Runnable {
      * Sends out all player info to the specified connection
      */
     private void transmitAllPlayerConnects(int connId) {
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
-
+        for (IPlayer player : game.getPlayers()) {
             send(connId, createPlayerConnectPacket(player.getId()));
         }
     }
@@ -32227,8 +32170,7 @@ public class Server implements Runnable {
      * Sends out the player info updates for all players to all connections
      */
     private void transmitAllPlayerUpdates() {
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
+        for (IPlayer player : game.getPlayers()) {
             if (null != player) {
                 send(createPlayerUpdatePacket(player.getId()));
             }
@@ -32239,9 +32181,7 @@ public class Server implements Runnable {
      * Sends out the player ready stats for all players to all connections
      */
     private void transmitAllPlayerDones() {
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
-
+        for (IPlayer player : game.getPlayers()) {
             send(createPlayerDonePacket(player.getId()));
         }
     }

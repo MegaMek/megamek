@@ -354,12 +354,7 @@ public interface IGame {
     /**
      * Return an enumeration of player in the game
      */
-    abstract Enumeration<IPlayer> getPlayers();
-
-    /**
-     * Return the players vector
-     */
-    abstract Vector<IPlayer> getPlayersVector();
+    abstract List<IPlayer> getPlayers();
 
     /**
      * Return the current number of active players in the game.

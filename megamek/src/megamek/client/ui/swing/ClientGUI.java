@@ -852,8 +852,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * and a file for salvage
      */
     public void doSaveUnit() {
-        for (Enumeration<IPlayer> iter = getClient().getGame().getPlayers(); iter.hasMoreElements(); ) {
-            IPlayer p = iter.nextElement();
+        for (IPlayer p : getClient().getGame().getPlayers()) {
             List<Entity> l = new ArrayList<>(getClient().getGame().getPlayerEntities(p, false));
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter2 = getClient().getGame().getRetreatedEntities(); iter2.hasMoreElements(); ) {
@@ -2419,7 +2418,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     void replacePlayer() {
         Set<IPlayer> ghostPlayers = new HashSet<>();
-        for (IPlayer p : client.getGame().getPlayersVector()) {
+        for (IPlayer p : client.getGame().getPlayers()) {
             if (p.isGhost()) {
                 ghostPlayers.add(p);
             }

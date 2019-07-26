@@ -5132,8 +5132,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // Set up variables we need
             // We use a vector instead of enumeration here so we can grab the
             // size
-            Vector<IPlayer> players = clientgui.getClient().getGame()
-                    .getPlayersVector();
+            List<IPlayer> players = clientgui.getClient().getGame()
+                    .getPlayers();
             Integer[] playerIds = new Integer[players.size() - 1];
             String[] playerNames = new String[players.size() - 1];
             String[] options = new String[players.size() - 1];
@@ -5141,8 +5141,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
             // Loop through the players vector and fill in the arrays
             int idx = 0;
-            for (int i = 0; i < players.size(); i++) {
-                IPlayer p = players.get(i);
+            for (IPlayer p : players) {
                 // If this is us, we skip it since we can't transfer to
                 // ourselves
                 if (p.getName().equals(

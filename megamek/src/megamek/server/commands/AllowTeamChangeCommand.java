@@ -53,7 +53,7 @@ public class AllowTeamChangeCommand extends ServerCommand {
             boolean changeTeam = true;
             int voteCount = 0;
             int eligiblePlayerCount = 0;
-            for (IPlayer p : server.getGame().getPlayersVector()){
+            for (IPlayer p : server.getGame().getPlayers()){
                 if (p.getTeam() != IPlayer.TEAM_UNASSIGNED){
                     changeTeam &= p.isAllowingTeamChange();
                     if (p.isAllowingTeamChange()){

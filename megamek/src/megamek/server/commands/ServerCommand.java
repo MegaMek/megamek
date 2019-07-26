@@ -79,10 +79,7 @@ public abstract class ServerCommand {
             return false; // Just in case something funky happens
 
         if (server.getPlayer(connId).isObserver()) {
-            for (Enumeration<IPlayer> e = server.getGame().getPlayers(); e
-                    .hasMoreElements();) {
-                IPlayer p = e.nextElement();
-
+            for (IPlayer p : server.getGame().getPlayers()) {
                 if (!p.isObserver() && !p.isGhost()) {
                     // There are non-Observer, non-Ghosts in the game, so
                     // Observers are locked out.

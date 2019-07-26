@@ -87,8 +87,8 @@ public class Game implements Serializable, IGame {
      */
     Vector<Entity> vOutOfGame = new Vector<Entity>();
 
-    private Vector<IPlayer> players = new Vector<IPlayer>();
-    private Vector<Team> teams = new Vector<Team>(); // DES
+    private List<IPlayer> players = new ArrayList<>();
+    private List<Team> teams = new ArrayList<>(); // DES
 
     private Hashtable<Integer, IPlayer> playerIds = new Hashtable<Integer, IPlayer>();
 
@@ -307,9 +307,7 @@ public class Game implements Serializable, IGame {
         minefields.clear();
         vibrabombs.removeAllElements();
 
-        Enumeration<IPlayer> iter = getPlayers();
-        while (iter.hasMoreElements()) {
-            IPlayer player = iter.nextElement();
+        for (IPlayer player : players) {
             player.removeMinefields();
         }
     }
@@ -362,8 +360,7 @@ public class Game implements Serializable, IGame {
      */
     public Team getTeamForPlayer(IPlayer p) {
         for (Team team : teams) {
-            for (Enumeration<IPlayer> j = team.getPlayers(); j.hasMoreElements(); ) {
-                final IPlayer player = j.nextElement();
+            for (IPlayer player : team.getPlayers()) {
                 if (p == player) {
                     return team;
                 }
@@ -384,8 +381,7 @@ public class Game implements Serializable, IGame {
 
         // Get all NO_TEAM players. If team_initiative is false, all
         // players are on their own teams for initiative purposes.
-        for (Enumeration<IPlayer> i = getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
+        for (IPlayer player : players) {
             // Ignore players not on a team
             if (player.getTeam() == IPlayer.TEAM_UNASSIGNED) {
                 continue;
@@ -401,8 +397,7 @@ public class Game implements Serializable, IGame {
             // Now, go through all the teams, and add the appropriate player
             for (int t = IPlayer.TEAM_NONE + 1; t < IPlayer.MAX_TEAMS; t++) {
                 Team new_team = null;
-                for (Enumeration<IPlayer> i = getPlayers(); i.hasMoreElements(); ) {
-                    final IPlayer player = i.nextElement();
+                for (IPlayer player : players) {
                     if (player.getTeam() == t) {
                         if (new_team == null) {
                             new_team = new Team(t);
@@ -431,17 +426,10 @@ public class Game implements Serializable, IGame {
     }
 
     /**
-     * Return an enumeration of player in the game
+     * Return a list of players in the game.
      */
-    public Enumeration<IPlayer> getPlayers() {
-        return players.elements();
-    }
-
-    /**
-     * Return the players vector
-     */
-    public Vector<IPlayer> getPlayersVector() {
-        return players;
+    public List<IPlayer> getPlayers() {
+        return Collections.unmodifiableList(players);
     }
 
     /**
@@ -463,7 +451,7 @@ public class Game implements Serializable, IGame {
 
     public void addPlayer(int id, IPlayer player) {
         player.setGame(this);
-        players.addElement(player);
+        players.add(player);
         playerIds.put(Integer.valueOf(id), player);
         setupTeams();
         updatePlayer(player);
@@ -472,7 +460,7 @@ public class Game implements Serializable, IGame {
     public void setPlayer(int id, IPlayer player) {
         final IPlayer oldPlayer = getPlayer(id);
         player.setGame(this);
-        players.setElementAt(player, players.indexOf(oldPlayer));
+        players.set(players.indexOf(oldPlayer), player);
         playerIds.put(Integer.valueOf(id), player);
         setupTeams();
         updatePlayer(player);
@@ -484,7 +472,7 @@ public class Game implements Serializable, IGame {
 
     public void removePlayer(int id) {
         IPlayer playerToRemove = getPlayer(id);
-        players.removeElement(playerToRemove);
+        players.remove(playerToRemove);
         playerIds.remove(Integer.valueOf(id));
         setupTeams();
         processGameEvent(new GamePlayerChangeEvent(this, playerToRemove));
@@ -1452,9 +1440,7 @@ public class Game implements Serializable, IGame {
     }
 
     private void removeArtyAutoHitHexes() {
-        Enumeration<IPlayer> iter = getPlayers();
-        while (iter.hasMoreElements()) {
-            IPlayer player = iter.nextElement();
+        for (IPlayer player : players) {
             player.removeArtyAutoHitHexes();
         }
     }

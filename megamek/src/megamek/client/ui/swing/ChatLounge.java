@@ -1997,8 +1997,7 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     private void refreshPlayerInfo() {
         playerModel.clearData();
-        for (Enumeration<IPlayer> i = clientgui.getClient().getPlayers(); i.hasMoreElements();) {
-            final IPlayer player = i.nextElement();
+        for (IPlayer player : clientgui.getClient().getPlayers()) {
             if (player == null) {
                 continue;
             }
@@ -2963,8 +2962,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                         Messages.getString("ChatLounge.ExclusiveDeploy.msg")); //$NON-NLS-1$
                 return;
             }
-            for (Enumeration<IPlayer> e = client.getGame().getPlayers(); e.hasMoreElements();) {
-                IPlayer player = e.nextElement();
+            for (IPlayer player : client.getGame().getPlayers()) {
                 if (player.getStartingPos() == 0) {
                     continue;
                 }
@@ -4071,10 +4069,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 // Change Owner Menu Item
                 menu = new JMenu(Messages.getString("ChatLounge.ChangeOwner"));
                 menu.setEnabled(isOwner || isBot);
-                Enumeration<IPlayer> players = clientgui.getClient().getPlayers();
-                while (players.hasMoreElements() && (isOwner || isBot)) {
-                    IPlayer p = players.nextElement();
-                    //
+                for (IPlayer p : clientgui.getClient().getPlayers()) {
                     if (!entity.getOwner().equals(p)) {
                         menuItem = new JMenuItem(p.getName());
                         menuItem.setActionCommand("CHANGE_OWNER|" + p.getId());

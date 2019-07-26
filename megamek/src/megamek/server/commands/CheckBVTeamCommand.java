@@ -40,10 +40,8 @@ public class CheckBVTeamCommand extends ServerCommand {
         for (Team team : server.getGame().getTeams()) {
             int initialTeamBV = 0;
             int currentTeamBV = 0;
-            Enumeration<IPlayer> playersEnum = team.getPlayers();
             boolean enemyTeam = false;
-            while (playersEnum.hasMoreElements()) {
-                IPlayer player = playersEnum.nextElement();
+            for (IPlayer player : team.getPlayers()) {
                 initialTeamBV += player.getInitialBV();
                 currentTeamBV += player.getBV();
                 if (player.isEnemyOf(requestingPlayer)) {

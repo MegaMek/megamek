@@ -17,8 +17,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -50,15 +52,12 @@ public class AddBotUtilTest {
         Mockito.when(mockBotPlayer.getName()).thenReturn(BOT_PLAYER_NAME);
         Mockito.when(mockBotPlayer.isGhost()).thenReturn(true);
 
-        final Vector<IPlayer> playerVector = new Vector<>(2);
-        playerVector.add(mockHumanPlayer);
-        playerVector.add(mockBotPlayer);
-
-        final Enumeration<IPlayer> playerEnumeration = playerVector.elements();
+        final List<IPlayer> players = new ArrayList<>(2);
+        players.add(mockHumanPlayer);
+        players.add(mockBotPlayer);
 
         mockGame = Mockito.mock(IGame.class);
-        Mockito.when(mockGame.getPlayersVector()).thenReturn(playerVector);
-        Mockito.when(mockGame.getPlayers()).thenReturn(playerEnumeration);
+        Mockito.when(mockGame.getPlayers()).thenReturn(players);
         Mockito.doNothing().when(mockGame).addGameListener(Mockito.any(GameListener.class));
 
         mockClient = Mockito.mock(Client.class);

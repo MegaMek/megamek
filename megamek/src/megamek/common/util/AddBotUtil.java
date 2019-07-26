@@ -131,10 +131,10 @@ public class AddBotUtil {
         }
 
         IPlayer target = null;
-        for (final Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
+        for (IPlayer player : game.getPlayers()) {
             if (player.getName().equals(playerName.toString())) {
                 target = player;
+                break;
             }
         }
 

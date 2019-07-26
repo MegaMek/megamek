@@ -36,9 +36,7 @@ public class CheckBVCommand extends ServerCommand {
         IPlayer requestingPlayer = server.getGame().getPlayer(connId);
         
         server.sendServerChat(connId, "Remaining BV:");        
-        for (Enumeration<IPlayer> i = server.getGame().getPlayers(); i
-                .hasMoreElements();) {
-            IPlayer player = i.nextElement();
+        for (IPlayer player : server.getGame().getPlayers()) {
             StringBuffer cb = new StringBuffer();
             double percentage = 0;
             if (player.getInitialBV() != 0) {

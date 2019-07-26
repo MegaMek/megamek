@@ -739,8 +739,8 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         pcd = null;
 
         // get player types and colors set
-        Player[] pa = new Player[g.getPlayersVector().size()];
-        g.getPlayersVector().copyInto(pa);
+        Player[] pa = new Player[g.getPlayers().size()];
+        pa = g.getPlayers().toArray(pa);
         ScenarioDialog sd = new ScenarioDialog(frame, pa);
         sd.setVisible(true);
         if (!sd.bSet) {
@@ -852,9 +852,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // If he didn't have a name when hasSlot was set, then the host should
         // be an observer.
         if (!hasSlot) {
-            Enumeration<IPlayer> pE = server.getGame().getPlayers();
-            while (pE.hasMoreElements()) {
-                IPlayer tmpP = pE.nextElement();
+            for (IPlayer tmpP : server.getGame().getPlayers()) {
                 if (tmpP.getName().equals(sd.localName)) {
                     tmpP.setObserver(true);
                 }

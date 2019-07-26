@@ -99,7 +99,7 @@ public class PlayerListDialog extends JDialog implements ActionListener {
     public static void refreshPlayerList(JList<String> playerList,
             Client client, boolean displayTeam) {
         ((DefaultListModel<String>) playerList.getModel()).removeAllElements();
-        for (IPlayer player : client.getGame().getPlayersVector()) {
+        for (IPlayer player : client.getGame().getPlayers()) {
             StringBuffer playerDisplay = new StringBuffer(player.getName());
 
             // Append team information

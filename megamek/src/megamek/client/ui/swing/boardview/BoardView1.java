@@ -1948,13 +1948,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
-                Enumeration<IPlayer> allP = game.getPlayers();
-                IPlayer cp;
                 int pCount = 0;
                 int bThickness = 1 + 10 / game.getNoOfPlayers();
                 // loop through all players
-                while (allP.hasMoreElements()) {
-                    cp = allP.nextElement();
+                for (IPlayer cp : game.getPlayers()) {
                     if (board.isLegalDeployment(c, cp.getStartingPos())) {
                         Color bC = new Color(PlayerColors.getColorRGB(cp.getColorIndex()));
                         drawHexBorder(g, getHexLocation(c), bC, (bThickness+2)
@@ -5787,12 +5784,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // in the artillery autohit designation phase
         if ((game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) && (mhex != null)) {
             txt.append("<TABLE BORDER=0 width=100%><TR><TD>"); //$NON-NLS-1$
-            Enumeration<IPlayer> allP = game.getPlayers();
             boolean foundPlayer = false;
             // loop through all players
-            while (allP.hasMoreElements())
-            {
-                IPlayer cp = allP.nextElement();
+            for (IPlayer cp : game.getPlayers()) {
                 if (game.getBoard().isLegalDeployment(mcoords, cp.getStartingPos())) {
                     if (!foundPlayer) {
                         foundPlayer = true;

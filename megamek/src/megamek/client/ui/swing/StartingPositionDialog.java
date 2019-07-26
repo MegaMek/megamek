@@ -170,8 +170,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
 
     public void update() {
         ((DefaultListModel<String>) lisStartList.getModel()).removeAllElements();
-        for (Enumeration<IPlayer> i = client.getPlayers(); i.hasMoreElements();) {
-            IPlayer player = i.nextElement();
+        for (IPlayer player : client.getPlayers()) {
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
@@ -195,9 +194,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                                 Messages.getString("ChatLounge.ExclusiveDeploy.msg")); //$NON-NLS-1$
                         return;
                     }
-                    for (Enumeration<IPlayer> e = client.getGame().getPlayers(); e
-                            .hasMoreElements();) {
-                        IPlayer player = e.nextElement();
+                    for (IPlayer player : client.getGame().getPlayers()) {
                         if (player.getStartingPos() == 0) {
                             continue;
                         }

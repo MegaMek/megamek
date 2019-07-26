@@ -36,7 +36,7 @@ public class LastManStandingVictory implements IVictoryConditions, Serializable 
         boolean oneTeamAlive = false;
         int lastTeam = IPlayer.TEAM_NONE;
         boolean unteamedAlive = false;
-        for (IPlayer player : game.getPlayersVector()) {
+        for (IPlayer player : game.getPlayers()) {
             int team = player.getTeam();
             if (game.getLiveDeployedEntitiesOwnedBy(player) <= 0) {
                 continue;

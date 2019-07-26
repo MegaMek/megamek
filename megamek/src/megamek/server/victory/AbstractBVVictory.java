@@ -29,7 +29,7 @@ public abstract class AbstractBVVictory implements IVictoryConditions, Serializa
 
     public int getFriendlyBV(IGame game, IPlayer player) {
         int ret = 0;
-        for (IPlayer other : game.getPlayersVector()) {
+        for (IPlayer other : game.getPlayers()) {
             if (other.isObserver())
                 continue;
             if (!other.isEnemyOf(player)) {
@@ -41,7 +41,7 @@ public abstract class AbstractBVVictory implements IVictoryConditions, Serializa
 
     public int getEnemyBV(IGame game, IPlayer player) {
         int ret = 0;
-        for (IPlayer other : game.getPlayersVector()) {
+        for (IPlayer other : game.getPlayers()) {
             if (other.isObserver())
                 continue;
             if (other.isEnemyOf(player)) {
@@ -53,7 +53,7 @@ public abstract class AbstractBVVictory implements IVictoryConditions, Serializa
 
     public int getEnemyInitialBV(IGame game, IPlayer player) {
         int ret = 0;
-        for (IPlayer other : game.getPlayersVector()) {
+        for (IPlayer other : game.getPlayers()) {
             if (other.isObserver())
                 continue;
             if (other.isEnemyOf(player)) {

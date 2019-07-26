@@ -367,7 +367,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Return an enumeration of the players in the game
      */
-    public Enumeration<IPlayer> getPlayers() {
+    public List<IPlayer> getPlayers() {
         return game.getPlayers();
     }
 

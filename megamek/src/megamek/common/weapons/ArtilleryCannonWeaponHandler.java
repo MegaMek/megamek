@@ -15,8 +15,6 @@
 
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -217,25 +215,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         boolean mineClear = target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR;
         if (mineClear && game.containsMinefield(targetPos) && !isFlak
                 && !bMissed) {
-            r = new Report(3255);
-            r.indent(1);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-
-            Enumeration<Minefield> minefields = game.getMinefields(targetPos)
-                    .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae,
-                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
-                    mfRemoved.add(mf);
-                }
-            }
-            // we have to do it this way to avoid a concurrent error problem
-            for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
-            }
+            reportAndResolveClearingMinefields(vPhaseReport, targetPos);
         }
 
         server.artilleryDamageArea(targetPos, ae.getPosition(), atype,
@@ -246,19 +226,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         // trying to
         // TODO: Does this apply to arty cannons?
         if (!mineClear && game.containsMinefield(targetPos)) {
-            Enumeration<Minefield> minefields = game.getMinefields(targetPos)
-                    .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae, 10, vPhaseReport)) {
-                    mfRemoved.add(mf);
-                }
-            }
-            // we have to do it this way to avoid a concurrent error problem
-            for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
-            }
+            resolveRemovingMinefields(vPhaseReport, targetPos, Minefield.CLEAR_NUMBER_ARTY_ACCIDENT);
         }
 
         return false;

@@ -14,8 +14,10 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.event.GamePlayerChangeEvent;
@@ -72,7 +74,7 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     private String camoFileName = null;
 
-    private Vector<Minefield> visibleMinefields = new Vector<Minefield>();
+    private List<Minefield> visibleMinefields = new ArrayList<>();
 
     private boolean admitsDefeat = false;
     
@@ -83,30 +85,28 @@ public final class Player extends TurnOrdered implements IPlayer {
     private boolean allowingTeamChange = false;
 
     @Override
-    public Vector<Minefield> getMinefields() {
+    public List<Minefield> getMinefields() {
         return visibleMinefields;
     }
 
     @Override
     public void addMinefield(Minefield mf) {
-        visibleMinefields.addElement(mf);
+        visibleMinefields.add(mf);
     }
 
     @Override
-    public void addMinefields(Vector<Minefield> minefields) {
-        for (int i = 0; i < minefields.size(); i++) {
-            visibleMinefields.addElement(minefields.elementAt(i));
-        }
+    public void addMinefields(List<Minefield> minefields) {
+        visibleMinefields.addAll(minefields);
     }
 
     @Override
     public void removeMinefield(Minefield mf) {
-        visibleMinefields.removeElement(mf);
+        visibleMinefields.remove(mf);
     }
 
     @Override
     public void removeMinefields() {
-        visibleMinefields.removeAllElements();
+        visibleMinefields.clear();
     }
 
     @Override

@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -43,11 +44,11 @@ public interface IPlayer extends ITurnOrdered {
      */
     public static final String ROOT_CAMO = "-- General --";
 
-    Vector<Minefield> getMinefields();
+    List<Minefield> getMinefields();
 
     void addMinefield(Minefield mf);
 
-    void addMinefields(Vector<Minefield> minefields);
+    void addMinefields(List<Minefield> minefields);
 
     void removeMinefield(Minefield mf);
 

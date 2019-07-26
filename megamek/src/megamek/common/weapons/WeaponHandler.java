@@ -18,7 +18,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Aero;
@@ -39,6 +39,7 @@ import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
+import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
@@ -1933,6 +1934,40 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean specialResolution(Vector<Report> vPhaseReport,
                                         Entity entityTarget) {
         return false;
+    }
+
+    /**
+     * Creates a report and resolves clearing minefields.
+     * @param vPhaseReport The current collection of phase reports.
+     * @param c The coordinates of the minefield being cleared.
+     */
+    protected void reportAndResolveClearingMinefields(Vector<Report> vPhaseReport, Coords c) {
+        Report r = new Report(3255);
+        r.indent(1);
+        r.subject = subjectId;
+        vPhaseReport.addElement(r);
+
+        resolveRemovingMinefields(vPhaseReport, c, Minefield.CLEAR_NUMBER_WEAPON);
+    }
+
+    /**
+     * Resolves an action to remove minefields at a given coordinate and
+     * a target roll.
+     * @param vPhaseReport The current collection of phase reports.
+     * @param c The coordinates of the minefield being removed.
+     * @param target The target roll to remove the minefield.
+     */
+    protected void resolveRemovingMinefields(Vector<Report> vPhaseReport, Coords c, int target) {
+        List<Minefield> mfRemoved = new ArrayList<>();
+        for (Minefield mf : game.getMinefields(c)) {
+            if (server.clearMinefield(mf, ae, target, vPhaseReport)) {
+                mfRemoved.add(mf);
+            }
+        }
+        // we have to do it this way to avoid a concurrent error problem
+        for (Minefield mf : mfRemoved) {
+            server.removeMinefield(mf);
+        }
     }
 
     public boolean announcedEntityFiring() {

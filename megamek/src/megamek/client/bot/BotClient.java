@@ -271,7 +271,7 @@ public abstract class BotClient extends Client {
      */
     protected abstract MovePath continueMovementFor(Entity entity);
 
-    protected abstract Vector<Minefield> calculateMinefieldDeployment();
+    protected abstract List<Minefield> calculateMinefieldDeployment();
 
     protected abstract Vector<Coords> calculateArtyAutoHitHexes();
 
@@ -514,7 +514,7 @@ public abstract class BotClient extends Client {
             } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
                 calculateDeployment();
             } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
-                Vector<Minefield> mines = calculateMinefieldDeployment();
+                List<Minefield> mines = calculateMinefieldDeployment();
                 for (Minefield mine : mines) {
                     game.addMinefield(mine);
                 }

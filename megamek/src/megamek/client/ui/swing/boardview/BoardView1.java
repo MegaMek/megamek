@@ -2176,9 +2176,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int maxY = drawY + drawHeight;
 
         IBoard board = game.getBoard();
-        for (Enumeration<Coords> minedCoords = game.getMinedCoords();
-             minedCoords.hasMoreElements(); ) {
-            Coords c = minedCoords.nextElement();
+        for (Coords c : game.getMinedCoords()) {
             // If the coords aren't visible, skip
             if ((c.getX() < drawX) || (c.getX() > maxX) || (c.getY() < drawY) || (c.getY() > maxY)
                 || !board.contains(c)) {
@@ -5720,9 +5718,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
 
             if (game.containsMinefield(mcoords)) {
-                Vector<Minefield> minefields = game.getMinefields(mcoords);
-                for (int i = 0; i < minefields.size(); i++) {
-                    Minefield mf = minefields.elementAt(i);
+                List<Minefield> minefields = game.getMinefields(mcoords);
+                for (Minefield mf : minefields) {
                     String owner = " (" //$NON-NLS-1$
                                    + game.getPlayer(mf.getPlayerId()).getName()
                                    + ")"; //$NON-NLS-1$

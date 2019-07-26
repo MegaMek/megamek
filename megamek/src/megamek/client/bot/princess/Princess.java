@@ -804,14 +804,14 @@ public class Princess extends BotClient {
     }
     
     @Override
-    protected Vector<Minefield> calculateMinefieldDeployment() {
+    protected List<Minefield> calculateMinefieldDeployment() {
         final String METHOD_NAME = "calculateMinefieldDeployment()";
         methodBegin(getClass(), METHOD_NAME);
 
         try {
             // currently returns no minefields
             // make an empty vector
-            return new Vector<>();
+            return Collections.emptyList();
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }

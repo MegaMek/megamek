@@ -840,12 +840,12 @@ public class Precognition implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void receiveDeployMinefields(Packet packet) {
-        getGame().addMinefields((Vector<Minefield>) packet.getObject(0));
+        getGame().addMinefields((List<Minefield>) packet.getObject(0));
     }
 
     @SuppressWarnings("unchecked")
     private void receiveSendingMinefields(Packet packet) {
-        getGame().setMinefields((Vector<Minefield>) packet.getObject(0));
+        getGame().setMinefields((List<Minefield>) packet.getObject(0));
     }
 
     @SuppressWarnings("unchecked")
@@ -864,8 +864,8 @@ public class Precognition implements Runnable {
     @SuppressWarnings("unchecked")
     private void receiveUpdateMinefields(Packet packet) {
         // only update information if you know about the minefield
-        Vector<Minefield> newMines = new Vector<>();
-        for (Minefield mf : (Vector<Minefield>) packet.getObject(0)) {
+        List<Minefield> newMines = new ArrayList<>();
+        for (Minefield mf : (List<Minefield>) packet.getObject(0)) {
             if (getOwner().getLocalPlayer().containsMinefield(mf)) {
                 newMines.add(mf);
             }

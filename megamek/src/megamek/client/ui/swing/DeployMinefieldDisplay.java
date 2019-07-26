@@ -17,10 +17,9 @@ package megamek.client.ui.swing;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -79,7 +78,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     private boolean remove = false;
 
     private IPlayer p;
-    private Vector<Minefield> deployedMinefields = new Vector<Minefield>();
+    private List<Minefield> deployedMinefields = new ArrayList<>();
 
     /**
      * Creates and lays out a new deployment phase display for the specified
@@ -187,14 +186,12 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             if (!clientgui.getClient().getGame().containsMinefield(coords)) {
                 return;
             }
-            Enumeration<?> mfs = clientgui.getClient().getGame().getMinefields(coords).elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-            while (mfs.hasMoreElements()) {
-                Minefield mf = (Minefield) mfs.nextElement();
+            List<Minefield> mfRemoved = new ArrayList<>();
+            for (Minefield mf : clientgui.getClient().getGame().getMinefields(coords)) {
                 if (mf.getPlayerId() == clientgui.getClient().getLocalPlayer().getId()) {
                     butDone.setEnabled(false);
                     mfRemoved.add(mf);
-                    deployedMinefields.removeElement(mf);
+                    deployedMinefields.remove(mf);
                     if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
                         p.setNbrMFConventional(p.getNbrMFConventional() + 1);
                     } else if (mf.getType() == Minefield.TYPE_COMMAND_DETONATED) {
@@ -215,9 +212,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         } else {
             // first check that there is not already a mine of this type
             // deployed
-            Enumeration<?> mfs = clientgui.getClient().getGame().getMinefields(coords).elements();
-            while (mfs.hasMoreElements()) {
-                Minefield mf = (Minefield) mfs.nextElement();
+            for (Minefield mf : clientgui.getClient().getGame().getMinefields(coords)) {
                 if ((deployM && (mf.getType() == Minefield.TYPE_CONVENTIONAL))
                         || (deployC && (mf.getType() == Minefield.TYPE_COMMAND_DETONATED))
                         || (deployV && (mf.getType() == Minefield.TYPE_VIBRABOMB))
@@ -305,7 +300,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             }
             if (mf != null) {
                 clientgui.getClient().getGame().addMinefield(mf);
-                deployedMinefields.addElement(mf);
+                deployedMinefields.add(mf);
             }
             clientgui.bv.refreshDisplayables();            
         }

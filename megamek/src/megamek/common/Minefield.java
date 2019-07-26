@@ -34,6 +34,7 @@ public class Minefield implements Serializable, Cloneable {
     public static final int TRIGGER_NONE = 0;
 
     public static final int CLEAR_NUMBER_WEAPON = 5;
+    public static final int CLEAR_NUMBER_ARTY_ACCIDENT = 10;
     public static final int CLEAR_NUMBER_INFANTRY = 10;
     public static final int CLEAR_NUMBER_INFANTRY_ACCIDENT = 5;
     public static final int CLEAR_NUMBER_INF_ENG = 9;

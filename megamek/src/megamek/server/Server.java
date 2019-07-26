@@ -10566,17 +10566,8 @@ public class Server implements Runnable {
 
             // Only if this is on the board...
             if (game.getBoard().contains(mfCoord)) {
-                Minefield minefield = null;
-                Enumeration<Minefield> minefields = game.getMinefields(mfCoord)
-                        .elements();
                 // Check if there already are Thunder minefields in the hex.
-                while (minefields.hasMoreElements()) {
-                    Minefield mf = minefields.nextElement();
-                    if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
-                        minefield = mf;
-                        break;
-                    }
-                }
+                Minefield minefield = game.findMinefield(mfCoord, Minefield.TYPE_CONVENTIONAL);
 
                 // Did we find a Thunder minefield in the hex?
                 // N.B. damage Thunder minefields equals the number of
@@ -10615,17 +10606,8 @@ public class Server implements Runnable {
      */
     public void deliverThunderMinefield(Coords coords, int playerId,
             int damage, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords)
-                .elements();
         // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
-                minefield = mf;
-                break;
-            }
-        }
+        Minefield minefield = game.findMinefield(coords, Minefield.TYPE_CONVENTIONAL);
 
         // Create a new Thunder minefield
         if (minefield == null) {
@@ -10655,17 +10637,8 @@ public class Server implements Runnable {
      */
     public void deliverThunderInfernoMinefield(Coords coords, int playerId,
             int damage, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords)
-                .elements();
         // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_INFERNO) {
-                minefield = mf;
-                break;
-            }
-        }
+        Minefield minefield = game.findMinefield(coords, Minefield.TYPE_INFERNO);
 
         // Create a new Thunder Inferno minefield
         if (minefield == null) {
@@ -10693,17 +10666,9 @@ public class Server implements Runnable {
             int entityId) {
         // Only if this is on the board...
         if (game.getBoard().contains(coords)) {
-            Minefield minefield = null;
-            Enumeration<Minefield> minefields = game.getMinefields(coords)
-                    .elements();
             // Check if there already are Thunder minefields in the hex.
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
-                    minefield = mf;
-                    break;
-                }
-            }
+            Minefield minefield = game.findMinefield(coords, Minefield.TYPE_CONVENTIONAL);
+
             // Did we find a Thunder minefield in the hex?
             if (minefield == null) {
                 minefield = Minefield.createMinefield(coords, playerId,
@@ -10729,17 +10694,8 @@ public class Server implements Runnable {
      */
     public void deliverThunderActiveMinefield(Coords coords, int playerId,
             int damage, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords)
-                .elements();
         // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_ACTIVE) {
-                minefield = mf;
-                break;
-            }
-        }
+        Minefield minefield = game.findMinefield(coords, Minefield.TYPE_ACTIVE);
 
         // Create a new Thunder-Active minefield
         if (minefield == null) {
@@ -10765,17 +10721,8 @@ public class Server implements Runnable {
      */
     public void deliverThunderVibraMinefield(Coords coords, int playerId,
             int damage, int sensitivity, int entityId) {
-        Minefield minefield = null;
-        Enumeration<Minefield> minefields = game.getMinefields(coords)
-                .elements();
         // Check if there already are Thunder minefields in the hex.
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
-                minefield = mf;
-                break;
-            }
-        }
+        Minefield minefield = game.findMinefield(coords, Minefield.TYPE_VIBRABOMB);
 
         // Create a new Thunder-Vibra minefield
         if (minefield == null) {
@@ -11567,7 +11514,7 @@ public class Server implements Runnable {
             }
         }
 
-        Vector<Minefield> fieldsToRemove = new Vector<>();
+        List<Minefield> fieldsToRemove = new ArrayList<>();
         // loop through mines in this hex
         for (Minefield mf : game.getMinefields(c)) {
 
@@ -11790,19 +11737,11 @@ public class Server implements Runnable {
      */
     private void resetMines() {
 
-        Enumeration<Coords> mineLoc = game.getMinedCoords();
-        while (mineLoc.hasMoreElements()) {
-            Coords c = mineLoc.nextElement();
-            Enumeration<Minefield> minefields = game.getMinefields(c)
-                                                    .elements();
-            while (minefields.hasMoreElements()) {
-                Minefield minefield = minefields.nextElement();
+        for (Coords c : game.getMinedCoords()) {
+            for (Minefield minefield : game.getMinefields(c)) {
                 if (minefield.hasDetonated()) {
                     minefield.setDetonated(false);
-                    Enumeration<Minefield> otherMines = game.getMinefields(c)
-                                                            .elements();
-                    while (otherMines.hasMoreElements()) {
-                        Minefield otherMine = otherMines.nextElement();
+                    for (Minefield otherMine : game.getMinefields(c)) {
                         if (otherMine.equals(minefield)) {
                             continue;
                         }
@@ -11817,12 +11756,11 @@ public class Server implements Runnable {
                     }
                 }
             }
+
             // cycle through a second time to see if any mines at these coords
             // need to be removed
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-            Enumeration<Minefield> mines = game.getMinefields(c).elements();
-            while (mines.hasMoreElements()) {
-                Minefield mine = mines.nextElement();
+            List<Minefield> mfRemoved = new ArrayList<>();
+            for (Minefield mine : game.getMinefields(c)) {
                 if (mine.getDensity() < 5) {
                     mfRemoved.add(mine);
                 }
@@ -11940,10 +11878,8 @@ public class Server implements Runnable {
      */
     private void clearDetonatedMines(Coords c, int target) {
 
-        Enumeration<Minefield> minefields = game.getMinefields(c).elements();
-        ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-        while (minefields.hasMoreElements()) {
-            Minefield minefield = minefields.nextElement();
+        List<Minefield> mfRemoved = new ArrayList<>();
+        for (Minefield minefield : game.getMinefields(c)) {
             if (minefield.hasDetonated() && (Compute.d6(2) >= target)) {
                 mfRemoved.add(minefield);
             }
@@ -11983,7 +11919,7 @@ public class Server implements Runnable {
 
         // Check for minesweepers sweeping VB minefields
         if (minesweeper != null) {
-            Vector<Minefield> fieldsToRemove = new Vector<>();
+            List<Minefield> fieldsToRemove = new ArrayList<>();
             for (Minefield mf : game.getVibrabombs()) {
                 // Ignore mines if they aren't in this position
                 if (!mf.getCoords().equals(coords)) {
@@ -12057,10 +11993,7 @@ public class Server implements Runnable {
             return boom;
         }
 
-        Enumeration<Minefield> e = game.getVibrabombs().elements();
-
-        while (e.hasMoreElements()) {
-            Minefield mf = e.nextElement();
+        for (Minefield mf : game.getVibrabombs()) {
 
             // Bug 954272: Mines shouldn't work underwater, and BMRr says
             // Vibrabombs are mines
@@ -12125,20 +12058,6 @@ public class Server implements Runnable {
         }
         return boom;
     }
-
-    /**
-     * Remove all minefields in the specified coords from the game
-     *
-     * @param coords
-     *            The <code>Coords</code> from which to remove minefields
-     */
-    /*
-     * public void removeMinefieldsFrom(Coords coords) { Vector<Minefield> v =
-     * game.getMinefields(coords); while (v.elements().hasMoreElements()) {
-     * Minefield mf = v.elements().nextElement(); removeMinefield(mf); }
-     *
-     * }
-     */
 
     /**
      * Removes the minefield from the game.
@@ -13918,7 +13837,7 @@ public class Server implements Runnable {
     @SuppressWarnings("unchecked")
     private void receiveDeployMinefields(Packet packet, int connId) {
         final String METHOD_NAME = "receiveDeployMinefields(Packet,int)";
-        Vector<Minefield> minefields = (Vector<Minefield>) packet.getObject(0);
+        List<Minefield> minefields = (List<Minefield>) packet.getObject(0);
 
         // is this the right phase?
         if (game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
@@ -13936,10 +13855,9 @@ public class Server implements Runnable {
      *
      * @param minefields
      */
-    private void processDeployMinefields(Vector<Minefield> minefields) {
+    private void processDeployMinefields(List<Minefield> minefields) {
         int playerId = IPlayer.PLAYER_NONE;
-        for (int i = 0; i < minefields.size(); i++) {
-            Minefield mf = minefields.elementAt(i);
+        for (Minefield mf : minefields) {
             playerId = mf.getPlayerId();
 
             game.addMinefield(mf);

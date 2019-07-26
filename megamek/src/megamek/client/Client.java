@@ -858,7 +858,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Sends an "deploy minefields" packet
      */
-    public void sendDeployMinefields(Vector<Minefield> minefields) {
+    public void sendDeployMinefields(List<Minefield> minefields) {
         send(new Packet(Packet.COMMAND_DEPLOY_MINEFIELDS, minefields));
     }
 
@@ -1034,12 +1034,12 @@ public class Client implements IClientCommandHandler {
 
     @SuppressWarnings("unchecked")
     protected void receiveDeployMinefields(Packet packet) {
-        game.addMinefields((Vector<Minefield>) packet.getObject(0));
+        game.addMinefields((List<Minefield>)packet.getObject(0));
     }
 
     @SuppressWarnings("unchecked")
     protected void receiveSendingMinefields(Packet packet) {
-        game.setMinefields((Vector<Minefield>) packet.getObject(0));
+        game.setMinefields((List<Minefield>) packet.getObject(0));
     }
 
     @SuppressWarnings("unchecked")
@@ -1058,8 +1058,8 @@ public class Client implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     protected void receiveUpdateMinefields(Packet packet) {
         // only update information if you know about the minefield
-        Vector<Minefield> newMines = new Vector<Minefield>();
-        for (Minefield mf : (Vector<Minefield>) packet.getObject(0)) {
+        List<Minefield> newMines = new ArrayList<>();
+        for (Minefield mf : (List<Minefield>) packet.getObject(0)) {
             if (getLocalPlayer().containsMinefield(mf)) {
                 newMines.add(mf);
             }

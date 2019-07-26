@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -542,43 +541,13 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         
         if (mineClear && game.containsMinefield(targetPos) && !isFlak
                 && !bMissed) {
-            r = new Report(3255);
-            r.indent(1);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-
-            Enumeration<Minefield> minefields = game.getMinefields(targetPos)
-                    .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae,
-                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
-                    mfRemoved.add(mf);
-                }
-            }
-            // we have to do it this way to avoid a concurrent error problem
-            for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
-            }
+            reportAndResolveClearingMinefields(vPhaseReport, targetPos);
         }
         if (!bMissed) {
             // artillery may unintentionally clear minefields, but only if it wasn't
             // trying to. For a hit on the target, just do this once.
             if (!mineClear && game.containsMinefield(targetPos)) {
-                Enumeration<Minefield> minefields = game.getMinefields(targetPos)
-                        .elements();
-                ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-                while (minefields.hasMoreElements()) {
-                    Minefield mf = minefields.nextElement();
-                    if (server.clearMinefield(mf, ae, 10, vPhaseReport)) {
-                        mfRemoved.add(mf);
-                    }
-                }
-                // we have to do it this way to avoid a concurrent error problem
-                for (Minefield mf : mfRemoved) {
-                    server.removeMinefield(mf);
-                }
+                resolveRemovingMinefields(vPhaseReport, targetPos, Minefield.CLEAR_NUMBER_ARTY_ACCIDENT);
             }
             //Here we're doing damage for each hit with more standard artillery shells
             while (nweaponsHit > 0) {
@@ -592,18 +561,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             for (Coords c : targets) {
                 //Accidental mine clearance...
                 if (!mineClear && game.containsMinefield(c)) {
-                    Enumeration<Minefield> minefields = game.getMinefields(c)
-                            .elements();
-                    ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-                    while (minefields.hasMoreElements()) {
-                        Minefield mf = minefields.nextElement();
-                        if (server.clearMinefield(mf, ae, 10, vPhaseReport)) {
-                            mfRemoved.add(mf);
-                        }
-                    }
-                    for (Minefield mf : mfRemoved) {
-                        server.removeMinefield(mf);
-                    }
+                    resolveRemovingMinefields(vPhaseReport, c, Minefield.CLEAR_NUMBER_ARTY_ACCIDENT);
                 }
                 server.artilleryDamageArea(c, aaa.getCoords(), atype,
                         subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,

@@ -1970,8 +1970,8 @@ public class TestBot extends BotClient {
     }
 
     @Override
-    protected Vector<Minefield> calculateMinefieldDeployment() {
-        Vector<Minefield> deployedMinefields = new Vector<Minefield>();
+    protected List<Minefield> calculateMinefieldDeployment() {
+        List<Minefield> deployedMinefields = new ArrayList<>();
 
         deployMinefields(deployedMinefields, getLocalPlayer()
                 .getNbrMFConventional(), 0);
@@ -1990,7 +1990,7 @@ public class TestBot extends BotClient {
         return artyAutoHitHexes;
     }
 
-    protected void deployMinefields(Vector<Minefield> deployedMinefields,
+    protected void deployMinefields(List<Minefield> deployedMinefields,
                                     int number, int type) {
         for (int i = 0; i < number; i++) {
             Coords coords = new Coords(Compute.randomInt(game.getBoard()

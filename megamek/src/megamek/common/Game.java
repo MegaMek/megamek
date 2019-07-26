@@ -145,8 +145,8 @@ public class Game implements Serializable, IGame {
     private Hashtable<Integer, Vector<Entity>> deploymentTable = new Hashtable<Integer, Vector<Entity>>();
     private int lastDeploymentRound = 0;
 
-    private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<Coords, Vector<Minefield>>();
-    private Vector<Minefield> vibrabombs = new Vector<Minefield>();
+    private Map<Coords, List<Minefield>> minefields = new HashMap<>();
+    private List<Minefield> vibrabombs = new ArrayList<>();
     private List<AttackHandler> attacks = new ArrayList<>();
     private Vector<ArtilleryAttackAction> offboardArtilleryAttacks = new Vector<ArtilleryAttackAction>();
 
@@ -200,16 +200,29 @@ public class Game implements Serializable, IGame {
         return minefields.containsKey(coords);
     }
 
-    public Vector<Minefield> getMinefields(Coords coords) {
-        Vector<Minefield> mfs = minefields.get(coords);
+    public List<Minefield> getMinefields(Coords coords) {
+        List<Minefield> mfs = minefields.get(coords);
         if (mfs == null) {
-            return new Vector<Minefield>();
+            return Collections.emptyList();
         }
-        return mfs;
+        return Collections.unmodifiableList(mfs);
+    }
+
+    public Minefield findMinefield(Coords coords, int type) {
+        List<Minefield> mfs = minefields.get(coords);
+        if (mfs == null) {
+            return null;
+        }
+        for (Minefield mf : mfs) {
+            if (mf.getType() == type) {
+                return mf;
+            }
+        }
+        return null;
     }
 
     public int getNbrMinefields(Coords coords) {
-        Vector<Minefield> mfs = minefields.get(coords);
+        List<Minefield> mfs = minefields.get(coords);
         if (mfs == null) {
             return 0;
         }
@@ -220,11 +233,11 @@ public class Game implements Serializable, IGame {
     /**
      * Get the coordinates of all mined hexes in the game.
      *
-     * @return an <code>Enumeration</code> of the <code>Coords</code> containing
+     * @return The <code>Set</code> of <code>Coords</code> containing
      * minefields. This will not be <code>null</code>.
      */
-    public Enumeration<Coords> getMinedCoords() {
-        return minefields.keys();
+    public Set<Coords> getMinedCoords() {
+        return minefields.keySet();
     }
 
     public void addMinefield(Minefield mf) {
@@ -232,46 +245,42 @@ public class Game implements Serializable, IGame {
         processGameEvent(new GameBoardChangeEvent(this));
     }
 
-    public void addMinefields(Vector<Minefield> mines) {
-        for (int i = 0; i < mines.size(); i++) {
-            Minefield mf = mines.elementAt(i);
+    public void addMinefields(List<Minefield> mines) {
+        for (Minefield mf : mines) {
             addMinefieldHelper(mf);
         }
         processGameEvent(new GameBoardChangeEvent(this));
     }
 
-    public void setMinefields(Vector<Minefield> minefields) {
+    public void setMinefields(List<Minefield> minefields) {
         clearMinefieldsHelper();
-        for (int i = 0; i < minefields.size(); i++) {
-            Minefield mf = minefields.elementAt(i);
+        for (Minefield mf : minefields) {
             addMinefieldHelper(mf);
         }
         processGameEvent(new GameBoardChangeEvent(this));
     }
 
-    public void resetMinefieldDensity(Vector<Minefield> newMinefields) {
+    public void resetMinefieldDensity(List<Minefield> newMinefields) {
         if (newMinefields.size() < 1) {
             return;
         }
-        Vector<Minefield> mfs = minefields.get(newMinefields.firstElement()
-                                                            .getCoords());
-        mfs.clear();
-        for (int i = 0; i < newMinefields.size(); i++) {
-            Minefield mf = newMinefields.elementAt(i);
+        List<Minefield> mfs = minefields.get(newMinefields.get(0).getCoords());
+        if (mfs != null) {
+            mfs.clear();
+        }
+        for (Minefield mf : newMinefields) {
             addMinefieldHelper(mf);
         }
         processGameEvent(new GameBoardChangeEvent(this));
     }
 
     protected void addMinefieldHelper(Minefield mf) {
-        Vector<Minefield> mfs = minefields.get(mf.getCoords());
+        List<Minefield> mfs = minefields.get(mf.getCoords());
         if (mfs == null) {
-            mfs = new Vector<Minefield>();
-            mfs.addElement(mf);
+            mfs = new ArrayList<>();
             minefields.put(mf.getCoords(), mfs);
-            return;
         }
-        mfs.addElement(mf);
+        mfs.add(mf);
     }
 
     public void removeMinefield(Minefield mf) {
@@ -280,19 +289,13 @@ public class Game implements Serializable, IGame {
     }
 
     public void removeMinefieldHelper(Minefield mf) {
-        Vector<Minefield> mfs = minefields.get(mf.getCoords());
+        List<Minefield> mfs = minefields.get(mf.getCoords());
         if (mfs == null) {
             return;
         }
 
-        Enumeration<Minefield> e = mfs.elements();
-        while (e.hasMoreElements()) {
-            Minefield mftemp = e.nextElement();
-            if (mftemp.equals(mf)) {
-                mfs.removeElement(mftemp);
-                break;
-            }
-        }
+        mfs.remove(mf);
+
         if (mfs.isEmpty()) {
             minefields.remove(mf.getCoords());
         }
@@ -305,23 +308,23 @@ public class Game implements Serializable, IGame {
 
     protected void clearMinefieldsHelper() {
         minefields.clear();
-        vibrabombs.removeAllElements();
+        vibrabombs.clear();
 
         for (IPlayer player : players) {
             player.removeMinefields();
         }
     }
 
-    public Vector<Minefield> getVibrabombs() {
+    public List<Minefield> getVibrabombs() {
         return vibrabombs;
     }
 
     public void addVibrabomb(Minefield mf) {
-        vibrabombs.addElement(mf);
+        vibrabombs.add(mf);
     }
 
     public void removeVibrabomb(Minefield mf) {
-        vibrabombs.removeElement(mf);
+        vibrabombs.remove(mf);
     }
 
     public boolean containsVibrabomb(Minefield mf) {

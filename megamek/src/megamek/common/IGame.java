@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.actions.ArtilleryAttackAction;
@@ -219,9 +220,20 @@ public interface IGame {
      * Get the minefields at specified coords
      *
      * @param coords
-     * @return the <code>Vector</code> of minefields at specified coord
+     * @return the <code>List</code> of minefields at specified coord
      */
-    abstract Vector<Minefield> getMinefields(Coords coords);
+    abstract List<Minefield> getMinefields(Coords coords);
+
+    /**
+     * Finds a minefield of the given type at the specified coords,
+     * or null if none could be found.
+     * @param coords The coordinates to search for a Minefield matching
+     *               the given type.
+     * @param type   The type of the minefield.
+     * @return The first minefield matching the type at the coordinates,
+     *         otherwise null if no matches were found.
+     */
+    abstract Minefield findMinefield(Coords coords, int type);
 
     /**
      * Get the number of the minefields at specified coords
@@ -234,10 +246,10 @@ public interface IGame {
     /**
      * Get the coordinates of all mined hexes in the game.
      *
-     * @return an <code>Enumeration</code> of the <code>Coords</code>
+     * @return a <code>Set</code> of the <code>Coords</code>
      *         containing minefilds. This will not be <code>null</code>.
      */
-    abstract Enumeration<Coords> getMinedCoords();
+    abstract Set<Coords> getMinedCoords();
 
     /**
      * Addds the specified minefield
@@ -249,22 +261,22 @@ public interface IGame {
     /**
      * Adds a number of minefields
      *
-     * @param minefields the <code>Vector</code> of the minefields to add
+     * @param minefields the <code>List</code> of the minefields to add
      */
-    abstract void addMinefields(Vector<Minefield> minefields);
+    abstract void addMinefields(List<Minefield> minefields);
 
     /**
-     * Sets the minefields to the given <code>Vector</code> of the minefields
+     * Sets the minefields to the given <code>List</code> of the minefields
      *
      * @param minefields
      */
-    abstract void setMinefields(Vector<Minefield> minefields);
+    abstract void setMinefields(List<Minefield> minefields);
 
     /**
-     * Resets the minefield density for a given <code>Vector</code> of minefields
+     * Resets the minefield density for a given <code>List</code> of minefields
      * @param newMinefields
      */
-    abstract void resetMinefieldDensity(Vector<Minefield> newMinefields);
+    abstract void resetMinefieldDensity(List<Minefield> newMinefields);
 
     /**
      * Removes the specified minefield
@@ -279,9 +291,9 @@ public interface IGame {
     abstract void clearMinefields();
 
     /**
-     * @return the <code>Vector</code> of the vibrabombs
+     * @return the <code>List</code> of vibrabombs
      */
-    abstract Vector<Minefield> getVibrabombs();
+    abstract List<Minefield> getVibrabombs();
 
     /**
      * Addds the specified vibrabomb

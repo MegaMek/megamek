@@ -930,7 +930,7 @@ public class Game implements Serializable, IGame {
         return Collections.unmodifiableList(entities);
     }
 
-    public synchronized void setEntitiesVector(List<Entity> entities) {
+    public void setEntitiesVector(List<Entity> entities) {
         //checkPositionCacheConsistency();
         this.entities.clear();
         this.entities.addAll(entities);
@@ -1273,7 +1273,7 @@ public class Game implements Serializable, IGame {
         addEntity(entity, true);
     }
 
-    public synchronized void addEntity(Entity entity, boolean genEvent) {
+    public void addEntity(Entity entity, boolean genEvent) {
         entity.setGame(this);
         if (entity instanceof Mech) {
             ((Mech) entity).setBAGrabBars();
@@ -1341,7 +1341,7 @@ public class Game implements Serializable, IGame {
         setEntity(id, entity, null);
     }
 
-    public synchronized void setEntity(int id, Entity entity, Vector<UnitLocation> movePath) {
+    public void setEntity(int id, Entity entity, Vector<UnitLocation> movePath) {
         final Entity oldEntity = getEntity(id);
         if (oldEntity == null) {
             addEntity(entity);
@@ -1384,7 +1384,7 @@ public class Game implements Serializable, IGame {
      * Remove an entity from the master list. If we can't find that entity,
      * (probably due to double-blind) ignore it.
      */
-    public synchronized void removeEntity(int id, int condition) {
+    public void removeEntity(int id, int condition) {
         Entity toRemove = getEntity(id);
         if (toRemove == null) {
             // This next statement has been cluttering up double-blind
@@ -1436,7 +1436,7 @@ public class Game implements Serializable, IGame {
     /**
      * Resets this game.
      */
-    public synchronized void reset() {
+    public void reset() {
         roundCount = 0;
 
         entities.clear();
@@ -1579,7 +1579,7 @@ public class Game implements Serializable, IGame {
      *            Flag that determines whether the ability to target is ignored
      * @return <code>List<Entity></code>
      */
-    public synchronized List<Entity> getEntitiesVector(Coords c, boolean ignore) {
+    public List<Entity> getEntitiesVector(Coords c, boolean ignore) {
         //checkPositionCacheConsistency();
         // Make sure the look-up is initialized
         if (entityPosLookup == null
@@ -3511,7 +3511,7 @@ public class Game implements Serializable, IGame {
      *
      * @param e
      */
-    public synchronized void updateEntityPositionLookup(Entity e,
+    public void updateEntityPositionLookup(Entity e,
             HashSet<Coords> oldPositions) {
         HashSet<Coords> newPositions = e.getOccupiedCoords();
         // Check to see that the position has actually changed

@@ -435,7 +435,7 @@ public abstract class BotClient extends Client {
 
     private void runEndGame() {
         // Make a list of the player's living units.
-        ArrayList<Entity> living = game.getPlayerEntities(getLocalPlayer(), false);
+        List<Entity> living = new ArrayList<>(game.getPlayerEntities(getLocalPlayer(), false));
 
         // Be sure to include all units that have retreated.
         for (Enumeration<Entity> iter = game.getRetreatedEntities(); iter.hasMoreElements(); ) {

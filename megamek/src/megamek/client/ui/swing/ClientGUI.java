@@ -854,7 +854,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void doSaveUnit() {
         for (Enumeration<IPlayer> iter = getClient().getGame().getPlayers(); iter.hasMoreElements(); ) {
             IPlayer p = iter.nextElement();
-            ArrayList<Entity> l = getClient().getGame().getPlayerEntities(p, false);
+            List<Entity> l = new ArrayList<>(getClient().getGame().getPlayerEntities(p, false));
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter2 = getClient().getGame().getRetreatedEntities(); iter2.hasMoreElements(); ) {
                 Entity e = iter2.nextElement();
@@ -1572,12 +1572,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void deleteAllUnits(Client c) {
-        ArrayList<Entity> currentUnits = c.getGame().getPlayerEntities(
-                c.getLocalPlayer(), false);
-        ArrayList<Integer> ids = new ArrayList<Integer>(currentUnits.size());
-        for (Entity e : currentUnits){
-            ids.add(e.getId());
-        }
+        List<Integer> ids = c.getGame().getPlayerEntityIds(c.getLocalPlayer(), false);
         c.sendDeleteEntities(ids);
     }
 
@@ -1593,11 +1588,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      *                 to a file. If this value is <code>null</code> or empty, the
      *                 "Save As" dialog will not be displayed.
      */
-    protected void saveListFile(ArrayList<Entity> unitList) {
+    protected void saveListFile(List<Entity> unitList) {
         saveListFile(unitList, client.getLocalPlayer().getName());
     }
 
-    protected void saveListFile(ArrayList<Entity> unitList, String filename) {
+    protected void saveListFile(List<Entity> unitList, String filename) {
 
         // Handle empty lists.
         if ((unitList == null) || unitList.isEmpty()) {
@@ -1878,7 +1873,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             getBots().clear();
 
             // Make a list of the player's living units.
-            ArrayList<Entity> living = getClient().getGame().getPlayerEntities(getClient().getLocalPlayer(), false);
+            List<Entity> living = new ArrayList<>(getClient().getGame().getPlayerEntities(getClient().getLocalPlayer(), false));
 
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter = getClient().getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {

@@ -16,7 +16,6 @@
 
 package megamek.common;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -940,22 +939,20 @@ public interface IGame {
     /**
      * Get the entities for the player.
      *
-     *
      * @param player - the <code>Player</code> whose entities are required.
      * @param hide - should fighters loaded into squadrons be excluded from this list?
-     * @return a <code>Vector</code> of <code>Entity</code>s.
+     * @return a <code>List</code> of <code>Entity</code>s.
      */
-    abstract ArrayList<Entity> getPlayerEntities(IPlayer player, boolean hide);
+    abstract List<Entity> getPlayerEntities(IPlayer player, boolean hide);
 
     /**
-     * Get the entities for the player.
-     *
+     * Get the entity IDs for the player.
      *
      * @param player - the <code>Player</code> whose entities are required.
      * @param hide - should fighters loaded into squadrons be excluded from this list?
-     * @return a <code>Vector</code> of <code>Entity</code>s.
+     * @return a <code>List</code> of <code>Entity</code> IDs.
      */
-    abstract ArrayList<Integer> getPlayerEntityIds(IPlayer player, boolean hide);
+    abstract List<Integer> getPlayerEntityIds(IPlayer player, boolean hide);
 
     /**
      * Determines if the indicated entity is stranded on a transport that can't

@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1610,13 +1611,12 @@ public class Client implements IClientCommandHandler {
      * @param ids
      */
     private void checkDuplicateNamesDuringDelete(List<Integer> ids) {
-        ArrayList<Entity> myEntities = game.getPlayerEntities(game.getPlayer(localPlayerNumber), false);
-        Hashtable<String, ArrayList<Integer>> rawNameToId = new Hashtable<String, ArrayList<Integer>>(
-                (int) (myEntities.size() * 1.26));
+        List<Entity> myEntities = game.getPlayerEntities(game.getPlayer(localPlayerNumber), false);
+        Map<String, List<Integer>> rawNameToId = new HashMap<>();
 
         for (Entity e : myEntities) {
             String rawName = e.getShortNameRaw();
-            ArrayList<Integer> namedIds = rawNameToId.get(rawName);
+            List<Integer> namedIds = rawNameToId.get(rawName);
             if (namedIds == null) {
                 namedIds = new ArrayList<Integer>();
             }
@@ -1633,7 +1633,7 @@ public class Client implements IClientCommandHandler {
             String removedRawName = removedEntity.getShortNameRaw();
             Integer count = duplicateNameHash.get(removedEntity.getShortNameRaw());
             if ((count != null) && (count > 1)) {
-                ArrayList<Integer> namedIds = rawNameToId.get(removedRawName);
+                List<Integer> namedIds = rawNameToId.get(removedRawName);
                 for (Integer i : namedIds) {
                     Entity e = game.getEntity(i);
                     String eRawName = e.getShortNameRaw();

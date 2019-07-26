@@ -27,6 +27,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -489,12 +490,12 @@ public class EntityListFile {
      *            - The current contents of the file will be discarded and all
      *            <code>Entity</code>s in the list will be written to the file.
      * @param list
-     *            - a <code>Vector</code> containing <code>Entity</code>s to be
+     *            - a <code>List</code> containing <code>Entity</code>s to be
      *            stored in a file.
      * @throws IOException
      *             is thrown on any error.
      */
-    public static void saveTo(File file, ArrayList<Entity> list)
+    public static void saveTo(File file, List<Entity> list)
             throws IOException {
 
         // Open up the file. Produce UTF-8 output.
@@ -735,7 +736,7 @@ public class EntityListFile {
         }
     }
 
-    private static void writeEntityList(Writer output, ArrayList<Entity> list) throws IOException {
+    private static void writeEntityList(Writer output, List<Entity> list) throws IOException {
         // Walk through the list of entities.
         Iterator<Entity> items = list.iterator();
         while (items.hasNext()) {

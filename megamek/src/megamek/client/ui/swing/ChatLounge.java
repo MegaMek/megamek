@@ -2341,9 +2341,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();
         ArrayList<Entity> c3members = new ArrayList<Entity>();
-        Iterator<Entity> playerUnits = c.getGame().getPlayerEntities(c.getLocalPlayer(), false).iterator();
-        while (playerUnits.hasNext()) {
-            Entity unit = playerUnits.next();
+        List<Entity> playerUnits = c.getGame().getPlayerEntities(c.getLocalPlayer(), false);
+        for (Entity unit : playerUnits) {
             if (!entity.equals(unit) && entity.onSameC3NetworkAs(unit)) {
                 c3members.add(unit);
             }

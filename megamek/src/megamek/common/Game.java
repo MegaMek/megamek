@@ -1952,39 +1952,48 @@ public class Game implements Serializable, IGame {
      *
      * @param player - the <code>Player</code> whose entities are required.
      * @param hide   - should fighters loaded into squadrons be excluded?
-     * @return a <code>Vector</code> of <code>Entity</code>s.
+     * @return a <code>List</code> of <code>Entity</code>s.
      */
-    public ArrayList<Entity> getPlayerEntities(IPlayer player, boolean hide) {
-        ArrayList<Entity> output = new ArrayList<Entity>();
+    public List<Entity> getPlayerEntities(IPlayer player, boolean hide) {
+        List<Entity> output = new ArrayList<>();
         for (Entity entity : entities) {
-            if (entity.isPartOfFighterSquadron() && hide) {
-                continue;
-            }
-            if (player.equals(entity.getOwner())) {
+            if (shouldIncludeEntity(player, entity, hide)) {
                 output.add(entity);
             }
         }
-        return output;
+        return Collections.unmodifiableList(output);
     }
 
     /**
-     * Get the entities for the player.
+     * Get the entity IDs for the player.
      *
      * @param player - the <code>Player</code> whose entities are required.
      * @param hide   - should fighters loaded into squadrons be excluded from this list?
-     * @return a <code>Vector</code> of <code>Entity</code>s.
+     * @return a <code>List</code> of <code>Entity</code> IDs.
      */
-    public ArrayList<Integer> getPlayerEntityIds(IPlayer player, boolean hide) {
-        ArrayList<Integer> output = new ArrayList<Integer>();
+    public List<Integer> getPlayerEntityIds(IPlayer player, boolean hide) {
+        List<Integer> output = new ArrayList<>();
         for (Entity entity : entities) {
-            if (entity.isPartOfFighterSquadron() && hide) {
-                continue;
-            }
-            if (player.equals(entity.getOwner())) {
+            if (shouldIncludeEntity(player, entity, hide)) {
                 output.add(entity.getId());
             }
         }
-        return output;
+        return Collections.unmodifiableList(output);
+    }
+
+    /**
+     * Determines if an entity should be included for a player.
+     * 
+     * @param player The player in question.
+     * @param entity The entity to be tested for ownership by the player.
+     * @param hideSquadrons A value indicating whether or not squadron members should be excluded.
+     * @return Returns true if the entity is one of the player's entities.
+     */
+    private boolean shouldIncludeEntity(IPlayer player, Entity entity, boolean hideSquadrons) {
+        if (hideSquadrons && entity.isPartOfFighterSquadron()) {
+            return false;
+        }
+        return player.equals(entity.getOwner());
     }
 
     /**
@@ -3015,10 +3024,7 @@ public class Game implements Serializable, IGame {
      * options.
      */
     public boolean checkForValidNonInfantryAndOrProtomechs(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
+        for (Entity entity : getPlayerEntities(getPlayer(playerId), false)) {
             boolean excluded = false;
             if ((entity instanceof Infantry)
                 && getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER)) {
@@ -3404,10 +3410,7 @@ public class Game implements Serializable, IGame {
      * maintained
      */
     public boolean checkForValidSpaceStations(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
+        for (Entity entity : getPlayerEntities(getPlayer(playerId), false)) {
             if ((entity instanceof SpaceStation)
                 && getTurn().isValidEntity(entity, this)) {
                 return true;
@@ -3417,10 +3420,7 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean checkForValidJumpships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
+        for (Entity entity : getPlayerEntities(getPlayer(playerId), false)) {
             if ((entity instanceof Jumpship) && !(entity instanceof Warship)
                 && getTurn().isValidEntity(entity, this)) {
                 return true;
@@ -3430,10 +3430,7 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean checkForValidWarships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
+        for (Entity entity : getPlayerEntities(getPlayer(playerId), false)) {
             if ((entity instanceof Warship)
                 && getTurn().isValidEntity(entity, this)) {
                 return true;
@@ -3443,10 +3440,7 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean checkForValidDropships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
+        for (Entity entity : getPlayerEntities(getPlayer(playerId), false)) {
             if ((entity instanceof Dropship)
                 && getTurn().isValidEntity(entity, this)) {
                 return true;
@@ -3456,10 +3450,7 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean checkForValidSmallCraft(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
+        for (Entity entity : getPlayerEntities(getPlayer(playerId), false)) {
             if ((entity instanceof SmallCraft)
                 && getTurn().isValidEntity(entity, this)) {
                 return true;

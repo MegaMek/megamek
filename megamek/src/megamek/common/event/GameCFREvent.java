@@ -15,6 +15,8 @@
 
 package megamek.common.event;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import megamek.common.actions.WeaponAttackAction;
@@ -168,34 +170,34 @@ public class GameCFREvent extends GameEvent {
     }
 
     public List<Integer> getTelemissileTargetIds() {
-        return telemissileTargets;
+        return Collections.unmodifiableList(telemissileTargets);
     }
     
     public void setTeleguidedMissileTargets(List<Integer> newTargetIds) {
-        telemissileTargets = newTargetIds;
+        telemissileTargets = new ArrayList<>(newTargetIds);
     }
     
     public List<Integer> getTmToHitValues() {
-        return tmToHitValues;
+        return Collections.unmodifiableList(tmToHitValues);
     }
     
     public void setTmToHitValues(List<Integer> toHitValues) {
-        tmToHitValues = toHitValues;
+        tmToHitValues = new ArrayList<>(toHitValues);
     }
 
     public List<Integer> getTAGTargets() {
-        return tagTargets;
+        return Collections.unmodifiableList(tagTargets);
     }
     
     public void setTAGTargets(List<Integer> newTargets) {
-        tagTargets = newTargets;
+        tagTargets = new ArrayList<>(newTargets);
     }
     
     public List<Integer> getTAGTargetTypes() {
-        return tagTargetTypes;
+        return Collections.unmodifiableList(tagTargetTypes);
     }
     
     public void setTAGTargetTypes(List<Integer> targetTypes) {
-        tagTargetTypes = targetTypes;
+        tagTargetTypes = new ArrayList<>(targetTypes);
     }
 }

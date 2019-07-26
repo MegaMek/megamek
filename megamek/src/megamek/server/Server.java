@@ -14331,13 +14331,6 @@ public class Server implements Runnable {
      */
     public void assignTeleMissileAMS(TeleMissileAttackAction taa) {
         final String METHOD_NAME = "assignTeleMissileAMS()";
-        // Map target to a list of telemissile attacks directed at entities
-        Hashtable<Entity, Vector<AttackAction>> htTMAttacks = new Hashtable<>();
-
-        //This should be impossible but just in case...
-        if (!(taa instanceof TeleMissileAttackAction)) {
-            getLogger().info(getClass(), METHOD_NAME, "Attack Action is the wrong type!");
-        }
 
         Entity target = (taa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) taa
                 .getTarget(game) : null;
@@ -14348,19 +14341,9 @@ public class Server implements Runnable {
             return;
         }
 
-        Vector<AttackAction> v = htTMAttacks.get(target);
-        if (v == null) {
-            v = new Vector<AttackAction>();
-            htTMAttacks.put(target, v);
-        }
-        v.addElement(taa);
-        // Let each target assign its AMS
-        for (Entity e : htTMAttacks.keySet()) {
-            Vector<AttackAction> vTMAttacks = htTMAttacks.get(e);
-            // Allow MM to automatically assign AMS targets
-            // AMS bays can fire multiple times, so manual target assignment is kind of pointless
-            e.assignTMAMS(vTMAttacks);
-        }
+        // Allow MM to automatically assign AMS targets
+        // AMS bays can fire multiple times, so manual target assignment is kind of pointless
+        target.assignTMAMS(taa);
     }
 
     /**

@@ -147,7 +147,7 @@ public class Game implements Serializable, IGame {
 
     private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<Coords, Vector<Minefield>>();
     private Vector<Minefield> vibrabombs = new Vector<Minefield>();
-    private Vector<AttackHandler> attacks = new Vector<AttackHandler>();
+    private List<AttackHandler> attacks = new ArrayList<>();
     private Vector<ArtilleryAttackAction> offboardArtilleryAttacks = new Vector<ArtilleryAttackAction>();
 
     private int lastEntityId;
@@ -2643,16 +2643,7 @@ public class Game implements Serializable, IGame {
      * @param ah - The <code>AttackHandler</code> to remove
      */
     public void removeAttack(AttackHandler ah) {
-        attacks.removeElement(ah);
-    }
-
-    /**
-     * get the attacks
-     *
-     * @return a <code>Enumeration</code> of all <code>AttackHandler</code>s
-     */
-    public Enumeration<AttackHandler> getAttacks() {
-        return attacks.elements();
+        attacks.remove(ah);
     }
 
     /**
@@ -2660,25 +2651,24 @@ public class Game implements Serializable, IGame {
      *
      * @return the <code>Vector</code> containing the attacks
      */
-    public Vector<AttackHandler> getAttacksVector() {
-        return attacks;
+    public List<AttackHandler> getAttacks() {
+        return Collections.unmodifiableList(attacks);
     }
 
     /**
      * reset the attacks vector
      */
     public void resetAttacks() {
-        attacks = new Vector<AttackHandler>();
+        attacks = new ArrayList<>();
     }
 
     /**
-     * set the attacks vector
+     * Sets the list of AttackHandler's.
      *
-     * @param v - the <code>Vector</code> that should be the new attacks
-     *          vector
+     * @param list - the updated list of attacks.
      */
-    public void setAttacksVector(Vector<AttackHandler> v) {
-        attacks = v;
+    public void setAttacks(List<AttackHandler> list) {
+        attacks = new ArrayList<>(list);
     }
 
     /**

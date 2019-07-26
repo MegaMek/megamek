@@ -704,9 +704,7 @@ public class Server implements Runnable {
         }
         // might need to restore weapon type for some attacks that take multiple
         // turns (like artillery)
-        for (Enumeration<AttackHandler> a = game.getAttacks(); a
-                .hasMoreElements(); ) {
-            AttackHandler handler = a.nextElement();
+        for (AttackHandler handler : game.getAttacks()) {
             if (handler instanceof WeaponHandler) {
                 ((WeaponHandler) handler).restore();
             }
@@ -2805,9 +2803,7 @@ public class Server implements Runnable {
         // if there are any that use homing ammo, we are playable
         // we need to do this because we might have a homing arty shot in flight
         // when the unit that mounted that ammo is no longer on the field
-        for (Enumeration<AttackHandler> attacks = game.getAttacks(); attacks
-                .hasMoreElements(); ) {
-            AttackHandler ah = attacks.nextElement();
+        for (AttackHandler ah : game.getAttacks()) {
             Mounted ammo = ah.getWaa().getEntity(game)
                              .getEquipment(ah.getWaa().getAmmoId());
             if (ammo != null) {
@@ -14215,9 +14211,8 @@ public class Server implements Runnable {
                 boolean firingAtNewHex = false;
                 final ArtilleryAttackAction aaa = (ArtilleryAttackAction) ea;
                 final Entity firingEntity = game.getEntity(aaa.getEntityId());
-                for (Enumeration<AttackHandler> j = game.getAttacks(); !firingAtNewHex
-                                                                       && j.hasMoreElements(); ) {
-                    WeaponHandler wh = (WeaponHandler) j.nextElement();
+                for (AttackHandler ah : game.getAttacks()) {
+                    WeaponHandler wh = (WeaponHandler)ah;
                     if (wh.waa instanceof ArtilleryAttackAction) {
                         ArtilleryAttackAction oaaa = (ArtilleryAttackAction) wh.waa;
                         if ((oaaa.getEntityId() == aaa.getEntityId())
@@ -14226,6 +14221,7 @@ public class Server implements Runnable {
                                     .equals(aaa.getTarget(game)
                                                .getPosition())) {
                             firingAtNewHex = true;
+                            break;
                         }
                     }
                 }
@@ -14376,7 +14372,7 @@ public class Server implements Runnable {
         // Keep track of each APDS, and which attacks it could affect
         Hashtable<Mounted, Vector<WeaponHandler>> apdsTargets = new Hashtable<>();
 
-        for (AttackHandler ah : game.getAttacksVector()) {
+        for (AttackHandler ah : game.getAttacks()) {
             WeaponHandler wh = (WeaponHandler) ah;
             WeaponAttackAction waa = wh.waa;
 
@@ -32662,9 +32658,8 @@ public class Server implements Runnable {
     private Packet createArtilleryPacket(IPlayer p) {
         Vector<ArtilleryAttackAction> v = new Vector<ArtilleryAttackAction>();
         int team = p.getTeam();
-        for (Enumeration<AttackHandler> i = game.getAttacks(); i
-                .hasMoreElements(); ) {
-            WeaponHandler wh = (WeaponHandler) i.nextElement();
+        for (AttackHandler ah : game.getAttacks()) {
+            WeaponHandler wh = (WeaponHandler)ah;
             if (wh.waa instanceof ArtilleryAttackAction) {
                 ArtilleryAttackAction aaa = (ArtilleryAttackAction) wh.waa;
                 if ((aaa.getPlayerId() == p.getId())
@@ -34689,9 +34684,8 @@ public class Server implements Runnable {
      * @param weaponID the <code>int</code> id of the weapon
      */
     private void clearArtillerySpotters(int entityID, int weaponID) {
-        for (Enumeration<AttackHandler> i = game.getAttacks(); i
-                .hasMoreElements(); ) {
-            WeaponHandler wh = (WeaponHandler) i.nextElement();
+        for (AttackHandler ah : game.getAttacks()) {
+            WeaponHandler wh = (WeaponHandler)ah;
             if ((wh.waa instanceof ArtilleryAttackAction)
                 && (wh.waa.getEntityId() == entityID)
                 && (wh.waa.getWeaponId() == weaponID)) {
@@ -37121,9 +37115,8 @@ public class Server implements Runnable {
     private void handleAttacks(boolean pointblankShot) {
         Report r;
         int lastAttackerId = -1;
-        Vector<AttackHandler> currentAttacks, keptAttacks;
-        currentAttacks = game.getAttacksVector();
-        keptAttacks = new Vector<AttackHandler>();
+        List<AttackHandler> currentAttacks = game.getAttacks();
+        List<AttackHandler> keptAttacks = new ArrayList<>();
         Vector<Report> handleAttackReports = new Vector<Report>();
         // first, do any TAGs, so homing arty will have TAG
         for (AttackHandler ah : currentAttacks) {
@@ -37202,8 +37195,9 @@ public class Server implements Runnable {
             Report.addNewline(handleAttackReports);
         }
         addReport(handleAttackReports);
+
         // HACK, but anything else seems to run into weird problems.
-        game.setAttacksVector(keptAttacks);
+        game.setAttacks(keptAttacks);
     }
 
     /**

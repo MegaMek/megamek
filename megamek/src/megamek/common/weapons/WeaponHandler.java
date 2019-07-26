@@ -201,8 +201,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (e.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
                 || e.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             if (e.usesWeaponBays()) {
-                for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
-                    AttackHandler ah = i.nextElement();
+                for (AttackHandler ah : game.getAttacks()) {
                     WeaponAttackAction prevAttack = ah.getWaa();
                     if (prevAttack.getEntityId() == e.getId()) {
                         Mounted prevWeapon = e.getEquipment(prevAttack.getWeaponId());
@@ -213,8 +212,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     }
                 }
             } else {
-                for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
-                    AttackHandler ah = i.nextElement();
+                for (AttackHandler ah : game.getAttacks()) {
                     WeaponAttackAction prevAttack = ah.getWaa();
                     if (prevAttack.getEntityId() == e.getId()) {
                         Mounted prevWeapon = e.getEquipment(prevAttack.getWeaponId());

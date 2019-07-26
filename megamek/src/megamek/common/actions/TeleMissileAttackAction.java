@@ -20,7 +20,8 @@
 package megamek.common.actions;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Collections;
+import java.util.List;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
@@ -118,8 +119,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         if (e.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
                 || e.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             if (e.usesWeaponBays()) {
-                for (Enumeration<AttackHandler> i = e.getGame().getAttacks(); i.hasMoreElements();) {
-                    AttackHandler ah = i.nextElement();
+                for (AttackHandler ah : e.getGame().getAttacks()) {
                     WeaponAttackAction prevAttack = ah.getWaa();
                     if (prevAttack.getEntityId() == e.getId()) {
                         Mounted prevWeapon = e.getEquipment(prevAttack.getWeaponId());
@@ -130,8 +130,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                     }
                 }
             } else {
-                for (Enumeration<AttackHandler> i = e.getGame().getAttacks(); i.hasMoreElements();) {
-                    AttackHandler ah = i.nextElement();
+                for (AttackHandler ah : e.getGame().getAttacks()) {
                     WeaponAttackAction prevAttack = ah.getWaa();
                     if (prevAttack.getEntityId() == e.getId()) {
                         Mounted prevWeapon = e.getEquipment(prevAttack.getWeaponId());

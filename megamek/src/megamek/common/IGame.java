@@ -1035,9 +1035,7 @@ public interface IGame {
 
     abstract void removeAttack(AttackHandler ah);
 
-    abstract Enumeration<AttackHandler> getAttacks();
-
-    abstract Vector<AttackHandler> getAttacksVector();
+    abstract List<AttackHandler> getAttacks();
 
     abstract void resetAttacks();
 
@@ -1048,7 +1046,7 @@ public interface IGame {
     Enumeration<ArtilleryAttackAction> getArtilleryAttacks();
 
     // HACK.
-    abstract void setAttacksVector(Vector<AttackHandler> v);
+    abstract void setAttacks(List<AttackHandler> list);
 
     /**
      * Returns an Enumeration of actions scheduled for this phase.

@@ -483,13 +483,19 @@ public interface IGame {
      * @param index2
      */
     abstract void swapTurnOrder(int index1, int index2);
+    
     /**
-     * Returns an Enumeration of the current turn list
+     * Returns the current turn list.
      */
-    abstract Enumeration<GameTurn> getTurns();
+    abstract List<GameTurn> getTurns();
 
     /**
-     * Returns the current turn index
+     * Sets the current turn list.
+     */
+    abstract void setTurns(List<GameTurn> list);
+
+    /**
+     * Returns the current turn index.
      */
     abstract int getTurnIndex();
 
@@ -502,16 +508,6 @@ public interface IGame {
      *            The ID of the player who triggered the turn index change.
      */
     abstract void setTurnIndex(int turnIndex, int prevPlayerId);
-
-    /**
-     * Returns the current turn vector
-     */
-    abstract List<GameTurn> getTurnVector();
-
-    /**
-     * Sets the current turn vector
-     */
-    abstract void setTurnVector(List<GameTurn> turnVector);
 
     abstract IGame.Phase getPhase();
 

@@ -764,7 +764,7 @@ public class Precognition implements Runnable {
      */
     @SuppressWarnings("unchecked")
     private void receiveTurns(Packet packet) {
-        getGame().setTurnVector((List<GameTurn>) packet.getObject(0));
+        getGame().setTurns((List<GameTurn>) packet.getObject(0));
     }
 
     /**

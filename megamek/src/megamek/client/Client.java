@@ -958,7 +958,7 @@ public class Client implements IClientCommandHandler {
      */
     @SuppressWarnings("unchecked")
     protected void receiveTurns(Packet packet) {
-        game.setTurnVector((List<GameTurn>) packet.getObject(0));
+        game.setTurns((List<GameTurn>) packet.getObject(0));
     }
 
     /**

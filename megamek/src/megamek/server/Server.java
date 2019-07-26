@@ -2280,7 +2280,7 @@ public class Server implements Runnable {
         // the Entity whose turn we are ending as the next turn. If this has
         // happened, the remaining entity count will be off and we must ensure
         // that the SpecificEntityTurn for this unit remains the next turn
-        List<GameTurn> turnVector = game.getTurnVector();
+        List<GameTurn> turnVector = game.getTurns();
         int turnIndex = game.getTurnIndex();
         boolean usedEntityNotDone = false;
         if ((turnIndex + 1) < turnVector.size()) {
@@ -2508,15 +2508,15 @@ public class Server implements Runnable {
                 setIneligible(phase);
 
                 Enumeration<IPlayer> e = game.getPlayers();
-                Vector<GameTurn> turns = new Vector<GameTurn>();
+                List<GameTurn> turns = new ArrayList<>();
                 while (e.hasMoreElements()) {
                     IPlayer p = e.nextElement();
                     if (p.hasMinefields() && game.getBoard().onGround()) {
                         GameTurn gt = new GameTurn(p.getId());
-                        turns.addElement(gt);
+                        turns.add(gt);
                     }
                 }
-                game.setTurnVector(turns);
+                game.setTurns(turns);
                 game.resetTurnIndex();
 
                 // send turns to all players
@@ -2535,7 +2535,7 @@ public class Server implements Runnable {
                 setIneligible(phase);
 
                 Enumeration<IPlayer> players = game.getPlayers();
-                Vector<GameTurn> turn = new Vector<GameTurn>();
+                List<GameTurn> turns2 = new ArrayList<>();
 
                 // Walk through the players of the game, and add
                 // a turn for all players with artillery weapons.
@@ -2556,13 +2556,13 @@ public class Server implements Runnable {
                             return false;
                         }
                     };
-                if (game.getSelectedEntities(playerArtySelector).hasNext()) {
+                    if (game.getSelectedEntities(playerArtySelector).hasNext()) {
                         // Yes, the player has arty-equipped units.
                         GameTurn gt = new GameTurn(p.getId());
-                        turn.addElement(gt);
+                        turns2.add(gt);
                     }
                 }
-                game.setTurnVector(turn);
+                game.setTurns(turns2);
                 game.resetTurnIndex();
 
                 // send turns to all players
@@ -3334,7 +3334,7 @@ public class Server implements Runnable {
 
             int currentturnindex = game.getTurnIndex();
             // now look for the next occurence of player next in the turn order
-            List<GameTurn> turns = game.getTurnVector();
+            List<GameTurn> turns = game.getTurns();
             GameTurn turn = game.getTurn();
             // not entirely necessary. As we will also check this for the
             // activity of the button but to be sure do it on the server too.
@@ -3666,8 +3666,8 @@ public class Server implements Runnable {
         transmitAllPlayerUpdates();
     }
 
-    private Vector<GameTurn> checkTurnOrderStranded(TurnVectors team_order) {
-        Vector<GameTurn> turns = new Vector<GameTurn>(team_order.getTotalTurns()
+    private List<GameTurn> checkTurnOrderStranded(TurnVectors team_order) {
+        List<GameTurn> turns = new ArrayList<GameTurn>(team_order.getTotalTurns()
                 + team_order.getEvenTurns());
         // Stranded units only during movement phases, rebuild the turns vector
         if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
@@ -3684,9 +3684,9 @@ public class Server implements Runnable {
             if (strandedUnits.hasNext()) {
                 // Add a game turn to unload stranded units, if this
                 // is the movement phase.
-                turns = new Vector<GameTurn>(team_order.getTotalTurns()
+                turns = new ArrayList<GameTurn>(team_order.getTotalTurns()
                                              + team_order.getEvenTurns() + 1);
-                turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
+                turns.add(new GameTurn.UnloadStrandedTurn(strandedUnits));
             }
         }
         return turns;
@@ -3738,7 +3738,7 @@ public class Server implements Runnable {
         TurnVectors team_order = TurnOrdered.generateTurnOrder(entities, game);
 
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns = checkTurnOrderStranded(team_order);
+        List<GameTurn> turns = checkTurnOrderStranded(team_order);
 
 
 
@@ -3748,17 +3748,17 @@ public class Server implements Runnable {
             if (e.isSelectableThisTurn()) {
                 if (!protosMoveMulti && (e instanceof Protomech)
                         && (e.getUnitNumber() != Entity.NONE)) {
-                    turns.addElement(new GameTurn.UnitNumberTurn(
+                    turns.add(new GameTurn.UnitNumberTurn(
                             e.getOwnerId(), e.getUnitNumber()));
                 } else {
-                    turns.addElement(new GameTurn.SpecificEntityTurn(e
+                    turns.add(new GameTurn.SpecificEntityTurn(e
                             .getOwnerId(), e.getId()));
                 }
             }
         }
 
         // set fields in game
-        game.setTurnVector(turns);
+        game.setTurns(turns);
         game.resetTurnIndex();
 
         // send turns to all players
@@ -3957,7 +3957,7 @@ public class Server implements Runnable {
                 game.getTeamsVector(), game);
 
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns = checkTurnOrderStranded(team_order);
+        List<GameTurn> turns = checkTurnOrderStranded(team_order);
 
         // Walk through the global order, assigning turns
         // for individual players to the single vector.
@@ -4049,7 +4049,7 @@ public class Server implements Runnable {
                         turn = new GameTurn(player.getId());
                     }
                 }
-                turns.addElement(turn);
+                turns.add(turn);
 
             } // End team-has-"normal"-turns
             else if (withinTeamTurns.hasMoreSpaceStationElements()) {
@@ -4058,40 +4058,40 @@ public class Server implements Runnable {
                 GameTurn turn = null;
                 turn = new GameTurn.EntityClassTurn(player.getId(),
                                                     GameTurn.CLASS_SPACE_STATION);
-                turns.addElement(turn);
+                turns.add(turn);
             } else if (withinTeamTurns.hasMoreJumpshipElements()) {
                 IPlayer player = (IPlayer) withinTeamTurns
                         .nextJumpshipElement();
                 GameTurn turn = null;
                 turn = new GameTurn.EntityClassTurn(player.getId(),
                                                     GameTurn.CLASS_JUMPSHIP);
-                turns.addElement(turn);
+                turns.add(turn);
             } else if (withinTeamTurns.hasMoreWarshipElements()) {
                 IPlayer player = (IPlayer) withinTeamTurns.nextWarshipElement();
                 GameTurn turn = null;
                 turn = new GameTurn.EntityClassTurn(player.getId(),
                                                     GameTurn.CLASS_WARSHIP);
-                turns.addElement(turn);
+                turns.add(turn);
             } else if (withinTeamTurns.hasMoreDropshipElements()) {
                 IPlayer player = (IPlayer) withinTeamTurns
                         .nextDropshipElement();
                 GameTurn turn = null;
                 turn = new GameTurn.EntityClassTurn(player.getId(),
                                                     GameTurn.CLASS_DROPSHIP);
-                turns.addElement(turn);
+                turns.add(turn);
             } else if (withinTeamTurns.hasMoreSmallCraftElements()) {
                 IPlayer player = (IPlayer) withinTeamTurns
                         .nextSmallCraftElement();
                 GameTurn turn = null;
                 turn = new GameTurn.EntityClassTurn(player.getId(),
                                                     GameTurn.CLASS_SMALL_CRAFT);
-                turns.addElement(turn);
+                turns.add(turn);
             } else if (withinTeamTurns.hasMoreAeroElements()) {
                 IPlayer player = (IPlayer) withinTeamTurns.nextAeroElement();
                 GameTurn turn = null;
                 turn = new GameTurn.EntityClassTurn(player.getId(),
                                                     GameTurn.CLASS_AERO);
-                turns.addElement(turn);
+                turns.add(turn);
             }
 
             // Add the calculated number of "even" turns.
@@ -4100,14 +4100,13 @@ public class Server implements Runnable {
             while ((numEven > 0) && withinTeamTurns.hasMoreEvenElements()) {
                 IPlayer evenPlayer = (IPlayer) withinTeamTurns
                         .nextEvenElement();
-                turns.addElement(new GameTurn.EntityClassTurn(evenPlayer
-                                                                      .getId(), evenMask));
+                turns.add(new GameTurn.EntityClassTurn(evenPlayer.getId(), evenMask));
                 numEven--;
             }
         }
 
         // set fields in game
-        game.setTurnVector(turns);
+        game.setTurns(turns);
         game.resetTurnIndex();
 
         // send turns to all players
@@ -4157,8 +4156,7 @@ public class Server implements Runnable {
         if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             r = new Report(1040, Report.PUBLIC);
             addReport(r);
-            for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements(); ) {
-                GameTurn t = e.nextElement();
+            for (GameTurn t : game.getTurns()) {
                 if (t instanceof GameTurn.SpecificEntityTurn) {
                     Entity entity = game
                             .getEntity(((GameTurn.SpecificEntityTurn) t)
@@ -4219,9 +4217,7 @@ public class Server implements Runnable {
                 r = new Report(1020, Report.PUBLIC);
 
                 boolean hasEven = false;
-                for (Enumeration<GameTurn> i = game.getTurns(); i
-                        .hasMoreElements(); ) {
-                    GameTurn turn = i.nextElement();
+                for (GameTurn turn : game.getTurns()) { 
                     IPlayer player = getPlayer(turn.getPlayerNum());
                     if (null != player) {
                         r.add(player.getName());
@@ -4991,7 +4987,7 @@ public class Server implements Runnable {
         // of having a unit of another class consume the turn and leave the
         // unloaded unit without a turn
         int turnMask;
-        List<GameTurn> turnVector = game.getTurnVector();
+        List<GameTurn> turnVector = game.getTurns();
         if (unit instanceof Dropship) {
             turnMask = GameTurn.CLASS_DROPSHIP;
         } else if (unit instanceof SmallCraft) {
@@ -7268,7 +7264,7 @@ public class Server implements Runnable {
                         addNewLines();
                         Report.addNewline(vPhaseReport);
                         // If we aren't at the end, send a special report
-                        if ((game.getTurnIndex() + 1) < game.getTurnVector()
+                        if ((game.getTurnIndex() + 1) < game.getTurns()
                                 .size()) {
                             send(e.getOwner().getId(),
                                     createSpecialReportPacket());
@@ -14938,7 +14934,7 @@ public class Server implements Runnable {
         }
 
         if (vPhaseReport.size() > 0 && game.getPhase() == Phase.PHASE_MOVEMENT
-                && (game.getTurnIndex() + 1) < game.getTurnVector().size()) {
+                && (game.getTurnIndex() + 1) < game.getTurns().size()) {
             for (Integer playerId : reportPlayers) {
                 send(playerId, createSpecialReportPacket());
             }
@@ -32271,7 +32267,7 @@ public class Server implements Runnable {
      * Creates a packet containing the current turn vector
      */
     private Packet createTurnVectorPacket() {
-        return new Packet(Packet.COMMAND_SENDING_TURNS, game.getTurnVector());
+        return new Packet(Packet.COMMAND_SENDING_TURNS, game.getTurns());
     }
 
     /**

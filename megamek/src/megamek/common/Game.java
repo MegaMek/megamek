@@ -112,7 +112,7 @@ public class Game implements Serializable, IGame {
     /**
      * The current turn list
      */
-    private Vector<GameTurn> turnVector = new Vector<GameTurn>();
+    private List<GameTurn> turns = new ArrayList<>();
     private int turnIndex = 0;
 
     /**
@@ -656,15 +656,15 @@ public class Game implements Serializable, IGame {
      * Returns the current GameTurn object
      */
     public GameTurn getTurn() {
-        if ((turnIndex < 0) || (turnIndex >= turnVector.size())) {
+        if ((turnIndex < 0) || (turnIndex >= turns.size())) {
             return null;
         }
-        return turnVector.elementAt(turnIndex);
+        return turns.get(turnIndex);
     }
 
     public GameTurn getTurnForPlayer(int pn) {
-        for (int i = turnIndex; i < turnVector.size(); i++) {
-            GameTurn gt = turnVector.get(i);
+        for (int i = turnIndex; i < turns.size(); i++) {
+            GameTurn gt = turns.get(i);
             if (gt.isValid(pn, this)) {
                 return gt;
             }
@@ -691,39 +691,46 @@ public class Game implements Serializable, IGame {
      * Returns true if there is a turn after the current one
      */
     public boolean hasMoreTurns() {
-        return turnVector.size() > (turnIndex + 1);
+        return turns.size() > (turnIndex + 1);
     }
 
     /**
      * Inserts a turn that will come directly after the current one
      */
     public void insertNextTurn(GameTurn turn) {
-        turnVector.insertElementAt(turn, turnIndex + 1);
+        turns.add(turnIndex + 1, turn);
     }
 
     /**
      * Inserts a turn after the specific index
      */
     public void insertTurnAfter(GameTurn turn, int index) {
-        if ((index + 1) >= turnVector.size()) {
-            turnVector.add(turn);
+        if ((index + 1) >= turns.size()) {
+            turns.add(turn);
         } else {
-            turnVector.insertElementAt(turn, index + 1);
+            turns.add(index + 1, turn);
         }
     }
 
     public void swapTurnOrder(int index1, int index2) {
-        GameTurn turn1 = turnVector.get(index1);
-        GameTurn turn2 = turnVector.get(index2);
-        turnVector.set(index2, turn1);
-        turnVector.set(index1, turn2);
+        GameTurn turn1 = turns.get(index1);
+        GameTurn turn2 = turns.get(index2);
+        turns.set(index2, turn1);
+        turns.set(index1, turn2);
     }
 
     /**
      * Returns an Enumeration of the current turn list
      */
-    public Enumeration<GameTurn> getTurns() {
-        return turnVector.elements();
+    public List<GameTurn> getTurns() {
+        return Collections.unmodifiableList(turns);
+    }
+
+    /**
+     * Sets the current turn vector
+     */
+    public void setTurns(List<GameTurn> turns) {
+        this.turns = new ArrayList<>(turns);
     }
 
     /**
@@ -742,23 +749,6 @@ public class Game implements Serializable, IGame {
         this.turnIndex = turnIndex;
         processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn()
                 .getPlayerNum()), prevPlayerId));
-    }
-
-    /**
-     * Returns the current turn vector
-     */
-    public List<GameTurn> getTurnVector() {
-        return Collections.unmodifiableList(turnVector);
-    }
-
-    /**
-     * Sets the current turn vector
-     */
-    public void setTurnVector(List<GameTurn> turnVector) {
-        this.turnVector.clear();
-        for (GameTurn turn : turnVector) {
-            this.turnVector.add(turn);
-        }
     }
 
     public Phase getPhase() {
@@ -1445,7 +1435,7 @@ public class Game implements Serializable, IGame {
 
         vOutOfGame.removeAllElements();
 
-        turnVector.clear();
+        turns.clear();
         turnIndex = 0;
 
         resetActions();
@@ -2118,10 +2108,10 @@ public class Game implements Serializable, IGame {
     public GameTurn removeFirstTurnFor(Entity entity) {
         assert (phase != Phase.PHASE_MOVEMENT); // special move multi cases
         // ignored
-        for (int i = turnIndex; i < turnVector.size(); i++) {
-            GameTurn turn = turnVector.elementAt(i);
+        for (int i = turnIndex; i < turns.size(); i++) {
+            GameTurn turn = turns.get(i);
             if (turn.isValidEntity(entity, this)) {
-                turnVector.removeElementAt(i);
+                turns.remove(i);
                 return turn;
             }
         }
@@ -2133,7 +2123,7 @@ public class Game implements Serializable, IGame {
      * Used when, say, an entity dies mid-phase.
      */
     public void removeTurnFor(Entity entity) {
-        if (turnVector.size() == 0) {
+        if (turns.size() == 0) {
             return;
         }
         // If the game option "move multiple infantry per mech" is selected,
@@ -2150,13 +2140,13 @@ public class Game implements Serializable, IGame {
                 // contrived, but may come up e.g. one inf accidently kills
                 // another
                 if (hasMoreTurns()) {
-                    GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
+                    GameTurn nextTurn = turns.get(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
                         GameTurn.EntityClassTurn ect =
                                 (GameTurn.EntityClassTurn) nextTurn;
                         if (ect.isValidClass(GameTurn.CLASS_INFANTRY)
                             && !ect.isValidClass(~GameTurn.CLASS_INFANTRY)) {
-                            turnVector.removeElementAt(turnIndex + 1);
+                            turns.remove(turnIndex + 1);
                         }
                     }
                 }
@@ -2174,13 +2164,13 @@ public class Game implements Serializable, IGame {
                 // contrived, but may come up e.g. one inf accidently kills
                 // another
                 if (hasMoreTurns()) {
-                    GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
+                    GameTurn nextTurn = turns.get(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
                         GameTurn.EntityClassTurn ect =
                                 (GameTurn.EntityClassTurn) nextTurn;
                         if (ect.isValidClass(GameTurn.CLASS_PROTOMECH)
                             && !ect.isValidClass(~GameTurn.CLASS_PROTOMECH)) {
-                            turnVector.removeElementAt(turnIndex + 1);
+                            turns.remove(turnIndex + 1);
                         }
                     }
                 }
@@ -2197,13 +2187,13 @@ public class Game implements Serializable, IGame {
                 // contrived, but may come up e.g. one tank accidently kills
                 // another
                 if (hasMoreTurns()) {
-                    GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
+                    GameTurn nextTurn = turns.get(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
                         GameTurn.EntityClassTurn ect =
                                 (GameTurn.EntityClassTurn) nextTurn;
                         if (ect.isValidClass(GameTurn.CLASS_TANK)
                             && !ect.isValidClass(~GameTurn.CLASS_TANK)) {
-                            turnVector.removeElementAt(turnIndex + 1);
+                            turns.remove(turnIndex + 1);
                         }
                     }
                 }
@@ -2220,13 +2210,13 @@ public class Game implements Serializable, IGame {
                 // contrived, but may come up e.g. one mech accidently kills
                 // another
                 if (hasMoreTurns()) {
-                    GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
+                    GameTurn nextTurn = turns.get(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
                         GameTurn.EntityClassTurn ect =
                                 (GameTurn.EntityClassTurn) nextTurn;
                         if (ect.isValidClass(GameTurn.CLASS_MECH)
                             && !ect.isValidClass(~GameTurn.CLASS_MECH)) {
-                            turnVector.removeElementAt(turnIndex + 1);
+                            turns.remove(turnIndex + 1);
                         }
                     }
                 }
@@ -2247,29 +2237,28 @@ public class Game implements Serializable, IGame {
             useInfantryMoveLaterCheck = false;
         }
 
-        for (int i = turnVector.size() - 1; i >= turnIndex; i--) {
-            GameTurn turn = turnVector.elementAt(i);
-
+        for (Iterator<GameTurn> it = turns.listIterator(); it.hasNext(); ) {
+            GameTurn turn = it.next();
             if (turn.isValidEntity(entity, this, useInfantryMoveLaterCheck)) {
-                turnVector.removeElementAt(i);
+                it.remove();
                 break;
             }
         }
     }
     
     public int removeSpecificEntityTurnsFor(Entity entity) {
-        List<GameTurn> turnsToRemove = new ArrayList<GameTurn>();
-        
-        for (GameTurn turn : turnVector) {
+        int turnsRemoved = 0;
+        for (Iterator<GameTurn> it = turns.listIterator(); it.hasNext(); ) {
+            GameTurn turn = it.next();
             if (turn instanceof SpecificEntityTurn) {
                 int turnOwner = ((SpecificEntityTurn) turn).getEntityNum();
                 if (entity.getId() == turnOwner) {
-                    turnsToRemove.add(turn);
+                    it.remove();
+                    turnsRemoved++;
                 }
             }
         }
-        turnVector.removeAll(turnsToRemove);
-        return turnsToRemove.size();
+        return turnsRemoved;
     }
 
     /**

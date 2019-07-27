@@ -2129,7 +2129,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     }
                     break;
                 case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
-                    List<String> targetDescriptions = evt.getTelemissileTargetDescriptions();
+                    List<Integer> targetIds = evt.getTelemissileTargetIds();
+                    List<Integer> toHitValues = evt.getTmToHitValues();
+                    List<String> targetDescriptions = new ArrayList<String>();
+                    for (int i = 0; i < targetIds.size(); i++) {
+                        int id = targetIds.get(i);
+                        int th = toHitValues.get(i);
+                        Entity tgt = client.getGame().getEntity(id);
+                        if (tgt != null) {
+                            targetDescriptions.add(String.format(Messages.getString("TeleMissileTargetDialog.target"), tgt.getDisplayName(), th));
+                        }
+                    }
                     //Set up the selection pane
                     String i18nString = "TeleMissileTargetDialog.message"; //$NON-NLS-1$;
                     msg = Messages.getString(i18nString);
@@ -2154,8 +2164,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     List<Integer> TAGTargets = evt.getTAGTargets();
                     List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
                     List<String> TAGTargetDescriptions = new ArrayList<String>();
-                    for (int id : TAGTargets) {
-                        int nType = TAGTargetTypes.get(TAGTargets.indexOf(id));
+                    for (int i = 0; i < TAGTargets.size(); i++) {
+                        int id = TAGTargets.get(i);
+                        int nType = TAGTargetTypes.get(i);
                         Targetable tgt = client.getGame().getTarget(nType, id);
                         if (tgt != null) {
                             TAGTargetDescriptions.add(tgt.getDisplayName());

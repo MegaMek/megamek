@@ -880,7 +880,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                             .getGame());
             // Get the launch velocity for bearings-only telemissiles
             if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {                
-                TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.frame);
+                TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.frame, clientgui.getClient().getGame());
                 tsd.setVisible(true);
                 waa.setLaunchVelocity(tsd.getSetting());
                 waa.updateTurnsTilHit(clientgui.getClient().getGame());

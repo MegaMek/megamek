@@ -4474,7 +4474,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         this.isHomingShot = isHomingShot;
     }
     
-    /*
+    /**
      * Needed by teleoperated missiles
      * @param velocity - an integer representing initial velocity
      */
@@ -4483,7 +4483,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     }
     
     //This is a stub. ArtilleryAttackActions actually need to use it
-    public void updateTurnsTilHit(IGame game) {
-        
+    public void updateTurnsTilHit(IGame game) {        
+    }
+    
+    /**
+     * Convenience method that compiles the ToHit modifiers applicable to the weapon being fired
+     * Got a heavy large laser that gets a +1 TH penalty?  You'll find that here.
+     * Bonuses related to the attacker's condition?  Ammunition being used?  Those are in other methods.
+     * @param 
+     */
+    public void compileWeaponToHitMods(Mounted weapon, WeaponType wtype) {
     }
 }

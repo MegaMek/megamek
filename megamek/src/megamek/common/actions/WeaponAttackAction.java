@@ -4490,8 +4490,49 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Convenience method that compiles the ToHit modifiers applicable to the weapon being fired
      * Got a heavy large laser that gets a +1 TH penalty?  You'll find that here.
      * Bonuses related to the attacker's condition?  Ammunition being used?  Those are in other methods.
-     * @param 
+     * 
+     * @param weapon The Mounted weapon being used for this attack
+     * @param wtype The WeaponType of the weapon being used
+     * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    public void compileWeaponToHitMods(Mounted weapon, WeaponType wtype) {
+    public ToHitData compileWeaponToHitMods(Mounted weapon, WeaponType wtype, ToHitData toHit) {
+        return toHit;
+    }
+    
+    /**
+     * Convenience method that compiles the ToHit modifiers applicable to the ammunition being used
+     * Using precision AC rounds that get a -1 TH bonus?  You'll find that here.
+     * Bonuses related to the attacker's condition?  Using a weapon with a TH penalty?  Those are in other methods.
+     * 
+     * @param weapon The Mounted weapon being used for this attack
+     * @param atype The AmmoType being used for this attack
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     */
+    public ToHitData compileAmmoToHitMods(Mounted weapon, AmmoType atype, ToHitData toHit) {
+        return toHit;
+    }
+    
+    /**
+     * Convenience method that compiles the ToHit modifiers applicable to the attacker's condition
+     * Attacker has damaged sensors?  You'll find that here.
+     * Defender's a superheavy mech?  Using a weapon with a TH penalty?  Those are in other methods.
+     * 
+     * @param attacker The Entity making this attack
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     */
+    public ToHitData compileAttackerToHitMods(Entity attacker, ToHitData toHit) {
+        return toHit;
+    }
+    
+    /**
+     * Convenience method that compiles the ToHit modifiers applicable to the defender's condition
+     * -4 for shooting at an immobile target?  You'll find that here.
+     * Attacker strafing?  Using a weapon with a TH penalty?  Those are in other methods.
+     * 
+     * @param target The Targetable object being attacked
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     */
+    public ToHitData compileTargetToHitMods(Targetable target, ToHitData toHit) {
+        return toHit;
     }
 }

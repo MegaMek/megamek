@@ -616,6 +616,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             losMods = los.losModifiers(game, eistatus, underWater);
+            // Torpedos must remain in the water over their whole path to the target
             if ((atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                             || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
@@ -663,88 +664,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             ae.setElevation(-1);
         }
 
-        // Leg attacks, Swarm attacks, and
-        // Mine Launchers don't use gunnery.
-        if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
-            toHit = Compute.getLegAttackBaseToHit(ae, te, game);
-            if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                return toHit;
-            }
-            if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
-            }
-
-        } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
-            toHit = Compute.getSwarmMekBaseToHit(ae, te, game);
-            if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                return toHit;
-            }
-
-            if (te instanceof Tank) {
-                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TeVehicle"));
-            }
-            if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
-            }
-
-            // If the defender carries mechanized BA, they can fight off the
-            // swarm
-            if (te != null) {
-                for (Entity e : te.getExternalUnits()) {
-                    if (e instanceof BattleArmor) {
-                        BattleArmor ba = (BattleArmor) e;
-                        int def = ba.getShootingStrength();
-                        int att = ((Infantry) ae).getShootingStrength();
-                        if (!(ae instanceof BattleArmor)) {
-                            if (att >= 28) {
-                                att = 5;
-                            } else if (att >= 24) {
-                                att = 4;
-                            } else if (att >= 21) {
-                                att = 3;
-                            } else if (att >= 18) {
-                                att = 2;
-                            } else {
-                                att = 1;
-                            }
-                        }
-                        def = (def + 2) - att;
-                        if (def > 0) {
-                            toHit.addModifier(def, Messages.getString("WeaponAttackAction.DefendingBA"));
-                        }
-                    }
-                }
-            }
-        } else if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
-            // Can't stop if we're not swarming, otherwise automatic.
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.EndSwarm"));
-        } else if (BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName())) {
-            // Mine launchers can not hit infantry.
-            toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.MagMine"));
-        } else if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
-            if (ae.getPosition().equals(target.getPosition())) {
-                // Micro bombs use anti-mech skill
-                toHit = new ToHitData(ae.getCrew().getPiloting(), Messages.getString("WeaponAttackAction.AntiMechSkill"));
-                if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
-                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
-                }
-                return toHit;
-            }
-            return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.OutOfRange"));
-        }
-        // Swarming infantry always hit their target, but
-        // they can only target the Mek they're swarming.
-        else if ((te != null) && (ae.getSwarmTargetId() == te.getId())) {
-            int side = te instanceof Tank ? ToHitData.SIDE_RANDOM : ToHitData.SIDE_FRONT;
-            if (ae instanceof BattleArmor) {
-                if (!Infantry.SWARM_WEAPON_MEK.equals(wtype.getInternalName()) && !(wtype instanceof InfantryAttack)) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.WrongSwarmUse"));
-                }
-                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.SwarmingAutoHit"), ToHitData.HIT_SWARM,
-                        side);
-            }
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.SwarmingAutoHit"), ToHitData.HIT_SWARM_CONVENTIONAL, side);
-        } else if (isArtilleryFLAK) {
+         else if (isArtilleryFLAK) {
             if (game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
                 toHit = new ToHitData(ae.getCrew().getArtillery(), Messages.getString("WeaponAttackAction.ArtySkill"));
             } else {
@@ -4495,7 +4415,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param wtype The WeaponType of the weapon being used
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    public ToHitData compileWeaponToHitMods(Mounted weapon, WeaponType wtype, ToHitData toHit) {
+    private ToHitData compileWeaponToHitMods(Mounted weapon, WeaponType wtype, ToHitData toHit) {
         return toHit;
     }
     
@@ -4508,7 +4428,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param atype The AmmoType being used for this attack
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    public ToHitData compileAmmoToHitMods(Mounted weapon, AmmoType atype, ToHitData toHit) {
+    private ToHitData compileAmmoToHitMods(Mounted weapon, AmmoType atype, ToHitData toHit) {
         return toHit;
     }
     
@@ -4520,7 +4440,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param attacker The Entity making this attack
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    public ToHitData compileAttackerToHitMods(Entity attacker, ToHitData toHit) {
+    private ToHitData compileAttackerToHitMods(Entity attacker, Targetable target, ToHitData toHit) {
         return toHit;
     }
     
@@ -4532,7 +4452,115 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param target The Targetable object being attacked
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    public ToHitData compileTargetToHitMods(Targetable target, ToHitData toHit) {
+    private ToHitData compileTargetToHitMods(Targetable target, ToHitData toHit) {
+        return toHit;
+    }
+    
+    /**
+     * If you're using a weapon that does something totally special and doesn't apply mods like everything else, look here
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param atype The AmmoType being used for this attack
+     * @param attacker The Entity making this attack
+     * @param target The Targetable object being attacked
+     * @param los The calculated LOS between attacker and target
+     * @param game The current game
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     */
+    private ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity attacker, Targetable target, LosEffects los, IGame game, ToHitData toHit) {
+        // Battle Armor bomb racks (Micro bombs) use gunnery skill and no other mods per TWp228 2018 errata
+        if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
+            if (attacker.getPosition().equals(target.getPosition())) {
+                toHit = new ToHitData(ae.getCrew().getPiloting(), Messages.getString("WeaponAttackAction.GunSkill"));
+                return toHit;
+            }
+            return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.OutOfRange"));
+        }
+        return toHit;
+    }
+    
+    /**
+     * Convenience method that compiles the ToHit modifiers applicable to swarm attacks
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param attacker The Entity making this attack
+     * @param te The Entity being attacked
+     * @param game The current game
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     */
+    private ToHitData handleSwarmAttacks(WeaponType wtype, Entity attacker, Entity te, IGame game, ToHitData toHit) {
+        // Leg attacks, Swarm attacks, and
+        // Mine Launchers don't use gunnery.
+        if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
+            toHit = Compute.getLegAttackBaseToHit(attacker, te, game);
+            if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+                return toHit;
+            }
+            if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
+            }
+
+        } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
+            toHit = Compute.getSwarmMekBaseToHit(attacker, te, game);
+            if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+                return toHit;
+            }
+
+            if (te instanceof Tank) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TeVehicle"));
+            }
+            if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
+            }
+
+            // If the defender carries mechanized BA, they can fight off the
+            // swarm
+            if (te != null) {
+                for (Entity e : te.getExternalUnits()) {
+                    if (e instanceof BattleArmor) {
+                        BattleArmor ba = (BattleArmor) e;
+                        int def = ba.getShootingStrength();
+                        int att = ((Infantry) attacker).getShootingStrength();
+                        if (!(attacker instanceof BattleArmor)) {
+                            if (att >= 28) {
+                                att = 5;
+                            } else if (att >= 24) {
+                                att = 4;
+                            } else if (att >= 21) {
+                                att = 3;
+                            } else if (att >= 18) {
+                                att = 2;
+                            } else {
+                                att = 1;
+                            }
+                        }
+                        def = (def + 2) - att;
+                        if (def > 0) {
+                            toHit.addModifier(def, Messages.getString("WeaponAttackAction.DefendingBA"));
+                        }
+                    }
+                }
+            }
+        } else if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
+            // Can't stop if we're not swarming, otherwise automatic.
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.EndSwarm"));
+        } else if (BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName())) {
+            // Mine launchers can not hit infantry.
+            toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.MagMine"));
+        } 
+        // Swarming infantry always hit their target, but
+        // they can only target the Mek they're swarming.
+        else if ((te != null) && (attacker.getSwarmTargetId() == te.getId())) {
+            int side = te instanceof Tank ? ToHitData.SIDE_RANDOM : ToHitData.SIDE_FRONT;
+            if (attacker instanceof BattleArmor) {
+                if (!Infantry.SWARM_WEAPON_MEK.equals(wtype.getInternalName()) && !(wtype instanceof InfantryAttack)) {
+                    return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.WrongSwarmUse"));
+                }
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.SwarmingAutoHit"), ToHitData.HIT_SWARM,
+                        side);
+            }
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.SwarmingAutoHit"), ToHitData.HIT_SWARM_CONVENTIONAL, side);
+        }
         return toHit;
     }
 }

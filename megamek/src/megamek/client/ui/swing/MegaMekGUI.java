@@ -306,7 +306,8 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
 
         String splashFilename;
         if (skinSpec.hasBackgrounds()) {
-            splashFilename = skinSpec.backgrounds.get(0);
+            splashFilename = determineSplashScreen(skinSpec.backgrounds, 
+            		currentMonitor.getWidth(), currentMonitor.getHeight());
             if (skinSpec.backgrounds.size() > 1) {
                 File file = new MegaMekFile(Configuration.widgetsDir(),
                         skinSpec.backgrounds.get(1)).getFile();
@@ -315,16 +316,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                             + file.getAbsolutePath());
                 } else {
                     backgroundIcon = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
-                }
-            }
-            // Check for multi-resolutioned splash image
-            if (skinSpec.backgrounds.size() > 2) {
-                // If the current monitor size is over FHD, use the third image
-                if (currentMonitor.getWidth() > 1920) {
-                    splashFilename = skinSpec.backgrounds.get(2);
-                // If we have a low-rez version, and the resolution is below HD+ (1600x900)...
-                } else if ((skinSpec.backgrounds.size() > 3) && (currentMonitor.getWidth() < 1600)) {
-                    splashFilename = skinSpec.backgrounds.get(3);
                 }
             }
         } else {
@@ -1178,5 +1169,40 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             showMainMenu();
             frame.repaint();
         }
+    }
+    
+    /**
+     * Method used to determine the appropriate splash screen to use. This method looks 
+     * at both the height and the width of the main monitor.
+     * 
+     * @param splashScreens
+     * 		List of available splash screens.
+     * @param screenWidth
+     * 		Width of the current monitor.
+     * @param screenHeight
+     * 		Height of the current monitor.
+     * @return
+     * 		String that represents the splash screen that should be displayed.
+     */
+    private String determineSplashScreen(final List<String> splashScreens, 
+    		final int screenWidth, final int screenHeight) {
+    	// Ensure that the list is of appropriate size to contain HD, FHD, and UHD splash 
+    	// screens.
+    	if (splashScreens.size() > 3) {
+    		// Default to the HD splash screen.
+    		String splashFileName = splashScreens.get(3);
+    		// If both height and width is greater than 1080p use the UHD splash screen.
+	    	if (screenWidth > 1920 && screenHeight > 1080) {
+	    		splashFileName = splashScreens.get(2);
+	    	}
+	    	// If both height and width is greater than 720p then use the FHD splash screen.
+	    	else if (screenWidth > 1280 && screenHeight > 720)
+	    	{
+	    		splashFileName = splashScreens.get(0);
+	    	}
+	    	return splashFileName;
+    	}
+    	// List of splash screens is not complete so default to the first splash screen.
+    	return splashScreens.get(0);
     }
 }

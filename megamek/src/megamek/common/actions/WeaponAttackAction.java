@@ -359,6 +359,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
         
+        long munition = AmmoType.M_STANDARD;
+        if (atype != null) {
+            munition = atype.getMunitionType();
+        }
+        
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         
         boolean bMekTankStealthActive = false;
@@ -631,11 +636,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && target.getPosition().equals(ae.getPosition())) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.BPodAtInf"));
         }
-
-        long munition = AmmoType.M_STANDARD;
-        if (atype != null) {
-            munition = atype.getMunitionType();
-        }
+        
         if (munition == AmmoType.M_HOMING && ammo.curMode().equals("Homing")) {
             // target type checked later because its different for
             // direct/indirect (BMRr p77 on board arrow IV)

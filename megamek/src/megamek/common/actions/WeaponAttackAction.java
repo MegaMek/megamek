@@ -616,19 +616,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             losMods = los.losModifiers(game, eistatus, underWater);
-            // Torpedos must remain in the water over their whole path to the target
-            if ((atype != null)
-                    && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                            || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
-                            || (((atype.getAmmoType() == AmmoType.T_SRM)
-                                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
-                                    || (atype.getAmmoType() == AmmoType.T_MRM)
-                                    || (atype.getAmmoType() == AmmoType.T_LRM)
-                                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                                    || (atype.getAmmoType() == AmmoType.T_MML)) && (munition == AmmoType.M_TORPEDO)))
-                    && (los.getMinimumWaterDepth() < 1)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.TorpOutOfWater"));
-            }
         } else {
             if (!exchangeSwarmTarget) {
                 los = LosEffects.calculateLos(game, spotter.getId(), target, true);
@@ -2771,11 +2758,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return toHit;
     }
 
-    private static String toHitIsImpossible(IGame game, Entity ae, Targetable target, Targetable swarmPrimaryTarget,
-            Targetable swarmSecondaryTarget, Mounted weapon, AmmoType atype, WeaponType wtype, int ttype,
-            boolean exchangeSwarmTarget, boolean usesAmmo, Entity te, boolean isTAG, boolean isInferno,
+    private static String toHitIsImpossible(IGame game, Entity ae, Entity te, Targetable target, Targetable swarmPrimaryTarget,
+            Targetable swarmSecondaryTarget, Mounted weapon, Mounted ammo, AmmoType atype, WeaponType wtype, int ttype,
+            LosEffects los, boolean exchangeSwarmTarget, boolean usesAmmo, boolean isTAG, boolean isInferno,
             boolean isAttackerInfantry, boolean isIndirect, int attackerId, int weaponId, boolean isArtilleryIndirect,
-            Mounted ammo, boolean isArtilleryFLAK, boolean targetInBuilding, boolean isArtilleryDirect,
+            boolean isArtilleryFLAK, boolean targetInBuilding, boolean isArtilleryDirect,
             boolean isTargetECMAffected, boolean isStrafing, boolean isBearingsOnlyMissile, boolean isCruiseMissile) {
         boolean isHoming = false;
         ToHitData toHit = null;
@@ -2845,6 +2832,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // is the attack originating from underwater
         boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)
                 || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
+        
+        // Torpedos must remain in the water over their whole path to the target
+        if ((atype != null)
+                && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+                        || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
+                        || (((atype.getAmmoType() == AmmoType.T_SRM)
+                                || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
+                                || (atype.getAmmoType() == AmmoType.T_MRM)
+                                || (atype.getAmmoType() == AmmoType.T_LRM)
+                                || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                                || (atype.getAmmoType() == AmmoType.T_MML)) && (atype.getMunitionType() == AmmoType.M_TORPEDO)))
+                && (los.getMinimumWaterDepth() < 1)) {
+            return Messages.getString("WeaponAttackAction.TorpOutOfWater");
+        }
 
         if ((ae instanceof Protomech) && ((Protomech) ae).isEDPCharging() && wtype.hasFlag(WeaponType.F_ENERGY)) {
             return Messages.getString("WeaponAttackAction.ChargingEDP");
@@ -3682,12 +3683,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // check LOS (indirect LOS is from the spotter)
-        LosEffects los;
         ToHitData losMods;
         if (isIndirect && ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
                 && !underWater) {
             // Assume that no LOS mods apply
-            los = new LosEffects();
             losMods = new ToHitData();
             
         } else if (!isIndirect || (isIndirect && (spotter == null))) {
@@ -4461,16 +4460,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param wtype The WeaponType of the weapon being used
      * @param atype The AmmoType being used for this attack
-     * @param attacker The Entity making this attack
+     * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param los The calculated LOS between attacker and target
      * @param game The current game
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    private ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity attacker, Targetable target, LosEffects los, IGame game, ToHitData toHit) {
+    private ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity ae, Targetable target, LosEffects los, IGame game, ToHitData toHit) {
         // Battle Armor bomb racks (Micro bombs) use gunnery skill and no other mods per TWp228 2018 errata
         if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
-            if (attacker.getPosition().equals(target.getPosition())) {
+            if (ae.getPosition().equals(target.getPosition())) {
                 toHit = new ToHitData(ae.getCrew().getPiloting(), Messages.getString("WeaponAttackAction.GunSkill"));
                 return toHit;
             }

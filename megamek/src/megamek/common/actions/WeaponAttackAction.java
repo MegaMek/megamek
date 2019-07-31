@@ -490,52 +490,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         int toSubtract = 0;
         final int ttype = target.getTargetType();
-
-        ToHitData toHit;
-        String reason = WeaponAttackAction.toHitIsImpossible(game, ae, target, swarmPrimaryTarget, swarmSecondaryTarget,
-                weapon, atype, wtype, ttype, exchangeSwarmTarget, usesAmmo, te, isTAG, isInferno, isAttackerInfantry,
-                isIndirect, attackerId, weaponId, isArtilleryIndirect, ammo, isArtilleryFLAK, targetInBuilding,
-                isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile, isCruiseMissile);
-        if (reason != null) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
-        }
-
-        // if this is a bombing attack then get the to hit and return
-        // TODO: this should probably be its own kind of attack
-        if (wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
-            toHit = Compute.getSpaceBombBaseToHit(ae, te, game);
-            return toHit;
-        }
-
-        // B-Pod firing at infantry in the same hex autohit
-        if (wtype.hasFlag(WeaponType.F_B_POD) && (target instanceof Infantry)
-                && target.getPosition().equals(ae.getPosition())) {
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.BPodAtInf"));
-        }
-
-        long munition = AmmoType.M_STANDARD;
-        if (atype != null) {
-            munition = atype.getMunitionType();
-        }
-        if (munition == AmmoType.M_HOMING && ammo.curMode().equals("Homing")) {
-            // target type checked later because its different for
-            // direct/indirect (BMRr p77 on board arrow IV)
-            isHoming = true;
-        }
-        int targEl;
-
-        if (te == null) {
-            targEl = -game.getBoard().getHex(target.getPosition()).depth();
-        } else {
-            targEl = te.relHeight();
-        }
-
-        // TODO: mech making DFA could be higher if DFA target hex is higher
-        // BMRr pg. 43, "attacking unit is considered to be in the air
-        // above the hex, standing on an elevation 1 level higher than
-        // the target hex or the elevation of the hex the attacker is
-        // in, whichever is higher."
-
+      
         // if we're doing indirect fire, find a spotter
         Entity spotter = null;
         boolean narcSpotter = false;
@@ -585,7 +540,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // check LOS (indirect LOS is from the spotter)
         LosEffects los;
         ToHitData losMods;
-
         if (isIndirect && ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
                 && !underWater) {
             los = new LosEffects();
@@ -650,8 +604,58 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // return to depth 1
             ae.setElevation(-1);
         }
+        
+        //Now we've got our LOS calculations done. 
+        //Check to see if this attack is impossible and return the reason code
+        
+        String reason = WeaponAttackAction.toHitIsImpossible(game, ae, te, target, swarmPrimaryTarget, swarmSecondaryTarget,
+                weapon, ammo, atype, wtype, ttype, los, usesAmmo, exchangeSwarmTarget, isTAG, isInferno, isAttackerInfantry,
+                isIndirect, attackerId, weaponId, isArtilleryIndirect, isArtilleryFLAK, targetInBuilding,
+                isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile, isCruiseMissile);
+        if (reason != null) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
+        }
+        
+        //This attack has now tested possible, so let's start dealing with to-hit numbers
+        ToHitData toHit;
+        
+        // if this is a bombing attack then get the to hit and return
+        // TODO: this should probably be its own kind of attack
+        if (wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
+            toHit = Compute.getSpaceBombBaseToHit(ae, te, game);
+            return toHit;
+        }
 
-         else if (isArtilleryFLAK) {
+        // B-Pod firing at infantry in the same hex autohit
+        if (wtype.hasFlag(WeaponType.F_B_POD) && (target instanceof Infantry)
+                && target.getPosition().equals(ae.getPosition())) {
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.BPodAtInf"));
+        }
+
+        long munition = AmmoType.M_STANDARD;
+        if (atype != null) {
+            munition = atype.getMunitionType();
+        }
+        if (munition == AmmoType.M_HOMING && ammo.curMode().equals("Homing")) {
+            // target type checked later because its different for
+            // direct/indirect (BMRr p77 on board arrow IV)
+            isHoming = true;
+        }
+        int targEl;
+
+        if (te == null) {
+            targEl = -game.getBoard().getHex(target.getPosition()).depth();
+        } else {
+            targEl = te.relHeight();
+        }
+
+        // TODO: mech making DFA could be higher if DFA target hex is higher
+        // BMRr pg. 43, "attacking unit is considered to be in the air
+        // above the hex, standing on an elevation 1 level higher than
+        // the target hex or the elevation of the hex the attacker is
+        // in, whichever is higher."
+
+        if (isArtilleryFLAK) {
             if (game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
                 toHit = new ToHitData(ae.getCrew().getArtillery(), Messages.getString("WeaponAttackAction.ArtySkill"));
             } else {

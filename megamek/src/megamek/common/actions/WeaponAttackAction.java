@@ -473,6 +473,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
+        
+        //Set up the target's relative elevation/depth
+        int targEl;
+
+        if (te == null) {
+            targEl = -game.getBoard().getHex(target.getPosition()).depth();
+        } else {
+            targEl = te.relHeight();
+        }
 
         // is this attack originating from underwater
         // TODO: assuming that torpedoes are underwater attacks even if fired
@@ -494,6 +503,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         int toSubtract = 0;
+        
+        //Convenience variable to test the targetable type value
         final int ttype = target.getTargetType();
       
         // if we're doing indirect fire, find a spotter
@@ -613,12 +624,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         //Now we've got our LOS calculations done. 
         //Check to see if this attack is impossible and return the reason code
         
-        String reason = WeaponAttackAction.toHitIsImpossible(game, ae, te, target, swarmPrimaryTarget, swarmSecondaryTarget,
+        String reasonImpossible = WeaponAttackAction.toHitIsImpossible(game, ae, te, target, swarmPrimaryTarget, swarmSecondaryTarget,
                 weapon, ammo, atype, wtype, ttype, los, usesAmmo, exchangeSwarmTarget, isTAG, isInferno, isAttackerInfantry,
                 isIndirect, attackerId, weaponId, isArtilleryIndirect, isArtilleryFLAK, targetInBuilding,
                 isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile, isCruiseMissile);
-        if (reason != null) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
+        if (reasonImpossible != null) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, reasonImpossible);
         }
         
         //This attack has now tested possible, so let's start dealing with to-hit numbers
@@ -641,13 +652,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // target type checked later because its different for
             // direct/indirect (BMRr p77 on board arrow IV)
             isHoming = true;
-        }
-        int targEl;
-
-        if (te == null) {
-            targEl = -game.getBoard().getHex(target.getPosition()).depth();
-        } else {
-            targEl = te.relHeight();
         }
 
         // TODO: mech making DFA could be higher if DFA target hex is higher

@@ -377,6 +377,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean isCruiseMissile = weapon.getType().hasFlag(WeaponType.F_CRUISE_MISSILE);
         
         // hack, otherwise when actually resolves shot labeled impossible.
+        // TODO: Implement this properly. It should be a mode that lets you target a unit instead of a hex
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
                 && ((((te.getMovementMode() == EntityMovementMode.VTOL)
                         || (te.getMovementMode() == EntityMovementMode.WIGE)) && te.isAirborneVTOLorWIGE())
@@ -661,26 +662,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // above the hex, standing on an elevation 1 level higher than
         // the target hex or the elevation of the hex the attacker is
         // in, whichever is higher."
-
-        if (isArtilleryFLAK) {
-            if (game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
-                toHit = new ToHitData(ae.getCrew().getArtillery(), Messages.getString("WeaponAttackAction.ArtySkill"));
-            } else {
-                toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
-            }
-            toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
-            if (te.isAirborne()) {
-                if (te.getAltitude() > 3) {
-                    if (te.getAltitude() > 9) {
-                        toHit.addModifier(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.AeroTooHighForFlak"));
-                    } else if (te.getAltitude() > 6) {
-                        toHit.addModifier(2, Messages.getString("WeaponAttackAction.AeroTeAlt79"));
-                    } else if (te.getAltitude() > 3) {
-                        toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeroTeAlt46"));
-                    }
-                }
-            }
-        }
 
         // Engineer's fire extinguisher has fixed to hit number,
         // Note that coolant trucks make a regular attack.
@@ -1357,38 +1338,52 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Handle direct artillery attacks.
         if (isArtilleryDirect) {
-            if (!isArtilleryFLAK) {
+            if (isArtilleryFLAK) {
+                toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
+                if (te != null && te.isAirborne()) {
+                    if (te.getAltitude() > 3) {
+                        if (te.getAltitude() > 9) {
+                            toHit.addModifier(3, Messages.getString("WeaponAttackAction.AeroTeAlt10"));
+                        } else if (te.getAltitude() > 6) {
+                            toHit.addModifier(2, Messages.getString("WeaponAttackAction.AeroTeAlt79"));
+                        } else if (te.getAltitude() > 3) {
+                            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeroTeAlt46"));
+                        }
+                    }
+                }
+                return toHit;
+            } else {
                 toHit.addModifier(4, Messages.getString("WeaponAttackAction.DirectArty"));
-            }
-            toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
-            toHit.append(losMods);
-            toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
-            // actuator & sensor damage to attacker
-            toHit.append(Compute.getDamageWeaponMods(ae, weapon));
-            // heat
-            if (ae.getHeatFiringModifier() != 0) {
-                toHit.addModifier(ae.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
-            }
+                toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
+                toHit.append(losMods);
+                toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
+                // actuator & sensor damage to attacker
+                toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+                // heat
+                if (ae.getHeatFiringModifier() != 0) {
+                    toHit.addModifier(ae.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
+                }
 
-            // weapon to-hit modifier
-            if (wtype.getToHitModifier() != 0) {
-                toHit.addModifier(wtype.getToHitModifier(), Messages.getString("WeaponAttackAction.WeaponMod"));
-            }
+                // weapon to-hit modifier
+                if (wtype.getToHitModifier() != 0) {
+                    toHit.addModifier(wtype.getToHitModifier(), Messages.getString("WeaponAttackAction.WeaponMod"));
+                }
 
-            // ammo to-hit modifier
-            if (usesAmmo && (atype != null) && (atype.getToHitModifier() != 0)) {
-                toHit.addModifier(atype.getToHitModifier(),
-                        atype.getSubMunitionName()
-                                + Messages.getString("WeaponAttackAction.AmmoMod"));
-            }
-            
-            if (isHoming) {
-                return new ToHitData(4, Messages.getString("WeaponAttackAction.HomingArty"));
-            }
+                // ammo to-hit modifier
+                if (usesAmmo && (atype != null) && (atype.getToHitModifier() != 0)) {
+                    toHit.addModifier(atype.getToHitModifier(),
+                            atype.getSubMunitionName()
+                                    + Messages.getString("WeaponAttackAction.AmmoMod"));
+                }
+                
+                if (isHoming) {
+                    return new ToHitData(4, Messages.getString("WeaponAttackAction.HomingArty"));
+                }
 
-            if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())
-                    && !isArtilleryFLAK) {
-                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.ArtyDesTarget"));
+                if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())
+                        && !isArtilleryFLAK) {
+                    return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.ArtyDesTarget"));
+                }
             }
             return toHit;
         }

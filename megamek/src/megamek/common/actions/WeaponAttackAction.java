@@ -671,7 +671,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     || ((target instanceof Tank) && ((Tank) target).isInfernoFire())) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
             }
-            if ((Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType())
+            if ((Targetable.TYPE_HEX_EXTINGUISH == ttype)
                     && game.getBoard().isInfernoBurning(target.getPosition())) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
             }
@@ -1432,10 +1432,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if ((distance == 1) && ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
+        if ((distance == 1) && ((ttype == Targetable.TYPE_BUILDING)
+                || (ttype == Targetable.TYPE_BLDG_IGNITE)
+                || (ttype == Targetable.TYPE_FUEL_TANK)
+                || (ttype == Targetable.TYPE_FUEL_TANK_IGNITE)
                 || (target instanceof GunEmplacement))) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.AdjBuilding"));
         }
@@ -1444,10 +1444,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         toHit.setThruBldg(los.getThruBldg());
 
         // Attacks against buildings from inside automatically hit.
-        if ((null != los.getThruBldg()) && ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
+        if ((null != los.getThruBldg()) && ((ttype == Targetable.TYPE_BUILDING)
+                || (ttype == Targetable.TYPE_BLDG_IGNITE)
+                || (ttype == Targetable.TYPE_FUEL_TANK)
+                || (ttype == Targetable.TYPE_FUEL_TANK_IGNITE)
                 || (target instanceof GunEmplacement))) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.InsideBuilding"));
         }
@@ -1626,7 +1626,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // target terrain, not applicable when delivering minefields or bombs
         // also not applicable in pointblank shots from hidden units
-        if ((target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) && !isPointblankShot) {
+        if ((ttype != Targetable.TYPE_MINEFIELD_DELIVER) && !isPointblankShot) {
             toHit.append(Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater));
             toSubtract += Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater)
                     .getValue();
@@ -1960,10 +1960,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Heat Seeking Missles
         if (bHeatSeeking) {
             if (te == null) {
-                if ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                        || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-                        || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                        || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
+                if ((ttype == Targetable.TYPE_BUILDING)
+                        || (ttype == Targetable.TYPE_BLDG_IGNITE)
+                        || (ttype == Targetable.TYPE_FUEL_TANK)
+                        || (ttype == Targetable.TYPE_FUEL_TANK_IGNITE)
                         || (target instanceof GunEmplacement)) {
                     IHex hexTarget = game.getBoard().getHex(
                             target.getPosition());

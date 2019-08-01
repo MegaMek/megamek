@@ -168,6 +168,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Can be checked to allow casting of attack handlers to the proper homing handler.
      */
     protected boolean isHomingShot = false;
+    
+    /**
+     * Boolean flag that determines if this shot was fired using a weapon with special to-hit handling.
+     * Allows this waa to bypass all the standard to-hit modifier checks
+     */
+    protected static boolean specialResolution = false;
+
+    protected static boolean isSpecialResolution() {
+        return specialResolution;
+    }
+
+    protected static void setSpecialResolution(boolean specialResolution) {
+        WeaponAttackAction.specialResolution = specialResolution;
+    }
 
     // default to attacking an entity
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
@@ -606,7 +620,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             ae.setElevation(-1);
         }
         
-        //Now we've got our LOS calculations done. 
+        //Set up our initial toHit data
+        ToHitData toHit = new ToHitData();
+        
+        //Check to see if this attack was made with a weapon that has special to-hit rules
+        toHit = handleSpecialWeaponAttacks(wtype, atype, ae, target, los, game, toHit);
+        if (isSpecialResolution()) {
+            return toHit;
+        }
+        
         //Check to see if this attack is impossible and return the reason code
         
         String reasonImpossible = WeaponAttackAction.toHitIsImpossible(game, ae, te, target, swarmPrimaryTarget, swarmSecondaryTarget,
@@ -618,8 +640,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         //This attack has now tested possible and doesn't follow any weird special rules,
-        //so let's start dealing with to-hit numbers
-        ToHitData toHit;
+        //so let's start adding up the to-hit numbers
         
         //Start with the attacker's weapon skill
         toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
@@ -662,21 +683,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // above the hex, standing on an elevation 1 level higher than
         // the target hex or the elevation of the hex the attacker is
         // in, whichever is higher."
-
-        // Engineer's fire extinguisher has fixed to hit number,
-        // Note that coolant trucks make a regular attack.
-        if (wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
-            toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.FireExt"));
-            if (((target instanceof Entity) && ((Entity) target).infernos.isStillBurning())
-                    || ((target instanceof Tank) && ((Tank) target).isInfernoFire())) {
-                toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
-            }
-            if ((Targetable.TYPE_HEX_EXTINGUISH == ttype)
-                    && game.getBoard().isInfernoBurning(target.getPosition())) {
-                toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
-            }
-            return toHit;
-        }
 
         // if we're spotting for indirect fire, add +1 (no penalty with second pilot in command console)
         if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
@@ -4473,15 +4479,34 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param game The current game
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    private ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity ae, Targetable target, LosEffects los, IGame game, ToHitData toHit) {
+    private static ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity ae, Targetable target, LosEffects los, IGame game, ToHitData toHit) {
         // Battle Armor bomb racks (Micro bombs) use gunnery skill and no other mods per TWp228 2018 errata
         if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
             if (ae.getPosition().equals(target.getPosition())) {
                 toHit = new ToHitData(ae.getCrew().getPiloting(), Messages.getString("WeaponAttackAction.GunSkill"));
-                return toHit;
+            } else { 
+                toHit = new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.OutOfRange"));
             }
-            return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.OutOfRange"));
+            setSpecialResolution(true);
+            return toHit;
         }
+        
+        // Engineer's fire extinguisher has fixed to hit number,
+        // Note that coolant trucks make a regular attack.
+        if (wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
+            toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.FireExt"));
+            if (((target instanceof Entity) && ((Entity) target).infernos.isStillBurning())
+                    || ((target instanceof Tank) && ((Tank) target).isInfernoFire())) {
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
+            }
+            if ((target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH)
+                    && game.getBoard().isInfernoBurning(target.getPosition())) {
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
+            }
+            setSpecialResolution(true);
+            return toHit;
+        }
+        //If we get here, no special weapons apply. Return the input data and continue on
         return toHit;
     }
     

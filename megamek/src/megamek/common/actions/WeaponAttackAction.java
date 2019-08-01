@@ -639,6 +639,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return new ToHitData(TargetRoll.IMPOSSIBLE, reasonImpossible);
         }
         
+        //Check to see if this attack is automatically successful and return the reason code
+        String reasonAutoHit = WeaponAttackAction.toHitIsAutomatic(game, ae, te, target, swarmPrimaryTarget, swarmSecondaryTarget,
+                weapon, ammo, atype, wtype, ttype, los, usesAmmo, exchangeSwarmTarget, isTAG, isInferno, isAttackerInfantry,
+                isIndirect, attackerId, weaponId, isArtilleryIndirect, isArtilleryFLAK, targetInBuilding,
+                isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile, isCruiseMissile);
+        if (reasonAutoHit != null) {
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, reasonAutoHit);
+        }
+        
         //This attack has now tested possible and doesn't follow any weird special rules,
         //so let's start adding up the to-hit numbers
         
@@ -4260,6 +4269,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return toHit.getDesc();
         }
 
+        return null;
+    }
+    
+    private static String toHitIsAutomatic(IGame game, Entity ae, Entity te, Targetable target, Targetable swarmPrimaryTarget,
+            Targetable swarmSecondaryTarget, Mounted weapon, Mounted ammo, AmmoType atype, WeaponType wtype, int ttype,
+            LosEffects los, boolean exchangeSwarmTarget, boolean usesAmmo, boolean isTAG, boolean isInferno,
+            boolean isAttackerInfantry, boolean isIndirect, int attackerId, int weaponId, boolean isArtilleryIndirect,
+            boolean isArtilleryFLAK, boolean targetInBuilding, boolean isArtilleryDirect,
+            boolean isTargetECMAffected, boolean isStrafing, boolean isBearingsOnlyMissile, boolean isCruiseMissile) {
+        boolean isHoming = false;
+        ToHitData toHit = null;
+        
         return null;
     }
 

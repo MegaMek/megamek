@@ -40,6 +40,7 @@ public class DockingCollar implements Transporter {
     /* package */Vector<Integer> troops = new Vector<Integer>();
 
     private boolean damaged = false;
+    private int collarNumber = 0;
 
     transient IGame game;
 
@@ -67,16 +68,15 @@ public class DockingCollar implements Transporter {
     // Public constructors and methods.
 
     /**
-     * Create a space for the given tonnage of troops. For this class, only the
-     * weight of the troops (and their equipment) are considered; if you'd like
-     * to think that they are stacked like lumber, be my guest.
+     * Create a Jumpship collar that can carry one dropship
      *
-     * @param docks
-     *            - The weight of troops (in tons) this space can carry.
+     * @param docks Capacity. A collar can always carry one dropship.
+     * @param collarNumber the Id of this collar, used for tracking in MHQ 
      */
-    public DockingCollar(int docks) {
-        totalSpace = 1;
-        currentSpace = 1;
+    public DockingCollar(int docks, int collarNumber) {
+        totalSpace = docks;
+        currentSpace = docks;
+        this.collarNumber = collarNumber;
     }
 
     // Type is Docking Collar
@@ -323,5 +323,9 @@ public class DockingCollar implements Transporter {
     public String toString() {
         return "dockingcollar";
     }
+    
+    public int getCollarNumber() {
+        return collarNumber;
+    }
 
-} // End package class TroopSpace implements Transporter
+} // End package class DockingCollar implements Transporter

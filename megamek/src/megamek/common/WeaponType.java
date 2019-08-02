@@ -766,6 +766,7 @@ public class WeaponType extends EquipmentType {
     public WeaponType() {
     }
 
+    @Override
     public int getHeat() {
         return heat;
     }

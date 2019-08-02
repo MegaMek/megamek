@@ -268,22 +268,22 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         boolean failsOnly = true;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-file")) {
-                if (args.length <= i) {
+                i++;
+                if (i >= args.length) {
                     System.out.println("Missing argument filename!");
                     return;
                 }
-                i++;
                 f = new File(args[i]);
                 if (!f.exists()) {
                     System.out.println("Can't find: " + args[i] + "!");
                     return;
                 }
                 if (args[i].endsWith(".zip")) {
-                    if (args.length <= i + 1) {
+                    i++;
+                    if (i >= args.length) {
                         System.out.println("Missing Entity Name!");
                         return;
                     }
-                    i++;
                     entityName = args[i];
                 }
             } else if (args[i].equals("-v") || args[i].equals("-verbose")){

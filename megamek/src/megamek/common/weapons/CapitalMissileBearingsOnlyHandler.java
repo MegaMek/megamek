@@ -305,6 +305,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            return false;
         }
         //use this if PD counterfire destroys all the Capital missiles
         if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
@@ -312,6 +313,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            return false;
         }
 
         // Any necessary PSRs, jam checks, etc.
@@ -538,12 +540,14 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
         //If we're using tele-operated missiles, the player gets to select the target
         if (weapon.getType() instanceof TeleOperatedMissileBayWeapon) {
-            List<String> targetDescriptions = new ArrayList<String>();
+            List<Integer> targetIds = new ArrayList<Integer>();
+            List<Integer> toHitValues = new ArrayList<Integer>();
             for (Aero target : targets) {
                 setToHit(target);
-                targetDescriptions.add(target.getDisplayName() + ": Needs " + toHit.getValue() + " to hit.");
+                targetIds.add(target.getId());
+                toHitValues.add(toHit.getValue());
             }
-            int choice = server.processTeleguidedMissileCFR(ae.getOwnerId(), targetDescriptions);
+            int choice = server.processTeleguidedMissileCFR(ae.getOwnerId(), targetIds, toHitValues);
             newTarget = targets.get(choice);
             target = newTarget;
             aaa.setTargetId(target.getTargetId());

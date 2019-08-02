@@ -671,6 +671,10 @@ public class Protomech extends Entity {
         if (mounted.isRearMounted()) {
             return Compute.ARC_REAR;
         }
+        // VGLs base arc on their facing
+        if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+            return Compute.firingArcFromVGLFacing(mounted.getFacing());
+        }
         // front mounted
         switch (mounted.getLocation()) {
             case LOC_TORSO:

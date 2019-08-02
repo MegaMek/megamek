@@ -36,20 +36,25 @@ public class InfantryFireControl extends FireControl {
      *            Is the extreme range optional rule in effect?
      * @return The most damage done at that range.
      */
-    public double getMaxDamageAtRange(final Entity shooter, final MovePath path, final int range,
+    public double getMaxDamageAtRange(final MovePath shooterPath, final MovePath targetPath, final int range,
             final boolean useExtremeRange, final boolean useLOSRange) {
         double maxFGDamage = 0;
         double maxInfantryWeaponDamage = 0;
-        Entity target = path.getEntity();
-        IHex targetHex = target.getGame().getBoard().getHex(path.getFinalCoords());
-
+        Entity shooter = shooterPath.getEntity();
+        Entity target = targetPath.getEntity();
+        IHex targetHex = target.getGame().getBoard().getHex(targetPath.getFinalCoords());
+        
         // some preliminary computations 
         // whether the target is an infantry platoon
         boolean targetIsPlatoon = target.hasETypeFlag(Entity.ETYPE_INFANTRY) && !((Infantry) target).isSquad();
         // whether the target is infantry (and not battle armor)
         boolean targetIsActualInfantry = target.hasETypeFlag(Entity.ETYPE_INFANTRY)
                 && !target.hasETypeFlag(Entity.ETYPE_BATTLEARMOR);
-        boolean inBuilding = Compute.isInBuilding(target.getGame(), path.getFinalElevation(), path.getFinalCoords());
+        boolean shooterIsActualInfantry = shooter.hasETypeFlag(Entity.ETYPE_INFANTRY)
+                && !shooter.hasETypeFlag(Entity.ETYPE_BATTLEARMOR);
+        // field guns can't fire if the unit in question moved
+        boolean fieldGunsDoDamage = (shooterIsActualInfantry && shooterPath.getMpUsed() == 0) || !shooterIsActualInfantry;
+        boolean inBuilding = Compute.isInBuilding(target.getGame(), targetPath.getFinalElevation(), targetPath.getFinalCoords());
         boolean inOpen = ServerHelper.infantryInOpen(target, targetHex, target.getGame(), targetIsPlatoon, false, false);
         boolean nonInfantryVsMechanized = !shooter.hasETypeFlag(Entity.ETYPE_INFANTRY) && 
                 target.hasETypeFlag(Entity.ETYPE_INFANTRY) && ((Infantry) target).isMechanized();     
@@ -77,7 +82,8 @@ public class InfantryFireControl extends FireControl {
             if (weaponType.hasFlag(WeaponType.F_INFANTRY)) {
                 maxInfantryWeaponDamage += ((InfantryWeapon) weaponType).getInfantryDamage()
                         * ((Infantry) shooter).getInternal(Infantry.LOC_INFANTRY);
-            } else if (targetIsActualInfantry) {
+            // field guns can't fire if the infantry unit has done anything other than turning
+            } else if (targetIsActualInfantry && fieldGunsDoDamage) {
                 double damage = 0;
                 
                 // if we're outside, use the direct blow infantry damage calculation
@@ -93,12 +99,13 @@ public class InfantryFireControl extends FireControl {
                     // it by the building "toughness level"
                     // case 3
                     damage = weaponType.getDamage() * shooter.getGame().getBoard()
-                            .getBuildingAt(path.getFinalCoords()).getDamageReductionFromOutside();
+                            .getBuildingAt(targetPath.getFinalCoords()).getDamageReductionFromOutside();
                 }
                 
                 maxFGDamage += damage;
-            } else {
-                maxFGDamage += weaponType.getDamage();
+            // field guns can't fire if the infantry unit has done anything other than turning
+            } else if (fieldGunsDoDamage) {
+            	maxFGDamage += weaponType.getDamage();
             }
         }
 

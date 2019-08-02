@@ -235,11 +235,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             // If no facing specified, assume front
                             if (facing == -1) {
-                                if (rearMount) {
-                                    mount.setFacing(3);
-                                } else {
-                                    mount.setFacing(0);
-                                }
+                                mount.setFacing(defaultVGLFacing(useLoc, rearMount));
                             } else {
                                 mount.setFacing(facing);
                             }

@@ -1468,7 +1468,12 @@ public class Client implements IClientCommandHandler {
                 cfrEvt.setTargetId((int) c.getObject(2));
                 break;
             case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
-                cfrEvt.setTeleguidedMissileTargets((List<String>)c.getObject(1));
+                cfrEvt.setTeleguidedMissileTargets((List<Integer>)c.getObject(1));
+                cfrEvt.setTmToHitValues((List<Integer>)c.getObject(2));
+                break;
+            case Packet.COMMAND_CFR_TAG_TARGET:
+                cfrEvt.setTAGTargets((List<Integer>)c.getObject(1));
+                cfrEvt.setTAGTargetTypes((List<Integer>)c.getObject(2));
                 break;
             }
             game.processGameEvent(cfrEvt);
@@ -1525,6 +1530,12 @@ public class Client implements IClientCommandHandler {
 
     public void sendTelemissileTargetCFRResponse(int index) {
         Object data[] = { Packet.COMMAND_CFR_TELEGUIDED_TARGET, index };
+        Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
+        send(packet);
+    }
+    
+    public void sendTAGTargetCFRResponse(int index) {
+        Object data[] = { Packet.COMMAND_CFR_TAG_TARGET, index };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }

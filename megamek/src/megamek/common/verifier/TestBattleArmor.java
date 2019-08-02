@@ -876,12 +876,19 @@ public class TestBattleArmor extends TestEntity {
                 correct = false;
             }
 
-            if ((m.getType() instanceof AmmoType)
-                    && (m.getBaseShotsLeft() > NUM_SHOTS_PER_CRIT)) {
-                buff.append(m.getName() + "has " + m.getBaseShotsLeft()
-                        + " shots, but BattleArmor may only have at most "
-                        + NUM_SHOTS_PER_CRIT + " shots per slot.\n");
-                correct = false;
+            if (m.getType() instanceof AmmoType) {
+                final int maxShots;
+                if (((AmmoType) m.getType()).getAmmoType() != AmmoType.T_BA_TUBE) {
+                    maxShots = NUM_SHOTS_PER_CRIT;
+                } else {
+                    maxShots = NUM_SHOTS_PER_CRIT_TA;
+                }
+                if (m.getBaseShotsLeft() > maxShots) {
+                    buff.append(m.getName()).append(" has ").append(m.getBaseShotsLeft())
+                        .append(" shots, but BattleArmor may only have at most ")
+                        .append(maxShots).append(" shots per slot.\n");
+                    correct = false;
+                }
             }
 
             // Ensure that jump boosters are mounted in the body

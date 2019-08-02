@@ -15,9 +15,10 @@
 
 package megamek.common.event;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import megamek.common.Coords;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.net.Packet;
 
@@ -55,14 +56,24 @@ public class GameCFREvent extends GameEvent {
     private List<WeaponAttackAction> waas;
 
     /**
-     * List of descriptions for targets of a teleguided missile.
+     * List of Target IDs for targets of a teleguided missile.
      */
-    private List<String> telemissileTargets;
+    private List<Integer> telemissileTargets;
     
     /**
-     * Original target coords for a bearings-only teleguided missile.
+     * List of toHit values for the possible telemissile targets.
      */
-    private Coords telemissileTargetCoords;
+    private List<Integer> tmToHitValues;
+    
+    /**
+     * List of Target IDs for tagged targets within range.
+     */
+    private List<Integer> tagTargets;
+    
+    /**
+     * List of Targetable object types for tagged targets within range.
+     */
+    private List<Integer> tagTargetTypes;
     
     /**
      * Construct game event
@@ -99,6 +110,9 @@ public class GameCFREvent extends GameEvent {
                 break;
             case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
                 evtName += " assigning teleguided missile targets: " + telemissileTargets;
+                break;
+            case Packet.COMMAND_CFR_TAG_TARGET:
+                evtName += " assigning homing artillery targets: " + tagTargets;
         }
         return evtName;
     }
@@ -155,19 +169,35 @@ public class GameCFREvent extends GameEvent {
         this.targetId = targetId;
     }
 
-    public List<String> getTelemissileTargetDescriptions() {
-        return telemissileTargets;
+    public List<Integer> getTelemissileTargetIds() {
+        return Collections.unmodifiableList(telemissileTargets);
     }
     
-    public void setTeleguidedMissileTargets(List<String> newTargetDescriptions) {
-        telemissileTargets = newTargetDescriptions;
+    public void setTeleguidedMissileTargets(List<Integer> newTargetIds) {
+        telemissileTargets = new ArrayList<>(newTargetIds);
     }
     
-    public Coords getTelemissileTargetCoords() {
-        return telemissileTargetCoords;
+    public List<Integer> getTmToHitValues() {
+        return Collections.unmodifiableList(tmToHitValues);
     }
     
-    public void setTeleguidedMissileCoords(Coords tc) {
-        telemissileTargetCoords = tc;
+    public void setTmToHitValues(List<Integer> toHitValues) {
+        tmToHitValues = new ArrayList<>(toHitValues);
+    }
+
+    public List<Integer> getTAGTargets() {
+        return Collections.unmodifiableList(tagTargets);
+    }
+    
+    public void setTAGTargets(List<Integer> newTargets) {
+        tagTargets = new ArrayList<>(newTargets);
+    }
+    
+    public List<Integer> getTAGTargetTypes() {
+        return Collections.unmodifiableList(tagTargetTypes);
+    }
+    
+    public void setTAGTargetTypes(List<Integer> targetTypes) {
+        tagTargetTypes = new ArrayList<>(targetTypes);
     }
 }

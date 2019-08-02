@@ -40,6 +40,7 @@ import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
+import megamek.common.INarcPod;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.LargeSupportTank;
@@ -61,6 +62,7 @@ import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
+import megamek.common.actions.SpotAction;
 import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -69,6 +71,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
@@ -1621,6 +1624,12 @@ public class FireControl {
 
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
+        	// respect restriction on manual AMS firing.
+        	if(!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
+        			weapon.getType().hasFlag(WeaponType.F_AMS)) {
+        		continue;
+        	}
+        	
             final WeaponFireInfo shoot = buildWeaponFireInfo(shooter,
                                                              shooterState,
                                                              target,
@@ -1628,20 +1637,6 @@ public class FireControl {
                                                              weapon,
                                                              game,
                                                              true);
-
-            // If zero move infantry unit that moved, don't include any weapons
-            if ((shooter instanceof Infantry)
-                && (0 == shooter.getWalkMP())
-                && !(EntityMovementType.MOVE_NONE == shooterState.getMovementType())) {
-                continue;
-            }
-
-            //If infantry field gun unit that moved, don't include field guns
-            if ((shooter instanceof Infantry)
-                && !(EntityMovementType.MOVE_NONE == shooterState.getMovementType())
-                && (Infantry.LOC_FIELD_GUNS == shoot.getWeapon().getLocation())) {
-                continue;
-            }
 
             if (0 < shoot.getProbabilityToHit()) {
                 myPlan.add(shoot);
@@ -1843,6 +1838,13 @@ public class FireControl {
 
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
+        	// respect restriction on manual AMS firing.
+        	if(!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
+        			weapon.getType().hasFlag(WeaponType.F_AMS)) {
+        		continue;
+        	}
+        	
+        	
             final double toHitThreshold = ammoConservation.get(weapon);
             final WeaponFireInfo shoot = buildWeaponFireInfo(shooter, target, weapon, game, false);
             if ((shoot.getProbabilityToHit() > toHitThreshold)) {
@@ -1870,7 +1872,7 @@ public class FireControl {
         
         return myPlan;
     }
-
+    
     protected int calcHeatTolerance(final Entity entity,
                                   @Nullable Boolean isAero) {
 
@@ -2239,6 +2241,79 @@ public class FireControl {
     }
 
     /**
+     * Determines if the given entity can use indirect fire as in LRMs.
+     */
+    public boolean entityCanIndirectFireMissile(FireControlState fireControlState, Entity shooter) {
+    	// cache the results of our computation
+    	if(fireControlState.getEntityIDFStates().containsKey(shooter.getId())) {
+    		return fireControlState.getEntityIDFStates().get(shooter.getId());
+    	}
+    	
+        for(Mounted weapon : shooter.getWeaponList()) {
+        	if(weapon.getType().hasModeType(Weapon.Mode_Missile_Indirect)) {
+        		fireControlState.getEntityIDFStates().put(shooter.getId(), true);
+        		return true;
+        	}
+        }
+        
+        fireControlState.getEntityIDFStates().put(shooter.getId(), false);
+        return false;
+    }
+    
+    /**
+     * Determines if the given entity (potentially employing a given firing plan)
+     * can/should spot. If yes, then return a spot action.
+     * @param plan
+     * @param spotter
+     * @return
+     */
+    public SpotAction getSpotAction(FiringPlan plan, Entity spotter, FireControlState fireControlState) {
+    	// logic applies as follows:
+    	// if I am disqualified from spotting, don't spot
+    	// disqualifiers are:
+    	// 		legally can't spot
+    	//		am firing and don't have a command console to mitigate the spotting penalty
+    	// otherwise, attempt to spot the closest enemy
+    	if(spotter.isSpotting() || !spotter.canSpot() || spotter.isNarcedBy(INarcPod.HAYWIRE) || 
+    			(plan != null) && (plan.getExpectedDamage() > 0) && 
+    			!spotter.getCrew().hasActiveCommandConsole()) {
+    		return null;
+    	}
+    	
+    	List<Targetable> enemyTargets = getAllTargetableEnemyEntities(
+    			spotter.getOwner(), spotter.getGame(), fireControlState);
+    	List<Targetable> closestTargets = new ArrayList<>();
+    	int shortestDistance = Integer.MAX_VALUE;
+    	
+    	// loop through all enemy targets, pick a random one out of the closest.
+    	// future revision: pick one that's the least evasive
+    	for(Targetable target : enemyTargets) {
+    		LosEffects effects = LosEffects.calculateLos(spotter.getGame(), spotter.getId(), target);
+            
+            // if we're in LOS
+    		if (effects.canSee()) {
+    			int targetDistance = spotter.getPosition().distance(target.getPosition());
+    			if(targetDistance < shortestDistance) {
+    				shortestDistance = targetDistance;
+    				closestTargets.clear();
+    				closestTargets.add(target);
+    			} else if (targetDistance == shortestDistance) {
+    				closestTargets.add(target);
+    			}
+    		}
+    	}
+    	
+    	// if we found one or more targets, pick at random from the closest ones.
+    	// otherwise, we still can't spot
+    	if(closestTargets.size() > 0) {
+	    	Targetable target = closestTargets.get(Compute.randomInt(closestTargets.size()));
+	    	return new SpotAction(spotter.getId(), target.getTargetId());
+    	}
+    	
+    	return null;
+    }
+    
+    /**
      * Gets all the entities that are potential targets
      *
      * @param shooter The unit doing the shooting.
@@ -2250,10 +2325,12 @@ public class FireControl {
                                                         final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
+        boolean shooterHasIDF = entityCanIndirectFireMissile(fireControlState, shooter);
+        
         // Go through every unit in the game.
         for (final Entity entity : game.getEntitiesVector()) {
 
-            // If they are my enenmy and on the board, they're a target.
+            // If they are my enemy and on the board, they're a target.
             if (entity.getOwner().isEnemyOf(shooter.getOwner())
                 && (null != entity.getPosition())
                 && !entity.isOffBoard()
@@ -2262,7 +2339,9 @@ public class FireControl {
 
                 final LosEffects effects =
                         LosEffects.calculateLos(game, shooter.getId(), entity);
-                if (effects.canSee()) {
+                
+                // if we're in LOS or we have IDF capability
+                if (effects.canSee() || shooterHasIDF) {
                     targetableEnemyList.add(entity);
                 }
             }
@@ -2347,7 +2426,7 @@ public class FireControl {
                 bestPlan = plan;
             }
         }
-
+        
         // Return the best overall plan.
         return bestPlan;
     }

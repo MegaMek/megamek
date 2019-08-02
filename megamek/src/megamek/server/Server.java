@@ -238,6 +238,7 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
+import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
@@ -672,10 +673,18 @@ public class Server implements Runnable {
             getGame().addGameListener(listener);
         }
 
+        List<Integer> orphanEntities = new ArrayList<>();
+                
         // reattach the transient fields and ghost the players
         for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
             Entity ent = e.next();
             ent.setGame(game);
+            
+            if(ent.getOwner() == null) {
+                orphanEntities.add(ent.getId());
+                continue;
+            }
+            
             if (ent instanceof Mech) {
                 ((Mech) ent).setBAGrabBars();
                 ((Mech) ent).setProtomechClampMounts();
@@ -684,6 +693,9 @@ public class Server implements Runnable {
                 ((Tank) ent).setBAGrabBars();
             }
         }
+        
+        game.removeEntities(orphanEntities, IEntityRemovalConditions.REMOVE_UNKNOWN);
+        
         game.setOutOfGameEntitiesVector(game.getOutOfGameEntitiesVector());
         for (Enumeration<IPlayer> e = game.getPlayers(); e.hasMoreElements(); ) {
             IPlayer p = e.nextElement();
@@ -1384,6 +1396,12 @@ public class Server implements Runnable {
             sFile = sFile.replace(".gz", "");
         }
         XStream xstream = new XStream();
+
+        // This will make save games much smaller
+        // by using a more efficient means of referencing
+        // objects in the XML graph
+        xstream.setMode(XStream.ID_REFERENCES);
+
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav")) {
             sFinalFile = sFile + ".sav";
@@ -1468,6 +1486,10 @@ public class Server implements Runnable {
         IGame newGame;
         try(InputStream is = new GZIPInputStream(new FileInputStream(f))) {
             XStream xstream = new XStream();
+
+            // This mirrors the settings is saveGame
+            xstream.setMode(XStream.ID_REFERENCES);
+
             xstream.registerConverter(new Converter() {
                 @SuppressWarnings("rawtypes")
                 @Override
@@ -6909,6 +6931,10 @@ public class Server implements Runnable {
         // Handle any picked up MechWarriors
         for (Integer mechWarriorId : entity.getPickedUpMechWarriors()) {
             Entity mw = game.getEntity(mechWarriorId.intValue());
+            
+            if(mw == null) {
+            	continue;
+            }
 
             // Is the MechWarrior an enemy?
             int condition = IEntityRemovalConditions.REMOVE_IN_RETREAT;
@@ -10446,9 +10472,9 @@ public class Server implements Runnable {
         }
     }
 
-    public int processTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
-        final String METHOD_NAME = "processTeleguidedMissileCFR(Entity, Entity)";
-        sendTeleguidedMissileCFR(playerId, targetDescriptions);
+    public int processTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues) {
+        final String METHOD_NAME = "processTeleguidedMissileCFR()";
+        sendTeleguidedMissileCFR(playerId, targetIds, toHitValues);
         while (true) {
             synchronized (cfrPacketQueue) {
                 try {
@@ -10473,6 +10499,44 @@ public class Server implements Runnable {
                     if (rp.connId != playerId) {
                         getLogger().error(getClass(), METHOD_NAME,
                                 "Exected a " + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet " + "from player  " + playerId
+                                + " but instead it came from player " + rp.connId);
+                        continue;
+                    }
+                    return (int)rp.packet.getData()[1];
+                } else { // If no packets, wait again
+                    continue;
+                }
+            }
+        }
+    }
+    
+    public int processTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes) {
+        final String METHOD_NAME = "processTAGTargetCFR()";
+        sendTAGTargetCFR(playerId, targetIds, targetTypes);
+        while (true) {
+            synchronized (cfrPacketQueue) {
+                try {
+                    while (cfrPacketQueue.isEmpty()) {
+                        cfrPacketQueue.wait();
+                    }
+                } catch (InterruptedException e) {
+                    return 0;
+                }
+                // Get the packet, if there's something to get
+                ReceivedPacket rp;
+                if (cfrPacketQueue.size() > 0) {
+                    rp = cfrPacketQueue.poll();
+                    int cfrType = rp.packet.getIntValue(0);
+                    // Make sure we got the right type of response
+                    if (cfrType != Packet.COMMAND_CFR_TAG_TARGET) {
+                        getLogger().error(getClass(), METHOD_NAME,
+                                "Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet, " + "received: " + cfrType);
+                        continue;
+                    }
+                    // Check packet came from right ID
+                    if (rp.connId != playerId) {
+                        getLogger().error(getClass(), METHOD_NAME,
+                                "Exected a " + "COMMAND_CFR_TAG_TARGET CFR packet " + "from player  " + playerId
                                 + " but instead it came from player " + rp.connId);
                         continue;
                     }
@@ -11118,6 +11182,10 @@ public class Server implements Runnable {
         IHex hex = game.getBoard().getHex(t.getPosition());
         Report r;
         Vector<Report> vPhaseReport = new Vector<Report>();
+        int attId = Entity.NONE;
+        if (null != ae) {
+            attId = ae.getId();
+        }
         switch (t.getTargetType()) {
             case Targetable.TYPE_HEX_ARTILLERY:
                 // used for BA inferno explosion
@@ -11147,7 +11215,7 @@ public class Server implements Runnable {
                                                                         .getBuildingAt(t.getPosition()), 2 * missiles,
                                                                     t.getPosition());
                     for (Report report : vBuildingReport) {
-                        report.subject = ae.getId();
+                        report.subject = attId;
                     }
                     vPhaseReport.addAll(vBuildingReport);
                 }
@@ -11159,14 +11227,14 @@ public class Server implements Runnable {
                 if ((h != null) && h.hasTerrainfactor()) {
                     r = new Report(3384);
                     r.indent(2);
-                    r.subject = ae.getId();
+                    r.subject = attId;
                     r.add(t.getPosition().getBoardNum());
                     r.add(missiles * 4);
                     vPhaseReport.addElement(r);
                 }
                 vPhaseReport.addAll(tryClearHex(t.getPosition(), missiles * 4,
-                                                ae.getId()));
-                tryIgniteHex(t.getPosition(), ae.getId(), false, true,
+                                                attId));
+                tryIgniteHex(t.getPosition(), attId, false, true,
                              new TargetRoll(0, "inferno"), -1, vPhaseReport);
                 break;
             case Targetable.TYPE_BLDG_IGNITE:
@@ -11175,7 +11243,7 @@ public class Server implements Runnable {
                                                                     .getBuildingAt(t.getPosition()), 2 * missiles,
                                                                 t.getPosition());
                 for (Report report : vBuildingReport) {
-                    report.subject = ae.getId();
+                    report.subject = attId;
                 }
                 vPhaseReport.addAll(vBuildingReport);
 
@@ -11209,7 +11277,7 @@ public class Server implements Runnable {
                 if ((te instanceof Mech) && (!areaEffect)) {
                     // Bug #1585497: Check for partial cover
                     int m = missiles;
-                    LosEffects le = LosEffects.calculateLos(game, ae.getId(), t);
+                    LosEffects le = LosEffects.calculateLos(game, attId, t);
                     int cover = le.getTargetCover();
                     Vector<Report> coverDamageReports = new Vector<Report>();
                     int heatDamage = 0;
@@ -11328,7 +11396,8 @@ public class Server implements Runnable {
                     }
                     vPhaseReport.addAll(coverDamageReports);
                     Report.addNewline(vPhaseReport);
-                } else if (te instanceof Aero) {
+                } else if (te.tracksHeat()) {
+                    // ASFs and small craft
                     r = new Report(3400);
                     r.add(2 * missiles);
                     r.subject = te.getId();
@@ -11337,18 +11406,21 @@ public class Server implements Runnable {
                     vPhaseReport.add(r);
                     te.heatFromExternal += 2 * missiles;
                     Report.addNewline(vPhaseReport);
-                } else if (te instanceof Tank) {
-                    boolean targetIsSupportVee = (te instanceof SupportTank)
-                                                 || (te instanceof LargeSupportTank)
-                                                 || (te instanceof SupportVTOL);
+                } else if (te instanceof GunEmplacement){
+                    int direction = Compute.targetSideTable(ae, te, called);
+                    while (missiles-- > 0) {
+                        HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL,
+                                                         direction);
+                        vPhaseReport.addAll(damageEntity(te, hit, 2));
+                    }
+                } else if ((te instanceof Tank) || te.isSupportVehicle()) {
                     int direction = Compute.targetSideTable(ae, te, called);
                     while (missiles-- > 0) {
                         HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL,
                                                          direction);
                         int critRollMod = 0;
-                        if (!targetIsSupportVee
-                            || (te.hasArmoredChassis() && (te.getBARRating(hit
-                                                                                   .getLocation()) > 9))) {
+                        if (!te.isSupportVehicle()
+                            || (te.hasArmoredChassis() && (te.getBARRating(hit.getLocation()) > 9))) {
                             critRollMod -= 2;
                         }
                         if ((te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED)
@@ -11358,6 +11430,38 @@ public class Server implements Runnable {
                         vPhaseReport.addAll(criticalEntity(te, hit.getLocation(),
                                                            hit.isRear(), critRollMod, 0, true));
                     }
+                } else if (te instanceof ConvFighter) {
+                    // CFs take a point SI damage for every three missiles that hit.
+                    // Use the heatFromExternal field to carry the remainder in case of multiple inferno hits.
+                    te.heatFromExternal += missiles;
+                    if (te.heatFromExternal >= 3) {
+                        int siDamage = te.heatFromExternal / 3;
+                        te.heatFromExternal %= 3;
+                        final ConvFighter ftr = (ConvFighter) te;
+                        int remaining = Math.max(0,  ftr.getSI() - siDamage);
+                        r = new Report(9146);
+                        r.subject = te.getId();
+                        r.indent(2);
+                        r.add(siDamage);
+                        r.add(remaining);
+                        vPhaseReport.add(r);
+                        ftr.setSI(remaining);
+                        te.damageThisPhase += siDamage;
+                        if (remaining <= 0) {
+                            vPhaseReport.addAll(destroyEntity(te,
+                                    "Structural Integrity Collapse"));
+                            ftr.setSI(0);
+                            if (null != ae) {
+                                creditKill(te, ae);
+                            }
+                        }
+                    }
+                } else if (te.isLargeCraft()) {
+                    // Large craft ignore infernos
+                    r = new Report(1242);
+                    r.subject = te.getId();
+                    r.indent(2);
+                    vPhaseReport.add(r);
                 } else if (te instanceof Protomech) {
                     te.heatFromExternal += missiles;
                     while (te.heatFromExternal >= 3) {
@@ -11366,11 +11470,11 @@ public class Server implements Runnable {
                                                          ToHitData.SIDE_FRONT);
                         if (hit.getLocation() == Protomech.LOC_NMISS) {
                             Protomech proto = (Protomech) te;
-                            r = new Report(6305);
+                            r = new Report(6035);
                             r.subject = te.getId();
                             r.indent(2);
                             if (proto.isGlider()) {
-                                r.messageId = 6306;
+                                r.messageId = 6036;
                                 proto.setWingHits(proto.getWingHits() + 1);
                             }
                             vPhaseReport.add(r);
@@ -11442,14 +11546,6 @@ public class Server implements Runnable {
                         vPhaseReport.addAll(destroyEntity(te, "damage", false));
                         creditKill(te, ae);
                         Report.addNewline(vPhaseReport);
-                    }
-                } else {
-                    // gun emplacements
-                    int direction = Compute.targetSideTable(ae, te, called);
-                    while (missiles-- > 0) {
-                        HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL,
-                                                         direction);
-                        vPhaseReport.addAll(damageEntity(te, hit, 2));
                     }
                 }
         }
@@ -13489,10 +13585,16 @@ public class Server implements Runnable {
                                 hidden.getId(), target.getId() }));
     }
 
-    private void sendTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
-        // Send target descriptions to Client
+    private void sendTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues) {
+        // Send target id numbers and to-hit values to Client
         send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetDescriptions}));
+                new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetIds, toHitValues}));
+    }
+    
+    private void sendTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes) {
+        // Send target id numbers and type identifiers to Client
+        send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+                new Object[] { Packet.COMMAND_CFR_TAG_TARGET, targetIds, targetTypes}));
     }
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,
@@ -14298,13 +14400,26 @@ public class Server implements Runnable {
             if (wh.roll < wh.toHit.getValue()) {
                 continue;
             }
-
-            // Can only use AMS versus missiles.
-            if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
+            
+            // Can only use AMS versus missiles. Artillery Bays might be firing Arrow IV homing missiles,
+            // but lack the flag
+            boolean isHomingMissile = false;
+            if (wh instanceof ArtilleryWeaponIndirectHomingHandler
+                    || wh instanceof ArtilleryBayWeaponIndirectHomingHandler) {
+                Mounted ammoUsed = game.getEntity(waa.getEntityId()).getEquipment(waa.getAmmoId());
+                AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
+                        .getType();
+                if (atype != null 
+                        && (atype.getAmmoType() == AmmoType.T_ARROW_IV || atype.getAmmoType() == BombType.B_HOMING)) {
+                    isHomingMissile = true;
+                }
+            }
+            if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)
+                    && !isHomingMissile) {
                 continue;
             }
 
-            // For Bearings-only Capital Missiles
+            // For Bearings-only Capital Missiles, don't assign during the offboard phase
             if (wh instanceof CapitalMissileBearingsOnlyHandler) {
                 ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
                 if (aaa.getTurnsTilHit() > 0 || game.getPhase() != IGame.Phase.PHASE_FIRING) {
@@ -14312,70 +14427,42 @@ public class Server implements Runnable {
                 }
             }
 
-            // For all other types of homing artillery
+            // For Arrow IV homing artillery
+            Entity target = null;
             if (waa instanceof ArtilleryAttackAction) {
-                // This will pick our TAG target back up and assign it to the waa
-                if (waa.isHomingShot() && wh instanceof ArtilleryWeaponIndirectHomingHandler) {
-                    ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
-                    hh.convertHomingShotToEntityTarget();
-                }
-
-                Entity target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
-                        .getTarget(game) : null;
+                target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                    .getTarget(game) : null;
 
                 // In case our target really is null.
                 if (target == null) {
                     continue;
                 }
-
-                Vector<WeaponHandler> v = htAttacks.get(target);
-                if (v == null) {
-                    v = new Vector<WeaponHandler>();
-                    htAttacks.put(target, v);
-                }
-                v.addElement(wh);
-                // Keep track of what weapon attacks could be affected by APDS
-                if (apdsCoords.containsKey(target.getPosition())) {
-                    for (Mounted apds : apdsCoords.get(target.getPosition())) {
-                        // APDS only affects attacks against friendly units
-                        if (target.isEnemyOf(apds.getEntity())) {
-                            continue;
-                        }
-                        Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
-                        if (handlerList == null) {
-                            handlerList = new Vector<>();
-                            apdsTargets.put(apds, handlerList);
-                        }
-                        handlerList.add(wh);
-                    }
-
-                }
             } else {
-                Entity target = game.getEntity(waa.getTargetId());
-                Vector<WeaponHandler> v = htAttacks.get(target);
-                if (v == null) {
-                    v = new Vector<WeaponHandler>();
-                    htAttacks.put(target, v);
-                }
-                v.addElement(wh);
-                // Keep track of what weapon attacks could be affected by APDS
-                if (apdsCoords.containsKey(target.getPosition())) {
-                    for (Mounted apds : apdsCoords.get(target.getPosition())) {
-                        // APDS only affects attacks against friendly units
-                        if (target.isEnemyOf(apds.getEntity())) {
-                            continue;
-                        }
-                        Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
-                        if (handlerList == null) {
-                            handlerList = new Vector<>();
-                            apdsTargets.put(apds, handlerList);
-                        }
-                        handlerList.add(wh);
+                target = game.getEntity(waa.getTargetId());
+            }
+            Vector<WeaponHandler> v = htAttacks.get(target);
+            if (v == null) {
+                v = new Vector<WeaponHandler>();
+                htAttacks.put(target, v);
+            }
+            v.addElement(wh);
+            // Keep track of what weapon attacks could be affected by APDS
+            if (apdsCoords.containsKey(target.getPosition())) {
+                for (Mounted apds : apdsCoords.get(target.getPosition())) {
+                    // APDS only affects attacks against friendly units
+                    if (target.isEnemyOf(apds.getEntity())) {
+                        continue;
                     }
+                    Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
+                    if (handlerList == null) {
+                        handlerList = new Vector<>();
+                        apdsTargets.put(apds, handlerList);
+                    }
+                    handlerList.add(wh);
                 }
             }
         }
-
+        
         // Let each target assign its AMS
         for (Entity e : htAttacks.keySet()) {
             Vector<WeaponHandler> vAttacks = htAttacks.get(e);
@@ -14654,13 +14741,31 @@ public class Server implements Runnable {
 
         //Now, run the detection rolls
         for (Entity detector : game.getEntitiesVector()) {
+            //Don't process for invalid units
+            //in the case of squadrons and transports, we want the 'host'
+            //unit, not the component entities
+            if (detector.getPosition() == null
+                    || detector.isDestroyed()
+                    || detector.isDoomed()
+                    || detector.isOffBoard()
+                    || detector.isPartOfFighterSquadron()
+                    || detector.getTransportId() != Entity.NONE) {
+                continue;
+            }
             for (Entity target : game.getEntitiesVector()) {
                 //Once a target is detected, we don't need to detect it again
-                if (Compute.hasSensorContact(game, detector, target)) {
+                if (detector.hasSensorContactFor(target.getId())) {
                     continue;
                 }
-                //Don't process for units with no position
-                if ((detector.getPosition() == null) || (target.getPosition() == null)) {
+                //Don't process for invalid units
+                //in the case of squadrons and transports, we want the 'host'
+                //unit, not the component entities
+                if (target.getPosition() == null
+                        || target.isDestroyed()
+                        || target.isDoomed()
+                        || target.isOffBoard()
+                        || target.isPartOfFighterSquadron()
+                        || target.getTransportId() != Entity.NONE) {
                     continue;
                 }
                 // Only process for enemy units
@@ -14669,41 +14774,47 @@ public class Server implements Runnable {
                 }
                 //If we successfully detect the enemy, add it to the appropriate detector's sensor contacts list
                 if (Compute.calcSensorContact(game, detector, target)) {
-                    detector.sensorContacts.add(target);
+                    detector.addSensorContact(target.getId());
                     //If detector is part of a C3 network, share the contact
                     if (detector.hasNavalC3()) {
                         for (Entity c3NetMate : game.getEntitiesVector()) {
                             if (c3NetMate != detector && c3NetMate.onSameC3NetworkAs(detector)) {
-                                c3NetMate.sensorContacts.add(target);
+                                c3NetMate.addSensorContact(target.getId());
                             }
                         }
                     }
                 }
             }
         }
-
-        //Now, try to establish firing solutions on detected units
-        ArrayList<Entity> detectedUnits = new ArrayList<>();
-        for (Entity target : game.getEntitiesVector()) {
-            if (Compute.isSensorContact(game, target)) {
-                detectedUnits.add(target);
-            }
-        }
-
-        // If no one is detected, there's nothing more to do
-        if (detectedUnits.size() < 1) {
-            return;
-        }
-
-        //Now, run the detection rolls
+        //Now, run the firing solution calculations
         for (Entity detector : game.getEntitiesVector()) {
-            for (Entity target : detectedUnits) {
+            //Don't process for invalid units
+            //in the case of squadrons and transports, we want the 'host'
+            //unit, not the component entities
+            if (detector.getPosition() == null
+                    || detector.isDestroyed()
+                    || detector.isDoomed()
+                    || detector.isOffBoard()
+                    || detector.isPartOfFighterSquadron()
+                    || detector.getTransportId() != Entity.NONE) {
+                continue;
+            }
+            for (int targetId : detector.getSensorContacts()) {
+                Entity target = game.getEntity(targetId);
                 //if we already have a firing solution, no need to process a new one
-                if (Compute.hasFiringSolution(game, detector, target)) {
+                if (detector.hasFiringSolutionFor(targetId)) {
                     continue;
                 }
-                //Don't process for units with no position
-                if ((detector.getPosition() == null) || (target.getPosition() == null)) {
+                //Don't process for invalid units
+                //in the case of squadrons and transports, we want the 'host'
+                //unit, not the component entities
+                if (target == null
+                        || target.getPosition() == null
+                        || target.isDestroyed()
+                        || target.isDoomed()
+                        || target.isOffBoard()
+                        || target.isPartOfFighterSquadron()
+                        || target.getTransportId() != Entity.NONE) {
                     continue;
                 }
                 // Only process for enemy units
@@ -14712,7 +14823,7 @@ public class Server implements Runnable {
                 }
                 //If we successfully lock up the enemy, add it to the appropriate detector's firing solutions list
                 if (Compute.calcFiringSolution(game, detector, target)) {
-                    detector.firingSolutions.add(target);
+                    detector.addFiringSolution(targetId);
                 }
             }
         }
@@ -14730,8 +14841,8 @@ public class Server implements Runnable {
         }
         //Run through our list of units and remove any entities from the plotting board that have moved out of range
         for (Entity detector : game.getEntitiesVector()) {
-            Compute.removeFiringSolution(detector);
-            Compute.removeSensorContact(detector);
+            Compute.updateFiringSolutions(game, detector);
+            Compute.updateSensorContacts(game, detector);
         }
     }
 
@@ -27111,23 +27222,87 @@ public class Server implements Runnable {
                 js.setCICHits(js.getCICHits() + 1);
                 break;
             case Aero.CRIT_KF_DRIVE:
-                if (js == null) {
+                //Per SO construction rules, stations have no KF drive, therefore they can't take a hit to it...
+                if (js == null || js instanceof SpaceStation) {
                     break;
                 }
-                // KF Drive hit
-                r = new Report(9190);
-                r.subject = aero.getId();
-                reports.add(r);
-                js.setKFIntegrity(js.getKFIntegrity() - 1);
+                // KF Drive hit - damage the drive integrity
+                js.setKFIntegrity(Math.max(0, (js.getKFIntegrity() - 1)));
+                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE)) {
+                    //Randomize the component struck - probabilities taken from the old BattleSpace record sheets
+                    switch (Compute.d6(2)) {
+                    case 2:
+                        //Drive Coil Hit
+                        r = new Report(9186);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFDriveCoilHit(true);
+                        break;
+                    case 3:
+                    case 11:
+                        //Charging System Hit
+                        r = new Report(9187);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFChargingSystemHit(true);
+                        break;
+                    case 5:
+                        //Field Initiator Hit
+                        r = new Report(9190);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFFieldInitiatorHit(true);
+                        break;
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                        //Helium Tank Hit
+                        r = new Report(9189);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFHeliumTankHit(true);
+                        break;
+                    case 9:
+                        //Drive Controller Hit
+                        r = new Report(9191);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        js.setKFDriveControllerHit(true);
+                        break;
+                    case 10:
+                    case 12:
+                        //LF Battery Hit - if you don't have one, treat as helium tank
+                        if (js.hasLF()) {
+                            r = new Report(9188);
+                            r.subject = aero.getId();
+                            reports.add(r);
+                            js.setLFBatteryHit(true);
+                        } else {
+                            r = new Report(9189);
+                            r.subject = aero.getId();
+                            reports.add(r);
+                            js.setKFHeliumTankHit(true);
+                        }
+                        break;
+                    }
+                } else {
+                    //Just report the standard KF hit, per SO rules
+                    r = new Report(9194);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                }
                 break;
             case Aero.CRIT_GRAV_DECK:
                 if (js == null) {
                     break;
                 }
-                // Grave Deck hit
+                int choice = Compute.randomInt(js.getTotalGravDeck());
+                // Grav Deck hit
                 r = new Report(9195);
                 r.subject = aero.getId();
                 reports.add(r);
+                js.setGravDeckDamageFlag(choice, 1);
                 break;
             case Aero.CRIT_LIFE_SUPPORT:
                 // Life Support hit

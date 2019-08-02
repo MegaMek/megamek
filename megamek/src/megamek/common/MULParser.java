@@ -126,7 +126,7 @@ public class MULParser {
     private static final String OFFBOARD_DISTANCE = "offboard_distance";
     private static final String OFFBOARD_DIRECTION = "offboard_direction";
     private static final String HIDDEN = "hidden";
-    private static final String DEPLOYMENT = "deployment";
+    public static final String DEPLOYMENT = "deployment";
     private static final String DEPLOYMENT_ZONE = "deploymentZone";
     private static final String NEVER_DEPLOYED = "neverDeployed";
     private static final String VELOCITY = "velocity";
@@ -189,6 +189,7 @@ public class MULParser {
     public static final String SNEAK_IR = "sneakIR";
     public static final String SNEAK_ECM = "sneakECM";
     public static final String INF_SPEC = "infantrySpecializations";
+    public static final String INF_SQUAD_NUM = "squadNum";
 
 
     /**
@@ -631,7 +632,7 @@ public class MULParser {
                     Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE));
             entity.setStartingPos(deployZone);
         } catch (Exception e) {
-            entity.setDeployRound(Board.START_NONE);
+            entity.setStartingPos(Board.START_NONE);
         }
 
 
@@ -750,6 +751,12 @@ public class MULParser {
             String infSpec = entityTag.getAttribute(INF_SPEC);
             if (infSpec.length() > 0) {
                 inf.setSpecializations(Integer.parseInt(infSpec));
+            }
+            
+            String infSquadNum = entityTag.getAttribute(INF_SQUAD_NUM);
+            if(infSquadNum.length() > 0) {
+                inf.setSquadN(Integer.parseInt(infSquadNum));
+                inf.autoSetInternal();
             }
         }
     }

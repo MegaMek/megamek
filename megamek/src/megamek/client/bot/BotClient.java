@@ -206,6 +206,9 @@ public abstract class BotClient extends Client {
                         }
 
                         break;
+                    case Packet.COMMAND_CFR_TAG_TARGET:
+                        sendTAGTargetCFRResponse(pickTagTarget(evt));
+                        break;
                 }
             }
 
@@ -253,6 +256,10 @@ public abstract class BotClient extends Client {
     
     protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) { 
         return null;
+    }
+    
+    protected int pickTagTarget(GameCFREvent evt) {
+        return 0;
     }
 
     /**
@@ -316,6 +323,16 @@ public abstract class BotClient extends Client {
             }
         }
         return result;
+    }
+    
+    protected Entity getArbitraryEntity() {
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getOwner().equals(getLocalPlayer())) {
+                return entity;
+            }
+        }
+        
+        return null;
     }
 
     public List<Entity> getEnemyEntities() {

@@ -67,6 +67,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IGame.Phase;
+import megamek.common.IPlayer;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameSettingsChangeEvent;
@@ -823,7 +824,12 @@ WindowListener, TreeSelectionListener {
         m_chPlayer.addItem(clientName);
         for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i
         .hasNext();) {
-            m_chPlayer.addItem(i.next().getName());
+            Client client = i.next();
+            IPlayer player = m_client.getGame().getPlayer(client.getLocalPlayerNumber());
+            
+            if(!player.isObserver()) {
+                m_chPlayer.addItem(client.getName());
+            }
         }
         if (m_chPlayer.getItemCount() == 1) {
             m_chPlayer.setEnabled(false);

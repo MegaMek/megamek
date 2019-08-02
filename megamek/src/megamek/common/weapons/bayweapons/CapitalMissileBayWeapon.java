@@ -35,6 +35,13 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
      * 
      */
     private static final long serialVersionUID = 8756042527483383101L;
+    
+    //There's no RAW minimum, but it can't be 0...
+    public static final int CAPITAL_MISSILE_MIN_VELOCITY = 1;
+    //This is the default flight speed, RAW
+    public static final int CAPITAL_MISSILE_DEFAULT_VELOCITY = 50;
+    //And this is useful at long bearings-only ranges, just for improved playability
+    public static final int CAPITAL_MISSILE_MAX_VELOCITY = 500;
 
     /**
      * 

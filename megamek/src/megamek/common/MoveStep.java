@@ -1336,9 +1336,6 @@ public class MoveStep implements Serializable {
      */
     public void moveInDir(int dir) {
         position = position.translated(dir);
-        if (!getGame().getBoard().contains(position)) {
-            throw getLogger().error(getClass(), "moveInDir(int)", new RuntimeException("Coordinate off the board."));
-        }
     }
 
     /**

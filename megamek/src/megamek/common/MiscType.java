@@ -1397,6 +1397,29 @@ public class MiscType extends EquipmentType {
 
         return returnBV;
     }
+    
+    @Override
+    public int getHeat() {
+        if (hasFlag(F_NULLSIG)
+                || hasFlag(F_VOIDSIG)) {
+            return 10;
+        } else if (hasFlag(F_MOBILE_HPG) && hasFlag(F_MECH_EQUIPMENT)) {
+            // Ground mobile HPG
+            return 20;
+        } else if (hasFlag(F_MOBILE_HPG)) {
+            // Large craft HPG
+            return 40;
+        } else if (hasFlag(F_CHAMELEON_SHIELD)) {
+            return 6;
+        } else if (hasFlag(F_VIRAL_JAMMER_DECOY)
+                || hasFlag(F_VIRAL_JAMMER_HOMING)) {
+            return 12;
+        } else if (hasFlag(F_RISC_LASER_PULSE_MODULE)
+                || hasFlag(F_NOVA)) {
+            return 2;
+        }
+        return 0;
+    }
 
     /**
      * Add all the types of misc eq we can create to the list
@@ -11884,11 +11907,14 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BOMB_BAY).or(F_MECH_EQUIPMENT);
         misc.explosive = true;
+        misc.rulesRefs = "110,IO";
 
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, 3071, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+        // Not listed in IO; this an amalgam of bimodal and standard LAM values.
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684, DATE_NONE, 3085)
+            .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2825)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

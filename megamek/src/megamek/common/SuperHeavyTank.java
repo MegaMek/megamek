@@ -375,9 +375,9 @@ public class SuperHeavyTank extends Tank {
                 && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
-        // VGLs always be considered forward, since arc is set by VGL facing
+        // VGLs base arc on their facing
         if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
-            return Compute.ARC_FORWARD;
+            return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
         switch (mounted.getLocation()) {
             case LOC_BODY:

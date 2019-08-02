@@ -3186,12 +3186,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
                 return String.format("%s Trailer Hitch #[%d] (front)", game.getEntity(id).getShortName(), getNumber());
             }
-
-            @Override
-            public int hashCode() {
-                return Objects.hash(id, number, hitch);
-            }
         }
+        
         //Create a collection to keep my choices in
         List<HitchChoice> hitchChoices = new ArrayList<>();
         

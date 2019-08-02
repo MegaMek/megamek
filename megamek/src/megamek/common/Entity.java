@@ -633,20 +633,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private Vector<IPlayer> entityDetectedBy = new Vector<IPlayer>();
 
     /**
-     * Contains all entities that have been detected by this entity's sensors.
+     * Contains the ids of all entities that have been detected by this entity's sensors.
      * Used for double-blind on space maps - SO p117
      *
-     * Entities need only be cleared from this when they move out of range
+     * Entities need only be cleared from this when they move out of range,
+     * are destroyed, or move off the board
      */
-    public Vector<Entity> sensorContacts = new Vector<Entity>();
+    public Set<Integer> sensorContacts = new HashSet<Integer>();
 
     /**
-     * Contains all entities that this entity has established a firing solution on.
+     * Contains the ids of all entities that this entity has established a firing solution on.
      * Used for double-blind on space maps - SO p117
      *
-     * Entities need only be cleared from this when they move out of range
+     * Entities need only be cleared from this when they move out of range,
+     * are destroyed, or move off the board
      */
-    public Vector<Entity> firingSolutions = new Vector<Entity>();
+    public Set<Integer> firingSolutions = new HashSet<Integer>();
 
     /**
      * Whether this entity is captured or not.
@@ -1226,6 +1228,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             .setPrototypeFactions(F_CCY, F_CSF).setProductionFactions(F_CCY, F_DC)
             .setTechRating(RATING_E).setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    // This is not in the rules anywhere, but is implied by the existence of the Badger and Bandit
+    // tanks used by Wolf's Dragoons and sold to the merc market as early as 3008.
+    private static final TechAdvancement TA_OMNIVEHICLE = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(3008, DATE_NONE, 3052).setISApproximate(true)
+            .setClanAdvancement(2854, 2856, 2864).setClanApproximate(true)
+            .setPrototypeFactions(F_CCY, F_CSF, F_MERC).setProductionFactions(F_CCY, F_DC)
+            .setTechRating(RATING_E).setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected final static TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, 3075, 3080).setApproximate(false, false, true)
             .setTechRating(RATING_A)
@@ -1244,7 +1254,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     public static TechAdvancement getOmniAdvancement() {
-        return new TechAdvancement(TA_OMNI);
+        return getOmniAdvancement(null);
+    }
+    
+    public static TechAdvancement getOmniAdvancement(Entity en) {
+        if (en instanceof Tank) {
+            return new TechAdvancement(TA_OMNIVEHICLE);
+        } else {
+            return new TechAdvancement(TA_OMNI);
+        }
     }
 
     public static TechAdvancement getPatchworkArmorAdvancement() {
@@ -3657,6 +3675,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         return weaponList.iterator();
+    }
+    
+    public ArrayList<Mounted> getIndividualWeaponList() {
+        return weaponList;
     }
 
     public ArrayList<Mounted> getWeaponList() {
@@ -8172,6 +8194,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return null;
     }
+    
+    @Nullable
+    public DockingCollar getCollarById(int collarNumber) {
+        //TODO: Change transports to a map or other indexed data structure to avoid
+        // linear-time algorithm.
+        for (Transporter next : transports) {
+            if (next instanceof DockingCollar) {
+                if (((DockingCollar) next).getCollarNumber() == collarNumber) {
+                    return (DockingCollar) next;
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * @return only entities in ASF Bays
@@ -8576,6 +8612,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
             if ((next instanceof Bay) && ((Bay)next).isQuarters()) {
+                continue;
+            }
+            if ((next instanceof DockingCollar) && ((DockingCollar)next).isDamaged()) {
                 continue;
             }
             if (ishtml && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
@@ -15577,5 +15616,88 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         return 1;
     }
-
+    
+    
+    //Getters and setters for sensor contacts and firing solutions. Currently only used in space combat
+    /**
+     * Retrieves the IDs of all entities that this entity has detected with sensors
+     * @return the contents of this entity's sensorContacts set
+     */
+    public Set<Integer> getSensorContacts() {
+        return sensorContacts;
+    }
+    
+    /**
+     * Checks the sensorContacts set for a specific target's ID number
+     * @param targetId the ID number of the target entity to check for
+     * @return true if the entity's sensorContacts set contains the passed-in target ID
+     */
+    public boolean hasSensorContactFor(int targetId) {
+        return sensorContacts.contains(targetId);
+    }
+    
+    /**
+     * Adds the specified target entity's ID to this entity's sensorContacts
+     * @param targetId the ID number of the target entity to add
+     */
+    public void addSensorContact(int targetId) {
+        sensorContacts.add(targetId);
+    }
+    
+    /**
+     * Removes the specified target entity's ID from this entity's sensorContacts
+     * @param targetIds the ID number of the target entity to remove
+     */
+    public void removeSensorContact(Collection<Integer> targetIds) {
+        sensorContacts.removeAll(targetIds);
+    }
+    
+    /**
+     * Empties this entity's sensorContacts
+     * Used when it dies or moves offboard
+     */
+    public void clearSensorContacts() {
+        sensorContacts.clear();
+    }
+    
+    /**
+     * Retrieves the IDs of all entities that this entity has established firing solutions on
+     * @return the contents of this entity's firingSolutions set
+     */
+    public Set<Integer> getFiringSolutions() {
+        return firingSolutions;
+    }
+    
+    /**
+     * Checks the firingSolutions set for a specific target's ID number
+     * @param targetId the ID number of the target entity to check for
+     * @return true if the entity's firingSolutions set contains the passed-in target ID
+     */
+    public boolean hasFiringSolutionFor(int targetId) {
+        return firingSolutions.contains(targetId);
+    }
+    
+    /**
+     * Adds the specified target entity's ID to this entity's firingSolutions
+     * @param targetId the ID number of the target entity to add
+     */
+    public void addFiringSolution(int targetId) {
+        firingSolutions.add(targetId);
+    }
+    
+    /**
+     * Removes the specified target entity's ID from this entity's firingSolutions
+     * @param targetIds the ID number of the target entity to remove
+     */
+    public void removeFiringSolution(Collection<Integer> targetIds) {
+        firingSolutions.removeAll(targetIds);
+    }
+    
+    /**
+     * Empties this entity's firingSolutions
+     * Used when it dies or moves offboard
+     */
+    public void clearFiringSolutions() {
+        firingSolutions.clear();
+    }
 }

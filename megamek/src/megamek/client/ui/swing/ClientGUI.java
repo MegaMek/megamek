@@ -94,6 +94,7 @@ import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.Targetable;
 import megamek.common.WeaponOrderHandler;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -2128,7 +2129,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     }
                     break;
                 case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
-                    List<String> targetDescriptions = evt.getTelemissileTargetDescriptions();
+                    List<Integer> targetIds = evt.getTelemissileTargetIds();
+                    List<Integer> toHitValues = evt.getTmToHitValues();
+                    List<String> targetDescriptions = new ArrayList<String>();
+                    for (int i = 0; i < targetIds.size(); i++) {
+                        int id = targetIds.get(i);
+                        int th = toHitValues.get(i);
+                        Entity tgt = client.getGame().getEntity(id);
+                        if (tgt != null) {
+                            targetDescriptions.add(String.format(Messages.getString("TeleMissileTargetDialog.target"), tgt.getDisplayName(), th));
+                        }
+                    }
                     //Set up the selection pane
                     String i18nString = "TeleMissileTargetDialog.message"; //$NON-NLS-1$;
                     msg = Messages.getString(i18nString);
@@ -2148,6 +2159,38 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         //If input IS null, as in the case of pressing the close or cancel buttons...
                         //Just pick the first target in the list, or server will be left waiting indefinitely.
                         client.sendTelemissileTargetCFRResponse(0);
+                    }
+                case Packet.COMMAND_CFR_TAG_TARGET:
+                    List<Integer> TAGTargets = evt.getTAGTargets();
+                    List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
+                    List<String> TAGTargetDescriptions = new ArrayList<String>();
+                    for (int i = 0; i < TAGTargets.size(); i++) {
+                        int id = TAGTargets.get(i);
+                        int nType = TAGTargetTypes.get(i);
+                        Targetable tgt = client.getGame().getTarget(nType, id);
+                        if (tgt != null) {
+                            TAGTargetDescriptions.add(tgt.getDisplayName());
+                        }
+                    }
+                    //Set up the selection pane
+                    i18nString = "TAGTargetDialog.message"; //$NON-NLS-1$;
+                    msg = Messages.getString(i18nString);
+                    i18nString = "TAGTargetDialog.title"; //$NON-NLS-1$
+                    title = Messages.getString(i18nString);
+                    input = (String) JOptionPane.showInputDialog(frame, msg,
+                            title, JOptionPane.QUESTION_MESSAGE, null,
+                            TAGTargetDescriptions.toArray(), TAGTargetDescriptions.get(0));
+                    if (input != null) {
+                        for (int i = 0; i < TAGTargetDescriptions.size(); i++) {
+                            if (input.equals(TAGTargetDescriptions.get(i))) {
+                                client.sendTAGTargetCFRResponse(i);
+                                break;
+                            }
+                        }
+                    } else {
+                        //If input IS null, as in the case of pressing the close or cancel buttons...
+                        //Just pick the first target in the list, or server will be left waiting indefinitely.
+                        client.sendTAGTargetCFRResponse(0);
                     }
             }
         }

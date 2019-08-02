@@ -633,7 +633,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             for (AmmoType atCheck : vAllTypes) {
                 if (entity.hasETypeFlag(Entity.ETYPE_AERO)
-                        && !atCheck.canAeroUse()) {
+                        && !atCheck.canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
                     continue;
                 }
                 SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(game);

@@ -33,6 +33,23 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
+    protected int defaultVGLFacing(int location, boolean rearFacing) {
+        switch (location) {
+            case SupportVTOL.LOC_RIGHT:
+                return rearFacing ? 2 : 1;
+            case SupportVTOL.LOC_REAR:
+                return 3;
+            case SupportVTOL.LOC_LEFT:
+                return rearFacing ? 4 : 5;
+            case SupportVTOL.LOC_FRONT:
+            case SupportVTOL.LOC_TURRET:
+            default:
+                return 0;
+        }
+    }
+
+    @Override
     public Entity getEntity() throws EntityLoadingException {
         SupportVTOL t = new SupportVTOL();
 

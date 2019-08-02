@@ -142,6 +142,7 @@ public class PlanetaryConditions implements Serializable {
         fog = other.fog;
         terrainAffected = other.terrainAffected;
         blowingSand = other.blowingSand;
+        runOnce = other.runOnce;
     }
 
     /** clone! */
@@ -964,11 +965,11 @@ public class PlanetaryConditions implements Serializable {
         blowingSand = conditions.blowingSand;
         runOnce = conditions.runOnce;
 
-        if (runOnce) {
+        if (!runOnce) {
             setTempFromWeather();
             setWindFromWeather();
             setSandStorm();
-            runOnce = false;
+            runOnce = true;
         }
 
     }
@@ -994,7 +995,6 @@ public class PlanetaryConditions implements Serializable {
     private void setWindFromWeather() {
         switch (weatherConditions) {
             case WE_SLEET:
-                windStrength = WI_MOD_GALE;
                 setSleet(true);
                 break;
             case WE_ICE_STORM:
@@ -1060,6 +1060,6 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public void setRunOnce(boolean run) {
-        runOnce = true;
+        runOnce = run;
     }
 }

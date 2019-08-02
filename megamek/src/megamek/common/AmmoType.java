@@ -192,7 +192,7 @@ public class AmmoType extends EquipmentType {
     public static final BigInteger F_TELE_MISSILE = BigInteger.valueOf(1)
             .shiftLeft(10); // Tele-Missile
     public static final BigInteger F_CAP_MISSILE = BigInteger.valueOf(1)
-            .shiftLeft(11); // Tele-Missile
+            .shiftLeft(11); // Other Capital-Missile
     public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1)
             .shiftLeft(12); // can
     // be
@@ -213,6 +213,14 @@ public class AmmoType extends EquipmentType {
     //For tag, rl pods, missiles and the like
     public static final BigInteger F_OTHER_BOMB = BigInteger.valueOf(1)
             .shiftLeft(16);
+    
+    //Used by MHQ for loading ammo bins
+    public static final BigInteger F_CRUISE_MISSILE = BigInteger.valueOf(1)
+            .shiftLeft(17);
+    
+    //Used by MHQ for loading ammo bins
+    public static final BigInteger F_SCREEN = BigInteger.valueOf(1)
+            .shiftLeft(18);
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -493,6 +501,67 @@ public class AmmoType extends EquipmentType {
                 return (munitionType == M_STANDARD)
                         || (munitionType == M_ARTEMIS_CAPABLE)
                         || (munitionType == M_ARTEMIS_V_CAPABLE);
+        }
+    }
+    
+    /**
+     * Aerospace units cannot use specialty munitions except Artemis and LBX cluster (but not standard).
+     * ATM ER and HE rounds are considered standard munitions. AR10 missiles are designed for aerospace
+     * units and all munition types are available.
+     * 
+     * @param option True if unofficial game option allowing alternate muntions for artillery bays is enabled
+     * 
+     * @return true if the munition can be used by aerospace units
+     */
+    public boolean canAeroUse(boolean option) {
+        if (option) {
+            switch (ammoType) {
+                case T_AC_LBX:
+                case T_SBGAUSS:
+                    return munitionType == M_CLUSTER;
+                case T_ATM:
+                case T_IATM:
+                    return (munitionType == M_STANDARD)
+                            || (munitionType == M_HIGH_EXPLOSIVE)
+                            || (munitionType == M_EXTENDED_RANGE);
+                case T_AR10:
+                    return true;
+                case T_ARROW_IV:
+                    return (munitionType == M_FLARE)
+                            || (munitionType == M_CLUSTER)
+                            || (munitionType == M_HOMING)
+                            || (munitionType == M_INFERNO_IV)
+                            || (munitionType == M_LASER_INHIB)
+                            || (munitionType == M_SMOKE)
+                            || (munitionType == M_FASCAM)
+                            || (munitionType == M_DAVY_CROCKETT_M)
+                            || (munitionType == M_VIBRABOMB_IV)
+                            || (munitionType == M_STANDARD);
+                case T_LONG_TOM:
+                    return (munitionType == M_FLARE)
+                            || (munitionType == M_CLUSTER)
+                            || (munitionType == M_HOMING)
+                            || (munitionType == M_FLECHETTE)
+                            || (munitionType == M_SMOKE)
+                            || (munitionType == M_FASCAM)
+                            || (munitionType == M_DAVY_CROCKETT_M)
+                            || (munitionType == M_STANDARD);
+                case T_SNIPER:
+                case T_THUMPER:
+                    return (munitionType == M_FLARE)
+                            || (munitionType == M_CLUSTER)
+                            || (munitionType == M_HOMING)
+                            || (munitionType == M_FLECHETTE)
+                            || (munitionType == M_SMOKE)
+                            || (munitionType == M_FASCAM)
+                            || (munitionType == M_STANDARD);
+                default:
+                    return (munitionType == M_STANDARD)
+                            || (munitionType == M_ARTEMIS_CAPABLE)
+                            || (munitionType == M_ARTEMIS_V_CAPABLE);
+            } 
+        } else {
+           return canAeroUse();
         }
     }
 
@@ -3566,6 +3635,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 75;
         ammo.cost = 20000;
         ammo.tonnage = 25;
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
         ammo.rulesRefs = "284,TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
@@ -3587,6 +3657,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 129;
         ammo.cost = 50000;
         ammo.tonnage = 35;
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
         ammo.rulesRefs = "284,TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
@@ -3608,6 +3679,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 191;
         ammo.cost = 90000;
         ammo.tonnage = 45;
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
         ammo.rulesRefs = "284,TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
@@ -3629,6 +3701,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 285;
         ammo.cost = 140000;
         ammo.tonnage = 60;
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
         ammo.rulesRefs = "284,TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
@@ -5798,12 +5871,12 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
         .setIntroLevel(false)
         .setUnofficial(false)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
-        .setClanAdvancement(3055, 3060, 3070, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CSJ)
-        .setProductionFactions(F_CSJ);
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+        .setISAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CC)
+        .setProductionFactions(F_CC);
         return ammo;
     }
     
@@ -11509,6 +11582,7 @@ public class AmmoType extends EquipmentType {
                 ammo.tonnage = 10.0;
                 ammo.bv = 20;
                 ammo.cost = 10000;
+                ammo.flags = ammo.flags.or(F_SCREEN);
                 ammo.rulesRefs = "237,TM";
                 ammo.techAdvancement.setTechBase(TECH_BASE_IS)
                     .setIntroLevel(false)

@@ -1500,13 +1500,14 @@ public class TestMech extends TestEntity {
         }
         
         for (Mounted m : mech.getWeaponList()) {
-            if (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
+            if ((((WeaponType) m.getType()).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                    || (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)) {
                 boolean torso = mech.locationIsTorso(m.getLocation());
                 if (m.getSecondLocation() != Entity.LOC_NONE) {
                     torso = torso && mech.locationIsTorso(m.getSecondLocation());
                 }
                 if (!mech.isSuperHeavy() && !torso) {
-                    buff.append("Improved Heavy Gauss can only be mounted in a torso location.\n");
+                    buff.append("Heavy Gauss can only be mounted in a torso location.\n");
                     illegal = true;
                 }
             }

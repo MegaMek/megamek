@@ -62,6 +62,7 @@ import megamek.common.Transporter;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
+import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.DefaultMmLogger;
@@ -91,6 +92,7 @@ public class Princess extends BotClient {
     private PathRankerState pathRankerState;
     private ArtilleryTargetingControl atc;
     
+    private Integer spinupThreshold = null;
     
     private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
@@ -204,6 +206,58 @@ public class Princess extends BotClient {
     boolean getFleeBoard() {
         return fleeBoard;
     }
+    
+    /**
+     * Picks a tag target based on the data contained within the given GameCFREvent
+     * Expects the event to have some tag targets and tag target types.
+     */
+    protected int pickTagTarget(GameCFREvent evt) {
+        List<Integer> TAGTargets = evt.getTAGTargets();
+        List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
+        Map<Coords, Integer> tagTargetHexes = new HashMap<>(); // maps coordinates to target index
+        
+        // Algorithm:
+        // get a list of the hexes being tagged
+        // figure out how much damage a hit to each of the tagged hexes will do (relatively)
+        // pick the one which will result in the best damage
+        
+        // get list of targetable hexes
+        for (int tagIndex = 0; tagIndex < TAGTargets.size(); tagIndex++) {
+            int nType = TAGTargetTypes.get(tagIndex);
+            Targetable tgt = getGame().getTarget(nType, TAGTargets.get(tagIndex));
+            if (tgt != null && !tagTargetHexes.containsKey(tgt.getPosition())) {
+                tagTargetHexes.put(tgt.getPosition(), tagIndex);
+            }
+        }
+        
+        Entity arbitraryEntity = getArbitraryEntity();
+        if(arbitraryEntity == null) {
+            return 0;
+        }
+        
+        double maxDamage = -Double.MAX_VALUE;
+        Coords maxDamageHex = null;
+        
+        // invoke ArtilleryTargetingControl.calculateDamageValue
+        for(Coords targetHex : tagTargetHexes.keySet()) {
+            // a note on parameters:
+            // we don't care about exact damage value since we're just comparing them relative to one another
+            //  note: technically we should, 
+            // we don't care about specific firing entity, we just want one on our side
+            //      since we only use it to determine friendlyness 
+            double currentDamage = getArtilleryTargetingControl().calculateDamageValue(10, targetHex, arbitraryEntity, game, this);
+            if(currentDamage > maxDamage) {
+                maxDamage = currentDamage;
+                maxDamageHex = targetHex;
+            }
+        }
+        
+        if(maxDamageHex != null) {
+            return tagTargetHexes.get(maxDamageHex);
+        } else {
+            return 0;
+        }
+    }
 
     boolean getForcedWithdrawal() {
         return getBehaviorSettings().isForcedWithdrawal();
@@ -274,6 +328,8 @@ public class Princess extends BotClient {
                                        Integer.parseInt(y) - 1);
             getStrategicBuildingTargets().add(coords);
         }
+        
+        spinupThreshold = null;
     }
 
     /**
@@ -549,7 +605,7 @@ public class Princess extends BotClient {
         try {
             // get the first entity that can act this turn make sure weapons 
             // are loaded
-            final Entity shooter = game.getFirstEntity(getMyTurn());
+            final Entity shooter = getEntityToFire(fireControlState);
 
             // Forego firing if 
             // a) hidden, 
@@ -577,7 +633,6 @@ public class Princess extends BotClient {
                 }
             }
             
-            // TODO: Make hidden units spot since they can't do anything else
             if(shooter.isHidden()) {
                 skipFiring = true;
                 log(getClass(), METHOD_NAME, LogLevel.INFO, "Hidden unit skips firing.");
@@ -608,15 +663,26 @@ public class Princess extends BotClient {
     
                     // Add expected damage from the chosen FiringPlan to the 
                     // damageMap for the target enemy.
+                    // while we're looping through all the shots anyway, send any firing mode changes
                     for(WeaponFireInfo shot : plan) {
                         Integer targetId = shot.getTarget().getTargetId();
                         double existingTargetDamage = damageMap.getOrDefault(targetId, 0.0);
                         double newDamage = existingTargetDamage + shot.getExpectedDamage();
                         damageMap.put(targetId, newDamage);
+                        
+                        if(shot.getUpdatedFiringMode() != null) {
+                        	super.sendModeChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()), shot.getUpdatedFiringMode());
+                        }
                     }
     
                     // tell the game I want to fire
-                    sendAttackData(shooter.getId(), plan.getEntityActionVector());
+                    Vector<EntityAction> actions = plan.getEntityActionVector();
+                    EntityAction spotAction = getFireControl(shooter).getSpotAction(plan, shooter, fireControlState);
+                	if(spotAction != null) {
+                		actions.add(spotAction);
+                	}
+                    
+                    sendAttackData(shooter.getId(), actions);
                     return;
                 } else {
                     log(getClass(), METHOD_NAME, LogLevel.INFO,
@@ -628,6 +694,14 @@ public class Princess extends BotClient {
             // if I have decided to skip firing, let's consider unjamming some weapons or turrets anyway
             if(skipFiring) {
                 Vector<EntityAction> unjamPlan = getFireControl(shooter).getUnjamWeaponPlan(shooter);
+                
+                if(unjamPlan.size() == 0) {
+                	EntityAction spotAction = getFireControl(shooter).getSpotAction(null, shooter, fireControlState);
+                	if(spotAction != null) {
+                		unjamPlan.add(spotAction);
+                	}
+                }
+                
                 sendAttackData(shooter.getId(), unjamPlan);
                 return;
             }
@@ -846,6 +920,47 @@ public class Princess extends BotClient {
         }
     }
 
+    /**
+     * Gets an entity eligible to fire from a list contained in the fire control state.
+     */
+    Entity getEntityToFire(FireControlState fireControlState) {
+    	if(fireControlState.getOrderedFiringEntities().size() == 0) {
+    		initFiringEntities(fireControlState);
+    	}
+    	
+    	//if, even after initializing entities, we have no valid entities
+    	//we'll let the game determine 
+    	if(fireControlState.getOrderedFiringEntities().size() == 0) {
+    	    return game.getFirstEntity(getMyTurn());
+    	}
+    	
+    	Entity entityToReturn = fireControlState.getOrderedFiringEntities().getFirst();
+    	fireControlState.getOrderedFiringEntities().removeFirst();
+    	return entityToReturn;
+    }
+    
+    /**
+     * Sorts firing entities to ensure that entities that can do indirect fire go after
+     * entities that cannot, so that IDF units go after spotting units.
+     */
+    private void initFiringEntities(FireControlState fireControlState) {
+    	List<Entity> myEntities = game.getPlayerEntities(this.getLocalPlayer(), true);
+    	fireControlState.clearOrderedFiringEntities();
+    	
+    	for(Entity entity : myEntities) {
+    	    // if you can't fire, you can't fire.
+    		if(!getMyTurn().isValidEntity(entity, game)) {
+    			continue;
+    		}
+    		
+    		if(getFireControl(entity).entityCanIndirectFireMissile(fireControlState, entity)) {
+    			fireControlState.getOrderedFiringEntities().addLast(entity);
+    		} else {
+    			fireControlState.getOrderedFiringEntities().addFirst(entity);
+    		}
+    	}
+    }
+    
     /**
      * Loops through the list of entities controlled by this Princess instance 
      * and decides which should be moved first.
@@ -1399,11 +1514,12 @@ public class Princess extends BotClient {
             final List<Targetable> potentialTargets =
                     FireControl.getAllTargetableEnemyEntities(getLocalPlayer(),
                                                               getGame(),
-                                                              fireControlState);
+                                                              getFireControlState());
             for (final Targetable target : potentialTargets) {
                 damageMap.put(target.getTargetId(), 0d);
             }
 
+            getFireControlState().clearTransientData();
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
@@ -1790,6 +1906,24 @@ public class Princess extends BotClient {
 
     IHonorUtil getHonorUtil() {
         return honorUtil;
+    }
+    
+    /**
+     * Lazy-loaded calculation of the "to-hit target number" threshold for
+     * spinning up a rapid fire autocannon.
+     */
+    public int getSpinupThreshold() {
+        if(spinupThreshold == null) {
+    	// we start spinning up the cannon at 11+ TN at highest aggression levels
+        // dropping it down to 6+ TN at the lower aggression levels
+        	spinupThreshold = Math.min(11, Math.max(getBehaviorSettings().getHyperAggressionIndex() + 2, 6));
+        }
+        
+        return spinupThreshold;
+    }
+    
+    public void resetSpinupThreshold() {
+    	spinupThreshold = null;
     }
 
     @Override

@@ -39,6 +39,7 @@ v0.45.5-SNAPSHOT
 + PR #1414: Fix for edge case in BV calculations when two different weapons have almost identical BVs
 + PR #1419: Bearings-Only Missile Tweaks
 + PR #1426: Splash screen displays properly on very high width-to-height resolution ratios.
++ Simple Tech Level wrong for Proto AC's and VSP Lasers.
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

@@ -20,6 +20,7 @@ v0.46.0-rc.1 (2019-07-23 0300 UTC)
 + Issue #1407: Attacks on transported battle armor no longer cause soft lock
 + PR #1412: Switch to XStream's ID_REFERENCES mode for save games, shrinking their size considerably.
 + PR #1414: Fix for edge case in BV calculations when two different weapons have almost identical BVs
++ Simple Tech Level wrong for Proto AC's and VSP Lasers.
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

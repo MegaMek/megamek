@@ -3671,6 +3671,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         return weaponList.iterator();
     }
+    
+    public ArrayList<Mounted> getIndividualWeaponList() {
+        return weaponList;
+    }
 
     public ArrayList<Mounted> getWeaponList() {
         if (usesWeaponBays()) {

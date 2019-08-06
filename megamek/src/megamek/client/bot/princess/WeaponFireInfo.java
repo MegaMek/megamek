@@ -524,20 +524,16 @@ public class WeaponFireInfo {
 
             // If we can't hit, set everything zero and return..
             if (12 < getToHit().getValue()) {
-            	// if we are able to switch the weapon to indirect fire mode, do so and try again
-            	if(!getWeapon().curMode().equals(Weapon.Mode_Missile_Indirect)) {
-	            	int indirectMode = getWeapon().setMode(Weapon.Mode_Missile_Indirect);
-            	
-	            	// this will be the case if the weapon is able to switch to indirect fire mode
-	            	if(indirectMode > -1) {
-	            		setUpdatedFiringMode(indirectMode);
-	            		initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
-	            		getWeapon().setMode(""); // make sure to reset the weapon firing mode
-	            		return;
-	            	}
-            	}
-            	
-                owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
+                int indirectMode = switchMissileMode();
+                
+                if(indirectMode > -1) {
+                    setUpdatedFiringMode(indirectMode);
+                    initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
+                    getWeapon().setMode(""); // make sure to reset the weapon firing mode
+                    return;
+                }
+                
+            	owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
                                                                       .append(getToHit().getValue()).toString());
                 setProbabilityToHit(0);
                 setMaxDamage(0);
@@ -632,6 +628,25 @@ public class WeaponFireInfo {
             }
         } finally {
             owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
+        }
+    }
+    
+    /**
+     * Attempts to switch the current weapon's firing mode between direct and indirect
+     * or vice versa. Returns -1 if the mode switch fails, or the weapon mode index if it succeeds.
+     * @return Mode switch result.
+     */
+    int switchMissileMode() {
+        //if we've already switched before, don't do it again
+        if(getUpdatedFiringMode() != null) {
+            return -1;
+        }
+        
+        // if we are able to switch the weapon to indirect fire mode, do so and try again
+        if(!getWeapon().curMode().equals(Weapon.Mode_Missile_Indirect)) {
+            return getWeapon().setMode(Weapon.Mode_Missile_Indirect);
+        } else {
+            return getWeapon().setMode("");
         }
     }
 

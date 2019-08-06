@@ -3705,18 +3705,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             losMods = new ToHitData();
             
         } else if (!isIndirect || (isIndirect && (spotter == null))) {
-            if (!exchangeSwarmTarget) {
-                los = LosEffects.calculateLos(game, attackerId, target);
-            } else {
-                // Swarm should draw LoS between targets, not attacker, since
-                // we don't want LoS to be blocked
-                if (swarmPrimaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-                    los = LosEffects.calculateLos(game, swarmPrimaryTarget.getTargetId(), swarmSecondaryTarget);
-                } else {
-                    los = LosEffects.calculateLos(game, swarmSecondaryTarget.getTargetId(), swarmPrimaryTarget);
-                }
-            }
-
             if (ae.hasActiveEiCockpit()) {
                 if (los.getLightWoods() > 0) {
                     eistatus = 2;

@@ -623,14 +623,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         //Set up our initial toHit data
         ToHitData toHit = new ToHitData();
         
-        //Check to see if this attack was made with a weapon that has special to-hit rules
-        toHit = handleSpecialWeaponAttacks(wtype, atype, ae, target, los, game, toHit);
-        if (isSpecialResolution()) {
-            return toHit;
-        }
-        
         //Check to see if this attack is impossible and return the reason code
-        
         String reasonImpossible = WeaponAttackAction.toHitIsImpossible(game, ae, te, target, swarmPrimaryTarget, swarmSecondaryTarget,
                 weapon, ammo, atype, wtype, ttype, los, usesAmmo, exchangeSwarmTarget, isTAG, isInferno, isAttackerInfantry,
                 isIndirect, attackerId, weaponId, isArtilleryIndirect, isArtilleryFLAK, targetInBuilding,
@@ -646,6 +639,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile, isCruiseMissile);
         if (reasonAutoHit != null) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, reasonAutoHit);
+        }
+        
+        //Is this an infantry leg/swarm attack?
+        toHit = handleSwarmAttacks(wtype, ae, target, ttype, game, toHit);
+        if (isSpecialResolution()) {
+            return toHit;
+        }
+        
+        //Check to see if this attack was made with a weapon that has special to-hit rules
+        toHit = handleSpecialWeaponAttacks(wtype, atype, ae, target, ttype, los, game, toHit);
+        if (isSpecialResolution()) {
+            return toHit;
         }
         
         //This attack has now tested possible and doesn't follow any weird special rules,
@@ -668,11 +673,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit = new ToHitData(ae.getCrew().getArtillery(), Messages.getString("WeaponAttackAction.ArtySkill"));
         }
         
-        // if this is a bombing attack then get the to hit and return
-        // TODO: this should probably be its own kind of attack
-        if (wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
-            toHit = Compute.getSpaceBombBaseToHit(ae, te, game);
-            return toHit;
+        //Mine launchers have their own base to-hit, but can still be affected by terrain and movement modifiers
+        if (BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName())) {
+            toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.MagMine"));
         }
 
         // B-Pod firing at infantry in the same hex autohit
@@ -4496,11 +4499,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param atype The AmmoType being used for this attack
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
+     * @param ttype  The targetable object type
      * @param los The calculated LOS between attacker and target
      * @param game The current game
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    private static ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity ae, Targetable target, LosEffects los, IGame game, ToHitData toHit) {
+    private static ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity ae, Targetable target, int ttype, LosEffects los, IGame game, ToHitData toHit) {
+        Entity te = null;
+        if (target == null || ttype != Targetable.TYPE_ENTITY) {
+            //Some of these weapons only target valid entities
+            te = (Entity) target;
+        }
+        
         // Battle Armor bomb racks (Micro bombs) use gunnery skill and no other mods per TWp228 2018 errata
         if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
             if (ae.getPosition().equals(target.getPosition())) {
@@ -4527,6 +4537,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             setSpecialResolution(true);
             return toHit;
         }
+        
+        // if this is a space bombing attack then get the to hit and return
+        if (wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
+            if (te != null) {
+                toHit = Compute.getSpaceBombBaseToHit(ae, te, game);
+                setSpecialResolution(true);
+                return toHit;
+            }
+        }
         //If we get here, no special weapons apply. Return the input data and continue on
         return toHit;
     }
@@ -4536,16 +4555,22 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param wtype The WeaponType of the weapon being used
      * @param attacker The Entity making this attack
-     * @param te The Entity being attacked
+     * @param target The Targetable object being attacked
+     * @param ttype  The targetable object type
      * @param game The current game
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    private ToHitData handleSwarmAttacks(WeaponType wtype, Entity attacker, Entity te, IGame game, ToHitData toHit) {
-        // Leg attacks, Swarm attacks, and
-        // Mine Launchers don't use gunnery.
+    private static ToHitData handleSwarmAttacks(WeaponType wtype, Entity attacker, Targetable target, int ttype, IGame game, ToHitData toHit) {
+        if (target == null || ttype != Targetable.TYPE_ENTITY) {
+            //Can only swarm a valid entity target
+            return toHit;
+        }
+        Entity te = (Entity) target;
+        // Leg attacks and Swarm attacks have their own base toHit values
         if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
             toHit = Compute.getLegAttackBaseToHit(attacker, te, game);
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+                setSpecialResolution(true);
                 return toHit;
             }
             if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
@@ -4555,6 +4580,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
             toHit = Compute.getSwarmMekBaseToHit(attacker, te, game);
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+                setSpecialResolution(true);
                 return toHit;
             }
 
@@ -4595,24 +4621,26 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         } else if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
             // Can't stop if we're not swarming, otherwise automatic.
+            setSpecialResolution(true);
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.EndSwarm"));
-        } else if (BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName())) {
-            // Mine launchers can not hit infantry.
-            toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.MagMine"));
-        } 
+        }
         // Swarming infantry always hit their target, but
         // they can only target the Mek they're swarming.
         else if ((te != null) && (attacker.getSwarmTargetId() == te.getId())) {
             int side = te instanceof Tank ? ToHitData.SIDE_RANDOM : ToHitData.SIDE_FRONT;
             if (attacker instanceof BattleArmor) {
                 if (!Infantry.SWARM_WEAPON_MEK.equals(wtype.getInternalName()) && !(wtype instanceof InfantryAttack)) {
+                    setSpecialResolution(true);
                     return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.WrongSwarmUse"));
                 }
+                setSpecialResolution(true);
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.SwarmingAutoHit"), ToHitData.HIT_SWARM,
                         side);
             }
+            setSpecialResolution(true);
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.SwarmingAutoHit"), ToHitData.HIT_SWARM_CONVENTIONAL, side);
         }
+        //If we get here, no swarm attack applies
         return toHit;
     }
 }

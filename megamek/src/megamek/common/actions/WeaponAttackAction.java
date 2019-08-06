@@ -4494,7 +4494,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      */
     private static ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity ae, Targetable target, int ttype, LosEffects los, IGame game, ToHitData toHit) {
         Entity te = null;
-        if (target == null || ttype != Targetable.TYPE_ENTITY) {
+        if (target != null && ttype == Targetable.TYPE_ENTITY) {
             //Some of these weapons only target valid entities
             te = (Entity) target;
         }
@@ -4607,6 +4607,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
             }
+            setSpecialResolution(true);
+            return toHit;
         } else if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
             // Can't stop if we're not swarming, otherwise automatic.
             setSpecialResolution(true);

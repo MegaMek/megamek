@@ -625,7 +625,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         //Check to see if this attack is impossible and return the reason code
         String reasonImpossible = WeaponAttackAction.toHitIsImpossible(game, ae, te, target, swarmPrimaryTarget, swarmSecondaryTarget,
-                weapon, ammo, atype, wtype, ttype, los, usesAmmo, exchangeSwarmTarget, isTAG, isInferno, isAttackerInfantry,
+                weapon, ammo, atype, wtype, ttype, los, exchangeSwarmTarget, usesAmmo, isTAG, isInferno, isAttackerInfantry,
                 isIndirect, attackerId, weaponId, isArtilleryIndirect, isArtilleryFLAK, targetInBuilding,
                 isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile, isCruiseMissile);
         if (reasonImpossible != null) {

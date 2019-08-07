@@ -40,9 +40,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -59,7 +57,7 @@ public class PrincessTest {
     public void setUp() {
         mockPathRanker = Mockito.mock(BasicPathRanker.class);
 
-        MoralUtil mockMoralUtil = Mockito.mock(MoralUtil.class);
+        MoraleUtil mockMoraleUtil = Mockito.mock(MoraleUtil.class);
 
         MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
@@ -67,7 +65,7 @@ public class PrincessTest {
                                                    Mockito.any(LogLevel.class), Mockito.anyString());
         Mockito.when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockPathRanker);
-        Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);
+        Mockito.when(mockPrincess.getMoraleUtil()).thenReturn(mockMoraleUtil);
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
     }
 

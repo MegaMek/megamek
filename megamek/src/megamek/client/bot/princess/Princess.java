@@ -107,7 +107,7 @@ public class Princess extends BotClient {
     private boolean fallBack = false;
     private final ChatProcessor chatProcessor = new ChatProcessor();
     private boolean fleeBoard = false;
-    private final IMoralUtil moralUtil = new MoralUtil(getLogger());
+    private final IMoraleUtil moraleUtil = new MoraleUtil(getLogger());
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
     private final Set<Integer> crippledUnits = new HashSet<>();
     private MMLogger logger = null;
@@ -1196,8 +1196,8 @@ public class Princess extends BotClient {
         return (entity.isCrippled() && getForcedWithdrawal()) || getFallBack();
     }
 
-    IMoralUtil getMoralUtil() {
-        return moralUtil;
+    IMoraleUtil getMoraleUtil() {
+        return moraleUtil;
     }
 
     /**
@@ -1897,7 +1897,7 @@ public class Princess extends BotClient {
 
     @Override
     protected void checkMoral() {
-        moralUtil.checkMoral(behaviorSettings.isForcedWithdrawal(),
+        moraleUtil.checkMorale(behaviorSettings.isForcedWithdrawal(),
                              behaviorSettings.getBraveryIndex(),
                              behaviorSettings.getSelfPreservationIndex(),
                              getLocalPlayer(),

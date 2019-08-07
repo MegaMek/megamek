@@ -4493,6 +4493,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
     private static ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity ae, Targetable target, int ttype, LosEffects los, IGame game, ToHitData toHit) {
+        setSpecialResolution(false);
         Entity te = null;
         if (target != null && ttype == Targetable.TYPE_ENTITY) {
             //Some of these weapons only target valid entities
@@ -4549,6 +4550,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
     private static ToHitData handleSwarmAttacks(WeaponType wtype, Entity attacker, Targetable target, int ttype, IGame game, ToHitData toHit) {
+        setSpecialResolution(false);
         if (target == null || ttype != Targetable.TYPE_ENTITY) {
             //Can only swarm a valid entity target
             return toHit;

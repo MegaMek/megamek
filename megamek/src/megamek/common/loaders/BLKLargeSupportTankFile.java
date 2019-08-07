@@ -218,6 +218,10 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
             t.setBaseChassisTurret2Weight(dataFile.getDataAsDouble("baseChassisTurret2Weight")[0]);
         }
 
+        if (dataFile.exists("baseChassisSponsonPintleWeight")) {
+            t.setBaseChassisSponsonPintleWeight(dataFile.getDataAsDouble("baseChassisSponsonPintleWeight")[0]);
+        }
+
         if (dataFile.exists("hasNoControlSystems")) {
             t.setHasNoControlSystems(true);
         }

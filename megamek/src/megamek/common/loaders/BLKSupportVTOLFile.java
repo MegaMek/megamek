@@ -201,6 +201,10 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
             t.setBaseChassisTurretWeight(dataFile.getDataAsDouble("baseChassisTurretWeight")[0]);
         }
 
+        if (dataFile.exists("baseChassisSponsonPintleWeight")) {
+            t.setBaseChassisSponsonPintleWeight(dataFile.getDataAsDouble("baseChassisSponsonPintleWeight")[0]);
+        }
+
         if (dataFile.exists("hasNoControlSystems")) {
             t.setHasNoControlSystems(true);
         }

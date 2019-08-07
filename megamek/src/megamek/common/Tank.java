@@ -157,8 +157,10 @@ public class Tank extends Entity {
     /**
      * Keeps track of the base weight of the turret for omni tanks.
      */
-    private double baseChassisTurretWeight = -1;
-    private double baseChassisTurret2Weight = -1;
+    public static final int BASE_CHASSIS_TURRET_WT_UNASSIGNED = -1;
+    private double baseChassisTurretWeight = BASE_CHASSIS_TURRET_WT_UNASSIGNED;
+    private double baseChassisTurret2Weight = BASE_CHASSIS_TURRET_WT_UNASSIGNED;
+    private double baseChassisSponsonPintleWeight = BASE_CHASSIS_TURRET_WT_UNASSIGNED;
 
     /**
      * Keeps track of whether this vehicle has control systems.  Trailers aren't
@@ -4244,20 +4246,63 @@ public class Tank extends Entity {
                 && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 
+    /**
+     * Used for omni vehicles, which must set the weight of turrets
+     * the base chassis, limiting the amount of pod space in the turret.
+     *
+     * @return The weight of the primary turret
+     */
     public double getBaseChassisTurretWeight() {
         return baseChassisTurretWeight;
     }
 
+    /**
+     * Sets the fixed weight of the primary turret on a dual-turret omnivehicle.
+     *
+     * @param baseChassisTurretWeight The weight of the turret
+     */
     public void setBaseChassisTurretWeight(double baseChassisTurretWeight) {
         this.baseChassisTurretWeight = baseChassisTurretWeight;
     }
 
+    /**
+     * Used for omni vehicles, which must set the weight of turrets
+     * the base chassis, limiting the amount of pod space in the turret.
+     *
+     * @return The weight of the second turret
+     */
     public double getBaseChassisTurret2Weight() {
         return baseChassisTurret2Weight;
     }
 
+    /**
+     * Sets the fixed weight of the second turret on a dual-turret omnivehicle.
+     *
+     * @param baseChassisTurret2Weight The weight of the turret
+     */
     public void setBaseChassisTurret2Weight(double baseChassisTurret2Weight) {
         this.baseChassisTurret2Weight = baseChassisTurret2Weight;
+    }
+
+    /**
+     * Used for omni vehicles, which must set the weight of sponson or pintle mounts in
+     * the base chassis, limiting the amount of pod space in the turret(s).
+     *
+     * @return The weight of any pintle mounts (small support vee) or sponson mounts
+     *         (combat vee and M/L support vee)
+     */
+    public double getBaseChassisSponsonPintleWeight() {
+        return baseChassisSponsonPintleWeight;
+    }
+
+    /**
+     * Sets the fixed weight of any pintle (small SV) or sponson (CV, M/L SV) turrets
+     * on an omnivehicle.
+     *
+     * @param baseChassisSponsonPintleWeight The weight of the sponson/pintle turrets.
+     */
+    public void setBaseChassisSponsonPintleWeight(double baseChassisSponsonPintleWeight) {
+        this.baseChassisSponsonPintleWeight = baseChassisSponsonPintleWeight;
     }
 
     public boolean hasNoControlSystems() {

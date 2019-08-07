@@ -27,7 +27,13 @@ public class ZellbrigenAdjudicatorTests {
 
     private Entity getTestEntity(int id, long entityType) {
         Entity mockEntity;
-        if ((entityType & Entity.ETYPE_MECH) == entityType) {
+
+        // from most to least specific
+        if ((entityType & Entity.ETYPE_PROTOMECH) == entityType) {
+            mockEntity = Mockito.mock(Protomech.class);
+        } else if ((entityType & Entity.ETYPE_BATTLEARMOR) == entityType) {
+            mockEntity = Mockito.mock(BattleArmor.class);
+        } else if ((entityType & Entity.ETYPE_MECH) == entityType) {
             mockEntity = Mockito.mock(Mech.class);
         } else if ((entityType & Entity.ETYPE_INFANTRY) == entityType) {
             mockEntity = Mockito.mock(Infantry.class);
@@ -35,8 +41,6 @@ public class ZellbrigenAdjudicatorTests {
             mockEntity = Mockito.mock(Tank.class);
         } else if ((entityType & Entity.ETYPE_AERO) == entityType) {
             mockEntity = Mockito.mock(Aero.class);
-        } else if ((entityType & Entity.ETYPE_PROTOMECH) == entityType) {
-            mockEntity = Mockito.mock(Protomech.class);
         } else {
             Assert.fail("Cannot mock entity of type " + entityType);
             return null;

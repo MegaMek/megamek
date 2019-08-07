@@ -256,8 +256,11 @@ public class ZellbrigenAdjudicator {
      *         otherwise false.
      */
     private boolean participatesInZellbrigen(Entity entity) {
-        return !entity.hasETypeFlag(Entity.ETYPE_INFANTRY)
-            && !entity.hasETypeFlag(Entity.ETYPE_TANK);
+        if (entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+            // BattleArmor participates in Zellbrigen
+            return entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR);
+        }
+        return !entity.hasETypeFlag(Entity.ETYPE_TANK);
     }
 
     private void trackDeclareTargetInternal(Entity shooter, Entity target) {

@@ -380,8 +380,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
-        int distance = enemy.getPosition().distance(path.getFinalCoords());                
-        int alpha = 1;
+        int distance = enemy.getPosition().distance(path.getFinalCoords());
+        
         // How much damage can they do to me?
         double theirDamagePotential = calculateDamagePotential(enemy,
                                                                new EntityState(enemy),
@@ -577,7 +577,6 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 EntityEvaluationResponse eval;
 
                 if (evaluateAsMoved(enemy)) { //For units that have already moved
-                    int alpha = 1;
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
                     eval = evaluateUnmovedEnemy(enemy, path, extremeRange,

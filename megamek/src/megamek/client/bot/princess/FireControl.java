@@ -2189,7 +2189,6 @@ public class FireControl {
                 noTwistPlan = getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
                 break;
             case GUESS:
-                int alpha = 1;
                 noTwistPlan = guessBestFiringPlanUnderHeat(shooter,
                                                            shooterState,
                                                            target,

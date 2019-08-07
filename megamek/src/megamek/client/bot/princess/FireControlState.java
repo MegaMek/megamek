@@ -69,6 +69,9 @@ public class FireControlState {
         return airborneTarget ? airborneTargetWeaponRanges : weaponRanges;
     }
     
+    /**
+     * Clears data that shouldn't persist phase-to-phase
+     */
     public void clearTransientData() {
     	clearEntityIDFStates();
     	clearOrderedFiringEntities();

@@ -343,7 +343,7 @@ public class FireControl {
         }
 
         // Is the target in range at all?
-        final int maxRange = shooter.getMaxWeaponRange();
+        final int maxRange = owner.getMaxWeaponRange(shooter, target.isAirborne());
         if (distance > maxRange) {
             return new ToHitData(TH_RNG_TOO_FAR);
         }
@@ -2189,6 +2189,7 @@ public class FireControl {
                 noTwistPlan = getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
                 break;
             case GUESS:
+                int alpha = 1;
                 noTwistPlan = guessBestFiringPlanUnderHeat(shooter,
                                                            shooterState,
                                                            target,

@@ -262,7 +262,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                     IGame game) {
 
         // If they don't have the range, they can't do damage.
-        int maxRange = enemy.getMaxWeaponRange();
+        int maxRange = getOwner().getMaxWeaponRange(enemy, path.getEntity().isAirborne());
         if (distance > maxRange) {
             return 0;
         }
@@ -283,7 +283,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             targetState = new EntityState(actualTarget);            
         }
 
-        int maxHeat = (enemy.getHeatCapacity() - enemy.heat) + 5;
+        int maxHeat = (enemy.getHeatCapacity() - enemy.heat) + (enemy.isAero() ? 0 : 5);
         FiringPlanCalculationParameters guess =
                 new FiringPlanCalculationParameters.Builder()
                         .buildGuess(enemy,
@@ -321,7 +321,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         // exception: I might, if I'm an aero on a ground map attacking a ground unit because aero unit ranges are a "special case"
         boolean aeroAttackingGroundUnitOnGroundMap = me.isAirborne() && !enemy.isAero() && game.getBoard().onGround();
         
-        int maxRange = me.getMaxWeaponRange();
+        int maxRange = getOwner().getMaxWeaponRange(me, enemy.isAirborne());
         if (distance > maxRange && !aeroAttackingGroundUnitOnGroundMap) {
             return 0;
         }
@@ -381,7 +381,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
         int distance = enemy.getPosition().distance(path.getFinalCoords());                
-        
+        int alpha = 1;
         // How much damage can they do to me?
         double theirDamagePotential = calculateDamagePotential(enemy,
                                                                new EntityState(enemy),
@@ -577,6 +577,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 EntityEvaluationResponse eval;
 
                 if (evaluateAsMoved(enemy)) { //For units that have already moved
+                    int alpha = 1;
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
                     eval = evaluateUnmovedEnemy(enemy, path, extremeRange,

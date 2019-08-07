@@ -613,6 +613,10 @@ public class WeaponType extends EquipmentType {
     public static final int RANGE_MED = RangeType.RANGE_MEDIUM;
     public static final int RANGE_LONG = RangeType.RANGE_LONG;
     public static final int RANGE_EXT = RangeType.RANGE_EXTREME;
+    
+    // weapons for airborne units all have fixed weapon ranges:
+    // no minimum, 6 short, 12 medium, 20 long, 25 extreme
+    public static final int[] AIRBORNE_WEAPON_RANGES = { 0, 6, 12, 20, 25 };
 
     // add weapon classes for AT2
     public static final int CLASS_NONE = 0;

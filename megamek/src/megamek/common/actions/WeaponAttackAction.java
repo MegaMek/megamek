@@ -586,9 +586,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             losMods = los.losModifiers(game, eistatus, underWater);
         } else {
-            if (!exchangeSwarmTarget) {
-                los = LosEffects.calculateLos(game, spotter.getId(), target, true);
-            } else {
+            if (exchangeSwarmTarget) {
                 // Swarm should draw LoS between targets, not attacker, since
                 // we don't want LoS to be blocked
                 if (swarmPrimaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -596,6 +594,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 } else {
                     los = LosEffects.calculateLos(game, swarmSecondaryTarget.getTargetId(), swarmPrimaryTarget);
                 }
+            } else {
+                //For everything else, set up a plain old LOS
+                los = LosEffects.calculateLos(game, spotter.getId(), target, true);
             }
 
             // do not count attacker partial cover in indirect fire
@@ -674,6 +675,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         //Mine launchers have their own base to-hit, but can still be affected by terrain and movement modifiers
+        //thus, they don't qualify for special weapon handling
         if (BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName())) {
             toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.MagMine"));
         }

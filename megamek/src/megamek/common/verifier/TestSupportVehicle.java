@@ -511,6 +511,33 @@ public class TestSupportVehicle extends TestEntity {
         }
     }
 
+    /**
+     * Checks whether the support vehicle can mount sponson turrets (TO, p. 348)
+     *
+     * @param type  The support vehicle type
+     * @param small Whether the {@link Entity} is a small support vehicle
+     * @return      Whether the vehicle can use sponson turrets.
+     */
+    public static boolean sponsonLegal(SVType type, boolean small) {
+        return !small
+                && (type != SVType.FIXED_WING)
+                && (type != SVType.AIRSHIP)
+                && (type != SVType.SATELLITE);
+    }
+
+    /**
+     * Checks whether the support vehicle can mount pintle turrets (TM, p. 348)
+     *
+     * @param type  The support vehicle type
+     * @param small Whether the {@link Entity} is a small support vehicle
+     * @return      Whether the vehicle can use pintle turrets.
+     */
+    public static boolean pintleLegal(SVType type, boolean small) {
+        return small
+                && (type != SVType.FIXED_WING)
+                && (type != SVType.NAVAL);
+    }
+
     private final Entity supportVee;
     /** Used by support tanks for calculation of turret weight */
     private final TestTank testTank;
@@ -734,6 +761,16 @@ public class TestSupportVehicle extends TestEntity {
                 StringUtil.makeLength("Crew Accomodations:", getPrintSize() - 5)
                     + TestEntity.makeWeightString(weight) + "\n" : "";
         return fireCon + crewStr;
+    }
+
+    public boolean canUseSponsonTurret() {
+        return sponsonLegal(SVType.getVehicleType(getEntity()),
+                getEntity().getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+    }
+
+    public boolean canUsePintleTurret() {
+        return pintleLegal(SVType.getVehicleType(getEntity()),
+                getEntity().getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
     }
 
     @Override

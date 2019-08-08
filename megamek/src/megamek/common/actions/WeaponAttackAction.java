@@ -391,7 +391,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean isCruiseMissile = weapon.getType().hasFlag(WeaponType.F_CRUISE_MISSILE);
         
         // hack, otherwise when actually resolves shot labeled impossible.
-        // TODO: Implement this properly. It should be a mode that lets you target a unit instead of a hex
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
                 && ((((te.getMovementMode() == EntityMovementMode.VTOL)
                         || (te.getMovementMode() == EntityMovementMode.WIGE)) && te.isAirborneVTOLorWIGE())

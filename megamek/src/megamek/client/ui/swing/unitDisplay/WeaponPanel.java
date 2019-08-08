@@ -1854,7 +1854,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 m_chBayWeapon.addItem(formatBayWeapon(curWeapon));
             }
 
-            if (chosen == -1) {
+            if (chosen == -1 || chosen >= m_chBayWeapon.getItemCount()) {
                 m_chBayWeapon.setSelectedIndex(0);
             } else {
                 m_chBayWeapon.setSelectedIndex(chosen);
@@ -2053,15 +2053,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
 
         // Aero
-        if (entity.isAirborne()){
-                //|| entity.usesWeaponBays()) {
+        if (entity.isAirborne()) {
 
             // prepare fresh ranges, no underwater
             ranges[0] = new int[] { 0, 0, 0, 0, 0 };  
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
             int maxr = WeaponType.RANGE_SHORT;
-
-            maxr = WeaponType.RANGE_SHORT;
+            
             // In the WeaponPanel, when the weapon is out of ammo
             // or otherwise nonfunctional, SHORT range will be listed;
             // the field of fire is instead disabled

@@ -297,12 +297,8 @@ public class Princess extends BotClient {
      * @return
      */
     public int getMaxWeaponRange(Entity entity, boolean airborneTarget) {
-        if(!getFireControlState().getWeaponRanges(airborneTarget).containsKey(entity.getId())) {
-            getFireControlState().getWeaponRanges(airborneTarget).put(entity.getId(), 
-                    entity.getMaxWeaponRange(airborneTarget));
-        }
-        
-        return getFireControlState().getWeaponRanges(airborneTarget).get(entity.getId());
+        return getFireControlState().getWeaponRanges(airborneTarget).
+            computeIfAbsent(entity.getId(), ent -> entity.getMaxWeaponRange(airborneTarget));
     }
 
     public void setFallBack(final boolean fallBack,

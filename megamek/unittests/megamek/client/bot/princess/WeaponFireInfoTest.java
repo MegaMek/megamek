@@ -6,6 +6,7 @@ import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EquipmentMode;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
@@ -50,6 +51,7 @@ public class WeaponFireInfoTest {
     private Mounted mockWeapon;
     private WeaponType mockWeaponType;
     private WeaponAttackAction mockWeaponAttackAction;
+    private EquipmentMode mockEquipmentMode;
     private Princess mockPrincess;
     private FireControl mockFireControl;
 
@@ -78,6 +80,7 @@ public class WeaponFireInfoTest {
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
+        Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class))).thenReturn(21);
 
         mockShooter = Mockito.mock(BipedMech.class);
         Mockito.when(mockShooter.getPosition()).thenReturn(SHOOTER_COORDS);
@@ -102,7 +105,10 @@ public class WeaponFireInfoTest {
 
         mockWeaponType = Mockito.mock(WeaponType.class);
         mockWeapon = Mockito.mock(Mounted.class);
+        mockEquipmentMode = Mockito.mock(EquipmentMode.class);
         Mockito.when(mockWeapon.getType()).thenReturn(mockWeaponType);
+        Mockito.when(mockEquipmentMode.getName()).thenReturn("");
+        Mockito.when(mockWeapon.curMode()).thenReturn(mockEquipmentMode);
 
         mockWeaponAttackAction = Mockito.mock(WeaponAttackAction.class);
     }

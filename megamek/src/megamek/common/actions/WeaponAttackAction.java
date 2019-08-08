@@ -692,65 +692,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // above the hex, standing on an elevation 1 level higher than
         // the target hex or the elevation of the hex the attacker is
         // in, whichever is higher."
-
-        // if we're spotting for indirect fire, add +1 (no penalty with second pilot in command console)
-        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
-            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeSpotting"));
-        }
+        
+        toHit = compileAttackerToHitMods(game, ae, target, toHit, wtype, atype, munition, isArtilleryDirect, isArtilleryIndirect, isIndirect, usesAmmo);
 
         if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
-        }
-
-        // fatigue
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
-                && ae.getCrew().isGunneryFatigued()) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.Fatigue"));
-        }
-
-        // If a unit is suffering from electromagnetic interference, they get a
-        // blanket +2.
-        // Sucks to be them.
-        if (ae.isSufferingEMI()) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.EMI"));
-        }   
+        } 
 
         // evading bonuses (
         if ((te != null) && te.isEvading()) {
             toHit.addModifier(te.getEvasionBonus(), Messages.getString("WeaponAttackAction.TeEvading"));
-        }
-
-        // ghost target modifier
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET) && !isIndirect
-                && !isArtilleryIndirect && !isArtilleryDirect) {
-            int ghostTargetMod = Compute.getGhostTargetNumber(ae, ae.getPosition(), target.getPosition());
-            if ((ghostTargetMod > -1) && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
-                int bapMod = 0;
-                if (ae.hasBAP()) {
-                    bapMod = 1;
-                }
-                int tcMod = 0;
-                if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponType.F_CWS)
-                        && !wtype.hasFlag(WeaponType.F_TASER) && (atype != null)
-                        && (!usesAmmo || !(((atype.getAmmoType() == AmmoType.T_AC_LBX)
-                                || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
-                                && (munition == AmmoType.M_CLUSTER)))) {
-                    tcMod = 2;
-                }
-                int ghostTargetMoF = (ae.getCrew().getSensorOps() + ghostTargetMod)
-                        - (ae.getGhostTargetOverride() + bapMod + tcMod);
-                if (ghostTargetMoF > 1) {
-                    // according to this rules clarification the +4 max is on
-                    // the PSR not on the to-hit roll
-                    // http://www.classicbattletech.com/forums/index.php?topic=66036.0
-                    // unofficial rule to cap the ghost target to-hit penalty
-                    int mod = ghostTargetMoF / 2;
-                    if (game.getOptions().intOption(OptionsConstants.ADVANCED_GHOST_TARGET_MAX) > 0) {
-                        mod = Math.min(mod, game.getOptions().intOption(OptionsConstants.ADVANCED_GHOST_TARGET_MAX));
-                    }
-                    toHit.addModifier(mod, Messages.getString("WeaponAttackAction.GhostTargets"));
-                }
-            }
         }
 
         if (Compute.isGroundToAir(ae, target) && (null != te) && te.isNOE()) {
@@ -769,95 +720,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 vMod = Math.min(vMod / 2, 4);
             }
             toHit.addModifier(vMod, Messages.getString("WeaponAttackAction.TeVelocity"));
-        }
-
-        // Situational modifiers for aero units, including fighter LAMs
-        if (ae.isAero()) {
-            IAero aero = (IAero) ae;
-
-            // pilot hits
-            int pilothits = ae.getCrew().getHits();
-            if ((pilothits > 0) && !ae.isCapitalFighter()) {
-                toHit.addModifier(pilothits, Messages.getString("WeaponAttackAction.PilotHits"));
-            }
-
-            // out of control
-            if (aero.isOutControlTotal()) {
-                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeroOoc"));
-            }
-
-            // check for heavy gauss rifle on fighter of small craft
-            if ((weapon.getType() instanceof ISHGaussRifle) && !(ae instanceof Dropship)
-                    && !(ae instanceof Jumpship)) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.WeaponMod"));
-            }
-            
-            // Space ECM
-            if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-                int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
-                if (!ae.isLargeCraft()) {
-                    ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
-                }
-                ecm = Math.min(4, ecm);
-                int eccm = 0;
-                if (ae.isLargeCraft()) {
-                    eccm = ((Aero) ae).getECCMBonus();
-                }
-                if (ecm > 0) {
-                    toHit.addModifier(ecm, Messages.getString("WeaponAttackAction.ECM"));
-                    if (eccm > 0) {
-                        toHit.addModifier(-1 * Math.min(ecm, eccm), Messages.getString("WeaponAttackAction.ECCM"));
-                    }
-                }
-            }
-            
-            //ASEW Missiles
-            // +4 for trying to fire one at a target of < 500 tons
-            if (wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE && te.getWeight() < 500.0) {
-                toHit.addModifier(4, Messages.getString("WeaponAttackAction.TeTooSmallForASM"));
-            }
-            // +4 attack penalty for ASEW affected locations
-            if (ae instanceof Dropship) {
-                Dropship d = (Dropship) ae;
-                int loc = weapon.getLocation();
-                if (d.getASEWAffected(loc) > 0) {
-                    toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
-                }            
-            } else if (ae instanceof Jumpship) {
-                Jumpship j = (Jumpship) ae;
-                int loc = weapon.getLocation();
-                if (j.getASEWAffected(loc) > 0) {
-                    toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
-                } 
-            } else {
-                if (ae.getASEWAffected() > 0) {
-                    toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeAsewAffected"));
-                }
-            }
-
-            // check for NOE
-            if (Compute.isAirToAir(ae, target)) {
-                if (target.isAirborneVTOLorWIGE()) {
-                    toHit.addModifier(+5, Messages.getString("WeaponAttackAction.TeNonAeroAirborne"));
-                }
-                if (ae.isNOE()) {
-                    if (ae.isOmni()) {
-                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeOmniNoe"));
-                    } else {
-                        toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeNoe"));
-                    }
-                }
-            }
-
-            if (!ae.isAirborne() && !ae.isSpaceborne()) {
-                // grounded aero
-                if (!(ae instanceof Dropship)) {
-                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GroundedAero"));
-                } else if (!target.isAirborne() && !isArtilleryIndirect) {
-                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GroundedDs"));
-                }
-            }
-
         }
         
         // Situational modifiers for aero units, not including LAMs.
@@ -4458,10 +4320,190 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Attacker has damaged sensors?  You'll find that here.
      * Defender's a superheavy mech?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
-     * @param attacker The Entity making this attack
+     * @param game The current game
+     * @param ae The Entity making this attack
+     * @param target The Targetable object being attacked
      * @param toHit The running total ToHitData for this WeaponAttackAction
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param atype The AmmoType being used for this attack
+     * @param muntion  Long indicating the muntion type flag being used, if applicable
+     * 
+     * @param isArtilleryDirect  flag that indicates whether this is a direct-fire artillery attack
+     * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
+     * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
+     * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
      */
-    private ToHitData compileAttackerToHitMods(Entity attacker, Targetable target, ToHitData toHit) {
+    private static ToHitData compileAttackerToHitMods(IGame game, Entity ae, Targetable target, ToHitData toHit,
+            WeaponType wtype, AmmoType atype, long munition,
+            boolean isArtilleryDirect, boolean isArtilleryIndirect, boolean isIndirect, boolean usesAmmo) {
+        // Modifiers related to an action the attacker is taking
+        
+        // if we're spotting for indirect fire, add +1 (no penalty with second pilot in command console)
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeSpotting"));
+        }
+        
+        // Special effects (like tasers) affecting the attacker
+        
+        // ghost target modifier
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET) && !isIndirect
+                && !isArtilleryIndirect && !isArtilleryDirect) {
+            int ghostTargetMod = Compute.getGhostTargetNumber(ae, ae.getPosition(), target.getPosition());
+            if ((ghostTargetMod > -1) && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+                int bapMod = 0;
+                if (ae.hasBAP()) {
+                    bapMod = 1;
+                }
+                int tcMod = 0;
+                if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponType.F_CWS)
+                        && !wtype.hasFlag(WeaponType.F_TASER) && (atype != null)
+                        && (!usesAmmo || !(((atype.getAmmoType() == AmmoType.T_AC_LBX)
+                                || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
+                                && (munition == AmmoType.M_CLUSTER)))) {
+                    tcMod = 2;
+                }
+                int ghostTargetMoF = (ae.getCrew().getSensorOps() + ghostTargetMod)
+                        - (ae.getGhostTargetOverride() + bapMod + tcMod);
+                if (ghostTargetMoF > 1) {
+                    // according to this rules clarification the +4 max is on
+                    // the PSR not on the to-hit roll
+                    // http://www.classicbattletech.com/forums/index.php?topic=66036.0
+                    // unofficial rule to cap the ghost target to-hit penalty
+                    int mod = ghostTargetMoF / 2;
+                    if (game.getOptions().intOption(OptionsConstants.ADVANCED_GHOST_TARGET_MAX) > 0) {
+                        mod = Math.min(mod, game.getOptions().intOption(OptionsConstants.ADVANCED_GHOST_TARGET_MAX));
+                    }
+                    toHit.addModifier(mod, Messages.getString("WeaponAttackAction.GhostTargets"));
+                }
+            }
+        }
+        
+        //Environmental effects affecting the attacker - weather, EMI, etc. Terrain is under target.
+
+        // If a unit is suffering from electromagnetic interference, they get a
+        // blanket +2.
+        // Sucks to be them.
+        if (ae.isSufferingEMI()) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.EMI"));
+        }
+        
+        //Now for modifiers affecting the attacker's crew
+        
+        // fatigue
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
+                && ae.getCrew().isGunneryFatigued()) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.Fatigue"));
+        }
+        return toHit;
+    }
+    
+    /**
+     * Convenience method that compiles the ToHit modifiers applicable to the attacker's condition, if the attacker is an aero
+     * Attacker has damaged sensors?  You'll find that here.
+     * Defender's a superheavy mech?  Using a weapon with a TH penalty?  Those are in other methods.
+     * 
+     * @param game The current game
+     * @param ae The Entity making this attack
+     * @param target The Targetable object being attacked
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param weapon The Mounted weapon being used
+     * @param atype The AmmoType being used for this attack
+     * @param muntion  Long indicating the muntion type flag being used, if applicable
+     * 
+     * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
+     */
+    private ToHitData compileAeroAttackerToHitMods(IGame game, Entity ae, Targetable target, ToHitData toHit,
+            WeaponType wtype, Mounted weapon, AmmoType atype, long munition, boolean isArtilleryIndirect) {
+        if (ae == null || !ae.isAero()) {
+            //Null and class cast guard
+            return toHit;
+        }
+        // Situational modifiers for aero units, including fighter LAMs
+        IAero aero = (IAero) ae;
+        
+        // pilot hits
+        int pilothits = ae.getCrew().getHits();
+        if ((pilothits > 0) && !ae.isCapitalFighter()) {
+            toHit.addModifier(pilothits, Messages.getString("WeaponAttackAction.PilotHits"));
+        }
+
+        // out of control
+        if (aero.isOutControlTotal()) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeroOoc"));
+        }
+
+        // check for heavy gauss rifle on fighter of small craft
+        if ((weapon.getType() instanceof ISHGaussRifle) && !(ae instanceof Dropship)
+                && !(ae instanceof Jumpship)) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.WeaponMod"));
+        }
+            
+        // Space ECM
+        if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+            int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
+            if (!ae.isLargeCraft()) {
+                ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
+        }
+            ecm = Math.min(4, ecm);
+            int eccm = 0;
+            if (ae.isLargeCraft()) {
+                eccm = ((Aero) ae).getECCMBonus();
+            }
+            if (ecm > 0) {
+                toHit.addModifier(ecm, Messages.getString("WeaponAttackAction.ECM"));
+                if (eccm > 0) {
+                    toHit.addModifier(-1 * Math.min(ecm, eccm), Messages.getString("WeaponAttackAction.ECCM"));
+                }
+            }
+        }
+            
+        //ASEW Missiles
+        // +4 for trying to fire one at a target of < 500 tons
+        if (wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE && te.getWeight() < 500.0) {
+            toHit.addModifier(4, Messages.getString("WeaponAttackAction.TeTooSmallForASM"));
+        }
+        // +4 attack penalty for ASEW affected locations
+        if (ae instanceof Dropship) {
+            Dropship d = (Dropship) ae;
+            int loc = weapon.getLocation();
+            if (d.getASEWAffected(loc) > 0) {
+                toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
+            }            
+        } else if (ae instanceof Jumpship) {
+            Jumpship j = (Jumpship) ae;
+            int loc = weapon.getLocation();
+            if (j.getASEWAffected(loc) > 0) {
+                toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
+            } 
+        } else {
+            if (ae.getASEWAffected() > 0) {
+                toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeAsewAffected"));
+            }
+        }
+        // check for NOE
+        if (Compute.isAirToAir(ae, target)) {
+            if (target.isAirborneVTOLorWIGE()) {
+                toHit.addModifier(+5, Messages.getString("WeaponAttackAction.TeNonAeroAirborne"));
+            }
+            if (ae.isNOE()) {
+                if (ae.isOmni()) {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeOmniNoe"));
+                } else {
+                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeNoe"));
+                }
+            }
+        }
+        if (!ae.isAirborne() && !ae.isSpaceborne()) {
+            // grounded aero
+            if (!(ae instanceof Dropship)) {
+                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GroundedAero"));
+            } else if (!target.isAirborne() && !isArtilleryIndirect) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GroundedDs"));
+            }
+        }
         return toHit;
     }
     

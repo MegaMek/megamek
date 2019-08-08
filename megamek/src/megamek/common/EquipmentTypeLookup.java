@@ -30,16 +30,33 @@ package megamek.common;
  */
 public class EquipmentTypeLookup {
 
+    public static final String JUMP_JET = "Jump Jet";
+    public static final String IMPROVED_JUMP_JET = "Improved Jump Jet";
+    public static final String PROTOTYPE_JUMP_JET = "ISPrototypeJumpJet";
+    public static final String PROTOTYPE_IMPROVED_JJ = "ISPrototypeImprovedJumpJet";
+    public static final String MECH_UMU = "UMU";
+    public static final String MECH_JUMP_BOOSTER = "MechanicalJumpBooster";
     public static final String VEHICLE_JUMP_JET = "VehicleJumpJet";
     public static final String PROTOMECH_JUMP_JET = "ProtomechJumpJet";
     public static final String EXTENDED_JUMP_JET_SYSTEM = "ExtendedJumpJetSystem";
     public static final String PROTOMECH_UMU = "ProtomechUMU";
     public static final String PROTOMECH_MYOMER_BOOSTER = "CLMyomerBooster";
-
+    public static final String BA_JUMP_JET = "BAJumpJet";
+    public static final String BA_VTOL = "BAVTOL";
+    public static final String BA_UMU = "BAUMU";
     public static final String BA_MYOMER_BOOSTER = "CLBAMyomerBooster";
     public static final String BA_PARTIAL_WING = "BAPartialWing";
     public static final String BA_JUMP_BOOSTER = "BAJumpBooster";
     public static final String BA_MECHANICAL_JUMP_BOOSTER = "BAMechanicalJumpBooster";
+
+    public static final String SINGLE_HS = "Heat Sink";
+    public static final String IS_DOUBLE_HS = "ISDoubleHeatSink";
+    public static final String CLAN_DOUBLE_HS = "CLDoubleHeatSink";
+    public static final String LASER_HS = "Laser Heat Sink";
+    public static final String COMPACT_HS_1 = "1 Compact Heat Sink";
+    public static final String COMPACT_HS_2 = "2 Compact Heat Sinks";
+    public static final String IS_DOUBLE_HS_PROTOTYPE = "ISDoubleHeatSinkPrototype";
+    public static final String IS_DOUBLE_HS_FREEZER = "ISDoubleHeatSinkFreezer";
 
     public static final String HITCH = "Hitch";
     public static final String CLAN_CASE = "CLCASE";
@@ -48,7 +65,10 @@ public class EquipmentTypeLookup {
     public static final String QUADVEE_WHEELS = "QuadVee Wheels";
     public static final String IM_EJECTION_SEAT = "Ejection Seat (Industrial Mech)";
     public static final String TSM = "Triple Strength Myomer";
+    public static final String SCM = "ISSuperCooledMyomer";
     public static final String ITSM = "Industrial Triple Strength Myomer";
+    public static final String IS_MASC = "ISMASC";
+    public static final String CLAN_MASC = "CLMASC";
     public static final String SPONSON_TURRET = "SponsonTurret";
     public static final String PINTLE_TURRET = "PintleTurret";
 

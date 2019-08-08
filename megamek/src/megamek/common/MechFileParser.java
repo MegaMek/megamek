@@ -643,7 +643,7 @@ public class MechFileParser {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     //Handle weapon bays
-                    if (wtype.getBayType().equals(EquipmentType.get("PPC Bay"))){
+                    if (wtype.getBayType().equals(EquipmentType.get(EquipmentTypeLookup.PPC_BAY))){
                         for (int wId : mWeapon.getBayWeapons())
                         {
                             Mounted bayMountedWeapon = ent.getEquipment(wId);

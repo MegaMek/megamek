@@ -83,6 +83,7 @@ public class EquipmentTypeLookup {
 
     public static final String AC_BAY = "AC Bay";
     public static final String AMS_BAY = "AMS Bay";
+    public static final String ARTILLERY_BAY = "Artillery Bay";
     public static final String AR10_BAY = "AR10 Bay";
     public static final String ATM_BAY = "ATM Bay";
     public static final String CAPITAL_AC_BAY = "Capital AC Bay";

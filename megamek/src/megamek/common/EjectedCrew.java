@@ -55,9 +55,9 @@ public class EjectedCrew extends Infantry {
             && (!(this instanceof MechWarrior) 
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
             try {
-                addEquipment(EquipmentType.get("InfantryAssaultRifle"),
+                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
                         Infantry.LOC_INFANTRY);
-                setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get("InfantryAssaultRifle"));
+                setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -105,9 +105,9 @@ public class EjectedCrew extends Infantry {
             && (!(this instanceof MechWarrior) 
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
             try {
-                addEquipment(EquipmentType.get("InfantryAssaultRifle"),
+                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
                         Infantry.LOC_INFANTRY);
-                setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get("InfantryAssaultRifle"));
+                setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

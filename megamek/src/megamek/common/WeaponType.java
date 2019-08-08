@@ -1012,68 +1012,68 @@ public class WeaponType extends EquipmentType {
         // return the correct weapons bay for the given type of weapon
         switch (atClass) {
             case (CLASS_LASER):
-                return EquipmentType.get("Laser Bay");
+                return EquipmentType.get(EquipmentTypeLookup.LASER_BAY);
             case (CLASS_AMS):
-            	return EquipmentType.get("AMS Bay");
+                return EquipmentType.get(EquipmentTypeLookup.AMS_BAY);
             case (CLASS_POINT_DEFENSE):
-                return EquipmentType.get("Point Defense Bay");
+                return EquipmentType.get(EquipmentTypeLookup.POINT_DEFENSE_BAY);
             case (CLASS_PPC):
-                return EquipmentType.get("PPC Bay");
+                return EquipmentType.get(EquipmentTypeLookup.PPC_BAY);
             case (CLASS_PULSE_LASER):
-                return EquipmentType.get("Pulse Laser Bay");
+                return EquipmentType.get(EquipmentTypeLookup.PULSE_LASER_BAY);
             case (CLASS_ARTILLERY):
-                return EquipmentType.get("Artillery Bay");
+                return EquipmentType.get(EquipmentTypeLookup.ARTILLERY_BAY);
             case (CLASS_PLASMA):
-                return EquipmentType.get("Plasma Bay");
+                return EquipmentType.get(EquipmentTypeLookup.PLASMA_BAY);
             case (CLASS_AC):
-                return EquipmentType.get("AC Bay");
+                return EquipmentType.get(EquipmentTypeLookup.AC_BAY);
 /*            case (CLASS_GAUSS):
-                return EquipmentType.get("Gauss Bay");*/
+                return EquipmentType.get(EquipmentTypeLookup.GAUSS_BAY);*/
             case (CLASS_LBX_AC):
-                return EquipmentType.get("LBX AC Bay");
+                return EquipmentType.get(EquipmentTypeLookup.LBX_AC_BAY);
             case (CLASS_LRM):
-                return EquipmentType.get("LRM Bay");
+                return EquipmentType.get(EquipmentTypeLookup.LRM_BAY);
             case (CLASS_SRM):
-                return EquipmentType.get("SRM Bay");
+                return EquipmentType.get(EquipmentTypeLookup.SRM_BAY);
             case (CLASS_MRM):
-                return EquipmentType.get("MRM Bay");
+                return EquipmentType.get(EquipmentTypeLookup.MRM_BAY);
             case (CLASS_MML):
-                return EquipmentType.get("MML Bay");
+                return EquipmentType.get(EquipmentTypeLookup.MML_BAY);
             case (CLASS_THUNDERBOLT):
-                return EquipmentType.get("Thunderbolt Bay");
+                return EquipmentType.get(EquipmentTypeLookup.THUNDERBOLT_BAY);
             case (CLASS_ATM):
-                return EquipmentType.get("ATM Bay");
+                return EquipmentType.get(EquipmentTypeLookup.ATM_BAY);
             case (CLASS_ROCKET_LAUNCHER):
-                return EquipmentType.get("Rocket Launcher Bay");
+                return EquipmentType.get(EquipmentTypeLookup.ROCKET_LAUNCHER_BAY);
             case (CLASS_CAPITAL_LASER):
                 if (subCapital) {
-                    return EquipmentType.get("Sub-Capital Laser Bay");
+                    return EquipmentType.get(EquipmentTypeLookup.SCL_BAY);
                 }
-                return EquipmentType.get("Capital Laser Bay");
+                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
             case (CLASS_CAPITAL_PPC):
-                return EquipmentType.get("Capital PPC Bay");
+                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_PPC_BAY);
             case (CLASS_CAPITAL_AC):
                 if (subCapital) {
-                    return EquipmentType.get("Sub-Capital Cannon Bay");
+                    return EquipmentType.get(EquipmentTypeLookup.SCC_BAY);
                 }
-                return EquipmentType.get("Capital AC Bay");
+                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
             case (CLASS_CAPITAL_GAUSS):
-                return EquipmentType.get("Capital Gauss Bay");
+                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_GAUSS_BAY);
             case (CLASS_CAPITAL_MD):
-                return EquipmentType.get("Capital Mass Driver Bay");
+                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_MASS_DRIVER_BAY);
             case (CLASS_CAPITAL_MISSILE):
                 if (subCapital) {
-                    return EquipmentType.get("Sub-Capital Missile Bay");
+                    return EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY);
                 }
-                return EquipmentType.get("Capital Missile Bay");
+                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
             case (CLASS_TELE_MISSILE):
-                return EquipmentType.get("Tele-Operated Capital Missile Bay");
+                return EquipmentType.get(EquipmentTypeLookup.TELE_CAPITAL_MISSILE_BAY);
             case (CLASS_AR10):
-                return EquipmentType.get("AR10 Bay");
+                return EquipmentType.get(EquipmentTypeLookup.AR10_BAY);
             case (CLASS_SCREEN):
-                return EquipmentType.get("Screen Launcher Bay");
+                return EquipmentType.get(EquipmentTypeLookup.SCREEN_LAUNCHER_BAY);
             default:
-                return EquipmentType.get("Misc Bay");
+                return EquipmentType.get(EquipmentTypeLookup.MISC_BAY);
         }
     }
     

@@ -1993,7 +1993,7 @@ public class Infantry extends Entity {
         if ((spec & TRENCH_ENGINEERS) > 0 && (infSpecs & TRENCH_ENGINEERS) == 0) {
             // Need to add vibro shovels
             try {
-                EquipmentType shovels = EquipmentType.get("Vibro-Shovel");
+                EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
                 addEquipment(shovels, Infantry.LOC_INFANTRY);
             } catch (LocationFullException e) {
                 e.printStackTrace();
@@ -2015,7 +2015,7 @@ public class Infantry extends Entity {
         if ((spec & DEMO_ENGINEERS) > 0 && (infSpecs & DEMO_ENGINEERS) == 0) {
             // Need to add vibro shovels
             try {
-                EquipmentType shovels = EquipmentType.get("Demolition Charge");
+                EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
                 addEquipment(shovels, Infantry.LOC_INFANTRY);
             } catch (LocationFullException e) {
                 e.printStackTrace();

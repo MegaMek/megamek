@@ -16,12 +16,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.Mounted;
-import megamek.common.TechAdvancement;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.server.Server;
@@ -43,7 +38,7 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
         // tech levels are a little tricky
         this.flags = flags.or(F_ARTILLERY);
         this.name = "Artillery Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.ARTILLERY_BAY);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 6;

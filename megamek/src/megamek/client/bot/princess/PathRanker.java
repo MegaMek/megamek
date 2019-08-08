@@ -107,6 +107,7 @@ public abstract class PathRanker implements IPathRanker {
             BigDecimal interval = new BigDecimal(5);
             for (MovePath path : validPaths) {
                 count = count.add(BigDecimal.ONE);
+                
                 returnPaths.add(rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
                                          allyCenter));
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))

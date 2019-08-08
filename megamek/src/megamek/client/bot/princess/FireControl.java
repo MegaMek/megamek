@@ -343,7 +343,7 @@ public class FireControl {
         }
 
         // Is the target in range at all?
-        final int maxRange = shooter.getMaxWeaponRange();
+        final int maxRange = owner.getMaxWeaponRange(shooter, target.isAirborne());
         if (distance > maxRange) {
             return new ToHitData(TH_RNG_TOO_FAR);
         }

@@ -14707,11 +14707,27 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return 1;
     }
 
+    /**
+     * The max weapons range of this entity, taking into account whether or not
+     * we're on an air/space map, using extreme range. Assumes target is not airborne
+     * if we are on a ground map.
+     * @return
+     */
     public int getMaxWeaponRange() {
+        return getMaxWeaponRange(false);
+    }
+    
+    /**
+     * The max weapons range of this entity, taking into account whether or not
+     * we're on an air/space map, using extreme range, and whether or not the target is
+     * air borne.
+     * @param targetIsAirborne
+     * @return
+     */
+    public int getMaxWeaponRange(boolean targetIsAirborne) {
         // Aeros on the ground map must shoot along their flight path, giving
         // them effectively 0 range
-        if (isAero() && isAirborne()
-                && game.getBoard().onGround()) {
+        if (isAirborneAeroOnGroundMap() && !targetIsAirborne) {
             return 0;
         }
 
@@ -14729,9 +14745,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
 
             WeaponType type = (WeaponType) weapon.getType();
-            int range = (game.getOptions().booleanOption(
+            int range;
+            
+            if(isAirborne()) {
+                int rangeMultiplier = type.isCapital() ? 2 : 1;
+                rangeMultiplier *= isAirborneAeroOnGroundMap() ? 8 : 1;
+                
+                range = WeaponType.AIRBORNE_WEAPON_RANGES[type.getMaxRange(weapon)] * rangeMultiplier;
+            } else {
+                range = (game.getOptions().booleanOption(
                     OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ? type.getExtremeRange()
                     : type.getLongRange());
+            }
+            
             if (range > maxRange) {
                 maxRange = range;
             }

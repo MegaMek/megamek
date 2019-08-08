@@ -2017,7 +2017,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Jump Jet";
-        misc.setInternalName("VehicleJumpJet");
+        misc.setInternalName(EquipmentTypeLookup.VEHICLE_JUMP_JET);
         misc.addLookupName("VJJ");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
@@ -2039,7 +2039,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createProtomechJumpJet() {
         MiscType misc = new MiscType();
         misc.name = "Jump Jet";
-        misc.setInternalName("ProtomechJumpJet");
+        misc.setInternalName(EquipmentTypeLookup.PROTOMECH_JUMP_JET);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = 0;
@@ -2059,7 +2059,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         // TODO Game Rules.
         misc.name = "Extended Jump Jet System";
-        misc.setInternalName("ExtendedJumpJetSystem");
+        misc.setInternalName(EquipmentTypeLookup.EXTENDED_JUMP_JET_SYSTEM);
         misc.addLookupName("XJJ");
         misc.shortName = "Extended Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
@@ -2081,7 +2081,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         // TODO Game Rules.
         misc.name = "UMU";
-        misc.setInternalName("ProtomechUMU");
+        misc.setInternalName(EquipmentTypeLookup.PROTOMECH_UMU);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 0;
@@ -2100,7 +2100,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Protomech Myomer Booster";
-        misc.setInternalName("CLMyomerBooster");
+        misc.setInternalName(EquipmentTypeLookup.PROTOMECH_MYOMER_BOOSTER);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = COST_VARIABLE;
@@ -2351,7 +2351,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Tracks";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.MECH_TRACKS);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.spreadable = true;
@@ -2375,7 +2375,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "QuadVee Wheels";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.QUADVEE_WHEELS);
         misc.addLookupName("Wheels");
         misc.shortName = "Wheels";
         misc.tonnage = TONNAGE_VARIABLE;
@@ -5129,7 +5129,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Tree Club";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.TREE_CLUB);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
@@ -5147,7 +5147,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Girder Club";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.GIRDER_CLUB);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
@@ -5164,7 +5164,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Limb Club";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.LIMB_CLUB);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.flags = misc.flags.or(F_CLUB);
@@ -5357,7 +5357,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "CASE";
-        misc.setInternalName("CLCASE");
+        misc.setInternalName(EquipmentTypeLookup.CLAN_CASE);
         misc.addLookupName("Clan CASE");
         misc.tonnage = 0.0f;
         misc.criticals = 0;
@@ -5918,7 +5918,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Ejection Seat (Industrial Mech)";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.IM_EJECTION_SEAT);
         misc.shortName = "Ejection Seat";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
@@ -9886,7 +9886,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Triple Strength Myomer";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.TSM);
         misc.addLookupName("IS TSM");
         misc.addLookupName("TSM");
         misc.addLookupName("Triple Strength Myomer");
@@ -9914,7 +9914,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Industrial Triple Strength Myomer";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.ITSM);
         misc.addLookupName("IS Industrial TSM");
         misc.addLookupName("Industrial TSM");
         misc.tonnage = 0;
@@ -10369,7 +10369,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createHitch() {
         MiscType misc = new MiscType();
         misc.name = "Trailer Hitch";
-        misc.setInternalName("Hitch");
+        misc.setInternalName(EquipmentTypeLookup.HITCH);
         misc.tonnage = 0;
         misc.cost = 0;
         misc.criticals = 0; // being errata'd to no slots.
@@ -10522,7 +10522,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createISSponsonTurret() {
         MiscType misc = new MiscType();
         misc.name = "Vehicular Sponson Turret";
-        misc.setInternalName("ISSponsonTurret");
+        misc.setInternalName(EquipmentTypeLookup.SPONSON_TURRET);
+        misc.addLookupName("ISSponsonTurret");
         misc.addLookupName("CLSponsonTurret");
         misc.shortName = "Sponson Turret";
         misc.tonnage = TONNAGE_VARIABLE;
@@ -10544,7 +10545,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createPintleTurret() {
         MiscType misc = new MiscType();
         misc.name = "Pintle Mount";
-        misc.setInternalName("PintleTurret");
+        misc.setInternalName(EquipmentTypeLookup.PINTLE_TURRET);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
@@ -11379,7 +11380,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Jump Booster [BA]";
-        misc.setInternalName("BAJumpBooster");
+        misc.setInternalName(EquipmentTypeLookup.BA_JUMP_BOOSTER);
         misc.addLookupName("ISBAJumpBooster");
         misc.addLookupName("CLBAJumpBooster");
         misc.tonnage = 0.125;
@@ -11427,7 +11428,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISBAMechanicalJumpBooster() {
         MiscType misc = new MiscType();
         misc.name = "Mechanical Jump Booster";
-        misc.setInternalName("BAMechanicalJumpBooster");
+        misc.setInternalName(EquipmentTypeLookup.BA_MECHANICAL_JUMP_BOOSTER);
         misc.addLookupName("ISMechanicalJumpBooster");
         misc.addLookupName("CLMechanicalJumpBooster");
         misc.shortName = "Jump Booster";
@@ -11449,7 +11450,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "BA Myomer Booster";
-        misc.setInternalName("CLBAMyomerBooster");
+        misc.setInternalName(EquipmentTypeLookup.BA_MYOMER_BOOSTER);
         misc.addLookupName("CLBAMB");
         misc.addLookupName("BAMyomerBooster");
         // Need variable tonnage because we have to account for tonnage being
@@ -11474,7 +11475,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Partial Wing [BA]";
-        misc.setInternalName("BAPartialWing");
+        misc.setInternalName(EquipmentTypeLookup.BA_PARTIAL_WING);
         misc.tonnage = 0.2;
         misc.criticals = 1;
         misc.cost = 50000;
@@ -11682,7 +11683,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Demolition Charge";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.DEMOLITION_CHARGE);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -11704,7 +11705,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Vibro-Shovel";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.VIBRO_SHOVEL);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;

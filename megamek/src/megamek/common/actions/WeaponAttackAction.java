@@ -410,8 +410,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         boolean isTAG = wtype.hasFlag(WeaponType.F_TAG);
         
-        boolean isHoming = false;
-        
+        // target type checked later because its different for
+        // direct/indirect (BMRr p77 on board arrow IV)
+        boolean isHoming = (munition == AmmoType.M_HOMING && ammo.curMode().equals("Homing"));
+
         boolean bHeatSeeking = (atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_SRM)
                         || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
@@ -683,12 +685,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (wtype.hasFlag(WeaponType.F_B_POD) && (target instanceof Infantry)
                 && target.getPosition().equals(ae.getPosition())) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.BPodAtInf"));
-        }
-        
-        if (munition == AmmoType.M_HOMING && ammo.curMode().equals("Homing")) {
-            // target type checked later because its different for
-            // direct/indirect (BMRr p77 on board arrow IV)
-            isHoming = true;
         }
 
         // TODO: mech making DFA could be higher if DFA target hex is higher

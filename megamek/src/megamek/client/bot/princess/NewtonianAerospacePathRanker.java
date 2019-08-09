@@ -81,7 +81,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             int distance, IGame game) {
         Entity me = path.getEntity();
 
-        int maxRange = me.getMaxWeaponRange();
+        int maxRange = getOwner().getMaxWeaponRange(me, enemy.isAirborne());
         if (distance > maxRange) {
             return 0;
         }

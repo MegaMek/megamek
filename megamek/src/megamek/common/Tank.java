@@ -3267,13 +3267,13 @@ public class Tank extends Entity {
             //Add hitch to the rear by default
             if (isSuperHeavy()) {
                 try {
-                    addEquipment(EquipmentType.get("Hitch"), SuperHeavyTank.LOC_REAR);
+                    addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), SuperHeavyTank.LOC_REAR);
                } catch (LocationFullException ex) {
                    //For vehicles, this shouldn't happen
                }
             } else {
                 try {
-                    addEquipment(EquipmentType.get("Hitch"), Tank.LOC_REAR);
+                    addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), Tank.LOC_REAR);
                } catch (LocationFullException ex) {
                    //ditto
                }

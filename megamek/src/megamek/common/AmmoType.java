@@ -14116,7 +14116,8 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "Coolant Pod";
         ammo.shortName = "Coolant Pod";
-        ammo.setInternalName("IS Coolant Pod");
+        ammo.setInternalName(EquipmentTypeLookup.COOLANT_POD);
+        ammo.addLookupName("IS Coolant Pod");
         ammo.addLookupName("Clan Coolant Pod");
         ammo.damagePerShot = 10;
         ammo.rackSize = 1;

@@ -1553,14 +1553,14 @@ public abstract class Mech extends Entity {
     public void addEngineSinks(int totalSinks, BigInteger heatSinkFlag,
             boolean clan) {
         if (heatSinkFlag == MiscType.F_DOUBLE_HEAT_SINK) {
-            addEngineSinks(totalSinks, clan ? "CLDoubleHeatSink"
-                    : "ISDoubleHeatSink");
+            addEngineSinks(totalSinks, clan ? EquipmentTypeLookup.CLAN_DOUBLE_HS
+                    : EquipmentTypeLookup.IS_DOUBLE_HS);
         } else if (heatSinkFlag == MiscType.F_COMPACT_HEAT_SINK) {
-            addEngineSinks(totalSinks, "IS1 Compact Heat Sink");
+            addEngineSinks(totalSinks, EquipmentTypeLookup.COMPACT_HS_1);
         } else if (heatSinkFlag == MiscType.F_LASER_HEAT_SINK) {
-            addEngineSinks(totalSinks, "CLLaser Heat Sink");
+            addEngineSinks(totalSinks, EquipmentTypeLookup.LASER_HS);
         } else {
-            addEngineSinks(totalSinks, "Heat Sink");
+            addEngineSinks(totalSinks, EquipmentTypeLookup.SINGLE_HS);
         }
     }
 
@@ -2939,7 +2939,7 @@ public abstract class Mech extends Entity {
      */
     public void addClanCase() {
         boolean explosiveFound = false;
-        EquipmentType clCase = EquipmentType.get("CLCASE");
+        EquipmentType clCase = EquipmentType.get(EquipmentTypeLookup.CLAN_CASE);
         for (int i = 0; i < locations(); i++) {
             explosiveFound = false;
             for (Mounted m : getEquipment()) {

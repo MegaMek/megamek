@@ -16,11 +16,7 @@
  */
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBayHandler;
@@ -50,7 +46,7 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "Capital Missile Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 12;

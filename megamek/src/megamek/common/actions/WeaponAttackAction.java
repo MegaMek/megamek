@@ -796,21 +796,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // if we're spotting for indirect fire, add +1 (no penalty with second pilot in command console)
-        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
-
-	    //also see if the entity has successfuly designated TAG on something and suffers no penalty of spotting for indirect fire.
-            boolean isSpotByTag = false;            
-	    for (TagInfo tmpInfo : game.getTagInfo()) {
-                if (tmpInfo.attackerId == ae.getId()) {
-                isSpotByTag = true;
-                break;
-                }
-            }
-		
-            if(!isSpotByTag){
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeSpotting"));
-            }
-
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()
+                && game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == ae.getId())) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeSpotting"));
         }
 
         if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {

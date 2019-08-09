@@ -41,6 +41,7 @@ v0.45.5-SNAPSHOT
 + PR #1426: Splash screen displays properly on very high width-to-height resolution ratios.
 + Simple Tech Level wrong for Proto AC's and VSP Lasers.'
 + PR #1430: Improvements to bot handling of aerospace units, especially on low-atmospheric maps.
++ Issue #1388: Successful TAG designation cause the unit to suffer the penalty of spot for LRM indirect fire on the same turn
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

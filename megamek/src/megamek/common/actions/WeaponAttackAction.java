@@ -693,7 +693,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // the target hex or the elevation of the hex the attacker is
         // in, whichever is higher."
         
-        toHit = compileAttackerToHitMods(game, ae, target, toHit, wtype, atype, munition, isArtilleryDirect, isArtilleryIndirect, isIndirect, usesAmmo);
+        //Collect the modifiers for the attacker's condition/actions
+        if (ae != null) {
+            //Conventional fighter, Aerospace and fighter LAM attackers
+            if (ae instanceof IAero) {
+                toHit = compileAeroAttackerToHitMods(game, ae, target, toHit, wtype, weapon, munition, isArtilleryIndirect);
+            //Everyone else
+            } else {
+                toHit = compileAttackerToHitMods(game, ae, target, toHit, wtype, atype, munition, isArtilleryDirect, isArtilleryIndirect, isIndirect, usesAmmo);
+            }
+        }
+        
+        
 
         if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
@@ -720,117 +731,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 vMod = Math.min(vMod / 2, 4);
             }
             toHit.addModifier(vMod, Messages.getString("WeaponAttackAction.TeVelocity"));
-        }
-        
-        // Situational modifiers for aero units, not including LAMs.
-        if (ae instanceof Aero) {
-            Aero aero = (Aero) ae;
-
-            // sensor hits
-            int sensors = aero.getSensorHits();
-
-            if (!ae.isCapitalFighter()) {
-                if ((sensors > 0) && (sensors < 3)) {
-                    toHit.addModifier(sensors, Messages.getString("WeaponAttackAction.SensorDamage"));
-                }
-                if (sensors > 2) {
-                    toHit.addModifier(+5, Messages.getString("WeaponAttackAction.SensorDestroyed"));
-                }
-            }
-
-            // FCS hits
-            int fcs = aero.getFCSHits();
-
-            if ((fcs > 0) && !aero.isCapitalFighter()) {
-                toHit.addModifier(fcs * 2, Messages.getString("WeaponAttackAction.FcsDamage"));
-            }
-
-            if (aero instanceof Jumpship) {
-                Jumpship js = (Jumpship) aero;
-                int cic = js.getCICHits();
-                if (cic > 0) {
-                    toHit.addModifier(cic * 2, Messages.getString("WeaponAttackAction.CicDamage"));
-                }
-            }
-
-            // targeting mods for evasive action by large craft
-            // Per TW, this does not apply when firing Capital Missiles
-            if (aero.isEvading() &&
-                    (!(wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE
-                            || wtype.getAtClass() == WeaponType.CLASS_AR10
-                            || wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE))) {
-                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeEvading"));
-            }
-
-            // check for particular kinds of weapons in weapon bays
-            if (ae.usesWeaponBays()) {
-
-                // any heavy lasers
-                if (wtype.getAtClass() == WeaponType.CLASS_LASER) {
-                    for (int wId : weapon.getBayWeapons()) {
-                        Mounted bweap = ae.getEquipment(wId);
-                        WeaponType bwtype = (WeaponType) bweap.getType();
-                        if ((bwtype.getInternalName().contains("Heavy"))
-                                && (bwtype.getInternalName().contains("Laser"))) {
-                            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.HeavyLaserInBay"));
-                            break;
-                        }
-                    }
-                }
-                // barracuda missiles
-                else if (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE) {
-                    boolean onlyBarracuda = true;
-                    for (int wId : weapon.getBayWeapons()) {
-                        Mounted bweap = ae.getEquipment(wId);
-                        Mounted bammo = bweap.getLinked();
-                        if (bammo != null) {
-                            AmmoType batype = (AmmoType) bammo.getType();
-                            if (batype.getAmmoType() != AmmoType.T_BARRACUDA) {
-                                onlyBarracuda = false;
-                            }
-                        }
-                    }
-                    if (onlyBarracuda) {
-                        toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Barracuda"));
-                    }
-                }
-                // barracuda missiles in an AR10 launcher (must all be
-                // barracuda)
-                else if (wtype.getAtClass() == WeaponType.CLASS_AR10) {
-                    boolean onlyBarracuda = true;
-                    for (int wId : weapon.getBayWeapons()) {
-                        Mounted bweap = ae.getEquipment(wId);
-                        Mounted bammo = bweap.getLinked();
-                        if (bammo != null) {
-                            AmmoType batype = (AmmoType) bammo.getType();
-                            if (!batype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-                                onlyBarracuda = false;
-                            }
-                        }
-                    }
-                    if (onlyBarracuda) {
-                        toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Barracuda"));
-                    }
-                }
-                // LBX cluster
-                else if (wtype.getAtClass() == WeaponType.CLASS_LBX_AC) {
-                    boolean onlyCluster = true;
-                    for (int wId : weapon.getBayWeapons()) {
-                        Mounted bweap = ae.getEquipment(wId);
-                        Mounted bammo = bweap.getLinked();
-                        if (bammo != null) {
-                            AmmoType batype = (AmmoType) bammo.getType();
-                            if (batype.getMunitionType() != AmmoType.M_CLUSTER) {
-                                onlyCluster = false;
-                                break;
-                            }
-                        }
-                    }
-                    if (onlyCluster) {
-                        toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ClusterAmmo"));
-                    }
-                }
-            }
         }
 
         if (wtype.hasFlag(WeaponType.F_ANTI_SHIP) && (te != null) && (te.getWeight() < 500)) {
@@ -4299,6 +4199,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
     private ToHitData compileWeaponToHitMods(Mounted weapon, WeaponType wtype, ToHitData toHit) {
+        //ASEW Missiles
+        // +4 for trying to fire one at a target of < 500 tons
+        if (wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE && te != null && te.getWeight() < 500.0) {
+            toHit.addModifier(4, Messages.getString("WeaponAttackAction.TeTooSmallForASM"));
+        }
         return toHit;
     }
     
@@ -4327,7 +4232,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param wtype The WeaponType of the weapon being used
      * @param atype The AmmoType being used for this attack
-     * @param muntion  Long indicating the muntion type flag being used, if applicable
+     * @param munition  Long indicating the munition type flag being used, if applicable
      * 
      * @param isArtilleryDirect  flag that indicates whether this is a direct-fire artillery attack
      * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
@@ -4399,7 +4304,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     }
     
     /**
-     * Convenience method that compiles the ToHit modifiers applicable to the attacker's condition, if the attacker is an aero
+     * Convenience method that compiles the ToHit modifiers applicable to the attacker's condition, 
+     * if the attacker is an aero
      * Attacker has damaged sensors?  You'll find that here.
      * Defender's a superheavy mech?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
@@ -4410,98 +4316,207 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param wtype The WeaponType of the weapon being used
      * @param weapon The Mounted weapon being used
-     * @param atype The AmmoType being used for this attack
-     * @param muntion  Long indicating the muntion type flag being used, if applicable
+     * @param munition  Long indicating the munition type flag being used, if applicable
      * 
      * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
      */
-    private ToHitData compileAeroAttackerToHitMods(IGame game, Entity ae, Targetable target, ToHitData toHit,
-            WeaponType wtype, Mounted weapon, AmmoType atype, long munition, boolean isArtilleryIndirect) {
-        if (ae == null || !ae.isAero()) {
-            //Null and class cast guard
+    private static ToHitData compileAeroAttackerToHitMods(IGame game, Entity ae, Targetable target, ToHitData toHit,
+            WeaponType wtype, Mounted weapon, long munition, boolean isArtilleryIndirect) {
+        if (ae == null || target == null) {
+            //Null guard
             return toHit;
         }
-        // Situational modifiers for aero units, including fighter LAMs
-        IAero aero = (IAero) ae;
+        // Modifiers for aero units, including fighter LAMs
+        if (ae instanceof IAero) {
+            IAero aero = (IAero) ae;
         
-        // pilot hits
-        int pilothits = ae.getCrew().getHits();
-        if ((pilothits > 0) && !ae.isCapitalFighter()) {
-            toHit.addModifier(pilothits, Messages.getString("WeaponAttackAction.PilotHits"));
-        }
-
-        // out of control
-        if (aero.isOutControlTotal()) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeroOoc"));
-        }
-
-        // check for heavy gauss rifle on fighter of small craft
-        if ((weapon.getType() instanceof ISHGaussRifle) && !(ae instanceof Dropship)
-                && !(ae instanceof Jumpship)) {
-            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.WeaponMod"));
-        }
-            
-        // Space ECM
-        if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-            int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
-            if (!ae.isLargeCraft()) {
-                ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
-        }
-            ecm = Math.min(4, ecm);
-            int eccm = 0;
-            if (ae.isLargeCraft()) {
-                eccm = ((Aero) ae).getECCMBonus();
+            // pilot hits
+            int pilothits = ae.getCrew().getHits();
+            if ((pilothits > 0) && !ae.isCapitalFighter()) {
+                toHit.addModifier(pilothits, Messages.getString("WeaponAttackAction.PilotHits"));
             }
-            if (ecm > 0) {
-                toHit.addModifier(ecm, Messages.getString("WeaponAttackAction.ECM"));
-                if (eccm > 0) {
-                    toHit.addModifier(-1 * Math.min(ecm, eccm), Messages.getString("WeaponAttackAction.ECCM"));
+
+            // out of control
+            if (aero.isOutControlTotal()) {
+                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeroOoc"));
+            }
+
+            // check for heavy gauss rifle on fighter of small craft
+            // Arguably a weapon effect, except that it only applies when used by a fighter (isn't recoil fun?)
+            // So it's here instead of with other weapon mods that apply across the board
+            if ((wtype instanceof ISHGaussRifle) && !(ae instanceof Dropship)
+                    && !(ae instanceof Jumpship)) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.WeaponAttackAction.FighterHeavyGauss"));
+            }
+            
+            // Space ECM
+            if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+                int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
+                if (!ae.isLargeCraft()) {
+                    ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
+                }
+                ecm = Math.min(4, ecm);
+                int eccm = 0;
+                if (ae.isLargeCraft()) {
+                    eccm = ((Aero) ae).getECCMBonus();
+                }
+                if (ecm > 0) {
+                    toHit.addModifier(ecm, Messages.getString("WeaponAttackAction.ECM"));
+                    if (eccm > 0) {
+                        toHit.addModifier(-1 * Math.min(ecm, eccm), Messages.getString("WeaponAttackAction.ECCM"));
+                    }
                 }
             }
-        }
-            
-        //ASEW Missiles
-        // +4 for trying to fire one at a target of < 500 tons
-        if (wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE && te.getWeight() < 500.0) {
-            toHit.addModifier(4, Messages.getString("WeaponAttackAction.TeTooSmallForASM"));
-        }
-        // +4 attack penalty for ASEW affected locations
-        if (ae instanceof Dropship) {
-            Dropship d = (Dropship) ae;
-            int loc = weapon.getLocation();
-            if (d.getASEWAffected(loc) > 0) {
-                toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
-            }            
-        } else if (ae instanceof Jumpship) {
-            Jumpship j = (Jumpship) ae;
-            int loc = weapon.getLocation();
-            if (j.getASEWAffected(loc) > 0) {
-                toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
-            } 
-        } else {
-            if (ae.getASEWAffected() > 0) {
-                toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeAsewAffected"));
-            }
-        }
-        // check for NOE
-        if (Compute.isAirToAir(ae, target)) {
-            if (target.isAirborneVTOLorWIGE()) {
-                toHit.addModifier(+5, Messages.getString("WeaponAttackAction.TeNonAeroAirborne"));
-            }
-            if (ae.isNOE()) {
-                if (ae.isOmni()) {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeOmniNoe"));
-                } else {
-                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeNoe"));
+
+            // +4 attack penalty for locations hit by ASEW missiles
+            if (ae instanceof Dropship) {
+                Dropship d = (Dropship) ae;
+                int loc = weapon.getLocation();
+                if (d.getASEWAffected(loc) > 0) {
+                    toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
+                }            
+            } else if (ae instanceof Jumpship) {
+                Jumpship j = (Jumpship) ae;
+                int loc = weapon.getLocation();
+                if (j.getASEWAffected(loc) > 0) {
+                    toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
+                } 
+            } else {
+                if (ae.getASEWAffected() > 0) {
+                    toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeAsewAffected"));
                 }
             }
-        }
-        if (!ae.isAirborne() && !ae.isSpaceborne()) {
+            // Altitude-related mods for air-to-air combat
+            if (Compute.isAirToAir(ae, target)) {
+                if (target.isAirborneVTOLorWIGE()) {
+                    toHit.addModifier(+5, Messages.getString("WeaponAttackAction.TeNonAeroAirborne"));
+                }
+                if (ae.isNOE()) {
+                    if (ae.isOmni()) {
+                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeOmniNoe"));
+                    } else {
+                        toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeNoe"));
+                    }
+                }
+            }
             // grounded aero
-            if (!(ae instanceof Dropship)) {
-                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GroundedAero"));
-            } else if (!target.isAirborne() && !isArtilleryIndirect) {
-                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GroundedDs"));
+            if (!ae.isAirborne() && !ae.isSpaceborne()) {
+                if (!(ae instanceof Dropship)) {
+                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GroundedAero"));
+                } else if (!target.isAirborne() && !isArtilleryIndirect) {
+                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GroundedDs"));
+                }
+            }
+        }
+        // Situational modifiers for aero units, not including LAMs.
+        if (ae instanceof Aero) {
+            Aero aero = (Aero) ae;
+
+            // sensor hits
+            int sensors = aero.getSensorHits();
+
+            if (!ae.isCapitalFighter()) {
+                if ((sensors > 0) && (sensors < 3)) {
+                    toHit.addModifier(sensors, Messages.getString("WeaponAttackAction.SensorDamage"));
+                }
+                if (sensors > 2) {
+                    toHit.addModifier(+5, Messages.getString("WeaponAttackAction.SensorDestroyed"));
+                }
+            }
+
+            // FCS hits
+            int fcs = aero.getFCSHits();
+
+            if ((fcs > 0) && !aero.isCapitalFighter()) {
+                toHit.addModifier(fcs * 2, Messages.getString("WeaponAttackAction.FcsDamage"));
+            }
+            
+            // CIC hits
+            if (aero instanceof Jumpship) {
+                Jumpship js = (Jumpship) aero;
+                int cic = js.getCICHits();
+                if (cic > 0) {
+                    toHit.addModifier(cic * 2, Messages.getString("WeaponAttackAction.CicDamage"));
+                }
+            }
+
+            // targeting mods for evasive action by large craft
+            // Per TW, this does not apply when firing Capital Missiles
+            if (aero.isEvading() &&
+                    (!(wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE
+                            || wtype.getAtClass() == WeaponType.CLASS_AR10
+                            || wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE))) {
+                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeEvading"));
+            }
+
+            // check for particular kinds of weapons in weapon bays
+            if (ae.usesWeaponBays()) {
+
+                // any heavy lasers
+                if (wtype.getAtClass() == WeaponType.CLASS_LASER) {
+                    for (int wId : weapon.getBayWeapons()) {
+                        Mounted bweap = ae.getEquipment(wId);
+                        WeaponType bwtype = (WeaponType) bweap.getType();
+                        if ((bwtype.getInternalName().contains("Heavy"))
+                                && (bwtype.getInternalName().contains("Laser"))) {
+                            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.HeavyLaserInBay"));
+                            break;
+                        }
+                    }
+                }
+                // barracuda missiles
+                else if (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE) {
+                    boolean onlyBarracuda = true;
+                    for (int wId : weapon.getBayWeapons()) {
+                        Mounted bweap = ae.getEquipment(wId);
+                        Mounted bammo = bweap.getLinked();
+                        if (bammo != null) {
+                            AmmoType batype = (AmmoType) bammo.getType();
+                            if (batype.getAmmoType() != AmmoType.T_BARRACUDA) {
+                                onlyBarracuda = false;
+                            }
+                        }
+                    }
+                    if (onlyBarracuda) {
+                        toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Barracuda"));
+                    }
+                }
+                // barracuda missiles in an AR10 launcher (must all be
+                // barracuda)
+                else if (wtype.getAtClass() == WeaponType.CLASS_AR10) {
+                    boolean onlyBarracuda = true;
+                    for (int wId : weapon.getBayWeapons()) {
+                        Mounted bweap = ae.getEquipment(wId);
+                        Mounted bammo = bweap.getLinked();
+                        if (bammo != null) {
+                            AmmoType batype = (AmmoType) bammo.getType();
+                            if (!batype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                                onlyBarracuda = false;
+                            }
+                        }
+                    }
+                    if (onlyBarracuda) {
+                        toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Barracuda"));
+                    }
+                }
+                // LBX cluster
+                else if (wtype.getAtClass() == WeaponType.CLASS_LBX_AC) {
+                    boolean onlyCluster = true;
+                    for (int wId : weapon.getBayWeapons()) {
+                        Mounted bweap = ae.getEquipment(wId);
+                        Mounted bammo = bweap.getLinked();
+                        if (bammo != null) {
+                            AmmoType batype = (AmmoType) bammo.getType();
+                            if (batype.getMunitionType() != AmmoType.M_CLUSTER) {
+                                onlyCluster = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (onlyCluster) {
+                        toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ClusterAmmo"));
+                    }
+                }
             }
         }
         return toHit;

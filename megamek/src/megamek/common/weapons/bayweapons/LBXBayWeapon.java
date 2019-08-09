@@ -16,6 +16,8 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.EquipmentTypeLookup;
+
 /**
  * @author Jay Lawson
  */
@@ -32,7 +34,7 @@ public class LBXBayWeapon extends AmmoBayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "LBX AC Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.LBX_AC_BAY);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 6;

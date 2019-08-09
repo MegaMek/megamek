@@ -3054,7 +3054,7 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public void addClanCase() {
         boolean explosiveFound = false;
-        EquipmentType clCase = EquipmentType.get("CLCASE");
+        EquipmentType clCase = EquipmentType.get(EquipmentTypeLookup.CLAN_CASE);
         for (int i = 0; i < locations(); i++) {
             // Ignore wings location: it's not a valid loc to put equipment in
             if (i == LOC_WINGS) {

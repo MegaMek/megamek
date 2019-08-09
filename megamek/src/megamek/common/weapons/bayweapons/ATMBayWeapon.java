@@ -16,13 +16,13 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.EquipmentTypeLookup;
 import megamek.common.IGame;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.MissileBayWeaponHandler;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.server.Server;
 
 /**
@@ -40,7 +40,7 @@ public class ATMBayWeapon extends AmmoBayWeapon {
     public ATMBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "ATM Bay";
+        this.name = EquipmentTypeLookup.ATM_BAY;
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;

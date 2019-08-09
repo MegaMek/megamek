@@ -16,6 +16,7 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.EquipmentTypeLookup;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -39,7 +40,7 @@ public class LRMBayWeapon extends AmmoBayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "LRM Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.LRM_BAY);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 6;

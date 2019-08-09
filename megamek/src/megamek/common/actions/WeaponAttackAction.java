@@ -796,7 +796,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // if we're spotting for indirect fire, add +1 (no penalty with second pilot in command console)
-        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()
+                && game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == ae.getId())) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeSpotting"));
         }
 

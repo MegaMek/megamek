@@ -644,7 +644,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         //Is this an infantry leg/swarm attack?
-        toHit = handleSwarmAttacks(wtype, ae, target, ttype, game, toHit);
+        toHit = handleSwarmAttacks(game, ae, target, ttype, wtype, toHit);
         if (isSpecialResolution()) {
             return toHit;
         }
@@ -693,14 +693,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // the target hex or the elevation of the hex the attacker is
         // in, whichever is higher."
         
-        //Collect the modifiers for the attacker's condition/actions
+        // Collect the modifiers for the environment
+        toHit = compileWeatherToHitMods(game, ae, target, wtype, atype, toHit, isArtilleryIndirect);
+        
+        // Collect the modifiers for the attacker's condition/actions
         if (ae != null) {
             //Conventional fighter, Aerospace and fighter LAM attackers
             if (ae instanceof IAero) {
                 toHit = compileAeroAttackerToHitMods(game, ae, target, toHit, wtype, weapon, munition, isArtilleryIndirect);
             //Everyone else
             } else {
-                toHit = compileAttackerToHitMods(game, ae, target, toHit, wtype, atype, munition, isArtilleryDirect, isArtilleryIndirect, isIndirect, usesAmmo);
+                toHit = compileAttackerToHitMods(game, ae, target, toHit, wtype, weapon, atype, munition,
+                        isArtilleryDirect, isArtilleryIndirect, isIndirect, usesAmmo);
             }
         }
         
@@ -733,19 +737,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(vMod, Messages.getString("WeaponAttackAction.TeVelocity"));
         }
 
-        if (wtype.hasFlag(WeaponType.F_ANTI_SHIP) && (te != null) && (te.getWeight() < 500)) {
-            toHit.addModifier(4, Messages.getString("WeaponAttackAction.TeTooSmallForASM"));
-        }
-
-        if (wtype.hasFlag(WeaponType.F_MASS_DRIVER)) {
-            toHit.addModifier(2, Messages.getString("WeaponAttackAction.MassDriver"));
-        }
-        
-        //Capital missiles in waypoint launch mode
-        if (weapon.isInWaypointLaunchMode()) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.WaypointLaunch"));
-        }
-
         if (te instanceof Entity && te.isAero() && te.isAirborne()) {
 
             IAero a = (IAero) te;
@@ -753,37 +744,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // is the target at zero velocity
             if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !game.getBoard().inSpace())) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ImmobileAero"));
-            }
-
-            // capital weapon (except missiles) penalties at small targets
-            if (wtype.isCapital() && (wtype.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE)
-                    && (wtype.getAtClass() != WeaponType.CLASS_AR10) && !te.isLargeCraft()) {
-                // check to see if we are using AAA mode
-                int aaaMod = 0;
-                if (wtype.hasModes() && weapon.curMode().equals("AAA")) {
-                    aaaMod = 2;
-                }
-                if (wtype.isSubCapital()) {
-                    toHit.addModifier(3 - aaaMod, Messages.getString("WeaponAttackAction.SubCapSmallTe"));
-                } else {
-                    toHit.addModifier(5 - aaaMod, Messages.getString("WeaponAttackAction.CapSmallTe"));
-                }
-            }
-
-            // AAA mode makes targeting large craft more difficult
-            if (wtype.hasModes() && weapon.curMode().equals("AAA") && te.isLargeCraft()) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AAALaserAtShip"));
-            }
-
-            // check for bracketing mode
-            if (wtype.hasModes() && weapon.curMode().equals("Bracket 80%")) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Bracket80"));
-            }
-            if (wtype.hasModes() && weapon.curMode().equals("Bracket 60%")) {
-                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Bracket60"));
-            }
-            if (wtype.hasModes() && weapon.curMode().equals("Bracket 40%")) {
-                toHit.addModifier(-3, Messages.getString("WeaponAttackAction.Bracket40"));
             }
 
             // sensor shadows
@@ -804,124 +764,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-        }
-
-        // Vehicles may suffer from criticals
-        if (ae instanceof Tank) {
-            Tank tank = (Tank) ae;
-            if (tank.isCommanderHit()) {
-                if (ae instanceof VTOL) {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CopilotHit"));
-                } else {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CmdrHit"));
-                }
-            }
-            int sensors = tank.getSensorHits();
-            if (sensors > 0) {
-                toHit.addModifier(sensors, Messages.getString("WeaponAttackAction.SensorDamage"));
-            }
-            if (tank.isStabiliserHit(weapon.getLocation())) {
-                toHit.addModifier(Compute.getAttackerMovementModifier(game, tank.getId()).getValue(),
-                        "stabiliser damage");
-            }
-        }
-
-        if (ae.hasFunctionalArmAES(weapon.getLocation()) && !weapon.isSplit()) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AES"));
-        }
-
-        if (ae.hasShield()) {
-            // active shield has already been checked as it makes shots
-            // impossible
-            // time to check passive defense and no defense
-
-            if (ae.hasPassiveShield(weapon.getLocation(), weapon.isRearMounted())) {
-                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.PassiveShield"));
-            } else if (ae.hasNoDefenseShield(weapon.getLocation())) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Shield"));
-            }
-        }
-        // if we have BAP with MaxTech rules, and there are woods in the
-        // way, and we are within BAP range, we reduce the BTH by 1
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) && !isIndirect && (te != null)
-                && ae.hasBAP() && (ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te))
-                && !ComputeECM.isAffectedByECM(ae, ae.getPosition(), te.getPosition())
-                && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
-                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE)
-                        || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los.getUltraWoods() > 0))) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
-        }
-
-        // quirks
-        if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS)) {
-            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorGhosts"));
-        }
-
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_ACCURATE)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AccWeapon"));
-        }
-
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE)) {
-            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.InAccWeapon"));
-        }
-
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON) && (ae.moved == EntityMovementType.MOVE_RUN)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.StableWeapon"));
-        }
-        
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED)) {
-            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisrepairedWeapon"));
-        }
-        
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED)) {
-            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisreplacedWeapon"));
-        }
-
-        // Has the pilot the appropriate gunnery skill?
-        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER)
-                && wtype.hasFlag(WeaponType.F_ENERGY)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunESkill"));
-        }
-
-        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
-                && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunBSkill"));
-        }
-
-        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE)
-                && wtype.hasFlag(WeaponType.F_MISSILE)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunMSkill"));
-        }
-
-        // Is the pilot a weapon specialist?
-        if (ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
-            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));
-        } else if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST)) {
-			// aToW style gunnery specialist: -1 to specialized weapon and +1 to
-			// all other weapons
-			// Note that weapon specialist supercedes gunnery specialization, so
-			// if you have
-			// a specialization in Medium Lasers and a Laser specialization, you
-			// only get the -2 specialization mod
-            if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_ENERGY)) {
-                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.EnergySpec"));
-                } else {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
-                }
-            } else if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_BALLISTIC)) {
-                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BallisticSpec"));
-                } else {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
-                }
-            } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_MISSILE)) {
-                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MissileSpec"));
-                } else {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
-                }
-            }
         }
 
         if (te != null) {
@@ -950,70 +792,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SwampBeast"));
             }
         }
-
-        // check for VDNI
-        if (ae.hasAbility(OptionsConstants.MD_VDNI)
-                || ae.hasAbility(OptionsConstants.MD_BVDNI)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
-        }
-
-        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
-            // check for pl-masc
-            // the rules are a bit vague, but assume that if the infantry didn't
-            // move or jumped, then they shouldn't get the penalty
-            if (ae.hasAbility(OptionsConstants.MD_PL_MASC)
-                    && ((ae.moved == EntityMovementType.MOVE_WALK) || (ae.moved == EntityMovementType.MOVE_RUN))) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.PlMasc"));
-            }
-
-            // check for cyber eye laser sighting on ranged attacks
-            if (ae.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER)
-                    && !(wtype instanceof InfantryAttack)) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MdEye"));
-            }
-        }
-
-        // industrial cockpit: +1 to hit
-        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_INDUSTRIAL)) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.IndustrialNoAfc"));
-        }
-        // primitive industrial cockpit: +2 to hit
-        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
-            toHit.addModifier(2, Messages.getString("WeaponAttackAction.PrimIndustrialNoAfc"));
-        }
-
-        // primitive industrial cockpit with advanced firing control: +1 to hit
-        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_PRIMITIVE)
-                && ((Mech) ae).isIndustrial()) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.PrimIndustrialAfc"));
-        }
-
-        //Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
-        if (ae instanceof Mech && ((Mech)ae).getCockpitType() == Mech.COCKPIT_DUAL) {
-            if (!ae.getCrew().isActive(ae.getCrew().getCrewType().getGunnerPos())) {
-                toHit.addModifier(1, Messages.getString("WeaponAttackAction.GunnerHit"));                
-            } else if (ae.getCrew().hasDedicatedGunner()) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.DualCockpit"));
-            }
-        }
-
-        //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
-        if ((ae instanceof TripodMech || ae instanceof QuadVee) && !ae.getCrew().hasDedicatedGunner()) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GunnerHit"));
-        }
-        if (ae instanceof QuadVee && ae.isConvertingNow()) {
-            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.QuadVeeConverting"));
-        }
-
-        if ((ae instanceof SupportTank) || (ae instanceof SupportVTOL)) {
-            if (!ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
-                    && !ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
-                toHit.addModifier(2, Messages.getString("WeaponAttackAction.SupVeeNoFc"));
-            } else if (ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
-                    && !(ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))) {
-                toHit.addModifier(1, Messages.getString("WeaponAttackAction.SupVeeBfc"));
-            }
-        }
+        
+        placeholder
 
         // Do we use Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected && (atype != null)
@@ -1032,86 +812,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int aAlt = ae.getAltitude();
         int tAlt = target.getAltitude();
         int distance = Compute.effectiveDistance(game, ae, target);
-
-        if (!isArtilleryIndirect) {
-            toHit.append(AbstractAttackAction.nightModifiers(game, target, atype, ae, true));
-        }
-
-        TargetRoll weatherToHitMods = new TargetRoll();
-
-        // weather mods (not in space)
-        int weatherMod = game.getPlanetaryConditions().getWeatherHitPenalty(ae);
-        if ((weatherMod != 0) && !game.getBoard().inSpace()) {
-            weatherToHitMods.addModifier(weatherMod, game.getPlanetaryConditions().getWeatherDisplayableName());
-        }
-
-        // wind mods (not in space)
-        if (!game.getBoard().inSpace()) {
-            int windCond = game.getPlanetaryConditions().getWindStrength();
-            if (windCond == PlanetaryConditions.WI_MOD_GALE) {
-                if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                    weatherToHitMods.addModifier(1, PlanetaryConditions.getWindDisplayableName(windCond));
-                }
-            } else if (windCond == PlanetaryConditions.WI_STRONG_GALE) {
-                if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                    weatherToHitMods.addModifier(1, PlanetaryConditions.getWindDisplayableName(windCond));
-                } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                    weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
-                }
-            } else if (windCond == PlanetaryConditions.WI_STORM) {
-                if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                    weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
-                } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                    weatherToHitMods.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
-                }
-            } else if (windCond == PlanetaryConditions.WI_TORNADO_F13) {
-                if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                    weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
-                } else {
-                    weatherToHitMods.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
-                }
-            } else if (windCond == PlanetaryConditions.WI_TORNADO_F4) {
-                weatherToHitMods.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
-            }
-        }
-
-        // fog mods (not in space)
-        if (wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
-                && (game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY)) {
-            weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.HeavyFog"));
-        }
-
-        // blowing sand mods
-        if (wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
-                && game.getPlanetaryConditions().isSandBlowing()
-                && (game.getPlanetaryConditions().getWindStrength() > PlanetaryConditions.WI_LIGHT_GALE)) {
-            weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.BlowingSand"));
-        }
-
-        if (weatherToHitMods.getValue() > 0) {
-            if ((ae.getCrew() != null) && ae.hasAbility(OptionsConstants.UNOFF_WEATHERED)) {
-                weatherToHitMods.addModifier(-1, Messages.getString("WeaponAttackAction.Weathered"));
-            }
-            toHit.append(weatherToHitMods);
-        }
-
-        // gravity mods (not in space)
-        if (!game.getBoard().inSpace()) {
-            int mod = (int) Math.floor(Math.abs((game.getPlanetaryConditions().getGravity() - 1.0f) / 0.2f));
-            if ((mod != 0) && (wtype.hasFlag(WeaponType.F_BALLISTIC) || wtype.hasFlag(WeaponType.F_MISSILE))) {
-                toHit.addModifier(mod, Messages.getString("WeaponAttackAction.Gravity"));
-            }
-        }
-
-        // Electro-Magnetic Interference
-        if (game.getPlanetaryConditions().hasEMI() && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
-            toHit.addModifier(2, Messages.getString("WeaponAttackAction.EMI"));
-        }
-
-        if (ae.isAirborne() && !ae.isAero()) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.Dropping"));
-            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.Jumping"));
-        }
 
         // Handle direct artillery attacks.
         if (isArtilleryDirect) {
@@ -4190,19 +3890,191 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     }
     
     /**
+     * Convenience method that compiles the ToHit modifiers applicable to the weather or other special environmental
+     * effects. These affect everyone on the board.
+     * @param game  The current game
+     * @param ae    The attacking entity
+     * @param target The Targetable object being attacked
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param atype The AmmoType being used for this attack
+     * 
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     * 
+     * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
+     */
+    private static ToHitData compileWeatherToHitMods(IGame game, Entity ae, Targetable target, WeaponType wtype, 
+            AmmoType atype, ToHitData toHit, boolean isArtilleryIndirect) {
+        // Night combat modifiers
+        if (!isArtilleryIndirect) {
+            toHit.append(AbstractAttackAction.nightModifiers(game, target, atype, ae, true));
+        }
+
+        TargetRoll weatherToHitMods = new TargetRoll();
+
+        // weather mods (not in space)
+        int weatherMod = game.getPlanetaryConditions().getWeatherHitPenalty(ae);
+        if ((weatherMod != 0) && !game.getBoard().inSpace()) {
+            weatherToHitMods.addModifier(weatherMod, game.getPlanetaryConditions().getWeatherDisplayableName());
+        }
+
+        // wind mods (not in space)
+        if (!game.getBoard().inSpace()) {
+            int windCond = game.getPlanetaryConditions().getWindStrength();
+            if (windCond == PlanetaryConditions.WI_MOD_GALE) {
+                if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                    weatherToHitMods.addModifier(1, PlanetaryConditions.getWindDisplayableName(windCond));
+                }
+            } else if (windCond == PlanetaryConditions.WI_STRONG_GALE) {
+                if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                    weatherToHitMods.addModifier(1, PlanetaryConditions.getWindDisplayableName(windCond));
+                } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                    weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
+                }
+            } else if (windCond == PlanetaryConditions.WI_STORM) {
+                if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                    weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
+                } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                    weatherToHitMods.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
+                }
+            } else if (windCond == PlanetaryConditions.WI_TORNADO_F13) {
+                if (wtype.hasFlag(WeaponType.F_ENERGY)) {
+                    weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
+                } else {
+                    weatherToHitMods.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
+                }
+            } else if (windCond == PlanetaryConditions.WI_TORNADO_F4) {
+                weatherToHitMods.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
+            }
+        }
+
+        // fog mods (not in space)
+        if (wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
+                && (game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY)) {
+            weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.HeavyFog"));
+        }
+
+        // blowing sand mods
+        if (wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
+                && game.getPlanetaryConditions().isSandBlowing()
+                && (game.getPlanetaryConditions().getWindStrength() > PlanetaryConditions.WI_LIGHT_GALE)) {
+            weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.BlowingSand"));
+        }
+
+        if (weatherToHitMods.getValue() > 0) {
+            if ((ae.getCrew() != null) && ae.hasAbility(OptionsConstants.UNOFF_WEATHERED)) {
+                weatherToHitMods.addModifier(-1, Messages.getString("WeaponAttackAction.Weathered"));
+            }
+            toHit.append(weatherToHitMods);
+        }
+
+        // gravity mods (not in space)
+        if (!game.getBoard().inSpace()) {
+            int mod = (int) Math.floor(Math.abs((game.getPlanetaryConditions().getGravity() - 1.0f) / 0.2f));
+            if ((mod != 0) && (wtype.hasFlag(WeaponType.F_BALLISTIC) || wtype.hasFlag(WeaponType.F_MISSILE))) {
+                toHit.addModifier(mod, Messages.getString("WeaponAttackAction.Gravity"));
+            }
+        }
+
+        // Electro-Magnetic Interference
+        if (game.getPlanetaryConditions().hasEMI() && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+            toHit.addModifier(2, Messages.getString("WeaponAttackAction.EMI"));
+        }
+        return toHit;
+    }
+    
+    /**
      * Convenience method that compiles the ToHit modifiers applicable to the weapon being fired
      * Got a heavy large laser that gets a +1 TH penalty?  You'll find that here.
      * Bonuses related to the attacker's condition?  Ammunition being used?  Those are in other methods.
      * 
+     * @param ae    The attacking entity
+     * 
      * @param weapon The Mounted weapon being used for this attack
      * @param wtype The WeaponType of the weapon being used
+     * @param target The Targetable object being attacked
+     * @param ttype  The targetable object type
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    private ToHitData compileWeaponToHitMods(Mounted weapon, WeaponType wtype, ToHitData toHit) {
-        //ASEW Missiles
-        // +4 for trying to fire one at a target of < 500 tons
-        if (wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE && te != null && te.getWeight() < 500.0) {
+    private static ToHitData compileWeaponToHitMods(Entity ae, Mounted weapon, WeaponType wtype, Targetable target,
+            int ttype, ToHitData toHit) {
+        if (ae == null) {
+            //*Should* be impossible at this point in the process
+            return toHit;
+        }
+        Entity te = null;
+        if (target != null && ttype == Targetable.TYPE_ENTITY) {
+            //Some of these weapons only target valid entities
+            te = (Entity) target;
+        }
+        
+        // +4 for trying to fire ASEW or antiship missile at a target of < 500 tons
+        if ((wtype.hasFlag(WeaponType.F_ANTI_SHIP) || wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE)
+                && (te != null) && (te.getWeight() < 500)) {
             toHit.addModifier(4, Messages.getString("WeaponAttackAction.TeTooSmallForASM"));
+        }
+        
+        // AAA mode makes targeting large craft more difficult
+        if (wtype.hasModes() && weapon.curMode().equals("AAA") && te.isLargeCraft()) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AAALaserAtShip"));
+        }
+
+        // Bracketing modes
+        if (wtype.hasModes() && weapon.curMode().equals("Bracket 80%")) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Bracket80"));
+        }
+        if (wtype.hasModes() && weapon.curMode().equals("Bracket 60%")) {
+            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Bracket60"));
+        }
+        if (wtype.hasModes() && weapon.curMode().equals("Bracket 40%")) {
+            toHit.addModifier(-3, Messages.getString("WeaponAttackAction.Bracket40"));
+        }
+        
+        // Capital ship mass driver penalty. YOU try hitting a maneuvering target with a spinal-mount weapon!
+        if (wtype.hasFlag(WeaponType.F_MASS_DRIVER)) {
+            toHit.addModifier(2, Messages.getString("WeaponAttackAction.MassDriver"));
+        }
+        
+        // Capital missiles in waypoint launch mode
+        if (weapon.isInWaypointLaunchMode()) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.WaypointLaunch"));
+        }
+        
+        // Capital weapon (except missiles) penalties at small targets
+        if (wtype.isCapital() && (wtype.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE)
+                && (wtype.getAtClass() != WeaponType.CLASS_AR10) && !te.isLargeCraft()) {
+            // check to see if we are using AAA mode
+            int aaaMod = 0;
+            if (wtype.hasModes() && weapon.curMode().equals("AAA")) {
+                aaaMod = 2;
+            }
+            if (wtype.isSubCapital()) {
+                toHit.addModifier(3 - aaaMod, Messages.getString("WeaponAttackAction.SubCapSmallTe"));
+            } else {
+                toHit.addModifier(5 - aaaMod, Messages.getString("WeaponAttackAction.CapSmallTe"));
+            }
+        }
+        
+        // quirks
+        
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_ACCURATE)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AccWeapon"));
+        }
+
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE)) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.InAccWeapon"));
+        }
+
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON) && (ae.moved == EntityMovementType.MOVE_RUN)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.StableWeapon"));
+        }
+        
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED)) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisrepairedWeapon"));
+        }
+        
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED)) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisreplacedWeapon"));
         }
         return toHit;
     }
@@ -4212,11 +4084,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Using precision AC rounds that get a -1 TH bonus?  You'll find that here.
      * Bonuses related to the attacker's condition?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
-     * @param weapon The Mounted weapon being used for this attack
-     * @param atype The AmmoType being used for this attack
+     * @param game The current game
+     * @param ae The Entity making this attack
+     * 
+     * @param wtype The WeaponType of the weapon being used
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    private ToHitData compileAmmoToHitMods(Mounted weapon, AmmoType atype, ToHitData toHit) {
+    private ToHitData compileAmmoToHitMods(IGame game, Entity ae, Mounted weapon, AmmoType atype, ToHitData toHit) {
+        
+
+        if (ae.isAirborne() && !ae.isAero()) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.Dropping"));
+            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.Jumping"));
+        }
         return toHit;
     }
     
@@ -4231,6 +4111,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * 
      * @param wtype The WeaponType of the weapon being used
+     * @param weapon The Mounted weapon being used
      * @param atype The AmmoType being used for this attack
      * @param munition  Long indicating the munition type flag being used, if applicable
      * 
@@ -4239,19 +4120,32 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
      * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
      */
+    placeholder
     private static ToHitData compileAttackerToHitMods(IGame game, Entity ae, Targetable target, ToHitData toHit,
-            WeaponType wtype, AmmoType atype, long munition,
+            WeaponType wtype, Mounted weapon, AmmoType atype, long munition,
             boolean isArtilleryDirect, boolean isArtilleryIndirect, boolean isIndirect, boolean usesAmmo) {
         // Modifiers related to an action the attacker is taking
         
-        // if we're spotting for indirect fire, add +1 (no penalty with second pilot in command console)
+        // Quadvee converting to a new mode
+        if (ae instanceof QuadVee && ae.isConvertingNow()) {
+            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.QuadVeeConverting"));
+        }
+        
+        // If we're spotting for indirect fire, add +1 (no penalty with second pilot in command console)
         if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeSpotting"));
         }
         
         // Special effects (like tasers) affecting the attacker
         
-        // ghost target modifier
+        // If a unit is suffering from electromagnetic interference, they get a
+        // blanket +2.
+        // Sucks to be them.
+        if (ae.isSufferingEMI()) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.EMI"));
+        }
+        
+        // Ghost target modifier
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET) && !isIndirect
                 && !isArtilleryIndirect && !isArtilleryDirect) {
             int ghostTargetMod = Compute.getGhostTargetNumber(ae, ae.getPosition(), target.getPosition());
@@ -4284,21 +4178,178 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         
-        //Environmental effects affecting the attacker - weather, EMI, etc. Terrain is under target.
+        // Special Equipment that that attacker possesses
+        
+        // Attacker has an AES system
+        if (ae.hasFunctionalArmAES(weapon.getLocation()) && !weapon.isSplit()) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AES"));
+        }
+        
+        // industrial cockpit: +1 to hit
+        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_INDUSTRIAL)) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.IndustrialNoAfc"));
+        }
+        // primitive industrial cockpit: +2 to hit
+        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
+            toHit.addModifier(2, Messages.getString("WeaponAttackAction.PrimIndustrialNoAfc"));
+        }
 
-        // If a unit is suffering from electromagnetic interference, they get a
-        // blanket +2.
-        // Sucks to be them.
-        if (ae.isSufferingEMI()) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.EMI"));
+        // primitive industrial cockpit with advanced firing control: +1 to hit
+        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_PRIMITIVE)
+                && ((Mech) ae).isIndustrial()) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.PrimIndustrialAfc"));
+        }
+        
+        // Support vehicle basic/advanced fire control systems
+        if ((ae instanceof SupportTank) || (ae instanceof SupportVTOL)) {
+            if (!ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
+                    && !ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.SupVeeNoFc"));
+            } else if (ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
+                    && !(ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))) {
+                toHit.addModifier(1, Messages.getString("WeaponAttackAction.SupVeeBfc"));
+            }
+        }
+        
+        // Is the attacker hindered by a shield?
+        if (ae.hasShield()) {
+            // active shield has already been checked as it makes shots
+            // impossible
+            // time to check passive defense and no defense
+
+            if (ae.hasPassiveShield(weapon.getLocation(), weapon.isRearMounted())) {
+                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.PassiveShield"));
+            } else if (ae.hasNoDefenseShield(weapon.getLocation())) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Shield"));
+            }
+        }
+        
+        //Critical damage effects
+        
+        // Vehicle criticals
+        if (ae instanceof Tank) {
+            Tank tank = (Tank) ae;
+            int sensors = tank.getSensorHits();
+            if (sensors > 0) {
+                toHit.addModifier(sensors, Messages.getString("WeaponAttackAction.SensorDamage"));
+            }
+            if (tank.isStabiliserHit(weapon.getLocation())) {
+                toHit.addModifier(Compute.getAttackerMovementModifier(game, tank.getId()).getValue(),
+                        "stabiliser damage");
+            }
+        }
+        
+        // Quirks
+        if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS)) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorGhosts"));
         }
         
         //Now for modifiers affecting the attacker's crew
+        
+        // Bonuses for dual cockpits, etc
+        //Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
+        if (ae instanceof Mech && ((Mech)ae).getCockpitType() == Mech.COCKPIT_DUAL) {
+            if (!ae.getCrew().isActive(ae.getCrew().getCrewType().getGunnerPos())) {
+                toHit.addModifier(1, Messages.getString("WeaponAttackAction.GunnerHit"));                
+            } else if (ae.getCrew().hasDedicatedGunner()) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.DualCockpit"));
+            }
+        }
+
+        //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
+        if ((ae instanceof TripodMech || ae instanceof QuadVee) && !ae.getCrew().hasDedicatedGunner()) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GunnerHit"));
+        }
         
         // fatigue
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
                 && ae.getCrew().isGunneryFatigued()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.Fatigue"));
+        }
+        
+        // Manei Domini Upgrades
+        
+        // VDNI
+        if (ae.hasAbility(OptionsConstants.MD_VDNI)
+                || ae.hasAbility(OptionsConstants.MD_BVDNI)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
+        }
+
+        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+            // check for pl-masc
+            // the rules are a bit vague, but assume that if the infantry didn't
+            // move or jumped, then they shouldn't get the penalty
+            if (ae.hasAbility(OptionsConstants.MD_PL_MASC)
+                    && ((ae.moved == EntityMovementType.MOVE_WALK) || (ae.moved == EntityMovementType.MOVE_RUN))) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.PlMasc"));
+            }
+
+            // check for cyber eye laser sighting on ranged attacks
+            if (ae.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER)
+                    && !(wtype instanceof InfantryAttack)) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MdEye"));
+            }
+        }
+        
+        // SPAs
+        
+        // Unofficial weapon class specialist - Does not have an unspecialized penalty 
+        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER)
+                && wtype.hasFlag(WeaponType.F_ENERGY)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunESkill"));
+        }
+
+        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
+                && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunBSkill"));
+        }
+
+        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE)
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunMSkill"));
+        }
+
+        // Is the pilot a weapon specialist?
+        if (ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
+            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));
+        } else if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST)) {
+            // aToW style gunnery specialist: -1 to specialized weapon and +1 to
+            // all other weapons
+            // Note that weapon specialist supersedes gunnery specialization, so
+            // if you have
+            // a specialization in Medium Lasers and a Laser specialization, you
+            // only get the -2 specialization mod
+            if (wtype.hasFlag(WeaponType.F_ENERGY)) {
+                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_ENERGY)) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.EnergySpec"));
+                } else {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
+                }
+            } else if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_BALLISTIC)) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BallisticSpec"));
+                } else {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
+                }
+            } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_MISSILE)) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MissileSpec"));
+                } else {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
+                }
+            }
+        }
+        
+        // Vehicle crew hits
+        if (ae instanceof Tank) {
+            Tank tank = (Tank) ae;
+            if (tank.isCommanderHit()) {
+                if (ae instanceof VTOL) {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CopilotHit"));
+                } else {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CmdrHit"));
+                }
+            }
         }
         return toHit;
     }
@@ -4334,11 +4385,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             int pilothits = ae.getCrew().getHits();
             if ((pilothits > 0) && !ae.isCapitalFighter()) {
                 toHit.addModifier(pilothits, Messages.getString("WeaponAttackAction.PilotHits"));
-            }
-
-            // out of control
-            if (aero.isOutControlTotal()) {
-                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeroOoc"));
             }
 
             // check for heavy gauss rifle on fighter of small craft
@@ -4406,6 +4452,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 } else if (!target.isAirborne() && !isArtilleryIndirect) {
                     toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GroundedDs"));
                 }
+            }
+            // out of control
+            if (aero.isOutControlTotal()) {
+                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeroOoc"));
             }
         }
         // Situational modifiers for aero units, not including LAMs.
@@ -4531,6 +4581,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
     private ToHitData compileTargetToHitMods(Targetable target, ToHitData toHit) {
+        // if we have BAP and there are woods in the
+        // way, and we are within BAP range, we reduce the BTH by 1
+        // Per TacOps errata, this bonus also applies to all units on the same C3 network
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) && !isIndirect && (te != null)
+                && ae.hasBAP() && (ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te))
+                && !ComputeECM.isAffectedByECM(ae, ae.getPosition(), te.getPosition())
+                && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
+                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE)
+                        || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los.getUltraWoods() > 0))) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
+        }
         return toHit;
     }
     
@@ -4546,7 +4607,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param game The current game
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    private static ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity ae, Targetable target, int ttype, LosEffects los, IGame game, ToHitData toHit) {
+    private static ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity ae,
+            Targetable target, int ttype, LosEffects los, IGame game, ToHitData toHit) {
         setSpecialResolution(false);
         Entity te = null;
         if (target != null && ttype == Targetable.TYPE_ENTITY) {
@@ -4596,14 +4658,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     /**
      * Convenience method that compiles the ToHit modifiers applicable to swarm attacks
      * 
-     * @param wtype The WeaponType of the weapon being used
+     * @param game The current game
      * @param attacker The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
-     * @param game The current game
+     * 
+     * @param wtype The WeaponType of the weapon being used
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
-    private static ToHitData handleSwarmAttacks(WeaponType wtype, Entity attacker, Targetable target, int ttype, IGame game, ToHitData toHit) {
+    private static ToHitData handleSwarmAttacks(IGame game, Entity attacker, Targetable target,
+            int ttype, WeaponType wtype, ToHitData toHit) {
         setSpecialResolution(false);
         if (target == null || ttype != Targetable.TYPE_ENTITY) {
             //Can only swarm a valid entity target

@@ -158,18 +158,18 @@ class EntitySprite extends Sprite {
                 bv.getFontMetrics(labelFont).getAscent()+2);
         
         Coords position = entity.getPosition();
-        if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
+        if (!bv.game.hasEntitiesAt(position.translated("SE"), true)) {
             labelRect.setLocation((int)(bv.hex_size.width*0.55), (int)(0.75*bv.hex_size.height));
             labelPos = Positioning.RIGHT;
-        } else if (bv.game.getEntitiesVector(position.translated("NW"), true).isEmpty()) {
+        } else if (!bv.game.hasEntitiesAt(position.translated("NW"), true)) {
             labelRect.setLocation((int)(bv.hex_size.width*0.45)-labelRect.width, 
                     (int)(0.25*bv.hex_size.height)-labelRect.height);
             labelPos = Positioning.LEFT;
-        } else if (bv.game.getEntitiesVector(position.translated("NE"), true).isEmpty()) {
+        } else if (!bv.game.hasEntitiesAt(position.translated("NE"), true)) {
             labelRect.setLocation((int)(bv.hex_size.width*0.55), 
                     (int)(0.25*bv.hex_size.height)-labelRect.height);
             labelPos = Positioning.RIGHT;
-        } else if (bv.game.getEntitiesVector(position.translated("SW"), true).isEmpty()) {
+        } else if (!bv.game.hasEntitiesAt(position.translated("SW"), true)) {
             labelRect.setLocation((int)(bv.hex_size.width*0.45)-labelRect.width, 
                     (int)(0.75*bv.hex_size.height));
             labelPos = Positioning.LEFT;

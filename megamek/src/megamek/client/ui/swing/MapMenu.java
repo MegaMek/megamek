@@ -322,16 +322,11 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem(
                 Messages.getString("MovementDisplay.butCharge"));
 
-        if (!client.getGame().getEntities(coords).hasNext()) {
+        if (!client.getGame().hasEntitiesAt(coords)) {
             return null;
         }
         item.setActionCommand(MovementDisplay.MoveCommand.MOVE_CHARGE.getCmd());
-        item.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                plotCourse(e);
-            }
-        });
+        item.addActionListener(e -> plotCourse(e));
 
         return item;
     }
@@ -340,16 +335,11 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem(
                 Messages.getString("MovementDisplay.butDfa"));
 
-        if (!client.getGame().getEntities(coords).hasNext()) {
+        if (!client.getGame().hasEntitiesAt(coords)) {
             return null;
         }
         item.setActionCommand(MovementDisplay.MoveCommand.MOVE_DFA.getCmd());
-        item.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                plotCourse(e);
-            }
-        });
+        item.addActionListener(e -> plotCourse(e));
 
         return item;
     }
@@ -487,33 +477,29 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenu createSelectMenu() {
-        JMenu menu = new JMenu("Select");
+        final JMenu menu = new JMenu("Select");
         // add select options
         if (canSelectEntities()) {
-            for (Entity entity : client.getGame().getEntitiesVector(coords,
-                    canTargetEntities())) {
+            client.getGame().forEachEntityAt(coords, canTargetEntities(), entity -> {
                 if (client.getMyTurn().isValidEntity(entity, client.getGame())) {
                     menu.add(selectJMenuItem(entity));
                 }
-            }
+            });
         }
         return menu;
     }
 
     private JMenu createViewMenu() {
-        JMenu menu = new JMenu("View");
-        IGame game = client.getGame();
-                
-        IPlayer localPlayer = client.getLocalPlayer();
-        
-        for (Entity entity : game.getEntitiesVector(coords, true)) {
+        final JMenu menu = new JMenu("View");
+        final IPlayer localPlayer = client.getLocalPlayer();
+        client.getGame().forEachEntityAt(coords, true, entity -> {
             // Only add the unit if it's actually visible
             //  With double blind on, the game may unseen units
             if (!entity.isSensorReturn(localPlayer)
                     && entity.hasSeenEntity(localPlayer)) {
                 menu.add(viewJMenuItem(entity));
             }
-        }
+        });
         return menu;
     }
 

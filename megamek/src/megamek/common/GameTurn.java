@@ -22,7 +22,7 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Iterator;
+import java.util.List;
 
 import megamek.common.options.OptionsConstants;
 
@@ -468,7 +468,7 @@ public class GameTurn implements Serializable {
          *                <code>null</code> or empty value is passed for
          *                entities.
          */
-        public UnloadStrandedTurn(Iterator<Entity> entities) {
+        public UnloadStrandedTurn(List<Entity> entities) {
             super(IPlayer.PLAYER_NONE);
 
             // Validate input.
@@ -476,40 +476,15 @@ public class GameTurn implements Serializable {
                 throw new IllegalArgumentException(
                         "the passed enumeration of entities is null");
             }
-            if (!entities.hasNext()) {
+            if (entities.isEmpty()) {
                 throw new IllegalArgumentException(
                         "the passed enumeration of entities is empty");
             }
 
-            // Get the first entity.
-            Entity entity = entities.next();
-
-            // Do we need to get more entities?
-            if (entities.hasNext()) {
-
-                // It's a bit of a hack, but get the Game from the first
-                // entity, and create a temporary array that can hold the
-                // IDs of every entity in the game.
-                int[] ids = new int[entity.game.getNoOfEntities()];
-                int length = 0;
-
-                // Store the first entity's ID.
-                ids[length++] = entity.getId();
-
-                // Walk the list of remaining stranded entities.
-                while (entities.hasNext()) {
-                    ids[length++] = entities.next().getId();
-                }
-
-                // Create an array that just holds the stranded entity ids.
-                entityIds = new int[length];
-                System.arraycopy(ids, 0, entityIds, 0, length);
-
-            } // End have-more-stranded-entities
-            else {
-                // There was only one stranded entity.
-                entityIds = new int[1];
-                entityIds[0] = entity.getId();
+            int index = 0;
+            int[] entityIds = new int[entities.size()];
+            for (Entity entity : entities) {
+                entityIds[index++] = entity.getId();
             }
         }
 

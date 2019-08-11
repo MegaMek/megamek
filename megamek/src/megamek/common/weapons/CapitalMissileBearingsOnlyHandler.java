@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -459,8 +458,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         Vector<Aero> targets = new Vector<Aero>();
         
         // get all entities on the opposing side
-        for(Iterator<Entity> enemies = game.getAllEnemyEntities(ae); enemies.hasNext();) {
-            Entity e = enemies.next();
+        for(Entity e : game.getAllEnemyEntities(ae)) {
             //Narrow the list to small craft and larger
             if (((e.getEntityType() & (Entity.ETYPE_SMALL_CRAFT)) != 0)) {
                 Aero a = (Aero) e;

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -318,8 +317,8 @@ public abstract class BotClient extends Client {
     }
     
     public List<Entity> getEntitiesOwned() {
-        ArrayList<Entity> result = new ArrayList<>();
-        for (Entity entity : game.getEntitiesVector()) {
+        List<Entity> result = new ArrayList<>();
+        for (Entity entity : game.getEntities()) {
             if (entity.getOwner().equals(getLocalPlayer())
                 && (entity.getPosition() != null) && !entity.isOffBoard()) {
                 result.add(entity);
@@ -329,7 +328,7 @@ public abstract class BotClient extends Client {
     }
     
     protected Entity getArbitraryEntity() {
-        for (Entity entity : game.getEntitiesVector()) {
+        for (Entity entity : game.getEntities()) {
             if (entity.getOwner().equals(getLocalPlayer())) {
                 return entity;
             }
@@ -345,7 +344,7 @@ public abstract class BotClient extends Client {
     public List<Entity> getEnemyEntities() {
         if(currentTurnEnemyEntities == null) {
             currentTurnEnemyEntities = new ArrayList<>();
-            for (Entity entity : game.getEntitiesVector()) {
+            for (Entity entity : game.getEntities()) {
                 if (entity.getOwner().isEnemyOf(getLocalPlayer())
                     && (entity.getPosition() != null) && !entity.isOffBoard()
                     && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
@@ -365,7 +364,7 @@ public abstract class BotClient extends Client {
     public List<Entity> getFriendEntities() {
         if(currentTurnFriendlyEntities == null) {
             currentTurnFriendlyEntities = new ArrayList<>();
-            for (Entity entity : game.getEntitiesVector()) {
+            for (Entity entity : game.getEntities()) {
                 if (!entity.getOwner().isEnemyOf(getLocalPlayer()) && (entity.getPosition() != null)
                     && !entity.isOffBoard()) {
                     currentTurnFriendlyEntities.add(entity);
@@ -452,7 +451,7 @@ public abstract class BotClient extends Client {
 
     private void runEndGame() {
         // Make a list of the player's living units.
-        ArrayList<Entity> living = game.getPlayerEntities(getLocalPlayer(), false);
+        List<Entity> living = game.getPlayerEntities(getLocalPlayer(), false);
 
         // Be sure to include all units that have retreated.
         for (Enumeration<Entity> iter = game.getRetreatedEntities(); iter.hasMoreElements(); ) {
@@ -563,10 +562,7 @@ public abstract class BotClient extends Client {
         final IHex hex = game.getBoard().getHex(coords);
         final int buildingElevation = hex.terrainLevel(Terrains.BLDG_ELEV);
         final int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
-        Iterator<Entity> crowd = game.getEntities(coords);
-        while (crowd.hasNext()) {
-            Entity e = crowd.next();
-
+        for (Entity e : game.getEntities(coords)) {
             if (buildingElevation >= e.getElevation() || bridgeElevation >= e.getElevation()) {
                 mass += e.getWeight();
             }
@@ -617,7 +613,7 @@ public abstract class BotClient extends Client {
         Vector<Entity> valid_attackers;
         WeaponAttackAction test_attack;
         List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
-                .getEntitiesVector());
+                .getEntities());
 
         // Create array of hexes in the deployment zone that can be deployed to
         // Check for prohibited terrain, stacking limits
@@ -1036,7 +1032,7 @@ public abstract class BotClient extends Client {
         int total_bv, known_bv, known_range, known_count, trigger_range;
         int new_stealth;
 
-        for (Entity check_ent : game.getEntitiesVector()) {
+        for (Entity check_ent : game.getEntities()) {
             if ((check_ent.getOwnerId() == localPlayerNumber)
                 && (check_ent instanceof Mech)) {
                 if (check_ent.hasStealth()
@@ -1065,7 +1061,7 @@ public abstract class BotClient extends Client {
                                 known_range = 0;
                                 known_count = 0;
 
-                                for (Entity test_ent : game.getEntitiesVector()) {
+                                for (Entity test_ent : game.getEntities()) {
                                     if (check_ent.isEnemyOf(test_ent)) {
                                         total_bv += test_ent
                                                 .calculateBattleValue();

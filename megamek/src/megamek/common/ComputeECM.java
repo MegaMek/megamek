@@ -16,6 +16,7 @@
 package megamek.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -134,7 +135,7 @@ public class ComputeECM {
         Vector<Coords> vFriendlyBAPCoords = new Vector<Coords>(16);
         Vector<Integer> vFriendlyBAPRanges = new Vector<Integer>(16);
         Vector<Integer> vFriendlyBAPFacings = new Vector<Integer>(16);
-        for (Entity ent : ae.getGame().getEntitiesVector()) {
+        for (Entity ent : ae.getGame().getEntities()) {
             Coords entPos = ent.getPosition();
             if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
                 Entity carrier = ae.getGame().getEntity(ent.getTransportId());
@@ -257,7 +258,7 @@ public class ComputeECM {
         Vector<Coords> vFriendlyBAPCoords = new Vector<Coords>(16);
         Vector<Integer> vFriendlyBAPRanges = new Vector<Integer>(16);
         Vector<Integer> vFriendlyBAPFacings = new Vector<Integer>(16);
-        for (Entity ent : ae.getGame().getEntitiesVector()) {
+        for (Entity ent : ae.getGame().getEntities()) {
             Coords entPos = ent.getPosition();
             if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
                 Entity carrier = ae.getGame().getEntity(ent.getTransportId());
@@ -364,12 +365,12 @@ public class ComputeECM {
      * @return          An ECMInfo entry for each active ECM and ECCM fielded.
      */
     public static List<ECMInfo> computeAllEntitiesECMInfo(
-            List<Entity> entities) {
+            Collection<Entity> entities) {
         Comparator<ECMInfo> ecmComparator;
         ecmComparator = new ECMInfo.ECCMComparator();
         
-        ArrayList<ECMInfo> allEcmInfo = new ArrayList<ECMInfo>(entities.size());
-        ArrayList<ECMInfo> allEccmInfo = new ArrayList<ECMInfo>(entities.size());
+        List<ECMInfo> allEcmInfo = new ArrayList<>(entities.size());
+        List<ECMInfo> allEccmInfo = new ArrayList<>(entities.size());
         // ECCM that counter an ECM need to get removed from allEcmInfo later
         LinkedList<ECMInfo> eccmToRemove = new LinkedList<ECMInfo>();
         
@@ -494,7 +495,7 @@ public class ComputeECM {
 
         if (allEcmInfo == null) {
             allEcmInfo = computeAllEntitiesECMInfo(ae.getGame()
-                    .getEntitiesVector());
+                    .getEntities());
         }
         
         // Get intervening Coords

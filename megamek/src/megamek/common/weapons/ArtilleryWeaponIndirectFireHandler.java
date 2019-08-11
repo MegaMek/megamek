@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -27,7 +27,6 @@ import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.EntitySelector;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
@@ -157,33 +156,18 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
             // fetch possible spotters now
-            Iterator<Entity> spottersAfter = game
-                    .getSelectedEntities(new EntitySelector() {
-                        public int player = playerId;
-
-                        public Targetable targ = target;
-
-                        public boolean accept(Entity entity) {
-                            Integer id = Integer.valueOf(entity.getId());
-                            if ((player == entity.getOwnerId())
-                                    && spottersBefore.contains(id)
-                                    && !(LosEffects.calculateLos(game,
-                                            entity.getId(), targ, true))
-                                            .isBlocked()
-                                    && entity.isActive()
-                                    // airborne aeros can't spot for arty
-                                    && !((entity.isAero()) && entity
-                                            .isAirborne())
-                                    && !entity.isINarcedWith(INarcPod.HAYWIRE)) {
-                                return true;
-                            }
-                            return false;
-                        }
-                    });
+            List<Entity> spottersAfter = game.getSelectedEntities(entity -> {
+                return (playerId == entity.getOwnerId())
+                        && spottersBefore.contains(entity.getId())
+                        && !(LosEffects.calculateLos(game, entity.getId(), target, true)).isBlocked()
+                        && entity.isActive()
+                        // airborne aeros can't spot for arty
+                        && !(entity.isAero() && entity.isAirborne())
+                        && !entity.isINarcedWith(INarcPod.HAYWIRE);
+            });
 
             // Out of any valid spotters, pick the best.
-            while (spottersAfter.hasNext()) {
-                Entity ent = spottersAfter.next();
+            for (Entity ent : spottersAfter) {
                 if (bestSpotter == null) {
                     bestSpotter = ent;
                 } else if (ent.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)

@@ -20,7 +20,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -33,7 +33,6 @@ import javax.swing.SwingConstants;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
-import megamek.common.EntitySelector;
 import megamek.common.Infantry;
 import megamek.common.LAMPilot;
 import megamek.common.Protomech;
@@ -267,25 +266,17 @@ public class CustomPilotView extends JPanel {
 
             // Get the Protomechs of this entity's player
             // that *aren't* in the entity's unit.
-            Iterator<Entity> otherUnitEntities = parent.clientgui.getClient().getGame()
-                    .getSelectedEntities(new EntitySelector() {
-                        private final int ownerId = entity.getOwnerId();
-
-                        private final short unitNumber = entity.getUnitNumber();
-
-                        public boolean accept(Entity unitEntity) {
-                            if ((unitEntity instanceof Protomech)
+            final int ownerId = entity.getOwnerId();
+            final short unitNumber = entity.getUnitNumber();
+            List<Entity> otherUnitEntities = parent.clientgui.getClient()
+                    .getSelectedEntities(unitEntity -> {
+                        return (unitEntity instanceof Protomech)
                                     && (ownerId == unitEntity.getOwnerId())
-                                    && (unitNumber != unitEntity
-                                            .getUnitNumber())) {
-                                return true;
-                            }
-                            return false;
-                        }
+                                    && (unitNumber != unitEntity.getUnitNumber());
                     });
 
             // If we got any other entites, show the unit number controls.
-            if (otherUnitEntities.hasNext()) {
+            if (!otherUnitEntities.isEmpty()) {
                 label = new JLabel(Messages.getString("CustomMechDialog.labUnitNum"), SwingConstants.CENTER); //$NON-NLS-1$
                 add(choUnitNum, GBC.eop());
                 refreshUnitNum(otherUnitEntities);
@@ -326,7 +317,7 @@ public class CustomPilotView extends JPanel {
      *            the <code>Enumeration</code> containing entities in other
      *            units.
      */
-    private void refreshUnitNum(Iterator<Entity> others) {
+    private void refreshUnitNum(List<Entity> others) {
         // Clear the list of old values
         choUnitNum.removeAllItems();
         entityUnitNum.clear();
@@ -337,9 +328,8 @@ public class CustomPilotView extends JPanel {
         entityUnitNum.add(entity);
 
         // Walk through the other entities.
-        while (others.hasNext()) {
+        for (Entity other : others) {
             // Track the position of the next other entity.
-            final Entity other = others.next();
             entityUnitNum.add(other);
 
             // Show the other entity's name and callsign.

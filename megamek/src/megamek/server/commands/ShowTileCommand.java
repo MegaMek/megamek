@@ -3,7 +3,8 @@
  */
 package megamek.server.commands;
 
-import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -35,8 +36,7 @@ public class ShowTileCommand extends ServerCommand {
         try {
             int i = 3;
             String str = "";
-            Coords coord = new Coords(Integer.parseInt(args[1]) - 1, Integer
-                                                                             .parseInt(args[2]) - 1);
+            Coords coord = new Coords(Integer.parseInt(args[1]) - 1, Integer.parseInt(args[2]) - 1);
             IHex hex;
 
             do {
@@ -49,15 +49,10 @@ public class ShowTileCommand extends ServerCommand {
                     // units in this tile.
                     if (!server.getGame().getOptions().booleanOption(
                             OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
-                        Iterator<Entity> entList = server.getGame()
-                                                         .getEntities(coord);
-                        if (entList.hasNext()) {
-                            str = str + "; Contains entities: "
-                                  + entList.next().getId();
-                            while (entList.hasNext()) {
-                                str = str + ", "
-                                      + entList.next().getId();
-                            }
+                        List<Entity> entList = server.getGame().getEntities(coord);
+                        if (!entList.isEmpty()) {
+                            str += "; Contains entities: "
+                                  + entList.stream().map(e -> Integer.toString(e.getId())).collect(Collectors.joining(", "));
                         }
                     }
 

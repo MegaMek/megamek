@@ -17,7 +17,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -2364,7 +2363,7 @@ public class FireControl {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
         // Go through every unit in the game.
-        for (final Entity entity : game.getEntitiesVector()) {
+        for (final Entity entity : game.getEntities()) {
 
             // If they are my enemy and on the board, they're a target.
             if (entity.getOwner().isEnemyOf(player)

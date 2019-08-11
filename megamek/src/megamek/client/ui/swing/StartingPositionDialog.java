@@ -29,7 +29,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
-import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -40,8 +39,6 @@ import javax.swing.JScrollPane;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.EntitySelector;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
 import megamek.common.OffBoardDirection;
@@ -231,67 +228,63 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                 // newly
                 // selected home edge.
                 if (gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE)) { //$NON-NLS-1$
-                    OffBoardDirection direction = OffBoardDirection.NONE;
-                    switch (i) {
-                        case 0:
-                            break;
-                        case 1:
-                        case 2:
-                        case 3:
-                            direction = OffBoardDirection.NORTH;
-                            break;
-                        case 4:
-                            direction = OffBoardDirection.EAST;
-                            break;
-                        case 5:
-                        case 6:
-                        case 7:
-                            direction = OffBoardDirection.SOUTH;
-                            break;
-                        case 8:
-                            direction = OffBoardDirection.WEST;
-                            break;
-                        case 11:
-                        case 12:
-                        case 13:
-                            direction = OffBoardDirection.NORTH;
-                            break;
-                        case 14:
-                            direction = OffBoardDirection.EAST;
-                            break;
-                        case 15:
-                        case 16:
-                        case 17:
-                            direction = OffBoardDirection.SOUTH;
-                            break;
-                        case 18:
-                            direction = OffBoardDirection.WEST;
-                            break;
-                        default:
-                    }
-                    Iterator<Entity> thisPlayerArtyUnits = client.getGame()
-                            .getSelectedEntities(new EntitySelector() {
-                                public boolean accept(Entity entity) {
-                                    if (entity.getOwnerId() == client
-                                            .getLocalPlayer().getId()) {
-                                        return true;
-                                    }
-                                    return false;
+                    final OffBoardDirection direction = translateDirection(i);
+                    client.getGame().forEachEntity(entity -> {
+                        if (entity.getOwnerId() == client.getLocalPlayer().getId()) {
+                            if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
+                                if (direction != OffBoardDirection.NONE) {
+                                    entity.setOffBoard(entity.getOffBoardDistance(), direction);
                                 }
-                            });
-                    while (thisPlayerArtyUnits.hasNext()) {
-                        Entity entity = thisPlayerArtyUnits.next();
-                        if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
-                            if (direction != OffBoardDirection.NONE) {
-                                entity.setOffBoard(entity.getOffBoardDistance(),
-                                        direction);
                             }
                         }
-                    }
+                    });
                 }
             }
         }
         setVisible(false);
+    }
+
+    private OffBoardDirection translateDirection(int i) {
+        OffBoardDirection direction = OffBoardDirection.NONE;
+        switch (i) {
+            case 0:
+                break;
+            case 1:
+            case 2:
+            case 3:
+                direction = OffBoardDirection.NORTH;
+                break;
+            case 4:
+                direction = OffBoardDirection.EAST;
+                break;
+            case 5:
+            case 6:
+            case 7:
+                direction = OffBoardDirection.SOUTH;
+                break;
+            case 8:
+                direction = OffBoardDirection.WEST;
+                break;
+            case 11:
+            case 12:
+            case 13:
+                direction = OffBoardDirection.NORTH;
+                break;
+            case 14:
+                direction = OffBoardDirection.EAST;
+                break;
+            case 15:
+            case 16:
+            case 17:
+                direction = OffBoardDirection.SOUTH;
+                break;
+            case 18:
+                direction = OffBoardDirection.WEST;
+                break;
+            default:
+                break;
+        }
+        return direction;
     }
 
     public void setClient(Client client) {

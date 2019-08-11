@@ -1576,23 +1576,18 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      */
     private Targetable chooseTarget(Coords pos) {
         final IGame game = clientgui.getClient().getGame();
-        // Assume that we have *no* choice.
-        Targetable choice = null;
-
-        // Get the available choices.
-        Iterator<Entity> choices = game.getEntities(pos);
 
         // Convert the choices into a List of targets.
-        List<Targetable> targets = new ArrayList<Targetable>();
+        List<Targetable> targets = new ArrayList<>();
+        
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
-        while (choices.hasNext()) {
-            choice = choices.next();
-            if (!ce().equals(choice) && (friendlyFire || choice.isEnemyOf(ce()))) {
-                targets.add(choice);
+        game.forEachEntity(e -> {
+            if (!ce().equals(e) && (friendlyFire || e.isEnemyOf(ce()))) {
+                targets.add(e);
             }
-        }
-        targets.sort(new Comparator<Targetable>(){
+        });
 
+        targets.sort(new Comparator<Targetable>(){
             @Override
             public int compare(Targetable o1, Targetable o2) {
                 boolean enemy1 = o1.isEnemyOf(ce());
@@ -1604,7 +1599,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 } else {
                     return 1;
                 }
-            }});
+            }
+        });
 
         // Is there a building in the hex?
         Building bldg = game.getBoard().getBuildingAt(pos);
@@ -1617,10 +1613,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             // Add any iNarc pods attached to the entity.
             Iterator<INarcPod> pods = ce().getINarcPodsAttached();
             while (pods.hasNext()) {
-                choice = pods.next();
-                targets.add(choice);
+                targets.add(pods.next());
             }
         }
+
+        Targetable choice = null;
 
         // Do we have a single choice?
         if (targets.size() == 1) {

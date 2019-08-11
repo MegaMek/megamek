@@ -17,17 +17,22 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import megamek.MegaMek;
 import megamek.common.GameTurn.SpecificEntityTurn;
@@ -79,20 +84,19 @@ public class Game implements Serializable, IGame {
 
     public IBoard board = new Board();
 
-    private final List<Entity> entities = new CopyOnWriteArrayList<>();
-    private Hashtable<Integer, Entity> entityIds = new Hashtable<Integer, Entity>();
+    private ConcurrentSkipListMap<Integer, Entity> entities = new ConcurrentSkipListMap<>();
 
     /**
      * Track entities removed from the game (probably by death)
      */
-    Vector<Entity> vOutOfGame = new Vector<Entity>();
+    private List<Entity> vOutOfGame = new CopyOnWriteArrayList<>();
 
     private Vector<IPlayer> players = new Vector<IPlayer>();
     private Vector<Team> teams = new Vector<Team>(); // DES
 
-    private Hashtable<Integer, IPlayer> playerIds = new Hashtable<Integer, IPlayer>();
+    private final Map<Integer, IPlayer> playerIds = new ConcurrentHashMap<>();
 
-    private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
+    private final Map<Coords, Set<Integer>> entityPosLookup = new ConcurrentHashMap<>();
 
     /**
      * have the entities been deployed?
@@ -504,7 +508,7 @@ public class Game implements Serializable, IGame {
      */
     public int getEntitiesOwnedBy(IPlayer player) {
         int count = 0;
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (entity.getOwner().equals(player)) {
                 count++;
             }
@@ -518,7 +522,7 @@ public class Game implements Serializable, IGame {
      */
     public int getAllEntitiesOwnedBy(IPlayer player) {
         int count = 0;
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (entity.getOwner().equals(player)) {
                 count++;
             }
@@ -536,7 +540,7 @@ public class Game implements Serializable, IGame {
      */
     public int getLiveEntitiesOwnedBy(IPlayer player) {
         int count = 0;
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
                     && !entity.isCarcass()) {
                 count++;
@@ -552,7 +556,7 @@ public class Game implements Serializable, IGame {
      */
     public int getLiveDeployedEntitiesOwnedBy(IPlayer player) {
         int count = 0;
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
                 && !entity.isCarcass()
                 && !entity.isOffBoard() && !entity.isCaptured()) {
@@ -568,7 +572,7 @@ public class Game implements Serializable, IGame {
      */
     public int getLiveCommandersOwnedBy(IPlayer player) {
         int count = 0;
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
                 && !entity.isCarcass()
                 && entity.isCommander() && !entity.isOffBoard()
@@ -584,7 +588,7 @@ public class Game implements Serializable, IGame {
      * pilot special ability.
      */
     public boolean hasTacticalGenius(IPlayer player) {
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (entity.hasAbility(OptionsConstants.MISC_TACTICAL_GENIUS)
                     && entity.getOwner().equals(player) && !entity.isDestroyed() && entity.isDeployed()
                     && !entity.isCarcass() && !entity.getCrew().isUnconscious()) {
@@ -603,7 +607,7 @@ public class Game implements Serializable, IGame {
 
         boolean friendlyFire = getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
-        for (Entity otherEntity : entities) {
+        for (Entity otherEntity : entities.values()) {
             // Even if friendly fire is acceptable, do not shoot yourself
             // Enemy units not on the board can not be shot.
             if ((otherEntity.getPosition() != null)
@@ -827,7 +831,7 @@ public class Game implements Serializable, IGame {
     public void setupRoundDeployment() {
         deploymentTable = new Hashtable<Integer, Vector<Entity>>();
 
-        for (Entity ent : entities) {
+        for (Entity ent : entities.values()) {
             if (ent.isDeployed()) {
                 continue;
             }
@@ -897,44 +901,53 @@ public class Game implements Serializable, IGame {
     /**
      * Returns an enumeration of all the entites in the game.
      */
-    public Iterator<Entity> getEntities() {
-        return entities.iterator();
+    public Collection<Entity> getEntities() {
+        return Collections.unmodifiableCollection(entities.values());
+    }
+
+    public void forEachEntity(Consumer<Entity> consumer) {
+        entities.forEach((id, entity) -> consumer.accept(entity));
     }
 
     public Entity getPreviousEntityFromList(Entity current) {
-        if ((current != null) && entities.contains(current)) {
-            int prev = entities.indexOf(current) - 1;
-            if (prev < 0) {
-                prev = entities.size() - 1; // wrap around to end
+        if (current != null && entities.containsKey(current.getId())) {
+            Entry<Integer, Entity> previousEntity = entities.lowerEntry(current.getId());
+            if (previousEntity != null) {
+                return previousEntity.getValue();
             }
-            return entities.get(prev);
         }
         return null;
     }
 
     public Entity getNextEntityFromList(Entity current) {
-        if ((current != null) && entities.contains(current)) {
-            int next = entities.indexOf(current) + 1;
-            if (next >= entities.size()) {
-                next = 0; // wrap-around to begining
+        if (current != null && entities.containsKey(current.getId())) {
+            Entry<Integer, Entity> nextEntity = entities.higherEntry(current.getId());
+            if (nextEntity != null) {
+                return nextEntity.getValue();
             }
-            return entities.get(next);
         }
         return null;
     }
-
     /**
      * Returns the actual vector for the entities
      */
     public List<Entity> getEntitiesVector() {
-        return Collections.unmodifiableList(entities);
+        return new ArrayList<>(entities.values());
     }
 
     public void setEntitiesVector(List<Entity> entities) {
-        //checkPositionCacheConsistency();
-        this.entities.clear();
-        this.entities.addAll(entities);
-        reindexEntities();
+        ConcurrentSkipListMap<Integer, Entity> newEntities = new ConcurrentSkipListMap<>();
+        for (Entity entity : entities) {
+            final int id = entity.getId();
+            newEntities.put(id, entity);
+            if (id > lastEntityId) {
+                lastEntityId = id;
+            }
+            entity.setGame(this);
+        }
+
+        this.entities = newEntities;
+
         resetEntityPositionLookup();
         processGameEvent(new GameEntityNewEvent(this, entities));
     }
@@ -942,8 +955,8 @@ public class Game implements Serializable, IGame {
     /**
      * Returns the actual vector for the out-of-game entities
      */
-    public Vector<Entity> getOutOfGameEntitiesVector() {
-        return vOutOfGame;
+    public List<Entity> getOutOfGameEntitiesVector() {
+        return Collections.unmodifiableList(vOutOfGame);
     }
 
     /**
@@ -955,14 +968,14 @@ public class Game implements Serializable, IGame {
      */
     public void setOutOfGameEntitiesVector(List<Entity> vOutOfGame) {
         assert (vOutOfGame != null) : "New out-of-game list should not be null.";
-        Vector<Entity> newOutOfGame = new Vector<Entity>();
+        List<Entity> newOutOfGame = new CopyOnWriteArrayList<>();
 
         // Add entities for the existing players to the game.
         for (Entity entity : vOutOfGame) {
             int ownerId = entity.getOwnerId();
             if ((ownerId != Entity.NONE) && (getPlayer(ownerId) != null)) {
                 entity.setGame(this);
-                newOutOfGame.addElement(entity);
+                newOutOfGame.add(entity);
             }
         }
         this.vOutOfGame = newOutOfGame;
@@ -977,15 +990,12 @@ public class Game implements Serializable, IGame {
      * out-of-game entity has that ID, returns a <code>null</code>.
      */
     public Entity getOutOfGameEntity(int id) {
-        Entity match = null;
-        Enumeration<Entity> iter = vOutOfGame.elements();
-        while ((null == match) && iter.hasMoreElements()) {
-            Entity entity = iter.nextElement();
-            if (id == entity.getId()) {
-                match = entity;
+        for (Entity entity : vOutOfGame) {
+            if (entity.getId() == id) {
+                return entity;
             }
         }
-        return match;
+        return null;
     }
 
     /**
@@ -1011,7 +1021,7 @@ public class Game implements Serializable, IGame {
 
             // Walk throught the entities in the game, and add all
             // members of the C3 network to the output Vector.
-            for (Entity unit : entities) {
+            for (Entity unit : entities.values()) {
                 if (entity.equals(unit) || entity.onSameC3NetworkAs(unit)) {
                     members.addElement(unit);
                 }
@@ -1053,7 +1063,7 @@ public class Game implements Serializable, IGame {
 
             // Walk throught the entities in the game, and add all
             // sub-members of the C3 network to the output Vector.
-            for (Entity unit : entities) {
+            for (Entity unit : entities.values()) {
                 if (entity.equals(unit) || unit.C3MasterIs(entity)) {
                     members.addElement(unit);
                 }
@@ -1079,7 +1089,7 @@ public class Game implements Serializable, IGame {
         Vector<Entity> atPos = null;
 
         // Walk through the entities in this game.
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             // Get the vector for this entity's position.
             final Coords coords = entity.getPosition();
             if (coords != null) {
@@ -1174,7 +1184,7 @@ public class Game implements Serializable, IGame {
     public Enumeration<Entity> getCarcassEntities() {
         Vector<Entity> carcasses = new Vector<Entity>();
         
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (entity.isCarcass()) {
                 carcasses.addElement(entity);
             }
@@ -1235,7 +1245,7 @@ public class Game implements Serializable, IGame {
      */
 
     public Entity getEntity(int id) {
-        return entityIds.get(Integer.valueOf(id));
+        return entities.get(id);
     }
 
     /**
@@ -1243,12 +1253,8 @@ public class Game implements Serializable, IGame {
      */
     public Entity getEntityFromAllSources(int id) {
         Entity en = getEntity(id);
-        if(null == en) {
-            for (Entity entity : vOutOfGame) {
-                if(entity.getId() == id) {
-                    return entity;
-                }
-            }
+        if (null == en) {
+            return getOutOfGameEntity(id);
         }
         return en;
     }
@@ -1301,19 +1307,12 @@ public class Game implements Serializable, IGame {
         }
         // Add this Entity, ensuring that it's id is unique
         int id = entity.getId();
-        if (!entityIds.containsKey(id)) {
-            entityIds.put(Integer.valueOf(id), entity);
-        } else {
-            id = getNextEntityId();
-            entity.setId(id);
-            entityIds.put(id, entity);
-        }
-        entities.add(entity);
-        updateEntityPositionLookup(entity, null);
-
+        entities.put(id, entity);
         if (id > lastEntityId) {
             lastEntityId = id;
         }
+
+        updateEntityPositionLookup(entity, null);
 
         // And... lets get this straight now.
         if ((entity instanceof Mech)
@@ -1330,7 +1329,6 @@ public class Game implements Serializable, IGame {
             ((Mech) entity).setCondEjectHeadshot(true);
         }
 
-        assert (entities.size() == entityIds.size()) : "Add Entity failed";
         if (genEvent) {
             entity.setInitialBV(entity.calculateBattleValue(false, false));
             processGameEvent(new GameEntityNewEvent(this, entity));
@@ -1347,22 +1345,21 @@ public class Game implements Serializable, IGame {
             addEntity(entity);
         } else {
             entity.setGame(this);
-            entities.set(entities.indexOf(oldEntity), entity);
-            entityIds.put(id, entity);
-            // Get the collection of positions
-            HashSet<Coords> oldPositions = oldEntity.getOccupiedCoords();
-            // Update position lookup table
-            updateEntityPositionLookup(entity, oldPositions);
+            entities.put(id, entity);
 
             // Not sure if this really required
             if (id > lastEntityId) {
                 lastEntityId = id;
             }
 
-            processGameEvent(
-                    new GameEntityChangeEvent(this, entity, movePath, oldEntity));
+            // Get the collection of positions
+            HashSet<Coords> oldPositions = oldEntity.getOccupiedCoords();
+
+            // Update position lookup table
+            updateEntityPositionLookup(entity, oldPositions);
+
+            processGameEvent(new GameEntityChangeEvent(this, entity, movePath, oldEntity));
         }
-        assert (entities.size() == entityIds.size()) : "Set Entity Failed";
     }
 
     /**
@@ -1377,7 +1374,7 @@ public class Game implements Serializable, IGame {
      * game.
      */
     public boolean hasEntity(int entityId) {
-        return entityIds.containsKey(Integer.valueOf(entityId));
+        return entities.containsKey(entityId);
     }
 
     /**
@@ -1395,8 +1392,8 @@ public class Game implements Serializable, IGame {
             return;
         }
 
-        entities.remove(toRemove);
-        entityIds.remove(Integer.valueOf(id));
+        entities.remove(id);
+
         removeEntityPositionLookup(toRemove);
 
         toRemove.setRemovalCondition(condition);
@@ -1404,7 +1401,7 @@ public class Game implements Serializable, IGame {
         // do not keep never-joined entities
         if ((vOutOfGame != null)
             && (condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED)) {
-            vOutOfGame.addElement(toRemove);
+            vOutOfGame.add(toRemove);
         }
 
         // We also need to remove it from the list of things to be deployed...
@@ -1440,10 +1437,9 @@ public class Game implements Serializable, IGame {
         roundCount = 0;
 
         entities.clear();
-        entityIds.clear();
         entityPosLookup.clear();
 
-        vOutOfGame.removeAllElements();
+        vOutOfGame.clear();
 
         turnVector.clear();
         turnIndex = 0;
@@ -1489,40 +1485,13 @@ public class Game implements Serializable, IGame {
 //    }
 
     /**
-     * Regenerates the entities by id hashtable by going thru all entities in
-     * the Vector
-     */
-    private void reindexEntities() {
-        entityIds.clear();
-        lastEntityId = 0;
-
-        if (entities != null) {
-            // Add these entities to the game.
-            for (Entity entity : entities) {
-                final int id = entity.getId();
-                entityIds.put(Integer.valueOf(id), entity);
-
-                if (id > lastEntityId) {
-                    lastEntityId = id;
-                }
-            }
-            // We need to ensure that each entity has the propery Game reference
-            //  however, the entityIds Hashmap must be fully formed before this
-            //  is called, since setGame also calls setGame for loaded Entities
-            for (Entity entity : entities) {
-                entity.setGame(this);
-            }
-        }
-    }
-
-    /**
      * Returns the first entity at the given coordinate, if any. Only returns
      * targetable (non-dead) entities.
      *
      * @param c the coordinates to search at
      */
     public Entity getFirstEntity(Coords c) {
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (c.equals(entity.getPosition()) && entity.isTargetable()) {
                 return entity;
             }
@@ -1538,7 +1507,7 @@ public class Game implements Serializable, IGame {
      * @param currentEntity the entity that is firing
      */
     public Entity getFirstEnemyEntity(Coords c, Entity currentEntity) {
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (c.equals(entity.getPosition()) && entity.isTargetable()
                 && entity.isEnemyOf(currentEntity)) {
                 return entity;
@@ -1550,15 +1519,8 @@ public class Game implements Serializable, IGame {
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
-    public Iterator<Entity> getEntities(Coords c) {
+    public List<Entity> getEntities(Coords c) {
         return getEntities(c, false);
-    }
-
-    /**
-     * Returns an Enumeration of the active entities at the given coordinates.
-     */
-    public Iterator<Entity> getEntities(Coords c, boolean ignore) {
-        return getEntitiesVector(c,ignore).iterator();
     }
 
     /**
@@ -1580,6 +1542,16 @@ public class Game implements Serializable, IGame {
      * @return <code>List<Entity></code>
      */
     public List<Entity> getEntitiesVector(Coords c, boolean ignore) {
+        List<Entity> list = new ArrayList<>();
+        forEachEntityAt(c, ignore, entity -> list.add(entity));
+        return Collections.unmodifiableList(list);
+    }
+
+    public void forEachEntityAt(Coords c, Consumer<Entity> function) {
+        forEachEntityAt(c, false, function);
+    }
+
+    public void forEachEntityAt(Coords c, boolean ignore, Consumer<Entity> function) {
         //checkPositionCacheConsistency();
         // Make sure the look-up is initialized
         if (entityPosLookup == null
@@ -1587,9 +1559,8 @@ public class Game implements Serializable, IGame {
             resetEntityPositionLookup();
         }
         Set<Integer> posEntities = entityPosLookup.get(c);
-        List<Entity> vector = new ArrayList<Entity>();
         if (posEntities != null) {
-            for (Integer eId : posEntities) {
+            for (int eId : posEntities) {
                 Entity e = getEntity(eId);
                 
                 // if the entity with the given ID doesn't exist, we will update the lookup table
@@ -1600,10 +1571,10 @@ public class Game implements Serializable, IGame {
                 }
                 
                 if (e.isTargetable() || ignore) {
-                    vector.add(e);
+                    function.accept(e);
 
                     // Sanity check
-                    HashSet<Coords> positions = e.getOccupiedCoords();
+                    Set<Coords> positions = e.getOccupiedCoords();
                     if (!positions.contains(c)) {
                         System.out.println("Game.getEntitiesVector(1) Error! "
                                 + e.getDisplayName() + " is not in " + c + "!");
@@ -1611,7 +1582,61 @@ public class Game implements Serializable, IGame {
                 }
             }
         }
-        return Collections.unmodifiableList(vector);
+    }
+
+    /**
+     * Returns an Enumeration of the active entities at the given coordinates.
+     */
+    public List<Entity> getEntities(Coords c, boolean ignore) {
+        return getEntitiesVector(c, ignore);
+    }
+
+    public boolean hasEntitiesAt(Coords c) {
+        return hasEntitiesAt(c, false);
+    }
+
+    public boolean hasEntitiesAt(Coords c, boolean ignore) {
+        return null != findEntityAt(c, ignore, e -> true);
+    }
+
+    public Entity findEntity(Predicate<Entity> predicate) {
+        for (Entity entity : entities.values()) {
+            if (predicate.test(entity)) {
+                return entity;
+            }
+        }
+        return null;
+    }
+
+    public Entity findEntityAt(Coords c, Predicate<Entity> predicate) {
+        return findEntityAt(c, false, predicate);
+    }
+
+    public Entity findEntityAt(Coords c, boolean ignore, Predicate<Entity> predicate) {
+        //checkPositionCacheConsistency();
+        // Make sure the look-up is initialized
+        if (entityPosLookup == null
+                || (entityPosLookup.size() < 1 && entities.size() > 0)) {
+            resetEntityPositionLookup();
+        }
+        Set<Integer> posEntities = entityPosLookup.get(c);
+        if (posEntities != null) {
+            for (int eId : posEntities) {
+                Entity e = getEntity(eId);
+                
+                // if the entity with the given ID doesn't exist, we will move on
+                if(e == null) {
+                    continue;
+                }
+                
+                if (e.isTargetable() || ignore) {
+                    if (predicate.test(e)) {
+                        return e;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -1621,15 +1646,15 @@ public class Game implements Serializable, IGame {
      * @return <code>Vector<Entity></code>
      */
     public Vector<GunEmplacement> getGunEmplacements(Coords c) {
-        Vector<GunEmplacement> vector = new Vector<GunEmplacement>();
+        final Vector<GunEmplacement> vector = new Vector<GunEmplacement>();
 
         // Only build the list if the coords are on the board.
         if (board.contains(c)) {
-            for (Entity entity : getEntitiesVector(c, true)) {
+            forEachEntityAt(c, true, entity -> {
                 if (entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)) {
                     vector.addElement((GunEmplacement) entity);
                 }
-            }
+            });
         }
 
         return vector;
@@ -1698,21 +1723,11 @@ public class Game implements Serializable, IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
      *         coordinates who are enemies of the given unit.
      */
-    public Iterator<Entity> getEnemyEntities(final Coords c,
-            final Entity currentEntity) {
+    public List<Entity> getEnemyEntities(final Coords c, final Entity currentEntity) {
         // Use an EntitySelector to avoid walking the entities vector twice.
-        return getSelectedEntities(new EntitySelector() {
-            private Coords coords = c;
-            private Entity friendly = currentEntity;
-
-            public boolean accept(Entity entity) {
-                if (coords.equals(entity.getPosition())
-                        && entity.isTargetable() && entity.isEnemyOf(friendly)) {
-                    return true;
-                }
-                return false;
-            }
-        });
+        return getSelectedEntities(entity -> c.equals(entity.getPosition())
+                                                && entity.isTargetable()
+                                                && entity.isEnemyOf(currentEntity));
     }
     
     /**
@@ -1723,14 +1738,9 @@ public class Game implements Serializable, IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
      *         coordinates who are enemies of the given unit.
      */
-    public Iterator<Entity> getAllEnemyEntities(final Entity currentEntity) {
-    	return getSelectedEntities(new EntitySelector() {
-    		private Entity friendly = currentEntity;
-    		
-    		public boolean accept(Entity entity) {
-    			return entity.isTargetable() && entity.isEnemyOf(friendly);
-    		}
-    	});
+    public List<Entity> getAllEnemyEntities(final Entity currentEntity) {
+        return getSelectedEntities(entity -> entity.isTargetable() 
+                                                && entity.isEnemyOf(currentEntity));
     }
 
     /**
@@ -1744,20 +1754,17 @@ public class Game implements Serializable, IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
      *         coordinates who are friends of the given unit.
      */
-    public Iterator<Entity> getFriendlyEntities(final Coords c,
-            final Entity currentEntity) {
+    public List<Entity> getFriendlyEntities(final Coords c, final Entity currentEntity) {
         // Use an EntitySelector to avoid walking the entities vector twice.
-        return getSelectedEntities(new EntitySelector() {
-            private Coords coords = c;
-            private Entity friendly = currentEntity;
+        return getSelectedEntities(entity -> c.equals(entity.getPosition())
+                                                && entity.isTargetable()
+                                                && !entity.isEnemyOf(currentEntity));
+    }
 
-            public boolean accept(Entity entity) {
-                if (coords.equals(entity.getPosition())
-                        && entity.isTargetable() && !entity.isEnemyOf(friendly)) {
-                    return true;
-                }
-                return false;
-            }
+    public boolean hasFriendlyEntities(final Coords c, final Entity currentEntity) {
+        return null != findEntityAt(c, e -> {
+            return c.equals(e.getPosition())
+                    && e.isTargetable() && !e.isEnemyOf(currentEntity);
         });
     }
 
@@ -1829,7 +1836,7 @@ public class Game implements Serializable, IGame {
         if (turn == null) {
             return -1;
         }
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (turn.isValidEntity(entity, this)) {
                 return entity.getId();
             }
@@ -1864,26 +1871,18 @@ public class Game implements Serializable, IGame {
         if (turn == null) {
             return Entity.NONE;
         }
-        boolean hasLooped = false;
-        int i = (entities.indexOf(entityIds.get(start)) + 1) % entities.size();
-        if (i == -1) {
+
+        if (!entities.containsKey(start)) {
             //This means we were given an invalid entity ID, punt
             return Entity.NONE;
         }
-        int startingIndex = i;
-        while (!((hasLooped == true) && (i == startingIndex))) {
-            final Entity entity = entities.get(i);
-            if (turn.isValidEntity(entity, this)) {
-                return entity.getId();
-            }
-            i++;
-            if (i == entities.size()) {
-                i = 0;
-                hasLooped = true;
-            }
+
+        Integer nextEntity = entities.higherKey(start);
+        if (nextEntity == null) {
+            return Entity.NONE;
         }
-        // return getFirstEntityNum(turn);
-        return Entity.NONE;
+        
+        return nextEntity;
     }
 
     /**
@@ -1894,55 +1893,48 @@ public class Game implements Serializable, IGame {
      * @param start the entity id to start at
      */
     public int getPrevEntityNum(GameTurn turn, int start) {
-        boolean hasLooped = false;
-        int i = (entities.indexOf(entityIds.get(start)) - 1) % entities.size();
-        if (i == -2) {
-            //This means we were given an invalid entity ID, punt
-            return -1;
+        if (turn == null || !entities.containsKey(start)) {
+            return Entity.NONE;
         }
-        if (i == -1) {
-            //This means we were given an invalid entity ID, punt
-            i = entities.size() - 1;
+
+        Integer previousEntity = entities.lowerKey(start);
+        if (previousEntity == null) {
+            return Entity.NONE;
         }
-        int startingIndex = i;
-        while (!((hasLooped == true) && (i == startingIndex))) {
-            final Entity entity = entities.get(i);
-            if (turn.isValidEntity(entity, this)) {
-                return entity.getId();
-            }
-            i--;
-            if (i < 0) {
-                i = entities.size() - 1;
-                hasLooped = true;
-            }
-        }
-        // return getFirstEntityNum(turn);
-        return -1;
+
+        return previousEntity;
     }
 
     public int getFirstDeployableEntityNum(GameTurn turn) {
         // Repeat the logic from getFirstEntityNum.
         if (turn == null) {
-            return -1;
+            return Entity.NONE;
         }
-        for (Entity entity : entities) {
+
+        for (Entity entity : entities.values()) {
             if (turn.isValidEntity(entity, this)
                 && entity.shouldDeploy(getRoundCount())) {
                 return entity.getId();
             }
         }
-        return -1;
+
+        return Entity.NONE;
     }
 
     public int getNextDeployableEntityNum(GameTurn turn, int start) {
-        if (start >= 0) {
-            for (int i = start; i < entities.size(); i++) {
-                final Entity entity = entities.get(i);
-                if (turn.isValidEntity(entity, this)
-                    && entity.shouldDeploy(getRoundCount())) {
-                    return entity.getId();
-                }
+        while (entities.containsKey(start)) {
+            Entry<Integer, Entity> nextEntity = entities.higherEntry(start);
+            if (nextEntity == null) {
+                break;
             }
+
+            Entity entity = nextEntity.getValue();
+            if (turn.isValidEntity(entity, this)
+                && entity.shouldDeploy(getRoundCount())) {
+                return entity.getId();
+            }
+
+            start = entity.getId();
         }
         return getFirstDeployableEntityNum(turn);
     }
@@ -1954,9 +1946,9 @@ public class Game implements Serializable, IGame {
      * @param hide   - should fighters loaded into squadrons be excluded?
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
-    public ArrayList<Entity> getPlayerEntities(IPlayer player, boolean hide) {
-        ArrayList<Entity> output = new ArrayList<Entity>();
-        for (Entity entity : entities) {
+    public List<Entity> getPlayerEntities(IPlayer player, boolean hide) {
+        List<Entity> output = new ArrayList<Entity>();
+        for (Entity entity : entities.values()) {
             if (entity.isPartOfFighterSquadron() && hide) {
                 continue;
             }
@@ -1964,7 +1956,19 @@ public class Game implements Serializable, IGame {
                 output.add(entity);
             }
         }
-        return output;
+        return Collections.unmodifiableList(output);
+    }
+
+    public Entity findPlayerEntity(IPlayer player, boolean hide, Predicate<Entity> predicate) {
+        for (Entity entity : entities.values()) {
+            if (entity.isPartOfFighterSquadron() && hide) {
+                continue;
+            }
+            if (player.equals(entity.getOwner()) && predicate.test(entity)) {
+                return entity;
+            }
+        }
+        return null;
     }
 
     /**
@@ -1974,9 +1978,9 @@ public class Game implements Serializable, IGame {
      * @param hide   - should fighters loaded into squadrons be excluded from this list?
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
-    public ArrayList<Integer> getPlayerEntityIds(IPlayer player, boolean hide) {
-        ArrayList<Integer> output = new ArrayList<Integer>();
-        for (Entity entity : entities) {
+    public List<Integer> getPlayerEntityIds(IPlayer player, boolean hide) {
+        List<Integer> output = new ArrayList<Integer>();
+        for (Entity entity : entities.values()) {
             if (entity.isPartOfFighterSquadron() && hide) {
                 continue;
             }
@@ -1984,7 +1988,7 @@ public class Game implements Serializable, IGame {
                 output.add(entity.getId());
             }
         }
-        return output;
+        return Collections.unmodifiableList(output);
     }
 
     /**
@@ -2027,7 +2031,7 @@ public class Game implements Serializable, IGame {
         IPlayer player = getPlayer(playerId);
         int remaining = 0;
 
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (player.equals(entity.getOwner())
                 && entity.isSelectableThisTurn()
                 && (entity instanceof Infantry)) {
@@ -2045,7 +2049,7 @@ public class Game implements Serializable, IGame {
         IPlayer player = getPlayer(playerId);
         int remaining = 0;
 
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (player.equals(entity.getOwner())
                 && entity.isSelectableThisTurn()
                 && (entity instanceof Protomech)) {
@@ -2068,7 +2072,7 @@ public class Game implements Serializable, IGame {
         IPlayer player = getPlayer(playerId);
         int remaining = 0;
 
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (player.equals(entity.getOwner())
                 && entity.isSelectableThisTurn()
                 && (entity instanceof Tank)) {
@@ -2091,7 +2095,7 @@ public class Game implements Serializable, IGame {
         IPlayer player = getPlayer(playerId);
         int remaining = 0;
 
-        for (Entity entity : entities) {
+        for (Entity entity : entities.values()) {
             if (player.equals(entity.getOwner())
                 && entity.isSelectableThisTurn()
                 && (entity instanceof Mech)) {
@@ -2822,62 +2826,27 @@ public class Game implements Serializable, IGame {
      * accepts. This value will not be <code>null</code> but it may be
      * empty.
      */
-    public Iterator<Entity> getSelectedEntities(EntitySelector selector) {
-        Iterator<Entity> retVal;
+    public List<Entity> getSelectedEntities(EntitySelector selector) {
+        List<Entity> retVal;
 
         // If no selector was supplied, return all entities.
         if (null == selector) {
-            retVal = this.getEntities();
+            retVal = new ArrayList<>(entities.values());
         }
 
         // Otherwise, return an anonymous Enumeration
         // that selects entities in this game.
         else {
-            final EntitySelector entry = selector;
-            retVal = new Iterator<Entity>() {
-                private EntitySelector entitySelector = entry;
-                private Entity current = null;
-                private Iterator<Entity> iter = getEntities();
-
-                // Do any more entities meet the selection criteria?
-                public boolean hasNext() {
-                    // See if we have a pre-approved entity.
-                    if (null == current) {
-
-                        // Find the first acceptable entity
-                        while ((null == current) && iter.hasNext()) {
-                            current = iter.next();
-                            if (!entitySelector.accept(current)) {
-                                current = null;
-                            }
-                        }
-                    }
-                    return (null != current);
+            retVal = new ArrayList<>(entities.size());
+            for (Entity entity : entities.values()) {
+                if (selector.accept(entity)) {
+                    retVal.add(entity);
                 }
-
-                // Get the next entity that meets the selection criteria.
-                public Entity next() {
-                    // Pre-approve an entity.
-                    if (!hasNext()) {
-                        return null;
-                    }
-
-                    // Use the pre-approved entity, and null out our reference.
-                    Entity next = current;
-                    current = null;
-                    return next;
-                }
-
-                @Override
-                public void remove() {
-                    throw new UnsupportedOperationException();
-                }
-            };
-
+            }
         } // End use-selector
 
         // Return the selected entities.
-        return retVal;
+        return Collections.unmodifiableList(retVal);
 
     }
 
@@ -2902,13 +2871,11 @@ public class Game implements Serializable, IGame {
 
         // Otherwise, count the entities that meet the selection criteria.
         else {
-            Iterator<Entity> iter = this.getEntities();
-            while (iter.hasNext()) {
-                if (selector.accept(iter.next())) {
+            for (Entity entity : entities.values()) {
+                if (selector.accept(entity)) {
                     retVal++;
                 }
             }
-
         } // End use-selector
 
         // Return the number of selected entities.
@@ -2927,58 +2894,28 @@ public class Game implements Serializable, IGame {
      * accepts. This value will not be <code>null</code> but it may be
      * empty.
      */
-    public Enumeration<Entity> getSelectedOutOfGameEntities(
-            EntitySelector selector) {
-        Enumeration<Entity> retVal;
+    public List<Entity> getSelectedOutOfGameEntities(EntitySelector selector) {
+        List<Entity> retVal;
 
         // If no selector was supplied, return all entities.
         if (null == selector) {
-            retVal = vOutOfGame.elements();
+            retVal = new ArrayList<>(vOutOfGame);
         }
 
         // Otherwise, return an anonymous Enumeration
         // that selects entities in this game.
         else {
-            final EntitySelector entry = selector;
-            retVal = new Enumeration<Entity>() {
-                private EntitySelector entitySelector = entry;
-                private Entity current = null;
-                private Enumeration<Entity> iter = vOutOfGame.elements();
-
-                // Do any more entities meet the selection criteria?
-                public boolean hasMoreElements() {
-                    // See if we have a pre-approved entity.
-                    if (null == current) {
-
-                        // Find the first acceptable entity
-                        while ((null == current) && iter.hasMoreElements()) {
-                            current = iter.nextElement();
-                            if (!entitySelector.accept(current)) {
-                                current = null;
-                            }
-                        }
-                    }
-                    return (null != current);
+            retVal = new ArrayList<>(vOutOfGame.size());
+            for (Entity entity : vOutOfGame) {
+                if (selector.accept(entity)) {
+                    retVal.add(entity);
                 }
-
-                // Get the next entity that meets the selection criteria.
-                public Entity nextElement() {
-                    // Pre-approve an entity.
-                    if (!hasMoreElements()) {
-                        return null;
-                    }
-
-                    // Use the pre-approved entity, and null out our reference.
-                    Entity next = current;
-                    current = null;
-                    return next;
-                }
-            };
+            }
 
         } // End use-selector
 
         // Return the selected entities.
-        return retVal;
+        return Collections.unmodifiableList(retVal);
 
     }
 
@@ -3004,13 +2941,11 @@ public class Game implements Serializable, IGame {
 
         // Otherwise, count the entities that meet the selection criteria.
         else {
-            Enumeration<Entity> iter = vOutOfGame.elements();
-            while (iter.hasMoreElements()) {
-                if (selector.accept(iter.nextElement())) {
+            for (Entity entity : vOutOfGame) {
+                if (selector.accept(entity)) {
                     retVal++;
                 }
             }
-
         } // End use-selector
 
         // Return the number of selected entities.
@@ -3025,23 +2960,25 @@ public class Game implements Serializable, IGame {
      * options.
      */
     public boolean checkForValidNonInfantryAndOrProtomechs(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            boolean excluded = false;
-            if ((entity instanceof Infantry)
-                && getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER)) {
-                excluded = true;
-            } else if ((entity instanceof Protomech)
-                       && getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)) {
-                excluded = true;
-            }
+        final IPlayer player = getPlayer(playerId);
+        Entity match = findPlayerEntity(player, false, entity -> isValidNonInfantryAndOrProtomech(entity));
+        return match != null;
+    }
 
-            if (!excluded && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
+    private boolean isValidNonInfantryAndOrProtomech(Entity entity) {
+        boolean excluded = false;
+        if ((entity instanceof Infantry)
+            && getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER)) {
+            excluded = true;
+        } else if ((entity instanceof Protomech)
+                   && getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)) {
+            excluded = true;
         }
+
+        if (!excluded && getTurn().isValidEntity(entity, this)) {
+            return true;
+        }
+
         return false;
     }
 
@@ -3060,12 +2997,12 @@ public class Game implements Serializable, IGame {
         final ArrayList<Coords> in = Coords.intervening(attackerPos, target);
         Vector<Entity> nemesisTargets = new Vector<Entity>();
         for (Coords c : in) {
-            for (Entity entity : getEntitiesVector(c)) {
+            forEachEntityAt(c, entity -> {
                 if (entity.isINarcedWith(INarcPod.NEMESIS)
                     && !entity.isEnemyOf(attacker)) {
                     nemesisTargets.addElement(entity);
                 }
-            }
+            });
         }
         return nemesisTargets.elements();
     }
@@ -3414,68 +3351,48 @@ public class Game implements Serializable, IGame {
      * maintained
      */
     public boolean checkForValidSpaceStations(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            if ((entity instanceof SpaceStation)
-                && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
-        }
-        return false;
+        final IPlayer player = getPlayer(playerId);
+        final Entity match = findPlayerEntity(player, false, entity -> {
+            return (entity instanceof SpaceStation)
+                    && getTurn().isValidEntity(entity, this);
+        });
+        return match != null;
     }
 
     public boolean checkForValidJumpships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            if ((entity instanceof Jumpship) && !(entity instanceof Warship)
-                && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
-        }
-        return false;
+        final IPlayer player = getPlayer(playerId);
+        final Entity match = findPlayerEntity(player, false, entity -> {
+            return (entity instanceof Jumpship) && !(entity instanceof Warship)
+                    && getTurn().isValidEntity(entity, this);
+        });
+        return match != null;
     }
 
     public boolean checkForValidWarships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            if ((entity instanceof Warship)
-                && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
-        }
-        return false;
+        final IPlayer player = getPlayer(playerId);
+        final Entity match = findPlayerEntity(player, false, entity -> {
+            return (entity instanceof Warship)
+                    && getTurn().isValidEntity(entity, this);
+        });
+        return match != null;
     }
 
     public boolean checkForValidDropships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            if ((entity instanceof Dropship)
-                && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
-        }
-        return false;
+        final IPlayer player = getPlayer(playerId);
+        final Entity match = findPlayerEntity(player, false, entity -> {
+            return (entity instanceof Dropship)
+                    && getTurn().isValidEntity(entity, this);
+        });
+        return match != null;
     }
 
     public boolean checkForValidSmallCraft(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            if ((entity instanceof SmallCraft)
-                && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
-        }
-        return false;
+        final IPlayer player = getPlayer(playerId);
+        final Entity match = findPlayerEntity(player, false, entity -> {
+            return (entity instanceof SmallCraft)
+                    && getTurn().isValidEntity(entity, this);
+        });
+        return match != null;
     }
 
     public PlanetaryConditions getPlanetaryConditions() {
@@ -3522,7 +3439,7 @@ public class Game implements Serializable, IGame {
         // Remove the old cached location(s)
         if (oldPositions != null) {
             for (Coords pos : oldPositions) {
-                HashSet<Integer> posEntities = entityPosLookup.get(pos);
+                Set<Integer> posEntities = entityPosLookup.get(pos);
                 if (posEntities != null) {
                     posEntities.remove(e.getId());
                 }
@@ -3531,21 +3448,15 @@ public class Game implements Serializable, IGame {
 
         // Add Entity for each position
         for (Coords pos : newPositions) {
-            HashSet<Integer> posEntities = entityPosLookup.get(pos);
-            if (posEntities == null) {
-                posEntities = new HashSet<Integer>();
-                posEntities.add(e.getId());
-                entityPosLookup.put(pos, posEntities);
-            } else {
-                posEntities.add(e.getId());
-            }
+            Set<Integer> posEntities = entityPosLookup.computeIfAbsent(pos, c -> ConcurrentHashMap.newKeySet());
+            posEntities.add(e.getId());
         }
     }
 
     private void removeEntityPositionLookup(Entity e) {
         // Remove Entity from cache
         for (Coords pos : e.getOccupiedCoords()) {
-            HashSet<Integer> posEntities = entityPosLookup.get(pos);
+            Set<Integer> posEntities = entityPosLookup.get(pos);
             if (posEntities != null) {
                 posEntities.remove(e.getId());
             }
@@ -3554,18 +3465,17 @@ public class Game implements Serializable, IGame {
 
     private void resetEntityPositionLookup() {
         entityPosLookup.clear();
-        for (Entity e : entities) {
+        for (Entity e : entities.values()) {
             updateEntityPositionLookup(e, null);
         }
     }
 
     private int countEntitiesInCache(List<Integer> entitiesInCache) {
-        int count = 0;
+        int initialCount = entitiesInCache.size();
         for (Coords c : entityPosLookup.keySet()) {
-            count += entityPosLookup.get(c).size();
             entitiesInCache.addAll(entityPosLookup.get(c));
         }
-        return count;
+        return entitiesInCache.size() - initialCount;
     }
     
     /**
@@ -3577,11 +3487,11 @@ public class Game implements Serializable, IGame {
     private void checkPositionCacheConsistency() {
         // Sanity check on the position cache
         //  This could be removed once we are confident the cache is working
-        List<Integer> entitiesInCache = new ArrayList<Integer>();
-        List<Integer> entitiesInVector = new ArrayList<Integer>();
+        List<Integer> entitiesInCache = new ArrayList<>();
+        List<Integer> entitiesInVector = new ArrayList<>();
         int entitiesInCacheCount = countEntitiesInCache(entitiesInCache);
         int entityVectorSize = 0;
-        for (Entity e : entities) {
+        for (Entity e : entities.values()) {
             if (e.getPosition() != null) {
                 entityVectorSize++;
                 entitiesInVector.add(e.getId());
@@ -3598,18 +3508,18 @@ public class Game implements Serializable, IGame {
             System.out.println("Entities vector has " + entities.size()
                     + " but pos lookup cache has " + entitiesInCache.size()
                     + " entities!");
-            List<Integer> missingIds = new ArrayList<Integer>();
-            for (Integer id : entitiesInVector) {
+            List<Integer> missingIds = new ArrayList<>();
+            for (int id : entitiesInVector) {
                 if (!entitiesInCache.contains(id)) {
                     missingIds.add(id);
                 }
             }
             System.out.println("Missing ids: " + missingIds);
         }
-        for (Entity e : entities) {
+        for (Entity e : entities.values()) {
             HashSet<Coords> positions = e.getOccupiedCoords();
             for (Coords c : positions) {
-                HashSet<Integer> ents = entityPosLookup.get(c);
+                Set<Integer> ents = entityPosLookup.get(c);
                 if ((ents != null) && !ents.contains(e.getId())) {
                     System.out.println("Entity " + e.getId() + " is in "
                             + e.getPosition() + " however the position cache "
@@ -3618,7 +3528,7 @@ public class Game implements Serializable, IGame {
             }
         }
         for (Coords c : entityPosLookup.keySet()) {
-            for (Integer eId : entityPosLookup.get(c)) {
+            for (int eId : entityPosLookup.get(c)) {
                 Entity e = getEntity(eId);
                 if (e == null) {
                     continue;

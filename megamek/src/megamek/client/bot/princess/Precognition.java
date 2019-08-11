@@ -131,7 +131,7 @@ public class Precognition implements Runnable {
         setPathEnumerator(new PathEnumerator(owner, getGame()));
         // Initialize ECM Info, especially important if Princess added mid-game
         ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
-                getGame().getEntitiesVector());
+                getGame().getEntities());
     }
     
     /**
@@ -378,7 +378,7 @@ public class Precognition implements Runnable {
 
         try {
             pause();
-            for (Entity entity : getGame().getEntitiesVector()) {
+            for (Entity entity : getGame().getEntities()) {
                 // If Precog is done, just exit
                 if (getDone().get()) {
                     return;
@@ -429,7 +429,7 @@ public class Precognition implements Runnable {
                 if (!getEventsToProcess().isEmpty()) {
                     processGameEvents();
                     ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
-                            getGame().getEntitiesVector());
+                            getGame().getEntities());
                 } else if (!getDirtyUnits().isEmpty()) {
                     Entity entity = getGame().getEntity(getDirtyUnits().pollFirst());
                     if ((entity != null) && isEntityOnMap(entity)) {
@@ -548,7 +548,7 @@ public class Precognition implements Runnable {
                     // All units are dirty
                     if (phaseChange.getNewPhase() == IGame.Phase.PHASE_MOVEMENT) {
                         getPathEnumerator().clear();
-                        for (Entity entity : getGame().getEntitiesVector()) {
+                        for (Entity entity : getGame().getEntities()) {
                             if (entity.isActive() && entity.isDeployed() && entity.getPosition() != null) {
                                 getDirtyUnits().add(entity.getId());
                             }

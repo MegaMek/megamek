@@ -24,7 +24,6 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -3243,37 +3242,19 @@ public class MoveStep implements Serializable {
             }
 
             // Find the unit being loaded.
-            Entity other = null;
-            Iterator<Entity> entities = game.getEntities(src);
-            while (entities.hasNext()) {
-
-                // Is the other unit friendly and not the current entity?
-                other = entities.next();
+            final Entity match = game.findEntityAt(src, other -> {
                 if (!entity.getOwner().isEnemyOf(other.getOwner())
-                        && !entity.equals(other)) {
-
+                    && !entity.equals(other)) {
                     // The moving unit should be able to load the other unit.
-                    if (!entity.canLoad(other)) {
-                        return false;
-                    }
-
                     // The other unit should be able to have a turn.
-                    if (!other.isLoadableThisTurn()) {
-                        return false;
-                    }
-
-                    // We can stop looking.
-                    break;
+                    return entity.canLoad(other)
+                        && other.isLoadableThisTurn();
                 }
-                // Nope. Discard it.
-                other = null;
 
-            } // Check the next entity in this position.
-
-            // We were supposed to find someone to load.
-            if (other == null) {
                 return false;
-            }
+            });
+
+            return match != null;
 
         } // End STEP_LOAD-checks
         

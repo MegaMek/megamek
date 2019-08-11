@@ -1498,8 +1498,7 @@ public class Princess extends BotClient {
 
             // ----Debugging: print out any errors made in guessing to hit
             // values-----
-            final List<Entity> ents = game.getEntitiesVector();
-            for (final Entity ent : ents) {
+            for (final Entity ent : game.getEntities()) {
                 final String errors = getFireControl(ent).checkAllGuesses(ent, game);
                 if (!StringUtil.isNullOrEmpty(errors)) {
                     log(getClass(), METHOD_NAME, LogLevel.WARNING, errors);
@@ -1671,18 +1670,15 @@ public class Princess extends BotClient {
                 final Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
                     final Coords coords = bldgCoords.nextElement();
-                    for (final Entity entity : game.getEntitiesVector(coords,
-                                                                      true)) {
-                        final BuildingTarget bt = new BuildingTarget(coords,
-                                                                     game.getBoard(),
-                                                                     false);
+                    game.forEachEntityAt(coords, true, entity -> {
                         if (isEnemyGunEmplacement(entity, coords)) {
-                            fireControlState.getAdditionalTargets().add(bt);
+                            fireControlState.getAdditionalTargets().add(
+                                new BuildingTarget(coords, game.getBoard(), false));
                             sendChat("Building in Hex " +
                                      coords.toFriendlyString()
                                      + " designated target due to Gun Emplacement.", LogLevel.INFO);
                         }
-                    }
+                    });
                 }
             }
 
@@ -1737,15 +1733,14 @@ public class Princess extends BotClient {
                 final Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
                     final Coords coords = bldgCoords.nextElement();
-                    for (final Entity entity : game.getEntitiesVector(coords,
-                                                                      true)) {
+                    game.forEachEntityAt(coords, true, entity -> {
                         if (isEnemyGunEmplacement(entity, coords)) {
                             getStrategicBuildingTargets().add(coords);
                             sendChat("Building in Hex " +
                                      coords.toFriendlyString() +
                                      " designated target due to Gun Emplacement.", LogLevel.INFO);
                         }
-                    }
+                    });
                 }
             }
 

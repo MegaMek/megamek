@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -392,7 +393,7 @@ public class Client implements IClientCommandHandler {
      * Returns an <code>Enumeration</code> of the entities that match the
      * selection criteria.
      */
-    public Iterator<Entity> getSelectedEntities(EntitySelector selector) {
+    public List<Entity> getSelectedEntities(EntitySelector selector) {
         return game.getSelectedEntities(selector);
     }
 
@@ -439,10 +440,11 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Returns an enumeration of the entities in game.entities
+     * Gets a collection of entities in the game.
+     * @return A collection of entities in the game.
      */
-    public List<Entity> getEntitiesVector() {
-        return game.getEntitiesVector();
+    public Collection<Entity> getEntities() {
+        return game.getEntities();
     }
 
     public MapSettings getMapSettings() {
@@ -1611,13 +1613,12 @@ public class Client implements IClientCommandHandler {
      * @param ids
      */
     private void checkDuplicateNamesDuringDelete(List<Integer> ids) {
-        ArrayList<Entity> myEntities = game.getPlayerEntities(game.getPlayer(localPlayerNumber), false);
-        Hashtable<String, ArrayList<Integer>> rawNameToId = new Hashtable<String, ArrayList<Integer>>(
-                (int) (myEntities.size() * 1.26));
+        List<Entity> myEntities = game.getPlayerEntities(game.getPlayer(localPlayerNumber), false);
+        Map<String, List<Integer>> rawNameToId = new HashMap<>();
 
         for (Entity e : myEntities) {
             String rawName = e.getShortNameRaw();
-            ArrayList<Integer> namedIds = rawNameToId.get(rawName);
+            List<Integer> namedIds = rawNameToId.get(rawName);
             if (namedIds == null) {
                 namedIds = new ArrayList<Integer>();
             }
@@ -1634,8 +1635,8 @@ public class Client implements IClientCommandHandler {
             String removedRawName = removedEntity.getShortNameRaw();
             Integer count = duplicateNameHash.get(removedEntity.getShortNameRaw());
             if ((count != null) && (count > 1)) {
-                ArrayList<Integer> namedIds = rawNameToId.get(removedRawName);
-                for (Integer i : namedIds) {
+                List<Integer> namedIds = rawNameToId.get(removedRawName);
+                for (int i : namedIds) {
                     Entity e = game.getEntity(i);
                     String eRawName = e.getShortNameRaw();
                     if (eRawName.equals(removedRawName) && (e.duplicateMarker > removedEntity.duplicateMarker)) {

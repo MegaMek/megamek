@@ -47,7 +47,7 @@ public class GAAttack extends GA {
         this.attack = attack;
         this.attacker = attacker;
         game = tb.getGame();
-        target_array = new ArrayList<Entity>(game.getEntitiesVector());
+        target_array = new ArrayList<>(game.getEntitiesVector());
         ArrayList<Integer> temp = new ArrayList<Integer>();
         for (int i = 0; i < target_array.size(); i++) {
             Entity entity = target_array.get(i);

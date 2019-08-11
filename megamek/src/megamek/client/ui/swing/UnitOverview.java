@@ -24,7 +24,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.client.event.BoardViewEvent;
@@ -107,8 +107,7 @@ public class UnitOverview implements IDisplayable {
         computeUnitsPerPage(clipBounds.getSize());
 
         graph.setFont(FONT);
-        ArrayList<Entity> v = clientgui.getClient().getGame()
-                .getPlayerEntities(clientgui.getClient().getLocalPlayer(), true);
+        List<Entity> v = clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), true);
         unitIds = new int[v.size()];
 
         scroll = v.size() > unitsPerPage;

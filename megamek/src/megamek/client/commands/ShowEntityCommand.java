@@ -37,7 +37,7 @@ public class ShowEntityCommand extends ClientCommand {
         }
         if (args.length == 1) {
             String list = "List of all entities.\n";
-            for (Entity ent : getClient().getEntitiesVector()) {
+            for (Entity ent : getClient().getEntities()) {
                 list += ent.getId() + " " + ent.getOwner().getName() + "'s "
                         + ent.getDisplayName() + "\n";
             }

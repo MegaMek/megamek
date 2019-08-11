@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -749,9 +748,7 @@ public class Compute {
             Coords dest = src.translated((direction + offset) % 6);
             if (Compute.isValidDisplacement(game, entityId, src, dest)
                 && game.getBoard().contains(dest)) {
-                Iterator<Entity> entities = game.getFriendlyEntities(dest,
-                        game.getEntity(entityId));
-                if (entities.hasNext()) {
+                if (game.hasFriendlyEntities(dest, game.getEntity(entityId))) {
                     // friendly unit here, try next hex
                     continue;
                 }
@@ -849,7 +846,7 @@ public class Compute {
         }
         ToHitData bestMods = new ToHitData(TargetRoll.IMPOSSIBLE, "");
 
-        for (Entity other : game.getEntitiesVector()) {
+        for (Entity other : game.getEntities()) {
             if (((other.isSpotting() && (other.getSpotTargetId() == target
                     .getTargetId())) || (taggedBy == other.getId()))
                 && !attacker.isEnemyOf(other)) {
@@ -1774,7 +1771,7 @@ public class Compute {
         ArrayList<Entity> network = new ArrayList<Entity>();
 
         // Compute friends in network
-        for (Entity friend : game.getEntitiesVector()) {
+        for (Entity friend : game.getEntities()) {
 
             if (attacker.equals(friend)
                     || !attacker.onSameC3NetworkAs(friend, true)
@@ -1809,7 +1806,7 @@ public class Compute {
 
         // ensure network connectivity
         List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
-                .getEntitiesVector());
+                .getEntities());
         int position = 0;
         for (Entity spotter : network) {
             for (int count = position++; count < network.size(); count++) {
@@ -4175,7 +4172,7 @@ public class Compute {
      * @param targetId - the ID# of the target entity we're looking for
      */
     public static boolean isAnySensorContact(IGame game, int targetId) {
-        for (Entity detector : game.getEntitiesVector()) {
+        for (Entity detector : game.getEntities()) {
             if (detector.hasSensorContactFor(targetId) && game.getEntity(targetId) != null) {
                 game.getEntity(targetId).addBeenDetectedBy(detector.getOwner());
                 return true;
@@ -4202,7 +4199,7 @@ public class Compute {
      * @param targetId - the ID # of the target we're firing at
      */
     public static boolean hasAnyFiringSolution(IGame game, int targetId) {
-        for (Entity detector : game.getEntitiesVector()) {
+        for (Entity detector : game.getEntities()) {
             if (detector.hasFiringSolutionFor(targetId) && game.getEntity(targetId) != null) {
                 game.getEntity(targetId).addBeenSeenBy(detector.getOwner());
                 return true;
@@ -5121,7 +5118,7 @@ public class Compute {
         Vector<Coords> vFriendlyECMCoords = new Vector<Coords>(16);
         Vector<Integer> vFriendlyECMRanges = new Vector<Integer>(16);
         Vector<Double> vFriendlyECMStrengths = new Vector<Double>(16);
-        for (Entity ent : ae.getGame().getEntitiesVector()) {
+        for (Entity ent : ae.getGame().getEntities()) {
             Coords entPos = ent.getPosition();
             if (ent.isEnemyOf(ae) && ent.hasGhostTargets(true)
                 && (entPos != null)) {
@@ -6029,12 +6026,10 @@ public class Compute {
      */
     public static Entity getSwarmMissileTarget(IGame game, int aeId,
                                                Coords coords, int weaponId) {
-        Entity tempEntity = null;
         // first, check the hex of the original target
-        Iterator<Entity> entities = game.getEntities(coords);
+        List<Entity> entities = game.getEntities(coords);
         Vector<Entity> possibleTargets = new Vector<Entity>();
-        while (entities.hasNext()) {
-            tempEntity = entities.next();
+        for (Entity tempEntity : entities) {
             if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                 // we found a target
                 possibleTargets.add(tempEntity);
@@ -6055,8 +6050,8 @@ public class Compute {
                 continue;
             }
             entities = game.getEntities(tempcoords);
-            if (entities.hasNext()) {
-                tempEntity = entities.next();
+            if (!entities.isEmpty()) {
+                Entity tempEntity = entities.get(0);
                 if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                     // we found a target
                     possibleTargets.add(tempEntity);

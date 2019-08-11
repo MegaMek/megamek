@@ -847,7 +847,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // Determine which entities are spotted
         Set<Integer> spottedEntities = new HashSet<>();
-        for (Entity target : game.getEntitiesVector()) {
+        for (Entity target : game.getEntities()) {
             if (!target.isEnemyOf(ce()) && target.isSpotting()) {
                 spottedEntities.add(target.getSpotTargetId());
             }
@@ -855,7 +855,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // Calculate firing solutions
         Map<Integer, FiringSolution> fs = new HashMap<>();
-        for (Entity target : game.getEntitiesVector()) {
+        for (Entity target : game.getEntities()) {
             boolean friendlyFire = game.getOptions().booleanOption(
                     OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
@@ -2517,7 +2517,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
-        Iterator<Entity> choices;
 
         int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
         Mounted weap = ce().getEquipment(wn);
@@ -2546,6 +2545,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             }
         }
         // Get the available choices, depending on friendly fire
+        List<Entity> choices;
         if (friendlyFire) {
             choices = game.getEntities(pos);
         } else {
@@ -2555,18 +2555,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // Convert the choices into a List of targets.
         List<Targetable> targets = new ArrayList<Targetable>();
         final IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
-        while (choices.hasNext()) {
-            Targetable t = choices.next();
-            boolean isSensorReturn = false;
-            boolean isVisible = true;
-            boolean isHidden = false;
-            if (t instanceof Entity) {
-                isSensorReturn = ((Entity) t).isSensorReturn(localPlayer);
-                isVisible = ((Entity) t).hasSeenEntity(localPlayer);
-                isHidden = ((Entity) t).isHidden();
-            }
-            if (!ce().equals(t) && !isSensorReturn && isVisible && !isHidden) {
-                targets.add(t);
+        for (Entity entity : choices) {
+            boolean isSensorReturn = entity.isSensorReturn(localPlayer);
+            boolean isVisible = entity.hasSeenEntity(localPlayer);
+            boolean isHidden = entity.isHidden();
+            if (!ce().equals(entity) && !isSensorReturn && isVisible && !isHidden) {
+                targets.add(entity);
             }
         }
         

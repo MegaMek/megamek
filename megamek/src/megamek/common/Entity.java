@@ -1730,7 +1730,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * entity is a target of.
      */
     public DisplacementAttackAction findTargetedDisplacement() {
-        for (Entity other : game.getEntitiesVector()) {
+        for (Entity other : game.getEntities()) {
             if (other.hasDisplacementAttack()
                 && (other.getDisplacementAttack().getTargetId() == id)) {
                 return other.getDisplacementAttack();
@@ -5654,7 +5654,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (hasC3MM()) {
             nodes = 2;
             if (game != null) {
-                for (Entity e : game.getEntitiesVector()) {
+                for (Entity e : game.getEntities()) {
                     if (e.hasC3M() && (e != this)) {
                         final Entity m = e.getC3Master();
                         if (equals(m)) {
@@ -5669,7 +5669,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (hasC3M() && C3MasterIs(this)) {
             nodes = 3;
             if (game != null) {
-                for (Entity e : game.getEntitiesVector()) {
+                for (Entity e : game.getEntities()) {
                     if (e.hasC3() && (e != this)) {
                         final Entity m = e.getC3Master();
                         if (equals(m)) {
@@ -5700,7 +5700,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (hasC3i() || hasNavalC3()) {
             nodes = 5;
             if (game != null) {
-                for (Entity e : game.getEntitiesVector()) {
+                for (Entity e : game.getEntities()) {
                     if (!equals(e) && onSameC3NetworkAs(e)) {
                         nodes--;
                         if (nodes <= 0) {
@@ -5712,7 +5712,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (hasC3M()) {
             nodes = 3;
             if (game != null) {
-                for (Entity e : game.getEntitiesVector()) {
+                for (Entity e : game.getEntities()) {
                     if (e.hasC3() && !equals(e)) {
                         final Entity m = e.getC3Master();
                         if (equals(m)) {
@@ -5731,7 +5731,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (hasActiveNovaCEWS()) {
             nodes = 2;
             if (game != null) {
-                for (Entity e : game.getEntitiesVector()) {
+                for (Entity e : game.getEntities()) {
                     if (!equals(e) && onSameC3NetworkAs(e)) {
                         nodes--;
                         if (nodes <= 0) {
@@ -5910,7 +5910,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // this just changed from a company-level to lance-level (or vice
             // versa); have to disconnect all slaved units to maintain
             // integrity.
-            for (Entity e : game.getEntitiesVector()) {
+            for (Entity e : game.getEntities()) {
                 if (e.C3MasterIs(this) && !equals(e)) {
                     e.setC3Master(NONE, reset);
                 }
@@ -5928,7 +5928,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (hasC3() || hasC3i() || hasNavalC3()) {
             c3NetIdString = game.getEntity(entityId).getC3NetId();
         }
-        for (Entity e : game.getEntitiesVector()) {
+        for (Entity e : game.getEntities()) {
             if (e.C3MasterIs(this) && !equals(e)) {
                 e.c3NetIdString = c3NetIdString;
             }
@@ -9518,30 +9518,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return hasAbility(OptionsConstants.PILOT_MANEUVERING_ACE);
     }
 
-    public Enumeration<Entity> getKills() {
-        final int killer = id;
-        return game.getSelectedOutOfGameEntities(new EntitySelector() {
-            @Override
-            public boolean accept(Entity entity) {
-                if (killer == entity.killerId) {
-                    return true;
-                }
-                return false;
-            }
-        });
+    public List<Entity> getKills() {
+        return game.getSelectedOutOfGameEntities(entity -> id == entity.killerId);
     }
 
     public int getKillNumber() {
-        final int killer = id;
-        return game.getSelectedOutOfGameEntityCount(new EntitySelector() {
-            @Override
-            public boolean accept(Entity entity) {
-                if (killer == entity.killerId) {
-                    return true;
-                }
-                return false;
-            }
-        });
+        return game.getSelectedOutOfGameEntityCount(entity -> id == entity.killerId);
     }
 
     public void addKill(Entity kill) {
@@ -9786,9 +9768,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // Try to find a valid entity target.
-        Iterator<Entity> e = game.getEntities();
-        while (!canHit && e.hasNext()) {
-            Entity target = e.next();
+        for (Entity target : game.getEntities()) {
+            if (!canHit) {
+                break;
+            }
 
             // don't shoot at friendlies unless you are into that sort of thing
             // and do not shoot yourself even then

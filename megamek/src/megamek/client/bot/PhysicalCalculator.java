@@ -277,7 +277,7 @@ public final class PhysicalCalculator {
             }
         }
 
-        for (Entity target : game.getEntitiesVector()) {
+        for (Entity target : game.getEntities()) {
 
             if (target.equals(entity)) {
                 continue;

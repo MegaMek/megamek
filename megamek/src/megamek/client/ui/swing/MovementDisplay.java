@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -54,7 +53,6 @@ import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
-import megamek.common.EntitySelector;
 import megamek.common.GameTurn;
 import megamek.common.IAero;
 import megamek.common.IBoard;
@@ -5271,40 +5269,26 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * dismount at the start of the turn.
      */
     private void unloadStranded() {
-        Vector<Entity> stranded = new Vector<Entity>();
-        String[] names = null;
-        Entity entity = null;
-        Entity transport = null;
-
         // Let the player know what's going on.
         setStatusBarText(Messages.getString("MovementDisplay.AllPlayersUnload")); //$NON-NLS-1$
 
-        // Collect the stranded entities into the vector.
-        Iterator<Entity> entities = clientgui.getClient().getSelectedEntities(
-                new EntitySelector() {
-                    private final IGame game = clientgui.getClient().getGame();
-                    private final GameTurn turn = clientgui.getClient()
-                            .getGame().getTurn();
-                    private final int ownerId = clientgui.getClient()
-                            .getLocalPlayer().getId();
+        final IGame game = clientgui.getClient().getGame();
+        final GameTurn turn = game.getTurn();
+        final int ownerId = clientgui.getClient().getLocalPlayer().getId();
 
-                    public boolean accept(Entity acc) {
-                        if (turn.isValid(ownerId, acc, game)) {
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-        while (entities.hasNext()) {
-            stranded.addElement(entities.next());
-        }
+        // Collect the stranded entities
+        final List<Entity> stranded = new ArrayList<>();
+        clientgui.getClient().getGame().forEachEntity(entity -> {
+            if (turn.isValid(ownerId, entity, game)) {
+                stranded.add(entity);
+            }
+        });
 
         // Construct an array of stranded entity names
-        names = new String[stranded.size()];
+        String[] names = new String[stranded.size()];
         for (int index = 0; index < names.length; index++) {
-            entity = stranded.elementAt(index);
-            transport = clientgui.getClient()
-                                 .getEntity(entity.getTransportId());
+            Entity entity = stranded.get(index);
+            Entity transport = clientgui.getClient().getEntity(entity.getTransportId());
             String buffer;
             if (null == transport) {
                 buffer = entity.getDisplayName();
@@ -5328,7 +5312,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (null != indexes) {
             ids = new int[indexes.length];
             for (int index = 0; index < indexes.length; index++) {
-                entity = stranded.elementAt(index);
+                Entity entity = stranded.get(index);
                 ids[index] = entity.getId();
             }
         }

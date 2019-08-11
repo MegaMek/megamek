@@ -753,7 +753,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         }
         if (option.getName().equals(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
             if (client != null) {
-                for (Entity ent : client.getClient().getGame().getEntitiesVector()) {
+                for (Entity ent : client.getClient().getGame().getEntities()) {
                     if (ent instanceof Mech) {
                         ((Mech) ent).setBAGrabBars();
                     }

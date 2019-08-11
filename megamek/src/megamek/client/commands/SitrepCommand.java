@@ -76,7 +76,7 @@ public class SitrepCommand extends ClientCommand {
         int maxDistance = -1;
 
         // first we assemble the qualifying entities into buckets, sorted by distance
-        for (Entity entity : getClient().getEntitiesVector()) {
+        for (Entity entity : getClient().getEntities()) {
             boolean hostileEntity = entity.getOwner().isEnemyOf(getClient().getLocalPlayer());
             boolean displayEntity = (showFriendly && !hostileEntity) ||
                                     (showHostile && hostileEntity);

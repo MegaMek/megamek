@@ -16,14 +16,15 @@
 
 package megamek.common;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -554,21 +555,29 @@ public interface IGame {
     abstract List<Entity> getUndeployedEntities();
 
     /**
-     * Returns an enumeration of all the entites in the game.
+     * Returns a collection of all the entites in the game.
      */
-    abstract Iterator<Entity> getEntities();
+    abstract Collection<Entity> getEntities();
 
     /**
-     * Returns the actual vector for the entities
+     * Runs a function for each entity in the game.
+     * @param function The function to run on each entity.
+     */
+    abstract void forEachEntity(Consumer<Entity> function);
+
+    /**
+     * Returns a list of entities.
+     * @return A list of entities in the game.
      */
     abstract List<Entity> getEntitiesVector();
 
     abstract void setEntitiesVector(List<Entity> entities);
 
     /**
-     * Returns the actual vector for the out-of-game entities
+     * Returns a list of out-of-game entities.
+     * @return A list of out-of-game entities.
      */
-    abstract Vector<Entity> getOutOfGameEntitiesVector();
+    abstract List<Entity> getOutOfGameEntitiesVector();
 
     /**
      * Returns an out-of-game entity.
@@ -781,12 +790,87 @@ public interface IGame {
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
-    abstract Iterator<Entity> getEntities(Coords c);
+    abstract List<Entity> getEntities(Coords c);
 
     /**
-     * Returns an Enumeration of the active entities at the given coordinates.
+     * Gets a value indicating whether or not any entities
+     * can be found at the given coordinates.
+     * @param c The coordinates to search for entities.
+     * @return True if any entities are present at the given
+     *         coordinates, otherwise false.
      */
-    abstract Iterator<Entity> getEntities(Coords c, boolean ignore);
+    abstract boolean hasEntitiesAt(Coords c);
+
+    /**
+     * Gets a value indicating whether or not any entities
+     * can be found at the given coordinates.
+     * @param c The coordinates to search for entities.
+     * @param ignore A value indicating whether or not to include un-targettable entities.
+     * @return True if any entities are present at the given
+     *         coordinates, otherwise false.
+     */
+    abstract boolean hasEntitiesAt(Coords c, boolean ignore);
+
+    /**
+     * Returns a list of the active entities at the given coordinates.
+     */
+    abstract List<Entity> getEntities(Coords c, boolean ignore);
+
+    /**
+     * Calls a function for each entity at a given coordinate.
+     * @param c The coordinates to search for entities.
+     * @param function A function to call on each entity found at the coordinates.
+     */
+    abstract void forEachEntityAt(Coords c, Consumer<Entity> function);
+
+    /**
+     * Calls a function for each entity at a given coordinate.
+     * @param c The coordinates to search for entities.
+     * @param ignore A value indicating whether or not to include un-targettable entities.
+     * @param function A function to call on each entity found at the coordinates.
+     */
+    abstract void forEachEntityAt(Coords c, boolean ignore, Consumer<Entity> function);
+
+    /**
+     * Searches for an entity which matches the given predicate.
+     * 
+     * No specific order of entities is guaranteed.
+     * 
+     * @param predicate A predicate to use when searching for an entity.
+     * @return The first entity which matches the predicate,
+     *         otherwise null.
+     */
+    @Nullable
+    abstract Entity findEntity(Predicate<Entity> predicate);
+
+    /**
+     * Searches for an entity at the given coordinates which matches
+     * the given predicate.
+     * 
+     * No specific order of entities is guaranteed.
+     *
+     * @param c The coordinates to search for entities.
+     * @param predicate A predicate to use when searching for an entity.
+     * @return The first entity at the coordinates which matches the
+     *         predicate, otherwise null.
+     */
+    @Nullable
+    abstract Entity findEntityAt(Coords c, Predicate<Entity> predicate);
+
+        /**
+     * Searches for an entity at the given coordinates which matches
+     * the given predicate.
+     * 
+     * No specific order of entities is guaranteed.
+     *
+     * @param c The coordinates to search for entities.
+     * @param ignore True if untargettable entities should be searched.
+     * @param predicate A predicate to use when searching for an entity.
+     * @return The first entity at the coordinates which matches the
+     *         predicate, otherwise null.
+     */
+    @Nullable
+    abstract Entity findEntityAt(Coords c, boolean ignore, Predicate<Entity> predicate);
 
     /**
      * Returns a List of the active entities at the given coordinates.
@@ -828,8 +912,7 @@ public interface IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the
      *         given coordinates who are enemies of the given unit.
      */
-    abstract Iterator<Entity> getEnemyEntities(final Coords c,
-            final Entity currentEntity);
+    abstract List<Entity> getEnemyEntities(final Coords c, final Entity currentEntity);
 
     /**
      * Returns an <code>Enumeration</code> of active enemy entities
@@ -838,7 +921,7 @@ public interface IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the
      *         given coordinates who are enemies of the given unit.
      */
-    abstract Iterator<Entity> getAllEnemyEntities(final Entity currentEntity);
+    abstract List<Entity> getAllEnemyEntities(final Entity currentEntity);
 
     /**
      * Returns an <code>Enumeration</code> of friendly active entities at the
@@ -849,8 +932,18 @@ public interface IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the
      *         given coordinates who are friends of the given unit.
      */
-    abstract Iterator<Entity> getFriendlyEntities(final Coords c,
-            final Entity currentEntity);
+    abstract List<Entity> getFriendlyEntities(final Coords c, final Entity currentEntity);
+
+    /**
+     * Gets a value indicating whether or not friendly entities exist at the
+     * given coordinates.
+     * 
+     * @param c The coordinates to search for friendly entities.
+     * @param currentEntity The entity to test for friendship.
+     * @return A value indicating whether or not the given coordinates contains
+     *         one or more entities friendly to the given entity.
+     */
+    abstract boolean hasFriendlyEntities(final Coords c, final Entity currentEntity);
 
     /**
      * Moves an entity into the graveyard so it stops getting sent out every
@@ -945,7 +1038,20 @@ public interface IGame {
      * @param hide - should fighters loaded into squadrons be excluded from this list?
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
-    abstract ArrayList<Entity> getPlayerEntities(IPlayer player, boolean hide);
+    abstract List<Entity> getPlayerEntities(IPlayer player, boolean hide);
+
+    /**
+     * Searches for a player's entity which matches the given predicate.
+     * 
+     * No specific order is guaranteed when searching.
+     * 
+     * @param player The player whose entities should be searched.
+     * @param hide A value indicated if fighters loaded into squadrons should be excluded.
+     * @param predicate A predicate to use when searching for an entity.
+     * @return The first entity for the player which matches the predicate, otherwise null.
+     */
+    @Nullable
+    abstract Entity findPlayerEntity(IPlayer player, boolean hide, Predicate<Entity> predicate);
 
     /**
      * Get the entities for the player.
@@ -955,7 +1061,7 @@ public interface IGame {
      * @param hide - should fighters loaded into squadrons be excluded from this list?
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
-    abstract ArrayList<Integer> getPlayerEntityIds(IPlayer player, boolean hide);
+    abstract List<Integer> getPlayerEntityIds(IPlayer player, boolean hide);
 
     /**
      * Determines if the indicated entity is stranded on a transport that can't
@@ -1309,8 +1415,7 @@ public interface IGame {
      *         accepts. This value will not be <code>null</code> but it may be
      *         empty.
      */
-    abstract Iterator<Entity> getSelectedEntities(
-            EntitySelector selector);
+    abstract List<Entity> getSelectedEntities(EntitySelector selector);
 
     /**
      * Count all <code>Entity</code>s that pass the given selection criteria.
@@ -1337,8 +1442,7 @@ public interface IGame {
      *         accepts. This value will not be <code>null</code> but it may be
      *         empty.
      */
-    abstract Enumeration<Entity> getSelectedOutOfGameEntities(
-            EntitySelector selector);
+    abstract List<Entity> getSelectedOutOfGameEntities(EntitySelector selector);
 
     /**
      * Count all out-of-game<code>Entity</code>s that pass the given

@@ -51,16 +51,14 @@ public class GameVictoryEvent extends GameEvent {
     /**
      * @param source event source
      */
-    @SuppressWarnings("unchecked")
     public GameVictoryEvent(Object source, IGame game) {
         super(source);
-        for (Entity entity : game.getEntitiesVector()) {
+        for (Entity entity : game.getEntities()) {
             entities.add(entity);
             entityIds.put(entity.getId(), entity);
         }
 
-        vOutOfGame = (Vector<Entity>) game.getOutOfGameEntitiesVector().clone();
-        for (Entity entity : vOutOfGame) {
+        for (Entity entity : game.getOutOfGameEntitiesVector()) {
             entityIds.put(entity.getId(), entity);
         }
     }

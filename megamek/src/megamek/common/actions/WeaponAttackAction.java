@@ -3851,7 +3851,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             boolean networkFiringSolution = false;
             //Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
             if (ae.hasNavalC3()) {
-                for (Entity en : game.getEntitiesVector()) {
+                for (Entity en : game.getEntities()) {
                     if (en != ae && !en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && ae.hasFiringSolutionFor(te.getId())) {
                         networkFiringSolution = true;
                         break;
@@ -3890,7 +3890,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (ae.hasC3() || ae.hasC3i() || ae.hasNavalC3()|| ae.hasActiveNovaCEWS()) {
                 // c3 units can fire if any other unit in their network is in
                 // visual or sensor range
-                for (Entity en : game.getEntitiesVector()) {
+                for (Entity en : game.getEntities()) {
                     if (!en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.canSee(game, en, target)) {
                         networkSee = true;
                         break;

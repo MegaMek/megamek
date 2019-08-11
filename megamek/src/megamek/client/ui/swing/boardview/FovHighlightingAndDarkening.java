@@ -270,7 +270,7 @@ class FovHighlightingAndDarkening {
             cacheGameChanged = false;
             cachedAllECMInfo = ComputeECM
                     .computeAllEntitiesECMInfo(boardView1.game
-                            .getEntitiesVector());
+                            .getEntities());
         }
 
         LosEffects los = losCache.get(dest);

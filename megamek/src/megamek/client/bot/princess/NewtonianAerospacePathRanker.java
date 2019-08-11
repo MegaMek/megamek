@@ -14,7 +14,6 @@
 
 package megamek.client.bot.princess;
 
-import java.util.Iterator;
 import java.util.List;
 
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
@@ -198,28 +197,21 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             return 0;
         }
 
-        int sensorShadowMod = 0;
         List<Coords> coordsToCheck = path.getFinalCoords().allAdjacent();
         coordsToCheck.add(path.getFinalCoords());
         for(Coords coords : coordsToCheck) {
             // if the coordinate contains a large craft within a certain mass of me, it will generate a sensor shadow
-            Iterator<Entity> potentialShadowIter = path.getGame().getFriendlyEntities(coords, path.getEntity());
-
-            while(potentialShadowIter.hasNext() && sensorShadowMod == 0) {
-                Entity potentialShadow = potentialShadowIter.next();
+            List<Entity> potentialShadowIter = path.getGame().getFriendlyEntities(coords, path.getEntity());
+            for (Entity potentialShadow : potentialShadowIter) {
                 if(potentialShadow.isDone() &&
                         potentialShadow.isLargeCraft() &&
                         (potentialShadow.getWeight() - path.getEntity().getWeight() >= -WeaponAttackAction.STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
-                    sensorShadowMod = 1;
+                    return 1;
                 }
-            }
-
-            if(sensorShadowMod == 1) {
-                break;
             }
         }
 
-        return sensorShadowMod;
+        return 0;
     }
 
     /**

@@ -42,7 +42,7 @@ public class FixElevationCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         int countbad = 0;
-        for (Entity entity : server.getGame().getEntitiesVector()) {
+        for (Entity entity : server.getGame().getEntities()) {
             if (entity.fixElevation()) {
                 Building bldg = server.getGame().getBoard().getBuildingAt(entity.getPosition());
                 if (bldg != null) {

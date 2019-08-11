@@ -796,7 +796,7 @@ public class MiniMap extends JPanel {
                 }
 
                 multiUnits.clear();
-                for (Entity e : m_game.getEntitiesVector()) {
+                for (Entity e : m_game.getEntities()) {
                     if (e.getPosition() == null) {
                         continue;
                     }

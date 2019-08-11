@@ -1251,7 +1251,7 @@ public class ChatLounge extends AbstractPhaseDisplay
          * units will be sorted by the order they were "added" to the list.
          */
         ArrayList<Entity> allEntities = new ArrayList<Entity>();
-        for (Entity ent : clientgui.getClient().getEntitiesVector()) {
+        for (Entity ent : clientgui.getClient().getEntities()) {
             allEntities.add(ent);
         }
 
@@ -2077,7 +2077,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             // to work by looping through the
             // unit.getLoadedUnits() - it always returned with an empty list
             // even when there was loaded units.
-            for (Entity unit : c.getGame().getEntitiesVector()) {
+            for (Entity unit : c.getGame().getEntities()) {
                 if (unit.getOwner().equals(c.getLocalPlayer())) {
                     continue;
                 }
@@ -2341,9 +2341,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();
         ArrayList<Entity> c3members = new ArrayList<Entity>();
-        Iterator<Entity> playerUnits = c.getGame().getPlayerEntities(c.getLocalPlayer(), false).iterator();
-        while (playerUnits.hasNext()) {
-            Entity unit = playerUnits.next();
+        for (Entity unit : c.getGame().getPlayerEntities(c.getLocalPlayer(), false)) {
             if (!entity.equals(unit) && entity.onSameC3NetworkAs(unit)) {
                 c3members.add(unit);
             }
@@ -3158,7 +3156,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             int bv = 0;
             int cost = 0;
             double ton = 0;
-            for (Entity entity : clientgui.getClient().getEntitiesVector()) {
+            for (Entity entity : clientgui.getClient().getEntities()) {
                 if (entity.getOwner().equals(player)) {
                     bv += entity.calculateBattleValue();
                     cost += entity.getCost(false);
@@ -4101,7 +4099,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                             allHaveMagClamp &= b.hasWorkingMisc(MiscType.F_MAGNETIC_CLAMP);
                         }
                     }
-                    for (Entity loader : clientgui.getClient().getGame().getEntitiesVector()) {
+                    for (Entity loader : clientgui.getClient().getGame().getEntities()) {
                         // TODO don't allow capital fighters to load one another
                         // at the moment
                         if (loader.isCapitalFighter() && !(loader instanceof FighterSquadron)) {
@@ -4311,7 +4309,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 if (oneSelected) {
                     menu = new JMenu("Swap pilots with");
                     boolean canSwap = false;
-                    for (Entity swapper : clientgui.getClient().getGame().getEntitiesVector()) {
+                    for (Entity swapper : clientgui.getClient().getGame().getEntities()) {
                         if (swapper.isCapitalFighter()) {
                             continue;
                         }

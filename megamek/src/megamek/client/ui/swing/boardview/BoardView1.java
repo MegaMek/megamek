@@ -3654,7 +3654,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         clearC3Networks();
         clearFlyOverPaths();
-        for (Entity entity : game.getEntitiesVector()) {
+        for (Entity entity : game.getEntities()) {
             if (entity.getPosition() == null) {
                 continue;
             }
@@ -4270,7 +4270,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         if (e.hasC3i()) {
-            for (Entity fe : game.getEntitiesVector()) {
+            for (Entity fe : game.getEntities()) {
                 if (fe.getPosition() == null) {
                     return;
                 }
@@ -4282,7 +4282,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         } else if (e.hasNavalC3()) {
-            for (Entity fe : game.getEntitiesVector()) {
+            for (Entity fe : game.getEntities()) {
                 if (fe.getPosition() == null) {
                     return;
                 }
@@ -4292,7 +4292,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         } else if (e.hasActiveNovaCEWS()) {
             // WOR Nova CEWS
-            for (Entity fe : game.getEntitiesVector()) {
+            for (Entity fe : game.getEntities()) {
                 if (fe.getPosition() == null) {
                     return;
                 }
@@ -4447,7 +4447,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void refreshMoveVectors() {
         clearAllMoveVectors();
-        for (Entity e : game.getEntitiesVector()) {
+        for (Entity e : game.getEntities()) {
             if (e.getPosition() != null) {
                 movementSprites.add(new MovementSprite(this, e, e.getVectors(),
                                                        Color.gray, false));
@@ -4459,7 +4459,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         clearAllMoveVectors();
         // same as normal but when I find the active entity I used the MovePath
         // to get vector
-        for (Entity e : game.getEntitiesVector()) {
+        for (Entity e : game.getEntities()) {
             if (e.getPosition() != null) {
                 if ((en != null) && (e.getId() == en.getId())) {
                     movementSprites.add(new MovementSprite(this, e, md
@@ -5338,11 +5338,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Compute info about all E(C)CM on the board
         final List<ECMInfo> allEcmInfo = ComputeECM
-                .computeAllEntitiesECMInfo(game.getEntitiesVector());
+                .computeAllEntitiesECMInfo(game.getEntities());
 
         // First, mark the sources of E(C)CM
         // Used for highlighting hexes and tooltips
-        for (Entity e : game.getEntitiesVector()) {
+        for (Entity e : game.getEntities()) {
             if (e.getPosition() == null) {
                 continue;
             }
@@ -6338,7 +6338,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void updateEntityLabels() {
-        for (Entity e: game.getEntitiesVector()) {
+        for (Entity e: game.getEntities()) {
             e.generateShortName();
         }
         for (EntitySprite eS: entitySprites) {

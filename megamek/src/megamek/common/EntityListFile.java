@@ -27,6 +27,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -41,7 +42,7 @@ import megamek.common.options.PilotOptions;
  */
 public class EntityListFile {
 
-    /**
+	/**
      * Produce a string describing this armor value. Valid output values are any
      * integer from 0 to 100, N/A, or Destroyed.
      *
@@ -494,10 +495,10 @@ public class EntityListFile {
      * @throws IOException
      *             is thrown on any error.
      */
-    public static void saveTo(File file, ArrayList<Entity> list)
+    public static void saveTo(File file, List<Entity> list)
             throws IOException {
 
-        // Open up the file. Produce UTF-8 output.
+		// Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(file), "UTF-8"));
 
@@ -514,7 +515,6 @@ public class EntityListFile {
         } catch(IOException exception) {
             throw exception;
         }
-
 
         // Finish writing.
         output.write("</unit>");
@@ -565,9 +565,7 @@ public class EntityListFile {
         Hashtable<String, String> kills = new Hashtable<String, String>();        
 
         //Sort entities into player's, enemies, and allies and add to survivors, salvage, and allies.
-        Iterator<Entity> entities = client.getGame().getEntities();
-        while(entities.hasNext()) {
-            Entity entity = entities.next();
+        for (Entity entity : client.getGame().getEntities()) {
             if (entity.getOwner().getId() == client.getLocalPlayer().getId()) {
             	living.add(entity);
             } else if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
@@ -735,12 +733,9 @@ public class EntityListFile {
         }
     }
 
-    private static void writeEntityList(Writer output, ArrayList<Entity> list) throws IOException {
+    private static void writeEntityList(Writer output, List<Entity> list) throws IOException {
         // Walk through the list of entities.
-        Iterator<Entity> items = list.iterator();
-        while (items.hasNext()) {
-            final Entity entity = items.next();
-
+        for (Entity entity : list) {
             if (entity instanceof FighterSquadron) {
                 continue;
             }

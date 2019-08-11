@@ -15,7 +15,6 @@
 package megamek.common;
 
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.event.GamePlayerChangeEvent;
@@ -386,27 +385,16 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     @Override
     public boolean hasTAG() {
-        for (Iterator<Entity> e = game
-                .getSelectedEntities(new EntitySelector() {
-                    private final int ownerId = getId();
-
-                    public boolean accept(Entity entity) {
-                        if (entity.getOwner() == null) {
-                            return false;
-                        }
-                        if (ownerId == entity.getOwner().getId()) {
-                            return true;
-                        }
-                        return false;
-                    }
-                }); e.hasNext(); ) {
-            Entity m = e.next();
-            if (m.hasTAG()) {
-                return true;
+        final int ownerId = getId();
+        return null != game.findEntity(entity -> {
+            if (entity.getOwner() == null) {
+                return false;
             }
-            // A player can't be on two teams.
-        }
-        return false;
+            if (ownerId == entity.getOwner().getId()) {
+                return entity.hasTAG();
+            }
+            return false;
+        });
     }
 
     /**
@@ -416,7 +404,7 @@ public final class Player extends TurnOrdered implements IPlayer {
     public int getBV() {
         int bv = 0;
 
-        for (Entity entity : game.getEntitiesVector()) {
+        for (Entity entity : game.getEntities()) {
             if (equals(entity.getOwner()) && !entity.isDestroyed()
                     && !entity.isTrapped()) {
                 bv += entity.calculateBattleValue();
@@ -493,7 +481,7 @@ public final class Player extends TurnOrdered implements IPlayer {
         if (game.getEntitiesVector() == null) {
             return 0;
         }
-        for (Entity entity : game.getEntitiesVector()) {
+        for (Entity entity : game.getEntities()) {
             if (entity.getOwner().equals(this)) {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)
                     && (bonusHQ == 0) && (entity.getHQIniBonus() > 0)) {
@@ -525,7 +513,7 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public int getCommandBonus() {
         int commandb = 0;
-        for (Entity entity : game.getEntitiesVector()) {
+        for (Entity entity : game.getEntities()) {
             if ((null != entity.getOwner())
                     && entity.getOwner().equals(this)
                     && !entity.isDestroyed()
@@ -564,7 +552,7 @@ public final class Player extends TurnOrdered implements IPlayer {
 
         //a vector of unit ids
         Vector<Integer> units = new Vector<Integer>();
-        for (Entity entity : game.getEntitiesVector()) {
+        for (Entity entity : game.getEntities()) {
             if (entity.getOwner().equals(this)) {
                 if (((entity instanceof VTOL)
                      || (entity.getMovementMode() == EntityMovementMode.WIGE)) &&

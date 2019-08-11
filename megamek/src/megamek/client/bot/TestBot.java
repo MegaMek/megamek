@@ -137,7 +137,7 @@ public class TestBot extends BotClient {
             enemies_moved = initiative;
             ArrayList<MoveOption[]> possible = new ArrayList<MoveOption[]>();
 
-            for (Entity entity : game.getEntitiesVector()) {
+            for (Entity entity : game.getEntities()) {
 
                 // ignore loaded and off-board units
                 if ((entity.getPosition() == null) || entity.isOffBoard()) {
@@ -306,7 +306,7 @@ public class TestBot extends BotClient {
                     // functional
                     // If nothing is "close" then unjam anyways
                     int check_range = 100;
-                    for (Entity enemy : game.getEntitiesVector()) {
+                    for (Entity enemy : game.getEntities()) {
                         if ((min.getCEntity().entity.getPosition() != null)
                             && (enemy.getPosition() != null)
                             && (enemy.isEnemyOf(min.getCEntity().entity))) {
@@ -333,7 +333,7 @@ public class TestBot extends BotClient {
 
     public MoveOption[] calculateMove(Entity entity) {
         List<Entity> enemy_array = myEnemies(entity);
-        ArrayList<Entity> entities = new ArrayList<Entity>(
+        ArrayList<Entity> entities = new ArrayList<>(
                 game.getEntitiesVector());
         CEntity self = centities.get(entity);
         MoveOption[] move_array;
@@ -1102,13 +1102,11 @@ public class TestBot extends BotClient {
 
     @Override
     protected void initFiring() {
-        ArrayList<Entity> entities = new ArrayList<Entity>(
-                game.getEntitiesVector());
-        for (int i = 0; i < entities.size(); i++) {
-            Entity entity = entities.get(i);
+        int count = 0;
+        for (Entity entity : game.getEntities()) {
             CEntity centity = centities.get(entity);
             centity.reset();
-            centity.enemy_num = i;
+            centity.enemy_num = count++;
         }
         for (Entity entity : getEnemyEntities()) {
             CEntity centity = centities.get(entity);
@@ -1577,7 +1575,7 @@ public class TestBot extends BotClient {
         old_moves = null;
         enemies_moved = 0;
         double max_modifier = 1.4;
-        ArrayList<Entity> entities = new ArrayList<Entity>(
+        ArrayList<Entity> entities = new ArrayList<>(
                 game.getEntitiesVector());
         double num_entities = Math.sqrt(entities.size()) / 100;
         ArrayList<CEntity> friends = new ArrayList<CEntity>();
@@ -1796,7 +1794,7 @@ public class TestBot extends BotClient {
         hex_count = 0;
         x_ave = 0;
         y_ave = 0;
-        for (Entity test_ent : game.getEntitiesVector()) {
+        for (Entity test_ent : game.getEntities()) {
             if (test_ent.isDeployed()) {
                 if (test_ent.isVisibleToEnemy()) {
                     if (cDeploy.distance(test_ent.getPosition()) <= (int) av_range) {
@@ -1944,7 +1942,7 @@ public class TestBot extends BotClient {
                     // functional
                     // If nothing is "close" then unjam anyways
                     int check_range = 100;
-                    for (Entity enemy : game.getEntitiesVector()) {
+                    for (Entity enemy : game.getEntities()) {
                         if ((min.getCEntity().entity.getPosition() != null)
                             && (enemy.getPosition() != null)
                             && (enemy.isEnemyOf(min.getCEntity().entity))) {

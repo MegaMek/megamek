@@ -402,7 +402,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         // load all mech images
-        for (Entity e : game.getEntitiesVector()) {
+        for (Entity e : game.getEntities()) {
             if (e.getSecondaryPositions().isEmpty()) {
                 loadImage(e, -1);
             } else {

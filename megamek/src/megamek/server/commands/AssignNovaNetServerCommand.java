@@ -406,7 +406,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
      */
     private List<Entity> getMyNovaUnits(int connID) {
         List<Entity> novaUnits = new LinkedList<Entity>();
-        for (Entity ent : server.getGame().getEntitiesVector()) {
+        for (Entity ent : server.getGame().getEntities()) {
             if ((ent.getOwnerId() == connID) && ent.hasNovaCEWS()) {
                 novaUnits.add(ent);
             }

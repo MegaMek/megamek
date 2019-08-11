@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -191,9 +190,7 @@ public class ArtilleryTargetingControl {
     private void buildTargetList(Entity shooter, IGame game, Princess owner) {
         targetSet = new HashSet<>();
         
-        for(Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
-            Entity e = enemies.next();
-            
+        for(Entity e : game.getAllEnemyEntities(shooter)) {
             // skip airborne entities
             if(!e.isAirborne() && !e.isAirborneVTOLorWIGE()) {
                 targetSet.add(new HexTarget(e.getPosition(), game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));

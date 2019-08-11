@@ -625,7 +625,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // Determine which entities are spotted
         Set<Integer> spottedEntities = new HashSet<>();
-        for (Entity target : game.getEntitiesVector()) {
+        for (Entity target : game.getEntities()) {
             if (!target.isEnemyOf(ce()) && target.isSpotting()) {
                 spottedEntities.add(target.getSpotTargetId());
             }
@@ -633,7 +633,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // Calculate firing solutions
         Map<Integer, FiringSolution> fs = new HashMap<>();
-        for (Entity target : game.getEntitiesVector()) {
+        for (Entity target : game.getEntities()) {
             boolean friendlyFire = game.getOptions().booleanOption(
                     OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
@@ -1353,31 +1353,24 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         boolean friendlyFire = clientgui.getClient().getGame().getOptions()
                 .booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
-        // Assume that we have *no* choice.
-        Targetable choice = null;
-        Iterator<Entity> choices;
+
+        List<Entity> choices;
 
         // Get the available choices, depending on friendly fire
         if (friendlyFire) {
             choices = clientgui.getClient().getGame().getEntities(pos);
         } else {
-            choices = clientgui.getClient().getGame()
-                    .getEnemyEntities(pos, ce());
+            choices = clientgui.getClient().getGame().getEnemyEntities(pos, ce());
         }
 
         // Convert the choices into a List of targets.
-        List<Targetable> targets = new ArrayList<Targetable>();
+        List<Targetable> targets = new ArrayList<>();
         final IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
-        while (choices.hasNext()) {
-            Targetable t = choices.next();
-            boolean isSensorReturn = false;
-            boolean isVisible = true;
-            if (t instanceof Entity) {
-                isSensorReturn = ((Entity) t).isSensorReturn(localPlayer);
-                isVisible = ((Entity) t).hasSeenEntity(localPlayer);
-            }
-            if (!ce().equals(t) && !isSensorReturn && isVisible) {
-                targets.add(t);
+        for (Entity entity : choices) {
+            boolean isSensorReturn = entity.isSensorReturn(localPlayer);
+            boolean isVisible = entity.hasSeenEntity(localPlayer);
+            if (!ce().equals(entity) && !isSensorReturn && isVisible) {
+                targets.add(entity);
             }
         }
 
@@ -1391,6 +1384,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         targets.add(new HexTarget(pos, clientgui.getClient().getGame()
                 .getBoard(), Targetable.TYPE_HEX_TAG));
+
+        Targetable choice = null;
 
         // Do we have a single choice?
         if (targets.size() == 1) {

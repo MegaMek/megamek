@@ -311,7 +311,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
     private List<Entity> getMyNovaUnits()
     {
         List<Entity> novaUnits = new LinkedList<Entity>();
-        for (Entity ent : client.getEntitiesVector()) {
+        for (Entity ent : client.getEntities()) {
             if(ent.getOwnerId() == client.getLocalPlayer().getId() && ent.hasNovaCEWS())
             {
                 novaUnits.add(ent);

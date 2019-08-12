@@ -1581,11 +1581,12 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         List<Targetable> targets = new ArrayList<>();
         
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
-        game.forEachEntity(e -> {
+        game.forEachEntityAt(pos, e -> {
             if (!ce().equals(e) && (friendlyFire || e.isEnemyOf(ce()))) {
                 targets.add(e);
             }
         });
+        
 
         targets.sort(new Comparator<Targetable>(){
             @Override

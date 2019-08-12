@@ -1851,12 +1851,15 @@ public class Game implements Serializable, IGame {
      * @param start the index number to start at (not an Entity Id)
      */
     public Entity getNextEntity(int start) {
-        if (entities.size() == 0) {
+        if (entities.isEmpty()) {
             return null;
         }
-        start = start % entities.size();
-        int entityId = entities.get(start).getId();
-        return getEntity(getNextEntityNum(getTurn(), entityId));
+        for (Entity entity : entities.values()) {
+            if (start-- <= 0) {
+                return entity;
+            }
+        }
+        return null;
     }
 
     /**

@@ -1,0 +1,34 @@
+#############################################################################
+# Tables adapted from the Against the Bot Campaign Civilian Units Tables    #
+#   Original tables can be found here:                                      #
+#     http://bg.battletech.com/forums/index.php/topic,23390.msg521754.html#msg521754   #
+#   As noted in the original files (probably), these are fan works          #
+#   and should not be taken as official in any way.                         #
+#                                                                           #
+# Adaptation performed by user Obvious from                                 #
+#     http://www.classicbattletech.com/forums/)                             #
+#   If any discrepancies are found between these files and the original     #
+#   AtBC tables, please post the updated file on the forum thread.          #
+#                                                                           #
+# Notes on adaptation:                                                      #
+# * APC table alone, for convenience                                        #
+#############################################################################
+CivilianUnits_APC
+Armored Personnel Carrier (Hover LRM),27
+Armored Personnel Carrier (Hover MG),27
+Armored Personnel Carrier (Hover SRM),27
+Armored Personnel Carrier (Tracked LRM),27
+Armored Personnel Carrier (Tracked MG),27
+Armored Personnel Carrier (Tracked SRM),27
+Armored Personnel Carrier (Wheeled LRM),27
+Armored Personnel Carrier (Wheeled MG),27
+Armored Personnel Carrier (Wheeled SRM),27
+Heavy Hover APC (LRM),3
+Heavy Hover APC (MG),3
+Heavy Hover APC (SRM),3
+Heavy Tracked APC (LRM),3
+Heavy Tracked APC (MG),3
+Heavy Tracked APC (SRM),3
+Heavy Wheeled APC (LRM),3
+Heavy Wheeled APC (MG),3
+Heavy Wheeled APC (SRM),3

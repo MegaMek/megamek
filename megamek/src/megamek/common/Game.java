@@ -39,6 +39,7 @@ import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEndEvent;
@@ -909,6 +910,7 @@ public class Game implements Serializable, IGame {
         entities.forEach((id, entity) -> consumer.accept(entity));
     }
 
+    @Nullable
     public Entity getPreviousEntityFromList(Entity current) {
         if (current != null && entities.containsKey(current.getId())) {
             Entry<Integer, Entity> previousEntity = entities.lowerEntry(current.getId());
@@ -916,9 +918,15 @@ public class Game implements Serializable, IGame {
                 return previousEntity.getValue();
             }
         }
+
+        if (!entities.isEmpty()) {
+            return entities.lastEntry().getValue();
+        }
+
         return null;
     }
 
+    @Nullable
     public Entity getNextEntityFromList(Entity current) {
         if (current != null && entities.containsKey(current.getId())) {
             Entry<Integer, Entity> nextEntity = entities.higherEntry(current.getId());
@@ -926,6 +934,11 @@ public class Game implements Serializable, IGame {
                 return nextEntity.getValue();
             }
         }
+
+        if (!entities.isEmpty()) {
+            return entities.firstEntry().getValue();
+        }
+
         return null;
     }
     /**

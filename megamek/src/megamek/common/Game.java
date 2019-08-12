@@ -1882,7 +1882,8 @@ public class Game implements Serializable, IGame {
 
         Integer nextEntity = entities.higherKey(start);
         if (nextEntity == null) {
-            return Entity.NONE;
+            // Loop around if we reached the end.
+            return entities.firstKey();
         }
         
         return nextEntity;
@@ -1902,7 +1903,8 @@ public class Game implements Serializable, IGame {
 
         Integer previousEntity = entities.lowerKey(start);
         if (previousEntity == null) {
-            return Entity.NONE;
+            // Loop around if we reached the end.
+            return entities.lastKey();
         }
 
         return previousEntity;
@@ -1928,6 +1930,7 @@ public class Game implements Serializable, IGame {
         while (entities.containsKey(start)) {
             Entry<Integer, Entity> nextEntity = entities.higherEntry(start);
             if (nextEntity == null) {
+                // We've looped around, go to the beginning.
                 break;
             }
 

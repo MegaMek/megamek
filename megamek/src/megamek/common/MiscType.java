@@ -520,6 +520,13 @@ public class MiscType extends EquipmentType {
             weaponWeight /= 10;
             return Math.ceil(weaponWeight * 2.0f) / 2.0f;
         } else if (hasFlag(F_SPONSON_TURRET)) {
+            // For omni vehicles, this should be set as part of the base chassis.
+            if ((entity.isOmni() && (entity instanceof Tank)
+                    && ((Tank) entity).getBaseChassisSponsonPintleWeight() >= 0)) {
+                // Split between the two mounts
+                return ((Tank) entity).getBaseChassisSponsonPintleWeight() /
+                        entity.countWorkingMisc(MiscType.F_SPONSON_TURRET);
+            }
             /* The sponson turret mechanism is equal to 10% of the weight of all mounted weapons, rounded
              * up to the half ton. Since the turrets come in pairs, splitting the weight between them
              * may result in a quarter-ton result for a single turret, but the overall unit weight will
@@ -534,6 +541,13 @@ public class MiscType extends EquipmentType {
             weaponWeight /= 10.0;
             return Math.ceil(weaponWeight * 2.0) / 2.0 / entity.countWorkingMisc(MiscType.F_SPONSON_TURRET);
         } else if (hasFlag(F_PINTLE_TURRET)) {
+            // For omnivehicles the weight should be set as chassis fixed weight.
+            // Split the weight evenly among the mounts to assure the total weight is correct.
+            if ((entity.isOmni() && (entity instanceof Tank)
+                    && ((Tank) entity).getBaseChassisSponsonPintleWeight() >= 0)) {
+                return ((Tank) entity).getBaseChassisSponsonPintleWeight() /
+                        entity.countWorkingMisc(MiscType.F_PINTLE_TURRET);
+            }
             double weaponWeight = 0;
             // 5% of linked weapons' weight
             for (Mounted m : entity.getWeaponList()) {

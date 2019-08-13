@@ -281,8 +281,8 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             t.setHasNoControlSystems(true);
         }
 
-        if (dataFile.exists("baseChassisFireConWeight")) {
-            t.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
+        if (dataFile.exists("trailer")) {
+            t.setHasNoControlSystems(true);
         }
 
         return t;

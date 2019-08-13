@@ -492,4 +492,9 @@ public class SupportTank extends Tank {
         return true;
     }
 
+    @Override
+    public boolean isTrailer() {
+        return hasWorkingMisc(MiscType.F_TRAILER_MODIFICATION);
+    }
+
 }

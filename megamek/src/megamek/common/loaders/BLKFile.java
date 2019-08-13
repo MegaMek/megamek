@@ -861,6 +861,9 @@ public class BLKFile {
             if (tank.hasNoControlSystems()) {
                 blk.writeBlockData("hasNoControlSystems", 1);
             }
+            if (!t.isSupportVehicle() && t.isTrailer()) {
+                blk.writeBlockData("trailer", 1);
+            }
         }
         
         if (t instanceof SmallCraft) {

@@ -163,6 +163,11 @@ public class Tank extends Entity {
     private double baseChassisSponsonPintleWeight = BASE_CHASSIS_TURRET_WT_UNASSIGNED;
 
     /**
+     * Flag to indicate unit is constructed as a trailer. Trailers do not require
+     * control systems or engines unless they are intended for independent operation.
+     */
+    private boolean trailer = false;
+    /**
      * Keeps track of whether this vehicle has control systems.  Trailers aren't
      * required to have control systems.
      */
@@ -4329,19 +4334,21 @@ public class Tank extends Entity {
     /**
      * Used to determine if this vehicle can be towed by a tractor
      * 
-     * @return
+     * @return Whether the unit is constructed as a trailer
      */
     @Override
     public boolean isTrailer() {
-        if (hasMisc(MiscType.F_TRAILER_MODIFICATION)) {
-            return true;
-        }
-        //Maybe an exploit here if it starts returning true for vehicles that get disabled
-        //but maybe we want to be able to tow those off the field too?
-        if (hasMisc(MiscType.F_HITCH) && getWalkMP() == 0) {
-            return true;
-        }
-        return false;
+        return trailer;
+    }
+
+    /**
+     * Marks whether the tank is constructed as a trailer. This has no effect on
+     * support vehicles, which determine trailer status by the trailer chassis modification.
+     *
+     * @param trailer Whether the tank is constructed as a trailer.
+     */
+    public void setTrailer(boolean trailer) {
+        this.trailer = trailer;
     }
     
     /**

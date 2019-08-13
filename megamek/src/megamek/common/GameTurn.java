@@ -481,11 +481,7 @@ public class GameTurn implements Serializable {
                         "the passed enumeration of entities is empty");
             }
 
-            int index = 0;
-            int[] entityIds = new int[entities.size()];
-            for (Entity entity : entities) {
-                entityIds[index++] = entity.getId();
-            }
+            entityIds = entities.stream().mapToInt(e -> e.getId()).toArray();
         }
 
         /**

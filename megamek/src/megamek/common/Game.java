@@ -1869,7 +1869,7 @@ public class Game implements Serializable, IGame {
         }
         for (Entity entity : entities.values()) {
             if (start-- <= 0) {
-                return entity;
+                return getEntity(getNextEntityNum(getTurn(), entity.getId()));
             }
         }
         return null;
@@ -1893,13 +1893,26 @@ public class Game implements Serializable, IGame {
             return Entity.NONE;
         }
 
-        Integer nextEntity = entities.higherKey(start);
-        if (nextEntity == null) {
-            // Loop around if we reached the end.
-            return entities.firstKey();
+        int id = start;
+        while (true) {
+            Entry<Integer, Entity> entry = entities.higherEntry(id);
+            if (entry == null) {
+                // Loop around if we reached the end.
+                entry = entities.firstEntry();
+            }
+
+            id = entry.getKey();
+            if (id == start) {
+                // we've looped
+                break;
+            }
+
+            if (turn.isValidEntity(entry.getValue(), this)) {
+                return id;
+            }
         }
-        
-        return nextEntity;
+
+        return Entity.NONE;
     }
 
     /**
@@ -1914,13 +1927,26 @@ public class Game implements Serializable, IGame {
             return Entity.NONE;
         }
 
-        Integer previousEntity = entities.lowerKey(start);
-        if (previousEntity == null) {
-            // Loop around if we reached the end.
-            return entities.lastKey();
+        int id = start;
+        while (true) {
+            Entry<Integer, Entity> entry = entities.lowerEntry(id);
+            if (entry == null) {
+                // Loop around if we reached the beginning.
+                entry = entities.lastEntry();
+            }
+
+            id = entry.getKey();
+            if (id == start) {
+                // we've looped
+                break;
+            }
+
+            if (turn.isValidEntity(entry.getValue(), this)) {
+                return id;
+            }
         }
 
-        return previousEntity;
+        return Entity.NONE;
     }
 
     public int getFirstDeployableEntityNum(GameTurn turn) {

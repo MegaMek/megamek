@@ -60,6 +60,7 @@ public class GameVictoryEvent extends GameEvent {
 
         for (Entity entity : game.getOutOfGameEntitiesVector()) {
             entityIds.put(entity.getId(), entity);
+            vOutOfGame.add(entity);
         }
     }
 

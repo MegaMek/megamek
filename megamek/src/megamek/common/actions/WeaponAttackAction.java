@@ -3990,12 +3990,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param toHit The running total ToHitData for this WeaponAttackAction
      */
     private ToHitData compileAmmoToHitMods(IGame game, Entity ae, Mounted weapon, AmmoType atype, ToHitData toHit) {
-        
-
-        if (ae.isAirborne() && !ae.isAero()) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.Dropping"));
-            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.Jumping"));
-        }
         return toHit;
     }
     
@@ -4033,6 +4027,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // If we're spotting for indirect fire, add +1 (no penalty with second pilot in command console)
         if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeSpotting"));
+        }
+        
+        // Per SO p22, dropping units get hit with a +2 dropping penalty AND the +3 Jumping penalty 
+        if (ae.isAirborne() && !ae.isAero()) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.Dropping"));
+            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.Jumping"));
         }
         
         // Special effects (like tasers) affecting the attacker

@@ -696,6 +696,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Collect the modifiers for the environment
         toHit = compileWeatherToHitMods(game, ae, target, wtype, atype, toHit, isArtilleryIndirect);
         
+        // Collect the modifiers for the attacker's crew/pilot
+        toHit = compileCrewToHitMods(game, ae, toHit, wtype);
+        
         // Collect the modifiers for the attacker's condition/actions
         if (ae != null) {
             //Conventional fighter, Aerospace and fighter LAM attackers
@@ -4243,114 +4246,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS)) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorGhosts"));
         }
-        
-        //Now for modifiers affecting the attacker's crew
-        
-        // Bonuses for dual cockpits, etc
-        //Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
-        if (ae instanceof Mech && ((Mech)ae).getCockpitType() == Mech.COCKPIT_DUAL) {
-            if (!ae.getCrew().isActive(ae.getCrew().getCrewType().getGunnerPos())) {
-                toHit.addModifier(1, Messages.getString("WeaponAttackAction.GunnerHit"));                
-            } else if (ae.getCrew().hasDedicatedGunner()) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.DualCockpit"));
-            }
-        }
 
-        //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
-        if ((ae instanceof TripodMech || ae instanceof QuadVee) && !ae.getCrew().hasDedicatedGunner()) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GunnerHit"));
-        }
-        
-        // fatigue
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
-                && ae.getCrew().isGunneryFatigued()) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.Fatigue"));
-        }
-        
-        // Manei Domini Upgrades
-        
-        // VDNI
-        if (ae.hasAbility(OptionsConstants.MD_VDNI)
-                || ae.hasAbility(OptionsConstants.MD_BVDNI)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
-        }
-
-        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
-            // check for pl-masc
-            // the rules are a bit vague, but assume that if the infantry didn't
-            // move or jumped, then they shouldn't get the penalty
-            if (ae.hasAbility(OptionsConstants.MD_PL_MASC)
-                    && ((ae.moved == EntityMovementType.MOVE_WALK) || (ae.moved == EntityMovementType.MOVE_RUN))) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.PlMasc"));
-            }
-
-            // check for cyber eye laser sighting on ranged attacks
-            if (ae.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER)
-                    && !(wtype instanceof InfantryAttack)) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MdEye"));
-            }
-        }
-        
-        // SPAs
-        
-        // Unofficial weapon class specialist - Does not have an unspecialized penalty 
-        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER)
-                && wtype.hasFlag(WeaponType.F_ENERGY)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunESkill"));
-        }
-
-        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
-                && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunBSkill"));
-        }
-
-        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE)
-                && wtype.hasFlag(WeaponType.F_MISSILE)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunMSkill"));
-        }
-
-        // Is the pilot a weapon specialist?
-        if (ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
-            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));
-        } else if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST)) {
-            // aToW style gunnery specialist: -1 to specialized weapon and +1 to
-            // all other weapons
-            // Note that weapon specialist supersedes gunnery specialization, so
-            // if you have
-            // a specialization in Medium Lasers and a Laser specialization, you
-            // only get the -2 specialization mod
-            if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_ENERGY)) {
-                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.EnergySpec"));
-                } else {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
-                }
-            } else if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_BALLISTIC)) {
-                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BallisticSpec"));
-                } else {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
-                }
-            } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_MISSILE)) {
-                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MissileSpec"));
-                } else {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
-                }
-            }
-        }
-        
-        // Vehicle crew hits
-        if (ae instanceof Tank) {
-            Tank tank = (Tank) ae;
-            if (tank.isCommanderHit()) {
-                if (ae instanceof VTOL) {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CopilotHit"));
-                } else {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CmdrHit"));
-                }
-            }
-        }
         return toHit;
     }
     
@@ -4570,6 +4466,128 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         return toHit;
+    }
+    
+    /**
+     * Convenience method that compiles the ToHit modifiers applicable to the attacker's crew/pilot
+     * Pilot wounded?  Has an SPA?  You'll find that here.
+     * Defender's a superheavy mech?  Using a weapon with a TH penalty?  Those are in other methods.
+     * 
+     * @param game The current game
+     * @param ae The Entity making this attack
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * 
+     */
+    private static ToHitData compileCrewToHitMods(IGame game, Entity ae, ToHitData toHit, WeaponType wtype) {
+        //Now for modifiers affecting the attacker's crew
+        
+        // Bonuses for dual cockpits, etc
+        //Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
+        if (ae instanceof Mech && ((Mech)ae).getCockpitType() == Mech.COCKPIT_DUAL) {
+            if (!ae.getCrew().isActive(ae.getCrew().getCrewType().getGunnerPos())) {
+                toHit.addModifier(1, Messages.getString("WeaponAttackAction.GunnerHit"));                
+            } else if (ae.getCrew().hasDedicatedGunner()) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.DualCockpit"));
+            }
+        }
+
+        //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
+        if ((ae instanceof TripodMech || ae instanceof QuadVee) && !ae.getCrew().hasDedicatedGunner()) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GunnerHit"));
+        }
+        
+        // fatigue
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
+                && ae.getCrew().isGunneryFatigued()) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.Fatigue"));
+        }
+        
+        // Manei Domini Upgrades
+        
+        // VDNI
+        if (ae.hasAbility(OptionsConstants.MD_VDNI)
+                || ae.hasAbility(OptionsConstants.MD_BVDNI)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
+        }
+
+        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+            // check for pl-masc
+            // the rules are a bit vague, but assume that if the infantry didn't
+            // move or jumped, then they shouldn't get the penalty
+            if (ae.hasAbility(OptionsConstants.MD_PL_MASC)
+                    && ((ae.moved == EntityMovementType.MOVE_WALK) || (ae.moved == EntityMovementType.MOVE_RUN))) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.PlMasc"));
+            }
+
+            // check for cyber eye laser sighting on ranged attacks
+            if (ae.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER)
+                    && !(wtype instanceof InfantryAttack)) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MdEye"));
+            }
+        }
+        
+        // SPAs
+        
+        // Unofficial weapon class specialist - Does not have an unspecialized penalty 
+        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER)
+                && wtype.hasFlag(WeaponType.F_ENERGY)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunESkill"));
+        }
+
+        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
+                && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunBSkill"));
+        }
+
+        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE)
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunMSkill"));
+        }
+
+        // Is the pilot a weapon specialist?
+        if (ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
+            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));
+        } else if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST)) {
+            // aToW style gunnery specialist: -1 to specialized weapon and +1 to
+            // all other weapons
+            // Note that weapon specialist supersedes gunnery specialization, so
+            // if you have
+            // a specialization in Medium Lasers and a Laser specialization, you
+            // only get the -2 specialization mod
+            if (wtype.hasFlag(WeaponType.F_ENERGY)) {
+                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_ENERGY)) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.EnergySpec"));
+                } else {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
+                }
+            } else if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_BALLISTIC)) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BallisticSpec"));
+                } else {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
+                }
+            } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_MISSILE)) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MissileSpec"));
+                } else {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
+                }
+            }
+        }
+        
+        // Vehicle crew hits
+        if (ae instanceof Tank) {
+            Tank tank = (Tank) ae;
+            if (tank.isCommanderHit()) {
+                if (ae instanceof VTOL) {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CopilotHit"));
+                } else {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CmdrHit"));
+                }
+            }
+        }
     }
     
     /**

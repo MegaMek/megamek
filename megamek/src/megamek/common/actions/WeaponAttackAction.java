@@ -803,7 +803,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.BoMissileHex"));
             }
             if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-                return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.BoMissileHex"));
+                return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.BoMissileMinRange"));
             } 
         }
 

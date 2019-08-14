@@ -696,8 +696,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Collect the modifiers for the environment
         toHit = compileWeatherToHitMods(game, ae, target, wtype, atype, toHit, isArtilleryIndirect);
         
-        // Collect the modifiers for the attacker's crew/pilot
-        toHit = compileCrewToHitMods(game, ae, toHit, wtype);
+        // Collect the modifiers for the crew/pilot
+        toHit = compileCrewToHitMods(game, ae, te, toHit, wtype);
         
         // Collect the modifiers for the attacker's condition/actions
         if (ae != null) {
@@ -767,33 +767,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-        }
-
-        if (te != null) {
-            if (te.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
-                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.PAVEMENT)
-                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD)
-                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
-                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING)
-                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.UrbanGuerilla"));
-            }
-            if (te.hasAbility(OptionsConstants.PILOT_SHAKY_STICK) && te.isAirborne()
-                    && !ae.isAirborne() && !ae.isAirborneVTOLorWIGE()) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.ShakyStick"));
-            }
-            if (te.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)
-                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
-                       || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE))
-                    && te.moved == EntityMovementType.MOVE_WALK) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.ForestRanger"));
-            }
-            if (te.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)
-                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.MUD)
-                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.SWAMP))
-                    && te.moved == EntityMovementType.MOVE_RUN) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SwampBeast"));
-            }
         }
         
         placeholder
@@ -4475,12 +4448,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param game The current game
      * @param ae The Entity making this attack
+     * @param te The target Entity
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * 
      * @param wtype The WeaponType of the weapon being used
      * 
      */
-    private static ToHitData compileCrewToHitMods(IGame game, Entity ae, ToHitData toHit, WeaponType wtype) {
+    private static ToHitData compileCrewToHitMods(IGame game, Entity ae, Entity te, ToHitData toHit, WeaponType wtype) {
         //Now for modifiers affecting the attacker's crew
         
         // Bonuses for dual cockpits, etc
@@ -4574,6 +4548,38 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 } else {
                     toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
                 }
+            }
+        }
+        
+        // Target SPAs
+        if (te != null) {
+            // Shaky Stick -  Target gets a +1 bonus against Ground-to-Air attacks
+            if (te.hasAbility(OptionsConstants.PILOT_SHAKY_STICK) && te.isAirborne()
+                    && !ae.isAirborne() && !ae.isAirborneVTOLorWIGE()) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.ShakyStick"));
+            }
+            // Urban Guerrilla - Target gets a +1 bonus in any sort of urban terrain
+            if (te.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
+                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.PAVEMENT)
+                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD)
+                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
+                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING)
+                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.UrbanGuerilla"));
+            }
+            // Forest Ranger - Target gets a +1 bonus in wooded terrain when moving at walking speed or greater
+            if (te.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)
+                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
+                       || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE))
+                    && te.moved == EntityMovementType.MOVE_WALK) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.ForestRanger"));
+            }
+            // Swamp Beast - Target gets a +1 bonus in mud/swamp terrain when running/flanking
+            if (te.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)
+                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.MUD)
+                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.SWAMP))
+                    && te.moved == EntityMovementType.MOVE_RUN) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SwampBeast"));
             }
         }
         

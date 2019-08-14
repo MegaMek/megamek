@@ -644,13 +644,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         //Is this an infantry leg/swarm attack?
-        toHit = handleSwarmAttacks(game, ae, target, ttype, wtype, toHit);
+        toHit = handleSwarmAttacks(game, ae, target, ttype, toHit, wtype);
+        if (isSpecialResolution()) {
+            return toHit;
+        }
+        
+        //Artillery attack?
+        toHit = handleArtilleryAttacks(game, ae, target, ttype, losMods, toHit, wtype, weapon, atype, isArtilleryDirect,
+                isArtilleryFLAK, isHoming, isArtilleryIndirect, usesAmmo);
         if (isSpecialResolution()) {
             return toHit;
         }
         
         //Check to see if this attack was made with a weapon that has special to-hit rules
-        toHit = handleSpecialWeaponAttacks(wtype, atype, ae, target, ttype, los, game, toHit);
+        toHit = handleSpecialWeaponAttacks(game, ae, target, ttype, los, toHit, wtype, atype);
         if (isSpecialResolution()) {
             return toHit;
         }
@@ -769,7 +776,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         }
         
-        placeholder
+        
 
         // Do we use Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected && (atype != null)
@@ -789,91 +796,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int tAlt = target.getAltitude();
         int distance = Compute.effectiveDistance(game, ae, target);
 
-        // Handle direct artillery attacks.
-        if (isArtilleryDirect) {
-            if (isArtilleryFLAK) {
-                toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
-                if (te != null && te.isAirborne()) {
-                    if (te.getAltitude() > 3) {
-                        if (te.getAltitude() > 9) {
-                            toHit.addModifier(3, Messages.getString("WeaponAttackAction.AeroTeAlt10"));
-                        } else if (te.getAltitude() > 6) {
-                            toHit.addModifier(2, Messages.getString("WeaponAttackAction.AeroTeAlt79"));
-                        } else if (te.getAltitude() > 3) {
-                            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeroTeAlt46"));
-                        }
-                    }
-                }
-                return toHit;
-            } else {
-                toHit.addModifier(4, Messages.getString("WeaponAttackAction.DirectArty"));
-                toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
-                toHit.append(losMods);
-                toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
-                // actuator & sensor damage to attacker
-                toHit.append(Compute.getDamageWeaponMods(ae, weapon));
-                // heat
-                if (ae.getHeatFiringModifier() != 0) {
-                    toHit.addModifier(ae.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
-                }
-
-                // weapon to-hit modifier
-                if (wtype.getToHitModifier() != 0) {
-                    toHit.addModifier(wtype.getToHitModifier(), Messages.getString("WeaponAttackAction.WeaponMod"));
-                }
-
-                // ammo to-hit modifier
-                if (usesAmmo && (atype != null) && (atype.getToHitModifier() != 0)) {
-                    toHit.addModifier(atype.getToHitModifier(),
-                            atype.getSubMunitionName()
-                                    + Messages.getString("WeaponAttackAction.AmmoMod"));
-                }
-                
-                if (isHoming) {
-                    return new ToHitData(4, Messages.getString("WeaponAttackAction.HomingArty"));
-                }
-
-                if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())
-                        && !isArtilleryFLAK) {
-                    return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.ArtyDesTarget"));
-                }
-            }
-            return toHit;
-        }
-        if (isArtilleryIndirect) {
-            if (isHoming) {
-                return new ToHitData(4, Messages.getString("WeaponAttackAction.HomingArty"));
-            }
-
-            if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
-                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.ArtyDesTarget"));
-            }
-            int mod = 7;
-            if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
-                mod--;
-            }
-            toHit.addModifier(mod, Messages.getString("WeaponAttackAction.IndirectArty"));
-            int adjust = ae.aTracker.getModifier(weapon, target.getPosition());
-            boolean spotterIsForwardObserver = ae.aTracker.getSpotterHasForwardObs();
-            if (adjust == TargetRoll.AUTOMATIC_SUCCESS) {
-                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                        "Artillery firing at target that's been hit before.");
-            } else if (adjust != 0) {
-                toHit.addModifier(adjust, Messages.getString("WeaponAttackAction.AdjustedFire"));
-                if (spotterIsForwardObserver) {
-                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.FooSpotter"));
-                }
-            }
-            if (ae.isAirborne()) {
-                if (ae.getAltitude() > 6) {
-                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.Altitude"));
-                } else if (ae.getAltitude() > 3) {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Altitude"));
-                }
-            }
-            return toHit;
-
-        }
+        placeholder
         
         if (isBearingsOnlyMissile) {
             if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
@@ -4622,17 +4545,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     /**
      * If you're using a weapon that does something totally special and doesn't apply mods like everything else, look here
      * 
-     * @param wtype The WeaponType of the weapon being used
-     * @param atype The AmmoType being used for this attack
+     * @param game The current game
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
      * @param los The calculated LOS between attacker and target
-     * @param game The current game
      * @param toHit The running total ToHitData for this WeaponAttackAction
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param atype The AmmoType being used for this attack
      */
-    private static ToHitData handleSpecialWeaponAttacks(WeaponType wtype, AmmoType atype, Entity ae,
-            Targetable target, int ttype, LosEffects los, IGame game, ToHitData toHit) {
+    private static ToHitData handleSpecialWeaponAttacks(IGame game, Entity ae,
+            Targetable target, int ttype, LosEffects los, ToHitData toHit, WeaponType wtype, AmmoType atype) {
         setSpecialResolution(false);
         Entity te = null;
         if (target != null && ttype == Targetable.TYPE_ENTITY) {
@@ -4686,12 +4610,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param attacker The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
+     * @param toHit The running total ToHitData for this WeaponAttackAction
      * 
      * @param wtype The WeaponType of the weapon being used
-     * @param toHit The running total ToHitData for this WeaponAttackAction
      */
     private static ToHitData handleSwarmAttacks(IGame game, Entity attacker, Targetable target,
-            int ttype, WeaponType wtype, ToHitData toHit) {
+            int ttype, ToHitData toHit, WeaponType wtype)  {
         setSpecialResolution(false);
         if (target == null || ttype != Targetable.TYPE_ENTITY) {
             //Can only swarm a valid entity target
@@ -4775,6 +4699,126 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.SwarmingAutoHit"), ToHitData.HIT_SWARM_CONVENTIONAL, side);
         }
         //If we get here, no swarm attack applies
+        return toHit;
+    }
+    
+    /**
+     * Convenience method that compiles the ToHit modifiers applicable to artillery attacks
+     * 
+     * @param game The current game
+     * @param ae The Entity making this attack
+     * @param target The Targetable object being attacked
+     * @param ttype  The targetable object type
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param weapon The Mounted weapon being used
+     * @param atype The AmmoType being used for this attack
+     * 
+     * @param isArtilleryDirect  flag that indicates whether this is a direct-fire artillery attack
+     * @param isArtilleryFLAK   flag that indicates whether this is a flak artillery attack
+     * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
+     * @param isHoming flag that indicates whether this is a homing missile/copperhead shot
+     * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
+     */
+    private static ToHitData handleArtilleryAttacks(IGame game, Entity ae, Targetable target, int ttype, 
+            ToHitData losMods, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype, 
+            boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isHoming,
+            boolean usesAmmo) {
+        setSpecialResolution(false);
+        
+        Entity te = null;
+        if (target != null && ttype == Targetable.TYPE_ENTITY) {
+            te = (Entity) target;
+        }
+        
+        //Homing warheads just need a flat 4 to seek out a successful TAG
+        if (isHoming) {  
+            setSpecialResolution(true);
+            return new ToHitData(4, Messages.getString("WeaponAttackAction.HomingArty"));
+        }
+        
+        //Don't bother adding up modifiers if the target hex has been hit before
+        if (game.getEntity(ae.getId()).getOwner().getArtyAutoHitHexes().contains(target.getPosition())
+                && !isArtilleryFLAK) {
+            setSpecialResolution(true);
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.ArtyDesTarget"));
+        }
+        
+        // Handle direct artillery attacks.
+        if (isArtilleryDirect) {
+            //If an airborne unit occupies the target hex, standard artillery ammo makes a flak attack against it
+            //TN is a flat 3 + the altitude mod + the attacker's weapon skill
+            if (isArtilleryFLAK && te != null) {
+                toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
+                if (te != null && te.isAirborne()) {
+                    if (te.getAltitude() > 3) {
+                        if (te.getAltitude() > 9) {
+                            toHit.addModifier(3, Messages.getString("WeaponAttackAction.AeroTeAlt10"));
+                        } else if (te.getAltitude() > 6) {
+                            toHit.addModifier(2, Messages.getString("WeaponAttackAction.AeroTeAlt79"));
+                        } else if (te.getAltitude() > 3) {
+                            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeroTeAlt46"));
+                        }
+                    }
+                }
+                setSpecialResolution(true);
+                return toHit;
+            } else {
+                //All other direct fire artillery attacks
+                toHit.addModifier(4, Messages.getString("WeaponAttackAction.DirectArty"));
+                toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
+                toHit.append(losMods);
+                toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
+                // actuator & sensor damage to attacker
+                toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+                // heat
+                if (ae.getHeatFiringModifier() != 0) {
+                    toHit.addModifier(ae.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
+                }
+
+                // weapon to-hit modifier
+                if (wtype.getToHitModifier() != 0) {
+                    toHit.addModifier(wtype.getToHitModifier(), Messages.getString("WeaponAttackAction.WeaponMod"));
+                }
+
+                // ammo to-hit modifier
+                if (usesAmmo && (atype != null) && (atype.getToHitModifier() != 0)) {
+                    toHit.addModifier(atype.getToHitModifier(),
+                            atype.getSubMunitionName()
+                                    + Messages.getString("WeaponAttackAction.AmmoMod"));
+                }
+            }
+            setSpecialResolution(true);
+            return toHit;
+        }
+        //And now for indirect artillery fire
+        if (isArtilleryIndirect) {
+            int mod = 7;
+            if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
+                mod--;
+            }
+            toHit.addModifier(mod, Messages.getString("WeaponAttackAction.IndirectArty"));
+            int adjust = ae.aTracker.getModifier(weapon, target.getPosition());
+            boolean spotterIsForwardObserver = ae.aTracker.getSpotterHasForwardObs();
+            if (adjust == TargetRoll.AUTOMATIC_SUCCESS) {
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
+                        "Artillery firing at target that's been hit before.");
+            } else if (adjust != 0) {
+                toHit.addModifier(adjust, Messages.getString("WeaponAttackAction.AdjustedFire"));
+                if (spotterIsForwardObserver) {
+                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.FooSpotter"));
+                }
+            }
+            if (ae.isAirborne()) {
+                if (ae.getAltitude() > 6) {
+                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.Altitude"));
+                } else if (ae.getAltitude() > 3) {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Altitude"));
+                }
+            }
+        }
+        //If we get here, this isn't an artillery attack
         return toHit;
     }
 }

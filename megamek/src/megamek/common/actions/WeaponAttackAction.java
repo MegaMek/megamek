@@ -700,6 +700,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // the target hex or the elevation of the hex the attacker is
         // in, whichever is higher."
         
+        // Store the thruBldg state, for later processing
+        toHit.setThruBldg(los.getThruBldg());
+        
         // Collect the modifiers for the environment
         toHit = compileEnvironmentalToHitMods(game, ae, target, wtype, atype, toHit, isArtilleryIndirect);
         
@@ -717,64 +720,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         isArtilleryDirect, isArtilleryIndirect, isIndirect, usesAmmo);
             }
         }
-        
-        
-
-        if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
-        } 
-
-        // evading bonuses (
-        if ((te != null) && te.isEvading()) {
-            toHit.addModifier(te.getEvasionBonus(), Messages.getString("WeaponAttackAction.TeEvading"));
-        }
-
-        if (Compute.isGroundToAir(ae, target) && (null != te) && te.isNOE()) {
-            if (te.passedWithin(ae.getPosition(), 1)) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.TeNoe"));
-            } else {
-                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.TeNoe"));
-            }
-        }
-
-        if (Compute.isGroundToAir(ae, target)
-                && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE) && (null != te)
-                && (te.isAero())) {
-            int vMod = ((IAero) te).getCurrentVelocity();
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AA_MOVE_MOD)) {
-                vMod = Math.min(vMod / 2, 4);
-            }
-            toHit.addModifier(vMod, Messages.getString("WeaponAttackAction.TeVelocity"));
-        }
-
-        if (te instanceof Entity && te.isAero() && te.isAirborne()) {
-
-            IAero a = (IAero) te;
-
-            // is the target at zero velocity
-            if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !game.getBoard().inSpace())) {
-                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ImmobileAero"));
-            }
-
-            // sensor shadows
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
-                    && game.getBoard().inSpace()) {
-                for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
-                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
-                        break;
-                    }
-                }
-                for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) a)
-                            && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
-                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
-                        break;
-                    }
-                }
-            }
-
-        }
 
         // determine some more variables
         int aElev = ae.getElevation();
@@ -782,8 +727,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int aAlt = ae.getAltitude();
         int tAlt = target.getAltitude();
         int distance = Compute.effectiveDistance(game, ae, target);
-
-        placeholder
         
         if (isBearingsOnlyMissile) {
             if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
@@ -803,9 +746,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.AdjBuilding"));
         }
 
-        // Store the thruBldg state, for later processing
-        toHit.setThruBldg(los.getThruBldg());
-
         // Attacks against buildings from inside automatically hit.
         if ((null != los.getThruBldg()) && ((ttype == Targetable.TYPE_BUILDING)
                 || (ttype == Targetable.TYPE_BLDG_IGNITE)
@@ -814,18 +754,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 || (target instanceof GunEmplacement))) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.InsideBuilding"));
         }
-
-        // Add range mods - If the attacker and target are in the same building
-        // & hex, range mods don't apply (and will cause the shot to fail)
-        if ((los.getThruBldg() == null) || !los.getTargetPosition().equals(ae.getPosition())) {
-            toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
-        }
-
-        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_ANTI_AIR) && (target instanceof Entity)) {
-            if (target.isAirborneVTOLorWIGE() || target.isAirborne()) {
-                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AaVsAir"));
-            }
-        }
+        
+        placeholder
 
         // air-to-ground strikes apply a +2 mod
         if (Compute.isAirToGround(ae, target)
@@ -4153,6 +4083,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Quirks
+        
+        // Anti-air targeting quirk vs airborne unit
+        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_ANTI_AIR) && (target instanceof Entity)) {
+            if (target.isAirborneVTOLorWIGE() || target.isAirborne()) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AaVsAir"));
+            }
+        }
+        
+        // Sensor ghosts quirk
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS)) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorGhosts"));
         }
@@ -4565,6 +4504,48 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             //Some of these weapons only target valid entities
             te = (Entity) target;
         }
+        
+        // Modifiers related to a special action the target is taking
+        
+        // evading bonuses
+        if ((te != null) && te.isEvading()) {
+            toHit.addModifier(te.getEvasionBonus(), Messages.getString("WeaponAttackAction.TeEvading"));
+        }
+        
+        // Special effects (like Heat) affecting the target
+        
+        // Special Equipment that that target possesses
+        
+        // Standard Movement and Position modifiers
+        
+        // Add range mods - If the attacker and target are in the same building
+        // & hex, range mods don't apply (and will cause the shot to fail)
+        if ((los.getThruBldg() == null) || !los.getTargetPosition().equals(ae.getPosition())) {
+            toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
+        }
+        
+        // Ground-to-air attacks against a target flying at NOE
+        if (Compute.isGroundToAir(ae, target) && (null != te) && te.isNOE()) {
+            if (te.passedWithin(ae.getPosition(), 1)) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.TeNoe"));
+            } else {
+                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.TeNoe"));
+            }
+        }
+
+        // Ground-to-air attacks against a target flying at any other altitude (if StratOps Velocity mods are on)
+        if (Compute.isGroundToAir(ae, target)
+                && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE) && (null != te)
+                && (te.isAero())) {
+            int vMod = ((IAero) te).getCurrentVelocity();
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AA_MOVE_MOD)) {
+                vMod = Math.min(vMod / 2, 4);
+            }
+            toHit.addModifier(vMod, Messages.getString("WeaponAttackAction.TeVelocity"));
+        }
+        
+        // Terrain and Line of Sight
+        
         // if we have BAP and there are woods in the
         // way, and we are within BAP range, we reduce the BTH by 1
         // Per TacOps errata, this bonus also applies to all units on the same C3 network
@@ -4576,6 +4557,42 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los.getUltraWoods() > 0))) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
         }
+        
+        // Unit-specific modifiers
+        
+        // -1 to hit a SuperHeavy mech
+        if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
+        }
+        
+        // Aerospace target modifiers
+        if (te != null && te.isAero() && te.isAirborne()) {
+            IAero a = (IAero) te;
+
+            // is the target at zero velocity
+            if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !game.getBoard().inSpace())) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ImmobileAero"));
+            }
+
+            // Target hidden in the sensor shadow of a larger spacecraft
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
+                    && game.getBoard().inSpace()) {
+                for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
+                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
+                        break;
+                    }
+                }
+                for (Entity en : game.getEntitiesVector(target.getPosition())) {
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) a)
+                            && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
+                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
+                        break;
+                    }
+                }
+            }
+        }
+        
         return toHit;
     }
     

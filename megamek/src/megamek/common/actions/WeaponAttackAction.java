@@ -701,7 +701,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // in, whichever is higher."
         
         // Collect the modifiers for the environment
-        toHit = compileWeatherToHitMods(game, ae, target, wtype, atype, toHit, isArtilleryIndirect);
+        toHit = compileEnvironmentalToHitMods(game, ae, target, wtype, atype, toHit, isArtilleryIndirect);
         
         // Collect the modifiers for the crew/pilot
         toHit = compileCrewToHitMods(game, ae, te, toHit, wtype);
@@ -774,19 +774,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-        }
-        
-        
-
-        // Do we use Listen-Kill ammo from War of 3039 sourcebook?
-        if (!isECMAffected && (atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_LRM) 
-                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                        || (atype.getAmmoType() == AmmoType.T_MML)
-                        || (atype.getAmmoType() == AmmoType.T_SRM)
-                        || (atype.getAmmoType() == AmmoType.T_SRM_IMP))
-                && (munition == AmmoType.M_LISTEN_KILL) && !((te != null) && te.isClan())) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ListenKill"));
         }
 
         // determine some more variables
@@ -3802,7 +3789,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
      */
-    private static ToHitData compileWeatherToHitMods(IGame game, Entity ae, Targetable target, WeaponType wtype, 
+    private static ToHitData compileEnvironmentalToHitMods(IGame game, Entity ae, Targetable target, WeaponType wtype, 
             AmmoType atype, ToHitData toHit, boolean isArtilleryIndirect) {
         // Night combat modifiers
         if (!isArtilleryIndirect) {
@@ -3897,8 +3884,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      */
     private static ToHitData compileWeaponToHitMods(Entity ae, Mounted weapon, WeaponType wtype, Targetable target,
             int ttype, ToHitData toHit) {
-        if (ae == null) {
-            //*Should* be impossible at this point in the process
+        if (ae == null || wtype == null || weapon == null) {
+            // Can't calculate weapon mods without a valid weapon and an attacker to fire it
             return toHit;
         }
         Entity te = null;
@@ -3985,11 +3972,38 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param game The current game
      * @param ae The Entity making this attack
+     * @param target The Targetable object being attacked
+     * @param ttype  The targetable object type
+     * @param toHit The running total ToHitData for this WeaponAttackAction
      * 
      * @param wtype The WeaponType of the weapon being used
-     * @param toHit The running total ToHitData for this WeaponAttackAction
+     * @param weapon The Mounted weapon being used
+     * @param atype The AmmoType being used for this attack
+     * @param munition  Long indicating the munition type flag being used, if applicable
+     * 
+     * @param isECMAffected flag that indicates whether the target is inside an ECM bubble
      */
-    private ToHitData compileAmmoToHitMods(IGame game, Entity ae, Mounted weapon, AmmoType atype, ToHitData toHit) {
+    private ToHitData compileAmmoToHitMods(IGame game, Entity ae, Targetable target, int ttype, ToHitData toHit,
+            WeaponType wtype, Mounted weapon, AmmoType atype, long munition, boolean isECMAffected) {
+        if (ae == null || atype == null || weapon == null) {
+            // Can't calculate ammo mods without valid ammo and an attacker to fire it
+            return toHit;
+        }
+        Entity te = null;
+        if (target != null && ttype == Targetable.TYPE_ENTITY) {
+            //Some ammo can only target valid entities
+            te = (Entity) target;
+        }
+        // Do we use Listen-Kill ammo from War of 3039 sourcebook?
+        if (!isECMAffected && (atype != null)
+                && ((atype.getAmmoType() == AmmoType.T_LRM) 
+                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                        || (atype.getAmmoType() == AmmoType.T_MML)
+                        || (atype.getAmmoType() == AmmoType.T_SRM)
+                        || (atype.getAmmoType() == AmmoType.T_SRM_IMP))
+                && (munition == AmmoType.M_LISTEN_KILL) && !((te != null) && te.isClan())) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ListenKill"));
+        }
         return toHit;
     }
     
@@ -4011,7 +4025,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isArtilleryDirect  flag that indicates whether this is a direct-fire artillery attack
      * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
      * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
-     * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
+     * @param usesAmmo  flag that indicates whether or not the WeaponType being used is ammo-fed
      */
     placeholder
     private static ToHitData compileAttackerToHitMods(IGame game, Entity ae, Targetable target, ToHitData toHit,
@@ -4524,10 +4538,33 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * -4 for shooting at an immobile target?  You'll find that here.
      * Attacker strafing?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
+     * @param game The current game
+     * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
+     * @param los The calculated LOS between attacker and target
      * @param toHit The running total ToHitData for this WeaponAttackAction
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param weapon The Mounted weapon being used
+     * @param atype The AmmoType being used for this attack
+     * @param munition  Long indicating the munition type flag being used, if applicable
+     * 
+     * @param isArtilleryDirect  flag that indicates whether this is a direct-fire artillery attack
+     * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
+     * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
+     * @param usesAmmo  flag that indicates whether or not the WeaponType being used is ammo-fed
      */
-    private ToHitData compileTargetToHitMods(Targetable target, ToHitData toHit) {
+    private ToHitData compileTargetToHitMods(IGame game, Entity ae, Targetable target, int ttype, LosEffects los,
+            ToHitData toHit, WeaponType wtype, AmmoType atype, boolean isIndirect) {
+        if (ae == null || target == null) {
+            // Can't handle these attacks without a valid attacker and target
+            return toHit;
+        }
+        Entity te = null;
+        if (ttype == Targetable.TYPE_ENTITY) {
+            //Some of these weapons only target valid entities
+            te = (Entity) target;
+        }
         // if we have BAP and there are woods in the
         // way, and we are within BAP range, we reduce the BTH by 1
         // Per TacOps errata, this bonus also applies to all units on the same C3 network
@@ -4558,6 +4595,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     private static ToHitData handleSpecialWeaponAttacks(IGame game, Entity ae,
             Targetable target, int ttype, LosEffects los, ToHitData toHit, WeaponType wtype, AmmoType atype) {
         setSpecialResolution(false);
+        if (ae == null) {
+            //*Should* be impossible at this point in the process
+            return toHit;
+        }
+        
         Entity te = null;
         if (target != null && ttype == Targetable.TYPE_ENTITY) {
             //Some of these weapons only target valid entities
@@ -4607,15 +4649,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Convenience method that compiles the ToHit modifiers applicable to swarm attacks
      * 
      * @param game The current game
-     * @param attacker The Entity making this attack
+     * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * 
      * @param wtype The WeaponType of the weapon being used
      */
-    private static ToHitData handleSwarmAttacks(IGame game, Entity attacker, Targetable target,
+    private static ToHitData handleSwarmAttacks(IGame game, Entity ae, Targetable target,
             int ttype, ToHitData toHit, WeaponType wtype)  {
+        if (ae == null) {
+            //*Should* be impossible at this point in the process
+            return toHit;
+        }
         setSpecialResolution(false);
         if (target == null || ttype != Targetable.TYPE_ENTITY) {
             //Can only swarm a valid entity target
@@ -4624,7 +4670,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         Entity te = (Entity) target;
         // Leg attacks and Swarm attacks have their own base toHit values
         if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
-            toHit = Compute.getLegAttackBaseToHit(attacker, te, game);
+            toHit = Compute.getLegAttackBaseToHit(ae, te, game);
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 setSpecialResolution(true);
                 return toHit;
@@ -4634,7 +4680,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
-            toHit = Compute.getSwarmMekBaseToHit(attacker, te, game);
+            toHit = Compute.getSwarmMekBaseToHit(ae, te, game);
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 setSpecialResolution(true);
                 return toHit;
@@ -4654,8 +4700,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     if (e instanceof BattleArmor) {
                         BattleArmor ba = (BattleArmor) e;
                         int def = ba.getShootingStrength();
-                        int att = ((Infantry) attacker).getShootingStrength();
-                        if (!(attacker instanceof BattleArmor)) {
+                        int att = ((Infantry) ae).getShootingStrength();
+                        if (!(ae instanceof BattleArmor)) {
                             if (att >= 28) {
                                 att = 5;
                             } else if (att >= 24) {
@@ -4684,9 +4730,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         // Swarming infantry always hit their target, but
         // they can only target the Mek they're swarming.
-        else if ((te != null) && (attacker.getSwarmTargetId() == te.getId())) {
+        else if ((te != null) && (ae.getSwarmTargetId() == te.getId())) {
             int side = te instanceof Tank ? ToHitData.SIDE_RANDOM : ToHitData.SIDE_FRONT;
-            if (attacker instanceof BattleArmor) {
+            if (ae instanceof BattleArmor) {
                 if (!Infantry.SWARM_WEAPON_MEK.equals(wtype.getInternalName()) && !(wtype instanceof InfantryAttack)) {
                     setSpecialResolution(true);
                     return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.WrongSwarmUse"));

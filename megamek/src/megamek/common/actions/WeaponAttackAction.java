@@ -758,64 +758,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         placeholder
 
-        // Armor Piercing ammo is a flat +1
-        if ((atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_AC) 
-                        || (atype.getAmmoType() == AmmoType.T_LAC)
-                        || (atype.getAmmoType() == AmmoType.T_AC_IMP)
-                        || (atype.getAmmoType() == AmmoType.T_PAC))
-                && (munition == AmmoType.M_ARMOR_PIERCING)) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
-        }
-
-        // spotter movement, if applicable
-        if (isIndirect) {
-            // semiguided ammo negates this modifier, if TAG succeeded
-            if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_MML)
-                    || (atype.getAmmoType() == AmmoType.T_NLRM) 
-                    || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
-                    && (munition == AmmoType.M_SEMIGUIDED)) {
-
-                if (Compute.isTargetTagged(target, game)) {
-                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
-                }
-            } else if (!narcSpotter && (spotter != null)) {
-                toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
-                if (spotter.isAttackingThisTurn() && !spotter.getCrew().hasActiveCommandConsole() && 
-                        !Compute.isTargetTagged(target, game)) {
-                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.SpotterAttacking"));
-                }
-            }
-        }
-
-        // attacker terrain
-        toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
-
-        // target terrain, not applicable when delivering minefields or bombs
-        // also not applicable in pointblank shots from hidden units
-        if ((ttype != Targetable.TYPE_MINEFIELD_DELIVER) && !isPointblankShot) {
-            toHit.append(Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater));
-            toSubtract += Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater)
-                    .getValue();
-        }
-
-        // target in water?
-        IHex targHex = game.getBoard().getHex(target.getPosition());
-        int partialWaterLevel = 1;
-        if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
-            partialWaterLevel = 2;
-        }
-        if ((te != null) && targHex.containsTerrain(Terrains.WATER)
-                && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) { // target
-                                                                                                                        // in
-                                                                                                                        // partial
-                                                                                                                        // water
-            los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
-            losMods = los.losModifiers(game, eistatus, underWater);
-        }
-
         if ((target instanceof Infantry) && !wtype.hasFlag(WeaponType.F_FLAMER)) {
             if (targHex.containsTerrain(Terrains.FORTIFIED)
                     || (((Infantry) target).getDugIn() == Infantry.DUG_IN_COMPLETE)) {
@@ -3683,17 +3625,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param game The current game
      * @param ae    The attacking entity
      * @param spotter   The spotting entity, if using indirect fire
-     * 
-     * @param weapon The Mounted weapon being used for this attack
-     * @param wtype The WeaponType of the weapon being used
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param weapon The Mounted weapon being used for this attack
+     * @param atype The AmmoType being used for this attack
+     * @param munition  Long indicating the munition type flag being used, if applicable
+     * 
      * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
+     * @param narcSpotter  flag that indicates whether this spotting entity is using NARC equipment
      */
-    private static ToHitData compileWeaponToHitMods(IGame game, Entity ae, Entity spotter, Mounted weapon, WeaponType wtype,
-                Targetable target, int ttype, ToHitData toHit, boolean isIndirect) {
+    private static ToHitData compileWeaponToHitMods(IGame game, Entity ae, Entity spotter, Targetable target,
+                int ttype, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype, long munition, 
+                boolean isIndirect, boolean narcSpotter) {
         if (ae == null || wtype == null || weapon == null) {
             // Can't calculate weapon mods without a valid weapon and an attacker to fire it
             return toHit;
@@ -3760,6 +3706,29 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         
+        // Indirect fire suffers a +1 penalty if the spotter is making attacks of its own
+        if (isIndirect) {
+            // semiguided ammo negates this modifier, if TAG succeeded
+            if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM)
+                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.T_MML)
+                    || (atype.getAmmoType() == AmmoType.T_NLRM) 
+                    || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
+                    && (munition == AmmoType.M_SEMIGUIDED)) {
+
+                if (Compute.isTargetTagged(target, game)) {
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
+                }
+            } else if (!narcSpotter && (spotter != null)) {
+                // Unless the target has been tagged, or the spotter has an active command console
+                toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
+                if (spotter.isAttackingThisTurn() && !spotter.getCrew().hasActiveCommandConsole() && 
+                        !Compute.isTargetTagged(target, game)) {
+                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.SpotterAttacking"));
+                }
+            }
+        }
+        
         // And if this is a Mech Mortar
         if (wtype instanceof MekMortarWeapon) {
             if (isIndirect) {
@@ -3773,7 +3742,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         
-        // +1 to hit if this optional rule is turned on, apparently. But only Jams on a 2.
+        // +1 to hit if the Kinder Rapid-Fire ACs optional rule is turned on, but only Jams on a 2.
         // See TacOps Autocannons for the rest of the rules
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC) 
                 && weapon.curMode().equals("Rapid")) {
@@ -3834,7 +3803,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             //Some ammo can only target valid entities
             te = (Entity) target;
         }
-        // Do we use Listen-Kill ammo from War of 3039 sourcebook?
+        // Autocannon Munitions
+        
+        // Armor Piercing ammo is a flat +1
+        if ((atype != null)
+                && ((atype.getAmmoType() == AmmoType.T_AC) 
+                        || (atype.getAmmoType() == AmmoType.T_LAC)
+                        || (atype.getAmmoType() == AmmoType.T_AC_IMP)
+                        || (atype.getAmmoType() == AmmoType.T_PAC))
+                && (munition == AmmoType.M_ARMOR_PIERCING)) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
+        }
+        
+        // Missile Munitions
+        
+        // Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected && (atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM) 
                         || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -3895,8 +3878,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Special effects (like tasers) affecting the attacker
         
         // If a unit is suffering from electromagnetic interference, they get a
-        // blanket +2.
-        // Sucks to be them.
+        // blanket +2. Sucks to be them.
         if (ae.isSufferingEMI()) {
             toHit.addModifier(+2, Messages.getString("WeaponAttackAction.EMI"));
         }
@@ -3980,7 +3962,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         
-        //Critical damage effects
+        // Critical damage effects
         
         // Vehicle criticals
         if (ae instanceof Tank) {
@@ -4451,15 +4433,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     }
     
     /**
-     * Convenience method that compiles the ToHit modifiers applicable to the defender's condition
+     * Convenience method that compiles the ToHit modifiers applicable to the defender's condition and actions
      * -4 for shooting at an immobile target?  You'll find that here.
      * Attacker strafing?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
      * @param game The current game
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
-     * @param los The calculated LOS between attacker and target
+     * @param ttype  The targetable object type
      * @param toHit The running total ToHitData for this WeaponAttackAction
+     * @param toSubtract An int value representing a running total of mods to disregard - used for some special attacks
      * 
      * @param wtype The WeaponType of the weapon being used
      * @param weapon The Mounted weapon being used
@@ -4467,18 +4450,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param munition  Long indicating the munition type flag being used, if applicable
      * 
      * @param isAttackerInfantry  flag that indicates whether the attacker is an infantry/BA unit
-     * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
      */
-    private ToHitData compileTargetToHitMods(IGame game, Entity ae, Targetable target, int ttype, LosEffects los,
-                ToHitData toHit, WeaponType wtype, AmmoType atype, long munition,
-                boolean isAttackerInfantry, boolean isIndirect) {
+    private ToHitData compileTargetToHitMods(IGame game, Entity ae, Targetable target, int ttype,
+                ToHitData toHit, int toSubtract, WeaponType wtype, AmmoType atype, long munition,
+                boolean isAttackerInfantry) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
         }
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
-            //Some of these weapons only target valid entities
+            //Some weapons only target valid entities
             te = (Entity) target;
         }
         
@@ -4500,7 +4482,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Standard Movement and Position modifiers
         
-     // target movement - ignore for pointblank shots from hidden units
+        // target movement - ignore for pointblank shots from hidden units
         if ((te != null) && !isPointblankShot) {
             ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getTargetId());
             toHit.append(thTemp);
@@ -4532,12 +4514,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         
-        // Add range mods - If the attacker and target are in the same building
-        // & hex, range mods don't apply (and will cause the shot to fail)
-        if ((los.getThruBldg() == null) || !los.getTargetPosition().equals(ae.getPosition())) {
-            toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
-        }
-        
         // Ground-to-air attacks against a target flying at NOE
         if (Compute.isGroundToAir(ae, target) && (null != te) && te.isNOE()) {
             if (te.passedWithin(ae.getPosition(), 1)) {
@@ -4556,20 +4532,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 vMod = Math.min(vMod / 2, 4);
             }
             toHit.addModifier(vMod, Messages.getString("WeaponAttackAction.TeVelocity"));
-        }
-        
-        // Terrain and Line of Sight
-        
-        // if we have BAP and there are woods in the
-        // way, and we are within BAP range, we reduce the BTH by 1
-        // Per TacOps errata, this bonus also applies to all units on the same C3 network
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) && !isIndirect && (te != null)
-                && ae.hasBAP() && (ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te))
-                && !ComputeECM.isAffectedByECM(ae, ae.getPosition(), te.getPosition())
-                && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
-                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE)
-                        || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los.getUltraWoods() > 0))) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
         }
         
         // Unit-specific modifiers
@@ -4620,6 +4582,97 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
             }
+        }
+        
+        return toHit;
+    }
+    
+    /**
+     * Convenience method that compiles the ToHit modifiers applicable to the terrain and line of sight (LOS)
+     * Woods along the LOS?  Target Underwater?  You'll find that here.
+     * -4 for shooting at an immobile target?  Using a weapon with a TH penalty?  Those are in other methods.
+     * 
+     * @param game The current game
+     * @param ae The Entity making this attack
+     * @param target The Targetable object being attacked
+     * @param ttype  The targetable object type
+     * @param targEl An int value representing the target's elevation
+     * @param los The calculated LOS between attacker and target
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     * @param losMods A cached set of LOS-related modifiers
+     * @param toSubtract An int value representing a running total of mods to disregard - used for some special attacks
+     * 
+     * @param eistatus An int value representing the ei cockpit/pilot upgrade status
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param weapon The Mounted weapon being used
+     * @param atype The AmmoType being used for this attack
+     * @param munition  Long indicating the munition type flag being used, if applicable
+     * 
+     * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
+     * @param inSameBuilding  flag that indicates whether this attack originates from within the same building
+     * @param underWater  flag that indicates whether the weapon being used is underwater
+     */
+    private ToHitData compileTerrainAndLosToHitMods(IGame game, Entity ae, Targetable target, int ttype, int targEl, LosEffects los,
+                ToHitData toHit, ToHitData losMods, int toSubtract, int eistatus, WeaponType wtype, AmmoType atype,
+                long munition, boolean isAttackerInfantry, boolean isIndirect, boolean inSameBuilding, boolean underWater) {
+        if (ae == null || target == null) {
+            // Can't handle these attacks without a valid attacker and target
+            return toHit;
+        }
+        
+        //Target's hex
+        IHex targHex = game.getBoard().getHex(target.getPosition());
+        
+        Entity te = null;
+        if (ttype == Targetable.TYPE_ENTITY) {
+            //Some of these weapons only target valid entities
+            te = (Entity) target;
+        }
+        
+        // Add range mods - If the attacker and target are in the same building
+        // & hex, range mods don't apply (and will cause the shot to fail)
+        if ((los.getThruBldg() == null) || !los.getTargetPosition().equals(ae.getPosition())) {
+            toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
+        }
+        
+        // Attacker Terrain
+        toHit.append(Compute.getAttackerTerrainModifier(game, ae.getId()));
+        
+        // Target Terrain
+        
+        // target terrain, not applicable when delivering minefields or bombs
+        // also not applicable in pointblank shots from hidden units
+        if ((ttype != Targetable.TYPE_MINEFIELD_DELIVER) && !isPointblankShot) {
+            toHit.append(Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater));
+            toSubtract += Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater)
+                    .getValue();
+        }
+
+        // target in water?
+        int partialWaterLevel = 1;
+        if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+            partialWaterLevel = 2;
+        }
+        if ((te != null) && targHex.containsTerrain(Terrains.WATER)
+                // target in partial water
+                && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) { 
+            los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
+            losMods = los.losModifiers(game, eistatus, underWater);
+        }
+        
+        // Special Equipment
+        
+        // if we have BAP and there are woods in the
+        // way, and we are within BAP range, we reduce the BTH by 1
+        // Per TacOps errata, this bonus also applies to all units on the same C3 network
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) && !isIndirect && (te != null)
+                && ae.hasBAP() && (ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te))
+                && !ComputeECM.isAffectedByECM(ae, ae.getPosition(), te.getPosition())
+                && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
+                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE)
+                        || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los.getUltraWoods() > 0))) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
         }
         
         return toHit;

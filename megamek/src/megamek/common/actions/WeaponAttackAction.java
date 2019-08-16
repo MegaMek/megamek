@@ -368,6 +368,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((ae instanceof Mech) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
+        
+        boolean isFlakAttack = !game.getBoard().inSpace() && (te != null)
+                && (te.isAirborne() || te.isAirborneVTOLorWIGE()) && (atype != null)
+                && ((((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                        || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
+                        && (munition == AmmoType.M_CLUSTER))
+                        || (munition == AmmoType.M_FLAK) || (atype.getAmmoType() == AmmoType.T_HAG));
+        
         boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals("Indirect"));
         
         boolean isInferno = ((atype != null)
@@ -720,12 +728,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae != null) {
             //Conventional fighter, Aerospace and fighter LAM attackers
             if (ae instanceof IAero) {
-                toHit = compileAeroAttackerToHitMods(game, ae, target, ttype, toHit, eistatus, wtype, weapon,
-                            munition, isArtilleryIndirect, isNemesisConfused, isStrafing);
+                toHit = compileAeroAttackerToHitMods(game, ae, target, ttype, toHit, aimingAt, aimingMode, eistatus,
+                            wtype, weapon, atype, munition, isArtilleryIndirect, isFlakAttack, isNemesisConfused, isStrafing,
+                            usesAmmo);
             //Everyone else
             } else {
-                toHit = compileAttackerToHitMods(game, ae, target, toHit, wtype, weapon, weaponId, atype, munition,
-                            isNemesisConfused, isWeaponFieldGuns);
+                toHit = compileAttackerToHitMods(game, ae, target, toHit, aimingAt, aimingMode, wtype, weapon, weaponId,
+                            atype, munition, isFlakAttack, isHaywireINarced, isNemesisConfused, isWeaponFieldGuns, usesAmmo);
             }
         }
         
@@ -758,128 +767,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         placeholder
 
-        // weapon to-hit modifier
-        if (wtype instanceof VariableSpeedPulseLaserWeapon) {
-            int nRange = ae.getPosition().distance(target.getPosition());
-            int[] nRanges = wtype.getRanges(weapon);
-            int modifier = wtype.getToHitModifier();
-
-            if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
-                modifier += RangeType.RANGE_SHORT;
-            } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
-                modifier += RangeType.RANGE_MEDIUM;
-            } else if (nRange <= nRanges[RangeType.RANGE_LONG]) {
-                modifier += RangeType.RANGE_LONG;
-            } else {
-                modifier = 0;
-            }
-
-            toHit.addModifier(modifier, Messages.getString("WeaponAttackAction.WeaponMod"));
-        } else if (wtype instanceof ISBombastLaser) {
-            double damage = Compute.dialDownDamage(weapon, wtype);
-            damage = Math.ceil((damage - 7) / 2);
-
-            if (damage > 0) {
-                toHit.addModifier((int) damage, Messages.getString("WeaponAttackAction.WeaponMod"));
-            }
-        } else if (wtype.getToHitModifier() != 0) {
-            toHit.addModifier(wtype.getToHitModifier(), Messages.getString("WeaponAttackAction.WeaponMod"));
-        }
-
-        // Check whether we're eligible for a flak bonus...
-        boolean isFlakAttack = !game.getBoard().inSpace() && (te != null)
-                && (te.isAirborne() || te.isAirborneVTOLorWIGE()) && (atype != null)
-                && ((((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
-                        || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
-                        && (munition == AmmoType.M_CLUSTER))
-                        || (munition == AmmoType.M_FLAK) || (atype.getAmmoType() == AmmoType.T_HAG));
-        if (isFlakAttack) {
-            // ...and if so, which one (HAGs get an extra -1 as per TW p. 136
-            // that's not covered by anything else).
-            if (atype.getAmmoType() == AmmoType.T_HAG) {
-                toHit.addModifier(-3, Messages.getString("WeaponAttackAction.HagFlak"));
-            } else {
-                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
-            }
-        }
-        // Apply ammo type modifier, if any.
-        if (usesAmmo && (atype != null) && (atype.getToHitModifier() != 0)) {
-            toHit.addModifier(atype.getToHitModifier(),
-                    atype.getSubMunitionName() + Messages.getString("WeaponAttackAction.AmmoMod"));
-        }
-
-        if ((atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_AAA_MISSILE) || (atype.getAmmoType() == AmmoType.T_LAA_MISSILE))
-                && Compute.isAirToGround(ae, target)) {
-            toHit.addModifier(+4, Messages.getString("WeaponAttackAction.AaaGroundAttack"));
-            if (ae.getAltitude() < 4) {
-                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.AaaLowAlt"));
-            }
-        }
-
-        // add iNarc bonus
-        if (isINarcGuided) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.iNarcHoming"));
-        }
-
-        // add Artemis V bonus
-        if (bArtemisV) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ArtemisV"));
-        }
-
-        if (isHaywireINarced) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.iNarcHaywire"));
-        }
-
-        // `Screen launchers hit automatically (if in range)
+        // Screen launchers hit automatically (if in range)
         if ((toHit.getValue() != TargetRoll.IMPOSSIBLE) && ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
                 || (wtype instanceof ScreenLauncherBayWeapon))) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.ScreenAutoHit"));
-        }
-
-        if (bFTL) {
-            toHit.addModifier(2,atype.getSubMunitionName()
-                    + Messages.getString("WeaponAttackAction.AmmoMod"));
-        }
-
-        if (bApollo) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ApolloFcs"));
-        }
-
-        // Heavy infantry have +1 penalty
-        if ((ae instanceof Infantry) && ae.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.HeavyArmor"));
-        }
-
-        // penalty for void sig system
-        if (ae.isVoidSigActive()) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeVoidSig"));
-        }
-
-        // add targeting computer (except with LBX cluster ammo)
-        if ((aimingMode == IAimingModes.AIM_MODE_TARG_COMP) && (aimingAt != Entity.LOC_NONE)) {
-            if (ae.hasActiveEiCockpit()) {
-                if (ae.hasTargComp()) {
-                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.AimWithTCompEi"));
-                } else {
-                    toHit.addModifier(6, Messages.getString("WeaponAttackAction.AimWithEiOnly"));
-                }
-            } else {
-                toHit.addModifier(3, Messages.getString("WeaponAttackAction.AimWithTCompOnly"));
-            }
-        } else {
-            // LB-X cluster, HAG flak, flak ammo ineligible for TC bonus
-            boolean usesLBXCluster = usesAmmo && (atype != null)
-                    && (atype.getAmmoType() == AmmoType.T_AC_LBX || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
-                    && munition == AmmoType.M_CLUSTER;
-            boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_HAG && isFlakAttack;
-            boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_SBGAUSS;
-            boolean isFlakAmmo = usesAmmo && (atype != null) && (munition == AmmoType.M_FLAK);
-            if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponType.F_CWS)
-                    && !wtype.hasFlag(WeaponType.F_TASER)
-                    && (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo))) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TComp"));
-            }
         }
 
         // Change hit table for elevation differences inside building.
@@ -896,7 +787,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     toHit.setHitTable(ToHitData.HIT_BELOW);
                 }
             }
-
         }
 
         // Change hit table for partial cover, accomodate for partial
@@ -976,39 +866,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.setSideTable(ToHitData.SIDE_FRONT);
         } else {
             toHit.setSideTable(Compute.targetSideTable(ae, target, weapon.getCalledShot().getCall()));
-        }
-
-        // Heat Seeking Missles
-        if (bHeatSeeking) {
-            if (te == null) {
-                if ((ttype == Targetable.TYPE_BUILDING)
-                        || (ttype == Targetable.TYPE_BLDG_IGNITE)
-                        || (ttype == Targetable.TYPE_FUEL_TANK)
-                        || (ttype == Targetable.TYPE_FUEL_TANK_IGNITE)
-                        || (target instanceof GunEmplacement)) {
-                    IHex hexTarget = game.getBoard().getHex(
-                            target.getPosition());
-                    if (hexTarget.containsTerrain(Terrains.FIRE)) {
-                        toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AmmoMod"));
-                    }
-                }
-            } else if ((te.isAirborne())
-                    && (toHit.getSideTable() == ToHitData.SIDE_REAR)) {
-                toHit.addModifier(-2, atype.getSubMunitionName()
-                        + Messages.getString("WeaponAttackAction.AmmoMod"));
-            } else if (te.heat == 0) {
-                toHit.addModifier(1, atype.getSubMunitionName()
-                        + Messages.getString("WeaponAttackAction.AmmoMod"));
-            } else {
-                toHit.addModifier(-te.getHeatMPReduction(),
-                        atype.getSubMunitionName()
-                                + Messages.getString("WeaponAttackAction.AmmoMod"));
-            }
-
-            if (LosEffects.hasFireBetween(ae.getPosition(),
-                    target.getPosition(), game)) {
-                toHit.addModifier(2, Messages.getString("WeaponAttackAction.HsmThruFire"));
-            }
         }
 
         // Aeros in atmosphere can hit above and below
@@ -3536,7 +3393,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param ae    The attacking entity
      * @param spotter   The spotting entity, if using indirect fire
      * @param target The Targetable object being attacked
-     * @param ttype  The targetable object type
+     * @param ttype  The Targetable object type
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * 
      * @param wtype The WeaponType of the weapon being used
@@ -3544,12 +3401,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param atype The AmmoType being used for this attack
      * @param munition  Long indicating the munition type flag being used, if applicable
      * 
+     * @param isFlakAttack  flag that indicates whether the attacker is using Flak against an airborne target
      * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
      * @param narcSpotter  flag that indicates whether this spotting entity is using NARC equipment
      */
     private static ToHitData compileWeaponToHitMods(IGame game, Entity ae, Entity spotter, Targetable target,
                 int ttype, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype, long munition, 
-                boolean isIndirect, boolean narcSpotter) {
+                boolean isFlakAttack, boolean isIndirect, boolean narcSpotter) {
         if (ae == null || wtype == null || weapon == null) {
             // Can't calculate weapon mods without a valid weapon and an attacker to fire it
             return toHit;
@@ -3569,6 +3427,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // AAA mode makes targeting large craft more difficult
         if (wtype.hasModes() && weapon.curMode().equals("AAA") && te.isLargeCraft()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AAALaserAtShip"));
+        }
+        
+        // Bombast Lasers
+        if (wtype instanceof ISBombastLaser) {
+            double damage = Compute.dialDownDamage(weapon, wtype);
+            damage = Math.ceil((damage - 7) / 2);
+
+            if (damage > 0) {
+                toHit.addModifier((int) damage, Messages.getString("WeaponAttackAction.WeaponMod"));
+            }
         }
 
         // Bracketing modes
@@ -3605,6 +3473,22 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             } else {
                 toHit.addModifier(5 - aaaMod, Messages.getString("WeaponAttackAction.CapSmallTe"));
             }
+        }
+        
+        // Check whether we're eligible for a flak bonus...
+        if (isFlakAttack) {
+            // ...and if so, which one (HAGs get an extra -1 as per TW p. 136
+            // that's not covered by anything else).
+            if (atype.getAmmoType() == AmmoType.T_HAG) {
+                toHit.addModifier(-3, Messages.getString("WeaponAttackAction.HagFlak"));
+            } else {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
+            }
+        }
+        
+        // Flat to hit modifiers defined in WeaponType  
+        if (wtype.getToHitModifier() != 0) {
+            toHit.addModifier(wtype.getToHitModifier(), Messages.getString("WeaponAttackAction.WeaponMod"));
         }
         
         // Indirect fire (LRMs, mortars and the like) has a +1 mod
@@ -3659,6 +3543,25 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.AcRapid"));
         }
         
+        // VSP Lasers
+        if (wtype instanceof VariableSpeedPulseLaserWeapon) {
+            int nRange = ae.getPosition().distance(target.getPosition());
+            int[] nRanges = wtype.getRanges(weapon);
+            int modifier = wtype.getToHitModifier();
+
+            if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
+                modifier += RangeType.RANGE_SHORT;
+            } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
+                modifier += RangeType.RANGE_MEDIUM;
+            } else if (nRange <= nRanges[RangeType.RANGE_LONG]) {
+                modifier += RangeType.RANGE_LONG;
+            } else {
+                modifier = 0;
+            }
+
+            toHit.addModifier(modifier, Messages.getString("WeaponAttackAction.WeaponMod"));
+        }
+        
         // quirks
         
         // Flat -1 for Accurate Weapon
@@ -3700,10 +3603,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param atype The AmmoType being used for this attack
      * @param munition  Long indicating the munition type flag being used, if applicable
      * 
+     * @param bApollo flag that indicates whether the attacker is using an Apollo FCS for MRMs
+     * @param bArtemisV flag that indicates whether the attacker is using an Artemis V FCS
+     * @param bFTL flag that indicates whether the attacker is using FTL missiles
+     * @param bHeatSeeking flag that indicates whether the attacker is using Heat Seeking missiles
      * @param isECMAffected flag that indicates whether the target is inside an ECM bubble
+     * @param isINarcGuided flag that indicates whether the target is broadcasting an iNarc beacon
      */
-    private ToHitData compileAmmoToHitMods(IGame game, Entity ae, Targetable target, int ttype, ToHitData toHit,
-                WeaponType wtype, Mounted weapon, AmmoType atype, long munition, boolean isECMAffected) {
+    private static ToHitData compileAmmoToHitMods(IGame game, Entity ae, Targetable target, int ttype, ToHitData toHit,
+                WeaponType wtype, Mounted weapon, AmmoType atype, long munition, boolean bApollo, boolean bArtemisV,
+                boolean bFTL, boolean bHeatSeeking, boolean isECMAffected, boolean isINarcGuided) {
         if (ae == null || atype == null || weapon == null) {
             // Can't calculate ammo mods without valid ammo and an attacker to fire it
             return toHit;
@@ -3713,6 +3622,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             //Some ammo can only target valid entities
             te = (Entity) target;
         }
+
         // Autocannon Munitions
         
         // Armor Piercing ammo is a flat +1
@@ -3725,7 +3635,79 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
         }
         
+        // Bombs
+        
+        // Air-to-air Arrow and Light Air-to-air missiles
+        if (((atype.getAmmoType() == AmmoType.T_AAA_MISSILE) || (atype.getAmmoType() == AmmoType.T_LAA_MISSILE))
+                && Compute.isAirToGround(ae, target)) {
+            // +4 penalty if trying to use one against a ground target
+            toHit.addModifier(+4, Messages.getString("WeaponAttackAction.AaaGroundAttack"));
+            // +3 additional if the attacker is flying at Altitude 3 or less
+            if (ae.getAltitude() < 4) {
+                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.AaaLowAlt"));
+            }
+        }
+        
+        // Flat modifiers defined in AmmoType
+        if (atype.getToHitModifier() != 0) {
+            toHit.addModifier(atype.getToHitModifier(),
+                    atype.getSubMunitionName() + Messages.getString("WeaponAttackAction.AmmoMod"));
+        }
+        
         // Missile Munitions
+        
+        // Apollo FCS for MRMs
+        if (bApollo) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ApolloFcs"));
+        }
+        
+        // add Artemis V bonus
+        if (bArtemisV) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ArtemisV"));
+        }
+        
+        // Follow-the-leader LRMs
+        if (bFTL) {
+            toHit.addModifier(2,atype.getSubMunitionName()
+                    + Messages.getString("WeaponAttackAction.AmmoMod"));
+        }
+        
+        // Heat Seeking Missles
+        if (bHeatSeeking) {
+            IHex hexTarget = game.getBoard().getHex(target.getPosition());
+            // -2 bonus if shooting at burning woods or buildings
+            if (te == null && hexTarget.containsTerrain(Terrains.FIRE)) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AmmoMod"));
+            } aa
+            if (te != null) {
+                if ((te.isAirborne())
+                        && (toHit.getSideTable() == ToHitData.SIDE_REAR)) {
+                    // -2 bonus if shooting an Aero through the rear arc
+                    toHit.addModifier(-2, atype.getSubMunitionName()
+                            + Messages.getString("WeaponAttackAction.AmmoMod"));
+                } else if (te.heat == 0) {
+                    // +1 penalty if shooting at a non-heat-tracking unit or a heat-tracking unit at 0 heat
+                    toHit.addModifier(1, atype.getSubMunitionName()
+                            + Messages.getString("WeaponAttackAction.AmmoMod"));
+                } else {
+                    // +1 bonus for each -1MP the target would get due to heat
+                    toHit.addModifier(-te.getHeatMPReduction(),
+                            atype.getSubMunitionName()
+                                    + Messages.getString("WeaponAttackAction.AmmoMod"));
+                }
+            }
+
+            // +2 penalty if shooting into or through a burning hex
+            if (LosEffects.hasFireBetween(ae.getPosition(),
+                    target.getPosition(), game)) {
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.HsmThruFire"));
+            }
+        }
+        
+        // Narc-capable missiles homing on an iNarc beacon
+        if (isINarcGuided) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.iNarcHoming"));
+        }
         
         // Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected && (atype != null)
@@ -3737,6 +3719,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (munition == AmmoType.M_LISTEN_KILL) && !((te != null) && te.isClan())) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ListenKill"));
         }
+        
         return toHit;
     }
     
@@ -3750,19 +3733,26 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param target The Targetable object being attacked
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * 
+     * @param aimingAt  An int value representing the location being aimed at
+     * @param aimingMode  An int value that determines the reason aiming is allowed
+     * 
      * @param wtype The WeaponType of the weapon being used
      * @param weapon The Mounted weapon being used
      * @param weaponId  The id number of the weapon being used - used by some external calculations
      * @param atype The AmmoType being used for this attack
      * @param munition  Long indicating the munition type flag being used, if applicable
      * 
+     * @param isFlakAttack  flag that indicates whether the attacker is using Flak against an airborne target
+     * @param isHaywireINarced  flag that indicates whether the attacker is affected by an iNarc Haywire pod
      * @param isNemesisConfused  flag that indicates whether the attack is affected by an iNarc Nemesis pod
      * @param isWeaponFieldGuns  flag that indicates whether the attack is being made with infantry field guns
+     * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
      */
     placeholder
     private static ToHitData compileAttackerToHitMods(IGame game, Entity ae, Targetable target, ToHitData toHit,
-                WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, long munition,
-                boolean isNemesisConfused, boolean isWeaponFieldGuns) {
+                int aimingAt, int aimingMode, WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, long munition,
+                boolean isFlakAttack, boolean isHaywireINarced, boolean isNemesisConfused, boolean isWeaponFieldGuns,
+                boolean usesAmmo) {
         // Modifiers related to an action the attacker is taking
         
         // attacker movement
@@ -3807,11 +3797,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(ae.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
         }
         
+        // Attacker hit with an iNarc Haywire pod
+        if (isHaywireINarced) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.iNarcHaywire"));
+        }
+        
         // Special Equipment that that attacker possesses
         
         // Attacker has an AES system
         if (ae.hasFunctionalArmAES(weapon.getLocation()) && !weapon.isSplit()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AES"));
+        }
+        
+        // Heavy infantry have +1 penalty
+        if ((ae instanceof Infantry) && ae.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.HeavyArmor"));
         }
         
         // industrial cockpit: +1 to hit
@@ -3851,6 +3851,37 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             } else if (ae.hasNoDefenseShield(weapon.getLocation())) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Shield"));
             }
+        }
+        
+        // add targeting computer (except with LBX cluster ammo)
+        if ((aimingMode == IAimingModes.AIM_MODE_TARG_COMP) && (aimingAt != Entity.LOC_NONE)) {
+            if (ae.hasActiveEiCockpit()) {
+                if (ae.hasTargComp()) {
+                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.AimWithTCompEi"));
+                } else {
+                    toHit.addModifier(6, Messages.getString("WeaponAttackAction.AimWithEiOnly"));
+                }
+            } else {
+                toHit.addModifier(3, Messages.getString("WeaponAttackAction.AimWithTCompOnly"));
+            }
+        } else {
+            // LB-X cluster, HAG flak, flak ammo ineligible for TC bonus
+            boolean usesLBXCluster = usesAmmo && (atype != null)
+                    && (atype.getAmmoType() == AmmoType.T_AC_LBX || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                    && munition == AmmoType.M_CLUSTER;
+            boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_HAG && isFlakAttack;
+            boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_SBGAUSS;
+            boolean isFlakAmmo = usesAmmo && (atype != null) && (munition == AmmoType.M_FLAK);
+            if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponType.F_CWS)
+                    && !wtype.hasFlag(WeaponType.F_TASER)
+                    && (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo))) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TComp"));
+            }
+        }
+        
+        // penalty for an active void signature system
+        if (ae.isVoidSigActive()) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeVoidSig"));
         }
         
         // Critical damage effects
@@ -3900,19 +3931,25 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param ttype  The targetable object type
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * 
+     * @param aimingAt  An int value representing the location being aimed at
+     * @param aimingMode  An int value that determines the reason aiming is allowed
      * @param eistatus An int value representing the ei cockpit/pilot upgrade status
      * 
      * @param wtype The WeaponType of the weapon being used
      * @param weapon The Mounted weapon being used
+     * @param atype The AmmoType being used for this attack
      * @param munition  Long indicating the munition type flag being used, if applicable
      * 
      * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
+     * @param isFlakAttack  flag that indicates whether the attacker is using Flak against an airborne target
      * @param isNemesisConfused  flag that indicates whether the attack is affected by an iNarc Nemesis pod
      * @param isStrafing    flag that indicates whether this is an aero strafing attack
+     * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
      */
     private static ToHitData compileAeroAttackerToHitMods(IGame game, Entity ae, Targetable target, int ttype,
-                ToHitData toHit, int eistatus, WeaponType wtype, Mounted weapon, long munition,
-                boolean isArtilleryIndirect, boolean isNemesisConfused, boolean isStrafing) {
+                ToHitData toHit, int aimingAt, int aimingMode, int eistatus, WeaponType wtype, Mounted weapon,
+                AmmoType atype, long munition, boolean isArtilleryIndirect, boolean isFlakAttack, boolean isNemesisConfused,
+                boolean isStrafing, boolean usesAmmo) {
         if (ae == null || target == null) {
             //Null guard
             return toHit;
@@ -3938,6 +3975,33 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (!isNemesisConfused && !wtype.hasFlag(WeaponType.F_ALT_BOMB) && !isStrafing) {
             toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
         }
+        
+        // add targeting computer (except with LBX cluster ammo)
+        if ((aimingMode == IAimingModes.AIM_MODE_TARG_COMP) && (aimingAt != Entity.LOC_NONE)) {
+            if (ae.hasActiveEiCockpit()) {
+                if (ae.hasTargComp()) {
+                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.AimWithTCompEi"));
+                } else {
+                    toHit.addModifier(6, Messages.getString("WeaponAttackAction.AimWithEiOnly"));
+                }
+            } else {
+                toHit.addModifier(3, Messages.getString("WeaponAttackAction.AimWithTCompOnly"));
+            }
+        } else {
+            // LB-X cluster, HAG flak, flak ammo ineligible for TC bonus
+            boolean usesLBXCluster = usesAmmo && (atype != null)
+                    && (atype.getAmmoType() == AmmoType.T_AC_LBX || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                    && munition == AmmoType.M_CLUSTER;
+            boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_HAG && isFlakAttack;
+            boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_SBGAUSS;
+            boolean isFlakAmmo = usesAmmo && (atype != null) && (munition == AmmoType.M_FLAK);
+            if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponType.F_CWS)
+                    && !wtype.hasFlag(WeaponType.F_TASER)
+                    && (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo))) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TComp"));
+            }
+        }
+        
         // Modifiers for aero units, including fighter LAMs
         if (ae instanceof IAero) {
             IAero aero = (IAero) ae;

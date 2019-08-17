@@ -703,12 +703,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.MagMine"));
         }
 
-        // B-Pod firing at infantry in the same hex autohit
-        if (wtype.hasFlag(WeaponType.F_B_POD) && (target instanceof Infantry)
-                && target.getPosition().equals(ae.getPosition())) {
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.BPodAtInf"));
-        }
-
         // TODO: mech making DFA could be higher if DFA target hex is higher
         // BMRr pg. 43, "attacking unit is considered to be in the air
         // above the hex, standing on an elevation 1 level higher than
@@ -747,9 +741,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Collect the modifiers for terrain and line-of-sight. This includes any related to-hit table changes
         toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
-                    losMods, toSubtract, eistatus, wtype, weapon, atype, munition, isAttackerInfantry, inSameBuilding,
-                    isIndirect, isPointblankShot, underWater);
-        placeholder
+                    losMods, toSubtract, eistatus, wtype, weapon, weaponId, atype, munition, isAttackerInfantry,
+                    inSameBuilding, isIndirect, isPointblankShot, underWater);
         
         // If this is a swarm LRM secondary attack, remove old target movement and terrain mods, then
         // add those for new target.
@@ -759,41 +752,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     inSameBuilding, underWater);
         }
         
-        //Attacker affected by Taser or TSEMP
-        if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeTsemped"));
-        }
+        // Collect the modifiers specific to the weapon the attacker is using
+        toHit = compileWeaponToHitMods(game, ae, spotter, target, ttype, toHit, wtype, weapon, atype, munition,
+                    isFlakAttack, isIndirect, narcSpotter);
+
+        // Collect the modifiers specific to the ammo the attacker is using
+        toHit = compileAmmoToHitMods(game, ae, target, ttype, toHit, wtype, weapon, atype, munition, bApollo,
+                    bArtemisV, bFTL, bHeatSeeking, isECMAffected, isINarcGuided);
         
-        if (ae.getTaserFeedBackRounds() > 0) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeTaserFeedback"));
-        }
-        if (ae.getTaserInterferenceRounds() > 0) {
-            toHit.addModifier(ae.getTaserInterference(), Messages.getString("WeaponAttackAction.AeHitByTaser"));
-        }
-
-        if (weapon.getType().hasFlag(WeaponType.F_VGL)) {
-            int facing = weapon.getFacing();
-            if (ae.isSecondaryArcWeapon(ae.getEquipmentNum(weapon))) {
-                facing = (facing + ae.getSecondaryFacing()) % 6;
-            }
-            Coords c = ae.getPosition().translated(facing);
-            if ((target instanceof HexTarget) && target.getPosition().equals(c)) {
-                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.Vgl"));
-            }
-        }
-
-        if ((te instanceof Infantry) && ((Infantry) te).isTakingCover()) {
-            if (te.getPosition().direction(ae.getPosition()) == te.getFacing()) {
-                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.FireThruCover"));
-            }
-        }
-
-        if ((ae instanceof Infantry) && ((Infantry) ae).isTakingCover()) {
-            if (ae.getPosition().direction(te.getPosition()) == ae.getFacing()) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FireThruCover"));
-            }
-        }
-
         // okay!
         return toHit;
     }
@@ -2887,7 +2853,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             boolean isAttackerInfantry, boolean isIndirect, int attackerId, int weaponId, boolean isArtilleryIndirect,
             boolean isArtilleryFLAK, boolean targetInBuilding, boolean isArtilleryDirect,
             boolean isTargetECMAffected, boolean isStrafing, boolean isBearingsOnlyMissile, boolean isCruiseMissile) {
-        boolean isHoming = false;
         ToHitData toHit = null;
         
         // Buildings
@@ -2912,6 +2877,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Special Weapon Rules
         
+        // B-Pod firing at infantry in the same hex autohit
+        if (wtype.hasFlag(WeaponType.F_B_POD) && (target instanceof Infantry)
+                && target.getPosition().equals(ae.getPosition())) {
+            return Messages.getString("WeaponAttackAction.BPodAtInf");
+        }
+        
         // Capital Missiles in bearings-only mode target hexes and always hit them
         if (isBearingsOnlyMissile) {
             if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
@@ -2923,6 +2894,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((toHit.getValue() != TargetRoll.IMPOSSIBLE) && ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
                 || (wtype instanceof ScreenLauncherBayWeapon))) {
             return Messages.getString("WeaponAttackAction.ScreenAutoHit");
+        }
+        
+        // Vehicular grenade launchers
+        if (weapon.getType().hasFlag(WeaponType.F_VGL)) {
+            int facing = weapon.getFacing();
+            if (ae.isSecondaryArcWeapon(ae.getEquipmentNum(weapon))) {
+                facing = (facing + ae.getSecondaryFacing()) % 6;
+            }
+            Coords c = ae.getPosition().translated(facing);
+            if ((target instanceof HexTarget) && target.getPosition().equals(c)) {
+                return Messages.getString("WeaponAttackAction.Vgl");
+            }
         }
         
         // If we get here, the shot isn't an auto-hit
@@ -3548,11 +3531,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isWeaponFieldGuns  flag that indicates whether the attack is being made with infantry field guns
      * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
      */
-    placeholder
     private static ToHitData compileAttackerToHitMods(IGame game, Entity ae, Targetable target, LosEffects los, ToHitData toHit,
                 int toSubtract, int aimingAt, int aimingMode, WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype,
                 long munition, boolean isFlakAttack, boolean isHaywireINarced, boolean isNemesisConfused, boolean isWeaponFieldGuns,
-                boolean usesAmmo) {
+                boolean usesAmmo) {        
         // Modifiers related to an action the attacker is taking
         
         // attacker movement
@@ -3603,6 +3585,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(+3, Messages.getString("WeaponAttackAction.Jumping"));
         }
         
+        // Infantry taking cover suffer a +1 penalty
+        if ((ae instanceof Infantry) && ((Infantry) ae).isTakingCover()) {
+            if (ae.getPosition().direction(target.getPosition()) == ae.getFacing()) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FireThruCover"));
+            }
+        }
+        
         // Quadvee converting to a new mode
         if (ae instanceof QuadVee && ae.isConvertingNow()) {
             toHit.addModifier(+3, Messages.getString("WeaponAttackAction.QuadVeeConverting"));
@@ -3622,6 +3611,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Special effects (like tasers) affecting the attacker
         
+        // Attacker is battle armor and affected by BA taser feedback
+        if (ae.getTaserFeedBackRounds() > 0) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeTaserFeedback"));
+        }
+        
         // If a unit is suffering from electromagnetic interference, they get a
         // blanket +2. Sucks to be them.
         if (ae.isSufferingEMI()) {
@@ -3636,6 +3630,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Attacker hit with an iNarc Haywire pod
         if (isHaywireINarced) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.iNarcHaywire"));
+        }
+        
+        // Attacker affected by Taser interference
+        if (ae.getTaserInterferenceRounds() > 0) {
+            toHit.addModifier(ae.getTaserInterference(), Messages.getString("WeaponAttackAction.AeHitByTaser"));
+        }
+        
+        // Attacker affected by TSEMP interference
+        if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeTsemped"));
         }
         
         // Special Equipment that that attacker possesses
@@ -4241,6 +4245,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SwampBeast"));
             }
         }
+        return toHit;
     }
     
     /**
@@ -4324,6 +4329,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         || (te.sideTable(ae.getPosition()) == ToHitData.SIDE_RIGHT)) {
                     toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
                 }
+            }
+        }
+        
+        // Infantry taking cover per TacOps special rules
+        if ((te instanceof Infantry) && ((Infantry) te).isTakingCover()) {
+            if (te.getPosition().direction(ae.getPosition()) == te.getFacing()) {
+                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.FireThruCover"));
             }
         }
         
@@ -4581,6 +4593,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param wtype The WeaponType of the weapon being used
      * @param weapon The Mounted weapon being used
+     * @param weaponId  The id number of the weapon being used - used by some external calculations 
      * @param atype The AmmoType being used for this attack
      * @param munition  Long indicating the munition type flag being used, if applicable
      * 
@@ -4591,8 +4604,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      */
     private static ToHitData compileTerrainAndLosToHitMods(IGame game, Entity ae, Targetable target, int ttype, int aElev, int tElev,
                 int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods, int toSubtract, int eistatus,
-                WeaponType wtype, Mounted weapon, AmmoType atype, long munition, boolean isAttackerInfantry, boolean inSameBuilding,
-                boolean isIndirect, boolean isPointBlankShot, boolean underWater) {
+                WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, long munition, boolean isAttackerInfantry,
+                boolean inSameBuilding, boolean isIndirect, boolean isPointBlankShot, boolean underWater) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;

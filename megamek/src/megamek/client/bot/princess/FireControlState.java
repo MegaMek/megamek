@@ -17,11 +17,15 @@ public class FireControlState {
     private List<Targetable> additionalTargets;
     private Map<Integer, Boolean> entityIDFStates;
     private LinkedList<Entity> orderedFiringEntities;
+    private Map<Integer, Integer> weaponRanges;
+    private Map<Integer, Integer> airborneTargetWeaponRanges;
     
     public FireControlState() {
         additionalTargets = new ArrayList<>();
         entityIDFStates = new HashMap<>();
         orderedFiringEntities = new LinkedList<>();
+        weaponRanges = new HashMap<>();
+        airborneTargetWeaponRanges = new HashMap<>();
     }
     
     /**
@@ -61,8 +65,17 @@ public class FireControlState {
     	this.orderedFiringEntities.clear();
     }
     
+    public Map<Integer, Integer> getWeaponRanges(boolean airborneTarget) {
+        return airborneTarget ? airborneTargetWeaponRanges : weaponRanges;
+    }
+    
+    /**
+     * Clears data that shouldn't persist phase-to-phase
+     */
     public void clearTransientData() {
     	clearEntityIDFStates();
     	clearOrderedFiringEntities();
+    	weaponRanges.clear();
+    	airborneTargetWeaponRanges.clear();
     }
 }

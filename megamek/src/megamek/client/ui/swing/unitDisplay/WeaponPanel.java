@@ -1854,7 +1854,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 m_chBayWeapon.addItem(formatBayWeapon(curWeapon));
             }
 
-            if (chosen == -1) {
+            if (chosen == -1 || chosen >= m_chBayWeapon.getItemCount()) {
                 m_chBayWeapon.setSelectedIndex(0);
             } else {
                 m_chBayWeapon.setSelectedIndex(chosen);
@@ -2053,15 +2053,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
 
         // Aero
-        if (entity.isAirborne() 
-                || entity.usesWeaponBays()) {
+        if (entity.isAirborne()) {
 
             // prepare fresh ranges, no underwater
             ranges[0] = new int[] { 0, 0, 0, 0, 0 };  
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
             int maxr = WeaponType.RANGE_SHORT;
-
-            maxr = WeaponType.RANGE_SHORT;
+            
             // In the WeaponPanel, when the weapon is out of ammo
             // or otherwise nonfunctional, SHORT range will be listed;
             // the field of fire is instead disabled
@@ -2088,22 +2086,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 }
 
                 // set the standard ranges, depending on capital or no
-                boolean isCap = wtype.isCapital();
-                ranges[0][0] = 0;
-                ranges[0][1] = isCap ? 12 : 6;
-                if (maxr > WeaponType.RANGE_SHORT) 
-                    ranges[0][2] = isCap ? 24 : 12;
-                if (maxr > WeaponType.RANGE_MED)
-                    ranges[0][3] = isCap ? 40 : 20;
-                if (maxr > WeaponType.RANGE_LONG) 
-                    ranges[0][4] = isCap ? 50 : 25;
-                
+                //boolean isCap = wtype.isCapital();
+                int rangeMultiplier = wtype.isCapital() ? 2 : 1;
                 final IGame game = unitDisplay.getClientGUI().getClient().getGame();
                 if (game.getBoard().onGround()) {
-                    ranges[0][1] *= 8;
-                    ranges[0][2] *= 8;
-                    ranges[0][3] *= 8;
-                    ranges[0][4] *= 8;
+                    rangeMultiplier *= 8;
+                }
+                
+                for(int rangeIndex = RangeType.RANGE_MINIMUM; rangeIndex <= RangeType.RANGE_EXTREME; rangeIndex++) {
+                    if(maxr >= rangeIndex) {
+                        ranges[0][rangeIndex] = WeaponType.AIRBORNE_WEAPON_RANGES[rangeIndex] * rangeMultiplier;
+                    }
                 }
             }
         }

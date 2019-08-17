@@ -283,6 +283,23 @@ public class Princess extends BotClient {
     Precognition getPrecognition() {
         return precognition;
     }
+    
+    public int getMaxWeaponRange(Entity entity) {
+        return getMaxWeaponRange(entity, false);
+    }
+    
+    /**
+     * Retrieves maximum weapon range for the given entity.
+     * Cached version of entity.getMaxWeaponRange() 
+     * @param entity Entity we're checking
+     * @param airborneTarget Whether the potential target is in the air, only relevant for
+     *          aircraft shooting at other aircraft on ground maps.
+     * @return
+     */
+    public int getMaxWeaponRange(Entity entity, boolean airborneTarget) {
+        return getFireControlState().getWeaponRanges(airborneTarget).
+            computeIfAbsent(entity.getId(), ent -> entity.getMaxWeaponRange(airborneTarget));
+    }
 
     public void setFallBack(final boolean fallBack,
                             final String reason) {
@@ -1418,7 +1435,7 @@ public class Princess extends BotClient {
                        
             final List<RankedPath> rankedpaths = getPathRanker(entity).rankPaths(paths,
                                                     getGame(),
-                                                    entity.getMaxWeaponRange(),
+                                                    getMaxWeaponRange(entity),
                                                     fallTolerance,
                                                     startingHomeDistance,
                                                     getEnemyEntities(),
@@ -2096,7 +2113,7 @@ public class Princess extends BotClient {
                 
                 // this is a primitive condition that checks whether we're within "engagement range" of an enemy
                 // where "engagement range" is defined as the maximum range of our weapons plus our walking movement
-                boolean inEngagementRange = loadedEntity.getWalkMP() + loadedEntity.getMaxWeaponRange() >= distanceToClosestEnemy;
+                boolean inEngagementRange = loadedEntity.getWalkMP() + getMaxWeaponRange(loadedEntity) >= distanceToClosestEnemy;
                 
                 if(!unloadFatal && !unloadIllegal && inEngagementRange) {
                     path.addStep(MoveStepType.UNLOAD, loadedEntity, pathEndpoint);

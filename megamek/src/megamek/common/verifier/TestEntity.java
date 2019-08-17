@@ -26,29 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Bay;
-import megamek.common.BombType;
-import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.ITechManager;
-import megamek.common.ITechnology;
-import megamek.common.Jumpship;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.SimpleTechLevel;
-import megamek.common.SmallCraft;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.Transporter;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.StringUtil;
 
 /**
@@ -326,15 +304,15 @@ public abstract class TestEntity implements TestEntityOption {
         if ((entitytype & Entity.ETYPE_MECH) != 0) {
             return TestMech.MechJumpJets.allJJs(industrial);
         } else if ((entitytype & Entity.ETYPE_TANK) != 0) {
-            return Collections.singletonList(EquipmentType.get("VehicleJumpJet"));
+            return Collections.singletonList(EquipmentType.get(EquipmentTypeLookup.VEHICLE_JUMP_JET));
         } else if ((entitytype & Entity.ETYPE_BATTLEARMOR) != 0) {
             return TestBattleArmor.BAMotiveSystems.allSystems();
         } else if ((entitytype & Entity.ETYPE_PROTOMECH) != 0) {
             // Until we have a TestProtomech
             return Arrays.asList(new EquipmentType[] {
-                EquipmentType.get("ProtomechJumpJet"),
-                EquipmentType.get("ExtendedJumpJetSystem"),
-                EquipmentType.get("ProtomechUMU")});
+                EquipmentType.get(EquipmentTypeLookup.PROTOMECH_JUMP_JET),
+                EquipmentType.get(EquipmentTypeLookup.EXTENDED_JUMP_JET_SYSTEM),
+                EquipmentType.get(EquipmentTypeLookup.PROTOMECH_UMU)});
         } else {
             return Collections.emptyList();
         }

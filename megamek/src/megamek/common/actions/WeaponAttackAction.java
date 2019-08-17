@@ -651,8 +651,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         //Check to see if this attack is automatically successful and return the reason code
         String reasonAutoHit = WeaponAttackAction.toHitIsAutomatic(game, ae, te, target, swarmPrimaryTarget, swarmSecondaryTarget,
-                weapon, ammo, atype, wtype, ttype, los, usesAmmo, exchangeSwarmTarget, isTAG, isInferno, isAttackerInfantry,
-                isIndirect, attackerId, weaponId, isArtilleryIndirect, isArtilleryFLAK, targetInBuilding,
+                weapon, ammo, atype, wtype, ttype, los, distance, usesAmmo, exchangeSwarmTarget, isTAG, isInferno,
+                isAttackerInfantry, isIndirect, attackerId, weaponId, isArtilleryIndirect, isArtilleryFLAK, targetInBuilding,
                 isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile, isCruiseMissile);
         if (reasonAutoHit != null) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, reasonAutoHit);
@@ -733,45 +733,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             usesAmmo);
             //Everyone else
             } else {
-                toHit = compileAttackerToHitMods(game, ae, target, toHit, aimingAt, aimingMode, wtype, weapon, weaponId,
-                            atype, munition, isFlakAttack, isHaywireINarced, isNemesisConfused, isWeaponFieldGuns, usesAmmo);
+                toHit = compileAttackerToHitMods(game, ae, target, los, toHit, toSubtract, aimingAt, aimingMode, wtype,
+                        weapon, weaponId, atype, munition, isFlakAttack, isHaywireINarced, isNemesisConfused,
+                        isWeaponFieldGuns, usesAmmo);
             }
-        }
-        
-        if (isBearingsOnlyMissile) {
-            if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.BoMissileHex"));
-            }
-            if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-                return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.BoMissileMinRange"));
-            } 
-        }
-
-        // Attacks against adjacent buildings automatically hit.
-        if ((distance == 1) && ((ttype == Targetable.TYPE_BUILDING)
-                || (ttype == Targetable.TYPE_BLDG_IGNITE)
-                || (ttype == Targetable.TYPE_FUEL_TANK)
-                || (ttype == Targetable.TYPE_FUEL_TANK_IGNITE)
-                || (target instanceof GunEmplacement))) {
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.AdjBuilding"));
-        }
-
-        // Attacks against buildings from inside automatically hit.
-        if ((null != los.getThruBldg()) && ((ttype == Targetable.TYPE_BUILDING)
-                || (ttype == Targetable.TYPE_BLDG_IGNITE)
-                || (ttype == Targetable.TYPE_FUEL_TANK)
-                || (ttype == Targetable.TYPE_FUEL_TANK_IGNITE)
-                || (target instanceof GunEmplacement))) {
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.InsideBuilding"));
         }
         
         placeholder
-
-        // Screen launchers hit automatically (if in range)
-        if ((toHit.getValue() != TargetRoll.IMPOSSIBLE) && ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
-                || (wtype instanceof ScreenLauncherBayWeapon))) {
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.ScreenAutoHit"));
-        }
 
         // Change hit table for elevation differences inside building.
         if ((null != los.getThruBldg()) && (aElev != tElev)) {
@@ -786,71 +754,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 } else {
                     toHit.setHitTable(ToHitData.HIT_BELOW);
                 }
-            }
-        }
-
-        // Change hit table for partial cover, accomodate for partial
-        // underwater(legs)
-        if (los.getTargetCover() != LosEffects.COVER_NONE) {
-            if (underWater && (targHex.containsTerrain(Terrains.WATER) && (targEl == 0) && (te.height() > 0))) {
-                // weapon underwater, target in partial water
-                toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
-                toHit.setCover(LosEffects.COVER_UPPER);
-            } else {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
-                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
-                    toHit.setCover(los.getTargetCover());
-                } else {
-                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
-                    toHit.setCover(LosEffects.COVER_HORIZONTAL);
-                }
-                // Set damagable cover state information
-                toHit.setDamagableCoverTypePrimary(los.getDamagableCoverTypePrimary());
-                toHit.setCoverLocPrimary(los.getCoverLocPrimary());
-                toHit.setCoverDropshipPrimary(los.getCoverDropshipPrimary());
-                toHit.setCoverBuildingPrimary(los.getCoverBuildingPrimary());
-                toHit.setDamagableCoverTypeSecondary(los.getDamagableCoverTypeSecondary());
-                toHit.setCoverLocSecondary(los.getCoverLocSecondary());
-                toHit.setCoverDropshipSecondary(los.getCoverDropshipSecondary());
-                toHit.setCoverBuildingSecondary(los.getCoverBuildingSecondary());
-            }
-            // XXX what to do about GunEmplacements with partial cover?
-            // Only 'mechs can have partial cover - Arlith
-        }
-
-        // add penalty for called shots and change hit table, if necessary
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
-            int call = weapon.getCalledShot().getCall();
-            if ((call > CalledShot.CALLED_NONE) && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.CantAimAndCallShots"));
-            }
-            switch (call) {
-            case CalledShot.CALLED_NONE:
-                break;
-            case CalledShot.CALLED_HIGH:
-                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledHigh"));
-                toHit.setHitTable(ToHitData.HIT_ABOVE);
-                break;
-            case CalledShot.CALLED_LOW:
-                if (los.getTargetCover() == LosEffects.COVER_HORIZONTAL) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.CalledLowPartCover"));
-                }
-                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledLow"));
-                toHit.setHitTable(ToHitData.HIT_BELOW);
-                break;
-            case CalledShot.CALLED_LEFT:
-                // handled by Compute#targetSideTable
-                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledLeft"));
-                break;
-            case CalledShot.CALLED_RIGHT:
-                // handled by Compute#targetSideTable
-                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledRight"));
-                break;
-            }
-            // If we're making a called shot with swarm LRMs, then the penalty
-            // only applies to the original attack.
-            if (call != CalledShot.CALLED_NONE) {
-                toSubtract += 3;
             }
         }
 
@@ -3057,11 +2960,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
         }
+        // Capital missiles in bearings-only mode
         if (isBearingsOnlyMissile) {
+            //Can't target anything beyond max range of 5,000 hexes
             //this is an arbitrary number. You shouldn't ever get this message.
             if (distance > RangeType.RANGE_BEARINGS_ONLY_OUT) {
                 return Messages.getString("WeaponAttackAction.OutOfRange");
             }
+            // Can't fire in bearings-only mode within direct-fire range (50 hexes)
+            if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+                return Messages.getString("WeaponAttackAction.BoMissileMinRange");
+            } 
+            // Can't target anything but hexes
             if (ttype != Targetable.TYPE_HEX_ARTILLERY) {
                 return Messages.getString("WeaponAttackAction.BOHexOnly");
             }
@@ -3119,19 +3029,56 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((toHit != null) && toHit.getValue() == ToHitData.IMPOSSIBLE) {
             return toHit.getDesc();
         }
-
+        
+        // If we get here, the shot is possible
         return null;
     }
     
     private static String toHitIsAutomatic(IGame game, Entity ae, Entity te, Targetable target, Targetable swarmPrimaryTarget,
             Targetable swarmSecondaryTarget, Mounted weapon, Mounted ammo, AmmoType atype, WeaponType wtype, int ttype,
-            LosEffects los, boolean exchangeSwarmTarget, boolean usesAmmo, boolean isTAG, boolean isInferno,
+            LosEffects los, int distance, boolean exchangeSwarmTarget, boolean usesAmmo, boolean isTAG, boolean isInferno,
             boolean isAttackerInfantry, boolean isIndirect, int attackerId, int weaponId, boolean isArtilleryIndirect,
             boolean isArtilleryFLAK, boolean targetInBuilding, boolean isArtilleryDirect,
             boolean isTargetECMAffected, boolean isStrafing, boolean isBearingsOnlyMissile, boolean isCruiseMissile) {
         boolean isHoming = false;
         ToHitData toHit = null;
         
+        // Buildings
+        
+        // Attacks against adjacent buildings automatically hit.
+        if ((distance == 1) && ((ttype == Targetable.TYPE_BUILDING)
+                || (ttype == Targetable.TYPE_BLDG_IGNITE)
+                || (ttype == Targetable.TYPE_FUEL_TANK)
+                || (ttype == Targetable.TYPE_FUEL_TANK_IGNITE)
+                || (target instanceof GunEmplacement))) {
+            return Messages.getString("WeaponAttackAction.AdjBuilding");
+        }
+
+        // Attacks against buildings from inside automatically hit.
+        if ((null != los.getThruBldg()) && ((ttype == Targetable.TYPE_BUILDING)
+                || (ttype == Targetable.TYPE_BLDG_IGNITE)
+                || (ttype == Targetable.TYPE_FUEL_TANK)
+                || (ttype == Targetable.TYPE_FUEL_TANK_IGNITE)
+                || (target instanceof GunEmplacement))) {
+            return Messages.getString("WeaponAttackAction.InsideBuilding");
+        }
+        
+        // Special Weapon Rules
+        
+        // Capital Missiles in bearings-only mode target hexes and always hit them
+        if (isBearingsOnlyMissile) {
+            if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+                return Messages.getString("WeaponAttackAction.BoMissileHex");
+            }
+        }
+        
+        // Screen launchers target hexes and hit automatically (if in range)
+        if ((toHit.getValue() != TargetRoll.IMPOSSIBLE) && ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
+                || (wtype instanceof ScreenLauncherBayWeapon))) {
+            return Messages.getString("WeaponAttackAction.ScreenAutoHit");
+        }
+        
+        // If we get here, the shot isn't an auto-hit
         return null;
     }
 
@@ -3678,7 +3625,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // -2 bonus if shooting at burning woods or buildings
             if (te == null && hexTarget.containsTerrain(Terrains.FIRE)) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AmmoMod"));
-            } aa
+            }
             if (te != null) {
                 if ((te.isAirborne())
                         && (toHit.getSideTable() == ToHitData.SIDE_REAR)) {
@@ -3731,7 +3678,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param game The current game
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
+     * @param los The calculated LOS between attacker and target
      * @param toHit The running total ToHitData for this WeaponAttackAction
+     * @param toSubtract An int value representing a running total of mods to disregard - used for some special attacks
      * 
      * @param aimingAt  An int value representing the location being aimed at
      * @param aimingMode  An int value that determines the reason aiming is allowed
@@ -3749,9 +3698,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
      */
     placeholder
-    private static ToHitData compileAttackerToHitMods(IGame game, Entity ae, Targetable target, ToHitData toHit,
-                int aimingAt, int aimingMode, WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, long munition,
-                boolean isFlakAttack, boolean isHaywireINarced, boolean isNemesisConfused, boolean isWeaponFieldGuns,
+    private static ToHitData compileAttackerToHitMods(IGame game, Entity ae, Targetable target, LosEffects los, ToHitData toHit,
+                int toSubtract, int aimingAt, int aimingMode, WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype,
+                long munition, boolean isFlakAttack, boolean isHaywireINarced, boolean isNemesisConfused, boolean isWeaponFieldGuns,
                 boolean usesAmmo) {
         // Modifiers related to an action the attacker is taking
         
@@ -3760,6 +3709,42 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // attacker prone
         toHit.append(Compute.getProneMods(game, ae, weaponId));
+        
+        // add penalty for called shots and change hit table, if necessary
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
+            int call = weapon.getCalledShot().getCall();
+            if ((call > CalledShot.CALLED_NONE) && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.CantAimAndCallShots"));
+            }
+            switch (call) {
+            case CalledShot.CALLED_NONE:
+                break;
+            case CalledShot.CALLED_HIGH:
+                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledHigh"));
+                toHit.setHitTable(ToHitData.HIT_ABOVE);
+                break;
+            case CalledShot.CALLED_LOW:
+                if (los.getTargetCover() == LosEffects.COVER_HORIZONTAL) {
+                    return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.CalledLowPartCover"));
+                }
+                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledLow"));
+                toHit.setHitTable(ToHitData.HIT_BELOW);
+                break;
+            case CalledShot.CALLED_LEFT:
+                // handled by Compute#targetSideTable
+                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledLeft"));
+                break;
+            case CalledShot.CALLED_RIGHT:
+                // handled by Compute#targetSideTable
+                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledRight"));
+                break;
+            }
+            // If we're making a called shot with swarm LRMs, then the penalty
+            // only applies to the original attack.
+            if (call != CalledShot.CALLED_NONE) {
+                toSubtract += 3;
+            }
+        }
         
         // Dropping units get hit with a +2 dropping penalty AND the +3 Jumping penalty (SO p22) 
         if (ae.isAirborne() && !ae.isAero()) {
@@ -4755,6 +4740,33 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) { 
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
             losMods = los.losModifiers(game, eistatus, underWater);
+        }
+        
+        // Change hit table for partial cover, accomodate for partial
+        // underwater(legs)
+        if (los.getTargetCover() != LosEffects.COVER_NONE) {
+            if (underWater && (targHex.containsTerrain(Terrains.WATER) && (targEl == 0) && (te.height() > 0))) {
+                // weapon underwater, target in partial water
+                toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
+                toHit.setCover(LosEffects.COVER_UPPER);
+            } else {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
+                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
+                    toHit.setCover(los.getTargetCover());
+                } else {
+                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
+                    toHit.setCover(LosEffects.COVER_HORIZONTAL);
+                }
+                // Set damagable cover state information
+                toHit.setDamagableCoverTypePrimary(los.getDamagableCoverTypePrimary());
+                toHit.setCoverLocPrimary(los.getCoverLocPrimary());
+                toHit.setCoverDropshipPrimary(los.getCoverDropshipPrimary());
+                toHit.setCoverBuildingPrimary(los.getCoverBuildingPrimary());
+                toHit.setDamagableCoverTypeSecondary(los.getDamagableCoverTypeSecondary());
+                toHit.setCoverLocSecondary(los.getCoverLocSecondary());
+                toHit.setCoverDropshipSecondary(los.getCoverDropshipSecondary());
+                toHit.setCoverBuildingSecondary(los.getCoverBuildingSecondary());
+            }
         }
         
         // Special Equipment

@@ -806,6 +806,39 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         ToHitData losMods = los.losModifiers(game, eistatus, ae.isUnderwater());
         ToHitData toHit = new ToHitData(0, Messages.getString("WeaponAttackAction.BaseToHit"));
+        
+        /*
+        // Collect the modifiers for the environment
+        toHit = compileEnvironmentalToHitMods(game, ae, target, wtype, atype, toHit, isArtilleryIndirect);
+        
+        // Collect the modifiers for the crew/pilot
+        toHit = compileCrewToHitMods(game, ae, te, toHit, wtype);
+        
+        // Collect the modifiers for the attacker's condition/actions
+        if (ae != null) {
+            //Conventional fighter, Aerospace and fighter LAM attackers
+            if (ae instanceof IAero) {
+                toHit = compileAeroAttackerToHitMods(game, ae, target, ttype, toHit, aimingAt, aimingMode, eistatus,
+                            wtype, weapon, atype, munition, isArtilleryIndirect, isFlakAttack, isNemesisConfused, isStrafing,
+                            usesAmmo);
+            //Everyone else
+            } else {
+                toHit = compileAttackerToHitMods(game, ae, target, los, toHit, toSubtract, aimingAt, aimingMode, wtype,
+                        weapon, weaponId, atype, munition, isFlakAttack, isHaywireINarced, isNemesisConfused,
+                        isWeaponFieldGuns, usesAmmo);
+            }
+        }
+        
+        // Collect the modifiers for the target's condition/actions 
+        toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, toSubtract, aimingAt, aimingMode, distance,
+                    wtype, weapon, atype, munition, isArtilleryDirect, isArtilleryIndirect, isAttackerInfantry,
+                    exchangeSwarmTarget, isIndirect, isPointblankShot, usesAmmo);
+        
+        // Collect the modifiers for terrain and line-of-sight. This includes any related to-hit table changes
+        toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
+                    losMods, toSubtract, eistatus, wtype, weapon, weaponId, atype, munition, isAttackerInfantry,
+                    inSameBuilding, isIndirect, isPointblankShot, underWater);
+        */
 
         // taser feedback
         if (ae.getTaserFeedBackRounds() > 0) {

@@ -714,6 +714,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // above the hex, standing on an elevation 1 level higher than
         // the target hex or the elevation of the hex the attacker is
         // in, whichever is higher."
+            // Ancient rules - have we implemented this per TW?
         
         // Store the thruBldg state, for later processing
         toHit.setThruBldg(los.getThruBldg());
@@ -742,18 +743,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Collect the modifiers for the target's condition/actions 
         toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, toSubtract, aimingAt, aimingMode, distance,
                     wtype, weapon, atype, munition, isArtilleryDirect, isArtilleryIndirect, isAttackerInfantry,
-                    exchangeSwarmTarget, isIndirect, usesAmmo);
+                    exchangeSwarmTarget, isIndirect, isPointblankShot, usesAmmo);
         
         // Collect the modifiers for terrain and line-of-sight. This includes any related to-hit table changes
         toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
-                    losMods, toSubtract, eistatus, wtype, weapon, atype, munition, isAttackerInfantry, isIndirect,
-                    inSameBuilding, underWater);
+                    losMods, toSubtract, eistatus, wtype, weapon, atype, munition, isAttackerInfantry, inSameBuilding,
+                    isIndirect, isPointblankShot, underWater);
         placeholder
         
         // If this is a swarm LRM secondary attack, remove old target movement and terrain mods, then
         // add those for new target.
         if (exchangeSwarmTarget) {
-            toHit = handleSwarmLrmAttacks();
+            toHit = handleSwarmSecondaryAttacks(game, ae, target, swarmPrimaryTarget, swarmSecondaryTarget, toHit,
+                    toSubtract, eistatus, aimingAt, aimingMode, weapon, atype, munition, isECMAffected,
+                    inSameBuilding, underWater);
         }
         
         //Attacker affected by Taser or TSEMP
@@ -4267,12 +4270,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isAttackerInfantry  flag that indicates whether the attacker is an infantry/BA unit
      * @param exchangeSwarmTarget  flag that indicates whether this is the secondary target of Swarm LRMs
      * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
+     * @param isPointBlankShot  flag that indicates whether or not this is a PBS by a hidden unit
      * @param usesAmmo  flag that indicates whether or not the WeaponType being used is ammo-fed
      */
     private static ToHitData compileTargetToHitMods(IGame game, Entity ae, Targetable target, int ttype, LosEffects los,
                 ToHitData toHit, int toSubtract, int aimingAt, int aimingMode, int distance, WeaponType wtype,
                 Mounted weapon, AmmoType atype, long munition, boolean isArtilleryDirect, boolean isArtilleryIndirect,
-                boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect, boolean usesAmmo) {
+                boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect,
+                boolean isPointBlankShot, boolean usesAmmo) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
@@ -4405,7 +4410,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Movement and Position modifiers
         
         // target movement - ignore for pointblank shots from hidden units
-        if ((te != null) && !isPointblankShot) {
+        if ((te != null) && !isPointBlankShot) {
             ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getTargetId());
             toHit.append(thTemp);
             toSubtract += thTemp.getValue();
@@ -4579,14 +4584,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param atype The AmmoType being used for this attack
      * @param munition  Long indicating the munition type flag being used, if applicable
      * 
-     * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
      * @param inSameBuilding  flag that indicates whether this attack originates from within the same building
+     * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
+     * @param isPointBlankShot  flag that indicates whether or not this is a PBS by a hidden unit
      * @param underWater  flag that indicates whether the weapon being used is underwater
      */
     private static ToHitData compileTerrainAndLosToHitMods(IGame game, Entity ae, Targetable target, int ttype, int aElev, int tElev,
                 int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods, int toSubtract, int eistatus,
-                WeaponType wtype, Mounted weapon, AmmoType atype, long munition, boolean isAttackerInfantry, boolean isIndirect,
-                boolean inSameBuilding, boolean underWater) {
+                WeaponType wtype, Mounted weapon, AmmoType atype, long munition, boolean isAttackerInfantry, boolean inSameBuilding,
+                boolean isIndirect, boolean isPointBlankShot, boolean underWater) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
@@ -4617,7 +4623,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Base terrain calculations, not applicable when delivering minefields or bombs
         // also not applicable in pointblank shots from hidden units
-        if ((ttype != Targetable.TYPE_MINEFIELD_DELIVER) && !isPointblankShot) {
+        if ((ttype != Targetable.TYPE_MINEFIELD_DELIVER) && !isPointBlankShot) {
             toHit.append(Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater));
             toSubtract += Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater)
                     .getValue();
@@ -4912,15 +4918,28 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param game The current game
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
-     * @param ttype  The targetable object type
-     * @param los The calculated LOS between attacker and target
+     * @param swarmPrimaryTarget The original Targetable object being attacked
+     * @param swarmSecondaryTarget The current Targetable object being attacked
+     * @param targEl An int value representing the target's relative elevation
      * @param toHit The running total ToHitData for this WeaponAttackAction
+     * @param toSubtract An int value representing a running total of mods to disregard
      * 
-     * @param wtype The WeaponType of the weapon being used
+     * @param eistatus An int value representing the ei cockpit/pilot upgrade status - used for terrain calculation
+     * @param aimingAt  An int value representing the location being aimed at - used for immobile target
+     * @param aimingMode  An int value that determines the reason aiming is allowed - used for immobile target
+     * 
+     * @param weapon The Mounted weapon being used
      * @param atype The AmmoType being used for this attack
+     * @param munition  Long indicating the munition type flag being used, if applicable
+     * 
+     * @param isECMAffected flag that indicates whether the target is inside an ECM bubble
+     * @param inSameBuilding  flag that indicates whether this attack originates from within the same building
+     * @param underWater  flag that indicates whether the weapon being used is underwater
      */
-    private static ToHitData handleSwarmSecondaryAttacks(IGame game, Entity ae, Targetable target, int ttype,
-                LosEffects los, ToHitData toHit, WeaponType wtype, AmmoType atype) {
+    private static ToHitData handleSwarmSecondaryAttacks(IGame game, Entity ae, Targetable target,
+                Targetable swarmPrimaryTarget, Targetable swarmSecondaryTarget, ToHitData toHit,
+                int toSubtract, int eistatus, int aimingAt, int aimingMode, Mounted weapon, AmmoType atype,
+                long munition, boolean isECMAffected, boolean inSameBuilding, boolean underWater) {
         
         toHit.addModifier(-toSubtract, Messages.getString("WeaponAttackAction.OriginalTargetMods"));
         toHit.append(Compute.getImmobileMod(swarmSecondaryTarget, aimingAt, aimingMode));
@@ -4928,7 +4947,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 game.getTarget(swarmSecondaryTarget.getTargetType(), swarmSecondaryTarget.getTargetId()), eistatus,
                 inSameBuilding, underWater));
         toHit.setCover(LosEffects.COVER_NONE);
-        distance = Compute.effectiveDistance(game, ae, swarmSecondaryTarget);
+        
+        IHex targHex = game.getBoard().getHex(swarmSecondaryTarget.getPosition());
+        int targEl = swarmSecondaryTarget.relHeight();
+        int distance = Compute.effectiveDistance(game, ae, swarmSecondaryTarget);
+        
+        Entity te = null;
+        if (swarmSecondaryTarget != null && swarmSecondaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = (Entity) target;
+        }
 
         // We might not attack the new target from the same side as the
         // old, so recalculate; the attack *direction* is still traced from
@@ -4963,15 +4990,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         // target in water?
-        targHex = game.getBoard().getHex(swarmSecondaryTarget.getPosition());
-        targEl = swarmSecondaryTarget.relHeight();
-            
         if (swarmSecondaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity oldEnt = game.getEntity(swarmSecondaryTarget.getTargetId());
             toHit.append(Compute.getTargetMovementModifier(game, oldEnt.getId()));
-            // target in partial water
-            partialWaterLevel = 1;
-            if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+            // target in partial water - depth 1 for most units
+            int partialWaterLevel = 1;
+            // Depth 2 for superheavy mechs
+            if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
                 partialWaterLevel = 2;
             }
             if (targHex.containsTerrain(Terrains.WATER)
@@ -4980,6 +5005,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.setCover(toHit.getCover() | LosEffects.COVER_HORIZONTAL);
             }
             // Prone
+            ToHitData proneMod = new ToHitData();
             if (oldEnt.isProne()) {
                 // easier when point-blank
                 if (distance <= 1) {
@@ -5074,12 +5100,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if (ae.getHeatFiringModifier() != 0) {
                     toHit.addModifier(ae.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
                 }
-
                 // weapon to-hit modifier
                 if (wtype.getToHitModifier() != 0) {
                     toHit.addModifier(wtype.getToHitModifier(), Messages.getString("WeaponAttackAction.WeaponMod"));
                 }
-
                 // ammo to-hit modifier
                 if (usesAmmo && (atype != null) && (atype.getToHitModifier() != 0)) {
                     toHit.addModifier(atype.getToHitModifier(),

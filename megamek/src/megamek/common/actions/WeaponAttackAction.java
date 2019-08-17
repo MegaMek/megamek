@@ -3622,11 +3622,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Heat Seeking Missles
         if (bHeatSeeking) {
             IHex hexTarget = game.getBoard().getHex(target.getPosition());
-            // -2 bonus if shooting at burning woods or buildings
+            // -2 bonus if shooting at burning hexes or buildings
             if (te == null && hexTarget.containsTerrain(Terrains.FIRE)) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AmmoMod"));
             }
             if (te != null) {
+                // -2 bonus if the target is on fire
+                if (te.infernos.isStillBurning()) {
+                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AmmoMod"));
+                }
                 if ((te.isAirborne())
                         && (toHit.getSideTable() == ToHitData.SIDE_REAR)) {
                     // -2 bonus if shooting an Aero through the rear arc

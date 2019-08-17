@@ -659,7 +659,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         //Is this an infantry leg/swarm attack?
-        toHit = handleSwarmAttacks(game, ae, target, ttype, toHit, wtype);
+        toHit = handleInfantrySwarmAttacks(game, ae, target, ttype, toHit, wtype);
         if (isSpecialResolution()) {
             return toHit;
         }
@@ -739,177 +739,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         
+        // Collect the modifiers for the target's condition/actions 
+        toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, toSubtract, aimingAt, aimingMode, distance,
+                    wtype, weapon, atype, munition, isArtilleryDirect, isArtilleryIndirect, isAttackerInfantry,
+                    exchangeSwarmTarget, isIndirect, usesAmmo);
+        
+        // Collect the modifiers for terrain and line-of-sight. This includes any related to-hit table changes
+        toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
+                    losMods, toSubtract, eistatus, wtype, weapon, atype, munition, isAttackerInfantry, isIndirect,
+                    inSameBuilding, underWater);
         placeholder
-
-        // Change hit table for elevation differences inside building.
-        if ((null != los.getThruBldg()) && (aElev != tElev)) {
-
-            // Tanks get hit in a random side.
-            if (target instanceof Tank) {
-                toHit.setSideTable(ToHitData.SIDE_RANDOM);
-            } else if (target instanceof Mech) {
-                // Meks have special tables for shots from above and below.
-                if (aElev > tElev) {
-                    toHit.setHitTable(ToHitData.HIT_ABOVE);
-                } else {
-                    toHit.setHitTable(ToHitData.HIT_BELOW);
-                }
-            }
-        }
-
-        // change hit table for surface vessels hit by underwater attacks
-        if (underWater && targHex.containsTerrain(Terrains.WATER) && (null != te) && te.isSurfaceNaval()) {
-            toHit.setHitTable(ToHitData.HIT_UNDERWATER);
-        }
-
-        // factor in target side
-        if (isAttackerInfantry && (0 == distance)) {
-            // Infantry attacks from the same hex are resolved against the
-            // front.
-            toHit.setSideTable(ToHitData.SIDE_FRONT);
-        } else {
-            toHit.setSideTable(Compute.targetSideTable(ae, target, weapon.getCalledShot().getCall()));
-        }
-
-        // Aeros in atmosphere can hit above and below
-        if (Compute.isAirToAir(ae, target)) {
-            if ((aAlt - tAlt) > 2) {
-                toHit.setHitTable(ToHitData.HIT_ABOVE);
-            } else if ((tAlt - aAlt) > 2) {
-                toHit.setHitTable(ToHitData.HIT_BELOW);
-            } else if (((aAlt - tAlt) > 0) && (te.isAero() && ((IAero) te).isSpheroid())) {
-                toHit.setHitTable(ToHitData.HIT_ABOVE);
-            } else if (((aAlt - tAlt) < 0) && (te.isAero() && ((IAero) te).isSpheroid())) {
-                toHit.setHitTable(ToHitData.HIT_BELOW);
-            }
-        }
-        if (Compute.isGroundToAir(ae, target) && ((aAlt - tAlt) > 2)) {
-            toHit.setHitTable(ToHitData.HIT_BELOW);
-        }
-
-        if (target.isAirborne() && target.isAero()) {
-            if (!(((IAero) target).isSpheroid() && !game.getBoard().inSpace())) {
-                // get mods for direction of attack
-                int side = toHit.getSideTable();
-                // if this is an aero attack using advanced movement rules then
-                // determine side differently
-                if (game.useVectorMove()) {
-                    boolean usePrior = false;
-                    Coords attackPos = ae.getPosition();
-                    if (game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())) {
-                        int moveSort = Compute.shouldMoveBackHex(ae, (Entity)target);
-                        if (moveSort < 0) {
-                            attackPos = ae.getPriorPosition();
-                        }
-                        usePrior = moveSort > 0;
-                    }
-                    side = ((Entity) target).chooseSide(attackPos, usePrior);
-                }
-                if (side == ToHitData.SIDE_FRONT) {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeroNoseAttack"));
-                }
-                if ((side == ToHitData.SIDE_LEFT) || (side == ToHitData.SIDE_RIGHT)) {
-                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeroSideAttack"));
-                }
-            }
-        }
-
-        // deal with grapples
-        if (target instanceof Entity) {
-            int grapple = ((Entity) target).getGrappled();
-            if (grapple != Entity.NONE) {
-                if ((grapple == ae.getId()) && (((Entity) target).getGrappleSide() == Entity.GRAPPLE_BOTH)) {
-                    toHit.addModifier(-4, Messages.getString("WeaponAttackAction.Grappled"));
-                } else if ((grapple == ae.getId()) && (((Entity) target).getGrappleSide() != Entity.GRAPPLE_BOTH)) {
-                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GrappledByChain"));
-                } else if (!exchangeSwarmTarget) {
-                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.FireIntoMelee"));
-                } else {
-                    // this -1 cancels the original +1
-                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.FriendlyFire"));
-                    return toHit;
-                }
-            }
-        }
-
-        // remove old target movement and terrain mods,
+        
+        // If this is a swarm LRM secondary attack, remove old target movement and terrain mods, then
         // add those for new target.
         if (exchangeSwarmTarget) {
-            toHit.addModifier(-toSubtract, Messages.getString("WeaponAttackAction.OriginalTargetMods"));
-            toHit.append(Compute.getImmobileMod(swarmSecondaryTarget, aimingAt, aimingMode));
-            toHit.append(Compute.getTargetTerrainModifier(game,
-                    game.getTarget(swarmSecondaryTarget.getTargetType(), swarmSecondaryTarget.getTargetId()), eistatus,
-                    inSameBuilding, underWater));
-            toHit.setCover(LosEffects.COVER_NONE);
-            distance = Compute.effectiveDistance(game, ae, swarmSecondaryTarget);
-
-            // We might not attack the new target from the same side as the
-            // old, so recalculate; the attack *direction* is still traced from
-            // the original source.
-            toHit.setSideTable(Compute.targetSideTable(ae, swarmSecondaryTarget));
-
-            // Secondary swarm LRM attacks are never called shots even if the
-            // initial one was.
-            if (weapon.getCalledShot().getCall() != CalledShot.CALLED_NONE) {
-                weapon.getCalledShot().reset();
-                toHit.setHitTable(ToHitData.HIT_NORMAL);
-            }
-
-            LosEffects swarmlos;
-            // TO makes it seem like the terrain modifers should be between the
-            // attacker and the secondary target, but we have received rules
-            // clarifications on the old forums indicating that this is correct
-            if (swarmPrimaryTarget.getTargetType() != Targetable.TYPE_ENTITY) {
-                swarmlos = LosEffects.calculateLos(game, swarmSecondaryTarget.getTargetId(), target);
-            } else {
-                swarmlos = LosEffects.calculateLos(game, swarmPrimaryTarget.getTargetId(), swarmSecondaryTarget);
-            }
-
-            // reset cover
-            if (swarmlos.getTargetCover() != LosEffects.COVER_NONE) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
-                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
-                    toHit.setCover(swarmlos.getTargetCover());
-                } else {
-                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
-                    toHit.setCover(LosEffects.COVER_HORIZONTAL);
-                }
-            }
-            // target in water?
-            targHex = game.getBoard().getHex(swarmSecondaryTarget.getPosition());
-            targEl = swarmSecondaryTarget.relHeight();
-
-            if (swarmSecondaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-                Entity oldEnt = game.getEntity(swarmSecondaryTarget.getTargetId());
-                toHit.append(Compute.getTargetMovementModifier(game, oldEnt.getId()));
-                // target in partial water
-                partialWaterLevel = 1;
-                if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
-                    partialWaterLevel = 2;
-                }
-                if (targHex.containsTerrain(Terrains.WATER)
-                        && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0)
-                        && (oldEnt.height() > 0)) {
-                    toHit.setCover(toHit.getCover() | LosEffects.COVER_HORIZONTAL);
-                }
-                // Prone
-                if (oldEnt.isProne()) {
-                    // easier when point-blank
-                    if (distance <= 1) {
-                        proneMod = new ToHitData(-2, Messages.getString("WeaponAttackAction.ProneAdj"));
-                    } else {
-                        // Harder at range.
-                        proneMod = new ToHitData(1, Messages.getString("WeaponAttackAction.ProneRange"));
-                    }
-                }
-                // I-Swarm bonus
-                toHit.append(proneMod);
-                if (!isECMAffected && (atype != null) && !oldEnt.isEnemyOf(ae)
-                        && !(oldEnt.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
-                        && (munition == AmmoType.M_SWARM_I)) {
-                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.SwarmIFriendly"));
-                }
-            }
+            toHit = handleSwarmLrmAttacks();
         }
         
         //Attacker affected by Taser or TSEMP
@@ -4421,13 +4265,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isArtilleryDirect  flag that indicates whether this is a direct-fire artillery attack
      * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
      * @param isAttackerInfantry  flag that indicates whether the attacker is an infantry/BA unit
+     * @param exchangeSwarmTarget  flag that indicates whether this is the secondary target of Swarm LRMs
      * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
      * @param usesAmmo  flag that indicates whether or not the WeaponType being used is ammo-fed
      */
-    private ToHitData compileTargetToHitMods(IGame game, Entity ae, Targetable target, int ttype, LosEffects los,
+    private static ToHitData compileTargetToHitMods(IGame game, Entity ae, Targetable target, int ttype, LosEffects los,
                 ToHitData toHit, int toSubtract, int aimingAt, int aimingMode, int distance, WeaponType wtype,
                 Mounted weapon, AmmoType atype, long munition, boolean isArtilleryDirect, boolean isArtilleryIndirect,
-                boolean isAttackerInfantry, boolean isIndirect, boolean usesAmmo) {
+                boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect, boolean usesAmmo) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
@@ -4495,7 +4340,27 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toSubtract += proneMod.getValue();
         }
         
-        // Special effects (like Heat) affecting the target
+        // Special effects affecting the target
+        
+        // Target grappled?
+        if (te != null) {
+            int grapple = te.getGrappled();
+            if (grapple != Entity.NONE) {
+                // -4 bonus if attacking the entity you're grappling
+                if ((grapple == ae.getId()) && (te.getGrappleSide() == Entity.GRAPPLE_BOTH)) {
+                    toHit.addModifier(-4, Messages.getString("WeaponAttackAction.Grappled"));
+                // -2 bonus if grappling the target at range with a chain whip
+                } else if ((grapple == ae.getId()) && (te.getGrappleSide() != Entity.GRAPPLE_BOTH)) {
+                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GrappledByChain"));
+                // +1 penalty if firing at a target grappled by another unit. This does not apply to Swarm LRMs
+                } else if (!exchangeSwarmTarget) {
+                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.FireIntoMelee"));
+                } else {
+                    // this -1 cancels the original +1
+                    toHit.addModifier(-1, Messages.getString("WeaponAttackAction.FriendlyFire"));
+                }
+            }
+        }
         
         // Special Equipment and Quirks that the target possesses
         
@@ -4537,7 +4402,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.LowProfile"));
         }
         
-        // Standard Movement and Position modifiers
+        // Movement and Position modifiers
         
         // target movement - ignore for pointblank shots from hidden units
         if ((te != null) && !isPointblankShot) {
@@ -4638,6 +4503,33 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !game.getBoard().inSpace())) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ImmobileAero"));
             }
+            
+            // get mods for direction of attack
+            if (!(a.isSpheroid() && !game.getBoard().inSpace())) {
+                int side = toHit.getSideTable();
+                // if this is an aero attack using advanced movement rules then
+                // determine side differently
+                if (game.useVectorMove()) {
+                    boolean usePrior = false;
+                    Coords attackPos = ae.getPosition();
+                    if (game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())) {
+                        int moveSort = Compute.shouldMoveBackHex(ae, (Entity)target);
+                        if (moveSort < 0) {
+                            attackPos = ae.getPriorPosition();
+                        }
+                        usePrior = moveSort > 0;
+                    }
+                    side = ((Entity) target).chooseSide(attackPos, usePrior);
+                }
+                // +1 if shooting at an aero approaching nose-on
+                if (side == ToHitData.SIDE_FRONT) {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeroNoseAttack"));
+                }
+                // +2 if shooting at the side as it flashes by
+                if ((side == ToHitData.SIDE_LEFT) || (side == ToHitData.SIDE_RIGHT)) {
+                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeroSideAttack"));
+                }
+            }
 
             // Target hidden in the sensor shadow of a larger spacecraft
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
@@ -4663,14 +4555,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     
     /**
      * Convenience method that compiles the ToHit modifiers applicable to the terrain and line of sight (LOS)
-     * Woods along the LOS?  Target Underwater?  You'll find that here.
+     * Woods along the LOS?  Target Underwater?  Partial cover? You'll find that here.
+     * Also, if the to-hit table is changed due to cover/angle/elevation, look here.
      * -4 for shooting at an immobile target?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
      * @param game The current game
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
-     * @param targEl An int value representing the target's elevation
+     * @param aElev An int value representing the attacker's elevation
+     * @param tElev An int value representing the target's elevation
+     * @param targEl An int value representing the target's relative elevation
+     * @param distance  The distance in hexes from attacker to target
      * @param los The calculated LOS between attacker and target
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * @param losMods A cached set of LOS-related modifiers
@@ -4687,9 +4583,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param inSameBuilding  flag that indicates whether this attack originates from within the same building
      * @param underWater  flag that indicates whether the weapon being used is underwater
      */
-    private ToHitData compileTerrainAndLosToHitMods(IGame game, Entity ae, Targetable target, int ttype, int targEl, LosEffects los,
-                ToHitData toHit, ToHitData losMods, int toSubtract, int eistatus, WeaponType wtype, AmmoType atype,
-                long munition, boolean isAttackerInfantry, boolean isIndirect, boolean inSameBuilding, boolean underWater) {
+    private static ToHitData compileTerrainAndLosToHitMods(IGame game, Entity ae, Targetable target, int ttype, int aElev, int tElev,
+                int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods, int toSubtract, int eistatus,
+                WeaponType wtype, Mounted weapon, AmmoType atype, long munition, boolean isAttackerInfantry, boolean isIndirect,
+                boolean inSameBuilding, boolean underWater) {
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
@@ -4741,7 +4638,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         if ((te != null) && targHex.containsTerrain(Terrains.WATER)
                 // target in partial water
-                && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) { 
+                && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (tElev == 0) && (te.height() > 0)) { 
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
             losMods = los.losModifiers(game, eistatus, underWater);
         }
@@ -4749,7 +4646,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Change hit table for partial cover, accomodate for partial
         // underwater(legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
-            if (underWater && (targHex.containsTerrain(Terrains.WATER) && (targEl == 0) && (te.height() > 0))) {
+            if (underWater && (targHex.containsTerrain(Terrains.WATER) && (tElev == 0) && (te.height() > 0))) {
                 // weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                 toHit.setCover(LosEffects.COVER_UPPER);
@@ -4787,6 +4684,56 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
         }
         
+        // To-hit table changes with no to-hit modifiers
+        
+        // Aeros in air-to-air combat can hit above and below
+        if (Compute.isAirToAir(ae, target)) {
+            if ((ae.getAltitude() - target.getAltitude()) > 2) {
+                toHit.setHitTable(ToHitData.HIT_ABOVE);
+            } else if ((target.getAltitude() - ae.getAltitude()) > 2) {
+                toHit.setHitTable(ToHitData.HIT_BELOW);
+            } else if (((ae.getAltitude() - target.getAltitude()) > 0) && (te.isAero() && ((IAero) te).isSpheroid())) {
+                toHit.setHitTable(ToHitData.HIT_ABOVE);
+            } else if (((ae.getAltitude() - target.getAltitude()) < 0) && (te.isAero() && ((IAero) te).isSpheroid())) {
+                toHit.setHitTable(ToHitData.HIT_BELOW);
+            }
+        }
+        
+        // Change hit table for elevation differences inside building.
+        if ((null != los.getThruBldg()) && (aElev != tElev)) {
+
+            // Tanks get hit in a random side.
+            if (target instanceof Tank) {
+                toHit.setSideTable(ToHitData.SIDE_RANDOM);
+            } else if (target instanceof Mech) {
+                // Meks have special tables for shots from above and below.
+                if (aElev > tElev) {
+                    toHit.setHitTable(ToHitData.HIT_ABOVE);
+                } else {
+                    toHit.setHitTable(ToHitData.HIT_BELOW);
+                }
+            }
+        }
+        
+        // Ground-to-air attacks always hit from below
+        if (Compute.isGroundToAir(ae, target) && ((ae.getAltitude() - target.getAltitude()) > 2)) {
+            toHit.setHitTable(ToHitData.HIT_BELOW);
+        }
+        
+        // factor in target side
+        if (isAttackerInfantry && (0 == distance)) {
+            // Infantry attacks from the same hex are resolved against the
+            // front.
+            toHit.setSideTable(ToHitData.SIDE_FRONT);
+        } else {
+            toHit.setSideTable(Compute.targetSideTable(ae, target, weapon.getCalledShot().getCall()));
+        }
+        
+        // Change hit table for surface naval vessels hit by underwater attacks
+        if (underWater && targHex.containsTerrain(Terrains.WATER) && (null != te) && te.isSurfaceNaval()) {
+            toHit.setHitTable(ToHitData.HIT_UNDERWATER);
+        }
+        
         return toHit;
     }
     
@@ -4803,8 +4750,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param wtype The WeaponType of the weapon being used
      * @param atype The AmmoType being used for this attack
      */
-    private static ToHitData handleSpecialWeaponAttacks(IGame game, Entity ae,
-                Targetable target, int ttype, LosEffects los, ToHitData toHit, WeaponType wtype, AmmoType atype) {
+    private static ToHitData handleSpecialWeaponAttacks(IGame game, Entity ae, Targetable target, int ttype,
+                LosEffects los, ToHitData toHit, WeaponType wtype, AmmoType atype) {
         setSpecialResolution(false);
         if (ae == null) {
             //*Should* be impossible at this point in the process
@@ -4857,7 +4804,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     }
     
     /**
-     * Convenience method that compiles the ToHit modifiers applicable to swarm attacks
+     * Convenience method that compiles the ToHit modifiers applicable to infantry/BA swarm attacks
      * 
      * @param game The current game
      * @param ae The Entity making this attack
@@ -4867,7 +4814,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param wtype The WeaponType of the weapon being used
      */
-    private static ToHitData handleSwarmAttacks(IGame game, Entity ae, Targetable target,
+    private static ToHitData handleInfantrySwarmAttacks(IGame game, Entity ae, Targetable target,
                 int ttype, ToHitData toHit, WeaponType wtype)  {
         if (ae == null) {
             //*Should* be impossible at this point in the process
@@ -4956,6 +4903,100 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.SwarmingAutoHit"), ToHitData.HIT_SWARM_CONVENTIONAL, side);
         }
         //If we get here, no swarm attack applies
+        return toHit;
+    }
+    
+    /**
+     * Method to handle modifiers for swarm missile secondary targets
+     * 
+     * @param game The current game
+     * @param ae The Entity making this attack
+     * @param target The Targetable object being attacked
+     * @param ttype  The targetable object type
+     * @param los The calculated LOS between attacker and target
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param atype The AmmoType being used for this attack
+     */
+    private static ToHitData handleSwarmSecondaryAttacks(IGame game, Entity ae, Targetable target, int ttype,
+                LosEffects los, ToHitData toHit, WeaponType wtype, AmmoType atype) {
+        
+        toHit.addModifier(-toSubtract, Messages.getString("WeaponAttackAction.OriginalTargetMods"));
+        toHit.append(Compute.getImmobileMod(swarmSecondaryTarget, aimingAt, aimingMode));
+        toHit.append(Compute.getTargetTerrainModifier(game,
+                game.getTarget(swarmSecondaryTarget.getTargetType(), swarmSecondaryTarget.getTargetId()), eistatus,
+                inSameBuilding, underWater));
+        toHit.setCover(LosEffects.COVER_NONE);
+        distance = Compute.effectiveDistance(game, ae, swarmSecondaryTarget);
+
+        // We might not attack the new target from the same side as the
+        // old, so recalculate; the attack *direction* is still traced from
+        // the original source.
+        toHit.setSideTable(Compute.targetSideTable(ae, swarmSecondaryTarget));
+
+        // Secondary swarm LRM attacks are never called shots even if the
+        // initial one was.
+        if (weapon.getCalledShot().getCall() != CalledShot.CALLED_NONE) {
+            weapon.getCalledShot().reset();
+            toHit.setHitTable(ToHitData.HIT_NORMAL);
+        }
+
+        LosEffects swarmlos;
+        // TO makes it seem like the terrain modifers should be between the
+        // attacker and the secondary target, but we have received rules
+        // clarifications on the old forums indicating that this is correct
+        if (swarmPrimaryTarget.getTargetType() != Targetable.TYPE_ENTITY) {
+            swarmlos = LosEffects.calculateLos(game, swarmSecondaryTarget.getTargetId(), target);
+        } else {
+            swarmlos = LosEffects.calculateLos(game, swarmPrimaryTarget.getTargetId(), swarmSecondaryTarget);
+        }
+
+        // reset cover
+        if (swarmlos.getTargetCover() != LosEffects.COVER_NONE) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
+                toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
+                toHit.setCover(swarmlos.getTargetCover());
+            } else {
+                toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
+                toHit.setCover(LosEffects.COVER_HORIZONTAL);
+            }
+        }
+        // target in water?
+        targHex = game.getBoard().getHex(swarmSecondaryTarget.getPosition());
+        targEl = swarmSecondaryTarget.relHeight();
+            
+        if (swarmSecondaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity oldEnt = game.getEntity(swarmSecondaryTarget.getTargetId());
+            toHit.append(Compute.getTargetMovementModifier(game, oldEnt.getId()));
+            // target in partial water
+            partialWaterLevel = 1;
+            if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+                partialWaterLevel = 2;
+            }
+            if (targHex.containsTerrain(Terrains.WATER)
+                    && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0)
+                    && (oldEnt.height() > 0)) {
+                toHit.setCover(toHit.getCover() | LosEffects.COVER_HORIZONTAL);
+            }
+            // Prone
+            if (oldEnt.isProne()) {
+                // easier when point-blank
+                if (distance <= 1) {
+                    proneMod = new ToHitData(-2, Messages.getString("WeaponAttackAction.ProneAdj"));
+                } else {
+                    // Harder at range.
+                    proneMod = new ToHitData(1, Messages.getString("WeaponAttackAction.ProneRange"));
+                }
+            }
+            // I-Swarm bonus
+            toHit.append(proneMod);
+            if (!isECMAffected && (atype != null) && !oldEnt.isEnemyOf(ae)
+                    && !(oldEnt.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
+                    && (munition == AmmoType.M_SWARM_I)) {
+                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.SwarmIFriendly"));
+            }
+        }
         return toHit;
     }
     

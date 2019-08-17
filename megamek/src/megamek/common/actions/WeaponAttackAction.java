@@ -2886,7 +2886,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             boolean isAttackerInfantry, boolean isIndirect, int attackerId, int weaponId, boolean isArtilleryIndirect,
             boolean isArtilleryFLAK, boolean targetInBuilding, boolean isArtilleryDirect,
             boolean isTargetECMAffected, boolean isStrafing, boolean isBearingsOnlyMissile, boolean isCruiseMissile) {
-        ToHitData toHit = null;
         
         // Buildings
         
@@ -2924,8 +2923,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Screen launchers target hexes and hit automatically (if in range)
-        if ((toHit.getValue() != TargetRoll.IMPOSSIBLE) && ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
-                || (wtype instanceof ScreenLauncherBayWeapon))) {
+        if (((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
+                || (wtype instanceof ScreenLauncherBayWeapon)) && distance <= wtype.getExtremeRange()) {
             return Messages.getString("WeaponAttackAction.ScreenAutoHit");
         }
         
@@ -3884,7 +3883,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // So it's here instead of with other weapon mods that apply across the board
             if ((wtype instanceof ISHGaussRifle) && !(ae instanceof Dropship)
                     && !(ae instanceof Jumpship)) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.WeaponAttackAction.FighterHeavyGauss"));
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FighterHeavyGauss"));
             }
             
             // Space ECM

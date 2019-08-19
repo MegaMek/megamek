@@ -3326,10 +3326,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 ToHitData toHit, int aimingAt, int aimingMode, int eistatus, WeaponType wtype, Mounted weapon,
                 AmmoType atype, long munition, boolean isArtilleryIndirect, boolean isFlakAttack, boolean isNemesisConfused,
                 boolean isStrafing, boolean usesAmmo) {
-        if (ae == null || target == null) {
-            //Null guard
-            return toHit;
-        }
         
         if (toHit == null) {
             // Without valid toHit data, the rest of this will fail
@@ -3377,7 +3373,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_HAG && isFlakAttack;
             boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_SBGAUSS;
             boolean isFlakAmmo = usesAmmo && (atype != null) && (munition == AmmoType.M_FLAK);
-            if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponType.F_CWS)
+            if (ae.hasTargComp() && wtype != null && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponType.F_CWS)
                     && !wtype.hasFlag(WeaponType.F_TASER)
                     && (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TComp"));
@@ -3391,7 +3387,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // check for heavy gauss rifle on fighter of small craft
             // Arguably a weapon effect, except that it only applies when used by a fighter (isn't recoil fun?)
             // So it's here instead of with other weapon mods that apply across the board
-            if ((wtype instanceof ISHGaussRifle) && !(ae instanceof Dropship)
+            if ((wtype != null && wtype instanceof ISHGaussRifle) && !(ae instanceof Dropship)
                     && !(ae instanceof Jumpship)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FighterHeavyGauss"));
             }
@@ -3451,7 +3447,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (Compute.isAirToGround(ae, target)
                     || (ae.isMakingVTOLGroundAttack())) {
                 // When altitude bombing, add the altitude as a modifier
-                if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                if (wtype != null && wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                     toHit.addModifier(ae.getAltitude(), Messages.getString("WeaponAttackAction.BombAltitude"));
                     // -2 for the Golden Goose SPA
                     if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
@@ -3474,7 +3470,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     // +2 modifier for striking
                     toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AtgStrike"));
                     if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
-                        if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+                        if (wtype != null && wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
                             // -2 for the Golden Goose SPA if dive bombing
                             toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GoldenGoose"));
                         } else {
@@ -3546,7 +3542,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // targeting mods for evasive action by large craft
             // Per TW, this does not apply when firing Capital Missiles
-            if (aero.isEvading() &&
+            if (aero.isEvading() && wtype != null && 
                     (!(wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE
                             || wtype.getAtClass() == WeaponType.CLASS_AR10
                             || wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE))) {
@@ -3554,7 +3550,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // check for particular kinds of weapons in weapon bays
-            if (ae.usesWeaponBays()) {
+            if (ae.usesWeaponBays() && wtype != null) {
 
                 // any heavy lasers
                 if (wtype.getAtClass() == WeaponType.CLASS_LASER) {

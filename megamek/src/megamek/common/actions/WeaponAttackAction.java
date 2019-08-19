@@ -664,13 +664,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return toHit;
         }
         
-        //Artillery attack?
-        toHit = handleArtilleryAttacks(game, ae, target, ttype, losMods, toHit, wtype, weapon, atype, isArtilleryDirect,
-                isArtilleryFLAK, isHoming, isArtilleryIndirect, usesAmmo);
-        if (isSpecialResolution()) {
-            return toHit;
-        }
-        
         //Check to see if this attack was made with a weapon that has special to-hit rules
         toHit = handleSpecialWeaponAttacks(game, ae, target, ttype, los, toHit, wtype, atype);
         if (isSpecialResolution()) {
@@ -695,6 +688,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         if (wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             toHit = new ToHitData(ae.getCrew().getArtillery(), Messages.getString("WeaponAttackAction.ArtySkill"));
+        }
+        
+        // Is this an Artillery attack?
+        toHit = handleArtilleryAttacks(game, ae, target, ttype, losMods, toHit, wtype, weapon, atype, isArtilleryDirect,
+                isArtilleryFLAK, isArtilleryIndirect, isHoming, usesAmmo);
+        if (isSpecialResolution()) {
+            return toHit;
         }
         
         //Mine launchers have their own base to-hit, but can still be affected by terrain and movement modifiers
@@ -4725,6 +4725,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Altitude"));
                 }
             }
+            setSpecialResolution(true);
+            return toHit;
         }
         //If we get here, this isn't an artillery attack
         return toHit;

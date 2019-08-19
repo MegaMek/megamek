@@ -4190,7 +4190,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Add range mods - If the attacker and target are in the same building
         // & hex, range mods don't apply (and will cause the shot to fail)
-        if ((los.getThruBldg() == null) || !los.getTargetPosition().equals(ae.getPosition())) {
+        if (((los.getThruBldg() == null) || !los.getTargetPosition().equals(ae.getPosition())) 
+                && weaponId > WeaponType.WEAPON_NA) {
             toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
         }
         

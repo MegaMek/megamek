@@ -4316,7 +4316,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // front.
             toHit.setSideTable(ToHitData.SIDE_FRONT);
         } else {
-            toHit.setSideTable(Compute.targetSideTable(ae, target, weapon.getCalledShot().getCall()));
+            if (weapon != null) {
+                toHit.setSideTable(Compute.targetSideTable(ae, target, weapon.getCalledShot().getCall()));
+            }
         }
         
         // Change hit table for surface naval vessels hit by underwater attacks

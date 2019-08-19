@@ -773,18 +773,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         final Entity ae = game.getEntity(attackerId);
 
         Entity te = null;
-        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+        int ttype = target.getTargetType();
+        if (ttype == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         }
-        boolean isAttackerInfantry = ae instanceof Infantry;
-        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
+        int aElev = ae.getElevation();
+        int tElev = target.getElevation();
         int targEl;
         if (te == null) {
             targEl = game.getBoard().getHex(target.getPosition()).floor();
         } else {
             targEl = te.relHeight();
         }
+        
+        int toSubtract = 0;
+        int distance = Compute.effectiveDistance(game, ae, target);
+        
+        int weaponId = game.getTarget(getWeaponId());
 
         // EI system
         // 0 if no EI (or switched off)
@@ -792,8 +798,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // 2 if intervening light woods (because target in woods + intervening
         // woods is only +1 total)
         int eistatus = 0;
+        
+        boolean isAttackerInfantry = ae instanceof Infantry;
+        boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
-        // check LOS (indirect LOS is from the spotter)
+        // check LOS
         LosEffects los = LosEffects.calculateLos(game, attackerId, target);
 
         if (ae.hasActiveEiCockpit()) {
@@ -807,9 +816,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         ToHitData losMods = los.losModifiers(game, eistatus, ae.isUnderwater());
         ToHitData toHit = new ToHitData(0, Messages.getString("WeaponAttackAction.BaseToHit"));
         
-        /*
         // Collect the modifiers for the environment
-        toHit = compileEnvironmentalToHitMods(game, ae, target, wtype, atype, toHit, isArtilleryIndirect);
+        toHit = compileEnvironmentalToHitMods(game, ae, target, wtype, atype, toHit, false);
         
         // Collect the modifiers for the crew/pilot
         toHit = compileCrewToHitMods(game, ae, te, toHit, wtype);
@@ -818,558 +826,29 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae != null) {
             //Conventional fighter, Aerospace and fighter LAM attackers
             if (ae instanceof IAero) {
-                toHit = compileAeroAttackerToHitMods(game, ae, target, ttype, toHit, aimingAt, aimingMode, eistatus,
-                            wtype, weapon, atype, munition, isArtilleryIndirect, isFlakAttack, isNemesisConfused, isStrafing,
-                            usesAmmo);
+                toHit = compileAeroAttackerToHitMods(game, ae, target, ttype, toHit, Entity.LOC_NONE,
+                            IAimingModes.AIM_MODE_NONE, eistatus,
+                            wtype, weapon, atype, AmmoType.M_STANDARD, false, false, false, false,
+                            false);
             //Everyone else
             } else {
-                toHit = compileAttackerToHitMods(game, ae, target, los, toHit, toSubtract, aimingAt, aimingMode, wtype,
-                        weapon, weaponId, atype, munition, isFlakAttack, isHaywireINarced, isNemesisConfused,
-                        isWeaponFieldGuns, usesAmmo);
+                toHit = compileAttackerToHitMods(game, ae, target, los, toHit, toSubtract, Entity.LOC_NONE,
+                            IAimingModes.AIM_MODE_NONE, wtype,
+                        weapon, weaponId, atype, AmmoType.M_STANDARD, false, false, false,
+                        false, false);
             }
         }
         
         // Collect the modifiers for the target's condition/actions 
-        toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, toSubtract, aimingAt, aimingMode, distance,
-                    wtype, weapon, atype, munition, isArtilleryDirect, isArtilleryIndirect, isAttackerInfantry,
-                    exchangeSwarmTarget, isIndirect, isPointblankShot, usesAmmo);
+        toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, toSubtract, Entity.LOC_NONE,
+                    IAimingModes.AIM_MODE_NONE, distance,
+                    wtype, weapon, atype, AmmoType.M_STANDARD, false, false, isAttackerInfantry,
+                    false, false, false, false);
         
         // Collect the modifiers for terrain and line-of-sight. This includes any related to-hit table changes
         toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
-                    losMods, toSubtract, eistatus, wtype, weapon, weaponId, atype, munition, isAttackerInfantry,
-                    inSameBuilding, isIndirect, isPointblankShot, underWater);
-        */
-
-        // taser feedback
-        if (ae.getTaserFeedBackRounds() > 0) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeTaserFeedback"));
-        }
-        // taser interference
-        if (ae.getTaserInterferenceRounds() > 0) {
-            toHit.addModifier(ae.getTaserInterference(), Messages.getString("WeaponAttackAction.AeHitByTaser"));
-        }
-        // if we're spotting for indirect fire, add +1
-        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
-            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeSpotting"));
-        }
-        // super heavy modifier
-        if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
-        }
-        // fatigue
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
-                && ae.getCrew().isGunneryFatigued()) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.Fatigue"));
-        }
-        // If a unit is suffering from electromagnetic interference, they get a
-        // blanket +2.
-        // Sucks to be them.
-        if (ae.isSufferingEMI()) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.EMI"));
-        }
-        // evading bonuses (
-        if ((target.getTargetType() == Targetable.TYPE_ENTITY) && te.isEvading()) {
-            toHit.addModifier(te.getEvasionBonus(), Messages.getString("WeaponAttackAction.TeEvading"));
-        }
-        if (Compute.isGroundToAir(ae, target) && (null != te) && te.isNOE()) {
-            if (te.passedWithin(ae.getPosition(), 1)) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.TeNoe"));
-            } else {
-                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.TeNoe"));
-            }
-        }
-
-        if (Compute.isGroundToAir(ae, target)
-                && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE) && (null != te)
-                && te.isAero()) {
-            int vMod = ((IAero) te).getCurrentVelocity();
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AA_MOVE_MOD)) {
-                vMod = Math.min(vMod / 2, 4);
-            }
-            toHit.addModifier(vMod, Messages.getString("WeaponAttackAction.TeVelocity"));
-        }
-
-        // Damage effects for Aero, including LAMs.
-        if (ae.isAero()) {
-            // pilot hits
-            int pilothits = ae.getCrew().getHits();
-            if ((pilothits > 0) && !ae.isCapitalFighter()) {
-                toHit.addModifier(pilothits, Messages.getString("WeaponAttackAction.PilotHits"));
-            }
-
-            // out of control
-            if (((IAero)ae).isOutControlTotal()) {
-                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeroOoc"));
-            }
-
-            // targeting mods for evasive action by large craft
-            if (ae.isEvading()) {
-                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeEvading"));
-            }
-
-            // check for NOE
-            if (Compute.isAirToAir(ae, target)) {
-                if (target.isAirborneVTOLorWIGE()) {
-                    toHit.addModifier(+5, Messages.getString("WeaponAttackAction.TeNonAeroAirborne"));
-                }
-                if (ae.isNOE()) {
-                    if (ae.isOmni()) {
-                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeOmniNoe"));
-                    } else {
-                        toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeNoe"));
-                    }
-                }
-            }
-
-            if (!ae.isAirborne() && !ae.isSpaceborne()) {
-                // grounded aero
-                if (!(ae instanceof Dropship)) {
-                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GroundedAero"));
-                } else if (!target.isAirborne()) {
-                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GroundedDs"));
-                }
-            }
-        }
-        
-        // Aeros may suffer from criticals
-        if (ae instanceof Aero) {
-            Aero aero = (Aero) ae;
-
-            // sensor hits
-            int sensors = aero.getSensorHits();
-
-            if (!aero.isCapitalFighter()) {
-                if ((sensors > 0) && (sensors < 3)) {
-                    toHit.addModifier(sensors, Messages.getString("WeaponAttackAction.SensorDamage"));
-                }
-                if (sensors > 2) {
-                    toHit.addModifier(+5, Messages.getString("WeaponAttackAction.SensorDestroyed"));
-                }
-            }
-
-            // FCS hits
-            int fcs = aero.getFCSHits();
-
-            if ((fcs > 0) && !aero.isCapitalFighter()) {
-                toHit.addModifier(fcs * 2, Messages.getString("WeaponAttackAction.FcsDamage"));
-            }
-
-            if (aero instanceof Jumpship) {
-                Jumpship js = (Jumpship) aero;
-                int cic = js.getCICHits();
-                if (cic > 0) {
-                    toHit.addModifier(cic * 2, Messages.getString("WeaponAttackAction.CicDamage"));
-                }
-            }
-        }
-
-        if (target.isAirborne() && target.isAero()) {
-
-            IAero a = (IAero) target;
-
-            // is the target at zero velocity
-            if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !game.getBoard().inSpace())) {
-                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ImmobileAero"));
-            }
-
-            // sensor shadows
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
-                    && game.getBoard().inSpace()) {
-                for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf((Entity)a) && en.isLargeCraft() && ((en.getWeight()
-                            - ((Entity)a).getWeight()) >= -100000.0)) {
-                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
-                        break;
-                    }
-                }
-                for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf((Entity)a) && en.isLargeCraft() && !en.equals((Entity) a)
-                            && ((en.getWeight() - ((Entity)a).getWeight()) >= -100000.0)) {
-                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorShadow"));
-                        break;
-                    }
-                }
-            }
-
-        }
-        
-        // Vehicles may suffer from criticals
-        if (ae instanceof Tank) {
-            Tank tank = (Tank) ae;
-            if (tank.isCommanderHit()) {
-                if (ae instanceof VTOL) {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CopilotHit"));
-                } else {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.CmdrHit"));
-                }
-            }
-            int sensors = tank.getSensorHits();
-            if (sensors > 0) {
-                toHit.addModifier(sensors, Messages.getString("WeaponAttackAction.SensorDamage"));
-            }
-        }
-
-        // if we have BAP with MaxTech rules, and there are woods in the
-        // way, and we are within BAP range, we reduce the BTH by 1
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) && (te != null) && ae.hasBAP()
-                && (ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te))
-                && !ComputeECM.isAffectedByECM(ae, ae.getPosition(), te.getPosition())
-                && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
-                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE)
-                        || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los.getUltraWoods() > 0))) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
-        }
-
-        // quirks
-        if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS)) {
-            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorGhosts"));
-        }
-
-        // check for VDNI
-        if (ae.hasAbility(OptionsConstants.MD_VDNI)
-                || ae.hasAbility(OptionsConstants.MD_BVDNI)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
-        }
-
-        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
-            // check for pl-masc
-            // the rules are a bit vague, but assume that if the infantry didn't
-            // move or jumped, then they shouldn't get the penalty
-            if (ae.hasAbility(OptionsConstants.MD_PL_MASC)
-                    && ((ae.moved == EntityMovementType.MOVE_WALK) || (ae.moved == EntityMovementType.MOVE_RUN))) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.PlMasc"));
-            }
-        }
-
-        // industrial cockpit: +1 to hit
-        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_INDUSTRIAL)) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.IndustrialNoAfc"));
-        }
-        // primitive industrial cockpit: +2 to hit
-        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
-            toHit.addModifier(2, Messages.getString("WeaponAttackAction.PrimIndustrialNoAfc"));
-        }
-
-        // primitive industrial cockpit with advanced firing control: +1 to hit
-        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_PRIMITIVE)
-                && ((Mech) ae).isIndustrial()) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.PrimIndustrialAfc"));
-        }
-        //Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
-        if (ae instanceof Mech && ((Mech)ae).getCockpitType() == Mech.COCKPIT_DUAL) {
-            if (!ae.getCrew().isActive(ae.getCrew().getCrewType().getGunnerPos())) {
-                toHit.addModifier(1, Messages.getString("WeaponAttackAction.GunnerHit"));                
-            } else if (ae.getCrew().hasDedicatedGunner()) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.DualCockpit"));
-            }
-        }
-        //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
-        if ((ae instanceof TripodMech || ae instanceof QuadVee) && !ae.getCrew().hasDedicatedGunner()) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GunnerHit"));
-        }
-        if (ae instanceof QuadVee && ae.isConvertingNow()) {
-            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.QuadVeeConverting"));
-        }
-
-        if ((ae instanceof SupportTank) || (ae instanceof SupportVTOL)) {
-            if (!ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
-                    && !ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
-                toHit.addModifier(2, Messages.getString("WeaponAttackAction.SupVeeNoFc"));
-            } else if (ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
-                    && !(ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))) {
-                toHit.addModifier(1, Messages.getString("WeaponAttackAction.SupVeeBfc"));
-            }
-        }
-
-        // determine some more variables
-        int aElev = ae.getElevation();
-        int tElev = target.getElevation();
-        int distance = Compute.effectiveDistance(game, ae, target);
-
-        toHit.append(AbstractAttackAction.nightModifiers(game, target, null, ae, true));
-
-        // weather mods (not in space)
-        int weatherMod = game.getPlanetaryConditions().getWeatherHitPenalty(ae);
-        if ((weatherMod != 0) && !game.getBoard().inSpace()) {
-            toHit.addModifier(weatherMod, game.getPlanetaryConditions().getWeatherDisplayableName());
-        }
-
-        // Electro-Magnetic Interference
-        if (game.getPlanetaryConditions().hasEMI() && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
-            toHit.addModifier(2, Messages.getString("WeaponAttackAction.EMI"));
-        }
-
-        if (ae.isAirborne() && !ae.isAero()) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.Dropping"));
-            toHit.addModifier(+3, Messages.getString("WeaponAttackAction.Jumping"));
-        }
-
-        // Attacks against adjacent buildings automatically hit.
-        if ((distance == 1) && ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
-                || (target instanceof GunEmplacement))) {
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.AdjBuilding"));
-        }
-
-        // Attacks against buildings from inside automatically hit.
-        if ((null != los.getThruBldg()) && ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
-                || (target instanceof GunEmplacement))) {
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.InsideBuilding"));
-        }
-
-        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_ANTI_AIR) && (target instanceof Entity)) {
-            if (target.isAirborneVTOLorWIGE() || target.isAirborne()) {
-                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AaVsAir"));
-            }
-        }
-
-        // air-to-ground strikes apply a +2 mod
-        if (Compute.isAirToGround(ae, target)
-                || (ae.isBomber() && ((IBomber)ae).isVTOLBombing())) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AtgStrike"));
-        }
-
-        // units making air to ground attacks are easier to hit by air-to-air
-        // attacks
-        if ((null != te) && Compute.isAirToAir(ae, target)) {
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                EntityAction ea = i.nextElement();
-                if (!(ea instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                if ((prevAttack.getEntityId() == te.getId()) && prevAttack.isAirToGround(game)) {
-                    toHit.addModifier(-3, Messages.getString("WeaponAttackAction.TeGroundAttack"));
-                    break;
-                }
-            }
-        }
-
-        // units with the narrow/low profile quirk are harder to hit
-        if ((te != null) && te.hasQuirk(OptionsConstants.QUIRK_POS_LOW_PROFILE)) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.LowProfile"));
-        }
-
-        // Battle Armor targets are hard for Meks and Tanks to hit.
-        if (!isAttackerInfantry && (te != null) && (te instanceof BattleArmor)) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.BaTarget"));
-        }
-
-        // Infantry squads are also hard to hit -- including for other infantry,
-        // it seems (the rule is "all attacks"). However, this only applies to
-        // proper squads deployed as such.
-        if ((te instanceof Infantry) && !(te instanceof BattleArmor) && ((Infantry) te).isSquad()) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));
-        }
-
-        // Ejected MechWarriors are also more difficult targets.
-        if ((te != null) && (te instanceof MechWarrior)) {
-            toHit.addModifier(2, Messages.getString("WeaponAttackAction.MwTarget"));
-        }
-
-        // attacker movement
-        toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
-
-        // target movement
-        if (te != null) {
-            ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getTargetId());
-            toHit.append(thTemp);
-        }
-
-        // attacker terrain
-        toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
-
-        // target terrain, not applicable when delivering minefields or bombs
-        if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
-            toHit.append(Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, ae.isUnderwater()));
-        }
-
-        // target in water?
-        IHex targHex = game.getBoard().getHex(target.getPosition());
-        if ((target.getTargetType() == Targetable.TYPE_ENTITY) && targHex.containsTerrain(Terrains.WATER)
-                && (targHex.terrainLevel(Terrains.WATER) == 1) && (targEl == 0) && (te.height() > 0)) { // target
-            // in
-            // partial
-            // water
-            los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
-            losMods = los.losModifiers(game, eistatus, ae.isUnderwater());
-        }
-
-        // add in LOS mods that we've been keeping
-        toHit.append(losMods);
-
-        if ((te != null) && te.isHullDown()) {
-            if ((te instanceof Mech && !(te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
-                    && (los.getTargetCover() > LosEffects.COVER_NONE)) {
-                toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
-            }
-            // tanks going Hull Down is different rules then 'Mechs, the
-            // direction the attack comes from matters
-            else if ((te instanceof Tank || (te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
-                    && targHex.containsTerrain(Terrains.FORTIFIED)) {
-                // TODO make this a LoS mod so that attacks will come in from
-                // directions that grant Hull Down Mods
-                int moveInDirection = ToHitData.SIDE_FRONT;
-
-                if (!((Tank) te).isBackedIntoHullDown()) {
-                    moveInDirection = ToHitData.SIDE_FRONT;
-                } else {
-                    moveInDirection = ToHitData.SIDE_REAR;
-                }
-
-                if ((te.sideTable(ae.getPosition()) == moveInDirection)
-                        || (te.sideTable(ae.getPosition()) == ToHitData.SIDE_LEFT)
-                        || (te.sideTable(ae.getPosition()) == ToHitData.SIDE_RIGHT)) {
-                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
-                }
-            }
-        }
-
-        // heat
-        if (ae.getHeatFiringModifier() != 0) {
-            toHit.addModifier(ae.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
-        }
-
-        // target immobile
-        ToHitData immobileMod = Compute.getImmobileMod(target, -1, -1);
-        // grounded dropships are treated as immobile as well for purpose of
-        // the mods
-        if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Aero)
-                && ((Aero) te).isSpheroid()) {
-            immobileMod = new ToHitData(-4, Messages.getString("WeaponAttackAction.ImmobileDs"));
-        }
-        if (immobileMod != null) {
-            toHit.append(immobileMod);
-        }
-
-        // attacker prone
-        if (ae.isProne()) {
-            toHit.addModifier(2, Messages.getString("WeaponAttackAction.AeProne"));
-        }
-
-        // target prone
-        ToHitData proneMod = null;
-        if ((te != null) && te.isProne()) {
-            // easier when point-blank
-            if (distance <= 1) {
-                // TW, pg. 221: Swarm Mek attacks apply prone/immobile mods as
-                // normal.
-                proneMod = new ToHitData(-2, Messages.getString("WeaponAttackAction.ProneAdj"));
-            } else {
-                // Harder at range.
-                proneMod = new ToHitData(1, Messages.getString("WeaponAttackAction.ProneRange"));
-            }
-        }
-        if (proneMod != null) {
-            toHit.append(proneMod);
-        }
-
-        // Heavy infantry have +1 penalty
-        if ((ae instanceof Infantry) && ae.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.HeavyArmor"));
-        }
-
-        // penalty for void sig system
-        if (ae.isVoidSigActive()) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeVoidSig"));
-        }
-
-        // Change hit table for elevation differences inside building.
-        if ((null != los.getThruBldg()) && (aElev != tElev)) {
-
-            // Tanks get hit in a random side.
-            if (target instanceof Tank) {
-                toHit.setSideTable(ToHitData.SIDE_RANDOM);
-            } else if (target instanceof Mech) {
-                // Meks have special tables for shots from above and below.
-                if (aElev > tElev) {
-                    toHit.setHitTable(ToHitData.HIT_ABOVE);
-                } else {
-                    toHit.setHitTable(ToHitData.HIT_BELOW);
-                }
-            }
-
-        }
-
-        // Change hit table for partial cover, accomodate for partial
-        // underwater(legs)
-        if (los.getTargetCover() != LosEffects.COVER_NONE) {
-            if (ae.isUnderwater() && (targHex.containsTerrain(Terrains.WATER) && (targEl == 0) && (te.height() > 0))) {
-                // weapon underwater, target in partial water
-                toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
-                toHit.setCover(LosEffects.COVER_UPPER);
-            } else {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
-                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
-                    toHit.setCover(los.getTargetCover());
-                } else {
-                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
-                    toHit.setCover(LosEffects.COVER_HORIZONTAL);
-                }
-                // Set damagable cover state information
-                toHit.setDamagableCoverTypePrimary(los.getDamagableCoverTypePrimary());
-                toHit.setCoverLocPrimary(los.getCoverLocPrimary());
-                toHit.setCoverDropshipPrimary(los.getCoverDropshipPrimary());
-                toHit.setCoverBuildingPrimary(los.getCoverBuildingPrimary());
-                toHit.setDamagableCoverTypeSecondary(los.getDamagableCoverTypeSecondary());
-                toHit.setCoverLocSecondary(los.getCoverLocSecondary());
-                toHit.setCoverDropshipSecondary(los.getCoverDropshipSecondary());
-                toHit.setCoverBuildingSecondary(los.getCoverBuildingSecondary());
-            }
-        }
-
-        // change hit table for surface vessels hit by underwater attacks
-        if (ae.isUnderwater() && targHex.containsTerrain(Terrains.WATER) && (null != te) && te.isSurfaceNaval()) {
-            toHit.setHitTable(ToHitData.HIT_UNDERWATER);
-        }
-
-        if (target.isAirborne() && target.isAero()) {
-            if (!(((IAero) target).isSpheroid() && !game.getBoard().inSpace())) {
-                // get mods for direction of attack
-                int side = toHit.getSideTable();
-                // if this is an aero attack using advanced movement rules then
-                // determine side differently
-                if (game.useVectorMove()) {
-                    boolean usePrior = false;
-                    Coords attackPos = ae.getPosition();
-                    if (game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())) {
-                        int moveSort = Compute.shouldMoveBackHex(ae, (Entity)target);
-                        if (moveSort < 0) {
-                            attackPos = ae.getPriorPosition();
-                        }
-                        usePrior = moveSort > 0;
-                    }
-                    side = ((Entity) target).chooseSide(attackPos, usePrior);
-                }
-                if (side == ToHitData.SIDE_FRONT) {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeroNoseAttack"));
-                }
-                if ((side == ToHitData.SIDE_LEFT) || (side == ToHitData.SIDE_RIGHT)) {
-                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeroSideAttack"));
-                }
-            }
-        }
-
-        if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
-            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeTsemped"));
-        }
-
-        if ((te instanceof Infantry) && ((Infantry) te).isTakingCover()) {
-            if (te.getPosition().direction(ae.getPosition()) == te.getFacing()) {
-                toHit.addModifier(+3, Messages.getString("WeaponAttackAction.FireThruCover"));
-            }
-        }
-
-        if ((ae instanceof Infantry) && ((Infantry) ae).isTakingCover()) {
-            if (ae.getPosition().direction(te.getPosition()) == ae.getFacing()) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FireThruCover"));
-            }
-        }
+                    losMods, toSubtract, eistatus, wtype, weapon, weaponId, atype, AmmoType.M_STANDARD, isAttackerInfantry,
+                    inSameBuilding, false, false, false);
 
         // okay!
         return toHit;
@@ -3132,23 +2611,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (!game.getBoard().inSpace()) {
             int windCond = game.getPlanetaryConditions().getWindStrength();
             if (windCond == PlanetaryConditions.WI_MOD_GALE) {
-                if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
                     weatherToHitMods.addModifier(1, PlanetaryConditions.getWindDisplayableName(windCond));
                 }
             } else if (windCond == PlanetaryConditions.WI_STRONG_GALE) {
-                if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                if (wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
                     weatherToHitMods.addModifier(1, PlanetaryConditions.getWindDisplayableName(windCond));
-                } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                } else if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
                     weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
                 }
             } else if (windCond == PlanetaryConditions.WI_STORM) {
-                if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                if (wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
                     weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
-                } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                } else if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
                     weatherToHitMods.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
                 }
             } else if (windCond == PlanetaryConditions.WI_TORNADO_F13) {
-                if (wtype.hasFlag(WeaponType.F_ENERGY)) {
+                if (wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
                     weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
                 } else {
                     weatherToHitMods.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
@@ -3159,13 +2638,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // fog mods (not in space)
-        if (wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
+        if (wtype != null && wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
                 && (game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY)) {
             weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.HeavyFog"));
         }
 
         // blowing sand mods
-        if (wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
+        if (wtype != null && wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
                 && game.getPlanetaryConditions().isSandBlowing()
                 && (game.getPlanetaryConditions().getWindStrength() > PlanetaryConditions.WI_LIGHT_GALE)) {
             weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.BlowingSand"));
@@ -3181,7 +2660,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // gravity mods (not in space)
         if (!game.getBoard().inSpace()) {
             int mod = (int) Math.floor(Math.abs((game.getPlanetaryConditions().getGravity() - 1.0f) / 0.2f));
-            if ((mod != 0) && (wtype.hasFlag(WeaponType.F_BALLISTIC) || wtype.hasFlag(WeaponType.F_MISSILE))) {
+            if ((mod != 0) && wtype != null && 
+                    (wtype.hasFlag(WeaponType.F_BALLISTIC) || wtype.hasFlag(WeaponType.F_MISSILE))) {
                 toHit.addModifier(mod, Messages.getString("WeaponAttackAction.Gravity"));
             }
         }

@@ -328,7 +328,7 @@ public class TestSupportVehicle extends TestEntity {
         FUSION (Engine.NORMAL_ENGINE),
         MAGLEV (Engine.MAGLEV, EnumSet.of(SVType.RAIL)),
         EXTERNAL (Engine.EXTERNAL, EnumSet.of(SVType.RAIL), true),
-        NONE (Engine.NONE, EnumSet.of(SVType.WHEELED, SVType.TRACKED), false);
+        NONE (Engine.NONE, EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.RAIL), false);
 
         /** The engine type constant used to create a new {@link Engine}. */
         public final Engine engine;
@@ -668,11 +668,6 @@ public class TestSupportVehicle extends TestEntity {
             if ((t instanceof Bay) && ((Bay) t).isQuarters()) {
                 weight += ((Bay) t).getWeight();
             }
-        }
-        if (supportVee instanceof FixedWingSupport) {
-            weight += ((FixedWingSupport) supportVee).getExtraCrewSeats() * 0.5;
-        } else {
-            weight += ((Tank) supportVee).getExtraCrewSeats() * 0.5;
         }
         return roundWeight(weight);
     }

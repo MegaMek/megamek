@@ -2914,7 +2914,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     private static ToHitData compileAmmoToHitMods(IGame game, Entity ae, Targetable target, int ttype, ToHitData toHit,
                 WeaponType wtype, Mounted weapon, AmmoType atype, long munition, boolean bApollo, boolean bArtemisV,
                 boolean bFTL, boolean bHeatSeeking, boolean isECMAffected, boolean isINarcGuided) {
-        if (ae == null || atype == null || weapon == null) {
+        if (ae == null || atype == null) {
             // Can't calculate ammo mods without valid ammo and an attacker to fire it
             return toHit;
         }

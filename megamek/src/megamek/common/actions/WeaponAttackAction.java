@@ -3739,7 +3739,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Is the pilot a weapon specialist?
-        if (ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
+        if (wtype != null && ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
             toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));
         } else if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST)) {
             // aToW style gunnery specialist: -1 to specialized weapon and +1 to

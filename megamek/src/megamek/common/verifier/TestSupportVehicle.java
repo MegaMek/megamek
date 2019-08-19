@@ -308,7 +308,8 @@ public class TestSupportVehicle extends TestEntity {
         FISSION (Engine.FISSION),
         FUSION (Engine.NORMAL_ENGINE),
         MAGLEV (Engine.MAGLEV, EnumSet.of(SVType.RAIL)),
-        EXTERNAL (Engine.NONE, EnumSet.of(SVType.RAIL), true);
+        EXTERNAL (Engine.EXTERNAL, EnumSet.of(SVType.RAIL), true),
+        NONE (Engine.NONE, EnumSet.of(SVType.WHEELED, SVType.TRACKED), false);
 
         /** The engine type constant used to create a new {@link Engine}. */
         public final Engine engine;
@@ -365,6 +366,9 @@ public class TestSupportVehicle extends TestEntity {
          * @return       Whether the engine is valid for the support vee.
          */
         public boolean isValidFor(Entity entity) {
+            if ((this == NONE) && !entity.isTrailer()) {
+                return false;
+            }
             return isValidFor(SVType.getVehicleType(entity));
         }
 
@@ -420,8 +424,8 @@ public class TestSupportVehicle extends TestEntity {
      * Filters all vehicle armor according to given tech constraints. Standard armor is treated as basic
      * support vehicle armor.
      *
-     * @param techManager
-     * @return
+     * @param techManager Applies the filtering criteria
+     * @return            A list of armor equipment that meets the tech constraints
      */
     public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
         if (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {

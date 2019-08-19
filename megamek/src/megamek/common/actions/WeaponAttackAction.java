@@ -751,11 +751,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     toSubtract, eistatus, aimingAt, aimingMode, weapon, atype, munition, isECMAffected,
                     inSameBuilding, underWater);
         }
-        
+
         // Collect the modifiers specific to the weapon the attacker is using
         toHit = compileWeaponToHitMods(game, ae, spotter, target, ttype, toHit, wtype, weapon, atype, munition,
                     isFlakAttack, isIndirect, narcSpotter);
-
+        
         // Collect the modifiers specific to the ammo the attacker is using
         toHit = compileAmmoToHitMods(game, ae, target, ttype, toHit, wtype, weapon, atype, munition, bApollo,
                     bArtemisV, bFTL, bHeatSeeking, isECMAffected, isINarcGuided);
@@ -790,8 +790,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int toSubtract = 0;
         int distance = Compute.effectiveDistance(game, ae, target);
         
-        int weaponId = game.getTarget(getWeaponId());
-
         // EI system
         // 0 if no EI (or switched off)
         // 1 if no intervening light woods
@@ -817,7 +815,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         ToHitData toHit = new ToHitData(0, Messages.getString("WeaponAttackAction.BaseToHit"));
         
         // Collect the modifiers for the environment
-        toHit = compileEnvironmentalToHitMods(game, ae, target, wtype, atype, toHit, false);
+        toHit = compileEnvironmentalToHitMods(game, ae, target, null, null, toHit, false);
         
         // Collect the modifiers for the crew/pilot
         toHit = compileCrewToHitMods(game, ae, te, toHit, wtype);
@@ -2594,6 +2592,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      */
     private static ToHitData compileEnvironmentalToHitMods(IGame game, Entity ae, Targetable target, WeaponType wtype, 
                 AmmoType atype, ToHitData toHit, boolean isArtilleryIndirect) {
+        
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
+        }
+        
         // Night combat modifiers
         if (!isArtilleryIndirect) {
             toHit.append(AbstractAttackAction.nightModifiers(game, target, atype, ae, true));
@@ -3610,10 +3614,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      */
     private static ToHitData compileCrewToHitMods(IGame game, Entity ae, Entity te, ToHitData toHit, WeaponType wtype) {
+        
+        if (ae == null) {
+            // These checks won't work without a valid attacker
+            return toHit;
+        }
+        
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
+        }
+        
         //Now for modifiers affecting the attacker's crew
         
         // Bonuses for dual cockpits, etc
-        //Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
+        // Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
         if (ae instanceof Mech && ((Mech)ae).getCockpitType() == Mech.COCKPIT_DUAL) {
             if (!ae.getCrew().isActive(ae.getCrew().getCrewType().getGunnerPos())) {
                 toHit.addModifier(1, Messages.getString("WeaponAttackAction.GunnerHit"));                
@@ -3681,17 +3696,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Unofficial weapon class specialist - Does not have an unspecialized penalty 
         if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER)
-                && wtype.hasFlag(WeaponType.F_ENERGY)) {
+                && wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunESkill"));
         }
 
         if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
-                && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                && wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunBSkill"));
         }
 
         if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE)
-                && wtype.hasFlag(WeaponType.F_MISSILE)) {
+                && wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunMSkill"));
         }
 
@@ -3705,19 +3720,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // if you have
             // a specialization in Medium Lasers and a Laser specialization, you
             // only get the -2 specialization mod
-            if (wtype.hasFlag(WeaponType.F_ENERGY)) {
+            if (wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
                 if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_ENERGY)) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.EnergySpec"));
                 } else {
                     toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
                 }
-            } else if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+            } else if (wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
                 if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_BALLISTIC)) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BallisticSpec"));
                 } else {
                     toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
                 }
-            } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+            } else if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
                 if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_MISSILE)) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MissileSpec"));
                 } else {

@@ -239,6 +239,25 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         /**
+         * Checks whether something about the vehicle requires a specific chassis mod.
+         *
+         * @param sv A support vehicle
+         * @return   Whether this chassis mod is required by the vehicle.
+         */
+        public boolean requiredFor(Entity sv) {
+            switch (this) {
+                case PROP:
+                    return sv instanceof FixedWingSupport
+                            && SVEngine.getEngineType(sv.getEngine()).electric;
+                case EXTERNAL_POWER_PICKUP:
+                    return sv.getMovementMode().equals(EntityMovementMode.RAIL)
+                            && SVEngine.getEngineType(sv.getEngine()).equals(SVEngine.EXTERNAL);
+                default:
+                    return false;
+            }
+        }
+
+        /**
          * Checks for compatibility between different chassis modifications
          *
          * @param other Another chassis mod

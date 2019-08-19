@@ -2780,7 +2780,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (isFlakAttack) {
             // ...and if so, which one (HAGs get an extra -1 as per TW p. 136
             // that's not covered by anything else).
-            if (atype.getAmmoType() == AmmoType.T_HAG) {
+            if (atype != null && atype.getAmmoType() == AmmoType.T_HAG) {
                 toHit.addModifier(-3, Messages.getString("WeaponAttackAction.HagFlak"));
             } else {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));

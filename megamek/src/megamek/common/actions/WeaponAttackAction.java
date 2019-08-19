@@ -829,13 +829,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (ae instanceof IAero) {
                 toHit = compileAeroAttackerToHitMods(game, ae, target, ttype, toHit, Entity.LOC_NONE,
                             IAimingModes.AIM_MODE_NONE, eistatus,
-                            wtype, weapon, atype, AmmoType.M_STANDARD, false, false, false, false,
+                            null, null, null, AmmoType.M_STANDARD, false, false, false, false,
                             false);
             //Everyone else
             } else {
                 toHit = compileAttackerToHitMods(game, ae, target, los, toHit, toSubtract, Entity.LOC_NONE,
-                            IAimingModes.AIM_MODE_NONE, wtype,
-                        weapon, weaponId, atype, AmmoType.M_STANDARD, false, false, false,
+                            IAimingModes.AIM_MODE_NONE, null,
+                            null, weaponId, null, AmmoType.M_STANDARD, false, false, false,
                         false, false);
             }
         }
@@ -843,12 +843,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Collect the modifiers for the target's condition/actions 
         toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, toSubtract, Entity.LOC_NONE,
                     IAimingModes.AIM_MODE_NONE, distance,
-                    wtype, weapon, atype, AmmoType.M_STANDARD, false, false, isAttackerInfantry,
+                    null, null, null, AmmoType.M_STANDARD, false, false, isAttackerInfantry,
                     false, false, false, false);
         
         // Collect the modifiers for terrain and line-of-sight. This includes any related to-hit table changes
         toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
-                    losMods, toSubtract, eistatus, wtype, weapon, weaponId, atype, AmmoType.M_STANDARD, isAttackerInfantry,
+                    losMods, toSubtract, eistatus, null, null, weaponId, null, AmmoType.M_STANDARD, isAttackerInfantry,
                     inSameBuilding, false, false, false);
 
         // okay!
@@ -4226,7 +4226,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         if ((te != null) && targHex.containsTerrain(Terrains.WATER)
                 // target in partial water
-                && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (tElev == 0) && (te.height() > 0)) { 
+                && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) { 
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
             losMods = los.losModifiers(game, eistatus, underWater);
         }
@@ -4234,7 +4234,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Change hit table for partial cover, accomodate for partial
         // underwater(legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
-            if (underWater && (targHex.containsTerrain(Terrains.WATER) && (tElev == 0) && (te.height() > 0))) {
+            if (underWater && (targHex.containsTerrain(Terrains.WATER) && (targEl == 0) && (te.height() > 0))) {
                 // weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                 toHit.setCover(LosEffects.COVER_UPPER);

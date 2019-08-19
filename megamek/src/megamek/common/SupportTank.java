@@ -356,6 +356,15 @@ public class SupportTank extends Tank {
                 } else {
                     return 0.006;
                 }
+            case RAIL:
+            case MAGLEV:
+                if (getWeight() < 5) {
+                    return 0.003;
+                } else if (!isSuperHeavy()) {
+                    return 0.004;
+                } else {
+                    return 0.005;
+                }
            default:
                return 0;
         }

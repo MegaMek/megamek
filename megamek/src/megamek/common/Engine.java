@@ -331,8 +331,12 @@ public class Engine implements Serializable, ITechnology {
         // Support Vehicles compute engine weight differently
         if ((entity.isSupportVehicle() || hasFlag(SUPPORT_VEE_ENGINE))
                 && isValidEngine()) {
-            double movementFactor = 4 + entity.getOriginalWalkMP()
-                    * entity.getOriginalWalkMP();
+            int mp = entity.getOriginalWalkMP();
+            if (entity.getMovementMode().equals(EntityMovementMode.RAIL)
+                    || entity.getMovementMode().equals(EntityMovementMode.MAGLEV)) {
+                mp = Math.max(1, mp - 2);
+            }
+            double movementFactor = 4 + mp * mp;
             double engineWeightMult = SV_ENGINE_RATINGS[engineType][entity
                     .getEngineTechRating()];
             double weight = entity.getBaseEngineValue() * movementFactor

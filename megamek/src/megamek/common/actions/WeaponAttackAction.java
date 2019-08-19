@@ -797,7 +797,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // woods is only +1 total)
         int eistatus = 0;
         
-        int weaponId = -1;
+        // Bogus value, since this method doesn't account for weapons but some of its calls do
+        int weaponId = WeaponType.WEAPON_NA;
         
         boolean isAttackerInfantry = ae instanceof Infantry;
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
@@ -3077,7 +3078,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
         
         // attacker prone
-        toHit.append(Compute.getProneMods(game, ae, weaponId));
+        if (weaponId > WeaponType.WEAPON_NA) {
+            toHit.append(Compute.getProneMods(game, ae, weaponId));
+        }
         
         // add penalty for called shots and change hit table, if necessary
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)
@@ -3182,7 +3185,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Special Equipment that that attacker possesses
         
         // Attacker has an AES system
-        if (ae.hasFunctionalArmAES(weapon.getLocation()) && !weapon.isSplit()) {
+        if (weapon != null && ae.hasFunctionalArmAES(weapon.getLocation()) && !weapon.isSplit()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AES"));
         }
         
@@ -3218,7 +3221,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Is the attacker hindered by a shield?
-        if (ae.hasShield()) {
+        if (ae.hasShield() && weapon != null) {
             // active shield has already been checked as it makes shots
             // impossible
             // time to check passive defense and no defense
@@ -3264,7 +3267,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Critical damage effects
         
         // actuator & sensor damage to attacker (includes partial repairs)
-        toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+        if (weapon != null) {
+            toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+        }
         
         // Vehicle criticals
         if (ae instanceof Tank) {
@@ -3273,7 +3278,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (sensors > 0) {
                 toHit.addModifier(sensors, Messages.getString("WeaponAttackAction.SensorDamage"));
             }
-            if (tank.isStabiliserHit(weapon.getLocation())) {
+            if (weapon != null && tank.isStabiliserHit(weapon.getLocation())) {
                 toHit.addModifier(Compute.getAttackerMovementModifier(game, tank.getId()).getValue(),
                         "stabiliser damage");
             }
@@ -4206,7 +4211,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Fortified/Dug-In Infantry
-        if ((target instanceof Infantry) && !wtype.hasFlag(WeaponType.F_FLAMER)) {
+        if ((target instanceof Infantry) && wtype != null && !wtype.hasFlag(WeaponType.F_FLAMER)) {
             if (targHex.containsTerrain(Terrains.FORTIFIED)
                     || (((Infantry) target).getDugIn() == Infantry.DUG_IN_COMPLETE)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.DugInInf"));
@@ -4215,7 +4220,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // target in water?
         int partialWaterLevel = 1;
-        if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+        if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
             partialWaterLevel = 2;
         }
         if ((te != null) && targHex.containsTerrain(Terrains.WATER)
@@ -4274,9 +4279,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.setHitTable(ToHitData.HIT_ABOVE);
             } else if ((target.getAltitude() - ae.getAltitude()) > 2) {
                 toHit.setHitTable(ToHitData.HIT_BELOW);
-            } else if (((ae.getAltitude() - target.getAltitude()) > 0) && (te.isAero() && ((IAero) te).isSpheroid())) {
+            } else if (((ae.getAltitude() - target.getAltitude()) > 0) 
+                    && te != null && (te.isAero() && ((IAero) te).isSpheroid())) {
                 toHit.setHitTable(ToHitData.HIT_ABOVE);
-            } else if (((ae.getAltitude() - target.getAltitude()) < 0) && (te.isAero() && ((IAero) te).isSpheroid())) {
+            } else if (((ae.getAltitude() - target.getAltitude()) < 0) 
+                    && te != null && (te.isAero() && ((IAero) te).isSpheroid())) {
                 toHit.setHitTable(ToHitData.HIT_BELOW);
             }
         }

@@ -3888,7 +3888,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Infantry taking cover per TacOps special rules
-        if ((te instanceof Infantry) && ((Infantry) te).isTakingCover()) {
+        if (te != null && (te instanceof Infantry) && ((Infantry) te).isTakingCover()) {
             if (te.getPosition().direction(ae.getPosition()) == te.getFacing()) {
                 toHit.addModifier(+3, Messages.getString("WeaponAttackAction.FireThruCover"));
             }
@@ -3946,7 +3946,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     bapMod = 1;
                 }
                 int tcMod = 0;
-                if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponType.F_CWS)
+                if (ae.hasTargComp() && wtype != null 
+                        && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponType.F_CWS)
                         && !wtype.hasFlag(WeaponType.F_TASER) && (atype != null)
                         && (!usesAmmo || !(((atype.getAmmoType() == AmmoType.T_AC_LBX)
                                 || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
@@ -4029,9 +4030,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // target immobile
-        boolean mekMortarMunitionsIgnoreImmobile = weapon.getType().hasFlag(WeaponType.F_MEK_MORTAR) && (atype != null)
-                && (munition == AmmoType.M_AIRBURST);
-        if (!(wtype instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
+        boolean mekMortarMunitionsIgnoreImmobile = wtype != null && wtype.hasFlag(WeaponType.F_MEK_MORTAR) 
+                && (atype != null) && (munition == AmmoType.M_AIRBURST);
+        if (wtype != null && !(wtype instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
             ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
             // grounded dropships are treated as immobile as well for purpose of
             // the mods
@@ -4048,7 +4049,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Unit-specific modifiers
         
         // -1 to hit a SuperHeavy mech
-        if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+        if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
         }
         
@@ -4058,7 +4059,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // infantry squads are also hard to hit
-        if ((te instanceof Infantry) && !(te instanceof BattleArmor) && ((Infantry) te).isSquad()) {
+        if (te != null && (te instanceof Infantry) && !(te instanceof BattleArmor) && ((Infantry) te).isSquad()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));
         }
 
@@ -4084,14 +4085,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if (game.useVectorMove()) {
                     boolean usePrior = false;
                     Coords attackPos = ae.getPosition();
-                    if (game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())) {
-                        int moveSort = Compute.shouldMoveBackHex(ae, (Entity)target);
+                    if (game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())
+                            && te != null) {
+                        int moveSort = Compute.shouldMoveBackHex(ae, te);
                         if (moveSort < 0) {
                             attackPos = ae.getPriorPosition();
                         }
                         usePrior = moveSort > 0;
                     }
-                    side = ((Entity) target).chooseSide(attackPos, usePrior);
+                    side = te.chooseSide(attackPos, usePrior);
                 }
                 // +1 if shooting at an aero approaching nose-on
                 if (side == ToHitData.SIDE_FRONT) {

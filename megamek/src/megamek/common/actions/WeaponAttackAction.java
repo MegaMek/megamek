@@ -797,6 +797,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // woods is only +1 total)
         int eistatus = 0;
         
+        int weaponId = -1;
+        
         boolean isAttackerInfantry = ae instanceof Infantry;
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
@@ -818,7 +820,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         toHit = compileEnvironmentalToHitMods(game, ae, target, null, null, toHit, false);
         
         // Collect the modifiers for the crew/pilot
-        toHit = compileCrewToHitMods(game, ae, te, toHit, wtype);
+        toHit = compileCrewToHitMods(game, ae, te, toHit, null);
         
         // Collect the modifiers for the attacker's condition/actions
         if (ae != null) {
@@ -2705,6 +2707,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Can't calculate weapon mods without a valid weapon and an attacker to fire it
             return toHit;
         }
+        
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
+        }
+        
         Entity te = null;
         if (target != null && ttype == Targetable.TYPE_ENTITY) {
             //Some of these weapons only target valid entities
@@ -2910,6 +2918,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Can't calculate ammo mods without valid ammo and an attacker to fire it
             return toHit;
         }
+        
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
+        }
+        
         Entity te = null;
         if (target != null && ttype == Targetable.TYPE_ENTITY) {
             //Some ammo can only target valid entities
@@ -3050,7 +3064,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     private static ToHitData compileAttackerToHitMods(IGame game, Entity ae, Targetable target, LosEffects los, ToHitData toHit,
                 int toSubtract, int aimingAt, int aimingMode, WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype,
                 long munition, boolean isFlakAttack, boolean isHaywireINarced, boolean isNemesisConfused, boolean isWeaponFieldGuns,
-                boolean usesAmmo) {        
+                boolean usesAmmo) {
+        
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
+        }
+        
         // Modifiers related to an action the attacker is taking
         
         // attacker movement
@@ -3310,6 +3330,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             //Null guard
             return toHit;
         }
+        
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
+        }
+        
         Entity te = null;
         if (target != null && ttype == Targetable.TYPE_ENTITY) {
             //Some of these weapons only target valid entities
@@ -3815,6 +3841,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return toHit;
         }
         
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
+        }
+        
         //Target's hex
         IHex targHex = game.getBoard().getHex(target.getPosition());
         
@@ -4136,6 +4167,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
+        }
+        
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
         }
         
         //Target's hex

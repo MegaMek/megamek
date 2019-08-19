@@ -3080,7 +3080,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         toHit.append(Compute.getProneMods(game, ae, weaponId));
         
         // add penalty for called shots and change hit table, if necessary
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)
+                && weapon != null) {
             int call = weapon.getCalledShot().getCall();
             if ((call > CalledShot.CALLED_NONE) && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.CantAimAndCallShots"));
@@ -3248,7 +3249,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_HAG && isFlakAttack;
             boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_SBGAUSS;
             boolean isFlakAmmo = usesAmmo && (atype != null) && (munition == AmmoType.M_FLAK);
-            if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponType.F_CWS)
+            if (ae.hasTargComp() && wtype != null && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponType.F_CWS)
                     && !wtype.hasFlag(WeaponType.F_TASER)
                     && (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TComp"));

@@ -45,6 +45,7 @@ public class BLKFile {
     public static final int STEAM = 10;
     public static final int BATTERY = 11;
     public static final int SOLAR = 12;
+    public static final int EXTERNAL = 13;
     
     private static final String COMSTAR_BAY = "c*";
     
@@ -188,7 +189,8 @@ public class BLKFile {
             return Engine.BATTERY;
         } else if (code == BLKFile.SOLAR) {
             return Engine.SOLAR;
-          
+        } else if (code == BLKFile.EXTERNAL) {
+            return Engine.EXTERNAL;
         } else {
             return -1;
         }
@@ -463,8 +465,14 @@ public class BLKFile {
         blk.writeBlockData("motion_type", t.getMovementModeAsString());
 
         String[] transporter_array = new String[t.getTransports().size()];
-        for (int i = 0; i < t.getTransports().size(); i++) {
-            transporter_array[i] = t.getTransports().get(i).toString();
+        int index = 0;
+        for (Transporter transporter : t.getTransports()) {
+            if (t.isPodMountedTransport(transporter)) {
+                transporter_array[index] = "omni:" + transporter.toString();
+            } else {
+                transporter_array[index] = transporter.toString();
+            }
+            index++;
         }
         blk.writeBlockData("transporters", transporter_array);
 
@@ -519,6 +527,21 @@ public class BLKFile {
                         break;
                     case Engine.NONE:
                         engineCode = BLKFile.NONE;
+                        break;
+                    case Engine.MAGLEV:
+                        engineCode = BLKFile.MAGLEV;
+                        break;
+                    case Engine.STEAM:
+                        engineCode = BLKFile.STEAM;
+                        break;
+                    case Engine.BATTERY:
+                        engineCode = BLKFile.BATTERY;
+                        break;
+                    case Engine.SOLAR:
+                        engineCode = BLKFile.SOLAR;
+                        break;
+                    case Engine.EXTERNAL:
+                        engineCode = BLKFile.EXTERNAL;
                         break;
                 }
                 blk.writeBlockData("engine_type", engineCode);
@@ -936,113 +959,113 @@ public class BLKFile {
             	// TroopSpace:
                 if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.
-                    double fsize = Double.valueOf(transporter.substring(11));
+                    double fsize = Double.parseDouble(transporter.substring(11));
                     e.addTransporter(new TroopSpace(fsize), isPod);
                 } else if (transporter.startsWith("cargobay:", 0)) {
                     String numbers = transporter.substring(9);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new CargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new CargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("liquidcargobay:", 0)) {
                     String numbers = transporter.substring(15);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new LiquidCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new LiquidCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("insulatedcargobay:", 0)) {
                     String numbers = transporter.substring(18);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new InsulatedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new InsulatedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("refrigeratedcargobay:", 0)) {
                     String numbers = transporter.substring(21);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new RefrigeratedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new RefrigeratedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("livestockcargobay:", 0)) {
                     String numbers = transporter.substring(18);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new LivestockCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new LivestockCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("asfbay:", 0)) {
                     String numbers = transporter.substring(7);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("smallcraftbay:", 0)) {
                     String numbers = transporter.substring(14);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("mechbay:", 0)) {
                     String numbers = transporter.substring(8);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new MechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new MechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("lightvehiclebay:", 0)) {
                     String numbers = transporter.substring(16);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new LightVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new LightVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("heavyvehiclebay:", 0)) {
                     String numbers = transporter.substring(16);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new HeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new HeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("superheavyvehiclebay:", 0)) {
                     String numbers = transporter.substring(21);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new SuperHeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new SuperHeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("infantrybay:", 0)) {
                     String numbers = transporter.substring(12);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new InfantryBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getPlatoonType()));
+                    e.addTransporter(new InfantryBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getPlatoonType()), isPod);
                 } else if (transporter.startsWith("battlearmorbay:", 0)) {
                     String numbers = transporter.substring(15);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new BattleArmorBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(),
-                            e.isClan(), pbi.isComstarBay()));
+                            e.isClan(), pbi.isComstarBay()), isPod);
                 } else if (transporter.startsWith("bay:", 0)) {
                     String numbers = transporter.substring(4);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new Bay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new Bay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("protomechbay:", 0)) {
                     String numbers = transporter.substring(13);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new ProtomechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new ProtomechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("dropshuttlebay:")) {
                     String numbers = transporter.substring("dropshuttlebay:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new DropshuttleBay(pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()));
+                    e.addTransporter(new DropshuttleBay(pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()), isPod);
                 } else if (transporter.startsWith("navalrepairpressurized:")) {
                     String numbers = transporter.substring("navalrepairpressurized:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing(), true));
+                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing(), true), isPod);
                 } else if (transporter.startsWith("navalrepairunpressurized:")) {
                     String numbers = transporter.substring("navalrepairunpressurized:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing(), false));
+                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing(), false), isPod);
                 } else if (transporter.startsWith("reinforcedrepairfacility:")) {
                     String numbers = transporter.substring("reinforcedrepairfacility:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new ReinforcedRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()));
+                    e.addTransporter(new ReinforcedRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()), isPod);
                 } else if (transporter.startsWith("crewquarters:", 0)) {
                     String numbers = transporter.substring(13);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new CrewQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
+                    e.addTransporter(new CrewQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
                 } else if (transporter.startsWith("steeragequarters:", 0)) {
                     String numbers = transporter.substring(17);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new SteerageQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
+                    e.addTransporter(new SteerageQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
                 } else if (transporter.startsWith("2ndclassquarters:", 0)) {
                     String numbers = transporter.substring(17);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new SecondClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
+                    e.addTransporter(new SecondClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
                 } else if (transporter.startsWith("1stclassquarters:", 0)) {
                     String numbers = transporter.substring(17);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new FirstClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
+                    e.addTransporter(new FirstClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
                 } else if (transporter.startsWith("pillionseats:", 0)) {
                     String numbers = transporter.substring(13);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new PillionSeatCargoBay(pbi.getSize()));
+                    e.addTransporter(new PillionSeatCargoBay(pbi.getSize()), isPod);
                 } else if (transporter.startsWith("standardseats:", 0)) {
                     String numbers = transporter.substring(14);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new StandardSeatCargoBay(pbi.getSize()));
+                    e.addTransporter(new StandardSeatCargoBay(pbi.getSize()), isPod);
                 } else if (transporter.startsWith("ejectionseats:", 0)) {
                     String numbers = transporter.substring("ejectionseats:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new EjectionSeatCargoBay(pbi.getSize()));
+                    e.addTransporter(new EjectionSeatCargoBay(pbi.getSize()), isPod);
                 } else if (transporter.startsWith("dockingcollar", 0)) {
                     //Add values for collars so they can be parsed and assigned a 'bay' number
                     String numbers = "1.0:0";

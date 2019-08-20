@@ -43,7 +43,6 @@ import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAero;
 import megamek.common.IAimingModes;
-import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -2205,6 +2204,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
                 return toHit.getDesc();
             }
+            // Out of range?
+            if (Compute.effectiveDistance(game, ae, target) > 0) {
+                return Messages.getString("WeaponAttackAction.OutOfRange");
+            }
+            // Can't combine leg attacks with other attacks
             if (!WeaponAttackAction.isOnlyAttack(game, ae, Infantry.LEG_ATTACK, te)) {
                 return Messages.getString("WeaponAttackAction.LegAttackOnly");
             }
@@ -2215,6 +2219,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
                 return toHit.getDesc();
             }
+            // Out of range?
+            if (Compute.effectiveDistance(game, ae, target) > 0) {
+                return Messages.getString("WeaponAttackAction.OutOfRange");
+            }
+            // Can't combine swarm attacks with other attacks
             if (!WeaponAttackAction.isOnlyAttack(game, ae, Infantry.SWARM_MEK, te)) {
                 return Messages.getString("WeaponAttackAction.SwarmAttackOnly");
             }
@@ -4356,6 +4365,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             te = (Entity) target;
         }
         
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
+        }
+        
         // Battle Armor bomb racks (Micro bombs) use gunnery skill and no other mods per TWp228 2018 errata
         if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
             if (ae.getPosition().equals(target.getPosition())) {
@@ -4417,17 +4431,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             //Can only swarm a valid entity target
             return toHit;
         }
+        
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
+        }
+        
         Entity te = (Entity) target;
         // Leg attacks and Swarm attacks have their own base toHit values
         if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
             toHit = Compute.getLegAttackBaseToHit(ae, te, game);
-            if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                setSpecialResolution(true);
-                return toHit;
-            }
-            if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+            if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
             }
+            setSpecialResolution(true);
+            return toHit;
 
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
             toHit = Compute.getSwarmMekBaseToHit(ae, te, game);
@@ -4526,6 +4544,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 Targetable swarmPrimaryTarget, Targetable swarmSecondaryTarget, ToHitData toHit,
                 int toSubtract, int eistatus, int aimingAt, int aimingMode, Mounted weapon, AmmoType atype,
                 long munition, boolean isECMAffected, boolean inSameBuilding, boolean underWater) {
+        
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
+        }
         
         toHit.addModifier(-toSubtract, Messages.getString("WeaponAttackAction.OriginalTargetMods"));
         toHit.append(Compute.getImmobileMod(swarmSecondaryTarget, aimingAt, aimingMode));
@@ -4640,6 +4663,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         Entity te = null;
         if (target != null && ttype == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
+        }
+        
+        if (toHit == null) {
+            // Without valid toHit data, the rest of this will fail
+            toHit = new ToHitData();
         }
         
         //Homing warheads just need a flat 4 to seek out a successful TAG

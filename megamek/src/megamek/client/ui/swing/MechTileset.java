@@ -85,6 +85,11 @@ public class MechTileset {
     private String SUBMARINE_STRING = "default_submarine"; //$NON-NLS-1$
     private String HYDROFOIL_STRING = "default_hydrofoil"; //$NON-NLS-1$
     private String VTOL_STRING = "default_vtol"; //$NON-NLS-1$
+    private String RAIL_TRACTOR_STRING = "default_rail_tractor"; //$NON-NLS-1$
+    private String RAIL_MAGLEV_STRING = "default_maglev_tractor"; //$NON-NLS-1$
+    private String TRAILER_STRING = "default_trailer"; //$NON-NLS-1$
+    private String SMALL_TRAILER_STRING = "default_small_trailer"; //$NON-NLS-1$
+    private String LARGE_TRAILER_STRING = "default_large_trailer"; //$NON-NLS-1$
     private String INF_STRING = "default_infantry"; //$NON-NLS-1$
     private String BA_STRING = "default_ba"; //$NON-NLS-1$
     private String PROTO_STRING = "default_proto"; //$NON-NLS-1$
@@ -138,6 +143,11 @@ public class MechTileset {
     private MechEntry default_submarine;
     private MechEntry default_hydrofoil;
     private MechEntry default_vtol;
+    private MechEntry default_rail_tractor;
+    private MechEntry default_maglev_tractor;
+    private MechEntry default_trailer;
+    private MechEntry default_large_trailer;
+    private MechEntry default_small_trailer;
     private MechEntry default_inf;
     private MechEntry default_ba;
     private MechEntry default_proto;
@@ -306,6 +316,17 @@ public class MechTileset {
             return default_hydrofoil;
         }
         if (entity instanceof Tank) {
+            if (entity.isTrailer()) {
+                if (entity.isSuperHeavy()) {
+                    return default_large_trailer;
+                } else if ((entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)
+                        || (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM)
+                        || (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT)) {
+                    return default_small_trailer;
+                } else {
+                    return default_trailer;
+                }
+            }
             if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
                 if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
                     return default_tracked_heavy;
@@ -329,6 +350,12 @@ public class MechTileset {
             }
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                 return default_wige;
+            }
+            if (entity.getMovementMode() == EntityMovementMode.RAIL) {
+                return default_rail_tractor;
+            }
+            if (entity.getMovementMode() == EntityMovementMode.MAGLEV) {
+                return default_maglev_tractor;
             }
         }
         if (entity instanceof GunEmplacement) {
@@ -487,6 +514,11 @@ public class MechTileset {
         default_submarine = exact.get(SUBMARINE_STRING.toUpperCase());
         default_hydrofoil = exact.get(HYDROFOIL_STRING.toUpperCase());
         default_vtol = exact.get(VTOL_STRING.toUpperCase());
+        default_rail_tractor = exact.get(RAIL_TRACTOR_STRING.toUpperCase());
+        default_maglev_tractor = exact.get(RAIL_MAGLEV_STRING.toUpperCase());
+        default_trailer = exact.get(TRAILER_STRING.toUpperCase());
+        default_small_trailer = exact.get(SMALL_TRAILER_STRING.toUpperCase());
+        default_large_trailer = exact.get(LARGE_TRAILER_STRING.toUpperCase());
         default_inf = exact.get(INF_STRING.toUpperCase());
         default_ba = exact.get(BA_STRING.toUpperCase());
         default_proto = exact.get(PROTO_STRING.toUpperCase());

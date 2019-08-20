@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.46.0
+v0.46.0 (2019-08-20 1900 UTC)
 + Data New Sprites.
 + MekHQ Issue #1256 - Several XTRO mechs labeled 'Unofficial'
 + Issue #1439 - mechset.txt typo

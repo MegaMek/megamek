@@ -88,7 +88,6 @@ Savior Repair Vehicle (Standard),3
 Stoat Scout Car (Standard),9
 Transportable Field Repair Unit JI-100,9
 Wayland Mobile Base (Standard),3
-
 #IndustrialMechs
 Arbiter SecurityMech ARB-001,1
 Buster BC XV-M HaulerMech MOD,18
@@ -176,7 +175,6 @@ Uni ATAE-70 CargoMech (Standard),18
 Uni ATAE-70T CargoMech (Standard),9
 Uni ATAE-70 MilitiaMech (Standard),9
 Vampyr SC-V-1 SalvageMech (Standard),3
-
 #Primitive Mechs
 Archer ARC-1A,7
 Banshee BNC-1E,5
@@ -209,5 +207,5 @@ Trooper TP-1R,7
 Wasp WSP-1,7
 Wolverine WVR-1R,11
 Wolverine WVR-3R,11
-Xanthos XNT-20,5
+Xanthos XNT-2O,5
 Ymir BWP-X1 'Bipedal Weapons Platform',5

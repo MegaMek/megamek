@@ -47,5 +47,5 @@ Trooper TP-1R,7
 Wasp WSP-1,7
 Wolverine WVR-1R,11
 Wolverine WVR-3R,11
-Xanthos XNT-20,5
+Xanthos XNT-2O,5
 Ymir BWP-X1 'Bipedal Weapons Platform',5

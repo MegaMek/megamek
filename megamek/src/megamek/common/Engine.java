@@ -470,49 +470,7 @@ public class Engine implements Serializable, ITechnology {
         if (hasFlag(LARGE_ENGINE)) {
             sb.append(Messages.getString("Engine.Large"));
         }
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-                sb.append(" ICE");
-                break;
-            case NORMAL_ENGINE:
-                sb.append(" Fusion");
-                break;
-            case XL_ENGINE:
-                sb.append(" XL");
-                break;
-            case LIGHT_ENGINE:
-                sb.append(" Light");
-                break;
-            case XXL_ENGINE:
-                sb.append(" XXL");
-                break;
-            case COMPACT_ENGINE:
-                sb.append(" Compact");
-                break;
-            case FUEL_CELL:
-                sb.append(" Fuel Cell");
-                break;
-            case FISSION:
-                sb.append(" Fission");
-                break;
-            case STEAM:
-                sb.append(" Steam");
-                break;
-            case BATTERY:
-                sb.append(" Battery");
-                break;
-            case SOLAR:
-                sb.append(" Solar");
-                break;
-            case MAGLEV:
-                sb.append(" MagLev");
-                break;
-            case NONE:
-                sb.append(" NONE");
-                break;
-            default:
-                return problem.toString();
-        }
+        sb.append(Messages.getString("Engine." + TYPE_KEYS[engineType]));
         if (hasFlag(CLAN_ENGINE)) {
             sb.append(Messages.getString("Engine.Clan"));
         }

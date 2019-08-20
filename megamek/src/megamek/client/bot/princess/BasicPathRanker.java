@@ -320,7 +320,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         // If I don't have range, I can't do damage.
         // exception: I might, if I'm an aero on a ground map attacking a ground unit because aero unit ranges are a "special case"
         boolean aeroAttackingGroundUnitOnGroundMap = me.isAirborne() && !enemy.isAero() && game.getBoard().onGround();
-        
+
         int maxRange = getOwner().getMaxWeaponRange(me, enemy.isAirborne());
         if (distance > maxRange && !aeroAttackingGroundUnitOnGroundMap) {
             return 0;

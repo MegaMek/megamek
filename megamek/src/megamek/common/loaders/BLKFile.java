@@ -467,10 +467,9 @@ public class BLKFile {
         String[] transporter_array = new String[t.getTransports().size()];
         int index = 0;
         for (Transporter transporter : t.getTransports()) {
+            transporter_array[index] = transporter.toString();
             if (t.isPodMountedTransport(transporter)) {
-                transporter_array[index] = "omni:" + transporter.toString();
-            } else {
-                transporter_array[index] = transporter.toString();
+                transporter_array[index] += ":omni";
             }
             index++;
         }

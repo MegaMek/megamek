@@ -1,6 +1,11 @@
 VERSION HISTORY:
 ----------------
-0.46.0-rc.2 (2019-08-12 0100 UTC)
+v0.46.0
++ Data New Sprites.
++ MekHQ Issue #1256 - Several XTRO mechs labeled 'Unofficial'
++ Issue #1439 - mechset.txt typo
+
+v0.46.0-rc.2 (2019-08-12 0100 UTC)
 + PR #1426: Splash screen displays properly on very high width-to-height resolution ratios.
 + Simple Tech Level wrong for Proto AC's and VSP Lasers.
 + Issue #1388: Successful TAG designation cause the unit to suffer the penalty of spot for LRM indirect fire on the same turn

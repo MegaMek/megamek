@@ -1092,8 +1092,12 @@ public class Princess extends BotClient {
 
         try {
             initialize();
+            
             // get the first entity that can act this turn
             final Entity attacker = game.getFirstEntity(getMyTurn());
+            if (null == attacker) {
+                return null;
+            }
 
             // If my unit is forced to withdraw, don't attack unless I've been 
             // attacked.
@@ -1149,7 +1153,6 @@ public class Princess extends BotClient {
                                              PhysicalAttackType.RIGHT_PUNCH,
                                              game,
                                              this,
-
                                              false);
                     getFireControl(hitter).calculateUtility(right_punch);
                     if (0 < right_punch.getUtility()) {
@@ -1216,7 +1219,7 @@ public class Princess extends BotClient {
                 if (null != best_attack) {
                     return best_attack.getAsPhysicalOption();
                 }
-            } while (nextEntityId != firstEntityId);
+            } while (nextEntityId != firstEntityId && nextEntityId != Entity.NONE);
 
             // no one can hit anything anymore, so give up
             return null;

@@ -1,52 +1,58 @@
 VERSION HISTORY:
 ----------------
-v0.45.5-SNAPSHOT
+v0.47.0-SNAPSHOT
 + Issue #1315: add support for map annotations and description to .board files.
 + PR #1323: implement "#sitrep" client command which can be used to display, 
 	in the console, a list of units near the entity with the given ID.
 + PR #1329: Princess will now fire at multiple targets with units that have no secondary target penalty. 
 	This should be most noticeable with dropships and other large spacecraft.
-+ PR #1331: Infantry with "forest ranger" SPA is no longer able to move through woods for free.
-+ Issue #1356: Partial Wing won't work on Ultralight Battlemech.
 + PR #1358: Princess properly operates really slow aircraft on ground maps and can actually drop thunder bombs now.
-+ PR #1359, 1364, 1365: Multiple fixes preventing bot freezes in "edge" cases
-+ Issue #1353: Battle Armor Heavy Flamer only raise 2 heat per hit
-+ Issue #1297: LRM5 smoke rounds says 'heavy smoke' on the report.
-+ Data: New Sprites
-+ Data: New Boards from new Beginner Box set (thanks ask)
-+ Data: New units from TP:Tokasha, OTP:Fronc Reaches and Vega 3039
-+ Issue #1090: VGL Unable to Fire - Out of Arc
-+ Issue #1375: Heat damage not correctly applied to all unit types
-+ PR #1385: Lack of deployment zone for entity no longer causes deployment turn to be ignored when loading MUL.
-+ PR #1389: Adding units mid game (via rat/mul) to an observer player is no longer possible as it causes the game to lock up
 + PR #1354: Support for detailed large craft parts (K-F boom, grav deck, CIC, etc)
-+ MegaMekLab Issue #314: Fixed availability ratings for inner sphere LMG and ammo
-+ Issue #1249: Industrial TSM now applies 2x damage to appropriate melee attacks
-+ Issue #1352: Changing Planetary Conditions prior to starting a new game causes a -40C without input
-+ Issue #1400: Fleeing while carrying a non-existent mechwarrior no longer causes a soft-lock
-+ Data: Corsair fighter once again shows proper sprite
 + PR #1401: Improved bot behavior using field gun infantry.
 + PR #1404: Princess can now use rapid-fire autocannons; will respect "no AMS as weapon" setting
 + PR #1405: Introduced Princess capability for indirect fire at spotted units
-+ Issue #1407: Attacks on transported battle armor no longer cause soft lock
-+ PR #1412: Switch to XStream's ID_REFERENCES mode for save games, shrinking their size considerably.
 + PR #1409: Dropship artillery bays now fully functional
 	Dropships can optionally load/fire alternate artillery munitions
 	Copperhead ammo functions as homing rounds
 + Issue #1351: When a homing round lands, the firing player will now get asked which tagged unit gets clobbered.
 + PR #1406: Princess can now spot units for indirect fire
 + PR #1413: Performance and functionality improvements for space sensors
-+ PR #1414: Fix for edge case in BV calculations when two different weapons have almost identical BVs
 + PR #1419: Bearings-Only Missile Tweaks
-+ PR #1426: Splash screen displays properly on very high width-to-height resolution ratios.
-+ Simple Tech Level wrong for Proto AC's and VSP Lasers.'
 + PR #1430: Improvements to bot handling of aerospace units, especially on low-atmospheric maps.
-+ Issue #1388: Successful TAG designation cause the unit to suffer the penalty of spot for LRM indirect fire on the same turn
 + PR #1440: Added ignore for YML files when loading units
 + PR #1436: Greater variety of primitive and civilian units for AtB and template scenarios
-+ Data New Sprites. 
-+ MekHQ Issue #1256 - Several XTRO mechs labeled 'Unofficial' 
+
+v0.46.0 (2019-08-20 1900 UTC)
++ Data New Sprites.
++ MekHQ Issue #1256 - Several XTRO mechs labeled 'Unofficial'
 + Issue #1439 - mechset.txt typo
+
+v0.46.0-rc.2 (2019-08-12 0100 UTC)
++ PR #1426: Splash screen displays properly on very high width-to-height resolution ratios.
++ Simple Tech Level wrong for Proto AC's and VSP Lasers.
++ Issue #1388: Successful TAG designation cause the unit to suffer the penalty of spot for LRM indirect fire on the same turn
++ Data: New Sprites
++ Data: New Boards from new Beginner Box set (thanks ask)
++ Data: New units from TP:Tokasha, OTP:Fronc Reaches and Vega 3039 
+
+v0.46.0-rc.1 (2019-07-23 0300 UTC)
++ PR #1331: Infantry with "forest ranger" SPA is no longer able to move through woods for free.
++ Issue #1356: Partial Wing won't work on Ultralight Battlemech.
++ PR #1359, 1364, 1365: Multiple fixes preventing bot freezes in "edge" cases
++ Issue #1353: Battle Armor Heavy Flamer only raise 2 heat per hit
++ Issue #1297: LRM5 smoke rounds says 'heavy smoke' on the report.
++ Issue #1090: VGL Unable to Fire - Out of Arc
++ Issue #1375: Heat damage not correctly applied to all unit types
++ PR #1385: Lack of deployment zone for entity no longer causes deployment turn to be ignored when loading MUL.
++ PR #1389: Adding units mid game (via rat/mul) to an observer player is no longer possible as it causes the game to lock up
++ MegaMekLab Issue #314: Fixed availability ratings for inner sphere LMG and ammo
++ Issue #1249: Industrial TSM now applies 2x damage to appropriate melee attacks
++ Issue #1352: Changing Planetary Conditions prior to starting a new game causes a -40C without input
++ Issue #1400: Fleeing while carrying a non-existent mechwarrior no longer causes a soft-lock
++ Data: Corsair fighter once again shows proper sprite
++ Issue #1407: Attacks on transported battle armor no longer cause soft lock
++ PR #1412: Switch to XStream's ID_REFERENCES mode for save games, shrinking their size considerably.
++ PR #1414: Fix for edge case in BV calculations when two different weapons have almost identical BVs
 
 v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment

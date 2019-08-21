@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.47.0-SNAPSHOT
+v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.
 + PR #1323: implement "#sitrep" client command which can be used to display, 
 	in the console, a list of units near the entity with the given ID.

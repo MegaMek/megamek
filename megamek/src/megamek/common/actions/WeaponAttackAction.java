@@ -853,83 +853,173 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // okay!
         return toHit;
     }
-
-    private static String toHitIsImpossible(IGame game, Entity ae, Entity te, Targetable target, Targetable swarmPrimaryTarget,
-            Targetable swarmSecondaryTarget, Mounted weapon, Mounted ammo, AmmoType atype, WeaponType wtype, int ttype,
-            LosEffects los, boolean exchangeSwarmTarget, boolean usesAmmo, boolean isTAG, boolean isInferno,
-            boolean isAttackerInfantry, boolean isIndirect, int attackerId, int weaponId, boolean isArtilleryIndirect,
+    
+    
+    /**
+     * Convenience method that tests each attack to see if it's impossible.
+     * If so, a reason string will be returned. A null return means we can continue
+     * processing the attack
+     * 
+     * @param game The current game
+     * @param ae The Entity making this attack
+     * @param target The Targetable object being attacked
+     * @param ttype  The targetable object type
+     * @param los The calculated LOS between attacker and target
+     * @param toHit The running total ToHitData for this WeaponAttackAction
+     * @param toSubtract An int value representing a running total of mods to disregard - used for some special attacks
+     * 
+     * @param aimingAt  An int value representing the location being aimed at - used by immobile target calculations
+     * @param aimingMode  An int value that determines the reason aiming is allowed - used by immobile target calculations
+     * @param distance  The distance in hexes from attacker to target
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param weapon The Mounted weapon being used
+     * @param atype The AmmoType being used for this attack
+     * @param munition  Long indicating the munition type flag being used, if applicable
+     * 
+     * @param isArtilleryDirect  flag that indicates whether this is a direct-fire artillery attack
+     * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
+     * @param isAttackerInfantry  flag that indicates whether the attacker is an infantry/BA unit
+     * @param exchangeSwarmTarget  flag that indicates whether this is the secondary target of Swarm LRMs
+     * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
+     * @param isPointBlankShot  flag that indicates whether or not this is a PBS by a hidden unit
+     * @param usesAmmo  flag that indicates whether or not the WeaponType being used is ammo-fed
+     */
+    private static String toHitIsImpossible(IGame game, Entity ae, Targetable target, int ttype,
+            LosEffects los, ToHitData toHit, WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, Mounted ammo,
+            boolean exchangeSwarmTarget, boolean usesAmmo, boolean isTAG, boolean isInferno,
+            boolean isAttackerInfantry, boolean isIndirect, int attackerId, boolean isArtilleryIndirect,
             boolean isArtilleryFLAK, boolean targetInBuilding, boolean isArtilleryDirect,
             boolean isTargetECMAffected, boolean isStrafing, boolean isBearingsOnlyMissile, boolean isCruiseMissile) {
-        boolean isHoming = false;
-        ToHitData toHit = null;
-
-        if ((target instanceof Entity) && ((Entity)target).isHidden()) {
-            return Messages.getString("WeaponAttackAction.NoFireAtHidden");
+        
+        // Block the shot if the attacker is null
+        if (ae == null) {
+            return Messages.getString("WeaponAttackAction.NoAttacker");
         }
-
-        if (weapon.isSquadSupportWeapon() && (ae instanceof BattleArmor)) {
-            if (!((BattleArmor) ae).isTrooperActive(BattleArmor.LOC_TROOPER_1)) {
-                return Messages.getString("WeaponAttackAction.NoSquadSupport");
+        // Or if the target is null
+        if (target == null) {
+            return Messages.getString("WeaponAttackAction.NoTarget");
+        }
+        // Without valid toHit data, the rest of this will fail
+        if (toHit == null) {
+            toHit = new ToHitData();
+        }
+        
+        Entity te = null;
+        if (ttype == Targetable.TYPE_ENTITY) {
+            //Some weapons only target valid entities
+            te = (Entity) target;
+        }
+        
+        // Aero/LAM-only Attacker Action Reasons
+        if (ae instanceof IAero) {
+            
+        }
+        
+        // Ammo-specific Reasons
+        
+        if (atype != null) {
+        
+            // make sure weapon can deliver flares
+            if ((target.getTargetType() == Targetable.TYPE_FLARE_DELIVER) && !(usesAmmo
+                    && ((atype.getAmmoType() == AmmoType.T_LRM) 
+                            || (atype.getAmmoType() == AmmoType.T_MML)
+                            || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                            || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
+                    && (munition == AmmoType.M_FLARE))) {
+                return Messages.getString("WeaponAttackAction.NoFlares");
+            }
+            
+            // make sure weapon can deliver minefield
+            if ((target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) 
+                    && !AmmoType.canDeliverMinefield(atype)) {
+                return Messages.getString("WeaponAttackAction.NoMinefields");
+            }
+            
+            // These ammo types can only target hexes for flare delivery
+            if (((atype.getAmmoType() == AmmoType.T_LRM)
+                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.T_MML))
+                    && (atype.getMunitionType() == AmmoType.M_FLARE)
+                    && (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
+                return Messages.getString("WeaponAttackAction.OnlyFlare");
+            }
+            
+            // These ammo types can only target hexes for minefield delivery
+            if (((atype.getAmmoType() == AmmoType.T_LRM) 
+                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.T_MML)
+                    || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
+                    && ((atype.getMunitionType() == AmmoType.M_THUNDER)
+                            || (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
+                            || (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
+                            || (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
+                            || (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED))
+                    && (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER)) {
+                return Messages.getString("WeaponAttackAction.OnlyMinefields");
             }
         }
+        
+        // Attacker Action Reasons
+placeholder
 
-        // BA NARCs and Tasers can only fire at one target in a round
-        if ((ae instanceof BattleArmor)
-                && (weapon.getType().hasFlag(WeaponType.F_TASER) || wtype.getAmmoType() == AmmoType.T_NARC)) {
-            // Go through all of the current actions to see if a NARC or Taser
-            // has been fired
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
-                // Is this an attack from this entity to a different target?
-                if (prevAttack.getEntityId() == ae.getId() && prevAttack.getTargetId() != target.getTargetId()) {
-                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                    WeaponType prevWtype = (WeaponType) prevWeapon.getType();
-                    if (prevWeapon.getType().hasFlag(WeaponType.F_TASER)
-                            && weapon.getType().hasFlag(WeaponType.F_TASER)) {
-                        return Messages.getString("WeaponAttackAction.BATaserSameTarget");
-                    }
-                    if (prevWtype.getAmmoType() == AmmoType.T_NARC && wtype.getAmmoType() == AmmoType.T_NARC) {
-                        return Messages.getString("WeaponAttackAction.BANarcSameTarget");
-                    }
-                }
-            }
+        // If the attacker is actively using a shield, weapons in the same location are blocked
+        if (weapon != null && ae.hasShield() && ae.hasActiveShield(weapon.getLocation(), weapon.isRearMounted())) {
+            return Messages.getString("WeaponAttackAction.ActiveShieldBlocking");
         }
 
-        // BA can only make one AP attack
-        if ((ae instanceof BattleArmor) && weapon.getType().hasFlag(WeaponType.F_INFANTRY)) {
-            final int weapId = ae.getEquipmentNum(weapon);
-            // See if this unit has made a previous AP attack
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
-                // Is this an attack from this entity
-                if (prevAttack.getEntityId() == ae.getId()) {
-                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                    WeaponType prevWtype = (WeaponType) prevWeapon.getType();
-                    if (prevWtype.hasFlag(WeaponType.F_INFANTRY) && (prevAttack.getWeaponId() != weapId)) {
-                        return Messages.getString("WeaponAttackAction.OnlyOneBAAPAttack");
-                    }
-                }
-            }
+        // Airborne units cannot direct-fire artillery weapons
+        if (isArtilleryDirect && ae.isAirborne()) {
+            return Messages.getString("WeaponAttackAction.NoAeroDirectArty");
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS) && (ae instanceof Tank) && ae.isUnjammingRAC()
+        //If we're lying mines, we can't shoot.
+        if (ae.isLayingMines()) {
+            return Messages.getString("WeaponAttackAction.BusyLayingMines");
+        }
+
+        // Crew Related Reasons
+placeholder        
+        // Vehicles with a single crewman can't shoot and unjam a RAC in the same turn (like mechs...) 
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS) 
+                && (ae instanceof Tank) && ae.isUnjammingRAC()
                 && (ae.getCrew().getSize() == 1)) {
             return Messages.getString("WeaponAttackAction.VeeSingleCrew");
         }
-
-        // is the attack originating from underwater
-        boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)
-                || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
         
-        // Torpedos must remain in the water over their whole path to the target
+        // Critical Damage Reasons
+placeholder
+        //If it has a torso-mounted cockpit and two head sensor hits or three
+        // sensor hits...
+        // It gets a =4 penalty for being blind!
+        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
+            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+            if ((sensorHits + sensorHits2) == 3) {
+                return Messages.getString("WeaponAttackAction.SensorsDestroyedTMC");
+            }
+        }
+
+        // Invalid Target Reasons
+placeholder     
+        //Tasers must target units and can't target flying units
+        if (wtype != null && wtype.hasFlag(WeaponType.F_TASER)) {
+            if (te != null) {
+                if (te.isAirborne() || te.isAirborneVTOLorWIGE()) {
+                    return Messages.getString("WeaponAttackAction.NoTaserAtAirborne");
+                }
+            } else {
+                return Messages.getString("WeaponAttackAction.TaserOnlyAtUnit");
+            }
+        }
+        // Can't fire at hidden targets
+        if ((target instanceof Entity) && ((Entity)target).isHidden()) {
+            return Messages.getString("WeaponAttackAction.NoFireAtHidden");
+        }
+        
+        // Line of Sight and Range Reasons
+placeholder     
+        //Torpedos must remain in the water over their whole path to the target
         if ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                         || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
@@ -943,142 +1033,165 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return Messages.getString("WeaponAttackAction.TorpOutOfWater");
         }
 
-        if ((ae instanceof Protomech) && ((Protomech) ae).isEDPCharging() && wtype.hasFlag(WeaponType.F_ENERGY)) {
-            return Messages.getString("WeaponAttackAction.ChargingEDP");
-        }
+        // Phase Reasons
 
-        // tasers only at non-flying units
-        if (wtype.hasFlag(WeaponType.F_TASER)) {
-            if (te != null) {
-                if (te.isAirborne() || te.isAirborneVTOLorWIGE()) {
-                    return Messages.getString("WeaponAttackAction.NoTaserAtAirborne");
-                }
-            } else {
-                return Messages.getString("WeaponAttackAction.TaserOnlyAtUnit");
-            }
-        }
-
-        if (wtype.hasFlag(WeaponType.F_TSEMP) && wtype.hasFlag(WeaponType.F_ONESHOT) && weapon.isFired()) {
-            return Messages.getString("WeaponAttackAction.OneShotTSEMP");
-        }
-
-        if (wtype.hasFlag(WeaponType.F_TSEMP) && weapon.isFired()) {
-            return Messages.getString("WeaponAttackAction.TSEMPRecharging");
-        }
-
-        // only leg mounted b-pods can be fired normally
-        if (wtype.hasFlag(WeaponType.F_B_POD)) {
-            if (!(target instanceof Infantry)) {
-                return Messages.getString("WeaponAttackAction.BPodOnlyAtInf");
-            }
-            if (ae instanceof BipedMech) {
-                if (!((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG))) {
-                    return Messages.getString("WeaponAttackAction.OnlyLegBPod");
-                }
-            } else if (ae instanceof QuadMech) {
-                if (!((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG)
-                        || (weapon.getLocation() == Mech.LOC_LARM) || (weapon.getLocation() == Mech.LOC_RARM))) {
-                    return Messages.getString("WeaponAttackAction.OnlyLegBPod");
-                }
-            }
-        }
-        if (ae.hasShield() && ae.hasActiveShield(weapon.getLocation(), weapon.isRearMounted())) {
-            return Messages.getString("WeaponAttackAction.ActiveShieldBlocking");
-        }
-        // If it has a torso-mounted cockpit and two head sensor hits or three
-        // sensor hits...
-        // It gets a =4 penalty for being blind!
-        if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
-            if ((sensorHits + sensorHits2) == 3) {
-                return Messages.getString("WeaponAttackAction.SensorsDestroyedTMC");
-            }
-        }
-
-        // can't fire Indirect LRM with direct LOS
-        if (isIndirect && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
-                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
-                && LosEffects.calculateLos(game, ae.getId(), target).canSee()
-                && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                        || Compute.canSee(game, ae, target))
-                && !(wtype instanceof ArtilleryCannonWeapon) && !(wtype instanceof MekMortarWeapon)) {
-            return Messages.getString("WeaponAttackAction.NoIndirectWithLOS");
-        }
-
-        // If we're lying mines, we can't shoot.
-        if (ae.isLayingMines()) {
-            return Messages.getString("WeaponAttackAction.BusyLayingMines");
-        }
-
-        // make sure weapon can deliver minefield
-        if ((target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) && !AmmoType.canDeliverMinefield(atype)) {
-            return Messages.getString("WeaponAttackAction.NoMinefields");
-        }
-        if ((target.getTargetType() == Targetable.TYPE_FLARE_DELIVER) && !(usesAmmo
-                && ((atype.getAmmoType() == AmmoType.T_LRM) 
-                        || (atype.getAmmoType() == AmmoType.T_MML)
-                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                        || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
-                && (atype.getMunitionType() == AmmoType.M_FLARE))) {
-            return Messages.getString("WeaponAttackAction.NoFlares");
-        }
+        // Only bearings-only capital missiles and indirect fire artillery can be fired in the targeting phase
         if ((game.getPhase() == IGame.Phase.PHASE_TARGETING) && (!(isArtilleryIndirect || isBearingsOnlyMissile))) {
             return Messages.getString("WeaponAttackAction.NotValidForTargPhase");
         }
+        // Only TAG can be fired in the offboard phase
         if ((game.getPhase() == IGame.Phase.PHASE_OFFBOARD) && !isTAG) {
             return Messages.getString("WeaponAttackAction.OnlyTagInOffboard");
         }
+        // TAG can't be fired in any phase but offboard
         if ((game.getPhase() != IGame.Phase.PHASE_OFFBOARD) && isTAG) {
             return Messages.getString("WeaponAttackAction.TagOnlyInOffboard");
         }
-        if (isArtilleryDirect && ae.isAirborne()) {
-            return Messages.getString("WeaponAttackAction.NoAeroDirectArty");
-        }
-
-        if (isArtilleryDirect && (Compute.effectiveDistance(game, ae, target) <= 6)) {
-            return Messages.getString("WeaponAttackAction.TooShortForDirectArty");
-        }
         
-        // check called shots
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
-            String reason = weapon.getCalledShot().isValid(target);
-            if (reason != null) {
-                return reason;
+        // Unit-specific Reasons
+placeholder
+        // Protomechs can't fire energy weapons while charging EDP armor
+        if ((ae instanceof Protomech) && ((Protomech) ae).isEDPCharging() 
+                && wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
+            return Messages.getString("WeaponAttackAction.ChargingEDP");
+        }
+        // Weapon-specific Reasons
+placeholder        
+        if (weapon != null && wtype != null) {
+            // Variable setup
+            // is the attack originating from underwater
+            boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)
+                    || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
+            
+            // Artillery
+            
+            // Direct fire artillery cannot be fired at less than 6 hexes
+            if (isArtilleryDirect && (Compute.effectiveDistance(game, ae, target) <= 6)) {
+                return Messages.getString("WeaponAttackAction.TooShortForDirectArty");
+            }
+            
+            // Battle Armor
+            
+            // BA can only make one AP attack
+            if ((ae instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INFANTRY)) {
+                final int weapId = ae.getEquipmentNum(weapon);
+                // See if this unit has made a previous AP attack
+                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                    Object o = i.nextElement();
+                    if (!(o instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                    // Is this an attack from this entity
+                    if (prevAttack.getEntityId() == ae.getId()) {
+                        Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+                        WeaponType prevWtype = (WeaponType) prevWeapon.getType();
+                        if (prevWtype.hasFlag(WeaponType.F_INFANTRY) && (prevAttack.getWeaponId() != weapId)) {
+                            return Messages.getString("WeaponAttackAction.OnlyOneBAAPAttack");
+                        }
+                    }
+                }
+            }
+            // BA NARCs and Tasers can only fire at one target in a round
+            if ((ae instanceof BattleArmor)
+                    && (wtype.hasFlag(WeaponType.F_TASER) || wtype.getAmmoType() == AmmoType.T_NARC)) {
+                // Go through all of the current actions to see if a NARC or Taser
+                // has been fired
+                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                    Object o = i.nextElement();
+                    if (!(o instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                    // Is this an attack from this entity to a different target?
+                    if (prevAttack.getEntityId() == ae.getId() && prevAttack.getTargetId() != target.getTargetId()) {
+                        Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+                        WeaponType prevWtype = (WeaponType) prevWeapon.getType();
+                        if (prevWeapon.getType().hasFlag(WeaponType.F_TASER)
+                                && weapon.getType().hasFlag(WeaponType.F_TASER)) {
+                            return Messages.getString("WeaponAttackAction.BATaserSameTarget");
+                        }
+                        if (prevWtype.getAmmoType() == AmmoType.T_NARC && wtype.getAmmoType() == AmmoType.T_NARC) {
+                            return Messages.getString("WeaponAttackAction.BANarcSameTarget");
+                        }
+                    }
+                }
+            }
+            // BA squad support weapons require that Trooper 1 be alive to use
+            if (weapon.isSquadSupportWeapon() && (ae instanceof BattleArmor)) {
+                if (!((BattleArmor) ae).isTrooperActive(BattleArmor.LOC_TROOPER_1)) {
+                    return Messages.getString("WeaponAttackAction.NoSquadSupport");
+                }
+            }
+            
+            // Bombs and such
+            
+            // Anti ship missiles can't be launched from altitude 3 or lower
+            if (wtype.hasFlag(WeaponType.F_ANTI_SHIP) && !game.getBoard().inSpace() && (ae.getAltitude() < 4)) {
+                return Messages.getString("WeaponAttackAction.TooLowForASM");
+            }
+            
+            // ASEW Missiles cannot be launched in an atmosphere
+            if ((wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE)
+                    && !ae.isSpaceborne()) {
+                return Messages.getString("WeaponAttackAction.ASEWAtmo");
+            }
+            
+            // B-Pods
+
+            if (wtype.hasFlag(WeaponType.F_B_POD)) {
+                // B-Pods are only effective against infantry
+                if (!(target instanceof Infantry)) {
+                    return Messages.getString("WeaponAttackAction.BPodOnlyAtInf");
+                }
+                // Leg-mounted B-Pods can be fired at infantry in the attacker's hex, other locations
+                // can only be fired in response to leg/swarm attacks
+                if (ae instanceof BipedMech) {
+                    if (!((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG))) {
+                        return Messages.getString("WeaponAttackAction.OnlyLegBPod");
+                    }
+                } else if (ae instanceof QuadMech) {
+                    if (!((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG)
+                            || (weapon.getLocation() == Mech.LOC_LARM) || (weapon.getLocation() == Mech.LOC_RARM))) {
+                        return Messages.getString("WeaponAttackAction.OnlyLegBPod");
+                    }
+                }
+            }
+            
+            // Check called shots
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
+                String reason = weapon.getCalledShot().isValid(target);
+                if (reason != null) {
+                    return reason;
+                }
+            }
+            
+            // Indirect Fire (LRMs)
+            
+            // Can't fire Indirect LRM with direct LOS
+            if (isIndirect && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
+                    && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
+                    && LosEffects.calculateLos(game, ae.getId(), target).canSee()
+                    && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                            || Compute.canSee(game, ae, target))
+                    && !(wtype instanceof ArtilleryCannonWeapon) && !(wtype instanceof MekMortarWeapon)) {
+                return Messages.getString("WeaponAttackAction.NoIndirectWithLOS");
+            }
+            
+            // TSEMPs
+            
+            // Can't fire a one-shot TSEMP more than once
+            if (wtype.hasFlag(WeaponType.F_TSEMP) && wtype.hasFlag(WeaponType.F_ONESHOT) && weapon.isFired()) {
+                return Messages.getString("WeaponAttackAction.OneShotTSEMP");
+            }
+
+            // Can't fire a regular TSEMP while it is recharging
+            if (wtype.hasFlag(WeaponType.F_TSEMP) && weapon.isFired()) {
+                return Messages.getString("WeaponAttackAction.TSEMPRecharging");
             }
         }
-
-        if ((atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_LRM) 
-                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                        || (atype.getAmmoType() == AmmoType.T_MML)
-                        || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
-                && ((atype.getMunitionType() == AmmoType.M_THUNDER)
-                        || (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
-                        || (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
-                        || (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
-                        || (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED))
-                && (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER)) {
-            return Messages.getString("WeaponAttackAction.OnlyMinefields");
-        }
-        if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM)
-                || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                || (atype.getAmmoType() == AmmoType.T_MML))
-                && (atype.getMunitionType() == AmmoType.M_FLARE)
-                && (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
-            return Messages.getString("WeaponAttackAction.OnlyFlare");
-        }
-        
-        // Anti ship missiles can't be launched from altitude 3 or lower
-        if (wtype.hasFlag(WeaponType.F_ANTI_SHIP) && !game.getBoard().inSpace() && (ae.getAltitude() < 4)) {
-            return Messages.getString("WeaponAttackAction.TooLowForASM");
-        }
-        
-        // ASEW Missiles cannot be launched in an atmosphere
-        if ((wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE)
-                && !ae.isSpaceborne()) {
-            return Messages.getString("WeaponAttackAction.ASEWAtmo");
-        }
+       
+placeholder       
 
         // some weapons can only target infantry
         if (wtype.hasFlag(WeaponType.F_INFANTRY_ONLY)) {

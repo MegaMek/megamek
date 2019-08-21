@@ -7,6 +7,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
+import megamek.common.Game;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
@@ -111,6 +112,7 @@ public class WeaponFireInfoTest {
         Mockito.when(mockWeapon.curMode()).thenReturn(mockEquipmentMode);
 
         mockWeaponAttackAction = Mockito.mock(WeaponAttackAction.class);
+        Mockito.when(mockWeaponAttackAction.getEntity(Mockito.any(IGame.class))).thenReturn(mockShooter);
     }
 
     private void setupLightTarget() {
@@ -176,6 +178,7 @@ public class WeaponFireInfoTest {
         Mockito.doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
+        Mockito.when(mockShooter.getEquipment(Mockito.anyInt())).thenReturn(mockWeapon);
         testWeaponFireInfo.initDamage(null, false, true, null);
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());

@@ -33,6 +33,7 @@ import megamek.common.MechWarrior;
 import megamek.common.RangeType;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.TagInfo;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
@@ -211,7 +212,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         }
 
         // if we're spotting for indirect fire, add +1
-        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()
+                && game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == ae.getId())) {
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
 

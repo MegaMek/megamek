@@ -157,32 +157,38 @@ public class FixedWingSupport extends ConvFighter {
 
     protected static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_AIRSHIP_SUPPORT_SMALL = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_A).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            .setTechRating(RATING_A).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_AIRSHIP_SUPPORT_MEDIUM = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Availability missing from TO. Using medium
     protected static final TechAdvancement TA_AIRSHIP_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     // Availability missing from TO. Using similar values from other support vees.
     // Also using early spaceflight for intro dates based on common sense.
     protected static final TechAdvancement TA_SATELLITE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        return getTechAdvancement(getMovementMode(), getWeightClass());
+        return getConstructionTechAdvancement(getMovementMode(), getWeightClass());
     }
 
-    public static TechAdvancement getTechAdvancement(EntityMovementMode movementMode, int weightClass) {
+    public static TechAdvancement getConstructionTechAdvancement(EntityMovementMode movementMode, int weightClass) {
         if (movementMode.equals(EntityMovementMode.AIRSHIP)) {
             if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
                 return TA_AIRSHIP_SUPPORT_LARGE;

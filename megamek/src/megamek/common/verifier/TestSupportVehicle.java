@@ -33,7 +33,7 @@ public class TestSupportVehicle extends TestEntity {
      * Support vehicle categories for construction purposes. Most of these match with a particular movement
      * mode, but the construction rules treat naval and rail units as single types.
      */
-    public enum SVType {
+    public enum SVType implements ITechnologyDelegator {
         AIRSHIP (300, EntityMovementMode.AIRSHIP,
                 new double[]{0.2, 0.25, 0.3}, new double[]{0.004, 0.008, 0.012}),
         FIXED_WING (200, EntityMovementMode.AERODYNE,
@@ -175,6 +175,25 @@ public class TestSupportVehicle extends TestEntity {
                 return type.getBaseEngineValue(sv.getWeightClass());
             }
             return 0.0;
+        }
+
+        @Override
+        public ITechnology getTechSource() {
+            /* Support vehicle availability advancement can vary with the size class.
+               The small is the least restrictive, so it serves as the base line for each
+               type as a whole. */
+            switch (defaultMovementMode) {
+                case AERODYNE:
+                case AIRSHIP:
+                case STATION_KEEPING:
+                    return FixedWingSupport.getConstructionTechAdvancement(defaultMovementMode,
+                            EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+                case VTOL:
+                    return SupportVTOL.getConstructionTechAdvancement(EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+                default:
+                    return SupportTank.getConstructionTechAdvancement(defaultMovementMode,
+                            EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+            }
         }
     }
 

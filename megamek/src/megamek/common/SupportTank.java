@@ -96,6 +96,10 @@ public class SupportTank extends Tank {
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
             .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_NAVAL_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_C, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     private static final TechAdvancement TA_TRACKED = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
             .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
@@ -121,9 +125,17 @@ public class SupportTank extends Tank {
             .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_WIGE_LARGE = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
             .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_RAIL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    private static final TechAdvancement TA_RAIL_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -143,7 +155,11 @@ public class SupportTank extends Tank {
             case NAVAL:
             case HYDROFOIL:
             case SUBMARINE:
-                return TA_NAVAL;
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_NAVAL_LARGE;
+                } else {
+                    return TA_NAVAL;
+                }
             case TRACKED:
                 if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
                     return TA_TRACKED_LARGE;
@@ -166,9 +182,11 @@ public class SupportTank extends Tank {
                 }
             case RAIL:
             case MAGLEV:
-                // TacOps gives a minimum tech rating of A but no availability data. Assuming A, the same
-                // as small wheeled. Maglev will be higher based on the required engine.
-                return TA_WHEELED_SMALL;
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_RAIL_LARGE;
+                } else {
+                    return TA_RAIL;
+                }
             default:
                 return TA_TRACKED; // average
         }

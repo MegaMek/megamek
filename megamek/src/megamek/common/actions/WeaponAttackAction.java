@@ -930,12 +930,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return Messages.getString("WeaponAttackAction.NoFlares");
             }
             
-            // make sure weapon can deliver minefield
-            if ((target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) 
-                    && !AmmoType.canDeliverMinefield(atype)) {
-                return Messages.getString("WeaponAttackAction.NoMinefields");
-            }
-            
             // These ammo types can only target hexes for flare delivery
             if (((atype.getAmmoType() == AmmoType.T_LRM)
                     || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -944,6 +938,26 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
                 return Messages.getString("WeaponAttackAction.OnlyFlare");
             }
+            
+            // got ammo?
+            if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
+                return Messages.getString("WeaponAttackAction.OutOfAmmo");
+            }
+
+            // Aeros must have enough ammo for the maximum rate of fire because
+            // they cannot lower it
+            if (ae.isAero() && usesAmmo && (ammo != null)
+                    && (ae.getTotalAmmoOfType(ammo.getType()) < weapon.getCurrentShots())) {
+                return Messages.getString("WeaponAttackAction.InsufficientAmmo");
+            }
+            
+            // make sure weapon can deliver minefield
+            if ((target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) 
+                    && !AmmoType.canDeliverMinefield(atype)) {
+                return Messages.getString("WeaponAttackAction.NoMinefields");
+            }
+            
+            
             
             // These ammo types can only target hexes for minefield delivery
             if (((atype.getAmmoType() == AmmoType.T_LRM) 
@@ -968,9 +982,9 @@ placeholder
             return Messages.getString("WeaponAttackAction.ActiveShieldBlocking");
         }
 
-        // Airborne units cannot direct-fire artillery weapons
-        if (isArtilleryDirect && ae.isAirborne()) {
-            return Messages.getString("WeaponAttackAction.NoAeroDirectArty");
+        //is the attacker even active?
+        if (ae.isShutDown() || !ae.getCrew().isActive()) {
+            return Messages.getString("WeaponAttackAction.AttackerNotReady");
         }
 
         //If we're lying mines, we can't shoot.
@@ -979,7 +993,11 @@ placeholder
         }
 
         // Crew Related Reasons
-placeholder        
+placeholder
+        // Stunned vehicle crews can't make attacks
+        if (((Tank) ae).getStunnedTurns() > 0) {
+            return Messages.getString("WeaponAttackAction.CrewStunned");
+        }
         // Vehicles with a single crewman can't shoot and unjam a RAC in the same turn (like mechs...) 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS) 
                 && (ae instanceof Tank) && ae.isUnjammingRAC()
@@ -989,19 +1007,55 @@ placeholder
         
         // Critical Damage Reasons
 placeholder
-        //If it has a torso-mounted cockpit and two head sensor hits or three
-        // sensor hits...
-        // It gets a =4 penalty for being blind!
+
+        // Otherwise, are the sensors operational?
+        // Battlemech sensors are destroyed after 2 hits, unless they have a torso-mounted cockpit
+        int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
         if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
-            if ((sensorHits + sensorHits2) == 3) {
-                return Messages.getString("WeaponAttackAction.SensorsDestroyedTMC");
+            sensorHits += ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+            if (sensorHits > 2) {
+                return Messages.getString("WeaponAttackAction.SensorsDestroyed");
+            }
+        } else if (ae instanceof Tank) {
+            sensorHits = ((Tank) ae).getSensorHits();
+            if (sensorHits > 3) {
+                return Messages.getString("WeaponAttackAction.SensorsDestroyed");
+            }
+        } else if (ae instanceof Aero) {
+            // Aeros with 3 sensor hits can't shoot
+            if (((Aero) ae).isAeroSensorDestroyed()) {
+                return Messages.getString("WeaponAttackAction.SensorsDestroyed");
             }
         }
+        // Industrialmechs and other unit types have destroyed sensors with 2 or more hits
+        if ((sensorHits > 1)
+                || ((ae instanceof Mech) && (((Mech) ae).isIndustrial() && (sensorHits == 1)))) {
+            return Messages.getString("WeaponAttackAction.SensorsDestroyed");
+        } 
 
         // Invalid Target Reasons
 placeholder     
+        
+        //a friendly unit can never be the target of a direct attack.
+        // but we do allow vehicle flamers to cool. Also swarm missile secondary targets and strafing are exempt.
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE) && !isStrafing && !exchangeSwarmTarget) {
+            if (te != null && !te.getOwner().isEnemyOf(ae.getOwner())) {
+                if (!(usesAmmo && atype != null && (atype.getMunitionType() == AmmoType.M_COOLANT))) {
+                    return Messages.getString("WeaponAttackAction.NoFriendlyTarget");
+                }
+            }
+        }
+
+        // Can't fire at hidden targets
+        if ((target instanceof Entity) && ((Entity)target).isHidden()) {
+            return Messages.getString("WeaponAttackAction.NoFireAtHidden");
+        }
+        
+        // Only weapons allowed to clear minefields can target a hex for minefield clearance
+        if ((target instanceof MinefieldTarget) && atype != null && !AmmoType.canClearMinefield(atype)) {
+            return Messages.getString("WeaponAttackAction.CantClearMines");
+        }
+        
         //Tasers must target units and can't target flying units
         if (wtype != null && wtype.hasFlag(WeaponType.F_TASER)) {
             if (te != null) {
@@ -1012,9 +1066,10 @@ placeholder
                 return Messages.getString("WeaponAttackAction.TaserOnlyAtUnit");
             }
         }
-        // Can't fire at hidden targets
-        if ((target instanceof Entity) && ((Entity)target).isHidden()) {
-            return Messages.getString("WeaponAttackAction.NoFireAtHidden");
+        
+        // can't target yourself intentionally, but swarm missiles can come back to bite you
+        if (!exchangeSwarmTarget && te != null && ae.equals(te)) {
+            return Messages.getString("WeaponAttackAction.NoSelfTarget");
         }
         
         // Line of Sight and Range Reasons
@@ -1050,6 +1105,14 @@ placeholder
         
         // Unit-specific Reasons
 placeholder
+
+        // LAMs in fighter mode are restricted to only the ammo types that Aeros can use
+        if ((ae instanceof LandAirMech) && (ae.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)
+                && usesAmmo && ammo != null 
+                && !((AmmoType)ammo.getType()).canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
+            return Messages.getString("WeaponAttackAction.InvalidAmmoForFighter");
+        }
+
         // Protomechs can't fire energy weapons while charging EDP armor
         if ((ae instanceof Protomech) && ((Protomech) ae).isEDPCharging() 
                 && wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
@@ -1063,7 +1126,60 @@ placeholder
             boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)
                     || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
             
+            // Anti-Infantry weapons can only target infantry
+            if (wtype.hasFlag(WeaponType.F_INFANTRY_ONLY)) {
+                if ((te != null) && !(te instanceof Infantry)) {
+                    return Messages.getString("WeaponAttackAction.TargetOnlyInf");
+                }
+            }
+            
             // Artillery
+            
+            // Arty shots have to be with arty, non arty shots with non arty.
+            if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+                // check artillery is targetted appropriately for its ammo
+                // Artillery only targets hexes unless making a direct fire flak shot or using
+                // homing ammo.
+                if ((ttype != Targetable.TYPE_HEX_ARTILLERY) && (ttype != Targetable.TYPE_MINEFIELD_CLEAR)
+                        && !isArtilleryFLAK && !isHoming) {
+                    return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
+                }
+                // Airborne units can't make direct-fire artillery attacks
+                if (ae.isAirborne()) {
+                    if (isArtilleryDirect) {
+                        return Messages.getString("WeaponAttackAction.NoAeroDirectArty");
+                    } else if (isArtilleryIndirect) {
+                        // and can only make indirect artillery attacks at altitude 9 or below
+                        if (ae.getAltitude() > 9) {
+                            return Messages.getString("WeaponAttackAction.TooHighForArty");
+                        }
+                        // and finally, can only use Arrow IV artillery
+                        if (ae.usesWeaponBays()) {
+                            //For Dropships
+                            for (int wId : weapon.getBayWeapons()) {
+                                Mounted bayW = ae.getEquipment(wId);
+                                // check the loaded ammo for the Arrow IV flag
+                                Mounted bayWAmmo = bayW.getLinked();
+                                AmmoType bAType = (AmmoType) bayWAmmo.getType();
+                                if (bAType.getAmmoType() != AmmoType.T_ARROW_IV) {
+                                    return Messages.getString("WeaponAttackAction.OnlyArrowArty");
+                                }
+                            }
+                        } else if (wtype.getAmmoType() != AmmoType.T_ARROW_IV) {
+                            //For Fighters, LAMs, Small Craft and VTOLs
+                            return Messages.getString("WeaponAttackAction.OnlyArrowArty");
+                        }
+                    }
+                }
+            } else if (weapon.isInBearingsOnlyMode()) {             
+                // We don't really need to do anything here. This just prevents these weapons
+                // from passing the next test erroneously.
+            } else {
+                // weapon is not artillery
+                if (ttype == Targetable.TYPE_HEX_ARTILLERY) {
+                    return Messages.getString("WeaponAttackAction.NoArtyAttacks");
+                }
+            }
             
             // Direct fire artillery cannot be fired at less than 6 hexes
             if (isArtilleryDirect && (Compute.effectiveDistance(game, ae, target) <= 6)) {
@@ -1189,135 +1305,14 @@ placeholder
             if (wtype.hasFlag(WeaponType.F_TSEMP) && weapon.isFired()) {
                 return Messages.getString("WeaponAttackAction.TSEMPRecharging");
             }
-        }
-       
-placeholder       
-
-        // some weapons can only target infantry
-        if (wtype.hasFlag(WeaponType.F_INFANTRY_ONLY)) {
-            if (((te != null) && !(te instanceof Infantry)) || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
-                return Messages.getString("WeaponAttackAction.TargetOnlyInf");
-            }
-        }
-
-        // make sure weapon can clear minefield
-        if ((target instanceof MinefieldTarget) && !AmmoType.canClearMinefield(atype)) {
-            return Messages.getString("WeaponAttackAction.CantClearMines");
-        }
-
-        // Arty shots have to be with arty, non arty shots with non arty.
-        if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-            // check artillery is targetted appropriately for its ammo
-            long munition = AmmoType.M_STANDARD;
-            if (atype != null) {
-                munition = atype.getMunitionType();
-            }
-            if (munition == AmmoType.M_HOMING && ammo.curMode().equals("Homing")) {
-                // target type checked later because its different for
-                // direct/indirect (BMRr p77 on board arrow IV)
-                isHoming = true;
-            } else if ((ttype != Targetable.TYPE_HEX_ARTILLERY) && (ttype != Targetable.TYPE_MINEFIELD_CLEAR)
-                    && !isArtilleryFLAK) {
-                return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
-            }
-            if (ae.isAirborne()) {
-                if (isArtilleryDirect) {
-                    return Messages.getString("WeaponAttackAction.NoAeroDirectArty");
-                } else if (isArtilleryIndirect) {
-                    if (ae.getAltitude() > 9) {
-                        return Messages.getString("WeaponAttackAction.TooHighForArty");
-                    }
-                    if (ae.usesWeaponBays()) {
-                        //For Dropships
-                        for (int wId : weapon.getBayWeapons()) {
-                            Mounted bayW = ae.getEquipment(wId);
-                            // check the loaded ammo for the Arrow IV flag
-                            Mounted bayWAmmo = bayW.getLinked();
-                            AmmoType bAType = (AmmoType) bayWAmmo.getType();
-                            if (bAType.getAmmoType() != AmmoType.T_ARROW_IV) {
-                                return Messages.getString("WeaponAttackAction.OnlyArrowArty");
-                            }
-                        }
-                    } else if (wtype.getAmmoType() != AmmoType.T_ARROW_IV) {
-                        //For Fighters, LAMs, Small Craft and VTOLs
-                        return Messages.getString("WeaponAttackAction.OnlyArrowArty");
-                    }
-                }
-            }
-        } else if (weapon.isInBearingsOnlyMode()) {             
-            //We don't really need to do anything here. This just prevents these weapons from returning impossible.
-        } else {
-            // weapon is not artillery
-            if (ttype == Targetable.TYPE_HEX_ARTILLERY) {
-                return Messages.getString("WeaponAttackAction.NoArtyAttacks");
-            }
-        }
-
-        // check the following only if we're not a flight of continuing swarm
-        // missiles
-        if (!exchangeSwarmTarget) {
-
-            if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE) && !isStrafing) {
-                // a friendly unit can never be the target of a direct attack.
-                // but we do allow vehicle flamers to cool
-                if ((target.getTargetType() == Targetable.TYPE_ENTITY) && !te.getOwner().isEnemyOf(ae.getOwner())) {
-                    if (!(usesAmmo && (atype.getMunitionType() == AmmoType.M_COOLANT))) {
-                        return Messages.getString("WeaponAttackAction.NoFriendlyTarget");
-                    }
-                }
-            }
-            // can't target yourself,
-            if (ae.equals(te)) {
-                return Messages.getString("WeaponAttackAction.NoSelfTarget");
-            }
-            // is the attacker even active?
-            if (ae.isShutDown() || !ae.getCrew().isActive()) {
-                return Messages.getString("WeaponAttackAction.AttackerNotReady");
-            }
-
-            // sensors operational?
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
-                sensorHits += ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
-                if (sensorHits > 2) {
-                    return Messages.getString("WeaponAttackAction.SensorsDestroyed");
-                }
-            } else if ((sensorHits > 1)
-                    || ((ae instanceof Mech) && (((Mech) ae).isIndustrial() && (sensorHits == 1)))) {
-                return Messages.getString("WeaponAttackAction.SensorsDestroyed");
-            }
+            
             // weapon operational?
             if (!weapon.canFire(isStrafing)) {
                 return Messages.getString("WeaponAttackAction.WeaponNotReady");
             }
-
-            // got ammo?
-            if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
-                return Messages.getString("WeaponAttackAction.OutOfAmmo");
-            }
-
-            // Aeros must have enough ammo for the maximum rate of fire because
-            // they cannot lower it
-            if (ae.isAero() && usesAmmo && (ammo != null)
-                    && (ae.getTotalAmmoOfType(ammo.getType()) < weapon.getCurrentShots())) {
-                return Messages.getString("WeaponAttackAction.InsufficientAmmo");
-            }
-            
-            if ((ae instanceof LandAirMech) && (ae.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)
-                    && usesAmmo && ammo != null && !((AmmoType)ammo.getType()).canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
-                return Messages.getString("WeaponAttackAction.InvalidAmmoForFighter");
-            }
-
-            if (ae instanceof Tank) {
-                sensorHits = ((Tank) ae).getSensorHits();
-                if (sensorHits > 3) {
-                    return Messages.getString("WeaponAttackAction.SensorsDestroyed");
-                }
-                if (((Tank) ae).getStunnedTurns() > 0) {
-                    return Messages.getString("WeaponAttackAction.CrewStunned");
-                }
-            }
         }
+       
+placeholder       
 
         // Are we dumping that ammo?
         if (usesAmmo && ammo.isDumping()) {

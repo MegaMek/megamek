@@ -176,7 +176,7 @@ public class Tank extends Entity {
     /**
      * Alternate fuel for ICEs that affects operating range
      */
-    private boolean alcoholNatGasFueled = false;
+    private FuelType fuelType = FuelType.PETROCHEMICALS;
 
     public CrewType defaultCrewType() {
         return CrewType.CREW;
@@ -4191,10 +4191,10 @@ public class Tank extends Entity {
             case Engine.STEAM:
                 return getEngine().getWeightEngine(this) * 0.03;
             case Engine.COMBUSTION_ENGINE:
-                if (isAlcoholOrNaturalGasFueled()) {
-                    return getEngine().getWeightEngine(this) * 0.0125;
-                } else {
+                if (getICEFuelType() == FuelType.PETROCHEMICALS) {
                     return getEngine().getWeightEngine(this) * 0.01;
+                } else {
+                    return getEngine().getWeightEngine(this) * 0.0125;
                 }
             case Engine.BATTERY:
                 return getEngine().getWeightEngine(this) * 0.05;
@@ -4205,12 +4205,18 @@ public class Tank extends Entity {
         }
     }
 
-    public boolean isAlcoholOrNaturalGasFueled() {
-        return alcoholNatGasFueled;
+    /**
+     * The type of fuel for internal combustion engines. This has no meaning for
+     * other engine types.
+     *
+     * @return The ICE fuel type
+     */
+    public FuelType getICEFuelType() {
+        return fuelType;
     }
 
-    public void setAlcoholOrNaturalGasFueled(boolean fuel) {
-        alcoholNatGasFueled = fuel;
+    public void setICEFuelType(FuelType fuelType) {
+        this.fuelType = fuelType;
     }
 
     /**

@@ -22,12 +22,8 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.SupportTank;
-import megamek.common.Tank;
+import megamek.common.*;
+import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.BuildingBlock;
 
 public class BLKSupportTankFile extends BLKFile implements IMechLoader {
@@ -217,6 +213,18 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
 
         if (dataFile.exists("baseChassisFireConWeight")) {
             t.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
+        }
+
+        if (dataFile.exists("fuelType")) {
+            try {
+                t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
+            } catch (IllegalArgumentException ex) {
+                DefaultMmLogger.getInstance().error(getClass(), "getEntity()",
+                        "While loading " + t.getShortNameRaw()
+                                + ": Could not parse ICE fuel type "
+                                + dataFile.getDataAsString("fuelType")[0]);
+                t.setICEFuelType(FuelType.PETROCHEMICALS);
+            }
         }
 
         return t;

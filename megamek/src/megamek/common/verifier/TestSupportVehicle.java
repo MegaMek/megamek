@@ -663,6 +663,13 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     @Override
+    public double calculateWeight() {
+        double weight = super.calculateWeight();
+        weight += getFuelTonnage();
+        return roundWeight(weight);
+    }
+
+    @Override
     public double getWeightStructure() {
         double weight = supportVee.getWeight();
         weight *= SVType.getBaseChassisValue(supportVee);

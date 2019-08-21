@@ -83,6 +83,9 @@ import megamek.common.util.StringUtil;
 public abstract class BotClient extends Client {
     private Map<EntityMovementMode, BoardEdgePathFinder> deploymentPathFinders = new HashMap<>();
 
+    private List<Entity> currentTurnEnemyEntities;
+    private List<Entity> currentTurnFriendlyEntities;
+    
     // a frame, to show stuff in
     public JFrame frame;
     
@@ -335,28 +338,42 @@ public abstract class BotClient extends Client {
         return null;
     }
 
+    /**
+     * Lazy-loaded list of enemy entities that we should consider firing at.
+     * Only good for the current entity turn calculation, as this list can change between individual entity turns. 
+     */
     public List<Entity> getEnemyEntities() {
-        ArrayList<Entity> result = new ArrayList<>();
-        for (Entity entity : game.getEntitiesVector()) {
-            if (entity.getOwner().isEnemyOf(getLocalPlayer())
-                && (entity.getPosition() != null) && !entity.isOffBoard()
-                && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
-
-                result.add(entity);
+        if(currentTurnEnemyEntities == null) {
+            currentTurnEnemyEntities = new ArrayList<>();
+            for (Entity entity : game.getEntitiesVector()) {
+                if (entity.getOwner().isEnemyOf(getLocalPlayer())
+                    && (entity.getPosition() != null) && !entity.isOffBoard()
+                    && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
+    
+                    currentTurnEnemyEntities.add(entity);
+                }
             }
         }
-        return result;
+        
+        return currentTurnEnemyEntities;
     }
 
+    /**
+     * Lazy-loaded list of friendly entities.
+     * Only good for the current entity turn calculation, as this list can change between individual entity turns. 
+     */
     public List<Entity> getFriendEntities() {
-        List<Entity> result = new ArrayList<>();
-        for (Entity entity : game.getEntitiesVector()) {
-            if (!entity.getOwner().isEnemyOf(getLocalPlayer()) && (entity.getPosition() != null)
-                && !entity.isOffBoard()) {
-                result.add(entity);
+        if(currentTurnFriendlyEntities == null) {
+            currentTurnFriendlyEntities = new ArrayList<>();
+            for (Entity entity : game.getEntitiesVector()) {
+                if (!entity.getOwner().isEnemyOf(getLocalPlayer()) && (entity.getPosition() != null)
+                    && !entity.isOffBoard()) {
+                    currentTurnFriendlyEntities.add(entity);
+                }
             }
         }
-        return result;
+        
+        return currentTurnFriendlyEntities;
     }
 
     // TODO: move initMovement to be called on phase end
@@ -481,6 +498,10 @@ public abstract class BotClient extends Client {
     }
 
     private synchronized void calculateMyTurn() {
+        // clear out transient data
+        currentTurnEnemyEntities = null;
+        currentTurnFriendlyEntities = null;
+        
         try {
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 MovePath mp;

@@ -678,7 +678,7 @@ public class TestSupportVehicle extends TestEntity {
                 }
             }
         }
-        return roundWeight(weight);
+        return ceil(weight, usesKgStandard(getEntity()) ? Ceil.KILO : Ceil.HALFTON);
     }
 
     public double getFuelTonnage() {

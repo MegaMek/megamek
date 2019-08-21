@@ -30,13 +30,10 @@ import java.util.Vector;
 
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.autocannons.HVACWeapon;
-import megamek.common.weapons.bayweapons.MMLBayWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.Server;
-
-import javax.print.attribute.SupportedValuesAttribute;
 
 /**
  * Represents any type of equipment mounted on a mechs, excluding systems and
@@ -53,7 +50,7 @@ public class EquipmentType implements ITechnology {
     /** Default value for support vehicle slot cost. Those that differ from mechs are assigned
      * a value >= 0
      */
-    public static final int MECH_SLOT_COST = -1;
+    private static final int MECH_SLOT_COST = -1;
 
     public static final int T_ARMOR_UNKNOWN = -1;
     public static final int T_ARMOR_STANDARD = 0;

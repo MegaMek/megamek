@@ -3796,9 +3796,11 @@ placeholder
         // Injuries
         
         // Aero unit pilot/crew hits
-        int pilothits = ae.getCrew().getHits();
-        if ((pilothits > 0) && !ae.isCapitalFighter()) {
-            toHit.addModifier(pilothits, Messages.getString("WeaponAttackAction.PilotHits"));
+        if (ae instanceof Aero) {
+            int pilothits = ae.getCrew().getHits();
+            if ((pilothits > 0) && !ae.isCapitalFighter()) {
+                toHit.addModifier(pilothits, Messages.getString("WeaponAttackAction.PilotHits"));
+            }
         }
         
         // Vehicle crew hits

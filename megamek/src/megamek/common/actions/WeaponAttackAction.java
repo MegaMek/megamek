@@ -2844,7 +2844,7 @@ placeholder
         }
         
         // AAA mode makes targeting large craft more difficult
-        if (wtype.hasModes() && weapon.curMode().equals("AAA") && te.isLargeCraft()) {
+        if (wtype.hasModes() && weapon.curMode().equals("AAA") && te != null && te.isLargeCraft()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AAALaserAtShip"));
         }
         
@@ -2881,7 +2881,7 @@ placeholder
         
         // Capital weapon (except missiles) penalties at small targets
         if (wtype.isCapital() && (wtype.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE)
-                && (wtype.getAtClass() != WeaponType.CLASS_AR10) && !te.isLargeCraft()) {
+                && (wtype.getAtClass() != WeaponType.CLASS_AR10) && te != null && !te.isLargeCraft()) {
             // Capital Lasers have an AAA mode for shooting at small targets
             int aaaMod = 0;
             if (wtype.hasModes() && weapon.curMode().equals("AAA")) {

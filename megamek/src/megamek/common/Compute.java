@@ -6845,6 +6845,9 @@ public class Compute {
      * @return       The minimum base crew
      */
     public static int getSVBaseCrewNeeds(Entity entity) {
+        if (entity.isTrailer() && (entity.getEngine().getEngineType() == Engine.NONE)) {
+            return 0;
+        }
         final boolean naval = entity.getMovementMode().equals(EntityMovementMode.NAVAL)
                 || entity.getMovementMode().equals(EntityMovementMode.HYDROFOIL)
                 || entity.getMovementMode().equals(EntityMovementMode.SUBMARINE);

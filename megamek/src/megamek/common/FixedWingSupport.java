@@ -35,8 +35,6 @@ public class FixedWingSupport extends ConvFighter {
     private static String[] LOCATION_NAMES =
         { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Body" };
     private int[] barRating;
-    /** Vehicles can be constructed with seating for additional crew. This has no effect on play */
-    private int extraCrewSeats = 0;
 
     public FixedWingSupport() {
         super();
@@ -155,30 +153,37 @@ public class FixedWingSupport extends ConvFighter {
         return 1000.0 / kgPerFuelPoint();
     }
 
-    protected static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    protected static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    protected static final TechAdvancement TA_AIRSHIP_SUPPORT_SMALL = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_SMALL = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(RATING_A).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    protected static final TechAdvancement TA_AIRSHIP_SUPPORT_MEDIUM = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_MEDIUM = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     // Availability missing from TO. Using medium
-    protected static final TechAdvancement TA_AIRSHIP_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
             .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    // Availability missing from TO. Using similar values from other support vees.
     // Also using early spaceflight for intro dates based on common sense.
-    protected static final TechAdvancement TA_SATELLITE = new TechAdvancement(TECH_BASE_ALL)
+    private static final TechAdvancement TA_SATELLITE_SMALL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+            .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    private static final TechAdvancement TA_SATELLITE_MEDIUM = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+            .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    private static final TechAdvancement TA_SATELLITE_LARGE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
             .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
@@ -198,7 +203,13 @@ public class FixedWingSupport extends ConvFighter {
                 return TA_AIRSHIP_SUPPORT_SMALL;
             }
         } else if (movementMode.equals(EntityMovementMode.STATION_KEEPING)) {
-            return TA_SATELLITE;
+            if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                return TA_SATELLITE_LARGE;
+            } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
+                return TA_SATELLITE_MEDIUM;
+            } else {
+                return TA_SATELLITE_SMALL;
+            }
         } else if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
             return TA_FIXED_WING_SUPPORT_LARGE;
         } else {
@@ -272,17 +283,6 @@ public class FixedWingSupport extends ConvFighter {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
 
-    /**
-     * @return Additional seats beyond the minimum crew requirements
-     */
-    public int getExtraCrewSeats() {
-        return extraCrewSeats;
-    }
-
-    public void setExtraCrewSeats(int seats) {
-        this.extraCrewSeats = seats;
-    }
-    
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);

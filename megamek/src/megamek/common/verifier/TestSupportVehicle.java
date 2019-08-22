@@ -654,9 +654,18 @@ public class TestSupportVehicle extends TestEntity {
         return false;
     }
 
-    private double roundWeight(double val) {
+    /**
+     * Rounds up to the nearest half ton or kilogram as appropriate to the vehicle
+     *
+     * @param val The weight to round, in tons
+     * @return    The rounded weight, in tons
+     */
+    private double ceilWeight(double val) {
         if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            return round(val, Ceil.KILO);
+            // Deal first with possible variances from floating point precision
+            // by rounding to the gram, then round the result up to the next kilogram.
+            // Then convert back to metric tons.
+            return Math.ceil(Math.round(val * 1000000.0) / 1000.0) / 1000.0;
         } else {
             return ceil(val, Ceil.HALFTON);
         }
@@ -666,7 +675,7 @@ public class TestSupportVehicle extends TestEntity {
     public double calculateWeight() {
         double weight = super.calculateWeight();
         weight += getFuelTonnage();
-        return roundWeight(weight);
+        return ceilWeight(weight);
     }
 
     @Override
@@ -685,7 +694,7 @@ public class TestSupportVehicle extends TestEntity {
                 }
             }
         }
-        return ceil(weight, usesKgStandard(getEntity()) ? Ceil.KILO : Ceil.HALFTON);
+        return ceilWeight(weight);
     }
 
     public double getFuelTonnage() {
@@ -713,7 +722,7 @@ public class TestSupportVehicle extends TestEntity {
                 weight += ((Bay) t).getWeight();
             }
         }
-        return roundWeight(weight);
+        return ceilWeight(weight);
     }
 
     @Override
@@ -745,6 +754,7 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double getWeightPowerAmp() {
+        // Small support vees only use infantry weapons, which do not require amplifiers.
         if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             return 0.0;
         }
@@ -762,7 +772,7 @@ public class TestSupportVehicle extends TestEntity {
                     weight += m.getLinkedBy().getType().getTonnage(supportVee);
                 }
             }
-            return roundWeight(weight / 10);
+            return ceilWeight(weight / 10);
         }
         return 0.0;
     }

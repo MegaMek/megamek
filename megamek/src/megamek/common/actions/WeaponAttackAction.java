@@ -76,6 +76,7 @@ import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.LaserBayWeapon;
@@ -375,7 +376,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         && (munition == AmmoType.M_CLUSTER))
                         || (munition == AmmoType.M_FLAK) || (atype.getAmmoType() == AmmoType.T_HAG));
         
-        boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals("Indirect"));
+        boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Missile_Indirect));
         
         boolean isInferno = ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_SRM)
@@ -917,9 +918,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Ammo-specific Reasons
-        
         if (atype != null) {
-        
+            // Are we dumping that ammo?
+            if (usesAmmo && ammo != null && ammo.isDumping()) {
+                ae.loadWeaponWithSameAmmo(weapon);
+                if ((ammo.getUsableShotsLeft() == 0) || ammo.isDumping()) {
+                    return Messages.getString("WeaponAttackAction.DumpingAmmo");
+                }
+            }
             // make sure weapon can deliver flares
             if ((target.getTargetType() == Targetable.TYPE_FLARE_DELIVER) && !(usesAmmo
                     && ((atype.getAmmoType() == AmmoType.T_LRM) 
@@ -957,8 +963,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return Messages.getString("WeaponAttackAction.NoMinefields");
             }
             
-            
-            
             // These ammo types can only target hexes for minefield delivery
             if (((atype.getAmmoType() == AmmoType.T_LRM) 
                     || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -985,6 +989,11 @@ placeholder
         //is the attacker even active?
         if (ae.isShutDown() || !ae.getCrew().isActive()) {
             return Messages.getString("WeaponAttackAction.AttackerNotReady");
+        }
+        
+        // Only large spacecraft can shoot while evading
+        if (ae.isEvading() && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) {
+            return Messages.getString("WeaponAttackAction.AeEvading");
         }
 
         //If we're lying mines, we can't shoot.
@@ -1306,20 +1315,7 @@ placeholder
                 return Messages.getString("WeaponAttackAction.WeaponNotReady");
             }
         }
-       
 placeholder       
-
-        // Are we dumping that ammo?
-        if (usesAmmo && ammo.isDumping()) {
-            ae.loadWeaponWithSameAmmo(weapon);
-            if ((ammo.getUsableShotsLeft() == 0) || ammo.isDumping()) {
-                return Messages.getString("WeaponAttackAction.DumpingAmmo");
-            }
-        }
-
-        if (ae.isEvading() && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) {
-            return Messages.getString("WeaponAttackAction.AeEvading");
-        }
 
         if (ae instanceof Aero) {
             Aero aero = (Aero) ae;
@@ -1385,8 +1381,8 @@ placeholder
 
         // you cannot bracket small craft at short range
         if (wtype.hasModes()
-                && (weapon.curMode().equals("Bracket 80%") || weapon.curMode().equals("Bracket 60%")
-                        || weapon.curMode().equals("Bracket 40%"))
+                && (weapon.curMode().equals(Weapon.Mode_Capital_Bracket_80) || weapon.curMode().equals(Weapon.Mode_Capital_Bracket_60)
+                        || weapon.curMode().equals(Weapon.Mode_Capital_Bracket_40))
                 && target.isAero() && !te.isLargeCraft()
                 && (RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon),
                         true, false) == RangeType.RANGE_SHORT)) {
@@ -1394,13 +1390,13 @@ placeholder
         }
 
         // you must have enough weapons in your bay to be able to use bracketing
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 80%") && (weapon.getBayWeapons().size() < 2)) {
+        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_80) && (weapon.getBayWeapons().size() < 2)) {
             return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
         }
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 60%") && (weapon.getBayWeapons().size() < 3)) {
+        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_60) && (weapon.getBayWeapons().size() < 3)) {
             return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
         }
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 40%") && (weapon.getBayWeapons().size() < 4)) {
+        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_40) && (weapon.getBayWeapons().size() < 4)) {
             return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
         }
         
@@ -2839,7 +2835,7 @@ placeholder
         }
         
         // AAA mode makes targeting large craft more difficult
-        if (wtype.hasModes() && weapon.curMode().equals("AAA") && te != null && te.isLargeCraft()) {
+        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_CapLaser_AAA) && te != null && te.isLargeCraft()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AAALaserAtShip"));
         }
         
@@ -2854,13 +2850,13 @@ placeholder
         }
 
         // Bracketing modes
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 80%")) {
+        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_80)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Bracket80"));
         }
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 60%")) {
+        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_60)) {
             toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Bracket60"));
         }
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 40%")) {
+        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_40)) {
             toHit.addModifier(-3, Messages.getString("WeaponAttackAction.Bracket40"));
         }
         
@@ -2879,7 +2875,7 @@ placeholder
                 && (wtype.getAtClass() != WeaponType.CLASS_AR10) && te != null && !te.isLargeCraft()) {
             // Capital Lasers have an AAA mode for shooting at small targets
             int aaaMod = 0;
-            if (wtype.hasModes() && weapon.curMode().equals("AAA")) {
+            if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_CapLaser_AAA)) {
                 aaaMod = 2;
             }
             if (wtype.isSubCapital()) {
@@ -2953,7 +2949,7 @@ placeholder
         // +1 to hit if the Kinder Rapid-Fire ACs optional rule is turned on, but only Jams on a 2.
         // See TacOps Autocannons for the rest of the rules
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC) 
-                && weapon.curMode().equals("Rapid")) {
+                && weapon.curMode().equals(Weapon.Mode_AC_Rapid)) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.AcRapid"));
         }
         

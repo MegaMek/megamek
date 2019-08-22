@@ -880,6 +880,9 @@ public class BLKFile {
 
         if (t instanceof Tank) {
             Tank tank = (Tank) t;
+            if (tank.isSupportVehicle()) {
+                blk.writeBlockData("fuel", tank.getFuelTonnage());
+            }
             if (tank.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) {
                 blk.writeBlockData("fuelType", tank.getICEFuelType().toString());
             }

@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.47.1-SNAPSHOT
++ PR #1451: Enable bot use of searchlights when necessary
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

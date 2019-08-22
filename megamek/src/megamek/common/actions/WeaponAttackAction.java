@@ -1021,17 +1021,12 @@ placeholder
             if (sensorHits > 3) {
                 return Messages.getString("WeaponAttackAction.SensorsDestroyed");
             }
-        } else if (ae instanceof Aero) {
-            // Aeros with 3 sensor hits can't shoot
-            if (((Aero) ae).isAeroSensorDestroyed()) {
-                return Messages.getString("WeaponAttackAction.SensorsDestroyed");
-            }
         }
         // Industrialmechs and other unit types have destroyed sensors with 2 or more hits
         if ((sensorHits > 1)
                 || ((ae instanceof Mech) && (((Mech) ae).isIndustrial() && (sensorHits == 1)))) {
             return Messages.getString("WeaponAttackAction.SensorsDestroyed");
-        } 
+        }
 
         // Invalid Target Reasons
 placeholder     
@@ -3464,7 +3459,9 @@ placeholder
         // Generic modifiers that apply to airborne and ground attackers
         
         // actuator & sensor damage to attacker (includes partial repairs)
-        toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+        if (weapon != null) {
+            toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+        }
         
         // heat
         if (ae.getHeatFiringModifier() != 0) {
@@ -3473,7 +3470,7 @@ placeholder
         
         // Secondary targets modifier, if this is not a iNarc Nemesis confused attack
         // Also does not apply for altitude bombing or strafing
-        if (!isNemesisConfused && !wtype.hasFlag(WeaponType.F_ALT_BOMB) && !isStrafing) {
+        if (!isNemesisConfused && wtype != null && !wtype.hasFlag(WeaponType.F_ALT_BOMB) && !isStrafing) {
             toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
         }
         
@@ -3605,7 +3602,7 @@ placeholder
             }
             // units making air to ground attacks are easier to hit by air-to-air
             // attacks
-            if ((null != te) && Compute.isAirToAir(ae, target)) {
+            if (Compute.isAirToAir(ae, target)) {
                 for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
                     EntityAction ea = i.nextElement();
                     if (!(ea instanceof WeaponAttackAction)) {

@@ -3201,6 +3201,13 @@ public class FireControl {
             }
         }
         
+        List<SearchlightAttackAction> searchlights = new ArrayList<>();
+        for (EntityAction action : shooter.getGame().getActionsVector()) {
+            if (action instanceof SearchlightAttackAction) {
+                searchlights.add((SearchlightAttackAction) action);
+            }
+        }
+        
         // for each potential target on the board, draw a line between "shooter" and target
         // and assign it a score. Score is determined by:
         // # hostiles lit up - # friendlies lit up + # targets lit up
@@ -3217,6 +3224,25 @@ public class FireControl {
                 }
                 
                 for(Entity ent : shooter.getGame().getEntitiesVector(intervening, true)) {
+                    // don't count ourselves, or the target if it's already lit itself up
+                    // or the target if it will be lit up by a previously declared search light
+                    if((ent.getId() == shooter.getId()) || ent.isIlluminated()) {
+                        continue;
+                    } else {
+                        boolean willbeIlluminated = false;
+                        
+                        for(SearchlightAttackAction searchlight : searchlights) {
+                            if(searchlight.willIlluminate(shooter.getGame(), ent)) {
+                                willbeIlluminated = true;
+                                break;
+                            }
+                        }
+                        
+                        if(willbeIlluminated) {
+                            continue;
+                        }
+                    }
+                    
                     if(ent.isEnemyOf(shooter)) {
                         score++;
                     } else {
@@ -3229,7 +3255,8 @@ public class FireControl {
                 }
             }
             
-            if(score > bestTargetScore) {
+            // don't bother considering impossible searchlight actions
+            if(score > bestTargetScore && SearchlightAttackAction.isPossible(shooter.getGame(), shooter.getId(), target, null)) {
                 bestTargetScore = score;
                 bestTarget = target;
             }

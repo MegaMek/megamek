@@ -1017,7 +1017,24 @@ placeholder
         // Critical Damage Reasons
 placeholder
 
-        // Otherwise, are the sensors operational?
+        // Aerospace units can't fire if the FCS/CIC is destroyed
+        if (ae instanceof Aero) {
+            Aero aero = (Aero) ae;
+            // FCS hits
+            int fcs = aero.getFCSHits();
+            if (fcs > 2) {
+                return Messages.getString("WeaponAttackAction.FCSDestroyed");
+            }
+            // JS/WS/SS have CIC instead of FCS
+            if (aero instanceof Jumpship) {
+                Jumpship js = (Jumpship) aero;
+                int cic = js.getCICHits();
+                if (cic > 2) {
+                    return Messages.getString("WeaponAttackAction.CICDestroyed");
+                }
+            }
+        }
+        // Are the sensors operational?
         // Battlemech sensors are destroyed after 2 hits, unless they have a torso-mounted cockpit
         int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
         if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
@@ -1025,6 +1042,7 @@ placeholder
             if (sensorHits > 2) {
                 return Messages.getString("WeaponAttackAction.SensorsDestroyed");
             }
+        // Vehicles Sensor Hits
         } else if (ae instanceof Tank) {
             sensorHits = ((Tank) ae).getSensorHits();
             if (sensorHits > 3) {
@@ -1257,6 +1275,51 @@ placeholder
                 return Messages.getString("WeaponAttackAction.ASEWAtmo");
             }
             
+            if (ae.isAero()) {
+                // Can't mix bombing with other attack types
+                // also for altitude bombing, the target hex must either be the first in a line
+                // adjacent to a prior one
+                boolean adjacentAltBomb = false;
+                boolean firstAltBomb = true;
+                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                    Object o = i.nextElement();
+                    if (!(o instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                    if (prevAttack.getEntityId() == attackerId) {
+                        // You also can't mix and match the 3 different types of bombing:  Space, Dive and Altitude
+                        if ((weaponId != prevAttack.getWeaponId())
+                                && ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
+                            return Messages.getString("WeaponAttackAction.BusySpaceBombing");
+                        }
+                        if ((weaponId != prevAttack.getWeaponId())
+                                && ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+                            return Messages.getString("WeaponAttackAction.BusyDiveBombing");
+                        }
+                        if ((weaponId != prevAttack.getWeaponId())
+                                && ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_ALT_BOMB)) {
+                            if (!wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                                return Messages.getString("WeaponAttackAction.BusyAltBombing");
+                            }
+                            firstAltBomb = false;
+                            int bombDistance = prevAttack.getTarget(game).getPosition().distance(target.getPosition());
+                            if (bombDistance == 1) {
+                                adjacentAltBomb = true;
+                            }
+                            // For altitude bombing, prevent targeting the same hex twice
+                            if (bombDistance == 0) {
+                                return Messages.getString("WeaponAttackAction.AlreadyBombingHex");
+                            }
+
+                        }
+                    }
+                }
+                if (wtype.hasFlag(WeaponType.F_ALT_BOMB) && !firstAltBomb && !adjacentAltBomb) {
+                    return Messages.getString("WeaponAttackAction.BombNotInLine");
+                }
+            }
+            
             // B-Pods
 
             if (wtype.hasFlag(WeaponType.F_B_POD)) {
@@ -1310,102 +1373,44 @@ placeholder
                 return Messages.getString("WeaponAttackAction.TSEMPRecharging");
             }
             
+            // Weapon Bays
+            
+            // Large Craft weapon bays cannot bracket small craft at short range
+            if (wtype.hasModes()
+                    && (weapon.curMode().equals(Weapon.Mode_Capital_Bracket_80) || weapon.curMode().equals(Weapon.Mode_Capital_Bracket_60)
+                            || weapon.curMode().equals(Weapon.Mode_Capital_Bracket_40))
+                    && target.isAero() && !te.isLargeCraft()
+                    && (RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon),
+                            true, false) == RangeType.RANGE_SHORT)) {
+                return Messages.getString("WeaponAttackAction.TooCloseForSCBracket");
+            }
+            
+            // you must have enough weapons in your bay to be able to use bracketing
+            if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_80) && (weapon.getBayWeapons().size() < 2)) {
+                return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
+            }
+            if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_60) && (weapon.getBayWeapons().size() < 3)) {
+                return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
+            }
+            if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_40) && (weapon.getBayWeapons().size() < 4)) {
+                return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
+            }
+            
+            // If you're an aero, can't fire an AMS Bay at all or a Point Defense bay that's in PD Mode
+            if (wtype.hasFlag(WeaponType.F_AMSBAY)) {
+                return Messages.getString("WeaponAttackAction.AutoWeapon");
+            } else if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Point_Defense)) {
+                return Messages.getString("WeaponAttackAction.PDWeapon");
+            }
+            
             // weapon operational?
             if (!weapon.canFire(isStrafing)) {
                 return Messages.getString("WeaponAttackAction.WeaponNotReady");
             }
         }
 placeholder       
-
-        if (ae instanceof Aero) {
-            Aero aero = (Aero) ae;
-            // FCS hits
-            int fcs = aero.getFCSHits();
-            if (fcs > 2) {
-                return Messages.getString("WeaponAttackAction.FCSDestroyed");
-            }
-
-            if (aero instanceof Jumpship) {
-                Jumpship js = (Jumpship) aero;
-                int cic = js.getCICHits();
-                if (cic > 2) {
-                    return Messages.getString("WeaponAttackAction.CICDestroyed");
-                }
-            }
-        }
         
-        if (ae.isAero()) {
-            // if bombing, then can't do other attacks
-            // also for altitude bombing, you must either be the first or be
-            // adjacent to a prior one
-            boolean adjacentAltBomb = false;
-            boolean firstAltBomb = true;
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
-                if (prevAttack.getEntityId() == attackerId) {
-                    if ((weaponId != prevAttack.getWeaponId())
-                            && ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
-                        return Messages.getString("WeaponAttackAction.BusySpaceBombing");
-                    }
-                    if ((weaponId != prevAttack.getWeaponId())
-                            && ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
-                        return Messages.getString("WeaponAttackAction.BusyDiveBombing");
-                    }
-                    if ((weaponId != prevAttack.getWeaponId())
-                            && ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponType.F_ALT_BOMB)) {
-                        // if the current attack is not an altitude bombing then
-                        // return
-                        if (!wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
-                            return Messages.getString("WeaponAttackAction.BusyAltBombing");
-                        }
-                        firstAltBomb = false;
-                        int distance = prevAttack.getTarget(game).getPosition().distance(target.getPosition());
-                        if (distance == 1) {
-                            adjacentAltBomb = true;
-                        }
-                        if (distance == 0) {
-                            return Messages.getString("WeaponAttackAction.AlreadyBombingHex");
-                        }
-
-                    }
-                }
-            }
-            if (wtype.hasFlag(WeaponType.F_ALT_BOMB) && !firstAltBomb && !adjacentAltBomb) {
-                return Messages.getString("WeaponAttackAction.BombNotInLine");
-            }
-        }
-
-        // you cannot bracket small craft at short range
-        if (wtype.hasModes()
-                && (weapon.curMode().equals(Weapon.Mode_Capital_Bracket_80) || weapon.curMode().equals(Weapon.Mode_Capital_Bracket_60)
-                        || weapon.curMode().equals(Weapon.Mode_Capital_Bracket_40))
-                && target.isAero() && !te.isLargeCraft()
-                && (RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon),
-                        true, false) == RangeType.RANGE_SHORT)) {
-            return Messages.getString("WeaponAttackAction.TooCloseForSCBracket");
-        }
-
-        // you must have enough weapons in your bay to be able to use bracketing
-        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_80) && (weapon.getBayWeapons().size() < 2)) {
-            return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
-        }
-        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_60) && (weapon.getBayWeapons().size() < 3)) {
-            return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
-        }
-        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_40) && (weapon.getBayWeapons().size() < 4)) {
-            return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
-        }
         
-        // If you're an aero, can't fire an AMS Bay or a Point Defense bay in PD Mode
-        if (wtype.hasFlag(WeaponType.F_AMSBAY)) {
-            return Messages.getString("WeaponAttackAction.AutoWeapon");
-        } else if (wtype.hasModes() && weapon.curMode().equals("Point Defense")) {
-            return Messages.getString("WeaponAttackAction.PDWeapon");
-        }
         
         // Is the weapon blocked by a tractor/trailer?
         if (ae.getTowing() != Entity.NONE || ae.getTowedBy() != Entity.NONE) {

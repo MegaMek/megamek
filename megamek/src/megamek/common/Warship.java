@@ -211,7 +211,7 @@ public class Warship extends Jumpship {
     
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[23];
+        double[] costs = new double[24];
         int costIdx = 0;
         double cost = 0;
 
@@ -298,12 +298,18 @@ public class Warship extends Jumpship {
         // Transport Bays
         int baydoors = 0;
         long bayCost = 0;
+        long quartersCost = 0;
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            bayCost += next.getCost();
+            if (next.isQuarters()) {
+                quartersCost += next.getCost();
+            } else {
+                bayCost += next.getCost();
+            }
         }
 
         costs[costIdx++] += bayCost + (baydoors * 1000);
+        costs[costIdx++] = quartersCost;
 
         // Weapons and Equipment
         // HPG
@@ -334,7 +340,7 @@ public class Warship extends Jumpship {
                 "Structural Integrity", "Drive Unit", "Engine", "Engine Control Unit",
                 "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
                 "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
-                "Bays/Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
+                "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 

@@ -1407,6 +1407,18 @@ placeholder
                 return Messages.getString("WeaponAttackAction.TooShortForDirectArty");
             }
             
+            // Ballistic and Missile weapons are subject to wind conditions
+            int windCond = game.getPlanetaryConditions().getWindStrength();
+            if ((windCond == PlanetaryConditions.WI_TORNADO_F13) && wtype.hasFlag(WeaponType.F_MISSILE)
+                    && !game.getBoard().inSpace()) {
+                return Messages.getString("WeaponAttackAction.NoMissileTornado");
+            }
+
+            if ((windCond == PlanetaryConditions.WI_TORNADO_F4) && !game.getBoard().inSpace()
+                    && (wtype.hasFlag(WeaponType.F_MISSILE) || wtype.hasFlag(WeaponType.F_BALLISTIC))) {
+                return Messages.getString("WeaponAttackAction.F4Tornado");
+            }
+            
             // Battle Armor
             
             // BA can only make one AP attack
@@ -1429,6 +1441,27 @@ placeholder
                     }
                 }
             }
+            
+            // BA compact narc: we have one weapon for each trooper, but you
+            // can fire only at one target at a time
+            if (wtype.getName().equals("Compact Narc")) {
+                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                    EntityAction ea = i.nextElement();
+                    if (!(ea instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    final WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                    if (prevAttack.getEntityId() == attackerId) {
+                        Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+                        if (prevWeapon.getType().getName().equals("Compact Narc")) {
+                            if (prevAttack.getTargetId() != target.getTargetId()) {
+                                return Messages.getString("WeaponAttackAction.OneTargetForCNarc");
+                            }
+                        }
+                    }
+                }
+            }
+            
             // BA NARCs and Tasers can only fire at one target in a round
             if ((ae instanceof BattleArmor)
                     && (wtype.hasFlag(WeaponType.F_TASER) || wtype.getAmmoType() == AmmoType.T_NARC)) {
@@ -1454,6 +1487,7 @@ placeholder
                     }
                 }
             }
+            
             // BA squad support weapons require that Trooper 1 be alive to use
             if (weapon.isSquadSupportWeapon() && (ae instanceof BattleArmor)) {
                 if (!((BattleArmor) ae).isTrooperActive(BattleArmor.LOC_TROOPER_1)) {
@@ -1568,6 +1602,54 @@ placeholder
                 return Messages.getString("WeaponAttackAction.CantIntentionallyBurn");
             }
             
+            // Conventional Infantry Attacks
+            
+            if (isAttackerInfantry && !(ae instanceof BattleArmor)) {
+                // 0 MP infantry units: move or shoot, except for anti-mech attacks,
+                // those are handled above
+                if ((ae.getMovementMode() == EntityMovementMode.INF_LEG) && (ae.getWalkMP() == 0)
+                        && (ae.moved != EntityMovementType.MOVE_NONE)) {
+                    return Messages.getString("WeaponAttackAction.0MPInf");
+                }
+                // Can't shoot if platoon used fast movement
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE)
+                        && (ae.moved == EntityMovementType.MOVE_RUN)) {
+                    return Messages.getString("WeaponAttackAction.CantShootAndFastMove");
+                }
+                // check for trying to fire field gun after moving
+                if ((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (ae.moved != EntityMovementType.MOVE_NONE)) {
+                    return Messages.getString("WeaponAttackAction.CantMoveAndFieldGun");
+                }
+                // check for mixing infantry and field gun attacks
+                double fieldGunWeight = 0.0;
+                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                    EntityAction ea = i.nextElement();
+                    if (!(ea instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    final WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                    if (prevAttack.getEntityId() == attackerId) {
+                        Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+                        if ((prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY)
+                                && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS))
+                                || (weapon.getType().hasFlag(WeaponType.F_INFANTRY)
+                                        && (prevWeapon.getLocation() == Infantry.LOC_FIELD_GUNS))) {
+                            return Messages.getString("WeaponAttackAction.FieldGunOrSAOnly");
+                        }
+                        if ((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (weaponId != prevAttack.getWeaponId())) {
+                            fieldGunWeight += prevWeapon.getType().getTonnage(ae);
+                        }
+                    }
+                }
+                // the total tonnage of field guns fired has to be less than or
+                // equal to the men in the platoon
+                if (weapon.getLocation() == Infantry.LOC_FIELD_GUNS) {
+                    if (((Infantry) ae).getShootingStrength() < Math.ceil(fieldGunWeight + wtype.getTonnage(ae))) {
+                        return Messages.getString("WeaponAttackAction.NoFieldGunCrew");
+                    }
+                }
+            }
+            
             // Extinguishing Fires
 
             // You can use certain types of flamer/sprayer ammo or infantry firefighting engineers
@@ -1598,6 +1680,63 @@ placeholder
                             || Compute.canSee(game, ae, target))
                     && !(wtype instanceof ArtilleryCannonWeapon) && !(wtype instanceof MekMortarWeapon)) {
                 return Messages.getString("WeaponAttackAction.NoIndirectWithLOS");
+            }
+            
+            // MG arrays
+            
+            // Can't fire one if none of the component MGs are functional
+            if (wtype.hasFlag(WeaponType.F_MGA) && (weapon.getCurrentShots() == 0)) {
+                return Messages.getString("WeaponAttackAction.NoWorkingMGs");
+            }
+            // Or if the array is off
+            if (wtype.hasFlag(WeaponType.F_MGA) && wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_AMS_Off)) {
+                return Messages.getString("WeaponAttackAction.MGArrayOff");
+            } else if (wtype.hasFlag(WeaponType.F_MG)) {
+                // and you can't fire an individual MG if it's in an array
+                if (ae.hasLinkedMGA(weapon)) {
+                    return Messages.getString("WeaponAttackAction.MGPartOfArray");
+                }
+            }
+            
+            // Some weapons can only be fired by themselves
+            
+            // Check to see if another solo weapon was fired
+            boolean hasSoloAttack = false;
+            String soloWeaponName = "";
+            for (EntityAction ea : game.getActionsVector()) {
+                if ((ea.getEntityId() == attackerId) && (ea instanceof WeaponAttackAction)) {
+                    WeaponAttackAction otherWAA = (WeaponAttackAction) ea;
+                    final Mounted otherWeapon = ae.getEquipment(otherWAA.getWeaponId());
+
+                    if (!(otherWeapon.getType() instanceof WeaponType)) {
+                        continue;
+                    }
+                    final WeaponType otherWtype = (WeaponType) otherWeapon.getType();
+                    hasSoloAttack |= (otherWtype.hasFlag(WeaponType.F_SOLO_ATTACK) && otherWAA.getWeaponId() != weaponId);
+                    if (hasSoloAttack) {
+                        soloWeaponName = otherWeapon.getName();
+                        break;
+                    }
+                }
+            }
+            if (hasSoloAttack) {
+                return String.format(Messages.getString("WeaponAttackAction.CantFireWithOtherWeapons"), soloWeaponName);
+            }
+            
+            // Handle solo attack weapons.
+            if (wtype.hasFlag(WeaponType.F_SOLO_ATTACK)) {
+                for (EntityAction ea : game.getActionsVector()) {
+                    if (!(ea instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                    if (prevAttack.getEntityId() == attackerId) {
+                        // If the attacker fires another weapon, this attack fails.
+                        if (weaponId != prevAttack.getWeaponId()) {
+                            return Messages.getString("WeaponAttackAction.CantMixAttacks");
+                        }
+                    }
+                }
             }
             
             // TAG
@@ -1660,130 +1799,6 @@ placeholder
             }
         }
 placeholder       
-
-        // MG arrays
-        if (wtype.hasFlag(WeaponType.F_MGA) && (weapon.getCurrentShots() == 0)) {
-            return Messages.getString("WeaponAttackAction.NoWorkingMGs");
-        }
-        if (wtype.hasFlag(WeaponType.F_MGA) && wtype.hasModes() && weapon.curMode().equals("Off")) {
-            return Messages.getString("WeaponAttackAction.MGArrayOff");
-        } else if (wtype.hasFlag(WeaponType.F_MG)) {
-            if (ae.hasLinkedMGA(weapon)) {
-                return Messages.getString("WeaponAttackAction.MGPartOfArray");
-            }
-        }
-        // Check to see if another solo weapon was fired
-        boolean hasSoloAttack = false;
-        String soloWeaponName = "";
-        for (EntityAction ea : game.getActionsVector()) {
-            if ((ea.getEntityId() == attackerId) && (ea instanceof WeaponAttackAction)) {
-                WeaponAttackAction otherWAA = (WeaponAttackAction) ea;
-                final Mounted otherWeapon = ae.getEquipment(otherWAA.getWeaponId());
-
-                if (!(otherWeapon.getType() instanceof WeaponType)) {
-                    continue;
-                }
-                final WeaponType otherWtype = (WeaponType) otherWeapon.getType();
-                hasSoloAttack |= (otherWtype.hasFlag(WeaponType.F_SOLO_ATTACK) && otherWAA.getWeaponId() != weaponId);
-                if (hasSoloAttack) {
-                    soloWeaponName = otherWeapon.getName();
-                    break;
-                }
-            }
-        }
-        if (hasSoloAttack) {
-            return String.format(Messages.getString("WeaponAttackAction.CantFireWithOtherWeapons"), soloWeaponName);
-        }
-        
-        // Handle solo attack weapons.
-        if (wtype.hasFlag(WeaponType.F_SOLO_ATTACK)) {
-            for (EntityAction ea : game.getActionsVector()) {
-                if (!(ea instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                if (prevAttack.getEntityId() == attackerId) {
-                    // If the attacker fires another weapon, this attack fails.
-                    if (weaponId != prevAttack.getWeaponId()) {
-                        return Messages.getString("WeaponAttackAction.CantMixAttacks");
-                    }
-                }
-            }
-        } else if (isAttackerInfantry && !(ae instanceof BattleArmor)) {
-            // 0 MP infantry units: move or shoot, except for anti-mech attacks,
-            // those are handled above
-            if ((ae.getMovementMode() == EntityMovementMode.INF_LEG) && (ae.getWalkMP() == 0)
-                    && (ae.moved != EntityMovementType.MOVE_NONE)) {
-                return Messages.getString("WeaponAttackAction.0MPInf");
-            }
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE)
-                    && (ae.moved == EntityMovementType.MOVE_RUN)) {
-                return Messages.getString("WeaponAttackAction.CantShootAndFastMove");
-            }
-            // check for trying to fire field gun after moving
-            if ((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (ae.moved != EntityMovementType.MOVE_NONE)) {
-                return Messages.getString("WeaponAttackAction.CantMoveAndFieldGun");
-            }
-            // check for mixing infantry and field gun attacks
-            double fieldGunWeight = 0.0;
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                EntityAction ea = i.nextElement();
-                if (!(ea instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                final WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                if (prevAttack.getEntityId() == attackerId) {
-                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                    if ((prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY)
-                            && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS))
-                            || (weapon.getType().hasFlag(WeaponType.F_INFANTRY)
-                                    && (prevWeapon.getLocation() == Infantry.LOC_FIELD_GUNS))) {
-                        return Messages.getString("WeaponAttackAction.FieldGunOrSAOnly");
-                    }
-                    if ((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (weaponId != prevAttack.getWeaponId())) {
-                        fieldGunWeight += prevWeapon.getType().getTonnage(ae);
-                    }
-                }
-            }
-            // the total tonnage of field guns fired has to be less than or
-            // equal to the men in the platoon
-            if (weapon.getLocation() == Infantry.LOC_FIELD_GUNS) {
-                if (((Infantry) ae).getShootingStrength() < Math.ceil(fieldGunWeight + wtype.getTonnage(ae))) {
-                    return Messages.getString("WeaponAttackAction.NoFieldGunCrew");
-                }
-            }
-            // BA compact narc: we have one weapon for each trooper, but you
-            // can fire only at one target at a time
-            if (wtype.getName().equals("Compact Narc")) {
-                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                    EntityAction ea = i.nextElement();
-                    if (!(ea instanceof WeaponAttackAction)) {
-                        continue;
-                    }
-                    final WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                    if (prevAttack.getEntityId() == attackerId) {
-                        Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                        if (prevWeapon.getType().getName().equals("Compact Narc")) {
-                            if (prevAttack.getTargetId() != target.getTargetId()) {
-                                return Messages.getString("WeaponAttackAction.OneTargetForCNarc");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // check wind conditions
-        int windCond = game.getPlanetaryConditions().getWindStrength();
-        if ((windCond == PlanetaryConditions.WI_TORNADO_F13) && wtype.hasFlag(WeaponType.F_MISSILE)
-                && !game.getBoard().inSpace()) {
-            return Messages.getString("WeaponAttackAction.NoMissileTornado");
-        }
-
-        if ((windCond == PlanetaryConditions.WI_TORNADO_F4) && !game.getBoard().inSpace()
-                && (wtype.hasFlag(WeaponType.F_MISSILE) || wtype.hasFlag(WeaponType.F_BALLISTIC))) {
-            return Messages.getString("WeaponAttackAction.F4Tornado");
-        }
 
         // check if indirect fire is valid
         if (isIndirect && !game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {

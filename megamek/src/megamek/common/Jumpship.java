@@ -2003,7 +2003,7 @@ public class Jumpship extends Aero {
 
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[22];
+        double[] costs = new double[23];
         int costIdx = 0;
         double cost = 0;
 
@@ -2086,18 +2086,19 @@ public class Jumpship extends Aero {
 
         // Transport Bays
         int baydoors = 0;
-        int bayCost = 0;
+        long bayCost = 0;
+        long quartersCost = 0;
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if ((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
-                bayCost += 20000 * next.totalSpace;
-            }
-            if ((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
-                bayCost += 20000 * next.totalSpace;
+            if (next.isQuarters()) {
+                quartersCost += next.getCost();
+            } else {
+                bayCost += next.getCost();
             }
         }
 
-        costs[costIdx++] += bayCost + (baydoors * 1000);
+        costs[costIdx++] += bayCost + (baydoors * 1000L);
+        costs[costIdx++] = quartersCost;
 
         // Weapons and Equipment
         // HPG
@@ -2129,7 +2130,7 @@ public class Jumpship extends Aero {
                 "Structural Integrity", "Engine", "Engine Control Unit",
                 "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
                 "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
-                "Bays", "HPG", "Weapons/Equipment", "Weight Multiplier" };
+                "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 

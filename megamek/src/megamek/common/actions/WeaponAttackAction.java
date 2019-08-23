@@ -1190,6 +1190,11 @@ placeholder
             return Messages.getString("WeaponAttackAction.AeroCantTAGAndShoot");
         }
 
+        //hull down vees can't fire front weapons
+        if ((ae instanceof Tank) && ae.isHullDown() && weapon != null && (weapon.getLocation() == Tank.LOC_FRONT)) {
+            return Messages.getString("WeaponAttackAction.FrontBlockedByTerrain");
+        }
+
         // LAMs in fighter mode are restricted to only the ammo types that Aeros can use
         if ((ae instanceof LandAirMech) && (ae.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)
                 && usesAmmo && ammo != null 
@@ -1553,6 +1558,67 @@ placeholder
                 }
             }
             
+            // Altitude and dive bombing attacks...
+            if (wtype.hasFlag(WeaponType.F_DIVE_BOMB) || wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                // Can't fire if the unit is out of bombs
+                if (ae.getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
+                    return Messages.getString("WeaponAttackAction.OutOfBombs");
+                }
+                // Spheroid Aeros can't bomb
+                if (ae.isAero() && ((IAero) ae).isSpheroid()) {
+                    return Messages.getString("WeaponAttackAction.NoSpheroidBombing");
+                }
+                // Grounded Aeros can't bomb
+                if (!ae.isAirborne() && !ae.isAirborneVTOLorWIGE()) {
+                    return Messages.getString("WeaponAttackAction.GroundedAeroCantBomb");
+                }
+                // Bomb attacks can only target hexes
+                if (target.getTargetType() != Targetable.TYPE_HEX_AERO_BOMB) {
+                    return Messages.getString("WeaponAttackAction.BombTargetHexOnly");
+                }
+                // Can't target a hex that isn't on the flight path
+                if (!ae.passedOver(target)) {
+                    return Messages.getString("WeaponAttackAction.CantBombOffFlightPath");
+                }
+                // Dive Bombing can only be conducted if starting between altitude 5 and altitude 3
+                if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+                    if (ae.getAltitude() > DiveBombAttack.DIVE_BOMB_MAX_ALTITUDE) {
+                        return Messages.getString("WeaponAttackAction.TooHighForDiveBomb");
+                    }
+                    if (ae.isAero()) {
+                        int altLoss = ((IAero) ae).getAltLossThisRound();
+                        if ((ae.getAltitude() + altLoss) < DiveBombAttack.DIVE_BOMB_MIN_ALTITUDE) {
+                            return Messages.getString("WeaponAttackAction.TooLowForDiveBomb");
+                        }
+                    }
+                }
+            }
+            
+            // Can't attack bomb hex targets with weapons other than alt/dive bombs
+            if ((target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) && !wtype.hasFlag(WeaponType.F_DIVE_BOMB)
+                    && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                return Messages.getString("WeaponAttackAction.InvalidForBombing");
+            }
+            
+            // BA Micro bombs only when flying
+            if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
+                if (!ae.isAirborneVTOLorWIGE()) {
+                    return Messages.getString("WeaponAttackAction.MinimumAlt1");
+                // and can only target hexes
+                } else if (target.getTargetType() != Targetable.TYPE_HEX_BOMB) {
+                    return Messages.getString("WeaponAttackAction.BombTargetHexOnly");
+                // and can only be dropped at exactly altitude 1
+                } else if (ae.getElevation() != 1) {
+                    return Messages.getString("WeaponAttackAction.ExactlyAlt1");
+                }
+            }
+            
+            // Can't attack a Micro Bomb hex target with other weapons
+            if ((target.getTargetType() == Targetable.TYPE_HEX_BOMB)
+                    && !(usesAmmo && atype != null && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB))) {
+                return Messages.getString("WeaponAttackAction.InvalidForBombing");
+            }
+            
             // B-Pods
 
             if (wtype.hasFlag(WeaponType.F_B_POD)) {
@@ -1682,6 +1748,17 @@ placeholder
                 return Messages.getString("WeaponAttackAction.NoIndirectWithLOS");
             }
             
+            // Can't fire Indirect LRMs if the option is turned off
+            if (isIndirect && !game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+                return Messages.getString("WeaponAttackAction.IndirectFireOff");
+            }
+
+            // Can't fire an MML indirectly when loaded with SRM munitions
+            if (isIndirect && usesAmmo 
+                    && atype != null && (atype.getAmmoType() == AmmoType.T_MML) && !atype.hasFlag(AmmoType.F_MML_LRM)) {
+                return Messages.getString("WeaponAttackAction.NoIndirectSRM");
+            }
+            
             // MG arrays
             
             // Can't fire one if none of the component MGs are functional
@@ -1799,81 +1876,6 @@ placeholder
             }
         }
 placeholder       
-
-        // check if indirect fire is valid
-        if (isIndirect && !game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
-            return Messages.getString("WeaponAttackAction.IndirectFireOff");
-        }
-
-        if (isIndirect && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
-                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
-                && LosEffects.calculateLos(game, attackerId, target).canSee()
-                && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                        || Compute.canSee(game, ae, target))
-                && !(wtype instanceof ArtilleryCannonWeapon) && !(wtype instanceof MekMortarWeapon)) {
-            return Messages.getString("WeaponAttackAction.NoIndirectWithLOS");
-        }
-
-        if (isIndirect && usesAmmo && (atype.getAmmoType() == AmmoType.T_MML) && !atype.hasFlag(AmmoType.F_MML_LRM)) {
-            return Messages.getString("WeaponAttackAction.NoIndirectSRM");
-        }
-
-        // hull down vees can't fire front weapons
-        if ((ae instanceof Tank) && ae.isHullDown() && (weapon.getLocation() == Tank.LOC_FRONT)) {
-            return Messages.getString("WeaponAttackAction.FrontBlockedByTerrain");
-        }
-
-        // BA Micro bombs only when flying
-        if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
-            if (!ae.isAirborneVTOLorWIGE()) {
-                return Messages.getString("WeaponAttackAction.MinimumAlt1");
-            } else if (target.getTargetType() != Targetable.TYPE_HEX_BOMB) {
-                return Messages.getString("WeaponAttackAction.BombTargetHexOnly");
-            } else if (ae.getElevation() != 1) {
-                return Messages.getString("WeaponAttackAction.ExactlyAlt1");
-            }
-        }
-
-        if ((target.getTargetType() == Targetable.TYPE_HEX_BOMB)
-                && !(usesAmmo && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB))) {
-            return Messages.getString("WeaponAttackAction.InvalidForBombing");
-        }
-
-        if ((target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) && !wtype.hasFlag(WeaponType.F_DIVE_BOMB)
-                && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
-            return Messages.getString("WeaponAttackAction.InvalidForBombing");
-        }
-
-        if (wtype.hasFlag(WeaponType.F_DIVE_BOMB) || wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
-            if (ae.getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
-                return Messages.getString("WeaponAttackAction.OutOfBombs");
-            }
-            if (ae.isAero() && ((IAero) ae).isSpheroid()) {
-                return Messages.getString("WeaponAttackAction.NoSpheroidBombing");
-            }
-            if (!ae.isAirborne() && !ae.isAirborneVTOLorWIGE()) {
-                return Messages.getString("WeaponAttackAction.GroundedAeroCantBomb");
-            }
-
-            if (target.getTargetType() != Targetable.TYPE_HEX_AERO_BOMB) {
-                return Messages.getString("WeaponAttackAction.BombTargetHexOnly");
-            }
-            if (!ae.passedOver(target)) {
-                return Messages.getString("WeaponAttackAction.CantBombOffFlightPath");
-            }
-
-            if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
-                if (ae.getAltitude() > DiveBombAttack.DIVE_BOMB_MAX_ALTITUDE) {
-                    return Messages.getString("WeaponAttackAction.TooHighForDiveBomb");
-                }
-                if (ae.isAero()) {
-                    int altLoss = ((IAero) ae).getAltLossThisRound();
-                    if ((ae.getAltitude() + altLoss) < DiveBombAttack.DIVE_BOMB_MIN_ALTITUDE) {
-                        return Messages.getString("WeaponAttackAction.TooLowForDiveBomb");
-                    }
-                }
-            }
-        }
 
         Entity spotter = null;
         if (isIndirect) {

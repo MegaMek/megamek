@@ -98,4 +98,9 @@ public final class SecondClassQuartersCargoBay extends Bay {
         return "2ndclassquarters:" + weight + ":" + doors;
     }
 
+    @Override
+    public long getCost() {
+        return 15000L * (long) totalSpace;
+    }
+
 }

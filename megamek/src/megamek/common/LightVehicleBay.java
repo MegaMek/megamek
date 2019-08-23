@@ -128,4 +128,10 @@ public final class LightVehicleBay extends Bay {
         return LightVehicleBay.techAdvancement();
     }
 
+    @Override
+    public long getCost() {
+        // Based on the number of cubicles
+        return 10000L * (long) totalSpace;
+    }
+
 } // End package class TroopSpace implements Transporter

@@ -266,4 +266,10 @@ public final class SmallCraftBay extends Bay {
         return SmallCraftBay.techAdvancement();
     }
 
+    @Override
+    public long getCost() {
+        // Based on the number of cubicles
+        return 20000L * (long) totalSpace;
+    }
+
 } // End package class TroopSpace implements Transporter

@@ -108,4 +108,10 @@ public class DropshuttleBay extends Bay {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
+    @Override
+    public long getCost() {
+        // Set cost for 2-capacity bay
+        return 150000000;
+    }
+
 }

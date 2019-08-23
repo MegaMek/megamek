@@ -98,4 +98,9 @@ public final class SteerageQuartersCargoBay extends Bay {
         return "steeragequarters:" + weight + ":" + doors;
     }
 
+    @Override
+    public long getCost() {
+        return 5000L * (long) totalSpace;
+    }
+
 }

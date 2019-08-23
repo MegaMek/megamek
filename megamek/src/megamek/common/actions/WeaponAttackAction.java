@@ -866,12 +866,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
      * @param los The calculated LOS between attacker and target
+     * @param losMods ToHitData calculated from the spotter for indirect fire scenarios
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * @param toSubtract An int value representing a running total of mods to disregard - used for some special attacks
      * 
      * @param aimingAt  An int value representing the location being aimed at - used by immobile target calculations
      * @param aimingMode  An int value that determines the reason aiming is allowed - used by immobile target calculations
      * @param distance  The distance in hexes from attacker to target
+     * @param spotter  The spotting entity for indirect fire, if present
      * 
      * @param wtype The WeaponType of the weapon being used
      * @param weapon The Mounted weapon being used
@@ -884,6 +886,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param exchangeSwarmTarget  flag that indicates whether this is the secondary target of Swarm LRMs
      * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
      * @param isPointBlankShot  flag that indicates whether or not this is a PBS by a hidden unit
+     * @param mpElevationHack  flag used to handle multi purpose LRM munitions fired underwater
      * @param usesAmmo  flag that indicates whether or not the WeaponType being used is ammo-fed
      */
     private static String toHitIsImpossible(IGame game, Entity ae, Targetable target, int ttype,
@@ -912,9 +915,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             te = (Entity) target;
         }
         
-        // Aero/LAM-only Attacker Action Reasons
-        if (ae instanceof IAero) {
-            
+        // If the attacker and target are in the same building & hex, they can
+        // always attack each other, TW pg 175.
+        if ((los.getThruBldg() != null) && los.getTargetPosition().equals(ae.getPosition())) {
+            return null;
         }
         
         // Ammo-specific Reasons
@@ -1140,6 +1144,11 @@ placeholder
         
         // Line of Sight and Range Reasons
 placeholder     
+        //if LOS is blocked, block the shot except in the case of indirect artillery fire
+        if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect) {
+                return losMods.getDesc();
+        }
+
         //Torpedos must remain in the water over their whole path to the target
         if ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
@@ -1759,6 +1768,15 @@ placeholder
                 return Messages.getString("WeaponAttackAction.NoIndirectSRM");
             }
             
+            // Can't fire anything but Mech Mortars and Artillery Cannons indirectly without a spotter 
+            // unless the attack has the Oblique Attacker SPA
+            if (isIndirect) {
+                if ((spotter == null) && !(wtype instanceof MekMortarWeapon) && !(wtype instanceof ArtilleryCannonWeapon)
+                        && !ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
+                    return Messages.getString("WeaponAttackAction.NoSpotter");
+                }
+            }
+            
             // MG arrays
             
             // Can't fire one if none of the component MGs are functional
@@ -1870,124 +1888,21 @@ placeholder
                 return Messages.getString("WeaponAttackAction.PDWeapon");
             }
             
-            // weapon operational?
+            // Weapon in arc?
+            if (!Compute.isInArc(game, attackerId, weaponId, target)
+                    && (!Compute.isAirToGround(ae, target) || isArtilleryIndirect)
+                    && !ae.isMakingVTOLGroundAttack()
+                    && !ae.isOffBoard()) {
+                return Messages.getString("WeaponAttackAction.OutOfArc");
+            }
+            
+            // Weapon operational?
             if (!weapon.canFire(isStrafing)) {
                 return Messages.getString("WeaponAttackAction.WeaponNotReady");
             }
         }
 placeholder       
 
-        Entity spotter = null;
-        if (isIndirect) {
-            if ((target instanceof Entity) && !isTargetECMAffected && usesAmmo
-                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
-                    && ((te.isNarcedBy(ae.getOwner().getTeam())) || (te.isINarcedBy(ae.getOwner().getTeam())))) {
-                spotter = te;
-            } else {
-                spotter = Compute.findSpotter(game, ae, target);
-            }
-
-            if ((spotter == null) && (atype != null)
-                    && ((atype.getAmmoType() == AmmoType.T_LRM) 
-                            || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                            || (atype.getAmmoType() == AmmoType.T_MML)
-                            || (atype.getAmmoType() == AmmoType.T_NLRM)
-                            || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
-                    && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
-                for (TagInfo ti : game.getTagInfo()) {
-                    if (target.getTargetId() == ti.target.getTargetId()) {
-                        spotter = game.getEntity(ti.attackerId);
-                    }
-                }
-            }
-
-            if ((spotter == null) && !(wtype instanceof MekMortarWeapon) && !(wtype instanceof ArtilleryCannonWeapon)
-                    && !ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
-                return Messages.getString("WeaponAttackAction.NoSpotter");
-            }
-        }
-
-        int eistatus = 0;
-
-        boolean multiPurposeelevationHack = false;
-        if (usesAmmo 
-                && ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)) 
-                && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE)
-                && (ae.getElevation() == -1)
-                && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
-            multiPurposeelevationHack = true;
-            // surface to fire
-            ae.setElevation(0);
-        }
-
-        // check LOS (indirect LOS is from the spotter)
-        ToHitData losMods;
-        if (isIndirect && ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
-                && !underWater) {
-            // Assume that no LOS mods apply
-            losMods = new ToHitData();
-            
-        } else if (!isIndirect || (isIndirect && (spotter == null))) {
-            if (ae.hasActiveEiCockpit()) {
-                if (los.getLightWoods() > 0) {
-                    eistatus = 2;
-                } else {
-                    eistatus = 1;
-                }
-            }
-
-            if ((wtype instanceof MekMortarWeapon) && isIndirect) {
-                los.setArcedAttack(true);
-            }
-            
-            losMods = los.losModifiers(game, eistatus, underWater);
-        } else {
-            if (!exchangeSwarmTarget) {
-                los = LosEffects.calculateLos(game, spotter.getId(), target);
-            } else {
-                // Swarm should draw LoS between targets, not attacker, since
-                // we don't want LoS to be blocked
-                if (swarmPrimaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-                    los = LosEffects.calculateLos(game, swarmPrimaryTarget.getTargetId(), swarmSecondaryTarget);
-                } else {
-                    los = LosEffects.calculateLos(game, swarmSecondaryTarget.getTargetId(), swarmPrimaryTarget);
-                }
-            }
-
-            // do not count attacker partial cover in indirect fire
-            los.setAttackerCover(LosEffects.COVER_NONE);
-
-            if (spotter.hasActiveEiCockpit()) {
-                if (los.getLightWoods() > 0) {
-                    eistatus = 2;
-                } else {
-                    eistatus = 1;
-                }
-            }
-
-            if ((wtype instanceof MekMortarWeapon) && isIndirect) {
-                los.setArcedAttack(true);
-            }
-
-            losMods = los.losModifiers(game, underWater);
-        }
-
-        // If the attacker and target are in the same building & hex, they can
-        // always attack each other, TW pg 175.
-        if ((los.getThruBldg() != null) && los.getTargetPosition().equals(ae.getPosition())) {
-            return null;
-        }
-
-        if (multiPurposeelevationHack) {
-            // and descend back to depth 1
-            ae.setElevation(-1);
-        }
-
-        // if LOS is blocked, block the shot
-        if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect) {
-            return losMods.getDesc();
-        }
-        
         //If using SO advanced sensors, the firing unit or one on its NC3 network must have a valid firing solution
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
@@ -2048,14 +1963,6 @@ placeholder
                     return Messages.getString("WeaponAttackAction.TargetNotSpotted");
                 }
             }
-        }
-
-        // Weapon in arc?
-        if (!Compute.isInArc(game, attackerId, weaponId, target)
-                && (!Compute.isAirToGround(ae, target) || isArtilleryIndirect)
-                && !ae.isMakingVTOLGroundAttack()
-                && !ae.isOffBoard()) {
-            return Messages.getString("WeaponAttackAction.OutOfArc");
         }
 
         if (Compute.isAirToGround(ae, target) && !isArtilleryIndirect && !ae.isDropping()) {

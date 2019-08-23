@@ -2097,7 +2097,7 @@ public class Jumpship extends Aero {
             }
         }
 
-        costs[costIdx++] += bayCost + (baydoors * 1000);
+        costs[costIdx++] += bayCost + (baydoors * 1000L);
         costs[costIdx++] = quartersCost;
 
         // Weapons and Equipment

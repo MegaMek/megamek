@@ -448,7 +448,7 @@ public class Dropship extends SmallCraft {
             }
         }
 
-        costs[costIdx++] += bayCost + (baydoors * 1000);
+        costs[costIdx++] += bayCost + (baydoors * 1000L);
         costs[costIdx++] = quartersCost;
 
         // Life Boats and Escape Pods

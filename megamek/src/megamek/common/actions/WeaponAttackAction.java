@@ -1073,9 +1073,53 @@ placeholder
             return Messages.getString("WeaponAttackAction.NoFireAtHidden");
         }
         
+        // Infantry can't clear woods.
+        if (isAttackerInfantry && (Targetable.TYPE_HEX_CLEAR == target.getTargetType())) {
+            IHex hexTarget = game.getBoard().getHex(target.getPosition());
+            if (hexTarget.containsTerrain(Terrains.WOODS)) {
+                return Messages.getString("WeaponAttackAction.NoInfantryWoodsClearing");
+            }
+        }
+        
+        // Can't target infantry with Inferno rounds (BMRr, pg. 141).
+        // Also, enforce options for keeping vehicles and protos safe
+        // if those options are checked.
+        if (isInferno && (((te instanceof Tank)
+                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS))
+                || ((te instanceof Protomech)
+                        && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS)))) {
+            return Messages.getString("WeaponAttackAction.CantShootWithInferno");
+        }
+        
         // Only weapons allowed to clear minefields can target a hex for minefield clearance
         if ((target instanceof MinefieldTarget) && atype != null && !AmmoType.canClearMinefield(atype)) {
             return Messages.getString("WeaponAttackAction.CantClearMines");
+        }
+        
+        // Mine Clearance munitions can only target hexes for minefield clearance
+        if (!(target instanceof HexTarget) && (atype != null)
+                && (atype.getMunitionType() == AmmoType.M_MINE_CLEARANCE)) {
+            return Messages.getString("WeaponAttackAction.MineClearHexOnly");
+        }
+        
+        // Only screen launchers may target a hex for screen launch
+        if (Targetable.TYPE_HEX_SCREEN == target.getTargetType()) {
+            if (wtype != null && 
+                    (!((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) || (wtype instanceof ScreenLauncherBayWeapon)))) {
+                return Messages.getString("WeaponAttackAction.ScreenLauncherOnly");
+            }
+        }
+
+        // Screen Launchers can only target hexes
+        if ((Targetable.TYPE_HEX_SCREEN != target.getTargetType())
+                && (wtype != null && ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
+                        || (wtype instanceof ScreenLauncherBayWeapon)))) {
+            return Messages.getString("WeaponAttackAction.ScreenHexOnly");
+        }
+        
+        // Can't target an entity conducting a swarm attack.
+        if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
+            return Messages.getString("WeaponAttackAction.TargetSwarming");
         }
         
         //Tasers must target units and can't target flying units
@@ -1110,6 +1154,18 @@ placeholder
             return Messages.getString("WeaponAttackAction.TorpOutOfWater");
         }
 
+        //Is the weapon blocked by a passenger?
+        if (weapon != null && (ae.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted()))) {
+            return Messages.getString("WeaponAttackAction.PassengerBlock");
+        }
+
+        //Is the weapon blocked by a tractor/trailer?
+        if (weapon != null && (ae.getTowing() != Entity.NONE || ae.getTowedBy() != Entity.NONE)) {
+            if (ae.isWeaponBlockedByTowing(weapon.getLocation(), ae.getSecondaryFacing(), weapon.isRearMounted())) {
+                return Messages.getString("WeaponAttackAction.TrailerBlock");
+            }
+        }
+
         // Phase Reasons
 
         // Only bearings-only capital missiles and indirect fire artillery can be fired in the targeting phase
@@ -1128,11 +1184,147 @@ placeholder
         // Unit-specific Reasons
 placeholder
 
+        //Airborne units cannot tag and attack
+        // http://bg.battletech.com/forums/index.php?topic=17613.new;topicseen#new
+        if (ae.isAirborne() && ae.usedTag()) {
+            return Messages.getString("WeaponAttackAction.AeroCantTAGAndShoot");
+        }
+
         // LAMs in fighter mode are restricted to only the ammo types that Aeros can use
         if ((ae instanceof LandAirMech) && (ae.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)
                 && usesAmmo && ammo != null 
                 && !((AmmoType)ammo.getType()).canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
             return Messages.getString("WeaponAttackAction.InvalidAmmoForFighter");
+        }
+        
+        // limit large craft to zero net heat and to heat by arc
+        final int heatcap = ae.getHeatCapacity();
+        if (ae.usesWeaponBays() && weapon != null && (weapon.getBayWeapons().size() > 0)) {
+            int totalheat = 0;
+
+            // first check to see if there are any usable weapons
+            boolean useable = false;
+            for (int wId : weapon.getBayWeapons()) {
+                Mounted m = ae.getEquipment(wId);
+                WeaponType bayWType = ((WeaponType) m.getType());
+                boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
+                if (m.canFire()) {
+                    if (bayWUsesAmmo) {
+                        if ((m.getLinked() != null) && (m.getLinked().getUsableShotsLeft() > 0)) {
+                            useable = true;
+                            break;
+                        }
+                    } else {
+                        useable = true;
+                        break;
+                    }
+                }
+            }
+            if (!useable) {
+                return Messages.getString("WeaponAttackAction.BayNotReady");
+            }
+
+            // create an array of booleans of locations
+            boolean[] usedFrontArc = new boolean[ae.locations()];
+            boolean[] usedRearArc = new boolean[ae.locations()];
+            for (int i = 0; i < ae.locations(); i++) {
+                usedFrontArc[i] = false;
+                usedRearArc[i] = false;
+            }
+
+            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                Object o = i.nextElement();
+                if (!(o instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                // Strafing attacks only count heat for first shot
+                if (prevAttack.isStrafing() && !prevAttack.isStrafingFirstShot()) {
+                    continue;
+                }
+                if ((prevAttack.getEntityId() == attackerId) && (weaponId != prevAttack.getWeaponId())) {
+                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+                    if (prevWeapon != null) {
+                        int loc = prevWeapon.getLocation();
+                        boolean rearMount = prevWeapon.isRearMounted();
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+                            for (int bwId : prevWeapon.getBayWeapons()) {
+                                totalheat += ae.getEquipment(bwId).getCurrentHeat();
+                            }
+                        } else {
+                            if (!rearMount) {
+                                if (!usedFrontArc[loc]) {
+                                    totalheat += ae.getHeatInArc(loc, rearMount);
+                                    usedFrontArc[loc] = true;
+                                }
+                            } else {
+                                if (!usedRearArc[loc]) {
+                                    totalheat += ae.getHeatInArc(loc, rearMount);
+                                    usedRearArc[loc] = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // now check the current heat
+            int loc = weapon.getLocation();
+            boolean rearMount = weapon.isRearMounted();
+            int currentHeat = ae.getHeatInArc(loc, rearMount);
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+                currentHeat = 0;
+                for (int bwId : weapon.getBayWeapons()) {
+                    currentHeat += ae.getEquipment(bwId).getCurrentHeat();
+                }
+            }
+            // check to see if this is currently the only arc being fired
+            boolean onlyArc = true;
+            for (int nLoc = 0; nLoc < ae.locations(); nLoc++) {
+                if (nLoc == loc) {
+                    continue;
+                }
+                if (usedFrontArc[nLoc] || usedRearArc[nLoc]) {
+                    onlyArc = false;
+                    break;
+                }
+            }
+
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+                if ((totalheat + currentHeat) > heatcap) {
+                    // FIXME: This is causing weird problems (try firing all the
+                    // Suffen's nose weapons)
+                    return Messages.getString("WeaponAttackAction.HeatOverCap");
+                }
+            } else {
+                if (!rearMount) {
+                    if (!usedFrontArc[loc] && ((totalheat + currentHeat) > heatcap) && !onlyArc) {
+                        return Messages.getString("WeaponAttackAction.HeatOverCap");
+                    }
+                } else {
+                    if (!usedRearArc[loc] && ((totalheat + currentHeat) > heatcap) && !onlyArc) {
+                        return Messages.getString("WeaponAttackAction.HeatOverCap");
+                    }
+                }
+            }
+        } else if (ae instanceof Dropship) {
+            int totalheat = 0;
+
+            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                Object o = i.nextElement();
+                if (!(o instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                if ((prevAttack.getEntityId() == attackerId) && (weaponId != prevAttack.getWeaponId())) {
+                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+                    totalheat += prevWeapon.getCurrentHeat();
+                }
+            }
+
+            if ((totalheat + weapon.getCurrentHeat()) > heatcap) {
+                return Messages.getString("WeaponAttackAction.HeatOverCap");
+            }
         }
 
         // Protomechs can't fire energy weapons while charging EDP armor
@@ -1144,6 +1336,13 @@ placeholder
 placeholder        
         if (weapon != null && wtype != null) {
             // Variable setup
+            
+            // "Cool" mode for vehicle flamer requires coolant ammo
+            boolean vf_cool = false;
+            if ((atype != null) && usesAmmo && (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_COOLANT)) {
+                vf_cool = true;
+            }
+            
             // is the attack originating from underwater
             boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)
                     || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
@@ -1341,11 +1540,51 @@ placeholder
                 }
             }
             
-            // Check called shots
+            // Called shots
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
                 String reason = weapon.getCalledShot().isValid(target);
                 if (reason != null) {
                     return reason;
+                }
+            }
+            
+            // Causing Fires
+            
+            // Some weapons can't cause fires, but Infernos always can.
+            if ((vf_cool || (wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno))
+                    && (Targetable.TYPE_HEX_IGNITE == target.getTargetType())) {
+                return Messages.getString("WeaponAttackAction.WeaponCantIgnite");
+            }
+            
+            // only woods and buildings can be set intentionally on fire
+            if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_NO_IGNITE_CLEAR)
+                    && !(game.getBoard().getHex(((HexTarget) target).getPosition()).containsTerrain(Terrains.WOODS)
+                            || game.getBoard().getHex(((HexTarget) target).getPosition()).containsTerrain(Terrains.JUNGLE)
+                            || game.getBoard().getHex(((HexTarget) target).getPosition())
+                                    .containsTerrain(Terrains.FUEL_TANK)
+                            || game.getBoard().getHex(((HexTarget) target).getPosition())
+                                    .containsTerrain(Terrains.BUILDING))) {
+                return Messages.getString("WeaponAttackAction.CantIntentionallyBurn");
+            }
+            
+            // Extinguishing Fires
+
+            // You can use certain types of flamer/sprayer ammo or infantry firefighting engineers
+            // to extinguish burning hexes (and units).
+            // TODO: This functionality does not appear to be implemented
+            if (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()) {
+                if (!wtype.hasFlag(WeaponType.F_EXTINGUISHER) && !vf_cool) {
+                    return Messages.getString("WeaponAttackAction.InvalidForFirefighting");
+                }
+                IHex hexTarget = game.getBoard().getHex(target.getPosition());
+                if (!hexTarget.containsTerrain(Terrains.FIRE)) {
+                    return Messages.getString("WeaponAttackAction.TargetNotBurning");
+                }
+            } else if (wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
+                if (!(((target instanceof Tank) && ((Tank) target).isOnFire())
+                        || ((target instanceof Entity) && (((Entity) target).infernos.getTurnsLeftToBurn() > 0)))) {
+                    return Messages.getString("WeaponAttackAction.TargetNotBurning");
                 }
             }
             
@@ -1359,6 +1598,18 @@ placeholder
                             || Compute.canSee(game, ae, target))
                     && !(wtype instanceof ArtilleryCannonWeapon) && !(wtype instanceof MekMortarWeapon)) {
                 return Messages.getString("WeaponAttackAction.NoIndirectWithLOS");
+            }
+            
+            // TAG
+            
+            // The TAG system cannot target Airborne Aeros.
+            if (isTAG && (te != null) && (te.isAirborne() || te.isSpaceborne())) {
+                return Messages.getString("WeaponAttackAction.CantTAGAero");
+            }
+            
+            // The TAG system cannot target infantry.
+            if (isTAG && (te != null) && (te instanceof Infantry)) {
+                return Messages.getString("WeaponAttackAction.CantTAGInf");
             }
             
             // TSEMPs
@@ -1409,243 +1660,6 @@ placeholder
             }
         }
 placeholder       
-        
-        
-        
-        // Is the weapon blocked by a tractor/trailer?
-        if (ae.getTowing() != Entity.NONE || ae.getTowedBy() != Entity.NONE) {
-            if (ae.isWeaponBlockedByTowing(weapon.getLocation(), ae.getSecondaryFacing(), weapon.isRearMounted())) {
-                return Messages.getString("WeaponAttackAction.TrailerBlock");
-            }
-        }
-        
-        // Is the weapon blocked by a passenger?
-        if (ae.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted())) {
-            return Messages.getString("WeaponAttackAction.PassengerBlock");
-        }
-
-        // Can't target an entity conducting a swarm attack.
-        if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
-            return Messages.getString("WeaponAttackAction.TargetSwarming");
-        }
-
-        // "Cool" mode for vehicle flamer requires coolant system
-        boolean vf_cool = false;
-        if ((atype != null) && usesAmmo && (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_COOLANT)) {
-            vf_cool = true;
-        }
-
-        if (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()) {
-            if (!wtype.hasFlag(WeaponType.F_EXTINGUISHER) && !vf_cool) {
-                return Messages.getString("WeaponAttackAction.InvalidForFirefighting");
-            }
-            IHex hexTarget = game.getBoard().getHex(target.getPosition());
-            if (!hexTarget.containsTerrain(Terrains.FIRE)) {
-                return Messages.getString("WeaponAttackAction.TargetNotBurning");
-            }
-        } else if (wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
-            if (!(((target instanceof Tank) && ((Tank) target).isOnFire())
-                    || ((target instanceof Entity) && (((Entity) target).infernos.getTurnsLeftToBurn() > 0)))) {
-                return Messages.getString("WeaponAttackAction.TargetNotBurning");
-            }
-        }
-        // Infantry can't clear woods.
-        if (isAttackerInfantry && (Targetable.TYPE_HEX_CLEAR == target.getTargetType())) {
-            IHex hexTarget = game.getBoard().getHex(target.getPosition());
-            if (hexTarget.containsTerrain(Terrains.WOODS)) {
-                return Messages.getString("WeaponAttackAction.NoInfantryWoodsClearing");
-            }
-        }
-
-        // only screen launchers may launch screens (what a coincidence)
-        if (Targetable.TYPE_HEX_SCREEN == target.getTargetType()) {
-            if (!((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) || (wtype instanceof ScreenLauncherBayWeapon))) {
-                return Messages.getString("WeaponAttackAction.ScreenLauncherOnly");
-            }
-        }
-
-        if ((Targetable.TYPE_HEX_SCREEN != target.getTargetType())
-                && ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
-                        || (wtype instanceof ScreenLauncherBayWeapon))) {
-            return Messages.getString("WeaponAttackAction.ScreenHexOnly");
-        }
-
-        if (!(target instanceof HexTarget) && (atype != null)
-                && (atype.getMunitionType() == AmmoType.M_MINE_CLEARANCE)) {
-            return Messages.getString("WeaponAttackAction.MineClearHexOnly");
-        }
-
-        // Some weapons can't cause fires, but Infernos always can.
-        if ((vf_cool || (wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno))
-                && (Targetable.TYPE_HEX_IGNITE == target.getTargetType())) {
-            return Messages.getString("WeaponAttackAction.WeaponCantIgnite");
-        }
-
-        // only woods and buildings can be set intentionally on fire
-        if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
-                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_NO_IGNITE_CLEAR)
-                && !(game.getBoard().getHex(((HexTarget) target).getPosition()).containsTerrain(Terrains.WOODS)
-                        || game.getBoard().getHex(((HexTarget) target).getPosition()).containsTerrain(Terrains.JUNGLE)
-                        || game.getBoard().getHex(((HexTarget) target).getPosition())
-                                .containsTerrain(Terrains.FUEL_TANK)
-                        || game.getBoard().getHex(((HexTarget) target).getPosition())
-                                .containsTerrain(Terrains.BUILDING))) {
-            return Messages.getString("WeaponAttackAction.CantIntentionallyBurn");
-        }
-
-        // Can't target infantry with Inferno rounds (BMRr, pg. 141).
-        // Also, enforce options for keeping vehicles and protos safe
-        // if those options are checked.
-        if (isInferno && (((te instanceof Tank)
-                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS))
-                || ((te instanceof Protomech)
-                        && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS)))) {
-            return Messages.getString("WeaponAttackAction.CantShootWithInferno");
-        }
-
-        // The TAG system cannot target infantry.
-        if (isTAG && (te instanceof Infantry)) {
-            return Messages.getString("WeaponAttackAction.CantTAGInf");
-        }
-
-        // The TAG system cannot target Airborne Aeros.
-        if (isTAG && (te != null) && (te.isAirborne() || te.isSpaceborne())) {
-            return Messages.getString("WeaponAttackAction.CantTAGAero");
-        }
-
-        // Airborne units cannot tag and attack
-        // http://bg.battletech.com/forums/index.php?topic=17613.new;topicseen#new
-        if (ae.isAirborne() && ae.usedTag()) {
-            return Messages.getString("WeaponAttackAction.AeroCantTAGAndShoot");
-        }
-
-        // limit large craft to zero net heat and to heat by arc
-        final int heatcap = ae.getHeatCapacity();
-        if (ae.usesWeaponBays() && (weapon.getBayWeapons().size() > 0)) {
-            int totalheat = 0;
-
-            // first check to see if there are any usable weapons
-            boolean useable = false;
-            for (int wId : weapon.getBayWeapons()) {
-                Mounted m = ae.getEquipment(wId);
-                WeaponType bayWType = ((WeaponType) m.getType());
-                boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
-                if (m.canFire()) {
-                    if (bayWUsesAmmo) {
-                        if ((m.getLinked() != null) && (m.getLinked().getUsableShotsLeft() > 0)) {
-                            useable = true;
-                            break;
-                        }
-                    } else {
-                        useable = true;
-                        break;
-                    }
-                }
-            }
-            if (!useable) {
-                return Messages.getString("WeaponAttackAction.BayNotReady");
-            }
-
-            // create an array of booleans of locations
-            boolean[] usedFrontArc = new boolean[ae.locations()];
-            boolean[] usedRearArc = new boolean[ae.locations()];
-            for (int i = 0; i < ae.locations(); i++) {
-                usedFrontArc[i] = false;
-                usedRearArc[i] = false;
-            }
-
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
-                // Strafing attacks only count heat for first shot
-                if (prevAttack.isStrafing() && !prevAttack.isStrafingFirstShot()) {
-                    continue;
-                }
-                if ((prevAttack.getEntityId() == attackerId) && (weaponId != prevAttack.getWeaponId())) {
-                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                    int loc = prevWeapon.getLocation();
-                    boolean rearMount = prevWeapon.isRearMounted();
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                        for (int bwId : prevWeapon.getBayWeapons()) {
-                            totalheat += ae.getEquipment(bwId).getCurrentHeat();
-                        }
-                    } else {
-                        if (!rearMount) {
-                            if (!usedFrontArc[loc]) {
-                                totalheat += ae.getHeatInArc(loc, rearMount);
-                                usedFrontArc[loc] = true;
-                            }
-                        } else {
-                            if (!usedRearArc[loc]) {
-                                totalheat += ae.getHeatInArc(loc, rearMount);
-                                usedRearArc[loc] = true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // now check the current heat
-            int loc = weapon.getLocation();
-            boolean rearMount = weapon.isRearMounted();
-            int currentHeat = ae.getHeatInArc(loc, rearMount);
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                currentHeat = 0;
-                for (int bwId : weapon.getBayWeapons()) {
-                    currentHeat += ae.getEquipment(bwId).getCurrentHeat();
-                }
-            }
-            // check to see if this is currently the only arc being fired
-            boolean onlyArc = true;
-            for (int nLoc = 0; nLoc < ae.locations(); nLoc++) {
-                if (nLoc == loc) {
-                    continue;
-                }
-                if (usedFrontArc[nLoc] || usedRearArc[nLoc]) {
-                    onlyArc = false;
-                    break;
-                }
-            }
-
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                if ((totalheat + currentHeat) > heatcap) {
-                    // FIXME: This is causing weird problems (try firing all the
-                    // Suffen's nose weapons)
-                    return Messages.getString("WeaponAttackAction.HeatOverCap");
-                }
-            } else {
-                if (!rearMount) {
-                    if (!usedFrontArc[loc] && ((totalheat + currentHeat) > heatcap) && !onlyArc) {
-                        return Messages.getString("WeaponAttackAction.HeatOverCap");
-                    }
-                } else {
-                    if (!usedRearArc[loc] && ((totalheat + currentHeat) > heatcap) && !onlyArc) {
-                        return Messages.getString("WeaponAttackAction.HeatOverCap");
-                    }
-                }
-            }
-        } else if (ae instanceof Dropship) {
-            int totalheat = 0;
-
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
-                if ((prevAttack.getEntityId() == attackerId) && (weaponId != prevAttack.getWeaponId())) {
-                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                    totalheat += prevWeapon.getCurrentHeat();
-                }
-            }
-
-            if ((totalheat + weapon.getCurrentHeat()) > heatcap) {
-                return Messages.getString("WeaponAttackAction.HeatOverCap");
-            }
-        }
 
         // MG arrays
         if (wtype.hasFlag(WeaponType.F_MGA) && (weapon.getCurrentShots() == 0)) {

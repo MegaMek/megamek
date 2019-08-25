@@ -82,7 +82,11 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String Mode_RAC_FiveShot = "5-Shot";
     public static final String Mode_RAC_SixShot = "6-Shot";
     
+    public static final String Mode_Gauss_Powered_Down = "Powered Down";
+    
     public static final String Mode_Missile_Indirect = "Indirect";
+    
+    public static final String Mode_PPC_Charge = "Charge";
     
     public static final String Mode_Point_Defense = "Point Defense";
     

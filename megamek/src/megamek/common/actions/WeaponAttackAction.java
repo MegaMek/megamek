@@ -1149,6 +1149,59 @@ placeholder
                 return losMods.getDesc();
         }
 
+        //If using SO advanced sensors, the firing unit or one on its NC3 network must have a valid firing solution
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                && ae.isSpaceborne()) {
+            boolean networkFiringSolution = false;
+            //Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
+            if (ae.hasNavalC3()) {
+                for (Entity en : game.getEntitiesVector()) {
+                    if (en != ae && !en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && ae.hasFiringSolutionFor(te.getId())) {
+                        networkFiringSolution = true;
+                        break;
+                    }
+                }
+            }
+            if (!networkFiringSolution) {
+                //If we don't check for target type here, we can't fire screens and missiles at hexes...
+                if (target.getTargetType() == Targetable.TYPE_ENTITY && (te != null && !ae.hasFiringSolutionFor(te.getId())))  {
+                    return Messages.getString("WeaponAttackAction.NoFiringSolution");
+                }
+            }
+        }
+        
+        // http://www.classicbattletech.com/forums/index.php/topic,47618.0.html
+        // anything outside of visual range requires a "sensor lock" in order to
+        // direct fire. Note that this is for ground combat with tacops sensors rules
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                && !ae.isSpaceborne()
+                && !Compute.inVisualRange(game, ae, target)
+                && !(Compute.inSensorRange(game, ae, target, null) 
+                        // Can shoot at something in sensor range if it has
+                        // been spotted by another unit
+                        && (te != null) && te.hasSeenEntity(ae.getOwner())) 
+                && !isArtilleryIndirect && !isIndirect && !isBearingsOnlyMissile) {
+            boolean networkSee = false;
+            if (ae.hasC3() || ae.hasC3i() || ae.hasActiveNovaCEWS()) {
+                // c3 units can fire if any other unit in their network is in
+                // visual or sensor range
+                for (Entity en : game.getEntitiesVector()) {
+                    if (!en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.canSee(game, en, target)) {
+                        networkSee = true;
+                        break;
+                    }
+                }
+            }
+            if (!networkSee) {
+                if (!Compute.inSensorRange(game, ae, target, null)) {
+                    return Messages.getString("WeaponAttackAction.NoSensorTarget");
+                } else {
+                    return Messages.getString("WeaponAttackAction.TargetNotSpotted");
+                }
+            }
+        }
+
         //Torpedos must remain in the water over their whole path to the target
         if ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
@@ -1209,6 +1262,17 @@ placeholder
                 && usesAmmo && ammo != null 
                 && !((AmmoType)ammo.getType()).canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
             return Messages.getString("WeaponAttackAction.InvalidAmmoForFighter");
+        }
+        
+        // LAMs carrying certain types of bombs that require a weapon have attacks that cannot
+        // be used in mech mode.
+        if ((ae instanceof LandAirMech)
+                && wtype != null
+                && (ae.getConversionMode() == LandAirMech.CONV_MODE_MECH)
+                && wtype.hasFlag(WeaponType.F_BOMB_WEAPON)
+                && wtype.getAmmoType() != AmmoType.T_RL_BOMB
+                && !wtype.hasFlag(WeaponType.F_TAG)) {
+            return Messages.getString("WeaponAttackAction.NoBombInMechMode");
         }
         
         // limit large craft to zero net heat and to heat by arc
@@ -1365,6 +1429,140 @@ placeholder
             if (wtype.hasFlag(WeaponType.F_INFANTRY_ONLY)) {
                 if ((te != null) && !(te instanceof Infantry)) {
                     return Messages.getString("WeaponAttackAction.TargetOnlyInf");
+                }
+            }
+            
+            // Air-to-ground attacks
+            if (Compute.isAirToGround(ae, target) && !isArtilleryIndirect && !ae.isDropping()) {
+                // Can't strike from above altitude 5. Dive bombing uses a different test below
+                if ((ae.getAltitude() > 5) 
+                        && !wtype.hasFlag(WeaponType.F_DIVE_BOMB) && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                    return Messages.getString("WeaponAttackAction.AttackerTooHigh");
+                }
+                // Can't strafe from above altitude 3
+                if ((ae.getAltitude() > 3) && isStrafing) {
+                    return Messages.getString("WeaponAttackAction.AttackerTooHigh");
+                }
+                // Additional Nape-of-Earth restrictions for strafing
+                if (ae.getAltitude() == 1 && isStrafing) {
+                    Vector<Coords> passedThrough = ae.getPassedThrough();
+                    if ((passedThrough.size() == 0) || passedThrough.get(0).equals(target.getPosition())) {
+                        // TW pg 243 says units flying at NOE have a harder time
+                        // establishing LoS while strafing and hence have to
+                        // consider the adjacent hex along the flight place in the
+                        // direction of the attack. What if there is no adjacent
+                        // hex? The rules don't address this. We could
+                        // theoretically consider last turns movement, but that's
+                        // cumbersome, so we'll just assume it's impossible - Arlith
+                        return Messages.getString("WeaponAttackAction.TooCloseForStrafe");
+                    }
+                    // Otherwise, check for a dead-zone, TW pg 243
+                    Coords prevCoords = ae.passedThroughPrevious(target.getPosition());
+                    IHex prevHex = game.getBoard().getHex(prevCoords);
+                    IHex currHex = game.getBoard().getHex(target.getPosition());
+                    int prevElev = prevHex.getLevel();
+                    int currElev = currHex.getLevel();
+                    if ((prevElev - currElev - target.relHeight()) > 2) {
+                        return Messages.getString("WeaponAttackAction.DeadZone");
+                    }
+                }
+
+                // Only direct-fire energy weapons can strafe
+                boolean isDirectFireEnergy = (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                        && (wtype.hasFlag(WeaponType.F_LASER) || wtype.hasFlag(WeaponType.F_PPC)
+                                || wtype.hasFlag(WeaponType.F_PLASMA) || wtype.hasFlag(WeaponType.F_PLASMA_MFUK)))
+                        || wtype.hasFlag(WeaponType.F_FLAMER);
+                // Note: flamers are direct fire energy, but don't have the flag,
+                // so they won't work with targeting computers
+                boolean isEnergyBay = (wtype instanceof LaserBayWeapon) || (wtype instanceof PPCBayWeapon)
+                        || (wtype instanceof PulseLaserBayWeapon);
+                if (isStrafing && !isDirectFireEnergy && !isEnergyBay) {
+                    return Messages.getString("WeaponAttackAction.StrafeDirectEnergyOnly");
+                }
+
+                // only certain weapons can be used for air to ground attacks
+                if (ae.isAero()) {
+                    // Spheroids can't strafe
+                    if (isStrafing && ((IAero) ae).isSpheroid()) {
+                        return Messages.getString("WeaponAttackAction.NoSpheroidStrafing");
+                    }
+                    // Spheroid craft can only use aft or aft-side mounted weapons for strike attacks
+                    if (((IAero) ae).isSpheroid()) {
+                        if ((weapon.getLocation() != Aero.LOC_AFT) && !weapon.isRearMounted()) {
+                            return Messages.getString("WeaponAttackAction.InvalidDSAtgArc");
+                        }
+                    // LAMs can't use leg or rear-mounted weapons
+                    } else if (ae instanceof LandAirMech) {
+                        if ((weapon.getLocation() == Mech.LOC_LLEG)
+                                || (weapon.getLocation() == Mech.LOC_RLEG)
+                                || weapon.isRearMounted()) {
+                            return Messages.getString("WeaponAttackAction.InvalidAeroDSAtgArc");
+                        }
+                    } else {
+                        // and other types of aero can't use aft or rear-mounted weapons
+                        if ((weapon.getLocation() == Aero.LOC_AFT) || weapon.isRearMounted()) {
+                            return Messages.getString("WeaponAttackAction.InvalidAeroDSAtgArc");
+                        }
+                    }
+                }
+
+                // for air to ground attacks, the target's position must be within
+                // the flight path, unless it is an artillery weapon in the nose.
+                // http://www.classicbattletech.com/forums/index.php?topic=65110.0
+                if (!ae.passedOver(target)) {
+                    if (!wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+                        return Messages.getString("WeaponAttackAction.NotOnFlightPath");
+                    } else if (weapon.getLocation() != Aero.LOC_NOSE) {
+                        return Messages.getString("WeaponAttackAction.NotOnFlightPath");
+                    }
+                }
+
+                // Strike attacks cost the attacker 1 altitude
+                int altitudeLoss = 1;
+                // Dive bombing costs 2 altitude
+                if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+                    altitudeLoss = 2;
+                }
+                // Altitude bombing and strafing cost nothing
+                if (wtype.hasFlag(WeaponType.F_ALT_BOMB) || isStrafing) {
+                    altitudeLoss = 0;
+                }
+                int altLossThisRound = 0;
+                if (ae.isAero()) {
+                    altLossThisRound = ((IAero) ae).getAltLossThisRound();
+                }
+                // you cant make attacks that would lower you to zero altitude
+                if (altitudeLoss >= (ae.getAltitude() + altLossThisRound)) {
+                    return Messages.getString("WeaponAttackAction.TooMuchAltLoss");
+                }
+
+                // can only make a strike attack against a single target
+                if (!isStrafing) {
+                    for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                        EntityAction ea = i.nextElement();
+                        if (!(ea instanceof WeaponAttackAction)) {
+                            continue;
+                        }
+
+                        WeaponAttackAction prevAttk = (WeaponAttackAction) ea;
+                        if ((prevAttk.getEntityId() == ae.getId()) && (prevAttk.getTargetId() != target.getTargetId())
+                                && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                            return Messages.getString("WeaponAttackAction.CantSplitFire");
+                        }
+                    }
+                }
+            // VTOL Strafing
+            } else if ((ae instanceof VTOL) && isStrafing) {
+                if (!(wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                        && (wtype.hasFlag(WeaponType.F_LASER) || wtype.hasFlag(WeaponType.F_PPC)
+                                || wtype.hasFlag(WeaponType.F_PLASMA) || wtype.hasFlag(WeaponType.F_PLASMA_MFUK)))
+                        || wtype.hasFlag(WeaponType.F_FLAMER)) {
+                    return Messages.getString("WeaponAttackAction.StrafeDirectEnergyOnly");
+                }
+                if (weapon.getLocation() != VTOL.LOC_FRONT
+                        && weapon.getLocation() != VTOL.LOC_TURRET
+                        && weapon.getLocation() != VTOL.LOC_TURRET_2) {
+                    return Messages.getString("WeaponAttackAction.InvalidStrafingArc");
                 }
             }
             
@@ -1745,6 +1943,59 @@ placeholder
                 }
             }
             
+            // Ground-to-air attacks
+            
+            // air2air and air2ground cannot be combined by any aerospace units
+            if (Compute.isAirToAir(ae, target) || Compute.isAirToGround(ae, target)) {
+                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                    EntityAction ea = i.nextElement();
+                    if (!(ea instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                    if (prevAttack.getEntityId() != ae.getId()) {
+                        continue;
+                    }
+                    if (Compute.isAirToAir(ae, target) && prevAttack.isAirToGround(game)) {
+                        return Messages.getString("WeaponAttackAction.AlreadyAtgAttack");
+                    }
+                    if (Compute.isAirToGround(ae, target) && prevAttack.isAirToAir(game)) {
+                        return Messages.getString("WeaponAttackAction.AlreadyAtaAttack");
+                    }
+                }
+            }
+            
+            // Can't make ground-to-air attacks against a target above altitude 8
+            if ((target.getAltitude() > 8) && Compute.isGroundToAir(ae, target)) {
+                return Messages.getString("WeaponAttackAction.AeroTooHighForGta");
+            }
+            
+            // only one ground-to-air attack allowed per turn
+            // grounded spheroid dropships dont have this limitation
+            if (!ae.isAirborne() && !((ae instanceof Dropship) && ((Aero) ae).isSpheroid())) {
+                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                    EntityAction ea = i.nextElement();
+                    if (!(ea instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                    if (prevAttack.getEntityId() == ae.getId()) {
+                        if (prevAttack.isGroundToAir(game) && !Compute.isGroundToAir(ae, target)) {
+                            return Messages.getString("WeaponAttackAction.AlreadyGtaAttack");
+                        }
+                        // Can't mix ground-to-air and ground-to-ground attacks either
+                        if (!prevAttack.isGroundToAir(game) && Compute.isGroundToAir(ae, target)) {
+                            return Messages.getString("WeaponAttackAction.AlreadyGtgAttack");
+                        }
+                        // Or split ground-to-air fire across multiple targets
+                        if (prevAttack.isGroundToAir(game) && Compute.isGroundToAir(ae, target) && (null != te)
+                                && (prevAttack.getTargetId() != te.getId())) {
+                            return Messages.getString("WeaponAttackAction.OneTargetForGta");
+                        }
+                    }
+                }
+            }
+            
             // Indirect Fire (LRMs)
             
             // Can't fire Indirect LRM with direct LOS
@@ -1902,252 +2153,6 @@ placeholder
             }
         }
 placeholder       
-
-        //If using SO advanced sensors, the firing unit or one on its NC3 network must have a valid firing solution
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
-                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                && ae.isSpaceborne()) {
-            boolean networkFiringSolution = false;
-            //Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
-            if (ae.hasNavalC3()) {
-                for (Entity en : game.getEntitiesVector()) {
-                    if (en != ae && !en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && ae.hasFiringSolutionFor(te.getId())) {
-                        networkFiringSolution = true;
-                        break;
-                    }
-                }
-            }
-            if (!networkFiringSolution) {
-                //If we don't check for target type here, we can't fire screens and missiles at hexes...
-                if (target.getTargetType() == Targetable.TYPE_ENTITY && (te != null && !ae.hasFiringSolutionFor(te.getId())))  {
-                    return Messages.getString("WeaponAttackAction.NoFiringSolution");
-                }
-            }
-        }
-
-        // http://www.classicbattletech.com/forums/index.php/topic,47618.0.html
-        // anything outside of visual range requires a "sensor lock" in order to
-        // direct fire
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
-                && !Compute.inVisualRange(game, ae, target)
-                && !(Compute.inSensorRange(game, ae, target, null) // Can shoot
-                                                                   // at
-                                                                   // something
-                                                                   // in sensor
-                                                                   // range
-                        && (te != null) && te.hasSeenEntity(ae.getOwner())) // if
-                                                                            // it
-                                                                            // has
-                                                                            // been
-                                                                            // spotted
-                                                                            // by
-                                                                            // another
-                                                                            // unit
-                && !isArtilleryIndirect && !isIndirect && !isBearingsOnlyMissile) {
-            boolean networkSee = false;
-            if (ae.hasC3() || ae.hasC3i() || ae.hasNavalC3()|| ae.hasActiveNovaCEWS()) {
-                // c3 units can fire if any other unit in their network is in
-                // visual or sensor range
-                for (Entity en : game.getEntitiesVector()) {
-                    if (!en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.canSee(game, en, target)) {
-                        networkSee = true;
-                        break;
-                    }
-                }
-            }
-            if (!networkSee) {
-                if (!Compute.inSensorRange(game, ae, target, null)) {
-                    return Messages.getString("WeaponAttackAction.NoSensorTarget");
-                } else {
-                    return Messages.getString("WeaponAttackAction.TargetNotSpotted");
-                }
-            }
-        }
-
-        if (Compute.isAirToGround(ae, target) && !isArtilleryIndirect && !ae.isDropping()) {
-            if ((ae.getAltitude() > 5) && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
-                return Messages.getString("WeaponAttackAction.AttackerTooHigh");
-            }
-            if ((ae.getAltitude() > 3) && isStrafing) {
-                return Messages.getString("WeaponAttackAction.AttackerTooHigh");
-            }
-            // Additional Nape-of-Earth restrictions for strafing
-            if (ae.getAltitude() == 1 && isStrafing) {
-                Vector<Coords> passedThrough = ae.getPassedThrough();
-                if ((passedThrough.size() == 0) || passedThrough.get(0).equals(target.getPosition())) {
-                    // TW pg 243 says units flying at NOE have a harder time
-                    // establishing LoS while strafing and hence have to
-                    // consider the adjacent hex along the flight place in the
-                    // direction of the attack. What if there is no adjacent
-                    // hex? The rules don't address this. We could
-                    // theoretically consider last turns movement, but that's
-                    // cumbersome, so we'll just assume it's impossible - Arlith
-                    return Messages.getString("WeaponAttackAction.TooCloseForStrafe");
-                }
-                // Otherwise, check for a dead-zone, TW pg 243
-                Coords prevCoords = ae.passedThroughPrevious(target.getPosition());
-                IHex prevHex = game.getBoard().getHex(prevCoords);
-                IHex currHex = game.getBoard().getHex(target.getPosition());
-                int prevElev = prevHex.getLevel();
-                int currElev = currHex.getLevel();
-                if ((prevElev - currElev - target.relHeight()) > 2) {
-                    return Messages.getString("WeaponAttackAction.DeadZone");
-                }
-            }
-
-            // Only direct-fire energy weapons can strafe
-            EquipmentType wt = weapon.getType();
-            boolean isDirectFireEnergy = (wt.hasFlag(WeaponType.F_DIRECT_FIRE)
-                    && (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)
-                            || wt.hasFlag(WeaponType.F_PLASMA) || wt.hasFlag(WeaponType.F_PLASMA_MFUK)))
-                    || wt.hasFlag(WeaponType.F_FLAMER);
-            // Note: flamers are direct fire energy, but don't have the flag,
-            // so they won't work with targeting computers
-            boolean isEnergyBay = (wt instanceof LaserBayWeapon) || (wt instanceof PPCBayWeapon)
-                    || (wt instanceof PulseLaserBayWeapon);
-            if (isStrafing && !isDirectFireEnergy && !isEnergyBay) {
-                return Messages.getString("WeaponAttackAction.StrafeDirectEnergyOnly");
-            }
-
-            // only certain weapons can be used for air to ground attacks
-            if (ae.isAero()) {
-                // Spheroids can't strafe
-                if (isStrafing && ((IAero) ae).isSpheroid()) {
-                    return Messages.getString("WeaponAttackAction.NoSpheroidStrafing");
-                }
-                if (((IAero) ae).isSpheroid()) {
-                    if ((weapon.getLocation() != Aero.LOC_AFT) && !weapon.isRearMounted()) {
-                        return Messages.getString("WeaponAttackAction.InvalidDSAtgArc");
-                    }
-                } else if (ae instanceof LandAirMech) {
-                    if ((weapon.getLocation() == Mech.LOC_LLEG)
-                            || (weapon.getLocation() == Mech.LOC_RLEG)
-                            || weapon.isRearMounted()) {
-                        return Messages.getString("WeaponAttackAction.InvalidAeroDSAtgArc");
-                    }
-                } else {
-                    if ((weapon.getLocation() == Aero.LOC_AFT) || weapon.isRearMounted()) {
-                        return Messages.getString("WeaponAttackAction.InvalidAeroDSAtgArc");
-                    }
-                }
-            }
-
-            // for air to ground attacks, the target's position must be within
-            // the flight path, unless it is an artillery weapon in the nose.
-            // http://www.classicbattletech.com/forums/index.php?topic=65110.0
-            if (!ae.passedOver(target)) {
-                if (!wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-                    return Messages.getString("WeaponAttackAction.NotOnFlightPath");
-                } else if (weapon.getLocation() != Aero.LOC_NOSE) {
-                    return Messages.getString("WeaponAttackAction.NotOnFlightPath");
-                }
-            }
-
-            int altitudeLoss = 1;
-            if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
-                altitudeLoss = 2;
-            }
-            if (wtype.hasFlag(WeaponType.F_ALT_BOMB) || isStrafing) {
-                altitudeLoss = 0;
-            }
-            int altLossThisRound = 0;
-            if (ae.isAero()) {
-                altLossThisRound = ((IAero) ae).getAltLossThisRound();
-            }
-            // you cant make attacks that would lower you to zero altitude
-            if (altitudeLoss >= (ae.getAltitude() + altLossThisRound)) {
-                return Messages.getString("WeaponAttackAction.TooMuchAltLoss");
-            }
-
-            // can only make a strike attack against a single target
-            if (!isStrafing) {
-                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                    EntityAction ea = i.nextElement();
-                    if (!(ea instanceof WeaponAttackAction)) {
-                        continue;
-                    }
-
-                    WeaponAttackAction prevAttk = (WeaponAttackAction) ea;
-                    if ((prevAttk.getEntityId() == ae.getId()) && (prevAttk.getTargetId() != target.getTargetId())
-                            && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
-                        return Messages.getString("WeaponAttackAction.CantSplitFire");
-                    }
-                }
-            }
-        } else if ((ae instanceof VTOL) && isStrafing) {
-            EquipmentType wt = weapon.getType();
-            if (!(wt.hasFlag(WeaponType.F_DIRECT_FIRE)
-                    && (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)
-                            || wt.hasFlag(WeaponType.F_PLASMA) || wt.hasFlag(WeaponType.F_PLASMA_MFUK)))
-                    || wt.hasFlag(WeaponType.F_FLAMER)) {
-                return Messages.getString("WeaponAttackAction.StrafeDirectEnergyOnly");
-            }
-            if (weapon.getLocation() != VTOL.LOC_FRONT
-                    && weapon.getLocation() != VTOL.LOC_TURRET
-                    && weapon.getLocation() != VTOL.LOC_TURRET_2) {
-                return Messages.getString("WeaponAttackAction.InvalidStrafingArc");
-            }
-                
-        }
-        
-        // LAMs carrying certain types of bombs that require a weapon have attacks that cannot
-        // be used in mech mode.
-        if ((ae instanceof LandAirMech)
-                && (ae.getConversionMode() == LandAirMech.CONV_MODE_MECH)
-                && wtype.hasFlag(WeaponType.F_BOMB_WEAPON)
-                && wtype.getAmmoType() != AmmoType.T_RL_BOMB
-                && !wtype.hasFlag(WeaponType.F_TAG)) {
-            return Messages.getString("WeaponAttackAction.NoBombInMechMode");
-        }
-
-        // only one ground-to-air attack allowed per turn
-        // grounded spheroid dropships dont have this limitation
-        if (!ae.isAirborne() && !((ae instanceof Dropship) && ((Aero) ae).isSpheroid())) {
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                EntityAction ea = i.nextElement();
-                if (!(ea instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                if (prevAttack.getEntityId() == ae.getId()) {
-                    if (prevAttack.isGroundToAir(game) && !Compute.isGroundToAir(ae, target)) {
-                        return Messages.getString("WeaponAttackAction.AlreadyGtaAttack");
-                    }
-                    if (!prevAttack.isGroundToAir(game) && Compute.isGroundToAir(ae, target)) {
-                        return Messages.getString("WeaponAttackAction.AlreadyGtgAttack");
-                    }
-                    if (prevAttack.isGroundToAir(game) && Compute.isGroundToAir(ae, target) && (null != te)
-                            && (prevAttack.getTargetId() != te.getId())) {
-                        return Messages.getString("WeaponAttackAction.OneTargetForGta");
-                    }
-                }
-            }
-        }
-
-        // air2air and air2ground cannot be combined by any aerospace units
-        if (Compute.isAirToAir(ae, target) || Compute.isAirToGround(ae, target)) {
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                EntityAction ea = i.nextElement();
-                if (!(ea instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                if (prevAttack.getEntityId() != ae.getId()) {
-                    continue;
-                }
-                if (Compute.isAirToAir(ae, target) && prevAttack.isAirToGround(game)) {
-                    return Messages.getString("WeaponAttackAction.AlreadyAtgAttack");
-                }
-                if (Compute.isAirToGround(ae, target) && prevAttack.isAirToAir(game)) {
-                    return Messages.getString("WeaponAttackAction.AlreadyAtaAttack");
-                }
-            }
-        }
-
-        if ((target.getAltitude() > 8) && Compute.isGroundToAir(ae, target)) {
-            return Messages.getString("WeaponAttackAction.AeroTooHighForGta");
-        }
 
         boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
         if ((ae instanceof Infantry) && Compute.isGroundToAir(ae, target) && !wtype.hasFlag(WeaponType.F_INF_AA)

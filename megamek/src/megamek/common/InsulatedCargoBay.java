@@ -106,4 +106,9 @@ public final class InsulatedCargoBay extends Bay {
         return true;
     }
 
+    @Override
+    public long getCost() {
+        // Based on the weight of the equipment (not capacity), rounded up to the whole ton
+        return 250L * (long) Math.ceil(getWeight());
+    }
 }

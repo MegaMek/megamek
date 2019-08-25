@@ -98,4 +98,9 @@ public final class PillionSeatCargoBay extends Bay {
         return "pillionseats:" + weight + ":" + doors;
     }
 
+    @Override
+    public long getCost() {
+        return 10L * (long) totalSpace;
+    }
+
 }

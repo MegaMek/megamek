@@ -110,6 +110,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.when(mockPrincess.getFireControlState()).thenReturn(mockFireControlState);
         Mockito.when(mockPrincess.getPathRankerState()).thenReturn(mockPathRankerState);
+        Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class), Mockito.anyBoolean())).thenReturn(21);
     }
 
     private void assertRankedPathEquals(final RankedPath expected,
@@ -1213,7 +1214,7 @@ public class BasicPathRankerTest {
         entities.add(mockEnemy);
 
         int testDistance = 10;
-        final IGame mockGame = generateMockGame(entities, mockBoard);;
+        final IGame mockGame = generateMockGame(entities, mockBoard);
         
         final FiringPlan mockFiringPlan = Mockito.mock(FiringPlan.class);
         Mockito.when(mockFiringPlan.getUtility()).thenReturn(25.2);
@@ -1279,6 +1280,7 @@ public class BasicPathRankerTest {
         
         Mockito.when(mockEntity.getHeatCapacity()).thenReturn(20);
         Mockito.when(mockEntity.getHeat()).thenReturn(0);
+        Mockito.when(mockEntity.isAirborne()).thenReturn(false);
         
         return mockEntity;
     }

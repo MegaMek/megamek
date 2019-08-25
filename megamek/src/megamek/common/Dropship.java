@@ -378,7 +378,7 @@ public class Dropship extends SmallCraft {
     
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[19];
+        double[] costs = new double[20];
         int costIdx = 0;
         double cost = 0;
 
@@ -437,18 +437,19 @@ public class Dropship extends SmallCraft {
 
         // Transport Bays
         int baydoors = 0;
-        int bayCost = 0;
+        long bayCost = 0;
+        long quartersCost = 0;
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if ((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
-                bayCost += 20000 * next.totalSpace;
-            }
-            if ((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
-                bayCost += 10000 * next.totalSpace;
+            if (next.isQuarters()) {
+                quartersCost += next.getCost();
+            } else {
+                bayCost += next.getCost();
             }
         }
 
-        costs[costIdx++] += bayCost + (baydoors * 1000);
+        costs[costIdx++] += bayCost + (baydoors * 1000L);
+        costs[costIdx++] = quartersCost;
 
         // Life Boats and Escape Pods
         costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
@@ -474,7 +475,7 @@ public class Dropship extends SmallCraft {
         String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
                 "Structural Integrity", "Attitude Thruster", "Landing Gear", "Docking Collar",
                 "Engine", "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Weapons/Equipment", "Bays",
-                "Life Boats/Escape Pods", "Weight Multiplier" };
+                "Quarters", "Life Boats/Escape Pods", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 

@@ -88,5 +88,9 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
+    @Override
+    public long getCost() {
+        return 30000L * (long) totalSpace;
+    }
 
 }

@@ -211,6 +211,11 @@ public class FireControlTest {
         Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
 
         mockGameOptions = Mockito.mock(GameOptions.class);
+        // logic within getFullFiringPlan checks if this feature is turned on then checks whether the
+        // weapon type is AMS
+        // since it's more of a pain to set up all the weapon types, we simply pretend the feature is turned on 
+        Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)))
+            .thenReturn(true);
 
         mockHex = Mockito.mock(IHex.class);
 
@@ -874,6 +879,7 @@ public class FireControlTest {
                .thenReturn(false);
         Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(ITerrain.LEVEL_NONE);
         Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(ITerrain.LEVEL_NONE);
+        Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class), Mockito.anyBoolean())).thenReturn(21);
         ToHitData expected = new ToHitData();
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
                                                                                              mockShooterState,
@@ -1185,7 +1191,7 @@ public class FireControlTest {
         mockTarget = Mockito.mock(BipedMech.class);
 
         // Target is out of range.
-        Mockito.when(mockShooter.getMaxWeaponRange()).thenReturn(5);
+        Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class), Mockito.anyBoolean())).thenReturn(5);
         expected = new ToHitData(FireControl.TH_RNG_TOO_FAR);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
                                                                                              mockShooterState,

@@ -649,10 +649,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         //Check to see if this attack is automatically successful and return the reason code
-        String reasonAutoHit = WeaponAttackAction.toHitIsAutomatic(game, ae, te, target, swarmPrimaryTarget, swarmSecondaryTarget,
-                weapon, ammo, atype, wtype, ttype, los, distance, usesAmmo, exchangeSwarmTarget, isTAG, isInferno,
-                isAttackerInfantry, isIndirect, attackerId, weaponId, isArtilleryIndirect, isArtilleryFLAK, targetInBuilding,
-                isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile, isCruiseMissile);
+        String reasonAutoHit = WeaponAttackAction.toHitIsAutomatic(game, ae, target, ttype, los, distance,
+                wtype, weapon, isBearingsOnlyMissile);
         if (reasonAutoHit != null) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, reasonAutoHit);
         }
@@ -856,7 +854,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     
     
     /**
-     * Convenience method that tests each attack to see if it's impossible.
+     * Method that tests each attack to see if it's impossible.
      * If so, a reason string will be returned. A null return means we can continue
      * processing the attack
      * 
@@ -2452,12 +2450,26 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return null;
     }
     
-    private static String toHitIsAutomatic(IGame game, Entity ae, Entity te, Targetable target, Targetable swarmPrimaryTarget,
-            Targetable swarmSecondaryTarget, Mounted weapon, Mounted ammo, AmmoType atype, WeaponType wtype, int ttype,
-            LosEffects los, int distance, boolean exchangeSwarmTarget, boolean usesAmmo, boolean isTAG, boolean isInferno,
-            boolean isAttackerInfantry, boolean isIndirect, int attackerId, int weaponId, boolean isArtilleryIndirect,
-            boolean isArtilleryFLAK, boolean targetInBuilding, boolean isArtilleryDirect,
-            boolean isTargetECMAffected, boolean isStrafing, boolean isBearingsOnlyMissile, boolean isCruiseMissile) {
+    /**
+     * Method that tests each attack to see if it would automatically hit.
+     * If so, a reason string will be returned. A null return means we can continue
+     * processing the attack
+     * 
+     * @param game The current game
+     * @param ae The Entity making this attack
+     * @param target The Targetable object being attacked
+     * @param ttype  The targetable object type
+     * @param los The calculated LOS between attacker and target
+     * 
+     * @param distance  The distance in hexes from attacker to target
+     * 
+     * @param wtype The WeaponType of the weapon being used
+     * @param weapon The Mounted weapon being used
+     * 
+     * @param isBearingsOnlyMissile  flag that indicates whether this is a bearings-only capital missile attack
+     */
+    private static String toHitIsAutomatic(IGame game, Entity ae, Targetable target, int ttype, LosEffects los,
+            int distance, WeaponType wtype, Mounted weapon, boolean isBearingsOnlyMissile) {
         
         // Buildings
         
@@ -2482,7 +2494,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Special Weapon Rules
         
         // B-Pod firing at infantry in the same hex autohit
-        if (wtype.hasFlag(WeaponType.F_B_POD) && (target instanceof Infantry)
+        if (wtype != null && wtype.hasFlag(WeaponType.F_B_POD) && (target instanceof Infantry)
                 && target.getPosition().equals(ae.getPosition())) {
             return Messages.getString("WeaponAttackAction.BPodAtInf");
         }
@@ -2495,13 +2507,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Screen launchers target hexes and hit automatically (if in range)
-        if (((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
+        if (wtype != null && ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)
                 || (wtype instanceof ScreenLauncherBayWeapon)) && distance <= wtype.getExtremeRange()) {
             return Messages.getString("WeaponAttackAction.ScreenAutoHit");
         }
         
         // Vehicular grenade launchers
-        if (weapon.getType().hasFlag(WeaponType.F_VGL)) {
+        if (weapon != null && weapon.getType().hasFlag(WeaponType.F_VGL)) {
             int facing = weapon.getFacing();
             if (ae.isSecondaryArcWeapon(ae.getEquipmentNum(weapon))) {
                 facing = (facing + ae.getSecondaryFacing()) % 6;

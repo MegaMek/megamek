@@ -960,7 +960,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // Aeros must have enough ammo for the maximum rate of fire because
             // they cannot lower it
-            if (ae.isAero() && usesAmmo && (ammo != null)
+            if (ae.isAero() && usesAmmo && ammo != null && weapon != null
                     && (ae.getTotalAmmoOfType(ammo.getType()) < weapon.getCurrentShots())) {
                 return Messages.getString("WeaponAttackAction.InsufficientAmmo");
             }
@@ -1193,7 +1193,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
 
         //attacker partial cover means no leg weapons
-        if (los.isAttackerCover() && ae.locationIsLeg(weapon.getLocation()) && !underWater) {
+        if (los.isAttackerCover() && weapon != null && ae.locationIsLeg(weapon.getLocation()) && !underWater) {
             return Messages.getString("WeaponAttackAction.LegBlockedByTerrain");
         }
 
@@ -1313,7 +1313,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Hull Down
 
         // Hull down mechs cannot fire any leg weapons
-        if (ae.isHullDown()) {
+        if (ae.isHullDown() && weapon != null) {
             if (((ae instanceof BipedMech)
                     && ((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG)))
                     || ((ae instanceof QuadMech) && ((weapon.getLocation() == Mech.LOC_LLEG)
@@ -1471,7 +1471,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-            if ((totalheat + weapon.getCurrentHeat()) > heatcap) {
+            if (weapon != null && ((totalheat + weapon.getCurrentHeat()) > heatcap)) {
                 return Messages.getString("WeaponAttackAction.HeatOverCap");
             }
         }
@@ -2408,7 +2408,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (wtype.hasModes()
                     && (weapon.curMode().equals(Weapon.Mode_Capital_Bracket_80) || weapon.curMode().equals(Weapon.Mode_Capital_Bracket_60)
                             || weapon.curMode().equals(Weapon.Mode_Capital_Bracket_40))
-                    && target.isAero() && !te.isLargeCraft()
+                    && target.isAero() && te!= null && !te.isLargeCraft()
                     && (RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon),
                             true, false) == RangeType.RANGE_SHORT)) {
                 return Messages.getString("WeaponAttackAction.TooCloseForSCBracket");
@@ -2819,7 +2819,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         Entity te = null;
-        if (target != null && ttype == Targetable.TYPE_ENTITY) {
+        if (ttype == Targetable.TYPE_ENTITY) {
             //Some of these weapons only target valid entities
             te = (Entity) target;
         }
@@ -3030,7 +3030,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         Entity te = null;
-        if (target != null && ttype == Targetable.TYPE_ENTITY) {
+        if (ttype == Targetable.TYPE_ENTITY) {
             //Some ammo can only target valid entities
             te = (Entity) target;
         }
@@ -3038,8 +3038,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Autocannon Munitions
         
         // Armor Piercing ammo is a flat +1
-        if ((atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_AC) 
+        if (((atype.getAmmoType() == AmmoType.T_AC) 
                         || (atype.getAmmoType() == AmmoType.T_LAC)
                         || (atype.getAmmoType() == AmmoType.T_AC_IMP)
                         || (atype.getAmmoType() == AmmoType.T_PAC))
@@ -3126,7 +3125,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Listen-Kill ammo from War of 3039 sourcebook?
-        if (!isECMAffected && (atype != null)
+        if (!isECMAffected
                 && ((atype.getAmmoType() == AmmoType.T_LRM) 
                         || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                         || (atype.getAmmoType() == AmmoType.T_MML)
@@ -3443,7 +3442,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         Entity te = null;
-        if (target != null && ttype == Targetable.TYPE_ENTITY) {
+        if (ttype == Targetable.TYPE_ENTITY) {
             //Some of these weapons only target valid entities
             te = (Entity) target;
         }
@@ -4459,7 +4458,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         Entity te = null;
-        if (target != null && ttype == Targetable.TYPE_ENTITY) {
+        if (ttype == Targetable.TYPE_ENTITY) {
             //Some of these weapons only target valid entities
             te = (Entity) target;
         }
@@ -4760,7 +4759,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         setSpecialResolution(false);
         
         Entity te = null;
-        if (target != null && ttype == Targetable.TYPE_ENTITY) {
+        if (ttype == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         }
         

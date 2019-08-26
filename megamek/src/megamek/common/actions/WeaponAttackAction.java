@@ -4606,7 +4606,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         // Swarming infantry always hit their target, but
         // they can only target the Mek they're swarming.
-        else if ((te != null) && (ae.getSwarmTargetId() == te.getId())) {
+        else if ((ae.getSwarmTargetId() == te.getId())) {
             int side = te instanceof Tank ? ToHitData.SIDE_RANDOM : ToHitData.SIDE_FRONT;
             if (ae instanceof BattleArmor) {
                 if (!Infantry.SWARM_WEAPON_MEK.equals(wtype.getInternalName()) && !(wtype instanceof InfantryAttack)) {
@@ -4632,7 +4632,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param target The Targetable object being attacked
      * @param swarmPrimaryTarget The original Targetable object being attacked
      * @param swarmSecondaryTarget The current Targetable object being attacked
-     * @param targEl An int value representing the target's relative elevation
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * @param toSubtract An int value representing a running total of mods to disregard
      * 
@@ -4653,6 +4652,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 int toSubtract, int eistatus, int aimingAt, int aimingMode, Mounted weapon, AmmoType atype,
                 long munition, boolean isECMAffected, boolean inSameBuilding, boolean underWater) {
         
+        if (ae == null || swarmPrimaryTarget == null || swarmSecondaryTarget == null) {
+            // This method won't work without these 3 things
+            return toHit;
+        }
+        
         if (toHit == null) {
             // Without valid toHit data, the rest of this will fail
             toHit = new ToHitData();
@@ -4670,7 +4674,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int distance = Compute.effectiveDistance(game, ae, swarmSecondaryTarget);
         
         Entity te = null;
-        if (swarmSecondaryTarget != null && swarmSecondaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+        if (swarmSecondaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         }
 
@@ -4681,7 +4685,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Secondary swarm LRM attacks are never called shots even if the
         // initial one was.
-        if (weapon.getCalledShot().getCall() != CalledShot.CALLED_NONE) {
+        if (weapon != null && weapon.getCalledShot().getCall() != CalledShot.CALLED_NONE) {
             weapon.getCalledShot().reset();
             toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
@@ -4797,7 +4801,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             //TN is a flat 3 + the altitude mod + the attacker's weapon skill
             if (isArtilleryFLAK && te != null) {
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
-                if (te != null && te.isAirborne()) {
+                if (te.isAirborne()) {
                     if (te.getAltitude() > 3) {
                         if (te.getAltitude() > 9) {
                             toHit.addModifier(3, Messages.getString("WeaponAttackAction.AeroTeAlt10"));
@@ -4817,7 +4821,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.append(losMods);
                 toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
                 // actuator & sensor damage to attacker
-                toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+                if (weapon != null) {
+                    toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+                }
                 // heat
                 if (ae.getHeatFiringModifier() != 0) {
                     toHit.addModifier(ae.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
@@ -4843,7 +4849,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 mod--;
             }
             toHit.addModifier(mod, Messages.getString("WeaponAttackAction.IndirectArty"));
-            int adjust = ae.aTracker.getModifier(weapon, target.getPosition());
+            int adjust = 0;
+            if (weapon != null) {        
+                adjust = ae.aTracker.getModifier(weapon, target.getPosition());
+            }
             boolean spotterIsForwardObserver = ae.aTracker.getSpotterHasForwardObs();
             if (adjust == TargetRoll.AUTOMATIC_SUCCESS) {
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,

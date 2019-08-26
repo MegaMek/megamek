@@ -4375,7 +4375,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && !ComputeECM.isAffectedByECM(ae, ae.getPosition(), te.getPosition())
                 && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
                         || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE)
-                        || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los.getUltraWoods() > 0))) {
+                        || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los.getUltraWoods() > 0))
+                || ae.hasNetworkBAP()) {
+            if (ae.hasBAP()) {
+                // If you want the bonus, the entity with the BAP should fire first. 
+                // Not sure how to get around this
+                for (Entity en : game.getC3NetworkMembers(ae)) {
+                    en.setNetworkBAP(true);
+                }
+            }
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
         }
         

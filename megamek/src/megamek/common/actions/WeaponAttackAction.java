@@ -420,7 +420,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // target type checked later because its different for
         // direct/indirect (BMRr p77 on board arrow IV)
-        boolean isHoming = (munition == AmmoType.M_HOMING && ammo.curMode().equals("Homing"));
+        boolean isHoming = (munition == AmmoType.M_HOMING && ammo != null && ammo.curMode().equals("Homing"));
 
         boolean bHeatSeeking = (atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_SRM)
@@ -1215,8 +1215,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             boolean networkFiringSolution = false;
             //Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
             if (ae.hasNavalC3()) {
-                for (Entity en : game.getEntitiesVector()) {
-                    if (en != ae && !en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && ae.hasFiringSolutionFor(te.getId())) {
+                for (Entity en : game.getC3NetworkMembers(ae)) {
+                    if (te != null && en.hasFiringSolutionFor(te.getId())) {
                         networkFiringSolution = true;
                         break;
                     }
@@ -1535,7 +1535,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             
             // "Cool" mode for vehicle flamer requires coolant ammo
             boolean vf_cool = false;
-            if ((atype != null) && usesAmmo && (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_COOLANT)) {
+            if (atype != null && ammo != null && (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_COOLANT)) {
                 vf_cool = true;
             }
             
@@ -3525,16 +3525,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // +4 attack penalty for locations hit by ASEW missiles
             if (ae instanceof Dropship) {
                 Dropship d = (Dropship) ae;
-                int loc = weapon.getLocation();
-                if (d.getASEWAffected(loc) > 0) {
-                    toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
-                }            
+                if (weapon != null) {
+                    int loc = weapon.getLocation();
+                    if (d.getASEWAffected(loc) > 0) {
+                        toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
+                    }
+                }
             } else if (ae instanceof Jumpship) {
                 Jumpship j = (Jumpship) ae;
-                int loc = weapon.getLocation();
-                if (j.getASEWAffected(loc) > 0) {
-                    toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
-                } 
+                if (weapon != null) {
+                    int loc = weapon.getLocation();
+                    if (j.getASEWAffected(loc) > 0) {
+                        toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeArcAsewAffected"));
+                    }
+                }
             } else {
                 if (ae.getASEWAffected() > 0) {
                     toHit.addModifier(4, Messages.getString("WeaponAttackAction.AeAsewAffected"));
@@ -3600,7 +3604,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         continue;
                     }
                     WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                    if ((prevAttack.getEntityId() == te.getId()) && prevAttack.isAirToGround(game)) {
+                    if ((te != null && prevAttack.getEntityId() == te.getId()) && prevAttack.isAirToGround(game)) {
                         toHit.addModifier(-3, Messages.getString("WeaponAttackAction.TeGroundAttack"));
                         break;
                     }
@@ -3661,7 +3665,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // check for particular kinds of weapons in weapon bays
-            if (ae.usesWeaponBays() && wtype != null) {
+            if (ae.usesWeaponBays() && wtype != null && weapon != null) {
 
                 // any heavy lasers
                 if (wtype.getAtClass() == WeaponType.CLASS_LASER) {
@@ -4197,8 +4201,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if (game.useVectorMove()) {
                     boolean usePrior = false;
                     Coords attackPos = ae.getPosition();
-                    if (game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())
-                            && te != null) {
+                    if (game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())) {
                         int moveSort = Compute.shouldMoveBackHex(ae, te);
                         if (moveSort < 0) {
                             attackPos = ae.getPriorPosition();
@@ -4219,7 +4222,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // Target hidden in the sensor shadow of a larger spacecraft
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
-                    && game.getBoard().inSpace() && te != null) {
+                    && game.getBoard().inSpace()) {
                 for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
                     if (!en.isEnemyOf(te) && en.isLargeCraft() 
                             && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
@@ -4341,7 +4344,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Change hit table for partial cover, accomodate for partial
         // underwater(legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
-            if (underWater && (targHex.containsTerrain(Terrains.WATER) && (targEl == 0) && (te.height() > 0))) {
+            if (underWater && (targHex.containsTerrain(Terrains.WATER) && (targEl == 0) 
+                    && (te != null && te.height() > 0))) {
                 // weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                 toHit.setCover(LosEffects.COVER_UPPER);
@@ -4547,7 +4551,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Leg attacks and Swarm attacks have their own base toHit values
         if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
             toHit = Compute.getLegAttackBaseToHit(ae, te, game);
-            if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+            if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
             }
             setSpecialResolution(true);
@@ -4569,29 +4573,27 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // If the defender carries mechanized BA, they can fight off the
             // swarm
-            if (te != null) {
-                for (Entity e : te.getExternalUnits()) {
-                    if (e instanceof BattleArmor) {
-                        BattleArmor ba = (BattleArmor) e;
-                        int def = ba.getShootingStrength();
-                        int att = ((Infantry) ae).getShootingStrength();
-                        if (!(ae instanceof BattleArmor)) {
-                            if (att >= 28) {
-                                att = 5;
-                            } else if (att >= 24) {
-                                att = 4;
-                            } else if (att >= 21) {
-                                att = 3;
-                            } else if (att >= 18) {
-                                att = 2;
-                            } else {
-                                att = 1;
-                            }
+            for (Entity e : te.getExternalUnits()) {
+                if (e instanceof BattleArmor) {
+                    BattleArmor ba = (BattleArmor) e;
+                    int def = ba.getShootingStrength();
+                    int att = ((Infantry) ae).getShootingStrength();
+                    if (!(ae instanceof BattleArmor)) {
+                        if (att >= 28) {
+                            att = 5;
+                        } else if (att >= 24) {
+                            att = 4;
+                        } else if (att >= 21) {
+                            att = 3;
+                        } else if (att >= 18) {
+                            att = 2;
+                        } else {
+                            att = 1;
                         }
-                        def = (def + 2) - att;
-                        if (def > 0) {
-                            toHit.addModifier(def, Messages.getString("WeaponAttackAction.DefendingBA"));
-                        }
+                    }
+                    def = (def + 2) - att;
+                    if (def > 0) {
+                        toHit.addModifier(def, Messages.getString("WeaponAttackAction.DefendingBA"));
                     }
                 }
             }

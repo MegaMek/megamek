@@ -1056,7 +1056,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Crew Related Reasons
 
         // Stunned vehicle crews can't make attacks
-        if (((Tank) ae).getStunnedTurns() > 0) {
+        if (ae instanceof Tank && ((Tank) ae).getStunnedTurns() > 0) {
             return Messages.getString("WeaponAttackAction.CrewStunned");
         }
         // Vehicles with a single crewman can't shoot and unjam a RAC in the same turn (like mechs...) 

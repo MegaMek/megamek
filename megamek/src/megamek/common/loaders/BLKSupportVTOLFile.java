@@ -1,5 +1,6 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -10,9 +11,6 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- */
-/*
- * Created on Jun 2, 2005
  */
 package megamek.common.loaders;
 
@@ -26,6 +24,8 @@ import megamek.common.VTOL;
 import megamek.common.util.BuildingBlock;
 
 /**
+ * Created on Jun 2, 2005
+ *
  * @author Andrew Hunter
  */
 public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
@@ -97,9 +97,6 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
             t.setFuelTonnage(dataFile.getDataAsDouble("fuel")[0]);
         }
         int engineFlags = Engine.TANK_ENGINE | Engine.SUPPORT_VEE_ENGINE;
-        if (t.isClan()) {
-            engineFlags |= Engine.CLAN_ENGINE;
-        }
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }

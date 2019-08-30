@@ -36,7 +36,7 @@ public class EntityWeightClass {
     public static final int WEIGHT_LARGE_DROP = 9;
     public static final int WEIGHT_SMALL_WAR = 10;
     public static final int WEIGHT_LARGE_WAR = 11;
-    
+
     // Support Vehicles
     public static final int WEIGHT_SMALL_SUPPORT = 12;
     public static final int WEIGHT_MEDIUM_SUPPORT = 13;
@@ -66,7 +66,7 @@ public class EntityWeightClass {
     private static double[] jumpshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 749999, 2500000 }; // Ten padding 0s
     private static double[] GEWeightLimits = { 0, 15, 40, 90, 150 }; // One padding 0
     private static double[] protoWeightLimits = { 0, 3, 5, 7, 9, 10 }; // One padding 0
-    
+
     public static double[] getWeightLimitByType(String type) {
         if (type.equals(UnitType.getTypeName(UnitType.MEK))) {
             return mechWeightLimits;
@@ -448,7 +448,7 @@ public class EntityWeightClass {
     }
 
     public static String getClassName(int wClass, Entity en) {
-        return getClassName(wClass, UnitType.determineUnitType(en), en.isSupportVehicle());
+        return getClassName(wClass, UnitType.getTypeName(en.getUnitType()), en.isSupportVehicle());
     }
 
     public static String getClassName(int nameVal) {

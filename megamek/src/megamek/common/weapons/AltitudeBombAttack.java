@@ -41,6 +41,7 @@ public class AltitudeBombAttack extends Weapon {
         mediumRange = 0;
         longRange = 0;
         extremeRange = 0;
+        maxRange = 0;
         tonnage = 0.0;
         criticals = 0;
         bv = 0;

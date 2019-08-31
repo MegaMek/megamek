@@ -61,7 +61,7 @@ public class ArtilleryTargetingControl {
     // this is a data structure that maps artillery damage value (which directly correlates with blast radius)
     // to a dictionary containing sets of coordinates and the damage value if one of those coordinates were hit by a shell
     // does not take into account hit odds or anything like that
-    private Map<Integer, HashMap<Coords, Double>> damageValues;
+    private Map<Integer, HashMap<Coords, Double>> damageValues = new HashMap<>();
     
     private Set<Targetable> targetSet;
     
@@ -75,7 +75,7 @@ public class ArtilleryTargetingControl {
      * @param shooter
      * @param game
      */
-    private double calculateDamageValue(int damage, Coords coords, Entity shooter, IGame game, Princess owner) {
+    public double calculateDamageValue(int damage, Coords coords, Entity shooter, IGame game, Princess owner) {
         if(getDamageValue(damage, coords) != null) {
             return getDamageValue(damage, coords);
         }
@@ -113,9 +113,9 @@ public class ArtilleryTargetingControl {
     private double calculateDamageValueForHex(int damage, Coords coords, Entity shooter, IGame game, Princess owner) {
         double value = 0;
         
-        for(Entity entity : game.getEntitiesVector(coords, false)) {
-            // ignore aircraft for now
-            if(entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
+        for(Entity entity : game.getEntitiesVector(coords, true)) {
+            // ignore aircraft for now, and also transported entities
+            if(entity.isAirborne() || entity.isAirborneVTOLorWIGE() || entity.getTransportId() != Entity.NONE) {
                 continue;
             }
             

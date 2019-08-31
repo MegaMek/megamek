@@ -71,6 +71,17 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String Mode_CapMissile_Bearing_Med = "Bearings-Only Medium Detection Range";
     public static final String Mode_CapMissile_Bearing_Short = "Bearings-Only Short Detection Range";
     
+    public static final String Mode_AC_Rapid = "Rapid";
+    public static final String Mode_AC_Single = "Single";
+    public static final String Mode_UAC_Ultra = "Ultra";
+    public static final String Mode_RAC_TwoShot = "2-Shot";
+    public static final String Mode_RAC_ThreeShot = "3-Shot";
+    public static final String Mode_RAC_FourShot = "4-Shot";
+    public static final String Mode_RAC_FiveShot = "5-Shot";
+    public static final String Mode_RAC_SixShot = "6-Shot";
+    
+    public static final String Mode_Missile_Indirect = "Indirect";
+    
     public static final String Mode_CapMissile_Tele_Operated = "Tele-Operated";
     
     public static final String Mode_Normal = "Normal";

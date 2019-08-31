@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons.infantry;
 
+import megamek.common.EquipmentTypeLookup;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -40,7 +41,7 @@ public class InfantrySupportTAGWeapon extends InfantryWeapon {
 		        .andNot(F_BA_WEAPON).andNot(F_PROTO_WEAPON).or(F_TAG).or(F_NO_FIRES).or(F_INF_ENCUMBER);
 
 		name = "TAG (Light, Man-Portable)";
-		setInternalName("InfantryTAG");
+		setInternalName(EquipmentTypeLookup.INFANTRY_TAG);
 		addLookupName("Infantry TAG");
 		damage = 0;
 		shortRange = 3;

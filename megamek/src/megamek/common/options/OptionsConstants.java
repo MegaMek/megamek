@@ -486,6 +486,7 @@ public class OptionsConstants {
     public static final String ADVAERORULES_STRATOPS_OVER_PENETRATE= "stratops_over_penetrate";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_SPACE_BOMB= "stratops_space_bomb";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH= "stratops_bearings_only";  //$NON-NLS$
+    public static final String ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY= "stratops_bearings_only_velocity";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH= "stratops_waypoint_launch";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_ADVANCED_SENSORS= "stratops_advanced_sensors";  //$NON-NLS$
     public static final String ADVAERORULES_VARIABLE_DAMAGE_THRESH= "variable_damage_thresh";  //$NON-NLS$
@@ -496,6 +497,8 @@ public class OptionsConstants {
     public static final String ADVAERORULES_AA_MOVE_MOD= "aa_move_mod";  //$NON-NLS$
     public static final String ADVAERORULES_ALLOW_LARGE_SQUADRONS= "allow_large_squadrons";  //$NON-NLS$
     public static final String ADVAERORULES_SINGLE_NO_CAP= "single_no_cap";  //$NON-NLS$
+    public static final String ADVAERORULES_AERO_ARTILLERY_MUNITIONS= "aero_artillery_munitions"; //$NON-NLS$
+    public static final String ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE= "expanded_kf_drive_damage";  //$NON-NLS$
 
     public static final String INIT_INF_MOVE_EVEN= "inf_move_even";  //$NON-NLS$
     public static final String INIT_INF_DEPLOY_EVEN= "inf_deploy_even";  //$NON-NLS$

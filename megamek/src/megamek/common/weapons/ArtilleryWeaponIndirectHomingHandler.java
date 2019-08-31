@@ -15,6 +15,7 @@
 package megamek.common.weapons;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -101,14 +102,10 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             aaa.decrementTurnsTilHit();
             return true;
         }
-        Entity entityTarget;
-        if (game.getPhase() == IGame.Phase.PHASE_OFFBOARD) {
-            convertHomingShotToEntityTarget();
-            entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
-                    .getTarget(game) : null;
-        } else {
-            entityTarget = (Entity) target;
-        }
+        
+        convertHomingShotToEntityTarget();
+        Entity entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
+                .getTarget(game) : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
@@ -232,14 +229,13 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         int hits = 1;
         int nCluster = 1;       
         if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
+            //Any AMS/Point Defense fire against homing rounds?
+            hits = handleAMS(vPhaseReport);
             if (aaa.getCoords() != null) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
            
         }
-        
-        //Any AMS/Point Defense fire against homing rounds?
-        hits = handleAMS(vPhaseReport);
         
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
@@ -341,13 +337,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
     }
 
     /**
-     * Find the tagged entity for this attack Each TAG will attract a number of
-     * shots up to its priority number (mode setting) When all the TAGs are used
-     * up, the shots fired are reset. So if you leave them all on 1-shot, then
-     * homing attacks will be evenly split, however many shots you fire.
-     * Priority setting is to allocate more homing attacks to a more important
-     * target as decided by player. TAGs fired by the enemy aren't eligible, nor
-     * are TAGs fired at a target on a different map sheet.
+     * Find the tagged entity for this attack 
+     * Uses a CFR to let the player choose from eligible TAG
      */
     public void convertHomingShotToEntityTarget() {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
@@ -411,43 +402,23 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             target = newTarget;
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no tag in 8 hex radius of target hex");
+        } else if (allowed.size() == 1) {
+            //Just use target 0...
+            newTarget = allowed.get(0).target;
+            target = newTarget;
+            aaa.setTargetId(target.getTargetId());
+            aaa.setTargetType(target.getTargetType());
         } else {
-            // find the TAG hit with the most shots left, and closest
-            int bestDistance = Integer.MAX_VALUE;
-            TagInfo targetTag = allowed.firstElement();
-            for (TagInfo ti : allowed) {
-                int distance = tc.distance(newTarget.getPosition());
-
-                // higher # of shots left
-                if (ti.shots > targetTag.shots) {
-                    bestDistance = distance;
-                    targetTag = ti;
-                    continue;
-                }
-                // same # of shots left
-                if (ti.shots == targetTag.shots) {
-                    // higher priority
-                    if (ti.priority > targetTag.priority) {
-                        bestDistance = distance;
-                        targetTag = ti;
-                        continue;
-                    }
-                    // same priority and closer
-                    if ((ti.priority == targetTag.priority)
-                            && (bestDistance > distance)) {
-                        bestDistance = distance;
-                        targetTag = ti;
-                    }
-                }
+            //The player gets to select the target
+            List<Integer> targetIds = new ArrayList<Integer>();
+            List<Integer> targetTypes = new ArrayList<Integer>();
+            for (TagInfo target : allowed) {
+                targetIds.add(target.target.getTargetId());
+                targetTypes.add(target.target.getTargetType());
             }
-
-            // if the best TAG has no shots left
-            if (targetTag.shots == 0) {
-                game.clearTagInfoShots(ae, tc);
-            }
-
-            targetTag.shots--;
-            target = targetTag.target;
+            int choice = server.processTAGTargetCFR(ae.getOwnerId(), targetIds, targetTypes);
+            newTarget = allowed.get(choice).target;
+            target = newTarget;
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
         }

@@ -16,6 +16,8 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.EquipmentTypeLookup;
+
 /**
  * @author Jay Lawson
  */
@@ -32,7 +34,7 @@ public class SubCapLaserBayWeapon extends BayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "Sub-Capital Laser Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.SCL_BAY);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 12;

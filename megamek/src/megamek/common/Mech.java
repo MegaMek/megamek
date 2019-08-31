@@ -1553,14 +1553,14 @@ public abstract class Mech extends Entity {
     public void addEngineSinks(int totalSinks, BigInteger heatSinkFlag,
             boolean clan) {
         if (heatSinkFlag == MiscType.F_DOUBLE_HEAT_SINK) {
-            addEngineSinks(totalSinks, clan ? "CLDoubleHeatSink"
-                    : "ISDoubleHeatSink");
+            addEngineSinks(totalSinks, clan ? EquipmentTypeLookup.CLAN_DOUBLE_HS
+                    : EquipmentTypeLookup.IS_DOUBLE_HS);
         } else if (heatSinkFlag == MiscType.F_COMPACT_HEAT_SINK) {
-            addEngineSinks(totalSinks, "IS1 Compact Heat Sink");
+            addEngineSinks(totalSinks, EquipmentTypeLookup.COMPACT_HS_1);
         } else if (heatSinkFlag == MiscType.F_LASER_HEAT_SINK) {
-            addEngineSinks(totalSinks, "CLLaser Heat Sink");
+            addEngineSinks(totalSinks, EquipmentTypeLookup.LASER_HS);
         } else {
-            addEngineSinks(totalSinks, "Heat Sink");
+            addEngineSinks(totalSinks, EquipmentTypeLookup.SINGLE_HS);
         }
     }
 
@@ -1831,6 +1831,11 @@ public abstract class Mech extends Entity {
             }
         }
         return sinksUnderwater;
+    }
+    
+    @Override
+    public boolean tracksHeat() {
+        return true;
     }
 
     /**
@@ -2934,7 +2939,7 @@ public abstract class Mech extends Entity {
      */
     public void addClanCase() {
         boolean explosiveFound = false;
-        EquipmentType clCase = EquipmentType.get("CLCASE");
+        EquipmentType clCase = EquipmentType.get(EquipmentTypeLookup.CLAN_CASE);
         for (int i = 0; i < locations(); i++) {
             explosiveFound = false;
             for (Mounted m : getEquipment()) {
@@ -4755,15 +4760,20 @@ public abstract class Mech extends Entity {
                 @Override
                 public int compare(ArrayList<Object> obj1,
                         ArrayList<Object> obj2) {
+                    Double obj1BV = (Double) obj1.get(0); // BV
+                    Double obj2BV = (Double) obj2.get(0); // BV
+                    
                     // first element in the the ArrayList is BV, second is heat
                     // if same BV, lower heat first
-                    if (obj1.get(0).equals(obj2.get(0))) {
-                        return (int) Math.ceil((Double) obj1.get(1)
-                                - (Double) obj2.get(1));
+                    if(obj1BV.equals(obj2BV)) {
+                        Double obj1Heat = (Double) obj1.get(1);
+                        Double obj2Heat = (Double) obj2.get(1);
+                        
+                        return Double.compare(obj1Heat, obj2Heat);
                     }
+                    
                     // higher BV first
-                    return (int) Math.ceil((Double) obj2.get(0)
-                            - (Double) obj1.get(0));
+                    return Double.compare(obj2BV, obj1BV);
                 }
             });
             // count heat-generating weapons at full modified BV until

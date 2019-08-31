@@ -189,6 +189,10 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                 a.addGravDeck(Integer.parseInt(t));
             }
         }
+        // Add a damage tracker value for each grav deck
+        for (int i = 0; i < a.getTotalGravDeck(); i++) {
+            a.initializeGravDeckDamage(i);
+        }
 
         // Switch older files with standard armor to aerospace
         int at = EquipmentType.T_ARMOR_AEROSPACE;
@@ -245,10 +249,10 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
 
         addTransports(a);
 
-        // get docking collars
+        // get docking collars (legacy BLK files)
         int docks = dataFile.getDataAsInt("docking_collar")[0];
         while (docks > 0) {
-            a.addTransporter(new DockingCollar(1));
+            a.addTransporter(new DockingCollar(1, (a.getTransports().size() + 1)));
             docks--;
         }
         a.setArmorTonnage(a.getArmorWeight());

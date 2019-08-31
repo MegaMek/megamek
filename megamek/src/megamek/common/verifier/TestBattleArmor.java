@@ -23,17 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.ITechManager;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -247,9 +237,9 @@ public class TestBattleArmor extends TestEntity {
     }
 
     public enum BAMotiveSystems {
-        BA_JUMP ("BAJumpJet", EntityMovementMode.INF_JUMP, new int[] { 25, 25, 50, 125, 250 }),
-        BA_VTOL ("BAVTOL", EntityMovementMode.VTOL, new int[] { 30, 40, 60 }),
-        BA_UMU ("BAUMU", EntityMovementMode.INF_UMU, new int[] { 45, 45, 85, 160, 250});
+        BA_JUMP (EquipmentTypeLookup.BA_JUMP_JET, EntityMovementMode.INF_JUMP, new int[] { 25, 25, 50, 125, 250 }),
+        BA_VTOL (EquipmentTypeLookup.BA_VTOL, EntityMovementMode.VTOL, new int[] { 30, 40, 60 }),
+        BA_UMU (EquipmentTypeLookup.BA_UMU, EntityMovementMode.INF_UMU, new int[] { 45, 45, 85, 160, 250});
 
         private final String internalName;
         private final EntityMovementMode mode;
@@ -736,7 +726,7 @@ public class TestBattleArmor extends TestEntity {
                     + "mechanical jump booster!");
             return false;
         }
-        EquipmentType boosterType = EquipmentType.get("CLBAMyomerBooster");
+        EquipmentType boosterType = EquipmentType.get(EquipmentTypeLookup.BA_MYOMER_BOOSTER);
         if (ba.countWorkingMisc(MiscType.F_MASC) > boosterType.getCriticals(ba)) {
             buff.append("BattleArmor may only mount 1 " + "myomer booster!");
             return false;
@@ -876,12 +866,19 @@ public class TestBattleArmor extends TestEntity {
                 correct = false;
             }
 
-            if ((m.getType() instanceof AmmoType)
-                    && (m.getBaseShotsLeft() > NUM_SHOTS_PER_CRIT)) {
-                buff.append(m.getName() + "has " + m.getBaseShotsLeft()
-                        + " shots, but BattleArmor may only have at most "
-                        + NUM_SHOTS_PER_CRIT + " shots per slot.\n");
-                correct = false;
+            if (m.getType() instanceof AmmoType) {
+                final int maxShots;
+                if (((AmmoType) m.getType()).getAmmoType() != AmmoType.T_BA_TUBE) {
+                    maxShots = NUM_SHOTS_PER_CRIT;
+                } else {
+                    maxShots = NUM_SHOTS_PER_CRIT_TA;
+                }
+                if (m.getBaseShotsLeft() > maxShots) {
+                    buff.append(m.getName()).append(" has ").append(m.getBaseShotsLeft())
+                        .append(" shots, but BattleArmor may only have at most ")
+                        .append(maxShots).append(" shots per slot.\n");
+                    correct = false;
+                }
             }
 
             // Ensure that jump boosters are mounted in the body

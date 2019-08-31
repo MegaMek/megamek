@@ -16,11 +16,7 @@
  */
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBayHandler;
@@ -45,7 +41,7 @@ public class AR10BayWeapon extends AmmoBayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "AR10 Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.AR10_BAY);
         addLookupName("ISAR10Bay");
         addLookupName("CLAR10Bay");
         this.heat = 0;

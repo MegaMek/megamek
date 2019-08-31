@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class CriticalSlot implements Serializable {
     /**
@@ -177,6 +178,11 @@ public class CriticalSlot implements Serializable {
         return ((other.getType() == type) && (other.getIndex() == index) && (((other
                 .getMount() != null) && (mount != null) && other.getMount()
                 .equals(mount)) || ((mount == null) && (other.getMount() == null))));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, index, mount);
     }
 
     /**

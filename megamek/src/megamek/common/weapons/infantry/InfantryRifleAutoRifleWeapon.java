@@ -18,6 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentTypeLookup;
 
 /**
  * @author Ben Grills
@@ -33,8 +34,8 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
 		super();
 
 		name = "Auto-Rifle (Modern, Generic)";
-		setInternalName(name);
-		addLookupName("InfantryAssaultRifle");
+		setInternalName(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE);
+		addLookupName(name);
 		addLookupName("Auto Rifle");
 		addLookupName("Auto-Rifle");
 		addLookupName("Infantry Automatic Rifle");

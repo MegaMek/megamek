@@ -190,6 +190,10 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                 a.addGravDeck(Integer.parseInt(t));
             }
         }
+        // Add a damage tracker value for each grav deck
+        for (int i = 0; i < a.getTotalGravDeck(); i++) {
+            a.initializeGravDeckDamage(i);
+        }
 
         // Switch older files with standard armor to capital
         int at = EquipmentType.T_ARMOR_AEROSPACE;

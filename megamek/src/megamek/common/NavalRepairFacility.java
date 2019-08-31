@@ -144,5 +144,9 @@ public class NavalRepairFacility extends Bay {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
+    @Override
+    public long getCost() {
+        return (isPressurized() ? 10000L : 5000L) * (long) totalSpace;
+    }
 
 }

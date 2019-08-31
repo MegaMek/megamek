@@ -39,9 +39,6 @@ public class Warship extends Jumpship {
     private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
             "Aft", "Aft Left Side", "Aft Right Side", "Hull", "Left Broadsides", "Right Broadsides" };
 
-    private int kf_integrity = 0;
-    private int sail_integrity = 0;
-
     public Warship() {
         super();
         damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -99,40 +96,19 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public void setKFIntegrity(int kf) {
-        kf_integrity = kf;
-    }
-
-    @Override
-    public int getKFIntegrity() {
-        return kf_integrity;
-    }
-
-    @Override
-    public void setSailIntegrity(int sail) {
-        sail_integrity = sail;
-    }
-
-    @Override
-    public int getSailIntegrity() {
-        return sail_integrity;
-    }
-
-    @Override
     public void initializeSailIntegrity() {
         int integrity = 1 + (int) Math.ceil((30.0 + weight / 20000.0) / 20.0);
+        setOSailIntegrity(integrity);
         setSailIntegrity(integrity);
     }
 
     @Override
     public void initializeKFIntegrity() {
         int integrity = (int) Math.ceil(2 + getJumpDriveWeight() / 25000.0);
+        setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
-    }
-
-    @Override
-    public boolean canJump() {
-        return kf_integrity > 0;
+        //Helium Tanks make up about 2/3 of the drive core.
+        setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
     
     // broadside weapon arcs
@@ -211,7 +187,7 @@ public class Warship extends Jumpship {
     
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[23];
+        double[] costs = new double[24];
         int costIdx = 0;
         double cost = 0;
 
@@ -297,18 +273,19 @@ public class Warship extends Jumpship {
 
         // Transport Bays
         int baydoors = 0;
-        int bayCost = 0;
+        long bayCost = 0;
+        long quartersCost = 0;
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if ((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
-                bayCost += 20000 * next.totalSpace;
-            }
-            if ((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
-                bayCost += 20000 * next.totalSpace;
+            if (next.isQuarters()) {
+                quartersCost += next.getCost();
+            } else {
+                bayCost += next.getCost();
             }
         }
 
-        costs[costIdx++] += bayCost + (baydoors * 1000);
+        costs[costIdx++] += bayCost + (baydoors * 1000L);
+        costs[costIdx++] = quartersCost;
 
         // Weapons and Equipment
         // HPG
@@ -339,7 +316,7 @@ public class Warship extends Jumpship {
                 "Structural Integrity", "Drive Unit", "Engine", "Engine Control Unit",
                 "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
                 "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
-                "Bays", "HPG", "Weapons/Equipment", "Weight Multiplier" };
+                "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 

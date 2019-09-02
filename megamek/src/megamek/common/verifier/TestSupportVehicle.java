@@ -616,7 +616,7 @@ public class TestSupportVehicle extends TestEntity {
     public String printWeightStructure() {
         return StringUtil.makeLength(
                 "Chassis: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightStructure()) + "\n";
+                + TestEntity.makeWeightString(getWeightStructure(), usesKgStandard()) + "\n";
     }
 
     @Override
@@ -624,7 +624,7 @@ public class TestSupportVehicle extends TestEntity {
         return StringUtil.makeLength(String.format("Engine: %s (%s)",
                 engine.getEngineName(), ITechnology.getRatingName(getEntity().getEngineTechRating())),
                 getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightEngine()) + "\n";
+                + TestEntity.makeWeightString(getWeightEngine(), usesKgStandard()) + "\n";
     }
 
     @Override
@@ -643,7 +643,7 @@ public class TestSupportVehicle extends TestEntity {
         return StringUtil.makeLength(
                 String.format("Armor: %d (%s)", getTotalOArmor(), name),
                 getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightArmor()) + "\n";
+                + TestEntity.makeWeightString(getWeightArmor(), usesKgStandard()) + "\n";
 
     }
 
@@ -841,7 +841,7 @@ public class TestSupportVehicle extends TestEntity {
         } else {
             return getWeightPowerAmp() != 0 ? StringUtil.makeLength(
                     "Power Amp:", getPrintSize() - 5)
-                    + TestEntity.makeWeightString(getWeightPowerAmp()) + "\n" : "";
+                    + TestEntity.makeWeightString(getWeightPowerAmp(), usesKgStandard()) + "\n" : "";
         }
     }
 
@@ -852,14 +852,14 @@ public class TestSupportVehicle extends TestEntity {
             if (m.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
                     || m.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
                 fireCon = StringUtil.makeLength(m.getName(), getPrintSize() - 5)
-                        + TestEntity.makeWeightString(m.getType().getTonnage(supportVee)) + "\n";
+                        + TestEntity.makeWeightString(m.getType().getTonnage(supportVee), usesKgStandard()) + "\n";
                 break;
             }
         }
         double weight = getWeightCrewAccomodations();
         String crewStr = weight > 0 ?
                 StringUtil.makeLength("Crew Accomodations:", getPrintSize() - 5)
-                    + TestEntity.makeWeightString(weight) + "\n" : "";
+                    + TestEntity.makeWeightString(weight, usesKgStandard()) + "\n" : "";
         return fireCon + crewStr;
     }
 
@@ -893,8 +893,13 @@ public class TestSupportVehicle extends TestEntity {
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
-            buff.append("Weight: ").append(getWeight()).append(" (").append(
-                    calculateWeight()).append(")\n");
+            if (!usesKgStandard()) {
+                buff.append("Weight: ").append(getWeight()).append(" (")
+                        .append(calculateWeight()).append(")\n");
+            } else {
+                buff.append("Weight: ").append(getWeight() * 1000).append(" kg (")
+                        .append(calculateWeight() * 1000).append(" kg)\n");
+            }
         }
 
         buff.append(printWeightCalculation()).append("\n");

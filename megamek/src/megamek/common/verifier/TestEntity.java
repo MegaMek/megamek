@@ -249,10 +249,15 @@ public abstract class TestEntity implements TestEntityOption {
         return Math.round(f * type.mult) / type.mult;
     }
 
-    protected static String makeWeightString(double weight) {
-        return (weight < 100 ? " " : "") + (weight < 10 ? " " : "")
-                + Double.toString(weight)
-                + ((Math.ceil(weight * 10) == (weight * 10)) ? "0" : "");
+    static String makeWeightString(double weight) {
+        return makeWeightString(weight, false);
+    }
+
+    static String makeWeightString(double weight, boolean kg) {
+        if (kg) {
+            weight *= 1000;
+        }
+        return String.format("%3.1f%s", weight, (kg ? " kg" : ""));
     }
 
     /**
@@ -415,13 +420,13 @@ public abstract class TestEntity implements TestEntityOption {
                         + (hasDoubleHeatSinks() ? " ["
                                 + Integer.toString(2 * getCountHeatSinks())
                                 + "]" : ""), getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightHeatSinks()) + "\n";
+                + TestEntity.makeWeightString(getWeightHeatSinks(), usesKgStandard()) + "\n";
     }
 
     public String printWeightEngine() {
         return StringUtil.makeLength("Engine: " + ((null != engine) ? engine.getEngineName() : "---"),
                 getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightEngine()) + "\n";
+                + TestEntity.makeWeightString(getWeightEngine(), usesKgStandard()) + "\n";
     }
 
     public double getWeightEngine() {
@@ -434,7 +439,7 @@ public abstract class TestEntity implements TestEntityOption {
                 "Structure: "
                         + Integer.toString(getEntity().getTotalOInternal())
                         + " " + structure.getShortName(), getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightStructure()) + "\n";
+                + TestEntity.makeWeightString(getWeightStructure(), usesKgStandard()) + "\n";
     }
 
     public double getWeightStructure() {
@@ -447,12 +452,12 @@ public abstract class TestEntity implements TestEntityOption {
             return StringUtil.makeLength(
                     "Armor: " + Integer.toString(getTotalOArmor()) + " "
                             + armor[0].getShortName(), getPrintSize() - 5)
-                    + TestEntity.makeWeightString(getWeightArmor()) + "\n";
+                    + TestEntity.makeWeightString(getWeightArmor(), usesKgStandard()) + "\n";
         } else {
             return StringUtil.makeLength(
                     "Armor: " + Integer.toString(getTotalOArmor()) + " "
                             + "Patchwork", getPrintSize() - 5)
-                    + TestEntity.makeWeightString(getWeightArmor()) + "\n";
+                    + TestEntity.makeWeightString(getWeightArmor(), usesKgStandard()) + "\n";
         }
 
     }
@@ -568,7 +573,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
-                    TestEntity.makeWeightString(mt.getTonnage(getEntity())));
+                    TestEntity.makeWeightString(mt.getTonnage(getEntity()), usesKgStandard()));
             buff.append("\n");
         }
         return buff;
@@ -612,7 +617,7 @@ public abstract class TestEntity implements TestEntityOption {
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
                     .append(TestEntity.makeWeightString(mt
-                            .getTonnage(getEntity()))).append("\n");
+                            .getTonnage(getEntity()), usesKgStandard())).append("\n");
         }
         return buff;
     }
@@ -661,7 +666,7 @@ public abstract class TestEntity implements TestEntityOption {
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
                     .append(TestEntity.makeWeightString(mt
-                            .getTonnage(getEntity()))).append("\n");
+                            .getTonnage(getEntity()), usesKgStandard())).append("\n");
         }
         return buff;
     }
@@ -1426,7 +1431,7 @@ public abstract class TestEntity implements TestEntityOption {
             carryingSpace = StringUtil.makeLength("Carrying Capacity:",
                     getPrintSize() - 5)
                     + TestEntity.makeWeightString(getEntity()
-                            .getTroopCarryingSpace()) + "\n";
+                            .getTroopCarryingSpace(), usesKgStandard()) + "\n";
         }
         String cargoWeightString = "";
         double cargoWeight = 0;
@@ -1436,7 +1441,7 @@ public abstract class TestEntity implements TestEntityOption {
         if (cargoWeight > 0) {
             cargoWeightString = StringUtil.makeLength("Cargo Weight:",
                     getPrintSize() - 5)
-                    + TestEntity.makeWeightString(cargoWeight) + "\n";
+                    + TestEntity.makeWeightString(cargoWeight, usesKgStandard()) + "\n";
         }
         return carryingSpace + cargoWeightString;
     }
@@ -1484,6 +1489,10 @@ public abstract class TestEntity implements TestEntityOption {
                 || entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)
                 || (EntityWeightClass.getWeightClass(entity.getWeight(), entity)
                         == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
+    }
+
+    boolean usesKgStandard() {
+        return usesKgStandard(getEntity());
     }
 
 } // End class TestEntity

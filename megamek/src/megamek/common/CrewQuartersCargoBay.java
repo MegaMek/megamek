@@ -104,4 +104,9 @@ public final class CrewQuartersCargoBay extends Bay {
         return "crewquarters:" + weight + ":" + doors;
     }
 
+    @Override
+    public long getCost() {
+        return 15000L * (long) totalSpace;
+    }
+
 }

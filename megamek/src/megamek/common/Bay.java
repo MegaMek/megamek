@@ -628,4 +628,11 @@ public class Bay implements Transporter, ITechnology {
         return false;
     }
 
-} // End package class TroopSpace implements Transporter
+    /**
+     * @return The cost of the bay in C-bills
+     */
+    public long getCost() {
+        return 0;
+    }
+
+ } // End package class TroopSpace implements Transporter

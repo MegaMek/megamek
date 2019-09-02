@@ -53,8 +53,10 @@ import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
+import megamek.common.PlanetaryConditions;
 import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -693,7 +695,16 @@ public class Princess extends BotClient {
                     }
     
                     // tell the game I want to fire
-                    Vector<EntityAction> actions = plan.getEntityActionVector();
+                    Vector<EntityAction> actions = new Vector<>();
+                    
+                    // if using search light, it needs to go before the other actions so we can light up what we're shooting at
+                    SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, plan);
+                    if(searchLightAction != null) {
+                        actions.add(searchLightAction);
+                    }
+                    
+                    actions.addAll(plan.getEntityActionVector());
+                    
                     EntityAction spotAction = getFireControl(shooter).getSpotAction(plan, shooter, fireControlState);
                 	if(spotAction != null) {
                 		actions.add(spotAction);
@@ -717,6 +728,11 @@ public class Princess extends BotClient {
                 	if(spotAction != null) {
                 		unjamPlan.add(spotAction);
                 	}
+                	
+                	SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, null);
+                    if(searchLightAction != null) {
+                        unjamPlan.add(searchLightAction);
+                    }
                 }
                 
                 sendAttackData(shooter.getId(), unjamPlan);
@@ -727,7 +743,7 @@ public class Princess extends BotClient {
             methodEnd(getClass(), METHOD_NAME);
         }
     }
-
+    
     /**
      * Calculates the targeting/offboard turn
      * This includes firing TAG and non-direct-fire artillery
@@ -2016,6 +2032,7 @@ public class Princess extends BotClient {
     private MovePath performPathPostProcessing(MovePath path, double expectedDamage) {
         MovePath retval = path;
         evadeIfNotFiring(retval, expectedDamage >= 0);
+        turnOnSearchLight(retval, expectedDamage >= 0);
         unloadTransportedInfantry(retval);
         unjamRAC(retval);
         
@@ -2060,6 +2077,21 @@ public class Princess extends BotClient {
            !possibleToInflictDamage &&
            (path.getMpUsed() <= AeroPathUtil.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
             path.addStep(MoveStepType.EVADE);
+        }
+    }
+    
+    /**
+     * Turn on the searchlight if we expect to be shooting at something and it's dark out
+     * @param path Path being considered
+     * @param possibleToInflictDamage Whether we expect to be shooting at something.
+     */
+    private void turnOnSearchLight(MovePath path, boolean possibleToInflictDamage) {
+        Entity pathEntity = path.getEntity();
+        if(possibleToInflictDamage &&
+                pathEntity.hasSpotlight() && 
+                !pathEntity.isUsingSpotlight() &&
+                (path.getGame().getPlanetaryConditions().getLight() >= PlanetaryConditions.L_FULL_MOON)) {
+            path.addStep(MoveStepType.SEARCHLIGHT);
         }
     }
     

@@ -57,4 +57,9 @@ public final class PillionSeatCargoBay extends StandardSeatCargoBay {
         return "pillionseats:" + currentSpace + ":" + doors;
     }
 
+    @Override
+    public long getCost() {
+        return 10L * (long) totalSpace;
+    }
+
 }

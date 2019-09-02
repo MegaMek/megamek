@@ -84,4 +84,9 @@ public class StandardSeatCargoBay extends Bay {
         return "standardseats:" + currentSpace + ":" + doors;
     }
 
+    @Override
+    public long getCost() {
+        return 100L * (long) totalSpace;
+    }
+
 }

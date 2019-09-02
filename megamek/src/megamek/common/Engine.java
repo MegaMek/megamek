@@ -466,7 +466,9 @@ public class Engine implements Serializable, ITechnology {
     // file parsing.
     public String getEngineName() {
         StringBuilder sb = new StringBuilder();
-        sb.append(engineRating);
+        if (!hasFlag(SUPPORT_VEE_ENGINE)) {
+            sb.append(engineRating);
+        }
         if (hasFlag(LARGE_ENGINE)) {
             sb.append(Messages.getString("Engine.Large"));
         }
@@ -474,7 +476,9 @@ public class Engine implements Serializable, ITechnology {
         if (hasFlag(CLAN_ENGINE)) {
             sb.append(Messages.getString("Engine.Clan"));
         }
-        if (hasFlag(TANK_ENGINE)) {
+        if (hasFlag(SUPPORT_VEE_ENGINE)) {
+            sb.append(Messages.getString("Engine.SupportVehicle"));
+        } else if (hasFlag(TANK_ENGINE)) {
             sb.append(Messages.getString("Engine.Vehicle"));
         }
         return sb.toString();

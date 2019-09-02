@@ -620,10 +620,18 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     @Override
+    public String printWeightEngine() {
+        return StringUtil.makeLength(String.format("Engine: %s (%s)",
+                engine.getEngineName(), ITechnology.getRatingName(getEntity().getEngineTechRating())),
+                getPrintSize() - 5)
+                + TestEntity.makeWeightString(getWeightEngine()) + "\n";
+    }
+
+    @Override
     public String printWeightArmor() {
         String name;
         if (getEntity().hasBARArmor(getEntity().firstArmorIndex())) {
-            name = String.format("BAR %d (%s)",
+            name = String.format("BAR %d [%s]",
                     getEntity().getBARRating(getEntity().firstArmorIndex()),
                     ITechnology.getRatingName(getEntity().getArmorTechRating()));
         } else if (!getEntity().hasPatchworkArmor()) {

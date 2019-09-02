@@ -620,6 +620,26 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     @Override
+    public String printWeightArmor() {
+        String name;
+        if (getEntity().hasBARArmor(getEntity().firstArmorIndex())) {
+            name = String.format("BAR %d (%s)",
+                    getEntity().getBARRating(getEntity().firstArmorIndex()),
+                    ITechnology.getRatingName(getEntity().getArmorTechRating()));
+        } else if (!getEntity().hasPatchworkArmor()) {
+            name = EquipmentType.getArmorTypeName(getEntity()
+                            .getArmorType(getEntity().firstArmorIndex()));
+        } else {
+            name = "Patchwork";
+        }
+        return StringUtil.makeLength(
+                String.format("Armor: %d (%s)", getTotalOArmor(), name),
+                getPrintSize() - 5)
+                + TestEntity.makeWeightString(getWeightArmor()) + "\n";
+
+    }
+
+    @Override
     public Entity getEntity() {
         return supportVee;
     }

@@ -17,9 +17,12 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -62,6 +65,7 @@ import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
+import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.SpotAction;
 import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -2327,15 +2331,11 @@ public class FireControl {
 
         boolean shooterHasIDF = entityCanIndirectFireMissile(fireControlState, shooter);
         
-        // Go through every unit in the game.
-        for (final Entity entity : game.getEntitiesVector()) {
+        // Go through every enemy unit 
+        for (final Entity entity : owner.getEnemyEntities()) {
 
-            // If they are my enemy and on the board, they're a target.
-            if (entity.getOwner().isEnemyOf(shooter.getOwner())
-                && (null != entity.getPosition())
-                && !entity.isOffBoard()
-                && entity.isTargetable()
-                && (null != entity.getCrew()) && !entity.getCrew().isDead()) {
+            // If they are my enemy and we can either see them or have IDF capability
+            if (entity.isTargetable()) {
 
                 final LosEffects effects =
                         LosEffects.calculateLos(game, shooter.getId(), entity);
@@ -3180,5 +3180,93 @@ public class FireControl {
         }
         
         return unjamVector;
+    }
+
+    /**
+     * Given a firing plan, calculate the best target to light up with a searchlight
+     * @param plan
+     * @return
+     */
+    public SearchlightAttackAction getSearchLightAction(Entity shooter, FiringPlan plan) {
+        // no search light if it's not on
+        if(!shooter.isUsingSpotlight() || !shooter.hasSpotlight()) {
+            return null;
+        }
+        
+        // assemble set of targets we're planning on shooting
+        Set<Coords> planTargets = new HashSet<>();
+        if(plan != null) {
+            for(WeaponFireInfo wfi : plan) {
+                planTargets.add(wfi.getTarget().getPosition());
+            }
+        }
+        
+        List<SearchlightAttackAction> searchlights = new ArrayList<>();
+        for (EntityAction action : shooter.getGame().getActionsVector()) {
+            if (action instanceof SearchlightAttackAction) {
+                searchlights.add((SearchlightAttackAction) action);
+            }
+        }
+        
+        // for each potential target on the board, draw a line between "shooter" and target
+        // and assign it a score. Score is determined by:
+        // # hostiles lit up - # friendlies lit up + # targets lit up
+        Targetable bestTarget = null;
+        int bestTargetScore = 0;
+
+        for(Targetable target : getTargetableEnemyEntities(shooter, shooter.getGame(), owner.getFireControlState())) {
+            int score = 0;
+            
+            for(Coords intervening : Coords.intervening(shooter.getPosition(), target.getPosition())) {
+                // if it's already lit up, don't count it 
+                if(shooter.getGame().isPositionIlluminated(intervening) > 0) {
+                    continue;
+                }
+                
+                for(Entity ent : shooter.getGame().getEntitiesVector(intervening, true)) {
+                    // don't count ourselves, or the target if it's already lit itself up
+                    // or the target if it will be lit up by a previously declared search light
+                    if((ent.getId() == shooter.getId()) || ent.isIlluminated()) {
+                        continue;
+                    } else {
+                        boolean willbeIlluminated = false;
+                        
+                        for(SearchlightAttackAction searchlight : searchlights) {
+                            if(searchlight.willIlluminate(shooter.getGame(), ent)) {
+                                willbeIlluminated = true;
+                                break;
+                            }
+                        }
+                        
+                        if(willbeIlluminated) {
+                            continue;
+                        }
+                    }
+                    
+                    if(ent.isEnemyOf(shooter)) {
+                        score++;
+                    } else {
+                        score--;
+                    }
+                    
+                    if(planTargets.contains(intervening)) {
+                        score++;
+                    }
+                }
+            }
+            
+            // don't bother considering impossible searchlight actions
+            if(score > bestTargetScore && SearchlightAttackAction.isPossible(shooter.getGame(), shooter.getId(), target, null)) {
+                bestTargetScore = score;
+                bestTarget = target;
+            }
+        }
+        
+        if(bestTarget != null) {
+            SearchlightAttackAction slaa = new SearchlightAttackAction(shooter.getId(), bestTarget.getTargetId());
+            return slaa;
+        }
+        
+        return null;
     }
 }

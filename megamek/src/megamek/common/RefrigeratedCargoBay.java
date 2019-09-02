@@ -108,4 +108,10 @@ public final class RefrigeratedCargoBay extends Bay {
         return true;
     }
 
+    @Override
+    public long getCost() {
+        // Based on the weight of the equipment (not capacity), rounded up to the whole ton
+        return 200L * (long) Math.ceil(getWeight());
+    }
+
 }

@@ -204,4 +204,9 @@ public final class InfantryBay extends Bay {
         return platoonType;
     }
 
+    @Override
+    public long getCost() {
+        // Based on the weight of the equipment (not capacity), rounded up to the whole ton
+        return 15000L * (long) Math.ceil(getWeight());
+    }
 } // End package class TroopSpace implements Transporter

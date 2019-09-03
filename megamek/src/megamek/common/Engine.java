@@ -334,7 +334,7 @@ public class Engine implements Serializable, ITechnology {
             int mp = entity.getOriginalWalkMP();
             if (entity.getMovementMode().equals(EntityMovementMode.RAIL)
                     || entity.getMovementMode().equals(EntityMovementMode.MAGLEV)) {
-                mp = Math.max(1, mp - 2);
+                mp = Math.max(0, mp - 2);
             }
             double movementFactor = 4 + mp * mp;
             double engineWeightMult = SV_ENGINE_RATINGS[engineType][entity
@@ -353,11 +353,10 @@ public class Engine implements Serializable, ITechnology {
             if (entity.getMovementMode().equals(EntityMovementMode.HOVER)) {
                 weight = Math.max(weight, entity.getWeight() * 0.2);
             }
-            roundWeight = TestEntity.Ceil.HALFTON;
             if (entity.getWeight() < 5) {
-                roundWeight = TestEntity.Ceil.KILO;
+                return TestEntity.round(weight, TestEntity.Ceil.KILO);
             }
-            return TestEntity.round(weight, roundWeight);
+            return TestEntity.ceil(weight, roundWeight);
         }
         // Protomech engines with rating < 40 use a special calculation
         if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (engineRating < 40)) {

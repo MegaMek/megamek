@@ -991,12 +991,6 @@ public class TestSupportVehicle extends TestEntity {
         if (hasIllegalEquipmentCombinations(buff)) {
             correct = false;
         }
-        // only tanks with fusion engine can be vacuum protected
-        if(supportVee.hasEngine() && !supportVee.getEngine().isFusion()
-                && !supportVee.doomedInVacuum()) {
-            buff.append("Vacuum protection requires fusion engine.\n");
-            correct = false;
-        }
 
         if (!correctCriticals(buff)) {
             correct = false;

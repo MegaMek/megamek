@@ -272,7 +272,9 @@ public class TestSupportVehicle extends TestEntity {
          */
         public boolean validFor(Entity sv) {
             return sv.isSupportVehicle() && allowedTypes.contains(SVType.getVehicleType(sv))
-                    && (!smallOnly || (sv.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT));
+                    && (!smallOnly || (sv.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT))
+                    // Hydrofoil has a specific upper weight limit rather than a weight class.
+                    && (!this.equals(HYDROFOIL) || sv.getWeight() <= 100.0);
         }
 
         /**

@@ -7013,6 +7013,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.cost = 40000;
         misc.criticals = 2;
+        misc.svslots = 1;
         misc.name = "Bridge Layer (Light)";
         misc.setInternalName("LightBridgeLayer");
         misc.flags = misc.flags.or(F_LIGHT_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
@@ -7033,6 +7034,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.cost = 75000;
         misc.criticals = 4;
+        misc.svslots = 1;
         misc.name = "Bridge Layer (Medium)";
         misc.setInternalName("MediumBridgeLayer");
         misc.flags = misc.flags.or(F_MEDIUM_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
@@ -7053,6 +7055,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 6;
         misc.cost = 100000;
         misc.criticals = 12;
+        misc.svslots = 1;
         misc.name = "Bridge Layer (Heavy)";
         misc.setInternalName("HeavyBridgeLayer");
         misc.flags = misc.flags.or(F_HEAVY_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
@@ -7475,6 +7478,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Lift Hoist");
         misc.tonnage = 3;
         misc.criticals = 3;
+        misc.svslots = 1;
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_LIFTHOIST).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.bv = 0;

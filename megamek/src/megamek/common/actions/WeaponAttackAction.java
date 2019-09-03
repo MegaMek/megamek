@@ -62,6 +62,7 @@ import megamek.common.QuadMech;
 import megamek.common.QuadVee;
 import megamek.common.RangeType;
 import megamek.common.SpaceStation;
+import megamek.common.SpecialResolutionTracker;
 import megamek.common.SupportTank;
 import megamek.common.SupportVTOL;
 import megamek.common.TagInfo;
@@ -168,20 +169,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Can be checked to allow casting of attack handlers to the proper homing handler.
      */
     protected boolean isHomingShot = false;
-    
-    /**
-     * Boolean flag that determines if this shot was fired using a weapon with special to-hit handling.
-     * Allows this waa to bypass all the standard to-hit modifier checks
-     */
-    protected static boolean specialResolution = false;
-
-    protected static boolean isSpecialResolution() {
-        return specialResolution;
-    }
-
-    protected static void setSpecialResolution(boolean specialResolution) {
-        WeaponAttackAction.specialResolution = specialResolution;
-    }
 
     // default to attacking an entity
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
@@ -655,15 +642,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, reasonAutoHit);
         }
         
+        SpecialResolutionTracker srt = new SpecialResolutionTracker();
+        srt.setSpecialResolution(false);
         //Is this an infantry leg/swarm attack?
-        toHit = handleInfantrySwarmAttacks(game, ae, target, ttype, toHit, wtype);
-        if (isSpecialResolution()) {
+        toHit = handleInfantrySwarmAttacks(game, ae, target, ttype, toHit, wtype, srt);
+        if (srt.isSpecialResolution()) {
             return toHit;
         }
         
         //Check to see if this attack was made with a weapon that has special to-hit rules
-        toHit = handleSpecialWeaponAttacks(game, ae, target, ttype, los, toHit, wtype, atype);
-        if (isSpecialResolution()) {
+        toHit = handleSpecialWeaponAttacks(game, ae, target, ttype, los, toHit, wtype, atype, srt);
+        if (srt.isSpecialResolution()) {
             return toHit;
         }
         
@@ -689,8 +678,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Is this an Artillery attack?
         toHit = handleArtilleryAttacks(game, ae, target, ttype, losMods, toHit, wtype, weapon, atype, isArtilleryDirect,
-                isArtilleryFLAK, isArtilleryIndirect, isHoming, usesAmmo);
-        if (isSpecialResolution()) {
+                isArtilleryFLAK, isArtilleryIndirect, isHoming, usesAmmo, srt);
+        if (srt.isSpecialResolution()) {
             return toHit;
         }
         
@@ -4463,10 +4452,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param wtype The WeaponType of the weapon being used
      * @param atype The AmmoType being used for this attack
+     * @param srt  Class that stores whether or not this WAA should return a special resolution
      */
     private static ToHitData handleSpecialWeaponAttacks(IGame game, Entity ae, Targetable target, int ttype,
-                LosEffects los, ToHitData toHit, WeaponType wtype, AmmoType atype) {
-        setSpecialResolution(false);
+                LosEffects los, ToHitData toHit, WeaponType wtype, AmmoType atype, SpecialResolutionTracker srt) {
         if (ae == null) {
             //*Should* be impossible at this point in the process
             return toHit;
@@ -4490,7 +4479,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             } else { 
                 toHit = new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.OutOfRange"));
             }
-            setSpecialResolution(true);
+            srt.setSpecialResolution(true);
             return toHit;
         }
         
@@ -4506,7 +4495,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && game.getBoard().isInfernoBurning(target.getPosition())) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
             }
-            setSpecialResolution(true);
+            srt.setSpecialResolution(true);
             return toHit;
         }
         
@@ -4514,7 +4503,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
             if (te != null) {
                 toHit = Compute.getSpaceBombBaseToHit(ae, te, game);
-                setSpecialResolution(true);
+                srt.setSpecialResolution(true);
                 return toHit;
             }
         }
@@ -4532,14 +4521,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * 
      * @param wtype The WeaponType of the weapon being used
+     * @param srt  Class that stores whether or not this WAA should return a special resolution
      */
     private static ToHitData handleInfantrySwarmAttacks(IGame game, Entity ae, Targetable target,
-                int ttype, ToHitData toHit, WeaponType wtype)  {
+                int ttype, ToHitData toHit, WeaponType wtype, SpecialResolutionTracker srt)  {
         if (ae == null) {
             //*Should* be impossible at this point in the process
             return toHit;
         }
-        setSpecialResolution(false);
         if (target == null || ttype != Targetable.TYPE_ENTITY) {
             //Can only swarm a valid entity target
             return toHit;
@@ -4557,13 +4546,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
             }
-            setSpecialResolution(true);
+            srt.setSpecialResolution(true);
             return toHit;
 
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
             toHit = Compute.getSwarmMekBaseToHit(ae, te, game);
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                setSpecialResolution(true);
+                srt.setSpecialResolution(true);
                 return toHit;
             }
 
@@ -4600,11 +4589,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
             }
-            setSpecialResolution(true);
+            srt.setSpecialResolution(true);
             return toHit;
         } else if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
             // Can't stop if we're not swarming, otherwise automatic.
-            setSpecialResolution(true);
+            srt.setSpecialResolution(true);
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.EndSwarm"));
         }
         // Swarming infantry always hit their target, but
@@ -4613,14 +4602,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             int side = te instanceof Tank ? ToHitData.SIDE_RANDOM : ToHitData.SIDE_FRONT;
             if (ae instanceof BattleArmor) {
                 if (!Infantry.SWARM_WEAPON_MEK.equals(wtype.getInternalName()) && !(wtype instanceof InfantryAttack)) {
-                    setSpecialResolution(true);
+                    srt.setSpecialResolution(true);
                     return new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.WrongSwarmUse"));
                 }
-                setSpecialResolution(true);
+                srt.setSpecialResolution(true);
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.SwarmingAutoHit"), ToHitData.HIT_SWARM,
                         side);
             }
-            setSpecialResolution(true);
+            srt.setSpecialResolution(true);
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.SwarmingAutoHit"), ToHitData.HIT_SWARM_CONVENTIONAL, side);
         }
         //If we get here, no swarm attack applies
@@ -4768,13 +4757,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
      * @param isHoming flag that indicates whether this is a homing missile/copperhead shot
      * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
+     * @param srt  Class that stores whether or not this WAA should return a special resolution
      */
     private static ToHitData handleArtilleryAttacks(IGame game, Entity ae, Targetable target, int ttype, 
                 ToHitData losMods, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype, 
                 boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isHoming,
-                boolean usesAmmo) {
-        setSpecialResolution(false);
-        
+                boolean usesAmmo, SpecialResolutionTracker srt) {
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
@@ -4787,14 +4775,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         //Homing warheads just need a flat 4 to seek out a successful TAG
         if (isHoming) {  
-            setSpecialResolution(true);
+            srt.setSpecialResolution(true);
             return new ToHitData(4, Messages.getString("WeaponAttackAction.HomingArty"));
         }
         
         //Don't bother adding up modifiers if the target hex has been hit before
         if (game.getEntity(ae.getId()).getOwner().getArtyAutoHitHexes().contains(target.getPosition())
                 && !isArtilleryFLAK) {
-            setSpecialResolution(true);
+            srt.setSpecialResolution(true);
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("WeaponAttackAction.ArtyDesTarget"));
         }
         
@@ -4815,7 +4803,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         }
                     }
                 }
-                setSpecialResolution(true);
+                srt.setSpecialResolution(true);
                 return toHit;
             } else {
                 //All other direct fire artillery attacks
@@ -4842,7 +4830,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                     + Messages.getString("WeaponAttackAction.AmmoMod"));
                 }
             }
-            setSpecialResolution(true);
+            srt.setSpecialResolution(true);
             return toHit;
         }
         //And now for indirect artillery fire
@@ -4873,7 +4861,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Altitude"));
                 }
             }
-            setSpecialResolution(true);
+            srt.setSpecialResolution(true);
             return toHit;
         }
         //If we get here, this isn't an artillery attack

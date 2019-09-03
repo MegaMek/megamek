@@ -704,7 +704,7 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double calculateWeight() {
-        double weight = super.calculateWeight();
+        double weight = setPrecision(super.calculateWeight(), 4);
         weight += getFuelTonnage();
         return ceilWeight(weight);
     }
@@ -1062,9 +1062,10 @@ public class TestSupportVehicle extends TestEntity {
         if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             int minCrew = Compute.getFullCrewSize(supportVee);
             // Pillion and ejection seating are subclasses of StandardSeatCargoBay
-            int seating = (int) supportVee.getTransports().stream()
+            int seating = supportVee.getTransports().stream()
                     .filter(t -> t instanceof StandardSeatCargoBay)
-                    .count();
+                    .mapToInt(t -> (int) ((Bay) t).getCapacity())
+                    .sum();
             if (seating < minCrew) {
                 buff.append("Minimum crew is ").append(minCrew)
                         .append(" but there is only seating for ")

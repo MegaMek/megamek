@@ -931,12 +931,19 @@ public class TestSupportVehicle extends TestEntity {
                 correct = false;
             }
         }
+        int hardpoints = 0;
         for (Mounted m : supportVee.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)
-                    && !(getEntity() instanceof Aero || getEntity() instanceof VTOL)) {
+                    && (getEntity() instanceof Aero || getEntity() instanceof VTOL)) {
                 buff.append("Armored Motive system and incompatible movemement mode!\n\n");
                 correct = false;
+            } else if (m.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
+                hardpoints++;
             }
+        }
+        if (hardpoints > supportVee.getWeight() / 10.0) {
+            buff.append("Exceeds maximum of one external stores hardpoint per 10 tons.\n");
+            correct = false;
         }
         for (Mounted m : supportVee.getWeaponList()) {
             if (!isValidWeapon(m)) {

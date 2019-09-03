@@ -6993,6 +6993,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 5;
         misc.criticals = 6;
+        misc.svslots = 1;
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.subType |= S_BACKHOE;
@@ -7098,6 +7099,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 5;
         misc.criticals = 5;
+        misc.svslots = 1;
         misc.cost = 100000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.subType |= S_CHAINSAW;
@@ -7120,6 +7122,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 2.5f;
         misc.criticals = 4;
+        misc.svslots = 1;
         misc.cost = 75000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.subType |= S_COMBINE;
@@ -7142,6 +7145,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 7;
         misc.criticals = 7;
+        misc.svslots = 1;
         misc.cost = 100000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.subType |= S_DUAL_SAW;
@@ -7523,6 +7527,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 10000;
         misc.tonnage = 3.0;
         misc.criticals = 4;
+        misc.svslots = 1;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.subType |= S_MINING_DRILL;
         misc.bv = 6;

@@ -274,7 +274,60 @@ public class SupportTank extends Tank {
         return getExtraCommGearTons();
     }
 
+    @Override
+    public int getWalkMP(boolean gravity, boolean ignoreheat,
+                         boolean ignoremodulararmor) {
+        int mp = getOriginalWalkMP();
+        if (engineHit) {
+            return 0;
+        }
+        if (hasWorkingMisc(MiscType.F_HYDROFOIL)) {
+            mp = (int) Math.round(mp * 1.25);
+        }
+        mp = Math.max(0, mp - motiveDamage);
+        mp = Math.max(0, mp - getCargoMpReduction(this));
+        if (null != game) {
+            int weatherMod = game.getPlanetaryConditions()
+                    .getMovementMods(this);
+            if (weatherMod != 0) {
+                mp = Math.max(mp + weatherMod, 0);
+            }
+        }
 
+        if (!ignoremodulararmor && hasModularArmor()) {
+            mp--;
+        }
+        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY) && (game != null)) {
+            mp--;
+        }
+
+        if (gravity) {
+            mp = applyGravityEffectsOnMP(mp);
+        }
+
+        //If the unit is towing trailers, adjust its walkMP, TW p205
+        if (!getAllTowedUnits().isEmpty()) {
+            double tractorWeight = getWeight();
+            double trailerWeight = 0;
+            //Add up the trailers
+            for (int id : getAllTowedUnits()) {
+                Entity tr = game.getEntity(id);
+                if (tr == null) {
+                    //this isn't supposed to happen, but it can in rare cases when tr is destroyed
+                    continue;
+                }
+                trailerWeight += tr.getWeight();
+            }
+            if (trailerWeight <= (tractorWeight / 4)) {
+                mp = Math.max((mp - 3), (mp / 2));
+            } else {
+                mp = (mp / 2);
+            }
+        }
+
+        return mp;
+
+    }
     
     // CONSTRUCTION INFORMATION
     //Support Vee Engine Information

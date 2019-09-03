@@ -29,7 +29,7 @@ Hurricane Conventional Fighter
 </originalBuildYear>
 
 <type>
-IS Level 4
+IS Level 2
 </type>
 
 <motion_type>
@@ -56,7 +56,7 @@ Aerodyne
 </sink_type>
 
 <fuel>
-320
+150
 </fuel>
 
 <engine_type>

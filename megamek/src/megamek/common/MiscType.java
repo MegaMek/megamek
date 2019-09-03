@@ -9171,7 +9171,7 @@ public class MiscType extends EquipmentType {
         misc.name = "MASH Operation Theater";
         misc.setInternalName(misc.name);
         misc.tonnage = 1;
-        misc.criticals = 1;
+        misc.criticals = 0;
         misc.tankslots = 0;
         misc.cost = 10000;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)

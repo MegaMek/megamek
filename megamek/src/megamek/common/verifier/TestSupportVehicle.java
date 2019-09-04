@@ -209,7 +209,7 @@ public class TestSupportVehicle extends TestEntity {
         BICYCLE (0.75,EquipmentTypeLookup.BICYCLE_CHASSIS_MOD,
                 EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED)),
         CONVERTIBLE (1.1,EquipmentTypeLookup.CONVERTIBLE_CHASSIS_MOD,
-                EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED), true),
+                EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED)),
         DUNE_BUGGY (1.5,EquipmentTypeLookup.DUNE_BUGGY_CHASSIS_MOD,
                 EnumSet.of(SVType.WHEELED)),
         ENVIRONMENTAL_SEALING (2.0,EquipmentTypeLookup.ENVIRONMENTAL_SEALING_CHASSIS_MOD,
@@ -274,7 +274,10 @@ public class TestSupportVehicle extends TestEntity {
             return sv.isSupportVehicle() && allowedTypes.contains(SVType.getVehicleType(sv))
                     && (!smallOnly || (sv.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT))
                     // Hydrofoil has a specific upper weight limit rather than a weight class.
-                    && (!this.equals(HYDROFOIL) || sv.getWeight() <= 100.0);
+                    && (!this.equals(HYDROFOIL) || sv.getWeight() <= 100.0)
+                    // Can't put a turret on a convertible
+                    && (!this.equals(CONVERTIBLE) || !(sv instanceof Tank)
+                        || ((Tank) sv).hasNoTurret());
         }
 
         /**

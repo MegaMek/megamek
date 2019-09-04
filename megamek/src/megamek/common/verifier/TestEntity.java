@@ -877,7 +877,13 @@ public abstract class TestEntity implements TestEntityOption {
         weight += getWeightCarryingSpace();
 
         weight += getArmoredComponentWeight();
-        return weight;
+        // If the unit used kg standard, we just need to get rid of floating-point math anomalies.
+        // Otherwise accumulated kg-scale equipment needs to be rounded up to the nearest half-ton.
+        if (usesKgStandard()) {
+            return round(weight, Ceil.KILO);
+        } else {
+            return ceil(weight, Ceil.HALFTON);
+        }
     }
 
     public String printWeightCalculation() {
@@ -1410,19 +1416,13 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public double getWeightCarryingSpace() {
-        double carryingSpace = getEntity().getTroopCarryingSpace();
-        double cargoWeight = 0;
-        Ceil rounding = Ceil.HALFTON;
-        if (getEntity().isSupportVehicle()
-                && (getEntity().getWeight() < 5.0)) {
-            rounding = Ceil.KILO;
-        }
+        double weight = getEntity().getTroopCarryingSpace();
         for (Bay bay : getEntity().getTransportBays()) {
             if (!bay.isQuarters()) {
-                cargoWeight += bay.getWeight();
+                TestEntity.ceil(weight += bay.getWeight(), Ceil.KILO);
             }
         }
-        return ceil(carryingSpace + cargoWeight, rounding);
+        return weight;
     }
 
     public String printWeightCarryingSpace() {

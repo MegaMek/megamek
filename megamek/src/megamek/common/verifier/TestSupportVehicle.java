@@ -704,9 +704,7 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double calculateWeight() {
-        double weight = setPrecision(super.calculateWeight(), 4);
-        weight += getFuelTonnage();
-        return ceilWeight(weight);
+        return ceilWeight(super.calculateWeight() + getFuelTonnage());
     }
 
     @Override
@@ -753,7 +751,7 @@ public class TestSupportVehicle extends TestEntity {
                 weight += ((Bay) t).getWeight();
             }
         }
-        return ceilWeight(weight);
+        return round(weight, Ceil.KILO);
     }
 
     @Override

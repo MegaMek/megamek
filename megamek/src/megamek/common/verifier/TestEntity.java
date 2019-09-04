@@ -879,8 +879,9 @@ public abstract class TestEntity implements TestEntityOption {
         weight += getArmoredComponentWeight();
         // If the unit used kg standard, we just need to get rid of floating-point math anomalies.
         // Otherwise accumulated kg-scale equipment needs to be rounded up to the nearest half-ton.
+        weight = round(weight, Ceil.KILO);
         if (usesKgStandard()) {
-            return round(weight, Ceil.KILO);
+            return weight;
         } else {
             return ceil(weight, Ceil.HALFTON);
         }

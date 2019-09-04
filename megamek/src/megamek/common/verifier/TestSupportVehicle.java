@@ -210,7 +210,7 @@ public class TestSupportVehicle extends TestEntity {
         BICYCLE (0.75,EquipmentTypeLookup.BICYCLE_CHASSIS_MOD,
                 EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED)),
         CONVERTIBLE (1.1,EquipmentTypeLookup.CONVERTIBLE_CHASSIS_MOD,
-                EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED), true),
+                EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED)),
         DUNE_BUGGY (1.5,EquipmentTypeLookup.DUNE_BUGGY_CHASSIS_MOD,
                 EnumSet.of(SVType.WHEELED)),
         ENVIRONMENTAL_SEALING (2.0,EquipmentTypeLookup.ENVIRONMENTAL_SEALING_CHASSIS_MOD,
@@ -275,7 +275,10 @@ public class TestSupportVehicle extends TestEntity {
             return sv.isSupportVehicle() && allowedTypes.contains(SVType.getVehicleType(sv))
                     && (!smallOnly || (sv.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT))
                     // Hydrofoil has a specific upper weight limit rather than a weight class.
-                    && (!this.equals(HYDROFOIL) || sv.getWeight() <= 100.0);
+                    && (!this.equals(HYDROFOIL) || sv.getWeight() <= 100.0)
+                    // Can't put a turret on a convertible
+                    && (!this.equals(CONVERTIBLE) || !(sv instanceof Tank)
+                        || ((Tank) sv).hasNoTurret());
         }
 
         /**
@@ -1031,7 +1034,24 @@ public class TestSupportVehicle extends TestEntity {
             buff.append("The Hydrofoil Chassis Mod may not be used on naval support vehicles larger than 100 tons.\n");
             illegal = true;
         }
+        if (chassisMods.contains(ChassisModification.CONVERTIBLE)
+                && (supportVee instanceof Tank) && !((Tank) supportVee).hasNoTurret()) {
+            buff.append("The Convertible Chassis Mod may not be used with a turret.\n");
+            illegal = true;
+        }
         for (ChassisModification mod : chassisMods) {
+            if (!mod.allowedTypes.contains(SVType.getVehicleType(supportVee))) {
+                buff.append(mod.equipment.getName())
+                        .append(" is not valid for ")
+                        .append(supportVee.getMovementModeAsString())
+                        .append("\n");
+                illegal = true;
+            }
+            if (mod.smallOnly && (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT)) {
+                buff.append(mod.equipment.getName())
+                        .append(" is only valid with small support vehicles.\n");
+                illegal = true;
+            }
             if (!mod.validFor(supportVee)) {
                 buff.append("Incompatible chassis mod: ")
                         .append(mod.equipment.getName())

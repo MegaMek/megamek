@@ -8505,6 +8505,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:1t";
         misc.tonnage = 1;
         misc.criticals = 1;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8529,6 +8530,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:2t";
         misc.tonnage = 2;
         misc.criticals = 2;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8554,6 +8556,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:3t";
         misc.tonnage = 3;
         misc.criticals = 3;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8579,6 +8582,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:4t";
         misc.tonnage = 4;
         misc.criticals = 4;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8604,6 +8608,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:5t";
         misc.tonnage = 5;
         misc.criticals = 5;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8629,6 +8634,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:6t";
         misc.tonnage = 6;
         misc.criticals = 6;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8654,6 +8660,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:7t";
         misc.tonnage = 7;
         misc.criticals = 7;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8679,6 +8686,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:8t";
         misc.tonnage = 8;
         misc.criticals = 8;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8704,6 +8712,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:9t";
         misc.tonnage = 9;
         misc.criticals = 9;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8729,6 +8738,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:10t";
         misc.tonnage = 10;
         misc.criticals = 10;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8754,6 +8764,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:11t";
         misc.tonnage = 11;
         misc.criticals = 11;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8779,6 +8790,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:12t";
         misc.tonnage = 12;
         misc.criticals = 12;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8804,6 +8816,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:13t";
         misc.tonnage = 13;
         misc.criticals = 13;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8829,6 +8842,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:14t";
         misc.tonnage = 14;
         misc.criticals = 14;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
@@ -8854,6 +8868,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "CommsGear:15t";
         misc.tonnage = 15;
         misc.criticals = 15;
+        misc.svslots = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };

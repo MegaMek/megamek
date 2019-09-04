@@ -102,6 +102,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     //and now Machine Gun Arrays too!
     private Vector<Integer> bayWeapons = new Vector<Integer>();
     private Vector<Integer> bayAmmo = new Vector<Integer>();
+    
+    // Crosslink that allows us to match the weapons and ammo in a bay
+    // Used when converting individual weapons to bays and back again during landing/liftoff
+    private int bayNumber = -1;
 
     // on capital fighters and squadrons some weapon mounts actually represent
     // multiple weapons of the same type
@@ -145,6 +149,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public static final int MINE_INFERNO = 3;
     public static final int MINE_EMP = 4;
     public static final int MINE_COMMAND_DETONATED = 5;
+    
+    // This mounted is not associated with a bay...
+    public static final int NO_BAY = -1;
 
     // New stuff for shields
     protected int baseDamageAbsorptionRate = 0;
@@ -1405,6 +1412,19 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void addWeaponToBay(int w) {
         bayWeapons.add(w);
+    }
+    
+    /**
+     * Sets the bay for this ammo bin, if applicable.
+     * @param bay
+     */
+    public void setBay(Mounted bay) {
+        int bayEqNum = entity.getEquipmentNum(bay);
+        bayNumber = bayEqNum;
+    }
+    
+    public int getBay() {
+        return bayNumber;
     }
 
     public Vector<Integer> getBayWeapons() {

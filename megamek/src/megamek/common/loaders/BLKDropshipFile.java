@@ -349,6 +349,8 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                                         .isSubCapital() && !weap.isSubCapital())) {
                             // then we should add this weapon to the current bay
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
+                            // and crosslink the new mount to its bay
+                            newmount.setBay(bayMount);
                             bayDamage += damage;
                         } else {
                             try {
@@ -366,6 +368,8 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                     // ammo should also get loaded into the bay
                     if (newmount.getType() instanceof AmmoType) {
                         bayMount.addAmmoToBay(a.getEquipmentNum(newmount));
+                        // and crosslink the new mount to its bay
+                        newmount.setBay(bayMount);
                     }
                 } else if (!equipName.equals("")) {
                     a.addFailedEquipment(equipName);

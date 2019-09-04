@@ -6791,10 +6791,11 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Sprayer [Vehicular]";
         misc.setInternalName("Tank Sprayer");
+        misc.shortName = "Sprayer";
         misc.tonnage = 0.015;
         misc.criticals = 1;
         misc.cost = 1000;
-        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_SPRAYER);
+        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_SPRAYER);
         misc.industrial = true;
         misc.rulesRefs = "248,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -9266,7 +9267,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_SEARCHLIGHT).or(F_MECH_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
-				.or(F_FIGHTER_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_BA_EQUIPMENT);
+				.or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_BA_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 500;
         misc.rulesRefs = "230,TM";

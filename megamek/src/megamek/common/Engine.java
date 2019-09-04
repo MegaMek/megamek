@@ -353,9 +353,6 @@ public class Engine implements Serializable, ITechnology {
             if (entity.getMovementMode().equals(EntityMovementMode.HOVER)) {
                 weight = Math.max(weight, entity.getWeight() * 0.2);
             }
-            if (entity.getWeight() < 5) {
-                return TestEntity.round(weight, TestEntity.Ceil.KILO);
-            }
             return TestEntity.ceil(weight, roundWeight);
         }
         // Protomech engines with rating < 40 use a special calculation

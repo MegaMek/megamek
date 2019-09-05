@@ -244,8 +244,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         if (target instanceof Dropship 
                 && waa.isAirToGround(game)
-                && !ae.usesWeaponBays()
-                && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER)) {
+                && !ae.usesWeaponBays()) {
             //Prevents a grounded dropship using individual weapons from engaging with AMSBays unless attacked by a dropship or capital fighter
             //You can get some blank missile weapons fire reports due to the attackvalue / ndamageperhit conversion if this isn't done
             return false;

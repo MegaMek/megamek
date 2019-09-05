@@ -1776,8 +1776,7 @@ public class Dropship extends SmallCraft {
         if (null == game) {
             return true;
         }
-        return !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER)
-                || (isAirborne() || isSpaceborne());
+        return !(isAirborne() || isSpaceborne());
     }
 
     @Override

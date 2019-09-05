@@ -279,7 +279,6 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AT2_NUKES, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_SANITY, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false); //$NON-NLS-1$

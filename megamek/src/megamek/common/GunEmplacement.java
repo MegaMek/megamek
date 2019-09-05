@@ -543,4 +543,15 @@ public class GunEmplacement extends Tank {
         // TODO: Power generators and energy grid setup
         return false;
     }
+    
+    @Override
+    public int getArmorType(int loc) {
+        // this is a hack to get around the fact that gun emplacements don't even have armor
+        return 0;
+    }
+    
+    @Override
+    public boolean hasStealth() {
+        return false;
+    }
 }

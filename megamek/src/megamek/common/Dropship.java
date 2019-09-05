@@ -175,11 +175,7 @@ public class Dropship extends SmallCraft {
         // Check prohibited terrain
         // treat grounded Dropships like wheeled tanks,
         // plus buildings are prohibited
-        boolean isProhibited = hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH)
-                || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
-                || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA)
-                || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1)
-                || (hex.terrainLevel(Terrains.GEYSER) == 2);
+        boolean isProhibited = hexContainsProhibitedTerrain(hex);
 
         HashMap<Integer, Integer> elevations = new HashMap<Integer, Integer>();
         elevations.put(hex.getLevel(), 1);
@@ -190,14 +186,7 @@ public class Dropship extends SmallCraft {
                 // Don't allow landed dropships to hang off the board
                 isProhibited = true;
             } else {
-                isProhibited |= secondaryHex.containsTerrain(Terrains.WOODS)
-                        || secondaryHex.containsTerrain(Terrains.ROUGH)
-                        || ((secondaryHex.terrainLevel(Terrains.WATER) > 0)
-                                && !secondaryHex.containsTerrain(Terrains.ICE))
-                        || secondaryHex.containsTerrain(Terrains.RUBBLE) || secondaryHex.containsTerrain(Terrains.MAGMA)
-                        || secondaryHex.containsTerrain(Terrains.JUNGLE)
-                        || (secondaryHex.terrainLevel(Terrains.SNOW) > 1)
-                        || (secondaryHex.terrainLevel(Terrains.GEYSER) == 2);
+                isProhibited |= hexContainsProhibitedTerrain(secondaryHex);
 
                 int elev = secondaryHex.getLevel();
                 if (elevations.containsKey(elev)) {
@@ -269,6 +258,20 @@ public class Dropship extends SmallCraft {
         }
 
         return isProhibited;
+    }
+    
+    /**
+     * Worker function that checks if a given hex contains terrain onto which a grounded dropship
+     * cannot deploy. 
+     */
+    private boolean hexContainsProhibitedTerrain(IHex hex) {
+        return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH)
+                || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
+                || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA)
+                || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1)
+                || (hex.terrainLevel(Terrains.GEYSER) == 2) 
+                || hex.containsTerrain(Terrains.BUILDING) || hex.containsTerrain(Terrains.IMPASSABLE);
+                
     }
 
     public void setDamageDockCollar(boolean b) {

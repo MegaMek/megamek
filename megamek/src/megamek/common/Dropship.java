@@ -256,7 +256,8 @@ public class Dropship extends SmallCraft {
                 || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA)
                 || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1)
                 || (hex.terrainLevel(Terrains.GEYSER) == 2) 
-                || hex.containsTerrain(Terrains.BUILDING) || hex.containsTerrain(Terrains.IMPASSABLE);
+                || hex.containsTerrain(Terrains.BUILDING) || hex.containsTerrain(Terrains.IMPASSABLE) 
+                || hex.containsTerrain(Terrains.BRIDGE);
                 
     }
 

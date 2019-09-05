@@ -1509,8 +1509,9 @@ public class MULParser {
             // it's possible that this is "extra" ammo in a weapons bay, so we may attempt
             // to shove it in there
             if (slot == null) {
-                if(entity.usesWeaponBays() &&
-                        !bayIndex.isEmpty()) {
+                if((entity.usesWeaponBays() 
+                        || (entity instanceof Dropship && entity.getAltitude() == 0)) 
+                        && !bayIndex.isEmpty()) {
                     addExtraAmmoToBay(entity, loc, type, bayIndex);
                     slot = entity.getCritical(loc, indexVal);
                 }

@@ -1735,6 +1735,7 @@ public class Server implements Runnable {
             entity.setIlluminated(false);
             entity.setUsedSearchlight(false);
             entity.setCarefulStand(false);
+            entity.setNetworkBAP(false);
 
             if (entity instanceof MechWarrior) {
                 ((MechWarrior) entity).setLanded(true);
@@ -2952,8 +2953,8 @@ public class Server implements Runnable {
                 break;
             case PHASE_MOVEMENT:
                 detectHiddenUnits();
-                detectSpacecraft();
                 updateSpacecraftDetection();
+                detectSpacecraft();
                 resolveWhatPlayersCanSeeWhatUnits();
                 doAllAssaultDrops();
                 addMovementHeat();
@@ -14677,13 +14678,11 @@ public class Server implements Runnable {
                 }
                 //If we successfully detect the enemy, add it to the appropriate detector's sensor contacts list
                 if (Compute.calcSensorContact(game, detector, target)) {
-                    detector.addSensorContact(target.getId());
+                    game.getEntity(detector.getId()).addSensorContact(target.getId());
                     //If detector is part of a C3 network, share the contact
                     if (detector.hasNavalC3()) {
-                        for (Entity c3NetMate : game.getEntitiesVector()) {
-                            if (c3NetMate != detector && c3NetMate.onSameC3NetworkAs(detector)) {
-                                c3NetMate.addSensorContact(target.getId());
-                            }
+                        for (Entity c3NetMate : game.getC3NetworkMembers(detector)) {
+                            game.getEntity(c3NetMate.getId()).addSensorContact(target.getId());
                         }
                     }
                 }
@@ -14726,7 +14725,7 @@ public class Server implements Runnable {
                 }
                 //If we successfully lock up the enemy, add it to the appropriate detector's firing solutions list
                 if (Compute.calcFiringSolution(game, detector, target)) {
-                    detector.addFiringSolution(targetId);
+                    game.getEntity(detector.getId()).addFiringSolution(targetId);
                 }
             }
         }

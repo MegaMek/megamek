@@ -4,6 +4,8 @@ v0.47.1-SNAPSHOT
 + PR #1451: Enable bot use of searchlights when necessary
 + Account for all bay types in large craft cost calculations.
 + Bug: Vehicle reduced to half movement not considered heavy damage
++ PR #1473: Allow the bot to gracefully handle deployment of grounded dropships on maps with no valid places to put them
++ PR #1474: TRO display in MegaMek lobby displays data for gun emplacements
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

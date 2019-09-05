@@ -107,7 +107,8 @@ public class EntityListFile {
             if (mount.getType() instanceof AmmoType) {
                 output.append("\" shots=\"");
                 output.append(String.valueOf(mount.getBaseShotsLeft()));
-                if (mount.getEntity().usesWeaponBays()) {
+                if (mount.getEntity().usesWeaponBays() 
+                        || mount.getEntity() instanceof Dropship) {
                     output.append("\" capacity=\"")
                         .append(String.valueOf(mount.getAmmoCapacity()));
                 }
@@ -276,8 +277,9 @@ public class EntityListFile {
                     
                     // if the "equipment" is a weapons bay, 
                     // then let's make a note of it
-                    if(entity.usesWeaponBays() && 
-                            slot.getMount().getBayAmmo().size() > 0) {
+                    if ((entity.usesWeaponBays() && mount.getBayAmmo().size() > 0) 
+                            || ((entity instanceof Dropship && entity.getAltitude() == 0)
+                                    && mount.getType() instanceof AmmoType && mount.getBay() != Mounted.NO_BAY)) {
                         baySlotMap.put(slot.getMount(), loop + 1);
                     }
 
@@ -334,6 +336,9 @@ public class EntityListFile {
                         for(Mounted bay : baySlotMap.keySet()) {
                             if(bay.ammoInBay(entity.getEquipmentNum(mount))) {
                                 bayIndex = String.valueOf(baySlotMap.get(bay));
+                            }
+                            if (bay.getBay() != Mounted.NO_BAY) {
+                                bayIndex = Integer.toString(bay.getBay());
                             }
                         }
                         

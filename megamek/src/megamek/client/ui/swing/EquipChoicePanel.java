@@ -599,7 +599,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         IOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
 
-        if (entity.usesWeaponBays() || (entity instanceof Dropship && entity.getAltitude() == 0)) {
+        if (entity.usesWeaponBays() || entity instanceof Dropship) {
             //Grounded dropships don't *use* weapon bays as such, but should load ammo as if they did
             panMunitions = new BayMunitionsChoicePanel(entity, game);
             return;

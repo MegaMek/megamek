@@ -1510,7 +1510,7 @@ public class MULParser {
             // to shove it in there
             if (slot == null) {
                 if((entity.usesWeaponBays() 
-                        || (entity instanceof Dropship && entity.getAltitude() == 0)) 
+                        || entity instanceof Dropship) 
                         && !bayIndex.isEmpty()) {
                     addExtraAmmoToBay(entity, loc, type, bayIndex);
                     slot = entity.getCritical(loc, indexVal);

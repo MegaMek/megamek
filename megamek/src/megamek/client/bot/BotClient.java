@@ -922,7 +922,7 @@ public abstract class BotClient extends Client {
      */
     private boolean hasPathToEdge(Entity entity, IBoard board) {
         // Flying units can always get anywhere
-        if (entity.isAero() || entity instanceof VTOL) {
+        if (entity.isAirborne() || entity instanceof VTOL) {
             return true;
         }
         

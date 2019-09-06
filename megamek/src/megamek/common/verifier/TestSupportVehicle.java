@@ -948,6 +948,7 @@ public class TestSupportVehicle extends TestEntity {
             buff.append("Exceeds maximum of one external stores hardpoint per 10 tons.\n");
             correct = false;
         }
+        double weaponWeight = 0.0;
         for (Mounted m : supportVee.getWeaponList()) {
             if (!isValidWeapon(m)) {
                 buff.append(m.getType().getName()).append(" is not a valid weapon for this unit.\n");
@@ -961,6 +962,13 @@ public class TestSupportVehicle extends TestEntity {
                 buff.append("Cannot use pintle mount.\n");
                 correct = false;
             }
+            weaponWeight += m.getType().getTonnage(supportVee, m.getLocation());
+        }
+        if (supportVee.isOmni() && (supportVee.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
+                    || supportVee.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))
+                && (weaponWeight > supportVee.getBaseChassisFireConWeight())) {
+            buff.append("Omni configuration exceeds weapon capacity of base chassis fire control system.\n");
+            correct = false;
         }
         for (int loc = 0; loc < supportVee.locations(); loc++) {
             int count = 0;
@@ -974,6 +982,9 @@ public class TestSupportVehicle extends TestEntity {
                 correct = false;
                 break;
             }
+        }
+        if (supportVee.isAero() && testAero.hasMismatchedLateralWeapons(buff)) {
+            correct = false;
         }
 
         if (hasIllegalChassisMods(buff)) {

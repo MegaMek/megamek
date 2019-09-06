@@ -6468,7 +6468,7 @@ public abstract class Mech extends Entity {
             case COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
                 inName = "COCKPIT_SUPERHEAVY_COMMAND_CONSOLE";
                 break;
-            case COCKPIT_COCKPIT_SMALL_COMMAND_CONSOLE:
+            case COCKPIT_SMALL_COMMAND_CONSOLE:
                 inName = "COCKPIT_SMALL_COMMAND_CONSOLE";
                 break;
             default:
@@ -7237,7 +7237,7 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean hasCommandConsoleBonus() {
-        return (getCockpitType() == COCKPIT_COMMAND_CONSOLE || COCKPIT_SUPERHEAVY_COMMAND_CONSOLE || COCKPIT_SMALL_COMMAND_CONSOLE)
+        return ((getCockpitType() == COCKPIT_COMMAND_CONSOLE) || (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE))
                 && getCrew().hasActiveCommandConsole()
                 && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
                 && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));

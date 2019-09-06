@@ -5237,7 +5237,7 @@ public abstract class Mech extends Entity {
 
         double cockpitMod = 1;
         if ((getCockpitType() == Mech.COCKPIT_SMALL)
-                || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED
+                || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
                     || (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE)) {
             cockpitMod = 0.95;
             finalBV *= cockpitMod;
@@ -5655,7 +5655,7 @@ public abstract class Mech extends Entity {
         }
 
         // Small/torso-mounted cockpit penalty?
-        if ((getCockpitType() == Mech.COCKPIT_SMALL)
+        if ( ( (getCockpitType() == Mech.COCKPIT_SMALL) || (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) )
                 && (!hasAbility(OptionsConstants.MD_BVDNI)
                 && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT))) {
             roll.addModifier(1, "Small Cockpit");

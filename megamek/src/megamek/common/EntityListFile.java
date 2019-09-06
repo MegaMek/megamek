@@ -277,8 +277,9 @@ public class EntityListFile {
                     
                     // if the "equipment" is a weapons bay, 
                     // then let's make a note of it
-                    if ((entity.usesWeaponBays() && mount.getBayAmmo().size() > 0) 
-                            || ((entity instanceof Dropship && entity.getAltitude() == 0)
+                    if (mount != null && 
+                            (entity.usesWeaponBays() && mount.getBayAmmo().size() > 0) 
+                                || ((entity instanceof Dropship && entity.getAltitude() == 0)
                                     && mount.getType() instanceof AmmoType && mount.getBay() != Mounted.NO_BAY)) {
                         baySlotMap.put(slot.getMount(), loop + 1);
                     }

@@ -740,8 +740,13 @@ public class MiscType extends EquipmentType {
             }
             // 5% of weapon weight
             double weaponWeight = 0;
+            // Don't count weight of AMS or light (e.g. non-support infantry) weapons
             for (Mounted mount : entity.getWeaponList()) {
-                weaponWeight += mount.getType().getTonnage(entity);
+                if (!mount.getType().hasFlag(WeaponType.F_AMS)
+                        && (!(mount.getType().hasFlag(WeaponType.F_INFANTRY)
+                        || mount.getType().hasFlag(WeaponType.F_INF_SUPPORT)))) {
+                    weaponWeight += mount.getType().getTonnage(entity);
+                }
             }
             TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
             if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
@@ -758,8 +763,13 @@ public class MiscType extends EquipmentType {
             }
             // 10% of weapon weight
             double weaponWeight = 0;
+            // Don't count weight of AMS or light (e.g. non-support infantry) weapons
             for (Mounted mount : entity.getWeaponList()) {
-                weaponWeight += mount.getType().getTonnage(entity);
+                if (!mount.getType().hasFlag(WeaponType.F_AMS)
+                    && (!(mount.getType().hasFlag(WeaponType.F_INFANTRY)
+                            || mount.getType().hasFlag(WeaponType.F_INF_SUPPORT)))) {
+                    weaponWeight += mount.getType().getTonnage(entity);
+                }
             }
             TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
             if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {

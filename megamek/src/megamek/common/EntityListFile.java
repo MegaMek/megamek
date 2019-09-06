@@ -337,9 +337,6 @@ public class EntityListFile {
                             if(bay.ammoInBay(entity.getEquipmentNum(mount))) {
                                 bayIndex = String.valueOf(baySlotMap.get(bay));
                             }
-                            if (bay.getBay() != Mounted.NO_BAY) {
-                                bayIndex = Integer.toString(bay.getBay());
-                            }
                         }
                         
                         thisLoc.append(indentStr(indentLvl+1) + "<slot index=\"");

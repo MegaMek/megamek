@@ -733,6 +733,11 @@ public class MiscType extends EquipmentType {
             return TestEntity.ceil(weight, roundWeight);
 
         } else if (hasFlag(F_BASIC_FIRECONTROL)) {
+            // Omni support vees have a fixed weight for the chassis, which may be
+            // higher than what is required for the current configuration
+            if (entity.getBaseChassisFireConWeight() > 0) {
+                return entity.getBaseChassisFireConWeight();
+            }
             // 5% of weapon weight
             double weaponWeight = 0;
             for (Mounted mount : entity.getWeaponList()) {
@@ -746,6 +751,11 @@ public class MiscType extends EquipmentType {
             return TestEntity.ceil(weight, roundWeight);
 
         } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
+            // Omni support vees have a fixed weight for the chassis, which may be
+            // higher than what is required for the current configuration
+            if (entity.getBaseChassisFireConWeight() > 0) {
+                return entity.getBaseChassisFireConWeight();
+            }
             // 10% of weapon weight
             double weaponWeight = 0;
             for (Mounted mount : entity.getWeaponList()) {

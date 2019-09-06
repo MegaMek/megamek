@@ -24,6 +24,10 @@ Freedom 900 Hover Jeep
 3013
 </year>
 
+<originalBuildYear>
+3013
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,11 @@ IS Level 2
 <motion_type>
 Hover
 </motion_type>
+
+<transporters>
+cargobay:0.304:1:1
+standardseats:4.0:0
+</transporters>
 
 <cruiseMP>
 10
@@ -40,24 +49,12 @@ Hover
 1
 </engine_type>
 
-<fuel>
-.3
-</fuel>
-
 <armor>
 2
 2
 2
 1
 </armor>
-
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
 
 <Body Equipment>
 ConvertibleChassisMod
@@ -75,10 +72,13 @@ ConvertibleChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-cargobay:.304:1
-standardseats:.3:4
-</transporters>
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <source>
 TRO VAr - Succession Wars
@@ -87,3 +87,12 @@ TRO VAr - Succession Wars
 <tonnage>
 3.0
 </tonnage>
+
+<fuel>
+0.3
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

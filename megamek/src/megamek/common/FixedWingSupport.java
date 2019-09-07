@@ -74,6 +74,11 @@ public class FixedWingSupport extends ConvFighter {
     }
 
     @Override
+    public boolean hasArmoredChassis() {
+        return hasWorkingMisc(MiscType.F_ARMORED_CHASSIS);
+    }
+
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }

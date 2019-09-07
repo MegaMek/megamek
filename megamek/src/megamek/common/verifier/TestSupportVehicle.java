@@ -954,9 +954,15 @@ public class TestSupportVehicle extends TestEntity {
                 buff.append(m.getType().getName()).append(" is not a valid weapon for this unit.\n");
                 correct = false;
             }
-            if (m.isSponsonTurretMounted() && !canUseSponsonTurret()) {
-                buff.append("Cannot use sponson mount.\n");
-                correct = false;
+            if (m.isSponsonTurretMounted()) {
+                if (canUseSponsonTurret()) {
+                    buff.append("Cannot use sponson mount.\n");
+                    correct = false;
+                }
+                if (supportVee.getOriginalJumpMP() > 0) {
+                    buff.append("Cannot mount both jump jets and sponson turrets.\n");
+                    correct = false;
+                }
             }
             if (m.isPintleTurretMounted() && !canUsePintleTurret()) {
                 buff.append("Cannot use pintle mount.\n");
@@ -1196,7 +1202,8 @@ public class TestSupportVehicle extends TestEntity {
             }
 
             if (!(mount.getType() instanceof AmmoType)
-                    && (EquipmentType.getArmorType(mount.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
+                    && (EquipmentType.getArmorType(mount.getType()) == EquipmentType.T_ARMOR_UNKNOWN)
+                    && !mount.getType().hasFlag(MiscType.F_JUMP_JET)) {
                 buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
                 buff.append(mount.getType().getSupportVeeSlots(supportVee)).append("\n");
             }
@@ -1369,10 +1376,15 @@ public class TestSupportVehicle extends TestEntity {
     public int getMiscEquipSlots() {
         int slots = 0;
         for (Mounted m : supportVee.getMisc()) {
-            // Skip armor
-            if (EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN) {
+            // Skip armor and jump jets
+            if ((EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN)
+                    && !m.getType().hasFlag(MiscType.F_JUMP_JET)) {
                 slots += m.getType().getSupportVeeSlots(supportVee);
             }
+        }
+        // Jump jets take a single slot regardless of the number.
+        if (supportVee.hasWorkingMisc(MiscType.F_JUMP_JET)) {
+            slots++;
         }
         return slots;
     }

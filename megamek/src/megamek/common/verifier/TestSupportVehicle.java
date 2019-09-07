@@ -804,7 +804,7 @@ public class TestSupportVehicle extends TestEntity {
                     weight += m.getLinkedBy().getType().getTonnage(supportVee);
                 }
             }
-            return weight / 10.0;
+            return ceilWeight(weight / 10);
         }
         return 0.0;
     }

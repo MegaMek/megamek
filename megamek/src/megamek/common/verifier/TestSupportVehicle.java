@@ -897,6 +897,15 @@ public class TestSupportVehicle extends TestEntity {
             buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
+        if ((supportVee instanceof Tank) && (((Tank) supportVee).fuelTonnagePer100km() > 0.0)
+                && (((Tank) supportVee).getFuelTonnage() <= 0.0)) {
+            buff.append("Support vehicles with ").append(engine.getEngineName())
+                    .append(" engine must allocate some weight for fuel.\n");
+            correct = false;
+        } else if ((supportVee instanceof Aero) && (((Aero) supportVee).getOriginalFuel() <= 0.0)) {
+            buff.append("Aerospace units must allocate some weight for fuel.\n");
+            correct = false;
+        }
         if (occupiedSlotCount() > totalSlotCount()) {
             buff.append("Not enough item slots available! Using ");
             buff.append(Math.abs(occupiedSlotCount() - totalSlotCount()));
@@ -991,7 +1000,7 @@ public class TestSupportVehicle extends TestEntity {
         }
         if (supportVee.isOmni() && (supportVee.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
                     || supportVee.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))
-                && (weaponWeight > supportVee.getBaseChassisFireConWeight())) {
+                && (weaponWeight / 10.0 > supportVee.getBaseChassisFireConWeight())) {
             buff.append("Omni configuration exceeds weapon capacity of base chassis fire control system.\n");
             correct = false;
         }

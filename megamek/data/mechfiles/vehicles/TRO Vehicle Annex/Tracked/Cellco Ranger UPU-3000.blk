@@ -37,8 +37,8 @@ Tracked
 </motion_type>
 
 <transporters>
-troopspace:1.0
 liquidcargobay:0.869:1:1
+troopspace:1.0
 </transporters>
 
 <cruiseMP>
@@ -58,8 +58,8 @@ liquidcargobay:0.869:1:1
 </armor>
 
 <Body Equipment>
-Armored Chassis
 IS Machine Gun Ammo - Half
+Armored Chassis
 </Body Equipment>
 
 <Front Equipment>

@@ -917,6 +917,21 @@ public class TestSupportVehicle extends TestEntity {
             buff.append(".\n\n");
             correct = false;
         }
+        if (supportVee.hasBARArmor(supportVee.firstArmorIndex())) {
+            int bar = supportVee.getBARRating(supportVee.firstArmorIndex());
+            if ((bar < 2) || (bar > 10)) {
+                buff.append("Armor must have a BAR between 2 and 10.\n");
+                correct = false;
+            } else {
+                double perPoint = EquipmentType.getSupportVehicleArmorWeightPerPoint(bar, supportVee.getArmorTechRating());
+                if (perPoint < 0.001) {
+                    buff.append("BAR ").append(bar).append(" exceeds maximum for armor tech rating ")
+                            .append(ITechnology.getRatingName(supportVee.getArmorTechRating()))
+                            .append(".\n");
+                    correct = false;
+                }
+            }
+        }
         if (supportVee instanceof VTOL) {
             if (!supportVee.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
                 for (Mounted m : supportVee.getEquipment()) {
@@ -935,6 +950,8 @@ public class TestSupportVehicle extends TestEntity {
             }
         }
         int hardpoints = 0;
+        boolean sponson = false;
+        boolean pintle = false;
         for (Mounted m : supportVee.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)
                     && (getEntity() instanceof Aero || getEntity() instanceof VTOL)) {
@@ -942,30 +959,32 @@ public class TestSupportVehicle extends TestEntity {
                 correct = false;
             } else if (m.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
                 hardpoints++;
+            } else if (m.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
+                sponson = true;
+            } else if (m.getType().hasFlag(MiscType.F_PINTLE_TURRET)) {
+                pintle = true;
             }
         }
         if (hardpoints > supportVee.getWeight() / 10.0) {
             buff.append("Exceeds maximum of one external stores hardpoint per 10 tons.\n");
             correct = false;
         }
+        if (sponson && !canUseSponsonTurret()) {
+            buff.append("Only medium and large surface vehicles can use a sponson turret.\n");
+            correct = false;
+        }
+        if (sponson && supportVee.getOriginalJumpMP() > 0) {
+            buff.append("Cannot mount both jump jets and sponson turrets.\n");
+            correct = false;
+        }
+        if (pintle && !canUsePintleTurret()) {
+            buff.append("Only small surface support vehicles can use a pintle turret.\n");
+            correct = false;
+        }
         double weaponWeight = 0.0;
         for (Mounted m : supportVee.getWeaponList()) {
             if (!isValidWeapon(m)) {
                 buff.append(m.getType().getName()).append(" is not a valid weapon for this unit.\n");
-                correct = false;
-            }
-            if (m.isSponsonTurretMounted()) {
-                if (canUseSponsonTurret()) {
-                    buff.append("Cannot use sponson mount.\n");
-                    correct = false;
-                }
-                if (supportVee.getOriginalJumpMP() > 0) {
-                    buff.append("Cannot mount both jump jets and sponson turrets.\n");
-                    correct = false;
-                }
-            }
-            if (m.isPintleTurretMounted() && !canUsePintleTurret()) {
-                buff.append("Cannot use pintle mount.\n");
                 correct = false;
             }
             weaponWeight += m.getType().getTonnage(supportVee, m.getLocation());

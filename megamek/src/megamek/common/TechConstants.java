@@ -760,6 +760,38 @@ public class TechConstants {
                     } else {
                         return T_IS_TW_NON_BOX;
                     }
+                //Same as Command Console
+                case Mech.COCKPIT_INDUSTRIAL_COMMAND_CONSOLE:
+                    if (isClan) {
+                        if (year <= 2807) {
+                            return T_CLAN_UNOFFICIAL;
+                        }
+                        return T_CLAN_ADVANCED;
+                    }
+                    if (year <= 2620) {
+                        return T_IS_UNOFFICIAL;
+                    } else if (year <= 2631) {
+                        return T_IS_EXPERIMENTAL;
+                    } else if (year <= 2845) {
+                        return T_IS_ADVANCED;
+                    } else if (year <= 3025) {
+                        return T_IS_UNOFFICIAL;
+                    } else {
+                        return T_IS_ADVANCED;
+                    }
+                //Same as Superheavy industrial
+                case Mech.COCKPIT_SUPERHEAVY_INDUSTRIAL_COMMAND_CONSOLE:
+                    if (isClan) {
+                        return T_CLAN_UNOFFICIAL;
+                    }
+
+                    if (year <= 2900) {
+                        return T_IS_UNOFFICIAL;
+                    } else if (year <= 2940) {
+                        return T_IS_EXPERIMENTAL;
+                    } else {
+                        return T_IS_ADVANCED;
+                    }
 
             }
         } else if ((entityType & Entity.ETYPE_AERO) != 0) {

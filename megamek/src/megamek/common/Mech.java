@@ -195,7 +195,7 @@ public abstract class Mech extends Entity {
             "Primitive", "Primitive Industrial", "Superheavy",
             "Superheavy Tripod", "Tripod", "Interface", "VRRP", "Quadvee",
             "Superheavy Industrial", "Superheavy Command", 
-            "Small Command", "Industrial Command" 
+            "Small Command", "Industrial Command",
 	    "Superheavy Industrial Command"};
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
@@ -7159,7 +7159,25 @@ public abstract class Mech extends Entity {
         setCockpitType(COCKPIT_DUAL);
         return true;
     }
-            
+	
+    public boolean addSuperheavyIndustrialCockpit() {
+        if (getEmptyCriticals(LOC_HEAD) < 5) {
+            return false;
+        }
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        setCockpitType(COCKPIT_SUPERHEAVY_INDUSTRIAL);
+        return true;
+    }
+	
     public boolean addSuperheavyCommandConsole() {
         addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));

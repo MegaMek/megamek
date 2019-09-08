@@ -5345,13 +5345,7 @@ public abstract class Mech extends Entity {
         } else if (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
             // The cost is the sum of both small and command console
             cockpitCost = 675000;            
-        } else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL_COMMAND_CONSOLE) {
-            // The cost is the sum of both industrial and command console
-            cockpitCost = 600000;            
-        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_INDUSTRIAL_COMMAND_CONSOLE) {
-            // The cost is the sum of both industrial and command console; for now, there is no actual cost for Superheavy Industrial cockpit.
-            cockpitCost = 600000;            
-        }else {
+        } else {
             cockpitCost = 200000;
         }
         if (hasEiCockpit()

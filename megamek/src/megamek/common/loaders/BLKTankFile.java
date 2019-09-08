@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -12,17 +13,6 @@
  * details.
  */
 
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author njrkrynn
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.Engine;
@@ -33,6 +23,13 @@ import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * BLkFile.java
+ *
+ * Created on April 6, 2002, 2:06 AM
+ *
+ * @author njrkrynn
+ */
 public class BLKTankFile extends BLKFile implements IMechLoader {
     
     private boolean superheavy = false;
@@ -48,11 +45,9 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
                 case SuperHeavyTank.LOC_FRONTRIGHT:
                     return 1;
                 case SuperHeavyTank.LOC_REARRIGHT:
-                    return 2;
                 case SuperHeavyTank.LOC_REAR:
                     return 2;
                 case SuperHeavyTank.LOC_REARLEFT:
-                    return 4;
                 case SuperHeavyTank.LOC_FRONTLEFT:
                     return 4;
                 case SuperHeavyTank.LOC_FRONT:
@@ -152,7 +147,12 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
         int engineFlags = Engine.TANK_ENGINE;
-        if (t.isClan()) {
+        // Support for mixed tech units with an engine with a different tech base
+        if (dataFile.exists("clan_engine")) {
+            if (Boolean.parseBoolean(dataFile.getDataAsString("clan_engine")[0])) {
+                engineFlags |= Engine.CLAN_ENGINE;
+            }
+        } else if (t.isClan()) {
             engineFlags |= Engine.CLAN_ENGINE;
         }
         if (!dataFile.exists("cruiseMP")) {

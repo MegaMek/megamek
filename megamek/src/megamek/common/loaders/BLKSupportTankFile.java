@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -12,17 +13,6 @@
  * details.
  */
 
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author njrkrynn
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.Engine;
@@ -33,6 +23,13 @@ import megamek.common.SupportTank;
 import megamek.common.Tank;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * BLkFile.java
+ *
+ * Created on April 6, 2002, 2:06 AM
+ *
+ * @author njrkrynn
+ */
 public class BLKSupportTankFile extends BLKFile implements IMechLoader {
     public BLKSupportTankFile(BuildingBlock bb) {
         dataFile = bb;
@@ -103,9 +100,6 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
             t.setFuelTonnage(dataFile.getDataAsDouble("fuel")[0]);
         }
         int engineFlags = Engine.TANK_ENGINE | Engine.SUPPORT_VEE_ENGINE;
-        if (t.isClan()) {
-            engineFlags |= Engine.CLAN_ENGINE;
-        }
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }

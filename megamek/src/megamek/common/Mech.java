@@ -8394,7 +8394,7 @@ public abstract class Mech extends Entity {
             specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
         }else if (getCockpitType() == COCKPIT_INDUSTRIAL_COMMAND_CONSOLE) {
             specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
-        }else if (getCockpitType() == CCOCKPIT_SUPERHEAVY_INDUSTRIAL_COMMAND_CONSOLE) {
+        }else if (getCockpitType() == COCKPIT_SUPERHEAVY_INDUSTRIAL_COMMAND_CONSOLE) {
             specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
         }else if (getCockpitType() == COCKPIT_VRRP) {
             specialAbilities.merge(BattleForceSPA.VR, 1, Integer::sum);

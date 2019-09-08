@@ -176,7 +176,9 @@ public abstract class Mech extends Entity {
     
     public static final int COCKPIT_SMALL_COMMAND_CONSOLE = 16;
 	
-    public static final int COCKPIT_SUPERHEAVY_INDUSTRIAL_COMMAND_CONSOLE = 17;
+    public static final int COCKPIT_INDUSTRIAL_COMMAND_CONSOLE = 17;	
+	
+    public static final int COCKPIT_SUPERHEAVY_INDUSTRIAL_COMMAND_CONSOLE = 18;
 
     public static final String[] COCKPIT_STRING = { "Standard Cockpit",
             "Small Cockpit", "Command Console", "Torso-Mounted Cockpit",
@@ -369,7 +371,6 @@ public abstract class Mech extends Entity {
 	case COCKPIT_INDUSTRIALL_COMMAND_CONSOLE:
             setCrew(new Crew(CrewType.COMMAND_CONSOLE));
             break;
-        }
 	case COCKPIT_SUPERHEAVY_INDUSTRIAL_COMMAND_CONSOLE:
             setCrew(new Crew(CrewType.COMMAND_CONSOLE));
             break;

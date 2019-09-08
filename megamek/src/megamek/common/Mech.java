@@ -182,13 +182,13 @@ public abstract class Mech extends Entity {
             "Primitive Industrial Cockpit", "Superheavy Cockpit",
             "Superheavy Tripod Cockpit", "Tripod Cockpit", "Interface Cockpit",
             "Virtual Reality Piloting Pod", "QuadVee Cockpit",
-            "Superheavy Industrial Cockpit", "Superheavy Command Console", "Small Command Console" };
+            "Superheavy Industrial Cockpit", "Superheavy Command Console", "Small Command Console", "Industrial Command Console" };
 
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",
             "Primitive", "Primitive Industrial", "Superheavy",
             "Superheavy Tripod", "Tripod", "Interface", "VRRP", "Quadvee",
-            "Superheavy Industrial", "Superheavy Command", "Small Command" };
+            "Superheavy Industrial", "Superheavy Command", "Small Command", "Industrial Command" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
@@ -358,6 +358,9 @@ public abstract class Mech extends Entity {
             setCrew(new Crew(CrewType.COMMAND_CONSOLE));
             break;
         case COCKPIT_SMALL_COMMAND_CONSOLE:
+            setCrew(new Crew(CrewType.COMMAND_CONSOLE));
+            break;
+	case COCKPIT_INDUSTRIALL_COMMAND_CONSOLE:
             setCrew(new Crew(CrewType.COMMAND_CONSOLE));
             break;
         }
@@ -3269,6 +3272,14 @@ public abstract class Mech extends Entity {
                 .setPrototypeFactions(F_FS).setProductionFactions(F_FS, F_CJF)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Small Command Console
+	    //FIXME: The data is for Industrial.
+	    new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
+                .setISApproximate(true, false, false, true, true)
+                .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setReintroductionFactions(F_FS).setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Industrial command console
 
     };
 
@@ -5349,7 +5360,10 @@ public abstract class Mech extends Entity {
         } else if (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
             // The cost is the sum of both small and command console
             cockpitCost = 675000;            
-        } else {
+        } else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL_COMMAND_CONSOLE) {
+            // The cost is the sum of both industrial and command console
+            cockpitCost = 600000;            
+        }else {
             cockpitCost = 200000;
         }
         if (hasEiCockpit()
@@ -5655,7 +5669,7 @@ public abstract class Mech extends Entity {
         }
 
         // Small/torso-mounted cockpit penalty?
-        if ( ( (getCockpitType() == Mech.COCKPIT_SMALL) || (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) )
+        if (((getCockpitType() == Mech.COCKPIT_SMALL) || (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE))
                 && (!hasAbility(OptionsConstants.MD_BVDNI)
                 && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT))) {
             roll.addModifier(1, "Small Cockpit");
@@ -6471,6 +6485,9 @@ public abstract class Mech extends Entity {
             case COCKPIT_SMALL_COMMAND_CONSOLE:
                 inName = "COCKPIT_SMALL_COMMAND_CONSOLE";
                 break;
+	    case COCKPIT_INDUSTRIAL_COMMAND_CONSOLE:
+                inName = "COCKPIT_INDUSTRIAL_COMMAND_CONSOLE";
+                break;
             default:
                 inName = "COCKPIT_UNKNOWN";
         }
@@ -7156,6 +7173,26 @@ public abstract class Mech extends Entity {
         return true;
     }
 
+    public boolean addIndustrialCommandConsole() {
+        if (getEmptyCriticals(LOC_HEAD) < 5) {
+            return false;
+        }
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+	addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        setCockpitType(COCKPIT_INDUSTRIAL_COMMAND_CONSOLE);
+        return true;
+    }
+	
     /**
      * Add the critical slots necessary for a torso-mounted cockpit. Note: This
      * is part of the mek creation public API, and might not be referenced by
@@ -7220,7 +7257,8 @@ public abstract class Mech extends Entity {
         //one.
         if (getCockpitType() == COCKPIT_COMMAND_CONSOLE
                 || getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE
-	            || getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE
+	        || getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE
+	        || getCockpitType() == COCKPIT_INDUSTRIAL_COMMAND_CONSOLE
                 || getCockpitType() == COCKPIT_DUAL
                 || getCockpitType() == COCKPIT_QUADVEE) {
             int crewSlot = 0;
@@ -7237,7 +7275,10 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean hasCommandConsoleBonus() {
-        return ((getCockpitType() == COCKPIT_COMMAND_CONSOLE) || (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE))
+        return ((getCockpitType() == COCKPIT_COMMAND_CONSOLE) 
+		|| (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) 
+		|| (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE)
+	        || (getCockpitType() == COCKPIT_INDUSTRIAL_COMMAND_CONSOLE))
                 && getCrew().hasActiveCommandConsole()
                 && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
                 && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));
@@ -8284,9 +8325,11 @@ public abstract class Mech extends Entity {
         }
         if (getCockpitType() == COCKPIT_COMMAND_CONSOLE) {
             specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
-        } else if (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
+        }else if (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
             specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
         }else if (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE) {
+            specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
+        }else if (getCockpitType() == COCKPIT_INDUSTRIAL_COMMAND_CONSOLE) {
             specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
         }else if (getCockpitType() == COCKPIT_VRRP) {
             specialAbilities.merge(BattleForceSPA.VR, 1, Integer::sum);

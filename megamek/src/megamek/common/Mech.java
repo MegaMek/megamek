@@ -368,7 +368,7 @@ public abstract class Mech extends Entity {
         case COCKPIT_SMALL_COMMAND_CONSOLE:
             setCrew(new Crew(CrewType.COMMAND_CONSOLE));
             break;
-	case COCKPIT_INDUSTRIALL_COMMAND_CONSOLE:
+	case COCKPIT_INDUSTRIAL_COMMAND_CONSOLE:
             setCrew(new Crew(CrewType.COMMAND_CONSOLE));
             break;
 	case COCKPIT_SUPERHEAVY_INDUSTRIAL_COMMAND_CONSOLE:

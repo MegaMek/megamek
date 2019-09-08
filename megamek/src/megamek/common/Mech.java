@@ -7215,9 +7215,6 @@ public abstract class Mech extends Entity {
     }
 
     public boolean addIndustrialCommandConsole() {
-        if (getEmptyCriticals(LOC_HEAD) < 5) {
-            return false;
-        }
         addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));
         addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
@@ -7235,9 +7232,6 @@ public abstract class Mech extends Entity {
     }
 
     public boolean addSuperheavyIndustrialCommandConsole() {
-        if (getEmptyCriticals(LOC_HEAD) < 5) {
-            return false;
-        }
         addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));
         addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,

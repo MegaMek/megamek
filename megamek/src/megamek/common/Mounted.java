@@ -103,10 +103,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private Vector<Integer> bayWeapons = new Vector<Integer>();
     private Vector<Integer> bayAmmo = new Vector<Integer>();
     
-    // Crosslink that allows us to match the weapons and ammo in a bay
-    // Used when converting individual weapons to bays and back again during landing/liftoff
-    private int bayNumber = -1;
-
     // on capital fighters and squadrons some weapon mounts actually represent
     // multiple weapons of the same type
     // provide a boolean indicating this type of mount and the number of weapons
@@ -1414,19 +1410,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         bayWeapons.add(w);
     }
     
-    /**
-     * Sets the bay for this ammo bin, if applicable.
-     * @param bay
-     */
-    public void setBay(Mounted bay) {
-        int bayEqNum = entity.getEquipmentNum(bay);
-        bayNumber = bayEqNum;
-    }
-    
-    public int getBay() {
-        return bayNumber;
-    }
-
     public Vector<Integer> getBayWeapons() {
         return bayWeapons;
     }

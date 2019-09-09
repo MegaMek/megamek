@@ -107,7 +107,6 @@ public class BayMunitionsChoicePanel extends JPanel {
                         try {
                             entity.addEquipment(mounted, row.bay.getLocation(), row.bay.isRearMounted());
                             row.bay.addAmmoToBay(entity.getEquipmentNum(mounted));
-                            row.bay.setBay(mounted);
                         } catch (LocationFullException e) {
                             DefaultMmLogger.getInstance().error(BayMunitionsChoicePanel.class,
                                     "apply()", e);

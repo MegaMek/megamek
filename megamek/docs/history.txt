@@ -7,6 +7,7 @@ v0.47.1-SNAPSHOT
 + PR #1473: Allow the bot to gracefully handle deployment of grounded dropships on maps with no valid places to put them
 + PR #1474: TRO display in MegaMek lobby displays data for gun emplacements
 + Issue #1459: Using XXL(Clan) fusion engine on combat vehicle by mixed IS tech is not loaded properly
++ Issue #1481: Selecting the Adelante Train throws IndexOutOfBounds Exception
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

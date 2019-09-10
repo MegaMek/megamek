@@ -114,6 +114,7 @@ public class MechTileset {
     private String SPACE_STATION_STRING = "default_space_station"; //$NON-NLS-1$
     private String FIGHTER_SQUADRON_STRING = "default_fighter_squadron"; //$NON-NLS-1$
     private String TELE_MISSILE_STRING = "default_tele_missile"; //$NON-NLS-1$
+    private String UNKNOWN_STRING = "default_unknown"; //$NON-NLS-1$
 
     private MechEntry default_ultra_light;
     private MechEntry default_light;
@@ -167,6 +168,7 @@ public class MechTileset {
     private MechEntry default_space_station;
     private MechEntry default_fighter_squadron;
     private MechEntry default_tele_missile;
+    private MechEntry default_unknown;
 
     private HashMap<String, MechEntry> exact = new HashMap<String, MechEntry>();
     private HashMap<String, MechEntry> chassis = new HashMap<String, MechEntry>();
@@ -410,8 +412,7 @@ public class MechTileset {
             return default_aero;
         }
 
-        // TODO: better exception?
-        throw new IndexOutOfBoundsException("can't find an image for that mech"); //$NON-NLS-1$
+        return default_unknown;
     }
 
     public void loadFromFile(String filename) throws IOException {
@@ -517,6 +518,7 @@ public class MechTileset {
         default_space_station = exact.get(SPACE_STATION_STRING.toUpperCase());
         default_fighter_squadron = exact.get(FIGHTER_SQUADRON_STRING.toUpperCase());
         default_tele_missile = exact.get(TELE_MISSILE_STRING.toUpperCase());
+        default_unknown = exact.get(UNKNOWN_STRING.toUpperCase());
     }
 
     /**

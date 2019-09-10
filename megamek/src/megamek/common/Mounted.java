@@ -145,9 +145,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public static final int MINE_INFERNO = 3;
     public static final int MINE_EMP = 4;
     public static final int MINE_COMMAND_DETONATED = 5;
-    
-    // This mounted is not associated with a bay...
-    public static final int NO_BAY = -1;
 
     // New stuff for shields
     protected int baseDamageAbsorptionRate = 0;

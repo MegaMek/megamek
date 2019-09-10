@@ -106,6 +106,7 @@ exact "default_warship" "warships/naga_warship.png"
 exact "default_space_station" "Space Stations/Bastion System Defense Station.png"
 exact "default_fighter_squadron" "defaults/fighter_squadron.png"
 exact "default_tele_missile" "defaults/telemissile.png"
+exact "default_unknown" "defaults/unknown.png"
 
 #ASF
 chassis "Ahab" "fighter/ahab.png"

@@ -492,7 +492,6 @@ public class OptionsConstants {
     public static final String ADVAERORULES_VARIABLE_DAMAGE_THRESH= "variable_damage_thresh";  //$NON-NLS$
     public static final String ADVAERORULES_AT2_NUKES= "at2_nukes";  //$NON-NLS$
     public static final String ADVAERORULES_AERO_SANITY= "aero_sanity";  //$NON-NLS$
-    public static final String ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER= "ind_weapons_grounded_dropper";  //$NON-NLS$
     public static final String ADVAERORULES_RETURN_FLYOVER= "return_flyover";  //$NON-NLS$
     public static final String ADVAERORULES_AA_MOVE_MOD= "aa_move_mod";  //$NON-NLS$
     public static final String ADVAERORULES_ALLOW_LARGE_SQUADRONS= "allow_large_squadrons";  //$NON-NLS$

@@ -3831,6 +3831,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Tries to load the specified weapon with the first available ammo of the
      * same munition type as currently in use. If this fails, use first ammo.
+     * 
+     * If this is a weapon bay, try to load the weapon with ammo in the same bay,
+     * and if it fails, load with compatible ammo in the same location.
      */
     public void loadWeaponWithSameAmmo(Mounted mounted) {
         for (Mounted mountedAmmo : getAmmo()) {
@@ -3881,8 +3884,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if ((oldammo != null)
             && (!((AmmoType) oldammo.getType()).equals(atype) || (((AmmoType) oldammo
-                .getType()).getMunitionType() != atype
-                                                                          .getMunitionType()))) {
+                .getType()).getMunitionType() != atype.getMunitionType()))) {
             return false;
         }
 

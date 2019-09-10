@@ -9,6 +9,7 @@ v0.47.1-SNAPSHOT
 + Issue #1459: Using XXL(Clan) fusion engine on combat vehicle by mixed IS tech is not loaded properly
 + Issue #1481: Selecting the Adelante Train throws IndexOutOfBounds Exception
 + PR #1484: JS/SS max armor calculation (affects validation and MML).
++ PR #1478: Grounded Dropships and Individual Weapons (implements errata).
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

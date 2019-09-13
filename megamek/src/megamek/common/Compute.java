@@ -2551,7 +2551,7 @@ public class Compute {
         ToHitData toHit = new ToHitData();
 
         // space screens; bonus depends on number (level)
-        if (hex.terrainLevel(Terrains.SCREEN) > 0) {
+        if ((hex != null) && (hex.terrainLevel(Terrains.SCREEN) > 0)) {
             toHit.addModifier(hex.terrainLevel(Terrains.SCREEN) + 1,
                               "attacker in screen(s)");
         }

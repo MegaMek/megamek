@@ -407,6 +407,10 @@ public class AmmoType extends EquipmentType {
                     .hasFlag(F_AR10_KILLER_WHALE)) {
                 return false;
             }
+            if (hasFlag(F_NUCLEAR) != ((AmmoType) other)
+                    .hasFlag(F_NUCLEAR)) {
+                return false;
+            }
         }
         return ((getAmmoType() == ((AmmoType) other).getAmmoType()) && (getRackSize() == ((AmmoType) other)
                 .getRackSize()));

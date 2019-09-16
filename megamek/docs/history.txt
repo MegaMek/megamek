@@ -10,6 +10,7 @@ v0.47.1-SNAPSHOT
 + Issue #1481: Selecting the Adelante Train throws IndexOutOfBounds Exception
 + PR #1484: JS/SS max armor calculation (affects validation and MML).
 + PR #1478: Grounded Dropships and Individual Weapons (implements errata).
++ PR #1488: Nuclear warheads for large craft properly differentiate themselves from their standard versions when swapping ammo
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

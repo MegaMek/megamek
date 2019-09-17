@@ -2537,6 +2537,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     || (aType.getAmmoType() == AmmoType.T_LRM)
                     || (aType.getAmmoType() == AmmoType.T_LRM_IMP))
                     && ((munitionType == AmmoType.M_AIRBURST) 
+                            || (munitionType == AmmoType.M_SMOKE)
                             || (munitionType == AmmoType.M_SMOKE_WARHEAD))) {
                 return new HexTarget(pos, game.getBoard(),
                         Targetable.TYPE_HEX_CLEAR);

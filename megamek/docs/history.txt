@@ -11,6 +11,7 @@ v0.47.1-SNAPSHOT
 + PR #1484: JS/SS max armor calculation (affects validation and MML).
 + PR #1478: Grounded Dropships and Individual Weapons (implements errata).
 + PR #1488: Nuclear warheads for large craft properly differentiate themselves from their standard versions when swapping ammo
++ Issue #1490: Fixed Ramshackle quirk description
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

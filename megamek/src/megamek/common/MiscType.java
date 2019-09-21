@@ -486,7 +486,10 @@ public class MiscType extends EquipmentType {
             // pg 350, TO
             // 10% of engine weight rounded to the nearest half ton
             Engine e = entity.getEngine();
-            return Math.ceil((e.getWeightEngine(entity) * 0.1 ) * 2.0) / 2.0;
+            if (null == e) {
+                return 0;
+            }
+            return Math.ceil((e.getWeightEngine(entity) / 10.0) * 2.0) / 2.0;
         } else if (hasFlag(F_MASC)) {
             if (entity instanceof Protomech) {
                 return entity.getWeight() * 0.025;
@@ -497,10 +500,20 @@ public class MiscType extends EquipmentType {
                 return (0.250 / 3);
             } else {
                 if (hasSubType(S_SUPERCHARGER)) {
-                    // pg 411, TO
+                    Engine e = entity.getEngine();
+                    if (null == e) {
+                        return 0;
+                    }
+                    // pg 344, TO
                     // 10% of engine weight
-                    return entity.hasEngine() ? entity.getEngine().getWeightEngine(entity) / 10.0f : 0.0f;
+                    //   <5t round to kg
+                    if (entity.getWeight() < 5.0) {
+                        return Math.round((e.getWeightEngine(entity) / 10.0) * 1000.0) / 1000.0;
+                    }
+                    //   >=5t round to half ton
+                    return Math.ceil((e.getWeightEngine(entity) / 10.0) * 2.0) / 2.0;
                 }
+
                 if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
                     return Math.round(entity.getWeight() / 25.0f);
                 }

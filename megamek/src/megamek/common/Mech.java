@@ -3254,7 +3254,6 @@ public abstract class Mech extends Entity {
                 .setPrototypeFactions(F_FW).setProductionFactions(F_FW)
                 .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy industrial
-            //FIXME: The data is for Superheavy.
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(3060, 3076)
                 .setISApproximate(true, false).setTechRating(RATING_E)
                 .setPrototypeFactions(F_WB).setProductionFactions(F_WB)
@@ -5234,7 +5233,7 @@ public abstract class Mech extends Entity {
         double cockpitMod = 1;
         if ((getCockpitType() == Mech.COCKPIT_SMALL)
                 || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
-                    || (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE)) {
+                || (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE)) {
             cockpitMod = 0.95;
             finalBV *= cockpitMod;
         } else if ((getCockpitType() == Mech.COCKPIT_TRIPOD)
@@ -7234,7 +7233,7 @@ public abstract class Mech extends Entity {
         //one.
         if (getCockpitType() == COCKPIT_COMMAND_CONSOLE
                 || getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE
-	        || getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE
+	            || getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE
                 || getCockpitType() == COCKPIT_DUAL
                 || getCockpitType() == COCKPIT_QUADVEE) {
             int crewSlot = 0;
@@ -8300,11 +8299,11 @@ public abstract class Mech extends Entity {
         }
         if (getCockpitType() == COCKPIT_COMMAND_CONSOLE) {
             specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
-        }else if (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
+        } else if (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
             specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
-        }else if (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE) {
+        } else if (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE) {
             specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
-        }else if (getCockpitType() == COCKPIT_VRRP) {
+        } else if (getCockpitType() == COCKPIT_VRRP) {
             specialAbilities.merge(BattleForceSPA.VR, 1, Integer::sum);
         }
         if (isIndustrial()) {

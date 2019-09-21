@@ -280,10 +280,10 @@ public class TestMech extends TestEntity {
             weight = 4.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_QUADVEE) {
             weight = 4.0;
-        }else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
+        } else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
             // Like as normal command console, it is technically two seperate 4-ton and 3-ton pieces of equipment.
             weight = 7.0;
-        }else if (mech.getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
+        } else if (mech.getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
             // Like as normal command console, it is technically two seperate 2-ton and 3-ton pieces of equipment. 
             weight = 5.0;
         }

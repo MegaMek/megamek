@@ -139,6 +139,8 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         } else {
             // Should only be used when using a grounded dropship with individual weapons
             // Otherwise we're using CapitalMissileBayHandler
+            nDamPerHit = calcDamagePerHit();
+            //This gets used if you're shooting at an airborne dropship. It can defend with PD bays.
             attackValue = calcAttackValue();
         }
         //CalcAttackValue triggers counterfire, so now we can safely get this
@@ -305,22 +307,31 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
+        AmmoType atype = (AmmoType) ammo.getType();
         int av = 0;
         double counterAV = calcCounterAV();
         int armor = wtype.getMissileArmor();
-        // if we have a ground firing unit, then AV should not be determined by
-        // aero range brackets
-        if (!ae.isAirborne() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)) {
-            if (usesClusterTable()) {
-                // for cluster weapons just use the short range AV
-                av = wtype.getRoundShortAV();
-            } else {
-                // otherwise just use the full weapon damage by range
-                av = wtype.getDamage(nRange);
+        //AR10 munitions
+        if (atype != null) {
+            if (atype.getAmmoType() == AmmoType.T_AR10) {
+                if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                    av = 4;
+                    armor = 40;
+                } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                    av = 3;
+                    armor = 30;
+                } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                    av = 1000;
+                    armor = 40;
+                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                    av = 100;
+                    armor = 30;
+                } else {
+                    av = 2;
+                    armor = 20;
+                }
             }
         } else {
-            // we have an airborne attacker, so we need to use aero range
-            // brackets
             int range = RangeType.rangeBracket(nRange, wtype.getATRanges(),
                     true, false);
             if (range == WeaponType.RANGE_SHORT) {
@@ -333,10 +344,13 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 av = wtype.getRoundExtAV();
             }
         }
-        
-        if (ammo.getType().hasFlag(AmmoType.F_NUCLEAR)) {
-            nukeS2S = true;
-        }
+        //Nuclear Warheads for non-AR10 missiles
+        if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+            av = 100;
+        } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+            av = 1000;
+        } 
+        nukeS2S = atype.hasFlag(AmmoType.F_NUCLEAR);
         
         CapMissileArmor = armor - (int) counterAV;
         CapMissileAMSMod = calcCapMissileAMSMod();

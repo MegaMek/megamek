@@ -53,6 +53,7 @@ public class CLArrowIV extends ArtilleryWeapon {
         bv = 240;
         cost = 450000;
         this.flags = flags.or(F_MISSILE);
+        this.missileArmor = 20;
         rulesRefs = "284,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setTechRating(RATING_F)

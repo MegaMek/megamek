@@ -52,6 +52,7 @@ public class ISASMissileWeapon extends ThunderBoltWeapon {
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_AS_MISSILE;
         capital = false;
+        this.missileArmor = 30;
         rulesRefs = "358,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)

@@ -237,9 +237,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((target == null)
                 || (target.getTargetType() != Targetable.TYPE_ENTITY)
                 || !advancedPD
-                //Don't defend against ground fire with bay fire unless attacked by bay fire
+                //Don't defend against ground fire with bay fire unless attacked by capital missile fire
                 //Prevents ammo and heat being used twice for dropships defending here and with getAMSHitsMod()
-                || (waa.isGroundToAir(game) && !ae.usesWeaponBays())) {
+                || (waa.isGroundToAir(game) && (!(wtype.isSubCapital() || wtype.isCapital())))) {
             return false;
         }
         if (target instanceof Dropship 

@@ -364,6 +364,15 @@ public class BayWeaponHandler extends WeaponHandler {
         Report.addNewline(vPhaseReport);
         return false;
     }
+    
+    /**
+     * Calculate the starting armor value of a flight of Capital Missiles
+     * Used for Aero Sanity. This is done in calcAttackValue() otherwise
+     *
+     */
+    protected int initializeCapMissileArmor() {
+        return 0;
+    }
 
     public boolean handleAeroSanity(IGame.Phase phase, Vector<Report> vPhaseReport) {
         final String METHOD_NAME = "handleAeroSanity(Phase, vPhaseReport)";

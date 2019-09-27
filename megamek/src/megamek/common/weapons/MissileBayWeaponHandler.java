@@ -169,6 +169,24 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     protected boolean isTbolt() {
         return wtype.hasFlag(WeaponType.F_LARGEMISSILE);
     }
+    
+    /**
+     * Calculate the starting armor value of a flight of thunderbolts
+     * Used for Aero Sanity. This is done in calcAttackValue() otherwise
+     *
+     */
+    @Override
+    protected int initializeCapMissileArmor() {
+        int armor = 0;
+        for (int wId : weapon.getBayWeapons()) {
+            int curr_armor = 0;
+            Mounted bayW = ae.getEquipment(wId);
+            WeaponType bayWType = ((WeaponType) bayW.getType());
+            curr_armor = bayWType.getMissileArmor();
+            armor = armor + curr_armor;
+        }
+        return armor;
+    }
 
     /*
      * check for special munitions and their effect on av 

@@ -146,7 +146,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     @Override
     protected void setAMSBayReportingFlag() {
         if (isTbolt()) {
-            amsBayEngagedMissile = true;
+            amsBayEngagedCap = true;
         } else {
             amsBayEngaged = true;
         }
@@ -158,7 +158,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     @Override
     protected void setPDBayReportingFlag() {
         if (isTbolt()) {
-            pdBayEngagedMissile = true;
+            pdBayEngagedCap = true;
         } else {
             pdBayEngaged = true;
         }
@@ -186,6 +186,15 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             armor = armor + curr_armor;
         }
         return armor;
+    }
+    
+    @Override
+    protected int calcCapMissileAMSMod() {
+        CapMissileAMSMod = 0;
+        if (isTbolt()) {
+            CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
+        }
+        return CapMissileAMSMod;
     }
 
     /*

@@ -33,6 +33,7 @@ import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.Terrains;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.annotations.Nullable;
 import megamek.common.MoveStep;
 
 /**
@@ -384,7 +385,7 @@ public class BoardEdgePathFinder {
      * @param coords The coordinates to check
      * @return A move path or null if these coordinates haven't been evaluated.
      */
-    public MovePath getLongestNonEdgePath(Coords coords) {
+    public @Nullable MovePath getLongestNonEdgePath(Coords coords) {
         return longestNonEdgePathCache.get(coords);
     }
 

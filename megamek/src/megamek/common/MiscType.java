@@ -480,6 +480,16 @@ public class MiscType extends EquipmentType {
             return Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
             return 0.5 + Math.ceil(entity.getWeight() / 10.0f) / 2.0;
+        } else if (hasFlag(F_JET_BOOSTER)) {
+            // CAW: Moved to before F_MASC to ensure this weight calc is used
+            //      for VTOL Jet Boosters (which have both flags set)
+            // pg 350, TO
+            // 10% of engine weight rounded to the nearest half ton
+            Engine e = entity.getEngine();
+            if (null == e) {
+                return 0;
+            }
+            return Math.ceil((e.getWeightEngine(entity) / 10.0) * 2.0) / 2.0;
         } else if (hasFlag(F_MASC)) {
             if (entity instanceof Protomech) {
                 return entity.getWeight() * 0.025;
@@ -489,16 +499,21 @@ public class MiscType extends EquipmentType {
                 // be split across 3 instances, since it's spreadable equipment
                 return (0.250 / 3);
             } else {
-                if (hasSubType(S_JETBOOSTER)) {
-                    return entity.hasEngine() ? entity.getEngine().getWeightEngine(entity) / 10.0f : 0.0f;
-                }
                 if (hasSubType(S_SUPERCHARGER)) {
                     Engine e = entity.getEngine();
-                    if (e == null) {
-                        return 0.0f;
+                    if (null == e) {
+                        return 0;
                     }
-                    return Math.ceil((e.getWeightEngine(entity) / 10.0f) * 2.0f) / 2.0;
+                    // pg 344, TO
+                    // 10% of engine weight
+                    //   <5t round to kg
+                    if (entity.getWeight() < 5.0) {
+                        return Math.round((e.getWeightEngine(entity) / 10.0) * 1000.0) / 1000.0;
+                    }
+                    //   >=5t round to half ton
+                    return Math.ceil((e.getWeightEngine(entity) / 10.0) * 2.0) / 2.0;
                 }
+
                 if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
                     return Math.round(entity.getWeight() / 25.0f);
                 }
@@ -668,9 +683,6 @@ public class MiscType extends EquipmentType {
 
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return Math.ceil((entity.getWeight() * entity.getOriginalJumpMP()) / 10.0f) / 2.0;
-        } else if (hasFlag(F_JET_BOOSTER)) {
-            Engine e = entity.getEngine();
-            return Math.ceil((e.getWeightEngine(entity) *.1 ) * 2.0f) / 2.0;
         } else if ((hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) || hasFlag(F_TALON)) {
             return Math.ceil(entity.getWeight() / 15);
         } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {

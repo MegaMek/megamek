@@ -13,6 +13,7 @@ v0.47.1-SNAPSHOT
 + PR #1488: Nuclear warheads for large craft properly differentiate themselves from their standard versions when swapping ammo
 + Issue #1490: Fixed Ramshackle quirk description
 + Issue #1489: Fix jet booster and supercharger weight calculations
++ Issue #1500: Avoid NRE in BotClient::getStartingCoordsArray
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

@@ -90,8 +90,9 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
-        calcCounterAV();
         int av = 0;
+        double counterAV = calcCounterAV();
+        int armor = wtype.getMissileArmor();
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         if (range == WeaponType.RANGE_SHORT) {
             av = wtype.getRoundShortAV();
@@ -102,6 +103,9 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         } else if (range == WeaponType.RANGE_EXT) {
             av = wtype.getRoundExtAV();
         }
+        
+        CapMissileArmor = armor - (int) counterAV;
+        CapMissileAMSMod = calcCapMissileAMSMod();
                         
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
@@ -112,6 +116,17 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         }
         av = (int) Math.floor(getBracketingMultiplier() * av);
         return (av);
+    }
+    
+    @Override
+    protected int calcCapMissileAMSMod() {
+        CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
+        return CapMissileAMSMod;
+    }
+    
+    @Override
+    protected int getCapMissileAMSMod() {
+        return CapMissileAMSMod;
     }
     
     @Override
@@ -138,8 +153,8 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             if (entityTarget != null && entityTarget.isLargeCraft()) {
                 if (getParentBayHandler() != null) {
                     WeaponHandler bayHandler = getParentBayHandler();
-                    amsBayEngagedMissile = bayHandler.amsBayEngagedMissile;
-                    pdBayEngagedMissile = bayHandler.pdBayEngagedMissile;
+                    amsBayEngagedCap = bayHandler.amsBayEngagedCap;
+                    pdBayEngagedCap = bayHandler.pdBayEngagedCap;
                 }
             }
         }
@@ -157,7 +172,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             r.indent();
             vPhaseReport.addElement(r);
         } 
-        if (amsEngaged || apdsEngaged || amsBayEngagedMissile || pdBayEngagedMissile) {
+        if (amsEngaged || apdsEngaged) {
             Report r = new Report(3235);
             r.subject = subjectId;
             vPhaseReport.add(r);
@@ -187,14 +202,14 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
     protected void setAMSBayReportingFlag() {
-        amsBayEngagedMissile = true;
+        amsBayEngagedCap = true;
     }
     
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
     protected void setPDBayReportingFlag() {
-        pdBayEngagedMissile = true;
+        pdBayEngagedCap = true;
     }
     
     @Override

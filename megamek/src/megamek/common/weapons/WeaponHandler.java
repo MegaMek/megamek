@@ -133,6 +133,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean pdBayEngagedMissile = false; // true if one or more point defense bays engages this attack. Used for reporting if this is a single large missile (thunderbolt, etc) attack.
     protected boolean advancedPD = false; //true if advanced StratOps game rule is on
     protected WeaponHandler parentBayHandler = null; //Used for weapons bays when Aero Sanity is on
+    protected int originalAV = 0; // Used to handle AMS damage to standard missile flights fired by capital fighters
     
     protected boolean amsEngaged = false;
     protected boolean apdsEngaged = false;
@@ -735,50 +736,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 if (nweapons > 1) {
                     nweaponsHit = Compute.missilesHit(nweapons,
                             ((IAero) ae).getClusterMods());
-                    //If point defenses engage Large, single missiles
-                    if (pdBayEngagedMissile || amsBayEngagedMissile) {
-                        int AMSHits = 0;
-                        Report r = new Report(3236);
-                        r.subject = subjectId;
-                        r.add(nweaponsHit);
-                        vPhaseReport.add(r);
-                        r = new Report(3230);
-                        r.indent(1);
-                        r.subject = subjectId;
-                        vPhaseReport.add(r);
-                        for (int i = 0; i < nweaponsHit; i++) {
-                        	int destroyRoll = Compute.d6();
-                        	if (destroyRoll <= 3) {
-                        		r = new Report(3240);
-                        		r.subject = subjectId;
-                        		r.add("missile");
-                        		r.add(destroyRoll);
-                        		vPhaseReport.add(r);
-                        		AMSHits += 1;
-                        	} else {
-                        		r = new Report(3241);
-                        		r.add("missile");
-                        		r.add(destroyRoll);
-                        		r.subject = subjectId;
-                        		vPhaseReport.add(r);                        		
-                        	}
-                        }
-                        nweaponsHit = nweaponsHit - AMSHits;
-                        if (nweaponsHit <= 0) {
-                        	hits = 0;
-                        } else {
-                        	hits = 1;
-                        }
-                        nDamPerHit = attackValue * nweaponsHit;
-                    } else if (pdBayEngaged || amsBayEngaged) {
+                    if (pdBayEngaged || amsBayEngaged) {
                     	//Point Defenses engage standard (cluster) missiles
                         int counterAV = 0;
                         counterAV = getCounterAV();
-                        nDamPerHit = attackValue * nweaponsHit - counterAV;
+                        nDamPerHit = originalAV * nweaponsHit - counterAV;
                         hits = 1;
                         nCluster = 1;
                     } else {
-                    	//If multiple non-missile weapons hit
+                    	//If multiple large missile or non-missile weapons hit
                     	Report r = new Report(3325);
                     	r.subject = subjectId;
                     	r.add(nweaponsHit);

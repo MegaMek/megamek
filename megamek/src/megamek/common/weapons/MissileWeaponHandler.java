@@ -52,7 +52,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     boolean advancedAMS = false;
     boolean advancedPD = false;
     boolean multiAMS = false;
-    
 
 
     /**
@@ -396,6 +395,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 && !atype.hasFlag(AmmoType.F_MML_LRM)) {
             av = av * 2;
         }
+        //Set the Capital Fighter AV here. We'll apply counterAV to this later
+        originalAV = av;
                 
         //Point Defenses engage the missiles still aimed at us
         counterAV = calcCounterAV();
@@ -761,6 +762,36 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
+        
+        attackValue = calcAttackValue();
+        CounterAV = getCounterAV();
+        
+        //CalcAttackValue triggers counterfire, so now we can safely get this
+        CapMissileAMSMod = getCapMissileAMSMod();
+        
+        //Only do this if a flight of large missiles wasn't destroyed
+        if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
+            toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
+            if (roll < toHit.getValue()) {
+                CapMissileMissed = true;
+            }
+        }
+        
+        // Report any AMS bay action against Large missiles that doesn't destroy them all.
+        if (amsBayEngagedCap && CapMissileArmor > 0) {
+            r = new Report(3358);
+            r.add(CapMissileAMSMod);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+                    
+        // Report any PD bay action against Large missiles that doesn't destroy them all.
+        } else if (pdBayEngagedCap && CapMissileArmor > 0) {
+            r = new Report(3357);
+            r.add(CapMissileAMSMod);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+        
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
@@ -835,11 +866,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // the miss later, as we already reported
         // it in doChecks
         boolean missReported = doChecks(vPhaseReport);
-        
-       
-
-        attackValue = calcAttackValue();
-        CounterAV = getCounterAV();
         
         //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship, but is ignored for ground-to-air fire
         //It's also rare but possible for two hostile grounded dropships to shoot at each other with individual weapons
@@ -923,7 +949,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     hits = Math.max(0, hits - amsRoll);
                 }
                 // Report any AMS bay action against standard missiles.
-                if (amsBayEngaged && (attackValue <= 0)) {
+                if (amsBayEngaged && (originalAV <= 0)) {
                     //use this if AMS counterfire destroys all the missiles
                     r = new Report(3356);
                     r.indent();
@@ -940,7 +966,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     
                 // Report any Point Defense bay action against standard missiles.
      
-                } else if (pdBayEngaged && (attackValue <= 0)) {
+                } else if (pdBayEngaged && (originalAV <= 0)) {
                     //use this if PD counterfire destroys all the missiles
                     r = new Report(3355);
                     r.subject = subjectId;
@@ -951,7 +977,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     r.add(CounterAV);
                     r.subject = subjectId;
                     vPhaseReport.addElement(r);
-                } else if (amsBayEngagedMissile || pdBayEngagedMissile) {
+                } else if (amsBayEngagedCap || pdBayEngagedCap) {
                 //This is reported elsewhere. Don't do anything else.   
                 }
             } 

@@ -5342,8 +5342,6 @@ public abstract class Mech extends Entity {
             cockpitCost = 375000;
         } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY) {
             cockpitCost = 300000;
-        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_INDUSTRIAL) {
-            cockpitCost = 200000;
         } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
             // The cost is the sum of both superheavy cockpit and command console
             cockpitCost = 800000;

@@ -5336,11 +5336,19 @@ public abstract class Mech extends Entity {
             cockpitCost = 1250000;
         } else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
             cockpitCost = 100000;
+        } else if (getCockpitType() == Mech.COCKPIT_TRIPOD) {
+            cockpitCost = 400000;
         } else if (getCockpitType() == Mech.COCKPIT_QUADVEE) {
             cockpitCost = 375000;
+        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY) {
+            cockpitCost = 300000;
+        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_INDUSTRIAL) {
+            cockpitCost = 200000;
         } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
-            // Same as standard cockpit command console
-            cockpitCost = 700000;
+            // The cost is the sum of both superheavy cockpit and command console
+            cockpitCost = 800000;
+        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
+            cockpitCost = 500000;
         } else if (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
             // The cost is the sum of both small and command console
             cockpitCost = 675000;            

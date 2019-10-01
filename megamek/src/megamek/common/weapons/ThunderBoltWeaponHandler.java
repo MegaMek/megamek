@@ -103,6 +103,10 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             av = wtype.getRoundExtAV();
         }
         
+        // For squadrons, total the missile armor for the launched volley
+        if (ae.isCapitalFighter()) {
+            armor = armor * nweapons;
+        }
         CapMissileArmor = armor - (int) counterAV;
         CapMissileAMSMod = calcCapMissileAMSMod();
                         

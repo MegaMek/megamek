@@ -330,28 +330,31 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                     av = 2;
                     armor = 20;
                 }
+            } else {
+                int range = RangeType.rangeBracket(nRange, wtype.getATRanges(),
+                        true, false);
+                if (range == WeaponType.RANGE_SHORT) {
+                    av = wtype.getRoundShortAV();
+                } else if (range == WeaponType.RANGE_MED) {
+                    av = wtype.getRoundMedAV();
+                } else if (range == WeaponType.RANGE_LONG) {
+                    av = wtype.getRoundLongAV();
+                } else if (range == WeaponType.RANGE_EXT) {
+                    av = wtype.getRoundExtAV();
+                }
             }
-        } else {
-            int range = RangeType.rangeBracket(nRange, wtype.getATRanges(),
-                    true, false);
-            if (range == WeaponType.RANGE_SHORT) {
-                av = wtype.getRoundShortAV();
-            } else if (range == WeaponType.RANGE_MED) {
-                av = wtype.getRoundMedAV();
-            } else if (range == WeaponType.RANGE_LONG) {
-                av = wtype.getRoundLongAV();
-            } else if (range == WeaponType.RANGE_EXT) {
-                av = wtype.getRoundExtAV();
+            //Nuclear Warheads for non-AR10 missiles
+            if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                av = 100;
+            } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                av = 1000;
             }
+            nukeS2S = atype.hasFlag(AmmoType.F_NUCLEAR);
         }
-        //Nuclear Warheads for non-AR10 missiles
-        if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
-            av = 100;
-        } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
-            av = 1000;
-        } 
-        nukeS2S = atype.hasFlag(AmmoType.F_NUCLEAR);
-        
+        // For squadrons, total the missile armor for the launched volley
+        if (ae.isCapitalFighter()) {
+            armor = armor * nweapons;
+        }
         CapMissileArmor = armor - (int) counterAV;
         CapMissileAMSMod = calcCapMissileAMSMod();
         

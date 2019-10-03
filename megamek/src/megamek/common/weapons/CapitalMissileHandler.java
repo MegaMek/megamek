@@ -137,8 +137,8 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             CounterAV = bayHandler.getCounterAV();
             nDamPerHit = calcDamagePerHit();
         } else {
-            // Should only be used when using a grounded dropship with individual weapons
-            // Otherwise we're using CapitalMissileBayHandler
+            // Used when using a grounded dropship with individual weapons
+            // or a fighter squadron loaded with ASM or Alamo bombs.
             nDamPerHit = calcDamagePerHit();
             //This gets used if you're shooting at an airborne dropship. It can defend with PD bays.
             attackValue = calcAttackValue();
@@ -286,10 +286,39 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
             return false;
         }
-        if (!bMissed && (entityTarget != null)) {
-            handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, bldgAbsorbs);
-            server.creditKill(entityTarget, ae);
+        if (!bMissed) {
+         // for each cluster of hits, do a chunk of damage
+            while (hits > 0) {
+                int nDamage;
+                // targeting a hex for igniting
+                if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                        || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
+                    handleIgnitionDamage(vPhaseReport, bldg, hits);
+                    return false;
+                }
+                // targeting a hex for clearing
+                if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+                    nDamage = nDamPerHit * hits;
+                    handleClearDamage(vPhaseReport, bldg, nDamage);
+                    return false;
+                }
+                // Targeting a building.
+                if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+                    // The building takes the full brunt of the attack.
+                    nDamage = nDamPerHit * hits;
+                    handleBuildingDamage(vPhaseReport, bldg, nDamage,
+                            target.getPosition());
+                    // And we're done!
+                    return false;
+                }
+                if (entityTarget != null) {
+                    handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+                            nCluster, bldgAbsorbs);
+                    server.creditKill(entityTarget, ae);
+                    hits -= nCluster;
+                    firstHit = false;
+                }
+            } // Handle the next cluster.
         } else if (!bMissed) { // Hex is targeted, need to report a hit
             r = new Report(3390);
             r.subject = subjectId;

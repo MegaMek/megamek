@@ -228,6 +228,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            nDamPerHit = 0;
         }
         //use this if PD counterfire destroys all the Capital missiles
         if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
@@ -235,6 +236,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            nDamPerHit = 0;
         }
 
         // Any necessary PSRs, jam checks, etc.

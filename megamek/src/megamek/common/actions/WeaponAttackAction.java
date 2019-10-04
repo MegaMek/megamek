@@ -2037,6 +2037,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
             
+            // Capital weapons fire by grounded dropships
+            if ((ae instanceof Dropship && !ae.isAirborne())
+                    && (wtype.isSubCapital() || wtype.isCapital())) {
+                // Can't fire any but capital/subcapital missiles surface to surface
+                if (!(wtype.getAtClass() == WeaponType.CLASS_AR10 || wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
+                        && Compute.isGroundToGround(ae, target)) {
+                    return Messages.getString("WeaponAttackAction.NoS2SCapWeapons");
+                }
+            }
+            
             // Causing Fires
             
             // Some weapons can't cause fires, but Infernos always can.

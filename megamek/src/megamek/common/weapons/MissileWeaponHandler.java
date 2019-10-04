@@ -399,7 +399,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         originalAV = av;
                 
         //Point Defenses engage the missiles still aimed at us
-        counterAV = calcCounterAV();
+        if (ae.usesWeaponBays() || ae.isCapitalFighter()) {
+            // Grounded dropships should fire with individual AMS, not bays
+            counterAV = calcCounterAV();
+        }
         av = av - counterAV;
         
         if (bDirect) {

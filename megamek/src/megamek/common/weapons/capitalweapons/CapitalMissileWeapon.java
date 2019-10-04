@@ -17,13 +17,17 @@
  */
 package megamek.common.weapons.capitalweapons;
 
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.ArtilleryWeaponIndirectFireHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.CapitalMissileHandler;
@@ -58,6 +62,10 @@ public abstract class CapitalMissileWeapon extends AmmoWeapon {
                 .getEquipment(waa.getWeaponId());
         Entity attacker = game.getEntity(waa.getEntityId());
         int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
+        // Capital missiles work like artillery for grounded dropships
+        if (attacker instanceof Dropship && !attacker.isAirborne()) {
+            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, server);
+        }
         if (weapon.isInBearingsOnlyMode()
                 && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
             return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, server);

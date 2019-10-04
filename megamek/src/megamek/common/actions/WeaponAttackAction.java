@@ -2870,6 +2870,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((wtype.getAtClass() == WeaponType.CLASS_AR10 || wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
                 && Compute.isGroundToGround(ae, target)) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.SubCapArtillery"));
+            // +3 additional modifier if fired underwater
+            if (ae.isUnderwater()) {
+                toHit.addModifier(3, Messages.getString("WeaponAttackAction.SubCapUnderwater"));
+            }
+            // +1 modifier if attacker cruised/walked
+            if (ae.getMovementType() == EntityMovementType.MOVE_WALK) {
+                
+            }
         }
         
         // Capital weapon (except missiles) penalties at small targets

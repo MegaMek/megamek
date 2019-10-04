@@ -2866,6 +2866,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Capital missiles used for surface to surface artillery attacks
+        // See SO p110
         if ((wtype.getAtClass() == WeaponType.CLASS_AR10 || wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
                 && Compute.isGroundToGround(ae, target)) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.SubCapArtillery"));

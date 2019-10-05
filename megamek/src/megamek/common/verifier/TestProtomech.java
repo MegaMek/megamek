@@ -111,13 +111,12 @@ public class TestProtomech extends TestEntity {
         }
 
         /**
-         * Given an armor type, return the {@link ProtomechArmor} instance that
-         * represents that type.
+         * Given a protomech, return the {@link ProtomechArmor} instance that
+         * represents the type installed
          *
-         * @param t   The armor type.
-         * @param c   Whether this armor type is Clan or not.
-         * @return    The {@link ProtomechArmor} that corresponds to the given type
-         *            or null if no match was found.
+         * @param proto The protomech
+         * @return      The {@link ProtomechArmor} that corresponds to the given type
+         *              or null if no match was found.
          */
         public static @Nullable ProtomechArmor getArmor(Protomech proto) {
             return getArmor(proto.getArmorType(Protomech.LOC_TORSO));

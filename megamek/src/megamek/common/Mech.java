@@ -3102,6 +3102,15 @@ public abstract class Mech extends Entity {
                     .setProductionFactions(F_TH).setTechRating(RATING_C)
                     .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        } else if (industrial && (EntityWeightClass.WEIGHT_SUPER_HEAVY == weightClass)) {
+            // Superheavy industrialmechs don't have a separate entry on the tech advancement
+            // table in IO, but the dates for the superheavy tripod are based on the
+            // three-man digging machine, which is an industrialmech.
+            return new TechAdvancement(TECH_BASE_IS)
+                    .setAdvancement(2930, 2940).setPrototypeFactions(F_FW)
+                    .setProductionFactions(F_FW).setTechRating(RATING_D)
+                    .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (industrial) {
             return new TechAdvancement(TECH_BASE_ALL)
                     .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)

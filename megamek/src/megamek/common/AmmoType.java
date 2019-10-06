@@ -1386,7 +1386,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_FW)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD), "373,TM"));
         
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
                 new TechAdvancement(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -1453,7 +1453,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true,false,false,false,false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD), "373,TM"));
                 
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)

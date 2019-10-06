@@ -74,7 +74,7 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
                 .getType();
         
         if ((atype == null) 
-                || (atype.getMunitionType() != AmmoType.M_SMOKE)) {
+                || (atype.getMunitionType() != AmmoType.M_SMOKE_WARHEAD)) {
             System.err.println("MekMortarFlareHandler: not using smoke ammo!");
             return true;
         }

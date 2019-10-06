@@ -73,7 +73,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
         } else if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
             // Semi-guided works like shaped-charge, but can benefit from tag
             return new MekMortarHandler(toHit, waa, game, server);
-        } else if (atype.getMunitionType() == AmmoType.M_SMOKE) {
+        } else if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
             return new MekMortarSmokeHandler(toHit, waa, game, server);
         }
         // If it doesn't match other types, it's the default armor-piercing

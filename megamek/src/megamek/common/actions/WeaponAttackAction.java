@@ -2867,6 +2867,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Capital missiles used for surface to surface artillery attacks
         // See SO p110
+        // Start with a flat +2 modifier
         if ((wtype.getAtClass() == WeaponType.CLASS_AR10 || wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
                 && Compute.isGroundToGround(ae, target)) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.SubCapArtillery"));
@@ -2875,8 +2876,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.SubCapUnderwater"));
             }
             // +1 modifier if attacker cruised/walked
-            if (ae.getMovementType() == EntityMovementType.MOVE_WALK) {
-                
+            if (ae.moved == EntityMovementType.MOVE_WALK) {
+                toHit.addModifier(1, Messages.getString("WeaponAttackAction.Walked"));
+            } else if (ae.moved == EntityMovementType.MOVE_RUN) {
+                // +2 modifier if attacker ran
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.Ran"));
             }
         }
         

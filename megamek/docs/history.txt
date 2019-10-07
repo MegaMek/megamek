@@ -1,17 +1,42 @@
 VERSION HISTORY:
 ----------------
-v0.46.1-SNAPSHOT
-+ Fix large craft bay cost calculations
+v0.47.1-SNAPSHOT
++ PR #1451: Enable bot use of searchlights when necessary
++ Account for all bay types in large craft cost calculations.
 + Bug: Vehicle reduced to half movement not considered heavy damage
 + PR #1473: Allow the bot to gracefully handle deployment of grounded dropships on maps with no valid places to put them
 + PR #1474: TRO display in MegaMek lobby displays data for gun emplacements
 + Issue #1459: Using XXL(Clan) fusion engine on combat vehicle by mixed IS tech is not loaded properly
 + Issue #1481: Selecting the Adelante Train throws IndexOutOfBounds Exception
 + PR #1484: JS/SS max armor calculation (affects validation and MML).
++ PR #1478: Grounded Dropships and Individual Weapons (implements errata).
 + PR #1488: Nuclear warheads for large craft properly differentiate themselves from their standard versions when swapping ammo
 + Issue #1490: Fixed Ramshackle quirk description
 + Issue #1489: Fix jet booster and supercharger weight calculations
 + Issue #1500: Avoid NRE in BotClient::getStartingCoordsArray
++ Data: Fixing the Hercules in the mechset again.
+
+v0.47.0 (2019-08-21 0300 UTC)
++ Issue #1315: add support for map annotations and description to .board files.
++ PR #1323: implement "#sitrep" client command which can be used to display, 
+	in the console, a list of units near the entity with the given ID.
++ PR #1329: Princess will now fire at multiple targets with units that have no secondary target penalty. 
+	This should be most noticeable with dropships and other large spacecraft.
++ PR #1358: Princess properly operates really slow aircraft on ground maps and can actually drop thunder bombs now.
++ PR #1354: Support for detailed large craft parts (K-F boom, grav deck, CIC, etc)
++ PR #1401: Improved bot behavior using field gun infantry.
++ PR #1404: Princess can now use rapid-fire autocannons; will respect "no AMS as weapon" setting
++ PR #1405: Introduced Princess capability for indirect fire at spotted units
++ PR #1409: Dropship artillery bays now fully functional
+	Dropships can optionally load/fire alternate artillery munitions
+	Copperhead ammo functions as homing rounds
++ Issue #1351: When a homing round lands, the firing player will now get asked which tagged unit gets clobbered.
++ PR #1406: Princess can now spot units for indirect fire
++ PR #1413: Performance and functionality improvements for space sensors
++ PR #1419: Bearings-Only Missile Tweaks
++ PR #1430: Improvements to bot handling of aerospace units, especially on low-atmospheric maps.
++ PR #1440: Added ignore for YML files when loading units
++ PR #1436: Greater variety of primitive and civilian units for AtB and template scenarios
 
 v0.46.0 (2019-08-20 1900 UTC)
 + Data New Sprites.
@@ -64,7 +89,6 @@ v0.45.4 (2019-03-24 1700 UTC)
 + Issue #1259: Extended Torso Twist Quirk not applying to Quads
 + Data: New Sprites
 + Data: Adding Fan Council TROs 3048/3062/3063 by popular request.
-
 
 v0.45.3 (2019-02-12 0500 UTC)
 + PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.

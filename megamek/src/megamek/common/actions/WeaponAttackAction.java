@@ -84,6 +84,8 @@ import megamek.common.weapons.bayweapons.LaserBayWeapon;
 import megamek.common.weapons.bayweapons.PPCBayWeapon;
 import megamek.common.weapons.bayweapons.PulseLaserBayWeapon;
 import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
+import megamek.common.weapons.capitalweapons.AR10Weapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.gaussrifles.ISHGaussRifle;
 import megamek.common.weapons.lasers.ISBombastLaser;
@@ -1673,7 +1675,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             
             // Arty shots have to be with arty, non arty shots with non arty.
             if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-                // check artillery is targetted appropriately for its ammo
+                // check artillery is targeted appropriately for its ammo
                 // Artillery only targets hexes unless making a direct fire flak shot or using
                 // homing ammo.
                 if ((ttype != Targetable.TYPE_HEX_ARTILLERY) && (ttype != Targetable.TYPE_MINEFIELD_CLEAR)
@@ -1707,9 +1709,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         }
                     }
                 }
-            } else if (weapon.isInBearingsOnlyMode()) {             
+            } else if (weapon.isInBearingsOnlyMode()) {
                 // We don't really need to do anything here. This just prevents these weapons
                 // from passing the next test erroneously.
+            } else if ((ae instanceof Dropship && ae.getAltitude() == 0)
+                    && (wtype instanceof CapitalMissileWeapon || wtype instanceof AR10Weapon)
+                    && Compute.isGroundToGround(ae, target)) {
+                // Grounded dropships firing capital missiles at ground targets must do so as artillery
+                if (ttype != Targetable.TYPE_HEX_ARTILLERY) {
+                    return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
+                }
             } else {
                 // weapon is not artillery
                 if (ttype == Targetable.TYPE_HEX_ARTILLERY) {

@@ -36,6 +36,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.capitalweapons.AR10Weapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -347,7 +349,9 @@ public class WeaponFireInfo {
     }
 
     WeaponAttackAction buildWeaponAttackAction() {
-        if (!getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)) {
+        if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY) 
+                || ((getWeapon().getType() instanceof CapitalMissileWeapon || getWeapon().getType() instanceof AR10Weapon)
+                        && Compute.isGroundToGround(shooter, target)))) {
             return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
                                           getShooter().getEquipmentNum(getWeapon()));
         } else {
@@ -658,7 +662,9 @@ public class WeaponFireInfo {
             if (null != getAction()) {
                 return getAction();
             }
-            if (!getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)
+                    || ((getWeapon().getType() instanceof CapitalMissileWeapon || getWeapon().getType() instanceof AR10Weapon)
+                            && Compute.isGroundToGround(shooter, target)))) {
                 setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
                         getShooter().getEquipmentNum(getWeapon())));
             } else {

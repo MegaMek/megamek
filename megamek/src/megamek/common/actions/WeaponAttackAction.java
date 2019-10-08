@@ -1757,8 +1757,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Indirect artillery attacks
             if (isArtilleryIndirect) {
                 int boardRange = (int) Math.ceil(distance / 17f);
+                int maxRange = wtype.getLongRange();
+                // Capital/subcapital missiles have a board range equal to their max space hex range
+                if (wtype instanceof CapitalMissileWeapon) {
+                    if (wtype.getMaxRange(weapon) == WeaponType.RANGE_EXT) {
+                        maxRange = 50;
+                    }
+                    if (wtype.getMaxRange(weapon) == WeaponType.RANGE_LONG) {
+                        maxRange = 40;
+                    }
+                    if (wtype.getMaxRange(weapon) == WeaponType.RANGE_MED) {
+                        maxRange = 24;
+                    }
+                    if (wtype.getMaxRange(weapon) == WeaponType.RANGE_SHORT) {
+                        maxRange = 12;
+                    }
+                }
                 // Maximum range is measured in mapsheets
-                if (boardRange > wtype.getLongRange()) {
+                if (boardRange > maxRange) {
                     return Messages.getString("WeaponAttackAction.OutOfRange");
                 }
                 // Indirect shots cannot be made at less than 17 hexes range unless

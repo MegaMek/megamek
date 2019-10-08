@@ -9889,8 +9889,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     return true;
                 }
             }
-            //Grounded dropships fire capital missiles as artillery
-            if ((this instanceof Dropship && this.getAltitude() == 0)
+            //Surface to surface capital missiles count as artillery
+            if  ((this.getAltitude() == 0)
                     && (wtype instanceof CapitalMissileWeapon || wtype instanceof AR10Weapon)) {
                 return true;
             }

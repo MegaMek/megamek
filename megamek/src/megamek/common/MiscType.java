@@ -5248,6 +5248,7 @@ public class MiscType extends EquipmentType {
         misc.shortName = "C3i";
         misc.tonnage = 2.5f;
         misc.criticals = 2;
+        misc.svslots = 1;
         misc.cost = 750000;
         misc.flags = misc.flags.or(F_C3I).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
@@ -7381,6 +7382,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Pile Driver");
         misc.tonnage = 10;
         misc.criticals = 8;
+        misc.svslots = 1;
         misc.cost = 100000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.subType |= S_PILE_DRIVER;
@@ -7593,6 +7595,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 5;
         misc.criticals = 5;
+        misc.svslots = 1;
         misc.cost = 100000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.subType |= S_ROCK_CUTTER;
@@ -7662,6 +7665,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLWrecking Ball");
         misc.tonnage = 4;
         misc.criticals = 5;
+        misc.svslots = 1;
         misc.cost = 110000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.subType |= S_WRECKING_BALL;

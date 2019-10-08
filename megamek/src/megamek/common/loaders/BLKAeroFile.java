@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -12,17 +13,6 @@
  * details.
  */
 
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author taharqa
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.Aero;
@@ -39,6 +29,13 @@ import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestEntity;
 
+/**
+ * BLkFile.java
+ *
+ * Created on April 6, 2002, 2:06 AM
+ *
+ * @author taharqa
+ */
 public class BLKAeroFile extends BLKFile implements IMechLoader {
 
     // armor locatioms
@@ -109,7 +106,12 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
         int engineFlags = 0;
-        if (a.isClan()) {
+        // Support for mixed tech units with an engine with a different tech base
+        if (dataFile.exists("clan_engine")) {
+            if (Boolean.parseBoolean(dataFile.getDataAsString("clan_engine")[0])) {
+                engineFlags |= Engine.CLAN_ENGINE;
+            }
+        } else if (a.isClan()) {
             engineFlags |= Engine.CLAN_ENGINE;
         }
         if (!dataFile.exists("SafeThrust")) {

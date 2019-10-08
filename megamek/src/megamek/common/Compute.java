@@ -1011,6 +1011,7 @@ public class Compute {
         //Naval C3 only provides full C3 range benefits to energy weapons and guided missiles
         boolean nc3EnergyGuided = ((wtype.hasFlag(WeaponType.F_ENERGY))
                 || (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
+                || (wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
                 || (wtype.getAtClass() == WeaponType.CLASS_AR10)
                 || (wtype.getAtClass() == WeaponType.CLASS_ATM)
                 || (wtype.getAtClass() == WeaponType.CLASS_LRM)
@@ -2552,7 +2553,7 @@ public class Compute {
         ToHitData toHit = new ToHitData();
 
         // space screens; bonus depends on number (level)
-        if (hex.terrainLevel(Terrains.SCREEN) > 0) {
+        if ((hex != null) && (hex.terrainLevel(Terrains.SCREEN) > 0)) {
             toHit.addModifier(hex.terrainLevel(Terrains.SCREEN) + 1,
                               "attacker in screen(s)");
         }

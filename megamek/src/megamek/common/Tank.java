@@ -4062,7 +4062,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgHeavy() {
-        if (((double) getWalkMP() / getOriginalJumpMP()) <= 0.5) {
+        if (((double) getWalkMP() / getOriginalWalkMP()) <= 0.5) {
             return true;
         }
 

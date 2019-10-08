@@ -1,5 +1,6 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,9 +12,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Jun 2, 2005
- */
 package megamek.common.loaders;
 
 import megamek.common.*;
@@ -21,6 +19,8 @@ import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.BuildingBlock;
 
 /**
+ * Created on Jun 2, 2005
+ *
  * @author Andrew Hunter
  */
 public class BLKVTOLFile extends BLKFile implements IMechLoader {
@@ -87,7 +87,12 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
         int engineFlags = Engine.TANK_ENGINE;
-        if (t.isClan()) {
+        // Support for mixed tech units with an engine with a different tech base
+        if (dataFile.exists("clan_engine")) {
+            if (Boolean.parseBoolean(dataFile.getDataAsString("clan_engine")[0])) {
+                engineFlags |= Engine.CLAN_ENGINE;
+            }
+        } else if (t.isClan()) {
             engineFlags |= Engine.CLAN_ENGINE;
         }
         if (!dataFile.exists("cruiseMP")) {

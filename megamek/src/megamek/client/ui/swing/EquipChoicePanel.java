@@ -45,6 +45,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IBomber;
@@ -598,7 +599,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         IOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
 
-        if (entity.usesWeaponBays()) {
+        if (entity.usesWeaponBays() || entity instanceof Dropship) {
+            //Grounded dropships don't *use* weapon bays as such, but should load ammo as if they did
             panMunitions = new BayMunitionsChoicePanel(entity, game);
             return;
         }
@@ -616,11 +618,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             // don't allow ammo switching of most things for Aeros
             // allow only MML, ATM, and NARC. LRM/SRM can switch between Artemis and standard,
             // but not other munitions. Same with MRM.
-            // TODO: need a better way to customize munitions on Aeros
-            // currently this doesn't allow AR10 and tele-missile launchers
-            // to switch back and forth between tele and regular missiles
-            // also would be better to not have to add Santa Anna's in such
-            // an idiosyncratic fashion
             if ((entity instanceof Aero)
                     && !((at.getAmmoType() == AmmoType.T_MML)
                             || (at.getAmmoType() == AmmoType.T_SRM)

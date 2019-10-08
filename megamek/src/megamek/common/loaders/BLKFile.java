@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -544,6 +545,9 @@ public class BLKFile {
                         break;
                 }
                 blk.writeBlockData("engine_type", engineCode);
+                if (t.getEngine().isClan() != t.isClan()) {
+                    blk.writeBlockData("clan_engine", Boolean.toString(t.getEngine().isClan()));
+                }
             }
             if (!t.hasPatchworkArmor() && (t.getArmorType(1) != 0)) {
                 blk.writeBlockData("armor_type", t.getArmorType(1));

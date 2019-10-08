@@ -897,7 +897,10 @@ public abstract class BotClient extends Client {
         // So we adjust each coordinate's fitness based on the "longest available path"
         if(highestFitness < -10) {
             for(RankedCoords rc : validCoords) {
-                rc.fitness += deploymentPathFinders.get(deployed_ent.getMovementMode()).getLongestNonEdgePath(rc.getCoords()).getHexesMoved();
+                MovePath movePath = getBoardEdgePathFinder(deployed_ent).getLongestNonEdgePath(rc.getCoords());
+                if (movePath != null) {
+                    rc.fitness += movePath.getHexesMoved();
+                }
             }
         }
         
@@ -912,6 +915,17 @@ public abstract class BotClient extends Client {
         return result;
     }
 
+    /**
+     * Gets the {@link BoardEdgePathFinder} for an {@link Entity} for their
+     * current movement mode.
+     * @param entity The entity to retrieve the {@link BoardEdgePathFinder}.
+     * @return The appropriate {@link BoardEdgePathFinder} for the given entity.
+     */
+    private BoardEdgePathFinder getBoardEdgePathFinder(Entity entity) {
+        return deploymentPathFinders.computeIfAbsent(entity.getMovementMode(), 
+            e -> new BoardEdgePathFinder());
+    }
+
     // ToDo: Change this to 'hasSafePathToCenter' to account for buildings, lava and similar hazards.
     /**
      * Determines if the given entity has a reasonable path to the "opposite" edge of the board from its
@@ -922,21 +936,11 @@ public abstract class BotClient extends Client {
      */
     private boolean hasPathToEdge(Entity entity, IBoard board) {
         // Flying units can always get anywhere
-        if (entity.isAero() || entity instanceof VTOL) {
+        if (entity.isAirborne() || entity instanceof VTOL) {
             return true;
         }
         
-        BoardEdgePathFinder boardEdgePathFinder;
-
-        if(deploymentPathFinders.containsKey(entity.getMovementMode())) {
-            boardEdgePathFinder = deploymentPathFinders.get(entity.getMovementMode());
-        }
-        else {
-            boardEdgePathFinder = new BoardEdgePathFinder();
-            deploymentPathFinders.put(entity.getMovementMode(), boardEdgePathFinder);
-        }
-        
-        MovePath mp = boardEdgePathFinder.findPathToEdge(entity);
+        MovePath mp = getBoardEdgePathFinder(entity).findPathToEdge(entity);
         return mp != null;
     }
 

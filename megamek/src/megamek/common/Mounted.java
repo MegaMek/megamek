@@ -102,7 +102,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     //and now Machine Gun Arrays too!
     private Vector<Integer> bayWeapons = new Vector<Integer>();
     private Vector<Integer> bayAmmo = new Vector<Integer>();
-
+    
     // on capital fighters and squadrons some weapon mounts actually represent
     // multiple weapons of the same type
     // provide a boolean indicating this type of mount and the number of weapons
@@ -1406,7 +1406,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void addWeaponToBay(int w) {
         bayWeapons.add(w);
     }
-
+    
     public Vector<Integer> getBayWeapons() {
         return bayWeapons;
     }

@@ -401,6 +401,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private String c3MasterIsUUID = null;
     private String[] c3iUUIDs = new String[MAX_C3i_NODES];
     private String[] NC3UUIDs = new String[MAX_C3i_NODES];
+    private boolean networkBAP = false;
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -3835,6 +3836,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Tries to load the specified weapon with the first available ammo of the
      * same munition type as currently in use. If this fails, use first ammo.
+     * 
+     * If this is a weapon bay, try to load the weapon with ammo in the same bay,
+     * and if it fails, load with compatible ammo in the same location.
      */
     public void loadWeaponWithSameAmmo(Mounted mounted) {
         for (Mounted mountedAmmo : getAmmo()) {
@@ -3885,8 +3889,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if ((oldammo != null)
             && (!((AmmoType) oldammo.getType()).equals(atype) || (((AmmoType) oldammo
-                .getType()).getMunitionType() != atype
-                                                                          .getMunitionType()))) {
+                .getType()).getMunitionType() != atype.getMunitionType()))) {
             return false;
         }
 
@@ -5170,6 +5173,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean hasBAP() {
         return hasBAP(true);
+    }
+    
+    /**
+     * Does a unit on the same C3 network have a BAP?
+     * Used to share BAP targeting bonuses against targets in woods
+     * @return
+     */
+    public boolean hasNetworkBAP() {
+        return networkBAP;
+    }
+    
+    public void setNetworkBAP(boolean BAP) {
+        networkBAP = BAP;
     }
 
     public boolean hasBAP(boolean checkECM) {

@@ -36776,6 +36776,37 @@ public class Server implements Runnable {
             boolean asfFlak, int attackingBA) {
         int damage = ammo.getRackSize();
         int falloff = 10;
+        // Capital and Subcapital missiles
+        if (ammo.getAmmoType() == AmmoType.T_KRAKEN_T
+                || ammo.getAmmoType() == AmmoType.T_KRAKENM
+                || ammo.getAmmoType() == AmmoType.T_MANTA_RAY) {
+            damage = 50;
+            falloff = 25;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_KILLER_WHALE
+                || ammo.getAmmoType() == AmmoType.T_KILLER_WHALE_T
+                || ammo.getAmmoType() == AmmoType.T_SWORDFISH
+                || ammo.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+            damage = 40;
+            falloff = 20;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_STINGRAY) {
+            damage = 35;
+            falloff = 17;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_WHITE_SHARK
+                || ammo.getAmmoType() == AmmoType.T_WHITE_SHARK_T
+                || ammo.getAmmoType() == AmmoType.T_PIRANHA
+                || ammo.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+            damage = 30;
+            falloff = 15;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_BARRACUDA
+                || ammo.getAmmoType() == AmmoType.T_BARRACUDA_T
+                || ammo.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+            damage = 20;
+            falloff = 10;
+        }
         if (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
             falloff = 25;
         }

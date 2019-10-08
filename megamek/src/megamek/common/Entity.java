@@ -3724,8 +3724,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Artillery and Bearings-Only Capital Missiles only in the correct phase...
             if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || mounted.isInBearingsOnlyMode())
-                && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
+                    || mounted.isInBearingsOnlyMode()
+                    || (this.getAltitude() == 0
+                            && mounted.getType() instanceof CapitalMissileWeapon))) {
                 continue;
             }
 
@@ -3785,7 +3786,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Artillery or Bearings-only missiles only in the targeting phase...
             if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || mounted.isInBearingsOnlyMode())
+                    || mounted.isInBearingsOnlyMode()
+                    || (this.getAltitude() == 0
+                            && mounted.getType() instanceof CapitalMissileWeapon))
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 return false;
             }

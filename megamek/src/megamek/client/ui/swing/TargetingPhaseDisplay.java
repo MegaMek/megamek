@@ -78,7 +78,6 @@ import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
-import megamek.common.weapons.capitalweapons.AR10Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /*
@@ -877,7 +876,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
                 || (mounted.isInBearingsOnlyMode()
                             && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)
-                || ((mounted.getType() instanceof CapitalMissileWeapon || mounted.getType() instanceof AR10Weapon)
+                || (mounted.getType() instanceof CapitalMissileWeapon
                                 && Compute.isGroundToGround(ce(), target))) {
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
                     target.getTargetId(), weaponNum, clientgui.getClient()

@@ -84,7 +84,6 @@ import megamek.common.weapons.bayweapons.LaserBayWeapon;
 import megamek.common.weapons.bayweapons.PPCBayWeapon;
 import megamek.common.weapons.bayweapons.PulseLaserBayWeapon;
 import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
-import megamek.common.weapons.capitalweapons.AR10Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.gaussrifles.ISHGaussRifle;
@@ -375,12 +374,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 || (isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO)));
         
         boolean isArtilleryDirect = (wtype.hasFlag(WeaponType.F_ARTILLERY) ||
-                ((wtype instanceof AR10Weapon || wtype instanceof CapitalMissileWeapon)
+                (wtype instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ae, target)))
                 && (game.getPhase() == IGame.Phase.PHASE_FIRING);
         
         boolean isArtilleryIndirect = (wtype.hasFlag(WeaponType.F_ARTILLERY) ||
-                ((wtype instanceof AR10Weapon || wtype instanceof CapitalMissileWeapon)
+                (wtype instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ae, target)))
                 && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                         || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
@@ -390,7 +389,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                     || (game.getPhase() == IGame.Phase.PHASE_FIRING));
         
         boolean isCruiseMissile = (weapon.getType().hasFlag(WeaponType.F_CRUISE_MISSILE)
-                        || ((wtype instanceof AR10Weapon || wtype instanceof CapitalMissileWeapon)
+                        || (wtype instanceof CapitalMissileWeapon
                                 && Compute.isGroundToGround(ae, target)));
         
         // hack, otherwise when actually resolves shot labeled impossible.
@@ -1495,8 +1494,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && wtype != null
                     // Unless the weapon is used as artillery
                     && (!(wtype instanceof ArtilleryWeapon || wtype.hasFlag(WeaponType.F_ARTILLERY)
-                            || (ae.getAltitude() == 0 && 
-                                (wtype instanceof CapitalMissileWeapon || wtype instanceof AR10Weapon))))) {
+                            || (ae.getAltitude() == 0 && wtype instanceof CapitalMissileWeapon)))) {
                 return Messages.getString("WeaponAttackAction.TooLowForNose");
             }
             // Front-side-mounted weapons can only be fired at targets at the same altitude or higher
@@ -1721,8 +1719,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             } else if (weapon.isInBearingsOnlyMode()) {
                 // We don't really need to do anything here. This just prevents these weapons
                 // from passing the next test erroneously.
-            } else if (ae.getAltitude() == 0
-                        && (wtype instanceof CapitalMissileWeapon || wtype instanceof AR10Weapon)
+            } else if (wtype instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ae, target)) {
                 // Grounded units firing capital missiles at ground targets must do so as artillery
                 if (ttype != Targetable.TYPE_HEX_ARTILLERY) {
@@ -2059,8 +2056,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (!ae.isAirborne()
                     && (wtype.isSubCapital() || wtype.isCapital())) {
                 // Can't fire any but capital/subcapital missiles surface to surface
-                if (!(wtype instanceof AR10Weapon || wtype instanceof CapitalMissileWeapon)
-                        && Compute.isGroundToGround(ae, target)) {
+                if (!(wtype instanceof CapitalMissileWeapon
+                        && Compute.isGroundToGround(ae, target))) {
                     return Messages.getString("WeaponAttackAction.NoS2SCapWeapons");
                 }
             }
@@ -4885,7 +4882,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Capital missiles used for surface to surface artillery attacks
             // See SO p110
             // Start with a flat +2 modifier
-            if ((wtype instanceof AR10Weapon || wtype instanceof CapitalMissileWeapon)
+            if (wtype instanceof CapitalMissileWeapon
                     && Compute.isGroundToGround(ae, target)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.SubCapArtillery"));
                 // +3 additional modifier if fired underwater

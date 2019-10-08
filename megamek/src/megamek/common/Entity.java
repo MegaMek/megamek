@@ -83,7 +83,6 @@ import megamek.common.weapons.bombs.ISASEWMissileWeapon;
 import megamek.common.weapons.bombs.ISASMissileWeapon;
 import megamek.common.weapons.bombs.ISBombTAG;
 import megamek.common.weapons.bombs.ISLAAMissileWeapon;
-import megamek.common.weapons.capitalweapons.AR10Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
 
@@ -9890,8 +9889,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
             //Surface to surface capital missiles count as artillery
-            if  ((this.getAltitude() == 0)
-                    && (wtype instanceof CapitalMissileWeapon || wtype instanceof AR10Weapon)) {
+            if  (this.getAltitude() == 0
+                    && wtype instanceof CapitalMissileWeapon) {
                 return true;
             }
         }

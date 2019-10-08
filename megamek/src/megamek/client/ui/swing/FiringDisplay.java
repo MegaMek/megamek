@@ -98,7 +98,6 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
-import megamek.common.weapons.capitalweapons.AR10Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
@@ -1574,7 +1573,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         
             WeaponAttackAction waa;
             if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || ((mounted.getType() instanceof CapitalMissileWeapon || mounted.getType() instanceof AR10Weapon)
+                    || (mounted.getType() instanceof CapitalMissileWeapon
                             && Compute.isGroundToGround(ce(), t)))){
                 waa = new WeaponAttackAction(cen, t.getTargetType(),
                         t.getTargetId(), weaponNum);

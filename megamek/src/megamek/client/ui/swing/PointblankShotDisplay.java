@@ -55,7 +55,6 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
-import megamek.common.weapons.capitalweapons.AR10Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
@@ -707,7 +706,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
 
         WeaponAttackAction waa;
         if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                || ((mounted.getType() instanceof CapitalMissileWeapon || mounted.getType() instanceof AR10Weapon)
+                || (mounted.getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ce(), target)))) {
             waa = new WeaponAttackAction(cen, target.getTargetType(),
                     target.getTargetId(), weaponNum);

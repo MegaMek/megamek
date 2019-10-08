@@ -306,7 +306,7 @@ public class SupportTank extends Tank {
         }
 
         //If the unit is towing trailers, adjust its walkMP, TW p205
-        if (!getAllTowedUnits().isEmpty()) {
+        if ((null != game) && !getAllTowedUnits().isEmpty()) {
             double tractorWeight = getWeight();
             double trailerWeight = 0;
             //Add up the trailers

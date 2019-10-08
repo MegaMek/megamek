@@ -389,7 +389,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                                     || (game.getPhase() == IGame.Phase.PHASE_FIRING));
         
-        boolean isCruiseMissile = weapon.getType().hasFlag(WeaponType.F_CRUISE_MISSILE);
+        boolean isCruiseMissile = (weapon.getType().hasFlag(WeaponType.F_CRUISE_MISSILE)
+                        || ((wtype instanceof AR10Weapon || wtype instanceof CapitalMissileWeapon)
+                                && Compute.isGroundToGround(ae, target)));
         
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
@@ -1491,7 +1493,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Nose-mounted weapons can only be fired at targets at least 1 altitude higher
             if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1)
                     && wtype != null
-                    && !((wtype instanceof ArtilleryWeapon) || wtype.hasFlag(WeaponType.F_ARTILLERY))) {
+                    // Unless the weapon is used as artillery
+                    && (!(wtype instanceof ArtilleryWeapon || wtype.hasFlag(WeaponType.F_ARTILLERY)
+                            || (ae.getAltitude() == 0 && 
+                                (wtype instanceof CapitalMissileWeapon || wtype instanceof AR10Weapon))))) {
                 return Messages.getString("WeaponAttackAction.TooLowForNose");
             }
             // Front-side-mounted weapons can only be fired at targets at the same altitude or higher
@@ -1716,10 +1721,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             } else if (weapon.isInBearingsOnlyMode()) {
                 // We don't really need to do anything here. This just prevents these weapons
                 // from passing the next test erroneously.
-            } else if ((ae instanceof Dropship && ae.getAltitude() == 0)
-                    && (wtype instanceof CapitalMissileWeapon || wtype instanceof AR10Weapon)
-                    && Compute.isGroundToGround(ae, target)) {
-                // Grounded dropships firing capital missiles at ground targets must do so as artillery
+            } else if (ae.getAltitude() == 0
+                        && (wtype instanceof CapitalMissileWeapon || wtype instanceof AR10Weapon)
+                        && Compute.isGroundToGround(ae, target)) {
+                // Grounded units firing capital missiles at ground targets must do so as artillery
                 if (ttype != Targetable.TYPE_HEX_ARTILLERY) {
                     return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
                 }
@@ -2876,25 +2881,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Capital missiles in waypoint launch mode
         if (weapon.isInWaypointLaunchMode()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.WaypointLaunch"));
-        }
-        
-        // Capital missiles used for surface to surface artillery attacks
-        // See SO p110
-        // Start with a flat +2 modifier
-        if ((wtype instanceof AR10Weapon || wtype instanceof CapitalMissileWeapon)
-                && Compute.isGroundToGround(ae, target)) {
-            toHit.addModifier(2, Messages.getString("WeaponAttackAction.SubCapArtillery"));
-            // +3 additional modifier if fired underwater
-            if (ae.isUnderwater()) {
-                toHit.addModifier(3, Messages.getString("WeaponAttackAction.SubCapUnderwater"));
-            }
-            // +1 modifier if attacker cruised/walked
-            if (ae.moved == EntityMovementType.MOVE_WALK) {
-                toHit.addModifier(1, Messages.getString("WeaponAttackAction.Walked"));
-            } else if (ae.moved == EntityMovementType.MOVE_RUN) {
-                // +2 modifier if attacker ran
-                toHit.addModifier(2, Messages.getString("WeaponAttackAction.Ran"));
-            }
         }
         
         // Capital weapon (except missiles) penalties at small targets
@@ -4896,7 +4882,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     toHit.addModifier(-2, Messages.getString("WeaponAttackAction.FooSpotter"));
                 }
             }
-            if (ae.isAirborne()) {
+            // Capital missiles used for surface to surface artillery attacks
+            // See SO p110
+            // Start with a flat +2 modifier
+            if ((wtype instanceof AR10Weapon || wtype instanceof CapitalMissileWeapon)
+                    && Compute.isGroundToGround(ae, target)) {
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.SubCapArtillery"));
+                // +3 additional modifier if fired underwater
+                if (ae.isUnderwater()) {
+                    toHit.addModifier(3, Messages.getString("WeaponAttackAction.SubCapUnderwater"));
+                }
+                // +1 modifier if attacker cruised/walked
+                if (ae.moved == EntityMovementType.MOVE_WALK) {
+                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.Walked"));
+                } else if (ae.moved == EntityMovementType.MOVE_RUN) {
+                    // +2 modifier if attacker ran
+                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.Ran"));
+                }
+            } else if (ae.isAirborne()) {
                 if (ae.getAltitude() > 6) {
                     toHit.addModifier(+2, Messages.getString("WeaponAttackAction.Altitude"));
                 } else if (ae.getAltitude() > 3) {

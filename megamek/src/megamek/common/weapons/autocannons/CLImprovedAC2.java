@@ -40,9 +40,10 @@ public class CLImprovedAC2 extends ACWeapon {
         heat = 1;
         damage = 2;
         rackSize = 2;
-        shortRange = 4;
-        mediumRange = 8;
-        longRange = 16;
+        minimumRange = 4;
+        shortRange = 8;
+        mediumRange = 16;
+        longRange = 24;
         extremeRange = 32;
         tonnage = 5.0;
         criticals = 1;

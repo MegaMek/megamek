@@ -42,4 +42,22 @@ public enum OffBoardDirection {
         }
         return NONE;
     }
+    
+    /**
+     * Translate a "START_X" constant from Board.java into one of these values if possible.
+     */
+    public static OffBoardDirection translateBoardStart(int value) {
+        switch(value) {
+        case Board.START_N:
+            return NORTH;
+        case Board.START_S:
+            return SOUTH;
+        case Board.START_E:
+            return EAST;
+        case Board.START_W:
+            return WEST;
+        default: 
+            return NONE;
+        }
+    }
 }

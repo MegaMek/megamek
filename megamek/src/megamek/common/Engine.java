@@ -510,7 +510,7 @@ public class Engine implements Serializable, ITechnology {
             }
             int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
-                slots = new int[]{ 0, 1, 2, 7 };
+                slots = new int[]{ 0, 1, 2, 5 };
             } else {
                 slots = new int[]{ 0, 1, 2, 7, 8, 9, 10, 11 };
             }

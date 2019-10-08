@@ -12,20 +12,23 @@
  * details.
  */
 
-/*
+package megamek.common.loaders;
+
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
+import megamek.common.SupportTank;
+import megamek.common.Tank;
+import megamek.common.util.BuildingBlock;
+
+/**
  * BLkFile.java
  *
  * Created on April 6, 2002, 2:06 AM
  *
  * @author njrkrynn
- * @version
  */
-package megamek.common.loaders;
-
-import megamek.common.*;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.util.BuildingBlock;
-
 public class BLKSupportTankFile extends BLKFile implements IMechLoader {
     public BLKSupportTankFile(BuildingBlock bb) {
         dataFile = bb;
@@ -96,9 +99,6 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
             t.setFuelTonnage(dataFile.getDataAsDouble("fuel")[0]);
         }
         int engineFlags = Engine.TANK_ENGINE | Engine.SUPPORT_VEE_ENGINE;
-        if (t.isClan()) {
-            engineFlags |= Engine.CLAN_ENGINE;
-        }
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }

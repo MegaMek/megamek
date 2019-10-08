@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.capitalweapons;
 
+import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
@@ -59,8 +60,8 @@ public abstract class CapitalMissileWeapon extends AmmoWeapon {
                 .getEquipment(waa.getWeaponId());
         Entity attacker = game.getEntity(waa.getEntityId());
         int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
-        // Capital missiles work like artillery for grounded units
-        if (!attacker.isAirborne()) {
+        // Capital missiles work like artillery for surface to surface fire
+        if (Compute.isGroundToGround(attacker, waa.getTarget(game))) {
             return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, server);
         }
         if (weapon.isInBearingsOnlyMode()

@@ -94,6 +94,8 @@ import megamek.common.verifier.TestInfantry;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
+import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
  * A dialog that a player can use to customize his mech before battle.
@@ -296,7 +298,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             boolean entityEligibleForOffBoard = false;
             for (Mounted mounted : e.getWeaponList()) {
                 WeaponType wtype = (WeaponType) mounted.getType();
-                if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+                if (wtype.hasFlag(WeaponType.F_ARTILLERY)
+                        || (!clientgui.getClient().getGame().getBoard().inSpace()
+                                && (wtype instanceof CapitalMissileWeapon 
+                                        || wtype instanceof CapitalMissileBayWeapon))) {
                     entityEligibleForOffBoard = true;
                 }
             }

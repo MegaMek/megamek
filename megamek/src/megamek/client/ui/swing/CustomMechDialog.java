@@ -94,7 +94,6 @@ import megamek.common.verifier.TestInfantry;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
-import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
@@ -296,12 +295,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isLAM &= (e instanceof LandAirMech);
             isGlider &= (e instanceof Protomech) && (e.getMovementMode() == EntityMovementMode.WIGE);
             boolean entityEligibleForOffBoard = false;
+            boolean space = clientgui.getClient().getGame().getBoard().inSpace();
             for (Mounted mounted : e.getWeaponList()) {
                 WeaponType wtype = (WeaponType) mounted.getType();
                 if (wtype.hasFlag(WeaponType.F_ARTILLERY)
-                        || (!clientgui.getClient().getGame().getBoard().inSpace()
-                                && (wtype instanceof CapitalMissileWeapon 
-                                        || wtype instanceof CapitalMissileBayWeapon))) {
+                        || wtype instanceof CapitalMissileWeapon) {
                     entityEligibleForOffBoard = true;
                 }
             }

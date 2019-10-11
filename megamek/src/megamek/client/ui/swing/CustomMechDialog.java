@@ -53,6 +53,7 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Board;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Dropship;
@@ -94,7 +95,7 @@ import megamek.common.verifier.TestInfantry;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 
 /**
  * A dialog that a player can use to customize his mech before battle.
@@ -295,12 +296,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isLAM &= (e instanceof LandAirMech);
             isGlider &= (e instanceof Protomech) && (e.getMovementMode() == EntityMovementMode.WIGE);
             boolean entityEligibleForOffBoard = false;
-            boolean space = clientgui.getClient().getGame().getBoard().inSpace();
-            for (Mounted mounted : e.getWeaponList()) {
-                WeaponType wtype = (WeaponType) mounted.getType();
-                if (wtype.hasFlag(WeaponType.F_ARTILLERY)
-                        || wtype instanceof CapitalMissileWeapon) {
-                    entityEligibleForOffBoard = true;
+            boolean space = clientgui.getClient().getMapSettings().getMedium() == Board.T_SPACE;
+            //TODO: This check is good for now, but at some point we want atmospheric flying droppers to be able to lob
+            // offboard missiles and we could use it in space for extreme range bearings-only fights, plus Ortillery. 
+            if (!space && e.getAltitude() == 0) {
+                // No need to bother checking weapons if the map and entity don't meet criteria for offboard units
+                for (Mounted mounted : e.getWeaponList()) {
+                    WeaponType wtype = (WeaponType) mounted.getType();
+                    if (wtype.hasFlag(WeaponType.F_ARTILLERY)
+                            || wtype instanceof CapitalMissileBayWeapon) {
+                        entityEligibleForOffBoard = true;
+                        break;
+                    }
                 }
             }
             eligibleForOffBoard &= entityEligibleForOffBoard;

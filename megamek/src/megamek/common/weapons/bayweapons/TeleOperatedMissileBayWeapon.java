@@ -28,7 +28,7 @@ import megamek.server.Server;
 /**
  * @author Jay Lawson
  */
-public class TeleOperatedMissileBayWeapon extends AmmoBayWeapon {
+public class TeleOperatedMissileBayWeapon extends CapitalMissileBayWeapon {
     /**
      * 
      */

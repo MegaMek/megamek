@@ -609,6 +609,7 @@ public class Game implements Serializable, IGame {
             if ((otherEntity.getPosition() != null)
                     && !otherEntity.isOffBoard()
                     && otherEntity.isTargetable()
+                    && !otherEntity.isHidden()
                     && !otherEntity.isSensorReturn(entity.getOwner())
                     && otherEntity.hasSeenEntity(entity.getOwner())
                     && (entity.isEnemyOf(otherEntity) || (friendlyFire && (entity

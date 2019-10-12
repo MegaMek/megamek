@@ -17,6 +17,7 @@ v0.47.1-SNAPSHOT
 + Issue #1508: #1261 was never merged properly.
 + Data: Fixing the Hercules in the mechset again.
 + Bug: Some weapons missing their Aerospace attack values.
++ Bug/Data: Fixing various validation errors.
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

@@ -2069,11 +2069,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             
             // Capital weapons fire by grounded units
-            if (!ae.isAirborne()
-                    && (wtype.isSubCapital() || wtype.isCapital())) {
+            if (wtype.isSubCapital() || wtype.isCapital()) {
                 // Can't fire any but capital/subcapital missiles surface to surface
-                if (!(wtype instanceof CapitalMissileWeapon
-                        && Compute.isGroundToGround(ae, target))) {
+                if (Compute.isGroundToGround(ae, target)
+                        && !(wtype instanceof CapitalMissileWeapon)) {
                     return Messages.getString("WeaponAttackAction.NoS2SCapWeapons");
                 }
             }

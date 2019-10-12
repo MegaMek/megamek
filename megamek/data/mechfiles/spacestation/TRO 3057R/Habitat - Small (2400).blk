@@ -32,10 +32,6 @@ Habitat - Small
 IS Level 3
 </type>
 
-<designtype>
-0
-</designtype>
-
 <motion_type>
 Aerodyne
 </motion_type>
@@ -44,7 +40,7 @@ Aerodyne
 smallcraftbay:20.0:3:1
 crewquarters:1421.0:0
 1stclassquarters:60010.0:0
-cargobay:46807.5:1:4
+cargobay:46757.0:1:4
 </transporters>
 
 <SafeThrust>

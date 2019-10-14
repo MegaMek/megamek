@@ -574,7 +574,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      */
     @Override
     protected void setAMSBayReportingFlag() {
-        amsBayEngaged = true;
+        amsBayEngagedCap = true;
     }
     
     /**
@@ -582,7 +582,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      */
     @Override
     protected void setPDBayReportingFlag() {
-        pdBayEngaged = true;
+        pdBayEngagedCap = true;
     }
     
     protected int handleAMS(Vector<Report> vPhaseReport) {
@@ -593,8 +593,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
             //this has to be called here or it fires before the TAG shot and we have no target
             server.assignAMS();
-            getAMSHitsMod(vPhaseReport);
             calcCounterAV();
+            getAMSHitsMod(vPhaseReport);
             // Report AMS/Pointdefense failure due to Overheating.
             if (pdOverheated 
                     && (!(amsBayEngaged

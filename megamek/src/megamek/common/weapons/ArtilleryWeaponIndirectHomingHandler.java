@@ -440,7 +440,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         
     protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
         if ((target == null)
-                || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
+                || target.getTargetType() != Targetable.TYPE_ENTITY
+                || CounterAV > 0) {
             return 0;
         }
         int apdsMod = 0;
@@ -585,6 +586,17 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         pdBayEngagedCap = true;
     }
     
+    @Override
+    protected int calcCapMissileAMSMod() {
+        CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
+        return CapMissileAMSMod;
+    }
+    
+    @Override
+    protected int getCapMissileAMSMod() {
+        return CapMissileAMSMod;
+    }
+    
     protected int handleAMS(Vector<Report> vPhaseReport) {
         
         int hits = 1;
@@ -608,8 +620,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 r.indent();
                 vPhaseReport.addElement(r);
             }
-            //They all do the same thing in this case...             
-            if (amsEngaged || apdsEngaged || amsBayEngaged || pdBayEngaged) {
+            //PD/AMS bays should engage using AV and missile armor per SO Errata
+            if (amsBayEngagedCap || pdBayEngagedCap) {
+                CapMissileArmor = wtype.getMissileArmor() - CounterAV;
+                CapMissileAMSMod = calcCapMissileAMSMod();
+            } else if (amsEngaged || apdsEngaged) {
+                //Single AMS/APDS should continue to engage per TW rules, which have not changed
                 bSalvo = true;
                 Report r = new Report(3235);
                 r.subject = subjectId;

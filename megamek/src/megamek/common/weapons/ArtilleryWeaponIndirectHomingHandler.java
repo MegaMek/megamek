@@ -624,6 +624,24 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             if (amsBayEngagedCap || pdBayEngagedCap) {
                 CapMissileArmor = wtype.getMissileArmor() - CounterAV;
                 CapMissileAMSMod = calcCapMissileAMSMod();
+                Report r = new Report(3235);
+                r.subject = subjectId;
+                vPhaseReport.add(r);
+                r = new Report(3230);
+                r.indent(1);
+                r.subject = subjectId;
+                vPhaseReport.add(r);
+                if (CapMissileArmor <= 0) {
+                    r = new Report(3356);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                    hits = 0;
+                } else {
+                    r = new Report(3358);
+                    r.subject = subjectId;
+                    r.add(CapMissileAMSMod);
+                    vPhaseReport.add(r);
+                }
             } else if (amsEngaged || apdsEngaged) {
                 //Single AMS/APDS should continue to engage per TW rules, which have not changed
                 bSalvo = true;

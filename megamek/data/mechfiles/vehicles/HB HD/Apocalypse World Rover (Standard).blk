@@ -24,10 +24,6 @@ Apocalypse World Rover
 2983
 </year>
 
-<originalBuildYear>
-2983
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,12 +31,6 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
-
-<transporters>
-standardseats:7.0:0
-cargobay:0.501:1:1
-BattleArmorHandles - troopers:-1
-</transporters>
 
 <cruiseMP>
 4
@@ -50,30 +40,16 @@ BattleArmorHandles - troopers:-1
 1
 </engine_type>
 
+<fuel>
+.024
+</fuel>
+
 <armor>
 3
 2
 2
 1
 </armor>
-
-<Body Equipment>
-ISOffRoadChassis
-</Body Equipment>
-
-<Front Equipment>
-</Front Equipment>
-
-<Right Equipment>
-PintleTurret
-</Right Equipment>
-
-<Left Equipment>
-PintleTurret
-</Left Equipment>
-
-<Rear Equipment>
-</Rear Equipment>
 
 <barrating>
 7
@@ -83,6 +59,29 @@ PintleTurret
 3
 </structural_tech_rating>
 
+<Body Equipment>
+ISOffRoadChassis
+PintleTurret
+InfantryHMG (PT)
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<transporters>
+cargobay:.5:1
+standardseats:.525:7
+</transporters>
+
 <source>
 HB:House Davion - Succession Wars
 </source>
@@ -90,12 +89,3 @@ HB:House Davion - Succession Wars
 <tonnage>
 2.0
 </tonnage>
-
-<fuel>
-0.024
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
-

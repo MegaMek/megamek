@@ -24,10 +24,6 @@ Reaper Self-Propelled Artillery
 2321
 </year>
 
-<originalBuildYear>
-2321
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -36,15 +32,12 @@ IS Level 4
 Tracked
 </motion_type>
 
-<transporters>
-</transporters>
-
 <cruiseMP>
 3
 </cruiseMP>
 
 <engine_type>
-1
+0
 </engine_type>
 
 <armor>
@@ -53,6 +46,14 @@ Tracked
 18
 18
 </armor>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<barrating>
+6
+</barrating>
 
 <Body Equipment>
 ISThumperAmmo
@@ -75,22 +76,6 @@ ISThumper
 <Rear Equipment>
 </Rear Equipment>
 
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
-
-<engine_tech_rating>
-2
-</engine_tech_rating>
-
-<armor_tech_rating>
-2
-</armor_tech_rating>
-
 <source>
 XTRO Primitives V - Age of War
 </source>
@@ -98,12 +83,4 @@ XTRO Primitives V - Age of War
 <tonnage>
 55.0
 </tonnage>
-
-<fuel>
-1.0
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
 

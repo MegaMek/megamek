@@ -37,8 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-lightvehiclebay:1.0:1:1:omni
-troopspace:4.0:omni
+troopspace:4.0
 </transporters>
 
 <SafeThrust>
@@ -109,11 +108,10 @@ Paramedic Equipment:OMNI
 Paramedic Equipment:OMNI
 Paramedic Equipment:OMNI
 FieldKitchen:OMNI
-ISCASE
+ISCASE:OMNI
+Advanced Fire Control
 Armored Chassis
 STOLChassisMod
-OmniChassisMod
-Advanced Fire Control
 </Body Equipment>
 
 <barrating>
@@ -131,8 +129,4 @@ TRO 3085
 <tonnage>
 200.0
 </tonnage>
-
-<baseChassisFireConWeight>
-5.5
-</baseChassisFireConWeight>
 

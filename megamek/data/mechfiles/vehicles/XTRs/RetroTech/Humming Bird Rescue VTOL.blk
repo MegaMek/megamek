@@ -24,10 +24,6 @@ Humming Bird VTOL
 3074
 </year>
 
-<originalBuildYear>
-3074
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -36,9 +32,8 @@ IS Level 4
 VTOL
 </motion_type>
 
-<transporters>
-cargobay:2.5:1:1
-</transporters>
+<fuel>
+</fuel>
 
 <cruiseMP>
 11
@@ -48,6 +43,10 @@ cargobay:2.5:1:1
 6
 </engine_type>
 
+<fuel>
+3.5
+</fuel>
+
 <armor>
 9
 8
@@ -55,6 +54,14 @@ cargobay:2.5:1:1
 4
 2
 </armor>
+
+<barrating>
+5
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <Body Equipment>
 </Body Equipment>
@@ -65,7 +72,7 @@ Searchlight
 </Front Equipment>
 
 <Right Equipment>
-Lift Hoist/Arresting Hoist
+Lift Hoist
 </Right Equipment>
 
 <Left Equipment>
@@ -77,13 +84,9 @@ Lift Hoist/Arresting Hoist
 <Rotor Equipment>
 </Rotor Equipment>
 
-<barrating>
-5
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
+<transporters>
+cargobay:2.5:1
+</transporters>
 
 <source>
 XTRO RetroTech - Jihad
@@ -92,8 +95,4 @@ XTRO RetroTech - Jihad
 <tonnage>
 30.0
 </tonnage>
-
-<fuel>
-3.5
-</fuel>
 

@@ -37,8 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-cargobay:20.0:1:1:omni
-troopspace:12.0:omni
+troopspace:12.0
 </transporters>
 
 <SafeThrust>
@@ -96,11 +95,10 @@ Searchlight:OMNI
 ISMobileFieldBase:OMNI
 ISMobileFieldBase:OMNI
 Lift Hoist/Arresting Hoist:OMNI
-ISCASE
+ISCASE:OMNI
+Advanced Fire Control
 Armored Chassis
 STOLChassisMod
-OmniChassisMod
-Advanced Fire Control
 </Body Equipment>
 
 <barrating>
@@ -111,10 +109,6 @@ Advanced Fire Control
 4
 </structural_tech_rating>
 
-<notes>
-This configuration is 4 tons overweight as given in the official source.
-</notes>
-
 <source>
 TRO 3085
 </source>
@@ -122,8 +116,4 @@ TRO 3085
 <tonnage>
 200.0
 </tonnage>
-
-<baseChassisFireConWeight>
-5.5
-</baseChassisFireConWeight>
 

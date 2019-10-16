@@ -13,7 +13,7 @@ SupportTank
 </UnitType>
 
 <Name>
-Aston-Martin Fiver Traveler
+Aston-Martin Fiver Traveler 
 </Name>
 
 <Model>
@@ -24,10 +24,6 @@ Aston-Martin Fiver Traveler
 3064
 </year>
 
-<originalBuildYear>
-3064
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -36,25 +32,32 @@ IS Level 2
 Wheeled
 </motion_type>
 
-<transporters>
-standardseats:8.0:0
-cargobay:0.21:1:1
-</transporters>
-
 <cruiseMP>
 11
 </cruiseMP>
 
-<engine_type>
-11
+<engine_type> 
+1
 </engine_type>
 
+<fuel>
+.244
+</fuel>
+
 <armor>
-2
-2
-2
-2
+0
+0
+0
+0
 </armor>
+
+<barrating>
+4
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <Body Equipment>
 </Body Equipment>
@@ -71,23 +74,16 @@ cargobay:0.21:1:1
 <Rear Equipment>
 </Rear Equipment>
 
-<barrating>
-4
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
+<transporters>
+cargobay:.2:1
+standardseats:.15:1
+</transporters>
 
 <source>
 TRO VAr - Civil War
 </source>
 
 <tonnage>
-2.5
+1.0
 </tonnage>
-
-<fuel>
-0.244
-</fuel>
 

@@ -13,7 +13,7 @@ SupportTank
 </UnitType>
 
 <Name>
-Aston-Martin Fiver Roadster
+Aston-Martin Fiver Roadster 
 </Name>
 
 <Model>
@@ -24,10 +24,6 @@ Aston-Martin Fiver Roadster
 3064
 </year>
 
-<originalBuildYear>
-3064
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -36,18 +32,17 @@ IS Level 2
 Wheeled
 </motion_type>
 
-<transporters>
-standardseats:2.0:0
-cargobay:0.052:1:1
-</transporters>
-
 <cruiseMP>
 12
 </cruiseMP>
 
 <engine_type>
-11
+1
 </engine_type>
+
+<fuel>
+.222
+</fuel>
 
 <armor>
 0
@@ -55,6 +50,14 @@ cargobay:0.052:1:1
 0
 0
 </armor>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <Body Equipment>
 ConvertibleChassisMod
@@ -72,13 +75,10 @@ ConvertibleChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
+<transporters>
+cargobay:.05:1
+standardseats:.15:1
+</transporters>
 
 <source>
 TRO VAr - Civil War
@@ -87,8 +87,4 @@ TRO VAr - Civil War
 <tonnage>
 1.0
 </tonnage>
-
-<fuel>
-0.222
-</fuel>
 

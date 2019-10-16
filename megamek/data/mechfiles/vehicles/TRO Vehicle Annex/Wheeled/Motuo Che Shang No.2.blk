@@ -24,10 +24,6 @@ Motuo Che Shang No.2
 2469
 </year>
 
-<originalBuildYear>
-2469
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,11 +31,6 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
-
-<transporters>
-cargobay:0.025:1:1
-pillionseats:1.0:0
-</transporters>
 
 <cruiseMP>
 12
@@ -49,12 +40,24 @@ pillionseats:1.0:0
 1
 </engine_type>
 
+<fuel>
+.01
+</fuel>
+
 <armor>
 0
 0
 0
 0
 </armor>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
 
 <Body Equipment>
 MonocycleChassisMod
@@ -72,27 +75,16 @@ MonocycleChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
+<transporters>
+cargobay:.025:1
+pillionseats:.025:1
+</transporters>
 
 <source>
 TRO VAr - Age of War
 </source>
 
 <tonnage>
-0.32
+.32
 </tonnage>
-
-<fuel>
-0.01
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
 

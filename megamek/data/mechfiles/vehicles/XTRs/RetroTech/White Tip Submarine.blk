@@ -1,16 +1,16 @@
 #building block data file
+
 <BlockVersion>
 1
 </BlockVersion>
 
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
 <UnitType>
 SupportTank
 </UnitType>
+
+<blockversion>
+1
+</blockversion>
 
 <Name>
 White Tip Submarine
@@ -24,42 +24,29 @@ White Tip Submarine
 3074
 </year>
 
-<originalBuildYear>
-3074
-</originalBuildYear>
+<source>
+XTRO RetroTech - Jihad
+</source>
 
 <type>
 IS Level 3
 </type>
 
+<tonnage>
+250
+</tonnage>
+
 <motion_type>
 Submarine
 </motion_type>
 
-<transporters>
-1stclassquarters:10.0:1
-1stclassquarters:10.0:1
-1stclassquarters:10.0:1
-2ndclassquarters:7.0:1
-2ndclassquarters:7.0:1
-2ndclassquarters:7.0:1
-2ndclassquarters:7.0:1
-steeragequarters:5.0:1
-steeragequarters:5.0:1
-steeragequarters:5.0:1
-steeragequarters:5.0:1
-steeragequarters:5.0:1
-steeragequarters:5.0:1
-cargobay:30.0:1:14
-</transporters>
+<engine_type>
+0
+</engine_type>
 
 <cruiseMP>
 3
 </cruiseMP>
-
-<engine_type>
-0
-</engine_type>
 
 <armor>
 22
@@ -68,6 +55,18 @@ cargobay:30.0:1:14
 17
 20
 </armor>
+
+<barrating>
+8
+</barrating>
+
+<armor_tech>
+3
+</armor_tech>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <Body Equipment>
 SubmersibleChassisMod
@@ -79,14 +78,15 @@ IS Ammo LRTorpedo-15
 IS Ammo LRTorpedo-15
 IS Ammo LRTorpedo-10
 IS Ammo LRTorpedo-10
-Communications Equipment (7 ton)
+CommsGear:7
 FieldKitchen
-MASH Core Component
+MASH core component
 </Body Equipment>
 
 <Front Equipment>
 SRT 4
 LRT 15
+Large Laser
 </Front Equipment>
 
 <Right Equipment>
@@ -102,26 +102,22 @@ LRT 15
 <Turret Equipment>
 SRT 4
 LRT 10
-ISERMediumLaser
+IS ER Medium Laser
 </Turret Equipment>
 
-<barrating>
-8
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
-
-<source>
-XTRO RetroTech - Jihad
-</source>
-
-<tonnage>
-250.0
-</tonnage>
-
-<fuel>
-0.0
-</fuel>
-
+<Transporters>
+1stclassquarters:10:1
+1stclassquarters:10:1
+1stclassquarters:10:1
+2ndclassquarters:7:1
+2ndclassquarters:7:1
+2ndclassquarters:7:1
+2ndclassquarters:7:1
+steeragequarters:5:1
+steeragequarters:5:1
+steeragequarters:5:1
+steeragequarters:5:1
+steeragequarters:5:1
+steeragequarters:5:1
+cargobay:30:1
+</transporters>

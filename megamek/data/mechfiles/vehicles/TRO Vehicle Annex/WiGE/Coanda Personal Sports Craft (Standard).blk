@@ -24,10 +24,6 @@ Coanda Personal Sports Craft
 3054
 </year>
 
-<originalBuildYear>
-3054
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,11 +31,6 @@ IS Level 2
 <motion_type>
 WiGE
 </motion_type>
-
-<transporters>
-cargobay:0.019:1:1
-standardseats:2.0:0
-</transporters>
 
 <cruiseMP>
 11
@@ -49,12 +40,24 @@ standardseats:2.0:0
 1
 </engine_type>
 
+<fuel>
+.475
+</fuel>
+
 <armor>
 1
 1
 1
 1
 </armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <Body Equipment>
 AmphibiousChassis
@@ -72,13 +75,10 @@ AmphibiousChassis
 <Rear Equipment>
 </Rear Equipment>
 
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
+<transporters>
+cargobay:.019:1
+standardseats:.15:2
+</transporters>
 
 <source>
 TRO VAr - Clan Invasion
@@ -87,12 +87,3 @@ TRO VAr - Clan Invasion
 <tonnage>
 3.5
 </tonnage>
-
-<fuel>
-0.475
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
-

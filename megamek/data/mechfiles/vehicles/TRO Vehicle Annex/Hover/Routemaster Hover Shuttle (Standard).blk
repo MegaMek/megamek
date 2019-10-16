@@ -24,10 +24,6 @@ Routemaster Hover Shuttle
 2770
 </year>
 
-<originalBuildYear>
-2770
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,11 +31,6 @@ IS Level 2
 <motion_type>
 Hover
 </motion_type>
-
-<transporters>
-cargobay:0.085:1:1
-standardseats:14.0:0
-</transporters>
 
 <cruiseMP>
 9
@@ -49,12 +40,24 @@ standardseats:14.0:0
 1
 </engine_type>
 
+<fuel>
+.08
+</fuel>
+
 <armor>
 1
 1
 1
 1
 </armor>
+
+<barrating>
+3
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
 
 <Body Equipment>
 </Body Equipment>
@@ -71,13 +74,10 @@ standardseats:14.0:0
 <Rear Equipment>
 </Rear Equipment>
 
-<barrating>
-3
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
+<transporters>
+cargobay:.085:1
+troopspace:1.050
+</transporters>
 
 <source>
 TRO VAr - Star League
@@ -86,12 +86,3 @@ TRO VAr - Star League
 <tonnage>
 3.8
 </tonnage>
-
-<fuel>
-0.08
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
-

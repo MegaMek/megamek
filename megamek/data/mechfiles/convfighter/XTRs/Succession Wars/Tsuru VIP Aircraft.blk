@@ -39,7 +39,6 @@ Aerodyne
 <transporters>
 cargobay:15.0:1:1
 1stclassquarters:10.0:1
-ejectionseats:20.0:0
 </transporters>
 
 <SafeThrust>
@@ -59,7 +58,7 @@ ejectionseats:20.0:0
 </sink_type>
 
 <fuel>
-400
+320
 </fuel>
 
 <engine_type>
@@ -95,6 +94,20 @@ ISChaffPod
 <Body Equipment>
 Armored Chassis
 STOLChassisMod
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
+Ejection Seat (Support Vehicle)
 Communications Equipment (3 ton)
 </Body Equipment>
 

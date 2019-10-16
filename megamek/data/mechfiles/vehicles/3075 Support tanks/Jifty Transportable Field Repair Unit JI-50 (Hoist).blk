@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,80 +20,73 @@ Jifty Transportable Field Repair Unit
 JI-50 (Hoist)
 </Model>
 
-<year>
-3070
-</year>
-
-<originalBuildYear>
-3070
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Tracked
-</motion_type>
-
-<transporters>
-cargobay:16.5:1:1
-</transporters>
+<Tonnage>
+60
+</Tonnage>
 
 <cruiseMP>
 4
 </cruiseMP>
 
-<engine_type>
-0
-</engine_type>
-
-<armor>
+<Armor>
 27
 20
 20
 25
-</armor>
+</Armor>
 
-<Body Equipment>
-IS Light Machine Gun Ammo - Half
-Armored Chassis
-</Body Equipment>
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <Front Equipment>
 Light Machine Gun
 Light Machine Gun
 </Front Equipment>
 
-<Right Equipment>
-</Right Equipment>
-
-<Left Equipment>
-</Left Equipment>
-
 <Rear Equipment>
-Lift Hoist/Arresting Hoist
-Lift Hoist/Arresting Hoist
-Lift Hoist/Arresting Hoist
+Lift Hoist
+Lift Hoist
+Lift Hoist
 </Rear Equipment>
 
-<barrating>
-6
-</barrating>
+<Body Equipment>
+IS Light Machine Gun Ammo - Half
+Armored Chassis
+</Body Equipment>
 
-<structural_tech_rating>
-3
-</structural_tech_rating>
+<type>
+IS Level 2
+</type>
+
+<year>
+3070
+</year>
 
 <source>
 TRO 3075 - Jihad
 </source>
 
-<tonnage>
-60.0
-</tonnage>
+<internal_type>
+0
+</internal_type>
 
-<fuel>
-0.0
-</fuel>
+<armor_type>
+14
+</armor_type>
 
+<engine_type>
+0
+</engine_type>
+
+<barrating>
+6
+</barrating>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+cargobay:16.5:1
+</transporters>

@@ -24,10 +24,6 @@ Corx Mobile Tunnel Miner
 2420
 </year>
 
-<originalBuildYear>
-2420
-</originalBuildYear>
-
 <type>
 IS Level 3
 </type>
@@ -35,10 +31,6 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
-
-<transporters>
-liquidcargobay:23.591:1:1
-</transporters>
 
 <cruiseMP>
 1
@@ -58,8 +50,24 @@ liquidcargobay:23.591:1:1
 6
 </armor>
 
+<barrating>
+5
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
 <Body Equipment>
-Environmental Sealed Chassis
+Environmental Sealing
 </Body Equipment>
 
 <Front Equipment>
@@ -96,13 +104,9 @@ Searchlight
 MiningDrill
 </Turret Equipment>
 
-<barrating>
-5
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
+<transporters>
+liquidcargobay:23.591:1
+</transporters>
 
 <source>
 TRO VAr - Age of War
@@ -111,8 +115,3 @@ TRO VAr - Age of War
 <tonnage>
 200.0
 </tonnage>
-
-<fuel>
-0.0
-</fuel>
-

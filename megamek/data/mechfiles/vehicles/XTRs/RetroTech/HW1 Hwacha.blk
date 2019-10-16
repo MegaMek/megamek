@@ -24,10 +24,6 @@ HW1
 3078
 </year>
 
-<originalBuildYear>
-3078
-</originalBuildYear>
-
 <type>
 IS Level 3
 </type>
@@ -35,9 +31,6 @@ IS Level 3
 <motion_type>
 Wheeled
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 3
@@ -47,6 +40,10 @@ Wheeled
 6
 </engine_type>
 
+<fuel>
+1
+</fuel>
+
 <armor>
 15
 12
@@ -55,14 +52,22 @@ Wheeled
 13
 </armor>
 
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
 <Body Equipment>
 Advanced Fire Control
-IS MRM 20 Ammo
-IS MRM 20 Ammo
-IS MRM 20 Ammo
-IS MRM 20 Ammo
-IS MRM 20 Ammo
-IS MRM 20 Ammo
+ISMRM20 Ammo
+ISMRM20 Ammo
+ISMRM20 Ammo
+ISMRM20 Ammo
+ISMRM20 Ammo
+ISMRM20 Ammo
 </Body Equipment>
 
 <Front Equipment>
@@ -83,18 +88,6 @@ MRM 20
 MRM 20
 </Turret Equipment>
 
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
-
-<notes>
-One ton overweight. The official source gives the turret weight as 1.5 tons, but the construction rules require 2.5 tons.
-</notes>
-
 <source>
 XTRO RetroTech - Jihad
 </source>
@@ -102,8 +95,4 @@ XTRO RetroTech - Jihad
 <tonnage>
 50.0
 </tonnage>
-
-<fuel>
-1.0
-</fuel>
 

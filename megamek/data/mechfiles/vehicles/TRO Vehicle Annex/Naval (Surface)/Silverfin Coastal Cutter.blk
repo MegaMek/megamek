@@ -3,11 +3,6 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
 <UnitType>
 SupportTank
 </UnitType>
@@ -24,29 +19,37 @@ Silverfin Coastal Cutter
 2302
 </year>
 
-<originalBuildYear>
-2302
-</originalBuildYear>
+<source>
+TRO VAr - Age of War
+</source>
 
 <type>
 IS Level 2
 </type>
+
+<tonnage>
+40
+</tonnage>
 
 <motion_type>
 Hydrofoil
 </motion_type>
 
 <transporters>
-cargobay:1.0:1:1
+CargoSpace:1:1
 </transporters>
-
-<cruiseMP>
-6
-</cruiseMP>
 
 <engine_type>
 1
 </engine_type>
+
+<fuel>
+3.5
+</fuel>
+
+<cruiseMP>
+8
+</cruiseMP>
 
 <armor>
 4
@@ -56,11 +59,19 @@ cargobay:1.0:1:1
 3
 </armor>
 
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
 HydroFoilChassisMod
 Advanced Fire Control
-IS Ammo SRTorpedo-2
-IS Machine Gun Ammo - Half
+ISSRT2 Ammo
+ISMG Ammo Full
 </Body Equipment>
 
 <Front Equipment>
@@ -80,31 +91,6 @@ Lifeboat (Maritime)
 </Rear Equipment>
 
 <Turret Equipment>
-Machine Gun
+ISMG
 Searchlight
 </Turret Equipment>
-
-<barrating>
-7
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
-<source>
-TRO VAr - Age of War
-</source>
-
-<tonnage>
-40.0
-</tonnage>
-
-<fuel>
-3.5
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
-

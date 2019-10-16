@@ -24,10 +24,6 @@ Skoda 'Growler' Service Utility Truck
 2388
 </year>
 
-<originalBuildYear>
-2388
-</originalBuildYear>
-
 <type>
 IS Level 3
 </type>
@@ -35,11 +31,6 @@ IS Level 3
 <motion_type>
 Wheeled
 </motion_type>
-
-<transporters>
-cargobay:0.128:1:1
-standardseats:4.0:0
-</transporters>
 
 <cruiseMP>
 6
@@ -49,36 +40,16 @@ standardseats:4.0:0
 1
 </engine_type>
 
+<fuel>
+.02
+</fuel>
+
 <armor>
 1
 1
 1
 1
 </armor>
-
-<Body Equipment>
-ISOffRoadChassis
-UltraLightChassisMod
-AmphibiousChassis
-</Body Equipment>
-
-<Front Equipment>
-HHSearchlight
-HHSearchlight
-</Front Equipment>
-
-<Right Equipment>
-Ladder (20m)
-Manipulator [Non-Mech/Non-Battle Armor]
-HHSearchlight
-</Right Equipment>
-
-<Left Equipment>
-HHSearchlight
-</Left Equipment>
-
-<Rear Equipment>
-</Rear Equipment>
 
 <barrating>
 2
@@ -88,6 +59,43 @@ HHSearchlight
 3
 </structural_tech_rating>
 
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
+<Body Equipment>
+ISOffRoadChassis
+UltraLightChassisMod
+AmphibiousChassis
+</Body Equipment>
+
+<Front Equipment>
+BASearchlight
+BASearchlight
+</Front Equipment>
+
+<Right Equipment>
+Ladder (20m)
+Manipulator
+BASearchlight
+</Right Equipment>
+
+<Left Equipment>
+BASearchlight
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<transporters>
+cargobay:.128:1
+standardseats:.3:1
+</transporters>
+
 <source>
 TRO VAr - Age of War
 </source>
@@ -95,12 +103,4 @@ TRO VAr - Age of War
 <tonnage>
 1.0
 </tonnage>
-
-<fuel>
-0.02
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
 

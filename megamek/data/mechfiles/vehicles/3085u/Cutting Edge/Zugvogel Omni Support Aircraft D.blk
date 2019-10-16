@@ -104,11 +104,10 @@ IS Gauss Ammo:OMNI
 IS Gauss Ammo:OMNI
 IS Ultra AC/2 Ammo:OMNI
 IS Ultra AC/2 Ammo:OMNI
-ISCASE
+ISCASE:OMNI
+Advanced Fire Control
 Armored Chassis
 STOLChassisMod
-OmniChassisMod
-Advanced Fire Control
 </Body Equipment>
 
 <barrating>
@@ -126,8 +125,4 @@ TRO 3085
 <tonnage>
 200.0
 </tonnage>
-
-<baseChassisFireConWeight>
-5.5
-</baseChassisFireConWeight>
 

@@ -24,10 +24,6 @@ Dreadnought Mk II Land Train
 3081
 </year>
 
-<originalBuildYear>
-3081
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -37,11 +33,11 @@ Tracked
 </motion_type>
 
 <transporters>
-cargobay:4.0:1:1
-steeragequarters:5.0:1
-steeragequarters:5.0:1
-steeragequarters:5.0:1
-infantrybay:2.0:1:5:Foot
+troopspace:10.0
+cargobay:4:1
+steeragequarters:5:1
+steeragequarters:5:1
+steeragequarters:5:1
 </transporters>
 
 <cruiseMP>
@@ -62,58 +58,6 @@ infantrybay:2.0:1:5:Foot
 35
 </armor>
 
-<Body Equipment>
-SV Chassis Mod [Tractor]
-FieldKitchen
-IS Ammo Extended LRM-5
-IS Ammo Extended LRM-5
-IS Ammo Extended LRM-5
-IS Ammo Extended LRM-5
-IS Ammo Extended LRM-5
-IS Ammo MG - Full
-IS Ammo HVAC/2
-IS Ammo HVAC/2
-IS Ammo HVAC/2
-Advanced Fire Control
-</Body Equipment>
-
-<Front Equipment>
-</Front Equipment>
-
-<Front Right Equipment>
-Machine Gun(ST)
-Machine Gun(ST)
-Machine Gun(ST)
-ISMGA(ST)
-SponsonTurret
-</Front Right Equipment>
-
-<Front Left Equipment>
-Machine Gun(ST)
-Machine Gun(ST)
-Machine Gun(ST)
-ISMGA(ST)
-SponsonTurret
-</Front Left Equipment>
-
-<Rear Right Equipment>
-</Rear Right Equipment>
-
-<Rear Left Equipment>
-</Rear Left Equipment>
-
-<Rear Equipment>
-Lift Hoist/Arresting Hoist
-Hitch
-</Rear Equipment>
-
-<Turret Equipment>
-Hyper Velocity Auto Cannon/2
-Hyper Velocity Auto Cannon/2
-Extended LRM 5
-Extended LRM 5
-</Turret Equipment>
-
 <barrating>
 7
 </barrating>
@@ -127,8 +71,57 @@ Extended LRM 5
 </engine_tech_rating>
 
 <armor_tech_rating>
-4
+3
 </armor_tech_rating>
+
+<Body Equipment>
+Tractor
+ISSponsonTurret
+FieldKitchen
+IS Ammo Extended LRM-5
+IS Ammo Extended LRM-5
+IS Ammo Extended LRM-5
+IS Ammo Extended LRM-5
+IS Ammo Extended LRM-5
+IS Ammo MG - Full
+IS Ammo HVAC/2
+IS Ammo HVAC/2
+IS Ammo HVAC/2
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Front Right Equipment>
+Machine Gun (ST)
+Machine Gun (ST)
+Machine Gun (ST)
+ISMGA (ST)
+</Front Right Equipment>
+
+<Front Left Equipment>
+Machine Gun (ST)
+Machine Gun (ST)
+Machine Gun (ST)
+ISMGA (ST)
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+Lift Hoist
+</Rear Equipment>
+
+<Turret Equipment>
+Hyper Velocity Auto Cannon/2
+Hyper Velocity Auto Cannon/2
+Extended LRM 5
+Extended LRM 5
+</Turret Equipment>
 
 <source>
 XTRO Periphery - Jihad
@@ -137,8 +130,8 @@ XTRO Periphery - Jihad
 <tonnage>
 200.0
 </tonnage>
-
-<fuel>
-0.0
-</fuel>
+ 
+<engine_tech_rating>
+4
+</engine_tech_rating>
 

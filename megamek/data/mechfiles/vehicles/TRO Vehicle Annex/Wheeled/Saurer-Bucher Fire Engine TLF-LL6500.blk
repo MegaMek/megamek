@@ -24,10 +24,6 @@ TLF-LL6500
 2400
 </year>
 
-<originalBuildYear>
-2400
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,12 +31,6 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
-
-<transporters>
-cargobay:4.0:4:1
-liquidcargobay:8.071:1:2
-standardseats:8.0:0
-</transporters>
 
 <cruiseMP>
 6
@@ -50,12 +40,24 @@ standardseats:8.0:0
 1
 </engine_type>
 
+<fuel>
+1
+</fuel>
+
 <armor>
 5
 5
 5
 4
 </armor>
+
+<barrating>
+4
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <Body Equipment>
 </Body Equipment>
@@ -66,25 +68,21 @@ standardseats:8.0:0
 <Right Equipment>
 Searchlight
 Ladder (100m)
-Tank Sprayer
 </Right Equipment>
 
 <Left Equipment>
 Searchlight
 Ladder (100m)
-Tank Sprayer
 </Left Equipment>
 
 <Rear Equipment>
 </Rear Equipment>
 
-<barrating>
-4
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
+<transporters>
+cargobay:4:4
+liquidcargobay:8.87:1
+troopspace:.6
+</transporters>
 
 <source>
 TRO VAr - Age of War
@@ -93,12 +91,4 @@ TRO VAr - Age of War
 <tonnage>
 44.0
 </tonnage>
-
-<fuel>
-1.0
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
 

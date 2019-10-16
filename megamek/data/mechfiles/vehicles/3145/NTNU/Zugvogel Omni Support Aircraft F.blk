@@ -121,11 +121,10 @@ IS Ammo Thunderbolt-20:OMNI
 IS Ammo Thunderbolt-20:OMNI
 IS Ammo Thunderbolt-20:OMNI
 CLMediumChemLaserAmmo:OMNI
-ISCASE
+ISCASE:OMNI
+Advanced Fire Control
 Armored Chassis
 STOLChassisMod
-OmniChassisMod
-Advanced Fire Control
 </Body Equipment>
 
 <barrating>
@@ -143,8 +142,4 @@ RS 3145 NT NU
 <tonnage>
 200.0
 </tonnage>
-
-<baseChassisFireConWeight>
-5.5
-</baseChassisFireConWeight>
 

@@ -24,10 +24,6 @@ C (Crane)
 3060
 </year>
 
-<originalBuildYear>
-3060
-</originalBuildYear>
-
 <type>
 IS Level 3
 </type>
@@ -61,11 +57,10 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 ISOffRoadChassis
-OmniChassisMod
 </Body Equipment>
 
 <Front Equipment>
-Lift Hoist/Arresting Hoist:OMNI
+Lift Hoist:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -92,16 +87,4 @@ TRO VAr - Clan Invasion
 <tonnage>
 7.0
 </tonnage>
-
-<baseChassisFireConWeight>
-0.0
-</baseChassisFireConWeight>
-
-<fuel>
-0.5
-</fuel>
-
-<fuelType>
-ALCOHOL
-</fuelType>
 

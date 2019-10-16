@@ -24,10 +24,6 @@ Croyle Systems Cortez Series N
 2582
 </year>
 
-<originalBuildYear>
-2582
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -37,8 +33,8 @@ Tracked
 </motion_type>
 
 <transporters>
-infantrybay:1.0:1:1:Foot
-cargobay:8.92:1:2
+Infantrybay:1:1
+cargobay:8.92:1
 </transporters>
 
 <cruiseMP>
@@ -57,46 +53,6 @@ cargobay:8.92:1:2
 16
 </armor>
 
-<Body Equipment>
-AmphibiousChassis
-Basic Fire Control
-Environmental Sealed Chassis
-</Body Equipment>
-
-<Front Equipment>
-BeagleActiveProbe
-Manipulator [Non-Mech/Non-Battle Armor]
-Manipulator [Non-Mech/Non-Battle Armor]
-HHSearchlight
-HHSearchlight
-HHSearchlight
-</Front Equipment>
-
-<Right Equipment>
-HHSearchlight
-HHSearchlight
-HHSearchlight
-</Right Equipment>
-
-<Left Equipment>
-HHSearchlight
-HHSearchlight
-HHSearchlight
-</Left Equipment>
-
-<Rear Equipment>
-Cargo Container (10 tons)
-RemoteSensorDispenser
-HHSearchlight
-HHSearchlight
-HHSearchlight
-</Rear Equipment>
-
-<Turret Equipment>
-Medium Laser
-Searchlight
-</Turret Equipment>
-
 <barrating>
 8
 </barrating>
@@ -105,6 +61,46 @@ Searchlight
 4
 </structural_tech_rating>
 
+<Body Equipment>
+AmphibiousChassis
+Basic Fire Control
+Environmental Sealed Chassis
+</Body Equipment>
+
+<Front Equipment>
+BeagleActiveProbe
+BASearchlight
+BASearchlight
+BASearchlight
+Manipulator
+Manipulator
+</Front Equipment>
+
+<Right Equipment>
+BASearchlight
+BASearchlight
+BASearchlight
+</Right Equipment>
+
+<Left Equipment>
+BASearchlight
+BASearchlight
+BASearchlight
+</Left Equipment>
+
+<Rear Equipment>
+Cargo Container (10 tons)
+RemoteSensorDispenser
+BASearchlight
+BASearchlight
+BASearchlight
+</Rear Equipment>
+
+<Turret Equipment>
+Medium Laser
+Searchlight
+</Turret Equipment>
+
 <source>
 TRO VAr - Star League
 </source>
@@ -112,8 +108,3 @@ TRO VAr - Star League
 <tonnage>
 75.0
 </tonnage>
-
-<fuel>
-0.0
-</fuel>
-

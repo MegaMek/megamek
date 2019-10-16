@@ -37,8 +37,6 @@ Aerodyne
 </motion_type>
 
 <transporters>
-ejectionseats:6.0:0
-cargobay:5.9:1:1
 </transporters>
 
 <SafeThrust>
@@ -58,11 +56,11 @@ cargobay:5.9:1:1
 </sink_type>
 
 <fuel>
-777
+1120
 </fuel>
 
 <engine_type>
-7
+0
 </engine_type>
 
 <armor>

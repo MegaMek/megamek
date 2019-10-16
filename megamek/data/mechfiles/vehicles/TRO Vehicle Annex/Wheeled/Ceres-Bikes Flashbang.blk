@@ -13,7 +13,7 @@ SupportTank
 </UnitType>
 
 <Name>
-Ceres-Bikes Flashbang
+Ceres-Bikes Flashbang 
 </Name>
 
 <Model>
@@ -21,12 +21,8 @@ ZZ10000
 </Model>
 
 <year>
-3058
+3058		
 </year>
-
-<originalBuildYear>
-3058
-</originalBuildYear>
 
 <type>
 IS Level 2
@@ -36,11 +32,6 @@ IS Level 2
 Wheeled
 </motion_type>
 
-<transporters>
-cargobay:0.021:1:1
-pillionseats:1.0:0
-</transporters>
-
 <cruiseMP>
 10
 </cruiseMP>
@@ -49,12 +40,24 @@ pillionseats:1.0:0
 1
 </engine_type>
 
+<fuel>
+.01
+</fuel>
+
 <armor>
 0
 0
 0
 0
 </armor>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
 
 <Body Equipment>
 BicycleChassisMod
@@ -72,27 +75,16 @@ BicycleChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
+<transporters>
+cargobay:.021:1
+pillionseats:.025:1
+</transporters>
 
 <source>
 TRO VAr - Clan Invasion
 </source>
 
 <tonnage>
-0.15
+.32
 </tonnage>
-
-<fuel>
-0.01
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
 

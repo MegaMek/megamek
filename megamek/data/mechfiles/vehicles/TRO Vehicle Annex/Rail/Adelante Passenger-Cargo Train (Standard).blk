@@ -13,7 +13,7 @@ LargeSupportTank
 </UnitType>
 
 <Name>
-Adelante Passenger/Cargo Train
+Adelante Passenger-Cargo Train
 </Name>
 
 <Model>
@@ -21,15 +21,15 @@ Adelante Passenger/Cargo Train
 </Model>
 
 <year>
-2899
+2919
 </year>
 
 <originalBuildYear>
-2899
+2919
 </originalBuildYear>
 
 <type>
-IS Level 2
+IS Level 4
 </type>
 
 <motion_type>
@@ -37,12 +37,8 @@ Rail
 </motion_type>
 
 <transporters>
-2ndclassquarters:7.0:1
-2ndclassquarters:7.0:1
-2ndclassquarters:7.0:1
-2ndclassquarters:7.0:1
-2ndclassquarters:7.0:1
-cargobay:28.0:1:6
+crewquarters:35.0:0
+cargobay:28.0:1:2
 </transporters>
 
 <cruiseMP>
@@ -52,6 +48,10 @@ cargobay:28.0:1:6
 <engine_type>
 0
 </engine_type>
+
+<internal_type>
+-1
+</internal_type>
 
 <armor>
 40
@@ -94,14 +94,10 @@ Hitch
 </structural_tech_rating>
 
 <source>
-TRO VAr - Succession Wars
+TRO:Vehicle Annex
 </source>
 
 <tonnage>
 600.0
 </tonnage>
-
-<fuel>
-0.0
-</fuel>
 

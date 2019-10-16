@@ -24,10 +24,6 @@ Champion Hoversports Crimson Streak Hover Racer
 3065
 </year>
 
-<originalBuildYear>
-3065
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,11 +31,6 @@ IS Level 2
 <motion_type>
 Hover
 </motion_type>
-
-<transporters>
-cargobay:0.053:1:1
-standardseats:1.0:0
-</transporters>
 
 <cruiseMP>
 17
@@ -49,12 +40,24 @@ standardseats:1.0:0
 6
 </engine_type>
 
+<fuel>
+.451
+</fuel>
+
 <armor>
 2
 2
 2
 1
 </armor>
+
+<barrating>
+8
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <Body Equipment>
 UltraLightChassisMod
@@ -72,13 +75,10 @@ UltraLightChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
-<barrating>
-8
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
+<transporters>
+cargobay:.053:1
+standardseats:.075:1
+</transporters>
 
 <source>
 TRO VAr - Civil War
@@ -87,8 +87,3 @@ TRO VAr - Civil War
 <tonnage>
 3.5
 </tonnage>
-
-<fuel>
-0.451
-</fuel>
-

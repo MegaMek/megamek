@@ -24,10 +24,6 @@ Ibex RV
 3064
 </year>
 
-<originalBuildYear>
-3064
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,11 +31,6 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
-
-<transporters>
-standardseats:8.0:0
-cargobay:0.387:1:1
-</transporters>
 
 <cruiseMP>
 5
@@ -49,32 +40,16 @@ cargobay:0.387:1:1
 1
 </engine_type>
 
+<fuel>
+.011
+</fuel>
+
 <armor>
 2
 2
 2
 2
 </armor>
-
-<Body Equipment>
-ISOffRoadChassis
-</Body Equipment>
-
-<Front Equipment>
-</Front Equipment>
-
-<Right Equipment>
-Gauss Rifle, Light (King David)(PT)
-PintleTurret
-</Right Equipment>
-
-<Left Equipment>
-Gauss Rifle, Light (King David)(PT)
-PintleTurret
-</Left Equipment>
-
-<Rear Equipment>
-</Rear Equipment>
 
 <barrating>
 7
@@ -84,6 +59,30 @@ PintleTurret
 3
 </structural_tech_rating>
 
+<Body Equipment>
+ISOffRoadChassis
+Infantry King David Light Gauss Rifle (PT)
+Infantry King David Light Gauss Rifle (PT)
+PintleTurret
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<transporters>
+cargobay:.388:1
+troopspace:.6
+</transporters>
+
 <source>
 HB:House Marik - Civil War
 </source>
@@ -91,12 +90,3 @@ HB:House Marik - Civil War
 <tonnage>
 2.0
 </tonnage>
-
-<fuel>
-0.011
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
-

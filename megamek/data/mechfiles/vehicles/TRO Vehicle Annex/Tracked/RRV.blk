@@ -24,10 +24,6 @@ RRV 'Rock Rover' Half-Track
 2619
 </year>
 
-<originalBuildYear>
-2619
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -37,9 +33,9 @@ Tracked
 </motion_type>
 
 <transporters>
-cargobay:1.054:1:1
 troopspace:1.0
-standardseats:3.0:0
+cargobay:1.054:1
+standardseats:.225:3
 </transporters>
 
 <cruiseMP>
@@ -50,6 +46,10 @@ standardseats:3.0:0
 6
 </engine_type>
 
+<fuel>
+.018
+</fuel>
+
 <armor>
 3
 3
@@ -57,32 +57,6 @@ standardseats:3.0:0
 2
 1
 </armor>
-
-<Body Equipment>
-Armored Chassis
-Advanced Fire Control
-</Body Equipment>
-
-<Front Equipment>
-HHSearchlight
-</Front Equipment>
-
-<Right Equipment>
-InfantryAssaultRifle(PT)
-PintleTurret
-</Right Equipment>
-
-<Left Equipment>
-InfantryAssaultRifle(PT)
-PintleTurret
-</Left Equipment>
-
-<Rear Equipment>
-</Rear Equipment>
-
-<Turret Equipment>
-Support Laser
-</Turret Equipment>
 
 <barrating>
 8
@@ -92,11 +66,30 @@ Support Laser
 3
 </structural_tech_rating>
 
-<notes>
-Extra ammo:
-Support Laser: 30
-Auto-rifle: 600
-</notes>
+<Body Equipment>
+Armored Chassis
+Advanced Fire Control
+PintleTurret
+</Body Equipment>
+
+<Front Equipment>
+BASearchlight
+</Front Equipment>
+
+<Right Equipment>
+InfantryAssaultRifle (PT)
+</Right Equipment>
+
+<Left Equipment>
+InfantryAssaultRifle (PT)
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+InfantrySupportLaser
+</Turret Equipment>
 
 <source>
 TRO VAr - Star League
@@ -105,8 +98,3 @@ TRO VAr - Star League
 <tonnage>
 4.0
 </tonnage>
-
-<fuel>
-0.018
-</fuel>
-

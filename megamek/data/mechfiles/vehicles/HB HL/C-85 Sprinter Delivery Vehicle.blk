@@ -24,10 +24,6 @@ C-85 Sprinter Delivery Vehicle
 3067
 </year>
 
-<originalBuildYear>
-3067
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,11 +31,6 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
-
-<transporters>
-cargobay:0.81:1:1
-standardseats:1.0:0
-</transporters>
 
 <cruiseMP>
 11
@@ -49,12 +40,24 @@ standardseats:1.0:0
 11
 </engine_type>
 
+<fuel
+.244
+</fuel>
+
 <armor>
 2
 2
 2
 2
 </armor>
+
+<barrating>
+4
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <Body Equipment>
 </Body Equipment>
@@ -71,17 +74,9 @@ standardseats:1.0:0
 <Rear Equipment>
 </Rear Equipment>
 
-<barrating>
-4
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
-<notes>
-Overweight by 75 kg. The official unit does not account for crew seating.
-</notes>
+<transporters>
+cargobay:.81:1
+</transporters>
 
 <source>
 HB:House Liao - Civil War
@@ -90,8 +85,3 @@ HB:House Liao - Civil War
 <tonnage>
 2.5
 </tonnage>
-
-<fuel>
-0.244
-</fuel>
-

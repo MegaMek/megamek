@@ -3,11 +3,6 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
 <UnitType>
 SupportTank
 </UnitType>
@@ -24,30 +19,39 @@ Seahorse Cargo Sub
 2625
 </year>
 
-<originalBuildYear>
-2625
-</originalBuildYear>
+<source>
+TRO VAr - Star League
+</source>
 
 <type>
 IS Level 2
 </type>
+
+<tonnage>
+250
+</tonnage>
 
 <motion_type>
 Submarine
 </motion_type>
 
 <transporters>
-cargobay:84.55:3:1
-standardseats:6.0:0
+cargobay:84.55:3
+troopspace:.45
+standardseats:.45:6
 </transporters>
-
-<cruiseMP>
-4
-</cruiseMP>
 
 <engine_type>
 1
 </engine_type>
+
+<fuel>
+26.5
+</fuel>
+
+<cruiseMP>
+4
+</cruiseMP>
 
 <armor>
 25
@@ -55,29 +59,6 @@ standardseats:6.0:0
 21
 20
 </armor>
-
-<Body Equipment>
-SubmersibleChassisMod
-Basic Fire Control
-Lifeboat (Maritime)
-Lifeboat (Maritime)
-IS Ammo LRTorpedo-10
-IS Ammo LRTorpedo-10
-</Body Equipment>
-
-<Front Equipment>
-</Front Equipment>
-
-<Right Equipment>
-LRT 10
-</Right Equipment>
-
-<Left Equipment>
-LRT 10
-</Left Equipment>
-
-<Rear Equipment>
-</Rear Equipment>
 
 <barrating>
 7
@@ -87,19 +68,25 @@ LRT 10
 3
 </structural_tech_rating>
 
-<source>
-TRO VAr - Star League
-</source>
+<Body Equipment>
+SubmersibleChassisMod
+Basic Fire Control
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+ISLRT10 Ammo
+ISLRT10 Ammo
+</Body Equipment>
 
-<tonnage>
-250.0
-</tonnage>
+<Front Equipment>
+</Front Equipment>
 
-<fuel>
-26.5
-</fuel>
+<Right Equipment>
+ISLRT10
+</Right Equipment>
 
-<fuelType>
-PETROCHEMICALS
-</fuelType>
+<Left Equipment>
+ISLRT10
+</Left Equipment>
 
+<Rear Equipment>
+</Rear Equipment>

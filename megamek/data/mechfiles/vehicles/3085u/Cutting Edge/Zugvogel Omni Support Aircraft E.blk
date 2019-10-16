@@ -37,7 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-troopspace:48.0:omni
+troopspace:48.0
 </transporters>
 
 <SafeThrust>
@@ -104,12 +104,11 @@ ISRotaryAC2 Ammo:OMNI
 ISAMS Ammo:OMNI
 ISAMS Ammo:OMNI
 ISAMS Ammo:OMNI
-ISCASE
+ISCASE:OMNI
 ISGuardianECMSuite:OMNI
+Advanced Fire Control
 Armored Chassis
 STOLChassisMod
-OmniChassisMod
-Advanced Fire Control
 </Body Equipment>
 
 <barrating>
@@ -127,8 +126,4 @@ TRO 3085
 <tonnage>
 200.0
 </tonnage>
-
-<baseChassisFireConWeight>
-5.5
-</baseChassisFireConWeight>
 

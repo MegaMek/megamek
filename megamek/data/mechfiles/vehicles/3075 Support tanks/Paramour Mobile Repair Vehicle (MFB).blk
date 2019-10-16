@@ -24,10 +24,6 @@ Paramour Mobile Repair Vehicle
 3074
 </year>
 
-<originalBuildYear>
-3074
-</originalBuildYear>
-
 <type>
 IS Level 3
 </type>
@@ -35,9 +31,6 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 4
@@ -53,6 +46,18 @@ Tracked
 20
 25
 </armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<armor_type>
+14
+</armor_type>
 
 <Body Equipment>
 Armored Chassis
@@ -71,17 +76,9 @@ Machine Gun
 </Left Equipment>
 
 <Rear Equipment>
-Lift Hoist/Arresting Hoist
-Lift Hoist/Arresting Hoist
+Lift Hoist
+Lift Hoist
 </Rear Equipment>
-
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
 
 <source>
 TRO 3075 - Jihad
@@ -90,8 +87,3 @@ TRO 3075 - Jihad
 <tonnage>
 60.0
 </tonnage>
-
-<fuel>
-0.0
-</fuel>
-

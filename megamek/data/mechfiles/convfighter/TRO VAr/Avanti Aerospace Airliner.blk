@@ -37,9 +37,9 @@ Aerodyne
 </motion_type>
 
 <transporters>
+troopspace:9.0
 cargobay:6.0:1:1
 1stclassquarters:20.0:2
-troopspace:9.0
 </transporters>
 
 <SafeThrust>
@@ -59,7 +59,7 @@ troopspace:9.0
 </sink_type>
 
 <fuel>
-750
+428
 </fuel>
 
 <engine_type>

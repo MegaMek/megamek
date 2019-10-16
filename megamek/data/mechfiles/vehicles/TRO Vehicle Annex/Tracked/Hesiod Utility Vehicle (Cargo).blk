@@ -24,10 +24,6 @@ Prime (Cargo)
 3060
 </year>
 
-<originalBuildYear>
-3060
-</originalBuildYear>
-
 <type>
 IS Level 3
 </type>
@@ -37,7 +33,10 @@ Wheeled
 </motion_type>
 
 <transporters>
-cargobay:3.0:1:1
+cargobay:3.0:1
+</transporters>
+
+<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -62,7 +61,6 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 ISOffRoadChassis
-OmniChassisMod
 </Body Equipment>
 
 <Front Equipment>
@@ -92,16 +90,4 @@ TRO VAr - Clan Invasion
 <tonnage>
 7.0
 </tonnage>
-
-<baseChassisFireConWeight>
-0.0
-</baseChassisFireConWeight>
-
-<fuel>
-0.5
-</fuel>
-
-<fuelType>
-ALCOHOL
-</fuelType>
 

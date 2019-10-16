@@ -24,10 +24,6 @@ Durandel-British 'Blue Nova' Convertible
 3067
 </year>
 
-<originalBuildYear>
-3067
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,11 +31,6 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
-
-<transporters>
-cargobay:0.198:1:1
-standardseats:2.0:0
-</transporters>
 
 <cruiseMP>
 8
@@ -49,12 +40,24 @@ standardseats:2.0:0
 1
 </engine_type>
 
+<fuel>
+.029
+</fuel>
+
 <armor>
 1
 1
 1
 1
 </armor>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+1
+</structural_tech_rating>
 
 <Body Equipment>
 ConvertibleChassisMod
@@ -72,27 +75,16 @@ ConvertibleChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-1
-</structural_tech_rating>
-
 <source>
 TRO VAr - Civil War
 </source>
 
+<transporters>
+cargobay:.198:1
+standardseats:.15:2
+</transporters>
+
 <tonnage>
 1.5
 </tonnage>
-
-<fuel>
-0.029
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
 

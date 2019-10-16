@@ -24,10 +24,6 @@ I
 2396
 </year>
 
-<originalBuildYear>
-2396
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -35,9 +31,6 @@ IS Level 4
 <motion_type>
 Tracked
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 3
@@ -47,6 +40,10 @@ Tracked
 1
 </engine_type>
 
+<fuel>
+1
+</fuel>
+
 <armor>
 30
 26
@@ -55,13 +52,20 @@ Tracked
 26
 </armor>
 
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
 <Body Equipment>
 Armored Chassis
 IS Ammo SRM-6
 IS Ammo AC/5
 IS Machine Gun Ammo - Half
 IS Ammo SRM-6
-Advanced Fire Control
 </Body Equipment>
 
 <Front Equipment>
@@ -82,22 +86,6 @@ Autocannon/5
 Machine Gun
 </Turret Equipment>
 
-<barrating>
-7
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
-
-<engine_tech_rating>
-2
-</engine_tech_rating>
-
-<armor_tech_rating>
-2
-</armor_tech_rating>
-
 <source>
 Era Digest: Age of War
 </source>
@@ -105,12 +93,4 @@ Era Digest: Age of War
 <tonnage>
 65.0
 </tonnage>
-
-<fuel>
-1.0
-</fuel>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
 

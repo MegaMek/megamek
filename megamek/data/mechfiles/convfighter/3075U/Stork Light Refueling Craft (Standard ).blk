@@ -37,7 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-insulatedcargobay:19.5:1:1
+liquidcargobay:23.98:1:1
 </transporters>
 
 <SafeThrust>
@@ -73,8 +73,6 @@ insulatedcargobay:19.5:1:1
 
 <Nose Equipment>
 SRM 4
-ISAntiMissileSystem
-ISAntiMissileSystem
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -86,8 +84,6 @@ ISAntiMissileSystem
 <Aft Equipment>
 SRM 4
 RefuelingDrogue
-ISAntiMissileSystem
-ISAntiMissileSystem
 </Aft Equipment>
 
 <Wings Equipment>
@@ -97,9 +93,6 @@ ISAntiMissileSystem
 Advanced Fire Control
 Armored Chassis
 IS Ammo SRM-4
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
 </Body Equipment>
 
 <barrating>
@@ -107,7 +100,7 @@ ISAMS Ammo
 </barrating>
 
 <structural_tech_rating>
-3
+4
 </structural_tech_rating>
 
 <source>

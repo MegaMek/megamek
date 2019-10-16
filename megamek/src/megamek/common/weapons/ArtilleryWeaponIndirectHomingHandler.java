@@ -626,10 +626,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 CapMissileAMSMod = calcCapMissileAMSMod();
                 Report r = new Report(3235);
                 r.subject = subjectId;
-                vPhaseReport.add(r);
-                r = new Report(3230);
                 r.indent(1);
-                r.subject = subjectId;
                 vPhaseReport.add(r);
                 if (CapMissileArmor <= 0) {
                     r = new Report(3356);
@@ -641,6 +638,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                     r.subject = subjectId;
                     r.add(CapMissileAMSMod);
                     vPhaseReport.add(r);
+                    toHit.addModifier(CapMissileAMSMod, "damage from AMS");
+                    // If the damage was enough to make us miss, report it and record 0 hits
+                    if (roll < toHit.getValue()) {
+                        
+                    }
                 }
             } else if (amsEngaged || apdsEngaged) {
                 //Single AMS/APDS should continue to engage per TW rules, which have not changed

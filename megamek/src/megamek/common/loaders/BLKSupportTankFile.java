@@ -1,6 +1,5 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,12 +14,8 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.SupportTank;
-import megamek.common.Tank;
+import megamek.common.*;
+import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.BuildingBlock;
 
 /**
@@ -150,7 +145,7 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        if ((armor.length < 4) || (armor.length > 5)) {
+        if ((armor.length < 4) || (armor.length > 6)) {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
@@ -199,6 +194,35 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
             t.setOmni(true);
         }
         t.setArmorTonnage(t.getArmorWeight());
+
+        if (dataFile.exists("baseChassisTurretWeight")) {
+            t.setBaseChassisTurretWeight(dataFile.getDataAsDouble("baseChassisTurretWeight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisTurret2Weight")) {
+            t.setBaseChassisTurret2Weight(dataFile.getDataAsDouble("baseChassisTurret2Weight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisSponsonPintleWeight")) {
+            t.setBaseChassisSponsonPintleWeight(dataFile.getDataAsDouble("baseChassisSponsonPintleWeight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisFireConWeight")) {
+            t.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
+        }
+
+        if (dataFile.exists("fuelType")) {
+            try {
+                t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
+            } catch (IllegalArgumentException ex) {
+                DefaultMmLogger.getInstance().error(getClass(), "getEntity()",
+                        "While loading " + t.getShortNameRaw()
+                                + ": Could not parse ICE fuel type "
+                                + dataFile.getDataAsString("fuelType")[0]);
+                t.setICEFuelType(FuelType.PETROCHEMICALS);
+            }
+        }
+
         return t;
     }
 }

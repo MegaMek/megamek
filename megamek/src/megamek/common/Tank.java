@@ -141,6 +141,8 @@ public class Tank extends Entity {
     //If there is a cockpit command console, the tank does not suffer the effects of the first commander critical,
     //but the command console benefits are lost as the backup has to take command.
     private boolean usingConsoleCommander = false;
+    /** Vehicles can be constructed with seating for additional crew. This has no effect on play */
+    private int extraCrewSeats = 0;
 
     // set up some vars for what the critical effects would be
     private int potCrit = CRIT_NONE;
@@ -155,14 +157,26 @@ public class Tank extends Entity {
     /**
      * Keeps track of the base weight of the turret for omni tanks.
      */
-    private double baseChassisTurretWeight = -1;
-    private double baseChassisTurret2Weight = -1;
+    public static final int BASE_CHASSIS_TURRET_WT_UNASSIGNED = -1;
+    private double baseChassisTurretWeight = BASE_CHASSIS_TURRET_WT_UNASSIGNED;
+    private double baseChassisTurret2Weight = BASE_CHASSIS_TURRET_WT_UNASSIGNED;
+    private double baseChassisSponsonPintleWeight = BASE_CHASSIS_TURRET_WT_UNASSIGNED;
 
+    /**
+     * Flag to indicate unit is constructed as a trailer. Trailers do not require
+     * control systems or engines unless they are intended for independent operation.
+     */
+    private boolean trailer = false;
     /**
      * Keeps track of whether this vehicle has control systems.  Trailers aren't
      * required to have control systems.
      */
     private boolean hasNoControlSystems = false;
+
+    /**
+     * Alternate fuel for ICEs that affects operating range
+     */
+    private FuelType fuelType = FuelType.PETROCHEMICALS;
 
     public CrewType defaultCrewType() {
         return CrewType.CREW;
@@ -436,6 +450,17 @@ public class Tank extends Entity {
     
     public void setUsingConsoleCommander(boolean b) {
         usingConsoleCommander = b;
+    }
+
+    /**
+     * @return Additional seats beyond the minimum crew requirements
+     */
+    public int getExtraCrewSeats() {
+        return extraCrewSeats;
+    }
+
+    public void setExtraCrewSeats(int seats) {
+        this.extraCrewSeats = seats;
     }
 
     public boolean isDriverHitPS() {
@@ -3564,17 +3589,16 @@ public class Tank extends Entity {
         }
         // for ammo, each type of ammo takes one slots, regardless of
         // submunition type
-        Map<String, Boolean> foundAmmo = new HashMap<String, Boolean>();
+        Set<String> foundAmmo = new HashSet<>();
         for (Mounted ammo : getAmmo()) {
             // don't count oneshot ammo
-            if ((ammo.getLocation() == Entity.LOC_NONE)
-                    && (ammo.getBaseShotsLeft() == 1)) {
+            if (ammo.isOneShotAmmo()) {
                 continue;
             }
             AmmoType at = (AmmoType) ammo.getType();
-            if (foundAmmo.get(at.getAmmoType() + ":" + at.getRackSize()) == null) {
+            if (!foundAmmo.contains(at.getAmmoType() + ":" + at.getRackSize())) {
                 usedSlots++;
-                foundAmmo.put(at.getAmmoType() + ":" + at.getRackSize(), true);
+                foundAmmo.add(at.getAmmoType() + ":" + at.getRackSize());
             }
         }
         // if a tank has an infantry bay, add 1 slots (multiple bays take 1 slot
@@ -3597,6 +3621,7 @@ public class Tank extends Entity {
                 usedSlots++;
             }
         }
+        usedSlots += extraCrewSeats;
         // different armor types take different amount of slots
         if (!hasPatchworkArmor()) {
             int type = getArmorType(1);
@@ -4112,12 +4137,86 @@ public class Tank extends Entity {
     }
 
     /**
-     * Returns a Support units fuel allotment.
-     * 
+     * Returns the mass of the fuel, which is used for calculating operating range.
+     * For combat vehicles this is considered part of the engine weight. For support vehicles it is in
+     * addition to the engine weight.
+     *
      * @return fuel tonnage
      */
     public double getFuelTonnage() {
-        return 0;
+        if (hasEngine()) {
+            // For combat vehicles the fuel tonnage is 10% of the engine.
+            return getEngine().getWeightEngine(this) * 0.1;
+        }
+        return 0.0;
+    }
+
+    /**
+     * Sets the fuel mass for support vehicles. Has no effect on combat vehicles.
+     *
+     * @param fuel The mass of the fuel in tons
+     */
+    public void setFuelTonnage(double fuel) {
+        // do nothing
+    }
+
+    /**
+     * Calculates the operating range of the vehicle based on engine type and fuel mass.
+     * Vehicles that do not require fuel report an operating range of {@code Integer.MAX_VALUE}.
+     *
+     * @return The vehicle's operating range in km
+     */
+    public int operatingRange() {
+        if (getFuelTonnage() <= 0) {
+            return 0;
+        }
+        double fuelUnit = fuelTonnagePer100km();
+        if (fuelUnit > 0) {
+            return (int) (getFuelTonnage() / fuelUnit * 100);
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Calculates fuel mass based on engine type and mass. Engines that do not require allocating
+     * fuel mass return a value of 0.0.
+     *
+     * @return The fuel mass required for every 100 km of vehicle range.
+     */
+    public double fuelTonnagePer100km() {
+        if (!hasEngine()) {
+            return 0.0;
+        }
+        switch (getEngine().getEngineType()) {
+            case Engine.STEAM:
+                return getEngine().getWeightEngine(this) * 0.03;
+            case Engine.COMBUSTION_ENGINE:
+                if (getICEFuelType() == FuelType.PETROCHEMICALS) {
+                    return getEngine().getWeightEngine(this) * 0.01;
+                } else {
+                    return getEngine().getWeightEngine(this) * 0.0125;
+                }
+            case Engine.BATTERY:
+                return getEngine().getWeightEngine(this) * 0.05;
+            case Engine.FUEL_CELL:
+                return getEngine().getWeightEngine(this) * 0.015;
+            default:
+                return 0.0;
+        }
+    }
+
+    /**
+     * The type of fuel for internal combustion engines. This has no meaning for
+     * other engine types.
+     *
+     * @return The ICE fuel type
+     */
+    public FuelType getICEFuelType() {
+        return fuelType;
+    }
+
+    public void setICEFuelType(FuelType fuelType) {
+        this.fuelType = fuelType;
     }
 
     /**
@@ -4158,20 +4257,63 @@ public class Tank extends Entity {
                 && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 
+    /**
+     * Used for omni vehicles, which must set the weight of turrets
+     * the base chassis, limiting the amount of pod space in the turret.
+     *
+     * @return The weight of the primary turret
+     */
     public double getBaseChassisTurretWeight() {
         return baseChassisTurretWeight;
     }
 
+    /**
+     * Sets the fixed weight of the primary turret on a dual-turret omnivehicle.
+     *
+     * @param baseChassisTurretWeight The weight of the turret
+     */
     public void setBaseChassisTurretWeight(double baseChassisTurretWeight) {
         this.baseChassisTurretWeight = baseChassisTurretWeight;
     }
 
+    /**
+     * Used for omni vehicles, which must set the weight of turrets
+     * the base chassis, limiting the amount of pod space in the turret.
+     *
+     * @return The weight of the second turret
+     */
     public double getBaseChassisTurret2Weight() {
         return baseChassisTurret2Weight;
     }
 
+    /**
+     * Sets the fixed weight of the second turret on a dual-turret omnivehicle.
+     *
+     * @param baseChassisTurret2Weight The weight of the turret
+     */
     public void setBaseChassisTurret2Weight(double baseChassisTurret2Weight) {
         this.baseChassisTurret2Weight = baseChassisTurret2Weight;
+    }
+
+    /**
+     * Used for omni vehicles, which must set the weight of sponson or pintle mounts in
+     * the base chassis, limiting the amount of pod space in the turret(s).
+     *
+     * @return The weight of any pintle mounts (small support vee) or sponson mounts
+     *         (combat vee and M/L support vee)
+     */
+    public double getBaseChassisSponsonPintleWeight() {
+        return baseChassisSponsonPintleWeight;
+    }
+
+    /**
+     * Sets the fixed weight of any pintle (small SV) or sponson (CV, M/L SV) turrets
+     * on an omnivehicle.
+     *
+     * @param baseChassisSponsonPintleWeight The weight of the sponson/pintle turrets.
+     */
+    public void setBaseChassisSponsonPintleWeight(double baseChassisSponsonPintleWeight) {
+        this.baseChassisSponsonPintleWeight = baseChassisSponsonPintleWeight;
     }
 
     public boolean hasNoControlSystems() {
@@ -4198,19 +4340,21 @@ public class Tank extends Entity {
     /**
      * Used to determine if this vehicle can be towed by a tractor
      * 
-     * @return
+     * @return Whether the unit is constructed as a trailer
      */
     @Override
     public boolean isTrailer() {
-        if (hasMisc(MiscType.F_TRAILER_MODIFICATION)) {
-            return true;
-        }
-        //Maybe an exploit here if it starts returning true for vehicles that get disabled
-        //but maybe we want to be able to tow those off the field too?
-        if (hasMisc(MiscType.F_HITCH) && getWalkMP() == 0) {
-            return true;
-        }
-        return false;
+        return trailer;
+    }
+
+    /**
+     * Marks whether the tank is constructed as a trailer. This has no effect on
+     * support vehicles, which determine trailer status by the trailer chassis modification.
+     *
+     * @param trailer Whether the tank is constructed as a trailer.
+     */
+    public void setTrailer(boolean trailer) {
+        this.trailer = trailer;
     }
     
     /**

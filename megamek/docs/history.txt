@@ -19,6 +19,7 @@ v0.47.1-SNAPSHOT
 + Bug: Some weapons missing their Aerospace attack values.
 + Bug/Data: Fixing various validation errors.
 + Issue #708: Errata indicates swarming battle armor should not be immune to fire.
++ Issue #1517: Fix for multiple NPEs caused by phantom transported units
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

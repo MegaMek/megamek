@@ -32,7 +32,7 @@ public class Engine implements Serializable, ITechnology {
      */
     private static final long serialVersionUID = -246032529363109609L;
 
-    private final static double[] ENGINE_RATINGS = { 0.0, 0.25, 0.5, 0.5,
+    public final static double[] ENGINE_RATINGS = { 0.0, 0.25, 0.5, 0.5,
             0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.5, 1.5, 1.5, 2.0, 2.0,
             2.0, 2.5, 2.5, 3.0, 3.0, 3.0, 3.5, 3.5, 4.0, 4.0, 4.0,
             4.5, 4.5, 5.0, 5.0, 5.5, 5.5, 6.0, 6.0, 6.0, 7.0, 7.0,

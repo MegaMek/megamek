@@ -8117,7 +8117,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      * list will never be <code>null</code>, but it may be empty. The
-     * returned <code>List</code> is independant from the under- lying
+     * returned <code>List</code> is independent from the under- lying
      * data structure; modifying one does not affect the other.
      */
     @Override
@@ -8132,7 +8132,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
             for (Entity e : next.getLoadedUnits()) {
-                result.add(e);
+                if(e != null) {
+                    result.add(e);
+                }
             }
         }
 

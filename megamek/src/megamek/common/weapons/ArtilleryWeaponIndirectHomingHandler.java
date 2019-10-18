@@ -215,6 +215,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         if (specialResolution(vPhaseReport, entityTarget)) {
             return false;
         }
+        
+        //Any AMS/Point Defense fire against homing rounds?
+        int hits = handleAMS(vPhaseReport);
 
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
@@ -226,12 +229,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 return false;
             }
         }
-        int hits = 1;
         int nCluster = 1;       
         if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
-            //Any AMS/Point Defense fire against homing rounds?
-            hits = handleAMS(vPhaseReport);
-            if (aaa.getCoords() != null) {
+            if (aaa.getCoords() != null && hits > 0) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
            

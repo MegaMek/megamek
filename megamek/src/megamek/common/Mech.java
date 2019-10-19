@@ -5123,14 +5123,14 @@ public abstract class Mech extends Entity {
             bvText.append("Weapon BV * Firing Control Modifier");
             bvText.append(endColumn);
             bvText.append(startColumn);
-            bvText.append(obv);
+            bvText.append(weaponBV);
             bvText.append(" * ");
             bvText.append("0.9");
             bvText.append(endColumn);
             weaponBV *= 0.9;
             bvText.append(startColumn);
             bvText.append(" = ");
-            bvText.append(obv);
+            bvText.append(weaponBV);
             bvText.append(endColumn);
             bvText.append(endRow);
         }

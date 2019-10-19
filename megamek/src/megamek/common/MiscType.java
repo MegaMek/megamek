@@ -744,7 +744,7 @@ public class MiscType extends EquipmentType {
             double weight = cargoTonnage / 20f;
             return TestEntity.ceil(weight, roundWeight);
 
-        } else if (hasFlag(F_BASIC_FIRECONTROL)) {
+        } else if (hasFlag(F_BASIC_FIRECONTROL) || hasFlag(F_ADVANCED_FIRECONTROL)) {
             // Omni support vees have a fixed weight for the chassis, which may be
             // higher than what is required for the current configuration
             if (entity.getBaseChassisFireConWeight() > 0) {
@@ -755,8 +755,8 @@ public class MiscType extends EquipmentType {
             // Don't count weight of AMS or light (e.g. non-support infantry) weapons
             for (Mounted mount : entity.getWeaponList()) {
                 if (!mount.getType().hasFlag(WeaponType.F_AMS)
-                        && (!(mount.getType().hasFlag(WeaponType.F_INFANTRY)
-                        || mount.getType().hasFlag(WeaponType.F_INF_SUPPORT)))) {
+                        && (!mount.getType().hasFlag(WeaponType.F_INFANTRY)
+                        || mount.getType().hasFlag(WeaponType.F_INF_SUPPORT))) {
                     weaponWeight += mount.getType().getTonnage(entity);
                 }
             }
@@ -764,30 +764,8 @@ public class MiscType extends EquipmentType {
             if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
                 roundWeight = TestEntity.Ceil.KILO;
             }
-            double weight = weaponWeight / 20;
+            double weight = weaponWeight / (hasFlag(F_BASIC_FIRECONTROL) ? 20.0 : 10.0);
             return TestEntity.ceil(weight, roundWeight);
-
-        } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
-            // Omni support vees have a fixed weight for the chassis, which may be
-            // higher than what is required for the current configuration
-            if (entity.getBaseChassisFireConWeight() > 0) {
-                return entity.getBaseChassisFireConWeight();
-            }
-            // 10% of weapon weight
-            double weaponWeight = 0;
-            // Don't count weight of AMS or light (e.g. non-support infantry) weapons
-            for (Mounted mount : entity.getWeaponList()) {
-                if (!mount.getType().hasFlag(WeaponType.F_AMS)
-                    && (!(mount.getType().hasFlag(WeaponType.F_INFANTRY)
-                            || mount.getType().hasFlag(WeaponType.F_INF_SUPPORT)))) {
-                    weaponWeight += mount.getType().getTonnage(entity);
-                }
-            }
-            TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
-            if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
-                roundWeight = TestEntity.Ceil.KILO;
-            }
-            return TestEntity.ceil(weaponWeight / 10f, roundWeight);
         } else if (hasFlag(F_BOOBY_TRAP)) {
             // 10% of unit weight
             double weight = entity.getWeight() / 10;

@@ -12,7 +12,7 @@ Mass:15
 Engine:40 Fuel Cell Engine(IS)
 Structure:IS Industrial
 Myomer:Standard
-Cockpit:Primitive Cockpit
+Cockpit:Primitive Industrial Cockpit
 Gyro:Standard Gyro
 
 Heat Sinks:1 Single

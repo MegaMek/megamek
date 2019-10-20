@@ -263,7 +263,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         nDamPerHit -= bldgAbsorbs;
 
         // Make sure the player knows when his attack causes no damage.
-        if (nDamPerHit == 0) {
+        if (nDamPerHit <= 0) {
             r = new Report(3365);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
@@ -632,6 +632,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                     r = new Report(3356);
                     r.subject = subjectId;
                     vPhaseReport.add(r);
+                    nDamPerHit = 0;
                     hits = 0;
                 } else {
                     r = new Report(3358);
@@ -639,9 +640,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                     r.add(CapMissileAMSMod);
                     vPhaseReport.add(r);
                     toHit.addModifier(CapMissileAMSMod, "damage from AMS");
-                    // If the damage was enough to make us miss, report it and record 0 hits
+                    // If the damage was enough to make us miss, record it for reporting and set 0 hits
                     if (roll < toHit.getValue()) {
-                        
+                        bMissed = true;
+                        nDamPerHit = 0;
+                        hits = 0;
                     }
                 }
             } else if (amsEngaged || apdsEngaged) {
@@ -661,6 +664,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                     r.add("missile");
                     r.add(destroyRoll);
                     vPhaseReport.add(r);
+                    nDamPerHit = 0;
                     hits = 0;
                                            
                 } else {

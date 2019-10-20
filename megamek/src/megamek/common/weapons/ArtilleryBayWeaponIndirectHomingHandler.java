@@ -239,7 +239,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             int nCluster = 1;        
             if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
                 //Do point defenses shoot down this homing missile? (Copperheads don't count)
-                hits = handleAMS(vPhaseReport);
+                hits = handleAMS(vPhaseReport, ammoUsed);
                 
                 if (bMissed && !missReported) {
                     reportMiss(vPhaseReport);
@@ -584,13 +584,14 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
      * This is a unified method that handles single AMS and AMS Bay counterfire against Arrow IV homing missiles
      * Artillery bays resolve each weapon individually and don't use Aero AV, so we can safely do this
      * @param vPhaseReport The report for this game phase, be it offboard (Indirect) or firing (Direct)
+     * @param ammoUsed The ammoType used by this bay - as only homing shots can be intercepted by AMS
      * @return 1 hit if this missile survives any AMS fire, 0 if it is destroyed
      */
-    protected int handleAMS(Vector<Report> vPhaseReport) {
+    protected int handleAMS(Vector<Report> vPhaseReport, Mounted ammoUsed) {
         
         int hits = 1;
-        if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV
-                || ((AmmoType) ammo.getType()).getAmmoType() == BombType.B_HOMING) {
+        if (((AmmoType) ammoUsed.getType()).getAmmoType() == AmmoType.T_ARROW_IV
+                || ((AmmoType) ammoUsed.getType()).getAmmoType() == BombType.B_HOMING) {
 
             //this has to be called here or it fires before the TAG shot and we have no target
             server.assignAMS();
@@ -611,7 +612,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             }
             //PD/AMS bays should engage using AV and missile armor per SO Errata
             if (amsBayEngagedCap || pdBayEngagedCap) {
-                CapMissileArmor = wtype.getMissileArmor() - CounterAV;
+                CapMissileArmor = ((WeaponType)ammoUsed.getLinkedBy().getType()).getMissileArmor() - CounterAV;
                 CapMissileAMSMod = calcCapMissileAMSMod();
                 Report r = new Report(3235);
                 r.subject = subjectId;
@@ -683,5 +684,32 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
+     */
+    @Override
+    protected void setAMSBayReportingFlag() {
+        amsBayEngagedCap = true;
+    }
+    
+    /**
+     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
+     */
+    @Override
+    protected void setPDBayReportingFlag() {
+        pdBayEngagedCap = true;
+    }
+    
+    @Override
+    protected int calcCapMissileAMSMod() {
+        CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
+        return CapMissileAMSMod;
+    }
+    
+    @Override
+    protected int getCapMissileAMSMod() {
+        return CapMissileAMSMod;
     }
 }

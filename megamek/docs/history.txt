@@ -20,7 +20,7 @@ v0.47.1-SNAPSHOT
 + Bug/Data: Fixing various validation errors.
 + Issue #708: Errata indicates swarming battle armor should not be immune to fire.
 + Issue #1517: Fix for multiple NPEs caused by phantom transported units
-+ Data: New Sprites
++ Data: New Sprites/New Boards from Derv.
 + Issue #1480: Mech Mortar Smoke round is unavailable
 
 v0.47.0 (2019-08-21 0300 UTC)

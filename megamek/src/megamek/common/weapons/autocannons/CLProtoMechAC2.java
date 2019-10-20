@@ -50,9 +50,9 @@ public class CLProtoMechAC2 extends ProtoMechACWeapon {
         criticals = 2;
         bv = 34;
         cost = 95000;
-        shortAV = 7;
-        medAV = 7;
-        longAV = 7;
+        shortAV = 2;
+        medAV = 2;
+        longAV = 2;
         maxRange = RANGE_LONG;
         explosionDamage = damage;
         rulesRefs = "286,TO";

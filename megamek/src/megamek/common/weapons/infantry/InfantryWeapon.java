@@ -53,6 +53,7 @@ public abstract class InfantryWeapon extends Weapon {
         tonnage = 0.0;
         criticals = 0;
         tankslots = 0;
+        svslots = 1;
         infantryDamage = 0;
         crew = 1;
         infantryRange = 0;

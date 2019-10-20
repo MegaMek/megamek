@@ -56,10 +56,11 @@ public class EntityWeightClass {
     private static double[] hoverSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 50, 100 }; // Twelve padding 0s
     private static double[] vtolSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 30, 60 }; // Twelve padding 0s
     private static double[] wigeSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80, 160 }; // Twelve padding 0s
-    //private static double[] airshipSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300, 1000 }; // Twelve padding 0s
-    //private static double[] fixedwingSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 100, 200 }; // Twelve padding 0s
+    private static double[] airshipSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300, 1000 }; // Twelve padding 0s
+    private static double[] fixedwingSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 100, 200 }; // Twelve padding 0s
     private static double[] navalSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300, 100000 }; // Twelve padding 0s
     private static double[] railSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300, 600 }; // Twelve padding 0s
+    private static double[] satelliteSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 100, 300 }; // Twelve padding 0s
     //private static double[] mobilestructuresSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80, 160 }; // Twelve padding 0s
     private static double[] ASFWeightLimits = { 0, 45, 70, 100 }; // One padding 0
     private static double[] dropshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 2499, 9999, 100000 }; // Seven padding 0s
@@ -91,6 +92,13 @@ public class EntityWeightClass {
         }
     }
 
+    /**
+     * Retrieves the weight class based on the type string in the unit file.
+     *
+     * @param tonnage The entity weight
+     * @param type    The type string
+     * @return        The weight class
+     */
     public static int getWeightClass(double tonnage, String type) {
         int i;
 
@@ -159,6 +167,13 @@ public class EntityWeightClass {
         return i;
     }
 
+    /**
+     * Retrieves the weight class for support vehicles based on the subtype string from the unit file
+     *
+     * @param tonnage The entity weight
+     * @param type    The subtype string
+     * @return        The weight class
+     */
     public static int getSupportWeightClass(double tonnage, String type) {
         int i = 0;
 
@@ -216,6 +231,24 @@ public class EntityWeightClass {
                     break;
                 }
             }
+        } else if (type.equals("Aerodyne")) {
+            for (i = WEIGHT_SMALL_SUPPORT; i < (fixedwingSupportVehicleWeightLimits.length - 1); i++) {
+                if (tonnage <= fixedwingSupportVehicleWeightLimits[i]) {
+                    break;
+                }
+            }
+        } else if (type.equals("Airship")) {
+            for (i = WEIGHT_SMALL_SUPPORT; i < (airshipSupportVehicleWeightLimits.length - 1); i++) {
+                if (tonnage <= airshipSupportVehicleWeightLimits[i]) {
+                    break;
+                }
+            }
+        } else if (type.equals("Satellite")) {
+            for (i = WEIGHT_SMALL_SUPPORT; i < (satelliteSupportVehicleWeightLimits.length - 1); i++) {
+                if (tonnage <= satelliteSupportVehicleWeightLimits[i]) {
+                    break;
+                }
+            }
         }
 
         return i;
@@ -240,6 +273,12 @@ public class EntityWeightClass {
         } else if (en instanceof Dropship) {
             for (i = WEIGHT_SMALL_DROP; i < (dropshipWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= dropshipWeightLimits[i]) {
+                    break;
+                }
+            }
+        } else if (en instanceof FixedWingSupport) {
+            for (i = WEIGHT_LIGHT; i < (fixedwingSupportVehicleWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
+                if (tonnage <= fixedwingSupportVehicleWeightLimits[i]) {
                     break;
                 }
             }

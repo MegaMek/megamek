@@ -49,6 +49,7 @@ public class ISArrowIV extends ArtilleryWeapon {
         extremeRange = 8; // No extreme range.
         tonnage = 15;
         criticals = 15;
+        svslots = 7;
         bv = 240;
         cost = 450000;
         this.flags = flags.or(F_MISSILE);

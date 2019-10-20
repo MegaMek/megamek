@@ -3110,6 +3110,15 @@ public abstract class Mech extends Entity {
                     .setProductionFactions(F_TH).setTechRating(RATING_C)
                     .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        } else if (industrial && (EntityWeightClass.WEIGHT_SUPER_HEAVY == weightClass)) {
+            // Superheavy industrialmechs don't have a separate entry on the tech advancement
+            // table in IO, but the dates for the superheavy tripod are based on the
+            // three-man digging machine, which is an industrialmech.
+            return new TechAdvancement(TECH_BASE_IS)
+                    .setAdvancement(2930, 2940).setPrototypeFactions(F_FW)
+                    .setProductionFactions(F_FW).setTechRating(RATING_D)
+                    .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else if (industrial) {
             return new TechAdvancement(TECH_BASE_ALL)
                     .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
@@ -5142,14 +5151,14 @@ public abstract class Mech extends Entity {
             bvText.append("Weapon BV * Firing Control Modifier");
             bvText.append(endColumn);
             bvText.append(startColumn);
-            bvText.append(obv);
+            bvText.append(weaponBV);
             bvText.append(" * ");
             bvText.append("0.9");
             bvText.append(endColumn);
             weaponBV *= 0.9;
             bvText.append(startColumn);
             bvText.append(" = ");
-            bvText.append(obv);
+            bvText.append(weaponBV);
             bvText.append(endColumn);
             bvText.append(endRow);
         }
@@ -5336,11 +5345,17 @@ public abstract class Mech extends Entity {
             cockpitCost = 1250000;
         } else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
             cockpitCost = 100000;
+        } else if (getCockpitType() == Mech.COCKPIT_TRIPOD) {
+            cockpitCost = 400000;
         } else if (getCockpitType() == Mech.COCKPIT_QUADVEE) {
             cockpitCost = 375000;
+        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY) {
+            cockpitCost = 300000;
         } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
-            // Same as standard cockpit command console
-            cockpitCost = 700000;
+            // The cost is the sum of both superheavy cockpit and command console
+            cockpitCost = 800000;
+        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
+            cockpitCost = 500000;
         } else if (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
             // The cost is the sum of both small and command console
             cockpitCost = 675000;            

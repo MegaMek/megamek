@@ -32,10 +32,6 @@ Factory - Small
 IS Level 3
 </type>
 
-<designtype>
-0
-</designtype>
-
 <motion_type>
 Aerodyne
 </motion_type>
@@ -44,7 +40,7 @@ Aerodyne
 smallcraftbay:2.0:2:1
 crewquarters:329.0:0
 1stclassquarters:240.0:0
-cargobay:1197.5:1:4
+cargobay:1197.0:1:4
 </transporters>
 
 <SafeThrust>
@@ -76,12 +72,12 @@ cargobay:1197.5:1:4
 </armor_tech>
 
 <armor>
-9
-9
-9
-9
-9
-9
+8
+7
+7
+3
+5
+5
 </armor>
 
 <Nose Equipment>

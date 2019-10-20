@@ -21280,10 +21280,7 @@ public class Server implements Runnable {
     private void doFlamingDamage(Entity entity) {
         Report r;
         int boomroll = Compute.d6(2);
-        // Infantry are unaffected by fire while they're still swarming.
-        if (Entity.NONE != entity.getSwarmTargetId()) {
-            return;
-        }
+
         if ((entity.getMovementMode() == EntityMovementMode.VTOL)
             && !entity.infernos.isStillBurning()) {
             // VTOLs don't check as long as they are flying higher than

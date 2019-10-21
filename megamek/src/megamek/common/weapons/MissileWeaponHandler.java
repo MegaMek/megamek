@@ -338,7 +338,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av = 0;
-        int counterAV = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         if (range == WeaponType.RANGE_SHORT) {
             av = wtype.getRoundShortAV();
@@ -400,10 +399,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 
         //Point Defenses engage the missiles still aimed at us
         if (ae.usesWeaponBays() || ae.isCapitalFighter()) {
-            // Grounded dropships should fire with individual AMS, not bays
-            counterAV = calcCounterAV();
+            CounterAV = calcCounterAV();
         }
-        av = av - counterAV;
+        av = av - CounterAV;
         
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);

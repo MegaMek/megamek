@@ -1441,9 +1441,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         // check to see if spheroids will drop an elevation
-        if ((ce() instanceof Aero) && ((Aero) ce()).isSpheroid()
-                && !clientgui.getClient().getGame().getBoard().inSpace()
-                && ((Aero) ce()).isAirborne() && (cmd.getFinalNDown() == 0)
+        if (Compute.useSpheroidAtmosphere(clientgui.getClient().getGame(), ce()) 
+                && (cmd.getFinalNDown() == 0)
                 && (cmd.getMpUsed() == 0) && !cmd.contains(MoveStepType.VLAND)) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$

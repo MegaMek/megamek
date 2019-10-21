@@ -7,39 +7,61 @@ import java.util.List;
 import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.client.bot.princess.FireControl;
 import megamek.common.Coords;
 import megamek.common.IGame;
-import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Terrains;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
 
 /**
- * This set of classes is intended to be used by AI players to generate paths for infantry units.
- * This includes both foot and jump paths.
+ * This set of classes is intended to be used by AI players to generate paths for units behaving
+ * like spheroid dropships in atmosphere. Remarkably similar to a jumping infantry unit.
  * @author NickAragua
  *
  */
-public class InfantryPathFinder {
+public class SpheroidPathFinder {
     private IGame game;
-    private List<MovePath> infantryPaths;
+    private List<MovePath> spheroidPaths;
     private MMLogger logger;
-    private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.InfantryPathFinder";
+    private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.SpheroidPathFinder";
     
     private Set<Coords> visitedCoords = new HashSet<>();
+    private static List<List<MoveStepType>> turns;
     
+    static {
+        // put together a pre-defined array of turns. Indexes correspond to the directional values found in Coords.java
+        turns = new ArrayList<>();
+        turns.add(new ArrayList<MoveStepType>()); // "no turns"
+        
+        turns.add(new ArrayList<MoveStepType>());
+        turns.get(1).add(MoveStepType.TURN_RIGHT);
+        
+        turns.add(new ArrayList<MoveStepType>());
+        turns.get(2).add(MoveStepType.TURN_RIGHT);
+        turns.get(2).add(MoveStepType.TURN_RIGHT);
+        
+        turns.add(new ArrayList<MoveStepType>());
+        turns.get(3).add(MoveStepType.TURN_RIGHT);
+        turns.get(3).add(MoveStepType.TURN_RIGHT);
+        turns.get(3).add(MoveStepType.TURN_RIGHT);
+        
+        turns.add(new ArrayList<MoveStepType>());
+        turns.get(4).add(MoveStepType.TURN_LEFT);
+        turns.get(4).add(MoveStepType.TURN_LEFT);
+        
+        turns.add(new ArrayList<MoveStepType>());
+        turns.get(5).add(MoveStepType.TURN_LEFT);
+    }
     
-    private InfantryPathFinder(IGame game) {
+    private SpheroidPathFinder(IGame game) {
         this.game = game;
         getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
     }
 
     public Collection<MovePath> getAllComputedPathsUncategorized() {
-        return infantryPaths;
+        return spheroidPaths;
     }
     
     private MMLogger getLogger() {
@@ -55,32 +77,33 @@ public class InfantryPathFinder {
         final String METHOD_NAME = "run";
         
         try {
-            infantryPaths = new ArrayList<MovePath>();
+            spheroidPaths = new ArrayList<MovePath>();
             // add an option to stand still
-            infantryPaths.add(startingEdge);
+            spheroidPaths.add(startingEdge);
             
-            // for an infantry unit with n MP, the total number of paths should be 6 * n*(n+1)/2 + 1 (triangular rule, plus "stand still")
-            infantryPaths.addAll(generateChildren(startingEdge));
+            // total number of paths should be ~217 * n on a ground map or 7 * n on a low atmo map
+            // where n is the number of possible altitude changes
+            List<MovePath> altitudePaths = AeroPathUtil.generateValidAltitudeChanges(startingEdge);
+            for(MovePath altitudePath : altitudePaths) {
+                spheroidPaths.addAll(generateChildren(altitudePath));
+            }
             
-            visitedCoords.clear();
-            
-            // add possible jump paths, if any
-            MovePath jumpEdge = startingEdge.clone();
-            jumpEdge.addStep(MoveStepType.START_JUMP);
-            infantryPaths.addAll(generateChildren(jumpEdge));
+            spheroidPaths.addAll(altitudePaths);
+            spheroidPaths.add(generateHoverPath(startingEdge));
             
             // now that we've got all our possible destinations, make sure to try every possible rotation,
-            // since facing matters for field guns and if using the "dig in" and "vehicle cover" tacops rules.
-            for(MovePath path : infantryPaths) {
-                infantryPaths.addAll(AeroPathUtil.generateValidRotations(path));
+            for(MovePath path : spheroidPaths) {
+                spheroidPaths.addAll(AeroPathUtil.generateValidRotations(path));
             }
+            
+            visitedCoords.clear();
             
             // add "flee" option if we haven't done anything else
             if(startingEdge.getFinalCoords().isOnBoardEdge(game.getBoard()) &&
                     startingEdge.getStepVector().size() == 0) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);
-                infantryPaths.add(fleePath);
+                spheroidPaths.add(fleePath);
             }
         } catch (OutOfMemoryError e) {
             /*
@@ -99,10 +122,16 @@ public class InfantryPathFinder {
         }
     }
     
-    public static InfantryPathFinder getInstance(IGame game) {
-        InfantryPathFinder ipf = new InfantryPathFinder(game);
+    public static SpheroidPathFinder getInstance(IGame game) {
+        SpheroidPathFinder ipf = new SpheroidPathFinder(game);
 
         return ipf;
+    }
+    
+    private MovePath generateHoverPath(MovePath startingPath) {
+        MovePath hoverPath = startingPath.clone();
+        hoverPath.addStep(MoveStepType.HOVER);
+        return hoverPath;
     }
     
     /**
@@ -117,52 +146,26 @@ public class InfantryPathFinder {
         
         // terminator conditions:
         // we've visited this hex already
-        // we are walking and at or past our movement mp
-        // we are jumping and at or past our jump mp
+        // we've moved further than 1 hex on a low-atmo map
+        // we've moved further than 8 hexes on a ground map
         if(visitedCoords.contains(startingPath.getFinalCoords()) ||
-                (!startingPath.isJumping() && (startingPath.getMpUsed() >= startingPath.getEntity().getRunMP()))||
-                (startingPath.isJumping() && (startingPath.getMpUsed() >= startingPath.getEntity().getJumpMP()))) {
+                (!startingPath.isJumping() && (startingPath.getMpUsed() >= startingPath.getEntity().getRunMP()))) {
             return retval;
         }
         
         visitedCoords.add(startingPath.getFinalCoords());
         
         // generate all possible children, add them to list
-        // for infantry, facing changes are free, so children are always
+        // for units acting as in-atmo spheroid jumpships, facing changes are free, so children are always
         // forward, left-forward, left-left-forward, right-forward, right-right-forward, right-right-right-forward
         // there is never a reason to "back up"
+        // there are also very little built-in error control, since these things are flying
         for(int direction = 0; direction <= 5; direction++) {
-            // carry out some preliminary checks:
-            // are we going off board?
-            // are we going into a building?
-            // are we going onto a bridge?
-            // make sure we're adjusting facing relative to the unit's current facing
-            IHex destinationHex = game.getBoard().getHexInDir(startingPath.getFinalCoords(), 
-                    FireControl.correctFacing(startingPath.getFinalFacing() + direction));
-            
-            // if we're going off board, we may as well not bother continuing
-            // additionally, if we're definitely going to collapse a bridge we're stepping on let's just stop right here.
-            // we're walking *through* buildings, so collapsing them isn't going to be a problem
-            if(destinationHex == null || 
-                    destinationHex.containsTerrain(Terrains.BRIDGE_CF) && 
-                    (destinationHex.getTerrain(Terrains.BRIDGE_CF).getLevel() < startingPath.getEntity().getWeight())) {
-                continue;
-            }
-            
             MovePath childPath = startingPath.clone();
             
             // for each child, we first turn in the appropriate direction
-            for(MoveStepType stepType : AeroPathUtil.TURNS.get(direction)) {
+            for(MoveStepType stepType : turns.get(direction)) {
                 childPath.addStep(stepType);
-            }
-            
-            // then, if we're going to wind up on a building or bridge, set CLIMB_MODE appropriately
-            // go *through* buildings
-            if(destinationHex.containsTerrain(Terrains.BLDG_CF) && childPath.getFinalClimbMode()) {
-                childPath.addStep(MoveStepType.CLIMB_MODE_OFF);
-            // go *over* bridges
-            } else if (destinationHex.containsTerrain(Terrains.BRIDGE_CF) && !childPath.getFinalClimbMode()) {
-                childPath.addStep(MoveStepType.CLIMB_MODE_ON);
             }
             
             // finally, move forward

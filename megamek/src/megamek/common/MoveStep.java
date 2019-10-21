@@ -658,16 +658,15 @@ public class MoveStep implements Serializable {
         // if this is a flying aero, then there is no MP cost for moving
         if ((prev.getAltitude() > 0) || game.getBoard().inSpace()) {
             setMp(0);
-            // if this a spheroid in atmosphere then the cost is always two
+            // if this a spheroid in atmosphere then the cost is always one
+            // we automatically append the cost for hovering as well for convenience
             if (useSpheroidAtmosphere(game, entity)) {
                 if (game.getBoard().onGround()) {
-                    // spheroids only pay for the first hex moved into every 8
-                    // hexes
                     if ((distance % 8) == 1) {
-                        setMp(1);
+                        setMp(3);
                     }
                 } else {
-                    setMp(2);
+                    setMp(3);
                 }
             }
         } else {
@@ -2001,6 +2000,14 @@ public class MoveStep implements Serializable {
             if (useAeroAtmosphere(game, entity)
                     && ((type == MoveStepType.TURN_LEFT) || (type == MoveStepType.TURN_RIGHT))
                     && !prev.canAeroTurn(game)) {
+                return;
+            }
+            
+            // spheroids in atmosphere can move a max of 1 hex on the low atmo map
+            // and 8 hexes on the ground map, regardless of any other considerations
+            if(useSpheroidAtmosphere(game, entity) && 
+                    (!game.getBoard().onGround() && (this.getDistance() > 1) || 
+                            (game.getBoard().onGround() && (getDistance() > 8)))) {
                 return;
             }
 
@@ -3662,6 +3669,11 @@ public class MoveStep implements Serializable {
             return 0;
         }
 
+        // if we're behaving like a spheroid in atmosphere, we can spin around to our heart's content
+        if (useSpheroidAtmosphere(game, entity)) {
+            return 0;
+        }
+        
         // if in atmosphere, the rules are different
         if (useAeroAtmosphere(game, entity)) {
             // if they have a free turn, then this move is free
@@ -3670,8 +3682,6 @@ public class MoveStep implements Serializable {
             }
             // it costs half the current velocity (rounded up)
             return (int) Math.ceil(getVelocity() / 2.0);
-        } else if (useSpheroidAtmosphere(game, entity)) {
-            return 0;
         }
 
         // first check for thruster damage
@@ -3772,15 +3782,21 @@ public class MoveStep implements Serializable {
      */
     public boolean canAeroTurn(IGame game) {
         Entity en = getEntity();
+        
         if (!en.isAero()) {
             return false;
+        }
+        
+        // spheroids in atmo can spin around like a centrifuge all they want
+        if(useSpheroidAtmosphere(game, en)) {
+            return true;
         }
 
         if (dueFreeTurn()) {
             return true;
         }
 
-        // if its parf of a maneuver then you can turn
+        // if its part of a maneuver then you can turn
         if (isManeuver()) {
             return true;
         }
@@ -3925,27 +3941,9 @@ public class MoveStep implements Serializable {
     /**
      * Should we treat this movement as if it is occurring for a spheroid unit
      * flying in atmosphere?
-     *
-     * @param game
-     * @param en
-     * @return
      */
-    private boolean useSpheroidAtmosphere(IGame game, Entity en) {
-        if (en.isAero()) {
-            return false;
-        }
-        // are we in space?
-        if (game.getBoard().inSpace()) {
-            return false;
-        }
-        // aerodyne's will operate like spheroids in vacuum
-        if (!((IAero) en).isSpheroid()
-                && !game.getPlanetaryConditions().isVacuum()) {
-            return false;
-        }
-        // are we in atmosphere?
-        return en.isAirborne();
-
+    public boolean useSpheroidAtmosphere(IGame game, Entity en) {
+        return Compute.useSpheroidAtmosphere(game, en);
     }
 
     /**

@@ -15,12 +15,8 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.LargeSupportTank;
-import megamek.common.Tank;
+import megamek.common.*;
+import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.BuildingBlock;
 
 /**
@@ -206,6 +202,39 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
             t.setOmni(true);
         }
         t.setArmorTonnage(t.getArmorWeight());
+
+        if (dataFile.exists("baseChassisTurretWeight")) {
+            t.setBaseChassisTurretWeight(dataFile.getDataAsDouble("baseChassisTurretWeight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisTurret2Weight")) {
+            t.setBaseChassisTurret2Weight(dataFile.getDataAsDouble("baseChassisTurret2Weight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisSponsonPintleWeight")) {
+            t.setBaseChassisSponsonPintleWeight(dataFile.getDataAsDouble("baseChassisSponsonPintleWeight")[0]);
+        }
+
+        if (dataFile.exists("hasNoControlSystems")) {
+            t.setHasNoControlSystems(true);
+        }
+
+        if (dataFile.exists("baseChassisFireConWeight")) {
+            t.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
+        }
+
+        if (dataFile.exists("fuelType")) {
+            try {
+                t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
+            } catch (IllegalArgumentException ex) {
+                DefaultMmLogger.getInstance().error(getClass(), "getEntity()",
+                        "While loading " + t.getShortNameRaw()
+                                + ": Could not parse ICE fuel type "
+                                + dataFile.getDataAsString("fuelType")[0]);
+                t.setICEFuelType(FuelType.PETROCHEMICALS);
+            }
+        }
+
         return t;
     }
 }

@@ -219,6 +219,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * the engine and structural tech ratings match.
      */
     protected int engineTechRating = USE_STRUCTURAL_RATING;
+
+    /**
+     * Used by omni support vehicles to track the weight of optional fire control systems.
+     */
+    private double baseChassisFireConWeight = 0.0;
     /**
      * Year to use calculating engine and control system weight and fuel efficiency for primitive
      * support vehicles and aerospace units. This needs to be tracked separately from intro year to
@@ -10686,7 +10691,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return The armor weight in tons.
      */
     public double getArmorWeight() {
-        if (!hasPatchworkArmor()) {
+        if (hasPatchworkArmor()) {
+            double total = 0;
+            for (int loc = 0; loc < locations(); loc++) {
+                total += getArmorWeight(loc);
+            }
+            return Math.ceil(total * 2.0) / 2.0;
+        } else if (isSupportVehicle()
+                    && getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
+            double total = getTotalOArmor()
+                    * EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()), getArmorTechRating());
+            if (getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+                return Math.round(total * 1000.0) / 1000.0;
+            } else {
+                return Math.ceil(total * 2.0) / 2.0;
+            }
+        } else {
             // this roundabout method is actually necessary to avoid rounding
             // weirdness. Yeah, it's dumb.
             double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
@@ -10695,12 +10715,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             double armorWeight = points / armorPerTon;
             armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
             return armorWeight;
-        } else {
-            double total = 0;
-            for (int loc = 0; loc < locations(); loc++) {
-                total += getArmorWeight(loc);
-            }
-            return Math.ceil(total * 2.0) / 2.0;
         }
     }
 
@@ -12606,6 +12620,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
+     * Sets the barrier armor rating for support vehicles. Has no effect on other unit types.
+     * @param rating
+     */
+    public void setBARRating(int rating) {}
+
+    /**
      * does this entity have an armored chassis?
      *
      * @return
@@ -14416,6 +14436,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getLabTotalArmorPoints() {
+        if (isSupportVehicle() && (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD)
+            && !hasPatchworkArmor()) {
+            return (int) Math.floor(armorTonnage
+                    / EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()),
+                    getArmorTechRating()));
+        }
         double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
                 armorType[0], armorTechLevel[0]);
         return (int) Math.floor(armorPerTon * armorTonnage);
@@ -15025,6 +15051,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setEngineTechRating(int engineTechRating) {
         this.engineTechRating = engineTechRating;
+    }
+
+    /**
+     * Used by omni support vehicles to track the weight of fire control systems.
+     * This limits the tonnage that can be devoted to weapons in pods.
+     *
+     * @return The fixed weight of fire control systems.
+     */
+    public double getBaseChassisFireConWeight() {
+        return baseChassisFireConWeight;
+    }
+
+    /**
+     *  Used by omni support vehicles to set the weight of fixed fire control systems in the base chassis.
+     *
+     * @param weight The weight of fixed fire control systems.
+     */
+    public void setBaseChassisFireConWeight(double weight) {
+        baseChassisFireConWeight = weight;
     }
 
     /**

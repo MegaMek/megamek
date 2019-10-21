@@ -125,6 +125,45 @@ public class EquipmentTypeLookup {
     public static final String PINTLE_TURRET = "PintleTurret";
 
     @EquipmentName
+    public static final String AMPHIBIOUS_CHASSIS_MOD = "AmphibiousChassisMod";
+    @EquipmentName
+    public static final String ARMORED_CHASSIS_MOD = "ArmoredChassisMod";
+    @EquipmentName
+    public static final String BICYCLE_CHASSIS_MOD = "BicycleChassisMod";
+    @EquipmentName
+    public static final String CONVERTIBLE_CHASSIS_MOD = "ConvertibleChassisMod";
+    @EquipmentName
+    public static final String DUNE_BUGGY_CHASSIS_MOD = "DuneBuggyChassisMod";
+    @EquipmentName
+    public static final String ENVIRONMENTAL_SEALING_CHASSIS_MOD = "EnvironmentalSealingChassisMod";
+    @EquipmentName
+    public static final String EXTERNAL_POWER_PICKUP_CHASSIS_MOD = "ExternalPowerPickupChassisMod";
+    @EquipmentName
+    public static final String HYDROFOIL_CHASSIS_MOD = "HydrofoilChassisMod";
+    @EquipmentName
+    public static final String MONOCYCLE_CHASSIS_MOD = "MonocycleChassisMod";
+    @EquipmentName
+    public static final String OFFROAD_CHASSIS_MOD = "OffroadChassisMod";
+    @EquipmentName
+    public static final String OMNI_CHASSIS_MOD = "OmniChassisMod";
+    @EquipmentName
+    public static final String PROP_CHASSIS_MOD = "PropChassisMod";
+    @EquipmentName
+    public static final String SNOWMOBILE_CHASSIS_MOD = "SnowmobileChassisMod";
+    @EquipmentName
+    public static final String STOL_CHASSIS_MOD = "STOLChassisMod";
+    @EquipmentName
+    public static final String SUBMERSIBLE_CHASSIS_MOD = "SubmersibleChassisMod";
+    @EquipmentName
+    public static final String TRACTOR_CHASSIS_MOD = "TractorChassisMod";
+    @EquipmentName
+    public static final String TRAILER_CHASSIS_MOD = "TrailerChassisMod";
+    @EquipmentName
+    public static final String ULTRALIGHT_CHASSIS_MOD = "UltraLightChassisMod";
+    @EquipmentName
+    public static final String VSTOL_CHASSIS_MOD = "VSTOLChassisMod";
+    
+    @EquipmentName
     public static final String LIMB_CLUB = "Limb Club";
     @EquipmentName
     public static final String GIRDER_CLUB = "Girder Club";

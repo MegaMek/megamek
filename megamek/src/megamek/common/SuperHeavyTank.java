@@ -568,5 +568,9 @@ public class SuperHeavyTank extends Tank {
         }
         return "?";
     }
-    
+
+    @Override
+    public boolean isTrailer() {
+        return hasWorkingMisc(MiscType.F_TRAILER_MODIFICATION);
+    }
 }

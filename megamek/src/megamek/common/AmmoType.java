@@ -1386,7 +1386,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_FW)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD), "373,TO"));
         
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
                 new TechAdvancement(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -1453,7 +1453,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true,false,false,false,false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD), "373,TO"));
                 
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -12978,6 +12978,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_BA_MICRO_BOMB;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
+        ammo.kgPerShot = 0;        
         ammo.bv = 0;
         ammo.cost = 500;
         ammo.rulesRefs = "253,TM";
@@ -13147,7 +13148,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
         ammo.shots = 200;
         ammo.bv = 1;
-        ammo.kgPerShot = 10;
+        ammo.kgPerShot = 5;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But MG Tech Base and Avail Ratings.
         ammo.rulesRefs = "228,TM";

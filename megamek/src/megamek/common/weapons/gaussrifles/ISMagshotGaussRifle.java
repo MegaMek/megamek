@@ -43,6 +43,10 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
+        shortAV = 2;
+        medAV = 2;
+        longAV = 2;
+        maxRange = RANGE_SHORT;
         tonnage = 0.5;
         criticals = 2;
         bv = 15;

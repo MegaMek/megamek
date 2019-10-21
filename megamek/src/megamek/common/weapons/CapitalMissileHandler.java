@@ -130,16 +130,16 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         
+        // Used when using a grounded dropship with individual weapons
+        // or a fighter squadron loaded with ASM or Alamo bombs.
+        nDamPerHit = calcDamagePerHit();
+        
         //Point Defense fire vs Capital Missiles
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
                 && getParentBayHandler() != null) {
             WeaponHandler bayHandler = getParentBayHandler();
             CounterAV = bayHandler.getCounterAV();
-            nDamPerHit = calcDamagePerHit();
         } else {
-            // Used when using a grounded dropship with individual weapons
-            // or a fighter squadron loaded with ASM or Alamo bombs.
-            nDamPerHit = calcDamagePerHit();
             //This gets used if you're shooting at an airborne dropship. It can defend with PD bays.
             attackValue = calcAttackValue();
         }

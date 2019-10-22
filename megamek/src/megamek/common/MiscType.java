@@ -760,21 +760,10 @@ public class MiscType extends EquipmentType {
                     weaponWeight += mount.getType().getTonnage(entity);
                 }
             }
-            TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
-            if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
-                roundWeight = TestEntity.Ceil.KILO;
-            }
             double weight = weaponWeight / (hasFlag(F_BASIC_FIRECONTROL) ? 20.0 : 10.0);
-            return TestEntity.ceil(weight, roundWeight);
+            return RoundWeight.standard(weight, entity);
         } else if (hasFlag(F_BOOBY_TRAP)) {
-            // 10% of unit weight
-            double weight = entity.getWeight() / 10;
-            TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
-            if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
-                roundWeight = TestEntity.Ceil.KILO;
-            }
-            return TestEntity.ceil(weight, roundWeight);
-
+            return RoundWeight.standard(entity.getWeight() / 10.0, entity);
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
             double weight = 2;
             for (Mounted mount : entity.getMisc()) {
@@ -816,9 +805,9 @@ public class MiscType extends EquipmentType {
                 }
                 //Jumpship is based on non-drive weight and rounded to ton
                 if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-                    return Math.ceil((entity.getWeight() - ((Jumpship)entity).getJumpDriveWeight()) * pct);
+                    RoundWeight.nextTon((entity.getWeight() - ((Jumpship) entity).getJumpDriveWeight()) * pct);
                 }
-                return Math.ceil(entity.getWeight() * pct * 2.0) / 2.0;
+                return RoundWeight.standard(entity.getWeight() * pct, entity);
             } else if (subType == S_IMPROVED) {
                 return 1.0; // no weight for the base system for units < 10 tons, +1 for improved, elite not allowed
             } else {
@@ -842,9 +831,9 @@ public class MiscType extends EquipmentType {
                 }
             }
             if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-                return Math.ceil(entity.getWeight() * pct);
+                return RoundWeight.nextTon(entity.getWeight());
             } else {
-                return Math.ceil((entity.getWeight() * pct) * 2.0) / 2.0;
+                return RoundWeight.standard(entity.getWeight(), entity);
             }
         } else if (hasFlag(MiscType.F_CASPARII)) {
             double pct = 0.06; // Value for small craft
@@ -864,30 +853,19 @@ public class MiscType extends EquipmentType {
                 }
             }
             if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-                return Math.ceil(entity.getWeight() * pct);
+                return RoundWeight.nextTon(entity.getWeight());
             } else {
-                return Math.ceil((entity.getWeight() * pct) * 2.0) / 2.0;
+                return RoundWeight.standard(entity.getWeight(), entity);
             }
         } else if (hasFlag(MiscType.F_ATAC)) {
             //TODO Neo - pg IO 146 Each drone that it can control adds 150 ton to weight.
-            double tWeight = 0;
-            tWeight = Math.ceil((entity.getWeight() * 0.02) * 2) / 2.0;
-            if (tWeight >50000) {
-                return 50000;
-            } else {
-                return Math.ceil((entity.getWeight() * 0.02) * 2) / 2.0;
-            }
+            double tWeight = RoundWeight.standard(entity.getWeight() * 0.02, entity);
+            return Math.min(tWeight, 50000);
         } else if (hasFlag(MiscType.F_DTAC)) {
             //TODO Neo - pg IO 146 Each drone that it can control adds 150 ton to weight.
-            return Math.ceil((entity.getWeight() * 0.03) * 2) / 2.0;
+            return RoundWeight.standard(entity.getWeight() * 0.03, entity);
         } else if (hasFlag(MiscType.F_SDS_DESTRUCT)) {
-            double tWeight = 0;
-            tWeight = Math.ceil((entity.getWeight() * 0.1) * 2) / 2.0;
-            if (tWeight >10000) {
-                return 10000;
-            } else {
-                return Math.ceil((entity.getWeight() * 0.02) * 2) / 2.0;
-            }
+            return Math.min(RoundWeight.nextTon(entity.getWeight() * 0.1), 10000);
         }  else if (hasFlag(MiscType.F_MAGNETIC_CLAMP) && hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
             if (entity.getWeight() < 6) {
                 return 0.25;

@@ -321,7 +321,7 @@ public class TestProtomech extends TestEntity {
         return StringUtil.makeLength(
                 "Structure: "
                         + Integer.toString(getEntity().getTotalOInternal()), getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightStructure()) + "\n";
+                + TestEntity.makeWeightString(getWeightStructure(), true) + "\n";
     }
 
     @Override
@@ -333,7 +333,7 @@ public class TestProtomech extends TestEntity {
     public String printWeightControls() {
         StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
                 "Controls:", getPrintSize() - 5));
-        retVal.append(makeWeightString(getWeightControls()));
+        retVal.append(makeWeightString(getWeightControls(), true));
         retVal.append("\n");
         return retVal.toString();
     }
@@ -348,7 +348,7 @@ public class TestProtomech extends TestEntity {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
-                    TestEntity.makeWeightString(round(mt.getTonnage(getEntity()), Ceil.KILO)));
+                    TestEntity.makeWeightString(round(mt.getTonnage(getEntity()), Ceil.KILO), true));
             buff.append("\n");
         }
         return buff;
@@ -364,7 +364,7 @@ public class TestProtomech extends TestEntity {
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
                     .append(TestEntity.makeWeightString(round(mt
-                            .getTonnage(getEntity()), Ceil.KILO))).append("\n");
+                            .getTonnage(getEntity()), Ceil.KILO), true)).append("\n");
         }
         return buff;
     }
@@ -379,7 +379,7 @@ public class TestProtomech extends TestEntity {
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
                     .append(TestEntity.makeWeightString(
-                            Math.ceil(mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0)).append("\n");
+                            Math.ceil(mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0, true)).append("\n");
         }
         return buff;
     }
@@ -587,8 +587,8 @@ public class TestProtomech extends TestEntity {
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
-            buff.append("Weight: ").append(getWeight()).append(" (")
-                    .append(calculateWeight()).append(")\n");
+            buff.append("Weight: ").append(getWeight() * 1000).append(" kg (")
+                    .append(calculateWeight() * 1000).append(" kg)\n");
         }
         buff.append(printWeightCalculation()).append("\n");
         buff.append(printArmorPlacement());

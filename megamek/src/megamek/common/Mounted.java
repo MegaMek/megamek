@@ -1066,7 +1066,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (atype.getAmmoType() == AmmoType.T_MEK_MORTAR) {
                 if ((mType == AmmoType.M_AIRBURST)
                         || (mType == AmmoType.M_FLARE)
-                        || (mType == AmmoType.M_SMOKE)) {
+                        || (mType == AmmoType.M_SMOKE_WARHEAD)) {
                     damagePerShot = 1;
                 } else {
                     damagePerShot = 2;

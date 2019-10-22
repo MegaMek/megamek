@@ -46,6 +46,7 @@ public class FixedWingSupport extends ConvFighter {
         barRating[loc] = rating;
     }
 
+    @Override
     public void setBARRating(int rating) {
         for (int i = 0; i < locations(); i++) {
             barRating[i] = rating;
@@ -73,6 +74,11 @@ public class FixedWingSupport extends ConvFighter {
     }
 
     @Override
+    public boolean hasArmoredChassis() {
+        return hasWorkingMisc(MiscType.F_ARMORED_CHASSIS);
+    }
+
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
@@ -88,37 +94,128 @@ public class FixedWingSupport extends ConvFighter {
     }
 
     @Override
+    public boolean isSupportVehicle() {
+        return true;
+    }
+
+    @Override
     public void autoSetSI() {
         initializeSI(getOriginalWalkMP());
     }
 
-
     @Override
     public boolean isVSTOL() {
-        if (hasWorkingMisc(MiscType.F_VSTOL_CHASSIS, -1)) {
-            return true;
-        }
-        return false;
+        return hasWorkingMisc(MiscType.F_VSTOL_CHASSIS);
     }
 
     @Override
     public boolean isSTOL() {
-        if (hasWorkingMisc(MiscType.F_STOL_CHASSIS, -1)) {
-            return true;
-        }
-        return false;
+        return hasWorkingMisc(MiscType.F_STOL_CHASSIS);
     }
 
-    protected static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)
+    public boolean hasPropChassisMod() {
+        return hasWorkingMisc(MiscType.F_PROP);
+    }
+
+    /**
+     * The mass of each point of fuel in kg, based on weight class and engine tech rating.
+     */
+    private static final int[][] KG_PER_FUEL_POINT = {
+            {50, 30, 23, 15, 13, 10}, // small
+            {63, 38, 25, 20, 18, 15}, // medium
+            {83, 50, 35, 28, 23, 20} // large
+    };
+
+    /**
+     * While most aerospace units measure fuel weight in points per ton, support vehicles measure
+     * in kg per point. Vehicles that do not require fuel return 0.
+     *
+     * @return The mass of each point of fuel in kg.
+     */
+    public int kgPerFuelPoint() {
+        int kg = KG_PER_FUEL_POINT[getWeightClass() - EntityWeightClass.WEIGHT_SMALL_SUPPORT][getEngineTechRating()];
+        if (hasPropChassisMod() || getMovementMode().equals(EntityMovementMode.AIRSHIP)) {
+            if (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION)
+                    || (getEngine().getEngineType() == Engine.SOLAR)) {
+                return 0;
+            }
+            kg = (int) Math.ceil(kg * 0.75);
+        }
+        return kg;
+    }
+
+    @Override
+    public double getFuelTonnage() {
+        double weight = getOriginalFuel() * kgPerFuelPoint() / 1000.0;
+        if (getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            weight = Math.ceil(weight * 2.0) * 0.5;
+        }
+        return weight;
+    }
+
+    @Override
+    public double getFuelPointsPerTon() {
+        return 1000.0 / kgPerFuelPoint();
+    }
+
+    private static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
-    protected static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_SMALL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_A).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_MEDIUM = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    // Availability missing from TO. Using medium
+    private static final TechAdvancement TA_AIRSHIP_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    // Also using early spaceflight for intro dates based on common sense.
+    private static final TechAdvancement TA_SATELLITE_SMALL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+            .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    private static final TechAdvancement TA_SATELLITE_MEDIUM = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+            .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    private static final TechAdvancement TA_SATELLITE_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+        return getConstructionTechAdvancement(getMovementMode(), getWeightClass());
+    }
+
+    public static TechAdvancement getConstructionTechAdvancement(EntityMovementMode movementMode, int weightClass) {
+        if (movementMode.equals(EntityMovementMode.AIRSHIP)) {
+            if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                return TA_AIRSHIP_SUPPORT_LARGE;
+            } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
+                return TA_AIRSHIP_SUPPORT_MEDIUM;
+            } else {
+                return TA_AIRSHIP_SUPPORT_SMALL;
+            }
+        } else if (movementMode.equals(EntityMovementMode.STATION_KEEPING)) {
+            if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                return TA_SATELLITE_LARGE;
+            } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
+                return TA_SATELLITE_MEDIUM;
+            } else {
+                return TA_SATELLITE_SMALL;
+            }
+        } else if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
             return TA_FIXED_WING_SUPPORT_LARGE;
         } else {
             return TA_FIXED_WING_SUPPORT;
@@ -190,8 +287,7 @@ public class FixedWingSupport extends ConvFighter {
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
-    
-    
+
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);

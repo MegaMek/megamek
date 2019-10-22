@@ -51,6 +51,7 @@ public class LongTom extends ArtilleryWeapon {
         extremeRange = 30; // No extreme range.
         tonnage = 30;
         criticals = 30;
+        svslots = 15;
         bv = 368;
         cost = 450000;
         rulesRefs = "284,TO";

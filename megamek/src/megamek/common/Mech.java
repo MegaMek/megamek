@@ -5151,14 +5151,14 @@ public abstract class Mech extends Entity {
             bvText.append("Weapon BV * Firing Control Modifier");
             bvText.append(endColumn);
             bvText.append(startColumn);
-            bvText.append(obv);
+            bvText.append(weaponBV);
             bvText.append(" * ");
             bvText.append("0.9");
             bvText.append(endColumn);
             weaponBV *= 0.9;
             bvText.append(startColumn);
             bvText.append(" = ");
-            bvText.append(obv);
+            bvText.append(weaponBV);
             bvText.append(endColumn);
             bvText.append(endRow);
         }
@@ -8047,7 +8047,7 @@ public abstract class Mech extends Entity {
             } else if (mountBv > 0) {
                 bv += mountBv * 0.05 * mount.getType().getCriticals(this);
             } else {
-                bv += 5;
+                bv += 5 * mount.getType().getCriticals(this);
             }
         }
 

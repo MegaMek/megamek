@@ -957,7 +957,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Some Mek mortar ammo types can only be aimed at a hex
             if (wtype != null && wtype.hasFlag(WeaponType.F_MEK_MORTAR)
                     && ((atype.getMunitionType() == AmmoType.M_AIRBURST) || (atype.getMunitionType() == AmmoType.M_FLARE)
-                            || (atype.getMunitionType() == AmmoType.M_SMOKE))) {
+                            || (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD))) {
                 if (!(target instanceof HexTarget)) {
                     return String.format(Messages.getString("WeaponAttackAction.AmmoAtHexOnly"), atype.getSubMunitionName());
                 }

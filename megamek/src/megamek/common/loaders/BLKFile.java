@@ -708,6 +708,8 @@ public class BLKFile {
         
         if (t.isSupportVehicle() || (t instanceof FixedWingSupport)) {
             blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating());
+            blk.writeBlockData("engine_tech_rating", t.getEngineTechRating());
+            blk.writeBlockData("armor_tech_rating", t.getArmorTechRating());
         }
         
         if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)

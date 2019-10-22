@@ -403,6 +403,8 @@ public class MoveStep implements Serializable {
                 return "Thrust";
             case YAW:
                 return "Yaw";
+            case HOVER:
+                return "Hover";
             default:
                 return "???";
         }

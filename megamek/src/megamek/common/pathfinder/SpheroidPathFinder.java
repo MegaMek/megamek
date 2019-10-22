@@ -8,6 +8,7 @@ import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Coords;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
@@ -78,8 +79,11 @@ public class SpheroidPathFinder {
         
         try {
             spheroidPaths = new ArrayList<MovePath>();
-            // add an option to stand still
-            spheroidPaths.add(startingEdge);
+
+            // can't do anything if the unit is out of control.
+            if(((IAero) startingEdge.getEntity()).isOutControlTotal()) {
+                return;
+            }
             
             // total number of paths should be ~217 * n on a ground map or 7 * n on a low atmo map
             // where n is the number of possible altitude changes
@@ -91,10 +95,14 @@ public class SpheroidPathFinder {
             spheroidPaths.addAll(altitudePaths);
             spheroidPaths.add(generateHoverPath(startingEdge));
             
-            // now that we've got all our possible destinations, make sure to try every possible rotation,
+            List<MovePath> validRotations = new ArrayList<>();
+            // now that we've got all our possible destinations, make sure to try every possible rotation
+            // at the end of the path
             for(MovePath path : spheroidPaths) {
-                spheroidPaths.addAll(AeroPathUtil.generateValidRotations(path));
+                validRotations.addAll(AeroPathUtil.generateValidRotations(path));
             }
+            
+            spheroidPaths.addAll(validRotations);
             
             visitedCoords.clear();
             
@@ -131,7 +139,14 @@ public class SpheroidPathFinder {
     private MovePath generateHoverPath(MovePath startingPath) {
         MovePath hoverPath = startingPath.clone();
         hoverPath.addStep(MoveStepType.HOVER);
-        return hoverPath;
+        
+        // if we can hover, then hover. If not (due to battle damage or whatever), then we fall down.
+        if(hoverPath.isMoveLegal()) {
+            return hoverPath;
+        } else {
+            hoverPath.removeLastStep();
+            return hoverPath;
+        }
     }
     
     /**

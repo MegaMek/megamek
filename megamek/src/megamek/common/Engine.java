@@ -464,6 +464,9 @@ public class Engine implements Serializable, ITechnology {
     // Don't localize the marked strings below since they are used in mech
     // file parsing.
     public String getEngineName() {
+        if (!isValidEngine()) {
+            return Messages.getString("Engine.invalid");
+        }
         StringBuilder sb = new StringBuilder();
         sb.append(engineRating);
         if (hasFlag(LARGE_ENGINE)) {

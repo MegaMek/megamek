@@ -613,7 +613,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         for (int i = 0; i < nweaponsHit; i++) {
                             hits += calcHits(throwAwayReport);
                         }
-                        //Report point defense fire
+                        //Report and apply point defense fire
                         if (pdBayEngaged || amsBayEngaged) {
                             Report r = new Report(3367);
                             r.indent();
@@ -621,6 +621,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             r.add(getCounterAV());
                             r.newlines = 0;
                             vPhaseReport.addElement(r);
+                            hits -= (CounterAV / nDamPerHit);
                         } else if (amsEngaged) {
                             Report r = new Report(3350);
                             r.subject = entityTarget.getId();
@@ -713,14 +714,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             nweaponsHit = nweaponsHit - AMSHits;
                         }
                         nCluster = 1;
-                        Report r = new Report(3325);
-                        r.subject = subjectId;
-                        r.add(nweaponsHit);
-                        r.add(" weapon(s) ");
-                        r.add(" ");
-                        r.newlines = 0;
-                        hits = nweaponsHit;
-                        vPhaseReport.add(r);
+                        if (!bMissed) {
+                            Report r = new Report(3325);
+                            r.subject = subjectId;
+                            r.add(nweaponsHit);
+                            r.add(" weapon(s) ");
+                            r.add(" ");
+                            r.newlines = 0;
+                            hits = nweaponsHit;
+                            vPhaseReport.add(r);
+                        }
                     }
                 }
             }

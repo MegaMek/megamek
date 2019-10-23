@@ -432,8 +432,7 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
-    public double getTonnage(Entity entity, int location) {
-
+    public double getTonnage(Entity entity, int location, RoundWeight defaultRounding) {
         if ((tonnage != TONNAGE_VARIABLE) || (null == entity)) {
             return tonnage;
         }
@@ -465,9 +464,9 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_MECH_EQUIPMENT)) {
             if (isClan()) {
-                return RoundWeight.standard(entity.getWeight() * 0.05, entity);
+                return defaultRounding.round(entity.getWeight() * 0.05, entity);
             } else {
-                return RoundWeight.standard(entity.getWeight() * 0.07, entity);
+                return defaultRounding.round(entity.getWeight() * 0.07, entity);
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_PROTOMECH_EQUIPMENT)) {
             return RoundWeight.nearestKg(entity.getWeight() / 5.0);
@@ -476,11 +475,11 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
             return RoundWeight.nextTon(entity.getWeight() / 20.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_SWORD)) {
-            return RoundWeight.standard(entity.getWeight() / 20.0, entity);
+            return defaultRounding.round(entity.getWeight() / 20.0, entity);
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
             return RoundWeight.nextTon(entity.getWeight() / 10.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
-            return 0.5 + RoundWeight.standard(entity.getWeight() / 20.0, entity);
+            return 0.5 + defaultRounding.round(entity.getWeight() / 20.0, entity);
         } else if (hasFlag(F_JET_BOOSTER)) {
             // CAW: Moved to before F_MASC to ensure this weight calc is used
             //      for VTOL Jet Boosters (which have both flags set)
@@ -490,7 +489,7 @@ public class MiscType extends EquipmentType {
             if (null == e) {
                 return 0;
             }
-            return RoundWeight.standard(e.getWeightEngine(entity) / 10.0, entity);
+            return defaultRounding.round(e.getWeightEngine(entity) / 10.0, entity);
         } else if (hasFlag(F_MASC)) {
             if (entity instanceof Protomech) {
                 return RoundWeight.nearestKg(entity.getWeight() * 0.025);
@@ -507,7 +506,7 @@ public class MiscType extends EquipmentType {
                     }
                     // pg 344, TO
                     // 10% of engine weight
-                    return RoundWeight.standard(e.getWeightEngine(entity) / 10.0, entity);
+                    return defaultRounding.round(e.getWeightEngine(entity) / 10.0, entity);
                 }
 
                 if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
@@ -528,7 +527,7 @@ public class MiscType extends EquipmentType {
                 }
             }
             // round to half ton
-            return RoundWeight.standard(weaponWeight / 10.0, entity);
+            return defaultRounding.round(weaponWeight / 10.0, entity);
         } else if (hasFlag(F_SPONSON_TURRET)) {
             // For omni vehicles, this should be set as part of the base chassis.
             if ((entity.isOmni() && (entity instanceof Tank)
@@ -548,8 +547,8 @@ public class MiscType extends EquipmentType {
                     weaponWeight += m.getType().getTonnage(entity);
                 }
             }
-            return RoundWeight.standard(weaponWeight / 10.0 / entity.countWorkingMisc(MiscType.F_SPONSON_TURRET),
-                    entity) * 0.5;
+            return defaultRounding.round(weaponWeight / 10.0,
+                    entity) / entity.countWorkingMisc(MiscType.F_SPONSON_TURRET);
         } else if (hasFlag(F_PINTLE_TURRET)) {
             // For omnivehicles the weight should be set as chassis fixed weight.
             // Split the weight evenly among the mounts to assure the total weight is correct.
@@ -565,12 +564,12 @@ public class MiscType extends EquipmentType {
                     weaponWeight += m.getType().getTonnage(entity);
                 }
             }
-            return RoundWeight.standard(weaponWeight / 20.0, entity);
+            return defaultRounding.round(weaponWeight / 20.0, entity);
         } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
             if (isClan()) {
-                return RoundWeight.standard(entity.getWeight() * 0.1, entity);
+                return defaultRounding.round(entity.getWeight() * 0.1, entity);
             } else {
-                return RoundWeight.standard(entity.getWeight() * 0.15, entity);
+                return defaultRounding.round(entity.getWeight() * 0.15, entity);
             }
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
@@ -599,7 +598,7 @@ public class MiscType extends EquipmentType {
                 } else {
                     tons = entity.getTotalOArmor() / (16 * 1.12f);
                 }
-                tons = RoundWeight.standard(tons, entity);
+                tons = defaultRounding.round(tons, entity);
             } else {
                 // TODO
             }
@@ -608,7 +607,7 @@ public class MiscType extends EquipmentType {
             double tons = 0;
             if (!entity.hasPatchworkArmor()) {
                 tons = entity.getTotalOArmor() / (16 * 1.06f);
-                tons = RoundWeight.standard(tons, entity);
+                tons = defaultRounding.round(tons, entity);
             } else {
                 // TODO
             }
@@ -617,7 +616,7 @@ public class MiscType extends EquipmentType {
             double tons = 0;
             if (!entity.hasPatchworkArmor()) {
                 tons = entity.getTotalOArmor() / (16 * 1.24f);
-                tons = RoundWeight.standard(tons, entity);
+                tons = defaultRounding.round(tons, entity);
             } else {
                 // TODO
             }
@@ -626,20 +625,20 @@ public class MiscType extends EquipmentType {
             double tons = 0;
             if (!entity.hasPatchworkArmor()) {
                 tons = entity.getTotalOArmor() / (16 * 0.875f);
-                tons = RoundWeight.standard(tons, entity);
+                tons = defaultRounding.round(tons, entity);
             } else {
                 // TODO
             }
             return tons;
         } else if (hasFlag(MiscType.F_INDUSTRIAL_STRUCTURE)) {
-            return RoundWeight.standard(entity.getWeight() * 0.2, entity);
+            return defaultRounding.round(entity.getWeight() * 0.2, entity);
         } else if (hasFlag(F_ENDO_STEEL) || hasFlag(F_ENDO_STEEL_PROTO)
                 || hasFlag(MiscType.F_COMPOSITE)) {
-            return RoundWeight.standard(entity.getWeight() * 0.05, entity);
+            return defaultRounding.round(entity.getWeight() * 0.05, entity);
         } else if (hasFlag(MiscType.F_REINFORCED)) {
-            return RoundWeight.standard(entity.getWeight() * 0.2, entity);
+            return defaultRounding.round(entity.getWeight() * 0.2, entity);
         } else if (hasFlag(F_ENDO_COMPOSITE)) {
-            return RoundWeight.standard(entity.getWeight() * 0.075, entity);
+            return defaultRounding.round(entity.getWeight() * 0.075, entity);
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return RoundWeight.nextTon(entity.getWeight() * 0.1);
         } else if (hasFlag(F_DUNE_BUGGY)) {
@@ -671,25 +670,25 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             // This is the 'Mech mechanical jump booster. The BA jump booster has the same flag but
             // has a fixed weight so doesn't get to this point.
-            return RoundWeight.standard((entity.getWeight() * entity.getOriginalJumpMP()) * 0.05, entity);
+            return defaultRounding.round((entity.getWeight() * entity.getOriginalJumpMP()) * 0.05, entity);
         } else if ((hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) || hasFlag(F_TALON)) {
             return RoundWeight.nextTon(entity.getWeight() / 15.0);
         } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
             if (entity.entityIsQuad()) {
-                return RoundWeight.standard(entity.getWeight() / 50.0, entity);
+                return defaultRounding.round(entity.getWeight() / 50.0, entity);
             } else {
-                return RoundWeight.standard(entity.getWeight() / 35.0, entity);
+                return defaultRounding.round(entity.getWeight() / 35.0, entity);
             }
         } else if (hasFlag(F_TRACKS)) {
             if (hasSubType(S_QUADVEE_WHEELS)) {
-                return RoundWeight.standard(entity.getWeight() * 0.15, entity);
+                return defaultRounding.round(entity.getWeight() * 0.15, entity);
             } else {
-                return RoundWeight.standard(entity.getWeight() * 0.1, entity);
+                return defaultRounding.round(entity.getWeight() * 0.1, entity);
             }
         } else if (hasFlag(F_LIMITED_AMPHIBIOUS)) {
-            return RoundWeight.standard(entity.getWeight() / 25.0, entity);
+            return defaultRounding.round(entity.getWeight() / 25.0, entity);
         } else if (hasFlag(F_FULLY_AMPHIBIOUS)) {
-            return RoundWeight.standard(entity.getWeight() / 10.0, entity);
+            return defaultRounding.round(entity.getWeight() / 10.0, entity);
         } else if (hasFlag(F_DUMPER)) {
             // 5% of cargo
             double cargoTonnage = 0;
@@ -698,7 +697,7 @@ public class MiscType extends EquipmentType {
                     cargoTonnage += mount.getType().getTonnage(entity);
                 }
             }
-            return RoundWeight.standard(cargoTonnage / 20.0, entity);
+            return defaultRounding.round(cargoTonnage / 20.0, entity);
         } else if (hasFlag(F_BASIC_FIRECONTROL) || hasFlag(F_ADVANCED_FIRECONTROL)) {
             // Omni support vees have a fixed weight for the chassis, which may be
             // higher than what is required for the current configuration
@@ -716,9 +715,9 @@ public class MiscType extends EquipmentType {
                 }
             }
             double weight = weaponWeight / (hasFlag(F_BASIC_FIRECONTROL) ? 20.0 : 10.0);
-            return RoundWeight.standard(weight, entity);
+            return defaultRounding.round(weight, entity);
         } else if (hasFlag(F_BOOBY_TRAP)) {
-            return RoundWeight.standard(entity.getWeight() / 10.0, entity);
+            return defaultRounding.round(entity.getWeight() / 10.0, entity);
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
             double weight = 2;
             for (Mounted mount : entity.getMisc()) {
@@ -762,7 +761,7 @@ public class MiscType extends EquipmentType {
                 if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
                     RoundWeight.nextTon((entity.getWeight() - ((Jumpship) entity).getJumpDriveWeight()) * pct);
                 }
-                return RoundWeight.standard(entity.getWeight() * pct, entity);
+                return defaultRounding.round(entity.getWeight() * pct, entity);
             } else if (subType == S_IMPROVED) {
                 return 1.0; // no weight for the base system for units < 10 tons, +1 for improved, elite not allowed
             } else {
@@ -788,7 +787,7 @@ public class MiscType extends EquipmentType {
             if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
                 return RoundWeight.nextTon(entity.getWeight() * pct);
             } else {
-                return RoundWeight.standard(entity.getWeight() * pct, entity);
+                return defaultRounding.round(entity.getWeight() * pct, entity);
             }
         } else if (hasFlag(MiscType.F_CASPARII)) {
             double pct = 0.06; // Value for small craft
@@ -810,15 +809,15 @@ public class MiscType extends EquipmentType {
             if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
                 return RoundWeight.nextTon(entity.getWeight() * pct);
             } else {
-                return RoundWeight.standard(entity.getWeight() * pct, entity);
+                return defaultRounding.round(entity.getWeight() * pct, entity);
             }
         } else if (hasFlag(MiscType.F_ATAC)) {
             //TODO Neo - pg IO 146 Each drone that it can control adds 150 ton to weight.
-            double tWeight = RoundWeight.standard(entity.getWeight() * 0.02, entity);
+            double tWeight = defaultRounding.round(entity.getWeight() * 0.02, entity);
             return Math.min(tWeight, 50000);
         } else if (hasFlag(MiscType.F_DTAC)) {
             //TODO Neo - pg IO 146 Each drone that it can control adds 150 ton to weight.
-            return RoundWeight.standard(entity.getWeight() * 0.03, entity);
+            return defaultRounding.round(entity.getWeight() * 0.03, entity);
         } else if (hasFlag(MiscType.F_SDS_DESTRUCT)) {
             return Math.min(RoundWeight.nextTon(entity.getWeight() * 0.1), 10000);
         }  else if (hasFlag(MiscType.F_MAGNETIC_CLAMP) && hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {

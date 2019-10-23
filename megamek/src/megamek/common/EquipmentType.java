@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
@@ -309,11 +310,43 @@ public class EquipmentType implements ITechnology {
         }
     }
 
-    public double getTonnage(Entity entity) {
-        return getTonnage(entity, Entity.LOC_NONE);
+    /**
+     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
+     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity The unit the equipment is mounted on
+     * @return       The weight of the equipment in tons
+     */
+    public double getTonnage(@Nullable Entity entity) {
+        return getTonnage(entity, Entity.LOC_NONE, RoundWeight.STANDARD);
     }
 
+    /**
+     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
+     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity   The unit the equipment is mounted on
+     * @param location The mount location
+     * @return         The weight of the equipment in tons
+     */
     public double getTonnage(Entity entity, int location) {
+        return getTonnage(entity, location, RoundWeight.STANDARD);
+    }
+
+    /**
+     * Calculates the weight of the equipment, with the option to override the standard rounding based on unit
+     * type. This allows for the optional fractional accounting construction rules.
+     * If {@code entity} is {@code null}, equipment without a fixed weight will
+     * return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity        The unit the equipment is mounted on
+     * @param location      The mount location
+     * @param defaultMethod The rounding method to use for any variable weight equipment. Any equipment
+     *                      that is normally rounded to either the half ton or kg based on unit type
+     *                      will have this method applied instead.
+     * @return              The weight of the equipment in tons
+     */
+    public double getTonnage(Entity entity, int location, RoundWeight defaultMethod) {
         return tonnage;
     }
 

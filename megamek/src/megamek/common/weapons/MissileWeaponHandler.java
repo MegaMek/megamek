@@ -399,9 +399,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 
         //Point Defenses engage the missiles still aimed at us
         if (ae.usesWeaponBays() || ae.isCapitalFighter()) {
-            CounterAV = calcCounterAV();
+            av = av - calcCounterAV();
         }
-        av = av - CounterAV;
         
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);

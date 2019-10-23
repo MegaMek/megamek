@@ -604,7 +604,7 @@ public class TestBattleArmor extends TestEntity {
     @Override
     public String printWeightStructure() {
         return StringUtil.makeLength("Structure: ", getPrintSize() + 9)
-                + TestEntity.makeWeightString(getWeightStructure()) + "\n";
+                + TestEntity.makeWeightString(getWeightStructure(), true) + "\n";
     }
 
     @Override
@@ -616,7 +616,7 @@ public class TestBattleArmor extends TestEntity {
         return StringUtil.makeLength(
                 "Armor: " + Integer.toString(getTotalOArmor()) + " "
                         + armorName, getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightArmor()) + "\n";
+                + TestEntity.makeWeightString(getWeightArmor(), true) + "\n";
     }
 
     @Override
@@ -1177,8 +1177,8 @@ public class TestBattleArmor extends TestEntity {
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
-            buff.append("Weight: ").append(getWeight()).append(" (")
-                    .append(calculateWeight()).append(")\n");
+            buff.append("Weight: ").append(getWeight() * 1000).append(" kg (")
+                    .append(calculateWeight() * 1000).append(" kg)\n");
         }
         buff.append(printWeightCalculation()).append("\n");
         buff.append(printArmorPlacement());

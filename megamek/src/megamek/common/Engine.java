@@ -353,9 +353,6 @@ public class Engine implements Serializable, ITechnology {
             if (entity.getMovementMode().equals(EntityMovementMode.HOVER)) {
                 weight = Math.max(weight, entity.getWeight() * 0.2);
             }
-            if (entity.getWeight() < 5) {
-                return TestEntity.round(weight, TestEntity.Ceil.KILO);
-            }
             return TestEntity.ceil(weight, roundWeight);
         }
         // Protomech engines with rating < 40 use a special calculation
@@ -468,7 +465,9 @@ public class Engine implements Serializable, ITechnology {
             return Messages.getString("Engine.invalid");
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(engineRating);
+        if (!hasFlag(SUPPORT_VEE_ENGINE)) {
+            sb.append(engineRating);
+        }
         if (hasFlag(LARGE_ENGINE)) {
             sb.append(Messages.getString("Engine.Large"));
         }
@@ -476,7 +475,9 @@ public class Engine implements Serializable, ITechnology {
         if (hasFlag(CLAN_ENGINE)) {
             sb.append(Messages.getString("Engine.Clan"));
         }
-        if (hasFlag(TANK_ENGINE)) {
+        if (hasFlag(SUPPORT_VEE_ENGINE)) {
+            sb.append(Messages.getString("Engine.SupportVehicle"));
+        } else if (hasFlag(TANK_ENGINE)) {
             sb.append(Messages.getString("Engine.Vehicle"));
         }
         return sb.toString();

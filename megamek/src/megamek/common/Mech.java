@@ -8047,7 +8047,7 @@ public abstract class Mech extends Entity {
             } else if (mountBv > 0) {
                 bv += mountBv * 0.05 * mount.getType().getCriticals(this);
             } else {
-                bv += 5;
+                bv += 5 * mount.getType().getCriticals(this);
             }
         }
 

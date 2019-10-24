@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-ConvFighter
+FixedWingSupport
 </UnitType>
 
 <Name>
@@ -29,7 +29,7 @@ Mosquito Light Fighter
 </originalBuildYear>
 
 <type>
-IS Level 4
+IS Level 2
 </type>
 
 <motion_type>
@@ -48,7 +48,7 @@ Aerodyne
 </cockpit_type>
 
 <heatsinks>
-10
+0
 </heatsinks>
 
 <sink_type>
@@ -60,8 +60,12 @@ Aerodyne
 </fuel>
 
 <engine_type>
-1
+0
 </engine_type>
+
+<internal_type>
+-1
+</internal_type>
 
 <armor>
 9
@@ -71,18 +75,15 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-Advanced Fire Control
 LRM 5
 </Nose Equipment>
 
 <Left Wing Equipment>
 Machine Gun
-External Stores Hardpoint
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 Machine Gun
-External Stores Hardpoint
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -91,10 +92,29 @@ External Stores Hardpoint
 <Wings Equipment>
 </Wings Equipment>
 
-<Fuselage Equipment>
+<Body Equipment>
 IS Ammo LRM-5
 IS Ammo MG - Full
-</Fuselage Equipment>
+Advanced Fire Control
+External Stores Hardpoint
+External Stores Hardpoint
+</Body Equipment>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
 
 <source>
 XTRO Primitives II - Age of War

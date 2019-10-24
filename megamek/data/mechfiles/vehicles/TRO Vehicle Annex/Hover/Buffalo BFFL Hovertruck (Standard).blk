@@ -24,6 +24,10 @@ BFFL 'Buffalo'
 2670
 </year>
 
+<originalBuildYear>
+2670
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Hover
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -48,14 +55,6 @@ Hover
 6
 6
 </armor>
-
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
 
 <Body Equipment>
 </Body Equipment>
@@ -82,6 +81,14 @@ Cargo Container (10 tons)
 Cargo Container (10 tons)
 </Rear Equipment>
 
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <source>
 TRO VAr - Star League
 </source>
@@ -89,3 +96,8 @@ TRO VAr - Star League
 <tonnage>
 100.0
 </tonnage>
+
+<fuel>
+6.0
+</fuel>
+

@@ -24,6 +24,10 @@ Generic Expandable Services Vehicle
 3066
 </year>
 
+<originalBuildYear>
+3066
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -33,11 +37,8 @@ Wheeled
 </motion_type>
 
 <transporters>
-cargobay:2.5:1
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
+cargobay:2.5:1:1:omni
 </transporters>
 
 <cruiseMP>
@@ -60,13 +61,14 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-Tractor
-MASH core component:OMNI
+SV Chassis Mod [Tractor]
+MASH Core Component:OMNI
 MASH Operation Theater:OMNI
 MASH Operation Theater:OMNI
 MASH Operation Theater:OMNI
 MASH Operation Theater:OMNI
 MASH Operation Theater:OMNI
+OmniChassisMod
 </Body Equipment>
 
 <Front Equipment>
@@ -79,7 +81,7 @@ MASH Operation Theater:OMNI
 </Left Equipment>
 
 <Rear Equipment>
-Hitch:OMNI
+Hitch
 </Rear Equipment>
 
 <barrating>
@@ -97,4 +99,12 @@ HB:House Davion - Civil War
 <tonnage>
 30.0
 </tonnage>
+
+<baseChassisFireConWeight>
+0.0
+</baseChassisFireConWeight>
+
+<fuel>
+3.5
+</fuel>
 

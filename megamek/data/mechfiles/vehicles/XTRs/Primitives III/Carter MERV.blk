@@ -24,6 +24,10 @@ Carter Medical Emergency Response Vehicle
 2341
 </year>
 
+<originalBuildYear>
+2541
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -33,7 +37,7 @@ Wheeled
 </motion_type>
 
 <transporters>
-cargobay:2:1
+cargobay:2.0:1:1
 </transporters>
 
 <cruiseMP>
@@ -44,10 +48,6 @@ cargobay:2:1
 1
 </engine_type>
 
-<fuel>
-1
-</fuel>
-
 <armor>
 14
 14
@@ -55,16 +55,11 @@ cargobay:2:1
 10
 </armor>
 
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
 <Body Equipment>
-MASH Operation Theater
 MASH Operation Theater
 Paramedic Equipment
 ISOffRoadChassis
-MASH core component
+MASH Core Component
 </Body Equipment>
 
 <Front Equipment>
@@ -82,6 +77,14 @@ Paramedic Equipment
 <Rear Equipment>
 </Rear Equipment>
 
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <source>
 XTRO Primitives III - Age of War
 </source>
@@ -90,7 +93,11 @@ XTRO Primitives III - Age of War
 25.0
 </tonnage>
 
-<barrating>
-6
-</barrating>
+<fuel>
+1.0
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
 

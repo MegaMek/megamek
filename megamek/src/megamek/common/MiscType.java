@@ -432,6 +432,11 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
+    public double getTonnage(Entity entity, int location) {
+        return getTonnage(entity, location, RoundWeight.STANDARD);
+    }
+
+    @Override
     public double getTonnage(Entity entity, int location, RoundWeight defaultRounding) {
         if ((tonnage != TONNAGE_VARIABLE) || (null == entity)) {
             return tonnage;
@@ -489,7 +494,7 @@ public class MiscType extends EquipmentType {
             if (null == e) {
                 return 0;
             }
-            return defaultRounding.round(e.getWeightEngine(entity) / 10.0, entity);
+            return defaultRounding.round(e.getWeightEngine(entity, defaultRounding) / 10.0, entity);
         } else if (hasFlag(F_MASC)) {
             if (entity instanceof Protomech) {
                 return RoundWeight.nearestKg(entity.getWeight() * 0.025);
@@ -506,13 +511,10 @@ public class MiscType extends EquipmentType {
                     }
                     // pg 344, TO
                     // 10% of engine weight
-                    return defaultRounding.round(e.getWeightEngine(entity) / 10.0, entity);
+                    return defaultRounding.round(e.getWeightEngine(entity, defaultRounding) / 10.0, entity);
                 }
 
-                if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
-                    return Math.round(entity.getWeight() / 25.0f);
-                }
-                return Math.round(entity.getWeight() / 20.0f);
+                return RoundWeight.nearestTon(entity.getWeight() * (isClan() ? 0.04 : 0.05));
             }
         } else if (hasFlag(F_QUAD_TURRET) || hasFlag(F_SHOULDER_TURRET) || hasFlag(F_HEAD_TURRET)) {
             int locationToCheck = location;

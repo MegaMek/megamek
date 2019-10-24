@@ -318,7 +318,7 @@ public class EquipmentType implements ITechnology {
      * @return       The weight of the equipment in tons
      */
     public double getTonnage(@Nullable Entity entity) {
-        return getTonnage(entity, Entity.LOC_NONE, RoundWeight.STANDARD);
+        return getTonnage(entity, Entity.LOC_NONE);
     }
 
     /**
@@ -330,7 +330,7 @@ public class EquipmentType implements ITechnology {
      * @return         The weight of the equipment in tons
      */
     public double getTonnage(Entity entity, int location) {
-        return getTonnage(entity, location, RoundWeight.STANDARD);
+        return tonnage;
     }
 
     /**
@@ -347,7 +347,7 @@ public class EquipmentType implements ITechnology {
      * @return              The weight of the equipment in tons
      */
     public double getTonnage(Entity entity, int location, RoundWeight defaultMethod) {
-        return tonnage;
+        return defaultMethod.round(getTonnage(entity, location));
     }
 
     void setTonnage(double tonnage) {

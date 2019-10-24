@@ -1997,8 +1997,7 @@ public class Jumpship extends Aero {
             baseArmor *= 0.66;
         }
 
-        double armWeight = armorPoints / baseArmor;
-        return Math.ceil(armWeight * 2.0) / 2.0;
+        return RoundWeight.standard(armorPoints / baseArmor, this);
     }
 
     @Override

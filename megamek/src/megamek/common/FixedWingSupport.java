@@ -147,10 +147,7 @@ public class FixedWingSupport extends ConvFighter {
     @Override
     public double getFuelTonnage() {
         double weight = getOriginalFuel() * kgPerFuelPoint() / 1000.0;
-        if (getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            weight = Math.ceil(weight * 2.0) * 0.5;
-        }
-        return weight;
+        return RoundWeight.standard(weight, this);
     }
 
     @Override

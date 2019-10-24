@@ -27,12 +27,18 @@ import java.util.function.BiFunction;
  */
 public enum RoundWeight {
     NONE ((w, e) -> w),
+    /** Round up to next half ton */
+    NEAREST_HALF_TON ((w, e) -> Math.round(truncate(w) * 2.0) / 2.0),
     /** Round to nearest kg */
     NEAREST_KG ((w, e) -> Math.round(w * 1000.0) / 1000.0),
+    /** Round to nearest ton */
+    NEAREST_TON ((w, e) -> Double.valueOf(Math.round(w))),
     /** Round up to next half ton */
     NEXT_HALF_TON ((w, e) -> Math.ceil(truncate(w) * 2.0) / 2.0),
     /** Round up to nearest kg (used for small SV engine and structure) */
-    NEXT_KG ((w, u) -> Math.ceil(truncate(w) * 1000.0) / 1000.0),
+    NEXT_KG ((w, e) -> Math.ceil(truncate(w) * 1000.0) / 1000.0),
+    /** Round up to nearest ton */
+    NEXT_TON ((w, e) -> Math.ceil(truncate(w))),
     /** Round kg standard to next kg, ton-standard to next half ton */
     STANDARD ((w, e) -> {
         if (null != e && usesKilogramStandard(e)) {
@@ -40,9 +46,7 @@ public enum RoundWeight {
         } else {
             return RoundWeight.NEXT_HALF_TON.round(w, e);
         }
-    }),
-    /** Round up to nearest ton */
-    NEXT_TON ((w, u) -> Math.ceil(truncate(w)));
+    });
 
     private final BiFunction<Double, Entity, Double> calc;
 
@@ -95,6 +99,26 @@ public enum RoundWeight {
      */
     public static double truncate(double weight) {
         return Math.round(weight * 1000000.0) / 1000000.0;
+    }
+
+    /**
+     * Rounds normally to nearest half ton
+     *
+     * @param weight The weight in tons
+     * @return       The weight in tons, rounded to the closest half ton.
+     */
+    public static double nearestHalfTon(double weight) {
+        return NEAREST_HALF_TON.round(weight);
+    }
+
+    /**
+     * Rounds normally to nearest ton
+     *
+     * @param weight The weight in tons
+     * @return       The weight in tons, rounded to the closest ton.
+     */
+    public static double nearestTon(double weight) {
+        return NEAREST_TON.round(weight);
     }
 
     /**

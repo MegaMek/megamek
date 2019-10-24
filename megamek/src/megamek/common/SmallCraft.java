@@ -602,7 +602,7 @@ public class SmallCraft extends Aero {
         double armorPerTon = SmallCraft.armorPointsPerTon(getWeight(), isSpheroid(),
                 getArmorType(0), TechConstants.isClan(getArmorTechLevel(0)));
 
-        return Math.ceil(2.0 * armorPoints / armorPerTon) / 2.0;
+        return RoundWeight.nextHalfTon(armorPoints / armorPerTon);
     }
     
     public static double armorPointsPerTon(double craftWeight, boolean spheroid, int at, boolean isClan) {

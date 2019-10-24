@@ -10696,25 +10696,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             for (int loc = 0; loc < locations(); loc++) {
                 total += getArmorWeight(loc);
             }
-            return Math.ceil(total * 2.0) / 2.0;
+            return RoundWeight.standard(total, this);
         } else if (isSupportVehicle()
                     && getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
             double total = getTotalOArmor()
                     * EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()), getArmorTechRating());
-            if (getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-                return Math.round(total * 1000.0) / 1000.0;
-            } else {
-                return Math.ceil(total * 2.0) / 2.0;
-            }
+            return RoundWeight.standard(total, this);
         } else {
             // this roundabout method is actually necessary to avoid rounding
             // weirdness. Yeah, it's dumb.
             double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
                     armorType[0], armorTechLevel[0]);
-            double points = getTotalOArmor();
-            double armorWeight = points / armorPerTon;
-            armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
-            return armorWeight;
+            return RoundWeight.standard(getTotalOArmor() / armorPerTon, this);
         }
     }
 

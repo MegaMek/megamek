@@ -350,7 +350,7 @@ public class EquipmentType implements ITechnology {
         return tonnage;
     }
 
-    public void setTonnage(double tonnage) {
+    void setTonnage(double tonnage) {
         this.tonnage = tonnage;
     }
 

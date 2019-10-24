@@ -272,7 +272,7 @@ public class TestProtomech extends TestEntity {
     
     @Override
     public double getWeightEngine() {
-        return proto.getEngine().getWeightEngine(proto, Ceil.KILO);
+        return proto.getEngine().getWeightEngine(proto);
     }
 
     @Override

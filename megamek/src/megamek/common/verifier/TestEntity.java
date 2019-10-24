@@ -430,8 +430,7 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public double getWeightEngine() {
-        return ((null != engine) ? engine.getWeightEngine(getEntity(),
-                usesKgStandard()? Ceil.KILO : getWeightCeilingEngine()) : 0);
+        return ((null != engine) ? engine.getWeightEngine(getEntity()) : 0);
     }
 
     public String printWeightStructure() {

@@ -317,7 +317,7 @@ public class Engine implements Serializable, ITechnology {
      * @return the weight of the engine.
      */
     public double getWeightEngine(Entity entity) {
-        return getWeightEngine(entity, TestEntity.Ceil.HALFTON);
+        return getWeightEngine(entity, RoundWeight.STANDARD);
     }
 
     /**
@@ -327,7 +327,7 @@ public class Engine implements Serializable, ITechnology {
      *            {@link megamek.common.verifier.TestEntity}.
      * @return the weight of the engine in tons.
      */
-    public double getWeightEngine(Entity entity, TestEntity.Ceil roundWeight) {
+    public double getWeightEngine(Entity entity, RoundWeight roundWeight) {
         // Support Vehicles compute engine weight differently
         if ((entity.isSupportVehicle() || hasFlag(SUPPORT_VEE_ENGINE))
                 && isValidEngine()) {
@@ -341,7 +341,6 @@ public class Engine implements Serializable, ITechnology {
                     .getEngineTechRating()];
             double weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
-            weight = TestEntity.setPrecision(weight, 4);
             // Fusion engines have a minimum weight of 0.25t at D+ and 0.5t at C. Fission engines have
             // a minimum of 0.5t at all tech ratings.
             if ((engineType == NORMAL_ENGINE) && (entity.getEngineTechRating() >= RATING_D)) {
@@ -353,11 +352,11 @@ public class Engine implements Serializable, ITechnology {
             if (entity.getMovementMode().equals(EntityMovementMode.HOVER)) {
                 weight = Math.max(weight, entity.getWeight() * 0.2);
             }
-            return TestEntity.ceil(weight, roundWeight);
+            return roundWeight.round(weight, entity);
         }
         // Protomech engines with rating < 40 use a special calculation
         if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (engineRating < 40)) {
-            return TestEntity.round(engineRating * 0.025, roundWeight);
+            return roundWeight.round(engineRating * 0.025, entity);
         }
         double weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5.0)];
         switch (engineType) {
@@ -388,17 +387,17 @@ public class Engine implements Serializable, ITechnology {
             case NONE:
                 return 0;
         }
-        weight = TestEntity.ceilMaxHalf(weight, roundWeight);
+        weight = roundWeight.round(weight, entity);
 
         if (hasFlag(TANK_ENGINE) && (isFusion() || (engineType == FISSION))) {
             weight *= 1.5;
         }
         
         
-        double toReturn = TestEntity.ceilMaxHalf(weight, roundWeight);
+        double toReturn = roundWeight.round(weight, entity);
         // hover have a minimum weight of 20%
         if ((entity.getMovementMode() == EntityMovementMode.HOVER) && (entity instanceof Tank)) {
-            return Math.max(TestEntity.ceilMaxHalf(entity.getWeight()/5, TestEntity.Ceil.HALFTON), toReturn);
+            toReturn = Math.max(roundWeight.round(entity.getWeight() / 5.0, entity), toReturn);
         }
         return toReturn;
     }

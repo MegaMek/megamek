@@ -56,7 +56,7 @@ Aerodyne
 </sink_type>
 
 <fuel>
-320
+140
 </fuel>
 
 <engine_type>
@@ -101,7 +101,7 @@ IS Ammo SRM-4
 </barrating>
 
 <structural_tech_rating>
-3
+2
 </structural_tech_rating>
 
 <source>

@@ -24,6 +24,10 @@ Slipper Hovercar LX-Series
 3061
 </year>
 
+<originalBuildYear>
+3061
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,11 @@ IS Level 2
 <motion_type>
 Hover
 </motion_type>
+
+<transporters>
+standardseats:4.0:0
+cargobay:0.009:1:1
+</transporters>
 
 <cruiseMP>
 15
@@ -40,24 +49,12 @@ Hover
 6
 </engine_type>
 
-<fuel>
-.078
-</fuel>
-
 <armor>
 1
 1
 1
 1
 </armor>
-
-<barrating>
-4
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
 
 <Body Equipment>
 UltraLightChassisMod
@@ -75,9 +72,13 @@ UltraLightChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-standardseats:.3:4
-</transporters>
+<barrating>
+4
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <source>
 TRO VAr - Clan Invasion
@@ -86,3 +87,8 @@ TRO VAr - Clan Invasion
 <tonnage>
 1.5
 </tonnage>
+
+<fuel>
+0.078
+</fuel>
+

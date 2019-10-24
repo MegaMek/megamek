@@ -24,6 +24,10 @@ Series II
 2621
 </year>
 
+<originalBuildYear>
+2621
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,11 @@ IS Level 2
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+cargobay:0.55:1:1
+standardseats:6.0:0
+</transporters>
 
 <cruiseMP>
 15
@@ -47,14 +56,6 @@ VTOL
 2
 2
 </armor>
-
-<barrating>
-10
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
 
 <Body Equipment>
 Armored Chassis
@@ -76,11 +77,13 @@ ISGuardianECMSuite
 <Rotor Equipment>
 </Rotor Equipment>
 
-<transporters>
-cargobay:.55:1
-troopspace:.45
-standardseats:.45:6
-</transporters>
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <source>
 TRO VAr - Star League
@@ -89,3 +92,8 @@ TRO VAr - Star League
 <tonnage>
 15.0
 </tonnage>
+
+<fuel>
+0.0
+</fuel>
+

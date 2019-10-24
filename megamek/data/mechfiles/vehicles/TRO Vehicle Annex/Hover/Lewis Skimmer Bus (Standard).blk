@@ -24,6 +24,10 @@ Lewis Skimmer Bus
 3026
 </year>
 
+<originalBuildYear>
+3026
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -33,8 +37,8 @@ Hover
 </motion_type>
 
 <transporters>
-troopspace:6.45
-cargobay:18.05:1
+cargobay:18.05:1:1
+standardseats:86.0:0
 </transporters>
 
 <cruiseMP>
@@ -45,10 +49,6 @@ cargobay:18.05:1
 6
 </engine_type>
 
-<fuel
-4
-</fuel>
-
 <armor>
 11
 9
@@ -57,14 +57,6 @@ cargobay:18.05:1
 9
 10
 </armor>
-
-<barrating>
-4
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
 
 <Body Equipment>
 </Body Equipment>
@@ -87,6 +79,14 @@ cargobay:18.05:1
 <Rear Equipment>
 </Rear Equipment>
 
+<barrating>
+4
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <source>
 TRO VAr - Succession Wars
 </source>
@@ -94,3 +94,8 @@ TRO VAr - Succession Wars
 <tonnage>
 80.0
 </tonnage>
+
+<fuel>
+4.0
+</fuel>
+

@@ -38,6 +38,7 @@ Aerodyne
 
 <transporters>
 1stclassquarters:10.0:1
+cargobay:1.5:1:1
 </transporters>
 
 <SafeThrust>

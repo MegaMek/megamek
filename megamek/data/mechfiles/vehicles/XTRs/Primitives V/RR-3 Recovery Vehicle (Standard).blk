@@ -24,6 +24,10 @@ RR-3 Recovery Vehicle
 2439
 </year>
 
+<originalBuildYear>
+2439
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,10 @@ IS Level 4
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+cargobay:20.0:1:1
+</transporters>
 
 <cruiseMP>
 3
@@ -47,16 +55,8 @@ Wheeled
 15
 </armor>
 
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
-<barrating>
-6
-</barrating>
-
 <Body Equipment>
-Tractor
+SV Chassis Mod [Tractor]
 ISOffRoadChassis
 </Body Equipment>
 
@@ -70,13 +70,26 @@ ISOffRoadChassis
 </Left Equipment>
 
 <Rear Equipment>
-Lift Hoist
-Lift Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Hitch
 </Rear Equipment>
 
-<transporters>
-cargobay:20:1
-</transporters>
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
 
 <source>
 XTRO Primitives V - Age of War
@@ -85,4 +98,12 @@ XTRO Primitives V - Age of War
 <tonnage>
 55.0
 </tonnage>
+
+<fuel>
+1.5
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
 

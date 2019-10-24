@@ -21,11 +21,11 @@ Colt Medium Fighter
 </Model>
 
 <year>
-2354
+2375
 </year>
 
 <originalBuildYear>
-2354
+2375
 </originalBuildYear>
 
 <type>
@@ -103,6 +103,14 @@ IS Ammo SRM-4
 <structural_tech_rating>
 2
 </structural_tech_rating>
+
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
 
 <source>
 XTRO Primitives IV - Age of War

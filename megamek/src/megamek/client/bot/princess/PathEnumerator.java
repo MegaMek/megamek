@@ -256,7 +256,7 @@ public class PathEnumerator {
                 AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
                 apf.run(new MovePath(game, mover));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
-            // this handles the case of the mover acting like a spheroid aerospace unit in an atomsphere
+            // this handles the case of the mover acting like a spheroid aerospace unit in an atmosphere
             } else if(Compute.useSpheroidAtmosphere(game, mover)) {
                 SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game);
                 spf.run(new MovePath(game, mover));

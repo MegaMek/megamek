@@ -38,7 +38,7 @@ public class TestSupportVehicle extends TestEntity {
         AIRSHIP (300, EntityMovementMode.AIRSHIP,
                 new double[]{0.2, 0.25, 0.3}, new double[]{0.004, 0.008, 0.012}),
         FIXED_WING (200, EntityMovementMode.AERODYNE,
-                new double[]{0.8, 0.1, 0.15}, new double[]{0.005, 0.01, 0.015}),
+                new double[]{0.08, 0.1, 0.15}, new double[]{0.005, 0.01, 0.015}),
         HOVERCRAFT (100, EntityMovementMode.HOVER,
                 new double[]{0.2, 0.25, 0.3}, new double[]{0.0025, 0.004, 0.007}),
         NAVAL (300, EntityMovementMode.NAVAL,
@@ -54,7 +54,7 @@ public class TestSupportVehicle extends TestEntity {
         RAIL (600, EntityMovementMode.RAIL,
                 new double[]{0.15, 0.2, 0.3}, new double[]{0.003, 0.004, 0.005}),
         SATELLITE (300, EntityMovementMode.STATION_KEEPING,
-                new double[]{0.8, 0.12, 0.16}, new double[]{0.1, 0.1, 0.1});
+                new double[]{0.08, 0.12, 0.16}, new double[]{0.1, 0.1, 0.1});
 
         /** The maximum tonnage for a large support vehicle of this type; for airship this is the
          *  maximum for a medium for now.

@@ -88,12 +88,23 @@ public class SpheroidPathFinder {
             // total number of paths should be ~217 * n on a ground map or 7 * n on a low atmo map
             // where n is the number of possible altitude changes
             List<MovePath> altitudePaths = AeroPathUtil.generateValidAltitudeChanges(startingEdge);
+            MovePath hoverPath = generateHoverPath(startingEdge);
             for(MovePath altitudePath : altitudePaths) {
-                spheroidPaths.addAll(generateChildren(altitudePath));
+                // since we are considering paths across multiple altitudes that cross the same coordinates
+                // we want to clear this out before every altitude to avoid discarding altitude changing paths
+                // so that our dropships can maneuver vertically if necessary.
+                visitedCoords.clear();
+                
+                // we don't really want to consider a non-hovering path, we will add it as a special case
+                if(altitudePath.length() != 0) {
+                    spheroidPaths.addAll(generateChildren(altitudePath));
+                } else {
+                    spheroidPaths.addAll(generateChildren(hoverPath));
+                }
             }
             
             spheroidPaths.addAll(altitudePaths);
-            spheroidPaths.add(generateHoverPath(startingEdge));
+            spheroidPaths.add(hoverPath);
             
             List<MovePath> validRotations = new ArrayList<>();
             // now that we've got all our possible destinations, make sure to try every possible rotation
@@ -152,7 +163,7 @@ public class SpheroidPathFinder {
     /**
      * Recursive method that generates the possible child paths from the given path.
      * Eliminates paths to hexes we've already visited.
-     * Generates *shortest* paths to destination hexes, because, look, infantry isn't going to get beyond a move 1 mod anyway.
+     * Generates *shortest* paths to destination hexes
      * @param startingPath
      * @return
      */
@@ -164,7 +175,7 @@ public class SpheroidPathFinder {
         // we've moved further than 1 hex on a low-atmo map
         // we've moved further than 8 hexes on a ground map
         if(visitedCoords.contains(startingPath.getFinalCoords()) ||
-                (!startingPath.isJumping() && (startingPath.getMpUsed() >= startingPath.getEntity().getRunMP()))) {
+                (startingPath.getMpUsed() > startingPath.getEntity().getRunMP())) {
             return retval;
         }
         

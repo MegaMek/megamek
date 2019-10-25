@@ -1440,10 +1440,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
 
-        // check to see if spheroids will drop an elevation
+        // check to see if spheroids will drop elevation
+        // they will do so if they're not hovering, landing, or changing altitude voluntarily.
         if (Compute.useSpheroidAtmosphere(clientgui.getClient().getGame(), ce()) 
-                && (cmd.getFinalNDown() == 0)
-                && (cmd.getMpUsed() == 0) && !cmd.contains(MoveStepType.VLAND)) {
+                && !cmd.contains(MoveStepType.HOVER) 
+                && !cmd.contains(MoveStepType.VLAND)
+                && !cmd.contains(MoveStepType.UP)
+                && !cmd.contains(MoveStepType.DOWN)) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.SpheroidAltitudeLoss") +

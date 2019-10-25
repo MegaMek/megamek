@@ -661,14 +661,14 @@ public class MoveStep implements Serializable {
         if ((prev.getAltitude() > 0) || game.getBoard().inSpace()) {
             setMp(0);
             // if this a spheroid in atmosphere then the cost is always one
-            // we automatically append the cost for hovering as well for convenience
+            // if it is the very first step, we prepend the cost of hovering for convenience
             if (useSpheroidAtmosphere(game, entity)) {
                 if (game.getBoard().onGround()) {
                     if ((distance % 8) == 1) {
-                        setMp(3);
+                        setMp(1);
                     }
                 } else {
-                    setMp(3);
+                    setMp(1);
                 }
             }
         } else {
@@ -757,6 +757,7 @@ public class MoveStep implements Serializable {
         boolean isFieldArtillery = (entity instanceof Infantry)
                 && ((Infantry) entity).hasActiveFieldArtillery();
         copy(game, prev);
+        int alpha = 1;
 
         // Is this the first step?
         if (prev == null) {

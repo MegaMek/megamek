@@ -228,7 +228,7 @@ public class AeroPathUtil
     public static List<MovePath> generateValidRotations(MovePath path) {
         List<MovePath> childPaths = new ArrayList<>();
         
-        for(int x = 0; x < TURNS.size(); x++) {
+        for(int x = 1; x < TURNS.size(); x++) {
             MovePath childPath = path.clone();
             
             for(MoveStepType turn : TURNS.get(x)) {

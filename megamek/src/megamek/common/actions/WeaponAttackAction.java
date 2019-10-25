@@ -1474,8 +1474,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // for spheroid dropships in atmosphere (and on ground), the rules about
         // firing arcs are more complicated
         // TW errata 2.1
-        if ((ae instanceof Aero) && ((Aero) ae).isSpheroid() 
-                && weapon != null && !game.getBoard().inSpace()) {
+        if (Compute.useSpheroidAtmosphere(game, ae) && weapon != null) {
             int altDif = target.getAltitude() - ae.getAltitude();
             int range = Compute.effectiveDistance(game, ae, target, false);
             // Only aft-mounted weapons can be fired at range 0 (targets directly underneath)

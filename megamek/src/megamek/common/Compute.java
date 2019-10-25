@@ -1242,7 +1242,7 @@ public class Compute {
         }
 
         // Account for "dead zones" between Aeros at different altitudes
-        if (Compute.inDeadZone(game, ae, target)) {
+        if (!Compute.useSpheroidAtmosphere(game, ae) && Compute.inDeadZone(game, ae, target)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target in dead zone");
         }
 

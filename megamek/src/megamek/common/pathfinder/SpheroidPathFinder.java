@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2019 The MegaMek Team. All rights reserved.
+ *
+ * This file is part of MekHQ.
+ *
+ * MekHQ is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MekHQ is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MekHQ.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package megamek.common.pathfinder;
 
 import java.util.ArrayList;
@@ -29,32 +48,6 @@ public class SpheroidPathFinder {
     private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.SpheroidPathFinder";
     
     private Set<Coords> visitedCoords = new HashSet<>();
-    private static List<List<MoveStepType>> turns;
-    
-    static {
-        // put together a pre-defined array of turns. Indexes correspond to the directional values found in Coords.java
-        turns = new ArrayList<>();
-        turns.add(new ArrayList<MoveStepType>()); // "no turns"
-        
-        turns.add(new ArrayList<MoveStepType>());
-        turns.get(1).add(MoveStepType.TURN_RIGHT);
-        
-        turns.add(new ArrayList<MoveStepType>());
-        turns.get(2).add(MoveStepType.TURN_RIGHT);
-        turns.get(2).add(MoveStepType.TURN_RIGHT);
-        
-        turns.add(new ArrayList<MoveStepType>());
-        turns.get(3).add(MoveStepType.TURN_RIGHT);
-        turns.get(3).add(MoveStepType.TURN_RIGHT);
-        turns.get(3).add(MoveStepType.TURN_RIGHT);
-        
-        turns.add(new ArrayList<MoveStepType>());
-        turns.get(4).add(MoveStepType.TURN_LEFT);
-        turns.get(4).add(MoveStepType.TURN_LEFT);
-        
-        turns.add(new ArrayList<MoveStepType>());
-        turns.get(5).add(MoveStepType.TURN_LEFT);
-    }
     
     private SpheroidPathFinder(IGame game) {
         this.game = game;
@@ -190,7 +183,7 @@ public class SpheroidPathFinder {
             MovePath childPath = startingPath.clone();
             
             // for each child, we first turn in the appropriate direction
-            for(MoveStepType stepType : turns.get(direction)) {
+            for(MoveStepType stepType : AeroPathUtil.TURNS.get(direction)) {
                 childPath.addStep(stepType);
             }
             

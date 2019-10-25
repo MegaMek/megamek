@@ -757,7 +757,6 @@ public class MoveStep implements Serializable {
         boolean isFieldArtillery = (entity instanceof Infantry)
                 && ((Infantry) entity).hasActiveFieldArtillery();
         copy(game, prev);
-        int alpha = 1;
 
         // Is this the first step?
         if (prev == null) {

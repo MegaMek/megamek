@@ -22,6 +22,7 @@ v0.47.1-SNAPSHOT
 + Issue #1517: Fix for multiple NPEs caused by phantom transported units
 + Data: New Sprites/New Boards from Derv.
 + Issue #1480: Mech Mortar Smoke round is unavailable
++ Updating the Simon Landmine Map Pack.
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

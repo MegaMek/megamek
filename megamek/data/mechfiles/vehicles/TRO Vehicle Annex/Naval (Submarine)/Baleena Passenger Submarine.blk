@@ -3,6 +3,11 @@
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 SupportTank
 </UnitType>
@@ -19,37 +24,32 @@ Baleena Passenger Submarine
 2545
 </year>
 
-<source>
-TRO VAr - Age of War
-</source>
+<originalBuildYear>
+2545
+</originalBuildYear>
 
 <type>
 IS Level 2
 </type>
-
-<tonnage>
-200
-</tonnage>
 
 <motion_type>
 Submarine
 </motion_type>
 
 <transporters>
-troopspace:1.5
-standardseats:1.5:20
-steeragequarters:10:2
-lightvehiclebay:1:1
-cargobay:3:1
+steeragequarters:10.0:2
+lightvehiclebay:1.0:1:3
+cargobay:3.0:1:4
+standardseats:20.0:0
 </transporters>
-
-<engine_type>
-0
-</engine_type>
 
 <cruiseMP>
 3
 </cruiseMP>
+
+<engine_type>
+0
+</engine_type>
 
 <armor>
 22
@@ -57,14 +57,6 @@ cargobay:3:1
 16
 16
 </armor>
-
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
 
 <Body Equipment>
 SubmersibleChassisMod
@@ -90,3 +82,24 @@ Cargo Container (10 tons)
 
 <Rear Equipment>
 </Rear Equipment>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<source>
+TRO VAr - Age of War
+</source>
+
+<tonnage>
+200.0
+</tonnage>
+
+<fuel>
+0.0
+</fuel>
+

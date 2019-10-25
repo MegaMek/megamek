@@ -24,6 +24,10 @@ Saturn Harvester
 2652
 </year>
 
+<originalBuildYear>
+2652
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,12 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+2ndclassquarters:21.0:3
+cargobay:21.5:1:2
+refrigeratedcargobay:10.44:1:3
+</transporters>
 
 <cruiseMP>
 2
@@ -48,14 +58,6 @@ Tracked
 18
 18
 </armor>
-
-<barrating>
-4
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
 
 <Body Equipment>
 AmphibiousChassis
@@ -78,14 +80,16 @@ Combine
 </Rear Left Equipment>
 
 <Rear Equipment>
-Lift Hoist
+Lift Hoist/Arresting Hoist
 </Rear Equipment>
 
-<transporters>
-2ndclassquarters:21:3
-cargobay:21.5:1
-refrigeratedcargobay:12:1
-</transporters>
+<barrating>
+4
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <source>
 TRO VAr - Star League
@@ -94,3 +98,8 @@ TRO VAr - Star League
 <tonnage>
 175.0
 </tonnage>
+
+<fuel>
+0.0
+</fuel>
+

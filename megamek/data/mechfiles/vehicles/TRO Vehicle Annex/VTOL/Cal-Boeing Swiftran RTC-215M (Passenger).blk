@@ -24,6 +24,10 @@ Cal-Boeing Swiftran RTC-215M
 3053
 </year>
 
+<originalBuildYear>
+3053
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -33,9 +37,8 @@ VTOL
 </motion_type>
 
 <transporters>
-cargobay:.5:1
-troopspace:1.5
-standardseats:1.5:20
+cargobay:0.5:1:1
+standardseats:20.0:0
 </transporters>
 
 <cruiseMP>
@@ -46,10 +49,6 @@ standardseats:1.5:20
 1
 </engine_type>
 
-<fuel>
-1
-</fuel>
-
 <armor>
 8
 7
@@ -57,18 +56,6 @@ standardseats:1.5:20
 5
 2
 </armor>
-
-<barrating>
-10
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
-
-<armor_tech_rating>
-3
-</armor_tech_rating>
 
 <Body Equipment>
 Armored Chassis
@@ -95,6 +82,14 @@ Paramedic Equipment
 <Rotor Equipment>
 </Rotor Equipment>
 
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <source>
 TRO VAr - Clan Invasion
 </source>
@@ -102,3 +97,12 @@ TRO VAr - Clan Invasion
 <tonnage>
 25.0
 </tonnage>
+
+<fuel>
+1.0
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

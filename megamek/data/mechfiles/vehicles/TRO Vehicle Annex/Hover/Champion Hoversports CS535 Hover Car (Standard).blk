@@ -24,6 +24,10 @@ Champion Hoversports CS535 Hover Car
 3065
 </year>
 
+<originalBuildYear>
+3065
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,11 @@ IS Level 2
 <motion_type>
 Hover
 </motion_type>
+
+<transporters>
+cargobay:0.214:1:1
+standardseats:2.0:0
+</transporters>
 
 <cruiseMP>
 15
@@ -40,24 +49,12 @@ Hover
 1
 </engine_type>
 
-<fuel>
-.1
-</fuel>
-
 <armor>
 1
 1
 1
 1
 </armor>
-
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
 
 <Body Equipment>
 UltraLightChassisMod
@@ -75,10 +72,13 @@ UltraLightChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-cargobay:.214:1
-standardseats:.150:2
-</transporters>
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <source>
 TRO VAr - Civil War
@@ -87,3 +87,12 @@ TRO VAr - Civil War
 <tonnage>
 3.0
 </tonnage>
+
+<fuel>
+0.1
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

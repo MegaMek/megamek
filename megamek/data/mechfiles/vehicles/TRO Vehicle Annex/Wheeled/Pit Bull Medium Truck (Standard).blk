@@ -24,6 +24,10 @@ Pit Bull Medium Truck
 3035
 </year>
 
+<originalBuildYear>
+3035
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,11 @@ IS Level 3
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+standardseats:4.0:0
+cargobay:1.383:1:1
+</transporters>
 
 <cruiseMP>
 4
@@ -40,10 +49,6 @@ Wheeled
 1
 </engine_type>
 
-<fuel>
-.045
-</fuel>
-
 <armor>
 1
 1
@@ -51,23 +56,15 @@ Wheeled
 1
 </armor>
 
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-1
-</structural_tech_rating>
-
 <Body Equipment>
 ISOffRoadChassis
 </Body Equipment>
 
 <Front Equipment>
-BASearchlight
-BASearchlight
-BASearchlight
-BASearchlight
+HHSearchlight
+HHSearchlight
+HHSearchlight
+HHSearchlight
 </Front Equipment>
 
 <Right Equipment>
@@ -79,10 +76,13 @@ BASearchlight
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-cargobay:1.3:1
-standardseats:.3:2
-</transporters>
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+1
+</structural_tech_rating>
 
 <source>
 TRO VAr - Succession Wars
@@ -91,4 +91,12 @@ TRO VAr - Succession Wars
 <tonnage>
 3.0
 </tonnage>
+
+<fuel>
+0.045
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
 

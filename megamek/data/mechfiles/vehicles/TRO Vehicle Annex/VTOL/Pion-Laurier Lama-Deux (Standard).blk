@@ -24,6 +24,10 @@ Pion-Laurier Lama-Deux
 3022
 </year>
 
+<originalBuildYear>
+3022
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,11 @@ IS Level 2
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+standardseats:0.45:0
+liquidcargobay:11.393:1:1
+</transporters>
 
 <cruiseMP>
 6
@@ -40,10 +49,6 @@ VTOL
 1
 </engine_type>
 
-<fuel>
-.5
-</fuel>
-
 <armor>
 11
 8
@@ -51,14 +56,6 @@ VTOL
 5
 2
 </armor>
-
-<barrating>
-3
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
 
 <Body Equipment>
 </Body Equipment>
@@ -81,10 +78,13 @@ Tank Sprayer
 <Rotor Equipment>
 </Rotor Equipment>
 
-<transporters>
-liquidcargobay:12.52:1
-standardseats:.45:6
-</transporters>
+<barrating>
+3
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
 
 <source>
 TRO VAr - Succession Wars
@@ -93,3 +93,12 @@ TRO VAr - Succession Wars
 <tonnage>
 30.0
 </tonnage>
+
+<fuel>
+0.5
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

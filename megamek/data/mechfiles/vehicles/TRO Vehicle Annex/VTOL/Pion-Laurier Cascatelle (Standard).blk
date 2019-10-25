@@ -24,6 +24,10 @@ Pion-Laurier Cascatelle
 3063
 </year>
 
+<originalBuildYear>
+3063
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,11 @@ IS Level 2
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+cargobay:0.1:2:1
+standardseats:12.0:0
+</transporters>
 
 <cruiseMP>
 6
@@ -40,10 +49,6 @@ VTOL
 1
 </engine_type>
 
-<fuel>
-3
-</fuel>
-
 <armor>
 21
 15
@@ -52,16 +57,8 @@ VTOL
 2
 </armor>
 
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
 <Body Equipment>
-Fluid Suction System
+Fluid Suction System[Standard]
 </Body Equipment>
 
 <Front Equipment>
@@ -81,11 +78,13 @@ Cargo Container (10 tons)
 <Rotor Equipment>
 </Rotor Equipment>
 
-<transporters>
-cargobay:.1:1
-troopspace:.9
-standardseats:.9:12
-</transporters>
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <source>
 TRO VAr - Civil War
@@ -94,3 +93,12 @@ TRO VAr - Civil War
 <tonnage>
 60.0
 </tonnage>
+
+<fuel>
+3.0
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

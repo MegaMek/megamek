@@ -37,9 +37,9 @@ Aerodyne
 </motion_type>
 
 <transporters>
-troopspace:1.5
 cargobay:8.5:1:1
 1stclassquarters:50.0:5
+troopspace:1.5
 </transporters>
 
 <SafeThrust>
@@ -70,7 +70,7 @@ cargobay:8.5:1:1
 22
 15
 15
-12
+10
 </armor>
 
 <Nose Equipment>

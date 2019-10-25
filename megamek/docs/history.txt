@@ -23,6 +23,7 @@ v0.47.1-SNAPSHOT
 + Data: New Sprites/New Boards from Derv.
 + Issue #1480: Mech Mortar Smoke round is unavailable
 + Updating the Simon Landmine Map Pack.
++ PR #1519: Validation for support vehicles, corrections to many of the support vehicle unit files.
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

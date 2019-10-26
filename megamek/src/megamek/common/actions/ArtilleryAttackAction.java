@@ -26,6 +26,8 @@ import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
  * ArtilleryAttackAction Holds the data needed for an artillery attack in
@@ -55,6 +57,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         distance = (int)Math.floor((double)distance/game.getPlanetaryConditions().getGravity());
         EquipmentType eType = getEntity(game).getEquipment(weaponId).getType();
         WeaponType wType = (WeaponType) eType;
+        Mounted mounted = getEntity(game).getEquipment(weaponId);
         if (getEntity(game).usesWeaponBays() && wType.getAtClass() == WeaponType.CLASS_ARTILLERY) {
             for (int wId : game.getEntity(entityId).getEquipment(weaponId).getBayWeapons()) {
                 Mounted bayW = game.getEntity(entityId).getEquipment(wId);
@@ -89,12 +92,15 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         }
         //Capital missiles fired at bearings-only ranges will act like artillery and use this aaa.
         //An aaa will only be returned if the weapon is set to the correct mode
-        if (((wType.getAtClass() == WeaponType.CLASS_AR10)
-                || (wType.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
-                || (wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE))
-                && (distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)) {
+        if (mounted.isInBearingsOnlyMode()
+                && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
             this.launchVelocity = game.getOptions().intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
             turnsTilHit = (int) (distance / launchVelocity);
+            return;
+        }
+        //Capital missiles fired surface to surface as artillery have a flight time of their capital hex range / 6
+        if (wType instanceof CapitalMissileWeapon || wType instanceof CapitalMissileBayWeapon) {
+            turnsTilHit = (distance / Board.DEFAULT_BOARD_HEIGHT);
             return;
         }
         //Currently, spaceborne entities also count as airborne, though the reverse is not true.

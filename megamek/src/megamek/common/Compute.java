@@ -1242,7 +1242,7 @@ public class Compute {
         }
 
         // Account for "dead zones" between Aeros at different altitudes
-        if (Compute.inDeadZone(game, ae, target)) {
+        if (!Compute.useSpheroidAtmosphere(game, ae) && Compute.inDeadZone(game, ae, target)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target in dead zone");
         }
 
@@ -7013,6 +7013,27 @@ public class Compute {
             return getFullCrewSize(entity);
         }
         return 0;
+    }
+    
+    /**
+     * Should we treat this entity, in its current state, as if it is a spheroid unit
+     * flying in atmosphere?
+     */
+    public static boolean useSpheroidAtmosphere(IGame game, Entity en) {
+        if (!en.isAero()) {
+            return false;
+        }
+        // are we in space?
+        if (game.getBoard().inSpace()) {
+            return false;
+        }
+        // aerodyne's will operate like spheroids in vacuum
+        if (!((IAero) en).isSpheroid()
+                && !game.getPlanetaryConditions().isVacuum()) {
+            return false;
+        }
+        // are we in atmosphere?
+        return en.isAirborne();
     }
 
 } // End public class Compute

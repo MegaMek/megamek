@@ -2,6 +2,7 @@ package megamek.client.bot.princess;
 
 import java.util.List;
 
+import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -14,7 +15,6 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
     public InfantryPathRanker(Princess princess) {
         super(princess);
 
-        setFireControl(new InfantryFireControl(princess));
         setPathEnumerator(princess.getPrecognition().getPathEnumerator());
     }
 
@@ -159,7 +159,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
             // for infantry, facing doesn't matter because you rotate for free
             // (unless you're using "dig in" rules, but we're not there yet)
             returnResponse.addToMyEstimatedDamage(
-                        ((InfantryFireControl) getFireControl()).getMaxDamageAtRange(
+                        ((InfantryFireControl) getFireControl(path.getEntity())).getMaxDamageAtRange(
 							path,
 							blankEnemyPath,
 							range,
@@ -168,7 +168,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
 
             //in general if an enemy can end its position in range, it can hit me
             returnResponse.addToEstimatedEnemyDamage(
-            		((InfantryFireControl) getFireControl()).getMaxDamageAtRange(
+            		((InfantryFireControl) getOwner().getFireControl(FireControlType.Infantry)).getMaxDamageAtRange(
             				blankEnemyPath,
             				path,
             				range,

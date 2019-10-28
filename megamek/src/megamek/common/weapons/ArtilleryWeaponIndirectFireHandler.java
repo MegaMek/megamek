@@ -43,6 +43,7 @@ import megamek.common.VTOL;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.server.Server;
 
 /**
@@ -482,6 +483,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         float toReturn = wtype.rackSize;
+        if (wtype instanceof CapitalMissileWeapon) {
+            toReturn = wtype.getRoundShortAV();
+        }
         // BA Tube artillery is the only artillery that can be mounted by BA
         // so we do the multiplication here
         if (ae instanceof BattleArmor) {

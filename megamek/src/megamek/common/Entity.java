@@ -83,6 +83,7 @@ import megamek.common.weapons.bombs.ISASEWMissileWeapon;
 import megamek.common.weapons.bombs.ISASMissileWeapon;
 import megamek.common.weapons.bombs.ISBombTAG;
 import megamek.common.weapons.bombs.ISLAAMissileWeapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
@@ -3728,8 +3729,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Artillery and Bearings-Only Capital Missiles only in the correct phase...
             if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || mounted.isInBearingsOnlyMode())
-                && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
+                    || mounted.isInBearingsOnlyMode()
+                    || (this.getAltitude() == 0
+                            && mounted.getType() instanceof CapitalMissileWeapon))) {
                 continue;
             }
 
@@ -3789,7 +3791,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Artillery or Bearings-only missiles only in the targeting phase...
             if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || mounted.isInBearingsOnlyMode())
+                    || mounted.isInBearingsOnlyMode()
+                    || (this.getAltitude() == 0
+                            && mounted.getType() instanceof CapitalMissileWeapon))
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 return false;
             }
@@ -9893,6 +9897,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (mounted.isInBearingsOnlyMode()) {
                     return true;
                 }
+            }
+            //Surface to surface capital missiles count as artillery
+            if  (this.getAltitude() == 0
+                    && wtype instanceof CapitalMissileWeapon) {
+                return true;
             }
         }
         return false;

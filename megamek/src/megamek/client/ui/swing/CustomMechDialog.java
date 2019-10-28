@@ -53,6 +53,7 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Board;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Dropship;
@@ -94,6 +95,8 @@ import megamek.common.verifier.TestInfantry;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
+import megamek.common.weapons.ArtilleryBayWeapon;
+import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 
 /**
  * A dialog that a player can use to customize his mech before battle.
@@ -294,10 +297,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isLAM &= (e instanceof LandAirMech);
             isGlider &= (e instanceof Protomech) && (e.getMovementMode() == EntityMovementMode.WIGE);
             boolean entityEligibleForOffBoard = false;
-            for (Mounted mounted : e.getWeaponList()) {
-                WeaponType wtype = (WeaponType) mounted.getType();
-                if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-                    entityEligibleForOffBoard = true;
+            boolean space = clientgui.getClient().getMapSettings().getMedium() == Board.T_SPACE;
+            //TODO: This check is good for now, but at some point we want atmospheric flying droppers to be able to lob
+            // offboard missiles and we could use it in space for extreme range bearings-only fights, plus Ortillery. 
+            if (!space && e.getAltitude() == 0) {
+                // No need to bother checking weapons if the map and entity don't meet criteria for offboard units
+                for (Mounted mounted : e.getWeaponList()) {
+                    WeaponType wtype = (WeaponType) mounted.getType();
+                    if (wtype.hasFlag(WeaponType.F_ARTILLERY)
+                            || wtype instanceof CapitalMissileBayWeapon) {
+                        entityEligibleForOffBoard = true;
+                        break;
+                    }
                 }
             }
             eligibleForOffBoard &= entityEligibleForOffBoard;
@@ -912,21 +923,57 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     public void actionPerformed(ActionEvent actionEvent) {
 
         if (actionEvent.getSource().equals(butOffBoardDistance)) {
-            int maxDistance = 19 * 17; // Long Tom
+            // We'll allow the player to deploy at the maximum possible
+            // effective range, even if many of the unit's weapons would be out of range
+            int maxDistance = 0;
             for (Entity entity : entities) {
                 for (Mounted wep : entity.getWeaponList()) {
                     EquipmentType e = wep.getType();
                     WeaponType w = (WeaponType) e;
+                    int nDistance = 0;
                     if (w.hasFlag(WeaponType.F_ARTILLERY)) {
-                        int nDistance = (w.getLongRange() - 1) * 17;
-                        if (nDistance < maxDistance) {
-                            maxDistance = nDistance;
+                        if (w instanceof ArtilleryBayWeapon) {
+                            // Artillery bays can mix and match, so limit the bay
+                            // to the shortest range of the weapons in it
+                            int bayShortestRange = 150; // Cruise missile/120
+                            for (int wId : wep.getBayWeapons()) {
+                                Mounted bweap = entity.getEquipment(wId);
+                                WeaponType bwtype = (WeaponType) bweap.getType();
+                                // Max TO range in mapsheets - 1 for the actual play area
+                                int currentDistance = (bwtype.getLongRange() - 1);
+                                if (currentDistance < bayShortestRange) {
+                                    bayShortestRange = currentDistance;
+                                }
+                            }
+                            nDistance = bayShortestRange;
+                        } else {
+                            // Max TO range in mapsheets - 1 for the actual play area
+                            nDistance = (w.getLongRange() - 1);
+                        }
+                    } else if (w.isCapital() || w.isSubCapital()) {
+                        // Capital weapons use their maximum space hex range as the mapsheet range
+                        if (w.getMaxRange(wep) == WeaponType.RANGE_EXT) {
+                            nDistance = 50;
+                        }
+                        if (w.getMaxRange(wep) == WeaponType.RANGE_LONG) {
+                            nDistance = 40;
+                        }
+                        if (w.getMaxRange(wep) == WeaponType.RANGE_MED) {
+                            nDistance = 24;
+                        }
+                        if (w.getMaxRange(wep) == WeaponType.RANGE_SHORT) {
+                            nDistance = 12;
                         }
                     }
+                    // Now, convert to mapsheets
+                    nDistance = nDistance * Board.DEFAULT_BOARD_HEIGHT;
+                    // And set our maximum slider hex distance based on the calculations
+                    if (nDistance > maxDistance) {
+                        maxDistance = nDistance;
+                    }
                 }
+                
             }
-            // int dist = Math.min(Math.max(entity.getOffBoardDistance(), 17),
-            // maxDistance);
             Slider sl = new Slider(
                     clientgui.frame,
                     Messages.getString("CustomMechDialog.offboardDistanceTitle"),

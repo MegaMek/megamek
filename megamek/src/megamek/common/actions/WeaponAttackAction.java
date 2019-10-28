@@ -84,6 +84,7 @@ import megamek.common.weapons.bayweapons.LaserBayWeapon;
 import megamek.common.weapons.bayweapons.PPCBayWeapon;
 import megamek.common.weapons.bayweapons.PulseLaserBayWeapon;
 import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.gaussrifles.ISHGaussRifle;
 import megamek.common.weapons.lasers.ISBombastLaser;
@@ -372,10 +373,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (atype.getMunitionType() == AmmoType.M_INFERNO))
                 || (isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO)));
         
-        boolean isArtilleryDirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
+        boolean isArtilleryDirect = (wtype.hasFlag(WeaponType.F_ARTILLERY) ||
+                (wtype instanceof CapitalMissileWeapon
+                        && Compute.isGroundToGround(ae, target)))
                 && (game.getPhase() == IGame.Phase.PHASE_FIRING);
         
-        boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) 
+        boolean isArtilleryIndirect = (wtype.hasFlag(WeaponType.F_ARTILLERY) ||
+                (wtype instanceof CapitalMissileWeapon
+                        && Compute.isGroundToGround(ae, target)))
                 && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                         || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
         
@@ -383,7 +388,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                                     || (game.getPhase() == IGame.Phase.PHASE_FIRING));
         
-        boolean isCruiseMissile = weapon.getType().hasFlag(WeaponType.F_CRUISE_MISSILE);
+        boolean isCruiseMissile = (weapon.getType().hasFlag(WeaponType.F_CRUISE_MISSILE)
+                        || (wtype instanceof CapitalMissileWeapon
+                                && Compute.isGroundToGround(ae, target)));
         
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
@@ -1474,8 +1481,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // for spheroid dropships in atmosphere (and on ground), the rules about
         // firing arcs are more complicated
         // TW errata 2.1
-        if ((ae instanceof Aero) && ((Aero) ae).isSpheroid() 
-                && weapon != null && !game.getBoard().inSpace()) {
+        if (Compute.useSpheroidAtmosphere(game, ae) && weapon != null) {
             int altDif = target.getAltitude() - ae.getAltitude();
             int range = Compute.effectiveDistance(game, ae, target, false);
             // Only aft-mounted weapons can be fired at range 0 (targets directly underneath)
@@ -1485,7 +1491,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Nose-mounted weapons can only be fired at targets at least 1 altitude higher
             if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1)
                     && wtype != null
-                    && !((wtype instanceof ArtilleryWeapon) || wtype.hasFlag(WeaponType.F_ARTILLERY))) {
+                    // Unless the weapon is used as artillery
+                    && (!(wtype instanceof ArtilleryWeapon || wtype.hasFlag(WeaponType.F_ARTILLERY)
+                            || (ae.getAltitude() == 0 && wtype instanceof CapitalMissileWeapon)))) {
                 return Messages.getString("WeaponAttackAction.TooLowForNose");
             }
             // Front-side-mounted weapons can only be fired at targets at the same altitude or higher
@@ -1673,7 +1681,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             
             // Arty shots have to be with arty, non arty shots with non arty.
             if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-                // check artillery is targetted appropriately for its ammo
+                // check artillery is targeted appropriately for its ammo
                 // Artillery only targets hexes unless making a direct fire flak shot or using
                 // homing ammo.
                 if ((ttype != Targetable.TYPE_HEX_ARTILLERY) && (ttype != Targetable.TYPE_MINEFIELD_CLEAR)
@@ -1707,9 +1715,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         }
                     }
                 }
-            } else if (weapon.isInBearingsOnlyMode()) {             
+            } else if (weapon.isInBearingsOnlyMode()) {
                 // We don't really need to do anything here. This just prevents these weapons
                 // from passing the next test erroneously.
+            } else if (wtype instanceof CapitalMissileWeapon
+                        && Compute.isGroundToGround(ae, target)) {
+                // Grounded units firing capital missiles at ground targets must do so as artillery
+                if (ttype != Targetable.TYPE_HEX_ARTILLERY) {
+                    return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
+                }
             } else {
                 // weapon is not artillery
                 if (ttype == Targetable.TYPE_HEX_ARTILLERY) {
@@ -1742,8 +1756,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Indirect artillery attacks
             if (isArtilleryIndirect) {
                 int boardRange = (int) Math.ceil(distance / 17f);
+                int maxRange = wtype.getLongRange();
+                // Capital/subcapital missiles have a board range equal to their max space hex range
+                if (wtype instanceof CapitalMissileWeapon) {
+                    if (wtype.getMaxRange(weapon) == WeaponType.RANGE_EXT) {
+                        maxRange = 50;
+                    }
+                    if (wtype.getMaxRange(weapon) == WeaponType.RANGE_LONG) {
+                        maxRange = 40;
+                    }
+                    if (wtype.getMaxRange(weapon) == WeaponType.RANGE_MED) {
+                        maxRange = 24;
+                    }
+                    if (wtype.getMaxRange(weapon) == WeaponType.RANGE_SHORT) {
+                        maxRange = 12;
+                    }
+                }
                 // Maximum range is measured in mapsheets
-                if (boardRange > wtype.getLongRange()) {
+                if (boardRange > maxRange) {
                     return Messages.getString("WeaponAttackAction.OutOfRange");
                 }
                 // Indirect shots cannot be made at less than 17 hexes range unless
@@ -2034,6 +2064,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // Can't target anything but hexes
                 if (ttype != Targetable.TYPE_HEX_ARTILLERY) {
                     return Messages.getString("WeaponAttackAction.BOHexOnly");
+                }
+            }
+            
+            // Capital weapons fire by grounded units
+            if (wtype.isSubCapital() || wtype.isCapital()) {
+                // Can't fire any but capital/subcapital missiles surface to surface
+                if (Compute.isGroundToGround(ae, target)
+                        && !(wtype instanceof CapitalMissileWeapon)) {
+                    return Messages.getString("WeaponAttackAction.NoS2SCapWeapons");
                 }
             }
             
@@ -4854,7 +4893,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     toHit.addModifier(-2, Messages.getString("WeaponAttackAction.FooSpotter"));
                 }
             }
-            if (ae.isAirborne()) {
+            // Capital missiles used for surface to surface artillery attacks
+            // See SO p110
+            // Start with a flat +2 modifier
+            if (wtype instanceof CapitalMissileWeapon
+                    && Compute.isGroundToGround(ae, target)) {
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.SubCapArtillery"));
+                // +3 additional modifier if fired underwater
+                if (ae.isUnderwater()) {
+                    toHit.addModifier(3, Messages.getString("WeaponAttackAction.SubCapUnderwater"));
+                }
+                // +1 modifier if attacker cruised/walked
+                if (ae.moved == EntityMovementType.MOVE_WALK) {
+                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.Walked"));
+                } else if (ae.moved == EntityMovementType.MOVE_RUN) {
+                    // +2 modifier if attacker ran
+                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.Ran"));
+                }
+            } else if (ae.isAirborne()) {
                 if (ae.getAltitude() > 6) {
                     toHit.addModifier(+2, Messages.getString("WeaponAttackAction.Altitude"));
                 } else if (ae.getAltitude() > 3) {

@@ -148,6 +148,22 @@ public class Engine implements Serializable, ITechnology {
         SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_F] = 0.6;
     }
 
+    /**
+     * Lookup factor used in calculating support vehicle engine rating
+     *
+     * @param etype       The engine type constant
+     * @param techRating  The tech rating of the engine ({@link ITechnology#RATING_A} through {@link }ITechnology#RATING_F})
+     * @return            The engine factor
+     */
+    public static double getSVEngineFactor(int etype, int techRating) {
+        if ((etype >= 0) && (etype < NUM_ENGINE_TYPES)
+            && (techRating >= EquipmentType.RATING_A)
+            && (techRating <= EquipmentType.RATING_F)
+                && (SV_ENGINE_RATINGS[etype] != null)) {
+            return SV_ENGINE_RATINGS[etype][techRating];
+        }
+        return 0.0;
+    }
        
     public boolean engineValid;
     private int engineRating;
@@ -704,6 +720,36 @@ public class Engine implements Serializable, ITechnology {
             cost *= 2;
         }
         return cost;
+    }
+
+    /**
+     * Values used for calculating the cost of a support vehicle engine. The engine cost in C-bills is
+     * tonnage * 5,000 * type multiplier
+     *
+     * @param etype The engine type
+     * @return      The type multiplier for cost
+     */
+    public static double getSVCostMultiplier(int etype) {
+        switch (etype) {
+            case STEAM:
+                return 0.8;
+            case BATTERY:
+                return 1.2;
+            case FUEL_CELL:
+                return 1.4;
+            case SOLAR:
+                return 1.6;
+            case MAGLEV:
+                return 2.5;
+            case FISSION:
+                return 3.0;
+            case NORMAL_ENGINE:
+                return 2.0;
+            case COMBUSTION_ENGINE:
+            case EXTERNAL:
+            default:
+                return 1.0;
+        }
     }
 
     private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)

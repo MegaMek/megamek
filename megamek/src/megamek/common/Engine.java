@@ -21,8 +21,6 @@ package megamek.common;
 
 import java.io.Serializable;
 
-import megamek.common.verifier.TestEntity;
-
 /**
  * This class represents an engine, such as those driving mechs.
  */
@@ -148,23 +146,6 @@ public class Engine implements Serializable, ITechnology {
         SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_F] = 0.6;
     }
 
-    /**
-     * Lookup factor used in calculating support vehicle engine rating
-     *
-     * @param etype       The engine type constant
-     * @param techRating  The tech rating of the engine ({@link ITechnology#RATING_A} through {@link }ITechnology#RATING_F})
-     * @return            The engine factor
-     */
-    public static double getSVEngineFactor(int etype, int techRating) {
-        if ((etype >= 0) && (etype < NUM_ENGINE_TYPES)
-            && (techRating >= EquipmentType.RATING_A)
-            && (techRating <= EquipmentType.RATING_F)
-                && (SV_ENGINE_RATINGS[etype] != null)) {
-            return SV_ENGINE_RATINGS[etype][techRating];
-        }
-        return 0.0;
-    }
-       
     public boolean engineValid;
     private int engineRating;
     private int engineType;

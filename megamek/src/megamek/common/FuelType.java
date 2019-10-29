@@ -23,6 +23,7 @@ package megamek.common;
  * range. See StratOps, p. 179.
  */
 public enum FuelType {
+    NONE (0, ITechnology.RATING_A),
     HYRDOGEN (15000, ITechnology.RATING_C),
     PETROCHEMICALS (1000, ITechnology.RATING_A),
     ALCOHOL (1500, ITechnology.RATING_A),

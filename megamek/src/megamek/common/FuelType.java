@@ -27,7 +27,7 @@ public enum FuelType {
     NONE (0, ITechnology.RATING_A),
     /** Fuel cell */
     HYRDOGEN (15000, ITechnology.RATING_C),
-    /** Standard ICE fuel (non-aerospace) */
+    /** Standard non-aerospace ICE fuel */
     PETROCHEMICALS (1000, ITechnology.RATING_A),
     /** Alternate ICE fuel */
     ALCOHOL (1500, ITechnology.RATING_A),

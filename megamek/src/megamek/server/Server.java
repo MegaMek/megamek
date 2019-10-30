@@ -35139,6 +35139,14 @@ public class Server implements Runnable {
             pilot.setDeployed(true);
             pilot.setId(getFreeEntityId());
             pilot.setLanded(false);
+            if (entity.isSpaceborne()) {
+                //In space, ejected pilots retain the heading and velocity of the unit they eject from
+                pilot.setVectors(entity.getVectors());
+                pilot.setFacing(entity.getFacing());
+                pilot.setCurrentVelocity(entity.getVelocity());
+                //If the pilot ejects, he should no longer be accelerating
+                pilot.setNextVelocity(entity.getVelocity());
+            }
             game.addEntity(pilot);
             send(createAddEntityPacket(pilot.getId()));
             // make him not get a move this turn

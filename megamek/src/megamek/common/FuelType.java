@@ -23,10 +23,15 @@ package megamek.common;
  * range. See StratOps, p. 179.
  */
 public enum FuelType {
+    /** Currently a place holder for "none of the others"; a better option than null */
     NONE (0, ITechnology.RATING_A),
+    /** Fuel cell */
     HYRDOGEN (15000, ITechnology.RATING_C),
+    /** Standard ICE fuel (non-aerospace) */
     PETROCHEMICALS (1000, ITechnology.RATING_A),
+    /** Alternate ICE fuel */
     ALCOHOL (1500, ITechnology.RATING_A),
+    /** Alternal ICE fuel */
     NATURAL_GAS (1200, ITechnology.RATING_A);
 
     /**

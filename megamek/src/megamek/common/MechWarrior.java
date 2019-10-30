@@ -24,7 +24,7 @@ public class MechWarrior extends EjectedCrew {
     private int pickedUpById = Entity.NONE;
     private String pickedUpByExternalId = "-1";
     private boolean landed = true;
-
+    
     /**
      * Create a new MechWarrior
      *
@@ -33,12 +33,12 @@ public class MechWarrior extends EjectedCrew {
      */
     public MechWarrior(Entity originalRide) {
         super(originalRide);
-        setChassis(EjectedCrew.MW_EJECT_NAME);
+        setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
     
     public MechWarrior(Crew crew, IPlayer owner, IGame game) {
         super(crew, owner, game);
-        setChassis(EjectedCrew.MW_EJECT_NAME);
+        setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
 
     /**
@@ -46,7 +46,7 @@ public class MechWarrior extends EjectedCrew {
      */
     public MechWarrior() {
         super();
-        setChassis(EjectedCrew.MW_EJECT_NAME);
+        setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
     
     /*
@@ -125,6 +125,31 @@ public class MechWarrior extends EjectedCrew {
     public boolean isCrippled() {
         return true; //Ejected mchwarriors should always attempt to flee according to Forced Withdrawal.
     }
+    
+    // Handle pilot velocity for Aeros
+    
+    public int getCurrentVelocity() {
+        // if using advanced movement then I just want to sum up
+        // the different vectors
+        if ((game != null) && game.useVectorMove()) {
+            return getVelocity();
+        }
+        return currentVelocity;
+    }
+
+    public void setCurrentVelocity(int velocity) {
+        currentVelocity = velocity;
+    }
+
+    public int getNextVelocity() {
+        return nextVelocity;
+    }
+
+    public void setNextVelocity(int velocity) {
+        nextVelocity = velocity;
+    }
+    
+    
     
     
     public long getEntityType(){

@@ -17,10 +17,14 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 public class EjectedCrew extends Infantry {
     protected int originalRideId;
     protected String originalRideExternalId;
+    // set up movement for Aero pilots and vessel crews
+    protected int currentVelocity = 0;
+    protected int nextVelocity = currentVelocity;
     
     private static final long serialVersionUID = 8136710237585797372L;
     
     public static final String VEE_EJECT_NAME = "Vehicle Crew";
+    public static final String PILOT_EJECT_NAME = "Pilot";
     public static final String MW_EJECT_NAME = "MechWarrior";
 
     public EjectedCrew(Entity originalRide) {

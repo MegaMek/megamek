@@ -35071,6 +35071,7 @@ public class Server implements Runnable {
         // and run around the board afterwards.
         if (entity instanceof Mech || entity.isFighter()) {
             int facing = entity.getFacing();
+            int altitude = entity.getAltitude();
             Coords targetCoords = (null != entity.getPosition())
                 ? entity.getPosition().translated((facing + 3) % 6) : null;
 
@@ -35223,7 +35224,7 @@ public class Server implements Runnable {
                 }
             } // Crew safely ejects.
 
-        } // End entity-is-Mek
+        } // End entity-is-Mek or fighter
         else if (game.getBoard().contains(entity.getPosition())
                  && (entity instanceof Tank)) {
             EjectedCrew crew = new EjectedCrew(entity);
@@ -35304,11 +35305,9 @@ public class Server implements Runnable {
             boolean autoEject, Coords targetCoords, String desc) {
         PilotingRollData rollTarget = new PilotingRollData(entity.getId(),
                 entity.getCrew().getPiloting(crewPos), desc);
+        // Per SO p26, fighters can eject as per TO rules on 196 with some exceptions
         if (entity.isProne()) {
             rollTarget.addModifier(5, "Mech is prone");
-        }
-        if (entity.isFighter()) {
-            
         }
         if (entity.getCrew().isUnconscious(crewPos)) {
             rollTarget.addModifier(3, "pilot unconscious");
@@ -35325,51 +35324,59 @@ public class Server implements Runnable {
                     "Head Internal Structure Damage");
         }
         IHex targetHex = game.getBoard().getHex(targetCoords);
-        if (targetHex != null) {
-            if ((targetHex.terrainLevel(Terrains.WATER) > 0)
-                    && !targetHex.containsTerrain(Terrains.ICE)) {
-                rollTarget.addModifier(-1, "landing in water");
-            } else if (targetHex.containsTerrain(Terrains.ROUGH)) {
-                rollTarget.addModifier(0, "landing in rough");
-            } else if (targetHex.containsTerrain(Terrains.RUBBLE)) {
-                rollTarget.addModifier(0, "landing in rubble");
-            } else if (targetHex.terrainLevel(Terrains.WOODS) == 1) {
-                rollTarget.addModifier(2, "landing in light woods");
-            } else if (targetHex.terrainLevel(Terrains.WOODS) == 2) {
-                rollTarget.addModifier(3, "landing in heavy woods");
-            } else if (targetHex.terrainLevel(Terrains.WOODS) == 3) {
-                rollTarget.addModifier(4, "landing in ultra heavy woods");
-            } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 1) {
-                rollTarget.addModifier(3, "landing in light jungle");
-            } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 2) {
-                rollTarget.addModifier(5, "landing in heavy jungle");
-            } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 3) {
-                rollTarget.addModifier(7, "landing in ultra heavy jungle");
-            } else if (targetHex.terrainLevel(Terrains.BLDG_ELEV) > 0) {
-                rollTarget.addModifier(
-                        targetHex.terrainLevel(Terrains.BLDG_ELEV),
-                        "landing in a building");
+        //Terrain modifiers should only apply if the unit is on the ground...
+        if (!entity.isSpaceborne() && !entity.isAirborne()) {
+            if (targetHex != null) {
+                if ((targetHex.terrainLevel(Terrains.WATER) > 0)
+                        && !targetHex.containsTerrain(Terrains.ICE)) {
+                    rollTarget.addModifier(-1, "landing in water");
+                } else if (targetHex.containsTerrain(Terrains.ROUGH)) {
+                    rollTarget.addModifier(0, "landing in rough");
+                } else if (targetHex.containsTerrain(Terrains.RUBBLE)) {
+                    rollTarget.addModifier(0, "landing in rubble");
+                } else if (targetHex.terrainLevel(Terrains.WOODS) == 1) {
+                    rollTarget.addModifier(2, "landing in light woods");
+                } else if (targetHex.terrainLevel(Terrains.WOODS) == 2) {
+                    rollTarget.addModifier(3, "landing in heavy woods");
+                } else if (targetHex.terrainLevel(Terrains.WOODS) == 3) {
+                    rollTarget.addModifier(4, "landing in ultra heavy woods");
+                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 1) {
+                    rollTarget.addModifier(3, "landing in light jungle");
+                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 2) {
+                    rollTarget.addModifier(5, "landing in heavy jungle");
+                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 3) {
+                    rollTarget.addModifier(7, "landing in ultra heavy jungle");
+                } else if (targetHex.terrainLevel(Terrains.BLDG_ELEV) > 0) {
+                    rollTarget.addModifier(
+                            targetHex.terrainLevel(Terrains.BLDG_ELEV),
+                            "landing in a building");
+                } else {
+                    rollTarget.addModifier(-2, "landing in clear terrain");
+                }
             } else {
-                rollTarget.addModifier(-2, "landing in clear terrain");
+                rollTarget.addModifier(-2, "landing off the board");
             }
-        } else {
-            rollTarget.addModifier(-2, "landing off the board");
         }
-
-        if (game.getPlanetaryConditions().getGravity() == 0) {
-            rollTarget.addModifier(3, "Zero-G");
-        } else if (game.getPlanetaryConditions().getGravity() < .8) {
-            rollTarget.addModifier(2, "Low-G");
-        } else if (game.getPlanetaryConditions().getGravity() > 1.2) {
-            rollTarget.addModifier(2, "High-G");
-        }
-
-        if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VACUUM) {
-            rollTarget.addModifier(3, "Vacuum");
-        } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VHIGH) {
-            rollTarget.addModifier(2, "Very High Atmosphere Pressure");
-        } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_TRACE) {
-            rollTarget.addModifier(2, "Trace atmosphere");
+        if (!entity.isSpaceborne()) {
+            //At present, the UI lets you set these atmospheric conditions for a space battle, but it shouldn't
+            //That's a fix for another day, probably when I get around to space terrain and 'weather'
+            if (game.getPlanetaryConditions().getGravity() == 0) {
+                rollTarget.addModifier(3, "Zero-G");
+            } else if (game.getPlanetaryConditions().getGravity() < .8) {
+                rollTarget.addModifier(2, "Low-G");
+            } else if (game.getPlanetaryConditions().getGravity() > 1.2) {
+                rollTarget.addModifier(2, "High-G");
+            }
+        
+            //Vacuum shouldn't apply to ASF ejection since they're designed for it, but the rules don't specify
+            //High and low pressures make more sense to apply to all
+            if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VACUUM) {
+                rollTarget.addModifier(3, "Vacuum");
+            } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VHIGH) {
+                rollTarget.addModifier(2, "Very High Atmosphere Pressure");
+            } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_TRACE) {
+                rollTarget.addModifier(2, "Trace atmosphere");
+            }
         }
 
         if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)

@@ -2587,6 +2587,9 @@ public class Tank extends Entity {
             if (hasMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 chassisCost *= 1.75;
             }
+            if (hasMisc(MiscType.F_EXTERNAL_POWER_PICKUP)) {
+                chassisCost *= 1.1;
+            }
             if (hasMisc(MiscType.F_HYDROFOIL)) {
                 chassisCost *= 1.1;
             }
@@ -2627,30 +2630,8 @@ public class Tank extends Entity {
         double engineCost = 0.0;
         if(hasEngine()) {
             if (isSupportVehicle()) {
-                engineCost = 5000 * getEngine().getWeightEngine(this);
-                switch (getEngine().getEngineType()) {
-                    case Engine.STEAM:
-                        engineCost *= 0.8;
-                        break;
-                    case Engine.COMBUSTION_ENGINE:
-                        engineCost *= 1.0;
-                        break;
-                    case Engine.BATTERY:
-                        engineCost *= 1.2;
-                        break;
-                    case Engine.FUEL_CELL:
-                        engineCost *= 1.4;
-                        break;
-                    case Engine.SOLAR:
-                        engineCost *= 1.6;
-                        break;
-                    case Engine.FISSION:
-                        engineCost *= 3;
-                        break;
-                    case Engine.NORMAL_ENGINE:
-                        engineCost *= 2;
-                        break;
-                }
+                engineCost = 5000 * getEngine().getWeightEngine(this)
+                        * Engine.getSVCostMultiplier(getEngine().getEngineType());
             } else {
                 engineCost = (getEngine().getBaseCost() *
                         getEngine().getRating() * weight) / 75.0;

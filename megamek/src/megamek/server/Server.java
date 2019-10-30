@@ -35067,9 +35067,9 @@ public class Server implements Runnable {
             return vDesc;
         }
 
-        // Mek pilots may get hurt during ejection,
+        // Mek and fighter pilots may get hurt during ejection,
         // and run around the board afterwards.
-        if (entity instanceof Mech) {
+        if (entity instanceof Mech || entity.isFighter()) {
             int facing = entity.getFacing();
             Coords targetCoords = (null != entity.getPosition())
                 ? entity.getPosition().translated((facing + 3) % 6) : null;
@@ -35306,6 +35306,9 @@ public class Server implements Runnable {
                 entity.getCrew().getPiloting(crewPos), desc);
         if (entity.isProne()) {
             rollTarget.addModifier(5, "Mech is prone");
+        }
+        if (entity.isFighter()) {
+            
         }
         if (entity.getCrew().isUnconscious(crewPos)) {
             rollTarget.addModifier(3, "pilot unconscious");

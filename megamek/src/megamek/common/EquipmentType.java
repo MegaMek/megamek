@@ -904,7 +904,7 @@ public class EquipmentType implements ITechnology {
         if (bar < 0) {
             return 0;
         }
-        return SV_ARMOR_COST[Math.min(bar, SV_ARMOR_COST.length)];
+        return SV_ARMOR_COST[Math.min(bar, SV_ARMOR_COST.length - 1)];
     }
     
     /* Armor and structure are stored as integers and standard uses a generic MiscType that

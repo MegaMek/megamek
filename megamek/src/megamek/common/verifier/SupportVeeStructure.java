@@ -16,7 +16,6 @@ package megamek.common.verifier;
 
 import megamek.common.Entity;
 import megamek.common.MiscType;
-import megamek.common.Tank;
 
 public class SupportVeeStructure extends Structure {
 

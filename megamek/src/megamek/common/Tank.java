@@ -102,9 +102,6 @@ public class Tank extends Entity {
     private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front",
             "Right", "Left", "Rear", "Rear Turret", "Front Turret" };
 
-    public static float[] BAR_ARMOR_COST_MULT = { 0, 0, 50, 100, 150, 200, 250,
-            300, 400, 500, 625 };
-
     @Override
     public int getUnitType() {
         EntityMovementMode mm = getMovementMode();
@@ -2645,8 +2642,8 @@ public class Tank extends Entity {
             for (int loc = 0; loc < locations(); loc++) {
                 totalArmorPoints += getOArmor(loc);
             }
-            costs[i++] = totalArmorPoints *
-                    BAR_ARMOR_COST_MULT[getBARRating(LOC_BODY)];
+            costs[i++] = totalArmorPoints
+                    * EquipmentType.getSupportVehicleArmorCostPerPoint(getBARRating(firstArmorIndex()));
         } else {
             if (hasPatchworkArmor()) {
                 for (int loc = 0; loc < locations(); loc++) {
@@ -2740,28 +2737,38 @@ public class Tank extends Entity {
 
 
         double multiplier = 1.0;
-        switch (movementMode) {
-            case HOVER:
-            case SUBMARINE:
-                multiplier += weight / 50.0;
-                break;
-            case HYDROFOIL:
-                multiplier += weight / 75.0;
-                break;
-            case NAVAL:
-            case WHEELED:
-                multiplier += weight / 200.0;
-                break;
-            case TRACKED:
-                multiplier += weight / 100.0;
-                break;
-            case VTOL:
-                multiplier += weight / 30.0;
-                break;
-            case WIGE:
-                multiplier += weight / 25.0;
-                break;
-            default:
+        if (isSupportVehicle()
+            && (movementMode.equals(EntityMovementMode.NAVAL)
+                || movementMode.equals(EntityMovementMode.HYDROFOIL)
+                || movementMode.equals(EntityMovementMode.SUBMARINE))) {
+            multiplier += weight / 100000.0;
+        } else {
+            switch (movementMode) {
+                case HOVER:
+                case SUBMARINE:
+                    multiplier += weight / 50.0;
+                    break;
+                case HYDROFOIL:
+                    multiplier += weight / 75.0;
+                    break;
+                case NAVAL:
+                case WHEELED:
+                    multiplier += weight / 200.0;
+                    break;
+                case TRACKED:
+                    multiplier += weight / 100.0;
+                    break;
+                case VTOL:
+                    multiplier += weight / 30.0;
+                    break;
+                case WIGE:
+                    multiplier += weight / 25.0;
+                    break;
+                case RAIL:
+                case MAGLEV:
+                    multiplier += weight / 250.0;
+                    break;
+            }
         }
         cost *= multiplier;
         costs[i++] = -multiplier;

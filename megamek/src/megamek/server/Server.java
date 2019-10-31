@@ -35157,6 +35157,8 @@ public class Server implements Runnable {
             } else if (entity.isAirborne()) {
                 pilot.setAltitude(entity.getAltitude());
             }
+            //Pilot flight suits are vacuum-rated. Mechwarriors wear shorts...
+            pilot.setSpaceSuit(entity.isAero());
             game.addEntity(pilot);
             send(createAddEntityPacket(pilot.getId()));
             // make him not get a move this turn
@@ -35467,7 +35469,7 @@ public class Server implements Runnable {
 
         Coords targetCoords = entity.getPosition();
 
-        if (entity instanceof Mech || entity.isAero()) {
+        if (entity instanceof Mech || (entity.isAero() && !entity.isAirborne())) {
             // okay, print the info
             r = new Report(2027);
             r.subject = entity.getId();
@@ -35486,7 +35488,15 @@ public class Server implements Runnable {
             pilot.setDeployed(true);
             pilot.setId(getFreeEntityId());
             //Pilot flight suits are vacuum-rated. Mechwarriors wear shorts...
-            pilot.setXCTGear(entity.isAero());
+            pilot.setSpaceSuit(entity.isAero());
+            if (entity.isSpaceborne()) {
+                //In space, ejected pilots retain the heading and velocity of the unit they eject from
+                pilot.setVectors(entity.getVectors());
+                pilot.setFacing(entity.getFacing());
+                pilot.setCurrentVelocity(entity.getVelocity());
+                //If the pilot ejects, he should no longer be accelerating
+                pilot.setNextVelocity(entity.getVelocity());
+            }
             game.addEntity(pilot);
             send(createAddEntityPacket(pilot.getId()));
             // make him not get a move this turn
@@ -35507,7 +35517,7 @@ public class Server implements Runnable {
                 send(createRemoveEntityPacket(pilot.getId(),
                                               IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
-        } // End entity-is-Mek
+        } // End entity-is-Mek or Aero
         else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT)
                  && (entity instanceof Tank)) {
             // Don't make them abandon into vacuum

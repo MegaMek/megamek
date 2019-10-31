@@ -28,6 +28,7 @@ v0.47.1-SNAPSHOT
 	grounded dropships can now fire missiles as artillery;
 	grounded dropships cannot directly fire capital weapons at ground targets;
 + PR #1527/Issue #1303: Mostly implemented current TW rules for movement of spheroid dropships in atmosphere
++ PR #1530: Treat fixed wing support vehicles as support vehicles instead of conventional fighters for cost calculation.
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

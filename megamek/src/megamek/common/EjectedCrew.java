@@ -20,6 +20,7 @@ public class EjectedCrew extends Infantry {
     // set up movement for Aero pilots and vessel crews
     protected int currentVelocity = 0;
     protected int nextVelocity = currentVelocity;
+    protected boolean hasXCTGear = false;
     
     private static final long serialVersionUID = 8136710237585797372L;
     
@@ -178,6 +179,15 @@ public class EjectedCrew extends Infantry {
     public boolean isCrippled() {
         // Ejected crew should always attempt to flee according to Forced Withdrawal.
         return true;
+    }
+    
+    //Is this pilot/crew suited for vacuum/harsh environmental conditions?
+    public boolean hasXCTGear() {
+        return hasXCTGear;
+    }
+    
+    public void setXCTGear(boolean XCT) {
+        hasXCTGear = XCT;
     }
 
 }

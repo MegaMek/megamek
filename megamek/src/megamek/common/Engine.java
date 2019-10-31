@@ -21,8 +21,6 @@ package megamek.common;
 
 import java.io.Serializable;
 
-import megamek.common.verifier.TestEntity;
-
 /**
  * This class represents an engine, such as those driving mechs.
  */
@@ -148,7 +146,6 @@ public class Engine implements Serializable, ITechnology {
         SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_F] = 0.6;
     }
 
-       
     public boolean engineValid;
     private int engineRating;
     private int engineType;
@@ -704,6 +701,36 @@ public class Engine implements Serializable, ITechnology {
             cost *= 2;
         }
         return cost;
+    }
+
+    /**
+     * Values used for calculating the cost of a support vehicle engine. The engine cost in C-bills is
+     * tonnage * 5,000 * type multiplier
+     *
+     * @param etype The engine type
+     * @return      The type multiplier for cost
+     */
+    public static double getSVCostMultiplier(int etype) {
+        switch (etype) {
+            case STEAM:
+                return 0.8;
+            case BATTERY:
+                return 1.2;
+            case FUEL_CELL:
+                return 1.4;
+            case SOLAR:
+                return 1.6;
+            case MAGLEV:
+                return 2.5;
+            case FISSION:
+                return 3.0;
+            case NORMAL_ENGINE:
+                return 2.0;
+            case COMBUSTION_ENGINE:
+            case EXTERNAL:
+            default:
+                return 1.0;
+        }
     }
 
     private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)

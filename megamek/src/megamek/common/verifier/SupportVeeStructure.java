@@ -14,21 +14,21 @@
  */
 package megamek.common.verifier;
 
+import megamek.common.Entity;
 import megamek.common.MiscType;
-import megamek.common.Tank;
 
 public class SupportVeeStructure extends Structure {
 
     static final double[] SV_TECH_RATING_STRUCTURE_MULTIPLIER = 
         { 1.60, 1.30, 1.15, 1.00, 0.85, 0.66 };
     
-    Tank sv;
+    Entity sv;
     
-    public SupportVeeStructure(Tank supportVee) {
+    public SupportVeeStructure(Entity supportVee) {
         this.sv = supportVee;
     }
     
-    public static double getWeightStructure(Tank sv) {
+    public static double getWeightStructure(Entity sv) {
         double baseChassisVal = sv.getBaseChassisValue();
         double trMult = SV_TECH_RATING_STRUCTURE_MULTIPLIER[sv
                 .getStructuralTechRating()];
@@ -50,6 +50,9 @@ public class SupportVeeStructure extends Structure {
         }
         if (sv.hasMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
             chassisModMult *= 2;
+        }
+        if (sv.hasMisc(MiscType.F_EXTERNAL_POWER_PICKUP)) {
+            chassisModMult *= 1.1;
         }
         if (sv.hasMisc(MiscType.F_HYDROFOIL)) {
             chassisModMult *= 1.7;

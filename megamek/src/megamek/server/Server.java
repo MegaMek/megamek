@@ -35071,7 +35071,6 @@ public class Server implements Runnable {
         // and run around the board afterwards.
         if (entity instanceof Mech || entity.isFighter()) {
             int facing = entity.getFacing();
-            int altitude = entity.getAltitude();
             Coords targetCoords = (null != entity.getPosition())
                 ? entity.getPosition().translated((facing + 3) % 6) : null;
 
@@ -35116,7 +35115,12 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
                     Report.addNewline(vDesc);
                     if ((rollTarget.getValue() - diceRoll) > 1) {
-                        int damage = (rollTarget.getValue() - diceRoll) / 2;
+                        // Pilots take damage based on ejection roll MoF
+                        int damage = (rollTarget.getValue() - diceRoll);
+                        if (entity instanceof Mech) {
+                            // MechWarriors only take 1 damage per 2 points of MoF
+                            damage /= 2;
+                        }
                         if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)) {
                             damage++;
                         }
@@ -35146,6 +35150,8 @@ public class Server implements Runnable {
                 pilot.setCurrentVelocity(entity.getVelocity());
                 //If the pilot ejects, he should no longer be accelerating
                 pilot.setNextVelocity(entity.getVelocity());
+            } else if (entity.isAirborne()) {
+                pilot.setAltitude(entity.getAltitude());
             }
             game.addEntity(pilot);
             send(createAddEntityPacket(pilot.getId()));

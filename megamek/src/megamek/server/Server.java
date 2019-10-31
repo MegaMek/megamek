@@ -35073,6 +35073,10 @@ public class Server implements Runnable {
             int facing = entity.getFacing();
             Coords targetCoords = (null != entity.getPosition())
                 ? entity.getPosition().translated((facing + 3) % 6) : null;
+            if (entity.isSpaceborne() && entity.getPosition() != null) {
+                //Pilots in space should eject into the fighter's hex, not behind it
+                targetCoords = (entity.getPosition());
+            }
 
             if (autoEject) {
                 r = new Report(6395);
@@ -35175,48 +35179,25 @@ public class Server implements Runnable {
                 // Add the pilot as an infantry unit on the battlefield.
                 if (game.getBoard().contains(targetCoords)) {
                     pilot.setPosition(targetCoords);
-                    /*
-                     * Can pilots eject into water??? ASSUMPTION : They can
-                     * (because they get a -1 mod to the PSR. // Did the pilot
-                     * land in water? if ( game.getBoard().getHex(
-                     * targetCoords).levelOf ( Terrain.WATER ) > 0 ) { //report
-                     * missing desc.append("and the pilot ejects, but lands in
-                     * water!!!\n"); //report missing desc.append(destroyEntity(
-                     * pilot, "a watery grave", false )); } else { //report
-                     * missing desc.append("and the pilot ejects safely!\n"); }
-                     */
                     // report safe ejection
                     r = new Report(6400);
                     r.subject = entity.getId();
                     r.indent(3);
                     vDesc.addElement(r);
-                    // infantry have auto XTC gear so do pilots
-                    /*
-                     * if (game.getPlanetaryConditions().isVacuum()) { // ended
-                     * up in a vacuum r = new Report(6405); r.subject =
-                     * entity.getId(); r.indent(3); vDesc.addElement(r);
-                     * vDesc.addAll(destroyEntity(pilot,
-                     * "explosive decompression", false, false)); }
-                     */
                     // Update the entity
                     entityUpdate(pilot.getId());
                     // check if the pilot lands in a minefield
-                    vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
-                            entity.getPosition(), targetCoords,
-                            entity.getElevation()));
+                    if (!entity.isAirborne()) {
+                        vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
+                                entity.getPosition(), targetCoords,
+                                entity.getElevation()));
+                    }
                 } else {
                     // ejects safely
                     r = new Report(6410);
                     r.subject = entity.getId();
                     r.indent(3);
                     vDesc.addElement(r);
-                    /*
-                     * if (game.getPlanetaryConditions().isVacuum()) { // landed
-                     * in vacuum r = new Report(6405); r.subject =
-                     * entity.getId(); r.indent(3); vDesc.addElement(r);
-                     * vDesc.addAll(destroyEntity(pilot,
-                     * "explosive decompression", false, false)); } else {
-                     */
                     game.removeEntity(pilot.getId(),
                                       IEntityRemovalConditions.REMOVE_IN_RETREAT);
                     send(createRemoveEntityPacket(pilot.getId(),
@@ -35328,6 +35309,9 @@ public class Server implements Runnable {
         }
         if (autoEject) {
             rollTarget.addModifier(1, "automatic ejection");
+        }
+        if (entity.isFighter() && ((Aero)entity).isOutControl()) {
+            rollTarget.addModifier(5, "Out of Control");
         }
         if ((entity instanceof Mech)
                 && (entity.getInternal(Mech.LOC_HEAD) < entity
@@ -35481,14 +35465,9 @@ public class Server implements Runnable {
             return vDesc;
         }
 
-        // Don't make them abandon into vacuum
-        if (game.getPlanetaryConditions().isVacuum()) {
-            return vDesc;
-        }
-
         Coords targetCoords = entity.getPosition();
 
-        if (entity instanceof Mech) {
+        if (entity instanceof Mech || entity.isAero()) {
             // okay, print the info
             r = new Report(2027);
             r.subject = entity.getId();
@@ -35496,12 +35475,18 @@ public class Server implements Runnable {
             r.addDesc(entity);
             r.indent(3);
             vDesc.addElement(r);
+            // Don't make ill-equipped pilots abandon into vacuum
+            if (game.getPlanetaryConditions().isVacuum() && !entity.isAero()) {
+                return vDesc;
+            }
 
             // create the MechWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
             pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious());
             pilot.setDeployed(true);
             pilot.setId(getFreeEntityId());
+            //Pilot flight suits are vacuum-rated. Mechwarriors wear shorts...
+            pilot.setXCTGear(entity.isAero());
             game.addEntity(pilot);
             send(createAddEntityPacket(pilot.getId()));
             // make him not get a move this turn
@@ -35525,6 +35510,10 @@ public class Server implements Runnable {
         } // End entity-is-Mek
         else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT)
                  && (entity instanceof Tank)) {
+            // Don't make them abandon into vacuum
+            if (game.getPlanetaryConditions().isVacuum()) {
+                return vDesc;
+            }
             EjectedCrew crew = new EjectedCrew(entity);
             crew.setDeployed(true);
             crew.setId(getFreeEntityId());

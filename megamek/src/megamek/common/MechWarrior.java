@@ -149,9 +149,12 @@ public class MechWarrior extends EjectedCrew {
         nextVelocity = velocity;
     }
     
-    
-    
-    
+    @Override
+    //Aero pilots have parachutes and can thus survive being airborne
+    public boolean doomedInAtmosphere() {
+        return (game.getEntity(getOriginalRideId()) != null && game.getEntity(getOriginalRideId()).isAero());
+    }
+
     public long getEntityType(){
         return Entity.ETYPE_INFANTRY | Entity.ETYPE_MECHWARRIOR;
     }

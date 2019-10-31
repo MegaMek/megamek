@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**

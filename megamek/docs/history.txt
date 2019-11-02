@@ -2,6 +2,16 @@ VERSION HISTORY:
 ----------------
 v0.46.1-SNAPSHOT
 + Fix large craft bay cost calculations
++ Bug: Vehicle reduced to half movement not considered heavy damage
++ PR #1473: Allow the bot to gracefully handle deployment of grounded dropships on maps with no valid places to put them
++ PR #1474: TRO display in MegaMek lobby displays data for gun emplacements
++ Issue #1459: Using XXL(Clan) fusion engine on combat vehicle by mixed IS tech is not loaded properly
++ Issue #1481: Selecting the Adelante Train throws IndexOutOfBounds Exception
++ PR #1484: JS/SS max armor calculation (affects validation and MML).
++ PR #1488: Nuclear warheads for large craft properly differentiate themselves from their standard versions when swapping ammo
++ Issue #1490: Fixed Ramshackle quirk description
++ Issue #1489: Fix jet booster and supercharger weight calculations
++ Issue #1500: Avoid NRE in BotClient::getStartingCoordsArray
 
 v0.46.0 (2019-08-20 1900 UTC)
 + Data New Sprites.

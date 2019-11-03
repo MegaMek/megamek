@@ -754,7 +754,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         // figure out # of shots for variable-shot weapons
         if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
                 .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
-                && (ignoreMode || mode.equals("Ultra"))) {
+                && (ignoreMode || mode.equals(Weapon.Mode_UAC_Ultra))) {
             nShots = 2;
         }
         // sets number of shots for AC rapid mode
@@ -763,19 +763,19 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 || (wtype.getAmmoType() == AmmoType.T_AC_IMP)
                 || (wtype.getAmmoType() == AmmoType.T_PAC))
                 && wtype.hasModes()
-                && (ignoreMode || mode.equals("Rapid"))) {
+                && (ignoreMode || mode.equals(Weapon.Mode_AC_Rapid))) {
             nShots = 2;
         } else if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY)
                 || wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
-            if ((mode != null) && mode.equals("2-shot")) {
+            if ((mode != null) && mode.equals(Weapon.Mode_RAC_ThreeShot)) {
                 nShots = 2;
-            } else if ((mode != null) && mode.equals("3-shot")) {
+            } else if ((mode != null) && mode.equals(Weapon.Mode_RAC_ThreeShot)) {
                 nShots = 3;
-            } else if ((mode != null) && mode.equals("4-shot")) {
+            } else if ((mode != null) && mode.equals(Weapon.Mode_RAC_FourShot)) {
                 nShots = 4;
-            } else if ((mode != null) && mode.equals("5-shot")) {
+            } else if ((mode != null) && mode.equals(Weapon.Mode_RAC_FiveShot)) {
                 nShots = 5;
-            } else if ((ignoreMode || mode.equals("6-shot"))) {
+            } else if ((ignoreMode || mode.equals(Weapon.Mode_RAC_SixShot))) {
                 nShots = 6;
             }
         }

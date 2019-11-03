@@ -750,12 +750,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     public static int getNumShots(WeaponType wtype, EquipmentMode mode,
             boolean ignoreMode) {
-        int nShots = 1;
         // figure out # of shots for variable-shot weapons
         if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
                 .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
                 && (ignoreMode || mode.equals(Weapon.Mode_UAC_Ultra))) {
-            nShots = 2;
+            return 2;
         }
         // sets number of shots for AC rapid mode
         else if (((wtype.getAmmoType() == AmmoType.T_AC) 
@@ -764,22 +763,22 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 || (wtype.getAmmoType() == AmmoType.T_PAC))
                 && wtype.hasModes()
                 && (ignoreMode || mode.equals(Weapon.Mode_AC_Rapid))) {
-            nShots = 2;
+            return 2;
         } else if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY)
                 || wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
-            if ((mode != null) && mode.equals(Weapon.Mode_RAC_ThreeShot)) {
-                nShots = 2;
-            } else if ((mode != null) && mode.equals(Weapon.Mode_RAC_ThreeShot)) {
-                nShots = 3;
-            } else if ((mode != null) && mode.equals(Weapon.Mode_RAC_FourShot)) {
-                nShots = 4;
-            } else if ((mode != null) && mode.equals(Weapon.Mode_RAC_FiveShot)) {
-                nShots = 5;
-            } else if ((ignoreMode || mode.equals(Weapon.Mode_RAC_SixShot))) {
-                nShots = 6;
+            if (ignoreMode || (mode == null) || mode.equals(Weapon.Mode_RAC_SixShot)) {
+                return 6;
+            } else if (mode.equals(Weapon.Mode_RAC_ThreeShot)) {
+                return 2;
+            } else if (mode.equals(Weapon.Mode_RAC_ThreeShot)) {
+                return 3;
+            } else if (mode.equals(Weapon.Mode_RAC_FourShot)) {
+                return 4;
+            } else if (mode.equals(Weapon.Mode_RAC_FiveShot)) {
+                return 5;
             }
         }
-        return nShots;
+        return 1;
     }
 
     public boolean isPendingDump() {

@@ -76,7 +76,7 @@ public class TeleOperatedMissileBayWeapon extends CapitalMissileBayWeapon {
         if (weapon.isInBearingsOnlyMode()
                 && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
             return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, server);
-        } else if (weapon.curMode().equals(Weapon.Mode_CapMissile_Tele_Operated)) {
+        } else if (weapon.curMode().equals(Weapon.MODE_CAP_MISSILE_TELE_OPERATED)) {
             return new TeleMissileHandler(toHit, waa, game, server);
         } else {    
             return new CapitalMissileBayHandler(toHit, waa, game, server);

@@ -364,7 +364,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         && (munition == AmmoType.M_CLUSTER))
                         || (munition == AmmoType.M_FLAK) || (atype.getAmmoType() == AmmoType.T_HAG));
         
-        boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Missile_Indirect));
+        boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_MISSILE_INDIRECT));
         
         boolean isInferno = ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_SRM)
@@ -2166,7 +2166,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             
             // Gauss weapons using the TacOps powered down rule can't fire
             if ((wtype instanceof GaussWeapon) 
-                    && wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Gauss_Powered_Down)) {
+                    && wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_GAUSS_POWERED_DOWN)) {
                 return Messages.getString("WeaponAttackAction.WeaponNotReady");
             }
             
@@ -2331,7 +2331,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return Messages.getString("WeaponAttackAction.NoWorkingMGs");
             }
             // Or if the array is off
-            if (wtype.hasFlag(WeaponType.F_MGA) && wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_AMS_Off)) {
+            if (wtype.hasFlag(WeaponType.F_MGA) && wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_AMS_OFF)) {
                 return Messages.getString("WeaponAttackAction.MGArrayOff");
             } else if (wtype.hasFlag(WeaponType.F_MG)) {
                 // and you can't fire an individual MG if it's in an array
@@ -2361,7 +2361,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // PPCs linked to capacitors can't fire while charging
             if (weapon.getType().hasFlag(WeaponType.F_PPC) && (weapon.getLinkedBy() != null)
                     && weapon.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)
-                    && weapon.getLinkedBy().pendingMode().equals(Weapon.Mode_PPC_Charge)) {
+                    && weapon.getLinkedBy().pendingMode().equals(Weapon.MODE_PPC_CHARGE)) {
                 return Messages.getString("WeaponAttackAction.PPCCharging");
             }
             
@@ -2434,8 +2434,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             
             // Large Craft weapon bays cannot bracket small craft at short range
             if (wtype.hasModes()
-                    && (weapon.curMode().equals(Weapon.Mode_Capital_Bracket_80) || weapon.curMode().equals(Weapon.Mode_Capital_Bracket_60)
-                            || weapon.curMode().equals(Weapon.Mode_Capital_Bracket_40))
+                    && (weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80) || weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60)
+                            || weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40))
                     && target.isAero() && te!= null && !te.isLargeCraft()
                     && (RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon),
                             true, false) == RangeType.RANGE_SHORT)) {
@@ -2443,20 +2443,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             
             // you must have enough weapons in your bay to be able to use bracketing
-            if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_80) && (weapon.getBayWeapons().size() < 2)) {
+            if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80) && (weapon.getBayWeapons().size() < 2)) {
                 return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
             }
-            if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_60) && (weapon.getBayWeapons().size() < 3)) {
+            if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60) && (weapon.getBayWeapons().size() < 3)) {
                 return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
             }
-            if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_40) && (weapon.getBayWeapons().size() < 4)) {
+            if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40) && (weapon.getBayWeapons().size() < 4)) {
                 return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
             }
             
             // If you're an aero, can't fire an AMS Bay at all or a Point Defense bay that's in PD Mode
             if (wtype.hasFlag(WeaponType.F_AMSBAY)) {
                 return Messages.getString("WeaponAttackAction.AutoWeapon");
-            } else if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Point_Defense)) {
+            } else if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_POINT_DEFENSE)) {
                 return Messages.getString("WeaponAttackAction.PDWeapon");
             }
             
@@ -2859,7 +2859,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // AAA mode makes targeting large craft more difficult
-        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_CapLaser_AAA) && te != null && te.isLargeCraft()) {
+        if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA) && te != null && te.isLargeCraft()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AAALaserAtShip"));
         }
         
@@ -2874,13 +2874,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Bracketing modes
-        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_80)) {
+        if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Bracket80"));
         }
-        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_60)) {
+        if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60)) {
             toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Bracket60"));
         }
-        if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_Capital_Bracket_40)) {
+        if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40)) {
             toHit.addModifier(-3, Messages.getString("WeaponAttackAction.Bracket40"));
         }
         
@@ -2899,7 +2899,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (wtype.getAtClass() != WeaponType.CLASS_AR10) && te != null && !te.isLargeCraft()) {
             // Capital Lasers have an AAA mode for shooting at small targets
             int aaaMod = 0;
-            if (wtype.hasModes() && weapon.curMode().equals(Weapon.Mode_CapLaser_AAA)) {
+            if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA)) {
                 aaaMod = 2;
             }
             if (wtype.isSubCapital()) {
@@ -2973,7 +2973,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // +1 to hit if the Kinder Rapid-Fire ACs optional rule is turned on, but only Jams on a 2.
         // See TacOps Autocannons for the rest of the rules
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC) 
-                && weapon.curMode().equals(Weapon.Mode_AC_Rapid)) {
+                && weapon.curMode().equals(Weapon.MODE_AC_RAPID)) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.AcRapid"));
         }
         

@@ -47,50 +47,50 @@ public abstract class Weapon extends WeaponType implements Serializable {
     }
     
     //Mode text tokens
-    public static final String Mode_Flamer_Damage = "Damage";
-    public static final String Mode_Flamer_Heat = "Heat";
+    public static final String MODE_FLAMER_DAMAGE = "Damage";
+    public static final String MODE_FLAMER_HEAT = "Heat";
     
-    public static final String Mode_AMS_On = "On";
-    public static final String Mode_AMS_Off = "Off";
-    public static final String Mode_AMS_Manual = "Use as Weapon";
+    public static final String MODE_AMS_ON = "On";
+    public static final String MODE_AMS_OFF = "Off";
+    public static final String MODE_AMS_MANUAL = "Use as Weapon";
     
-    public static final String Mode_CapLaser_AAA = "AAA";
+    public static final String MODE_CAP_LASER_AAA = "AAA";
     
-    public static final String Mode_Capital_Bracket_80 = "Bracket 80%";
-    public static final String Mode_Capital_Bracket_60 = "Bracket 60%";
-    public static final String Mode_Capital_Bracket_40 = "Bracket 40%";
+    public static final String MODE_CAPITAL_BRACKET_80 = "Bracket 80%";
+    public static final String MODE_CAPITAL_BRACKET_60 = "Bracket 60%";
+    public static final String MODE_CAPITAL_BRACKET_40 = "Bracket 40%";
     
-    public static final String Mode_CapMissile_Waypoint_Bearing_Ext = "Waypoint Launch Bearings-Only Extreme Detection Range";
-    public static final String Mode_CapMissile_Waypoint_Bearing_Long = "Waypoint Launch Bearings-Only Long Detection Range";
-    public static final String Mode_CapMissile_Waypoint_Bearing_Med = "Waypoint Launch Bearings-Only Medium Detection Range";
-    public static final String Mode_CapMissile_Waypoint_Bearing_Short = "Waypoint Launch Bearings-Only Short Detection Range";
-    public static final String Mode_CapMissile_Waypoint = "Waypoint Launch";
+    public static final String MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT = "Waypoint Launch Bearings-Only Extreme Detection Range";
+    public static final String MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG = "Waypoint Launch Bearings-Only Long Detection Range";
+    public static final String MODE_CAP_MISSILE_WAYPOINT_BEARING_MED = "Waypoint Launch Bearings-Only Medium Detection Range";
+    public static final String MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT = "Waypoint Launch Bearings-Only Short Detection Range";
+    public static final String MODE_CAP_MISSILE_WAYPOINT = "Waypoint Launch";
     
-    public static final String Mode_CapMissile_Bearing_Ext = "Bearings-Only Extreme Detection Range";
-    public static final String Mode_CapMissile_Bearing_Long = "Bearings-Only Long Detection Range";
-    public static final String Mode_CapMissile_Bearing_Med = "Bearings-Only Medium Detection Range";
-    public static final String Mode_CapMissile_Bearing_Short = "Bearings-Only Short Detection Range";
+    public static final String MODE_CAP_MISSILE_BEARING_EXT = "Bearings-Only Extreme Detection Range";
+    public static final String MODE_CAP_MISSILE_BEARING_LONG = "Bearings-Only Long Detection Range";
+    public static final String MODE_CAP_MISSILE_BEARING_MED = "Bearings-Only Medium Detection Range";
+    public static final String MODE_CAP_MISSILE_BEARING_SHORT = "Bearings-Only Short Detection Range";
     
-    public static final String Mode_CapMissile_Tele_Operated = "Tele-Operated";
+    public static final String MODE_CAP_MISSILE_TELE_OPERATED = "Tele-Operated";
     
-    public static final String Mode_AC_Rapid = "Rapid";
-    public static final String Mode_AC_Single = "Single";
-    public static final String Mode_UAC_Ultra = "Ultra";
-    public static final String Mode_RAC_TwoShot = "2-shot";
-    public static final String Mode_RAC_ThreeShot = "3-shot";
-    public static final String Mode_RAC_FourShot = "4-shot";
-    public static final String Mode_RAC_FiveShot = "5-shot";
-    public static final String Mode_RAC_SixShot = "6-shot";
+    public static final String MODE_AC_RAPID = "Rapid";
+    public static final String MODE_AC_SINGLE = "Single";
+    public static final String MODE_UAC_ULTRA = "Ultra";
+    public static final String MODE_RAC_TWO_SHOT = "2-shot";
+    public static final String MODE_RAC_THREE_SHOT = "3-shot";
+    public static final String MODE_RAC_FOUR_SHOT = "4-shot";
+    public static final String MODE_RAC_FIVE_SHOT = "5-shot";
+    public static final String MODE_RAC_SIX_SHOT = "6-shot";
     
-    public static final String Mode_Gauss_Powered_Down = "Powered Down";
+    public static final String MODE_GAUSS_POWERED_DOWN = "Powered Down";
     
-    public static final String Mode_Missile_Indirect = "Indirect";
+    public static final String MODE_MISSILE_INDIRECT = "Indirect";
     
-    public static final String Mode_PPC_Charge = "Charge";
+    public static final String MODE_PPC_CHARGE = "Charge";
     
-    public static final String Mode_Point_Defense = "Point Defense";
+    public static final String MODE_POINT_DEFENSE = "Point Defense";
     
-    public static final String Mode_Normal = "Normal";
+    public static final String MODE_NORMAL = "Normal";
     
 
     public AttackHandler fire(WeaponAttackAction waa, IGame game, Server server) {
@@ -167,48 +167,48 @@ public abstract class Weapon extends WeaponType implements Serializable {
             } else {
                 if (getAtClass() == WeaponType.CLASS_TELE_MISSILE) {
                     setInstantModeSwitch(false);
-                    addMode(Mode_Normal);
-                    addMode(Mode_CapMissile_Tele_Operated);
+                    addMode(MODE_NORMAL);
+                    addMode(MODE_CAP_MISSILE_TELE_OPERATED);
                 }
                 
                 if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH)) {
                     setInstantModeSwitch(false);
-                    addMode(Mode_Normal);
-                    addMode(Mode_CapMissile_Waypoint);
+                    addMode(MODE_NORMAL);
+                    addMode(MODE_CAP_MISSILE_WAYPOINT);
                     if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
-                        addMode(Mode_CapMissile_Waypoint_Bearing_Ext);
-                        addMode(Mode_CapMissile_Waypoint_Bearing_Long);
-                        addMode(Mode_CapMissile_Waypoint_Bearing_Med);
-                        addMode(Mode_CapMissile_Waypoint_Bearing_Short);
+                        addMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT);
+                        addMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG);
+                        addMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_MED);
+                        addMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT);
                     } else {
-                        removeMode(Mode_CapMissile_Waypoint_Bearing_Ext);
-                        removeMode(Mode_CapMissile_Waypoint_Bearing_Long);
-                        removeMode(Mode_CapMissile_Waypoint_Bearing_Med);
-                        removeMode(Mode_CapMissile_Waypoint_Bearing_Short);
+                        removeMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT);
+                        removeMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG);
+                        removeMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_MED);
+                        removeMode(MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT);
                     }
                 } else {
-                    removeMode(Mode_CapMissile_Waypoint);
+                    removeMode(MODE_CAP_MISSILE_WAYPOINT);
                 }
 
                 if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
                     setInstantModeSwitch(false);
-                    addMode(Mode_Normal);
-                    addMode(Mode_CapMissile_Bearing_Ext);
-                    addMode(Mode_CapMissile_Bearing_Long);
-                    addMode(Mode_CapMissile_Bearing_Med);
-                    addMode(Mode_CapMissile_Bearing_Short);
+                    addMode(MODE_NORMAL);
+                    addMode(MODE_CAP_MISSILE_BEARING_EXT);
+                    addMode(MODE_CAP_MISSILE_BEARING_LONG);
+                    addMode(MODE_CAP_MISSILE_BEARING_MED);
+                    addMode(MODE_CAP_MISSILE_BEARING_SHORT);
                 } else {
-                    removeMode(Mode_CapMissile_Bearing_Ext);
-                    removeMode(Mode_CapMissile_Bearing_Long);
-                    removeMode(Mode_CapMissile_Bearing_Med);
-                    removeMode(Mode_CapMissile_Bearing_Short);
+                    removeMode(MODE_CAP_MISSILE_BEARING_EXT);
+                    removeMode(MODE_CAP_MISSILE_BEARING_LONG);
+                    removeMode(MODE_CAP_MISSILE_BEARING_MED);
+                    removeMode(MODE_CAP_MISSILE_BEARING_SHORT);
                 }
             }
         }
 
         if (hasFlag(WeaponType.F_AMS)) {
             if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
-                addMode(Weapon.Mode_AMS_Manual);
+                addMode(Weapon.MODE_AMS_MANUAL);
             }
             if (gOp.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 removeMode("Automatic");

@@ -646,8 +646,8 @@ public class WeaponFireInfo {
         }
         
         // if we are able to switch the weapon to indirect fire mode, do so and try again
-        if(!getWeapon().curMode().equals(Weapon.Mode_Missile_Indirect)) {
-            return getWeapon().setMode(Weapon.Mode_Missile_Indirect);
+        if(!getWeapon().curMode().equals(Weapon.MODE_MISSILE_INDIRECT)) {
+            return getWeapon().setMode(Weapon.MODE_MISSILE_INDIRECT);
         } else {
             return getWeapon().setMode("");
         }

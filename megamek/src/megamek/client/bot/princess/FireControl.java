@@ -17,7 +17,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -2254,7 +2253,7 @@ public class FireControl {
     	}
     	
         for(Mounted weapon : shooter.getWeaponList()) {
-        	if(weapon.getType().hasModeType(Weapon.Mode_Missile_Indirect)) {
+        	if(weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
         		fireControlState.getEntityIDFStates().put(shooter.getId(), true);
         		return true;
         	}

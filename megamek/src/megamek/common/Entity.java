@@ -9701,6 +9701,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && !(movementMode == EntityMovementMode.WIGE))) {
             return false;
         }
+        // Spaceborne pilots and crew are adrift...
+        if (isSpaceborne() && this instanceof EjectedCrew) {
+            return false;
+        }
         // check game options
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT)) {
             return true;

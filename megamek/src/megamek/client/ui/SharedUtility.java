@@ -22,6 +22,7 @@ import megamek.client.Client;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.EjectedCrew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
@@ -704,7 +705,13 @@ public class SharedUtility {
     public static MovePath moveAero(MovePath md, Client client) {
         final Entity entity = md.getEntity();
         final IGame game = entity.getGame();
-        if (!entity.isAero()) {
+        // Don't process further unless the entity belongs in space
+        if (!entity.isAero() && !(entity instanceof EjectedCrew)) {
+            return md;
+        }
+        // Ejected crew/pilots can't move, so just add the inherited move steps and be done with it
+        if (entity instanceof EjectedCrew) {
+            md = addSteps(md, client);
             return md;
         }
         IAero a = (IAero) entity;

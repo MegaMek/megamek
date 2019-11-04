@@ -3652,7 +3652,7 @@ public class Compute {
         threshold = atk.toHit(cgame).getValue();
 
         // Set the weapon to single shot mode
-        weapon.setMode(rapidAC ? "" : Weapon.Mode_AC_Single);
+        weapon.setMode(rapidAC ? "" : Weapon.MODE_AC_SINGLE);
         final_spin = 0;
 
         // If weapon can't hit target, exit the function with the weapon on
@@ -3667,11 +3667,11 @@ public class Compute {
             final_spin = 1;
             if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
                 || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
-                weapon.setMode(Weapon.Mode_UAC_Ultra);
+                weapon.setMode(Weapon.MODE_UAC_ULTRA);
             } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                weapon.setMode(Weapon.Mode_RAC_TwoShot);
+                weapon.setMode(Weapon.MODE_RAC_TWO_SHOT);
             } else if (rapidAC) {
-            	weapon.setMode(Weapon.Mode_AC_Rapid);
+            	weapon.setMode(Weapon.MODE_AC_RAPID);
             }
         }
 
@@ -3681,13 +3681,13 @@ public class Compute {
             // If random roll is >= to-hit + 2 then set to quad-spin
             if (spinupThreshold >= (threshold + 1)) {
                 final_spin = 2;
-                weapon.setMode(Weapon.Mode_RAC_FourShot);
+                weapon.setMode(Weapon.MODE_RAC_FOUR_SHOT);
             }
 
             // If random roll is >= to-hit + 3 then set to six-spin
             if (spinupThreshold >= (threshold + 2)) {
                 final_spin = 3;
-                weapon.setMode(Weapon.Mode_RAC_SixShot);
+                weapon.setMode(Weapon.MODE_RAC_SIX_SHOT);
             }
         }
         return final_spin;

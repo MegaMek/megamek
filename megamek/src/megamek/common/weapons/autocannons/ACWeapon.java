@@ -148,10 +148,10 @@ public abstract class ACWeapon extends AmmoWeapon {
         // Modes for allowing standard and light AC rapid fire
         if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
             addMode("");
-            addMode(Weapon.Mode_AC_Rapid);
+            addMode(Weapon.MODE_AC_RAPID);
         } else {
             removeMode("");
-            removeMode(Weapon.Mode_AC_Rapid);
+            removeMode(Weapon.MODE_AC_RAPID);
         }
     }
     

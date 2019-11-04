@@ -180,6 +180,29 @@ public class EjectedCrew extends Infantry {
         return true;
     }
     
+    // Handle pilot/escape pod velocity for Aeros
+    
+    public int getCurrentVelocity() {
+        // if using advanced movement then I just want to sum up
+        // the different vectors
+        if ((game != null) && game.useVectorMove()) {
+            return getVelocity();
+        }
+        return currentVelocity;
+    }
+
+    public void setCurrentVelocity(int velocity) {
+        currentVelocity = velocity;
+    }
+
+    public int getNextVelocity() {
+        return nextVelocity;
+    }
+
+    public void setNextVelocity(int velocity) {
+        nextVelocity = velocity;
+    }
+    
     //Is this pilot/crew suited for vacuum/harsh environmental conditions?
     @Override
     public boolean doomedInSpace() {

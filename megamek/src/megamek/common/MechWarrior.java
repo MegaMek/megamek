@@ -126,29 +126,6 @@ public class MechWarrior extends EjectedCrew {
         return true; //Ejected mchwarriors should always attempt to flee according to Forced Withdrawal.
     }
     
-    // Handle pilot velocity for Aeros
-    
-    public int getCurrentVelocity() {
-        // if using advanced movement then I just want to sum up
-        // the different vectors
-        if ((game != null) && game.useVectorMove()) {
-            return getVelocity();
-        }
-        return currentVelocity;
-    }
-
-    public void setCurrentVelocity(int velocity) {
-        currentVelocity = velocity;
-    }
-
-    public int getNextVelocity() {
-        return nextVelocity;
-    }
-
-    public void setNextVelocity(int velocity) {
-        nextVelocity = velocity;
-    }
-    
     @Override
     //Aero pilots have parachutes and can thus survive being airborne
     public boolean doomedInAtmosphere() {

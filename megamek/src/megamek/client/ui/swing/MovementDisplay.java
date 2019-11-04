@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -1463,7 +1462,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
         
-        if (ce().isAirborne() && ce().isAero()) {
+        if (ce().isAirborne() || ce().isSpaceborne()) {
+            if ()
             if (!clientgui.getClient().getGame().useVectorMove()
                 && !((IAero) ce()).isOutControlTotal()) {
                 // check for underuse of velocity

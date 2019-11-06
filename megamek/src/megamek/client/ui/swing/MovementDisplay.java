@@ -1479,37 +1479,38 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         
         if (ce().isAirborne() || ce().isSpaceborne()) {
-            if (!clientgui.getClient().getGame().useVectorMove()
-                && !((IAero) ce()).isOutControlTotal()) {
-                // check for underuse of velocity
-                boolean unusedVelocity = false;
-                if (null != cmd.getLastStep()) {
-                    unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
-                } else {
-                    unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0) &&
-                            (ce().delta_distance == 0);
-                }
-                boolean flyoff = false;
-                if ((null != cmd)
-                    && (cmd.contains(MoveStepType.OFF) || cmd
-                        .contains(MoveStepType.RETURN))) {
-                    flyoff = true;
-                }
-                boolean landing = false;
-                if ((null != cmd) && cmd.contains(MoveStepType.LAND)) {
-                    landing = true;
-                }
-                boolean ejecting = false;
-                if ((null != cmd) && cmd.contains(MoveStepType.EJECT)) {
-                    ejecting = true;
-                }
-                if (unusedVelocity && !flyoff && !landing && !ejecting) {
-                    String title = Messages
-                            .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
-                    String body = Messages
-                            .getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
-                    clientgui.doAlertDialog(title, body);
-                    return;
+            if (!clientgui.getClient().getGame().useVectorMove()) {
+                if (ce() instanceof IAero && !((IAero)ce()).isOutControlTotal()) {
+                    // check for underuse of velocity
+                    boolean unusedVelocity = false;
+                    if (null != cmd.getLastStep()) {
+                        unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
+                    } else {
+                        unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0) &&
+                                (ce().delta_distance == 0);
+                    }
+                    boolean flyoff = false;
+                    if ((null != cmd)
+                            && (cmd.contains(MoveStepType.OFF) || cmd
+                                    .contains(MoveStepType.RETURN))) {
+                        flyoff = true;
+                    }
+                    boolean landing = false;
+                    if ((null != cmd) && cmd.contains(MoveStepType.LAND)) {
+                        landing = true;
+                    }
+                    boolean ejecting = false;
+                    if ((null != cmd) && cmd.contains(MoveStepType.EJECT)) {
+                        ejecting = true;
+                    }
+                    if (unusedVelocity && !flyoff && !landing && !ejecting) {
+                        String title = Messages
+                                .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
+                        String body = Messages
+                                .getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
+                        clientgui.doAlertDialog(title, body);
+                        return;
+                    }
                 }
             }
             // depending on the rules and location (i.e. space v. atmosphere),

@@ -2104,7 +2104,7 @@ public class FireControl {
      *            The game currently being played.
      * @return the 'best' firing plan under a certain heat.
      */
-    private FiringPlan guessBestFiringPlanUnderHeat(final Entity shooter,
+    protected FiringPlan guessBestFiringPlanUnderHeat(final Entity shooter,
                                                     @Nullable final EntityState shooterState,
                                                     final Targetable target,
                                                     @Nullable final EntityState targetState,
@@ -3117,8 +3117,8 @@ public class FireControl {
                 validFacingChanges.add(2);
                 validFacingChanges.add(-2);
             }
-        } else if (shooter instanceof Tank
-                   && !((Tank) shooter).hasNoTurret()) {
+        } else if ((shooter instanceof Tank
+                   && !((Tank) shooter).hasNoTurret()) || (shooter instanceof Infantry)) {
             validFacingChanges.add(1);
             validFacingChanges.add(-1);
             validFacingChanges.add(2);

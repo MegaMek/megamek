@@ -39,6 +39,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
+import megamek.common.EjectedCrew;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -2035,7 +2036,7 @@ public class Princess extends BotClient {
         
         // if we are using vector movement, there's a whole bunch of post-processing that happens to
         // aircraft flight paths when a player does it, so we apply it here.
-        if(path.getEntity().isAero()) {
+        if(path.getEntity().isAero() || (path.getEntity() instanceof EjectedCrew && path.getEntity().isSpaceborne())) {
             retval = SharedUtility.moveAero(retval, null);
         }
         

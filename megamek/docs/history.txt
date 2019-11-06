@@ -25,6 +25,7 @@ v0.47.1-SNAPSHOT
 + Updating the Simon Landmine Map Pack.
 + Issue #1523: Fixes to 3145 FWL RATs
 + Issue #1514: Some Protomechs Missing Map Art
++ Issue #1454: RS:SW New Mechs are listed as Level 2 instead of Level 1
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

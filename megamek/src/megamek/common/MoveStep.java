@@ -1924,8 +1924,13 @@ public class MoveStep implements Serializable {
         }
         
         if ((prev.getAltitude() > 0) || game.getBoard().inSpace()) {
+            //Ejected crew/pilots just drift or parachute, resulting in a move_none type
+            if (entity instanceof EjectedCrew) {
+                movementType = EntityMovementType.MOVE_NONE;
+                return;
+            }
 
-            // If airborne and not an Aero then everything is illegal, except
+            // If airborne and some other non-Aero unit then everything is illegal, except
             // turns and AirMech 
             if (!entity.isAero()) {
                 switch (type) {

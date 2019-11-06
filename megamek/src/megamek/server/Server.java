@@ -35583,7 +35583,7 @@ public class Server implements Runnable {
             // Check for owner entities first...
             for (Entity pe : game.getEntitiesVector(e.getPosition())) {
                 if (pe.isDoomed() || pe.isShutDown()
-                    || pe.getCrew().isUnconscious() || pe.isAirborne()
+                    || pe.getCrew().isUnconscious() || (pe.isAirborne() && !pe.isSpaceborne())
                     || (pe.getElevation() != e.getElevation())
                     || (pe.getOwnerId() != e.getOwnerId())
                     || (pe.getId() == e.getId())) {
@@ -35616,7 +35616,7 @@ public class Server implements Runnable {
                     if (pe.isDoomed()
                         || pe.isShutDown()
                         || pe.getCrew().isUnconscious()
-                        || pe.isAirborne()
+                        || (pe.isAirborne() && !pe.isSpaceborne())
                         || (pe.getElevation() != e.getElevation())
                         || (pe.getOwnerId() == e.getOwnerId())
                         || (pe.getId() == e.getId())

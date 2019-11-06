@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.47.1-SNAPSHOT
+v0.47.1 (2019-11-05 0300 UTC) 
 + PR #1451: Enable bot use of searchlights when necessary
 + Account for all bay types in large craft cost calculations.
 + Bug: Vehicle reduced to half movement not considered heavy damage

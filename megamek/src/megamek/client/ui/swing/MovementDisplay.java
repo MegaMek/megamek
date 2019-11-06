@@ -1463,7 +1463,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         
         if (ce().isAirborne() || ce().isSpaceborne()) {
-            if ()
             if (!clientgui.getClient().getGame().useVectorMove()
                 && !((IAero) ce()).isOutControlTotal()) {
                 // check for underuse of velocity

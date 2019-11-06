@@ -2031,7 +2031,7 @@ public class Protomech extends Entity {
         retVal += 2000 * sinks;
 
         // Armor is linear on the armor value of the Protomech
-        retVal += getTotalArmor() * 625;
+        retVal += getTotalArmor() * EquipmentType.getProtomechArmorCostPerPoint(getArmorType(firstArmorIndex()));
 
         // Add in equipment cost.
         retVal += getWeaponsAndEquipmentCost(ignoreAmmo);

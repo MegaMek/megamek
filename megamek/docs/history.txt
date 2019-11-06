@@ -31,6 +31,7 @@ v0.47.1-SNAPSHOT
 + PR #1530: Treat fixed wing support vehicles as support vehicles instead of conventional fighters for cost calculation.
 + Issue #1516: Rotary RAC does not generate extra heat when rapid firing
 + Issue #1523: Fixes to 3145 FWL RATs
++ Issue #1514: Some Protomechs Missing Map Art
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

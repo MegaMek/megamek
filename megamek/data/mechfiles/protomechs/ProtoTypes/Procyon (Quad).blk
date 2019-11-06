@@ -13,7 +13,7 @@ ProtoMech
 </UnitType>
 
 <Name>
-Procyon
+Procyon ProtoMech
 </Name>
 
 <Model>
@@ -47,9 +47,17 @@ Quad
 0
 </jumpingMP>
 
+<interface_cockpit>
+false
+</interface_cockpit>
+
 <engine_type>
 0
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <internal_type>
 -1

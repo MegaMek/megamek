@@ -14,8 +14,8 @@ v0.47.1-SNAPSHOT
 + Issue #1490: Fixed Ramshackle quirk description
 + Issue #1489: Fix jet booster and supercharger weight calculations
 + Issue #1500: Avoid NRE in BotClient::getStartingCoordsArray
-+ Data: Fixing the Hercules in the mechset again.
 + Issue #1508: #1261 was never merged properly.
++ Data: Fixing the Hercules in the mechset again.
 + Bug: Some weapons missing their Aerospace attack values.
 + Bug/Data: Fixing various validation errors.
 + Issue #708: Errata indicates swarming battle armor should not be immune to fire.
@@ -23,6 +23,7 @@ v0.47.1-SNAPSHOT
 + Data: New Sprites/New Boards from Derv.
 + Issue #1480: Mech Mortar Smoke round is unavailable
 + Updating the Simon Landmine Map Pack.
++ Issue #1523: Fixes to 3145 FWL RATs
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

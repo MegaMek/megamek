@@ -50,6 +50,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.DockingCollar;
 import megamek.common.Dropship;
+import megamek.common.EjectedCrew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
@@ -935,21 +936,36 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Infantry - Fortify
         if (isInfantry
             && ce.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL)) {
-            getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
+            // Crews adrift in space or atmosphere can't do this
+            if (ce instanceof EjectedCrew && (ce.isSpaceborne() || ce.isAirborne())) {
+                getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
+            } else {
+                getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
+            }
         } else {
             getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(false);
         }
         // Infantry - Digging in
         if (isInfantry && gOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_DIG_IN)) {
-            // Allow infantry to dig in if they aren't currently dug in
-            int dugInState = ((Infantry) ce).getDugIn();
-            getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(
-                    dugInState == Infantry.DUG_IN_NONE);
+            // Crews adrift in space or atmosphere can't do this
+            if (ce instanceof EjectedCrew && (ce.isSpaceborne() || ce.isAirborne())) {
+                getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
+            } else {
+                // Allow infantry to dig in if they aren't currently dug in
+                int dugInState = ((Infantry) ce).getDugIn();
+                getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(
+                        dugInState == Infantry.DUG_IN_NONE);
+            }
         } else {
             getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
         }
         // Infantry - Take Cover
-        updateTakeCoverButton();
+        // Crews adrift in space or atmosphere can't do this
+        if (ce instanceof EjectedCrew && (ce.isSpaceborne() || ce.isAirborne())) {
+            getBtn(MoveCommand.MOVE_TAKE_COVER).setEnabled(false);
+        } else {
+            updateTakeCoverButton();
+        }
 
         // Infantry - Urban Guerrilla calling for support
         if (isInfantry && ce.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA)

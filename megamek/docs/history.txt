@@ -24,6 +24,7 @@ v0.47.1-SNAPSHOT
 + Issue #1480: Mech Mortar Smoke round is unavailable
 + Updating the Simon Landmine Map Pack.
 + Issue #1523: Fixes to 3145 FWL RATs
++ Issue #1514: Some Protomechs Missing Map Art
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

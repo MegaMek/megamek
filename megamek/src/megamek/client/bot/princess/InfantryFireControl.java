@@ -170,6 +170,19 @@ public class InfantryFireControl extends FireControl {
     @Override
     protected FiringPlan guessBestFiringPlanUnderHeat(final Entity shooter, @Nullable EntityState shooterState,
             final Targetable target, @Nullable EntityState targetState, int maxHeat, final IGame game) {
+        FiringPlan bestPlan = new FiringPlan(target);
+        
+        // Shooting isn't possible if one of us isn't on the board.
+        if ((null == shooter.getPosition()) || shooter.isOffBoard()
+                || !game.getBoard().contains(shooter.getPosition())) {
+            owner.log(getClass(), "InfantryFireControl.guessFiringPlan", LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
+            return bestPlan;
+        }
+        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
+            owner.log(getClass(), "InfantryFireControl.guessFiringPlan", LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            return bestPlan;
+        }
+        
         // if it's not infantry, then we shouldn't be here, let's redirect to the base method.
         if(!(shooter instanceof Infantry)) {
             return super.guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, game);
@@ -209,8 +222,6 @@ public class InfantryFireControl extends FireControl {
         firingPlans.add(swarmPlan);
 
         // now we'll pick the best of the plans
-        FiringPlan bestPlan = new FiringPlan(target);
-
         for (final FiringPlan firingPlan : firingPlans) {
             if ((bestPlan.getUtility() < firingPlan.getUtility())) {
                 bestPlan = firingPlan;
@@ -240,17 +251,6 @@ public class InfantryFireControl extends FireControl {
             final Targetable target, @Nullable EntityState targetState, final IGame game, InfantryFiringPlanType firingPlanType) {
         
         final FiringPlan myPlan = new FiringPlan(target);
-
-        // Shooting isn't possible if one of us isn't on the board.
-        if ((null == shooter.getPosition()) || shooter.isOffBoard()
-                || !game.getBoard().contains(shooter.getPosition())) {
-            owner.log(getClass(), "InfantryFireControl.guessFiringPlan", LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
-            return myPlan;
-        }
-        if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.log(getClass(), "InfantryFireControl.guessFiringPlan", LogLevel.ERROR, "Target's position is NULL/Off Board!");
-            return myPlan;
-        }
 
         // cycle through my field guns
         for (final Mounted weapon : shooter.getWeaponList()) {

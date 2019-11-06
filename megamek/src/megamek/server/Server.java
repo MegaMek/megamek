@@ -35312,7 +35312,7 @@ public class Server implements Runnable {
         if (autoEject) {
             rollTarget.addModifier(1, "automatic ejection");
         }
-        if (entity.isFighter() && ((Aero)entity).isOutControl()) {
+        if (entity.isFighter() && ((IAero)entity).isOutControl()) {
             rollTarget.addModifier(5, "Out of Control");
         }
         if ((entity instanceof Mech)

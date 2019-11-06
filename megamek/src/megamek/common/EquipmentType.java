@@ -856,6 +856,19 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
+     * Lookup method for protomech armor cost
+     * @param type The type of armor.
+     * @return     The cost per point in C-bills
+     */
+    public static int getProtomechArmorCostPerPoint(int type) {
+        // currently only one type of specialized armor for protomechs; anything else is treated as standard
+        if (type == T_ARMOR_EDP) {
+            return 1250;
+        }
+        return 625;
+    }
+
+    /**
      * Gives the weight of a single point of armor at a particular BAR for a
      * given tech level.
      */

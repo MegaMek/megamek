@@ -140,17 +140,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             Messages.getString("CustomMechDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JCheckBox chCondEjectHeadshot = new JCheckBox();
     
-    private JLabel labCondEjectEngine = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_Engine"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JCheckBox chCondEjectEngine = new JCheckBox();
+    private JLabel labCondEjectFuel = new JLabel(
+            Messages.getString("CustomMechDialog.labConditional_Ejection_Fuel"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JCheckBox chCondEjectFuel = new JCheckBox();
 
-    private JLabel labCondEjectCTDest = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_CT_Destroyed"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JCheckBox chCondEjectCTDest = new JCheckBox();
-
-    private JLabel labCondEjectHeadshot = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JCheckBox chCondEjectHeadshot = new JCheckBox();
+    private JLabel labCondEjectSIDest = new JLabel(
+            Messages.getString("CustomMechDialog.labConditional_Ejection_SI_Destroyed"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JCheckBox chCondEjectSIDest = new JCheckBox();
 
     private JLabel labSearchlight = new JLabel(
             Messages.getString("CustomMechDialog.labSearchlight"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -213,8 +209,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(chCondEjectHeadshot, GBC.eol());
                 chCondEjectHeadshot.setSelected(mech.isCondEjectHeadshot());
             }
-        }
-        if (entity.isFighter()) {
+        } else if (entity.isFighter()) {
             IAero aero = (IAero) entity;
 
             // Ejection Seat
@@ -230,16 +225,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     && hasEjectSeat) { // $NON-NLS-1$
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
-                chCondEjectAmmo.setSelected(mech.isCondEjectAmmo());
-                add(labCondEjectEngine, GBC.std());
-                add(chCondEjectEngine, GBC.eol());
-                chCondEjectEngine.setSelected(mech.isCondEjectEngine());
-                add(labCondEjectCTDest, GBC.std());
-                add(chCondEjectCTDest, GBC.eol());
-                chCondEjectCTDest.setSelected(mech.isCondEjectCTDest());
-                add(labCondEjectHeadshot, GBC.std());
-                add(chCondEjectHeadshot, GBC.eol());
-                chCondEjectHeadshot.setSelected(mech.isCondEjectHeadshot());
+                chCondEjectAmmo.setSelected(aero.isCondEjectAmmo());
+                add(labCondEjectFuel, GBC.std());
+                add(chCondEjectFuel, GBC.eol());
+                chCondEjectFuel.setSelected(aero.isCondEjectFuel());
+                add(labCondEjectSIDest, GBC.std());
+                add(chCondEjectSIDest, GBC.eol());
+                chCondEjectSIDest.setSelected(aero.isCondEjectSIDest());
             }
         }
 

@@ -787,5 +787,27 @@ public interface IAero {
      */
     default void updateSensorOptions() {
     }
+    
+    // Auto Ejection Methods
+    
+    boolean isAutoEject();
+    
+    void setAutoEject(boolean autoEject);
+    
+    boolean isCondEjectAmmo();
+   
+    void setCondEjectAmmo(boolean condEjectAmmo);
+    
+    boolean isCondEjectFuel();
+    
+    void setCondEjectFuel(boolean condEjectFuel);
+    
+    boolean isCondEjectSIDest();
+    
+    void setCondEjectSIDest(boolean condEjectSIDest);
+    
+    boolean isCondEjectCTDest();
+    
+    void setCondEjectCTDest(boolean condEjectCTDest);
 
 }

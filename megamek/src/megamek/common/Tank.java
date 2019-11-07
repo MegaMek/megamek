@@ -519,6 +519,15 @@ public class Tank extends Entity {
         return super.isImmobile() || m_bImmobile;
     }
     
+    /**
+     * Whether this unit is irreversibly immobilized for the rest of the game.
+     * Tanks have some additional criteria.
+     */
+    @Override
+    public boolean isPermanentlyImmobilized(boolean checkCrew) {
+        return super.isPermanentlyImmobilized(checkCrew) || isMovementHit();
+    }
+    
     @Override
     public boolean hasCommandConsoleBonus() {
         if (!hasWorkingMisc(MiscType.F_COMMAND_CONSOLE) || isCommanderHit() || isUsingConsoleCommander()) {

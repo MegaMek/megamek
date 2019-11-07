@@ -48,6 +48,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.IAero;
 import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -138,6 +139,18 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     private JLabel labCondEjectHeadshot = new JLabel(
             Messages.getString("CustomMechDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JCheckBox chCondEjectHeadshot = new JCheckBox();
+    
+    private JLabel labCondEjectEngine = new JLabel(
+            Messages.getString("CustomMechDialog.labConditional_Ejection_Engine"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JCheckBox chCondEjectEngine = new JCheckBox();
+
+    private JLabel labCondEjectCTDest = new JLabel(
+            Messages.getString("CustomMechDialog.labConditional_Ejection_CT_Destroyed"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JCheckBox chCondEjectCTDest = new JCheckBox();
+
+    private JLabel labCondEjectHeadshot = new JLabel(
+            Messages.getString("CustomMechDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JCheckBox chCondEjectHeadshot = new JCheckBox();
 
     private JLabel labSearchlight = new JLabel(
             Messages.getString("CustomMechDialog.labSearchlight"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -182,6 +195,34 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(labAutoEject, GBC.std());
                 add(chAutoEject, GBC.eol());
                 chAutoEject.setSelected(!mech.isAutoEject());
+            }
+
+            // Conditional Ejections
+            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                    && hasEjectSeat) { // $NON-NLS-1$
+                add(labCondEjectAmmo, GBC.std());
+                add(chCondEjectAmmo, GBC.eol());
+                chCondEjectAmmo.setSelected(mech.isCondEjectAmmo());
+                add(labCondEjectEngine, GBC.std());
+                add(chCondEjectEngine, GBC.eol());
+                chCondEjectEngine.setSelected(mech.isCondEjectEngine());
+                add(labCondEjectCTDest, GBC.std());
+                add(chCondEjectCTDest, GBC.eol());
+                chCondEjectCTDest.setSelected(mech.isCondEjectCTDest());
+                add(labCondEjectHeadshot, GBC.std());
+                add(chCondEjectHeadshot, GBC.eol());
+                chCondEjectHeadshot.setSelected(mech.isCondEjectHeadshot());
+            }
+        }
+        if (entity.isFighter()) {
+            IAero aero = (IAero) entity;
+
+            // Ejection Seat
+            boolean hasEjectSeat = !(entity.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
+            if (hasEjectSeat) {
+                add(labAutoEject, GBC.std());
+                add(chAutoEject, GBC.eol());
+                chAutoEject.setSelected(!aero.isAutoEject());
             }
 
             // Conditional Ejections

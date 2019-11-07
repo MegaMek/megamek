@@ -4385,4 +4385,76 @@ public class Aero extends Entity implements IAero, IBomber {
             }
         }
     }
+    
+    /**
+     * @return Returns the autoEject.
+     */
+    public boolean isAutoEject() {
+        boolean hasEjectSeat = true;
+        if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
+            hasEjectSeat = false;
+        }
+        if (isIndustrial()) {
+            // industrials can only eject when they have an ejection seat
+            for (Mounted misc : miscList) {
+                if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
+                    hasEjectSeat = true;
+                }
+            }
+        }
+        return autoEject && hasEjectSeat;
+    }
+
+    /**
+     * @param autoEject
+     *            The autoEject to set.
+     */
+    public void setAutoEject(boolean autoEject) {
+        this.autoEject = autoEject;
+    }
+
+    /**
+     * @return Conditional Ejection Ammo
+     */
+    public boolean isCondEjectAmmo() {
+        return condEjectAmmo;
+    }
+
+    /**
+     * @param condEjectAmmo
+     *            The condEjectAmmo to set.
+     */
+    public void setCondEjectAmmo(boolean condEjectAmmo) {
+        this.condEjectAmmo = condEjectAmmo;
+    }
+
+    /**
+     * @return Conditional Ejection Engine
+     */
+    public boolean isCondEjectEngine() {
+        return condEjectEngine;
+    }
+
+    /**
+     * @param condEjectEngine
+     *            The condEjectEngine to set.
+     */
+    public void setCondEjectEngine(boolean condEjectEngine) {
+        this.condEjectEngine = condEjectEngine;
+    }
+
+    /**
+     * @return Conditional Ejection CTDest
+     */
+    public boolean isCondEjectCTDest() {
+        return condEjectCTDest;
+    }
+
+    /**
+     * @param condEjectCTDest
+     *            The condEjectCTDest to set.
+     */
+    public void setCondEjectCTDest(boolean condEjectCTDest) {
+        this.condEjectCTDest = condEjectCTDest;
+    }
 }

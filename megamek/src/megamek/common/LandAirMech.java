@@ -127,6 +127,13 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int straightMoves = 0;
     private int altLoss = 0;
     private int altLossThisRound = 0;
+    
+    //Autoejection
+    private boolean autoEject = true;
+    private boolean condEjectAmmo = true;
+    private boolean condEjectFuel = true;
+    private boolean condEjectSIDest = true;
+    private boolean condEjectCTDest = false; //LAM only
 
     private boolean critThresh = false;
 
@@ -2107,5 +2114,83 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 setNextSensor(getSensors().firstElement());
             }
         }
+    }
+    
+    /**
+     * @return Returns the autoEject.
+     */
+    public boolean isAutoEject() {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+            return !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+        }
+        return true;
+    }
+
+    /**
+     * @param autoEject
+     *            The autoEject to set.
+     */
+    public void setAutoEject(boolean autoEject) {
+        this.autoEject = autoEject;
+    }
+
+    /**
+     * @return Conditional Ejection Ammo
+     */
+    public boolean isCondEjectAmmo() {
+        return condEjectAmmo;
+    }
+
+    /**
+     * @param condEjectAmmo
+     *            The condEjectAmmo to set.
+     */
+    public void setCondEjectAmmo(boolean condEjectAmmo) {
+        this.condEjectAmmo = condEjectAmmo;
+    }
+
+    /**
+     * @return Conditional Ejection Fuel Explosion
+     */
+    public boolean isCondEjectFuel() {
+        return condEjectFuel;
+    }
+
+    /**
+     * @param condEjectFuel
+     *            The condEjectFuel to set.
+     */
+    public void setCondEjectFuel(boolean condEjectFuel) {
+        this.condEjectFuel = condEjectFuel;
+    }
+
+    /**
+     * @return Conditional Ejection SIDest (Fighter only)
+     */
+    public boolean isCondEjectSIDest() {
+        return false;
+    }
+
+    /**
+     * @param condEjectSIDest
+     *            The condEjectSIDest to set.
+     */
+    public void setCondEjectSIDest(boolean condEjectSIDest) {
+        this.condEjectSIDest = condEjectSIDest;
+    }
+    
+    /**
+     * @return Conditional Ejection CTDest
+     */
+    public boolean isCondEjectCTDest() {
+        return condEjectCTDest;
+    }
+
+    /**
+     * @param condEjectCTDest
+     *            The condEjectCTDest to set.
+     */
+    public void setCondEjectCTDest(boolean condEjectCTDest) {
+        this.condEjectCTDest = condEjectCTDest;
     }
 }

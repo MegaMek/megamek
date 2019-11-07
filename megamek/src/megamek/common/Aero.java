@@ -128,6 +128,13 @@ public class Aero extends Entity implements IAero, IBomber {
     // ignored crew hit for harjel
     private int ignoredCrewHits = 0;
     private int cockpitType = COCKPIT_STANDARD;
+    
+    //Autoejection
+    private boolean autoEject = true;
+    private boolean condEjectAmmo = true;
+    private boolean condEjectFuel = true;
+    private boolean condEjectSIDest = true;
+    private boolean condEjectCTDest = false; //LAM only
 
     // track straight movement from last turn
     private int straightMoves = 0;
@@ -4390,19 +4397,10 @@ public class Aero extends Entity implements IAero, IBomber {
      * @return Returns the autoEject.
      */
     public boolean isAutoEject() {
-        boolean hasEjectSeat = true;
-        if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
-            hasEjectSeat = false;
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+            return !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
         }
-        if (isIndustrial()) {
-            // industrials can only eject when they have an ejection seat
-            for (Mounted misc : miscList) {
-                if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
-                    hasEjectSeat = true;
-                }
-            }
-        }
-        return autoEject && hasEjectSeat;
+        return true;
     }
 
     /**
@@ -4429,25 +4427,40 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-     * @return Conditional Ejection Engine
+     * @return Conditional Ejection Fuel Explosion
      */
-    public boolean isCondEjectEngine() {
-        return condEjectEngine;
+    public boolean isCondEjectFuel() {
+        return condEjectFuel;
     }
 
     /**
-     * @param condEjectEngine
-     *            The condEjectEngine to set.
+     * @param condEjectFuel
+     *            The condEjectFuel to set.
      */
-    public void setCondEjectEngine(boolean condEjectEngine) {
-        this.condEjectEngine = condEjectEngine;
+    public void setCondEjectFuel(boolean condEjectFuel) {
+        this.condEjectFuel = condEjectFuel;
     }
 
     /**
-     * @return Conditional Ejection CTDest
+     * @return Conditional Ejection SIDest
+     */
+    public boolean isCondEjectSIDest() {
+        return condEjectSIDest;
+    }
+
+    /**
+     * @param condEjectSIDest
+     *            The condEjectSIDest to set.
+     */
+    public void setCondEjectSIDest(boolean condEjectSIDest) {
+        this.condEjectSIDest = condEjectSIDest;
+    }
+    
+    /**
+     * @return Conditional Ejection CTDest (LAM only)
      */
     public boolean isCondEjectCTDest() {
-        return condEjectCTDest;
+        return false;
     }
 
     /**

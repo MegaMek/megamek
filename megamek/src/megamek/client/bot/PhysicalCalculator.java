@@ -65,7 +65,7 @@ public final class PhysicalCalculator {
         return null;
     }
 
-    static PhysicalOption getBestPhysical(Entity entity, IGame game) {
+    public static PhysicalOption getBestPhysical(Entity entity, IGame game) {
         // Infantry can't conduct physical attacks.
         if (entity instanceof Infantry) {
             return null;

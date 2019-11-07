@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
+import megamek.client.bot.PhysicalCalculator;
 import megamek.client.bot.PhysicalOption;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
@@ -1110,116 +1111,9 @@ public class Princess extends BotClient {
                 log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
             }
 
-            PhysicalInfo best_attack = null;
-            final int firstEntityId = attacker.getId();
-            int nextEntityId = firstEntityId;
-
-            // this is an array of all my enemies
-            final List<Entity> enemies = getEnemyEntities();
-
-            do {
-                final Entity hitter = game.getEntity(nextEntityId);
-                nextEntityId = game.getNextEntityNum(getMyTurn(), hitter.getId());
-
-                if (null == hitter.getPosition()) {
-                    continue;
-                }
-
-                log(getClass(), METHOD_NAME, LogLevel.DEBUG,
-                    "Calculating physical attacks for " +
-                    hitter.getDisplayName());
-
-                // cycle through potential enemies
-                for (final Entity e : enemies) {
-                    if (null == e.getPosition()) {
-                        continue; // Skip enemies not on the board.
-                    }
-                    if (1 < hitter.getPosition().distance(e.getPosition())) {
-                        continue;
-                    }
-                    if (getHonorUtil().isEnemyBroken(e.getTargetId(),
-                                                     e.getOwnerId(),
-                                                     getForcedWithdrawal())) {
-                        continue;
-                    }
-
-                    final PhysicalInfo right_punch =
-                            new PhysicalInfo(hitter,
-                                             e,
-                                             PhysicalAttackType.RIGHT_PUNCH,
-                                             game,
-                                             this,
-
-                                             false);
-                    getFireControl(hitter).calculateUtility(right_punch);
-                    if (0 < right_punch.getUtility()) {
-                        if ((null == best_attack) ||
-                            (right_punch.getUtility() > best_attack.getUtility())) {
-                            best_attack = right_punch;
-                        }
-                    }
-                    final PhysicalInfo left_punch = new PhysicalInfo(
-                            hitter,
-                            e,
-                            PhysicalAttackType.LEFT_PUNCH,
-                            game,
-                            this,
-                            false);
-                    getFireControl(hitter).calculateUtility(left_punch);
-                    if (0 < left_punch.getUtility()) {
-                        if ((null == best_attack)
-                            || (left_punch.getUtility() >
-                                best_attack.getUtility())) {
-                            best_attack = left_punch;
-                        }
-                    }
-                    final PhysicalInfo right_kick = new PhysicalInfo(
-                            hitter,
-                            e,
-                            PhysicalAttackType.RIGHT_KICK,
-                            game,
-                            this,
-                            false);
-                    getFireControl(hitter).calculateUtility(right_kick);
-                    if (0 < right_kick.getUtility()) {
-                        if ((null == best_attack)
-                            || (right_kick.getUtility() >
-                                best_attack.getUtility())) {
-                            best_attack = right_kick;
-                        }
-                    }
-                    final PhysicalInfo left_kick = new PhysicalInfo(
-                            hitter,
-                            e,
-                            PhysicalAttackType.LEFT_KICK,
-                            game,
-                            this,
-                            false);
-                    getFireControl(hitter).calculateUtility(left_kick);
-                    if (0 < left_kick.getUtility()) {
-                        if ((null == best_attack)
-                            || (left_kick.getUtility() >
-                                best_attack.getUtility())) {
-                            best_attack = left_kick;
-                        }
-                    }
-
-                }
-                if (null != best_attack) {
-                    log(getClass(), METHOD_NAME, LogLevel.INFO,
-                        "Best Physical Attack is " +
-                        best_attack.getDebugDescription());
-                } else {
-                    log(getClass(), METHOD_NAME, LogLevel.INFO,
-                        "No useful physical attack to be made");
-                }
-                if (null != best_attack) {
-                    return best_attack.getAsPhysicalOption();
-                }
-            } while (nextEntityId != firstEntityId);
-
-            // no one can hit anything anymore, so give up
-            return null;
+            // the original bot's physical options seem superior
+            PhysicalOption bestPhysical = PhysicalCalculator.getBestPhysical(attacker, game);
+            return bestPhysical;
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
@@ -1722,6 +1616,8 @@ public class Princess extends BotClient {
                 return; // no need to initialize twice
             }
 
+            checkForDishonoredEnemies();
+            checkForBrokenEnemies();
             refreshCrippledUnits();
             
             initializePathRankers();

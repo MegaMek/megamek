@@ -132,7 +132,7 @@ public class SharedUtility {
 
             // Check for Ejecting
             if (step.getType() == MoveStepType.EJECT 
-                    && (entity instanceof Mech)) {
+                    && (entity.isFighter())) {
                 rollTarget = Server.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }

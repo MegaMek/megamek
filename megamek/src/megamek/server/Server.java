@@ -22873,6 +22873,15 @@ public class Server implements Runnable {
                         + (int) Math.floor((damage - ship.getFatalThresh())
                                 / divisor);
                 if (roll > 9) {
+                    // Lets auto-eject if we can!
+                    if (ship.isAutoEject()
+                        && (!game.getOptions().booleanOption(
+                            OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
+                                                                .getOptions().booleanOption(
+                                    OptionsConstants.RPG_CONDITIONAL_EJECTION) && ship
+                                                                .isCondEjectSIDest()))) {
+                        vDesc.addAll(ejectEntity(en, true, false));
+                    }
                     vDesc.addAll(destroyEntity((Entity)ship, "fatal damage threshold"));
                     ship.doDisbandDamage();
                     if (prevAE != Entity.NONE) {

@@ -35353,6 +35353,12 @@ public class Server implements Runnable {
     public static PilotingRollData getEjectModifiers(IGame game,
             Entity entity, int crewPos, boolean autoEject) {
         int facing = entity.getFacing();
+        if (entity.isPartOfFighterSquadron()) {
+            // Because the components of a squadron have no position and will pass the next test
+            Entity squadron = game.getEntity(entity.getTransportId());
+            return getEjectModifiers(game, entity, crewPos, autoEject, squadron.getPosition(),
+                    "ejecting");
+        }
         if(null == entity.getPosition()) {
             // Off-board unit?
             return new PilotingRollData(entity.getId(), entity.getCrew().getPiloting(), "ejecting");
@@ -35376,7 +35382,8 @@ public class Server implements Runnable {
         if (autoEject) {
             rollTarget.addModifier(1, "automatic ejection");
         }
-        if (entity.isFighter() && ((IAero)entity).isOutControl()) {
+        if ((entity.isFighter() && ((IAero)entity).isOutControl())
+                || (entity.isPartOfFighterSquadron() && ((IAero)game.getEntity(entity.getTransportId())).isOutControl())) {
             rollTarget.addModifier(5, "Out of Control");
         }
         if ((entity instanceof Mech)

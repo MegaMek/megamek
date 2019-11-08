@@ -7389,6 +7389,15 @@ public class Server implements Runnable {
                             }
                             // check for destruction
                             if (a.getSI() == 0) {
+                                // Lets auto-eject if we can!
+                                if (a.isAutoEject()
+                                    && (!game.getOptions().booleanOption(
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
+                                                                            .getOptions().booleanOption(
+                                                OptionsConstants.RPG_CONDITIONAL_EJECTION) && a
+                                                                            .isCondEjectSIDest()))) {
+                                    addReport(ejectEntity(entity, true, false));
+                                }
                                 addReport(destroyEntity(entity,
                                         "Structural Integrity Collapse",
                                         false));
@@ -11352,6 +11361,15 @@ public class Server implements Runnable {
                         ftr.setSI(remaining);
                         te.damageThisPhase += siDamage;
                         if (remaining <= 0) {
+                            // Lets auto-eject if we can!
+                            if (ftr.isAutoEject()
+                                && (!game.getOptions().booleanOption(
+                                    OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
+                                                                        .getOptions().booleanOption(
+                                            OptionsConstants.RPG_CONDITIONAL_EJECTION) && ftr
+                                                                        .isCondEjectSIDest()))) {
+                                vPhaseReport.addAll(ejectEntity(te, true, false));
+                            }
                             vPhaseReport.addAll(destroyEntity(te,
                                     "Structural Integrity Collapse"));
                             ftr.setSI(0);
@@ -23123,6 +23141,14 @@ public class Server implements Runnable {
                     autoEject = true;
                     vDesc.addAll(ejectEntity(te, true));
                 }
+            } else if (te.isFighter()) {
+                IAero aero = (IAero) te;
+                if (aero.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                        || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                                && aero.isCondEjectAmmo()))) {
+                    autoEject = true;
+                    vDesc.addAll(ejectEntity(te, true));
+                }
             }
         }
         boolean isBattleArmor = te instanceof BattleArmor;
@@ -23458,6 +23484,15 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
                 // check to see if this detroyed the entity
                 if (a.getCapArmor() <= 0) {
+                    // Lets auto-eject if we can!
+                    if (a.isAutoEject()
+                        && (!game.getOptions().booleanOption(
+                            OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
+                                                                .getOptions().booleanOption(
+                                    OptionsConstants.RPG_CONDITIONAL_EJECTION) && a
+                                                                .isCondEjectSIDest()))) {
+                        vDesc.addAll(ejectEntity(te, true, false));
+                    }
                     vDesc.addAll(destroyEntity(te,
                             "Structural Integrity Collapse"));
                     a.doDisbandDamage();
@@ -24129,6 +24164,15 @@ public class Server implements Runnable {
                     damage = 0;
                     // check to see if this would destroy the ASF
                     if (a.getSI() <= 0) {
+                        // Lets auto-eject if we can!
+                        if (a.isAutoEject()
+                            && (!game.getOptions().booleanOption(
+                                OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
+                                                                    .getOptions().booleanOption(
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) && a
+                                                                    .isCondEjectSIDest()))) {
+                            vDesc.addAll(ejectEntity(te, true, false));
+                        }
                         vDesc.addAll(destroyEntity(te,
                                 "Structural Integrity Collapse"));
                         a.setSI(0);
@@ -24519,8 +24563,6 @@ public class Server implements Runnable {
                                     if (mech.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);
                                         mech.setDoomed(false);
-                                        // vDesc.addAll(damageCrew(te, 5 -
-                                        // mech.getCrew().getHits()));
                                         mech.setDoomed(true);
                                     }
                                     autoEject = true;
@@ -26669,6 +26711,18 @@ public class Server implements Runnable {
                     }
                     r.choose(true);
                     reports.add(r);
+                    // Lets auto-eject if we can!
+                    if (aero.isFighter()) {
+                        IAero ftr = (IAero) aero;
+                        if (ftr.isAutoEject()
+                           && (!game.getOptions().booleanOption(
+                                OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
+                                                                    .getOptions().booleanOption(
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) && ftr
+                                                                    .isCondEjectFuel()))) {
+                            reports.addAll(ejectEntity(aero, true, false));
+                        }
+                    }
                     reports.addAll(destroyEntity(aero, "fuel explosion", false,
                                                false));
                 } else {
@@ -28280,6 +28334,7 @@ public class Server implements Runnable {
                 r.add(Math.max(a.getSI(), 0));
                 vDesc.addElement(r);
                 if (a.getSI() <= 0) {
+                    //No autoejection chance here. Nuke would vaporize the pilot.
                     vDesc.addAll(destroyEntity(a,
                             "Structural Integrity Collapse"));
                     a.setSI(0);

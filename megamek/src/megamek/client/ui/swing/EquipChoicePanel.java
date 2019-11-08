@@ -353,11 +353,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     }
 
     public void applyChoices() {
+        //Autoejection Options
         boolean autoEject = chAutoEject.isSelected();
         boolean condEjectAmmo = chCondEjectAmmo.isSelected();
+        //Mechs and LAMs Only
         boolean condEjectEngine = chCondEjectEngine.isSelected();
         boolean condEjectCTDest = chCondEjectCTDest.isSelected();
         boolean condEjectHeadshot = chCondEjectHeadshot.isSelected();
+        //Aeros Only
+        boolean condEjectFuel = chCondEjectFuel.isSelected();
+        boolean condEjectSIDest = chCondEjectSIDest.isSelected();
 
         if (entity instanceof Mech) {
             Mech mech = (Mech) entity;
@@ -366,6 +371,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             mech.setCondEjectEngine(condEjectEngine);
             mech.setCondEjectCTDest(condEjectCTDest);
             mech.setCondEjectHeadshot(condEjectHeadshot);
+        } else if (entity.isFighter()) {
+            IAero aero = (IAero) entity;
+            aero.setAutoEject(!autoEject);
+            aero.setCondEjectAmmo(condEjectAmmo);
+            aero.setCondEjectFuel(condEjectFuel);
+            aero.setCondEjectSIDest(condEjectSIDest);
         }
 
         // update AP weapon selections

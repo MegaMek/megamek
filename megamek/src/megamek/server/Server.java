@@ -353,7 +353,6 @@ public class Server extends SocketServer {
 
     private List<DemolitionCharge> explodingCharges = new ArrayList<>();
 
-                getLogger().info(getClass(), "disconnected(DisconnectedEvent)", "s: connection " + conn.getId() + " disconnectd");
     /**
      * Used to ensure only one thread at a time is accessing this particular
      * instance of the server.
@@ -32957,9 +32956,10 @@ public class Server extends SocketServer {
      */
     @Override
     public void onConnectionClose(IConnection conn) {
+        final String METHOD_NAME = "onConnectionClose(IConnection conn)";
         synchronized (serverLock) {
             // write something in the log
-            logInfo("disconnected(DisconnectedEvent)", "s: connection " + conn.getId() + " disconnectd");
+            getLogger().info(getClass(), METHOD_NAME, "s: connection " + conn.getId() + " disconnected");
 
             connections.removeElement(conn);
             connectionsPending.removeElement(conn);

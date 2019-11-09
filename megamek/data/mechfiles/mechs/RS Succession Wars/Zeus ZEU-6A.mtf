@@ -4,9 +4,9 @@ ZEU-6A
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3025
-Source:Succession Wars
-Rules Level:2
+Era:2940
+Source:RS:Succession Wars - Succession Wars
+Rules Level:1
 
 Mass:80
 Engine:320 Fusion Engine(IS)

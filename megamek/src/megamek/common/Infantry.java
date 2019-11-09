@@ -2389,7 +2389,7 @@ public class Infantry extends Entity {
             }
         }
 
-        return TestEntity.round(ton, TestEntity.Ceil.HALFTON);
+        return RoundWeight.nearestHalfTon(ton);
 
     }
 

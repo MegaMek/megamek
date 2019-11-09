@@ -130,15 +130,17 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         
+        // Used when using a grounded dropship with individual weapons
+        // or a fighter squadron loaded with ASM or Alamo bombs.
+        nDamPerHit = calcDamagePerHit();
+        
         //Point Defense fire vs Capital Missiles
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
                 && getParentBayHandler() != null) {
             WeaponHandler bayHandler = getParentBayHandler();
             CounterAV = bayHandler.getCounterAV();
-            nDamPerHit = calcDamagePerHit();
         } else {
-            // Should only be used when using a grounded dropship with individual weapons
-            // Otherwise we're using CapitalMissileBayHandler
+            //This gets used if you're shooting at an airborne dropship. It can defend with PD bays.
             attackValue = calcAttackValue();
         }
         //CalcAttackValue triggers counterfire, so now we can safely get this
@@ -226,6 +228,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            nDamPerHit = 0;
         }
         //use this if PD counterfire destroys all the Capital missiles
         if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
@@ -233,6 +236,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            nDamPerHit = 0;
         }
 
         // Any necessary PSRs, jam checks, etc.
@@ -284,10 +288,39 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
             return false;
         }
-        if (!bMissed && (entityTarget != null)) {
-            handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, bldgAbsorbs);
-            server.creditKill(entityTarget, ae);
+        if (!bMissed) {
+         // for each cluster of hits, do a chunk of damage
+            while (hits > 0) {
+                int nDamage;
+                // targeting a hex for igniting
+                if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                        || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
+                    handleIgnitionDamage(vPhaseReport, bldg, hits);
+                    return false;
+                }
+                // targeting a hex for clearing
+                if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+                    nDamage = nDamPerHit * hits;
+                    handleClearDamage(vPhaseReport, bldg, nDamage);
+                    return false;
+                }
+                // Targeting a building.
+                if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+                    // The building takes the full brunt of the attack.
+                    nDamage = nDamPerHit * hits;
+                    handleBuildingDamage(vPhaseReport, bldg, nDamage,
+                            target.getPosition());
+                    // And we're done!
+                    return false;
+                }
+                if (entityTarget != null) {
+                    handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+                            nCluster, bldgAbsorbs);
+                    server.creditKill(entityTarget, ae);
+                    hits -= nCluster;
+                    firstHit = false;
+                }
+            } // Handle the next cluster.
         } else if (!bMissed) { // Hex is targeted, need to report a hit
             r = new Report(3390);
             r.subject = subjectId;
@@ -305,39 +338,54 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
+        AmmoType atype = (AmmoType) ammo.getType();
         int av = 0;
         double counterAV = calcCounterAV();
         int armor = wtype.getMissileArmor();
-        // if we have a ground firing unit, then AV should not be determined by
-        // aero range brackets
-        if (!ae.isAirborne() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)) {
-            if (usesClusterTable()) {
-                // for cluster weapons just use the short range AV
-                av = wtype.getRoundShortAV();
+        //AR10 munitions
+        if (atype != null) {
+            if (atype.getAmmoType() == AmmoType.T_AR10) {
+                if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                    av = 4;
+                    armor = 40;
+                } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                    av = 3;
+                    armor = 30;
+                } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                    av = 1000;
+                    armor = 40;
+                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                    av = 100;
+                    armor = 30;
+                } else {
+                    av = 2;
+                    armor = 20;
+                }
             } else {
-                // otherwise just use the full weapon damage by range
-                av = wtype.getDamage(nRange);
+                int range = RangeType.rangeBracket(nRange, wtype.getATRanges(),
+                        true, false);
+                if (range == WeaponType.RANGE_SHORT) {
+                    av = wtype.getRoundShortAV();
+                } else if (range == WeaponType.RANGE_MED) {
+                    av = wtype.getRoundMedAV();
+                } else if (range == WeaponType.RANGE_LONG) {
+                    av = wtype.getRoundLongAV();
+                } else if (range == WeaponType.RANGE_EXT) {
+                    av = wtype.getRoundExtAV();
+                }
             }
-        } else {
-            // we have an airborne attacker, so we need to use aero range
-            // brackets
-            int range = RangeType.rangeBracket(nRange, wtype.getATRanges(),
-                    true, false);
-            if (range == WeaponType.RANGE_SHORT) {
-                av = wtype.getRoundShortAV();
-            } else if (range == WeaponType.RANGE_MED) {
-                av = wtype.getRoundMedAV();
-            } else if (range == WeaponType.RANGE_LONG) {
-                av = wtype.getRoundLongAV();
-            } else if (range == WeaponType.RANGE_EXT) {
-                av = wtype.getRoundExtAV();
+            //Nuclear Warheads for non-AR10 missiles
+            if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                av = 100;
+            } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                av = 1000;
             }
+            nukeS2S = atype.hasFlag(AmmoType.F_NUCLEAR);
         }
-        
-        if (ammo.getType().hasFlag(AmmoType.F_NUCLEAR)) {
-            nukeS2S = true;
+        // For squadrons, total the missile armor for the launched volley
+        if (ae.isCapitalFighter()) {
+            armor = armor * nweapons;
         }
-        
         CapMissileArmor = armor - (int) counterAV;
         CapMissileAMSMod = calcCapMissileAMSMod();
         

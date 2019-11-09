@@ -24,13 +24,21 @@ Koi Variant
 3079
 </year>
 
+<originalBuildYear>
+3079
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
 
 <motion_type>
-WIGE
+WiGE
 </motion_type>
+
+<transporters>
+cargobay:51.5:1:1
+</transporters>
 
 <cruiseMP>
 5
@@ -40,49 +48,33 @@ WIGE
 0
 </engine_type>
 
-<armor_type>
-0
-</armor_type>
-
-<barrating>
-10
-</barrating>
-
 <armor>
 18
 18
 18
 18
 18
-18
+16
 18
 </armor>
-
-<barrating>
-10
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
 
 <Body Equipment>
 AmphibiousChassis
 Armored Chassis
 Advanced Fire Control
-ISSuperCharger
-ISThunderbolt10 Ammo
-ISThunderbolt10 Ammo
-ISThunderbolt10 Ammo
-ISThunderbolt10 Ammo
-ISThunderbolt10 Ammo
-ISThunderbolt10 Ammo
-ISThunderbolt10 Ammo
-ISThunderbolt10 Ammo
-ISThunderbolt10 Ammo
-ISThunderbolt10 Ammo
+Supercharger
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
 ISAMS Ammo
-CommsGear:8
+Communications Equipment (8 ton)
 </Body Equipment>
 
 <Front Equipment>
@@ -95,27 +87,36 @@ CommsGear:8
 </Front Left Equipment>
 
 <Rear Right Equipment>
-IS AMS
+ISAntiMissileSystem
 </Rear Right Equipment>
 
 <Rear Left Equipment>
-IS AMS
+ISAntiMissileSystem
 </Rear Left Equipment>
 
 <Rear Equipment>
 </Rear Equipment>
 
 <Turret Equipment>
-ISThunderbolt10
-ISThunderbolt10
-ISThunderbolt10
-ISThunderbolt10
+Thunderbolt 10
+Thunderbolt 10
+Thunderbolt 10
+Thunderbolt 10
 </Turret Equipment>
 
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <tonnage>
-240
+240.0
 </tonnage>
 
-<transporters>
-CargoBay:51.5:1
-</transporters>
+<fuel>
+0.0
+</fuel>
+

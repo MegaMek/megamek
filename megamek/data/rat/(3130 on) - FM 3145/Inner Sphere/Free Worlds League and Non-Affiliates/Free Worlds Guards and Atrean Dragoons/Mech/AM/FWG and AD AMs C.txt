@@ -8,5 +8,5 @@ Awesome AWS-10KM,6
 Grand Titan T-IT-N11M,5
 Longbow LGB-13C,4
 Cerberus MR-5M,3
-Grand Titan T-IT-N11M,2
+Juliano JLN-5A,2
 Trebaruna TR-XB,1

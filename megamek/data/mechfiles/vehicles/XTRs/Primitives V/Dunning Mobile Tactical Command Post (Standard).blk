@@ -24,6 +24,10 @@ Dunning Mobile Tactical Command Post
 2317
 </year>
 
+<originalBuildYear>
+2317
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -32,12 +36,16 @@ IS Level 4
 Wheeled
 </motion_type>
 
+<transporters>
+troopspace:3.0
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
 
 <engine_type>
-0
+1
 </engine_type>
 
 <armor>
@@ -46,14 +54,6 @@ Wheeled
 18
 10
 </armor>
-
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
 
 <Body Equipment>
 Communications Equipment (7 ton)
@@ -72,9 +72,21 @@ ISOffRoadChassis
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-troopspace:3
-</transporters>
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
 
 <source>
 XTRO Primitives V - Age of War
@@ -83,4 +95,12 @@ XTRO Primitives V - Age of War
 <tonnage>
 30.0
 </tonnage>
+
+<fuel>
+0.5
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
 

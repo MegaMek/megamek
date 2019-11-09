@@ -55,6 +55,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
  * This display is used for when hidden units are taking pointblank shots.
@@ -704,7 +705,9 @@ public class PointblankShotDisplay extends FiringDisplay implements
         }
 
         WeaponAttackAction waa;
-        if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+        if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                || (mounted.getType() instanceof CapitalMissileWeapon
+                        && Compute.isGroundToGround(ce(), target)))) {
             waa = new WeaponAttackAction(cen, target.getTargetType(),
                     target.getTargetId(), weaponNum);
         } else {
@@ -867,7 +870,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.alreadyFired")); //$NON-NLS-1$
                 setFireEnabled(false);
-            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.Mode_AMS_Manual))) {
+            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.autoFiringWeapon"));
                 //$NON-NLS-1$

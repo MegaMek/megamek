@@ -24,6 +24,10 @@ Bayamo Hoverbike
 3030
 </year>
 
+<originalBuildYear>
+3030
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,11 @@ IS Level 2
 <motion_type>
 Hover
 </motion_type>
+
+<transporters>
+cargobay:0.068:1:1
+pillionseats:2.0:0
+</transporters>
 
 <cruiseMP>
 12
@@ -40,10 +49,6 @@ Hover
 11
 </engine_type>
 
-<fuel>
-.068
-</fuel>
-
 <armor>
 1
 1
@@ -51,20 +56,12 @@ Hover
 1
 </armor>
 
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
 <Body Equipment>
 BicycleChassisMod
 </Body Equipment>
 
 <Front Equipment>
-BASearchlight
+HHSearchlight
 </Front Equipment>
 
 <Right Equipment>
@@ -76,15 +73,23 @@ BASearchlight
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-cargobay:.068:1
-pillionseats:.05:2
-</transporters>
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <source>
 TRO VAr - Succession Wars
 </source>
 
 <tonnage>
-.6
+0.6
 </tonnage>
+
+<fuel>
+0.068
+</fuel>
+

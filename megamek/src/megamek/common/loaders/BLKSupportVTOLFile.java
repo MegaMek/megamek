@@ -1,5 +1,6 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,21 +12,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Jun 2, 2005
- */
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.SupportVTOL;
-import megamek.common.Tank;
-import megamek.common.VTOL;
+import megamek.common.*;
+import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.BuildingBlock;
 
 /**
+ * Created on Jun 2, 2005
+ *
  * @author Andrew Hunter
  */
 public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
@@ -97,9 +92,6 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
             t.setFuelTonnage(dataFile.getDataAsDouble("fuel")[0]);
         }
         int engineFlags = Engine.TANK_ENGINE | Engine.SUPPORT_VEE_ENGINE;
-        if (t.isClan()) {
-            engineFlags |= Engine.CLAN_ENGINE;
-        }
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }
@@ -196,6 +188,35 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
             t.setOmni(true);
         }
         t.setArmorTonnage(t.getArmorWeight());
+
+        if (dataFile.exists("baseChassisTurretWeight")) {
+            t.setBaseChassisTurretWeight(dataFile.getDataAsDouble("baseChassisTurretWeight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisSponsonPintleWeight")) {
+            t.setBaseChassisSponsonPintleWeight(dataFile.getDataAsDouble("baseChassisSponsonPintleWeight")[0]);
+        }
+
+        if (dataFile.exists("fuelType")) {
+            try {
+                t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
+            } catch (IllegalArgumentException ex) {
+                DefaultMmLogger.getInstance().error(getClass(), "getEntity()",
+                        "While loading " + t.getShortNameRaw()
+                                + ": Could not parse ICE fuel type "
+                                + dataFile.getDataAsString("fuelType")[0]);
+                t.setICEFuelType(FuelType.PETROCHEMICALS);
+            }
+        }
+
+        if (dataFile.exists("hasNoControlSystems")) {
+            t.setHasNoControlSystems(true);
+        }
+
+        if (dataFile.exists("baseChassisFireConWeight")) {
+            t.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
+        }
+
         return t;
     }
 

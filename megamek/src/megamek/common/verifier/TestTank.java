@@ -296,6 +296,21 @@ public class TestTank extends TestEntity {
                 + TestEntity.makeWeightString(getWeightControls()) + "\n";
     }
 
+    @Override
+    public double getWeightCarryingSpace() {
+        return super.getWeightCarryingSpace() + tank.getExtraCrewSeats() * 0.5;
+    }
+
+    public String printWeightCarryingSpace() {
+        if (tank.getExtraCrewSeats() > 0) {
+            return super.printWeightCarryingSpace()
+                    + StringUtil.makeLength("Combat Seats:", getPrintSize() - 5)
+                    + TestEntity.makeWeightString(tank.getExtraCrewSeats() * 0.5) + "\n";
+        } else {
+            return super.printWeightCarryingSpace();
+        }
+    }
+
     public Tank getTank() {
         return tank;
     }
@@ -512,6 +527,10 @@ public class TestTank extends TestEntity {
                 buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
                 buff.append(mount.getType().getTankslots(tank)).append("\n");
             }
+        }
+        if (tank.getExtraCrewSeats() > 0) {
+            buff.append(StringUtil.makeLength("Combat Crew Seats:", 30));
+            buff.append(tank.getExtraCrewSeats()).append("\n");
         }
         // different armor types take different amount of slots
         int armorSlots = 0;

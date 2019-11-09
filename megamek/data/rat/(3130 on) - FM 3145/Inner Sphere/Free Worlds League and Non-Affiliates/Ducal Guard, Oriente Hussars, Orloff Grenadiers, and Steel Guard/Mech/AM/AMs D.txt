@@ -7,6 +7,6 @@ Longbow LGB-12C,5
 BattleMaster BLR-1Gb,6
 Albatross ALB-3Ur,5
 Awesome AWS-10KM,4
-Warhammer IIC 4,3
+Emperor EMP-6M,3
 Longbow LGB-13C,2
 Cerberus MR-5M,1

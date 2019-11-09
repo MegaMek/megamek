@@ -17,7 +17,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -2105,7 +2104,7 @@ public class FireControl {
      *            The game currently being played.
      * @return the 'best' firing plan under a certain heat.
      */
-    private FiringPlan guessBestFiringPlanUnderHeat(final Entity shooter,
+    protected FiringPlan guessBestFiringPlanUnderHeat(final Entity shooter,
                                                     @Nullable final EntityState shooterState,
                                                     final Targetable target,
                                                     @Nullable final EntityState targetState,
@@ -2254,7 +2253,7 @@ public class FireControl {
     	}
     	
         for(Mounted weapon : shooter.getWeaponList()) {
-        	if(weapon.getType().hasModeType(Weapon.Mode_Missile_Indirect)) {
+        	if(weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
         		fireControlState.getEntityIDFStates().put(shooter.getId(), true);
         		return true;
         	}
@@ -3118,8 +3117,8 @@ public class FireControl {
                 validFacingChanges.add(2);
                 validFacingChanges.add(-2);
             }
-        } else if (shooter instanceof Tank
-                   && !((Tank) shooter).hasNoTurret()) {
+        } else if ((shooter instanceof Tank
+                   && !((Tank) shooter).hasNoTurret()) || (shooter instanceof Infantry)) {
             validFacingChanges.add(1);
             validFacingChanges.add(-1);
             validFacingChanges.add(2);

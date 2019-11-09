@@ -1,7 +1,42 @@
 VERSION HISTORY:
 ----------------
-v0.47.1-SNAPSHOT
+v0.47.2-SNAPSHOT
++PR #1535: Use correct cost for Protomech EDP armor
++PR #1533: Improved bot usage of field gun infantry
+
+v0.47.1 (2019-11-05 0300 UTC) 
 + PR #1451: Enable bot use of searchlights when necessary
++ Account for all bay types in large craft cost calculations.
++ Bug: Vehicle reduced to half movement not considered heavy damage
++ PR #1473: Allow the bot to gracefully handle deployment of grounded dropships on maps with no valid places to put them
++ PR #1474: TRO display in MegaMek lobby displays data for gun emplacements
++ Issue #1459: Using XXL(Clan) fusion engine on combat vehicle by mixed IS tech is not loaded properly
++ Issue #1481: Selecting the Adelante Train throws IndexOutOfBounds Exception
++ PR #1484: JS/SS max armor calculation (affects validation and MML).
++ PR #1478: Grounded Dropships and Individual Weapons (implements errata).
++ PR #1488: Nuclear warheads for large craft properly differentiate themselves from their standard versions when swapping ammo
++ Issue #1490: Fixed Ramshackle quirk description
++ Issue #1489: Fix jet booster and supercharger weight calculations
++ Issue #1500: Avoid NRE in BotClient::getStartingCoordsArray
++ Issue #1508: #1261 was never merged properly.
++ Data: Fixing the Hercules in the mechset again.
++ Bug: Some weapons missing their Aerospace attack values.
++ Bug/Data: Fixing various validation errors.
++ Issue #708: Errata indicates swarming battle armor should not be immune to fire.
++ Issue #1517: Fix for multiple NPEs caused by phantom transported units
++ Data: New Sprites/New Boards from Derv.
++ Issue #1480: Mech Mortar Smoke round is unavailable
++ Updating the Simon Landmine Map Pack.
++ PR #1519: Validation for support vehicles, corrections to many of the support vehicle unit files.
++ PR #1521: Multiple fixes and errata related to handling of large craft missile weapons;
+	grounded dropships can now fire missiles as artillery;
+	grounded dropships cannot directly fire capital weapons at ground targets;
++ PR #1527/Issue #1303: Mostly implemented current TW rules for movement of spheroid dropships in atmosphere
++ PR #1530: Treat fixed wing support vehicles as support vehicles instead of conventional fighters for cost calculation.
++ Issue #1516: Rotary RAC does not generate extra heat when rapid firing
++ Issue #1523: Fixes to 3145 FWL RATs
++ Issue #1514: Some Protomechs Missing Map Art
++ Issue #1454: RS:SW New Mechs are listed as Level 2 instead of Level 1
 
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.

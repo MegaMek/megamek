@@ -1661,6 +1661,7 @@ public class Server extends SocketServer {
             entity.setIlluminated(false);
             entity.setUsedSearchlight(false);
             entity.setCarefulStand(false);
+            entity.setNetworkBAP(false);
 
             if (entity instanceof MechWarrior) {
                 ((MechWarrior) entity).setLanded(true);
@@ -2878,8 +2879,8 @@ public class Server extends SocketServer {
                 break;
             case PHASE_MOVEMENT:
                 detectHiddenUnits();
-                detectSpacecraft();
                 updateSpacecraftDetection();
+                detectSpacecraft();
                 resolveWhatPlayersCanSeeWhatUnits();
                 doAllAssaultDrops();
                 addMovementHeat();
@@ -14603,13 +14604,11 @@ public class Server extends SocketServer {
                 }
                 //If we successfully detect the enemy, add it to the appropriate detector's sensor contacts list
                 if (Compute.calcSensorContact(game, detector, target)) {
-                    detector.addSensorContact(target.getId());
+                    game.getEntity(detector.getId()).addSensorContact(target.getId());
                     //If detector is part of a C3 network, share the contact
                     if (detector.hasNavalC3()) {
-                        for (Entity c3NetMate : game.getEntitiesVector()) {
-                            if (c3NetMate != detector && c3NetMate.onSameC3NetworkAs(detector)) {
-                                c3NetMate.addSensorContact(target.getId());
-                            }
+                        for (Entity c3NetMate : game.getC3NetworkMembers(detector)) {
+                            game.getEntity(c3NetMate.getId()).addSensorContact(target.getId());
                         }
                     }
                 }
@@ -14652,7 +14651,7 @@ public class Server extends SocketServer {
                 }
                 //If we successfully lock up the enemy, add it to the appropriate detector's firing solutions list
                 if (Compute.calcFiringSolution(game, detector, target)) {
-                    detector.addFiringSolution(targetId);
+                    game.getEntity(detector.getId()).addFiringSolution(targetId);
                 }
             }
         }
@@ -21207,10 +21206,7 @@ public class Server extends SocketServer {
     private void doFlamingDamage(Entity entity) {
         Report r;
         int boomroll = Compute.d6(2);
-        // Infantry are unaffected by fire while they're still swarming.
-        if (Entity.NONE != entity.getSwarmTargetId()) {
-            return;
-        }
+
         if ((entity.getMovementMode() == EntityMovementMode.VTOL)
             && !entity.infernos.isStillBurning()) {
             // VTOLs don't check as long as they are flying higher than
@@ -36730,6 +36726,37 @@ public class Server extends SocketServer {
             boolean asfFlak, int attackingBA) {
         int damage = ammo.getRackSize();
         int falloff = 10;
+        // Capital and Subcapital missiles
+        if (ammo.getAmmoType() == AmmoType.T_KRAKEN_T
+                || ammo.getAmmoType() == AmmoType.T_KRAKENM
+                || ammo.getAmmoType() == AmmoType.T_MANTA_RAY) {
+            damage = 50;
+            falloff = 25;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_KILLER_WHALE
+                || ammo.getAmmoType() == AmmoType.T_KILLER_WHALE_T
+                || ammo.getAmmoType() == AmmoType.T_SWORDFISH
+                || ammo.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+            damage = 40;
+            falloff = 20;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_STINGRAY) {
+            damage = 35;
+            falloff = 17;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_WHITE_SHARK
+                || ammo.getAmmoType() == AmmoType.T_WHITE_SHARK_T
+                || ammo.getAmmoType() == AmmoType.T_PIRANHA
+                || ammo.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+            damage = 30;
+            falloff = 15;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_BARRACUDA
+                || ammo.getAmmoType() == AmmoType.T_BARRACUDA_T
+                || ammo.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+            damage = 20;
+            falloff = 10;
+        }
         if (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
             falloff = 25;
         }

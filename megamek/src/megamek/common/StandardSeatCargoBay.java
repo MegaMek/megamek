@@ -15,17 +15,14 @@
 package megamek.common;
 
 /**
- * Represents a standard sized passenger seat.
+ * Represents a standard support vehicle crew seat.
  */
 
-public final class StandardSeatCargoBay extends Bay {
+public class StandardSeatCargoBay extends Bay {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 4161027191694822726L;
 
-    private double weight = 0;
+    protected double weight = 0;
 
     /**
      * The default constructor is only for serialization.
@@ -38,19 +35,14 @@ public final class StandardSeatCargoBay extends Bay {
     // Public constructors and methods.
 
     /**
-     * Create a space for the given tonnage of troops. For this class, only the
-     * weight of the troops (and their equipment) are considered; if you'd like
-     * to think that they are stacked like lumber, be my guest.
+     * Creates standard crew seating for support vehicles.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param space The number of seats
      */
-    public StandardSeatCargoBay(double space, int doors) {
-        totalSpace = (int)(space/0.075);
-        weight = space;
-        currentSpace = (int)(space/0.075);
-        this.doors = doors;
-        currentdoors = doors;
+    public StandardSeatCargoBay(double space) {
+        totalSpace = currentSpace = space;
+        weight = space * 0.075;
+        doors = currentdoors = 0;
     }
 
     /**
@@ -64,18 +56,12 @@ public final class StandardSeatCargoBay extends Bay {
      */
     @Override
     public boolean canLoad(Entity unit) {
-        // Assume that we cannot carry the unit.
-        boolean result = false;
-
-        return result;
+        return false;
     }
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        StringBuffer returnString = new StringBuffer("Passenger Seats ("
-                + getCurrentDoors() + " doors) - ");
-        returnString.append((int)currentSpace);
-        return returnString.toString();
+        return "Seating (Standard) - " + currentSpace;
     }
 
     @Override
@@ -95,7 +81,7 @@ public final class StandardSeatCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "standardseats:" + weight + ":" + doors;
+        return "standardseats:" + currentSpace + ":" + doors;
     }
 
     @Override

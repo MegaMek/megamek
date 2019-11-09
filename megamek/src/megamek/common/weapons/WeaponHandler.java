@@ -133,6 +133,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean pdBayEngagedMissile = false; // true if one or more point defense bays engages this attack. Used for reporting if this is a single large missile (thunderbolt, etc) attack.
     protected boolean advancedPD = false; //true if advanced StratOps game rule is on
     protected WeaponHandler parentBayHandler = null; //Used for weapons bays when Aero Sanity is on
+    protected int originalAV = 0; // Used to handle AMS damage to standard missile flights fired by capital fighters
     
     protected boolean amsEngaged = false;
     protected boolean apdsEngaged = false;
@@ -237,15 +238,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((target == null)
                 || (target.getTargetType() != Targetable.TYPE_ENTITY)
                 || !advancedPD
-                //Don't defend against ground fire with bay fire unless attacked by bay fire
+                //Don't defend against ground fire with bay fire unless attacked by capital missile fire
                 //Prevents ammo and heat being used twice for dropships defending here and with getAMSHitsMod()
-                || (waa.isGroundToAir(game) && !ae.usesWeaponBays())) {
+                || (waa.isGroundToAir(game) && (!(wtype.isSubCapital() || wtype.isCapital())))) {
             return false;
         }
         if (target instanceof Dropship 
                 && waa.isAirToGround(game)
-                && !ae.usesWeaponBays()
-                && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER)) {
+                && !ae.usesWeaponBays()) {
             //Prevents a grounded dropship using individual weapons from engaging with AMSBays unless attacked by a dropship or capital fighter
             //You can get some blank missile weapons fire reports due to the attackvalue / ndamageperhit conversion if this isn't done
             return false;
@@ -613,7 +613,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         for (int i = 0; i < nweaponsHit; i++) {
                             hits += calcHits(throwAwayReport);
                         }
-                        //Report point defense fire
+                        //Report and apply point defense fire
                         if (pdBayEngaged || amsBayEngaged) {
                             Report r = new Report(3367);
                             r.indent();
@@ -621,6 +621,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             r.add(getCounterAV());
                             r.newlines = 0;
                             vPhaseReport.addElement(r);
+                            hits -= (CounterAV / nDamPerHit);
                         } else if (amsEngaged) {
                             Report r = new Report(3350);
                             r.subject = entityTarget.getId();
@@ -713,14 +714,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             nweaponsHit = nweaponsHit - AMSHits;
                         }
                         nCluster = 1;
-                        Report r = new Report(3325);
-                        r.subject = subjectId;
-                        r.add(nweaponsHit);
-                        r.add(" weapon(s) ");
-                        r.add(" ");
-                        r.newlines = 0;
-                        hits = nweaponsHit;
-                        vPhaseReport.add(r);
+                        if (!bMissed) {
+                            Report r = new Report(3325);
+                            r.subject = subjectId;
+                            r.add(nweaponsHit);
+                            r.add(" weapon(s) ");
+                            r.add(" ");
+                            r.newlines = 0;
+                            hits = nweaponsHit;
+                            vPhaseReport.add(r);
+                        }
                     }
                 }
             }
@@ -736,50 +739,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 if (nweapons > 1) {
                     nweaponsHit = Compute.missilesHit(nweapons,
                             ((IAero) ae).getClusterMods());
-                    //If point defenses engage Large, single missiles
-                    if (pdBayEngagedMissile || amsBayEngagedMissile) {
-                        int AMSHits = 0;
-                        Report r = new Report(3236);
-                        r.subject = subjectId;
-                        r.add(nweaponsHit);
-                        vPhaseReport.add(r);
-                        r = new Report(3230);
-                        r.indent(1);
-                        r.subject = subjectId;
-                        vPhaseReport.add(r);
-                        for (int i = 0; i < nweaponsHit; i++) {
-                        	int destroyRoll = Compute.d6();
-                        	if (destroyRoll <= 3) {
-                        		r = new Report(3240);
-                        		r.subject = subjectId;
-                        		r.add("missile");
-                        		r.add(destroyRoll);
-                        		vPhaseReport.add(r);
-                        		AMSHits += 1;
-                        	} else {
-                        		r = new Report(3241);
-                        		r.add("missile");
-                        		r.add(destroyRoll);
-                        		r.subject = subjectId;
-                        		vPhaseReport.add(r);                        		
-                        	}
-                        }
-                        nweaponsHit = nweaponsHit - AMSHits;
-                        if (nweaponsHit <= 0) {
-                        	hits = 0;
-                        } else {
-                        	hits = 1;
-                        }
-                        nDamPerHit = attackValue * nweaponsHit;
-                    } else if (pdBayEngaged || amsBayEngaged) {
+                    if (pdBayEngaged || amsBayEngaged) {
                     	//Point Defenses engage standard (cluster) missiles
                         int counterAV = 0;
                         counterAV = getCounterAV();
-                        nDamPerHit = attackValue * nweaponsHit - counterAV;
+                        nDamPerHit = originalAV * nweaponsHit - counterAV;
                         hits = 1;
                         nCluster = 1;
                     } else {
-                    	//If multiple non-missile weapons hit
+                    	//If multiple large missile or non-missile weapons hit
                     	Report r = new Report(3325);
                     	r.subject = subjectId;
                     	r.add(nweaponsHit);

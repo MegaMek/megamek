@@ -131,14 +131,11 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             testEntity = new TestMech((Mech) entity, mechOption, fileString);
         } else if (entity instanceof Protomech) {
             testEntity = new TestProtomech((Protomech) entity, protomechOption, fileString);
+        } else if (entity.isSupportVehicle()) {
+            testEntity = new TestSupportVehicle(entity, tankOption, null);
         } else if ((entity instanceof Tank) && 
                 !(entity instanceof GunEmplacement)) {
-            if (entity.isSupportVehicle()) {
-                testEntity = new TestSupportVehicle((Tank) entity, tankOption,
-                        null);
-            } else {
-                testEntity = new TestTank((Tank) entity, tankOption, null);
-            }
+            testEntity = new TestTank((Tank) entity, tankOption, null);
         } else if (entity.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
             testEntity = new TestSmallCraft((SmallCraft) entity, aeroOption, fileString);
         } else if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
@@ -230,9 +227,6 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
                         .getEntryName());
                 if (entity == null) {
-                    continue;
-                }
-                if (entity.hasETypeFlag(Entity.ETYPE_FIXED_WING_SUPPORT)) {
                     continue;
                 }
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),

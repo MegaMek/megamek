@@ -1011,6 +1011,7 @@ public class Compute {
         //Naval C3 only provides full C3 range benefits to energy weapons and guided missiles
         boolean nc3EnergyGuided = ((wtype.hasFlag(WeaponType.F_ENERGY))
                 || (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
+                || (wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
                 || (wtype.getAtClass() == WeaponType.CLASS_AR10)
                 || (wtype.getAtClass() == WeaponType.CLASS_ATM)
                 || (wtype.getAtClass() == WeaponType.CLASS_LRM)
@@ -1241,7 +1242,7 @@ public class Compute {
         }
 
         // Account for "dead zones" between Aeros at different altitudes
-        if (Compute.inDeadZone(game, ae, target)) {
+        if (!Compute.useSpheroidAtmosphere(game, ae) && Compute.inDeadZone(game, ae, target)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target in dead zone");
         }
 
@@ -2552,7 +2553,7 @@ public class Compute {
         ToHitData toHit = new ToHitData();
 
         // space screens; bonus depends on number (level)
-        if (hex.terrainLevel(Terrains.SCREEN) > 0) {
+        if ((hex != null) && (hex.terrainLevel(Terrains.SCREEN) > 0)) {
             toHit.addModifier(hex.terrainLevel(Terrains.SCREEN) + 1,
                               "attacker in screen(s)");
         }
@@ -3651,7 +3652,7 @@ public class Compute {
         threshold = atk.toHit(cgame).getValue();
 
         // Set the weapon to single shot mode
-        weapon.setMode(rapidAC ? "" : Weapon.Mode_AC_Single);
+        weapon.setMode(rapidAC ? "" : Weapon.MODE_AC_SINGLE);
         final_spin = 0;
 
         // If weapon can't hit target, exit the function with the weapon on
@@ -3666,11 +3667,11 @@ public class Compute {
             final_spin = 1;
             if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
                 || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
-                weapon.setMode(Weapon.Mode_UAC_Ultra);
+                weapon.setMode(Weapon.MODE_UAC_ULTRA);
             } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                weapon.setMode(Weapon.Mode_RAC_TwoShot);
+                weapon.setMode(Weapon.MODE_RAC_TWO_SHOT);
             } else if (rapidAC) {
-            	weapon.setMode(Weapon.Mode_AC_Rapid);
+            	weapon.setMode(Weapon.MODE_AC_RAPID);
             }
         }
 
@@ -3680,13 +3681,13 @@ public class Compute {
             // If random roll is >= to-hit + 2 then set to quad-spin
             if (spinupThreshold >= (threshold + 1)) {
                 final_spin = 2;
-                weapon.setMode(Weapon.Mode_RAC_FourShot);
+                weapon.setMode(Weapon.MODE_RAC_FOUR_SHOT);
             }
 
             // If random roll is >= to-hit + 3 then set to six-spin
             if (spinupThreshold >= (threshold + 2)) {
                 final_spin = 3;
-                weapon.setMode(Weapon.Mode_RAC_SixShot);
+                weapon.setMode(Weapon.MODE_RAC_SIX_SHOT);
             }
         }
         return final_spin;
@@ -6807,6 +6808,8 @@ public class Compute {
                 }
             }
             return nCapitalW + (int) Math.ceil(nStandardW / 6.0);
+        } else if (entity.isSupportVehicle()) {
+            return getSupportVehicleGunnerNeeds(entity);
         } else if (entity instanceof Tank) {
             return (getFullCrewSize(entity) - 1);
         } else if (entity instanceof Infantry) {
@@ -6836,9 +6839,119 @@ public class Compute {
         return 0;
     }
 
+    /**
+     * Calculates the base crew requirements for support vehicles.
+     *
+     * @param entity The support vehicle
+     * @return       The minimum base crew
+     */
+    public static int getSVBaseCrewNeeds(Entity entity) {
+        if (entity.isTrailer() && (entity.getEngine().getEngineType() == Engine.NONE)) {
+            return 0;
+        }
+        final boolean naval = entity.getMovementMode().equals(EntityMovementMode.NAVAL)
+                || entity.getMovementMode().equals(EntityMovementMode.HYDROFOIL)
+                || entity.getMovementMode().equals(EntityMovementMode.SUBMARINE);
+        int crew;
+        if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            crew = 1;
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
+            if (naval || entity.getMovementMode().equals(EntityMovementMode.AIRSHIP)) {
+                crew = 4;
+            } else {
+                crew = 2;
+            }
+        } else {
+            crew = 3;
+            if (naval) {
+                crew += (int) Math.ceil(entity.getWeight() / 5000);
+            } else if (entity.getMovementMode().equals(EntityMovementMode.AIRSHIP)) {
+                crew += (int) Math.ceil(entity.getWeight() / 500);
+            }
+        }
+        return crew;
+    }
+
+    /**
+     * Calculates number of gunners required for a support vehicle. See TM, 131.
+     *
+     * @param entity The support vehicle
+     * @return       The number of gunners required.
+     */
+    public static int getSupportVehicleGunnerNeeds(Entity entity) {
+        final boolean advFireCon = entity.hasMisc(MiscType.F_ADVANCED_FIRECONTROL);
+        final boolean basicFireCon = !advFireCon && entity.hasMisc(MiscType.F_BASIC_FIRECONTROL);
+        if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            if (!advFireCon && !basicFireCon) {
+                // No fire control requires one gunner per weapon.
+                return entity.getWeaponList().size();
+            } else {
+                // Otherwise we require one gunner per facing, with turrets and pintle mounts counting
+                // as separate facings
+                Set<Integer> facings = new HashSet<>();
+                int pintles = 0;
+                for (Mounted m : entity.getWeaponList()) {
+                    if (m.isPintleTurretMounted()) {
+                        pintles++;
+                    } else {
+                        facings.add(m.getLocation());
+                    }
+                }
+                if (advFireCon) {
+                    // Advanced fire control lets the driver count as a gunner, so one fewer dedicated gunners is needed.
+                    return Math.max(0, pintles + facings.size() - 1);
+                } else {
+                    return pintles + facings.size();
+                }
+            }
+        } else {
+            // Medium and large support vehicle gunner requirements are based on weapon tonnage
+            double tonnage = entity.getWeaponList().stream().filter(m -> !m.getType().hasFlag(WeaponType.F_AMS))
+                    .mapToDouble(m -> m.getType().getTonnage(entity)).sum();
+            if (advFireCon) {
+                return (int) Math.ceil(tonnage / 4.0);
+            } else if (basicFireCon) {
+                return (int) Math.ceil(tonnage / 3.0);
+            } else {
+                return (int) Math.ceil(tonnage / 2.0);
+            }
+        }
+    }
+
+    /**
+     * Calculates addiontal crew required by support vehicles and advanced aerospace vessels
+     * for certain misc equipment.
+     *
+     * @param entity The unit
+     * @return       The number of additional crew required
+     */
+    public static int getAdditionalNonGunner(Entity entity) {
+        int crew = 0;
+        for (Mounted m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                crew += (int) m.getType().getTonnage(entity);
+            } else if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
+                crew += 3;
+            } else if (m.getType().hasFlag(MiscType.F_MASH)
+                    || m.getType().hasFlag(MiscType.F_MASH_EXTRA)
+                    || m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                crew += 5;
+            }
+        }
+        return crew;
+    }
+
     // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
     public static int getFullCrewSize(Entity entity) {
-        if (entity instanceof Tank) {
+        if (entity.isSupportVehicle()) {
+            int crew = getSVBaseCrewNeeds(entity) + getSupportVehicleGunnerNeeds(entity)
+                    + getAdditionalNonGunner(entity);
+            // Add officers. Older editions of the rules give the officer ratio as 1:6 and 4 as the threshold to require officers
+            if (crew < 5) {
+                return crew;
+            }
+            return (int) Math.ceil(crew * 1.2);
+        } else if (entity instanceof Tank) {
             return (int) Math.ceil(entity.getWeight() / 15.0);
         } else if (entity instanceof BattleArmor) {
             int ntroopers = 0;
@@ -6900,6 +7013,27 @@ public class Compute {
             return getFullCrewSize(entity);
         }
         return 0;
+    }
+    
+    /**
+     * Should we treat this entity, in its current state, as if it is a spheroid unit
+     * flying in atmosphere?
+     */
+    public static boolean useSpheroidAtmosphere(IGame game, Entity en) {
+        if (!en.isAero()) {
+            return false;
+        }
+        // are we in space?
+        if (game.getBoard().inSpace()) {
+            return false;
+        }
+        // aerodyne's will operate like spheroids in vacuum
+        if (!((IAero) en).isSpheroid()
+                && !game.getPlanetaryConditions().isVacuum()) {
+            return false;
+        }
+        // are we in atmosphere?
+        return en.isAirborne();
     }
 
 } // End public class Compute

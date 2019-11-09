@@ -98,6 +98,7 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
         ItemListener, ListSelectionListener {
@@ -1571,7 +1572,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         for (Targetable t : targets) {
         
             WeaponAttackAction waa;
-            if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                    || (mounted.getType() instanceof CapitalMissileWeapon
+                            && Compute.isGroundToGround(ce(), t)))){
                 waa = new WeaponAttackAction(cen, t.getTargetType(),
                         t.getTargetId(), weaponNum);
             } else {
@@ -1938,7 +1941,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.alreadyFired")); //$NON-NLS-1$
                 setFireEnabled(false);
-            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.Mode_AMS_Manual))
+            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
             			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.autoFiringWeapon"));

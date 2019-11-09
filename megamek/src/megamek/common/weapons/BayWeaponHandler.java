@@ -364,6 +364,15 @@ public class BayWeaponHandler extends WeaponHandler {
         Report.addNewline(vPhaseReport);
         return false;
     }
+    
+    /**
+     * Calculate the starting armor value of a flight of Capital Missiles
+     * Used for Aero Sanity. This is done in calcAttackValue() otherwise
+     *
+     */
+    protected int initializeCapMissileArmor() {
+        return 0;
+    }
 
     public boolean handleAeroSanity(IGame.Phase phase, Vector<Report> vPhaseReport) {
         final String METHOD_NAME = "handleAeroSanity(Phase, vPhaseReport)";
@@ -400,6 +409,42 @@ public class BayWeaponHandler extends WeaponHandler {
             r.add(target.getDisplayName(), true);
         }
         vPhaseReport.addElement(r);
+        
+        // Handle point defense fire. For cluster hit missile launchers, we'll report later.
+        CounterAV = calcCounterAV();
+        
+        //We need this for thunderbolt bays
+        CapMissileAMSMod = calcCapMissileAMSMod();
+        
+        //Set up Capital Missile (thunderbolt) armor
+        CapMissileArmor = initializeCapMissileArmor();
+        
+        //and now damage it
+        CapMissileArmor = (CapMissileArmor - CounterAV);
+        
+        //Only do this if the missile wasn't destroyed
+        if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
+            toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
+            if (roll < toHit.getValue()) {
+                CapMissileMissed = true;
+            }
+        }
+        
+        // Report any AMS bay action against Capital missiles that doesn't destroy them all.
+        if (amsBayEngagedCap && CapMissileArmor > 0) {
+            r = new Report(3358);
+            r.add(CapMissileAMSMod);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+                    
+        // Report any PD bay action against Capital missiles that doesn't destroy them all.
+        } else if (pdBayEngagedCap && CapMissileArmor > 0) {
+            r = new Report(3357);
+            r.add(CapMissileAMSMod);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+        
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
@@ -465,9 +510,6 @@ public class BayWeaponHandler extends WeaponHandler {
 
         //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
         
-        // Handle point defense fire. For cluster hit missile launchers, we'll report later.
-        CounterAV = calcCounterAV();
-        
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
         // the miss later, as we already reported
@@ -480,6 +522,24 @@ public class BayWeaponHandler extends WeaponHandler {
         // Do we need some sort of special resolution (minefields,
         // artillery,
         if (specialResolution(vPhaseReport, entityTarget)) {
+            return false;
+        }
+        
+        //Large missiles
+        //use this if AMS counterfire destroys all the missiles
+        if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
+            r = new Report(3356);
+            r.indent();
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+            return false;
+        }
+        //use this if PD counterfire destroys all the Capital missiles
+        if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
+            r = new Report(3355);
+            r.indent();
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
             return false;
         }
 
@@ -526,7 +586,6 @@ public class BayWeaponHandler extends WeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        //Large missiles
 
         Report.addNewline(vPhaseReport);
         //New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow

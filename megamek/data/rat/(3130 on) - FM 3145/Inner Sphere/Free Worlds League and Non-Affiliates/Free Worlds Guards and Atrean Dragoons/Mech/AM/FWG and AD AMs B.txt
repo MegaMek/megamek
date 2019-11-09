@@ -6,7 +6,7 @@ Awesome AWS-10KM,4
 Grand Titan T-IT-N11M,5
 Longbow LGB-13C,6
 Cerberus MR-5M,5
-Grand Titan T-IT-N11M,4
+Juliano JLN-5A,4
 Trebaruna TR-XB,3
 Warhammer IIC 8,2
 Goliath GOL-6M,1

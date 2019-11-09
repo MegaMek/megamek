@@ -1782,17 +1782,14 @@ public class Princess extends BotClient {
         pathRankers = new HashMap<>();
 
         BasicPathRanker basicPathRanker = new BasicPathRanker(this);
-        basicPathRanker.setFireControl(fireControls.get(FireControlType.Basic));
         basicPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Basic, basicPathRanker);
         
         InfantryPathRanker infantryPathRanker = new InfantryPathRanker(this);
-        infantryPathRanker.setFireControl(fireControls.get(FireControlType.Infantry));
         infantryPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Infantry, infantryPathRanker);
         
         NewtonianAerospacePathRanker newtonianAerospacePathRanker = new NewtonianAerospacePathRanker(this);
-        newtonianAerospacePathRanker.setFireControl(fireControls.get(FireControlType.Basic));
         newtonianAerospacePathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.NewtonianAerospace, newtonianAerospacePathRanker);
     }

@@ -53,6 +53,7 @@ public class Sniper extends ArtilleryWeapon {
         extremeRange = 18; // No extreme range.
         tonnage = 20;
         criticals = 20;
+        svslots = 10;
         bv = 85;
         cost = 300000;
         rulesRefs = "284,TO";

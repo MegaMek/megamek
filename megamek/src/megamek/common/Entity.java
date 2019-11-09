@@ -83,6 +83,7 @@ import megamek.common.weapons.bombs.ISASEWMissileWeapon;
 import megamek.common.weapons.bombs.ISASMissileWeapon;
 import megamek.common.weapons.bombs.ISBombTAG;
 import megamek.common.weapons.bombs.ISLAAMissileWeapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
@@ -219,6 +220,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * the engine and structural tech ratings match.
      */
     protected int engineTechRating = USE_STRUCTURAL_RATING;
+
+    /**
+     * Used by omni support vehicles to track the weight of optional fire control systems.
+     */
+    private double baseChassisFireConWeight = 0.0;
     /**
      * Year to use calculating engine and control system weight and fuel efficiency for primitive
      * support vehicles and aerospace units. This needs to be tracked separately from intro year to
@@ -396,6 +402,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private String c3MasterIsUUID = null;
     private String[] c3iUUIDs = new String[MAX_C3i_NODES];
     private String[] NC3UUIDs = new String[MAX_C3i_NODES];
+    private boolean networkBAP = false;
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -3716,14 +3723,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 || (!mounted.getType().hasFlag(WeaponType.F_TAG) && (game
                                                                              .getPhase() == IGame.Phase.PHASE_OFFBOARD))
                 //No AMS, unless it's in 'weapon' mode
-                || (mounted.getType().hasFlag(WeaponType.F_AMS) && !mounted.curMode().equals(Weapon.Mode_AMS_Manual))) {
+                || (mounted.getType().hasFlag(WeaponType.F_AMS) && !mounted.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 continue;
             }
 
             // Artillery and Bearings-Only Capital Missiles only in the correct phase...
             if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || mounted.isInBearingsOnlyMode())
-                && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
+                    || mounted.isInBearingsOnlyMode()
+                    || (this.getAltitude() == 0
+                            && mounted.getType() instanceof CapitalMissileWeapon))) {
                 continue;
             }
 
@@ -3764,8 +3772,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // Start reached, now we can attempt to pick a weapon.
         if ((mounted != null)
             && (mounted.isReady())
-            && (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.Mode_AMS_On)))
-            && (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.Mode_AMS_Off)))
+            && (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.MODE_AMS_ON)))
+            && (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.MODE_AMS_OFF)))
             && (!mounted.getType().hasFlag(WeaponType.F_AMSBAY))
             && (!(mounted.getType().hasModes() && mounted.curMode().equals("Point Defense")))
             && ((mounted.getLinked() == null)
@@ -3783,7 +3791,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Artillery or Bearings-only missiles only in the targeting phase...
             if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || mounted.isInBearingsOnlyMode())
+                    || mounted.isInBearingsOnlyMode()
+                    || (this.getAltitude() == 0
+                            && mounted.getType() instanceof CapitalMissileWeapon))
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 return false;
             }
@@ -3830,6 +3840,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Tries to load the specified weapon with the first available ammo of the
      * same munition type as currently in use. If this fails, use first ammo.
+     * 
+     * If this is a weapon bay, try to load the weapon with ammo in the same bay,
+     * and if it fails, load with compatible ammo in the same location.
      */
     public void loadWeaponWithSameAmmo(Mounted mounted) {
         for (Mounted mountedAmmo : getAmmo()) {
@@ -3880,8 +3893,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if ((oldammo != null)
             && (!((AmmoType) oldammo.getType()).equals(atype) || (((AmmoType) oldammo
-                .getType()).getMunitionType() != atype
-                                                                          .getMunitionType()))) {
+                .getType()).getMunitionType() != atype.getMunitionType()))) {
             return false;
         }
 
@@ -5166,6 +5178,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasBAP() {
         return hasBAP(true);
     }
+    
+    /**
+     * Does a unit on the same C3 network have a BAP?
+     * Used to share BAP targeting bonuses against targets in woods
+     * @return
+     */
+    public boolean hasNetworkBAP() {
+        return networkBAP;
+    }
+    
+    public void setNetworkBAP(boolean BAP) {
+        networkBAP = BAP;
+    }
 
     public boolean hasBAP(boolean checkECM) {
         if (((game != null) && game.getPlanetaryConditions().hasEMI())
@@ -6357,7 +6382,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Make sure the AMS is good to go
             if (!weapon.isReady() || weapon.isMissing()
-                || !weapon.curMode().equals(Weapon.Mode_AMS_On)) {
+                || !weapon.curMode().equals(Weapon.MODE_AMS_ON)) {
                 continue;
             }
 
@@ -8096,7 +8121,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      * list will never be <code>null</code>, but it may be empty. The
-     * returned <code>List</code> is independant from the under- lying
+     * returned <code>List</code> is independent from the under- lying
      * data structure; modifying one does not affect the other.
      */
     @Override
@@ -8111,7 +8136,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
             for (Entity e : next.getLoadedUnits()) {
-                result.add(e);
+                if(e != null) {
+                    result.add(e);
+                }
             }
         }
 
@@ -9871,6 +9898,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     return true;
                 }
             }
+            //Surface to surface capital missiles count as artillery
+            if  (this.getAltitude() == 0
+                    && wtype instanceof CapitalMissileWeapon) {
+                return true;
+            }
         }
         return false;
     }
@@ -10668,21 +10700,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return The armor weight in tons.
      */
     public double getArmorWeight() {
-        if (!hasPatchworkArmor()) {
-            // this roundabout method is actually necessary to avoid rounding
-            // weirdness. Yeah, it's dumb.
-            double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
-                    armorType[0], armorTechLevel[0]);
-            double points = getTotalOArmor();
-            double armorWeight = points / armorPerTon;
-            armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
-            return armorWeight;
-        } else {
+        if (hasPatchworkArmor()) {
             double total = 0;
             for (int loc = 0; loc < locations(); loc++) {
                 total += getArmorWeight(loc);
             }
-            return Math.ceil(total * 2.0) / 2.0;
+            return RoundWeight.standard(total, this);
+        } else if (isSupportVehicle()
+                    && getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
+            double total = getTotalOArmor()
+                    * EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()), getArmorTechRating());
+            return RoundWeight.standard(total, this);
+        } else {
+            // this roundabout method is actually necessary to avoid rounding
+            // weirdness. Yeah, it's dumb.
+            double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
+                    armorType[0], armorTechLevel[0]);
+            return RoundWeight.standard(getTotalOArmor() / armorPerTon, this);
         }
     }
 
@@ -12588,6 +12622,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
+     * Sets the barrier armor rating for support vehicles. Has no effect on other unit types.
+     * @param rating
+     */
+    public void setBARRating(int rating) {}
+
+    /**
      * does this entity have an armored chassis?
      *
      * @return
@@ -14398,6 +14438,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getLabTotalArmorPoints() {
+        if (isSupportVehicle() && (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD)
+            && !hasPatchworkArmor()) {
+            return (int) Math.floor(armorTonnage
+                    / EquipmentType.getSupportVehicleArmorWeightPerPoint(getBARRating(firstArmorIndex()),
+                    getArmorTechRating()));
+        }
         double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
                 armorType[0], armorTechLevel[0]);
         return (int) Math.floor(armorPerTon * armorTonnage);
@@ -15007,6 +15053,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setEngineTechRating(int engineTechRating) {
         this.engineTechRating = engineTechRating;
+    }
+
+    /**
+     * Used by omni support vehicles to track the weight of fire control systems.
+     * This limits the tonnage that can be devoted to weapons in pods.
+     *
+     * @return The fixed weight of fire control systems.
+     */
+    public double getBaseChassisFireConWeight() {
+        return baseChassisFireConWeight;
+    }
+
+    /**
+     *  Used by omni support vehicles to set the weight of fixed fire control systems in the base chassis.
+     *
+     * @param weight The weight of fixed fire control systems.
+     */
+    public void setBaseChassisFireConWeight(double weight) {
+        baseChassisFireConWeight = weight;
     }
 
     /**

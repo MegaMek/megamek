@@ -24,6 +24,10 @@ Iveco Burro Heavy Support Truck
 2430
 </year>
 
+<originalBuildYear>
+2430
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,11 @@ IS Level 3
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+cargobay:0.739:1:1
+standardseats:3.0:0
+</transporters>
 
 <cruiseMP>
 6
@@ -47,6 +56,31 @@ Wheeled
 1
 </armor>
 
+<Body Equipment>
+ISOffRoadChassis
+SV Chassis Mod [Tractor]
+Armored Chassis
+</Body Equipment>
+
+<Front Equipment>
+Manipulator [Non-Mech/Non-Battle Armor]
+HHSearchlight
+HHSearchlight
+</Front Equipment>
+
+<Right Equipment>
+HHSearchlight
+</Right Equipment>
+
+<Left Equipment>
+HHSearchlight
+</Left Equipment>
+
+<Rear Equipment>
+Hitch
+HHSearchlight
+</Rear Equipment>
+
 <barrating>
 10
 </barrating>
@@ -55,35 +89,6 @@ Wheeled
 3
 </structural_tech_rating>
 
-<Body Equipment>
-ISOffRoadChassis
-Tractor
-Armored Chassis
-</Body Equipment>
-
-<Front Equipment>
-Manipulator
-BASearchlight
-BASearchlight
-</Front Equipment>
-
-<Right Equipment>
-BASearchlight
-</Right Equipment>
-
-<Left Equipment>
-BASearchlight
-</Left Equipment>
-
-<Rear Equipment>
-BASearchlight
-</Rear Equipment>
-
-<transporters>
-cargobay:.739:1
-standardseats:.225:1
-</transporters>
-
 <source>
 TRO VAr - Age of War
 </source>
@@ -91,3 +96,8 @@ TRO VAr - Age of War
 <tonnage>
 2.5
 </tonnage>
+
+<fuel>
+0.0
+</fuel>
+

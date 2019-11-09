@@ -809,6 +809,10 @@ public class Aero extends Entity implements IAero, IBomber {
         return rightThrustHits;
     }
 
+    public int getOriginalFuel() {
+        return fuel;
+    }
+
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
         		|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import megamek.client.bot.princess.AeroPathUtil;
 import megamek.client.bot.princess.FireControl;
 import megamek.common.Coords;
 import megamek.common.IGame;
@@ -30,34 +31,11 @@ public class InfantryPathFinder {
     private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.InfantryPathFinder";
     
     private Set<Coords> visitedCoords = new HashSet<>();
-    private List<List<MoveStepType>> turns;
+    
     
     private InfantryPathFinder(IGame game) {
         this.game = game;
         getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
-        
-        // put together a pre-defined array of turns. Indexes correspond to the directional values found in Coords.java
-        turns = new ArrayList<>();
-        turns.add(new ArrayList<MoveStepType>()); // "no turns"
-        
-        turns.add(new ArrayList<MoveStepType>());
-        turns.get(1).add(MoveStepType.TURN_RIGHT);
-        
-        turns.add(new ArrayList<MoveStepType>());
-        turns.get(2).add(MoveStepType.TURN_RIGHT);
-        turns.get(2).add(MoveStepType.TURN_RIGHT);
-        
-        turns.add(new ArrayList<MoveStepType>());
-        turns.get(3).add(MoveStepType.TURN_RIGHT);
-        turns.get(3).add(MoveStepType.TURN_RIGHT);
-        turns.get(3).add(MoveStepType.TURN_RIGHT);
-        
-        turns.add(new ArrayList<MoveStepType>());
-        turns.get(4).add(MoveStepType.TURN_LEFT);
-        turns.get(4).add(MoveStepType.TURN_LEFT);
-        
-        turns.add(new ArrayList<MoveStepType>());
-        turns.get(5).add(MoveStepType.TURN_LEFT);
     }
 
     public Collection<MovePath> getAllComputedPathsUncategorized() {
@@ -91,6 +69,12 @@ public class InfantryPathFinder {
             jumpEdge.addStep(MoveStepType.START_JUMP);
             infantryPaths.addAll(generateChildren(jumpEdge));
             
+            // now that we've got all our possible destinations, make sure to try every possible rotation,
+            // since facing matters for field guns and if using the "dig in" and "vehicle cover" tacops rules.
+            for(MovePath path : infantryPaths) {
+                infantryPaths.addAll(AeroPathUtil.generateValidRotations(path));
+            }
+            
             // add "flee" option if we haven't done anything else
             if(startingEdge.getFinalCoords().isOnBoardEdge(game.getBoard()) &&
                     startingEdge.getStepVector().size() == 0) {
@@ -98,12 +82,6 @@ public class InfantryPathFinder {
                 fleePath.addStep(MoveStepType.FLEE);
                 infantryPaths.add(fleePath);
             }
-            
-            // TODO: but low priority - if we're using "TacOps Dig In" or "Tac Ops Using Non-Infantry Units as Cover"
-            // ending facing matters, so we'll need to post-process all the generated move paths and 
-            // give them an ending facing
-            // this will increase the number of possible paths by a factor of 6, although, since infantry is slow, it's
-            // not that big a deal
         } catch (OutOfMemoryError e) {
             /*
              * Some implementations can run out of memory if they consider and
@@ -174,7 +152,7 @@ public class InfantryPathFinder {
             MovePath childPath = startingPath.clone();
             
             // for each child, we first turn in the appropriate direction
-            for(MoveStepType stepType : turns.get(direction)) {
+            for(MoveStepType stepType : AeroPathUtil.TURNS.get(direction)) {
                 childPath.addStep(stepType);
             }
             

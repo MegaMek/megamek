@@ -314,8 +314,12 @@ public class MovePath implements Cloneable, Serializable {
             // isn't legal.
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         } else {
-            final int distance = start.distance(land);
-            if (isJumping() && (getEntity().getJumpType() != Mech.JUMP_BOOSTER)) {
+            // if we're jumping without a mechanical jump booster (?)
+            // or we're acting like a spheroid dropship in the atmosphere
+            if ((isJumping() && (getEntity().getJumpType() != Mech.JUMP_BOOSTER)) ||
+                    (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
+                int distance = start.distance(land);
+                
                 if (step.isThisStepBackwards() || (step.getDistance() > distance)) {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                 }

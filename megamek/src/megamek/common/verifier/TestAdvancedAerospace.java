@@ -179,16 +179,16 @@ public class TestAdvancedAerospace extends TestAero {
      *   
      */
     public static double maxArmorWeight(Jumpship vessel){
-        // max armor tonnage is based on SI weight, which is vessel mass * SI / 1000
+        // max armor tonnage is based on SI weight
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
-            // SI weight / 50
+            // SI weight (SI/1000) / 50
             return floor(vessel.get0SI() * vessel.getWeight() / 50000.0, Ceil.HALFTON);
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
-            // SI weight / 3 + 60
-            return floor(vessel.get0SI() * vessel.getWeight() / 3000.0 + 60, Ceil.HALFTON);
+            // SI weight (SI/100) / 3 + 60
+            return floor(vessel.get0SI() * vessel.getWeight() / 300.0 + 60, Ceil.HALFTON);
         } else {
-            // SI weight / 12
-            return floor(vessel.get0SI() * vessel.getWeight() / 12000.0, Ceil.HALFTON);
+            // SI weight (SI/150) / 12
+            return floor(vessel.get0SI() * vessel.getWeight() / 1800.0, Ceil.HALFTON);
         }
     }
     

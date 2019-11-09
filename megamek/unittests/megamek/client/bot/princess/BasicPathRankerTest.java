@@ -105,6 +105,7 @@ public class BasicPathRankerTest {
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
         Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
+        Mockito.when(mockPrincess.getFireControl(Mockito.any(Entity.class))).thenReturn(mockFireControl);
         Mockito.when(mockPrincess.getHomeEdge(Mockito.any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
@@ -1149,11 +1150,12 @@ public class BasicPathRankerTest {
 
     @Test
     public void testCalculateDamagePotential() {
+        final Entity mockMe = generateMockEntity(10, 10);
+        
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
-        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl();
+        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
 
         final IBoard mockBoard = generateMockBoard();
-        final Entity mockMe = generateMockEntity(10, 10);
         final Entity mockEnemy = generateMockEntity(10, 5);
         final MovePath mockPath = generateMockPath(10, 5, mockEnemy);
         final List<Entity> entities = new ArrayList<>();
@@ -1202,11 +1204,12 @@ public class BasicPathRankerTest {
 
     @Test
     public void testCalculateMyDamagePotential() {
+        final Entity mockMe = generateMockEntity(10, 10);
+        
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
-        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl();
+        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
        
         final IBoard mockBoard = generateMockBoard();
-        final Entity mockMe = generateMockEntity(10, 10);
         final MovePath mockPath = generateMockPath(10, 10, mockMe);
         final Entity mockEnemy = generateMockEntity(10, 15);
         final List<Entity> entities = new ArrayList<>();

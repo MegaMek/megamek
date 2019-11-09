@@ -78,6 +78,7 @@ import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /*
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
@@ -874,7 +875,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 waa.getTarget(game));
         if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
                 || (mounted.isInBearingsOnlyMode()
-                            && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)) {
+                            && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)
+                || (mounted.getType() instanceof CapitalMissileWeapon
+                                && Compute.isGroundToGround(ce(), target))) {
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
                     target.getTargetId(), weaponNum, clientgui.getClient()
                             .getGame());
@@ -1061,7 +1064,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             Mounted m = ce().getEquipment(weaponId);
 
             int targetDistance = ce().getPosition().distance(target.getPosition()); 
-            boolean isArtilleryAttack = ((WeaponType) m.getType()).hasFlag(WeaponType.F_ARTILLERY);            
+            boolean isArtilleryAttack = ((WeaponType) m.getType()).hasFlag(WeaponType.F_ARTILLERY)
+                    // For other weapons that can make artillery attacks
+                    || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;            
             
             toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(),
                     cen, target, weaponId, Entity.LOC_NONE, 0, false);
@@ -1088,7 +1093,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             } else if (m.isInBearingsOnlyMode() && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
                 setFireEnabled(false);
-            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.Mode_AMS_Manual))) {
+            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("TargetingPhaseDisplay.autoFiringWeapon"));
                 //$NON-NLS-1$

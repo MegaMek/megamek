@@ -288,6 +288,12 @@ public class BayMunitionsChoicePanel extends JPanel {
                 return Messages.getString("CustomMechDialog.Artemis"); //$NON-NLS-1$
             }
             
+            // ATM munitions
+            if ((atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
+                    || (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
+                return atype.getDesc();
+            }
+            
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)) {
                 if (atype.getAmmoType() == AmmoType.T_ARROW_IV
                         || atype.getAmmoType() == AmmoType.T_LONG_TOM

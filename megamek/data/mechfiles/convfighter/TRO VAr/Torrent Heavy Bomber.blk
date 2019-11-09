@@ -37,6 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
+cargobay:15.0:1:1
 </transporters>
 
 <SafeThrust>

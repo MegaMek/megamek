@@ -102,7 +102,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     //and now Machine Gun Arrays too!
     private Vector<Integer> bayWeapons = new Vector<Integer>();
     private Vector<Integer> bayAmmo = new Vector<Integer>();
-
+    
     // on capital fighters and squadrons some weapon mounts actually represent
     // multiple weapons of the same type
     // provide a boolean indicating this type of mount and the number of weapons
@@ -750,12 +750,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     public static int getNumShots(WeaponType wtype, EquipmentMode mode,
             boolean ignoreMode) {
-        int nShots = 1;
         // figure out # of shots for variable-shot weapons
         if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
                 .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
-                && (ignoreMode || mode.equals("Ultra"))) {
-            nShots = 2;
+                && (ignoreMode || mode.equals(Weapon.MODE_UAC_ULTRA))) {
+            return 2;
         }
         // sets number of shots for AC rapid mode
         else if (((wtype.getAmmoType() == AmmoType.T_AC) 
@@ -763,23 +762,23 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 || (wtype.getAmmoType() == AmmoType.T_AC_IMP)
                 || (wtype.getAmmoType() == AmmoType.T_PAC))
                 && wtype.hasModes()
-                && (ignoreMode || mode.equals("Rapid"))) {
-            nShots = 2;
+                && (ignoreMode || mode.equals(Weapon.MODE_AC_RAPID))) {
+            return 2;
         } else if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY)
                 || wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
-            if ((mode != null) && mode.equals("2-shot")) {
-                nShots = 2;
-            } else if ((mode != null) && mode.equals("3-shot")) {
-                nShots = 3;
-            } else if ((mode != null) && mode.equals("4-shot")) {
-                nShots = 4;
-            } else if ((mode != null) && mode.equals("5-shot")) {
-                nShots = 5;
-            } else if ((ignoreMode || mode.equals("6-shot"))) {
-                nShots = 6;
+            if (ignoreMode || (mode == null) || mode.equals(Weapon.MODE_RAC_SIX_SHOT)) {
+                return 6;
+            } else if (mode.equals(Weapon.MODE_RAC_TWO_SHOT)) {
+                return 2;
+            } else if (mode.equals(Weapon.MODE_RAC_THREE_SHOT)) {
+                return 3;
+            } else if (mode.equals(Weapon.MODE_RAC_FOUR_SHOT)) {
+                return 4;
+            } else if (mode.equals(Weapon.MODE_RAC_FIVE_SHOT)) {
+                return 5;
             }
         }
-        return nShots;
+        return 1;
     }
 
     public boolean isPendingDump() {
@@ -1066,7 +1065,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (atype.getAmmoType() == AmmoType.T_MEK_MORTAR) {
                 if ((mType == AmmoType.M_AIRBURST)
                         || (mType == AmmoType.M_FLARE)
-                        || (mType == AmmoType.M_SMOKE)) {
+                        || (mType == AmmoType.M_SMOKE_WARHEAD)) {
                     damagePerShot = 1;
                 } else {
                     damagePerShot = 2;
@@ -1406,7 +1405,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void addWeaponToBay(int w) {
         bayWeapons.add(w);
     }
-
+    
     public Vector<Integer> getBayWeapons() {
         return bayWeapons;
     }
@@ -1712,14 +1711,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * @return
      */
     public boolean isInBearingsOnlyMode() {
-        if ((curMode().equals(Weapon.Mode_CapMissile_Bearing_Ext)
-                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Long)
-                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Med)
-                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Short)
-                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext)
-                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Long)
-                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Med)
-                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Short)) 
+        if ((curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_EXT)
+                    || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_LONG)
+                    || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_MED)
+                    || curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_SHORT)
+                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
+                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG)
+                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED)
+                    || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT))
                 && getEntity().isSpaceborne()) {
             return true;
         }
@@ -1732,11 +1731,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * @return
      */
     public boolean isInWaypointLaunchMode() {
-        if ((curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext)
-                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Long)
-                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Med)
-                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Short)
-                || curMode().equals(Weapon.Mode_CapMissile_Waypoint)) 
+        if ((curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT)
+                || curMode().equals(Weapon.MODE_CAP_MISSILE_WAYPOINT))
             && getEntity().isSpaceborne()) {
             return true;
         }
@@ -1751,16 +1750,16 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setModesForMapType() {
         //If the entity is not in space, remove these modes, which get set up based on game options in Weapon before game type is known
         if (!getEntity().isSpaceborne()) {
-            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext);
-            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Long);
-            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Med);
-            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Short);
-            getType().removeMode(Weapon.Mode_CapMissile_Waypoint);
-            getType().removeMode(Weapon.Mode_CapMissile_Tele_Operated);
-            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Ext);
-            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Long);
-            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Med);
-            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Short);
+            getType().removeMode(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_EXT);
+            getType().removeMode(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_LONG);
+            getType().removeMode(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_MED);
+            getType().removeMode(Weapon.MODE_CAP_MISSILE_WAYPOINT_BEARING_SHORT);
+            getType().removeMode(Weapon.MODE_CAP_MISSILE_WAYPOINT);
+            getType().removeMode(Weapon.MODE_CAP_MISSILE_TELE_OPERATED);
+            getType().removeMode(Weapon.MODE_CAP_MISSILE_BEARING_EXT);
+            getType().removeMode(Weapon.MODE_CAP_MISSILE_BEARING_LONG);
+            getType().removeMode(Weapon.MODE_CAP_MISSILE_BEARING_MED);
+            getType().removeMode(Weapon.MODE_CAP_MISSILE_BEARING_SHORT);
         }
         /*
         //Placeholder. This will be used to add the space modes back when we're able to switch maps.

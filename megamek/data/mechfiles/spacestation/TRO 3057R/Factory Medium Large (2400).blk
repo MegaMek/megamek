@@ -32,10 +32,6 @@ Factory - Medium/Large
 IS Level 3
 </type>
 
-<designtype>
-0
-</designtype>
-
 <motion_type>
 Aerodyne
 </motion_type>
@@ -45,7 +41,7 @@ smallcraftbay:12.0:2:1
 crewquarters:735.0:0
 1stclassquarters:2940.0:0
 navalrepairpressurized:24000.0:1:5:f0
-cargobay:8176.5:2:4
+cargobay:8116.5:2:4
 </transporters>
 
 <SafeThrust>
@@ -69,7 +65,7 @@ cargobay:8176.5:2:4
 </engine_type>
 
 <armor_type>
-40
+41
 </armor_type>
 
 <armor_tech>
@@ -129,7 +125,7 @@ Small Laser
 </structural_integrity>
 
 <source>
-TRO3057r -
+TRO3057r - Age of War
 </source>
 
 <tonnage>

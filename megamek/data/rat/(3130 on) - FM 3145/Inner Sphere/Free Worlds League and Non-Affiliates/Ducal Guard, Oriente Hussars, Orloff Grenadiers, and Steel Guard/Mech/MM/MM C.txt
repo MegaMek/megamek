@@ -5,8 +5,8 @@ Hunchback HBK-6N,3
 Shadow Hawk SHD-7M,4
 Shockwave SKW-4G,5
 Wolverine WVR-9M,6
-Black Hawk (Standard),5
+Ghost GST-10,5
 Strider SR1-O,4
 Phoenix Hawk PXH-1c (Special),3
-Mad Cat III (Standard),2
+Phoenix Hawk PXH-7K,2
 Griffin GRF-4R,1

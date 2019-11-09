@@ -215,6 +215,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         if (specialResolution(vPhaseReport, entityTarget)) {
             return false;
         }
+        
+        //Any AMS/Point Defense fire against homing rounds?
+        int hits = handleAMS(vPhaseReport);
 
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
@@ -226,12 +229,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 return false;
             }
         }
-        int hits = 1;
         int nCluster = 1;       
         if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
-            //Any AMS/Point Defense fire against homing rounds?
-            hits = handleAMS(vPhaseReport);
-            if (aaa.getCoords() != null) {
+            if (aaa.getCoords() != null && hits > 0) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
            
@@ -263,7 +263,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         nDamPerHit -= bldgAbsorbs;
 
         // Make sure the player knows when his attack causes no damage.
-        if (nDamPerHit == 0) {
+        if (nDamPerHit <= 0) {
             r = new Report(3365);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
@@ -440,7 +440,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         
     protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
         if ((target == null)
-                || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
+                || target.getTargetType() != Targetable.TYPE_ENTITY
+                || CounterAV > 0) {
             return 0;
         }
         int apdsMod = 0;
@@ -574,7 +575,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      */
     @Override
     protected void setAMSBayReportingFlag() {
-        amsBayEngaged = true;
+        amsBayEngagedCap = true;
     }
     
     /**
@@ -582,7 +583,18 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      */
     @Override
     protected void setPDBayReportingFlag() {
-        pdBayEngaged = true;
+        pdBayEngagedCap = true;
+    }
+    
+    @Override
+    protected int calcCapMissileAMSMod() {
+        CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
+        return CapMissileAMSMod;
+    }
+    
+    @Override
+    protected int getCapMissileAMSMod() {
+        return CapMissileAMSMod;
     }
     
     protected int handleAMS(Vector<Report> vPhaseReport) {
@@ -593,8 +605,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
             //this has to be called here or it fires before the TAG shot and we have no target
             server.assignAMS();
-            getAMSHitsMod(vPhaseReport);
             calcCounterAV();
+            getAMSHitsMod(vPhaseReport);
             // Report AMS/Pointdefense failure due to Overheating.
             if (pdOverheated 
                     && (!(amsBayEngaged
@@ -608,8 +620,35 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 r.indent();
                 vPhaseReport.addElement(r);
             }
-            //They all do the same thing in this case...             
-            if (amsEngaged || apdsEngaged || amsBayEngaged || pdBayEngaged) {
+            //PD/AMS bays should engage using AV and missile armor per SO Errata
+            if (amsBayEngagedCap || pdBayEngagedCap) {
+                CapMissileArmor = wtype.getMissileArmor() - CounterAV;
+                CapMissileAMSMod = calcCapMissileAMSMod();
+                Report r = new Report(3235);
+                r.subject = subjectId;
+                r.indent(1);
+                vPhaseReport.add(r);
+                if (CapMissileArmor <= 0) {
+                    r = new Report(3356);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                    nDamPerHit = 0;
+                    hits = 0;
+                } else {
+                    r = new Report(3358);
+                    r.subject = subjectId;
+                    r.add(CapMissileAMSMod);
+                    vPhaseReport.add(r);
+                    toHit.addModifier(CapMissileAMSMod, "damage from AMS");
+                    // If the damage was enough to make us miss, record it for reporting and set 0 hits
+                    if (roll < toHit.getValue()) {
+                        bMissed = true;
+                        nDamPerHit = 0;
+                        hits = 0;
+                    }
+                }
+            } else if (amsEngaged || apdsEngaged) {
+                //Single AMS/APDS should continue to engage per TW rules, which have not changed
                 bSalvo = true;
                 Report r = new Report(3235);
                 r.subject = subjectId;
@@ -625,6 +664,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                     r.add("missile");
                     r.add(destroyRoll);
                     vPhaseReport.add(r);
+                    nDamPerHit = 0;
                     hits = 0;
                                            
                 } else {

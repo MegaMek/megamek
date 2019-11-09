@@ -20,12 +20,8 @@
 package megamek.common.verifier;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.math.BigInteger;
+import java.util.*;
 import java.util.function.Function;
 
 import megamek.common.Aero;
@@ -1018,9 +1014,78 @@ public class TestAero extends TestEntity {
         correct &= correctControlSystems(buff);
         correct &= !hasIllegalTechLevels(buff, ammoTechLvl);
         correct &= !hasIllegalEquipmentCombinations(buff);
+        correct &= !hasMismatchedLateralWeapons(buff);
         correct &= correctHeatSinks(buff);
         
         return correct;
+    }
+
+    /**
+     * Checks that the weapon loads in the wings match each other.
+     * @param buff The buffer that contains the collected error messages.
+     * @return     Whether the lateral weapons are mismatched.
+     */
+    public boolean hasMismatchedLateralWeapons(StringBuffer buff) {
+        boolean illegal = false;
+        Map<EquipmentType,Integer> leftWing = new HashMap<>();
+        Map<EquipmentType,Integer> rightWing = new HashMap<>();
+        Map<EquipmentType,Integer> leftWingRear = new HashMap<>();
+        Map<EquipmentType,Integer> rightWingRear = new HashMap<>();
+        for (Mounted m : aero.getEquipment()) {
+            if (m.getType() instanceof WeaponType) {
+                if (m.getLocation() == Aero.LOC_LWING) {
+                    if (m.isRearMounted()) {
+                        leftWingRear.merge(m.getType(), 1, Integer::sum);
+                    } else {
+                        leftWing.merge(m.getType(), 1, Integer::sum);
+                    }
+                } else if (m.getLocation() == SmallCraft.LOC_RWING) {
+                    if (m.isRearMounted()) {
+                        rightWingRear.merge(m.getType(), 1, Integer::sum);
+                    } else {
+                        rightWing.merge(m.getType(), 1, Integer::sum);
+                    }
+                }
+            }
+        }
+        boolean lateralMatch = true;
+        for (EquipmentType eq : leftWing.keySet()) {
+            if (!rightWing.containsKey(eq) || !leftWing.get(eq).equals(rightWing.get(eq))) {
+                lateralMatch = false;
+                break;
+            }
+        }
+        if (lateralMatch) {
+            //We've already checked counts, so in the reverse direction we only need to see if there's
+            //anything not found on the other side.
+            for (EquipmentType eq : rightWing.keySet()) {
+                if (!leftWing.containsKey(eq)) {
+                    lateralMatch = false;
+                    break;
+                }
+            }
+        }
+        if (lateralMatch) {
+            for (EquipmentType eq : leftWingRear.keySet()) {
+                if (!rightWingRear.containsKey(eq) || !leftWingRear.get(eq).equals(rightWingRear.get(eq))) {
+                    lateralMatch = false;
+                    break;
+                }
+            }
+        }
+        if (lateralMatch) {
+            for (EquipmentType eq : rightWingRear.keySet()) {
+                if (!leftWingRear.containsKey(eq)) {
+                    lateralMatch = false;
+                    break;
+                }
+            }
+        }
+        if (!lateralMatch) {
+            buff.append("Left and right side weapon loads do not match.\n");
+            illegal = true;
+        }
+        return illegal;
     }
 
     public boolean isAeroWeapon(EquipmentType eq, Entity en) {

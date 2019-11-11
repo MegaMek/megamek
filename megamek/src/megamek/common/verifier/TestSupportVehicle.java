@@ -278,7 +278,10 @@ public class TestSupportVehicle extends TestEntity {
                     && (!this.equals(HYDROFOIL) || sv.getWeight() <= 100.0)
                     // Can't put a turret on a convertible
                     && (!this.equals(CONVERTIBLE) || !(sv instanceof Tank)
-                        || ((Tank) sv).hasNoTurret());
+                        || ((Tank) sv).hasNoTurret())
+                    // External power pickup is only valid for RAIL movement mode (not MAGLEV)
+                    && (!this.equals(EXTERNAL_POWER_PICKUP)
+                        || sv.getMovementMode().equals(EntityMovementMode.RAIL));
         }
 
         /**

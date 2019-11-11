@@ -221,9 +221,6 @@ public class UnitEditorDialog extends JDialog {
 
         for (int i = 0; i < entity.locations(); i++) {
             // some units have hidden locations, skip these
-            if (entity.getOArmor(i) <= 0) {
-                continue;
-            }
             if (entity.getOInternal(i) <= 0) {
                 continue;
             }

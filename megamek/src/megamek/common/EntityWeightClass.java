@@ -102,51 +102,53 @@ public class EntityWeightClass {
     public static int getWeightClass(double tonnage, String type) {
         int i;
 
-        if (type.equals("BattleArmor")) {
+        if (type.equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))) {
             for (i = 0; i < (BAWeightLimits.length - 1); i++) {
                 if (tonnage <= BAWeightLimits[i]) {
-                break;
+                    break;
+                }
             }
-        }
-        } else if (type.equals("Infantry")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.INFANTRY))) {
             return WEIGHT_LIGHT;
-        } else if (type.equals("VTOL") || type.equals("Naval") || type.equals("Tank")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.VTOL))
+                || type.equals(UnitType.getTypeName(UnitType.NAVAL))
+                || type.equals(UnitType.getTypeName(UnitType.TANK))) {
             for (i = WEIGHT_LIGHT; i < (vehicleWeightLimits.length - 1); i++) { // Started at late to bypass padding & save a loop execution
                 if (tonnage <= vehicleWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("Gun Emplacement")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.GUN_EMPLACEMENT))) {
             for (i = WEIGHT_LIGHT; i < (GEWeightLimits.length - 1); i++) { // Started at late to bypass padding & save a loop execution
                 if (tonnage <= GEWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("Mek")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.MEK))) {
             for (i = 0; i < (mechWeightLimits.length - 1); i++) {
                 if (tonnage <= mechWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("ProtoMek")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.PROTOMEK))) {
             for (i = WEIGHT_LIGHT; i < (protoWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= protoWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("Space Station") || type.equals("Warship") || type.equals("Jumpship")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.SPACE_STATION)) || type.equals(UnitType.getTypeName(UnitType.WARSHIP)) || type.equals(UnitType.getTypeName(UnitType.JUMPSHIP))) {
             for (i = WEIGHT_SMALL_WAR; i < (jumpshipWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= jumpshipWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("Dropship")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.DROPSHIP))) {
             for (i = WEIGHT_SMALL_DROP; i < (dropshipWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= dropshipWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("Small Craft")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.SMALL_CRAFT))) {
             return WEIGHT_SMALL_CRAFT;
         } else if (type.equals("Conventional Fighter")) {
             return WEIGHT_LIGHT;
@@ -195,7 +197,7 @@ public class EntityWeightClass {
                     break;
                 }
             }
-        } else if (type.equals("VTOL")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.VTOL))) {
             for (i = WEIGHT_SMALL_SUPPORT; i < (vtolSupportVehicleWeightLimits.length - 1); i++) {
                 if (tonnage <= vtolSupportVehicleWeightLimits[i]) {
                     break;
@@ -207,7 +209,7 @@ public class EntityWeightClass {
                     break;
                 }
             }
-        } else if (type.equals("Naval")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.NAVAL))) {
             for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
                 if (tonnage <= navalSupportVehicleWeightLimits[i]) {
                     break;
@@ -365,12 +367,6 @@ public class EntityWeightClass {
                 }
                 break;
             case RAIL:
-                for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= railSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
-                break;
             case MAGLEV:
                 for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
                     if (tonnage <= railSupportVehicleWeightLimits[i]) {
@@ -462,22 +458,22 @@ public class EntityWeightClass {
      * @return
      */
     public static String getClassName(int wClass, String unitType, boolean isSupport) {
-        if (unitType.equals("Space Station")) {
+        if (unitType.equals(UnitType.getTypeName(UnitType.SPACE_STATION))) {
             return Messages.getString("EntityWeightClass.SS." + wClass);
         }
-        if (unitType.equals("Warship")) {
+        if (unitType.equals(UnitType.getTypeName(UnitType.WARSHIP))) {
             return Messages.getString("EntityWeightClass.WS." + wClass);
         }
-        if (unitType.equals("Jumpship")) {
+        if (unitType.equals(UnitType.getTypeName(UnitType.JUMPSHIP))) {
             return Messages.getString("EntityWeightClass.JS." + wClass);
         }
-        if (unitType.equals("Dropship")) {
+        if (unitType.equals(UnitType.getTypeName(UnitType.DROPSHIP))) {
             return Messages.getString("EntityWeightClass.DS." + wClass);
         }
-        if (unitType.equals("Small Craft")) {
+        if (unitType.equals(UnitType.getTypeName(UnitType.SMALL_CRAFT))) {
             return Messages.getString("EntityWeightClass.SC");
         }
-        if (isSupport && (unitType.equals("VTOL") || unitType.equals("Tank"))) {
+        if (isSupport) {
             return Messages.getString("EntityWeightClass.SV." + wClass);
         }
         if ((wClass >= 0) && (wClass < SIZE)) {

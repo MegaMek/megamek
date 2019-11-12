@@ -278,7 +278,7 @@ public class SupportTank extends Tank {
     public int getWalkMP(boolean gravity, boolean ignoreheat,
                          boolean ignoremodulararmor) {
         int mp = getOriginalWalkMP();
-        if (engineHit) {
+        if (engineHit || isImmobile()) {
             return 0;
         }
         if (hasWorkingMisc(MiscType.F_HYDROFOIL)) {

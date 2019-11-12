@@ -265,7 +265,7 @@ public class Tank extends Entity {
     public int getWalkMP(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
-        if (engineHit) {
+        if (engineHit || isImmobile()) {
             return 0;
         }
         j = Math.max(0, j - motiveDamage);

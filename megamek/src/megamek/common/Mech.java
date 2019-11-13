@@ -6109,7 +6109,8 @@ public abstract class Mech extends Entity {
      */
     public boolean isAutoEject() {
         boolean hasEjectSeat = true;
-        if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
+        if (getCockpitType() == COCKPIT_TORSO_MOUNTED
+                || hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT)) {
             hasEjectSeat = false;
         }
         if (isIndustrial()) {

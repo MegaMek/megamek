@@ -129,8 +129,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int altLossThisRound = 0;
     
     //Autoejection
-    private boolean condEjectFuel = true;
-
     private boolean critThresh = false;
 
     private int[] bombChoices = new int[BombType.B_NUM];
@@ -2110,22 +2108,5 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 setNextSensor(getSensors().firstElement());
             }
         }
-    }
-
-    //Additional autoejection methods
-    /**
-     * Is autoejection enabled for fuel explosions?
-     * @return
-     */
-    public boolean isCondEjectFuel() {
-        return condEjectFuel;
-    }
-
-    /**
-     * Used by Conditional Auto Ejection - will we eject when a fuel explosion is triggered?
-     * @param  condEjectFuel   Sets autoejection for fuel tank explosions
-     */
-    public void setCondEjectFuel(boolean condEjectFuel) {
-        this.condEjectFuel = condEjectFuel;
     }
 }

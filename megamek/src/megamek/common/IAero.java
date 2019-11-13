@@ -787,18 +787,4 @@ public interface IAero {
      */
     default void updateSensorOptions() {
     }
-    
-    // Auto Ejection Methods
-    
-    /**
-     * Is autoejection enabled for fuel explosions?
-     * @return
-     */
-    boolean isCondEjectFuel();
-    
-    /**
-     * Used by Conditional Auto Ejection - will we eject when a fuel explosion is triggered?
-     * @param  condEjectFuel   Sets autoejection for fuel tank explosions
-     */
-    void setCondEjectFuel(boolean condEjectFuel);
 }

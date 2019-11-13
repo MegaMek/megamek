@@ -7390,11 +7390,24 @@ public class Server implements Runnable {
                             // check for destruction
                             if (a.getSI() == 0) {
                                 // Lets auto-eject if we can!
-                                if (a.isAutoEject()
-                                    && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
-                                            || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
-                                                    && a.isCondEjectSIDest()))) {
-                                    addReport(ejectEntity(entity, true, false));
+                                if (a instanceof LandAirMech) {
+                                    // LAMs eject if the CT destroyed switch is on
+                                    LandAirMech lam = (LandAirMech) a;
+                                    if (lam.isAutoEject()
+                                        && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                                || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                                        && lam.isCondEjectCTDest()))) {
+                                        addReport(ejectEntity(entity, true, false));
+                                    }
+                                } else {
+                                    // Aeros eject if the SI Destroyed switch is on
+                                    Aero aero = (Aero) a;
+                                    if (aero.isAutoEject()
+                                        && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                                || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                                        && aero.isCondEjectSIDest()))) {
+                                        addReport(ejectEntity(entity, true, false));
+                                    }
                                 }
                                 addReport(destroyEntity(entity,
                                         "Structural Integrity Collapse",
@@ -22870,11 +22883,24 @@ public class Server implements Runnable {
                                 / divisor);
                 if (roll > 9) {
                     // Lets auto-eject if we can!
-                    if (ship.isAutoEject()
-                        && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
-                                || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
-                                        && ship.isCondEjectSIDest()))) {
-                        vDesc.addAll(ejectEntity(en, true, false));
+                    if (ship instanceof LandAirMech) {
+                        // LAMs eject if the CT destroyed switch is on
+                        LandAirMech lam = (LandAirMech) ship;
+                        if (lam.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                            && lam.isCondEjectCTDest()))) {
+                            addReport(ejectEntity(en, true, false));
+                        }
+                    } else {
+                        // Aeros eject if the SI Destroyed switch is on
+                        Aero aero = (Aero) ship;
+                        if (aero.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                            && aero.isCondEjectSIDest()))) {
+                            addReport(ejectEntity(en, true, false));
+                        }
                     }
                     vDesc.addAll(destroyEntity((Entity)ship, "fatal damage threshold"));
                     ship.doDisbandDamage();
@@ -23144,8 +23170,8 @@ public class Server implements Runnable {
                     autoEject = true;
                     vDesc.addAll(ejectEntity(te, true));
                 }
-            } else if (te.isFighter()) {
-                IAero aero = (IAero) te;
+            } else if (te instanceof Aero) {
+                Aero aero = (Aero) te;
                 if (aero.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                         || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                 && aero.isCondEjectAmmo()))) {
@@ -23485,14 +23511,27 @@ public class Server implements Runnable {
                 r.subject = te_n;
                 r.add(Math.max(a.getCapArmor(), 0));
                 vDesc.addElement(r);
-                // check to see if this detroyed the entity
+                // check to see if this destroyed the entity
                 if (a.getCapArmor() <= 0) {
                     // Lets auto-eject if we can!
-                    if (a.isAutoEject()
-                        && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
-                                || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
-                                        && a.isCondEjectSIDest()))) {
-                        vDesc.addAll(ejectEntity(te, true, false));
+                    if (a instanceof LandAirMech) {
+                        // LAMs eject if the CT destroyed switch is on
+                        LandAirMech lam = (LandAirMech) a;
+                        if (lam.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                            && lam.isCondEjectCTDest()))) {
+                            addReport(ejectEntity(te, true, false));
+                        }
+                    } else {
+                        // Aeros eject if the SI Destroyed switch is on
+                        Aero aero = (Aero) a;
+                        if (aero.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                            && aero.isCondEjectSIDest()))) {
+                            addReport(ejectEntity(te, true, false));
+                        }
                     }
                     vDesc.addAll(destroyEntity(te,
                             "Structural Integrity Collapse"));

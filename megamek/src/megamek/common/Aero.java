@@ -130,6 +130,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int cockpitType = COCKPIT_STANDARD;
     
     //Autoejection
+    private boolean autoEject = true;
     private boolean condEjectAmmo = true;
     private boolean condEjectFuel = true;
     private boolean condEjectSIDest = true;
@@ -4392,6 +4393,23 @@ public class Aero extends Entity implements IAero, IBomber {
     }
     
     // autoejection methods
+    /**
+     * @return Returns the autoEject.
+     */
+    public boolean isAutoEject() {
+        boolean hasEjectSeat = !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+
+        return autoEject && hasEjectSeat;
+    }
+
+    /**
+     * @param autoEject
+     *            Turn the master autoejection system on or off
+     */
+    public void setAutoEject(boolean autoEject) {
+        this.autoEject = autoEject;
+    }
+    
     /**
      * Is autoejection enabled for ammo explosions?
      * @return

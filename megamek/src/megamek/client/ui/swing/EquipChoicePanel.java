@@ -48,7 +48,6 @@ import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.IAero;
 import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -210,14 +209,14 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 chCondEjectHeadshot.setSelected(mech.isCondEjectHeadshot());
             }
         } else if (entity.isFighter()) {
-            IAero aero = (IAero) entity;
+            Aero aero = (Aero) entity;
 
             // Ejection Seat
             boolean hasEjectSeat = !(entity.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
             if (hasEjectSeat) {
                 add(labAutoEject, GBC.std());
                 add(chAutoEject, GBC.eol());
-                chAutoEject.setSelected(!aero.isAutoEject());
+                chAutoEject.setSelected(aero.isAutoEject());
             }
 
             // Conditional Ejections
@@ -372,7 +371,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             mech.setCondEjectCTDest(condEjectCTDest);
             mech.setCondEjectHeadshot(condEjectHeadshot);
         } else if (entity.isFighter()) {
-            IAero aero = (IAero) entity;
+            Aero aero = (Aero) entity;
             aero.setAutoEject(!autoEject);
             aero.setCondEjectAmmo(condEjectAmmo);
             aero.setCondEjectFuel(condEjectFuel);

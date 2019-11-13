@@ -789,25 +789,65 @@ public interface IAero {
     }
     
     // Auto Ejection Methods
-    
+    /**
+     * Is this unit's autoejection system turned on?
+     * @return
+     */
     boolean isAutoEject();
     
+    /**
+     * Turns the whole autoejection system on or off
+     * @param  autoEject  On if true, off if not
+     */
     void setAutoEject(boolean autoEject);
     
+    /**
+     * Is autoejection enabled for ammo explosions?
+     * @return
+     */
     boolean isCondEjectAmmo();
    
+    /**
+     * Used by Conditional Auto Ejection - will we eject when an ammo explosion is triggered?
+     * @param  condEjectAmmo  Sets autoejection for ammo explosions
+     */
     void setCondEjectAmmo(boolean condEjectAmmo);
     
+    /**
+     * Is autoejection enabled for fuel explosions?
+     * @return
+     */
     boolean isCondEjectFuel();
     
+    /**
+     * Used by Conditional Auto Ejection - will we eject when a fuel explosion is triggered?
+     * @param  condEjectFuel   Sets autoejection for fuel tank explosions
+     */
     void setCondEjectFuel(boolean condEjectFuel);
     
+    /**
+     * Is autoejection enabled for SI destruction (Fighter only)?
+     * @return
+     */
     boolean isCondEjectSIDest();
     
+    /**
+     * Used by Conditional Auto Ejection - will we eject when structural integrity is reduced to 0?
+     * @param  condEjectSIDest   Sets autoejection for structural integrity destruction
+     */
     void setCondEjectSIDest(boolean condEjectSIDest);
     
+    /**
+     * Is autoejection enabled for CT destruction (LAM only)?
+     * @return
+     */
     boolean isCondEjectCTDest();
     
+    /**
+     * Used by Conditional Auto Ejection - will we eject when the center torso is destroyed?
+     * LAMs require this, as they do not have an SI value.
+     * @param  condEjectCTDest   Sets autoejection for center torso destruction
+     */
     void setCondEjectCTDest(boolean condEjectCTDest);
 
 }

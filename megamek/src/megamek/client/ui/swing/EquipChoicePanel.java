@@ -62,6 +62,7 @@ import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.options.Quirks;
 import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
@@ -174,7 +175,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             // Ejection Seat
             boolean hasEjectSeat = true;
             // torso mounted cockpits don't have an ejection seat
-            if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED
+                    || mech.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT)) {
                 hasEjectSeat = false;
             }
             if (mech.isIndustrial()) {
@@ -216,7 +218,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             if (hasEjectSeat) {
                 add(labAutoEject, GBC.std());
                 add(chAutoEject, GBC.eol());
-                chAutoEject.setSelected(aero.isAutoEject());
+                chAutoEject.setSelected(!aero.isAutoEject());
             }
 
             // Conditional Ejections

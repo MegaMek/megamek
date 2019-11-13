@@ -26712,11 +26712,10 @@ public class Server implements Runnable {
                     reports.add(r);
                     // Lets auto-eject if we can!
                     if (aero.isFighter()) {
-                        IAero ftr = (IAero) aero;
-                        if (ftr.isAutoEject()
+                        if (aero.isAutoEject()
                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
                                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
-                                           && ftr.isCondEjectFuel()))) {
+                                           && aero.isCondEjectFuel()))) {
                             reports.addAll(ejectEntity(aero, true, false));
                         }
                     }

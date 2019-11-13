@@ -7391,11 +7391,9 @@ public class Server implements Runnable {
                             if (a.getSI() == 0) {
                                 // Lets auto-eject if we can!
                                 if (a.isAutoEject()
-                                    && (!game.getOptions().booleanOption(
-                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
-                                                                            .getOptions().booleanOption(
-                                                OptionsConstants.RPG_CONDITIONAL_EJECTION) && a
-                                                                            .isCondEjectSIDest()))) {
+                                    && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                            || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                                    && a.isCondEjectSIDest()))) {
                                     addReport(ejectEntity(entity, true, false));
                                 }
                                 addReport(destroyEntity(entity,
@@ -11363,11 +11361,9 @@ public class Server implements Runnable {
                         if (remaining <= 0) {
                             // Lets auto-eject if we can!
                             if (ftr.isAutoEject()
-                                && (!game.getOptions().booleanOption(
-                                    OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
-                                                                        .getOptions().booleanOption(
-                                            OptionsConstants.RPG_CONDITIONAL_EJECTION) && ftr
-                                                                        .isCondEjectSIDest()))) {
+                                && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                        || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                                && ftr.isCondEjectSIDest()))) {
                                 vPhaseReport.addAll(ejectEntity(te, true, false));
                             }
                             vPhaseReport.addAll(destroyEntity(te,
@@ -22875,11 +22871,9 @@ public class Server implements Runnable {
                 if (roll > 9) {
                     // Lets auto-eject if we can!
                     if (ship.isAutoEject()
-                        && (!game.getOptions().booleanOption(
-                            OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
-                                                                .getOptions().booleanOption(
-                                    OptionsConstants.RPG_CONDITIONAL_EJECTION) && ship
-                                                                .isCondEjectSIDest()))) {
+                        && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                        && ship.isCondEjectSIDest()))) {
                         vDesc.addAll(ejectEntity(en, true, false));
                     }
                     vDesc.addAll(destroyEntity((Entity)ship, "fatal damage threshold"));
@@ -23495,11 +23489,9 @@ public class Server implements Runnable {
                 if (a.getCapArmor() <= 0) {
                     // Lets auto-eject if we can!
                     if (a.isAutoEject()
-                        && (!game.getOptions().booleanOption(
-                            OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
-                                                                .getOptions().booleanOption(
-                                    OptionsConstants.RPG_CONDITIONAL_EJECTION) && a
-                                                                .isCondEjectSIDest()))) {
+                        && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                        && a.isCondEjectSIDest()))) {
                         vDesc.addAll(ejectEntity(te, true, false));
                     }
                     vDesc.addAll(destroyEntity(te,
@@ -24175,11 +24167,9 @@ public class Server implements Runnable {
                     if (a.getSI() <= 0) {
                         // Lets auto-eject if we can!
                         if (a.isAutoEject()
-                            && (!game.getOptions().booleanOption(
-                                OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
-                                                                    .getOptions().booleanOption(
-                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) && a
-                                                                    .isCondEjectSIDest()))) {
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                            && a.isCondEjectSIDest()))) {
                             vDesc.addAll(ejectEntity(te, true, false));
                         }
                         vDesc.addAll(destroyEntity(te,
@@ -26724,11 +26714,9 @@ public class Server implements Runnable {
                     if (aero.isFighter()) {
                         IAero ftr = (IAero) aero;
                         if (ftr.isAutoEject()
-                           && (!game.getOptions().booleanOption(
-                                OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
-                                                                    .getOptions().booleanOption(
-                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) && ftr
-                                                                    .isCondEjectFuel()))) {
+                           && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                   || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                           && ftr.isCondEjectFuel()))) {
                             reports.addAll(ejectEntity(aero, true, false));
                         }
                     }
@@ -35139,7 +35127,7 @@ public class Server implements Runnable {
                 ? entity.getPosition().translated((facing + 3) % 6) : null;
             if (entity.isSpaceborne() && entity.getPosition() != null) {
                 //Pilots in space should eject into the fighter's hex, not behind it
-                targetCoords = (entity.getPosition());
+                targetCoords = entity.getPosition();
             }
 
             if (autoEject) {

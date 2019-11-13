@@ -130,11 +130,9 @@ public class Aero extends Entity implements IAero, IBomber {
     private int cockpitType = COCKPIT_STANDARD;
     
     //Autoejection
-    private boolean autoEject = true;
     private boolean condEjectAmmo = true;
     private boolean condEjectFuel = true;
     private boolean condEjectSIDest = true;
-    private boolean condEjectCTDest = false; //LAM only
 
     // track straight movement from last turn
     private int straightMoves = 0;
@@ -4393,25 +4391,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
     }
     
-    /**
-     * Is this unit's autoejection system turned on?
-     * @return
-     */
-    public boolean isAutoEject() {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            return !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
-        }
-        return true;
-    }
-
-    /**
-     * Turns the whole autoejection system on or off
-     * @param  autoEject  On if true, off if not
-     */
-    public void setAutoEject(boolean autoEject) {
-        this.autoEject = autoEject;
-    }
-
+    // autoejection methods
     /**
      * Is autoejection enabled for ammo explosions?
      * @return
@@ -4458,22 +4438,5 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public void setCondEjectSIDest(boolean condEjectSIDest) {
         this.condEjectSIDest = condEjectSIDest;
-    }
-    
-    /**
-     * Is autoejection enabled for CT destruction (LAM only)?
-     * @return
-     */
-    public boolean isCondEjectCTDest() {
-        return false;
-    }
-
-    /**
-     * Used by Conditional Auto Ejection - will we eject when the center torso is destroyed?
-     * LAMs require this, as they do not have an SI value.
-     * @param  condEjectCTDest   Sets autoejection for center torso destruction
-     */
-    public void setCondEjectCTDest(boolean condEjectCTDest) {
-        this.condEjectCTDest = condEjectCTDest;
     }
 }

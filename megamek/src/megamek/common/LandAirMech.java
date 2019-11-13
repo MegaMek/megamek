@@ -129,11 +129,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int altLossThisRound = 0;
     
     //Autoejection
-    private boolean autoEject = true;
-    private boolean condEjectAmmo = true;
     private boolean condEjectFuel = true;
-    private boolean condEjectSIDest = true;
-    private boolean condEjectCTDest = false; //LAM only
 
     private boolean critThresh = false;
 
@@ -2115,42 +2111,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             }
         }
     }
-    
-    /**
-     * Is this unit's autoejection system turned on?
-     * @return
-     */
-    public boolean isAutoEject() {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            return !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
-        }
-        return true;
-    }
 
-    /**
-     * Turns the whole autoejection system on or off
-     * @param  autoEject  On if true, off if not
-     */
-    public void setAutoEject(boolean autoEject) {
-        this.autoEject = autoEject;
-    }
-
-    /**
-     * Is autoejection enabled for ammo explosions?
-     * @return
-     */
-    public boolean isCondEjectAmmo() {
-        return condEjectAmmo;
-    }
-
-    /**
-     * Used by Conditional Auto Ejection - will we eject when an ammo explosion is triggered?
-     * @param  condEjectAmmo  Sets autoejection for ammo explosions
-     */
-    public void setCondEjectAmmo(boolean condEjectAmmo) {
-        this.condEjectAmmo = condEjectAmmo;
-    }
-
+    //Additional autoejection methods
     /**
      * Is autoejection enabled for fuel explosions?
      * @return
@@ -2165,38 +2127,5 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      */
     public void setCondEjectFuel(boolean condEjectFuel) {
         this.condEjectFuel = condEjectFuel;
-    }
-
-    /**
-     * Is autoejection enabled for SI destruction (Fighter only)?
-     * @return
-     */
-    public boolean isCondEjectSIDest() {
-        return false;
-    }
-
-    /**
-     * Used by Conditional Auto Ejection - will we eject when structural integrity is reduced to 0?
-     * @param  condEjectSIDest   Sets autoejection for structural integrity destruction
-     */
-    public void setCondEjectSIDest(boolean condEjectSIDest) {
-        this.condEjectSIDest = condEjectSIDest;
-    }
-    
-    /**
-     * Is autoejection enabled for CT destruction (LAM only)?
-     * @return
-     */
-    public boolean isCondEjectCTDest() {
-        return condEjectCTDest;
-    }
-
-    /**
-     * Used by Conditional Auto Ejection - will we eject when the center torso is destroyed?
-     * LAMs require this, as they do not have an SI value.
-     * @param  condEjectCTDest   Sets autoejection for center torso destruction
-     */
-    public void setCondEjectCTDest(boolean condEjectCTDest) {
-        this.condEjectCTDest = condEjectCTDest;
     }
 }

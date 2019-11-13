@@ -55,7 +55,7 @@ public class SharedUtility {
     public static List<TargetRoll> getPSRList(MovePath md) {
         // certain types of entities, such as airborne aero units, do not require many of the checks
         // carried out in the full PSR Check. So, we call a method that skips most of those.
-        if(md.getEntity().isAirborne()) {
+        if(md.getEntity().isAirborne() && md.getEntity().isAero()) {
             return (List<TargetRoll>) getAeroSpecificPSRList(md, false);
         } else {
             return (List<TargetRoll>) doPSRCheck(md, false);

@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.47.3-SNAPSHOT
+
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor
 +PR #1533: Improved bot usage of field gun infantry

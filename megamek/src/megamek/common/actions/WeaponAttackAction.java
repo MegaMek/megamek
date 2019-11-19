@@ -2922,9 +2922,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Flat to hit modifiers defined in WeaponType  
         if (wtype.getToHitModifier() != 0) {
-            toHit.addModifier(wtype.getToHitModifier(), Messages.getString("WeaponAttackAction.WeaponMod"));
+            int modifier = wtype.getToHitModifier();
+            if (wtype instanceof VariableSpeedPulseLaserWeapon) {
+                int nRange = ae.getPosition().distance(target.getPosition());
+                int[] nRanges = wtype.getRanges(weapon);
+
+                if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
+                    modifier += RangeType.RANGE_SHORT;
+                } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
+                    modifier += RangeType.RANGE_MEDIUM;
+                } else {
+                    modifier += RangeType.RANGE_LONG;
+                }
+            }
+            toHit.addModifier(modifier, Messages.getString("WeaponAttackAction.WeaponMod"));
         }
-        
+
+
         // Indirect fire (LRMs, mortars and the like) has a +1 mod
         if (isIndirect) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.Indirect"));
@@ -2978,24 +2992,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // VSP Lasers
-        if (wtype instanceof VariableSpeedPulseLaserWeapon) {
-            int nRange = ae.getPosition().distance(target.getPosition());
-            int[] nRanges = wtype.getRanges(weapon);
-            int modifier = wtype.getToHitModifier();
-
-            if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
-                modifier += RangeType.RANGE_SHORT;
-            } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
-                modifier += RangeType.RANGE_MEDIUM;
-            } else if (nRange <= nRanges[RangeType.RANGE_LONG]) {
-                modifier += RangeType.RANGE_LONG;
-            } else {
-                modifier = 0;
-            }
-
-            toHit.addModifier(modifier, Messages.getString("WeaponAttackAction.WeaponMod"));
-        }
-        
         // quirks
         
         // Flat -1 for Accurate Weapon

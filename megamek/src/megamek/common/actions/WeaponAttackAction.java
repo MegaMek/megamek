@@ -2938,7 +2938,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(modifier, Messages.getString("WeaponAttackAction.WeaponMod"));
         }
 
-
         // Indirect fire (LRMs, mortars and the like) has a +1 mod
         if (isIndirect) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.Indirect"));

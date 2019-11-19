@@ -531,7 +531,8 @@ public class MULParser {
         //first check for ejected mechwarriors and vee crews
         if(chassis.equals(EjectedCrew.VEE_EJECT_NAME)) {
             return new EjectedCrew();
-        } else if(chassis.equals(EjectedCrew.MW_EJECT_NAME)) {
+        } else if(chassis.equals(EjectedCrew.PILOT_EJECT_NAME)
+                    || chassis.equals(EjectedCrew.MW_EJECT_NAME)) {
             return new MechWarrior();
         }
 

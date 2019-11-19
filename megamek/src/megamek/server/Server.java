@@ -7389,6 +7389,26 @@ public class Server implements Runnable {
                             }
                             // check for destruction
                             if (a.getSI() == 0) {
+                                // Lets auto-eject if we can!
+                                if (a instanceof LandAirMech) {
+                                    // LAMs eject if the CT destroyed switch is on
+                                    LandAirMech lam = (LandAirMech) a;
+                                    if (lam.isAutoEject()
+                                        && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                                || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                                        && lam.isCondEjectCTDest()))) {
+                                        addReport(ejectEntity(entity, true, false));
+                                    }
+                                } else {
+                                    // Aeros eject if the SI Destroyed switch is on
+                                    Aero aero = (Aero) a;
+                                    if (aero.isAutoEject()
+                                        && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                                || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                                        && aero.isCondEjectSIDest()))) {
+                                        addReport(ejectEntity(entity, true, false));
+                                    }
+                                }
                                 addReport(destroyEntity(entity,
                                         "Structural Integrity Collapse",
                                         false));
@@ -11352,6 +11372,13 @@ public class Server implements Runnable {
                         ftr.setSI(remaining);
                         te.damageThisPhase += siDamage;
                         if (remaining <= 0) {
+                            // Lets auto-eject if we can!
+                            if (ftr.isAutoEject()
+                                && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                        || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                                && ftr.isCondEjectSIDest()))) {
+                                vPhaseReport.addAll(ejectEntity(te, true, false));
+                            }
                             vPhaseReport.addAll(destroyEntity(te,
                                     "Structural Integrity Collapse"));
                             ftr.setSI(0);
@@ -22855,6 +22882,26 @@ public class Server implements Runnable {
                         + (int) Math.floor((damage - ship.getFatalThresh())
                                 / divisor);
                 if (roll > 9) {
+                    // Lets auto-eject if we can!
+                    if (ship instanceof LandAirMech) {
+                        // LAMs eject if the CT destroyed switch is on
+                        LandAirMech lam = (LandAirMech) ship;
+                        if (lam.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                            && lam.isCondEjectCTDest()))) {
+                            addReport(ejectEntity(en, true, false));
+                        }
+                    } else {
+                        // Aeros eject if the SI Destroyed switch is on
+                        Aero aero = (Aero) ship;
+                        if (aero.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                            && aero.isCondEjectSIDest()))) {
+                            addReport(ejectEntity(en, true, false));
+                        }
+                    }
                     vDesc.addAll(destroyEntity((Entity)ship, "fatal damage threshold"));
                     ship.doDisbandDamage();
                     if (prevAE != Entity.NONE) {
@@ -23120,6 +23167,14 @@ public class Server implements Runnable {
                 if (mech.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                         || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                 && mech.isCondEjectAmmo()))) {
+                    autoEject = true;
+                    vDesc.addAll(ejectEntity(te, true));
+                }
+            } else if (te instanceof Aero) {
+                Aero aero = (Aero) te;
+                if (aero.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                        || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                                && aero.isCondEjectAmmo()))) {
                     autoEject = true;
                     vDesc.addAll(ejectEntity(te, true));
                 }
@@ -23456,8 +23511,28 @@ public class Server implements Runnable {
                 r.subject = te_n;
                 r.add(Math.max(a.getCapArmor(), 0));
                 vDesc.addElement(r);
-                // check to see if this detroyed the entity
+                // check to see if this destroyed the entity
                 if (a.getCapArmor() <= 0) {
+                    // Lets auto-eject if we can!
+                    if (a instanceof LandAirMech) {
+                        // LAMs eject if the CT destroyed switch is on
+                        LandAirMech lam = (LandAirMech) a;
+                        if (lam.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                            && lam.isCondEjectCTDest()))) {
+                            addReport(ejectEntity(te, true, false));
+                        }
+                    } else {
+                        // Aeros eject if the SI Destroyed switch is on
+                        Aero aero = (Aero) a;
+                        if (aero.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                            && aero.isCondEjectSIDest()))) {
+                            addReport(ejectEntity(te, true, false));
+                        }
+                    }
                     vDesc.addAll(destroyEntity(te,
                             "Structural Integrity Collapse"));
                     a.doDisbandDamage();
@@ -24129,6 +24204,13 @@ public class Server implements Runnable {
                     damage = 0;
                     // check to see if this would destroy the ASF
                     if (a.getSI() <= 0) {
+                        // Lets auto-eject if we can!
+                        if (a.isAutoEject()
+                            && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                    || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                            && a.isCondEjectSIDest()))) {
+                            vDesc.addAll(ejectEntity(te, true, false));
+                        }
                         vDesc.addAll(destroyEntity(te,
                                 "Structural Integrity Collapse"));
                         a.setSI(0);
@@ -24519,8 +24601,6 @@ public class Server implements Runnable {
                                     if (mech.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);
                                         mech.setDoomed(false);
-                                        // vDesc.addAll(damageCrew(te, 5 -
-                                        // mech.getCrew().getHits()));
                                         mech.setDoomed(true);
                                     }
                                     autoEject = true;
@@ -26669,6 +26749,15 @@ public class Server implements Runnable {
                     }
                     r.choose(true);
                     reports.add(r);
+                    // Lets auto-eject if we can!
+                    if (aero.isFighter()) {
+                        if (aero.isAutoEject()
+                           && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                   || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
+                                           && aero.isCondEjectFuel()))) {
+                            reports.addAll(ejectEntity(aero, true, false));
+                        }
+                    }
                     reports.addAll(destroyEntity(aero, "fuel explosion", false,
                                                false));
                 } else {
@@ -28280,6 +28369,7 @@ public class Server implements Runnable {
                 r.add(Math.max(a.getSI(), 0));
                 vDesc.addElement(r);
                 if (a.getSI() <= 0) {
+                    //No autoejection chance here. Nuke would vaporize the pilot.
                     vDesc.addAll(destroyEntity(a,
                             "Structural Integrity Collapse"));
                     a.setSI(0);
@@ -35067,12 +35157,16 @@ public class Server implements Runnable {
             return vDesc;
         }
 
-        // Mek pilots may get hurt during ejection,
+        // Mek and fighter pilots may get hurt during ejection,
         // and run around the board afterwards.
-        if (entity instanceof Mech) {
+        if (entity instanceof Mech || entity.isFighter()) {
             int facing = entity.getFacing();
             Coords targetCoords = (null != entity.getPosition())
                 ? entity.getPosition().translated((facing + 3) % 6) : null;
+            if (entity.isSpaceborne() && entity.getPosition() != null) {
+                //Pilots in space should eject into the fighter's hex, not behind it
+                targetCoords = entity.getPosition();
+            }
 
             if (autoEject) {
                 r = new Report(6395);
@@ -35115,7 +35209,12 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
                     Report.addNewline(vDesc);
                     if ((rollTarget.getValue() - diceRoll) > 1) {
-                        int damage = (rollTarget.getValue() - diceRoll) / 2;
+                        // Pilots take damage based on ejection roll MoF
+                        int damage = (rollTarget.getValue() - diceRoll);
+                        if (entity instanceof Mech) {
+                            // MechWarriors only take 1 damage per 2 points of MoF
+                            damage /= 2;
+                        }
                         if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)) {
                             damage++;
                         }
@@ -35138,6 +35237,18 @@ public class Server implements Runnable {
             pilot.setDeployed(true);
             pilot.setId(getFreeEntityId());
             pilot.setLanded(false);
+            if (entity.isSpaceborne()) {
+                //In space, ejected pilots retain the heading and velocity of the unit they eject from
+                pilot.setVectors(entity.getVectors());
+                pilot.setFacing(entity.getFacing());
+                pilot.setCurrentVelocity(entity.getVelocity());
+                //If the pilot ejects, he should no longer be accelerating
+                pilot.setNextVelocity(entity.getVelocity());
+            } else if (entity.isAirborne()) {
+                pilot.setAltitude(entity.getAltitude());
+            }
+            //Pilot flight suits are vacuum-rated. Mechwarriors wear shorts...
+            pilot.setSpaceSuit(entity.isAero());
             game.addEntity(pilot);
             send(createAddEntityPacket(pilot.getId()));
             // make him not get a move this turn
@@ -35160,48 +35271,25 @@ public class Server implements Runnable {
                 // Add the pilot as an infantry unit on the battlefield.
                 if (game.getBoard().contains(targetCoords)) {
                     pilot.setPosition(targetCoords);
-                    /*
-                     * Can pilots eject into water??? ASSUMPTION : They can
-                     * (because they get a -1 mod to the PSR. // Did the pilot
-                     * land in water? if ( game.getBoard().getHex(
-                     * targetCoords).levelOf ( Terrain.WATER ) > 0 ) { //report
-                     * missing desc.append("and the pilot ejects, but lands in
-                     * water!!!\n"); //report missing desc.append(destroyEntity(
-                     * pilot, "a watery grave", false )); } else { //report
-                     * missing desc.append("and the pilot ejects safely!\n"); }
-                     */
                     // report safe ejection
                     r = new Report(6400);
                     r.subject = entity.getId();
                     r.indent(3);
                     vDesc.addElement(r);
-                    // infantry have auto XTC gear so do pilots
-                    /*
-                     * if (game.getPlanetaryConditions().isVacuum()) { // ended
-                     * up in a vacuum r = new Report(6405); r.subject =
-                     * entity.getId(); r.indent(3); vDesc.addElement(r);
-                     * vDesc.addAll(destroyEntity(pilot,
-                     * "explosive decompression", false, false)); }
-                     */
                     // Update the entity
                     entityUpdate(pilot.getId());
                     // check if the pilot lands in a minefield
-                    vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
-                            entity.getPosition(), targetCoords,
-                            entity.getElevation()));
+                    if (!entity.isAirborne()) {
+                        vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
+                                entity.getPosition(), targetCoords,
+                                entity.getElevation()));
+                    }
                 } else {
                     // ejects safely
                     r = new Report(6410);
                     r.subject = entity.getId();
                     r.indent(3);
                     vDesc.addElement(r);
-                    /*
-                     * if (game.getPlanetaryConditions().isVacuum()) { // landed
-                     * in vacuum r = new Report(6405); r.subject =
-                     * entity.getId(); r.indent(3); vDesc.addElement(r);
-                     * vDesc.addAll(destroyEntity(pilot,
-                     * "explosive decompression", false, false)); } else {
-                     */
                     game.removeEntity(pilot.getId(),
                                       IEntityRemovalConditions.REMOVE_IN_RETREAT);
                     send(createRemoveEntityPacket(pilot.getId(),
@@ -35223,7 +35311,7 @@ public class Server implements Runnable {
                 }
             } // Crew safely ejects.
 
-        } // End entity-is-Mek
+        } // End entity-is-Mek or fighter
         else if (game.getBoard().contains(entity.getPosition())
                  && (entity instanceof Tank)) {
             EjectedCrew crew = new EjectedCrew(entity);
@@ -35291,6 +35379,12 @@ public class Server implements Runnable {
     public static PilotingRollData getEjectModifiers(IGame game,
             Entity entity, int crewPos, boolean autoEject) {
         int facing = entity.getFacing();
+        if (entity.isPartOfFighterSquadron()) {
+            // Because the components of a squadron have no position and will pass the next test
+            Entity squadron = game.getEntity(entity.getTransportId());
+            return getEjectModifiers(game, entity, crewPos, autoEject, squadron.getPosition(),
+                    "ejecting");
+        }
         if(null == entity.getPosition()) {
             // Off-board unit?
             return new PilotingRollData(entity.getId(), entity.getCrew().getPiloting(), "ejecting");
@@ -35304,6 +35398,7 @@ public class Server implements Runnable {
             boolean autoEject, Coords targetCoords, String desc) {
         PilotingRollData rollTarget = new PilotingRollData(entity.getId(),
                 entity.getCrew().getPiloting(crewPos), desc);
+        // Per SO p26, fighters can eject as per TO rules on 196 with some exceptions
         if (entity.isProne()) {
             rollTarget.addModifier(5, "Mech is prone");
         }
@@ -35312,6 +35407,10 @@ public class Server implements Runnable {
         }
         if (autoEject) {
             rollTarget.addModifier(1, "automatic ejection");
+        }
+        if ((entity.isFighter() && ((IAero)entity).isOutControl())
+                || (entity.isPartOfFighterSquadron() && ((IAero)game.getEntity(entity.getTransportId())).isOutControl())) {
+            rollTarget.addModifier(5, "Out of Control");
         }
         if ((entity instanceof Mech)
                 && (entity.getInternal(Mech.LOC_HEAD) < entity
@@ -35322,51 +35421,59 @@ public class Server implements Runnable {
                     "Head Internal Structure Damage");
         }
         IHex targetHex = game.getBoard().getHex(targetCoords);
-        if (targetHex != null) {
-            if ((targetHex.terrainLevel(Terrains.WATER) > 0)
-                    && !targetHex.containsTerrain(Terrains.ICE)) {
-                rollTarget.addModifier(-1, "landing in water");
-            } else if (targetHex.containsTerrain(Terrains.ROUGH)) {
-                rollTarget.addModifier(0, "landing in rough");
-            } else if (targetHex.containsTerrain(Terrains.RUBBLE)) {
-                rollTarget.addModifier(0, "landing in rubble");
-            } else if (targetHex.terrainLevel(Terrains.WOODS) == 1) {
-                rollTarget.addModifier(2, "landing in light woods");
-            } else if (targetHex.terrainLevel(Terrains.WOODS) == 2) {
-                rollTarget.addModifier(3, "landing in heavy woods");
-            } else if (targetHex.terrainLevel(Terrains.WOODS) == 3) {
-                rollTarget.addModifier(4, "landing in ultra heavy woods");
-            } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 1) {
-                rollTarget.addModifier(3, "landing in light jungle");
-            } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 2) {
-                rollTarget.addModifier(5, "landing in heavy jungle");
-            } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 3) {
-                rollTarget.addModifier(7, "landing in ultra heavy jungle");
-            } else if (targetHex.terrainLevel(Terrains.BLDG_ELEV) > 0) {
-                rollTarget.addModifier(
-                        targetHex.terrainLevel(Terrains.BLDG_ELEV),
-                        "landing in a building");
+        //Terrain modifiers should only apply if the unit is on the ground...
+        if (!entity.isSpaceborne() && !entity.isAirborne()) {
+            if (targetHex != null) {
+                if ((targetHex.terrainLevel(Terrains.WATER) > 0)
+                        && !targetHex.containsTerrain(Terrains.ICE)) {
+                    rollTarget.addModifier(-1, "landing in water");
+                } else if (targetHex.containsTerrain(Terrains.ROUGH)) {
+                    rollTarget.addModifier(0, "landing in rough");
+                } else if (targetHex.containsTerrain(Terrains.RUBBLE)) {
+                    rollTarget.addModifier(0, "landing in rubble");
+                } else if (targetHex.terrainLevel(Terrains.WOODS) == 1) {
+                    rollTarget.addModifier(2, "landing in light woods");
+                } else if (targetHex.terrainLevel(Terrains.WOODS) == 2) {
+                    rollTarget.addModifier(3, "landing in heavy woods");
+                } else if (targetHex.terrainLevel(Terrains.WOODS) == 3) {
+                    rollTarget.addModifier(4, "landing in ultra heavy woods");
+                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 1) {
+                    rollTarget.addModifier(3, "landing in light jungle");
+                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 2) {
+                    rollTarget.addModifier(5, "landing in heavy jungle");
+                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 3) {
+                    rollTarget.addModifier(7, "landing in ultra heavy jungle");
+                } else if (targetHex.terrainLevel(Terrains.BLDG_ELEV) > 0) {
+                    rollTarget.addModifier(
+                            targetHex.terrainLevel(Terrains.BLDG_ELEV),
+                            "landing in a building");
+                } else {
+                    rollTarget.addModifier(-2, "landing in clear terrain");
+                }
             } else {
-                rollTarget.addModifier(-2, "landing in clear terrain");
+                rollTarget.addModifier(-2, "landing off the board");
             }
-        } else {
-            rollTarget.addModifier(-2, "landing off the board");
         }
-
-        if (game.getPlanetaryConditions().getGravity() == 0) {
-            rollTarget.addModifier(3, "Zero-G");
-        } else if (game.getPlanetaryConditions().getGravity() < .8) {
-            rollTarget.addModifier(2, "Low-G");
-        } else if (game.getPlanetaryConditions().getGravity() > 1.2) {
-            rollTarget.addModifier(2, "High-G");
-        }
-
-        if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VACUUM) {
-            rollTarget.addModifier(3, "Vacuum");
-        } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VHIGH) {
-            rollTarget.addModifier(2, "Very High Atmosphere Pressure");
-        } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_TRACE) {
-            rollTarget.addModifier(2, "Trace atmosphere");
+        if (!entity.isSpaceborne()) {
+            //At present, the UI lets you set these atmospheric conditions for a space battle, but it shouldn't
+            //That's a fix for another day, probably when I get around to space terrain and 'weather'
+            if (game.getPlanetaryConditions().getGravity() == 0) {
+                rollTarget.addModifier(3, "Zero-G");
+            } else if (game.getPlanetaryConditions().getGravity() < .8) {
+                rollTarget.addModifier(2, "Low-G");
+            } else if (game.getPlanetaryConditions().getGravity() > 1.2) {
+                rollTarget.addModifier(2, "High-G");
+            }
+        
+            //Vacuum shouldn't apply to ASF ejection since they're designed for it, but the rules don't specify
+            //High and low pressures make more sense to apply to all
+            if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VACUUM) {
+                rollTarget.addModifier(3, "Vacuum");
+            } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VHIGH) {
+                rollTarget.addModifier(2, "Very High Atmosphere Pressure");
+            } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_TRACE) {
+                rollTarget.addModifier(2, "Trace atmosphere");
+            }
         }
 
         if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
@@ -35457,14 +35564,9 @@ public class Server implements Runnable {
             return vDesc;
         }
 
-        // Don't make them abandon into vacuum
-        if (game.getPlanetaryConditions().isVacuum()) {
-            return vDesc;
-        }
-
         Coords targetCoords = entity.getPosition();
 
-        if (entity instanceof Mech) {
+        if (entity instanceof Mech || (entity.isAero() && !entity.isAirborne())) {
             // okay, print the info
             r = new Report(2027);
             r.subject = entity.getId();
@@ -35472,12 +35574,26 @@ public class Server implements Runnable {
             r.addDesc(entity);
             r.indent(3);
             vDesc.addElement(r);
+            // Don't make ill-equipped pilots abandon into vacuum
+            if (game.getPlanetaryConditions().isVacuum() && !entity.isAero()) {
+                return vDesc;
+            }
 
             // create the MechWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
             pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious());
             pilot.setDeployed(true);
             pilot.setId(getFreeEntityId());
+            //Pilot flight suits are vacuum-rated. Mechwarriors wear shorts...
+            pilot.setSpaceSuit(entity.isAero());
+            if (entity.isSpaceborne()) {
+                //In space, ejected pilots retain the heading and velocity of the unit they eject from
+                pilot.setVectors(entity.getVectors());
+                pilot.setFacing(entity.getFacing());
+                pilot.setCurrentVelocity(entity.getVelocity());
+                //If the pilot ejects, he should no longer be accelerating
+                pilot.setNextVelocity(entity.getVelocity());
+            }
             game.addEntity(pilot);
             send(createAddEntityPacket(pilot.getId()));
             // make him not get a move this turn
@@ -35498,9 +35614,13 @@ public class Server implements Runnable {
                 send(createRemoveEntityPacket(pilot.getId(),
                                               IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
-        } // End entity-is-Mek
+        } // End entity-is-Mek or Aero
         else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT)
                  && (entity instanceof Tank)) {
+            // Don't make them abandon into vacuum
+            if (game.getPlanetaryConditions().isVacuum()) {
+                return vDesc;
+            }
             EjectedCrew crew = new EjectedCrew(entity);
             crew.setDeployed(true);
             crew.setId(getFreeEntityId());
@@ -35560,7 +35680,7 @@ public class Server implements Runnable {
             // Check for owner entities first...
             for (Entity pe : game.getEntitiesVector(e.getPosition())) {
                 if (pe.isDoomed() || pe.isShutDown()
-                    || pe.getCrew().isUnconscious() || pe.isAirborne()
+                    || pe.getCrew().isUnconscious() || (pe.isAirborne() && !pe.isSpaceborne())
                     || (pe.getElevation() != e.getElevation())
                     || (pe.getOwnerId() != e.getOwnerId())
                     || (pe.getId() == e.getId())) {
@@ -35593,7 +35713,7 @@ public class Server implements Runnable {
                     if (pe.isDoomed()
                         || pe.isShutDown()
                         || pe.getCrew().isUnconscious()
-                        || pe.isAirborne()
+                        || (pe.isAirborne() && !pe.isSpaceborne())
                         || (pe.getElevation() != e.getElevation())
                         || (pe.getOwnerId() == e.getOwnerId())
                         || (pe.getId() == e.getId())

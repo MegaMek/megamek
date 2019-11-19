@@ -138,6 +138,14 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     private JLabel labCondEjectHeadshot = new JLabel(
             Messages.getString("CustomMechDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JCheckBox chCondEjectHeadshot = new JCheckBox();
+    
+    private JLabel labCondEjectFuel = new JLabel(
+            Messages.getString("CustomMechDialog.labConditional_Ejection_Fuel"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JCheckBox chCondEjectFuel = new JCheckBox();
+
+    private JLabel labCondEjectSIDest = new JLabel(
+            Messages.getString("CustomMechDialog.labConditional_Ejection_SI_Destroyed"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JCheckBox chCondEjectSIDest = new JCheckBox();
 
     private JLabel labSearchlight = new JLabel(
             Messages.getString("CustomMechDialog.labSearchlight"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -166,7 +174,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             // Ejection Seat
             boolean hasEjectSeat = true;
             // torso mounted cockpits don't have an ejection seat
-            if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED
+                    || mech.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT)) {
                 hasEjectSeat = false;
             }
             if (mech.isIndustrial()) {
@@ -199,6 +208,30 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(labCondEjectHeadshot, GBC.std());
                 add(chCondEjectHeadshot, GBC.eol());
                 chCondEjectHeadshot.setSelected(mech.isCondEjectHeadshot());
+            }
+        } else if (entity.isFighter()) {
+            Aero aero = (Aero) entity;
+
+            // Ejection Seat
+            boolean hasEjectSeat = !(entity.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
+            if (hasEjectSeat) {
+                add(labAutoEject, GBC.std());
+                add(chAutoEject, GBC.eol());
+                chAutoEject.setSelected(!aero.isAutoEject());
+            }
+
+            // Conditional Ejections
+            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                    && hasEjectSeat) { // $NON-NLS-1$
+                add(labCondEjectAmmo, GBC.std());
+                add(chCondEjectAmmo, GBC.eol());
+                chCondEjectAmmo.setSelected(aero.isCondEjectAmmo());
+                add(labCondEjectFuel, GBC.std());
+                add(chCondEjectFuel, GBC.eol());
+                chCondEjectFuel.setSelected(aero.isCondEjectFuel());
+                add(labCondEjectSIDest, GBC.std());
+                add(chCondEjectSIDest, GBC.eol());
+                chCondEjectSIDest.setSelected(aero.isCondEjectSIDest());
             }
         }
 
@@ -320,11 +353,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     }
 
     public void applyChoices() {
+        //Autoejection Options
         boolean autoEject = chAutoEject.isSelected();
         boolean condEjectAmmo = chCondEjectAmmo.isSelected();
+        //Mechs and LAMs Only
         boolean condEjectEngine = chCondEjectEngine.isSelected();
         boolean condEjectCTDest = chCondEjectCTDest.isSelected();
         boolean condEjectHeadshot = chCondEjectHeadshot.isSelected();
+        //Aeros Only
+        boolean condEjectFuel = chCondEjectFuel.isSelected();
+        boolean condEjectSIDest = chCondEjectSIDest.isSelected();
 
         if (entity instanceof Mech) {
             Mech mech = (Mech) entity;
@@ -333,6 +371,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             mech.setCondEjectEngine(condEjectEngine);
             mech.setCondEjectCTDest(condEjectCTDest);
             mech.setCondEjectHeadshot(condEjectHeadshot);
+        } else if (entity.isFighter()) {
+            Aero aero = (Aero) entity;
+            aero.setAutoEject(!autoEject);
+            aero.setCondEjectAmmo(condEjectAmmo);
+            aero.setCondEjectFuel(condEjectFuel);
+            aero.setCondEjectSIDest(condEjectSIDest);
         }
 
         // update AP weapon selections

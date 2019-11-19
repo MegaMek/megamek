@@ -174,7 +174,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // Ejected MechWarriors are also more difficult targets.
         if (target instanceof MechWarrior) {
-            toHit.addModifier(2, "ejected MechWarrior target");
+            toHit.addModifier(2, "ejected Pilot target");
         }
         // attacker movement
         toHit.append(Compute.getAttackerMovementModifier(game, attackerId));

@@ -128,6 +128,12 @@ public class Aero extends Entity implements IAero, IBomber {
     // ignored crew hit for harjel
     private int ignoredCrewHits = 0;
     private int cockpitType = COCKPIT_STANDARD;
+    
+    //Autoejection
+    private boolean autoEject = true;
+    private boolean condEjectAmmo = true;
+    private boolean condEjectFuel = true;
+    private boolean condEjectSIDest = true;
 
     // track straight movement from last turn
     private int straightMoves = 0;
@@ -4384,5 +4390,71 @@ public class Aero extends Entity implements IAero, IBomber {
                 }
             }
         }
+    }
+    
+    // autoejection methods
+    /**
+     * @return Returns the autoEject.
+     */
+    public boolean isAutoEject() {
+        boolean hasEjectSeat = !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+
+        return autoEject && hasEjectSeat;
+    }
+
+    /**
+     * @param autoEject
+     *            Turn the master autoejection system on or off
+     */
+    public void setAutoEject(boolean autoEject) {
+        this.autoEject = autoEject;
+    }
+    
+    /**
+     * Is autoejection enabled for ammo explosions?
+     * @return
+     */
+    public boolean isCondEjectAmmo() {
+        return condEjectAmmo;
+    }
+
+    /**
+     * Used by Conditional Auto Ejection - will we eject when an ammo explosion is triggered?
+     * @param  condEjectAmmo  Sets autoejection for ammo explosions
+     */
+    public void setCondEjectAmmo(boolean condEjectAmmo) {
+        this.condEjectAmmo = condEjectAmmo;
+    }
+
+    /**
+     * Is autoejection enabled for fuel explosions?
+     * @return
+     */
+    public boolean isCondEjectFuel() {
+        return condEjectFuel;
+    }
+
+    /**
+     * Used by Conditional Auto Ejection - will we eject when a fuel explosion is triggered?
+     * @param  condEjectFuel   Sets autoejection for fuel tank explosions
+     */
+    public void setCondEjectFuel(boolean condEjectFuel) {
+        this.condEjectFuel = condEjectFuel;
+    }
+
+    /**
+     * Is autoejection enabled for SI destruction (Fighter only)?
+     * @return
+     */
+    public boolean isCondEjectSIDest() {
+        return condEjectSIDest;
+    }
+
+    /**
+     * Used by Conditional Auto Ejection - will we eject when structural integrity is reduced to 0?
+     * @param  condEjectSIDest   Sets autoejection for structural integrity destruction
+     */
+    public void setCondEjectSIDest(boolean condEjectSIDest) {
+        this.condEjectSIDest = condEjectSIDest;
     }
 }

@@ -9701,11 +9701,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && !(movementMode == EntityMovementMode.WIGE))) {
             return false;
         }
+        // Prevent ejected crews from moving when advanced movement rule is off
+        if (!game.useVectorMove() && isSpaceborne() && this instanceof EjectedCrew) {
+            return false;
+        }
         // check game options
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT)) {
             return true;
         }
-
         // Must be active: this is slightly different  from isActive();
         //   we don't want to skip manually shutdown units (so they can restart)
         boolean isActive = (!shutDown || isManualShutdown()) && !destroyed

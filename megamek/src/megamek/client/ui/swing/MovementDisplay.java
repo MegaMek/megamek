@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -51,6 +50,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.DockingCollar;
 import megamek.common.Dropship;
+import megamek.common.EjectedCrew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
@@ -936,21 +936,36 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Infantry - Fortify
         if (isInfantry
             && ce.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL)) {
-            getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
+            // Crews adrift in space or atmosphere can't do this
+            if (ce instanceof EjectedCrew && (ce.isSpaceborne() || ce.isAirborne())) {
+                getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
+            } else {
+                getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
+            }
         } else {
             getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(false);
         }
         // Infantry - Digging in
         if (isInfantry && gOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_DIG_IN)) {
-            // Allow infantry to dig in if they aren't currently dug in
-            int dugInState = ((Infantry) ce).getDugIn();
-            getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(
-                    dugInState == Infantry.DUG_IN_NONE);
+            // Crews adrift in space or atmosphere can't do this
+            if (ce instanceof EjectedCrew && (ce.isSpaceborne() || ce.isAirborne())) {
+                getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
+            } else {
+                // Allow infantry to dig in if they aren't currently dug in
+                int dugInState = ((Infantry) ce).getDugIn();
+                getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(
+                        dugInState == Infantry.DUG_IN_NONE);
+            }
         } else {
             getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
         }
         // Infantry - Take Cover
-        updateTakeCoverButton();
+        // Crews adrift in space or atmosphere can't do this
+        if (ce instanceof EjectedCrew && (ce.isSpaceborne() || ce.isAirborne())) {
+            getBtn(MoveCommand.MOVE_TAKE_COVER).setEnabled(false);
+        } else {
+            updateTakeCoverButton();
+        }
 
         // Infantry - Urban Guerrilla calling for support
         if (isInfantry && ce.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
@@ -1463,38 +1478,39 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
         
-        if (ce().isAirborne() && ce().isAero()) {
-            if (!clientgui.getClient().getGame().useVectorMove()
-                && !((IAero) ce()).isOutControlTotal()) {
-                // check for underuse of velocity
-                boolean unusedVelocity = false;
-                if (null != cmd.getLastStep()) {
-                    unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
-                } else {
-                    unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0) &&
-                            (ce().delta_distance == 0);
-                }
-                boolean flyoff = false;
-                if ((null != cmd)
-                    && (cmd.contains(MoveStepType.OFF) || cmd
-                        .contains(MoveStepType.RETURN))) {
-                    flyoff = true;
-                }
-                boolean landing = false;
-                if ((null != cmd) && cmd.contains(MoveStepType.LAND)) {
-                    landing = true;
-                }
-                boolean ejecting = false;
-                if ((null != cmd) && cmd.contains(MoveStepType.EJECT)) {
-                    ejecting = true;
-                }
-                if (unusedVelocity && !flyoff && !landing && !ejecting) {
-                    String title = Messages
-                            .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
-                    String body = Messages
-                            .getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
-                    clientgui.doAlertDialog(title, body);
-                    return;
+        if (ce().isAirborne() || ce().isSpaceborne()) {
+            if (!clientgui.getClient().getGame().useVectorMove()) {
+                if (ce() instanceof IAero && !((IAero)ce()).isOutControlTotal()) {
+                    // check for underuse of velocity
+                    boolean unusedVelocity = false;
+                    if (null != cmd.getLastStep()) {
+                        unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
+                    } else {
+                        unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0) &&
+                                (ce().delta_distance == 0);
+                    }
+                    boolean flyoff = false;
+                    if ((null != cmd)
+                            && (cmd.contains(MoveStepType.OFF) || cmd
+                                    .contains(MoveStepType.RETURN))) {
+                        flyoff = true;
+                    }
+                    boolean landing = false;
+                    if ((null != cmd) && cmd.contains(MoveStepType.LAND)) {
+                        landing = true;
+                    }
+                    boolean ejecting = false;
+                    if ((null != cmd) && cmd.contains(MoveStepType.EJECT)) {
+                        ejecting = true;
+                    }
+                    if (unusedVelocity && !flyoff && !landing && !ejecting) {
+                        String title = Messages
+                                .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
+                        String body = Messages
+                                .getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
+                        clientgui.doAlertDialog(title, body);
+                        return;
+                    }
                 }
             }
             // depending on the rules and location (i.e. space v. atmosphere),

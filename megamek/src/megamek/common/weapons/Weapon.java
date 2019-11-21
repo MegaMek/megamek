@@ -121,18 +121,6 @@ public abstract class Weapon extends WeaponType implements Serializable {
      * @author Simon (Juliez)
      */
     public void adaptToGameOptions(GameOptions gOp) {
-        // Flamers are spread out over all sorts of weapon types not limited to FlamerWeapon.
-        // Therefore modes are handled here.
-        if (hasFlag(WeaponType.F_FLAMER)) {
-            if (gOp.booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
-                addMode("Damage");
-                addMode("Heat");
-            } else {
-                removeMode("Damage");
-                removeMode("Heat");
-            }
-        }
-        
         // Capital weapons are spread out over all sorts of weapons.
         if (isCapital()) {
             if ((getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE)

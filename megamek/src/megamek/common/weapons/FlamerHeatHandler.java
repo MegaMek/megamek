@@ -57,29 +57,13 @@ public class FlamerHeatHandler extends WeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        if ((entityTarget.tracksHeat())
+        
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
+        
+        if (entityTarget.tracksHeat()
                 && game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
-            // heat
-            hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                    toHit.getSideTable(), waa.getAimedLocation(),
-                    waa.getAimingMode(), toHit.getCover());
-            hit.setAttackerId(getAttackerId());
-
-            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(), Compute.targetSideTable(ae, entityTarget,
-                            weapon.getCalledShot().getCall()))) {
-                // Weapon strikes Partial Cover.
-                handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg,
-                        hits, nCluster, bldgAbsorbs);
-                return;
-            }
-            Report r = new Report(3405);
-            r.subject = subjectId;
-            r.add(toHit.getTableDesc());
-            r.add(entityTarget.getLocationAbbr(hit));
-            vPhaseReport.addElement(r);
-
-            r = new Report(3400);
+            
+            Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
             int heatDamage = wtype.getDamage();
@@ -92,7 +76,7 @@ public class FlamerHeatHandler extends WeaponHandler {
                             (entityTarget.getArmorType(hit.getLocation()) == 
                             EquipmentType.T_ARMOR_REFLECTIVE))){
 
-                int actual = Math.max(heatDamage,  heatDamage / 2);
+                int actual = Math.max(1,  heatDamage / 2);
                 entityTarget.heatFromExternal += actual;
                 r.add(actual);
                 r.choose(true);
@@ -106,9 +90,6 @@ public class FlamerHeatHandler extends WeaponHandler {
                 r.choose(true);
             }                        
             vPhaseReport.addElement(r);
-        } else {
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, bldgAbsorbs);
         }
     }
 

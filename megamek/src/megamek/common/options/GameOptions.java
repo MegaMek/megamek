@@ -75,7 +75,7 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_SHOW_BAY_DETAIL, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_RNG_TYPE, 1); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_RNG_LOG, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_FLAMER_HEAT, true); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_FLAMER_HEAT, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_BREEZE, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); //$NON-NLS-1$

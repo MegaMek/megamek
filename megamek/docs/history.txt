@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.47.3-SNAPSHOT
 + Issue #1546: Large VSP + Targeting Computer applies to-hit mod twice, resulting in too-easy to-hit number
 + PR #1543: Fighter Ejection
++ Issue #920: Selecting a terrain feature in the map editor selects the right terrain type in the terrain type dropdown
 
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor

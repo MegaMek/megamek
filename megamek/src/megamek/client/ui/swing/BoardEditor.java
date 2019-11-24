@@ -113,6 +113,11 @@ public class BoardEditor extends JComponent implements ItemListener,
         public int compareTo(TerrainHelper o) {
             return toString().compareTo(o.toString());
         }
+        
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof TerrainHelper && this.getTerrainType() == ((TerrainHelper) o).getTerrainType();
+        }
 
     }
     
@@ -587,7 +592,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         ITerrain terrain = Terrains.getTerrainFactory().createTerrain(
                 lisTerrain.getSelectedValue());
         terrain = curHex.getTerrain(terrain.getType());
-        choTerrainType.setSelectedItem(Terrains.getName(terrain.getType()));
+        choTerrainType.setSelectedItem(new TerrainHelper(terrain.getType()));
         texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
         cheTerrExitSpecified.setSelected(terrain.hasExitsSpecified());
         texTerrExits.setText(Integer.toString(terrain.getExits()));

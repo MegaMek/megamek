@@ -257,17 +257,17 @@ public class PilotMapSet implements DisplayMapSet {
         int i = 0;
         for (Enumeration<IOptionGroup> advGroups = en.getCrew().getOptions().getGroups(); advGroups
                 .hasMoreElements();) {
-            if (i >= (N_ADV - 1)) {
-                advantagesR[i++].setString(Messages.getString("PilotMapSet.more"));
+            if (i >= advantagesR.length - 1) {
+                advantagesR[advantagesR.length - 1].setString(Messages.getString("PilotMapSet.more"));
                 break;
             }
             IOptionGroup advGroup = advGroups.nextElement();
             if (en.getCrew().countOptions(advGroup.getKey()) > 0) {
                 advantagesR[i++].setString(advGroup.getDisplayableName());
                 for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
-                    if (i >= (N_ADV - 1)) {
-                        advantagesR[i++].setString("  " + Messages.getString("PilotMapSet.more"));
-                        break;
+                    if (i >= advantagesR.length - 1) {
+                        advantagesR[advantagesR.length - 1].setString("  " + Messages.getString("PilotMapSet.more"));
+                        return;
                     }
                     IOption adv = advs.nextElement();
                     if ((adv != null) && adv.booleanValue()) {

@@ -5,6 +5,7 @@ v0.47.3-SNAPSHOT
 + PR #1543: Fighter Ejection
 + Issue #920: Selecting a terrain feature in the map editor selects the right terrain type in the terrain type dropdown
 + Issue #1549: Client freezes when selecting a unit with a lot of special pilot abilities
++ PR #1558: Errata: adjustments to piloting BV modifier
 
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor

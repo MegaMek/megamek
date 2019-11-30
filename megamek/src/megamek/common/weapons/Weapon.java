@@ -124,12 +124,12 @@ public abstract class Weapon extends WeaponType implements Serializable {
         // Flamers are spread out over all sorts of weapon types not limited to FlamerWeapon.
         // Therefore modes are handled here.
         if (hasFlag(WeaponType.F_FLAMER)) {
-            if (gOp.booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
-                addMode("Damage");
-                addMode("Heat");
+            if (!gOp.booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
+                addMode(MODE_FLAMER_DAMAGE);
+                addMode(MODE_FLAMER_HEAT);
             } else {
-                removeMode("Damage");
-                removeMode("Heat");
+                removeMode(MODE_FLAMER_DAMAGE);
+                removeMode(MODE_FLAMER_HEAT);
             }
         }
         

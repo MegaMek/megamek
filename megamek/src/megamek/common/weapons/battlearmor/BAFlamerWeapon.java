@@ -24,7 +24,6 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.FlamerHandler;
-import megamek.common.weapons.FlamerHeatHandler;
 import megamek.common.weapons.Weapon;
 import megamek.server.Server;
 
@@ -49,10 +48,6 @@ public abstract class BAFlamerWeapon extends Weapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())
-                .curMode().equals("Heat"))) {
-            return new FlamerHeatHandler(toHit, waa, game, server);
-        }
         return new FlamerHandler(toHit, waa, game, server);
     }
 

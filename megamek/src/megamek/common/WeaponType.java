@@ -1154,6 +1154,9 @@ public class WeaponType extends EquipmentType {
 
     /**
      * Add all the types of weapons we can create to the list
+     *
+     * When a weapon class extends another, the subclass must be listed first to avoid
+     * clobbering the name lookup when calling the contructor of the superclass.
      */
     public static void initializeTypes() {
         // Laser types
@@ -2178,6 +2181,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CapitalACBayWeapon());
         EquipmentType.addType(new CapitalGaussBayWeapon());
         EquipmentType.addType(new CapitalPPCBayWeapon());
+        EquipmentType.addType(new TeleOperatedMissileBayWeapon());
         EquipmentType.addType(new CapitalMissileBayWeapon());
         EquipmentType.addType(new CapitalMDBayWeapon());
         EquipmentType.addType(new AR10BayWeapon());
@@ -2188,7 +2192,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new SubCapitalMissileBayWeapon());
         EquipmentType.addType(new MiscBayWeapon());
         EquipmentType.addType(new AMSBayWeapon());
-        EquipmentType.addType(new TeleOperatedMissileBayWeapon());
 
         // Improved OS Weapons
         EquipmentType.addType(new ISLRM5IOS());

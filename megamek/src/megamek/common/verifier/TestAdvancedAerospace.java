@@ -164,8 +164,8 @@ public class TestAdvancedAerospace extends TestAero {
         if (null == a) {
             return 0;
         }
-        // The ship gets a number of armor points equal to 10% of the SI, rounded normally.
-        double freeSI = Math.round(vessel.get0SI() / 10.0);
+        // The ship gets a number of armor points equal to 10% of the SI, rounded normally, per facing.
+        double freeSI = Math.round(vessel.get0SI() / 10.0) * 6;
         // Primitive jumpships have the free SI armor reduced, but the fractional amount is
         // added to the value calculated from the max armor tonnage before truncating.
         if (vessel.isPrimitive()) {

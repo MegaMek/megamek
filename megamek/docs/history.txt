@@ -7,6 +7,7 @@ v0.47.3-SNAPSHOT
 + Issue #1549: Client freezes when selecting a unit with a lot of special pilot abilities
 + PR #1558: Errata: adjustments to piloting BV modifier
 + Issue #911: Implements "flamers do both damage and heat" rule from BMM p. 99; multiple flamer damage/heat handling corrections with regards to relevant specialized armor.
++ PR #1560: Vehicles and Atlas from House Arano sourcebook added
 
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor

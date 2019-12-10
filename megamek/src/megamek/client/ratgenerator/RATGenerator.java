@@ -1158,9 +1158,8 @@ public class RATGenerator {
 
         file = new File(dir + "/factions.xml");
         try {
-            pw = new PrintWriter(file);
-        } catch (FileNotFoundException e1) {
-            // TODO Auto-generated catch block
+            pw = new PrintWriter(file, "UTF-8");
+        } catch (Exception e1) {
             e1.printStackTrace();
         }
         pw.println("<?xml version='1.0' encoding='UTF-8'?>");
@@ -1182,7 +1181,7 @@ public class RATGenerator {
             int nextEra = (i < ERAS.size() - 1)? ERAS.get(i + 1) : era;
             try {
                 file = new File(dir + "/" + era + ".xml");
-                pw = new PrintWriter(file);
+                pw = new PrintWriter(file, "UTF-8");
                 pw.println("<?xml version='1.0' encoding='UTF-8'?>");
                 pw.println("<!-- Era " + era + "-->");
                 pw.println("<ratgen>");
@@ -1195,6 +1194,9 @@ public class RATGenerator {
                 pw.println("</factions>");
                 pw.println("<units>");
                 for (ChassisRecord cr : chassisRecs) {
+                    if(cr.getChassis().contains("Bluehawk")) {
+                        int alpha = 1;
+                    }
                     if (cr.getIntroYear() < nextEra && chassisIndex.get(era).containsKey(cr.getKey())) {
                         avFields.clear();
                         for (Iterator<AvailabilityRating> iter = chassisIndex.get(era).get(cr.getKey()).values().iterator();
@@ -1211,7 +1213,7 @@ public class RATGenerator {
                                         "' omni='Clan" : "' omni='IS";
                             }
                             pw.println("\t<chassis name='" + cr.getChassis().replaceAll("'", "&apos;")
-                                    + "' unitType='" + cr.getUnitType()
+                                    + "' unitType='" + UnitType.getTypeName(cr.getUnitType())
                                     + omni + "'>");
                             pw.print("\t\t<availability>");
                             for (Iterator<String> iter = avFields.iterator(); iter.hasNext();) {
@@ -1275,8 +1277,7 @@ public class RATGenerator {
                 pw.println("</units>");
                 pw.println("</ratgen>");
                 pw.close();
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

@@ -110,6 +110,16 @@ public class Bay implements Transporter, ITechnology {
     public void setBayDamage(double damage) {
     	this.damage = Math.min(damage, totalSpace);
     }
+    
+    /**
+     * Used by MHQ to directly access currentSpace in order to track what bay-equipped units
+     * can transport which entities
+     *
+     * @return The current available space in the bay
+     */
+    public double getCurrentSpace() {
+        return currentSpace;
+    }
 
     // the starting number of doors for the bay.
     public int getDoors() {

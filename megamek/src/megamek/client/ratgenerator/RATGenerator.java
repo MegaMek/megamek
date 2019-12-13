@@ -215,16 +215,22 @@ public class RATGenerator {
      * Adds or changes an availability rating entry for a model.
      * 
      * @param era  The year of the record to change
-     * @param unit The name of the model for which to change the record
+     * @param chassisKey The chassis key for the unit which is having its model record updated 
+     * @param unit The model key for the unit which is having its model record updated
      * @param ar   The new <code>AvailabilityRating</code> for the unit in the era. This provides the
      *             faction.
      */
-    public void setModelFactionRating(int era, String unit, AvailabilityRating ar) {
-        if (modelIndex.get(era).get(unit) == null) {
-            modelIndex.get(era).put(unit, new HashMap<String, AvailabilityRating>());
+    public void setModelFactionRating(int era, String chassisKey, String unitKey, AvailabilityRating ar) {
+        // create a blank chassis faction record as well
+        if (chassisIndex.get(era).get(chassisKey) == null) {
+            setChassisFactionRating(era, chassisKey, new AvailabilityRating(chassisKey, era, ar.getFaction() + ":1"));
         }
-        modelIndex.get(era).get(unit).put(ar.getFactionCode(), ar);
-        models.get(unit).getIncludedFactions().add(ar.getFactionCode());
+        
+        if (modelIndex.get(era).get(unitKey) == null) {
+            modelIndex.get(era).put(unitKey, new HashMap<String, AvailabilityRating>());
+        }
+        modelIndex.get(era).get(unitKey).put(ar.getFactionCode(), ar);
+        models.get(unitKey).getIncludedFactions().add(ar.getFactionCode());
     }
 
     /**
@@ -1194,14 +1200,12 @@ public class RATGenerator {
                 pw.println("</factions>");
                 pw.println("<units>");
                 for (ChassisRecord cr : chassisRecs) {
-                    if(cr.getChassis().contains("Bluehawk")) {
+                    if(cr.getChassis().contains("Bluehawk") && nextEra == 3028) {
                         int alpha = 1;
                     }
                     if (cr.getIntroYear() < nextEra && chassisIndex.get(era).containsKey(cr.getKey())) {
                         avFields.clear();
-                        for (Iterator<AvailabilityRating> iter = chassisIndex.get(era).get(cr.getKey()).values().iterator();
-                                iter.hasNext();) {
-                            AvailabilityRating av = iter.next();
+                        for (AvailabilityRating av : chassisIndex.get(era).get(cr.getKey()).values()) {
                             if (shouldExportAv(av, era)) {
                                 avFields.add(av.toString());
                             }
@@ -1228,9 +1232,7 @@ public class RATGenerator {
                                 if (cr.getIntroYear() < nextEra
                                         && modelIndex.get(era).containsKey(mr.getKey())) {
                                     avFields.clear();
-                                    for (Iterator<AvailabilityRating> iter = modelIndex.get(era).get(mr.getKey()).values().iterator();
-                                            iter.hasNext();) {
-                                        AvailabilityRating av = iter.next();
+                                    for (AvailabilityRating av : modelIndex.get(era).get(mr.getKey()).values()) {
                                         if (shouldExportAv(av, era)) {
                                             avFields.add(av.toString());
                                         }

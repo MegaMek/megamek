@@ -1200,9 +1200,6 @@ public class RATGenerator {
                 pw.println("</factions>");
                 pw.println("<units>");
                 for (ChassisRecord cr : chassisRecs) {
-                    if(cr.getChassis().contains("Bluehawk") && nextEra == 3028) {
-                        int alpha = 1;
-                    }
                     if (cr.getIntroYear() < nextEra && chassisIndex.get(era).containsKey(cr.getKey())) {
                         avFields.clear();
                         for (AvailabilityRating av : chassisIndex.get(era).get(cr.getKey()).values()) {

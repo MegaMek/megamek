@@ -7,6 +7,7 @@
 	</faction>
 	<faction key='AA' name='Augustine Alliance' minor='true' clan='false' periphery='false'>
 		<years>3139-</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>ROS</parentFaction>
 	</faction>
 	<faction key='AB' name='Azami Caliphate' minor='true' clan='false' periphery='false'>
@@ -190,6 +191,7 @@
 	</faction>
 	<faction key='CvW' name='Covenant Worlds' minor='true' clan='false' periphery='false'>
 		<years>3137-</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='DC' name='Draconis Combine' minor='false' clan='false' periphery='false'>
@@ -219,6 +221,7 @@
 	</faction>
 	<faction key='DS' name='Duchy of Small' minor='true' clan='false' periphery='false'>
 		<years>3057-3066</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
 	</faction>
 	<faction key='DTA' name='Duchy of Tamarind' minor='false' clan='false' periphery='false'>
@@ -273,6 +276,7 @@
 	</faction>
 	<faction key='FR' name='Fronc Reaches' minor='true' clan='false' periphery='true'>
 		<years>3066-</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>NCR</parentFaction>
 	</faction>
 	<faction key='GL' name='Galatean League' minor='true' clan='false' periphery='false'>
@@ -302,6 +306,7 @@
 	</faction>
 	<faction key='KP' name='Kittery Prefecture' minor='true' clan='false' periphery='false'>
 		<years>3072-3081</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
 	</faction>
 	<faction key='LL' name='Lothian League' minor='true' clan='false' periphery='true'>
@@ -354,6 +359,7 @@
 	</faction>
 	<faction key='MiC' name='Milton Combine' minor='true' clan='false' periphery='false'>
 		<years>3137-3139</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='MV' name='Morgraine&apos;s Valkyrate' minor='true' clan='false' periphery='true'>
@@ -378,6 +384,7 @@
 	</faction>
 	<faction key='OZP' name='Ohrensen-Zion Province' minor='true' clan='false' periphery='false'>
 		<years>3078-3081</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='OP' name='Oriente Protectorate' minor='false' clan='false' periphery='false'>
@@ -392,6 +399,7 @@
 	</faction>
 	<faction key='PP' name='Pentagon Powers' minor='false' clan='false' periphery='false'>
 		<years>2801-2822</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>SL</parentFaction>
 	</faction>
 	<faction key='Periphery' name='Periphery' minor='false' clan='false' periphery='true'>
@@ -421,6 +429,7 @@
 	</faction>
 	<faction key='PC' name='Protectorate Coalition' minor='true' clan='false' periphery='false'>
 		<years>3136-3144</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='RD' name='Rasalhague Dominion' minor='false' clan='true' periphery='false'>
@@ -445,12 +454,12 @@
 	</faction>
 	<faction key='RR' name='Republic Remnant' minor='false' clan='false' periphery='false'>
 		<years>3135-</years>
-		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone's Brigade</ratingLevels>
+		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone&apos;s Brigade</ratingLevels>
 		<parentFaction>ROS</parentFaction>
 	</faction>
 	<faction key='ROS' name='Republic of the Sphere' minor='false' clan='false' periphery='false'>
 		<years>3081-</years>
-		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone's Brigade</ratingLevels>
+		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone&apos;s Brigade</ratingLevels>
 		<parentFaction>IS</parentFaction>
 	</faction>
 	<faction key='RIM' name='Rim Collection' minor='true' clan='false' periphery='true'>
@@ -475,18 +484,22 @@
 	</faction>
 	<faction key='ST' name='Saiph Triumvirate' minor='true' clan='false' periphery='false'>
 		<years>3057-3068</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
 	</faction>
 	<faction key='SA' name='Senatorial Alliance' minor='true' clan='false' periphery='false'>
 		<years>3135-3138</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>ROS</parentFaction>
 	</faction>
 	<faction key='ShA' name='Shiloh Alliance' minor='true' clan='false' periphery='false'>
 		<years>3135-3144</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>ROS</parentFaction>
 	</faction>
 	<faction key='SHC' name='Silver Hawk Coalition' minor='true' clan='false' periphery='false'>
 		<years>3079-3084</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='SIC' name='St Ives Compact' minor='false' clan='false' periphery='false'>
@@ -501,6 +514,7 @@
 	</faction>
 	<faction key='SLIE' name='Star League-in-Exile' minor='false' clan='false' periphery='false'>
 		<years>2786-2801</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>SL</parentFaction>
 	</faction>
 	<faction key='SC' name='Stewart Commonality' minor='true' clan='false' periphery='false'>
@@ -515,10 +529,12 @@
 	</faction>
 	<faction key='SKC' name='Styk Commonality' minor='true' clan='false' periphery='false'>
 		<years>3057-3063</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
 	</faction>
 	<faction key='TTU' name='Tall Trees Union' minor='true' clan='false' periphery='false'>
 		<years>3136-3144</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>ROS</parentFaction>
 	</faction>
 	<faction key='TC' name='Taurian Concordat' minor='false' clan='false' periphery='true'>
@@ -528,6 +544,7 @@
 	</faction>
 	<faction key='TCC' name='Terracap Confederation' minor='true' clan='false' periphery='false'>
 		<years>3057-3068</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
 	</faction>
 	<faction key='TA' name='Terran Alliance' minor='false' clan='false' periphery='false'>
@@ -558,6 +575,7 @@
 	</faction>
 	<faction key='TFR' name='Tikonov Free Republic' minor='true' clan='false' periphery='false'>
 		<years>3029-3031</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
 	</faction>
 	<faction key='TD' name='Tortuga Dominions' minor='false' clan='false' periphery='true'>
@@ -835,6 +853,7 @@
 	</faction>
 	<faction key='MERC.ELH' name='Eridani Light Horse' minor='false' clan='false' periphery='false'>
 		<years>2780-3081</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>MERC</parentFaction>
 	</faction>
 	<faction key='CS.EC' name='Explorer Corps' minor='false' clan='false' periphery='false'>
@@ -894,6 +913,7 @@
 	</faction>
 	<faction key='MERC.GDL' name='Gray Death Legion' minor='false' clan='false' periphery='false'>
 		<years>3024-3065</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>MERC</parentFaction>
 	</faction>
 	<faction key='LA.HG' name='Hesperus Guards' minor='false' clan='false' periphery='false'>
@@ -913,6 +933,7 @@
 	</faction>
 	<faction key='MERC.KH' name='Kell Hounds' minor='false' clan='false' periphery='false'>
 		<years>3010-</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>MERC,LA</parentFaction>
 	</faction>
 	<faction key='CFM.BG' name='Kindraa Beyl-Grant' minor='false' clan='true' periphery='false'>
@@ -1062,6 +1083,7 @@
 	</faction>
 	<faction key='MERC.NH' name='Northwind Highlanders' minor='false' clan='false' periphery='false'>
 		<years>-3081</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>MERC</parentFaction>
 	</faction>
 	<faction key='LA.OR' name='Odessa Regulars' minor='false' clan='false' periphery='false'>
@@ -1196,6 +1218,7 @@
 	</faction>
 	<faction key='TC.PL' name='Pleiades Lancers' minor='false' clan='false' periphery='true'>
 		<years>2335-</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>TC</parentFaction>
 	</faction>
 	<faction key='DC.PH' name='Proserpina Hussars' minor='false' clan='false' periphery='false'>
@@ -1332,6 +1355,7 @@
 	</faction>
 	<faction key='SL.R' name='Star League Royal' minor='false' clan='false' periphery='false'>
 		<years>2571-2780</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>SL</parentFaction>
 	</faction>
 	<faction key='FWL.SD' name='Stewart Dragoons' minor='false' clan='false' periphery='false'>
@@ -1396,6 +1420,7 @@
 	</faction>
 	<faction key='MERC.WD' name='Wolf&apos;s Dragoons' minor='false' clan='false' periphery='false'>
 		<years>3005-</years>
+		<ratingLevels></ratingLevels>
 		<parentFaction>MERC</parentFaction>
 	</faction>
 	<faction key='LA.YR' name='York Regulars' minor='false' clan='false' periphery='false'>

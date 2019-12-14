@@ -81,6 +81,7 @@ public class AvailabilityRating {
 			DefaultMmLogger.getInstance().log(getClass(), "<init>(String, int, String)", LogLevel.WARNING,
 			       "No availability code given for " + unit +
 					" (" + era + "): " + faction);
+			return;
 		}
 		if (fields[1].endsWith("+")) {
 			this.ratingAdjustment++;

@@ -220,12 +220,7 @@ public class RATGenerator {
      * @param ar   The new <code>AvailabilityRating</code> for the unit in the era. This provides the
      *             faction.
      */
-    public void setModelFactionRating(int era, String chassisKey, String unitKey, AvailabilityRating ar) {
-        // create a blank chassis faction record as well
-        if (chassisIndex.get(era).get(chassisKey) == null) {
-            setChassisFactionRating(era, chassisKey, new AvailabilityRating(chassisKey, era, ar.getFaction() + ":1"));
-        }
-        
+    public void setModelFactionRating(int era, String unitKey, AvailabilityRating ar) {
         if (modelIndex.get(era).get(unitKey) == null) {
             modelIndex.get(era).put(unitKey, new HashMap<String, AvailabilityRating>());
         }

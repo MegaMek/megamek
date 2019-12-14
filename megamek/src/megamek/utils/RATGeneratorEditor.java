@@ -884,7 +884,7 @@ public class RATGeneratorEditor extends JFrame {
                 return false;
             }
             
-            if(mode == MODE_MODEL && (rg.getChassisFactionRatings(ERAS[0], getUnitKey()) == null)) {
+            if(mode == MODE_MODEL && (rg.getChassisFactionRatings(ERAS[0], unitRecord.getChassisKey()) == null)) {
                 return false;
             }                    
             

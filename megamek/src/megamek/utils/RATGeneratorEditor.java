@@ -884,8 +884,18 @@ public class RATGeneratorEditor extends JFrame {
                 return false;
             }
             
-            if(mode == MODE_MODEL && (rg.getChassisFactionRatings(ERAS[0], unitRecord.getChassisKey()) == null)) {
-                return false;
+            if(mode == MODE_MODEL) {
+                boolean chassisRecordFound = false;
+                for(int era : ERAS) {
+                    if(rg.getChassisFactionRatings(era, unitRecord.getChassisKey()) != null) {
+                        chassisRecordFound = true;
+                        break;
+                    }
+                }
+                
+                if(!chassisRecordFound) {
+                    return false;
+                }
             }                    
             
             factions.add(faction);
@@ -894,14 +904,6 @@ public class RATGeneratorEditor extends JFrame {
                 list.add("");
             }
             data.put(faction, list);
-            for (int i = 0; i < ERAS.length; i++) {
-                AvailabilityRating ar = new AvailabilityRating(getUnitKey(), ERAS[i], faction + ":");
-                if (mode == MODE_MODEL) {
-                    rg.setModelFactionRating(ERAS[i], getUnitKey(), ar);
-                } else {
-                    rg.setChassisFactionRating(ERAS[i], getUnitKey(), ar);
-                }
-            }
             fireTableDataChanged();
             return true;
         }

@@ -215,8 +215,7 @@ public class RATGenerator {
      * Adds or changes an availability rating entry for a model.
      * 
      * @param era  The year of the record to change
-     * @param chassisKey The chassis key for the unit which is having its model record updated 
-     * @param unit The model key for the unit which is having its model record updated
+     * @param unitKey The model key for the unit which is having its model record updated
      * @param ar   The new <code>AvailabilityRating</code> for the unit in the era. This provides the
      *             faction.
      */

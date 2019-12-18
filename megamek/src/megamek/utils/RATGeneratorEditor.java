@@ -36,6 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -312,7 +313,7 @@ public class RATGeneratorEditor extends JFrame {
                             getUnitRecord(tblMasterUnitList.
                                     convertRowIndexToModel(tblMasterUnitList.
                                             getSelectedRow()));
-                    unitEditorModel.setData(rec, unitEditorModel.getMode());
+                    unitEditorModel.setData(rec, radioModel.isSelected() ? UnitEditorTableModel.MODE_MODEL : UnitEditorTableModel.MODE_CHASSIS);
                 }
             }
         });
@@ -338,13 +339,19 @@ public class RATGeneratorEditor extends JFrame {
         gbc.gridy = 0;
         panEditTab.add(button, gbc);
         button.addActionListener(ev -> {
-            unitEditorModel.addEntry(txtFaction.getText());
-            String faction = txtFaction.getText();
-            if (faction.contains(".")) {
-                faction = faction.split("\\.")[0];
-            }
-            if (faction.contains("!")) {
-                faction = faction.split("!")[0];
+            
+            if(!unitEditorModel.addEntry(txtFaction.getText())) {
+                JOptionPane.showMessageDialog(this, 
+                        "Unable to add model or chassis entry. Please select a unit model. " +
+                        "If adding a model entry, make sure you already have a chassis entry defined.");
+            } else {
+                String faction = txtFaction.getText();
+                if (faction.contains(".")) {
+                    faction = faction.split("\\.")[0];
+                }
+                if (faction.contains("!")) {
+                    faction = faction.split("!")[0];
+                }
             }
         });
 
@@ -745,13 +752,17 @@ public class RATGeneratorEditor extends JFrame {
         HashMap<String, ArrayList<String>> data;
         private HashMap<String, ArrayList<Integer>> weights;
         private int mode;
-        private String unit;
+        private AbstractUnitRecord unitRecord;
+        
+        private String getUnitKey() {
+            return (mode == MODE_CHASSIS) ? unitRecord.getChassisKey() : unitRecord.getKey();
+        }
 
         public UnitEditorTableModel() {
             factions = new ArrayList<String>();
             data = new HashMap<String, ArrayList<String>>();
             weights = new HashMap<String, ArrayList<Integer>>();
-            unit = "";
+            unitRecord = null;
         }
 
         @SuppressWarnings("unchecked")
@@ -760,14 +771,14 @@ public class RATGeneratorEditor extends JFrame {
             data.clear();
             weights.clear();
             this.mode = mode;
-            unit = (mode == MODE_CHASSIS)?unitRec.getChassisKey():unitRec.getKey();
+            unitRecord = unitRec;
             final ArrayList<String> empty = new ArrayList<String>();
             while (empty.size() < rg.getEraSet().size()) {
                 empty.add("");
             }
             for (int i = 0; i < rg.getEraSet().size(); i++) {
                 Collection<AvailabilityRating> recs = (mode == MODE_MODEL)?
-                        rg.getModelFactionRatings(ERAS[i], unit):
+                        rg.getModelFactionRatings(ERAS[i], getUnitKey()):
                             rg.getChassisFactionRatings(ERAS[i], unitRec.getChassisKey());
                         if (recs != null) {
                             for (AvailabilityRating rec : recs) {
@@ -849,26 +860,44 @@ public class RATGeneratorEditor extends JFrame {
             } else if (!((String)value).matches("\\d+[\\+\\-]?(:\\d+)?")) {
                 return;
             } else {
-                ar = new AvailabilityRating(unit, era,
+                ar = new AvailabilityRating(getUnitKey(), era,
                         factions.get(row) + ":" + (String)value);            
             }
             data.get(factions.get(row)).set(col - 1, (String)value);
-            if (rg.getChassisRecord(unit) != null) {
+            if (rg.getChassisRecord(getUnitKey()) != null) {
                 if (ar == null) {
-                    rg.removeChassisFactionRating(era, unit, factions.get(row));                
+                    rg.removeChassisFactionRating(era, getUnitKey(), factions.get(row));                
                 } else {
-                    rg.setChassisFactionRating(era, unit, ar);
+                    rg.setChassisFactionRating(era, getUnitKey(), ar);
                 }
             } else {
                 if (ar == null) {
-                    rg.removeModelFactionRating(era, unit, factions.get(row));               
+                    rg.removeModelFactionRating(era, getUnitKey(), factions.get(row));               
                 } else {
-                    rg.setModelFactionRating(era, unit, ar);
+                    rg.setModelFactionRating(era, getUnitKey(), ar);
                 }
             }
         }
 
-        public void addEntry(String faction) {
+        public boolean addEntry(String faction) {
+            if(unitRecord == null) {                 
+                return false;
+            }
+            
+            if(mode == MODE_MODEL) {
+                boolean chassisRecordFound = false;
+                for(int era : ERAS) {
+                    if(rg.getChassisFactionRatings(era, unitRecord.getChassisKey()) != null) {
+                        chassisRecordFound = true;
+                        break;
+                    }
+                }
+                
+                if(!chassisRecordFound) {
+                    return false;
+                }
+            }                    
+            
             factions.add(faction);
             ArrayList<String> list = new ArrayList<String>();
             while (list.size() < ERAS.length) {
@@ -876,14 +905,15 @@ public class RATGeneratorEditor extends JFrame {
             }
             data.put(faction, list);
             fireTableDataChanged();
+            return true;
         }
 
         public void removeEntry(int row) {
             for (int era : ERAS) {
                 if (mode == MODE_CHASSIS) {
-                    rg.removeChassisFactionRating(era, unit, factions.get(row));                
+                    rg.removeChassisFactionRating(era, getUnitKey(), factions.get(row));                
                 } else {
-                    rg.removeModelFactionRating(era, unit, factions.get(row));                               
+                    rg.removeModelFactionRating(era, getUnitKey(), factions.get(row));                               
                 }
             }
             data.remove(factions.get(row));
@@ -901,12 +931,12 @@ public class RATGeneratorEditor extends JFrame {
             data.put(newFaction, copyTo);
             for (int i = 0; i < ERAS.length; i++) {
                 if (!copyFrom.get(i).equals("")) {
-                    AvailabilityRating ar = new AvailabilityRating(unit, ERAS[i],
+                    AvailabilityRating ar = new AvailabilityRating(getUnitKey(), ERAS[i],
                             newFaction + ":" + copyFrom.get(i));
                     if (mode == MODE_MODEL) {
-                        rg.setModelFactionRating(ERAS[i], unit, ar);
+                        rg.setModelFactionRating(ERAS[i], getUnitKey(), ar);
                     } else {
-                        rg.setChassisFactionRating(ERAS[i], unit, ar);
+                        rg.setChassisFactionRating(ERAS[i], getUnitKey(), ar);
                     }
                 }
             }

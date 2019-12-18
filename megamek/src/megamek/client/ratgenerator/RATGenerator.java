@@ -215,16 +215,16 @@ public class RATGenerator {
      * Adds or changes an availability rating entry for a model.
      * 
      * @param era  The year of the record to change
-     * @param unit The name of the model for which to change the record
+     * @param unitKey The model key for the unit which is having its model record updated
      * @param ar   The new <code>AvailabilityRating</code> for the unit in the era. This provides the
      *             faction.
      */
-    public void setModelFactionRating(int era, String unit, AvailabilityRating ar) {
-        if (modelIndex.get(era).get(unit) == null) {
-            modelIndex.get(era).put(unit, new HashMap<String, AvailabilityRating>());
+    public void setModelFactionRating(int era, String unitKey, AvailabilityRating ar) {
+        if (modelIndex.get(era).get(unitKey) == null) {
+            modelIndex.get(era).put(unitKey, new HashMap<String, AvailabilityRating>());
         }
-        modelIndex.get(era).get(unit).put(ar.getFactionCode(), ar);
-        models.get(unit).getIncludedFactions().add(ar.getFactionCode());
+        modelIndex.get(era).get(unitKey).put(ar.getFactionCode(), ar);
+        models.get(unitKey).getIncludedFactions().add(ar.getFactionCode());
     }
 
     /**
@@ -1158,9 +1158,8 @@ public class RATGenerator {
 
         file = new File(dir + "/factions.xml");
         try {
-            pw = new PrintWriter(file);
-        } catch (FileNotFoundException e1) {
-            // TODO Auto-generated catch block
+            pw = new PrintWriter(file, "UTF-8");
+        } catch (Exception e1) {
             e1.printStackTrace();
         }
         pw.println("<?xml version='1.0' encoding='UTF-8'?>");
@@ -1182,7 +1181,7 @@ public class RATGenerator {
             int nextEra = (i < ERAS.size() - 1)? ERAS.get(i + 1) : era;
             try {
                 file = new File(dir + "/" + era + ".xml");
-                pw = new PrintWriter(file);
+                pw = new PrintWriter(file, "UTF-8");
                 pw.println("<?xml version='1.0' encoding='UTF-8'?>");
                 pw.println("<!-- Era " + era + "-->");
                 pw.println("<ratgen>");
@@ -1197,9 +1196,7 @@ public class RATGenerator {
                 for (ChassisRecord cr : chassisRecs) {
                     if (cr.getIntroYear() < nextEra && chassisIndex.get(era).containsKey(cr.getKey())) {
                         avFields.clear();
-                        for (Iterator<AvailabilityRating> iter = chassisIndex.get(era).get(cr.getKey()).values().iterator();
-                                iter.hasNext();) {
-                            AvailabilityRating av = iter.next();
+                        for (AvailabilityRating av : chassisIndex.get(era).get(cr.getKey()).values()) {
                             if (shouldExportAv(av, era)) {
                                 avFields.add(av.toString());
                             }
@@ -1211,7 +1208,7 @@ public class RATGenerator {
                                         "' omni='Clan" : "' omni='IS";
                             }
                             pw.println("\t<chassis name='" + cr.getChassis().replaceAll("'", "&apos;")
-                                    + "' unitType='" + cr.getUnitType()
+                                    + "' unitType='" + UnitType.getTypeName(cr.getUnitType())
                                     + omni + "'>");
                             pw.print("\t\t<availability>");
                             for (Iterator<String> iter = avFields.iterator(); iter.hasNext();) {
@@ -1226,9 +1223,7 @@ public class RATGenerator {
                                 if (cr.getIntroYear() < nextEra
                                         && modelIndex.get(era).containsKey(mr.getKey())) {
                                     avFields.clear();
-                                    for (Iterator<AvailabilityRating> iter = modelIndex.get(era).get(mr.getKey()).values().iterator();
-                                            iter.hasNext();) {
-                                        AvailabilityRating av = iter.next();
+                                    for (AvailabilityRating av : modelIndex.get(era).get(mr.getKey()).values()) {
                                         if (shouldExportAv(av, era)) {
                                             avFields.add(av.toString());
                                         }
@@ -1275,8 +1270,7 @@ public class RATGenerator {
                 pw.println("</units>");
                 pw.println("</ratgen>");
                 pw.close();
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

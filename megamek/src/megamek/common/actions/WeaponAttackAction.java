@@ -4218,21 +4218,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             
             // get mods for direction of attack
             if (!(a.isSpheroid() && !game.getBoard().inSpace())) {
-                int side = toHit.getSideTable();
-                // if this is an aero attack using advanced movement rules then
-                // determine side differently
-                if (game.useVectorMove()) {
-                    boolean usePrior = false;
-                    Coords attackPos = ae.getPosition();
-                    if (game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())) {
-                        int moveSort = Compute.shouldMoveBackHex(ae, te);
-                        if (moveSort < 0) {
-                            attackPos = ae.getPriorPosition();
-                        }
-                        usePrior = moveSort > 0;
-                    }
-                    side = te.chooseSide(attackPos, usePrior);
-                }
+                int side = Compute.targetSideTable(ae.getPosition(), te);
+                
                 // +1 if shooting at an aero approaching nose-on
                 if (side == ToHitData.SIDE_FRONT) {
                     toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeroNoseAttack"));

@@ -1481,7 +1481,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // for spheroid dropships in atmosphere (and on ground), the rules about
         // firing arcs are more complicated
         // TW errata 2.1
-        if (Compute.useSpheroidAtmosphere(game, ae) && weapon != null) {
+        if ((Compute.useSpheroidAtmosphere(game, ae) ||
+                (((IAero) ae).isSpheroid() && ae.getAltitude() == 0))
+                && weapon != null) {
             int altDif = target.getAltitude() - ae.getAltitude();
             int range = Compute.effectiveDistance(game, ae, target, false);
             // Only aft-mounted weapons can be fired at range 0 (targets directly underneath)
@@ -1503,9 +1505,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return Messages.getString("WeaponAttackAction.TooLowForFrontSide");
             }
             // Aft-mounted weapons can only be fired at targets at least 1 altitude lower
-            if ((weapon.getLocation() == Aero.LOC_AFT)) {
-                if (ae.isAirborne() && (altDif > -1)) {
+            // For grounded spheroids, weapons can only be fired at targets in occupied hexes, 
+            // but it's not actually possible for a unit to occupy the same hex as a grounded spheroid so
+            // we simplify the calculation a bit
+            if ((weapon.getLocation() == Aero.LOC_AFT) && (altDif > -1)) {
+                if (ae.isAirborne()) {
                     return Messages.getString("WeaponAttackAction.TooHighForAft");
+                } else {
+                    return Messages.getString("WeaponAttackAction.GroundedSpheroidDropshipAftWeaponRestriction");
                 }
             }
             // and aft-side-mounted weapons can only be fired at targets at the same or lower altitude

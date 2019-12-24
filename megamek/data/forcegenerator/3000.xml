@@ -1120,6 +1120,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Bluehawk Combat Support Fighter' unitType='Conventional Fighter'>
+		<availability>MOC:6,OA:5,FS:2,Periphery:4,DC:2</availability>
+		<model name='MSF-42'>
+			<availability>General:6</availability>
+		</model>
+	</chassis>
 	<chassis name='Bombardier' unitType='Mek'>
 		<availability>CS:5,OA:2-,CDS:6,CLAN:5,IS:2-,NIOPS:5,FWL:2-,DC:2-,Periphery:1</availability>
 		<model name='BMB-10D'>
@@ -4303,6 +4309,12 @@
 		<model name='(Standard)'>
 			<roles>support,engineer</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Protector Combat Support Fighter' unitType='Conventional Fighter'>
+		<availability>MOC:5,OA:6,FS:2,Periphery:4,DC:2</availability>
+		<model name='ASF-23'>
+			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Prowler Multi-Terrain Vehicle' unitType='Tank'>

@@ -3080,6 +3080,12 @@
 			<availability>RF:0,General:4</availability>
 		</model>
 	</chassis>
+	<chassis name='Bluehawk Combat Support Fighter' unitType='Conventional Fighter'>
+		<availability>MOC:6,FS:2,Periphery:4,DC:2</availability>
+		<model name='MSF-42'>
+			<availability>General:6</availability>
+		</model>
+	</chassis>
 	<chassis name='Boeing Jump Bomber' unitType='Conventional Fighter'>
 		<availability>FS:1</availability>
 		<model name='(Standard)'>
@@ -13133,6 +13139,12 @@
 		<model name='(Standard)'>
 			<roles>support,engineer</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Protector Combat Support Fighter' unitType='Conventional Fighter'>
+		<availability>MOC:5,FS:2,Periphery:4,DC:2</availability>
+		<model name='ASF-23'>
+			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Prowler Multi-Terrain Vehicle' unitType='Tank'>

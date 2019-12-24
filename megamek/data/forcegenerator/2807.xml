@@ -1757,6 +1757,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Hover Scout' unitType='Tank'>
+		<availability>IS:1,Periphery:1</availability>
+		<model name='(Standard)'>
+			<availability>General:5</availability>
+		</model>
+	</chassis>
 	<chassis name='Hunchback' unitType='Mek'>
 		<availability>PP:5,CC:5,MOC:5,IS:5,Periphery.Deep:5,FS:5,CIR:5,TC:5,Periphery:5,CS:5-,OA:5,LA:5,Periphery.MW:5,Periphery.ME:5,FWL:5,NIOPS:5-,DC:5</availability>
 		<model name='HBK-4G'>

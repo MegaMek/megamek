@@ -3379,6 +3379,12 @@
 			<availability>FWL:8,IS:4,WOB:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Falcon Hover Tank' unitType='Tank'>
+		<availability>IS:1,Periphery:1</availability>
+		<model name='(Standard)'>
+			<availability>General:5</availability>
+		</model>
+	</chassis>
 	<chassis name='Falcon' unitType='Mek'>
 		<availability>DC.GHO:2,MERC.WD:2,DC:2</availability>
 		<model name='FLC-4N'>
@@ -4655,6 +4661,12 @@
 		<availability>IS:4,Periphery:4</availability>
 		<model name='Johnston Industries Rapid Response Force'>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Hover Scout' unitType='Tank'>
+		<availability>IS:1,Periphery:1</availability>
+		<model name='(Standard)'>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Huitzilopochtli Assault Tank &apos;Huey&apos;' unitType='Tank'>

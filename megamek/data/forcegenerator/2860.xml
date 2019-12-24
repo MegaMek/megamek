@@ -2231,6 +2231,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Hover Scout' unitType='Tank'>
+		<availability>IS:1,Periphery:1</availability>
+		<model name='(Standard)'>
+			<availability>General:5</availability>
+		</model>
+	</chassis>
 	<chassis name='Huitzilopochtli Assault Tank &apos;Huey&apos;' unitType='Tank'>
 		<availability>CLAN:5,CNC:5</availability>
 		<model name='(Standard)'>

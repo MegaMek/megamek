@@ -131,14 +131,11 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             testEntity = new TestMech((Mech) entity, mechOption, fileString);
         } else if (entity instanceof Protomech) {
             testEntity = new TestProtomech((Protomech) entity, protomechOption, fileString);
+        } else if (entity.isSupportVehicle()) {
+            testEntity = new TestSupportVehicle(entity, tankOption, null);
         } else if ((entity instanceof Tank) && 
                 !(entity instanceof GunEmplacement)) {
-            if (entity.isSupportVehicle()) {
-                testEntity = new TestSupportVehicle((Tank) entity, tankOption,
-                        null);
-            } else {
-                testEntity = new TestTank((Tank) entity, tankOption, null);
-            }
+            testEntity = new TestTank((Tank) entity, tankOption, null);
         } else if (entity.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
             testEntity = new TestSmallCraft((SmallCraft) entity, aeroOption, fileString);
         } else if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
@@ -232,9 +229,6 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 if (entity == null) {
                     continue;
                 }
-                if (entity.hasETypeFlag(Entity.ETYPE_FIXED_WING_SUPPORT)) {
-                    continue;
-                }
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),
                         loadingVerbosity,entity.getTechLevel(),failsOnly)) {
                     failures++;
@@ -268,22 +262,22 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         boolean failsOnly = true;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-file")) {
-                if (args.length <= i) {
+                i++;
+                if (i >= args.length) {
                     System.out.println("Missing argument filename!");
                     return;
                 }
-                i++;
                 f = new File(args[i]);
                 if (!f.exists()) {
                     System.out.println("Can't find: " + args[i] + "!");
                     return;
                 }
                 if (args[i].endsWith(".zip")) {
-                    if (args.length <= i + 1) {
+                    i++;
+                    if (i >= args.length) {
                         System.out.println("Missing Entity Name!");
                         return;
                     }
-                    i++;
                     entityName = args[i];
                 }
             } else if (args[i].equals("-v") || args[i].equals("-verbose")){

@@ -415,6 +415,10 @@ public class AmmoType extends EquipmentType {
                     .hasFlag(F_AR10_KILLER_WHALE)) {
                 return false;
             }
+            if (hasFlag(F_NUCLEAR) != ((AmmoType) other)
+                    .hasFlag(F_NUCLEAR)) {
+                return false;
+            }
         }
         return ((getAmmoType() == ((AmmoType) other).getAmmoType()) && (getRackSize() == ((AmmoType) other)
                 .getRackSize()));
@@ -501,6 +505,67 @@ public class AmmoType extends EquipmentType {
                 return (munitionType == M_STANDARD)
                         || (munitionType == M_ARTEMIS_CAPABLE)
                         || (munitionType == M_ARTEMIS_V_CAPABLE);
+        }
+    }
+    
+    /**
+     * Aerospace units cannot use specialty munitions except Artemis and LBX cluster (but not standard).
+     * ATM ER and HE rounds are considered standard munitions. AR10 missiles are designed for aerospace
+     * units and all munition types are available.
+     * 
+     * @param option True if unofficial game option allowing alternate muntions for artillery bays is enabled
+     * 
+     * @return true if the munition can be used by aerospace units
+     */
+    public boolean canAeroUse(boolean option) {
+        if (option) {
+            switch (ammoType) {
+                case T_AC_LBX:
+                case T_SBGAUSS:
+                    return munitionType == M_CLUSTER;
+                case T_ATM:
+                case T_IATM:
+                    return (munitionType == M_STANDARD)
+                            || (munitionType == M_HIGH_EXPLOSIVE)
+                            || (munitionType == M_EXTENDED_RANGE);
+                case T_AR10:
+                    return true;
+                case T_ARROW_IV:
+                    return (munitionType == M_FLARE)
+                            || (munitionType == M_CLUSTER)
+                            || (munitionType == M_HOMING)
+                            || (munitionType == M_INFERNO_IV)
+                            || (munitionType == M_LASER_INHIB)
+                            || (munitionType == M_SMOKE)
+                            || (munitionType == M_FASCAM)
+                            || (munitionType == M_DAVY_CROCKETT_M)
+                            || (munitionType == M_VIBRABOMB_IV)
+                            || (munitionType == M_STANDARD);
+                case T_LONG_TOM:
+                    return (munitionType == M_FLARE)
+                            || (munitionType == M_CLUSTER)
+                            || (munitionType == M_HOMING)
+                            || (munitionType == M_FLECHETTE)
+                            || (munitionType == M_SMOKE)
+                            || (munitionType == M_FASCAM)
+                            || (munitionType == M_DAVY_CROCKETT_M)
+                            || (munitionType == M_STANDARD);
+                case T_SNIPER:
+                case T_THUMPER:
+                    return (munitionType == M_FLARE)
+                            || (munitionType == M_CLUSTER)
+                            || (munitionType == M_HOMING)
+                            || (munitionType == M_FLECHETTE)
+                            || (munitionType == M_SMOKE)
+                            || (munitionType == M_FASCAM)
+                            || (munitionType == M_STANDARD);
+                default:
+                    return (munitionType == M_STANDARD)
+                            || (munitionType == M_ARTEMIS_CAPABLE)
+                            || (munitionType == M_ARTEMIS_V_CAPABLE);
+            } 
+        } else {
+           return canAeroUse();
         }
     }
 
@@ -1279,7 +1344,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
         
         munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1292,7 +1357,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_FS,F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
         
         //Armor Piercing is the base ammo type see further down.
         
@@ -1307,7 +1372,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_FS,F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
         
         munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1319,9 +1384,9 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FW)
                 .setProductionFactions(F_FW)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), "373,TM"));
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "373,TO"));
         
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
                 new TechAdvancement(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -1332,7 +1397,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_FS,F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
              
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1350,7 +1415,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
         
         munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -1362,7 +1427,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
         
         //Armor Piercing is the base ammo type see further down.
         
@@ -1376,7 +1441,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
         
         munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -1386,9 +1451,9 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setClanAdvancement(3055, 3064, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), "373,TM"));
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "373,TO"));
                 
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -1398,7 +1463,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
 
         AmmoType.createMunitions(clanMortarAmmos, munitions);
         
@@ -10789,7 +10854,6 @@ public class AmmoType extends EquipmentType {
                 ammo.shots = 4;
                 ammo.bv = 7.2;
                 ammo.cost = 28000;
-                ammo.rulesRefs = "263,TM";
                 ammo.rulesRefs = "324,TO";
                 ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)
@@ -12914,6 +12978,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_BA_MICRO_BOMB;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
+        ammo.kgPerShot = 0;        
         ammo.bv = 0;
         ammo.cost = 500;
         ammo.rulesRefs = "253,TM";
@@ -13083,7 +13148,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
         ammo.shots = 200;
         ammo.bv = 1;
-        ammo.kgPerShot = 10;
+        ammo.kgPerShot = 5;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But MG Tech Base and Avail Ratings.
         ammo.rulesRefs = "228,TM";
@@ -14055,7 +14120,8 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "Coolant Pod";
         ammo.shortName = "Coolant Pod";
-        ammo.setInternalName("IS Coolant Pod");
+        ammo.setInternalName(EquipmentTypeLookup.COOLANT_POD);
+        ammo.addLookupName("IS Coolant Pod");
         ammo.addLookupName("Clan Coolant Pod");
         ammo.damagePerShot = 10;
         ammo.rackSize = 1;

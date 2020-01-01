@@ -38,7 +38,7 @@ public class Aero extends Entity implements IAero, IBomber {
      *
      */
     private static final long serialVersionUID = 7196307097459255187L;
-    
+
     // locations
     public static final int LOC_NOSE = 0;
     public static final int LOC_LWING = 1;
@@ -128,6 +128,12 @@ public class Aero extends Entity implements IAero, IBomber {
     // ignored crew hit for harjel
     private int ignoredCrewHits = 0;
     private int cockpitType = COCKPIT_STANDARD;
+    
+    //Autoejection
+    private boolean autoEject = true;
+    private boolean condEjectAmmo = true;
+    private boolean condEjectFuel = true;
+    private boolean condEjectSIDest = true;
 
     // track straight movement from last turn
     private int straightMoves = 0;
@@ -239,19 +245,19 @@ public class Aero extends Entity implements IAero, IBomber {
             return TA_ASF;
         }
     }
-    
+
     protected static final TechAdvancement[] COCKPIT_TA = {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2491)
                 .setApproximate(true, false, false).setPrototypeFactions(F_TH)
                 .setPrototypeFactions(F_TH).setTechRating(RATING_C)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Standard            
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Standard
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(3065, 3070, 3080)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3080)
                 .setISApproximate(true, false, false).setPrototypeFactions(F_WB)
                 .setPrototypeFactions(F_WB, F_CSR).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Small            
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Small
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
                 .setISApproximate(true, false, false, true, true)
                 .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
@@ -263,55 +269,55 @@ public class Aero extends Entity implements IAero, IBomber {
                 .setISApproximate(false, true, false, false)
                 .setPrototypeFactions(F_TA).setTechRating(RATING_C)
                 .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Primitive            
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Primitive
     };
-    
+
     public static TechAdvancement getCockpitTechAdvancement(int cockpitType) {
         if (cockpitType >= 0 && cockpitType < COCKPIT_TA.length) {
             return new TechAdvancement(COCKPIT_TA[cockpitType]);
         }
         return null;
     }
-    
+
     public TechAdvancement getCockpitTechAdvancement() {
         return getCockpitTechAdvancement(getCockpitType());
     }
-    
+
     @Override
     protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         super.addSystemTechAdvancement(ctl);
         if (getCockpitTechAdvancement() != null) {
             ctl.addComponent(getCockpitTechAdvancement());
-        }        
+        }
     }
-    
+
     // Is it Civilian or Military
     public static final int CIVILIAN = 0;
     public static final int MILITARY = 1;
     protected int designType = MILITARY;
-    
+
     /**
-     * Sets the unit as either a civilian or military design 
+     * Sets the unit as either a civilian or military design
      */
     public void setDesignType(int design) {
         designType = design;
     }
-    
+
     /**
-     * Returns the unit's design type 
+     * Returns the unit's design type
      */
     public int getDesignType() {
         return designType;
     }
-    
+
     /**
-     * A method to determine if an aero has suffered 3 sensor hits. 
+     * A method to determine if an aero has suffered 3 sensor hits.
      * When double-blind is on, this affects both standard visibility and sensor rolls
      */
     public boolean isAeroSensorDestroyed() {
         return getSensorHits() >= 3;
     }
-    
+
     /**
      * Returns this entity's safe thrust, factored for heat, extreme
      * temperatures, gravity, partial repairs and bomb load.
@@ -380,7 +386,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         return j;
     }
-   
+
     /**
      * Returns the number of locations in the entity
      */
@@ -497,7 +503,7 @@ public class Aero extends Entity implements IAero, IBomber {
             bombChoices = bc;
         }
     }
-    
+
     @Override
     public void clearBombChoices() {
         Arrays.fill(bombChoices, 0);
@@ -724,7 +730,7 @@ public class Aero extends Entity implements IAero, IBomber {
         	return 0;
         }
     }
-    
+
     //Landing mods for partial repairs
     public int getLandingGearPartialRepairs() {
     	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
@@ -735,7 +741,7 @@ public class Aero extends Entity implements IAero, IBomber {
     	return 0;
     	}
     }
-    
+
     //Avionics mods for partial repairs
     public int getAvionicsMisreplaced() {
     	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
@@ -744,7 +750,7 @@ public class Aero extends Entity implements IAero, IBomber {
     	return 0;
     	}
     }
-    
+
     public int getAvionicsMisrepaired() {
     	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
         return 1;
@@ -809,6 +815,10 @@ public class Aero extends Entity implements IAero, IBomber {
         return rightThrustHits;
     }
 
+    public int getOriginalFuel() {
+        return fuel;
+    }
+
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
         		|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
@@ -817,7 +827,7 @@ public class Aero extends Entity implements IAero, IBomber {
         	return fuel;
         }
     }
-    
+
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
             	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
@@ -829,7 +839,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Sets the number of fuel points.
-     * 
+     *
      * @param gas
      *            Number of fuel points.
      */
@@ -837,7 +847,7 @@ public class Aero extends Entity implements IAero, IBomber {
         fuel = gas;
         currentfuel = gas;
     }
-    
+
     public void setCurrentFuel(int gas) {
     	currentfuel = gas;
     }
@@ -876,17 +886,17 @@ public class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Used by SmallCraft and Jumpship and their child classes.
-     * 
+     *
      * @return The tons of fuel burned in a day at 1G using strategic movement.
      */
     public double getStrategicFuelUse() {
         return 0.0;
     }
-    
+
     /**
      * Some primitve aerospace units have their fuel efficiency reduced by a factor based
      * on construction year.
-     * 
+     *
      * @return The primitive fuel factor for the build year.
      */
     public double primitiveFuelFactor() {
@@ -1299,7 +1309,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#calculateBattleValue()
      */
     @Override
@@ -1313,7 +1323,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#calculateBattleValue(boolean, boolean)
      */
     @Override
@@ -2152,13 +2162,20 @@ public class Aero extends Entity implements IAero, IBomber {
 
             // sort the heat-using weapons by modified BV
             Collections.sort(heatBVs, (obj1, obj2) -> {
+                Double obj1BV = (Double) obj1.get(0); // BV
+                Double obj2BV = (Double) obj2.get(0); // BV
+
                 // first element in the the ArrayList is BV, second is heat
                 // if same BV, lower heat first
-                if (obj1.get(0).equals(obj2.get(0))) {
-                    return (int) Math.ceil((Double) obj1.get(1) - (Double) obj2.get(1));
+                if(obj1BV.equals(obj2BV)) {
+                    Double obj1Heat = (Double) obj1.get(1);
+                    Double obj2Heat = (Double) obj2.get(1);
+
+                    return Double.compare(obj1Heat, obj2Heat);
                 }
+
                 // higher BV first
-                return (int) Math.ceil((Double) obj2.get(0) - (Double) obj1.get(0));
+                return Double.compare(obj2BV, obj1BV);
             });
 
             // count heat-generating weapons at full modified BV until
@@ -2588,7 +2605,7 @@ public class Aero extends Entity implements IAero, IBomber {
         if (avihits >= 3) {
             prd.addModifier(5, "Avionics Destroyed");
         }
-        
+
         // partial repairs to avionics system, but only if the avionics aren't already destroyed
         if ((getPartialRepairs() != null) && (avihits < 3)) {
             if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
@@ -2598,7 +2615,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 prd.addModifier(1, "Misreplaced Avionics");
             }
         }
-        
+
         if (pilothits > 0) {
             prd.addModifier(pilothits, "Pilot Hits");
         }
@@ -2908,7 +2925,7 @@ public class Aero extends Entity implements IAero, IBomber {
         return Math.round(cost * omniMultiplier * weightMultiplier);
 
     }
-    
+
     @Override
     protected int implicitClanCASE() {
         if (!isClan() || !isFighter()) {
@@ -3032,7 +3049,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-    
+
      */
     @Override
     public void setOmni(boolean omni) {
@@ -3047,7 +3064,7 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public void addClanCase() {
         boolean explosiveFound = false;
-        EquipmentType clCase = EquipmentType.get("CLCASE");
+        EquipmentType clCase = EquipmentType.get(EquipmentTypeLookup.CLAN_CASE);
         for (int i = 0; i < locations(); i++) {
             // Ignore wings location: it's not a valid loc to put equipment in
             if (i == LOC_WINGS) {
@@ -3380,7 +3397,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
     @Override
@@ -3620,8 +3637,8 @@ public class Aero extends Entity implements IAero, IBomber {
         if (!getPosition().equals(other.getPosition())) {
             return false;
         }
-        int type = UnitType.determineUnitTypeCode(this);
-        int otherType = UnitType.determineUnitTypeCode(other);
+        int type = this.getUnitType();
+        int otherType = other.getUnitType();
         int vel = getCurrentVelocity();
         int otherVel = other.getCurrentVelocity();
         if (type > otherType) {
@@ -4120,9 +4137,9 @@ public class Aero extends Entity implements IAero, IBomber {
             damage -= damPerHit;
         }
     }
-    
+
     /**
-     * Damage a capital fighter's weapons. WeaponGroups are damaged by critical hits. 
+     * Damage a capital fighter's weapons. WeaponGroups are damaged by critical hits.
      * This matches up the individual fighter's weapons and critical slots and damages those
      * for MHQ resolution
      * @param loc - Int corresponding to the location struck
@@ -4156,15 +4173,15 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getNCrew() {
         return 1;
     }
-    
-    
+
+
     /**
      * @return The total number of officers for vessels.
      */
     public int getNOfficers() {
         return 0;
     }
-    
+
     /**
      * @return The total number of gunners for vessels.
      */
@@ -4241,11 +4258,11 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getSpriteDrawPriority() {
         return 10;
     }
-    
+
     @Override
     public List<Mounted> getActiveAMS() {
         //Large craft use AMS and Point Defense bays
-        if ((this instanceof Dropship) 
+        if ((this instanceof Dropship)
                 || (this instanceof Jumpship)
                 || (this instanceof Warship)
                 || (this instanceof SpaceStation)) {
@@ -4276,7 +4293,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 for (int wId : weapon.getBayWeapons()) {
                     Mounted bayW = getEquipment(wId);
                     Mounted bayWAmmo = bayW.getLinked();
-                    if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY)) 
+                    if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
                             && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
                                     || bayWAmmo.isDumping())) {
                         loadWeapon(weapon);
@@ -4284,7 +4301,7 @@ public class Aero extends Entity implements IAero, IBomber {
                     }
 
                     // try again
-                    if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY)) 
+                    if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
                             && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
                                     || bayWAmmo.isDumping())) {
                         // No ammo for this AMS.
@@ -4298,7 +4315,7 @@ public class Aero extends Entity implements IAero, IBomber {
         //ASFs and Small Craft should use regular old AMS...
         return super.getActiveAMS();
     }
-    
+
     /**
      * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
      */
@@ -4348,7 +4365,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         //If we are in space, add them back...
         if (isSpaceborne()) {
-            if (hasETypeFlag(Entity.ETYPE_DROPSHIP) 
+            if (hasETypeFlag(Entity.ETYPE_DROPSHIP)
                     || hasETypeFlag(Entity.ETYPE_SPACE_STATION)
                     || hasETypeFlag(Entity.ETYPE_JUMPSHIP)
                     || hasETypeFlag(Entity.ETYPE_WARSHIP)) {
@@ -4364,7 +4381,7 @@ public class Aero extends Entity implements IAero, IBomber {
                         hasESM = true;
                     }
                 }
-            } else if (hasETypeFlag(Entity.ETYPE_AERO) 
+            } else if (hasETypeFlag(Entity.ETYPE_AERO)
                         || hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
                 //ASFs and small craft get thermal/optical sensors
                 if (!hasAeroThermal) {
@@ -4373,5 +4390,71 @@ public class Aero extends Entity implements IAero, IBomber {
                 }
             }
         }
+    }
+    
+    // autoejection methods
+    /**
+     * @return Returns the autoEject.
+     */
+    public boolean isAutoEject() {
+        boolean hasEjectSeat = !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+
+        return autoEject && hasEjectSeat;
+    }
+
+    /**
+     * @param autoEject
+     *            Turn the master autoejection system on or off
+     */
+    public void setAutoEject(boolean autoEject) {
+        this.autoEject = autoEject;
+    }
+    
+    /**
+     * Is autoejection enabled for ammo explosions?
+     * @return
+     */
+    public boolean isCondEjectAmmo() {
+        return condEjectAmmo;
+    }
+
+    /**
+     * Used by Conditional Auto Ejection - will we eject when an ammo explosion is triggered?
+     * @param  condEjectAmmo  Sets autoejection for ammo explosions
+     */
+    public void setCondEjectAmmo(boolean condEjectAmmo) {
+        this.condEjectAmmo = condEjectAmmo;
+    }
+
+    /**
+     * Is autoejection enabled for fuel explosions?
+     * @return
+     */
+    public boolean isCondEjectFuel() {
+        return condEjectFuel;
+    }
+
+    /**
+     * Used by Conditional Auto Ejection - will we eject when a fuel explosion is triggered?
+     * @param  condEjectFuel   Sets autoejection for fuel tank explosions
+     */
+    public void setCondEjectFuel(boolean condEjectFuel) {
+        this.condEjectFuel = condEjectFuel;
+    }
+
+    /**
+     * Is autoejection enabled for SI destruction (Fighter only)?
+     * @return
+     */
+    public boolean isCondEjectSIDest() {
+        return condEjectSIDest;
+    }
+
+    /**
+     * Used by Conditional Auto Ejection - will we eject when structural integrity is reduced to 0?
+     * @param  condEjectSIDest   Sets autoejection for structural integrity destruction
+     */
+    public void setCondEjectSIDest(boolean condEjectSIDest) {
+        this.condEjectSIDest = condEjectSIDest;
     }
 }

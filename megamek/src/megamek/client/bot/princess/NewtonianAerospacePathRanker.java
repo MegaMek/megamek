@@ -81,7 +81,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             int distance, IGame game) {
         Entity me = path.getEntity();
 
-        int maxRange = me.getMaxWeaponRange();
+        int maxRange = getOwner().getMaxWeaponRange(me, enemy.isAirborne());
         if (distance > maxRange) {
             return 0;
         }
@@ -103,7 +103,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
                       null,
                       FireControl.DOES_NOT_TRACK_HEAT,
                       null);
-        myFiringPlan = getFireControl().determineBestFiringPlan(guess);
+        myFiringPlan = getFireControl(path.getEntity()).determineBestFiringPlan(guess);
 
         return myFiringPlan.getUtility();
     }
@@ -164,7 +164,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
 
             // my estimated damage is my max damage at the
             returnResponse.addToMyEstimatedDamage(
-                        getMaxDamageAtRange(getFireControl(),
+                        getMaxDamageAtRange(getFireControl(path.getEntity()),
                                             path.getEntity(),
                                             range,
                                             useExtremeRange,
@@ -174,7 +174,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             double enemyDamageDiscount = Compute.oddsAbove(enemy.getCrew().getGunnery() + sensorShadowMod) / 100;
             //in general if an enemy can end its position in range, it can hit me
             returnResponse.addToEstimatedEnemyDamage(
-                    getMaxDamageAtRange(getFireControl(),
+                    getMaxDamageAtRange(getFireControl(enemy),
                                         enemy,
                                         range,
                                         useExtremeRange,

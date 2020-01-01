@@ -730,6 +730,36 @@ public class TechConstants {
                     } else {
                         return T_IS_ADVANCED;
                     }
+                //Same as Superheavy cockpit
+                case Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
+                    if (isClan) {
+                        return T_CLAN_UNOFFICIAL;
+                    }
+
+                    if (year <= 3055) {
+                        return T_IS_UNOFFICIAL;
+                    } else if (year <= 3076) {
+                        return T_IS_EXPERIMENTAL;
+                    } else {
+                        return T_IS_ADVANCED;
+                    }
+                //Same as Small cockpit
+                case Mech.COCKPIT_SMALL_COMMAND_CONSOLE:
+                    if (isClan) {
+                        if (year <= 3080) {
+                            return T_CLAN_UNOFFICIAL;
+                        }
+                        return T_CLAN_ADVANCED;
+                    }
+                    if (year <= 3060) {
+                        return T_IS_UNOFFICIAL;
+                    } else if (year <= 3067) {
+                        return T_IS_EXPERIMENTAL;
+                    } else if (year <= 3080) {
+                        return T_IS_ADVANCED;
+                    } else {
+                        return T_IS_TW_NON_BOX;
+                    }
 
             }
         } else if ((entityType & Entity.ETYPE_AERO) != 0) {

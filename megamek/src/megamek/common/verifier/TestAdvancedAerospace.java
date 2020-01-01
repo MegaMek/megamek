@@ -164,8 +164,8 @@ public class TestAdvancedAerospace extends TestAero {
         if (null == a) {
             return 0;
         }
-        // The ship gets a number of armor points equal to 10% of the SI, rounded normally.
-        double freeSI = Math.round(vessel.get0SI() / 10.0);
+        // The ship gets a number of armor points equal to 10% of the SI, rounded normally, per facing.
+        double freeSI = Math.round(vessel.get0SI() / 10.0) * 6;
         // Primitive jumpships have the free SI armor reduced, but the fractional amount is
         // added to the value calculated from the max armor tonnage before truncating.
         if (vessel.isPrimitive()) {
@@ -179,16 +179,16 @@ public class TestAdvancedAerospace extends TestAero {
      *   
      */
     public static double maxArmorWeight(Jumpship vessel){
-        // max armor tonnage is based on SI weight, which is vessel mass * SI / 1000
+        // max armor tonnage is based on SI weight
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
-            // SI weight / 50
+            // SI weight (SI/1000) / 50
             return floor(vessel.get0SI() * vessel.getWeight() / 50000.0, Ceil.HALFTON);
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
-            // SI weight / 3 + 60
-            return floor(vessel.get0SI() * vessel.getWeight() / 3000.0 + 60, Ceil.HALFTON);
+            // SI weight (SI/100) / 3 + 60
+            return floor(vessel.get0SI() * vessel.getWeight() / 300.0 + 60, Ceil.HALFTON);
         } else {
-            // SI weight / 12
-            return floor(vessel.get0SI() * vessel.getWeight() / 12000.0, Ceil.HALFTON);
+            // SI weight (SI/150) / 12
+            return floor(vessel.get0SI() * vessel.getWeight() / 1800.0, Ceil.HALFTON);
         }
     }
     
@@ -333,7 +333,11 @@ public class TestAdvancedAerospace extends TestAero {
      * @return       The maximum number of docking hardpoints (collars) that can be mounted on the ship.
      */
     public static int getMaxDockingHardpoints(Jumpship vessel) {
-        int max = (int) Math.floor(vessel.getWeight() / 50000);
+        // minimum of 50ktons
+        if (vessel.getWeight() < 50000) {
+            return 0;
+        }
+        int max = (int) Math.ceil(vessel.getWeight() / 50000);
         for (Bay bay : vessel.getTransportBays()) {
             max -= bay.hardpointCost();
         }

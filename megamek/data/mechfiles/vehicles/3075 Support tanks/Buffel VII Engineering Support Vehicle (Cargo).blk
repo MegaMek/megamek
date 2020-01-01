@@ -24,6 +24,10 @@ Buffel Engineering Support Vehicle VII
 2451
 </year>
 
+<originalBuildYear>
+2451
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,10 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+cargobay:3.5:1:1
+</transporters>
 
 <cruiseMP>
 3
@@ -40,10 +48,6 @@ Tracked
 1
 </engine_type>
 
-<fuel>
-.5
-</fuel>
-
 <armor>
 20
 20
@@ -52,17 +56,10 @@ Tracked
 14
 </armor>
 
-<barrating>
-7
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
-
 <Body Equipment>
 IS Ammo MG - Full
 Armored Chassis
+SV Chassis Mod [Tractor]
 </Body Equipment>
 
 <Front Equipment>
@@ -83,13 +80,17 @@ ISMineSweeper
 <Turret Equipment>
 Machine Gun
 Machine Gun
-Lift Hoist
-Lift Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
 </Turret Equipment>
 
-<transporters>
-cargobay:3.5:1
-</transporters>
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
 
 <source>
 TRO 3075 - Age of War
@@ -98,3 +99,12 @@ TRO 3075 - Age of War
 <tonnage>
 70.0
 </tonnage>
+
+<fuel>
+0.5
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

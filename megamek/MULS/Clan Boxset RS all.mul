@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<unit version="0.47.1-SNAPSHOT" >
+
+		<entity chassis="Puma (Adder)" model="Prime" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="bf1a1452-383b-4d46-afd8-55ec70aaea18" quirks="low_profile::no_twist" camoCategory="-- No Camo --">
+			<pilot size="1" name="Mary Kim" nick="" gunnery="3" gunneryL="4" gunneryM="4" gunneryB="4" piloting="4" externalId="ea491380-14db-4c41-bc50-47bbab499c2d" ejected="false" autoeject="true"/>
+		</entity>
+
+		<entity chassis="Puma (Adder)" model="A" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="92f86161-083e-4262-9cdf-97e69e5b139e" quirks="low_profile::no_twist" camoCategory="-- No Camo --">
+			<pilot size="1" name="Fayola Ametefe" nick="" gunnery="3" gunneryL="4" gunneryM="4" gunneryB="4" piloting="4" externalId="498a3d80-ebb3-4bfb-8c01-9b5438b67d21" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="4"> Right Arm
+				<slot index="5" type="Clan Ammo LRM-20" shots="6"/>
+				<slot index="6" type="Clan Ammo LRM-20" shots="6"/>
+			</location>
+			<location index="5"> Left Arm
+				<slot index="9" type="Clan Ammo LRM-20" shots="6"/>
+				<slot index="10" type="Clan Ammo LRM-20" shots="6"/>
+			</location>
+		</entity>
+
+		<entity chassis="Grendel (Mongrel)" model="Prime" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="8cbdc034-4e1c-4e9a-8274-073830f55e0f" quirks="rugged_1" camoCategory="-- No Camo --">
+			<pilot size="1" name="Larraya Muñóz" nick="" gunnery="3" gunneryL="4" gunneryM="4" gunneryB="4" piloting="4" externalId="94620ed1-6e11-44fb-8434-d065b3b1774c" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="8" type="Clan Streak SRM 6 Ammo" shots="15"/>
+			</location>
+		</entity>
+
+		<entity chassis="Grendel (Mongrel)" model="A" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="695ccb17-1879-4cf4-992c-e9852049d88e" quirks="rugged_1" camoCategory="-- No Camo --">
+			<pilot size="1" name="Judith Schmidt" nick="" gunnery="3" gunneryL="4" gunneryM="4" gunneryB="4" piloting="4" externalId="cc3e17d5-ed50-45c9-bb6c-3fce78781ae5" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="6" type="Clan Ammo LRM-15" shots="8"/>
+				<slot index="7" type="Clan Ammo LRM-15" shots="8"/>
+			</location>
+			<location index="3"> Left Torso
+				<slot index="6" type="Clan Ammo LRM-15" shots="8"/>
+				<slot index="7" type="Clan Ammo LRM-15" shots="8"/>
+			</location>
+		</entity>
+
+		<entity chassis="Black Hawk (Nova)" model="Prime" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="0e9fca2a-ff94-412f-bdc8-aa041f68c543" quirks="combat_computer::low_profile::no_twist" camoCategory="-- No Camo --">
+			<pilot size="1" name="Ed Furst" nick="" gunnery="3" gunneryL="4" gunneryM="4" gunneryB="4" piloting="4" externalId="f6debae9-c766-45d2-b3d8-53e02eede9e2" ejected="false" autoeject="true"/>
+		</entity>
+
+		<entity chassis="Black Hawk (Nova)" model="A" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="e370b7f1-d0e9-49bc-ad05-937ec7bebc45" quirks="combat_computer::low_profile::no_twist" camoCategory="-- No Camo --">
+			<pilot size="1" name="Lisa Totolos" nick="" gunnery="3" gunneryL="4" gunneryM="4" gunneryB="4" piloting="4" externalId="ef3bcdac-a3f8-4b76-bc01-c3ffce1fef3e" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="8" type="CLAMS Ammo" shots="24"/>
+			</location>
+		</entity>
+
+		<entity chassis="Mad Cat (Timber Wolf)" model="Prime" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="4ad6dbbd-8e6f-4be2-a906-864554cc6b32" quirks="imp_target_med::weak_head_1" camoCategory="-- No Camo --">
+			<pilot size="1" name="Vladka Migranyan" nick="" gunnery="3" gunneryL="4" gunneryM="4" gunneryB="4" piloting="4" externalId="4a5f941d-9e26-4660-b8bf-397dbb05b008" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="8" type="Clan Machine Gun Ammo - Full" shots="200"/>
+				<slot index="9" type="Clan Ammo LRM-20" shots="6"/>
+			</location>
+			<location index="3"> Left Torso
+				<slot index="8" type="Clan Ammo LRM-20" shots="6"/>
+			</location>
+		</entity>
+
+		<entity chassis="Mad Cat (Timber Wolf)" model="A" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="0d1d93ca-0e27-4c08-be70-e9c905682d9c" quirks="imp_target_med::weak_head_1" camoCategory="-- No Camo --">
+			<pilot size="1" name="Peyton Su-Tu" nick="" gunnery="3" gunneryL="4" gunneryM="4" gunneryB="4" piloting="4" externalId="daf5b1dc-adeb-44b8-9b2a-6764ae937cf2" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="5" type="Clan Streak SRM 6 Ammo" shots="15"/>
+			</location>
+		</entity>
+
+		<entity chassis="Gladiator (Executioner)" model="Prime" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="adb79554-107a-4f27-a1fe-506cc4cabaea" quirks="distracting" camoCategory="-- No Camo --">
+			<pilot size="1" name="Wiji Subagja" nick="" gunnery="3" gunneryL="4" gunneryM="4" gunneryB="4" piloting="4" externalId="bc0bbee5-dc78-4ac3-9f88-3de36674ba8f" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="7" type="Clan Machine Gun Ammo - Full" shots="200"/>
+			</location>
+			<location index="3"> Left Torso
+				<slot index="7" type="Clan Gauss Ammo" shots="8"/>
+				<slot index="8" type="Clan Gauss Ammo" shots="8"/>
+			</location>
+		</entity>
+
+		<entity chassis="Gladiator (Executioner)" model="A" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="4d7f2ff6-2601-44ae-83cb-b83dad4a6c1f" quirks="distracting" camoCategory="-- No Camo --">
+			<pilot size="1" name="Jo Heng" nick="" gunnery="3" gunneryL="4" gunneryM="4" gunneryB="4" piloting="4" externalId="b9eeeb76-a868-492e-a36c-611240c5dbfd" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="7" type="Clan Machine Gun Ammo - Full" shots="200"/>
+			</location>
+		</entity>
+
+		<entity chassis="Locust" model="LCT-3D" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="af73dfe5-fd8b-4959-b362-5549075ccf9f" quirks="compact_mech::low_profile::ubiquitous_is::cramped_cockpit::no_arms::no_twist::weak_legs" camoCategory="-- No Camo --">
+			<pilot size="1" name="Obke Linser" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="ee0d82bd-4e4d-4eaf-b89e-207d8088e887" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="1"> Center Torso
+				<slot index="11" type="IS Ammo LRM-5" shots="24"/>
+			</location>
+		</entity>
+
+		<entity chassis="Locust" model="LCT-3S" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="713276c8-2a3b-4542-97ff-856f622ca008" quirks="compact_mech::low_profile::ubiquitous_is::cramped_cockpit::no_arms::no_twist::weak_legs" camoCategory="-- No Camo --">
+			<pilot size="1" name="Penelope Triantafillou" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="73156f65-cac4-4ff6-ae96-c29f3d04f801" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="3"> Left Torso
+				<slot index="1" type="IS Streak SRM 2 Ammo" shots="50"/>
+			</location>
+		</entity>
+
+		<entity chassis="Commando" model="COM-5S" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="91b7e123-142a-412e-ae79-08bbf9efe18a" quirks="low_profile::exp_actuator" camoCategory="-- No Camo --">
+			<pilot size="1" name="Pei-Pei Wu" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="5d9f628e-3f5e-43dd-ae05-029b4ee8dcd8" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="1" type="IS Ammo SRM-6 Artemis-capable" shots="15"/>
+				<slot index="2" type="IS Ammo SRM-6 Artemis-capable" shots="15"/>
+				<slot index="3" type="IS Streak SRM 2 Ammo" shots="50"/>
+			</location>
+		</entity>
+
+		<entity chassis="Griffin" model="GRF-1DS" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="16899d70-7693-47f2-b5f3-a61c9cdecd81" quirks="battle_fists_la::battle_fists_ra::rugged_1::ubiquitous_is::ubiquitous_clan" camoCategory="-- No Camo --">
+			<pilot size="1" name="Hokulani Manuku" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="b8da77f0-a882-49e9-8e15-fbe997f36f0b" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="3"> Left Torso
+				<slot index="9" type="IS Ammo LRM-20" shots="6"/>
+				<slot index="10" type="IS Ammo LRM-20" shots="6"/>
+			</location>
+			<location index="4"> Right Arm
+         <slot index="8" type="ISLargePulseLaser" quirks="jettison_capable" isDestroyed="false"/>
+         <slot index="9" type="ISLargePulseLaser" quirks="jettison_capable" isDestroyed="false"/>
+			</location>
+		</entity>
+
+		<entity chassis="Griffin" model="GRF-3M" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="605e0e6c-3fef-43f5-b598-7db5f01c0f97" quirks="battle_fists_la::battle_fists_ra::rugged_1::ubiquitous_is::ubiquitous_clan" camoCategory="-- No Camo --">
+			<pilot size="1" name="Katherine Porter" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="d57e9b33-7bcc-4690-9755-cd564fc504bf" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="3"> Left Torso
+				<slot index="10" type="IS Ammo LRM-20" shots="6"/>
+				<slot index="11" type="IS Ammo LRM-20" shots="6"/>
+			</location>
+			<location index="4"> Right Arm
+         <slot index="8" type="ISERPPC" quirks="jettison_capable" isDestroyed="false"/>
+         <slot index="9" type="ISERPPC" quirks="jettison_capable" isDestroyed="false"/>
+         <slot index="10" type="ISERPPC" quirks="jettison_capable" isDestroyed="false"/>
+			</location>
+		</entity>
+
+		<entity chassis="Wolverine" model="WVR-7D" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="58e88b76-3509-4867-aad1-2ca38daf6bd2" quirks="command_mech::ext_twist::imp_com::pro_actuator::ubiquitous_is::ubiquitous_clan::cramped_cockpit" camoCategory="-- No Camo --">
+			<pilot size="1" name="Madzeija Stryjski" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="48ab6450-b5e0-4e05-935b-e0d2a2be9c8e" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="5" type="IS Ultra AC/5 Ammo" shots="20"/>
+			</location>
+			<location index="3"> Left Torso
+				<slot index="7" type="IS Ammo SRM-6" shots="15"/>
+			</location>
+			<location index="4"> Right Arm
+         <slot index="5" type="ISUltraAC5" quirks="jettison_capable" isDestroyed="false"/>
+         <slot index="6" type="ISUltraAC5" quirks="jettison_capable" isDestroyed="false"/>
+         <slot index="7" type="ISUltraAC5" quirks="jettison_capable" isDestroyed="false"/>
+         <slot index="8" type="ISUltraAC5" quirks="jettison_capable" isDestroyed="false"/>
+         <slot index="9" type="ISUltraAC5" quirks="jettison_capable" isDestroyed="false"/>
+			</location>
+		</entity>
+
+		<entity chassis="Wolverine" model="WVR-7K" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="03fde95e-83f6-4646-a497-3eef5cdc89a8" quirks="command_mech::ext_twist::imp_com::pro_actuator::ubiquitous_is::ubiquitous_clan::cramped_cockpit" camoCategory="-- No Camo --">
+			<pilot size="1" name="Declan Johnston" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="a9a7301c-7d8e-4846-ac2c-e28d73ec192c" ejected="false" autoeject="true"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="11" type="IS Ammo SRM-6" shots="15"/>
+			</location>
+			<location index="3"> Left Torso
+				<slot index="11" type="IS Ammo SRM-6" shots="15"/>
+			</location>
+			<location index="4"> Right Arm
+         <slot index="5" type="ISLargePulseLaser" quirks="jettison_capable" isDestroyed="false"/>
+         <slot index="6" type="ISLargePulseLaser" quirks="jettison_capable" isDestroyed="false"/>
+			</location>
+		</entity>
+
+		<entity chassis="Wolverine" model="WVR-7M" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="f0e86c08-cf17-443b-80f1-9a78e4778314" quirks="command_mech::ext_twist::imp_com::pro_actuator::ubiquitous_is::ubiquitous_clan::cramped_cockpit" camoCategory="-- No Camo --">
+			<pilot size="1" name="Farook Qadir" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="9b299bf3-027d-40c9-8ccc-7eb7619cd851" ejected="false" autoeject="true"/>
+      The first slot in a location is at index="1".
+			<location index="3"> Left Torso
+				<slot index="11" type="IS Ammo SRM-6" shots="15"/>
+			</location>
+			<location index="4"> Right Arm
+         <slot index="5" type="ISERLargeLaser" quirks="jettison_capable" isDestroyed="false"/>
+         <slot index="6" type="ISERLargeLaser" quirks="jettison_capable" isDestroyed="false"/>
+			</location>
+		</entity>
+
+		<entity chassis="Shadow Hawk" model="SHD-2D2" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="d0f50840-2121-4315-ae25-861ea4a4406d" quirks="battle_fists_la::battle_fists_ra::imp_life_support::ubiquitous_is::ubiquitous_clan" camoCategory="-- No Camo --">
+			<pilot size="1" name="Clarence Deavitt" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="35474332-f127-45c6-a005-72b22934201c" ejected="false" autoeject="true"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="4" type="IS Ammo LRM-5" shots="24"/>
+				<slot index="5" type="IS Streak SRM 2 Ammo" shots="50"/>
+			</location>
+			<location index="3"> Left Torso
+				<slot index="6" type="IS Ammo AC/5" shots="20"/>
+			</location>
+		</entity>
+
+		<entity chassis="Catapult" model="CPLT-K2K" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="dc254dd1-26bf-4d7f-a9b4-c256f0f368c4" quirks="no_arms::weak_head_1" camoCategory="-- No Camo --">
+			<pilot size="1" name="Nadine Caraffa" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="fba759a2-f4e2-4f70-8530-d93df183365c" ejected="false" autoeject="true"/>
+		</entity>
+
+		<entity chassis="Thunderbolt" model="TDR-7M" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="ed54a7a5-7f4e-4efc-8447-01ade57052f5" quirks="multi_trac::rugged_2::ubiquitous_is" camoCategory="-- No Camo --">
+			<pilot size="1" name="Rafiya Gamba" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="a4060074-73b0-4d46-b1e2-84f20eea749e" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="2"> Right Torso
+				<slot index="10" type="IS Streak SRM 2 Ammo" shots="50"/>
+			</location>
+			<location index="3"> Left Torso
+				<slot index="8" type="IS Ammo LRM-15" shots="8"/>
+				<slot index="9" type="IS Ammo LRM-15" shots="8"/>
+				<slot index="10" type="IS Ammo MG - Full" shots="200"/>
+			</location>
+		</entity>
+
+		<entity chassis="Thunderbolt" model="TDR-9SE" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="e49fae62-9b86-4047-bcda-b34ce43d5594" quirks="multi_trac::rugged_2::ubiquitous_is" camoCategory="-- No Camo --">
+			<pilot size="1" name="Katalin Koesters" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="ebdb8f8e-2177-4403-8821-a0414c0a262a" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="3"> Left Torso
+				<slot index="11" type="IS Ammo LRM-10" shots="12"/>
+			</location>
+		</entity>
+
+		<entity chassis="Awesome" model="AWS-9M" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="a9142295-509f-4142-9cc2-1e5df9d76063" quirks="battle_fists_la" camoCategory="-- No Camo --">
+			<pilot size="1" name="Gregory Unkovic" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="9de7354e-c0f5-4a88-8ab5-f17194b291fc" ejected="false" autoeject="true"/>
+      The first slot in a location is at index="1".
+			<location index="7"> Left Leg
+				<slot index="5" type="IS Streak SRM 2 Ammo" shots="50"/>
+			</location>
+		</entity>
+
+		<entity chassis="BattleMaster" model="BLR-3M" type="Biped" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="2f8fe9a3-b848-4c2b-bf2b-928759503353" quirks="command_mech::weak_head_1" camoCategory="-- No Camo --">
+			<pilot size="1" name="Lee Thuc" nick="" gunnery="4" gunneryL="4" gunneryM="4" gunneryB="4" piloting="5" externalId="0909d5e2-6ce8-43d4-8b4e-b407ba5678b7" ejected="false" autoeject="false"/>
+      The first slot in a location is at index="1".
+			<location index="3"> Left Torso
+				<slot index="9" type="IS Ammo MG - Full" shots="200"/>
+				<slot index="10" type="IS Ammo SRM-6" shots="15"/>
+				<slot index="11" type="IS Ammo SRM-6" shots="15"/>
+			</location>
+		</entity>
+
+</unit>

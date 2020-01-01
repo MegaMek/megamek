@@ -105,11 +105,13 @@ public class BasicPathRankerTest {
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
         Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
+        Mockito.when(mockPrincess.getFireControl(Mockito.any(Entity.class))).thenReturn(mockFireControl);
         Mockito.when(mockPrincess.getHomeEdge(Mockito.any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.when(mockPrincess.getFireControlState()).thenReturn(mockFireControlState);
         Mockito.when(mockPrincess.getPathRankerState()).thenReturn(mockPathRankerState);
+        Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class), Mockito.anyBoolean())).thenReturn(21);
     }
 
     private void assertRankedPathEquals(final RankedPath expected,
@@ -1148,11 +1150,12 @@ public class BasicPathRankerTest {
 
     @Test
     public void testCalculateDamagePotential() {
+        final Entity mockMe = generateMockEntity(10, 10);
+        
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
-        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl();
+        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
 
         final IBoard mockBoard = generateMockBoard();
-        final Entity mockMe = generateMockEntity(10, 10);
         final Entity mockEnemy = generateMockEntity(10, 5);
         final MovePath mockPath = generateMockPath(10, 5, mockEnemy);
         final List<Entity> entities = new ArrayList<>();
@@ -1201,11 +1204,12 @@ public class BasicPathRankerTest {
 
     @Test
     public void testCalculateMyDamagePotential() {
+        final Entity mockMe = generateMockEntity(10, 10);
+        
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
-        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl();
+        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
        
         final IBoard mockBoard = generateMockBoard();
-        final Entity mockMe = generateMockEntity(10, 10);
         final MovePath mockPath = generateMockPath(10, 10, mockMe);
         final Entity mockEnemy = generateMockEntity(10, 15);
         final List<Entity> entities = new ArrayList<>();
@@ -1213,7 +1217,7 @@ public class BasicPathRankerTest {
         entities.add(mockEnemy);
 
         int testDistance = 10;
-        final IGame mockGame = generateMockGame(entities, mockBoard);;
+        final IGame mockGame = generateMockGame(entities, mockBoard);
         
         final FiringPlan mockFiringPlan = Mockito.mock(FiringPlan.class);
         Mockito.when(mockFiringPlan.getUtility()).thenReturn(25.2);
@@ -1279,6 +1283,7 @@ public class BasicPathRankerTest {
         
         Mockito.when(mockEntity.getHeatCapacity()).thenReturn(20);
         Mockito.when(mockEntity.getHeat()).thenReturn(0);
+        Mockito.when(mockEntity.isAirborne()).thenReturn(false);
         
         return mockEntity;
     }

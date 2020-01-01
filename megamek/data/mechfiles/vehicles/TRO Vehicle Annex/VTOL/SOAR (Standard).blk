@@ -24,6 +24,10 @@ SOAR
 3018
 </year>
 
+<originalBuildYear>
+3018
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,11 @@ IS Level 2
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+cargobay:0.05:1:1
+standardseats:6.0:0
+</transporters>
 
 <cruiseMP>
 8
@@ -40,10 +49,6 @@ VTOL
 6
 </engine_type>
 
-<fuel>
-.5
-</fuel>
-
 <armor>
 5
 3
@@ -51,14 +56,6 @@ VTOL
 2
 2
 </armor>
-
-<barrating>
-4
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
 
 <Body Equipment>
 Environmental Sealed Chassis
@@ -83,11 +80,13 @@ Paramedic Equipment
 <Rotor Equipment>
 </Rotor Equipment>
 
-<transporters>
-cargobay:.05:1
-troopspace:.45
-standardseats:.45:6
-</transporters>
+<barrating>
+4
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
 
 <source>
 TRO VAr - Succession Wars
@@ -96,3 +95,8 @@ TRO VAr - Succession Wars
 <tonnage>
 15.0
 </tonnage>
+
+<fuel>
+0.5
+</fuel>
+

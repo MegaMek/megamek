@@ -24,6 +24,10 @@ Ibex RV
 3049
 </year>
 
+<originalBuildYear>
+3049
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,11 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+cargobay:0.601:1:1
+standardseats:8.0:0
+</transporters>
 
 <cruiseMP>
 5
@@ -40,24 +49,12 @@ Wheeled
 1
 </engine_type>
 
-<fuel>
-.011
-</fuel>
-
 <armor>
 2
 2
 2
 2
 </armor>
-
-<barrating>
-4
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
 
 <Body Equipment>
 ISOffRoadChassis
@@ -76,10 +73,13 @@ PintleTurret
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-cargobay:.601:1
-troopspace:.6
-</transporters>
+<barrating>
+4
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <source>
 HB:House Marik - Clan Invasion
@@ -88,3 +88,12 @@ HB:House Marik - Clan Invasion
 <tonnage>
 2.0
 </tonnage>
+
+<fuel>
+0.011
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

@@ -10,12 +10,39 @@ import megamek.common.UnitType;
 import megamek.common.MovePath.MoveStepType;
 
 /**
- * Helper class that contains functionality relating exclusively to aero unit paths.
+ * Helper class that contains functionality relating mostly to aero unit paths.
  * @author NickAragua
  *
  */
 public class AeroPathUtil 
 {	
+    public static List<List<MoveStepType>> TURNS;
+    
+    static {
+        // put together a pre-defined array of turns. Indexes correspond to the directional values found in Coords.java
+        TURNS = new ArrayList<>();
+        TURNS.add(new ArrayList<MoveStepType>()); // "no turns"
+        
+        TURNS.add(new ArrayList<MoveStepType>());
+        TURNS.get(1).add(MoveStepType.TURN_RIGHT);
+        
+        TURNS.add(new ArrayList<MoveStepType>());
+        TURNS.get(2).add(MoveStepType.TURN_RIGHT);
+        TURNS.get(2).add(MoveStepType.TURN_RIGHT);
+        
+        TURNS.add(new ArrayList<MoveStepType>());
+        TURNS.get(3).add(MoveStepType.TURN_RIGHT);
+        TURNS.get(3).add(MoveStepType.TURN_RIGHT);
+        TURNS.get(3).add(MoveStepType.TURN_RIGHT);
+        
+        TURNS.add(new ArrayList<MoveStepType>());
+        TURNS.get(4).add(MoveStepType.TURN_LEFT);
+        TURNS.get(4).add(MoveStepType.TURN_LEFT);
+        
+        TURNS.add(new ArrayList<MoveStepType>());
+        TURNS.get(5).add(MoveStepType.TURN_LEFT);
+    }
+    
 	/**
 	 * Determines if the aircraft undertaking the given path will stall at the end of the turn. 
 	 * Only relevant for aerodyne units 
@@ -179,8 +206,10 @@ public class AeroPathUtil
                     childPath.addStep(MoveStepType.DOWN);
                 }
                 
+                // going down doesn't use MP, but if we drop down more than 2 altitude it causes a massive 
+                // difficulty PSR, which is just not worth it.
                 if((childPath.getFinalAltitude() < 1) ||
-                        childPath.getMpUsed() > path.getEntity().getRunMP()) {
+                        childPath.length() > 2) {
                     break;
                 }
                 
@@ -189,5 +218,26 @@ public class AeroPathUtil
         }
         
         return paths;
+    }
+
+    /**
+     * Given a move path, generates all possible rotations from it,
+     * without any regard to legality. Mostly because it's intended for spheroid 
+     * dropships in atmosphere, which can rotate as much as they want.
+     */
+    public static List<MovePath> generateValidRotations(MovePath path) {
+        List<MovePath> childPaths = new ArrayList<>();
+        
+        for(int x = 1; x < TURNS.size(); x++) {
+            MovePath childPath = path.clone();
+            
+            for(MoveStepType turn : TURNS.get(x)) {
+                childPath.addStep(turn);
+            }
+            
+            childPaths.add(childPath);
+        }
+        
+        return childPaths;
     }
 }

@@ -32,10 +32,6 @@ Olympus Recharge Station
 Clan Level 3
 </type>
 
-<designtype>
-1
-</designtype>
-
 <motion_type>
 Aerodyne
 </motion_type>
@@ -52,7 +48,7 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:942601.0:1:8
+cargobay:942600.5:1:12
 </transporters>
 
 <SafeThrust>
@@ -74,6 +70,10 @@ cargobay:942601.0:1:8
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 13

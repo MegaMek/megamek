@@ -16,11 +16,7 @@
  */
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBayHandler;
@@ -35,6 +31,13 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
      * 
      */
     private static final long serialVersionUID = 8756042527483383101L;
+    
+    //There's no RAW minimum, but it can't be 0...
+    public static final int CAPITAL_MISSILE_MIN_VELOCITY = 1;
+    //This is the default flight speed, RAW
+    public static final int CAPITAL_MISSILE_DEFAULT_VELOCITY = 50;
+    //And this is useful at long bearings-only ranges, just for improved playability
+    public static final int CAPITAL_MISSILE_MAX_VELOCITY = 500;
 
     /**
      * 
@@ -43,7 +46,7 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "Capital Missile Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 12;

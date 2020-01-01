@@ -95,16 +95,14 @@ public class TestProtomech extends TestEntity {
      *
      */
     public static enum ProtomechArmor {
-        STANDARD (EquipmentType.T_ARMOR_STANDARD, true, 0),
-        EDP (EquipmentType.T_ARMOR_EDP, true, 1);
+        STANDARD (EquipmentType.T_ARMOR_STANDARD, 0),
+        EDP (EquipmentType.T_ARMOR_EDP, 1);
 
         private final int type;
-        private final boolean isClan;
         private final int torsoSlots;
 
-        ProtomechArmor(int t, boolean c, int slots) {
+        ProtomechArmor(int t, int slots) {
             type = t;
-            isClan = c;
             torsoSlots = slots;
         }
 
@@ -113,17 +111,15 @@ public class TestProtomech extends TestEntity {
         }
 
         /**
-         * Given an armor type, return the {@link ProtomechArmor} instance that
-         * represents that type.
+         * Given a protomech, return the {@link ProtomechArmor} instance that
+         * represents the type installed
          *
-         * @param t   The armor type.
-         * @param c   Whether this armor type is Clan or not.
-         * @return    The {@link ProtomechArmor} that corresponds to the given type
-         *            or null if no match was found.
+         * @param proto The protomech
+         * @return      The {@link ProtomechArmor} that corresponds to the given type
+         *              or null if no match was found.
          */
         public static @Nullable ProtomechArmor getArmor(Protomech proto) {
-            return getArmor(proto.getArmorType(Protomech.LOC_TORSO),
-                    TechConstants.isClan(proto.getArmorTechLevel(Protomech.LOC_TORSO)));
+            return getArmor(proto.getArmorType(Protomech.LOC_TORSO));
         }
 
         /**
@@ -131,24 +127,38 @@ public class TestProtomech extends TestEntity {
          * represents that type.
          *
          * @param t   The armor type.
-         * @param c   Whether this armor type is Clan or not.
          * @return    The {@link ProtomechArmor} that corresponds to the given type
          *            or null if no match was found.
          */
-        public static @Nullable ProtomechArmor getArmor(int t, boolean c) {
+        public static @Nullable ProtomechArmor getArmor(int t) {
             for (ProtomechArmor a : values()) {
-                if ((a.type == t) && (a.isClan == c)) {
+                if (a.type == t) {
                     return a;
                 }
             }
             return null;
+        }
+
+        /**
+         * Given an armor type, return the {@link ProtomechArmor} instance that
+         * represents that type.
+         * @deprecated Use {@link #getArmor(int)} instead
+
+         * @param t   The armor type.
+         * @param c   Whether the armor has a Clan tech base
+         * @return    The {@link ProtomechArmor} that corresponds to the given type
+         *            or null if no match was found.
+         */
+        @Deprecated
+        public static @Nullable ProtomechArmor getArmor(int t, boolean c) {
+            return getArmor(t);
         }
         
         /**
          * @return The {@link MiscType} for this armor.
          */
         public EquipmentType getArmorEqType() {
-            String name = EquipmentType.getArmorTypeName(type, isClan);
+            String name = EquipmentType.getArmorTypeName(type, true);
             return EquipmentType.get(name);
         }
         
@@ -158,11 +168,7 @@ public class TestProtomech extends TestEntity {
         
         public int getArmorTech() {
             EquipmentType eq = getArmorEqType();
-            return eq.getStaticTechLevel().getCompoundTechLevel(isClan);
-        }
-        
-        public boolean isClan() {
-            return isClan;
+            return eq.getStaticTechLevel().getCompoundTechLevel(true);
         }
         
         public int getTorsoSlots() {
@@ -266,7 +272,7 @@ public class TestProtomech extends TestEntity {
     
     @Override
     public double getWeightEngine() {
-        return proto.getEngine().getWeightEngine(proto, Ceil.KILO);
+        return proto.getEngine().getWeightEngine(proto);
     }
 
     @Override
@@ -315,7 +321,7 @@ public class TestProtomech extends TestEntity {
         return StringUtil.makeLength(
                 "Structure: "
                         + Integer.toString(getEntity().getTotalOInternal()), getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightStructure()) + "\n";
+                + TestEntity.makeWeightString(getWeightStructure(), true) + "\n";
     }
 
     @Override
@@ -327,7 +333,7 @@ public class TestProtomech extends TestEntity {
     public String printWeightControls() {
         StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
                 "Controls:", getPrintSize() - 5));
-        retVal.append(makeWeightString(getWeightControls()));
+        retVal.append(makeWeightString(getWeightControls(), true));
         retVal.append("\n");
         return retVal.toString();
     }
@@ -342,7 +348,7 @@ public class TestProtomech extends TestEntity {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
-                    TestEntity.makeWeightString(round(mt.getTonnage(getEntity()), Ceil.KILO)));
+                    TestEntity.makeWeightString(round(mt.getTonnage(getEntity()), Ceil.KILO), true));
             buff.append("\n");
         }
         return buff;
@@ -358,7 +364,7 @@ public class TestProtomech extends TestEntity {
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
                     .append(TestEntity.makeWeightString(round(mt
-                            .getTonnage(getEntity()), Ceil.KILO))).append("\n");
+                            .getTonnage(getEntity()), Ceil.KILO), true)).append("\n");
         }
         return buff;
     }
@@ -373,7 +379,7 @@ public class TestProtomech extends TestEntity {
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
                     .append(TestEntity.makeWeightString(
-                            Math.ceil(mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0)).append("\n");
+                            Math.ceil(mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0, true)).append("\n");
         }
         return buff;
     }
@@ -581,8 +587,8 @@ public class TestProtomech extends TestEntity {
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
-            buff.append("Weight: ").append(getWeight()).append(" (")
-                    .append(calculateWeight()).append(")\n");
+            buff.append("Weight: ").append(getWeight() * 1000).append(" kg (")
+                    .append(calculateWeight() * 1000).append(" kg)\n");
         }
         buff.append(printWeightCalculation()).append("\n");
         buff.append(printArmorPlacement());

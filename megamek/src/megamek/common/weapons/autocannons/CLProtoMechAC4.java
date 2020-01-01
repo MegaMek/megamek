@@ -50,9 +50,9 @@ public class CLProtoMechAC4 extends ProtoMechACWeapon {
         criticals = 3;
         bv = 49;
         cost = 133000;
-        shortAV = 7;
-        medAV = 7;
-        longAV = 7;
+        shortAV = 4;
+        medAV = 4;
+        longAV = 4;
         maxRange = RANGE_MED;
         explosionDamage = damage;
         rulesRefs = "286,TO";
@@ -60,6 +60,6 @@ public class CLProtoMechAC4 extends ProtoMechACWeapon {
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setClanAdvancement(3070, 3073, 3145).setClanApproximate(true, true, false)
             .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

@@ -30,22 +30,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import megamek.common.AmmoType;
-import megamek.common.BipedMech;
-import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.ITechManager;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadMech;
-import megamek.common.QuadVee;
-import megamek.common.SimpleTechLevel;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
@@ -58,12 +43,12 @@ import megamek.common.weapons.ppc.PPCWeapon;
 public class TestMech extends TestEntity {
 
     public enum MechJumpJets {
-        JJ_STANDARD ("JumpJet", true, Mech.JUMP_STANDARD),
-        JJ_IMPROVED ("ImprovedJump Jet", false, Mech.JUMP_IMPROVED),
-        JJ_PROTOTYPE ("ISPrototypeJumpJet", true, Mech.JUMP_PROTOTYPE),
-        JJ_PROTOTYPE_IMPROVED ("ISPrototypeImprovedJumpJet", false, Mech.JUMP_PROTOTYPE_IMPROVED),
-        JJ_UMU ("UMU", false, Mech.JUMP_NONE),
-        JJ_BOOSTER ("Mech Mechanical Jump Boosters", true, Mech.JUMP_BOOSTER);
+        JJ_STANDARD (EquipmentTypeLookup.JUMP_JET, true, Mech.JUMP_STANDARD),
+        JJ_IMPROVED (EquipmentTypeLookup.IMPROVED_JUMP_JET, false, Mech.JUMP_IMPROVED),
+        JJ_PROTOTYPE (EquipmentTypeLookup.PROTOTYPE_JUMP_JET, true, Mech.JUMP_PROTOTYPE),
+        JJ_PROTOTYPE_IMPROVED (EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ, false, Mech.JUMP_PROTOTYPE_IMPROVED),
+        JJ_UMU (EquipmentTypeLookup.MECH_UMU, false, Mech.JUMP_NONE),
+        JJ_BOOSTER (EquipmentTypeLookup.MECH_JUMP_BOOSTER, true, Mech.JUMP_BOOSTER);
         
         private String internalName;
         private boolean industrial;
@@ -295,6 +280,12 @@ public class TestMech extends TestEntity {
             weight = 4.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_QUADVEE) {
             weight = 4.0;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
+            // Like as normal command console, it is technically two seperate 4-ton and 3-ton pieces of equipment.
+            weight = 7.0;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
+            // Like as normal command console, it is technically two seperate 2-ton and 3-ton pieces of equipment. 
+            weight = 5.0;
         }
 
         return weight;
@@ -1500,13 +1491,14 @@ public class TestMech extends TestEntity {
         }
         
         for (Mounted m : mech.getWeaponList()) {
-            if (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
+            if ((((WeaponType) m.getType()).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                    || (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)) {
                 boolean torso = mech.locationIsTorso(m.getLocation());
                 if (m.getSecondLocation() != Entity.LOC_NONE) {
                     torso = torso && mech.locationIsTorso(m.getSecondLocation());
                 }
                 if (!mech.isSuperHeavy() && !torso) {
-                    buff.append("Improved Heavy Gauss can only be mounted in a torso location.\n");
+                    buff.append("Heavy Gauss can only be mounted in a torso location.\n");
                     illegal = true;
                 }
             }

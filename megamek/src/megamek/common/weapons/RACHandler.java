@@ -99,17 +99,17 @@ public class RACHandler extends UltraWeaponHandler {
         int actualShots;
         setDone();
         checkAmmo();
-        if (weapon.curMode().equals("6-shot")) {
+        if (weapon.curMode().equals(Weapon.MODE_RAC_SIX_SHOT)) {
             howManyShots = 6;
-        } else if (weapon.curMode().equals("5-shot")) {
+        } else if (weapon.curMode().equals(Weapon.MODE_RAC_FIVE_SHOT)) {
             howManyShots = 5;
-        } else if (weapon.curMode().equals("4-shot")) {
+        } else if (weapon.curMode().equals(Weapon.MODE_RAC_FOUR_SHOT)) {
             howManyShots = 4;
-        } else if (weapon.curMode().equals("3-shot")) {
+        } else if (weapon.curMode().equals(Weapon.MODE_RAC_THREE_SHOT)) {
             howManyShots = 3;
-        } else if (weapon.curMode().equals("2-shot")) {
+        } else if (weapon.curMode().equals(Weapon.MODE_RAC_TWO_SHOT)) {
             howManyShots = 2;
-        } else if (weapon.curMode().equals("Single")) {
+        } else if (weapon.curMode().equals(Weapon.MODE_AC_SINGLE)) {
             howManyShots = 1;
         }
         int total = ae.getTotalAmmoOfType(ammo.getType());

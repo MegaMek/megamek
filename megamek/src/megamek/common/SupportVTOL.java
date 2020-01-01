@@ -36,6 +36,7 @@ public class SupportVTOL extends VTOL {
         barRating[loc] = rating;
     }
 
+    @Override
     public void setBARRating(int rating) {
         for (int i = 0; i < locations(); i++) {
             barRating[i] = rating;
@@ -87,9 +88,13 @@ public class SupportVTOL extends VTOL {
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
+        return getConstructionTechAdvancement(getWeightClass());
+    }
+
+    public static TechAdvancement getConstructionTechAdvancement(int weightClass) {
         /* Support vehicle dates and tech ratings are found in TM 120, 122. DA availability is assumed to
          * be the same as Clan invasion era. */
-        if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+        if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
             return TA_VTOL_LARGE;
         } else {
             return TA_VTOL;
@@ -143,6 +148,7 @@ public class SupportVTOL extends VTOL {
         return fuelTonnage;
     }
 
+    @Override
     public void setFuelTonnage(double fuel) {
         fuelTonnage = fuel;
     }

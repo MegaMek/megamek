@@ -45,6 +45,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
@@ -1010,6 +1011,7 @@ public class Compute {
         //Naval C3 only provides full C3 range benefits to energy weapons and guided missiles
         boolean nc3EnergyGuided = ((wtype.hasFlag(WeaponType.F_ENERGY))
                 || (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
+                || (wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
                 || (wtype.getAtClass() == WeaponType.CLASS_AR10)
                 || (wtype.getAtClass() == WeaponType.CLASS_ATM)
                 || (wtype.getAtClass() == WeaponType.CLASS_LRM)
@@ -1240,7 +1242,7 @@ public class Compute {
         }
 
         // Account for "dead zones" between Aeros at different altitudes
-        if (Compute.inDeadZone(game, ae, target)) {
+        if (!Compute.useSpheroidAtmosphere(game, ae) && Compute.inDeadZone(game, ae, target)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target in dead zone");
         }
 
@@ -2551,7 +2553,7 @@ public class Compute {
         ToHitData toHit = new ToHitData();
 
         // space screens; bonus depends on number (level)
-        if (hex.terrainLevel(Terrains.SCREEN) > 0) {
+        if ((hex != null) && (hex.terrainLevel(Terrains.SCREEN) > 0)) {
             toHit.addModifier(hex.terrainLevel(Terrains.SCREEN) + 1,
                               "attacker in screen(s)");
         }
@@ -3612,24 +3614,37 @@ public class Compute {
      *
      * @return the <code>int</code> ID of weapon mode
      */
-
     public static int spinUpCannon(IGame cgame, WeaponAttackAction atk) {
+    	return spinUpCannon(cgame, atk, Compute.d6(2) - 1);
+    }
+    
+    /**
+     * If this is an ultra or rotary cannon, lets see about 'spinning it up' for
+     * extra damage
+     *
+     * @return the <code>int</code> ID of weapon mode
+     */
+
+    public static int spinUpCannon(IGame cgame, WeaponAttackAction atk, int spinupThreshold) {
 
         int threshold = 12;
-        int test, final_spin;
+        int final_spin;
         Entity shooter;
         Mounted weapon;
         WeaponType wtype = new WeaponType();
 
         // Double check this is an Ultra or Rotary cannon
+        // or a standard AC with the TacOps rapid fire rule turned on
         shooter = atk.getEntity(cgame);
         weapon = shooter.getEquipment(atk.getWeaponId());
         wtype = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
+        
+        boolean rapidAC = (wtype.getAmmoType() == AmmoType.T_AC) && cgame.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC);
 
         if (!((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-              || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) || (wtype
-                                                                              .getAmmoType() == AmmoType.T_AC_ROTARY)
-        )) {
+              || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) 
+              || (wtype.getAmmoType() == AmmoType.T_AC_ROTARY)
+              || rapidAC)) {
             return 0;
         }
 
@@ -3637,7 +3652,7 @@ public class Compute {
         threshold = atk.toHit(cgame).getValue();
 
         // Set the weapon to single shot mode
-        weapon.setMode("Single");
+        weapon.setMode(rapidAC ? "" : Weapon.MODE_AC_SINGLE);
         final_spin = 0;
 
         // If weapon can't hit target, exit the function with the weapon on
@@ -3647,18 +3662,16 @@ public class Compute {
             return final_spin;
         }
 
-        // Set a random 2d6 roll
-        test = Compute.d6(2);
-
         // If random roll is >= to-hit + 1, then set double-spin
-        if (test >= (threshold + 1)) {
+        if (spinupThreshold >= threshold) {
             final_spin = 1;
             if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
                 || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
-                weapon.setMode("Ultra");
-            }
-            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                weapon.setMode("2-shot");
+                weapon.setMode(Weapon.MODE_UAC_ULTRA);
+            } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                weapon.setMode(Weapon.MODE_RAC_TWO_SHOT);
+            } else if (rapidAC) {
+            	weapon.setMode(Weapon.MODE_AC_RAPID);
             }
         }
 
@@ -3666,15 +3679,15 @@ public class Compute {
         if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
 
             // If random roll is >= to-hit + 2 then set to quad-spin
-            if (test >= (threshold + 2)) {
+            if (spinupThreshold >= (threshold + 1)) {
                 final_spin = 2;
-                weapon.setMode("4-shot");
+                weapon.setMode(Weapon.MODE_RAC_FOUR_SHOT);
             }
 
             // If random roll is >= to-hit + 3 then set to six-spin
-            if (test >= (threshold + 3)) {
+            if (spinupThreshold >= (threshold + 2)) {
                 final_spin = 3;
-                weapon.setMode("6-shot");
+                weapon.setMode(Weapon.MODE_RAC_SIX_SHOT);
             }
         }
         return final_spin;
@@ -4080,7 +4093,7 @@ public class Compute {
                 && target.getTargetType() == Targetable.TYPE_ENTITY
                 && game.getBoard().inSpace()) {
             Entity te = (Entity) target;
-            return hasAnyFiringSolution(game, te);
+            return hasAnyFiringSolution(game, te.getId());
         }
         boolean teIlluminated = false;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -4160,12 +4173,12 @@ public class Compute {
      * Used for sensor return icons on board
      *
      * @param game - the current game
-     * @param target - the target we're looking for
+     * @param targetId - the ID# of the target entity we're looking for
      */
-    public static boolean isSensorContact(IGame game, Entity target) {
+    public static boolean isAnySensorContact(IGame game, int targetId) {
         for (Entity detector : game.getEntitiesVector()) {
-            if (detector.sensorContacts.contains(target)) {
-                target.addBeenDetectedBy(detector.getOwner());
+            if (detector.hasSensorContactFor(targetId) && game.getEntity(targetId) != null) {
+                game.getEntity(targetId).addBeenDetectedBy(detector.getOwner());
                 return true;
             }
         }
@@ -4175,15 +4188,11 @@ public class Compute {
     /**
      * Checks to see if target entity has already appeared on @detector's sensors
      * Used with Naval C3 to determine if @detector can fire weapons at @target
-     *
-     * @param game - the current game
      * @param detector - the entity making a sensor scan
+     * @param targetId - the entity id of the scan target
      */
-    public static boolean hasSensorContact(IGame game, Entity detector, Entity target) {
-        if (detector.sensorContacts.contains(target)) {
-            return true;
-        }
-        return false;
+    public static boolean hasSensorContact(Entity detector, int targetId) {
+        return detector.hasSensorContactFor(targetId);
     }
 
     /**
@@ -4191,28 +4200,14 @@ public class Compute {
      * Used for visibility
      *
      * @param game - the current game
-     * @param target - the target we're firing at
+     * @param targetId - the ID # of the target we're firing at
      */
-    public static boolean hasAnyFiringSolution(IGame game, Entity target) {
+    public static boolean hasAnyFiringSolution(IGame game, int targetId) {
         for (Entity detector : game.getEntitiesVector()) {
-            if (detector.firingSolutions.contains(target)) {
-                target.addBeenSeenBy(detector.getOwner());
+            if (detector.hasFiringSolutionFor(targetId) && game.getEntity(targetId) != null) {
+                game.getEntity(targetId).addBeenSeenBy(detector.getOwner());
                 return true;
             }
-        }
-        return false;
-    }
-
-    /**
-     * Checks to see if target entity has already had a firing solution established by @detector
-     * Used to determine if @detector can fire weapons at @target
-     *
-     * @param game - the current game
-     * @param detector - the entity making a sensor scan
-     */
-    public static boolean hasFiringSolution(IGame game, Entity detector, Entity target) {
-        if (detector.firingSolutions.contains(target)) {
-            return true;
         }
         return false;
     }
@@ -4278,86 +4273,97 @@ public class Compute {
     }
 
     /**
-     * Checks to see if an entity has passed out of range of a previously established firing solution
+     * Updates an entity's firingSolutions, removing any objects that no longer meet criteria for being
+     * tracked as targets. Also, if the detecting entity no longer meets criteria for having firing solutions,
+     * empty the list. We wouldn't want a dead ship to be providing NC3 data, now would we...
      */
-    public static void removeFiringSolution(Entity detector) {
-        Vector<Entity> toRemove = new Vector<Entity>();
-        //If the detector is dead, has no position, or has flown offboard, remove everything
+    public static void updateFiringSolutions(IGame game, Entity detector) {
+        List<Integer> toRemove = new ArrayList<Integer>();
+        //Flush the detecting unit's firing solutions if any of these conditions applies
         if (detector.isDestroyed()
+                || detector.isDoomed()
+                || detector.getTransportId() != Entity.NONE
+                || detector.isPartOfFighterSquadron()
                 || detector.isOffBoard()
                 || detector.getPosition() == null) {
-            detector.firingSolutions.removeAllElements();
+            detector.clearFiringSolutions();
             return;
         }
-        for (Entity target : detector.firingSolutions) {
-            //If the target is dead, has no position or has flown offboard, remove it
-            if (target.isDestroyed()
-                    || target.isOffBoard()
-                    || target.getPosition() == null) {
-                toRemove.add(target);
+        for (int id : detector.getFiringSolutions()) {
+            Entity target = game.getEntity(id);
+            //The target should be removed if it's off the board for any of these reasons
+            if (target == null
+                    || target.getPosition() == null
+                    || target.isDestroyed()
+                    || target.isDoomed()
+                    || target.getTransportId() != Entity.NONE
+                    || target.isPartOfFighterSquadron()
+                    || target.isOffBoard()) {
+                toRemove.add(id);
                 continue;
             }
             Coords targetPos = target.getPosition();
             int distance = detector.getPosition().distance(targetPos);
             //Per SO p119, optical firing solutions are lost if the target moves beyond 1/10 max range
-            if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
-                if (distance > Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE) {
-                    toRemove.add(target);
-                }
-            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
-                if (distance > Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE) {
-                    toRemove.add(target);
-                }
+            if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL
+                    && distance > Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE) {
+                    toRemove.add(id);
+            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL
+                    && distance > Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE) {
+                    toRemove.add(id);
             //For ASF sensors, make sure we're using the space range of 555...
-            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-                if (distance > Sensor.ASF_RADAR_MAX_RANGE) {
-                    toRemove.add(target);
-                }
-            }else {
+            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR
+                    && distance > Sensor.ASF_RADAR_MAX_RANGE) {
+                    toRemove.add(id);
+            } else {
                 //Radar firing solutions are only lost if the target moves out of range
                 if (distance > detector.getActiveSensor().getRangeByBracket()) {
-                    toRemove.add(target);
+                    toRemove.add(id);
                 }
             }
         }
-        if (toRemove.size() >= 1) {
-            for (Entity e : toRemove) {
-                detector.firingSolutions.remove(e);
-            }
-        }
+        detector.removeFiringSolution(toRemove);
     }
 
     /**
-     * Checks to see if an entity has passed out of range of a previously established sensor lock
+     * Updates an entity's sensorContacts, removing any objects that no longer meet criteria for being
+     * tracked. Also, if the detecting entity no longer meets criteria for having sensor contacts,
+     * empty the list. We wouldn't want a dead ship to be providing sensor data, now would we...
      */
-    public static void removeSensorContact(Entity detector) {
-        Vector<Entity> toRemove = new Vector<Entity>();
-        //If the detector is dead, has no position, or has flown offboard, remove everything
-        if (detector.isDestroyed()
-                || detector.isOffBoard()
-                || detector.getPosition() == null) {
-            detector.firingSolutions.removeAllElements();
+    public static void updateSensorContacts(IGame game, Entity detector) {
+        List<Integer> toRemove = new ArrayList<Integer>();
+        //Flush the detecting unit's sensor contacts if any of these conditions applies
+        if (detector.getPosition() == null
+                || detector.isDestroyed()
+                || detector.isDoomed()
+                || detector.getTransportId() != Entity.NONE
+                || detector.isPartOfFighterSquadron()
+                || detector.isOffBoard()) {
+            detector.clearSensorContacts();
             return;
         }
-        for (Entity target : detector.sensorContacts) {
-            //If the target is dead, has no position or has flown offboard, remove it
-            if (target.isDestroyed()
-                    || target.isOffBoard()
-                    || target.getPosition() == null) {
-                toRemove.add(target);
+        for (int id : detector.getSensorContacts()) {
+            Entity target = game.getEntity(id);
+            //The target should be removed if it's off the board for any of these reasons
+            if (target == null
+                    || target.getPosition() == null
+                    || target.isDestroyed()
+                    || target.isDoomed()
+                    || target.getTransportId() != Entity.NONE
+                    || target.isPartOfFighterSquadron()
+                    || target.isOffBoard()) {
+                toRemove.add(id);
                 continue;
             }
+            //And now calculate whether or not the target has moved out of range. Per SO p117-119,
+            //sensor contacts remain tracked on the plotting board until this occurs.
             Coords targetPos = target.getPosition();
             int distance = detector.getPosition().distance(targetPos);
             if (distance > detector.getActiveSensor().getRangeByBracket()) {
-                toRemove.add(target);
+                toRemove.add(id);
             }
         }
-        if (toRemove.size() >= 1) {
-            for (Entity e : toRemove) {
-                detector.sensorContacts.remove(e);
-            }
-        }
+        detector.removeSensorContact(toRemove);
     }
 
 
@@ -4409,8 +4415,12 @@ public class Compute {
             outOfVisualRange = Sensor.ASF_RADAR_MAX_RANGE;
             rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
         }
+        
+        if (distance > outOfVisualRange) {
+            return false;
+        }
 
-        if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
+        if (ae instanceof Aero) {
             Aero aero = (Aero) ae;
             //Account for sensor damage
             if (aero.isAeroSensorDestroyed()) {
@@ -4420,26 +4430,19 @@ public class Compute {
             }
         }
 
-        //If using active radar, targets at 1/10 max range are automatically detected
+        //Targets at 1/10 max range are automatically detected
         if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
             autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
         } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
             autoVisualRange = Sensor.LC_RADAR_AUTOSPOT_RANGE;
-        }
-
-        //If using thermal/optical sensors, we can only establish a firing solution at 1/10 max range
-        if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
-            outOfVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
+        } else if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
+            autoVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
         } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
-            outOfVisualRange = Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE;
+            autoVisualRange = Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE;
         }
 
         if (distance <= autoVisualRange) {
             return true;
-        }
-
-        if (distance > outOfVisualRange) {
-            return false;
         }
 
         //Apply Sensor Geek SPA, if present
@@ -4509,7 +4512,7 @@ public class Compute {
             rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
         }
 
-        if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
+        if (ae instanceof Aero) {
             Aero aero = (Aero) ae;
             //Account for sensor damage
             if (aero.isAeroSensorDestroyed()) {
@@ -4610,7 +4613,7 @@ public class Compute {
                 && target.getTargetType() == Targetable.TYPE_ENTITY
                 && game.getBoard().inSpace()) {
             Entity te = (Entity) target;
-            return isSensorContact(game, te);
+            return hasSensorContact(ae, te.getId());
         }
 
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
@@ -6805,6 +6808,8 @@ public class Compute {
                 }
             }
             return nCapitalW + (int) Math.ceil(nStandardW / 6.0);
+        } else if (entity.isSupportVehicle()) {
+            return getSupportVehicleGunnerNeeds(entity);
         } else if (entity instanceof Tank) {
             return (getFullCrewSize(entity) - 1);
         } else if (entity instanceof Infantry) {
@@ -6834,9 +6839,119 @@ public class Compute {
         return 0;
     }
 
+    /**
+     * Calculates the base crew requirements for support vehicles.
+     *
+     * @param entity The support vehicle
+     * @return       The minimum base crew
+     */
+    public static int getSVBaseCrewNeeds(Entity entity) {
+        if (entity.isTrailer() && (entity.getEngine().getEngineType() == Engine.NONE)) {
+            return 0;
+        }
+        final boolean naval = entity.getMovementMode().equals(EntityMovementMode.NAVAL)
+                || entity.getMovementMode().equals(EntityMovementMode.HYDROFOIL)
+                || entity.getMovementMode().equals(EntityMovementMode.SUBMARINE);
+        int crew;
+        if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            crew = 1;
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
+            if (naval || entity.getMovementMode().equals(EntityMovementMode.AIRSHIP)) {
+                crew = 4;
+            } else {
+                crew = 2;
+            }
+        } else {
+            crew = 3;
+            if (naval) {
+                crew += (int) Math.ceil(entity.getWeight() / 5000);
+            } else if (entity.getMovementMode().equals(EntityMovementMode.AIRSHIP)) {
+                crew += (int) Math.ceil(entity.getWeight() / 500);
+            }
+        }
+        return crew;
+    }
+
+    /**
+     * Calculates number of gunners required for a support vehicle. See TM, 131.
+     *
+     * @param entity The support vehicle
+     * @return       The number of gunners required.
+     */
+    public static int getSupportVehicleGunnerNeeds(Entity entity) {
+        final boolean advFireCon = entity.hasMisc(MiscType.F_ADVANCED_FIRECONTROL);
+        final boolean basicFireCon = !advFireCon && entity.hasMisc(MiscType.F_BASIC_FIRECONTROL);
+        if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            if (!advFireCon && !basicFireCon) {
+                // No fire control requires one gunner per weapon.
+                return entity.getWeaponList().size();
+            } else {
+                // Otherwise we require one gunner per facing, with turrets and pintle mounts counting
+                // as separate facings
+                Set<Integer> facings = new HashSet<>();
+                int pintles = 0;
+                for (Mounted m : entity.getWeaponList()) {
+                    if (m.isPintleTurretMounted()) {
+                        pintles++;
+                    } else {
+                        facings.add(m.getLocation());
+                    }
+                }
+                if (advFireCon) {
+                    // Advanced fire control lets the driver count as a gunner, so one fewer dedicated gunners is needed.
+                    return Math.max(0, pintles + facings.size() - 1);
+                } else {
+                    return pintles + facings.size();
+                }
+            }
+        } else {
+            // Medium and large support vehicle gunner requirements are based on weapon tonnage
+            double tonnage = entity.getWeaponList().stream().filter(m -> !m.getType().hasFlag(WeaponType.F_AMS))
+                    .mapToDouble(m -> m.getType().getTonnage(entity)).sum();
+            if (advFireCon) {
+                return (int) Math.ceil(tonnage / 4.0);
+            } else if (basicFireCon) {
+                return (int) Math.ceil(tonnage / 3.0);
+            } else {
+                return (int) Math.ceil(tonnage / 2.0);
+            }
+        }
+    }
+
+    /**
+     * Calculates addiontal crew required by support vehicles and advanced aerospace vessels
+     * for certain misc equipment.
+     *
+     * @param entity The unit
+     * @return       The number of additional crew required
+     */
+    public static int getAdditionalNonGunner(Entity entity) {
+        int crew = 0;
+        for (Mounted m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                crew += (int) m.getType().getTonnage(entity);
+            } else if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
+                crew += 3;
+            } else if (m.getType().hasFlag(MiscType.F_MASH)
+                    || m.getType().hasFlag(MiscType.F_MASH_EXTRA)
+                    || m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                crew += 5;
+            }
+        }
+        return crew;
+    }
+
     // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
     public static int getFullCrewSize(Entity entity) {
-        if (entity instanceof Tank) {
+        if (entity.isSupportVehicle()) {
+            int crew = getSVBaseCrewNeeds(entity) + getSupportVehicleGunnerNeeds(entity)
+                    + getAdditionalNonGunner(entity);
+            // Add officers. Older editions of the rules give the officer ratio as 1:6 and 4 as the threshold to require officers
+            if (crew < 5) {
+                return crew;
+            }
+            return (int) Math.ceil(crew * 1.2);
+        } else if (entity instanceof Tank) {
             return (int) Math.ceil(entity.getWeight() / 15.0);
         } else if (entity instanceof BattleArmor) {
             int ntroopers = 0;
@@ -6898,6 +7013,27 @@ public class Compute {
             return getFullCrewSize(entity);
         }
         return 0;
+    }
+    
+    /**
+     * Should we treat this entity, in its current state, as if it is a spheroid unit
+     * flying in atmosphere?
+     */
+    public static boolean useSpheroidAtmosphere(IGame game, Entity en) {
+        if (!en.isAero()) {
+            return false;
+        }
+        // are we in space?
+        if (game.getBoard().inSpace()) {
+            return false;
+        }
+        // aerodyne's will operate like spheroids in vacuum
+        if (!((IAero) en).isSpheroid()
+                && !game.getPlanetaryConditions().isVacuum()) {
+            return false;
+        }
+        // are we in atmosphere?
+        return en.isAirborne();
     }
 
 } // End public class Compute

@@ -110,6 +110,16 @@ public class Bay implements Transporter, ITechnology {
     public void setBayDamage(double damage) {
     	this.damage = Math.min(damage, totalSpace);
     }
+    
+    /**
+     * Method used by MHQ to update bay space when loading units in lobby. See Utilities.loadPlayerTransports
+     * This ensures that consumed space is kept in sync between the MM client and MHQ game thread
+     * 
+     * @param space - double representing space consumed by the unit being loaded. 1 except in the case of infantry
+     */
+    public void setCurrentSpace(double space) {
+        this.currentSpace = Math.max(0, (currentSpace - space));
+    }
 
     // the starting number of doors for the bay.
     public int getDoors() {
@@ -628,4 +638,11 @@ public class Bay implements Transporter, ITechnology {
         return false;
     }
 
-} // End package class TroopSpace implements Transporter
+    /**
+     * @return The cost of the bay in C-bills
+     */
+    public long getCost() {
+        return 0;
+    }
+
+ } // End package class TroopSpace implements Transporter

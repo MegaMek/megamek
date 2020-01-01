@@ -65,7 +65,6 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     protected final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
 
-    private FireControl fireControl;
     private PathEnumerator pathEnumerator;
 
     // the best damage enemies could expect were I not here. Used to determine 
@@ -85,13 +84,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 "Using " + getOwner().getBehaviorSettings().getDescription()
                         + " behavior");
     }
-
-    FireControl getFireControl() {
-        return fireControl;
-    }
-
-    void setFireControl(FireControl fireControl) {
-        this.fireControl = fireControl;
+    
+    FireControl getFireControl(Entity entity) {
+        return getOwner().getFireControl(entity);
     }
 
     void setPathEnumerator(PathEnumerator pathEnumerator) {
@@ -204,7 +199,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {
                 returnResponse.addToMyEstimatedDamage(
-                        getMaxDamageAtRange(fireControl,
+                        getMaxDamageAtRange(getFireControl(path.getEntity()),
                                             path.getEntity(),
                                             range,
                                             useExtremeRange,
@@ -213,7 +208,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
             //in general if an enemy can end its position in range, it can hit me
             returnResponse.addToEstimatedEnemyDamage(
-                    getMaxDamageAtRange(fireControl,
+                    getMaxDamageAtRange(getFireControl(enemy),
                                         enemy,
                                         range,
                                         useExtremeRange,
@@ -262,7 +257,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                     IGame game) {
 
         // If they don't have the range, they can't do damage.
-        int maxRange = enemy.getMaxWeaponRange();
+        int maxRange = getOwner().getMaxWeaponRange(enemy, path.getEntity().isAirborne());
         if (distance > maxRange) {
             return 0;
         }
@@ -283,7 +278,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             targetState = new EntityState(actualTarget);            
         }
 
-        int maxHeat = (enemy.getHeatCapacity() - enemy.heat) + 5;
+        int maxHeat = (enemy.getHeatCapacity() - enemy.heat) + (enemy.isAero() ? 0 : 5);
         FiringPlanCalculationParameters guess =
                 new FiringPlanCalculationParameters.Builder()
                         .buildGuess(enemy,
@@ -292,7 +287,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                     targetState,
                                     maxHeat,
                                     null);
-        return getFireControl().determineBestFiringPlan(guess).getUtility();
+        return getFireControl(path.getEntity()).determineBestFiringPlan(guess).getUtility();
     }
 
     double calculateKickDamagePotential(Entity enemy, MovePath path,
@@ -320,8 +315,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         // If I don't have range, I can't do damage.
         // exception: I might, if I'm an aero on a ground map attacking a ground unit because aero unit ranges are a "special case"
         boolean aeroAttackingGroundUnitOnGroundMap = me.isAirborne() && !enemy.isAero() && game.getBoard().onGround();
-        
-        int maxRange = me.getMaxWeaponRange();
+
+        int maxRange = getOwner().getMaxWeaponRange(me, enemy.isAirborne());
         if (distance > maxRange && !aeroAttackingGroundUnitOnGroundMap) {
             return 0;
         }
@@ -344,7 +339,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         FiringPlan myFiringPlan;
         // we're only going to do air to ground attack plans if we're an airborne aero attacking a ground unit
         if (aeroAttackingGroundUnitOnGroundMap) {
-            myFiringPlan = getFireControl().guessFullAirToGroundPlan(path.getEntity(), enemy,
+            myFiringPlan = getFireControl(path.getEntity()).guessFullAirToGroundPlan(me, enemy,
                                                                      new EntityState(enemy), path, game, false);
         } else {
             FiringPlanCalculationParameters guess =
@@ -353,9 +348,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                         new EntityState(path),
                                         enemy,
                                         null,
-                                        FireControl.DOES_NOT_TRACK_HEAT,
+                                        getFireControl(me).calcHeatTolerance(me, me.isAero()),
                                         null);
-            myFiringPlan = getFireControl().determineBestFiringPlan(guess);
+            myFiringPlan = getFireControl(me).determineBestFiringPlan(guess);
         }
         return myFiringPlan.getUtility();
     }
@@ -380,7 +375,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
-        int distance = enemy.getPosition().distance(path.getFinalCoords());                
+        int distance = enemy.getPosition().distance(path.getFinalCoords());
         
         // How much damage can they do to me?
         double theirDamagePotential = calculateDamagePotential(enemy,
@@ -709,7 +704,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                                 null,
                                                 (e.getHeatCapacity() - e.getHeat()) + 5,
                                                 null);
-                    double damage = fireControl.determineBestFiringPlan(guess)
+                    double damage = getFireControl(f).determineBestFiringPlan(guess)
                                                .getExpectedDamage();
                     if (damage > max_damage) {
                         max_damage = damage;
@@ -742,7 +737,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                         null,
                                         FireControl.DOES_NOT_TRACK_HEAT,
                                         null);
-            FiringPlan myFiringPlan = fireControl.determineBestFiringPlan(guess);
+            FiringPlan myFiringPlan = getFireControl(path.getEntity()).determineBestFiringPlan(guess);
             
             double myDamagePotential = myFiringPlan.getUtility();
             if (myDamagePotential > damageStructure.firingDamage) {

@@ -531,7 +531,8 @@ public class MULParser {
         //first check for ejected mechwarriors and vee crews
         if(chassis.equals(EjectedCrew.VEE_EJECT_NAME)) {
             return new EjectedCrew();
-        } else if(chassis.equals(EjectedCrew.MW_EJECT_NAME)) {
+        } else if(chassis.equals(EjectedCrew.PILOT_EJECT_NAME)
+                    || chassis.equals(EjectedCrew.MW_EJECT_NAME)) {
             return new MechWarrior();
         }
 
@@ -1509,8 +1510,9 @@ public class MULParser {
             // it's possible that this is "extra" ammo in a weapons bay, so we may attempt
             // to shove it in there
             if (slot == null) {
-                if(entity.usesWeaponBays() &&
-                        !bayIndex.isEmpty()) {
+                if((entity.usesWeaponBays() 
+                        || entity instanceof Dropship) 
+                        && !bayIndex.isEmpty()) {
                     addExtraAmmoToBay(entity, loc, type, bayIndex);
                     slot = entity.getCritical(loc, indexVal);
                 }

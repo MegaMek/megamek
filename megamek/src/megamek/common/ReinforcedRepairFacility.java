@@ -61,7 +61,7 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
 
     @Override
     public double getWeight() {
-        return Math.ceil(2 * totalSpace * 0.1) * 0.5;
+        return RoundWeight.nextHalfTon(totalSpace * 0.1);
     }
 
     @Override
@@ -88,5 +88,9 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
+    @Override
+    public long getCost() {
+        return 30000L * (long) totalSpace;
+    }
 
 }

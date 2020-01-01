@@ -15,17 +15,12 @@
 package megamek.common;
 
 /**
- * Represents a tiny seat for a passenger.
+ * Represents an external or exposed support vehicle crew seat.
  */
 
-public final class PillionSeatCargoBay extends Bay {
+public final class PillionSeatCargoBay extends StandardSeatCargoBay {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 4161027191694822726L;
-
-    private double weight = 0;
+    private static final long serialVersionUID = 145634308684637504L;
 
     /**
      * The default constructor is only for serialization.
@@ -38,44 +33,18 @@ public final class PillionSeatCargoBay extends Bay {
     // Public constructors and methods.
 
     /**
-     * Create a space for the given tonnage of troops. For this class, only the
-     * weight of the troops (and their equipment) are considered; if you'd like
-     * to think that they are stacked like lumber, be my guest.
+     * Creates pillion crew seating for support vehicles.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param space The number of seats
      */
-    public PillionSeatCargoBay(double space, int doors) {
-        totalSpace = (int)(space/0.025);
-        weight = space;
-        currentSpace = (int)(space/0.025);
-        this.doors = doors;
-        currentdoors = doors;
-    }
-
-    /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
-     *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
-     */
-    @Override
-    public boolean canLoad(Entity unit) {
-        // Assume that we cannot carry the unit.
-        boolean result = false;
-
-        return result;
+    public PillionSeatCargoBay(double space) {
+        super(space);
+        weight = space * 0.025;
     }
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        StringBuffer returnString = new StringBuffer(
-                "Passenger Pillion Seats (" + getCurrentDoors() + " doors) - ");
-        returnString.append((int)currentSpace);
-        return returnString.toString();
+        return "Seating (Pillion) - " + currentSpace;
     }
 
     @Override
@@ -84,18 +53,13 @@ public final class PillionSeatCargoBay extends Bay {
     }
 
     @Override
-    public double getWeight() {
-        return weight;
-    }
-
-    @Override
-    public boolean isQuarters() {
-        return true;
-    }
-
-    @Override
     public String toString() {
-        return "pillionseats:" + weight + ":" + doors;
+        return "pillionseats:" + currentSpace + ":" + doors;
+    }
+
+    @Override
+    public long getCost() {
+        return 10L * (long) totalSpace;
     }
 
 }

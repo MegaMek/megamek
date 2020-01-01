@@ -94,7 +94,7 @@ public class NavalRepairFacility extends Bay {
     
     @Override
     public double getWeight() {
-        return Math.ceil(2 * totalSpace * (pressurized? 0.075 : 0.025)) * 0.5;
+        return RoundWeight.nextHalfTon(totalSpace * (pressurized? 0.075 : 0.025));
     }
     
     @Override
@@ -144,5 +144,9 @@ public class NavalRepairFacility extends Bay {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
+    @Override
+    public long getCost() {
+        return (isPressurized() ? 10000L : 5000L) * (long) totalSpace;
+    }
 
 }

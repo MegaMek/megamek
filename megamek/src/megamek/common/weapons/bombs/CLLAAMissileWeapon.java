@@ -51,6 +51,7 @@ public class CLLAAMissileWeapon extends ThunderBoltWeapon {
         this.maxRange = RANGE_MED;
         this.ammoType = AmmoType.T_LAA_MISSILE;
         this.capital = false;
+        this.missileArmor = 6;
         rulesRefs = "359,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)

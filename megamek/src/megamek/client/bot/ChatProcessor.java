@@ -385,6 +385,7 @@ public class ChatProcessor {
             msg = "Aggression changed from " + currentAggression + " to " +
                   princess.getBehaviorSettings().getHyperAggressionIndex();
             princess.sendChat(msg);
+            princess.resetSpinupThreshold();
         }
 
         // Adjust herd mentality.

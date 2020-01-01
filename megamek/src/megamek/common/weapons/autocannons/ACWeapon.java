@@ -35,6 +35,7 @@ import megamek.common.weapons.ACWeaponHandler;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RapidfireACWeaponHandler;
+import megamek.common.weapons.Weapon;
 import megamek.server.Server;
 
 /**
@@ -147,10 +148,10 @@ public abstract class ACWeapon extends AmmoWeapon {
         // Modes for allowing standard and light AC rapid fire
         if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
             addMode("");
-            addMode("Rapid");
+            addMode(Weapon.MODE_AC_RAPID);
         } else {
             removeMode("");
-            removeMode("Rapid");
+            removeMode(Weapon.MODE_AC_RAPID);
         }
     }
     

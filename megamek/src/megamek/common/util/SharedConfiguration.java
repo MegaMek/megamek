@@ -59,13 +59,9 @@ public class SharedConfiguration {
      * 
      * @return A single instance of the {@link SharedConfiguration} class.
      */
-    public static SharedConfiguration getInstance() {
+    public static synchronized SharedConfiguration getInstance() {
         if (instance == null) {
-            synchronized (SharedConfiguration.class) {
-                if (instance == null) {
-                    instance = new SharedConfiguration();
-                }
-            }
+            instance = new SharedConfiguration();
         }
         
         return instance;

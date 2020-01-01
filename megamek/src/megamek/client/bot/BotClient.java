@@ -83,6 +83,9 @@ import megamek.common.util.StringUtil;
 public abstract class BotClient extends Client {
     private Map<EntityMovementMode, BoardEdgePathFinder> deploymentPathFinders = new HashMap<>();
 
+    private List<Entity> currentTurnEnemyEntities;
+    private List<Entity> currentTurnFriendlyEntities;
+    
     // a frame, to show stuff in
     public JFrame frame;
     
@@ -206,6 +209,9 @@ public abstract class BotClient extends Client {
                         }
 
                         break;
+                    case Packet.COMMAND_CFR_TAG_TARGET:
+                        sendTAGTargetCFRResponse(pickTagTarget(evt));
+                        break;
                 }
             }
 
@@ -253,6 +259,10 @@ public abstract class BotClient extends Client {
     
     protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) { 
         return null;
+    }
+    
+    protected int pickTagTarget(GameCFREvent evt) {
+        return 0;
     }
 
     /**
@@ -317,29 +327,53 @@ public abstract class BotClient extends Client {
         }
         return result;
     }
-
-    public List<Entity> getEnemyEntities() {
-        ArrayList<Entity> result = new ArrayList<>();
+    
+    protected Entity getArbitraryEntity() {
         for (Entity entity : game.getEntitiesVector()) {
-            if (entity.getOwner().isEnemyOf(getLocalPlayer())
-                && (entity.getPosition() != null) && !entity.isOffBoard()
-                && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
-
-                result.add(entity);
+            if (entity.getOwner().equals(getLocalPlayer())) {
+                return entity;
             }
         }
-        return result;
+        
+        return null;
     }
 
-    public List<Entity> getFriendEntities() {
-        List<Entity> result = new ArrayList<>();
-        for (Entity entity : game.getEntitiesVector()) {
-            if (!entity.getOwner().isEnemyOf(getLocalPlayer()) && (entity.getPosition() != null)
-                && !entity.isOffBoard()) {
-                result.add(entity);
+    /**
+     * Lazy-loaded list of enemy entities that we should consider firing at.
+     * Only good for the current entity turn calculation, as this list can change between individual entity turns. 
+     */
+    public List<Entity> getEnemyEntities() {
+        if(currentTurnEnemyEntities == null) {
+            currentTurnEnemyEntities = new ArrayList<>();
+            for (Entity entity : game.getEntitiesVector()) {
+                if (entity.getOwner().isEnemyOf(getLocalPlayer())
+                    && (entity.getPosition() != null) && !entity.isOffBoard()
+                    && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
+    
+                    currentTurnEnemyEntities.add(entity);
+                }
             }
         }
-        return result;
+        
+        return currentTurnEnemyEntities;
+    }
+
+    /**
+     * Lazy-loaded list of friendly entities.
+     * Only good for the current entity turn calculation, as this list can change between individual entity turns. 
+     */
+    public List<Entity> getFriendEntities() {
+        if(currentTurnFriendlyEntities == null) {
+            currentTurnFriendlyEntities = new ArrayList<>();
+            for (Entity entity : game.getEntitiesVector()) {
+                if (!entity.getOwner().isEnemyOf(getLocalPlayer()) && (entity.getPosition() != null)
+                    && !entity.isOffBoard()) {
+                    currentTurnFriendlyEntities.add(entity);
+                }
+            }
+        }
+        
+        return currentTurnFriendlyEntities;
     }
 
     // TODO: move initMovement to be called on phase end
@@ -464,6 +498,10 @@ public abstract class BotClient extends Client {
     }
 
     private synchronized void calculateMyTurn() {
+        // clear out transient data
+        currentTurnEnemyEntities = null;
+        currentTurnFriendlyEntities = null;
+        
         try {
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 MovePath mp;
@@ -859,7 +897,10 @@ public abstract class BotClient extends Client {
         // So we adjust each coordinate's fitness based on the "longest available path"
         if(highestFitness < -10) {
             for(RankedCoords rc : validCoords) {
-                rc.fitness += deploymentPathFinders.get(deployed_ent.getMovementMode()).getLongestNonEdgePath(rc.getCoords()).getHexesMoved();
+                MovePath movePath = getBoardEdgePathFinder(deployed_ent).getLongestNonEdgePath(rc.getCoords());
+                if (movePath != null) {
+                    rc.fitness += movePath.getHexesMoved();
+                }
             }
         }
         
@@ -874,6 +915,17 @@ public abstract class BotClient extends Client {
         return result;
     }
 
+    /**
+     * Gets the {@link BoardEdgePathFinder} for an {@link Entity} for their
+     * current movement mode.
+     * @param entity The entity to retrieve the {@link BoardEdgePathFinder}.
+     * @return The appropriate {@link BoardEdgePathFinder} for the given entity.
+     */
+    private BoardEdgePathFinder getBoardEdgePathFinder(Entity entity) {
+        return deploymentPathFinders.computeIfAbsent(entity.getMovementMode(), 
+            e -> new BoardEdgePathFinder());
+    }
+
     // ToDo: Change this to 'hasSafePathToCenter' to account for buildings, lava and similar hazards.
     /**
      * Determines if the given entity has a reasonable path to the "opposite" edge of the board from its
@@ -884,21 +936,11 @@ public abstract class BotClient extends Client {
      */
     private boolean hasPathToEdge(Entity entity, IBoard board) {
         // Flying units can always get anywhere
-        if (entity.isAero() || entity instanceof VTOL) {
+        if (entity.isAirborne() || entity instanceof VTOL) {
             return true;
         }
         
-        BoardEdgePathFinder boardEdgePathFinder;
-
-        if(deploymentPathFinders.containsKey(entity.getMovementMode())) {
-            boardEdgePathFinder = deploymentPathFinders.get(entity.getMovementMode());
-        }
-        else {
-            boardEdgePathFinder = new BoardEdgePathFinder();
-            deploymentPathFinders.put(entity.getMovementMode(), boardEdgePathFinder);
-        }
-        
-        MovePath mp = boardEdgePathFinder.findPathToEdge(entity);
+        MovePath mp = getBoardEdgePathFinder(entity).findPathToEdge(entity);
         return mp != null;
     }
 

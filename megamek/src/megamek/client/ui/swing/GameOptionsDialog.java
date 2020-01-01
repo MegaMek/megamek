@@ -68,6 +68,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.utils.MegaMekXmlUtil;
 
 /**
@@ -478,6 +479,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 optionComp.setEditable(editable);
             } else {
                 optionComp.setEditable(false);
+            }
+        } else if (option.getName().equals(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY)) {
+            if (option.intValue() < CapitalMissileBayWeapon.CAPITAL_MISSILE_MIN_VELOCITY) {
+                //Set to the minimum velocity if under
+                option.setValue(CapitalMissileBayWeapon.CAPITAL_MISSILE_MIN_VELOCITY);
+            } else if (option.intValue() > CapitalMissileBayWeapon.CAPITAL_MISSILE_MAX_VELOCITY) {
+                //Set to the maximum velocity if over
+                option.setValue(CapitalMissileBayWeapon.CAPITAL_MISSILE_MAX_VELOCITY);
             }
         } else if (option.getName().equals(OptionsConstants.RPG_BEGIN_SHUTDOWN)) {
             if ((options.getOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)).booleanValue()) {

@@ -46,6 +46,7 @@ import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.MovePathFinder;
 import megamek.common.pathfinder.NewtonianAerospacePathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
+import megamek.common.pathfinder.SpheroidPathFinder;
 
 public class PathEnumerator {
 
@@ -250,13 +251,18 @@ public class PathEnumerator {
                 AeroSpacePathFinder apf = AeroSpacePathFinder.getInstance(getGame());
                 apf.run(new MovePath(game, mover));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
-            // this handles the case of the mover being an infantry unit of some kind
-            } else if(mover.isAero() && game.getBoard().inAtmosphere()) {
+            // this handles the case of the mover being a winged aerospace unit on a low-atmo map
+            } else if(mover.isAero() && game.getBoard().inAtmosphere() && !Compute.useSpheroidAtmosphere(game, mover)) {
                 AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
                 apf.run(new MovePath(game, mover));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
+            // this handles the case of the mover acting like a spheroid aerospace unit in an atmosphere
+            } else if(Compute.useSpheroidAtmosphere(game, mover)) {
+                SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game);
+                spf.run(new MovePath(game, mover));
+                paths.addAll(spf.getAllComputedPathsUncategorized());
             // this handles the case of the mover being an infantry unit of some kind
-            }else if(mover.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+            } else if(mover.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
                 InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
                 ipf.run(new MovePath(game, mover));
                 paths.addAll(ipf.getAllComputedPathsUncategorized());

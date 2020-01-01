@@ -24,6 +24,10 @@ Paramour Mobile Repair Vehicle
 2557
 </year>
 
+<originalBuildYear>
+2557
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -33,8 +37,8 @@ Tracked
 </motion_type>
 
 <transporters>
+cargobay:15.0:1:1
 troopspace:5.0
-cargobay:15:1
 </transporters>
 
 <cruiseMP>
@@ -52,18 +56,6 @@ cargobay:15:1
 25
 </armor>
 
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
-<armor_type>
-14
-</armor_type>
-
 <Body Equipment>
 IS Machine Gun Ammo - Half
 Armored Chassis
@@ -80,9 +72,17 @@ Machine Gun
 </Left Equipment>
 
 <Rear Equipment>
-Lift Hoist
-Lift Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
 </Rear Equipment>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <source>
 TRO 3075 - Age of War
@@ -91,3 +91,8 @@ TRO 3075 - Age of War
 <tonnage>
 60.0
 </tonnage>
+
+<fuel>
+0.0
+</fuel>
+

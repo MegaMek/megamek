@@ -45,6 +45,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IBomber;
@@ -137,6 +138,14 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     private JLabel labCondEjectHeadshot = new JLabel(
             Messages.getString("CustomMechDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JCheckBox chCondEjectHeadshot = new JCheckBox();
+    
+    private JLabel labCondEjectFuel = new JLabel(
+            Messages.getString("CustomMechDialog.labConditional_Ejection_Fuel"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JCheckBox chCondEjectFuel = new JCheckBox();
+
+    private JLabel labCondEjectSIDest = new JLabel(
+            Messages.getString("CustomMechDialog.labConditional_Ejection_SI_Destroyed"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JCheckBox chCondEjectSIDest = new JCheckBox();
 
     private JLabel labSearchlight = new JLabel(
             Messages.getString("CustomMechDialog.labSearchlight"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -165,7 +174,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             // Ejection Seat
             boolean hasEjectSeat = true;
             // torso mounted cockpits don't have an ejection seat
-            if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED
+                    || mech.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT)) {
                 hasEjectSeat = false;
             }
             if (mech.isIndustrial()) {
@@ -198,6 +208,30 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(labCondEjectHeadshot, GBC.std());
                 add(chCondEjectHeadshot, GBC.eol());
                 chCondEjectHeadshot.setSelected(mech.isCondEjectHeadshot());
+            }
+        } else if (entity.isFighter()) {
+            Aero aero = (Aero) entity;
+
+            // Ejection Seat
+            boolean hasEjectSeat = !(entity.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
+            if (hasEjectSeat) {
+                add(labAutoEject, GBC.std());
+                add(chAutoEject, GBC.eol());
+                chAutoEject.setSelected(!aero.isAutoEject());
+            }
+
+            // Conditional Ejections
+            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                    && hasEjectSeat) { // $NON-NLS-1$
+                add(labCondEjectAmmo, GBC.std());
+                add(chCondEjectAmmo, GBC.eol());
+                chCondEjectAmmo.setSelected(aero.isCondEjectAmmo());
+                add(labCondEjectFuel, GBC.std());
+                add(chCondEjectFuel, GBC.eol());
+                chCondEjectFuel.setSelected(aero.isCondEjectFuel());
+                add(labCondEjectSIDest, GBC.std());
+                add(chCondEjectSIDest, GBC.eol());
+                chCondEjectSIDest.setSelected(aero.isCondEjectSIDest());
             }
         }
 
@@ -319,11 +353,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     }
 
     public void applyChoices() {
+        //Autoejection Options
         boolean autoEject = chAutoEject.isSelected();
         boolean condEjectAmmo = chCondEjectAmmo.isSelected();
+        //Mechs and LAMs Only
         boolean condEjectEngine = chCondEjectEngine.isSelected();
         boolean condEjectCTDest = chCondEjectCTDest.isSelected();
         boolean condEjectHeadshot = chCondEjectHeadshot.isSelected();
+        //Aeros Only
+        boolean condEjectFuel = chCondEjectFuel.isSelected();
+        boolean condEjectSIDest = chCondEjectSIDest.isSelected();
 
         if (entity instanceof Mech) {
             Mech mech = (Mech) entity;
@@ -332,6 +371,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             mech.setCondEjectEngine(condEjectEngine);
             mech.setCondEjectCTDest(condEjectCTDest);
             mech.setCondEjectHeadshot(condEjectHeadshot);
+        } else if (entity.isFighter()) {
+            Aero aero = (Aero) entity;
+            aero.setAutoEject(!autoEject);
+            aero.setCondEjectAmmo(condEjectAmmo);
+            aero.setCondEjectFuel(condEjectFuel);
+            aero.setCondEjectSIDest(condEjectSIDest);
         }
 
         // update AP weapon selections
@@ -598,7 +643,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         IOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
 
-        if (entity.usesWeaponBays()) {
+        if (entity.usesWeaponBays() || entity instanceof Dropship) {
+            //Grounded dropships don't *use* weapon bays as such, but should load ammo as if they did
             panMunitions = new BayMunitionsChoicePanel(entity, game);
             return;
         }
@@ -616,11 +662,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             // don't allow ammo switching of most things for Aeros
             // allow only MML, ATM, and NARC. LRM/SRM can switch between Artemis and standard,
             // but not other munitions. Same with MRM.
-            // TODO: need a better way to customize munitions on Aeros
-            // currently this doesn't allow AR10 and tele-missile launchers
-            // to switch back and forth between tele and regular missiles
-            // also would be better to not have to add Santa Anna's in such
-            // an idiosyncratic fashion
             if ((entity instanceof Aero)
                     && !((at.getAmmoType() == AmmoType.T_MML)
                             || (at.getAmmoType() == AmmoType.T_SRM)
@@ -633,7 +674,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             for (AmmoType atCheck : vAllTypes) {
                 if (entity.hasETypeFlag(Entity.ETYPE_AERO)
-                        && !atCheck.canAeroUse()) {
+                        && !atCheck.canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
                     continue;
                 }
                 SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(game);

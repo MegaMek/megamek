@@ -19,15 +19,9 @@ import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 
+import megamek.common.*;
 import org.junit.Test;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
 import megamek.common.verifier.TestEntity.Ceil;
 
 public class TestProtomechTest {
@@ -193,22 +187,19 @@ public class TestProtomechTest {
     
     @Test
     public void testEngineWeight() {
-        Entity mockProto = mock(Entity.class);
-        when(mockProto.hasETypeFlag(anyLong()))
-            .thenAnswer(inv -> (((Long) inv.getArgument(0)) & Entity.ETYPE_PROTOMECH) != 0);
-        Entity mockNonProto = mock(Entity.class);
-        when(mockNonProto.hasETypeFlag(anyLong())).thenReturn(false);
+        Entity proto = new Protomech();
+        Entity nonProto = new BipedMech();
         Engine engine45 = new Engine(45, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);
         Engine engine42 = new Engine(42, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);
         Engine engine40 = new Engine(40, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);
         Engine engine35 = new Engine(35, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);
         
-        assertEquals(engine42.getWeightEngine(mockProto, TestEntity.Ceil.KILO),
-                engine45.getWeightEngine(mockNonProto), 0.001);
-        assertEquals(engine40.getWeightEngine(mockProto, TestEntity.Ceil.KILO),
-                engine40.getWeightEngine(mockNonProto), 0.001);
-        assertTrue(engine35.getWeightEngine(mockProto,
-                TestEntity.Ceil.KILO) < engine35.getWeightEngine(mockNonProto));
+        assertEquals(engine42.getWeightEngine(proto, RoundWeight.STANDARD),
+                engine45.getWeightEngine(nonProto), 0.001);
+        assertEquals(engine40.getWeightEngine(proto, RoundWeight.STANDARD),
+                engine40.getWeightEngine(nonProto), 0.001);
+        assertTrue(engine35.getWeightEngine(proto,
+                RoundWeight.STANDARD) < engine35.getWeightEngine(nonProto));
     }
 
     @Test

@@ -69,6 +69,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 
         double av = 0;
         double counterAV = 0;
+        int weaponarmor = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
 
         for (int wId : weapon.getBayWeapons()) {
@@ -103,6 +104,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 current_av = updateAVforAmmo(current_av, atype, bayWType,
                         range, wId);
                 av = av + current_av;
+                //If these are thunderbolts, they'll have missile armor
+                weaponarmor += bayWType.getMissileArmor();
                 // now use the ammo that we had loaded
                 if (current_av > 0) {
                     int shots = bayW.getCurrentShots();
@@ -125,7 +128,12 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         
         //Point Defenses engage the missiles still aimed at us
         counterAV = calcCounterAV();
-        av = av - counterAV;
+        if (isTbolt()) {
+            CapMissileArmor = weaponarmor - (int) counterAV;
+            CapMissileAMSMod = calcCapMissileAMSMod();
+        } else {
+            av = av - counterAV;
+        }
         
         //Apply direct/glancing blow modifiers to the survivors
         if (bDirect) {
@@ -146,7 +154,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     @Override
     protected void setAMSBayReportingFlag() {
         if (isTbolt()) {
-            amsBayEngagedMissile = true;
+            amsBayEngagedCap = true;
         } else {
             amsBayEngaged = true;
         }
@@ -158,7 +166,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     @Override
     protected void setPDBayReportingFlag() {
         if (isTbolt()) {
-            pdBayEngagedMissile = true;
+            pdBayEngagedCap = true;
         } else {
             pdBayEngaged = true;
         }
@@ -168,6 +176,33 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     @Override
     protected boolean isTbolt() {
         return wtype.hasFlag(WeaponType.F_LARGEMISSILE);
+    }
+    
+    /**
+     * Calculate the starting armor value of a flight of thunderbolts
+     * Used for Aero Sanity. This is done in calcAttackValue() otherwise
+     *
+     */
+    @Override
+    protected int initializeCapMissileArmor() {
+        int armor = 0;
+        for (int wId : weapon.getBayWeapons()) {
+            int curr_armor = 0;
+            Mounted bayW = ae.getEquipment(wId);
+            WeaponType bayWType = ((WeaponType) bayW.getType());
+            curr_armor = bayWType.getMissileArmor();
+            armor = armor + curr_armor;
+        }
+        return armor;
+    }
+    
+    @Override
+    protected int calcCapMissileAMSMod() {
+        CapMissileAMSMod = 0;
+        if (isTbolt()) {
+            CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
+        }
+        return CapMissileAMSMod;
     }
 
     /*

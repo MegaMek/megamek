@@ -12,27 +12,19 @@
  * details.
  */
 
-/*
+package megamek.common.loaders;
+
+import megamek.common.*;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.util.BuildingBlock;
+
+/**
  * BLkFile.java
  *
  * Created on April 6, 2002, 2:06 AM
- */
-
-/**
  *
  * @author njrkrynn
- * @version
  */
-package megamek.common.loaders;
-
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.SupportTank;
-import megamek.common.Tank;
-import megamek.common.util.BuildingBlock;
-
 public class BLKSupportTankFile extends BLKFile implements IMechLoader {
     public BLKSupportTankFile(BuildingBlock bb) {
         dataFile = bb;
@@ -103,9 +95,6 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
             t.setFuelTonnage(dataFile.getDataAsDouble("fuel")[0]);
         }
         int engineFlags = Engine.TANK_ENGINE | Engine.SUPPORT_VEE_ENGINE;
-        if (t.isClan()) {
-            engineFlags |= Engine.CLAN_ENGINE;
-        }
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }
@@ -156,7 +145,7 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        if ((armor.length < 4) || (armor.length > 5)) {
+        if ((armor.length < 4) || (armor.length > 6)) {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
@@ -205,6 +194,35 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
             t.setOmni(true);
         }
         t.setArmorTonnage(t.getArmorWeight());
+
+        if (dataFile.exists("baseChassisTurretWeight")) {
+            t.setBaseChassisTurretWeight(dataFile.getDataAsDouble("baseChassisTurretWeight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisTurret2Weight")) {
+            t.setBaseChassisTurret2Weight(dataFile.getDataAsDouble("baseChassisTurret2Weight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisSponsonPintleWeight")) {
+            t.setBaseChassisSponsonPintleWeight(dataFile.getDataAsDouble("baseChassisSponsonPintleWeight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisFireConWeight")) {
+            t.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
+        }
+
+        if (dataFile.exists("fuelType")) {
+            try {
+                t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
+            } catch (IllegalArgumentException ex) {
+                DefaultMmLogger.getInstance().error(getClass(), "getEntity()",
+                        "While loading " + t.getShortNameRaw()
+                                + ": Could not parse ICE fuel type "
+                                + dataFile.getDataAsString("fuelType")[0]);
+                t.setICEFuelType(FuelType.PETROCHEMICALS);
+            }
+        }
+
         return t;
     }
 }

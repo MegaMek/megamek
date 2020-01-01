@@ -36,7 +36,7 @@ public class EntityWeightClass {
     public static final int WEIGHT_LARGE_DROP = 9;
     public static final int WEIGHT_SMALL_WAR = 10;
     public static final int WEIGHT_LARGE_WAR = 11;
-    
+
     // Support Vehicles
     public static final int WEIGHT_SMALL_SUPPORT = 12;
     public static final int WEIGHT_MEDIUM_SUPPORT = 13;
@@ -56,17 +56,18 @@ public class EntityWeightClass {
     private static double[] hoverSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 50, 100 }; // Twelve padding 0s
     private static double[] vtolSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 30, 60 }; // Twelve padding 0s
     private static double[] wigeSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80, 160 }; // Twelve padding 0s
-    //private static double[] airshipSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300, 1000 }; // Twelve padding 0s
-    //private static double[] fixedwingSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 100, 200 }; // Twelve padding 0s
+    private static double[] airshipSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300, 1000 }; // Twelve padding 0s
+    private static double[] fixedwingSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 100, 200 }; // Twelve padding 0s
     private static double[] navalSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300, 100000 }; // Twelve padding 0s
     private static double[] railSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300, 600 }; // Twelve padding 0s
+    private static double[] satelliteSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 100, 300 }; // Twelve padding 0s
     //private static double[] mobilestructuresSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80, 160 }; // Twelve padding 0s
     private static double[] ASFWeightLimits = { 0, 45, 70, 100 }; // One padding 0
     private static double[] dropshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 2499, 9999, 100000 }; // Seven padding 0s
     private static double[] jumpshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 749999, 2500000 }; // Ten padding 0s
     private static double[] GEWeightLimits = { 0, 15, 40, 90, 150 }; // One padding 0
     private static double[] protoWeightLimits = { 0, 3, 5, 7, 9, 10 }; // One padding 0
-    
+
     public static double[] getWeightLimitByType(String type) {
         if (type.equals(UnitType.getTypeName(UnitType.MEK))) {
             return mechWeightLimits;
@@ -91,54 +92,63 @@ public class EntityWeightClass {
         }
     }
 
+    /**
+     * Retrieves the weight class based on the type string in the unit file.
+     *
+     * @param tonnage The entity weight
+     * @param type    The type string
+     * @return        The weight class
+     */
     public static int getWeightClass(double tonnage, String type) {
         int i;
 
-        if (type.equals("BattleArmor")) {
+        if (type.equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))) {
             for (i = 0; i < (BAWeightLimits.length - 1); i++) {
                 if (tonnage <= BAWeightLimits[i]) {
-                break;
+                    break;
+                }
             }
-        }
-        } else if (type.equals("Infantry")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.INFANTRY))) {
             return WEIGHT_LIGHT;
-        } else if (type.equals("VTOL") || type.equals("Naval") || type.equals("Tank")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.VTOL))
+                || type.equals(UnitType.getTypeName(UnitType.NAVAL))
+                || type.equals(UnitType.getTypeName(UnitType.TANK))) {
             for (i = WEIGHT_LIGHT; i < (vehicleWeightLimits.length - 1); i++) { // Started at late to bypass padding & save a loop execution
                 if (tonnage <= vehicleWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("Gun Emplacement")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.GUN_EMPLACEMENT))) {
             for (i = WEIGHT_LIGHT; i < (GEWeightLimits.length - 1); i++) { // Started at late to bypass padding & save a loop execution
                 if (tonnage <= GEWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("Mek")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.MEK))) {
             for (i = 0; i < (mechWeightLimits.length - 1); i++) {
                 if (tonnage <= mechWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("ProtoMek")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.PROTOMEK))) {
             for (i = WEIGHT_LIGHT; i < (protoWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= protoWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("Space Station") || type.equals("Warship") || type.equals("Jumpship")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.SPACE_STATION)) || type.equals(UnitType.getTypeName(UnitType.WARSHIP)) || type.equals(UnitType.getTypeName(UnitType.JUMPSHIP))) {
             for (i = WEIGHT_SMALL_WAR; i < (jumpshipWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= jumpshipWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("Dropship")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.DROPSHIP))) {
             for (i = WEIGHT_SMALL_DROP; i < (dropshipWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= dropshipWeightLimits[i]) {
                     break;
                 }
             }
-        } else if (type.equals("Small Craft")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.SMALL_CRAFT))) {
             return WEIGHT_SMALL_CRAFT;
         } else if (type.equals("Conventional Fighter")) {
             return WEIGHT_LIGHT;
@@ -159,6 +169,13 @@ public class EntityWeightClass {
         return i;
     }
 
+    /**
+     * Retrieves the weight class for support vehicles based on the subtype string from the unit file
+     *
+     * @param tonnage The entity weight
+     * @param type    The subtype string
+     * @return        The weight class
+     */
     public static int getSupportWeightClass(double tonnage, String type) {
         int i = 0;
 
@@ -180,7 +197,7 @@ public class EntityWeightClass {
                     break;
                 }
             }
-        } else if (type.equals("VTOL")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.VTOL))) {
             for (i = WEIGHT_SMALL_SUPPORT; i < (vtolSupportVehicleWeightLimits.length - 1); i++) {
                 if (tonnage <= vtolSupportVehicleWeightLimits[i]) {
                     break;
@@ -192,7 +209,7 @@ public class EntityWeightClass {
                     break;
                 }
             }
-        } else if (type.equals("Naval")) {
+        } else if (type.equals(UnitType.getTypeName(UnitType.NAVAL))) {
             for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
                 if (tonnage <= navalSupportVehicleWeightLimits[i]) {
                     break;
@@ -213,6 +230,24 @@ public class EntityWeightClass {
         } else if (type.equals("MagLev")) {
             for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
                 if (tonnage <= railSupportVehicleWeightLimits[i]) {
+                    break;
+                }
+            }
+        } else if (type.equals("Aerodyne")) {
+            for (i = WEIGHT_SMALL_SUPPORT; i < (fixedwingSupportVehicleWeightLimits.length - 1); i++) {
+                if (tonnage <= fixedwingSupportVehicleWeightLimits[i]) {
+                    break;
+                }
+            }
+        } else if (type.equals("Airship")) {
+            for (i = WEIGHT_SMALL_SUPPORT; i < (airshipSupportVehicleWeightLimits.length - 1); i++) {
+                if (tonnage <= airshipSupportVehicleWeightLimits[i]) {
+                    break;
+                }
+            }
+        } else if (type.equals("Satellite")) {
+            for (i = WEIGHT_SMALL_SUPPORT; i < (satelliteSupportVehicleWeightLimits.length - 1); i++) {
+                if (tonnage <= satelliteSupportVehicleWeightLimits[i]) {
                     break;
                 }
             }
@@ -240,6 +275,12 @@ public class EntityWeightClass {
         } else if (en instanceof Dropship) {
             for (i = WEIGHT_SMALL_DROP; i < (dropshipWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= dropshipWeightLimits[i]) {
+                    break;
+                }
+            }
+        } else if (en instanceof FixedWingSupport) {
+            for (i = WEIGHT_LIGHT; i < (fixedwingSupportVehicleWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
+                if (tonnage <= fixedwingSupportVehicleWeightLimits[i]) {
                     break;
                 }
             }
@@ -326,12 +367,6 @@ public class EntityWeightClass {
                 }
                 break;
             case RAIL:
-                for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= railSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
-                break;
             case MAGLEV:
                 for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
                     if (tonnage <= railSupportVehicleWeightLimits[i]) {
@@ -423,22 +458,22 @@ public class EntityWeightClass {
      * @return
      */
     public static String getClassName(int wClass, String unitType, boolean isSupport) {
-        if (unitType.equals("Space Station")) {
+        if (unitType.equals(UnitType.getTypeName(UnitType.SPACE_STATION))) {
             return Messages.getString("EntityWeightClass.SS." + wClass);
         }
-        if (unitType.equals("Warship")) {
+        if (unitType.equals(UnitType.getTypeName(UnitType.WARSHIP))) {
             return Messages.getString("EntityWeightClass.WS." + wClass);
         }
-        if (unitType.equals("Jumpship")) {
+        if (unitType.equals(UnitType.getTypeName(UnitType.JUMPSHIP))) {
             return Messages.getString("EntityWeightClass.JS." + wClass);
         }
-        if (unitType.equals("Dropship")) {
+        if (unitType.equals(UnitType.getTypeName(UnitType.DROPSHIP))) {
             return Messages.getString("EntityWeightClass.DS." + wClass);
         }
-        if (unitType.equals("Small Craft")) {
+        if (unitType.equals(UnitType.getTypeName(UnitType.SMALL_CRAFT))) {
             return Messages.getString("EntityWeightClass.SC");
         }
-        if (isSupport && (unitType.equals("VTOL") || unitType.equals("Tank"))) {
+        if (isSupport) {
             return Messages.getString("EntityWeightClass.SV." + wClass);
         }
         if ((wClass >= 0) && (wClass < SIZE)) {
@@ -448,7 +483,7 @@ public class EntityWeightClass {
     }
 
     public static String getClassName(int wClass, Entity en) {
-        return getClassName(wClass, UnitType.determineUnitType(en), en.isSupportVehicle());
+        return getClassName(wClass, UnitType.getTypeName(en.getUnitType()), en.isSupportVehicle());
     }
 
     public static String getClassName(int nameVal) {

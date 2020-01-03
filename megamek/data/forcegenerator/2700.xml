@@ -3292,6 +3292,24 @@
 			<availability>DC:3+</availability>
 		</model>
 	</chassis>
+	<chassis name='Wasp LAM Mk I' unitType='Mek'>
+		<availability>SL:4,IS:3</availability>
+		<model name='WSP-100'>
+			<availability>SL:5,IS:4</availability>
+		</model>
+		<model name='WSP-100A'>
+			<availability>SL:4,IS:3</availability>
+		</model>
+		<model name='WSP-100b'>
+			<availability>SL:2+</availability>
+		</model>
+	</chassis>
+	<chassis name='Wasp LAM' unitType='Mek'>
+		<availability>SL:3,IS:4</availability>
+		<model name='WSP-105'>
+			<availability>SL:4,IS:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Wasp' unitType='Mek'>
 		<availability>TH:10,SL:6,IS:10,Periphery.Deep:4,SL.R:2,Periphery:4</availability>
 		<model name='WSP-1A'>

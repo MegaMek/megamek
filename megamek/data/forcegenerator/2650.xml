@@ -2660,6 +2660,15 @@
 			<availability>CC:2+,LA:2+,FWL:2+,SL.R:8,FS:2+</availability>
 		</model>
 	</chassis>
+	<chassis name='Wasp LAM Mk I' unitType='Mek'>
+		<availability>SL:4</availability>
+		<model name='WSP-100'>
+			<availability>SL:5</availability>
+		</model>
+		<model name='WSP-100A'>
+			<availability>SL:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Wasp' unitType='Mek'>
 		<availability>TH:10,SL:7,IS:10,Periphery.Deep:4,SL.R:4,Periphery:4</availability>
 		<model name='WSP-1A'>

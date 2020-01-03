@@ -4493,6 +4493,21 @@
 			<availability>FS:4</availability>
 		</model>
 	</chassis>
+	<chassis name='Wasp LAM Mk I' unitType='Mek'>
+		<availability>IS:3</availability>
+		<model name='WSP-100'>
+			<availability>IS:4</availability>
+		</model>
+		<model name='WSP-100A'>
+			<availability>IS:3</availability>
+		</model>
+	</chassis>
+	<chassis name='Wasp LAM' unitType='Mek'>
+		<availability>IS:4</availability>
+		<model name='WSP-105'>
+			<availability>IS:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Wasp' unitType='Mek'>
 		<availability>CS:4-,CLAN:1-,IS:10,NIOPS:4-,Periphery.Deep:6,CIR:4,Periphery:6</availability>
 		<model name='WSP-1A'>

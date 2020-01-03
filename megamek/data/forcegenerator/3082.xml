@@ -13771,6 +13771,21 @@
 			<availability>General:4</availability>
 		</model>
 	</chassis>
+	<chassis name='Stinger LAM Mk I' unitType='Mek'>
+		<availability>IS:2+</availability>
+		<model name='STG-A1'>
+			<availability>General:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Stinger LAM' unitType='Mek'>
+		<availability>IS:2</availability>
+		<model name='STG-A10'>
+			<availability>IS:2,DC:4</availability>
+		</model>
+		<model name='STG-A5'>
+			<availability>IS:3</availability>
+		</model>
+	</chassis>
 	<chassis name='Stinger' unitType='Mek'>
 		<availability>MOC:6,HL:5,CGB.FRR:4,IS:8,NIOPS:2-,Periphery.Deep:5,MERC:8,Periphery:6,DC:5,CGB:2-</availability>
 		<model name='STG-5R'>
@@ -15773,6 +15788,27 @@
 		<model name='S-9'>
 			<roles>recon</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Wasp LAM Mk I' unitType='Mek'>
+		<availability>IS:2</availability>
+		<model name='WSP-100'>
+			<availability>IS:3</availability>
+		</model>
+		<model name='WSP-100A'>
+			<availability>IS:2</availability>
+		</model>
+		<model name='WSP-100b'>
+			<availability>IS:2</availability>
+		</model>
+	</chassis>
+	<chassis name='Wasp LAM' unitType='Mek'>
+		<availability>IS:3</availability>
+		<model name='WSP-105'>
+			<availability>IS:4</availability>
+		</model>
+		<model name='WSP-105M'>
+			<availability>IS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp' unitType='Mek'>

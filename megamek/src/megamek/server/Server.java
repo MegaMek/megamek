@@ -11659,20 +11659,7 @@ public class Server implements Runnable {
 
             // set the target number
             if (target == -1) {
-                target = mf.getTrigger();
-                if (mf.getType() == Minefield.TYPE_ACTIVE) {
-                    target = 9;
-                }
-                if (entity instanceof Infantry) {
-                    target += 1;
-                }
-                if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
-                    target += 2;
-                }
-                if ((entity.getMovementMode() == EntityMovementMode.HOVER)
-                        || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
-                    target = 12;
-                }
+                target = mf.getDetonationTarget(entity);
             }
 
             int roll = Compute.d6(2);

@@ -664,7 +664,7 @@ public class Princess extends BotClient {
             if(!skipFiring) {
                 // Set up ammo conservation.
                 final Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
-    
+                
                 // entity that can act this turn make sure weapons are loaded
                 final FiringPlan plan = getFireControl(shooter).getBestFiringPlan(shooter,
                                                                       getHonorUtil(),
@@ -1419,6 +1419,7 @@ public class Princess extends BotClient {
                         // inside them, since there's no other way to attack
                         // them.
                         if (isEnemyInfantry(entity, coords)
+                                && !entity.isCrippled()
                                 && Compute.isInBuilding(game, entity)
                                 && !entity.isHidden()) {
                             fireControlState.getAdditionalTargets().add(bt);
@@ -1613,14 +1614,16 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         try {
-            if (initialized) {
-                return; // no need to initialize twice
-            }
-
+            // these need to be checked at the start of every phase, otherwise the bot will 
+            // not necessarily have the most up-to-date
             checkForDishonoredEnemies();
             checkForBrokenEnemies();
             refreshCrippledUnits();
             
+            if (initialized) {
+                return; // no need to initialize twice
+            }
+
             initializePathRankers();
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
@@ -1717,7 +1720,7 @@ public class Princess extends BotClient {
         return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
                && entity.getOwner().isEnemyOf(getLocalPlayer())
                && !getStrategicBuildingTargets().contains(coords)
-               && (null != entity.getCrew()) && !entity.getCrew().isDead();
+               && !entity.isCrippled();
     }
 
     private boolean isEnemyInfantry(final Entity entity,

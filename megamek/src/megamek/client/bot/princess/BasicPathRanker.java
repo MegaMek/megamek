@@ -42,6 +42,7 @@ import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
+import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
@@ -540,7 +541,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
             // look at all of my enemies          
             FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
-            
+                       
             double expectedDamageTaken = checkPathForHazards(pathCopy,
                                                              movingUnit,
                                                              game);
@@ -937,13 +938,13 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 hazards.add(type);
             }
         }
-
+        
         // No hazards were found, so nothing to worry about.
-        if (hazards.isEmpty()) {
+        if (hazards.isEmpty() && (getOwner().getGame().getNbrMinefields(step.getPosition()) == 0)) {
             logMsg.append(" has no hazards.");
             return 0;
         }
-
+        
         // Calculate hazard value by terrain type.
         double hazardValue = 0;
         for (int hazard : hazards) {
@@ -973,6 +974,14 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                     break;
             }
         }
+        
+        double mineValue = 0;
+        for(Minefield mines : getOwner().getGame().getMinefields(step.getPosition())) {
+            mineValue += mines.getDensity() * (Compute.oddsAbove(mines.getDetonationTarget(movingUnit)) / 100);
+        }
+        
+        hazardValue += mineValue;
+        
         logMsg.append("\n\tTotal Hazard = ")
               .append(LOG_DECIMAL.format(hazardValue));
 

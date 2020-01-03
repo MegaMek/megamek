@@ -2401,8 +2401,7 @@ public class FireControl {
         final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game, owner.getFireControlState());
 
         // Loop through each enemy and find the best plan for attacking them.
-        for (final Targetable enemy : enemies) {
-
+        for (final Targetable enemy : enemies) {           
             final boolean priorityTarget = owner.getPriorityUnitTargets().contains(enemy.getTargetId());
 
             // Skip retreating enemies so long as they haven't fired on me while retreating.

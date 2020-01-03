@@ -18,6 +18,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.Objects;
 
+import megamek.common.options.OptionsConstants;
+
 public class Minefield implements Serializable, Cloneable {
 
     /**
@@ -212,6 +214,31 @@ public class Minefield implements Serializable, Cloneable {
         if(isReduced) {
             setDensity(getDensity() - 5);
         }    
+    }
+    
+    /**
+     * Calculates the minefields detonation target roll based on the 
+     * minefield's characteristics and  
+     * @param victim
+     * @return
+     */
+    public int getDetonationTarget(Entity victim) {
+        int target = getTrigger();
+        if (getType() == Minefield.TYPE_ACTIVE) {
+            target = 9;
+        }
+        if (victim instanceof Infantry) {
+            target += 1;
+        }
+        if (victim.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
+            target += 2;
+        }
+        if ((victim.getMovementMode() == EntityMovementMode.HOVER)
+                || (victim.getMovementMode() == EntityMovementMode.WIGE)) {
+            target = 12;
+        }
+        
+        return target;
     }
     
 }

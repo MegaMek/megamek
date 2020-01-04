@@ -380,6 +380,10 @@ public abstract class BotClient extends Client {
     @Override
     public void changePhase(IGame.Phase phase) {
         super.changePhase(phase);
+        
+        // clear out transient data
+        currentTurnEnemyEntities = null;
+        currentTurnFriendlyEntities = null;
 
         try {
             switch (phase) {
@@ -497,11 +501,7 @@ public abstract class BotClient extends Client {
         return unMoved.get(Compute.randomInt(unMoved.size()));
     }
 
-    private synchronized void calculateMyTurn() {
-        // clear out transient data
-        currentTurnEnemyEntities = null;
-        currentTurnFriendlyEntities = null;
-        
+    private synchronized void calculateMyTurn() {        
         try {
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 MovePath mp;

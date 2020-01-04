@@ -1487,8 +1487,7 @@ public class Princess extends BotClient {
 
                     if (getHonorUtil().isEnemyBroken(entity.getTargetId(),
                                                      entity.getOwnerId(),
-                                                     getForcedWithdrawal()) ||
-                        !entity.isMilitary()) {
+                                                     getForcedWithdrawal())) {
                         // If he'd just continued running, I would have let him 
                         // go, but the bastard shot at me!
                         msg.append("\n\t")
@@ -1613,16 +1612,16 @@ public class Princess extends BotClient {
         final String METHOD_NAME = "initialize()";
         methodBegin(getClass(), METHOD_NAME);
 
-        try {
-            // these need to be checked at the start of every phase, otherwise the bot will 
-            // not necessarily have the most up-to-date
-            checkForDishonoredEnemies();
-            checkForBrokenEnemies();
-            refreshCrippledUnits();
+        try {      
             
             if (initialized) {
                 return; // no need to initialize twice
             }
+
+            // if we're just loading in, let's figure out who we shouldn't fire on
+            checkForDishonoredEnemies();
+            checkForBrokenEnemies();
+            refreshCrippledUnits();
 
             initializePathRankers();
             fireControlState = new FireControlState();

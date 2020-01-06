@@ -1188,7 +1188,7 @@ public class RATGenerator {
                 pw.println("<factions>");
                 for (FactionRecord fRec : factionRecs) {
                     if (fRec.isInEra(era)) {
-                        fRec.writeToXml(pw, era, nextEra);
+                        fRec.writeToXml(pw, era);
                     }
                 }
                 pw.println("</factions>");

@@ -15,12 +15,7 @@ package megamek.client.ratgenerator;
 
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.StringJoiner;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.w3c.dom.Node;
@@ -71,7 +66,7 @@ public class FactionRecord {
 				return null;
 			}
 		}
-	};
+	}
 	
 	private String key;
 	private boolean minor;
@@ -134,7 +129,7 @@ public class FactionRecord {
 
 	@Override
 	public boolean equals(Object other) {
-		return other != null && other instanceof FactionRecord
+		return other instanceof FactionRecord
 				&& ((FactionRecord)other).getKey().equals(getKey());
 	}
 	
@@ -255,7 +250,7 @@ public class FactionRecord {
 				} else if (range.endsWith("-")) {
 					yearsActive.add(new DateRange(Integer.parseInt(range.substring(0, range.length() - 1)), null));
 				} else {
-					String[] termini = range.split("\\-");
+					String[] termini = range.split("-");
 					if (termini.length == 2) {
 						yearsActive.add(new DateRange(Integer.parseInt(termini[0]),
 								Integer.parseInt(termini[1])));
@@ -280,8 +275,8 @@ public class FactionRecord {
 		if (salvage.containsKey(era) && salvage.get(era).size() > 0) {
 			return salvage.get(era);
 		}
-		HashMap<String,Integer> retVal = new HashMap<String, Integer>();
-		if (retVal.size() == 0 && parentFactions.size() > 0) {
+		HashMap<String,Integer> retVal = new HashMap<>();
+		if (parentFactions.size() > 0) {
 			for (String pKey : parentFactions) {
 				FactionRecord fRec = RATGenerator.getInstance().getFaction(pKey);
 				if (fRec != null) {
@@ -348,9 +343,7 @@ public class FactionRecord {
 		ratingLevels.clear();
 		if (str.length() > 0) {
 			String[] fields = str.split(",");
-			for (String rating : fields) {
-				ratingLevels.add(rating);
-			}
+			Collections.addAll(ratingLevels, fields);
 		}
 	}
 	
@@ -363,7 +356,7 @@ public class FactionRecord {
      */
 	public void setPctTech(TechCategory category, int era, String str) {
 		if (!pctTech.containsKey(category)) {
-			pctTech.put(category, new HashMap<Integer,ArrayList<Integer>>());
+			pctTech.put(category, new HashMap<>());
 		}
 		ArrayList<Integer> list = new ArrayList<>();
 		if (str != null && str.length() > 0) {
@@ -446,15 +439,18 @@ public class FactionRecord {
 	}
 	
 	public void setWeightDistribution(int era, int unitType, String dist) {
-		if (dist == null && weightDistribution.containsKey(era)) {
-			weightDistribution.get(era).remove(unitType);
+		if (dist == null) {
+			if (weightDistribution.containsKey(era)) {
+				weightDistribution.get(era).remove(unitType);
+			}
+			return;
 		}
 		ArrayList<Integer> list = new ArrayList<>();
 		for (String s : dist.split(",")) {
 			list.add(Integer.valueOf(s));
 		}
 		if (!weightDistribution.containsKey(era)) {
-			weightDistribution.put(era, new HashMap<Integer,ArrayList<Integer>>());
+			weightDistribution.put(era, new HashMap<>());
 		}
 		weightDistribution.get(era).put(unitType, list);
 	}
@@ -465,9 +461,7 @@ public class FactionRecord {
 	
 	public void setParentFactions(String factions) {
 		parentFactions.clear();
-		for (String faction : factions.split(",")) {
-			parentFactions.add(faction);
-		}
+		Collections.addAll(parentFactions, factions.split(","));
 	}
 	
 	public static FactionRecord createFromXml(Node node) {
@@ -555,7 +549,7 @@ public class FactionRecord {
 			case "salvage":
 				pctSalvage.put(era,
 						Integer.parseInt(wn.getAttributes().getNamedItem("pct").getTextContent()));
-				salvage.put(era, new HashMap<String,Integer>());
+				salvage.put(era, new HashMap<>());
 				String [] fields = wn.getTextContent().trim().split(",");
 				for (String field : fields) {
 					if (field.length() > 0) {
@@ -593,16 +587,16 @@ public class FactionRecord {
         pw.print(getYearsAsString());
         pw.println("</years>");
         if (ratingLevels.size() > 0) {
-            pw.println("\t\t<ratingLevels>" + StringEscapeUtils.escapeXml10(ratingLevels.stream().collect(Collectors.joining(","))) + "</ratingLevels>");
+            pw.println("\t\t<ratingLevels>" + StringEscapeUtils.escapeXml10(String.join(",", ratingLevels)) + "</ratingLevels>");
         }
         if (parentFactions != null) {
-            pw.println("\t\t<parentFaction>" + StringEscapeUtils.escapeXml10(parentFactions.stream().collect(Collectors.joining(","))) + "</parentFaction>");
+            pw.println("\t\t<parentFaction>" + StringEscapeUtils.escapeXml10(String.join(",", parentFactions)) + "</parentFaction>");
         }       
         pw.println("\t</faction>");
     }
 
     
-    public void writeToXml(PrintWriter pw, int era, int nextEra) {
+    public void writeToXml(PrintWriter pw, int era) {
         StringBuilder factionRecordBuilder = new StringBuilder();
                 
         
@@ -730,8 +724,8 @@ public class FactionRecord {
 
     /**
      * Checks whether the faction is active at any point from the given year to the next reference 
-     * @param era
-     * @return
+     * @param era The era start year
+     * @return    Whether the faction is active
      */
     public boolean isInEra(int era) {
         if (isActiveInYear(era)) {
@@ -756,11 +750,11 @@ public class FactionRecord {
 	 *         changes in the format year:name
 	 */
     public Object getNamesAsString() {
-        String retVal = name;
+        StringBuilder retVal = new StringBuilder(name);
         for (Integer y : altNames.keySet()) {
-            retVal += "," + y + ":" + altNames.get(y);
+            retVal.append(",").append(y).append(":").append(altNames.get(y));
         }
-        return retVal;
+        return retVal.toString();
     }
 
     /**
@@ -800,8 +794,8 @@ public class FactionRecord {
 	}
 	
 	private static class DateRange {
-		public Integer start = null;
-		public Integer end = null;
+		public Integer start;
+		public Integer end;
 		
 		public DateRange(Integer start, Integer end) {
 			this.start = start;
@@ -817,11 +811,11 @@ public class FactionRecord {
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
 			if (start != null) {
-				sb.append(String.valueOf(start));
+				sb.append(start);
 			}
 			sb.append("-");
 			if (end != null) {
-				sb.append(String.valueOf(end));
+				sb.append(end);
 			}
 			return sb.toString();
 		}

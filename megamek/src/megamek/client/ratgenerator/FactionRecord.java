@@ -692,21 +692,16 @@ public class FactionRecord {
 
         Integer pct = pctSalvage.get(era);
         if (pct != null) {
-            String line = "\t\t<salvage pct='" + pct + "'>";
-            int length = salvage.get(era).size();
+            StringJoiner sj = new StringJoiner(",");
             for (String faction : salvage.get(era).keySet()) {
                 FactionRecord fr = RATGenerator.getInstance().getFaction(faction);
                 if (fr == null || !fr.isInEra(era)) {
                     continue;
                 }
-                line += faction + ":" + salvage.get(era).get(faction);
-                length--;
-                if (length > 0) {
-                    line += ",";
-                }
+                sj.add(faction + ":" + salvage.get(era).get(faction));
             }
-            factionRecordBuilder.append(line);
-            factionRecordBuilder.append("</salvage>\n");
+			factionRecordBuilder.append("\t\t<salvage pct='").append(pct).append("'>")
+				.append(sj.toString()).append("</salvage>\n");
         }
         final int[] unitWeightKeys = { UnitType.MEK, UnitType.TANK, UnitType.AERO };
         if (weightDistribution.containsKey(era)) {
@@ -726,7 +721,7 @@ public class FactionRecord {
         
         if(factionRecordBuilder.length() > 0) {
             pw.println("\t<faction key='" + key + "'>");
-            pw.println(factionRecordBuilder.toString());
+            pw.println(factionRecordBuilder.toString().replaceFirst("\\n$", ""));
             pw.println("\t</faction>");
         } else {
             pw.println("\t<faction key='" + key + "'/>");

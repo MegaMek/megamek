@@ -734,7 +734,7 @@ public class MechSummaryCache {
         File lookupNames = new MegaMekFile(getUnitCacheDir(),
                 FILENAME_LOOKUP).getFile();
         boolean needsUpdate = false;
-        if (lookupNames.exists() && lookupNames.lastModified() > lLastCheck) {
+        if (lookupNames.exists()) {
             try {
                 InputStream is = new FileInputStream(lookupNames);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));

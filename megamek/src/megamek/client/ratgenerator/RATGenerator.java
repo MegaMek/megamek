@@ -19,17 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.DoubleSummaryStatistics;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,15 +49,13 @@ import megamek.utils.MegaMekXmlUtil;
  */
 public class RATGenerator {
 	
-	private HashMap<String, ModelRecord> models = new HashMap<String,ModelRecord>();
-	private HashMap<String, ChassisRecord> chassis = new HashMap<String,ChassisRecord>();
-	private HashMap<String, FactionRecord> factions = new HashMap<String,FactionRecord>();
-	private HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> modelIndex =
-			new HashMap<>();
-	private HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> chassisIndex =
-			new HashMap<>();
+	private HashMap<String, ModelRecord> models;
+	private HashMap<String, ChassisRecord> chassis;
+	private HashMap<String, FactionRecord> factions;
+	private HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> modelIndex;
+	private HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> chassisIndex;
 
-	private TreeSet<Integer> eraSet = new TreeSet<Integer>();
+	private TreeSet<Integer> eraSet;
 
 	private static RATGenerator rg = null;
     private static boolean interrupted = false;
@@ -79,14 +67,14 @@ public class RATGenerator {
     private ArrayList<ActionListener> listeners;
     
     protected RATGenerator() {
-    	models = new HashMap<String,ModelRecord>();
-    	chassis = new HashMap<String,ChassisRecord>();
-    	factions = new HashMap<String,FactionRecord>();
+    	models = new HashMap<>();
+    	chassis = new HashMap<>();
+    	factions = new HashMap<>();
     	modelIndex = new HashMap<>();
     	chassisIndex = new HashMap<>();
-    	eraSet = new TreeSet<Integer>();
+    	eraSet = new TreeSet<>();
     	
-    	listeners = new ArrayList<ActionListener>();
+    	listeners = new ArrayList<>();
     }
 
 	public static RATGenerator getInstance() {
@@ -97,11 +85,8 @@ public class RATGenerator {
             rg.initializing = true;
             interrupted = false;
             dispose = false;
-            rg.loader = new Thread(new Runnable() {
-                public void run() {
-                    rg.initialize();
-                }
-            }, "RAT Generator unit populator");
+            rg.loader = new Thread(() -> rg.initialize(Configuration.forceGeneratorDir()),
+					"RAT Generator unit populator");
             rg.loader.setPriority(Thread.NORM_PRIORITY - 1);
             rg.loader.start();
         }
@@ -111,6 +96,15 @@ public class RATGenerator {
     public boolean isInitialized() {
         return initialized;
     }
+
+	/**
+	 * Clears all data and loads from the given directory
+	 * @param dir The directory to load from
+	 */
+	public void reloadFromDir(File dir) {
+    	clear();
+    	initialize(dir);
+	}
 
 	public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, String faction,
 			int year) {
@@ -220,9 +214,7 @@ public class RATGenerator {
      *             faction.
      */
     public void setModelFactionRating(int era, String unitKey, AvailabilityRating ar) {
-        if (modelIndex.get(era).get(unitKey) == null) {
-            modelIndex.get(era).put(unitKey, new HashMap<String, AvailabilityRating>());
-        }
+		modelIndex.get(era).computeIfAbsent(unitKey, k -> new HashMap<>());
         modelIndex.get(era).get(unitKey).put(ar.getFactionCode(), ar);
         models.get(unitKey).getIncludedFactions().add(ar.getFactionCode());
     }
@@ -251,13 +243,13 @@ public class RATGenerator {
      * Provides a list of availability ratings for a chassis in a given era. Used in editing and reporting.
      * 
      * @param era  The year of the record. This must be one of the years in the <code>eraSet</code>.
-     * @param unit The chassis name to find records for.
+     * @param chassisKey The chassis name to find records for.
      * @return     A <code>Collection</code> of all the availability ratings for the chassis in the era,
      *             or null if there are no records for that era.
      */
-    public Collection<AvailabilityRating> getChassisFactionRatings(int era, String chassis) {
-        if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(chassis)) {
-            return chassisIndex.get(era).get(chassis).values();
+    public Collection<AvailabilityRating> getChassisFactionRatings(int era, String chassisKey) {
+        if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(chassisKey)) {
+            return chassisIndex.get(era).get(chassisKey).values();
         }
         return null;
     }
@@ -271,9 +263,7 @@ public class RATGenerator {
      *             faction.
      */
     public void setChassisFactionRating(int era, String unit, AvailabilityRating ar) {
-        if (chassisIndex.get(era).get(unit) == null) {
-            chassisIndex.get(era).put(unit, new HashMap<String, AvailabilityRating>());
-        }
+		chassisIndex.get(era).computeIfAbsent(unit, k -> new HashMap<>());
         chassisIndex.get(era).get(unit).put(ar.getFactionCode(), ar);
         chassis.get(unit).getIncludedFactions().add(ar.getFactionCode());
     }
@@ -375,9 +365,9 @@ public class RATGenerator {
 		
 		retVal.availability = (int)(AvailabilityRating.calcAvRating(totalWt / list.size()));
 		if (totalAdj < 0) {
-			retVal.ratingAdjustment = (int)((totalAdj - 1)/ list.size());			
+			retVal.ratingAdjustment = (totalAdj - 1)/ list.size();
 		} else {
-			retVal.ratingAdjustment = (int)((totalAdj + 1)/ list.size());
+			retVal.ratingAdjustment = (totalAdj + 1)/ list.size();
 		}
 		return retVal;
 	}
@@ -422,8 +412,8 @@ public class RATGenerator {
                 "            Collection<MissionRole>, int,\n" + 
                 "            FactionRecord)";
 	    
-		HashMap<ModelRecord, Double> unitWeights = new HashMap<ModelRecord, Double>();
-		HashMap<FactionRecord, Double> salvageWeights = new HashMap<FactionRecord, Double>();
+		HashMap<ModelRecord, Double> unitWeights = new HashMap<>();
+		HashMap<FactionRecord, Double> salvageWeights = new HashMap<>();
 		
 		loadYear(year);
 		
@@ -522,7 +512,7 @@ public class RATGenerator {
 		}
 
 		if (unitWeights.size() == 0) {
-			return new ArrayList<UnitTable.TableEntry>();
+			return new ArrayList<>();
 		}
 		
 		/* If there is more than one weight class and the faction record (or parent)
@@ -557,7 +547,7 @@ public class RATGenerator {
 					 * total of each group corresponds to the distribution for this faction. */
 					for (int i : weightGroups.keySet()) {
 						double totalWeight = weightGroups.get(i).stream()
-								.mapToDouble(mr->unitWeights.get(mr)).sum();
+								.mapToDouble(unitWeights::get).sum();
 						if (totalWeight > 0) {
 							double adj = totalMRWeight * wcd.get(i) / (totalWeight * totalWCDWeights);
 							weightGroups.get(i).forEach(mr -> unitWeights.merge(mr, adj, (x,y) -> x*y));
@@ -570,7 +560,7 @@ public class RATGenerator {
 		double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
 
 		if (fRec.getPctSalvage(early) != null) {
-			HashMap<String,Double> salvageEntries = new HashMap<String,Double>();
+			HashMap<String,Double> salvageEntries = new HashMap<>();
 			for (Map.Entry<String,Integer> entry : fRec.getSalvage(early).entrySet()) {
 				salvageEntries.put(entry.getKey(),
 						interpolate(entry.getValue(),
@@ -628,7 +618,7 @@ public class RATGenerator {
 			}
 		}
 		
-		List<UnitTable.TableEntry> retVal = new ArrayList<UnitTable.TableEntry>();
+		List<UnitTable.TableEntry> retVal = new ArrayList<>();
 		for (FactionRecord faction : salvageWeights.keySet()) {
 			int wt = (int)(salvageWeights.get(faction) * adj + 0.5);
 			if (wt > 0) {
@@ -769,8 +759,8 @@ public class RATGenerator {
 		 * part of the overall Clan percentage.
 		 */
 		if (!fRec.isClan() && pctClan != null && totalClan > 0) {
-			double clanSalvage = salvageWeights.keySet().stream().filter(fr -> fr.isClan())
-					.mapToDouble(fr -> salvageWeights.get(fr)).sum();
+			double clanSalvage = salvageWeights.keySet().stream().filter(FactionRecord::isClan)
+					.mapToDouble(salvageWeights::get).sum();
 			total += clanSalvage;
 			totalClan += clanSalvage;
 			for (FactionRecord fr : salvageWeights.keySet()) {
@@ -827,7 +817,7 @@ public class RATGenerator {
         initializing = false;
     }
 
-	private synchronized void initialize() {
+	private synchronized void initialize(File dir) {
         // Give the MSC some time to initialize
         MechSummaryCache msc = MechSummaryCache.getInstance();
         long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
@@ -838,12 +828,17 @@ public class RATGenerator {
                 // Ignore
             }
         }
-        
-        loadFactions();
-        
-		for (File f : Configuration.forceGeneratorDir().listFiles()) {
-			if (f.getName().matches("\\d+\\.xml")) {
-				eraSet.add(Integer.parseInt(f.getName().replace(".xml", "")));
+
+		if (!(dir.exists() && dir.isDirectory())) {
+			DefaultMmLogger.getInstance().error(getClass(), "initialize(File)",
+					dir + " is not a directory");
+		} else {
+			loadFactions(dir);
+
+			for (File f : dir.listFiles()) {
+				if (f.getName().matches("\\d+\\.xml")) {
+					eraSet.add(Integer.parseInt(f.getName().replace(".xml", "")));
+				}
 			}
 		}
 
@@ -874,11 +869,11 @@ public class RATGenerator {
 		}
 	}
 	
-	private void loadFactions() {
-	    final String METHOD_NAME = "loadFactions()";
+	private void loadFactions(File dir) {
+	    final String METHOD_NAME = "loadFactions(File)";
 	    
-		File file = new MegaMekFile(Configuration.forceGeneratorDir(), "factions.xml").getFile();
-		FileInputStream fis = null;
+		File file = new MegaMekFile(dir, "factions.xml").getFile();
+		FileInputStream fis;
 		try {
 			fis = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
@@ -887,13 +882,14 @@ public class RATGenerator {
 			return;
 		}
 
-		Document xmlDoc = null;
+		Document xmlDoc;
 
 		try {
 			DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
 			xmlDoc = db.parse(fis);
 		} catch (Exception ex) {
 			DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, ex);
+			return;
 		}
 
 		Element element = xmlDoc.getDocumentElement();
@@ -920,10 +916,10 @@ public class RATGenerator {
 		if (eraIsLoaded(era)) {
 			return;
 		}
-		chassisIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
-		modelIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
+		chassisIndex.put(era, new HashMap<>());
+		modelIndex.put(era, new HashMap<>());
 		File file = new MegaMekFile(Configuration.forceGeneratorDir(), era + ".xml").getFile();
-		FileInputStream fis = null;
+		FileInputStream fis;
 		try {
 			fis = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
@@ -939,13 +935,14 @@ public class RATGenerator {
 		    }
 		}
 
-		Document xmlDoc = null;
+		Document xmlDoc;
 
 		try {
 			DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
 			xmlDoc = db.parse(fis);
 		} catch (Exception ex) {
             DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, ex);
+            return;
 		}
 
 		Element element = xmlDoc.getDocumentElement();
@@ -1045,7 +1042,7 @@ public class RATGenerator {
 			Node wn2 = wn.getChildNodes().item(j);
 			if (wn2.getNodeName().equalsIgnoreCase("availability")) {
 				chassisIndex.get(era).put(chassisKey,
-						new HashMap<String, AvailabilityRating>());
+						new HashMap<>());
 				String [] codes = wn2.getTextContent().trim().split(",");
 				for (String code : codes) {
 					AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
@@ -1088,7 +1085,7 @@ public class RATGenerator {
 			} else if (wn2.getNodeName().equalsIgnoreCase("deployedWith") && newEntry) {
 				mr.setRequiredUnits(wn2.getTextContent().trim());            							
 			} else if (wn2.getNodeName().equalsIgnoreCase("availability")) {
-				modelIndex.get(era).put(mr.getKey(), new HashMap<String, AvailabilityRating>());
+				modelIndex.get(era).put(mr.getKey(), new HashMap<>());
 				String [] codes = wn2.getTextContent().trim().split(",");
 				for (String code : codes) {
 					AvailabilityRating ar = new AvailabilityRating(mr.getKey(), era, code);
@@ -1133,34 +1130,32 @@ public class RATGenerator {
     }
     
     public void exportRATGen(File dir) {
-        File file = null;
-        PrintWriter pw = null;
+        File file;
+        PrintWriter pw;
         
         FactionRecord[] factionRecs = factions.values().toArray(new FactionRecord[0]);
-        Arrays.sort(factionRecs, new Comparator<FactionRecord>() {
-            @Override
-            public int compare(FactionRecord arg0, FactionRecord arg1) {
-                if (arg0.getParentFactions() == null && arg1.getParentFactions() != null) {
-                    return -1;
-                }
-                if (arg0.getParentFactions() != null && arg1.getParentFactions() == null) {
-                    return 1;
-                }
-                if (arg0.getKey().contains(".") && !arg1.getKey().contains(".")) {
-                    return 1;
-                }
-                if (!arg0.getKey().contains(".") && arg1.getKey().contains(".")) {
-                    return -1;
-                }
-                return arg0.getName().compareTo(arg1.getName());
-            }
-        });
+        Arrays.sort(factionRecs, (arg0, arg1) -> {
+			if (arg0.getParentFactions() == null && arg1.getParentFactions() != null) {
+				return -1;
+			}
+			if (arg0.getParentFactions() != null && arg1.getParentFactions() == null) {
+				return 1;
+			}
+			if (arg0.getKey().contains(".") && !arg1.getKey().contains(".")) {
+				return 1;
+			}
+			if (!arg0.getKey().contains(".") && arg1.getKey().contains(".")) {
+				return -1;
+			}
+			return arg0.getName().compareTo(arg1.getName());
+		});
 
         file = new File(dir + "/factions.xml");
         try {
             pw = new PrintWriter(file, "UTF-8");
         } catch (Exception e1) {
             e1.printStackTrace();
+            return;
         }
         pw.println("<?xml version='1.0' encoding='UTF-8'?>");
         pw.println("<factions>");
@@ -1171,7 +1166,7 @@ public class RATGenerator {
         pw.close();
 
         ChassisRecord[] chassisRecs = chassis.values().toArray(new ChassisRecord[0]);
-        Arrays.sort(chassisRecs, (r1, r2) -> r1.getKey().compareTo(r2.getKey()));
+        Arrays.sort(chassisRecs, Comparator.comparing(AbstractUnitRecord::getKey));
         ArrayList<String> avFields = new ArrayList<>();
         
         final List<Integer> ERAS = new ArrayList<>(eraSet);
@@ -1246,7 +1241,7 @@ public class RATGenerator {
                                         if (mr.getDeployedWith().size() > 0 || mr.getRequiredUnits().size() > 0) {
                                             pw.print("\t\t\t<deployedWith>");
                                             StringJoiner sj = new StringJoiner(",");
-                                            mr.getDeployedWith().forEach(s -> sj.add(s));
+                                            mr.getDeployedWith().forEach(sj::add);
                                             mr.getRequiredUnits().forEach(s -> sj.add("req:" + s));
                                             pw.print(sj.toString());
                                             pw.println("</deployedWith>");

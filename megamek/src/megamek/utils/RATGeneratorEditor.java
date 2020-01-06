@@ -18,6 +18,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -107,6 +108,8 @@ public class RATGeneratorEditor extends JFrame {
     private final JTable tblSalvageEditor = new JTable();
     private SalvageEditorTableModel salvageEditorModel;
 
+    private File lastDir = Configuration.forceGeneratorDir();
+
     public RATGeneratorEditor() {
         rg = RATGenerator.getInstance();
         while (!rg.isInitialized()) {
@@ -168,22 +171,44 @@ public class RATGeneratorEditor extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         panMain.addTab("Edit Factions", panFactionEditorTab);
 
-        JButton btnSave = new JButton("Save");
-        panButtons.add(btnSave);
-        btnSave.addActionListener(ev -> saveValues());
+        JButton button = new JButton("Load");
+        button.setToolTipText("Load data from alternate location");
+        panButtons.add(button);
+        button.addActionListener(ev -> loadAltDir());
+
+        button = new JButton("Save");
+        button.setToolTipText("Export data to a selected directory");
+        panButtons.add(button);
+        button.addActionListener(ev -> saveValues());
 
         pack();
 
     }
 
+    private void loadAltDir() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(lastDir);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setDialogTitle("Select load directory");
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            lastDir = chooser.getSelectedFile();
+            rg.reloadFromDir(lastDir);
+            ERAS = rg.getEraSet().toArray(new Integer[0]);
+            rg.initRemainingUnits();
+            tblMasterUnitList.clearSelection();
+            tblMasterFactionList.clearSelection();
+        }
+    }
+
     private void saveValues() {
         JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(Configuration.forceGeneratorDir());
+        chooser.setCurrentDirectory(lastDir);
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setDialogTitle("Select save directory");
         chooser.setAcceptAllFileFilterUsed(false);
         if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-            rg.exportRATGen(chooser.getSelectedFile());
+            lastDir = chooser.getSelectedFile();
+            rg.exportRATGen(lastDir);
         }
     }
 
@@ -227,6 +252,8 @@ public class RATGeneratorEditor extends JFrame {
                     tblMasterUnitList.getSelectedRow() >= 0) {
                 ModelRecord model = masterUnitListModel.getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList.getSelectedRow()));
                 unitEditorModel.setData(model, UnitEditorTableModel.MODE_MODEL);
+            } else {
+                unitEditorModel.clearData();
             }
         });
 
@@ -238,6 +265,8 @@ public class RATGeneratorEditor extends JFrame {
                     tblMasterUnitList.getSelectedRow() >= 0) {
                 ModelRecord model = masterUnitListModel.getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList.getSelectedRow()));
                 unitEditorModel.setData(model, UnitEditorTableModel.MODE_CHASSIS);
+            } else {
+                unitEditorModel.clearData();
             }
         });
 
@@ -301,6 +330,8 @@ public class RATGeneratorEditor extends JFrame {
                                 convertRowIndexToModel(tblMasterUnitList.
                                         getSelectedRow()));
                 unitEditorModel.setData(rec, radioModel.isSelected() ? UnitEditorTableModel.MODE_MODEL : UnitEditorTableModel.MODE_CHASSIS);
+            } else {
+                unitEditorModel.clearData();
             }
         });
 
@@ -463,6 +494,9 @@ public class RATGeneratorEditor extends JFrame {
                                         getSelectedRow()));
                 factionEditorModel.setData(rec);
                 salvageEditorModel.setData(rec);
+            } else {
+                factionEditorModel.clearData();
+                salvageEditorModel.clearData();
             }
         });
 
@@ -709,9 +743,6 @@ public class RATGeneratorEditor extends JFrame {
 
     private static class UnitEditorTableModel extends DefaultTableModel {
 
-        /**
-         * 
-         */
         private static final long serialVersionUID = 1323721840252090355L;
 
         public static final int MODE_MODEL = 0;
@@ -731,6 +762,13 @@ public class RATGeneratorEditor extends JFrame {
             factions = new ArrayList<>();
             data = new HashMap<>();
             unitRecord = null;
+        }
+
+        public void clearData() {
+            factions.clear();
+            data.clear();
+            unitRecord = null;
+            fireTableDataChanged();
         }
 
         public void setData(AbstractUnitRecord unitRec, int mode) {
@@ -1085,6 +1123,10 @@ public class RATGeneratorEditor extends JFrame {
         public FactionEditorTableModel(FactionRecord rec) {
             factionRec = rec;
         }
+
+        public void clearData() {
+            setData(null);
+        }
         
         public void setData(FactionRecord rec) {
             factionRec = rec;
@@ -1244,8 +1286,14 @@ public class RATGeneratorEditor extends JFrame {
             data = new HashMap<>();
             factionRec = null;
         }
-        
-        @SuppressWarnings("unchecked")
+
+        public void clearData() {
+            factionRec = null;
+            factions.clear();
+            data.clear();
+            fireTableDataChanged();
+        }
+
         public void setData(FactionRecord rec) {
             factionRec = rec;
             factions.clear();
@@ -1260,7 +1308,7 @@ public class RATGeneratorEditor extends JFrame {
                     for (String faction : recs.keySet()) {
                         if (!factions.contains(faction)) {
                             factions.add(faction);
-                            data.put(faction, (ArrayList<String>)empty.clone());
+                            data.put(faction, new ArrayList<>(empty));
                         }
                         data.get(faction).set(i, recs.get(faction).toString());
                     }

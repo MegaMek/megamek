@@ -49,13 +49,13 @@ import megamek.utils.MegaMekXmlUtil;
  */
 public class RATGenerator {
 	
-	private HashMap<String, ModelRecord> models;
-	private HashMap<String, ChassisRecord> chassis;
-	private HashMap<String, FactionRecord> factions;
-	private HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> modelIndex;
-	private HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> chassisIndex;
+	private final HashMap<String, ModelRecord> models;
+	private final HashMap<String, ChassisRecord> chassis;
+	private final HashMap<String, FactionRecord> factions;
+	private final HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> modelIndex;
+	private final HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> chassisIndex;
 
-	private TreeSet<Integer> eraSet;
+	private final TreeSet<Integer> eraSet;
 
 	private static RATGenerator rg = null;
     private static boolean interrupted = false;
@@ -102,8 +102,16 @@ public class RATGenerator {
 	 * @param dir The directory to load from
 	 */
 	public void reloadFromDir(File dir) {
-    	clear();
+		models.clear();
+		chassis.clear();
+		factions.clear();
+		chassisIndex.clear();
+		modelIndex.clear();
+		eraSet.clear();
+		initialized = false;
+		initializing = false;
     	initialize(dir);
+		rg.getEraSet().forEach(e -> rg.loadEra(e, dir));
 	}
 
 	public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, String faction,
@@ -801,20 +809,8 @@ public class RATGenerator {
         interrupted = true;
         dispose = true;
         if (initialized){
-            clear();
+            rg = null;
         }
-    }
-
-    public void clear() {
-        rg = null;
-        models = null;
-        chassis = null;
-        factions = null;
-        chassisIndex = null;
-        modelIndex = null;
-        eraSet = null;
-        initialized = false;
-        initializing = false;
     }
 
 	private synchronized void initialize(File dir) {
@@ -848,7 +844,7 @@ public class RATGenerator {
         }
 
         if (dispose) {
-            clear();
+            rg = null;
             dispose = false;
         }
 	}
@@ -910,15 +906,19 @@ public class RATGenerator {
 			}			
 		}
 	}
+
+	private void loadEra(int era) {
+		loadEra(era, Configuration.forceGeneratorDir());
+	}
 	
-	private synchronized void loadEra(int era) {
-	    final String METHOD_NAME = "loadEra(int)"; //$NON-NLS-1$
+	private synchronized void loadEra(int era, File dir) {
+	    final String METHOD_NAME = "loadEra(int, File)"; //$NON-NLS-1$
 		if (eraIsLoaded(era)) {
 			return;
 		}
 		chassisIndex.put(era, new HashMap<>());
 		modelIndex.put(era, new HashMap<>());
-		File file = new MegaMekFile(Configuration.forceGeneratorDir(), era + ".xml").getFile();
+		File file = new MegaMekFile(dir, era + ".xml").getFile();
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(file);

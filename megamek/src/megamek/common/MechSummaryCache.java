@@ -28,29 +28,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.MegaMekFile;
-import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestAero;
-import megamek.common.verifier.TestBattleArmor;
-import megamek.common.verifier.TestEntity;
-import megamek.common.verifier.TestMech;
-import megamek.common.verifier.TestSupportVehicle;
-import megamek.common.verifier.TestTank;
+import megamek.common.verifier.*;
 
 /**
  * Cache of the Mech summary information. Implemented as Singleton so a client
@@ -61,7 +47,7 @@ import megamek.common.verifier.TestTank;
  */
 public class MechSummaryCache {
 
-    public static interface Listener {
+    public interface Listener {
         void doneLoading();
     }
 
@@ -75,7 +61,7 @@ public class MechSummaryCache {
     private boolean initialized = false;
     private boolean initializing = false;
 
-    private ArrayList<Listener> listeners = new ArrayList<Listener>();
+    private final List<Listener> listeners = new ArrayList<>();
 
     private StringBuffer loadReport = new StringBuffer();
     private EntityVerifier entityVerifier = null;
@@ -96,11 +82,8 @@ public class MechSummaryCache {
             m_instance.initialized = false;
             interrupted = false;
             disposeInstance = false;
-            m_instance.loader = new Thread(new Runnable() {
-                public void run() {
-                    m_instance.loadMechData(ignoringUnofficial);
-                }
-            }, "Mech Cache Loader");
+            m_instance.loader = new Thread(() -> m_instance.loadMechData(ignoringUnofficial),
+                    "Mech Cache Loader");
             m_instance.loader.setPriority(Thread.NORM_PRIORITY - 1);
             m_instance.loader.start();
         }
@@ -153,8 +136,8 @@ public class MechSummaryCache {
     private int zipCount;
 
     private MechSummaryCache() {
-        m_nameMap = new HashMap<String, MechSummary>();
-        m_fileNameMap = new HashMap<String, MechSummary>();
+        m_nameMap = new HashMap<>();
+        m_fileNameMap = new HashMap<>();
     }
 
     public MechSummary[] getAllMechs() {
@@ -192,12 +175,12 @@ public class MechSummaryCache {
     }
 
     public void loadMechData(boolean ignoreUnofficial) {
-        Vector<MechSummary> vMechs = new Vector<MechSummary>();
-        Set<String> sKnownFiles = new HashSet<String>();
+        Vector<MechSummary> vMechs = new Vector<>();
+        Set<String> sKnownFiles = new HashSet<>();
         long lLastCheck = 0;
         entityVerifier = EntityVerifier.getInstance(new MegaMekFile(getUnitCacheDir(),
                 EntityVerifier.CONFIG_FILENAME).getFile());
-        hFailedFiles = new HashMap<String, String>();
+        hFailedFiles = new HashMap<>();
 
         EquipmentType.initializeTypes(); // load master equipment lists
 
@@ -274,12 +257,12 @@ public class MechSummaryCache {
             } else {
                 String unitName = entryName;
 
-                if (unitName.indexOf("\\") > -1) {
+                if (unitName.contains("\\")) {
                     unitName = unitName
                             .substring(unitName.lastIndexOf("\\") + 1);
                 }
 
-                if (unitName.indexOf("/") > -1) {
+                if (unitName.contains("/")) {
                     unitName = unitName
                             .substring(unitName.lastIndexOf("/") + 1);
                 }
@@ -288,7 +271,7 @@ public class MechSummaryCache {
             }
         }
 
-        bNeedsUpdate |= addLookupNames(lLastCheck);
+        bNeedsUpdate |= addLookupNames();
 
         // save updated cache back to disk
         if (bNeedsUpdate) {
@@ -326,8 +309,8 @@ public class MechSummaryCache {
 
         initialized = true;
 
-        for (int i = 0; i < listeners.size(); i++) {
-            listeners.get(i).doneLoading();
+        for (Listener listener : listeners) {
+            listener.doneLoading();
         }
 
         if (disposeInstance) {
@@ -341,7 +324,7 @@ public class MechSummaryCache {
         File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
         ObjectOutputStream wr = new ObjectOutputStream(
                 new BufferedOutputStream(new FileOutputStream(unit_cache_path)));
-        Integer length = Integer.valueOf(m_data.length);
+        int length = m_data.length;
         wr.writeObject(length);
         for (MechSummary element : m_data) {
             wr.writeObject(element);
@@ -377,7 +360,7 @@ public class MechSummaryCache {
         ms.setTons(e.getWeight());
         if (e instanceof BattleArmor){
             ms.setTOweight(((BattleArmor)e).getAlternateWeight());
-            ms.setTWweight(((BattleArmor)e).getWeight());
+            ms.setTWweight(e.getWeight());
             ms.setSuitWeight(((BattleArmor)e).getTrooperWeight());
         }
         ms.setBV(e.calculateBattleValue());
@@ -442,43 +425,30 @@ public class MechSummaryCache {
         }
 
         // we can only test meks, vehicles, ASF, and Battlearmor right now
-        if ((e instanceof Mech)
-                || ((e instanceof Tank) && !(e instanceof GunEmplacement))
-                || (e instanceof Aero)
-                || (e instanceof BattleArmor)) {
-            TestEntity testEntity = null;
-            if (e instanceof Mech) {
-                testEntity = new TestMech((Mech) e, entityVerifier.mechOption,
-                        null);
-            } else if (e instanceof Tank){
-                if (e.isSupportVehicle()) {
-                    testEntity = new TestSupportVehicle((Tank) e,
-                            entityVerifier.tankOption, null);
-                } else {
-                    testEntity = new TestTank((Tank) e,
-                            entityVerifier.tankOption, null);
-                }
-            }else if (e.getEntityType() == Entity.ETYPE_AERO
-                    && e.getEntityType() !=
-                            Entity.ETYPE_DROPSHIP
-                    && e.getEntityType() !=
-                            Entity.ETYPE_SMALL_CRAFT
-                    && e.getEntityType() !=
-                            Entity.ETYPE_FIGHTER_SQUADRON
-                    && e.getEntityType() !=
-                            Entity.ETYPE_JUMPSHIP
-                    && e.getEntityType() !=
-                            Entity.ETYPE_SPACE_STATION) {
-                testEntity = new TestAero((Aero)e,
-                        entityVerifier.mechOption, null);
-            } else if (e instanceof BattleArmor){
-                testEntity = new TestBattleArmor((BattleArmor) e,
-                        entityVerifier.baOption, null);
-            }
-            if (testEntity != null &&
-                    !testEntity.correctEntity(new StringBuffer())) {
-                ms.setLevel("F");
-            }
+        TestEntity testEntity = null;
+        if (e instanceof Mech) {
+            testEntity = new TestMech((Mech) e, entityVerifier.mechOption, null);
+        } else if (e instanceof Protomech) {
+            testEntity = new TestProtomech((Protomech) e, entityVerifier.protomechOption, null);
+        } else if (e.isSupportVehicle()) {
+            testEntity = new TestSupportVehicle(e, entityVerifier.tankOption, null);
+        } else if (e instanceof Tank && !(e instanceof GunEmplacement)) {
+            testEntity = new TestTank((Tank) e, entityVerifier.tankOption, null);
+        } else if (e instanceof BattleArmor) {
+            testEntity = new TestBattleArmor((BattleArmor) e, entityVerifier.baOption, null);
+        } else if (e instanceof Infantry) {
+            testEntity = new TestInfantry((Infantry) e, entityVerifier.infOption, null);
+        } else if (e instanceof Jumpship) {
+            testEntity = new TestAdvancedAerospace((Jumpship) e, entityVerifier.aeroOption, null);
+        } else if (e instanceof SmallCraft) {
+            testEntity = new TestSmallCraft((SmallCraft) e, entityVerifier.aeroOption, null);
+        } else if (e instanceof Aero) {
+            // FighterSquadron and TeleMissile are also instanceof Aero but they won't be showing up in the unit files
+            testEntity = new TestAero((Aero) e, entityVerifier.aeroOption, null);
+        }
+        if (testEntity != null &&
+                !testEntity.correctEntity(new StringBuffer())) {
+            ms.setLevel("F");
         }
 
         ms.setGyroType(e.getGyroType());
@@ -623,7 +593,6 @@ public class MechSummaryCache {
                     ex.printStackTrace(printWriter);
                     loadReport.append(stringWriter.getBuffer()).append("\n");
                     hFailedFiles.put(f.toString(), ex.getMessage());
-                    continue;
                 }
             }
         }
@@ -713,7 +682,6 @@ public class MechSummaryCache {
                 if (!(ex.getMessage() == null)) {
                     hFailedFiles.put(zEntry.getName(), ex.getMessage());
                 }
-                continue;
             }
         }
 
@@ -729,7 +697,7 @@ public class MechSummaryCache {
         return bNeedsUpdate;
     }
 
-    private boolean addLookupNames(long lLastCheck) {
+    private boolean addLookupNames() {
         final String METHOD_NAME = "addLookupNames(long)"; //$NON-NLS-1$
         File lookupNames = new MegaMekFile(getUnitCacheDir(),
                 FILENAME_LOOKUP).getFile();
@@ -737,10 +705,10 @@ public class MechSummaryCache {
         if (lookupNames.exists()) {
             try {
                 InputStream is = new FileInputStream(lookupNames);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-                String line = null;
-                String lookupName = null;
-                String entryName = null;
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                String line;
+                String lookupName;
+                String entryName;
                 while (null != (line = reader.readLine())) {
                     if (line.startsWith("#")) {
                         continue;
@@ -749,7 +717,7 @@ public class MechSummaryCache {
                     if (index > 0) {
                         lookupName = line.substring(0, index);
                         entryName = line.substring(index + 1);
-                        if ((lookupName.length() > 0) && (!m_nameMap.containsKey(lookupName))) {
+                        if (!m_nameMap.containsKey(lookupName)) {
                             MechSummary ms = m_nameMap.get(entryName);
                             if (null != ms) {
                                 m_nameMap.put(lookupName, ms);

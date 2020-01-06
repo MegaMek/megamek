@@ -61,6 +61,7 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
+import megamek.common.logging.DefaultMmLogger;
 
 /**
  * @author neoancient
@@ -120,11 +121,20 @@ public class RATGeneratorEditor extends JFrame {
             }
         }
         rg.getEraSet().forEach(e -> rg.loadYear(e));
-        
         ERAS = rg.getEraSet().toArray(new Integer[0]);
         rg.initRemainingUnits();
 
         initUI();
+    }
+
+    public RATGeneratorEditor(File dir) {
+        this();
+        if (dir.exists() && dir.isDirectory()) {
+            lastDir = dir;
+            rg.reloadFromDir(lastDir);
+            ERAS = rg.getEraSet().toArray(new Integer[0]);
+            rg.initRemainingUnits();
+        }
     }
 
     private void initUI() {
@@ -1414,10 +1424,29 @@ public class RATGeneratorEditor extends JFrame {
         }
         
     }
-    
+
+    /**
+     * Runs the RATGeneratorEditor UI
+     *
+     * @param args The RATGenerator data will be loaded from the directory named as the first element
+     *             of the arguments. If the {@code args} element is empty, or the first element
+     *             is not a valid directory, loads from the default location.
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater (() -> {
-            RATGeneratorEditor ui = new RATGeneratorEditor();
+            RATGeneratorEditor ui;
+            if (args.length > 0) {
+                File dir = new File(args[0]);
+                if (dir.exists() && dir.isDirectory()) {
+                    ui = new RATGeneratorEditor(dir);
+                } else {
+                    DefaultMmLogger.getInstance().info(RATGeneratorEditor.class,
+                            "main(String[])", args[0] + " is not a valid directory name");
+                    ui = new RATGeneratorEditor();
+                }
+            } else {
+                ui = new RATGeneratorEditor();
+            }
             ui.setVisible(true);
         });
     }

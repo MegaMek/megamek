@@ -227,7 +227,14 @@ public class FactionRecord {
 			altNames.put(Integer.parseInt(entry[0]), entry[1]);
 		}
 	}
-	
+
+	/**
+	 * Check for whether the faction is active in a given year
+	 *
+	 * @param year The year to check
+	 * @return     Whether the faction is active
+	 * @see #isInEra(int)
+	 */
 	public boolean isActiveInYear(int year) {
 		for (DateRange dr : yearsActive) {
 			if (dr.isInRange(year)) {
@@ -236,7 +243,14 @@ public class FactionRecord {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Sets one or more ranges of years the faction is active.
+	 * @param str The range of years the faction is active. The format is YYYY-YYYY. Either the start
+	 *            or end year (or both) can be omitted to make the range open at that end. Factions that
+	 *            vanish and reappear can provide multiple ranges separated by a comma.
+	 * @throws ParseException If the date range format is invalid
+	 */
 	public void setYears(String str) throws ParseException {
 		yearsActive.clear();
 		String[] ranges = str.split(",");
@@ -437,8 +451,9 @@ public class FactionRecord {
 		}
 		return null;
 	}
-	
+
 	public void setWeightDistribution(int era, int unitType, String dist) {
+		// If the distribution parameter is null, clear the record if it exists.
 		if (dist == null) {
 			if (weightDistribution.containsKey(era)) {
 				weightDistribution.get(era).remove(unitType);
@@ -598,8 +613,6 @@ public class FactionRecord {
     
     public void writeToXml(PrintWriter pw, int era) {
         StringBuilder factionRecordBuilder = new StringBuilder();
-                
-        
         if (pctTech.containsKey(TechCategory.OMNI)
                 && pctTech.get(TechCategory.OMNI).containsKey(era)
                 && (pctTech.get(TechCategory.OMNI).get(era).size() > 0)) {
@@ -726,6 +739,7 @@ public class FactionRecord {
      * Checks whether the faction is active at any point from the given year to the next reference 
      * @param era The era start year
      * @return    Whether the faction is active
+	 * @see #isActiveInYear(int)
      */
     public boolean isInEra(int era) {
         if (isActiveInYear(era)) {

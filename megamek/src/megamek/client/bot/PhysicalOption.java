@@ -28,6 +28,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
+import megamek.common.actions.ThrashAttackAction;
 
 /**
  * TODO: add more options, pushing, kick both for quad mechs, etc.
@@ -135,10 +136,8 @@ public class PhysicalOption {
                 return new BrushOffAttackAction(attacker.getId(), target
                         .getTargetType(), target.getId(),
                         BrushOffAttackAction.BOTH);
-                /*
-                 * case THRASH_INF : return new
-                 * ThrashAttackAction(attacker.getId(), target.getId());
-                 */
+            case THRASH_INF : 
+                return new ThrashAttackAction(attacker.getId(), target.getId());
         }
         return null;
     }

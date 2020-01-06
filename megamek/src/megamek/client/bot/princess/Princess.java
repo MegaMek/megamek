@@ -1113,7 +1113,7 @@ public class Princess extends BotClient {
             }
 
             // the original bot's physical options seem superior
-            PhysicalOption bestPhysical = PhysicalCalculator.getBestPhysical(attacker, game);
+            PhysicalOption bestPhysical = PhysicalCalculator.getBestPhysical(attacker, game, getForcedWithdrawal() ? getHonorUtil() : null);
             return bestPhysical;
         } finally {
             methodEnd(getClass(), METHOD_NAME);
@@ -1384,6 +1384,21 @@ public class Princess extends BotClient {
     }
 
     @Override
+    public void changePhase(IGame.Phase phase) {
+        switch(phase) {
+        case PHASE_FIRING:
+        case PHASE_PHYSICAL:
+        case PHASE_TARGETING:
+            checkForDishonoredEnemies();
+            checkForBrokenEnemies();
+            refreshCrippledUnits();
+            break;
+        }
+        
+        super.changePhase(phase);
+    }
+    
+    @Override
     protected void initFiring() {
         final String METHOD_NAME = "initFiring()";
         methodBegin(getClass(), METHOD_NAME);
@@ -1613,7 +1628,6 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         try {      
-            
             if (initialized) {
                 return; // no need to initialize twice
             }

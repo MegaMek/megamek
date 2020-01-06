@@ -16,10 +16,13 @@ package megamek.client.bot;
 
 import java.util.Iterator;
 
+import megamek.client.bot.princess.IHonorUtil;
 import megamek.common.BattleArmor;
+import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.INarcPod;
@@ -29,6 +32,7 @@ import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
+import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.actions.BrushOffAttackAction;
@@ -64,8 +68,12 @@ public final class PhysicalCalculator {
         // Didn't find any physical attack.
         return null;
     }
-
+    
     public static PhysicalOption getBestPhysical(Entity entity, IGame game) {
+        return getBestPhysical(entity, game, null);
+    }
+
+    public static PhysicalOption getBestPhysical(Entity entity, IGame game, IHonorUtil honorUtil) {
         // Infantry can't conduct physical attacks.
         if (entity instanceof Infantry) {
             return null;
@@ -277,18 +285,15 @@ public final class PhysicalCalculator {
             }
         }
 
-        for (Entity target : game.getEntitiesVector()) {
+        Iterator<Entity> entityIter = game.getAllEnemyEntities(entity);
+        while(entityIter.hasNext()) {
+            Entity target = entityIter.next();
 
-            if (target.equals(entity)) {
-                continue;
-            }
-            if (!target.isEnemyOf(entity)) {
-                continue;
-            }
-            if (target.getPosition() == null) {
-                continue;
-            }
             if (Compute.effectiveDistance(game, entity, target) > 1) {
+                continue;
+            }
+            
+            if (honorUtil != null && honorUtil.isEnemyBroken(target.getId(), target.getOwnerId(), true)) {
                 continue;
             }
 
@@ -322,7 +327,7 @@ public final class PhysicalCalculator {
         if ((from instanceof Infantry) || (from instanceof Tank)) {
             return null;
         }
-
+        
         if ((to instanceof Infantry) && !(to instanceof BattleArmor)) {
             targetConvInfantry = true;
         }
@@ -533,8 +538,7 @@ public final class PhysicalCalculator {
                 }
                 // Modify damage to reflect how bad it is for target to be prone
                 if (to.getWalkMP() > 0) {
-                    dmg = dmg
-                            * Math.sqrt((1.0 / to.getWalkMP()) + to.getJumpMP());
+                    dmg = dmg * Math.sqrt((1.0 / to.getWalkMP()) + to.getJumpMP());
                 } else {
                     dmg = dmg * Math.max(1.0, Math.sqrt(to.getJumpMP()));
                 }

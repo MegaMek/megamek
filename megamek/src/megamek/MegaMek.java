@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -69,8 +68,6 @@ import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.server.DedicatedServer;
 import megamek.utils.RATGeneratorEditor;
-
-import javax.swing.*;
 
 /**
  * @author mev This is the class where the execution of the megamek game starts.

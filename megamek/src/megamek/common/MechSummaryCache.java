@@ -104,7 +104,7 @@ public class MechSummaryCache {
     }
 
     /**
-     * Get the directory for the unit cache file.<br />
+     * Get the directory for the unit cache file.
      *
      * @return The path to the directory containing the unit cache.
      */
@@ -176,6 +176,7 @@ public class MechSummaryCache {
     }
 
     public void loadMechData(boolean ignoreUnofficial) {
+        final String METHOD_NAME = "loadMechData(boolean)"; // $NON-NLS-1$
         Vector<MechSummary> vMechs = new Vector<>();
         Set<String> sKnownFiles = new HashSet<>();
         long lLastCheck = 0;
@@ -228,7 +229,7 @@ public class MechSummaryCache {
             } catch (Exception e) {
                 loadReport.append("  Unable to load unit cache: ")
                         .append(e.getMessage()).append("\n");
-                e.printStackTrace();
+                DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, e);
             }
         }
 
@@ -280,6 +281,7 @@ public class MechSummaryCache {
                 saveCache();
             } catch (Exception e) {
                 loadReport.append("  Unable to save mech cache\n");
+                DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, e);
             }
         }
 
@@ -303,18 +305,20 @@ public class MechSummaryCache {
         done();
     }
 
-    private synchronized void done() {
-        lock.notifyAll();
+    private void done() {
+        synchronized (lock) {
+            lock.notifyAll();
 
-        initialized = true;
+            initialized = true;
 
-        for (Listener listener : listeners) {
-            listener.doneLoading();
-        }
+            for (Listener listener : listeners) {
+                listener.doneLoading();
+            }
 
-        if (disposeInstance) {
-            m_instance = null;
-            initialized = false;
+            if (disposeInstance) {
+                m_instance = null;
+                initialized = false;
+            }
         }
     }
 
@@ -323,8 +327,7 @@ public class MechSummaryCache {
         File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
         ObjectOutputStream wr = new ObjectOutputStream(
                 new BufferedOutputStream(new FileOutputStream(unit_cache_path)));
-        int length = m_data.length;
-        wr.writeObject(length);
+        wr.writeObject(m_data.length);
         for (MechSummary element : m_data) {
             wr.writeObject(element);
         }
@@ -473,14 +476,14 @@ public class MechSummaryCache {
     }
 
     /**
-     * Loading a complete mech object for each summary is a bear and should be
+     * Loading a complete {@link Entity} object for each summary is a bear and should be
      * changed, but it lets me use the existing parsers
      *
-     * @param vMechs
-     * @param sKnownFiles
-     * @param lLastCheck
-     * @param fDir
-     * @return
+     * @param vMechs      List to add units to as they are loaded
+     * @param sKnownFiles Files that have been processed so far and can be skipped
+     * @param lLastCheck  The timestamp of the last time the cache was updated
+     * @param fDir        The directory to load units from
+     * @return            Whether the list of units has changed, requiring rewriting the cache
      */
     private boolean loadMechsFromDirectory(Vector<MechSummary> vMechs,
             Set<String> sKnownFiles, long lLastCheck, File fDir,
@@ -604,6 +607,7 @@ public class MechSummaryCache {
 
     private boolean loadMechsFromZipFile(Vector<MechSummary> vMechs,
             Set<String> sKnownFiles, long lLastCheck, File fZipFile) {
+        final String METHOD_NAME = "loadMechsFromZipFile(Vector<MechSummary>, Set<String>, long, File)"; //$NON-NLS-1$
         boolean bNeedsUpdate = false;
         ZipFile zFile;
         int thisZipFileCount = 0;
@@ -628,6 +632,7 @@ public class MechSummaryCache {
                     zFile.close();
                     return false;
                 } catch (IOException e) {
+                    DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, e);
                 }
             }
             ZipEntry zEntry = (ZipEntry) i.nextElement();
@@ -687,7 +692,7 @@ public class MechSummaryCache {
         try {
             zFile.close();
         } catch (Exception ex) {
-            // whatever.
+            DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, ex);
         }
 
         loadReport.append("  ...loaded ").append(thisZipFileCount)

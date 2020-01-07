@@ -1778,15 +1778,21 @@ public class FireControl {
         final HexTarget hexToBomb = new HexTarget(target.getPosition(), game.getBoard(), 
                 shooter.isAero() ? Targetable.TYPE_HEX_AERO_BOMB : Targetable.TYPE_HEX_BOMB);
 
+        // things that cause us to avoid calculating a bomb plan:
+        // not having any bombs (in the first place)
         final Iterator<Mounted> weaponIter = shooter.getWeapons();
         if (null == weaponIter) {
+            return diveBombPlan;
+        }
+        
+        // not having any bombs (due to expenditure/damage)
+        if(shooter.getBombs(BombType.F_GROUND_BOMB).size() == 0) {
             return diveBombPlan;
         }
 
         while (weaponIter.hasNext()) {
             final Mounted weapon = weaponIter.next();
             if(weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
-
                 final int[] bombPayload = new int[BombType.B_NUM];
                 // load up all droppable bombs, yeah baby! Mix thunder bombs and infernos 'cause why the hell not.
                 // seriously, though, TODO: more intelligent bomb drops
@@ -2250,6 +2256,12 @@ public class FireControl {
     	// cache the results of our computation
     	if(fireControlState.getEntityIDFStates().containsKey(shooter.getId())) {
     		return fireControlState.getEntityIDFStates().get(shooter.getId());
+    	}
+    	
+    	// airborne aerospace units cannot use indirect fire
+    	if(shooter.isAirborne()) {
+    	    fireControlState.getEntityIDFStates().put(shooter.getId(), false);
+    	    return false;
     	}
     	
         for(Mounted weapon : shooter.getWeaponList()) {

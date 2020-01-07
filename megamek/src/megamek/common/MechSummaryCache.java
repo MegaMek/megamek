@@ -54,7 +54,7 @@ public class MechSummaryCache {
     private static final String FILENAME_UNITS_CACHE = "units.cache";
     private static final String FILENAME_LOOKUP = "name_changes.txt";
 
-    static MechSummaryCache m_instance;
+    private static MechSummaryCache m_instance;
     private static boolean disposeInstance = false;
     private static boolean interrupted = false;
 
@@ -66,6 +66,7 @@ public class MechSummaryCache {
     private StringBuffer loadReport = new StringBuffer();
     private EntityVerifier entityVerifier = null;
     private Thread loader;
+    private static final Object lock = new Object();
 
     public static synchronized MechSummaryCache getInstance() {
         return getInstance(false);
@@ -92,7 +93,7 @@ public class MechSummaryCache {
 
     public static void dispose() {
         if (m_instance != null) {
-            synchronized (m_instance) {
+            synchronized (lock) {
                 interrupted = true;
                 m_instance.loader.interrupt();
                 // We can't do this, otherwise we can't notifyAll()
@@ -147,11 +148,11 @@ public class MechSummaryCache {
 
     private void block() {
         if (!initialized) {
-            synchronized (m_instance) {
+            synchronized (lock) {
                 try {
-                    m_instance.wait();
+                    lock.wait();
                 } catch (Exception e) {
-
+                    // Ignore
                 }
             }
         }
@@ -303,9 +304,7 @@ public class MechSummaryCache {
     }
 
     private synchronized void done() {
-        if (m_instance != null) {
-            m_instance.notifyAll();
-        }
+        lock.notifyAll();
 
         initialized = true;
 

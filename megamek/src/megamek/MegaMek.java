@@ -67,6 +67,7 @@ import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.server.DedicatedServer;
+import megamek.utils.RATGeneratorEditor;
 
 /**
  * @author mev This is the class where the execution of the megamek game starts.
@@ -112,6 +113,8 @@ public class MegaMek {
             String[] restArgs = cp.getRestArgs();
             if (cp.dedicatedServer()) {
                 MegaMek.startDedicatedServer(restArgs);
+            } else if (cp.ratGenEditor()) {
+                RATGeneratorEditor.main(restArgs);
             } else {
                 // Load button ordering
                 ButtonOrderPreferences.getInstance().setButtonPriorities();
@@ -472,6 +475,7 @@ public class MegaMek {
         private String logFilename;
         private String guiName;
         private boolean dedicatedServer = false;
+        private boolean ratGenEditor = false;
         private String[] restArgs = new String[0];
 
         // Options
@@ -486,6 +490,7 @@ public class MegaMek {
         private static final String OPTION_UNIT_BATTLEFORCE_CONVERSION = "bfc"; //$NON-NLS-1$
         private static final String OPTION_UNIT_ALPHASTRIKE_CONVERSION = "asc"; //$NON-NLS-1$
         private static final String OPTION_DATADIR = "data"; //$NON-NLS-1$
+        private static final String OPTION_RATGEN_EDIT = "editratgen"; // $NON-NLS-1$
 
         CommandLineParser(String[] args) {
             super(args);
@@ -498,6 +503,14 @@ public class MegaMek {
          */
         boolean dedicatedServer() {
             return dedicatedServer;
+        }
+
+        /**
+         * Flag that indicates the option for the RAT Generator editor
+         * @return Whether the RAT Generator editor should be invoked
+         */
+        boolean ratGenEditor() {
+            return ratGenEditor;
         }
 
         /**
@@ -532,68 +545,47 @@ public class MegaMek {
 
         @Override
         protected void start() throws ParseException {
-
-            if ((getToken() == TOK_OPTION)
-                    && getTokenValue().equals(OPTION_LOG)) {
+            if (getToken() == TOK_OPTION) {
+                final String tokenVal = getTokenValue();
                 nextToken();
-                parseLog();
-            }
-            if ((getToken() == TOK_OPTION)
-                    && getTokenValue().equals(OPTION_EQUIPMENT_DB)) {
-                nextToken();
-                processEquipmentDb();
-            }
-
-            if ((getToken() == TOK_OPTION)
-                    && getTokenValue().equals(OPTION_EQUIPMENT_EXTENDED_DB)) {
-                nextToken();
-                processExtendedEquipmentDb();
-            }
-            if ((getToken() == TOK_OPTION)
-                    && getTokenValue().equals(OPTION_DATADIR)) {
-                nextToken();
-                processDataDir();
-            }
-            if ((getToken() == TOK_OPTION)
-                    && getTokenValue().equals(OPTION_UNIT_VALIDATOR)) {
-                nextToken();
-                processUnitValidator();
-            }
-
-            if ((getToken() == TOK_OPTION)
-                    && getTokenValue().equals(OPTION_UNIT_EXPORT)) {
-                nextToken();
-                processUnitExporter();
-            }
-
-            if ((getToken() == TOK_OPTION)
-                    && getTokenValue().equals(OPTION_OFFICAL_UNIT_LIST)) {
-                nextToken();
-                processUnitExporter(true);
-            }
-
-            if ((getToken() == TOK_OPTION)
-                    && getTokenValue().equals(
-                            OPTION_UNIT_BATTLEFORCE_CONVERSION)) {
-                nextToken();
-                processUnitBattleForceConverter();
-            }
-
-            if ((getToken() == TOK_OPTION)
-                    && getTokenValue().equals(
-                            OPTION_UNIT_ALPHASTRIKE_CONVERSION)) {
-                nextToken();
-                processUnitAlphaStrikeConverter();
-            }
-
-            if ((getToken() == TOK_OPTION)
-                    && getTokenValue().equals(OPTION_DEDICATED)) {
-                nextToken();
-                dedicatedServer = true;
-            } else if ((getToken() == TOK_OPTION)
-                    && getTokenValue().equals(OPTION_GUI)) {
-                nextToken();
-                parseGUI();
+                switch (tokenVal) {
+                    case OPTION_LOG:
+                        parseLog();
+                        break;
+                    case OPTION_EQUIPMENT_DB:
+                        processEquipmentDb();
+                        break;
+                    case OPTION_EQUIPMENT_EXTENDED_DB:
+                        processExtendedEquipmentDb();
+                        break;
+                    case OPTION_DATADIR:
+                        processDataDir();
+                        break;
+                    case OPTION_UNIT_VALIDATOR:
+                        processUnitValidator();
+                        break;
+                    case OPTION_UNIT_EXPORT:
+                        processUnitExporter();
+                        break;
+                    case OPTION_OFFICAL_UNIT_LIST:
+                        processUnitExporter(true);
+                        break;
+                    case OPTION_UNIT_BATTLEFORCE_CONVERSION:
+                        processUnitBattleForceConverter();
+                        break;
+                    case OPTION_UNIT_ALPHASTRIKE_CONVERSION:
+                        processUnitAlphaStrikeConverter();
+                        break;
+                    case OPTION_DEDICATED:
+                        dedicatedServer = true;
+                        break;
+                    case OPTION_GUI:
+                        parseGUI();
+                        break;
+                    case OPTION_RATGEN_EDIT:
+                        ratGenEditor = true;
+                        break;
+                }
             }
             processRestOfInput();
             if (getToken() != TOK_EOF) {

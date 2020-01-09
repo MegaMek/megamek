@@ -1482,7 +1482,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // firing arcs are more complicated
         // TW errata 2.1
         if ((Compute.useSpheroidAtmosphere(game, ae) ||
-                (((IAero) ae).isSpheroid() && ae.getAltitude() == 0))
+                (ae.isAero() && ((IAero) ae).isSpheroid() && ae.getAltitude() == 0))
                 && weapon != null) {
             int altDif = target.getAltitude() - ae.getAltitude();
             int range = Compute.effectiveDistance(game, ae, target, false);
@@ -1508,11 +1508,25 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // For grounded spheroids, weapons can only be fired at targets in occupied hexes, 
             // but it's not actually possible for a unit to occupy the same hex as a grounded spheroid so
             // we simplify the calculation a bit
-            if ((weapon.getLocation() == Aero.LOC_AFT) && (altDif > -1)) {
-                if (ae.isAirborne()) {
+            if (weapon.getLocation() == Aero.LOC_AFT) {
+                if(altDif > -1) {
                     return Messages.getString("WeaponAttackAction.TooHighForAft");
-                } else {
-                    return Messages.getString("WeaponAttackAction.GroundedSpheroidDropshipAftWeaponRestriction");
+                } 
+                
+                // if both targets are on the ground
+                // and the target is below the attacker 
+                // and the attacker is in one of the target's occupied hexes
+                // then we can shoot aft weapons at it
+                // note that this cannot actually happen in MegaMek currently but is left here for the possible eventuality
+                // that overhanging dropships are implemented
+                if(!ae.isAirborne() && !target.isAirborne()) {
+                    boolean targetInAttackerHex = ae.getOccupiedCoords().contains(target.getPosition()) ||
+                            ae.getPosition().equals(target.getPosition());
+                    boolean targetBelowAttacker = ae.getElevation() > target.getElevation();
+                    
+                    if(!targetInAttackerHex || !targetBelowAttacker) {
+                        return Messages.getString("WeaponAttackAction.GroundedSpheroidDropshipAftWeaponRestriction");
+                    }
                 }
             }
             // and aft-side-mounted weapons can only be fired at targets at the same or lower altitude

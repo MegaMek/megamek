@@ -2772,8 +2772,8 @@ public class MoveStep implements Serializable {
         }
         
         if ((type == MoveStepType.LAY_MINE) && entity.canLayMine()) {
-            //All vechs may only lay mines on its first or last step.
-            //BA additionaly have to use Jump or VTOL movement.
+            //All units may only lay mines on its first or last step.
+            //BA additionally have to use Jump or VTOL movement.
             movementType = prev.movementType;
 
             if (entity instanceof BattleArmor &&

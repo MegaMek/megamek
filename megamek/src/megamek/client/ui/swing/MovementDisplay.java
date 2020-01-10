@@ -4877,12 +4877,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_LAY_MINE.getCmd())) {
             int i = chooseMineToLay();
             if (i != -1) {
-                Mounted m = ce().getEquipment(i);
+                Mounted m = ce.getEquipment(i);
                 if (m.getMineType() == Mounted.MINE_VIBRABOMB) {
                     VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                             clientgui.frame);
                     vsd.setVisible(true);
                     m.setVibraSetting(vsd.getSetting());
+                }
+                if (cmd.getLastStep() == null
+                        && ce instanceof BattleArmor
+                        && ce.getMovementMode().equals(EntityMovementMode.INF_JUMP)) {
+                    cmd.addStep(MoveStepType.START_JUMP);
+                    gear = GEAR_JUMP;
+                    Color jumpColor = GUIPreferences.getInstance().getColor(
+                            GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+                    clientgui.getBoardView().setHighlightColor(jumpColor);
+                    computeMovementEnvelope(ce);
                 }
                 cmd.addStep(MoveStepType.LAY_MINE, i);
                 clientgui.bv.drawMovementData(ce, cmd);

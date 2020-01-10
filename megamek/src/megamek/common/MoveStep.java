@@ -2777,7 +2777,8 @@ public class MoveStep implements Serializable {
             movementType = prev.movementType;
 
             if (entity instanceof BattleArmor &&
-                    !((prev.movementType == EntityMovementType.MOVE_JUMP)
+                    !(isFirstStep()
+                            || (prev.movementType == EntityMovementType.MOVE_JUMP)
                             || (prev.movementType == EntityMovementType.MOVE_VTOL_RUN)
                             || (prev.movementType == EntityMovementType.MOVE_VTOL_WALK))) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;

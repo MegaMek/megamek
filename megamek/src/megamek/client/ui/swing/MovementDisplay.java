@@ -2944,8 +2944,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         if (!ce.canLayMine()) {
             setLayMineEnabled(false);
-        }
-        if (ce instanceof BattleArmor) {
+        } else if (ce instanceof BattleArmor) {
             setLayMineEnabled(cmd.getLastStep() == null
                 || cmd.isJumping()
                 || cmd.getLastStepMovementType().equals(EntityMovementType.MOVE_VTOL_WALK));

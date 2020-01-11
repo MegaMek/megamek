@@ -5645,20 +5645,29 @@ public class Server implements Runnable {
                         } else {
                             PilotingRollData psr = target.getBasePilotingRoll();
                             psr.addModifier(0, "avoiding collision");
-                            int roll = Compute.d6(2);
-                            r = new Report(2425);
-                            r.subject = target.getId();
-                            r.addDesc(target);
-                            r.add(psr.getValue());
-                            r.add(psr.getDesc());
-                            r.add(roll);
-                            addReport(r);
-                            if (roll >= psr.getValue()) {
-                                game.removeTurnFor(target);
-                                avoidedChargeUnits.add(target);
-                                continue;
-                                // TODO: the charge should really be suspended
-                                // and resumed after the target moved.
+                            if (psr.getValue() == TargetRoll.AUTOMATIC_FAIL
+                                    || psr.getValue() == TargetRoll.IMPOSSIBLE) {
+                                r = new Report(2426);
+                                r.subject = target.getId();
+                                r.addDesc(target);
+                                r.add(psr.getDesc());
+                                addReport(r);
+                            } else {
+                                int roll = Compute.d6(2);
+                                r = new Report(2425);
+                                r.subject = target.getId();
+                                r.addDesc(target);
+                                r.add(psr.getValue());
+                                r.add(psr.getDesc());
+                                r.add(roll);
+                                addReport(r);
+                                if (roll >= psr.getValue()) {
+                                    game.removeTurnFor(target);
+                                    avoidedChargeUnits.add(target);
+                                    continue;
+                                    // TODO: the charge should really be suspended
+                                    // and resumed after the target moved.
+                                }
                             }
                         }
                     }

@@ -11,7 +11,8 @@ v0.47.3-SNAPSHOT
 + PR #1565: Aerospace fighters fighting in atmosphere no longer always report attack direction as being against the nose
 + Issue #1580: Indirect fire penalty occuring on C3 Master TAG again
 + PR #1588: Graphical editor for RAT Generator data. See documentation in docs/RAT Stuff/rat-generator.txt
-+ PR #1589: Fix support for adapting to name changes.
++ PR #1589: Fix support for adapting to unit name changes.
++ Issue #1590: Fa Shih unable to lay mines
 
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor

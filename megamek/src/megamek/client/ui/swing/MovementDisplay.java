@@ -2924,7 +2924,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if (!ce.canLayMine()) {
+        if (!ce.canLayMine() || cmd.contains(MoveStepType.LAY_MINE)) {
             setLayMineEnabled(false);
         } else if (ce instanceof BattleArmor) {
             setLayMineEnabled(cmd.getLastStep() == null

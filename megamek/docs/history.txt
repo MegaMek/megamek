@@ -13,6 +13,7 @@ v0.47.3-SNAPSHOT
 + PR #1588: Graphical editor for RAT Generator data. See documentation in docs/RAT Stuff/rat-generator.txt
 + PR #1589: Fix support for adapting to unit name changes.
 + Issue #1590: Fa Shih unable to lay mines
++ Issue #1587: Max Integer Substituted for Target Number
 
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor

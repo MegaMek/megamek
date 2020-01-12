@@ -58,6 +58,7 @@ Besides unit availability, the faction also determines the approximate percentag
 
 Implementation Details - File Format
 The data used for the RAT generator is in the data/forcegenerator directory in the MegaMek distribution. All are xml files.
+A graphic editing tool is available by running MegaMek from the command line with the argument "-editratgen" but a working knowledge of the file format is strongly recommended when using it. The graphical editor allows selecting an alternate directory for loading and saving the data files. Custom files can also be installed in "userdata/data/forcegenerator" and this will take precedence over the distribution files without having to replace them.
 
 factions.xml:
 This file holds faction data that is not tied to a specific year. There is one node for each faction; subcommands are considered factions. Here is the entry for Clan Ghost Bear for reference:

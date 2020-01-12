@@ -911,6 +911,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateDumpButton();
         updateEvadeButton();
         updateBootleggerButton();
+        updateLayMineButton();
 
         updateStartupButton();
         updateShutdownButton();
@@ -979,7 +980,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 (ce instanceof Tank)
                 && (ce.getSwarmAttackerId() != Entity.NONE));
 
-        setLayMineEnabled(ce.canLayMine());
         setFleeEnabled(ce.canFlee());
         if (gOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
             // Vehicle don't have ejection systems so crews abandon, and must 
@@ -1220,6 +1220,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateHoverButton();
         updateManeuverButton();
         updateAeroButtons();
+        updateLayMineButton();
 
         loadedUnits = ce.getLoadedUnits();
         if (ce instanceof Aero) {
@@ -2065,6 +2066,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateRollButton();
             updateTurnButton();
             updateTakeCoverButton();
+            updateLayMineButton();
             checkFuel();
             checkOOC();
             checkAtmosphere();
@@ -2933,6 +2935,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         } // End ce-hasn't-moved
     } // private void updateLoadButtons
+
+    private void updateLayMineButton() {
+        final Entity ce = ce();
+        if (null == ce) {
+            return;
+        }
+
+        if (!ce.canLayMine() || cmd.contains(MoveStepType.LAY_MINE)) {
+            setLayMineEnabled(false);
+        } else if (ce instanceof BattleArmor) {
+            setLayMineEnabled(cmd.getLastStep() == null
+                || cmd.isJumping()
+                || cmd.getLastStepMovementType().equals(EntityMovementType.MOVE_VTOL_WALK));
+        } else {
+            setLayMineEnabled(true);
+        }
+    }
 
     private Entity getMountedUnit() {
         Entity ce = ce();
@@ -4891,12 +4910,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_LAY_MINE.getCmd())) {
             int i = chooseMineToLay();
             if (i != -1) {
-                Mounted m = ce().getEquipment(i);
+                Mounted m = ce.getEquipment(i);
                 if (m.getMineType() == Mounted.MINE_VIBRABOMB) {
                     VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                             clientgui.frame);
                     vsd.setVisible(true);
                     m.setVibraSetting(vsd.getSetting());
+                }
+                if (cmd.getLastStep() == null
+                        && ce instanceof BattleArmor
+                        && ce.getMovementMode().equals(EntityMovementMode.INF_JUMP)) {
+                    cmd.addStep(MoveStepType.START_JUMP);
+                    gear = GEAR_JUMP;
+                    Color jumpColor = GUIPreferences.getInstance().getColor(
+                            GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+                    clientgui.getBoardView().setHighlightColor(jumpColor);
+                    computeMovementEnvelope(ce);
                 }
                 cmd.addStep(MoveStepType.LAY_MINE, i);
                 clientgui.bv.drawMovementData(ce, cmd);
@@ -5237,6 +5266,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateThrustButton();
         updateRollButton();
         updateTakeCoverButton();
+        updateLayMineButton();
         checkFuel();
         checkOOC();
         checkAtmosphere();

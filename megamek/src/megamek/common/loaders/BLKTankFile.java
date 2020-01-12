@@ -290,7 +290,7 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         }
 
         if (dataFile.exists("trailer")) {
-            t.setHasNoControlSystems(true);
+            t.setTrailer(true);
         }
 
         return t;

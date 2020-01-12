@@ -1522,7 +1522,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if(!ae.isAirborne() && !target.isAirborne()) {
                     boolean targetInAttackerHex = ae.getOccupiedCoords().contains(target.getPosition()) ||
                             ae.getPosition().equals(target.getPosition());
-                    boolean targetBelowAttacker = ae.getElevation() > target.getElevation();
+                    boolean targetBelowAttacker = game.getBoard().getHex(ae.getPosition()).surface() >
+                            game.getBoard().getHex(target.getPosition()).surface() + target.getElevation();
                     
                     if(!targetInAttackerHex || !targetBelowAttacker) {
                         return Messages.getString("WeaponAttackAction.GroundedSpheroidDropshipAftWeaponRestriction");

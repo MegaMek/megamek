@@ -16,6 +16,8 @@ v0.47.3-SNAPSHOT
 + Issue #1587: Max Integer Substituted for Target Number
 + Issue #1568: Several Trailer Units not tow-able
 + Issue #1562: Critical Hit on Protomech Near Miss
++ PR #1574: Grounded dropships no longer able to fire nose-mounted weapons at ground targets
++ PR #1598: Bot will no longer attempt to indirect-fire LRMs from airborne aircraft
 
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor

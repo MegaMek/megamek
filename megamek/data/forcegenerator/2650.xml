@@ -2424,7 +2424,7 @@
 	</chassis>
 	<chassis name='Merchant Jumpship' unitType='Jumpship'>
 		<availability>MOC:6,CC:4,IS:4,Periphery.Deep:6,RWR:4,MERC:6,FS:4,Periphery:6,TC:6,OA:6,TH:4,LA:4,SL:4,FWL:4,DC:4</availability>
-		<model name='(Standard)'>
+		<model name='(2503)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -2586,7 +2586,7 @@
 	</chassis>
 	<chassis name='Kimagure Pursuit Cruiser' unitType='Warship'>
 		<availability>SL:2</availability>
-		<model name='(Standard)'>
+		<model name='(2582)'>
 			<roles>cruiser</roles>
 			<availability>General:8</availability>
 		</model>
@@ -2614,7 +2614,7 @@
 	</chassis>
 	<chassis name='Mako Corvette' unitType='Warship'>
 		<availability>LA:6,SL:3</availability>
-		<model name='(Standard)'>
+		<model name='(2692)'>
 			<roles>corvette</roles>
 			<availability>General:8</availability>
 		</model>
@@ -2681,7 +2681,7 @@
 	</chassis>
 	<chassis name='Riga Frigate' unitType='Warship'>
 		<availability>SL:4</availability>
-		<model name='(Standard)'>
+		<model name='(2440)'>
 			<roles>frigate</roles>
 			<availability>General:8</availability>
 		</model>

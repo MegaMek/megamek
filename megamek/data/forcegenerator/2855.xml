@@ -4408,7 +4408,7 @@
 	</chassis>
 	<chassis name='Merchant Jumpship' unitType='Jumpship'>
 		<availability>MOC:6,CC:5,IS:5,Periphery.Deep:6,MERC:6,FS:5,CIR:6,TC:6,Periphery:6,CS:5,OA:6,LA:5,FWL:5,NIOPS:5,DC:5</availability>
-		<model name='(Standard)'>
+		<model name='(2503)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -4600,7 +4600,7 @@
 	</chassis>
 	<chassis name='Kimagure Pursuit Cruiser' unitType='Warship'>
 		<availability>CSR:2,CLAN:1</availability>
-		<model name='(Standard)'>
+		<model name='(2582)'>
 			<roles>cruiser</roles>
 			<availability>General:8</availability>
 		</model>
@@ -4636,7 +4636,7 @@
 	</chassis>
 	<chassis name='Mako Corvette' unitType='Warship'>
 		<availability>LA:1</availability>
-		<model name='(Standard)'>
+		<model name='(2692)'>
 			<roles>corvette</roles>
 			<availability>General:8</availability>
 		</model>

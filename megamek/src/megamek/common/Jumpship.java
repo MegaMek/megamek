@@ -1956,7 +1956,7 @@ public class Jumpship extends Aero {
     
     @Override
     public double getArmorWeight() {
-        return getArmorWeight(locations());
+        return getArmorWeight(locations() - 1); // no armor in hull location
     }
     
     @Override

@@ -206,7 +206,7 @@ public class Warship extends Jumpship {
 
     @Override
     public double getArmorWeight() {
-        return getArmorWeight(locations() - 3);
+        return getArmorWeight(locations() - 3); // No armor for RBS/LBS/HULL
     }
     
     @Override

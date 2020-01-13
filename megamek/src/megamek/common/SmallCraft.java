@@ -598,7 +598,11 @@ public class SmallCraft extends Aero {
     public double getArmorWeight() {
         // first I need to subtract SI bonus from total armor
         int armorPoints = getTotalOArmor();
-        armorPoints -= getSI() * (locations() - 1); // no armor in hull location
+        int freeSI = getSI() * (locations() - 1); // no armor in hull location
+        if (isPrimitive()) {
+            freeSI = (int) (freeSI * 0.66);
+        }
+        armorPoints -= freeSI;
         double armorPerTon = SmallCraft.armorPointsPerTon(getWeight(), isSpheroid(),
                 getArmorType(0), TechConstants.isClan(getArmorTechLevel(0)));
 

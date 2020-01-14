@@ -1956,7 +1956,7 @@ public class Jumpship extends Aero {
     
     @Override
     public double getArmorWeight() {
-        return getArmorWeight(locations());
+        return getArmorWeight(locations() - 1); // no armor in hull location
     }
     
     @Override
@@ -1966,7 +1966,7 @@ public class Jumpship extends Aero {
         if (!isPrimitive()) {
             armorPoints -= Math.round(get0SI() / 10.0) * locCount;
         } else {
-            armorPoints -= Math.round(get0SI() / 10.0) * locCount * 0.66;
+            armorPoints -= Math.floor(Math.round(get0SI() / 10.0) * locCount * 0.66);
         }
 
         // now I need to determine base armor points by type and weight

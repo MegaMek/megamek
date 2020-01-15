@@ -9213,6 +9213,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Searchlight (Handheld)";
         misc.setInternalName("HHSearchlight");
+        misc.shortName = "Searchlight";
         misc.tonnage = 0.005;
         misc.criticals = 0;
         misc.tankslots = 0;
@@ -9235,6 +9236,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Searchlight (Mounted)";
         misc.setInternalName("Searchlight");
+        misc.shortName = "Searchlight";
         misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.tankslots = 1;
@@ -11022,6 +11024,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Searchlight [BA]";
         misc.setInternalName("BASearchlight");
+        misc.shortName = "Searchlight";
         misc.tonnage = 0.005;
         misc.criticals = 1;
         misc.tankslots = 0;

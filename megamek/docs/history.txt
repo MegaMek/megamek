@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.46.1-SNAPSHOT
+0.46.1 (2020-01-17 0800 UTC)
 + Fix large craft bay cost calculations
 + Bug: Vehicle reduced to half movement not considered heavy damage
 + PR #1473: Allow the bot to gracefully handle deployment of grounded dropships on maps with no valid places to put them

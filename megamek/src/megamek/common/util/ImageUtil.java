@@ -185,8 +185,8 @@ public final class ImageUtil {
         public Image loadImage(String fileName) {
             File fin = new File(fileName);
             if (!fin.exists()) {
-                System.out.println("Trying to load image for a non-existant "
-                        + "file! Path: " + fileName);
+                System.out.println("Trying to load image for a non-existent " + "file! Path: " + fileName);
+                return null;
             }
             Image result = Toolkit.getDefaultToolkit().getImage(fileName);
             if(null == result) {
@@ -198,7 +198,7 @@ public final class ImageUtil {
     }
 
     /**
-     * ImageLoader that loads subregions from a larger atlas file.  The filename is assumed to have the format:
+     * ImageLoader that loads sub-regions from a larger atlas file. The filename is assumed to have the format:
      * <imageFile>(X,Y-Width,Height), where X,Y is the start of the image tile, and Width,Height are the size of the
      * image tile.
      */
@@ -229,7 +229,7 @@ public final class ImageUtil {
 
         /**
          * Given a string with the format <imageFile>(X,Y-W,H), load the image file and then use X,Y and W,H to find a
-         * subimage within the original image and return that subimage.
+         * sub-image within the original image and return that sub-image.
          *
          */
         @Override
@@ -270,8 +270,8 @@ public final class ImageUtil {
     }
 
     /**
-     * ImageLoader that loads subregions from a larger atlas file, but is given
-     * filenames that are mapped into an atlas. When constructed, this class
+     * ImageLoader that loads sub-regions from a larger atlas file, but is given
+     * file names that are mapped into an atlas. When constructed, this class
      * reads in a map that maps image files to an atlas image and offset
      * location. When an image file is requested to be opened, it first looks to
      * see if the map contains that file, and if it does returns an image from

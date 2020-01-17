@@ -674,7 +674,7 @@ public class BoardEditor extends JComponent
         buttonMg.addMouseWheelListener(wheelListener);
 
         // Mouse wheel behaviour for the BUILDINGS button
-        // This always ADDS the building because clearing all terrin except
+        // This always ADDS the building because clearing all terrain except
         // buildings is too complicated. User can click the X button to clear terrain.
         buttonBu.addMouseWheelListener(new MouseWheelListener() {
             @Override
@@ -1668,7 +1668,7 @@ public class BoardEditor extends JComponent
     private void showHelp() {
         // Do we need to create the "help" dialog?
         if (help == null) {
-            File helpfile = new File("docs", "editor-readme.txt"); //$NON-NLS-1$
+            File helpfile = new File("docs\\Boards Stuff", "Map Editor-readme.txt"); //$NON-NLS-1$
             help = new CommonHelpDialog(frame, helpfile);
         }
 
@@ -2044,7 +2044,7 @@ public class BoardEditor extends JComponent
          * specialized field for the BoardEditor that supports 
          * MouseWheel changes.
          * 
-         * @param text the inital text
+         * @param text the initial text
          * @param columns as in JTextField
          * 
          * @see javax.swing.JTextField#JTextField(String, int)
@@ -2134,7 +2134,5 @@ public class BoardEditor extends JComponent
                 return 0;
             }
         }
-        
     }
-
 }

@@ -24,6 +24,10 @@ A
 3086
 </year>
 
+<originalBuildYear>
+3086
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 4
@@ -99,10 +106,11 @@ IS LB 2-X Cluster Ammo:OMNI
 ISC3MasterUnit:OMNI
 Communications Equipment (10 ton):OMNI
 ISTankCockpitCommandConsole:OMNI
-ISCASE:OMNI
-Advanced Fire Control
+ISCASE
 Armored Chassis
 STOLChassisMod
+OmniChassisMod
+Advanced Fire Control
 </Body Equipment>
 
 <barrating>
@@ -120,4 +128,8 @@ TRO 3085
 <tonnage>
 200.0
 </tonnage>
+
+<baseChassisFireConWeight>
+5.5
+</baseChassisFireConWeight>
 

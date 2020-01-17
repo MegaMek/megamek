@@ -82,7 +82,6 @@ crewquarters:231.0:0
 </armor>
 
 <Nose Equipment>
-ISSmallNavalCommScannerSuite
 (B) Sub-Capital Missile Launcher (Piranha)
 Sub-Capital Missile Launcher (Piranha)
 Sub-Capital Missile Launcher (Piranha)
@@ -170,6 +169,10 @@ ISERMediumLaser
 ISERMediumLaser
 ISERMediumLaser
 </Aft Equipment>
+
+<Hull Equipment>
+ISSmallNavalCommScannerSuite
+</Hull Equipment>
 
 <structural_integrity>
 17

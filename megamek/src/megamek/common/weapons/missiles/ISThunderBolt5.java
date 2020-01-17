@@ -45,11 +45,12 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
         shortAV = 5;
         medAV = 5;
         maxRange = RANGE_MED;
-        tonnage = 3.0f;
+        tonnage = 3.0;
         criticals = 1;
         bv = 64;
         cost = 50000;
         flags = flags.or(F_LARGEMISSILE);
+        this.missileArmor = 5;
         rulesRefs = "347,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)

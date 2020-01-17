@@ -54,7 +54,7 @@ public class ISVariableSpeedPulseLaserLarge extends
         damageShort = 11;
         damageMedium = 9;
         damageLong = 7;
-        tonnage = 9.0f;
+        tonnage = 9.0;
         criticals = 4;
         bv = 123;
         cost = 465000;
@@ -65,7 +65,7 @@ public class ISVariableSpeedPulseLaserLarge extends
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setISAdvancement(3070, 3072, 3080).setPrototypeFactions(F_FW,F_WB)
-            .setProductionFactions(F_FW,F_WB).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setProductionFactions(F_FW,F_WB).setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
 }

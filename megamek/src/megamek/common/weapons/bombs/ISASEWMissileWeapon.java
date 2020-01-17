@@ -51,13 +51,14 @@ public class ISASEWMissileWeapon extends ThunderBoltWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 20000;
-        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON);
+        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON).andNot(F_MECH_WEAPON);;
         this.shortAV = 0;
         this.medAV = 0;
         this.longAV = 0;
         this.maxRange = RANGE_MED;
         this.ammoType = AmmoType.T_ASEW_MISSILE;
         this.capital = false;
+        this.missileArmor = 30;
         rulesRefs = "358,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)

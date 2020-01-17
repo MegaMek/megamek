@@ -1,16 +1,18 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common;
 
@@ -68,8 +70,10 @@ public class PlanetaryConditions implements Serializable {
     public static final int WI_SIZE = windNames.length;
 
     //wind direction
-    private static String[] dirNames = { "North", "Northeast", "Southeast", "South","Southwest", "Northwest" };
+    private static String[] dirNames = { "North", "Northeast", "Southeast", "South", "Southwest", "Northwest", "RandomWindDirection" };
     public static final int DIR_SIZE = dirNames.length;
+    public static final int DIR_RANDOM = 6;
+    
 
     //atmospheric pressure
     public static final int ATMO_VACUUM   = 0;
@@ -96,11 +100,11 @@ public class PlanetaryConditions implements Serializable {
     private boolean runOnce = false;
 
     //set up the specific conditions
-    private int lightConditions = WI_NONE;
+    private int lightConditions = L_DAY;
     private int weatherConditions = WE_NONE;
     private int oldWeatherConditions = WE_NONE;
     private int windStrength = WI_NONE;
-    private int windDirection = -1;
+    private int windDirection = DIR_RANDOM;
     private boolean shiftWindDirection = false;
     private boolean shiftWindStrength = false;
     private boolean isSleeting = false;
@@ -138,6 +142,7 @@ public class PlanetaryConditions implements Serializable {
         fog = other.fog;
         terrainAffected = other.terrainAffected;
         blowingSand = other.blowingSand;
+        runOnce = other.runOnce;
     }
 
     /** clone! */
@@ -161,7 +166,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public static String getWindDirDisplayableName(int type) {
-        if ((type >= 0) && (type < WI_SIZE)) {
+        if ((type >= 0) && (type < DIR_SIZE)) {
             return Messages.getString("PlanetaryConditions." + dirNames[type]);
         }
         throw new IllegalArgumentException("Unknown wind direction");
@@ -187,7 +192,7 @@ public class PlanetaryConditions implements Serializable {
         }
         throw new IllegalArgumentException("Unknown fog condition");
     }
-    
+
     public String getWindDirDisplayableName() {
         return getWindDirDisplayableName(windDirection);
     }
@@ -366,7 +371,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public void determineWind() {
-        if (windDirection == -1) {
+        if (windDirection == DIR_RANDOM) {
             // Initial wind direction. If using level 2 rules, this
             // will be the wind direction for the whole battle.
             windDirection = Compute.d6(1) - 1;
@@ -524,7 +529,7 @@ public class PlanetaryConditions implements Serializable {
 
     /**
      * Planetary conditions on movement, except for gravity
-     * @param entity - the entity in question
+     * @param en - the entity in question
      * @return an <code>int</code> with the modifier to movement
      */
     public int getMovementMods(Entity en) {
@@ -815,7 +820,7 @@ public class PlanetaryConditions implements Serializable {
         lightConditions = type;
     }
 
-    
+
     /** @return The time of day lighting conditions (one of PlanetaryConditions.L_*). */
     public int getLight() {
         return lightConditions;
@@ -959,12 +964,12 @@ public class PlanetaryConditions implements Serializable {
         terrainAffected = conditions.terrainAffected;
         blowingSand = conditions.blowingSand;
         runOnce = conditions.runOnce;
-        
-        if (runOnce) {
+
+        if (!runOnce) {
             setTempFromWeather();
             setWindFromWeather();
             setSandStorm();
-            runOnce = false;
+            runOnce = true;
         }
 
     }
@@ -990,7 +995,6 @@ public class PlanetaryConditions implements Serializable {
     private void setWindFromWeather() {
         switch (weatherConditions) {
             case WE_SLEET:
-                windStrength = WI_MOD_GALE;
                 setSleet(true);
                 break;
             case WE_ICE_STORM:
@@ -1056,6 +1060,6 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public void setRunOnce(boolean run) {
-        runOnce = true;
+        runOnce = run;
     }
 }

@@ -15,20 +15,28 @@
 package megamek.common.options;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import megamek.common.TechConstants;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * Contains the options determining play in the current game.
@@ -67,7 +75,7 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_SHOW_BAY_DETAIL, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_RNG_TYPE, 1); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_RNG_LOG, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_FLAMER_HEAT, true); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_FLAMER_HEAT, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_BREEZE, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); //$NON-NLS-1$
@@ -148,6 +156,7 @@ public class GameOptions extends AbstractOptions {
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMS, false); // $NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FLOATING_CRITS, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS, false); // $NON-NLS-1$
@@ -264,14 +273,18 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY, 50); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AT2_NUKES, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_SANITY, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE, false); //$NON-NLS-1$
 
         IBasicOptionGroup initiative = addGroup("initiative"); //$NON-NLS-1$
         addOption(initiative, OptionsConstants.INIT_INF_MOVE_EVEN, false); //$NON-NLS-1$
@@ -323,12 +336,13 @@ public class GameOptions extends AbstractOptions {
             JAXBContext jc = JAXBContext.newInstance(GameOptionsXML.class, Option.class, BasicOption.class);
             
             Unmarshaller um = jc.createUnmarshaller();
-            GameOptionsXML opts = (GameOptionsXML) um.unmarshal(file);
+            InputStream is = new FileInputStream(file);
+            GameOptionsXML opts = (GameOptionsXML) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
 
             for (IBasicOption bo : opts.getOptions()) {
                 changedOptions.add(parseOptionNode(bo, print));
             }
-        } catch (JAXBException ex) {
+        } catch (IOException | JAXBException | SAXException | ParserConfigurationException ex) {
             System.err.println("Error loading XML for game options: " + ex.getMessage()); //$NON-NLS-1$
             ex.printStackTrace();
         }
@@ -355,17 +369,17 @@ public class GameOptions extends AbstractOptions {
                                 break;
 
                             case IOption.BOOLEAN:
-                                tempOption.setValue(new Boolean(value
+                                tempOption.setValue(Boolean.valueOf(value
                                         .toString()));
                                 break;
 
                             case IOption.INTEGER:
-                                tempOption.setValue(new Integer(value
+                                tempOption.setValue(Integer.valueOf(value
                                         .toString()));
                                 break;
 
                             case IOption.FLOAT:
-                                tempOption.setValue(new Float(value
+                                tempOption.setValue(Float.valueOf(value
                                         .toString()));
                                 break;
                         }
@@ -410,7 +424,11 @@ public class GameOptions extends AbstractOptions {
             
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-            marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+            try {
+            	marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+            } catch (PropertyException ex) {
+            	marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+            }
             
             JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class, new GameOptionsXML(options));
             

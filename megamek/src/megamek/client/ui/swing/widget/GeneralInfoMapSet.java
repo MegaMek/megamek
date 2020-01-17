@@ -1,17 +1,19 @@
-/**
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+/*
+* MegaMek -
+* Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.client.ui.swing.widget;
 
@@ -38,6 +40,7 @@ import megamek.common.Jumpship;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.QuadVee;
+import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
@@ -108,11 +111,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         pilotL = createLabel(
                 Messages.getString("GeneralInfoMapSet.pilotL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(pilotL);
-        
+
         pilotR = createLabel(
                 Messages.getString("GeneralInfoMapSet.playerR"), fm, pilotL.getSize().width + 10, getYCoord()); //$NON-NLS-1$
         content.addArea(pilotR);
-        
+
         playerL = createLabel(
                 Messages.getString("GeneralInfoMapSet.playerL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(playerL);
@@ -248,7 +251,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         content.addArea(visualRangeR);
 
         getNewYCoord(); // skip a line for readability
-        
+
         quirksAndPartReps = new PMMultiLineLabel(fm, Color.white);
         quirksAndPartReps.moveTo(0, getNewYCoord());
         content.addArea(quirksAndPartReps);
@@ -298,7 +301,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 teamR.setVisible(true);
             }
         }
-        
+
         if (en.getCrew() != null) {
             Crew c = en.getCrew();
             String pilotString = c.getDesc(c.getCurrentPilotIndex()) + " (";
@@ -345,12 +348,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             addOptionsToList(en.getQuirks(), quirksAndPartReps);
         }
-        
+
         if ((null != en.getGame())
                 && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
             // skip a line for readability
             quirksAndPartReps.addString("");
-                        
+
             addOptionsToList(en.getPartialRepairs(), quirksAndPartReps);
         }
 
@@ -462,6 +465,23 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             curSensorsR.setString(en.getSensorDesc());
             visualRangeR.setString(Integer.toString(en.getGame()
                     .getPlanetaryConditions().getVisualRange(en, false)));
+            //If using sensors, update our visual range display to the automatic detection range of the current sensor
+            if (en.isSpaceborne() && en.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+                int autoVisualRange = 0;
+                //For squadrons. Default to the passive thermal/optical value used by component fighters
+                if (en.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
+                    autoVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
+                }
+                if (en.getActiveSensor() != null) {
+                    if (en.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                        //required because the return on this from the method below is for ground maps
+                        autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+                    } else {
+                        autoVisualRange = (int) Math.ceil(en.getActiveSensor().getRangeByBracket() / 10.0);
+                    }
+                }
+                visualRangeR.setString(Integer.toString(autoVisualRange));
+            }
         } else {
             curSensorsR.setVisible(false);
             visualRangeR.setVisible(false);
@@ -563,14 +583,14 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     /**
      * Add all options from the given IOptions instance into an array of PMSimpleLabel elements.
      * @param optionsInstance IOptions instance
-     * @param labels label array
+     * @param quirksAndPartReps
      */
     public void addOptionsToList(IOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
         for (Enumeration<IOptionGroup> optionGroups = optionsInstance.getGroups(); optionGroups.hasMoreElements();) {
             IOptionGroup group = optionGroups.nextElement();
             if (optionsInstance.count(group.getKey()) > 0) {
                 quirksAndPartReps.addString(group.getDisplayableName());
-                
+
                 for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
                     IOption option = options.nextElement();
                     if (option != null && option.booleanValue()) {
@@ -580,7 +600,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             }
         }
     }
-    
+
     public PMAreasGroup getContentGroup() {
         return content;
     }

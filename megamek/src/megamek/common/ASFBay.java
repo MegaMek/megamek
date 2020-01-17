@@ -266,4 +266,10 @@ public final class ASFBay extends Bay {
         return ASFBay.techAdvancement();
     }
 
+    @Override
+    public long getCost() {
+        // Based on the number of cubicles
+        return 20000L * (long) totalSpace;
+    }
+
 }

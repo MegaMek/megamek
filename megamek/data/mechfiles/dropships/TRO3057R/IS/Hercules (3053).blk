@@ -136,6 +136,9 @@ IS Ammo LRM-15 Artemis-capable:16
 ISArtemisIV
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 9
 </structural_integrity>

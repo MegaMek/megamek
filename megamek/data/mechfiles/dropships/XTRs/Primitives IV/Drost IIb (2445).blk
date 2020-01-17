@@ -39,9 +39,10 @@ Aerodyne
 <transporters>
 smallcraftbay:2.0:2:1
 smallcraftbay:6.0:2:2
-2ndclassquarters:70.0:0
 1stclassquarters:50.0:0
-crewquarters:217.0:0
+2ndclassquarters:70.0:0
+steeragequarters:105.0:0
+cargobay:97.5:1:6
 </transporters>
 
 <SafeThrust>
@@ -61,7 +62,7 @@ crewquarters:217.0:0
 </sink_type>
 
 <fuel>
-6819
+9545
 </fuel>
 
 <engine_type>
@@ -145,6 +146,9 @@ Medium Laser
 Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 16

@@ -38,11 +38,10 @@ Spheroid
 
 <transporters>
 smallcraftbay:2.0:2:1
-1stclassquarters:30.0:0
-steeragequarters:210.0:0
 2ndclassquarters:0.0:0
-crewquarters:77.0:0
-cargobay:75.0:1:2
+cargobay:75.0:1:6
+steeragequarters:260.0:0
+crewquarters:21.0:0
 </transporters>
 
 <SafeThrust>
@@ -88,8 +87,6 @@ PPC
 Medium Laser
 Medium Laser
 Medium Laser
-ISLookDownRadar
-ISHighResImager
 (B) Small Laser
 Small Laser
 Small Laser
@@ -125,17 +122,26 @@ Small Laser
 Small Laser
 </Aft Equipment>
 
+<Hull Equipment>
+ISLookDownRadar
+ISHighResImager
+</Hull Equipment>
+
 <structural_integrity>
 12
 </structural_integrity>
 
 <source>
-HB:House Kurita - Age of War
+HB:HK - Age of War
 </source>
 
 <tonnage>
 1500.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 21

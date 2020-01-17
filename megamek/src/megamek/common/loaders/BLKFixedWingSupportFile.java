@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -12,17 +13,6 @@
  * details.
  */
 
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author taharqa
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.Aero;
@@ -37,6 +27,13 @@ import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * BLkFile.java
+ *
+ * Created on April 6, 2002, 2:06 AM
+ *
+ * @author taharqa
+ */
 public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
 
     // armor locatioms
@@ -94,9 +91,6 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
         int engineFlags = Engine.SUPPORT_VEE_ENGINE;
-        if (a.isClan()) {
-            engineFlags |= Engine.CLAN_ENGINE;
-        }
         if (!dataFile.exists("SafeThrust")) {
             throw new EntityLoadingException("Could not find SafeThrust block.");
         }
@@ -194,6 +188,11 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         // support vees need equipment for this
         a.autoSetMaxBombPoints();
         a.setArmorTonnage(a.getArmorWeight());
+
+        if (dataFile.exists("baseChassisFireConWeight")) {
+            a.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
+        }
+
         return a;
     }
 
@@ -262,13 +261,8 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {
-                            // If no facing specified, assume front
                             if (facing == -1) {
-                                if (rearMount) {
-                                    mount.setFacing(3);
-                                } else {
-                                    mount.setFacing(0);
-                                }
+                                mount.setFacing(defaultVGLFacing(nLoc, rearMount));
                             } else {
                                 mount.setFacing(facing);
                             }

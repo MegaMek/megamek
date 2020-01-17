@@ -47,7 +47,9 @@ public class Dropship extends SmallCraft {
      * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
      */
     public void setASEWAffected(int arc, int turns) {
-        asewAffectedTurns[arc] = turns;
+        if (arc < asewAffectedTurns.length) {
+            asewAffectedTurns[arc] = turns;
+        }
     }
     
     /*
@@ -55,10 +57,12 @@ public class Dropship extends SmallCraft {
      * @param arc - integer representing the desired firing arc
      */
     public int getASEWAffected(int arc) {
-        return asewAffectedTurns[arc];
+        if (arc < asewAffectedTurns.length) {
+            return asewAffectedTurns[arc];            
+        }
+        return 0;
     }
-  
-    
+
     /**
      * Primitive Dropships may be constructed with no docking collar, or with a pre-boom collar. 
      * 
@@ -71,22 +75,36 @@ public class Dropship extends SmallCraft {
             "KF-Boom", "Prototype KF-Boom", "No Boom"
     };
     
+    //Likewise, you can have a prototype or standard K-F Boom
+    public static final int BOOM_STANDARD  = 0;
+    public static final int BOOM_PROTOTYPE = 1;
+    
     // what needs to go here?
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;
     private boolean kfBoomDamaged = false;
     private int collarType = COLLAR_STANDARD;
+    private int boomType = BOOM_STANDARD;
+
+    @Override
+    public boolean tracksHeat() {
+        // While large craft perform heat calculations, they are not considered heat-tracking units
+        // because they cannot generate more heat than they can dissipate in the same turn.
+        return false;
+    }
+
+    @Override
+    public int getUnitType() {
+        return UnitType.DROPSHIP;
+    }
 
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }
 
+    //Docking Collar Stuff
     public boolean isDockCollarDamaged() {
         return dockCollarDamaged;
-    }
-    
-    public boolean isKFBoomDamaged() {
-        return kfBoomDamaged;
     }
     
     public int getCollarType() {
@@ -111,25 +129,38 @@ public class Dropship extends SmallCraft {
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
+    
+    //KF Boom Stuff
+    public boolean isKFBoomDamaged() {
+        return kfBoomDamaged;
+    }
+    
+    public int getBoomType() {
+        return boomType;
+    }
+    
+    public void setBoomType(int boomType) {
+        this.boomType = boomType;
+    }
 
     public String getCritDamageString() {
-        String toReturn = super.getCritDamageString();
-        boolean first = toReturn.isEmpty();
+        StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
+        boolean first = toReturn.length() == 0;
         if (isDockCollarDamaged()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "Docking Collar";
+            toReturn.append(Messages.getString("Dropship.collarDamageString"));
             first = false;
         }
         if (isKFBoomDamaged()) {
             if (!first) {
-                toReturn += ", ";
+                toReturn.append(", ");
             }
-            toReturn += "K-F Boom";
+            toReturn.append(Messages.getString("Dropship.kfBoomDamageString"));
             first = false;
         }
-        return toReturn;
+        return toReturn.toString();
     }
 
     @Override
@@ -144,11 +175,7 @@ public class Dropship extends SmallCraft {
         // Check prohibited terrain
         // treat grounded Dropships like wheeled tanks,
         // plus buildings are prohibited
-        boolean isProhibited = hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH)
-                || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
-                || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA)
-                || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1)
-                || (hex.terrainLevel(Terrains.GEYSER) == 2);
+        boolean isProhibited = hexContainsProhibitedTerrain(hex);
 
         HashMap<Integer, Integer> elevations = new HashMap<Integer, Integer>();
         elevations.put(hex.getLevel(), 1);
@@ -159,14 +186,7 @@ public class Dropship extends SmallCraft {
                 // Don't allow landed dropships to hang off the board
                 isProhibited = true;
             } else {
-                isProhibited |= secondaryHex.containsTerrain(Terrains.WOODS)
-                        || secondaryHex.containsTerrain(Terrains.ROUGH)
-                        || ((secondaryHex.terrainLevel(Terrains.WATER) > 0)
-                                && !secondaryHex.containsTerrain(Terrains.ICE))
-                        || secondaryHex.containsTerrain(Terrains.RUBBLE) || secondaryHex.containsTerrain(Terrains.MAGMA)
-                        || secondaryHex.containsTerrain(Terrains.JUNGLE)
-                        || (secondaryHex.terrainLevel(Terrains.SNOW) > 1)
-                        || (secondaryHex.terrainLevel(Terrains.GEYSER) == 2);
+                isProhibited |= hexContainsProhibitedTerrain(secondaryHex);
 
                 int elev = secondaryHex.getLevel();
                 if (elevations.containsKey(elev)) {
@@ -238,6 +258,21 @@ public class Dropship extends SmallCraft {
         }
 
         return isProhibited;
+    }
+    
+    /**
+     * Worker function that checks if a given hex contains terrain onto which a grounded dropship
+     * cannot deploy. 
+     */
+    private boolean hexContainsProhibitedTerrain(IHex hex) {
+        return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH)
+                || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
+                || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA)
+                || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1)
+                || (hex.terrainLevel(Terrains.GEYSER) == 2) 
+                || hex.containsTerrain(Terrains.BUILDING) || hex.containsTerrain(Terrains.IMPASSABLE) 
+                || hex.containsTerrain(Terrains.BRIDGE);
+                
     }
 
     public void setDamageDockCollar(boolean b) {
@@ -347,7 +382,7 @@ public class Dropship extends SmallCraft {
     
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[19];
+        double[] costs = new double[20];
         int costIdx = 0;
         double cost = 0;
 
@@ -406,18 +441,19 @@ public class Dropship extends SmallCraft {
 
         // Transport Bays
         int baydoors = 0;
-        int bayCost = 0;
+        long bayCost = 0;
+        long quartersCost = 0;
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if ((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
-                bayCost += 20000 * next.totalSpace;
-            }
-            if ((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
-                bayCost += 10000 * next.totalSpace;
+            if (next.isQuarters()) {
+                quartersCost += next.getCost();
+            } else {
+                bayCost += next.getCost();
             }
         }
 
-        costs[costIdx++] += bayCost + (baydoors * 1000);
+        costs[costIdx++] += bayCost + (baydoors * 1000L);
+        costs[costIdx++] = quartersCost;
 
         // Life Boats and Escape Pods
         costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
@@ -443,7 +479,7 @@ public class Dropship extends SmallCraft {
         String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
                 "Structural Integrity", "Attitude Thruster", "Landing Gear", "Docking Collar",
                 "Engine", "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Weapons/Equipment", "Bays",
-                "Life Boats/Escape Pods", "Weight Multiplier" };
+                "Quarters", "Life Boats/Escape Pods", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 
@@ -1740,8 +1776,7 @@ public class Dropship extends SmallCraft {
         if (null == game) {
             return true;
         }
-        return !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER)
-                || (isAirborne() || isSpaceborne());
+        return (isAirborne() || isSpaceborne() || game.getPhase() == IGame.Phase.PHASE_LOUNGE);
     }
 
     @Override

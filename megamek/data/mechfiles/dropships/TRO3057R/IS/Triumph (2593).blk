@@ -119,6 +119,9 @@ Medium Laser
 IS Ammo LRM-10:12
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 11
 </structural_integrity>

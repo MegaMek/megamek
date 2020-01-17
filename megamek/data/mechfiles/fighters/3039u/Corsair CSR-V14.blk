@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,20 +20,55 @@ Corsair
 CSR-V14
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3051
+</year>
+
+<originalBuildYear>
+3051
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+16
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
 73
 50
 50
 43
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISERLargeLaser
@@ -55,42 +90,17 @@ Small Laser
 Small Laser
 </Aft Equipment>
 
-<heatsinks>
-16
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-3051
-</year>
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Clan Invasion
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

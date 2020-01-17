@@ -39,6 +39,7 @@ public class InfantrySupportGrenadeLauncherWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 465;
 		bv = 2.48;
+		tonnage = .005;
 		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
 		infantryDamage = 0.81;
 		infantryRange = 1;

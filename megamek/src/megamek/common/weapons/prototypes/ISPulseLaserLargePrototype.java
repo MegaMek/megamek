@@ -43,6 +43,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
         setInternalName("ISLargePulseLaserPrototype");
         addLookupName("IS Pulse Large Laser Prototype");
         addLookupName("IS Prototype Large Pulse Laser");
+        shortName = "Large Pulse Laser (P)";
         flags = flags.or(F_PROTOTYPE);
         heat = 10;
         damage = 9;
@@ -55,7 +56,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
         waterMediumRange = 5;
         waterLongRange = 7;
         waterExtremeRange = 10;
-        tonnage = 7.0f;
+        tonnage = 7.0;
         criticals = 2;
         bv = 119;
         cost = 875000;

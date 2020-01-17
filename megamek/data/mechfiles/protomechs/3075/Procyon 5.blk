@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,13 +16,28 @@ ProtoMech
 Procyon
 </Name>
 
-<model>
+<Model>
 5
-</model>
+</Model>
 
-<Tonnage>
-5
-</Tonnage>
+<year>
+3070
+</year>
+
+<originalBuildYear>
+3070
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -32,47 +47,53 @@ Procyon
 5
 </jumpingMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 3
 10
 2
 2
 6
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ammo SRM-2 (5)
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
 CLSRM2
-CLSRM2 Ammo (5)
 </Torso Equipment>
 
 <Right Arm Equipment>
 CLERSmallLaser
 </Right Arm Equipment>
 
-<type>
-Clan Level 2
-</type>
+<Left Arm Equipment>
+</Left Arm Equipment>
 
-<year>
-3070
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
+<Legs Equipment>
+</Legs Equipment>
 
 <source>
 TRO 3075 - Jihad
 </source>
+
+<tonnage>
+5.0
+</tonnage>
+

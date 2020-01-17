@@ -49,7 +49,7 @@ public class ISXPulseLaserLarge extends PulseLaserWeapon {
         waterMediumRange = 6;
         waterLongRange = 9;
         waterExtremeRange = 12;
-        tonnage = 7.0f;
+        tonnage = 7.0;
         criticals = 2;
         bv = 178;
         cost = 275000;

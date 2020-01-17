@@ -25,7 +25,7 @@ Cargomaster
 </year>
 
 <originalBuildYear>
-0
+2790
 </originalBuildYear>
 
 <type>
@@ -130,6 +130,9 @@ ISArtemisIV
 Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 12

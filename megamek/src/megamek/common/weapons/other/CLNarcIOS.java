@@ -39,9 +39,9 @@ public class CLNarcIOS extends NarcWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 1;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         bv = 6;
         cost = 100000;
         rulesRefs = "327,TO";

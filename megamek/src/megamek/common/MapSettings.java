@@ -24,13 +24,19 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import megamek.common.util.BuildingTemplate;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * MapSettings.java Created on March 27, 2002, 1:07 PM
@@ -354,8 +360,8 @@ public class MapSettings implements Serializable {
             JAXBContext jc = JAXBContext.newInstance(MapSettings.class);
 
             Unmarshaller um = jc.createUnmarshaller();
-            ms = (MapSettings) um.unmarshal(is);
-        } catch (JAXBException ex) {
+            ms = (MapSettings) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+        } catch (JAXBException | SAXException | ParserConfigurationException ex) {
             System.err.println("Error loading XML for map settings: " + ex.getMessage()); //$NON-NLS-1$
             ex.printStackTrace();
         }
@@ -1467,7 +1473,11 @@ public class MapSettings implements Serializable {
 
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-            marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+            try {
+            	marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+            } catch (PropertyException ex) {
+            	marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+            }
 
             JAXBElement<MapSettings> element = new JAXBElement<>(new QName("ENVIRONMENT"), MapSettings.class, this);
 

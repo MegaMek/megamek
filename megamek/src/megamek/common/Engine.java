@@ -21,8 +21,6 @@ package megamek.common;
 
 import java.io.Serializable;
 
-import megamek.common.verifier.TestEntity;
-
 /**
  * This class represents an engine, such as those driving mechs.
  */
@@ -70,11 +68,19 @@ public class Engine implements Serializable, ITechnology {
     public final static int STEAM = 10;
     public final static int BATTERY = 11;
     public final static int SOLAR = 12;
+    public final static int EXTERNAL = 13;
+    private final static int NUM_ENGINE_TYPES = 14;
+
+    /** Keys for retrieving engine name from {@link Messages} */
+    private final static String[] TYPE_KEYS = {
+            "ICE", "Fusion", "XL", "XXL", "FuelCell", "Light", "Compact", "Fission", "None",
+            "MagLev", "Steam", "Battery", "Solar", "External"
+    };
     
     //These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127
     //The other engine types are assumed to have a value of ) in the array
     //if not listed.
-    public final static double[][] SV_ENGINE_RATINGS = new double[13][6];
+    private final static double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][6];
     static { 
         SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_A] = 4.0;
         SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_B] = 3.5;
@@ -117,16 +123,29 @@ public class Engine implements Serializable, ITechnology {
         SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_D] = 1.5;
         SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_E] = 1.4;
         SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_F] = 1.3;
-        
+
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_A] = 0.0;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_B] = 0.0;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_C] = 1.5;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_D] = 1.0;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_E] = 0.75;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_F] = 0.5;
+
+        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_C] = 0.0;
+        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_D] = 0.0;
+        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_E] = 0.0;
+        SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_F] = 0.0;
+
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_B] = 1.4;
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_C] = 1.0;
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_D] = 0.8;
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_E] = 0.7;
+        SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_F] = 0.6;
     }
 
-       
     public boolean engineValid;
     private int engineRating;
     private int engineType;
@@ -166,10 +185,7 @@ public class Engine implements Serializable, ITechnology {
      * @return true if the flag is set.
      */
     public boolean hasFlag(int flag) {
-        if ((engineFlags & flag) != 0) {
-            return true;
-        }
-        return false;
+        return (engineFlags & flag) != 0;
     }
 
     /**
@@ -180,7 +196,7 @@ public class Engine implements Serializable, ITechnology {
     private boolean isValidEngine() {
         if (hasFlag(~(CLAN_ENGINE | TANK_ENGINE | LARGE_ENGINE
                 | SUPERHEAVY_ENGINE | SUPPORT_VEE_ENGINE))) {
-            problem.append("Flags:" + engineFlags);
+            problem.append("Flags:").append(engineFlags);
             return false;
         }
         
@@ -188,14 +204,15 @@ public class Engine implements Serializable, ITechnology {
                 && (engineType != COMBUSTION_ENGINE) && (engineType != BATTERY)
                 && (engineType != FUEL_CELL) && (engineType != SOLAR)
                 && (engineType != FISSION) && (engineType != NORMAL_ENGINE)
-                && (engineType != NONE)) {
+                && (engineType != MAGLEV) && (engineType != NONE)
+                && (engineType != EXTERNAL)) {
             problem.append("Invalid Engine type for support vehicle engines!");
             return false;
         }
 
         if ((((int) Math.ceil(engineRating / 5) > ENGINE_RATINGS.length)
                 || (engineRating < 0)) && !hasFlag(SUPPORT_VEE_ENGINE)) {
-            problem.append("Rating:" + engineRating);
+            problem.append("Rating:").append(engineRating);
             return false;
         }
         if ((engineRating > 400) && !hasFlag(SUPPORT_VEE_ENGINE)) {
@@ -212,6 +229,8 @@ public class Engine implements Serializable, ITechnology {
             case MAGLEV:
             case BATTERY:
             case SOLAR:
+            case STEAM:
+            case EXTERNAL:
                 break;
             case COMPACT_ENGINE:
                 if (hasFlag(LARGE_ENGINE)) {
@@ -229,7 +248,7 @@ public class Engine implements Serializable, ITechnology {
                 }
                 break;
             default:
-                problem.append("Type:" + engineType);
+                problem.append("Type:").append(engineType);
                 return false;
         }
 
@@ -243,33 +262,33 @@ public class Engine implements Serializable, ITechnology {
      * @return the type of the engine.
      */
     public static int getEngineTypeByString(String type) {
-        if (type.toLowerCase().indexOf("xxl") != -1) {
+        if (type.toLowerCase().contains("xxl")) {
             return XXL_ENGINE;
-        } else if (type.toLowerCase().indexOf("xl") != -1) {
+        } else if (type.toLowerCase().contains("xl")) {
             return XL_ENGINE;
-        } else if (type.toLowerCase().indexOf("light") != -1) {
+        } else if (type.toLowerCase().contains("light")) {
             return LIGHT_ENGINE;
-        } else if (type.toLowerCase().indexOf("compact") != -1) {
+        } else if (type.toLowerCase().contains("compact")) {
             return COMPACT_ENGINE;
-        } else if (type.toLowerCase().indexOf("ice") != -1) {
+        } else if (type.toLowerCase().contains("ice")) {
             return COMBUSTION_ENGINE;
-        } else if (type.toLowerCase().indexOf("i.c.e.") != -1) {
+        } else if (type.toLowerCase().contains("i.c.e.")) {
             return COMBUSTION_ENGINE;
-        } else if (type.toLowerCase().indexOf("fission") != -1) {
+        } else if (type.toLowerCase().contains("fission")) {
             return FISSION;
-        } else if (type.toLowerCase().indexOf("fuel cell") != -1) {
+        } else if (type.toLowerCase().contains("fuel cell")) {
             return FUEL_CELL;
-        } else if (type.toLowerCase().indexOf("fuel-cell") != -1) {
+        } else if (type.toLowerCase().contains("fuel-cell")) {
             return FUEL_CELL;
-        } else if (type.toLowerCase().indexOf("none") != -1) {
+        } else if (type.toLowerCase().contains("none")) {
             return NONE;
-        } else if (type.toLowerCase().indexOf("maglev") != -1) {
+        } else if (type.toLowerCase().contains("maglev")) {
             return MAGLEV;
-        } else if (type.toLowerCase().indexOf("steam") != -1) {
+        } else if (type.toLowerCase().contains("steam")) {
             return STEAM;
-        } else if (type.toLowerCase().indexOf("battery") != -1) {
+        } else if (type.toLowerCase().contains("battery")) {
             return BATTERY;
-        } else if (type.toLowerCase().indexOf("solar") != -1) {
+        } else if (type.toLowerCase().contains("solar")) {
             return SOLAR;
         } else {
             return NORMAL_ENGINE;
@@ -282,12 +301,9 @@ public class Engine implements Serializable, ITechnology {
      * @return true if it is not an internal combustion engine.
      */
     public boolean isFusion() {
-        if ((engineType == COMBUSTION_ENGINE) || (engineType == FISSION) || (engineType == FUEL_CELL) || (engineType == NONE)
-        		|| (engineType == BATTERY) || (engineType == SOLAR) || (engineType == STEAM) || (engineType == MAGLEV)      		        		
-        		) {
-            return false;
-        }
-        return true;
+        return (engineType != COMBUSTION_ENGINE) && (engineType != FISSION) && (engineType != FUEL_CELL)
+                && (engineType != NONE) && (engineType != BATTERY) && (engineType != SOLAR)
+                && (engineType != STEAM) && (engineType != MAGLEV) && (engineType != EXTERNAL);
     }
  
 
@@ -298,7 +314,7 @@ public class Engine implements Serializable, ITechnology {
      * @return the weight of the engine.
      */
     public double getWeightEngine(Entity entity) {
-        return getWeightEngine(entity, TestEntity.Ceil.HALFTON);
+        return getWeightEngine(entity, RoundWeight.STANDARD);
     }
 
     /**
@@ -308,22 +324,36 @@ public class Engine implements Serializable, ITechnology {
      *            {@link megamek.common.verifier.TestEntity}.
      * @return the weight of the engine in tons.
      */
-    public double getWeightEngine(Entity entity, TestEntity.Ceil roundWeight) {
+    public double getWeightEngine(Entity entity, RoundWeight roundWeight) {
         // Support Vehicles compute engine weight differently
         if ((entity.isSupportVehicle() || hasFlag(SUPPORT_VEE_ENGINE))
                 && isValidEngine()) {
-            double movementFactor = 4 + entity.getOriginalWalkMP()
-                    * entity.getOriginalWalkMP();
+            int mp = entity.getOriginalWalkMP();
+            if (entity.getMovementMode().equals(EntityMovementMode.RAIL)
+                    || entity.getMovementMode().equals(EntityMovementMode.MAGLEV)) {
+                mp = Math.max(0, mp - 2);
+            }
+            double movementFactor = 4 + mp * mp;
             double engineWeightMult = SV_ENGINE_RATINGS[engineType][entity
                     .getEngineTechRating()];
             double weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
-            weight = TestEntity.setPrecision(weight, 4);
-            roundWeight = TestEntity.Ceil.HALFTON;
-            if (entity.getWeight() < 5) {
-                roundWeight = TestEntity.Ceil.KILO;
+            // Fusion engines have a minimum weight of 0.25t at D+ and 0.5t at C. Fission engines have
+            // a minimum of 0.5t at all tech ratings.
+            if ((engineType == NORMAL_ENGINE) && (entity.getEngineTechRating() >= RATING_D)) {
+                weight = Math.max(weight, 0.25);
+            } else if ((engineType == NORMAL_ENGINE) || (engineType == FISSION)) {
+                weight = Math.max(weight, 0.5);
             }
-            return TestEntity.ceil(weight, roundWeight);
+            // Hovercraft have a minimum engine weight of 20% of the vehicle.
+            if (entity.getMovementMode().equals(EntityMovementMode.HOVER)) {
+                weight = Math.max(weight, entity.getWeight() * 0.2);
+            }
+            return roundWeight.round(weight, entity);
+        }
+        // Protomech engines with rating < 40 use a special calculation
+        if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (engineRating < 40)) {
+            return roundWeight.round(engineRating * 0.025, entity);
         }
         double weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5.0)];
         switch (engineType) {
@@ -354,24 +384,23 @@ public class Engine implements Serializable, ITechnology {
             case NONE:
                 return 0;
         }
-        weight = TestEntity.ceilMaxHalf(weight, roundWeight);
+        weight = roundWeight.round(weight, entity);
 
         if (hasFlag(TANK_ENGINE) && (isFusion() || (engineType == FISSION))) {
             weight *= 1.5;
         }
         
         
-        double toReturn = TestEntity.ceilMaxHalf(weight, roundWeight);
+        double toReturn = roundWeight.round(weight, entity);
         // hover have a minimum weight of 20%
         if ((entity.getMovementMode() == EntityMovementMode.HOVER) && (entity instanceof Tank)) {
-            return Math.max(TestEntity.ceilMaxHalf(entity.getWeight()/5, TestEntity.Ceil.HALFTON), toReturn);
+            toReturn = Math.max(roundWeight.round(entity.getWeight() / 5.0, entity), toReturn);
         }
         return toReturn;
     }
 
     /**
-     * return the number of heatsinks that fit weight-free into the engine
-     * @return
+     * @return the number of heatsinks that fit weight-free into the engine
      */
     public int getWeightFreeEngineHeatSinks() {
         // Support Vee engines never provide free heat-sinks, TM pg 133
@@ -409,49 +438,15 @@ public class Engine implements Serializable, ITechnology {
 
     /**
      * Get the name of this engine, this is the localized name used in displays.
-     * The name of an Engine is based on it's type.
+     * The name of an Engine is based on its type.
      *
      * @return the engine name.
      */
     public String getShortEngineName() {
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.ICE");
-            case NORMAL_ENGINE:
-                return Integer.toString(engineRating);
-            case XL_ENGINE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.XL");
-            case LIGHT_ENGINE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Light");
-            case XXL_ENGINE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.XXL");
-            case COMPACT_ENGINE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Compact");
-            case FISSION:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Fission");
-            case FUEL_CELL:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.FuelCell");
-            case NONE:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.None");
-            case STEAM:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Steam");
-            case BATTERY:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Battery");
-            case SOLAR:
-                return Integer.toString(engineRating)
-                        + Messages.getString("Engine.Solar");
-            default:
-                return Messages.getString("Engine.invalid");
+        if (engineType < TYPE_KEYS.length) {
+            return String.format("%d%s", engineRating, Messages.getString("Engine." + TYPE_KEYS[engineType]));
+        } else {
+            return Messages.getString("Engine.invalid");
         }
     }
 
@@ -462,68 +457,37 @@ public class Engine implements Serializable, ITechnology {
     // Don't localize the marked strings below since they are used in mech
     // file parsing.
     public String getEngineName() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(Integer.toString(engineRating));
+        if (!isValidEngine()) {
+            return Messages.getString("Engine.invalid");
+        }
+        StringBuilder sb = new StringBuilder();
+        if (!hasFlag(SUPPORT_VEE_ENGINE)) {
+            sb.append(engineRating);
+        }
         if (hasFlag(LARGE_ENGINE)) {
             sb.append(Messages.getString("Engine.Large"));
         }
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-                sb.append(" ICE"); //$NON-NLS-1$
-                break;
-            case NORMAL_ENGINE:
-                sb.append(" Fusion"); //$NON-NLS-1$
-                break;
-            case XL_ENGINE:
-                sb.append(" XL"); //$NON-NLS-1$
-                break;
-            case LIGHT_ENGINE:
-                sb.append(" Light"); //$NON-NLS-1$
-                break;
-            case XXL_ENGINE:
-                sb.append(" XXL"); //$NON-NLS-1$
-                break;
-            case COMPACT_ENGINE:
-                sb.append(" Compact"); //$NON-NLS-1$
-                break;
-            case FUEL_CELL:
-                sb.append(" Fuel Cell"); //$NON-NLS-1$
-                break;
-            case FISSION:
-                sb.append(" Fission"); //$NON-NLS-1$
-                break;
-            case BATTERY:
-                sb.append(" Battery"); //$NON-NLS-1$
-            case SOLAR:
-                sb.append(" Solar");  //$NON-NLS-1$
-            case NONE:
-                sb.append(" NONE"); //$NON-NLS-1$
-                break;
-            default:
-                return problem.toString();
-        }
+        sb.append(Messages.getString("Engine." + TYPE_KEYS[engineType]));
         if (hasFlag(CLAN_ENGINE)) {
             sb.append(Messages.getString("Engine.Clan"));
         }
-        if (hasFlag(TANK_ENGINE)) {
+        if (hasFlag(SUPPORT_VEE_ENGINE)) {
+            sb.append(Messages.getString("Engine.SupportVehicle"));
+        } else if (hasFlag(TANK_ENGINE)) {
             sb.append(Messages.getString("Engine.Vehicle"));
         }
         return sb.toString();
     }
 
     /**
-     * Returns the rating of the engine.
-     *
-     * @return
+     * @return The rating of the engine
      */
     public int getRating() {
         return engineRating;
     }
 
     /**
-     * returns the slots taken up by the engine in the center torso.
-     *
-     * @return
+     * @return The slots taken up by the engine in the center torso.
      */
     public int[] getCenterTorsoCriticalSlots(int gyroType) {
         if (engineType == COMPACT_ENGINE) {
@@ -546,7 +510,7 @@ public class Engine implements Serializable, ITechnology {
             }
             int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
-                slots = new int[]{ 0, 1, 2, 7 };
+                slots = new int[]{ 0, 1, 2, 5 };
             } else {
                 slots = new int[]{ 0, 1, 2, 7, 8, 9, 10, 11 };
             }
@@ -581,9 +545,7 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * Returns the engine criticals in the side torsos.
-     *
-     * @return
+     * @return the engine criticals in the side torsos.
      */
     public int[] getSideTorsoCriticalSlots() {
         if ((engineType == LIGHT_ENGINE)
@@ -620,25 +582,23 @@ public class Engine implements Serializable, ITechnology {
             }
             return slots;
         } else {
-            int[] slots = {};
-            return slots;
+            return new int[]{};
         }
     }
 
     /**
-     * Return the heat generated while the mech is standing still.
-     *
-     * @return
+     * @return the heat generated while the mech is standing still.
      */
     public int getStandingHeat() {
-        switch (engineType) {
-            case XXL_ENGINE:
-                return 2;
-            default:
-                return 0;
+        if (engineType == XXL_ENGINE) {
+            return 2;
         }
+        return 0;
     }
 
+    /**
+     * @return the heat generated while the mech is walking.
+     */
     public int getWalkHeat(Entity e) {
         switch (engineType) {
             case COMBUSTION_ENGINE:
@@ -651,6 +611,9 @@ public class Engine implements Serializable, ITechnology {
         }
     }
 
+    /**
+     * @return the heat generated while the mech is running.
+     */
     public int getRunHeat(Entity e) {
         switch (engineType) {
             case COMBUSTION_ENGINE:
@@ -663,6 +626,9 @@ public class Engine implements Serializable, ITechnology {
         }
     }
 
+    /**
+     * @return the heat generated while the mech is sprinting.
+     */
     public int getSprintHeat() {
         switch (engineType) {
             case COMBUSTION_ENGINE:
@@ -675,13 +641,14 @@ public class Engine implements Serializable, ITechnology {
         }
     }
 
+    /**
+     * @return the heat generated while the mech is jumping.
+     */
     public int getJumpHeat(int movedMP) {
-        switch (engineType) {
-            case XXL_ENGINE:
-                return Math.max(6, movedMP * 2);
-            default:
-                return Math.max(3, movedMP);
+        if (engineType == XXL_ENGINE) {
+            return Math.max(6, movedMP * 2);
         }
+        return Math.max(3, movedMP);
     }
 
     public double getBVMultiplier() {
@@ -734,6 +701,36 @@ public class Engine implements Serializable, ITechnology {
             cost *= 2;
         }
         return cost;
+    }
+
+    /**
+     * Values used for calculating the cost of a support vehicle engine. The engine cost in C-bills is
+     * tonnage * 5,000 * type multiplier
+     *
+     * @param etype The engine type
+     * @return      The type multiplier for cost
+     */
+    public static double getSVCostMultiplier(int etype) {
+        switch (etype) {
+            case STEAM:
+                return 0.8;
+            case BATTERY:
+                return 1.2;
+            case FUEL_CELL:
+                return 1.4;
+            case SOLAR:
+                return 1.6;
+            case MAGLEV:
+                return 2.5;
+            case FISSION:
+                return 3.0;
+            case NORMAL_ENGINE:
+                return 2.0;
+            case COMBUSTION_ENGINE:
+            case EXTERNAL:
+            default:
+                return 1.0;
+        }
     }
 
     private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
@@ -879,11 +876,15 @@ public class Engine implements Serializable, ITechnology {
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
             .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     private static final TechAdvancement SUPPORT_NONE_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
             .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
+
+    private static final TechAdvancement SUPPORT_EXTERNAL_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, DATE_NONE, DATE_PS)
+            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
 
     public TechAdvancement getTechAdvancement() {
         switch(engineType) {
@@ -965,6 +966,8 @@ public class Engine implements Serializable, ITechnology {
             return SUPPORT_SOLAR_TA;
         case NONE:
             return SUPPORT_NONE_TA;
+        case EXTERNAL:
+            return SUPPORT_EXTERNAL_TA;
         default:
             return new TechAdvancement();
         }
@@ -972,8 +975,8 @@ public class Engine implements Serializable, ITechnology {
     /**
      * Return the tech type (tech level + tech base) for the current engine.
      *
-     * @param year
-     * @return
+     * @param year The game year
+     * @return     The tech constant
      */
     public int getTechType(int year) {
         boolean isLarge = hasFlag(LARGE_ENGINE);
@@ -1055,7 +1058,6 @@ public class Engine implements Serializable, ITechnology {
                         return TechConstants.T_CLAN_UNOFFICIAL;
                     } else if (year <= 3125) {
                         return TechConstants.T_CLAN_EXPERIMENTAL;
-
                     } else {
                         return TechConstants.T_CLAN_ADVANCED;
                     }
@@ -1075,11 +1077,7 @@ public class Engine implements Serializable, ITechnology {
                     } else if (year <= 3130) {
                         return TechConstants.T_IS_EXPERIMENTAL;
                     } else {
-                        if (year <= 3050) {
-                            return TechConstants.T_IS_EXPERIMENTAL;
-                        } else if (year <= 3105) {
-                            return TechConstants.T_IS_ADVANCED;
-                        }
+                        return TechConstants.T_IS_ADVANCED;
                     }
                 }
             case FISSION:
@@ -1170,14 +1168,11 @@ public class Engine implements Serializable, ITechnology {
                     return TechConstants.T_ALLOWED_ALL;
                 }
             case MAGLEV:
-                return TechConstants.T_ALLOWED_ALL;
             case STEAM:
-                return TechConstants.T_ALLOWED_ALL;
             case BATTERY:
-                return TechConstants.T_ALLOWED_ALL;
             case SOLAR:
-                return TechConstants.T_ALLOWED_ALL;
             case NONE:
+            case EXTERNAL:
                 return TechConstants.T_ALLOWED_ALL;
             case COMPACT_ENGINE:
                 if (isClan) {
@@ -1203,21 +1198,21 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * For omnis set the base Chassies HS any variants will only use this and the reset will have to be added.
+     * For omnis set the base Chassies HS any variants will only use this and the reset
+     * will have to be added.
      *
-     * @param amount
-     * @return
+     * @param amount The number to set as base chassis heat sinks
      */
     public void setBaseChassisHeatSinks(int amount) {
         baseChassisHeatSinks = amount;
     }
 
     /**
-     * Return the Base Chassies Engine heat Sinks or intergalHeatSinkCapacity which ever is less.
+     * Return the Base Chassies Engine heat Sinks or integralHeatSinkCapacity which ever is less.
      *
      * @param compact Whether this engine uses compact heat sinks or not.
      *
-     * @return
+     * @return        The number of integral heat sinks in the base chassis
      */
     public int getBaseChassisHeatSinks(boolean compact) {
         return Math.min(integralHeatSinkCapacity(compact), baseChassisHeatSinks);

@@ -19,11 +19,11 @@ import static megamek.common.Compute.d6;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.DisplayMode;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,7 +31,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.MediaTracker;
-import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -301,9 +300,14 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         quitB.setActionCommand("quit"); //$NON-NLS-1$
         quitB.addActionListener(actionListener);
 
+        // Use the current monitor so we don't "overflow" computers whose primary
+        // displays aren't as large as their secondary displays.
+        DisplayMode currentMonitor = frame.getGraphicsConfiguration().getDevice().getDisplayMode();
+
         String splashFilename;
         if (skinSpec.hasBackgrounds()) {
-            splashFilename = skinSpec.backgrounds.get(0);
+            splashFilename = determineSplashScreen(skinSpec.backgrounds, 
+            		currentMonitor.getWidth(), currentMonitor.getHeight());
             if (skinSpec.backgrounds.size() > 1) {
                 File file = new MegaMekFile(Configuration.widgetsDir(),
                         skinSpec.backgrounds.get(1)).getFile();
@@ -312,28 +316,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                             + file.getAbsolutePath());
                 } else {
                     backgroundIcon = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
-                }
-            }
-            // Check for multi-resolutioned splash image
-            if (skinSpec.backgrounds.size() > 2) {
-                // Determine largest monitor size
-                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                GraphicsDevice[] gs = ge.getScreenDevices();
-                double maxWidth = 0;
-                for (int i = 0; i < gs.length; i++)
-                {
-                    Rectangle b = gs[i].getDefaultConfiguration().getBounds();
-                    if (b.getWidth() > maxWidth)
-                    {   // Update the max size found on this monitor
-                        maxWidth = b.getWidth();
-                    }
-                }
-                // If the largest size is over FHD, use the third image
-                if (maxWidth > 1920) {
-                    splashFilename = skinSpec.backgrounds.get(2);
-                // If we have a low-rez version, and the resolution is below HD+ (1600x900)...
-                } else if ((skinSpec.backgrounds.size() > 3) && (maxWidth < 1600)) {
-                    splashFilename = skinSpec.backgrounds.get(3);
                 }
             }
         } else {
@@ -364,15 +346,17 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());
         int height = metrics.getHeight();
-        Dimension textDim =  new Dimension(width+50,height+10);
+        Dimension textDim =  new Dimension(width+50, height+10);
 
-        Dimension splashDim = new Dimension((int)(imgSplash.getWidth(frame) * 0.3), 25);
-        Dimension minButtonDim;
-        if (textDim.getWidth() > splashDim.getWidth()) {
+        // Strive for no more than ~90% of the screen and use golden ratio to make
+        // the button width "look" reasonable.
+        int imageWidth = imgSplash.getWidth(frame);
+        int maximumWidth = (int)(0.9 * currentMonitor.getWidth()) - imageWidth;
+        Dimension minButtonDim = new Dimension((int)(maximumWidth / 1.618), 25);
+        if (textDim.getWidth() > minButtonDim.getWidth()) {
             minButtonDim = textDim;
-        } else {
-            minButtonDim = splashDim;
         }
+
         hostB.setPreferredSize(minButtonDim);
         connectB.setPreferredSize(minButtonDim);
         botB.setPreferredSize(minButtonDim);
@@ -1026,7 +1010,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                     helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            DefaultMmLogger.getInstance().log(getClass(), "showSkinningHowTo", e);
+            DefaultMmLogger.getInstance().error(getClass(), "showSkinningHowTo", e);
         }
     }
 
@@ -1185,5 +1169,40 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             showMainMenu();
             frame.repaint();
         }
+    }
+    
+    /**
+     * Method used to determine the appropriate splash screen to use. This method looks 
+     * at both the height and the width of the main monitor.
+     * 
+     * @param splashScreens
+     * 		List of available splash screens.
+     * @param screenWidth
+     * 		Width of the current monitor.
+     * @param screenHeight
+     * 		Height of the current monitor.
+     * @return
+     * 		String that represents the splash screen that should be displayed.
+     */
+    private String determineSplashScreen(final List<String> splashScreens, 
+    		final int screenWidth, final int screenHeight) {
+    	// Ensure that the list is of appropriate size to contain HD, FHD, and UHD splash 
+    	// screens.
+    	if (splashScreens.size() > 3) {
+    		// Default to the HD splash screen.
+    		String splashFileName = splashScreens.get(3);
+    		// If both height and width is greater than 1080p use the UHD splash screen.
+	    	if (screenWidth > 1920 && screenHeight > 1080) {
+	    		splashFileName = splashScreens.get(2);
+	    	}
+	    	// If both height and width is greater than 720p then use the FHD splash screen.
+	    	else if (screenWidth > 1280 && screenHeight > 720)
+	    	{
+	    		splashFileName = splashScreens.get(0);
+	    	}
+	    	return splashFileName;
+    	}
+    	// List of splash screens is not complete so default to the first splash screen.
+    	return splashScreens.get(0);
     }
 }

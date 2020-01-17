@@ -48,8 +48,7 @@ public class CLImprovedPPC extends PPCWeapon {
         waterMediumRange = 7;
         waterLongRange = 10;
         waterExtremeRange = 14;
-        setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
-        tonnage = 6.0f;
+        tonnage = 6.0;
         criticals = 2;
         bv = 176;
         cost = 200000;

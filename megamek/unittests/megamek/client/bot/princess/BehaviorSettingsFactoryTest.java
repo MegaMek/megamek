@@ -16,6 +16,7 @@ package megamek.client.bot.princess;
 import junit.framework.TestCase;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
+import megamek.utils.MegaMekXmlUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +27,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.CharArrayReader;
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class BehaviorSettingsFactoryTest {
             BehaviorSettingsFactory.getInstance(fakeLogger);
 
     private static Document buildTestDocument() throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilder documentBuilder = MegaMekXmlUtil.newSafeDocumentBuilder();
         Reader reader =
                 new CharArrayReader(BehaviorSettingsFactoryTestConstants.GOOD_BEHAVIOR_SETTINGS_FILE.toCharArray());
         return documentBuilder.parse(new InputSource(reader));

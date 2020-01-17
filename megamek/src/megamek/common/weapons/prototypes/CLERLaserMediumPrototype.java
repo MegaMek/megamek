@@ -36,6 +36,7 @@ public class CLERLaserMediumPrototype extends LaserWeapon {
         super();
         name = "Prototype ER Medium Laser";
         setInternalName("CLERMediumLaserPrototype");
+        shortName = "ER Medium Laser (P)";
         heat = 5;
         damage = 5;
         shortRange = 4;
@@ -46,7 +47,7 @@ public class CLERLaserMediumPrototype extends LaserWeapon {
         waterMediumRange = 5;
         waterLongRange = 8;
         waterExtremeRange = 10;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 1;
         bv = 62;
         cost = 80000;

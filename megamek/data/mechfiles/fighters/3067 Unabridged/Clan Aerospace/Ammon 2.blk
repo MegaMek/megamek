@@ -24,6 +24,10 @@ Ammon
 3075
 </year>
 
+<originalBuildYear>
+3075
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -86,9 +93,15 @@ CLStreakSRM6
 
 <Aft Equipment>
 CLERSmallLaser
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
 Clan Streak SRM 6 Ammo
 CLCASE
-</Aft Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Jihad

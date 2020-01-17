@@ -24,6 +24,10 @@ E
 3086
 </year>
 
+<originalBuildYear>
+3086
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -33,7 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-troopspace:48.0
+troopspace:48.0:omni
 </transporters>
 
 <SafeThrust>
@@ -100,11 +104,12 @@ ISRotaryAC2 Ammo:OMNI
 ISAMS Ammo:OMNI
 ISAMS Ammo:OMNI
 ISAMS Ammo:OMNI
-ISCASE:OMNI
+ISCASE
 ISGuardianECMSuite:OMNI
-Advanced Fire Control
 Armored Chassis
 STOLChassisMod
+OmniChassisMod
+Advanced Fire Control
 </Body Equipment>
 
 <barrating>
@@ -122,4 +127,8 @@ TRO 3085
 <tonnage>
 200.0
 </tonnage>
+
+<baseChassisFireConWeight>
+5.5
+</baseChassisFireConWeight>
 

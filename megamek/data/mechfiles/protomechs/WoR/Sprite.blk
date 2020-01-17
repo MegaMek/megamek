@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,16 +13,31 @@ ProtoMech
 </UnitType>
 
 <Name>
-Sprite
+Sprite Ultraheavy ProtoMech
 </Name>
 
 <Model>
 (Standard)
 </Model>
 
-<Tonnage>
-15
-</Tonnage>
+<year>
+3072
+</year>
+
+<originalBuildYear>
+3072
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -32,54 +47,63 @@ Sprite
 5
 </jumpingMP>
 
-<Armor>
-9
-30
-6
-6
-14
-</Armor>
-
-<Left Arm Equipment>
-CLLRM5
-CLLRM5 Ammo (12)
-</Left Arm Equipment>
-
-<Right Arm Equipment>
-CLLRM5
-CLLRM5 Ammo (12)
-</Right Arm Equipment>
-
-<Torso Equipment>
-CLLRM5
-CLLRM5
-CLLRM5 Ammo (24)
-</Torso Equipment>
-
-<type>
-Clan Level 3
-</type>
-
-<year>
-3072
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
+<interface_cockpit>
+false
+</interface_cockpit>
 
 <engine_type>
 0
 </engine_type>
 
-<motion_type>
-Biped
-</motion_type>
+<clan_engine>
+false
+</clan_engine>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+9
+30
+6
+6
+14
+</armor>
+
+<Body Equipment>
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+Clan Ammo LRM-5 (48)
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+CLLRM5
+CLLRM5
+</Torso Equipment>
+
+<Right Arm Equipment>
+CLLRM5
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+CLLRM5
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
 
 <source>
 Wars of Reaving - Jihad
 </source>
+
+<tonnage>
+15.0
+</tonnage>
+

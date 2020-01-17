@@ -41,6 +41,9 @@ public class ISBombastLaser extends LaserWeapon {
         setInternalName(name);
         addLookupName("IS Bombast Laser");
         addLookupName("ISBombastLaser");
+        String[] modeStrings = { "Damage 12", "Damage 11", "Damage 10", 
+                "Damage 9", "Damage 8", "Damage 7" };
+        setModes(modeStrings);
         heat = 12;
         damage = 12;
         shortRange = 5;
@@ -51,7 +54,7 @@ public class ISBombastLaser extends LaserWeapon {
         waterMediumRange = 6;
         waterLongRange = 9;
         waterExtremeRange = 12;
-        tonnage = 7.0f;
+        tonnage = 7.0;
         criticals = 3;
         bv = 137;
         cost = 200000;

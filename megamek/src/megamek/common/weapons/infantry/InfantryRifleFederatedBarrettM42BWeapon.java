@@ -39,6 +39,7 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 1385;
         bv = 3.12;
+		tonnage = .006;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST);
         infantryDamage = 1.02;
         infantryRange = 1;

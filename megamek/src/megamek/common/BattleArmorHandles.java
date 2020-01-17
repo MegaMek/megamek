@@ -14,9 +14,10 @@
 
 package megamek.common;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
+import megamek.common.annotations.Nullable;
 
 /**
  * Represents a set of handles on an OmniMech used by Battle Armor units
@@ -121,6 +122,7 @@ import java.util.Vector;
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
      */
+    @Override
     public boolean canLoad(Entity unit) {
         // Assume that we can carry the unit.
         boolean result = true;
@@ -154,6 +156,7 @@ import java.util.Vector;
      *                <code>IllegalArgumentException</code> exception will be
      *                thrown.
      */
+    @Override
     public final void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
@@ -172,6 +175,7 @@ import java.util.Vector;
      *         returned <code>List</code> is independant from the under- lying
      *         data structure; modifying one does not affect the other.
      */
+    @Override
     public final Vector<Entity> getLoadedUnits() {
         // Return a list of our carried troopers.
         Vector<Entity> units = new Vector<Entity>(1);
@@ -189,6 +193,7 @@ import java.util.Vector;
      * @return <code>true</code> if the unit was contain is loadeded in this
      *         space, <code>false</code> otherwise.
      */
+    @Override
     public final boolean unload(Entity unit) {
         // Are we carrying the unit?
         Entity trooper = game.getEntity(troopers);
@@ -210,10 +215,12 @@ import java.util.Vector;
      * @return A <code>String</code> meant for a human.
      * @see megamek.common.BattleArmorHandles#getUnusedString()
      */
+    @Override
     public final String getUnusedString() {
         return getVacancyString(troopers != Entity.NONE);
     }
 
+    @Override
     public double getUnused(){
         if (troopers == Entity.NONE){
             return 1;
@@ -222,6 +229,7 @@ import java.util.Vector;
         }
     }
 
+    @Override
     public void resetTransporter() {
         troopers = Entity.NONE;
     }
@@ -240,6 +248,7 @@ import java.util.Vector;
      *         <code>false</code> if the weapon can fire.
      * @see megamek.common.BattleArmorHandles#getBlockedLocs(boolean)
      */
+    @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         // Assume that the weapon is not blocked.
         boolean result = false;
@@ -289,35 +298,24 @@ import java.util.Vector;
      *         transported on the outside at that location.
      * @see megamek.common.BattleArmorHandles#getExteriorLocs(boolean)
      */
-    public final Entity getExteriorUnitAt(int loc, boolean isRear) {
-
-        // Only check if we are carrying troopers.
-        if (null != game.getEntity(troopers)) {
-
-            // See if troopers cover that location.
-            // Stop after the first match.
-            int[] locs = getExteriorLocs(isRear);
-            for (int loop = 0; loop < locs.length; loop++) {
-                if (loc == locs[loop]) {
-                    return game.getEntity(troopers);
-                }
-            }
-
-        } // End carrying-troopers
-
-        // No troopers at that location.
-        return null;
+    @Override
+    public final @Nullable Entity getExteriorUnitAt(int loc, boolean isRear) {
+        return isWeaponBlockedAt(loc, isRear)?
+                game.getEntity(troopers) : null;
     }
 
+    @Override
     public final List<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<Entity>(1);
-        if (troopers != Entity.NONE) {
-            rv.add(game.getEntity(troopers));
-        }
-        return rv;
+        return getLoadedUnits();
     }
 
-    public int getCargoMpReduction() {
+    @Override
+    public int getCargoMpReduction(Entity carrier) {
+        return 0;
+    }
+    
+    @Override
+    public int hardpointCost() {
         return 0;
     }
 
@@ -326,6 +324,7 @@ import java.util.Vector;
         return "BattleArmorHandles - troopers:" + troopers;
     }
 
+    @Override
     public void setGame(IGame game) {
         this.game = game;
     }

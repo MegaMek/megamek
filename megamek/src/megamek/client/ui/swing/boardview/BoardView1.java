@@ -1,17 +1,18 @@
 /*
- * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005,2006,2007,2008 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.client.ui.swing.boardview;
 
@@ -89,6 +90,10 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.client.TimerSingleton;
+import megamek.client.bot.princess.BotGeometry;
+import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
+import megamek.client.bot.princess.PathEnumerator;
+import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
@@ -169,6 +174,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.logging.LogLevel;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
@@ -212,9 +218,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
             ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
             ImageUtil.IMAGE_SCALE_BICUBIC };
-    
+
     public static final int [] allDirections = {0,1,2,3,4,5};
-    
+
     // Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = GUIPreferences.getInstance()
                                                   .getIsometricEnabled();
@@ -301,7 +307,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private ArrayList<MovementEnvelopeSprite> moveEnvSprites = new ArrayList<>();
     private ArrayList<MovementModifierEnvelopeSprite> moveModEnvSprites = new ArrayList<>();
-    
+
     // vector of sprites for all firing lines
     ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
 
@@ -313,10 +319,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // list of sprites for declared VTOL/airmech bombing/strafing targets
     private ArrayList<VTOLAttackSprite> vtolAttackSprites = new ArrayList<>();
-    
+
     // vector of sprites for aero flyover lines
     private ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<FlyOverSprite>();
-    
+
     // List of sprites for the weapon field of fire
     private ArrayList<HexSprite> fieldofFireSprites = new ArrayList<>();
     public int[][] fieldofFireRanges = { new int[5], new int[5] };
@@ -343,12 +349,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         hexPoly.addPoint(0, 36);
         hexPoly.addPoint(0, 35);
     }
-    
+
     Shape[] movementPolys;
     Shape[] facingPolys;
     Shape upArrow;
     Shape downArrow;
-    
+
     // Image to hold the complete board shadow map
     BufferedImage shadowMap;
     double[] lightDirection = { -19, 7 };
@@ -410,7 +416,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Coords highlighted;
     Coords selected;
     private Coords firstLOS;
-    
+
     /** stores the theme last selected to override all hex themes */
     private String selectedTheme = null;
 
@@ -469,8 +475,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     * Cache that stores hex images for different coords
     */
     ImageCache<Coords, HexImageCacheEntry> hexImageCache;
-    
-    
+
+
     /**
      * Keeps track of whether all deployment zones should
      * be shown in the Arty Auto Hit Designation phase
@@ -480,9 +486,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private long paintCompsStartTime;
 
     private Rectangle displayablesRect = new Rectangle();
-    
+
     // Soft Centering ---
-    
+
     /** True when the board is in the process of centering to a spot. */
     private boolean isSoftCentering = false;
     /** The final position of a soft centering relative to board size (x, y=0...1). */
@@ -491,10 +497,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private long waitTimer;
     /** Speed of soft centering of the board, less is faster */
     private static final int SOFT_CENTER_SPEED = 8;
-    
+
     // Tooltip Info ---
     /** Holds the final Coords for a planned movement. Set by MovementDisplay,
-     *  used to display the distance in the board tooltip. */ 
+     *  used to display the distance in the board tooltip. */
     private Coords movementTarget;
 
     // Used to track the previous x/y for tooltip display
@@ -505,6 +511,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     boolean displayInvalidHexInfo = false;
 
+    /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
+    private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
 
 
     /**
@@ -564,7 +572,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 double ihdx = ((double)inhexDelta.x)/((double)HEX_W)/scale;
                 double ihdy = ((double)inhexDelta.y)/((double)HEX_H)/scale;
                 int oldzoomIndex = zoomIndex;
-                
+
                 if (GUIPreferences.getInstance().getMouseWheelZoom()) {
                     boolean zoomIn = ((we.getWheelRotation() > 0) && !GUIPreferences
                             .getInstance().getMouseWheelZoomFlip())
@@ -577,7 +585,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                     if (zoomIndex != oldzoomIndex)
                         adjustVisiblePosition(zoomCenter, dispPoint, ihdx, ihdy);
-                    
+
                 } else {
                     if (we.isControlDown()) {
                         boolean zoomIn = ((we.getWheelRotation() > 0) && !GUIPreferences
@@ -865,12 +873,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
                         stopSoftCentering();
                     }
-                    
+
                     @Override
                     public void releaseAction() {
                         pingMinimap();
                     }
-                    
+
                     @Override
                     public boolean hasReleaseAction() {
                         return true;
@@ -897,12 +905,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
                         stopSoftCentering();
                     }
-                    
+
                     @Override
                     public void releaseAction() {
                         pingMinimap();
                     }
-                    
+
                     @Override
                     public boolean hasReleaseAction() {
                         return true;
@@ -929,12 +937,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
                         stopSoftCentering();
                     }
-                    
+
                     @Override
                     public void releaseAction() {
                         pingMinimap();
                     }
-                    
+
                     @Override
                     public boolean hasReleaseAction() {
                         return true;
@@ -961,19 +969,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
                         stopSoftCentering();
                     }
-                    
+
                     @Override
                     public void releaseAction() {
                         pingMinimap();
                     }
-                    
+
                     @Override
                     public boolean hasReleaseAction() {
                         return true;
                     }
 
                 });
-        
+
         // Register the action for Showing the Field of Fire
         controller.registerCommandAction(KeyCommandBind.FIELD_FIRE.cmd,
                 new CommandAction() {
@@ -1246,7 +1254,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Used to pad the board edge
         g.translate(HEX_W, HEX_H);
-        
+
         // Initialize the shadow map when its not yet present
         if (shadowMap == null) {
             updateShadowMap();
@@ -1258,7 +1266,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (guip.getShowWrecks() && !useIsometric()) {
             drawSprites(g, wreckSprites);
         }
-        
+
         // Field of Fire
         if (!useIsometric()
                 && GUIPreferences.getInstance().getShowFieldOfFire()) {
@@ -1290,7 +1298,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if ((en_Deployer != null) && !useIsometric()) {
             drawDeployment(g);
         }
-        
+
         if ((game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)
                 && (showAllDeployment)) {
             drawAllDeployment(g);
@@ -1328,7 +1336,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // draw movement, if valid
         drawSprites(g, pathSprites);
-        
+
         // draw firing solution sprites, but only during the firing phase
         if ((game.getPhase() == Phase.PHASE_FIRING) ||
             (game.getPhase() == Phase.PHASE_OFFBOARD)) {
@@ -1340,7 +1348,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 drawHexBorder(g, getHexLocation(c), Color.yellow, 0, 3);
             }
         }
-        
+
 
         // draw the ruler line
         if (rulerStart != null) {
@@ -1389,8 +1397,68 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.setColor(Color.YELLOW);
             g.drawString(s, -getX() + 5, -getY() + 20);
         }
+
+        // debugging method that renders the bounding box of a unit's movement envelope.
+        //renderMovementBoundingBox((Graphics2D) g);
+        //renderDonut(g, new Coords(10, 10), 2);
     }
-    
+
+    /**
+     * Debugging method that renders the bounding hex of a unit's movement envelope.
+     * Warning: very slow when rendering the bounding hex for really fast units.
+     * @param g Graphics object on which to draw.
+     */
+    @SuppressWarnings("unused")
+    private void renderMovementBoundingBox(Graphics2D g) {
+        if(selectedEntity != null) {
+            Princess princess = new Princess("test", "localhost", 2020, LogLevel.DEBUG);
+            princess.getGame().setBoard(this.game.getBoard());
+            PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
+            pathEnum.recalculateMovesFor(this.selectedEntity);
+
+            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(this.selectedEntity.getId());
+            for(int x = 0; x < game.getBoard().getWidth(); x++) {
+                for(int y = 0; y < game.getBoard().getHeight(); y++) {
+                    Point p = getCentreHexLocation(x, y, true);
+                    p.translate(HEX_W  / 2, HEX_H  / 2);
+                    Coords c = new Coords(x, y);
+
+                    if(cba.contains(c)) {
+
+                        drawHexBorder(g, p, Color.PINK, 0, 6);
+                    }
+                }
+            }
+
+            for(Integer x = 0; x < 6; x++) {
+                Coords c = cba.getVertexNum(x);
+                if(c == null) {
+                    continue;
+                }
+
+                Point p = getCentreHexLocation(c.getX(), c.getY(), true);
+                p.translate(HEX_W / 2, HEX_H  / 2);
+
+                drawHexBorder(g, p, Color.yellow, 0, 3);
+                String s = x.toString();
+                this.drawCenteredText((Graphics2D) g, s, p, Color.yellow, false);
+            }
+        }
+    }
+
+    /**
+     * Debugging method that renders a hex donut around the given coordinates, with the given radius.
+     * @param g Graphics object on which to draw.
+     */
+    private void renderDonut(Graphics2D g, Coords coords, int radius) {
+        Set<Coords> donut = BotGeometry.getHexDonut(coords, radius);
+
+        for(Coords donutCoords : donut) {
+            Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
+            p.translate(HEX_W  / 2, HEX_H  / 2);
+            drawHexBorder(g, p, Color.PINK, 0, 6);
+        }
+    }
     /**
      *  Returns a list of Coords of all hexes on the board.
      *  Returns ONLY hexes where board.getHex != null.
@@ -1398,7 +1466,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private ArrayList<Coords> allBoardHexes() {
         IBoard board = game.getBoard();
         if (board == null) return null;
-        
+
         ArrayList<Coords> CoordList = new ArrayList<Coords>();
         for (int i = 0; i < board.getWidth(); i++) {
             for (int j = 0; j < board.getHeight(); j++) {
@@ -1408,13 +1476,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         }
-        
+
         return CoordList;
     }
-    
+
     private Image createBlurredShadow(Image orig) {
         if ((orig == null) ||
-                orig.getWidth(this) < 0 || 
+                orig.getWidth(this) < 0 ||
                 orig.getHeight(this) < 0) {
             return null;
         }
@@ -1445,17 +1513,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      *  The shadow map is an image the size of the whole board.
      */
     private void updateShadowMap() {
-        // Issues: 
+        // Issues:
         // Bridge shadows show a gap towards connected hexes. I don't know why.
         // More than one super image on a hex (building+road) doesnt work. how do I get
         //   the super for a hex for a specific terrain? This would also help
         //   with building shadowing other buildings.
-        // AO shadows might be handled by this too. But: 
+        // AO shadows might be handled by this too. But:
         // this seems to need a lot of additional copying (paint shadow on a clean map for this level alone; soften up; copy to real shadow
-        // map with clipping area active; get new clean shadow map for next shadowed level; 
+        // map with clipping area active; get new clean shadow map for next shadowed level;
         // too much hassle currently; it works so beautifully
         if (!GUIPreferences.getInstance().getShadowMap()) return;
-        
+
         IBoard board = game.getBoard();
         if (board == null) return;
         if (board.inSpace()) return;
@@ -1463,7 +1531,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (!isTileImagesLoaded()) return;
         // Map editor? No shadows
         if (game.getPhase() == IGame.Phase.PHASE_UNKNOWN) return;
-        
+
         long stT = System.nanoTime();
 
         // 1) create or get the hex shadow
@@ -1472,22 +1540,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             repaint(1000);
             return;
         }
-        
-        
+
+
         // the shadowmap needs to be painted as if scale == 1
         // therefore some of the methods of boardview1 cannot be used
         int width = game.getBoard().getWidth() * HEX_WC + (int) (HEX_W / 4);
         int height = game.getBoard().getHeight() * (int) (HEX_H) + (int) (HEX_H / 2);
-        
+
         GraphicsConfiguration config = GraphicsEnvironment
                 .getLocalGraphicsEnvironment().getDefaultScreenDevice()
                 .getDefaultConfiguration();
-        
+
         shadowMap = config.createCompatibleImage(width, height,
                 Transparency.TRANSLUCENT);
-        
+
         Graphics2D g = (Graphics2D)(shadowMap.createGraphics());
-        
+
         if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS) ||
         (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK)) {
             lightDirection = new double[] { 0, 0 };
@@ -1497,7 +1565,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         } else {
             lightDirection = new double[] { -19, 7 };
         }
-        
+
         // Shadows for elevation
         // 1a) Sort the board hexes by elevation
         // 1b) Create a reduced list of shadowcasting hexes
@@ -1516,7 +1584,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 shadowCastingHexes.put(level, new HashSet<Coords>());
             }
             sortedHexes.get(level).add(c);
-            // add a hex to the shadowcasting hexes only 
+            // add a hex to the shadowcasting hexes only
             // if it is nor surrounded by same height hexes
             boolean surrounded = true;
             for (int dir: sDirs) {
@@ -1525,13 +1593,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 } else {
                     IHex nhex = board.getHex(c.translated(dir));
                     int lv = nhex.getLevel();
-                    if (lv < level) 
+                    if (lv < level)
                         surrounded = false;
                 }
             }
             if (!surrounded) shadowCastingHexes.get(level).add(c);
         }
-        
+
         // 2) Create clipping areas
         HashMap<Integer,Shape> levelClips = new HashMap<Integer,Shape>();
         for (Integer h: sortedHexes.keySet()) {
@@ -1550,30 +1618,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // 3) Find all level differences
         final int maxDiff = 35; // limit all diffs to this value
         Set<Integer> lDiffs = new TreeSet<Integer>();
-        for (int shadowed = board.getMinElevation(); 
-                shadowed < board.getMaxElevation(); 
+        for (int shadowed = board.getMinElevation();
+                shadowed < board.getMaxElevation();
                 shadowed++) {
             if (levelClips.get(shadowed) == null) continue;
 
-            for (int shadowcaster = shadowed+1; 
-                    shadowcaster <= board.getMaxElevation(); 
+            for (int shadowcaster = shadowed+1;
+                    shadowcaster <= board.getMaxElevation();
                     shadowcaster++) {
                 if (levelClips.get(shadowcaster) == null) continue;
-                
+
                 lDiffs.add(Math.min(shadowcaster-shadowed, maxDiff));
             }
         }
-        
+
         // 4) Elevation Shadow images for all level differences present
         int n = 10;
         double deltaX = lightDirection[0]/n;
         double deltaY = lightDirection[1]/n;
-        Map<Integer,BufferedImage> hS = new HashMap<Integer,BufferedImage>(); 
+        Map<Integer,BufferedImage> hS = new HashMap<Integer,BufferedImage>();
         for (int lDiff: lDiffs) {
             Dimension eSize = new Dimension(
-                    (int)(Math.abs(lightDirection[0])*lDiff+HEX_W)*2, 
+                    (int)(Math.abs(lightDirection[0])*lDiff+HEX_W)*2,
                     (int)(Math.abs(lightDirection[1])*lDiff+HEX_H)*2);
-            
+
             BufferedImage elevShadow = config.createCompatibleImage(eSize.width, eSize.height,
                     Transparency.TRANSLUCENT);
             Graphics gS = elevShadow.getGraphics();
@@ -1585,26 +1653,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             gS.dispose();
             hS.put(lDiff, elevShadow);
         }
-        
+
         // 5) Actually draw the elevation shadows
-        for (int shadowed = board.getMinElevation(); 
-                shadowed < board.getMaxElevation(); 
+        for (int shadowed = board.getMinElevation();
+                shadowed < board.getMaxElevation();
                 shadowed++) {
             if (levelClips.get(shadowed) == null) continue;
 
             Shape saveClip = g.getClip();
             g.setClip(levelClips.get(shadowed));
 
-            for (int shadowcaster = shadowed+1; 
-                    shadowcaster <= board.getMaxElevation(); 
+            for (int shadowcaster = shadowed+1;
+                    shadowcaster <= board.getMaxElevation();
                     shadowcaster++) {
                 if (levelClips.get(shadowcaster) == null) continue;
                 int lDiff = shadowcaster - shadowed;
 
                 for (Coords c: shadowCastingHexes.get(shadowcaster)) {
                     Point2D p0 = getHexLocationLargeTile(c.getX(), c.getY(), 1);
-                    g.drawImage(hS.get(Math.min(lDiff, maxDiff)), 
-                            (int)p0.getX()-(int)(Math.abs(lightDirection[0])*Math.min(lDiff, maxDiff)+HEX_W), 
+                    g.drawImage(hS.get(Math.min(lDiff, maxDiff)),
+                            (int)p0.getX()-(int)(Math.abs(lightDirection[0])*Math.min(lDiff, maxDiff)+HEX_W),
                             (int)p0.getY()-(int)(Math.abs(lightDirection[1])*Math.min(lDiff, maxDiff)+HEX_H), null);
                 }
             }
@@ -1614,25 +1682,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         n = 5;
         deltaX = lightDirection[0]/n;
         deltaY = lightDirection[1]/n;
-        
+
         // 4) woods and bulding shadows
-        for (int shadowed = board.getMinElevation(); 
-                shadowed <= board.getMaxElevation(); 
+        for (int shadowed = board.getMinElevation();
+                shadowed <= board.getMaxElevation();
                 shadowed++) {
             if (levelClips.get(shadowed) == null) continue;
-            
+
             Shape saveClip = g.getClip();
             g.setClip(levelClips.get(shadowed));
 
-            for (int shadowcaster = board.getMinElevation(); 
-                    shadowcaster <= board.getMaxElevation(); 
+            for (int shadowcaster = board.getMinElevation();
+                    shadowcaster <= board.getMaxElevation();
                     shadowcaster++) {
                 if (levelClips.get(shadowcaster) == null) continue;
-                
+
                 for (Coords c: sortedHexes.get(shadowcaster)) {
                     Point2D p0 = getHexLocationLargeTile(c.getX(), c.getY(), 1);
                     Point2D p1 = new Point2D.Double();
-                    
+
                     // Woods Shadow
                     IHex hex = board.getHex(c);
                     List<Image> supers = tileManager.supersFor(hex);
@@ -1646,7 +1714,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         if (hex.containsTerrain(Terrains.WOODS) ||
                                 hex.containsTerrain(Terrains.JUNGLE)) {
                             // Woods are 2 levels high, but then shadows
-                            // appear very extreme, therefore only 
+                            // appear very extreme, therefore only
                             // 1.5 levels: (shadowcaster+1.5-shadowed)
                             p1.setLocation(p0);
                             if ((shadowcaster+1.5-shadowed) > 0) {
@@ -1674,14 +1742,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     // Bridge Shadow
                     if (hex.containsTerrain(Terrains.BRIDGE)) {
                         supers = tileManager.orthoFor(hex);
-                        if (supers.isEmpty()) break; 
+                        if (supers.isEmpty()) break;
                         Image maskB = createBlurredShadow(supers.get(supers.size()-1));
                         if (maskB == null) {
                             clearShadowMap();
                             return;
                         }
                         int h = hex.terrainLevel(Terrains.BRIDGE_ELEV);
-                        p1.setLocation(p0.getX()+deltaX*n*(shadowcaster+h-shadowed), 
+                        p1.setLocation(p0.getX()+deltaX*n*(shadowcaster+h-shadowed),
                                 p0.getY()+deltaY*n*(shadowcaster+h-shadowed));
                         // the shadowmask is translucent, therefore draw n times
                         // stupid hack
@@ -1698,7 +1766,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         System.out.println("Time to prepare the shadow map: "+tT5/1e6+" ms");
 
     }
-    
+
     public void clearShadowMap() {
         shadowMap = null;
     }
@@ -1728,7 +1796,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private synchronized void drawHexSpritesForHex(Coords c, Graphics g,
             ArrayList<? extends HexSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
-        
+
         for (HexSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
             // This can potentially be an expensive operation
@@ -1863,7 +1931,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         }
     }
-    
+
     /**
      * Draw indicators for the deployment zones of all players
      */
@@ -1903,40 +1971,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Darkens a hexes in the viewing area if there is no line of sight between
      * them and the supplied source hex. Used in non-isometric view.
      *
-     * @param src
+     * @param p
      *            The source hex for which line of sight originates
      * @param g
-     *            The graphics object to draw on. / private void drawLos(Coords
-     *            src, Graphics g) { Rectangle view = g.getClipBounds(); // only
-     *            update visible hexes int drawX = (view.x / (int) (HEX_WC *
-     *            scale)) - 1; int drawY = (view.y / (int) (HEX_H * scale)) - 1;
-     *
-     *            int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3; int
-     *            drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
-     *
-     *            // loop through the hexes for (int i = 0; i < drawHeight; i++)
-     *            { for (int j = 0; j < drawWidth; j++) { Coords c = new
-     *            Coords(j + drawX, i + drawY); if
-     *            (game.getBoard().contains(c)){ drawLos(src,c,g); } } } }
-     *
-     *
-     *            /** Darkens a destination hex if there is no line of sight
-     *            between it and a source hex.
-     *
-     * @param src
-     *            The source hex for which line of sight originates
-     * @param dest
+     *            The graphics object to draw on.
+     * @param col
+     *            The what color to use.
+     * @param outOfFOV
      *            The destination hex for computing the line of sight
-     * @param g
-     *            The graphics object to draw on. / private void drawLos(Coords
-     *            src, Coords dest, Graphics g){ int max_dist; if (src == null
-     *            || dest == null){ return; } if (selectedEntity != null){
-     *            max_dist = game.getPlanetaryConditions().
-     *            getVisualRange(selectedEntity, false); } else { max_dist = 30;
-     *            } int dist = src.distance(dest); Color transparent_gray = new
-     *            Color(0,0,0,100); if (dist <= max_dist && !(getLosEffects(src,
-     *            dest).canSee())){ drawHexLayer(new Point(dest.x,dest.y), g,
-     *            transparent_gray); } }
      */
 
     /**
@@ -1963,24 +2005,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             float lineSpacing = fogStripes;
             // totally transparent here hurts the eyes
             Color c2 = new Color(col.getRed() / 2, col.getGreen() / 2,
-                    col.getBlue() / 2, col.getAlpha() / 2); 
+                    col.getBlue() / 2, col.getAlpha() / 2);
 
             // the numbers make the lines align across hexes
             GradientPaint gp = new GradientPaint(42.0f / lineSpacing, 0.0f,
                     col, 104.0f / lineSpacing, 106.0f / lineSpacing, c2, true);
             g2D.setPaint(gp);
         }
-        Composite svComposite = g2D.getComposite(); 
+        Composite svComposite = g2D.getComposite();
         g2D.setComposite(AlphaComposite.SrcAtop);
         g2D.fillRect(0, 0, hex_size.width, hex_size.height);
         g2D.setComposite(svComposite);
     }
-    
+
     private void drawHexBorder(Graphics g, Color col, double pad,
             double linewidth) {
         drawHexBorder(g, new Point(0,0), col, pad, linewidth);
     }
-    
+
     public void drawHexBorder(Graphics g, Point p, Color col, double pad,
             double linewidth) {
         g.setColor(col);
@@ -2341,25 +2383,28 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private void drawHexes(Graphics g, Rectangle view, boolean saveBoardImage) {
         // only update visible hexes
-        int drawX = (int) (view.x / (HEX_WC * scale)) - 1;
-        int drawY = (int) (view.y / (HEX_H * scale)) - 1;
+        double xs = (int) (HEX_WC*scale);
+        double ys = (int) (HEX_H*scale);
 
-        int drawWidth = (int) (view.width / (HEX_WC * scale)) + 3;
-        int drawHeight = (int) (view.height / (HEX_H * scale)) + 3;
+        int drawX = (int) (view.x / xs) - 1;
+        int drawY = (int) (view.y / ys) - 1;
+
+        int drawWidth = (int) (view.width / xs) + 3;
+        int drawHeight = (int) (view.height / ys) + 3;
 
         // draw some hexes.
         if (useIsometric()) {
-            // When using isometric rendering, hexes within a given row
-            // must be drawn from lowest to highest elevation.
             IBoard board = game.getBoard();
-            final int minElev = board.getMinElevation();
-            final int maxElev = board.getMaxElevation();
-            for (int i = 0; i < drawHeight; i++) {
-                for (int x = minElev; x <= maxElev; x++) {
-                    for (int j = 0; j < drawWidth; j++) {
-                        Coords c = new Coords(j + drawX, i + drawY);
+            for (int y = 0; y < drawHeight; y++) {
+                // Half of each row is one-half hex
+                // farther back (above) the other; draw those first
+                for (int s = 0; s <= 1; s++) {
+                    for (int x = s; x < drawWidth+s+1; x=x+2) {
+                        // For s == 0 the x coordinate MUST be an even number
+                        // to get correct occlusion; drawX may be any int though
+                        Coords c = new Coords(x + drawX/2*2, y + drawY);
                         IHex hex = board.getHex(c);
-                        if ((hex != null) && (hex.getLevel() == x)) {
+                        if ((hex != null)) {
                             drawHex(c, g, saveBoardImage);
                             if (GUIPreferences.getInstance()
                                     .getShowFieldOfFire()) {
@@ -2373,14 +2418,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                 drawHexBorder(g, getHexLocation(c),
                                         Color.yellow);
                             }
+                            drawOrthograph(c, g);
                         }
                     }
                 }
-                for (int k = 0; k < drawWidth; k++) {
-                    Coords c = new Coords(k + drawX, i + drawY);
+                for (int x = 0; x < drawWidth; x++) {
+                    Coords c = new Coords(x + drawX, y + drawY);
                     IHex hex = board.getHex(c);
                     if (hex != null) {
-                        drawOrthograph(c, g);
                         if (!saveBoardImage) {
                             if (GUIPreferences.getInstance().getShowWrecks()) {
                                 drawIsometricWreckSpritesForHex(c, g,
@@ -2490,7 +2535,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             repaint();
             return;
         }
-        
+
         BufferedImage hexImage = new BufferedImage(imgWidth, imgHeight,
                 BufferedImage.TYPE_INT_ARGB);
 
@@ -2679,7 +2724,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // Darken the hex for night-time, if applicable
-        if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) 
+        if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
                 && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
             for (int x = 0; x < hexImage.getWidth(); ++x) {
@@ -2688,10 +2733,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         }
-        
+
         // Set the text color according to Preferences or Light Gray in space
         g.setColor(guip.getMapTextColor());
-        if (game.getBoard().inSpace()) 
+        if (game.getBoard().inSpace())
             g.setColor(Color.LIGHT_GRAY);
 
         // draw special stuff for the hex
@@ -2762,7 +2807,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int s36 = (int)(36*scale);
         int s62 = (int)(62*scale);
         int s83 = (int)(83*scale);
-        
+
         Point p1 = new Point(s62, 0);
         Point p2 = new Point(s21, 0);
         Point p3 = new Point(s83, s35);
@@ -2852,7 +2897,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         }
-        
+
         if (!hasLoS && guip.getFovGrayscale()) {
             // rework the pixels to grayscale
             for (int x = 0; x < hexImage.getWidth(); ++x) {
@@ -2861,14 +2906,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     int rd = (rgb >> 16) & 0xFF;
                     int gr = (rgb >> 8) & 0xFF;
                     int bl = (rgb & 0xFF);
-                    int al = (rgb >> 24); 
+                    int al = (rgb >> 24);
 
                     int grayLevel = (rd + gr + bl) / 3;
-                    int gray = (al << 24) + (grayLevel << 16) + (grayLevel << 8) + grayLevel; 
+                    int gray = (al << 24) + (grayLevel << 16) + (grayLevel << 8) + grayLevel;
                     hexImage.setRGB(x, y, gray);
                 }
             }
-        }        
+        }
 
         cacheEntry = new HexImageCacheEntry(hexImage);
         if (!dontCache) {
@@ -2951,7 +2996,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         final IHex dest = game.getBoard().getHexInDir(c, dir);
         final IHex src = game.getBoard().getHex(c);
 
-        if (!useIsometric() || 
+        if (!useIsometric() ||
                 GUIPreferences.getInstance().getBoolean(GUIPreferences.FLOATINGISO)) {
             return;
         }
@@ -3012,7 +3057,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             g.setColor(new Color(0, 0, 0, 0.4f));
             g.fillPolygon(shadow1);*/
-            // not necessary with the shadowmap 
+            // not necessary with the shadowmap
             // people not using the shadowmap will probably not need this shadow either
         }
 
@@ -3112,19 +3157,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         return (al << 24) + (rd << 16) + (gr << 8) + bl;
     }
-    
+
     /**
      * Generates a Shape drawing area for the hex shadow effect in a lower hex
-     * when a higher hex is found in direction. 
+     * when a higher hex is found in direction.
      */
     private final Shape getElevationShadowArea(Coords src, int direction) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHexInDir(src, direction);
-        
+
         // When at the board edge, create a shadow in hexes of level < 0
         if (destHex == null)
         {
-            if (srcHex.getLevel() >= 0) return null; 
+            if (srcHex.getLevel() >= 0) return null;
         }
         else
         {
@@ -3135,34 +3180,34 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return(AffineTransform.getScaleInstance(scale, scale).createTransformedShape(
                 HexDrawUtilities.getHexBorderArea(direction, HexDrawUtilities.CUT_BORDER, 36)));
     }
-    
+
     /**
-     * Generates a fill gradient which is rotated and aligned properly for 
+     * Generates a fill gradient which is rotated and aligned properly for
      * the drawing area for a hex shadow effect in a lower hex.
      */
     private final GradientPaint getElevationShadowGP(Coords src, int direction) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHexInDir(src, direction);
-        
-        if (destHex == null) return null;  
-        
+
+        if (destHex == null) return null;
+
         int ldiff = destHex.getLevel()-srcHex.getLevel();
         // the shadow strength depends on the level difference,
         // but only to a maximum difference of 3 levels
         ldiff = Math.min(ldiff*5,15);
-        
+
         Color c1 = new Color(30,30,50,255); // dark end of shadow
         Color c2 = new Color(50,50,70,0);   // light end of shadow
 
         Point2D p1 = new Point2D.Double(41.5,-25+ldiff);
         Point2D p2 = new Point2D.Double(41.5,8.0+ldiff);
-        
+
         AffineTransform t = new AffineTransform();
         t.scale(scale,scale);
         t.rotate(Math.toRadians(direction*60),41.5,35.5);
         t.transform(p1,p1);
         t.transform(p2,p2);
-        
+
         return(new GradientPaint(p1,c1,p2,c2));
     }
 
@@ -3185,7 +3230,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return new Point(x * (int) (HEX_WC * scale), ypos
                                                      + (int) elevationAdjust);
     }
-    
+
     /**
      * For large tile texture: Returns the absolute position of the upper-left
      * hand corner of the hex graphic When using large tiles multiplying the
@@ -3198,7 +3243,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 + ((x & 1) == 1 ? (int) ((HEX_H / 2) * tscale) : 0);
         return new Point((int) (x * HEX_WC * tscale), ypos);
     }
-    
+
     private Point getHexLocationLargeTile(int x, int y) {
         return getHexLocationLargeTile(x, y, scale);
     }
@@ -3206,7 +3251,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     Point getHexLocation(Coords c) {
         return getHexLocation(c.getX(), c.getY(), false);
     }
-    
+
      /**
      * Returns the absolute position of the centre of the hex graphic
      */
@@ -3252,7 +3297,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // check the surrounding hexes if they contain p
         // checking at most 3 hexes would be sufficient
         // but which ones? This is failsafer.
-        Coords cc = new Coords(x, y); 
+        Coords cc = new Coords(x, y);
         if (!HexDrawUtilities.getHexFull(getHexLocation(cc),scale).contains(p)) {
             boolean hasMatch = false;
             for (int dir = 0; dir < 6 && !hasMatch; dir++) {
@@ -3263,10 +3308,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         }
-        
+
         if (useIsometric()) {
             // When using isometric rendering, a lower hex can obscure the
-            // normal hex. Iterate over all hexes from highest to lowest, 
+            // normal hex. Iterate over all hexes from highest to lowest,
             // looking for a hex that contains the selected mouse click point.
             final int minElev = Math.min(0, game.getBoard().getMinElevation());
             final int maxElev = Math.max(0, game.getBoard().getMaxElevation());
@@ -3280,7 +3325,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     for (int dx = -1; dx < 2; dx++) {
                         Coords c1 = new Coords(x + dx, i);
                         IHex hexAlt = game.getBoard().getHex(c1);
-                        if (HexDrawUtilities.getHexFull(getHexLocation(c1),scale).contains(p) 
+                        if (HexDrawUtilities.getHexFull(getHexLocation(c1),scale).contains(p)
                                 && (hexAlt != null)
                                 && (hexAlt.getLevel() == elev)) {
                             // Return immediately with highest hex found.
@@ -3300,7 +3345,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing,
             int elevation) {
-        Integer entityId = new Integer(entity.getId());
+        Integer entityId = Integer.valueOf(entity.getId());
         List<Integer> spriteKey = getIdAndLoc(entityId, -1);
         EntitySprite sprite = entitySpriteIds.get(spriteKey);
         IsometricSprite isoSprite = isometricSpriteIds.get(spriteKey);
@@ -3374,7 +3419,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * isometricSprite maps. The List contains as the first element the Entity
      * ID and as the second element it's location ID: either -1 if the Entity
      * has no secondary locations, or the index of its secondary location.
-     * 
+     *
      * @param entityId
      *            The Entity ID
      * @param secondaryLoc
@@ -3388,7 +3433,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         idLoc.add(secondaryLoc);
         return idLoc;
     }
-     
+
     /**
      * Clears the sprite for an entity and prepares it to be re-drawn. Replaces
      * the old sprite with the new! Takes a reference to the Entity object
@@ -3397,7 +3442,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * to prevent annoying ConcurrentModificationExceptions
      */
     public void redrawEntity(Entity entity, Entity oldEntity) {
-        Integer entityId = new Integer(entity.getId());
+        Integer entityId = Integer.valueOf(entity.getId());
         if (oldEntity == null) {
             oldEntity = entity;
         }
@@ -3406,7 +3451,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // remove all of its old sprites
         if (entity.getPosition() == null) {
             Iterator<EntitySprite> spriteIter;
-            
+
             // Remove Entity Sprites
             spriteIter = entitySprites.iterator();
             while (spriteIter.hasNext()) {
@@ -3415,7 +3460,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     spriteIter.remove();
                 }
             }
-            
+
             //  Update ID -> Sprite map
             spriteIter = entitySpriteIds.values().iterator();
             while (spriteIter.hasNext()) {
@@ -3424,9 +3469,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     spriteIter.remove();
                 }
             }
-            
+
             Iterator<IsometricSprite> isoSpriteIter;
-            
+
             // Remove IsometricSprites
             isoSpriteIter = isometricSprites.iterator();
             while (isoSpriteIter.hasNext()) {
@@ -3435,7 +3480,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     isoSpriteIter.remove();
                 }
             }
-            
+
             // Update ID -> Iso Sprite Map
             isoSpriteIter  = isometricSpriteIds.values().iterator();
             while (isoSpriteIter.hasNext()) {
@@ -3448,11 +3493,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Create a copy of the sprite list
         Queue<EntitySprite> newSprites = new PriorityQueue<>(entitySprites);
-        HashMap<List<Integer>, EntitySprite> newSpriteIds = 
+        HashMap<List<Integer>, EntitySprite> newSpriteIds =
                 new HashMap<>(entitySpriteIds);
         Queue<IsometricSprite> isoSprites = new PriorityQueue<>(
                 isometricSprites);
-        HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds = 
+        HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds =
                 new HashMap<>(isometricSpriteIds);
 
         // Remove the sprites we are going to update
@@ -3532,7 +3577,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 i.remove();
             }
         }
-        
+
         // Update C3 link, if necessary
         if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
             addC3Link(entity);
@@ -3544,7 +3589,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 iter.remove();
             }
         }
-        
+
         // Remove Flyover Sprites
         Iterator<FlyOverSprite> flyOverIt = flyOverSprites.iterator();
         while (flyOverIt.hasNext()) {
@@ -3553,7 +3598,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 flyOverIt.remove();
             }
         }
-        
+
         // Add Flyover path, if necessary
         if ((entity.isAirborne() || entity.isMakingVTOLGroundAttack())
                 && (entity.getPassedThrough().size() > 1)) {
@@ -3676,7 +3721,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         updateEcmList();
         // Re-highlight a selected entity, if present
         highlightSelectedEntity();
-        
+
         scheduleRedraw();
     }
 
@@ -3705,21 +3750,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         repaint(oldBounds);
         repaint(cursor.getBounds());
     }
-    
+
     /** Centers the board on hex c. Uses smooth centering
-     * if activated in the client settings. */  
+     * if activated in the client settings. */
     public void centerOnHex(Coords c) {
         if (c == null) return;
-        
+
         if (GUIPreferences.getInstance().getBoolean("SOFTCENTER")) {
             // Soft Centering:
             // set the target point
             Point p = getCentreHexLocation(c);
             softCenterTarget.setLocation(
-                    (double)p.x/boardSize.getWidth(), 
+                    (double)p.x/boardSize.getWidth(),
                     (double)p.y/boardSize.getHeight());
 
-            // adjust the target point because the board can't 
+            // adjust the target point because the board can't
             // center on points too close to an edge
             double w = scrollpane.getViewport().getWidth();
             double h = scrollpane.getViewport().getHeight();
@@ -3732,14 +3777,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             double maxY = (bh+HEX_H-h/2)/bh;
 
             // here the order is important because the top/left
-            // edges always stop the board, the bottom/right 
+            // edges always stop the board, the bottom/right
             // only when the board is big enough
             softCenterTarget.setLocation(
-                    Math.min(softCenterTarget.getX(), maxX), 
+                    Math.min(softCenterTarget.getX(), maxX),
                     Math.min(softCenterTarget.getY(), maxY));
 
             softCenterTarget.setLocation(
-                    Math.max(softCenterTarget.getX(), minX), 
+                    Math.max(softCenterTarget.getX(), minX),
                     Math.max(softCenterTarget.getY(), minY));
 
             // get the current board center point
@@ -3747,19 +3792,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             oldCenter.setLocation((v[0]+v[2])/2, (v[1]+v[3])/2);
 
             waitTimer = 0;
-            isSoftCentering = true; 
-        
+            isSoftCentering = true;
+
         } else {
             // no soft centering:
             // center on c directly
             Point p = getCentreHexLocation(c);
             centerOnPointRel(
-                    (double)p.x/boardSize.getWidth(), 
+                    (double)p.x/boardSize.getWidth(),
                     (double)p.y/boardSize.getHeight());
         }
     }
-    
-    /** Moves the board one step towards the final 
+
+    /** Moves the board one step towards the final
      * position in during soft centering.
      */
     private synchronized void centerOnHexSoftStep(long deltaTime) {
@@ -3768,30 +3813,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             waitTimer += deltaTime;
             if (waitTimer < 20) return;
             waitTimer = 0;
-            
+
             // move the board by a fraction of the distance to the target
             Point2D newCenter = new Point2D.Double(
-                    oldCenter.getX() + (softCenterTarget.getX() - oldCenter.getX())/SOFT_CENTER_SPEED, 
+                    oldCenter.getX() + (softCenterTarget.getX() - oldCenter.getX())/SOFT_CENTER_SPEED,
                     oldCenter.getY() + (softCenterTarget.getY() - oldCenter.getY())/SOFT_CENTER_SPEED );
             centerOnPointRel(newCenter.getX(), newCenter.getY());
-            
+
             oldCenter = newCenter;
-            
-            // stop the motion when close enough to the final position 
+
+            // stop the motion when close enough to the final position
             if (softCenterTarget.distance(newCenter) < 0.0005) {
                 stopSoftCentering();
                 pingMinimap();
             }
         }
     }
-    
+
     public void stopSoftCentering() {
         isSoftCentering = false;
     }
-    
+
     private void adjustVisiblePosition(Coords c, Point dispPoint, double ihdx, double ihdy) {
         if ((c == null) || (dispPoint == null)) return;
-        
+
         Point hexPoint = getCentreHexLocation(c);
         // correct for upper left board padding
         hexPoint.translate(HEX_W, HEX_H);
@@ -3802,13 +3847,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         pingMinimap();
         repaint();
     }
-    
+
     /**
      * Centers the board to a point
      * @param xrel the x position relative to board width.
      * @param yrel the y position relative to board height.
-     * Both xrel and yrel should be between 0 and 1. 
-     * The method will clip both values to this range. 
+     * Both xrel and yrel should be between 0 and 1.
+     * The method will clip both values to this range.
      */
     public void centerOnPointRel(double xrel, double yrel) {
         // restrict both values to between 0 and 1
@@ -3825,15 +3870,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         hscroll.setValue(p.x - (hscroll.getVisibleAmount() / 2));
         repaint();
     }
-    
+
     /**
      * Returns the currently visible area of the board.
      * @return an array of 4 double values indicating the relative size,
      * where the first two values indicate the x and y position of the upper left
      * corner of the visible area and the second two values the x and y position of
      * the lower right corner.
-     * So when the whole board is visible, the values should be 0,0,1,1. 
-     * When the lower right corner of the board is visible 
+     * So when the whole board is visible, the values should be 0,0,1,1.
+     * When the lower right corner of the board is visible
      * and 90% of width and height: 0.1,0.1,1,1
      * Due to board padding the values can be outside of [0;1]
      */
@@ -3845,12 +3890,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         double h = scrollpane.getViewport().getHeight();
         double bw = boardSize.getWidth();
         double bh = boardSize.getHeight();
-        
+
         values[0] = (x-HEX_W)/bw;
         values[1] = (y-HEX_H)/bh;
         values[2] = (x-HEX_W+w)/bw;
         values[3] = (y-HEX_H+h)/bh;
-        
+
         return values;
     }
 
@@ -3920,7 +3965,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 // having overlap.
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);
             }
-            
+
             if (previousStep != null
                     // for advanced movement, we always need to hide prior
                     // because costs will overlap and we only want the current
@@ -3934,7 +3979,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);
             }
 
-            pathSprites.add(new StepSprite(this, step, md.isEndStep(step)));           
+            pathSprites.add(new StepSprite(this, step, md.isEndStep(step)));
             previousStep = step;
         }
         repaint(100);
@@ -4000,7 +4045,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     spriteColor = guip
                             .getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
                     mvType = 2;
-                    
+
                 } else if (mvEnvData.get(loc) <= run) {
                     spriteColor = guip
                             .getColor(GUIPreferences.ADVANCED_MOVE_RUN_COLOR);
@@ -4011,7 +4056,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     mvType = 4;
                 }
             }
-            
+
             // Next: check the adjacent hexes and find
             // those with the same movement type,
             // send this to the Sprite so it paints only
@@ -4034,7 +4079,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                 }
                 // other movement type: paint a border in this direction
-                if (mvAdjType != mvType) edgesToPaint += (1 << dir); 
+                if (mvAdjType != mvType) edgesToPaint += (1 << dir);
             }
 
             if (spriteColor != null) {
@@ -4061,11 +4106,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         moveModEnvSprites.clear();
         repaint();
     }
-    
+
     /**
      * Draws the given <code>text</code> in the currently active font of the Graphics <code>g2D</code>
-     * at font size <code>fontSize</code>. The text is centered in both 
-     * x and y directions around the position <code>pos</code>. The text is colored with 
+     * at font size <code>fontSize</code>. The text is centered in both
+     * x and y directions around the position <code>pos</code>. The text is colored with
      * the given <code>color</code>, made translucent if the flag is set. The outline of the text
      * will be dark gray.
      * @param g2D the graphics to draw to, as <code>Graphics2D</code>
@@ -4083,38 +4128,38 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Center the text around pos
         int cx = pos.x - (fm.stringWidth(text) / 2);
         int cy = pos.y + (fm.getAscent() - fm.getDescent()) / 2;
-        
+
         // get text shape and position it
         GlyphVector gv = g2D.getFont().createGlyphVector(g2D.getFontRenderContext(), text);
         Shape shape = gv.getOutline();
         shape = AffineTransform.getTranslateInstance(cx,cy).
                 createTransformedShape(shape);
-        
+
         // text area fill
-        if (translucent) 
+        if (translucent)
             color = new Color(color.getRGB() & 0x00FFFFFF | 0xA0000000, true);
         g2D.setColor(color);
         g2D.fill(shape);
-        
+
         // outline
         g2D.setStroke(new BasicStroke(0.5f));
         Color lineColor = cOutline;
-        if (translucent) 
+        if (translucent)
             lineColor = new Color(lineColor.getRGB() & 0x00FFFFFF | 0xA0000000, true);
         g2D.setColor(lineColor);
         g2D.draw(shape);
     }
-    
+
     public void drawOutlineText(Graphics2D g2D, String text, Point pos,
             float fontSize, Color color, boolean translucent) {
         drawOutlineText(g2D, text, pos, fontSize, color, translucent, Color.DARK_GRAY);
     }
-    
+
     public void drawOutlineText(Graphics2D g2D, String text, Point pos,
             float fontSize, Color color) {
         drawOutlineText(g2D, text, pos, fontSize, color, false, Color.DARK_GRAY);
     }
-    
+
     public void drawTextShadow(Graphics2D g2D, String text, Point pos,
             Font font) {
         g2D.setFont(font);
@@ -4122,26 +4167,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // counteract the current graph scaling
         double scX = g2D.getTransform().getScaleX();
         double scY = g2D.getTransform().getScaleY();
-        
+
         drawCenteredText(g2D, text, (float)pos.x+(1.0f)/(float)scX,(float)pos.y, Color.BLACK, false);
         drawCenteredText(g2D, text, (float)pos.x-(1.0f)/(float)scX,(float)pos.y, Color.BLACK, false);
         drawCenteredText(g2D, text, (float)pos.x,(float)pos.y+(1.0f)/(float)scY, Color.BLACK, false);
         drawCenteredText(g2D, text, (float)pos.x,(float)pos.y-(1.0f)/(float)scY, Color.BLACK, false);
     }
-    
+
     public void drawCenteredText(Graphics2D g2D, String text, Point pos,
             Color color, boolean translucent) {
         FontMetrics fm = g2D.getFontMetrics(g2D.getFont());
         // Center the text around pos
         int cx = pos.x - (fm.stringWidth(text) / 2);
         int cy = pos.y - fm.getAscent()/2-fm.getDescent() / 2+fm.getAscent();
-        
-        if (translucent) 
+
+        if (translucent)
             color = new Color(color.getRGB() & 0x00FFFFFF | 0xA0000000, true);
         g2D.setColor(color);
         g2D.drawString(text, cx, cy);
     }
-    
+
     // This method is used to draw text shadows even when the g2D is scaled
     public void drawCenteredText(Graphics2D g2D, String text, float posx, float posy,
             Color color, boolean translucent) {
@@ -4149,25 +4194,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Center the text around pos
         float cx = posx - (fm.stringWidth(text) / 2);
         float cy = posy - fm.getAscent()/2-fm.getDescent() / 2+fm.getAscent();
-        
-        if (translucent) 
+
+        if (translucent)
             color = new Color(color.getRGB() & 0x00FFFFFF | 0xA0000000, true);
         g2D.setColor(color);
         g2D.drawString(text, cx, cy);
     }
-    
+
     public void drawCenteredText(Graphics2D g2D, String text, Point pos,
             Color color, boolean translucent, Font font) {
         g2D.setFont(font);
         drawCenteredText(g2D, text, pos, color, translucent);
     }
-    
+
     public void drawCenteredText(Graphics2D g2D, String text, Point pos,
             Color color, boolean translucent, int fontSize) {
         g2D.setFont(g2D.getFont().deriveFont(fontSize));
         drawCenteredText(g2D, text, pos, color, translucent);
     }
-    
+
     public void setLocalPlayer(IPlayer p) {
         localPlayer = p;
     }
@@ -4205,11 +4250,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         flyOverSprites.add(new FlyOverSprite(this, e));
     }
-    
+
     public List<Entity> getEntitiesFlyingOver(Coords c) {
         List<Entity> entities = new ArrayList<Entity>();
         for (FlyOverSprite fsprite : flyOverSprites) {
-            if (fsprite.getEntity().getPassedThrough().contains(c)) {
+            //Spaceborne units shouldn't count here. They show up incorrectly in the firing display when sensors are in use.
+            if (fsprite.getEntity().getPassedThrough().contains(c) && !fsprite.getEntity().isSpaceborne()) {
                 entities.add(fsprite.getEntity());
             }
         }
@@ -4300,7 +4346,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         EntitySprite eSprite = entitySpriteIds.get(getIdAndLoc(ae.getId(),
                 ae.getSecondaryPositions().size() > 0 ? 0 : -1));
-        if (eSprite.onlyDetectedBySensors()) {
+        if (eSprite != null && eSprite.onlyDetectedBySensors()) {
             return;
         }
 
@@ -4507,32 +4553,32 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (!le.canSee()) {
                 message.append(Messages.getString("BoardView1.LOSBlocked",
                                                   new Object[]{ //$NON-NLS-1$
-                                                                new Integer(c1.distance(c2))}));
+                                                                Integer.valueOf(c1.distance(c2))}));
                 ToHitData thd = le.losModifiers(game);
                 message.append("\t" + thd.getDesc() + "\n");
             } else {
                 message.append(Messages.getString("BoardView1.LOSNotBlocked",
                                                   new Object[]{ //$NON-NLS-1$
-                                                                new Integer(c1.distance(c2))}));
+                                                                Integer.valueOf(c1.distance(c2))}));
                 if (le.getHeavyWoods() > 0) {
                     message.append(Messages.getString(
                             "BoardView1.HeavyWoods", new Object[]{ //$NON-NLS-1$
-                                                                   new Integer(le.getHeavyWoods())}));
+                                                                   Integer.valueOf(le.getHeavyWoods())}));
                 }
                 if (le.getLightWoods() > 0) {
                     message.append(Messages.getString(
                             "BoardView1.LightWoods", new Object[]{ //$NON-NLS-1$
-                                                                   new Integer(le.getLightWoods())}));
+                                                                   Integer.valueOf(le.getLightWoods())}));
                 }
                 if (le.getLightSmoke() > 0) {
                     message.append(Messages.getString(
                             "BoardView1.LightSmoke", new Object[]{ //$NON-NLS-1$
-                                                                   new Integer(le.getLightSmoke())}));
+                                                                   Integer.valueOf(le.getLightSmoke())}));
                 }
                 if (le.getHeavySmoke() > 0) {
                     message.append(Messages.getString(
                             "BoardView1.HeavySmoke", new Object[]{ //$NON-NLS-1$
-                                                                   new Integer(le.getHeavySmoke())}));
+                                                                   Integer.valueOf(le.getHeavySmoke())}));
                 }
                 if (le.isTargetCover() && le.canSee()) {
                     message.append(Messages
@@ -4557,10 +4603,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Initializes the various overlay polygons with their vertices.
      */
-    public void initPolys() {        
+    public void initPolys() {
 
         AffineTransform FacingRotate = new AffineTransform();
-        
+
         // facing polygons
         Polygon facingPoly_tmp = new Polygon();
         facingPoly_tmp.addPoint(41, 3);
@@ -4569,7 +4615,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         facingPoly_tmp.addPoint(42, 7);
         facingPoly_tmp.addPoint(48, 9);
         facingPoly_tmp.addPoint(42, 3);
-        
+
         // create the rotated shapes
         facingPolys = new Shape[8];
         for (int dir: allDirections)
@@ -4586,14 +4632,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         movementPoly_tmp.addPoint(41, 62);
         movementPoly_tmp.addPoint(35, 66);
         movementPoly_tmp.addPoint(36, 67);
-        
+
         movementPoly_tmp.addPoint(47, 67);
         movementPoly_tmp.addPoint(45, 68);
         movementPoly_tmp.addPoint(38, 68);
         movementPoly_tmp.addPoint(38, 69);
         movementPoly_tmp.addPoint(45, 69);
         movementPoly_tmp.addPoint(45, 68);
-        
+
         movementPoly_tmp.addPoint(45, 70);
         movementPoly_tmp.addPoint(38, 70);
         movementPoly_tmp.addPoint(38, 71);
@@ -4601,14 +4647,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         movementPoly_tmp.addPoint(45, 68);
 
         // create the rotated shapes
-        FacingRotate.setToIdentity();  
+        FacingRotate.setToIdentity();
         movementPolys = new Shape[8];
         for (int dir: allDirections)
         {
             movementPolys[dir] = FacingRotate.createTransformedShape(movementPoly_tmp);
             FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
         }
-        
+
         // Up and Down Arrows
         FacingRotate.setToIdentity();
         FacingRotate.translate(0, -31);
@@ -4679,12 +4725,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (null == point) {
             return;
         }
-        
+
         // Button 4: Hide/Show the minimap and unitDisplay
         if (me.getButton() == 4) {
             if (clientgui != null) clientgui.toggleMMUDDisplays();
         }
-        
+
         // we clicked the right mouse button,
         // remember the position if we start to scroll
         // if we drag, we should scroll
@@ -4757,6 +4803,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void mouseExited(MouseEvent me) {
+        // Reset the tooltip dismissal delay to the preference
+        // value so that elements outside the boardview can
+    	// use tooltips
+    	if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
+    		ToolTipManager.sharedInstance().setDismissDelay(
+    				GUIPreferences.getInstance().getTooltipDismissDelay());
+    	} else {
+    		ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+    	}
     }
 
     public void mouseClicked(MouseEvent me) {
@@ -4919,7 +4974,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         }
     }
-    
+
     /**
      * Determines if this Board contains the Coords, and if so, "cursors" that
      * Coords.
@@ -5312,7 +5367,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     && !e.hasDetectedEntity(localPlayer)) {
                 continue;
             }
-            
+
             final Color ecmColor = ECMEffects.getECMColor(e.getOwner());
             // Update ECM center information
             if (e.getECMInfo() != null) {
@@ -5558,9 +5613,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             double deltaMagnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             if (deltaMagnitude > GUIPreferences.getInstance().getTooltipDistSuppression()) {
                 prevTipX = -1; prevTipY = -1;
-                // This is used to fool the tooltip manager into resetting the tip
-                ToolTipManager.sharedInstance().mousePressed(null);
-                return null;
+                // Set the dismissal delay to 0 so that the tooltip
+                // goes away and does not reappear until the mouse
+                // has moved more than the suppression distance
+                ToolTipManager.sharedInstance().setDismissDelay(0);
+                return new String(""); //$NON-NLS-1$
             }
         }
         prevTipX = point.x; prevTipY = point.y;
@@ -5569,17 +5626,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 getArtilleryAttacksAtLocation(mcoords);
         final Mounted curWeapon = getSelectedArtilleryWeapon();
 
-        if (game.getBoard().contains(mcoords)) 
+        if (game.getBoard().contains(mcoords))
             mhex = game.getBoard().getHex(mcoords);
 
         txt.append("<html>"); //$NON-NLS-1$
-        
+
 
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
-    
+
             txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
-            
+
             txt.append(Messages.getString("BoardView1.Tooltip.Hex", //$NON-NLS-1$
                     new Object[] { mcoords.getBoardNum(), mhex.getLevel() }));
             txt.append("<br>"); //$NON-NLS-1$
@@ -5603,9 +5660,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
             txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
-            
+
             // Distance from the selected unit and a planned movement end point
-            if ((selectedEntity != null) && 
+            if ((selectedEntity != null) &&
                     (selectedEntity.getPosition() != null)) {
                 int distance = selectedEntity
                         .getPosition()
@@ -5617,8 +5674,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     txt.append(Messages.getString("BoardView1.Tooltip.DistanceN", //$NON-NLS-1$
                             new Object[] { distance }));
                 }
-                
-                if ((game.getPhase() == Phase.PHASE_MOVEMENT) && 
+
+                if ((game.getPhase() == Phase.PHASE_MOVEMENT) &&
                         (movementTarget != null)) {
                     txt.append("<BR>");
                     int disPM = movementTarget.distance(mcoords);
@@ -5631,7 +5688,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
                 txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
-            
+
             // Fuel Tank
             if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
                 // In the BoardEditor, buildings have no entry in the
@@ -5655,7 +5712,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
                 txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
-            
+
             // Building
             if (mhex.containsTerrain(Terrains.BUILDING)) {
                 // In the BoardEditor, buildings have no entry in the
@@ -5677,7 +5734,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             bldg.toString(),
                             bldg.getCurrentCF(mcoords),
                             bldg.getArmor(mcoords),
-                            bldg.getBasement(mcoords).getDesc()       
+                            bldg.getBasement(mcoords).getDesc()
                     }));
 
                     if (bldg.getBasementCollapsed(mcoords)) {
@@ -5771,8 +5828,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         }
-        
-        // Show the player(s) that may deploy here 
+
+        // Show the player(s) that may deploy here
         // in the artillery autohit designation phase
         if ((game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) && (mhex != null)) {
             txt.append("<TABLE BORDER=0 width=100%><TR><TD>"); //$NON-NLS-1$
@@ -5802,10 +5859,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key); //$NON-NLS-1$
             txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHint",  //$NON-NLS-1$
                     new Object[] { keybindText }));
-            
+
             txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
         }
-        
+
 
         // check if it's on any flares
         for (FlareSprite fSprite : flareSprites) {
@@ -5813,7 +5870,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 txt.append(fSprite.getTooltip().toString());
             }
         }
-        
+
         // check if it's on any attacks
         for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(point)) {
@@ -5826,7 +5883,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Entity tooltips
         int entityCount = 0;
         // Maximum number of entities to show in the tooltip
-        int maxShown = 4; 
+        int maxShown = 4;
 
         Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(mcoords));
         Set<Entity> usedSet = new HashSet<Entity>(entitySprites.size());
@@ -5835,7 +5892,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     && !usedSet.contains(eSprite.entity)) {
                 usedSet.add(eSprite.entity);
                 entityCount++;
-                
+
                 // List only the first four units
                 if (entityCount <= maxShown) {
                     // Table to add a bar to the left of an entity in
@@ -5866,16 +5923,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         txt.append("</FONT>");
                     }
                     txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
-                } 
+                }
             }
         }
         // Info block if there are more than 4 units in that hex
         if (entityCount > maxShown)
         {
             txt.append("<TABLE BORDER=0 BGCOLOR=#000060 width=100%><TR><TD><FONT COLOR=WHITE>There ");
-            if (entityCount-maxShown == 1) 
+            if (entityCount-maxShown == 1)
                 txt.append("is 1 more<BR>unit");
-            else 
+            else
                 txt.append("are "+(entityCount-maxShown)+" more<BR>units");
             txt.append(" in this hex...</FONT>");
             txt.append("</TD></TR></TABLE>");
@@ -5897,14 +5954,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                 }
             }
-            
+
             txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">");
-            if (aaa.turnsTilHit == 1)
-                txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", 
+            if (aaa.getTurnsTilHit() == 1)
+                txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1",
                         new Object[] { wpName, ammoName }));
             else
-                txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttackN", 
-                        new Object[] { wpName, ammoName, aaa.turnsTilHit }));
+                txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttackN",
+                        new Object[] { wpName, ammoName, aaa.getTurnsTilHit() }));
             txt.append("</FONT></TD></TR></TABLE>");
         }
 
@@ -5927,7 +5984,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             } else {
                 txt.append(Messages.getString(
                         "BoardView1.ArtilleryAdjustment", //$NON-NLS-1$
-                        new Object[]{new Integer(amod)}));
+                        new Object[]{Integer.valueOf(amod)}));
                 txt.append("<br>"); //$NON-NLS-1$
             }
         }
@@ -5940,15 +5997,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             boolean isHexAutoHit = localPlayer.getArtyAutoHitHexes().contains(
                     mcoords);
             for (SpecialHexDisplay shd : shdList) {
-                boolean isTypeAutoHit = shd.getType() 
+                boolean isTypeAutoHit = shd.getType()
                         == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
                 // Don't draw if this SHD is obscured from this player
-                // The SHD list may also contain stale SHDs, so don't show 
+                // The SHD list may also contain stale SHDs, so don't show
                 // tooltips for SHDs that aren't drawn.
                 // The exception is auto hits.  There will be an icon for auto
                 // hits, so we need to draw a tooltip
                 if (!shd.isObscured(localPlayer)
-                        && (shd.drawNow(currPhase, round, localPlayer) 
+                        && (shd.drawNow(currPhase, round, localPlayer)
                                 || (isHexAutoHit && isTypeAutoHit))) {
                     if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
                         if (localPlayer.equals(shd.getOwner())) {
@@ -5967,13 +6024,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         txt.append("</html>"); //$NON-NLS-1$
+
         // Check to see if the tool tip is completely empty
-        if (txt.toString().equals("<html></html>")) {
-            // Returning null prevents the tooltip from being displayed
-            // This prevents a small blue tooltip rectangle being drawn at the
-            // edge of the board
-            return null;
+        if (txt.toString().equals("<html></html>")) { //$NON-NLS-1$
+            return new String(""); //$NON-NLS-1$
         }
+
+        // Now that a valid tooltip text seems to be present,
+        // (re)set the tooltip dismissal delay time to the preference
+        // value so that the tooltip actually appears
+        if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
+        	ToolTipManager.sharedInstance().setDismissDelay(
+        			GUIPreferences.getInstance().getTooltipDismissDelay());
+        } else {
+        	ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+        }
+
         return txt.toString();
     }
 
@@ -6078,7 +6144,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // IDisplayables that are drawn in fixed positions in the viewport
         // leave artifacts when scrolling
         scrollpane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
-        
+
         // Prevent the default arrow key scrolling
         scrollpane.getActionMap().put("unitScrollRight", DoNothing);
         scrollpane.getActionMap().put("unitScrollDown", DoNothing);
@@ -6095,7 +6161,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         return scrollpane;
     }
-    
+
     AbstractAction DoNothing = new AbstractAction() {
         private static final long serialVersionUID = 5944877465265121983L;
 
@@ -6110,11 +6176,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void refreshDisplayables() {
         repaint();
     }
-    
+
     private void pingMinimap() {
-        // send the minimap a hex moused event to make it 
+        // send the minimap a hex moused event to make it
         // update the visible area rectangle
-        BoardViewEvent bve = new BoardViewEvent(this,BoardViewEvent.BOARD_HEX_DRAGGED); 
+        BoardViewEvent bve = new BoardViewEvent(this,BoardViewEvent.BOARD_HEX_DRAGGED);
         if (boardListeners != null) {
             for (BoardViewListener l : boardListeners) l.hexMoused(bve);
         }
@@ -6173,7 +6239,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Changes hex dimensions and refreshes the map with the new scale
      */
     private void zoom() {
-        
+
         checkZoomIndex();
         stopSoftCentering();
         scale = ZOOM_FACTORS[zoomIndex];
@@ -6316,7 +6382,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         repaint();
         return drawIsometric;
     }
-    
+
     public void updateEntityLabels() {
         for (Entity e: game.getEntitiesVector()) {
             e.generateShortName();
@@ -6346,7 +6412,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         shadowImageCache.put(hashCode, mask);
         return mask;
     }
-    
+
     public void die() {
         ourTask.cancel();
         fovHighlightingAndDarkening.die();
@@ -6423,13 +6489,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         fieldofFireSprites.clear();
         repaint();
     }
-    
-    // this is called from MovementDisplay and checks if 
+
+    // this is called from MovementDisplay and checks if
     // the unit ends up underwater
     public void setWeaponFieldofFire(Entity ce, MovePath cmd) {
         // if lack of data: clear and return
-        if ((fieldofFireUnit == null) 
-            || (ce == null) 
+        if ((fieldofFireUnit == null)
+            || (ce == null)
             || (cmd == null)) {
             clearFieldofF();
             return;
@@ -6438,19 +6504,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // If the field of fire is not dispalyed
         // for the active unit, then don't change anything
         if (fieldofFireUnit.equals(ce)) {
-            
+
             fieldofFireWpUnderwater = 0;
             // check if the weapon ends up underwater
             IHex hex = game.getBoard().getHex(cmd.getFinalCoords());
-            
-            if ((hex.terrainLevel(Terrains.WATER) > 0) && !cmd.isJumping() 
+
+            if ((hex.terrainLevel(Terrains.WATER) > 0) && !cmd.isJumping()
                     && (cmd.getFinalElevation() < 0)) {
                 if ((fieldofFireUnit instanceof Mech) && !fieldofFireUnit.isProne()
                         && (hex.terrainLevel(Terrains.WATER) == 1)) {
                     if ((fieldofFireWpLoc == Mech.LOC_RLEG)
                         || (fieldofFireWpLoc == Mech.LOC_LLEG))
                         fieldofFireWpUnderwater = 1;
-                    
+
                     if (fieldofFireUnit instanceof QuadMech) {
                         if ((fieldofFireWpLoc == Mech.LOC_RARM)
                             || (fieldofFireWpLoc == Mech.LOC_LARM))
@@ -6463,11 +6529,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 } else {
                     fieldofFireWpUnderwater = 1;
                 }
-            } 
+            }
             setWeaponFieldofFire(cmd.getFinalFacing(), cmd.getFinalCoords());
         }
     }
-    
+
     // prepares the sprites for a field of fire
     public void setWeaponFieldofFire(int fac, Coords c) {
         if (fieldofFireUnit == null) {
@@ -6480,12 +6546,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             clearFieldofF();
             return;
         }
-        
+
         // check if extreme range is used
         int maxrange = 4;
         if (game.getOptions().
                 booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) maxrange = 5;
-        
+
         // create the lists of hexes
         List<Set<Coords>> fieldFire = new ArrayList<Set<Coords>>(5);
         int range = 1;
@@ -6502,13 +6568,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // Remove hexes that are not on the board or not in the arc
             for (Iterator<Coords> iterator = fieldFire.get(bracket).iterator(); iterator.hasNext();) {
                 Coords h = iterator.next();
-                if (!game.getBoard().contains(h) 
+                if (!game.getBoard().contains(h)
                         || !Compute.isInArc(c, fac, h, fieldofFireWpArc)) {
                     iterator.remove();
                 }
             }
         }
-        
+
         // create the sprites
         //
         fieldofFireSprites.clear();
@@ -6537,49 +6603,49 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // the directions tested are those that fall between the
             // hex facings because this makes for a better placement
             // ... most of the time...
-            
+
             // The directions[][] is used to make the marker placement
-            // fairly symmetrical to the unit facing which a simple for 
+            // fairly symmetrical to the unit facing which a simple for
             // loop over the hex facings doesn't do
             int[][] directions = { {0,1},{0,5},{3,2},{3,4},{1,2},{5,4} };
             // don't paint too many "min" markers
-            int numMinMarkers = 0; 
+            int numMinMarkers = 0;
             for (int[] dir: directions) {
                 // find the middle of the range bracket
                 int rangeend = Math.max(fieldofFireRanges[fieldofFireWpUnderwater][bracket],0);
-                int rangebegin = 1; 
-                if (bracket>0) 
+                int rangebegin = 1;
+                if (bracket>0)
                     rangebegin = Math.max(fieldofFireRanges[fieldofFireWpUnderwater][bracket-1]+1,1);
                 int dist = (rangeend + rangebegin)/2;
                 // translate to the middle of the range bracket
                 Coords mark = c.translated((dir[0]+fac)%6,(dist+1)/2)
                         .translated((dir[1]+fac)%6,dist/2);
                 // traverse back to the unit until a hex is onboard
-                while (!game.getBoard().contains(mark)) 
+                while (!game.getBoard().contains(mark))
                     mark = Coords.nextHex(mark, c);
-                
+
                 // add a text range marker if the found position is good
                 if (game.getBoard().contains(mark) && fieldFire.get(bracket).contains(mark)
                         && ((bracket > 0) || (numMinMarkers < 2))) {
-                    TextMarkerSprite tS = new TextMarkerSprite(this, mark, 
+                    TextMarkerSprite tS = new TextMarkerSprite(this, mark,
                             rangeTexts[bracket], FieldofFireSprite.fieldofFireColors[bracket]);
                     fieldofFireSprites.add(tS);
                     if (bracket == 0) numMinMarkers++;
                 }
             }
         }
-        
-        repaint(); 
+
+        repaint();
     }
-    
-    /** Displays a dialog and changes the theme of all 
+
+    /** Displays a dialog and changes the theme of all
      *  board hexes to the user-chosen theme.
      */
     public void changeTheme() {
         if (game == null) return;
         IBoard board = game.getBoard();
         if (board.inSpace()) return;
-        
+
         Set<String> themes = tileManager.getThemes();
         if (themes.remove("")) themes.add("(No Theme)");
         themes.add("(Original Theme)");
@@ -6594,17 +6660,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 themes.toArray(),
                 selectedTheme);
         setShouldIgnoreKeys(false);
-        
+
         if (selectedTheme == null) {
             return;
-            
+
         } else if (selectedTheme.equals("(Original Theme)")) {
             for (Coords c: allBoardHexes()) {
                 IHex hex = board.getHex(c);
                 hex.resetTheme();
                 board.setHex(c, hex);
             }
-            
+
         } else {
             for (Coords c: allBoardHexes()) {
                 IHex hex = board.getHex(c);
@@ -6626,15 +6692,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int boardX = (int)((c.getX() + 0.0) / board.getSubBoardWidth());
         int boardY = (int)((c.getY() + 0.0) / board.getSubBoardHeight());
         int linIdx = boardY * board.getNumBoardsWidth() + boardX;
-        if (linIdx < 0 || linIdx > boardBackgrounds.size()) {
-            System.out.println("Error computing linear index "
-                    + "in BoardView1.getTransparentImage!");
+        if (linIdx < 0 || linIdx > boardBackgrounds.size() - 1) {
+            System.out.println("Error computing linear index or "
+                    + "missing background images "
+                    + "in BoardView1.getBoardBackgroundHexImage!");
             return null;
         }
         Image bgImg = getScaledImage(boardBackgrounds.get(linIdx), true);
         int bgImgWidth = bgImg.getWidth(null);
-        int bgImgHeight = bgImg.getHeight(null);        
-        
+        int bgImgHeight = bgImg.getHeight(null);
+
         Point p1SRC = getHexLocationLargeTile(
                 c.getX() - (boardX * board.getSubBoardWidth()),
                 c.getY() - (boardY * board.getSubBoardHeight()));
@@ -6648,19 +6715,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Image hexImage = new BufferedImage(HEX_W,  HEX_H,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D)hexImage.getGraphics();
-        
+
         // hex mask to limit drawing to the hex shape
         // TODO: this is not ideal yet but at least it draws
         // without leaving gaps at any zoom
         Image hexMask = getScaledImage(tileManager.getHexMask(), true);
         g.drawImage(hexMask, 0, 0, this);
-        Composite svComp = g.getComposite(); 
+        Composite svComp = g.getComposite();
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,
               1f));
-        
+
         // paint the right slice from the big pic
         g.drawImage(bgImg, 0, 0, p2DST.x, p2DST.y, p1SRC.x, p1SRC.y,
-                p2SRC.x, p2SRC.y, null); 
+                p2SRC.x, p2SRC.y, null);
 
         // Handle wrapping of the image
         if (p2SRC.x > bgImgWidth && p2SRC.y <= bgImgHeight) {
@@ -6681,7 +6748,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // paint addtl slice on the top left side
             g.drawImage(bgImg, bgImgWidth - p1SRC.x,
                     bgImgHeight - p1SRC.y, p2DST.x, p2DST.y, 0, 0,
-                    p2SRC.x - bgImgWidth, p2SRC.y - bgImgHeight, null); 
+                    p2SRC.x - bgImgWidth, p2SRC.y - bgImgHeight, null);
         }
         g.setComposite(svComp);
         return hexImage;

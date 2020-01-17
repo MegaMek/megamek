@@ -43,6 +43,7 @@ public class ISUAC5Prototype extends UACWeapon {
         name = "Prototype Ultra Autocannon/5";
         setInternalName("ISUltraAC5Prototype");
         addLookupName("IS Ultra AC/5 Prototype");
+        shortName = "Ultra AC/5 (P)";
         flags = flags.or(F_PROTOTYPE);
         heat = 1;
         damage = 5;
@@ -52,7 +53,7 @@ public class ISUAC5Prototype extends UACWeapon {
         mediumRange = 13;
         longRange = 20;
         extremeRange = 26;
-        tonnage = 7.0f;
+        tonnage = 7.0;
         criticals = 2;
         bv = 112;
         cost = 1000000;

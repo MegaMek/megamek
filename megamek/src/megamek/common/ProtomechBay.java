@@ -127,4 +127,10 @@ public final class ProtomechBay extends Bay {
         return ProtomechBay.techAdvancement();
     }
 
+    @Override
+    public long getCost() {
+        // Cost is per five cubicles
+        return 10000L * (long) Math.ceil(totalSpace / 5);
+    }
+
 } // End package class TroopSpace implements Transporter

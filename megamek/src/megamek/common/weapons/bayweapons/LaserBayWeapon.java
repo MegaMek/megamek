@@ -16,6 +16,8 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.EquipmentTypeLookup;
+
 /**
  * @author Jay Lawson
  */
@@ -32,14 +34,14 @@ public class LaserBayWeapon extends BayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "Laser Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.LASER_BAY);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 6;
         this.mediumRange = 12;
         this.longRange = 20;
         this.extremeRange = 25;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.flags = flags.or(F_ENERGY);

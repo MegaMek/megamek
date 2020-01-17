@@ -24,6 +24,10 @@ F
 3095
 </year>
 
+<originalBuildYear>
+3095
+</originalBuildYear>
+
 <type>
 Mixed (IS Chassis) Advanced
 </type>
@@ -31,6 +35,9 @@ Mixed (IS Chassis) Advanced
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 4
@@ -114,10 +121,11 @@ IS Ammo Thunderbolt-20:OMNI
 IS Ammo Thunderbolt-20:OMNI
 IS Ammo Thunderbolt-20:OMNI
 CLMediumChemLaserAmmo:OMNI
-ISCASE:OMNI
-Advanced Fire Control
+ISCASE
 Armored Chassis
 STOLChassisMod
+OmniChassisMod
+Advanced Fire Control
 </Body Equipment>
 
 <barrating>
@@ -135,4 +143,8 @@ RS 3145 NT NU
 <tonnage>
 200.0
 </tonnage>
+
+<baseChassisFireConWeight>
+5.5
+</baseChassisFireConWeight>
 

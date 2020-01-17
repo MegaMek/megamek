@@ -1,9 +1,9 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,47 +20,32 @@ Shikra
 SKR-4M
 </Model>
 
-<Tonnage>
-90
-</Tonnage>
+<year>
+3101
+</year>
+
+<originalBuildYear>
+3101
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis) Advanced
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-111
-83
-83
-70
-</Armor>
-
-<Nose Equipment>
-ISGaussRifle
-ISGauss Ammo
-ISGauss Ammo
-ISGauss Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLUltraAC10
-CLUltraAC10 Ammo
-CLUltraAC10 Ammo
-CLUltraAC10 Ammo
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-CLUltraAC10
-CLUltraAC10 Ammo
-CLUltraAC10 Ammo
-CLUltraAC10 Ammo
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISMediumPulseLaser
-ISChaffPod
-ISChaffPod
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -74,42 +59,63 @@ ISChaffPod
 400
 </fuel>
 
-<type>
-Mixed (IS Chassis) Advanced 
-</type>
-
-<armor_tech>
-5
-</armor_tech>
-
-<year>
-3101
-</year>
-
-<source>
-TRO 3145 Free Worlds League - Late Republic
-</source>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 20
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+5
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+111
+83
+83
+70
+</armor>
 
-<history>
-</history>
+<Nose Equipment>
+ISGaussRifle
+</Nose Equipment>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Left Wing Equipment>
+CLUltraAC10
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLUltraAC10
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISMediumPulseLaser
+ISChaffPod
+ISChaffPod
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+</Fuselage Equipment>
+
+<source>
+TRO 3145 Free Worlds League - Late Republic
+</source>
+
+<tonnage>
+90.0
+</tonnage>
 

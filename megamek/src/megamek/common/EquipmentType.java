@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
@@ -47,6 +48,10 @@ public class EquipmentType implements ITechnology {
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
+    /** Default value for support vehicle slot cost. Those that differ from mechs are assigned
+     * a value >= 0
+     */
+    private static final int MECH_SLOT_COST = -1;
 
     public static final int T_ARMOR_UNKNOWN = -1;
     public static final int T_ARMOR_STANDARD = 0;
@@ -133,7 +138,7 @@ public class EquipmentType implements ITechnology {
             3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000,
             25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
             12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 5000,
-            5000 };
+            5000, 10000};
 
     public static final double[] armorPointMultipliers = {
             1, 1.12, 1, 1, 0.5, 1.06, 1.24, 1, 1, 1.12,
@@ -158,6 +163,7 @@ public class EquipmentType implements ITechnology {
     protected double tonnage = 0;
     protected int criticals = 0;
     protected int tankslots = 1;
+    protected int svslots = MECH_SLOT_COST;
 
     protected boolean explosive = false;
     protected boolean hittable = true; // if false, reroll critical hits
@@ -304,15 +310,47 @@ public class EquipmentType implements ITechnology {
         }
     }
 
-    public double getTonnage(Entity entity) {
+    /**
+     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
+     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity The unit the equipment is mounted on
+     * @return       The weight of the equipment in tons
+     */
+    public double getTonnage(@Nullable Entity entity) {
         return getTonnage(entity, Entity.LOC_NONE);
     }
 
+    /**
+     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
+     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity   The unit the equipment is mounted on
+     * @param location The mount location
+     * @return         The weight of the equipment in tons
+     */
     public double getTonnage(Entity entity, int location) {
         return tonnage;
     }
 
-    public void setTonnage(double tonnage) {
+    /**
+     * Calculates the weight of the equipment, with the option to override the standard rounding based on unit
+     * type. This allows for the optional fractional accounting construction rules.
+     * If {@code entity} is {@code null}, equipment without a fixed weight will
+     * return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity        The unit the equipment is mounted on
+     * @param location      The mount location
+     * @param defaultMethod The rounding method to use for any variable weight equipment. Any equipment
+     *                      that is normally rounded to either the half ton or kg based on unit type
+     *                      will have this method applied instead.
+     * @return              The weight of the equipment in tons
+     */
+    public double getTonnage(Entity entity, int location, RoundWeight defaultMethod) {
+        return defaultMethod.round(getTonnage(entity, location));
+    }
+
+    void setTonnage(double tonnage) {
         this.tonnage = tonnage;
     }
 
@@ -322,6 +360,13 @@ public class EquipmentType implements ITechnology {
 
     public int getTankslots(Entity entity) {
         return tankslots;
+    }
+
+    public int getSupportVeeSlots(Entity entity) {
+        if (svslots == MECH_SLOT_COST) {
+            return getCriticals(entity);
+        }
+        return svslots;
     }
 
     public boolean isExplosive(Mounted mounted) {
@@ -468,7 +513,26 @@ public class EquipmentType implements ITechnology {
      *         it can be in.
      */
     public boolean hasModes() {
-        return modes != null;
+        return (modes != null) && (!modes.isEmpty());
+    }
+    
+    /**
+     * Simple way to check if a piece of equipment has a specific usage/firing mode
+     * @param modeType The name of the mode to check.
+     * @return True or false.
+     */
+    public boolean hasModeType(String modeType) {
+    	if(!hasModes()) {
+    		return false;
+    	}
+    	
+    	for(EquipmentMode mode : modes) {
+    		if(mode.getName().equals(modeType)) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
     }
 
     /**
@@ -512,7 +576,7 @@ public class EquipmentType implements ITechnology {
      *            non null, non empty list of available mode names.
      */
     protected void setModes(String[] modes) {
-        assert ((modes != null) && (modes.length >= 0)) : "List of modes must not be null or empty";
+        assert ((modes != null) && (modes.length > 0)) : "List of modes must not be null or empty";
         Vector<EquipmentMode> newModes = new Vector<EquipmentMode>(modes.length);
         for (String mode : modes) {
             newModes.addElement(EquipmentMode.getMode(mode));
@@ -529,6 +593,24 @@ public class EquipmentType implements ITechnology {
     public boolean removeMode(String mode) {
         if (modes != null) {
             return modes.remove(EquipmentMode.getMode(mode));
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Add a mode to the Equipment
+     *
+     * @param mode The mode to be added
+     * @return true if the mode was added; false if modes was null or the mode was already present
+     * @author Simon (Juliez)
+     */
+    public boolean addMode(String mode) {
+        if (modes == null) {
+            modes = new Vector<EquipmentMode>();
+        }
+        if (!modes.contains(EquipmentMode.getMode(mode))) {
+            return modes.add(EquipmentMode.getMode(mode));
         } else {
             return false;
         }
@@ -760,6 +842,84 @@ public class EquipmentType implements ITechnology {
         }
     }
     
+    /**
+     * Computes protomech armor weight by point.
+     *  
+     * @param type    The armor type
+     * @return        The weight of a point of armor in kg
+     */
+    public static double getProtomechArmorWeightPerPoint(int type) {
+        if (type == T_ARMOR_EDP) {
+            return 0.075;
+        }
+        return 0.05;
+    }
+
+    /**
+     * Lookup method for protomech armor cost
+     * @param type The type of armor.
+     * @return     The cost per point in C-bills
+     */
+    public static int getProtomechArmorCostPerPoint(int type) {
+        // currently only one type of specialized armor for protomechs; anything else is treated as standard
+        if (type == T_ARMOR_EDP) {
+            return 1250;
+        }
+        return 625;
+    }
+
+    /**
+     * Gives the weight of a single point of armor at a particular BAR for a
+     * given tech level.
+     */
+    private static final double[][] SV_ARMOR_WEIGHT =
+            {{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+                    {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+                    {.040, .025, .016, .013, .012, .011},
+                    {.060, .038, .024, .019, .017, .016},
+                    {.000, .050, .032, .026, .023, .021},
+                    {.000, .063, .040, .032, .028, .026},
+                    {.000, .000, .048, .038, .034, .032},
+                    {.000, .000, .056, .045, .040, .037},
+                    {.000, .000, .000, .051, .045, .042},
+                    {.000, .000, .000, .057, .051, .047},
+                    {.000, .000, .000, .063, .056, .052}};
+
+    /**
+     * `Lookup method for the weight of a point of support vehicle armor.
+     *
+     * @param bar        The armor's barrier armor rating
+     * @param techRating The armor's tech rating (0-5 corresponds to A-F)
+     * @return           The weight of a point of armor in tons. Returns 0.0 for invalid value.
+     */
+    public static double getSupportVehicleArmorWeightPerPoint(int bar, int techRating) {
+        if ((bar >= 0) && (techRating >= 0)
+                && (bar < SV_ARMOR_WEIGHT.length) && (techRating < SV_ARMOR_WEIGHT[bar].length)) {
+            return SV_ARMOR_WEIGHT[bar][techRating];
+        }
+        return 0.0;
+    }
+
+    /**
+     * Cost in C-bills of a single point of SV armor for various BAR values.
+     */
+    private static int[] SV_ARMOR_COST = {
+            0, 0, 50, 100, 150, 200, 250, 300, 400, 500, 625
+    };
+
+    /**
+     * Cost lookup for standard SV armor.
+     *
+     * @param bar The barrier armor rating of the support vehicle armor
+     * @return    The cost per point, in C-bills.
+     */
+    public static double getSupportVehicleArmorCostPerPoint(int bar) {
+        if (bar < 0) {
+            return 0;
+        }
+        return SV_ARMOR_COST[Math.min(bar, SV_ARMOR_COST.length - 1)];
+    }
+    
     /* Armor and structure are stored as integers and standard uses a generic MiscType that
      * does not have its own TechAdvancement.
      */
@@ -776,6 +936,45 @@ public class EquipmentType implements ITechnology {
             .setAdvancement(DATE_NONE).setTechRating(RATING_A)
             .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
+    private static final TechAdvancement[] TA_SV_ARMOR = {
+            TA_NONE, // Placeholder for index 0
+            TA_NONE, // Placeholder for index 1
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                    .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 2
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                    .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 3
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                    .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_A, RATING_A)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 4
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                    .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_B, RATING_A)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 5
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                    .setTechRating(RATING_C).setAvailability(RATING_C, RATING_B, RATING_B, RATING_A)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 6
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2250, 2300, 2305)
+                    .setApproximate(true, true, false).setPrototypeFactions(F_TA)
+                    .setProductionFactions(F_TA).setTechRating(RATING_C)
+                    .setAvailability(RATING_C, RATING_B, RATING_B, RATING_B)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 7
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2425, 2435, 22445)
+                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_C, RATING_C, RATING_B, RATING_B)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 8
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2440, 2450, 2470)
+                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), // BAR 9
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2505)
+                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                    .setApproximate(true, false, false).setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD) // BAR 10
+    };
 
     /**
      * Tech advancement for armor based on the armor type index and tech base
@@ -792,6 +991,19 @@ public class EquipmentType implements ITechnology {
         EquipmentType armor = EquipmentType.get(armorName);
         if (armor != null) {
             return armor.getTechAdvancement();
+        }
+        return TA_NONE;
+    }
+
+    /**
+     * Tech advancement for support vehicle armor
+     *
+     * @param bar The armor's barrier armor rating
+     * @return    The armor tech advancement
+     */
+    public static TechAdvancement getSVArmorTechAdvancement(int bar) {
+        if ((bar >= 0) && (bar < TA_SV_ARMOR.length)) {
+            return TA_SV_ARMOR[bar];
         }
         return TA_NONE;
     }
@@ -1167,5 +1379,15 @@ public class EquipmentType implements ITechnology {
     @Override
     public int getBaseAvailability(int era) {
         return techAdvancement.getBaseAvailability(era);
+    }
+
+    /**
+     * This does not include heat generated by stealth armor, as that depends on whether
+     * it is installed as patchwork and does not appear in the equipment list of all unit types.
+     * 
+     * @return The amount of heat generated by the equipment
+     */
+    public int getHeat() {
+        return 0;
     }
 }

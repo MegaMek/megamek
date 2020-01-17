@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,96 +20,98 @@ O-65 'Oppie' Hazardous Materials Recovery Vehicle
 O-65 HMRV
 </Model>
 
-<Tonnage>
-150
-</Tonnage>
+<year>
+2822
+</year>
+
+<originalBuildYear>
+2822
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+liquidcargobay:22.91:1:1
+</transporters>
 
 <cruiseMP>
 2
 </cruiseMP>
 
-<barrating>
-8
-</barrating>
+<engine_type>
+0
+</engine_type>
 
-<Armor>
+<armor>
 100
 40
 40
 40
 40
 40
-</Armor>
+</armor>
+
+<Body Equipment>
+Paramedic Equipment
+Environmental Sealed Chassis
+SV Chassis Mod [Tractor]
+</Body Equipment>
+
+<Front Equipment>
+ISMineSweeper
+Bulldozer
+Searchlight
+</Front Equipment>
+
+<Front Right Equipment>
+Manipulator [Non-Mech/Non-Battle Armor]
+Searchlight
+</Front Right Equipment>
+
+<Front Left Equipment>
+Manipulator [Non-Mech/Non-Battle Armor]
+Searchlight
+</Front Left Equipment>
+
+<Rear Right Equipment>
+Manipulator [Non-Mech/Non-Battle Armor]
+Tank Sprayer
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+Manipulator [Non-Mech/Non-Battle Armor]
+Tank Sprayer
+</Rear Left Equipment>
+
+<Rear Equipment>
+Backhoe
+Searchlight
+Hitch
+</Rear Equipment>
+
+<barrating>
+8
+</barrating>
 
 <structural_tech_rating>
 4
 </structural_tech_rating>
 
-<Front Equipment>
-ISMinesweeper
-Bulldozer
-Searchlight
-</Front Equipment>
-
-<Front Left Equipment>
-Manipulator
-Searchlight
-</Front Left Equipment>
-
-<Front Right Equipment>
-Manipulator
-Searchlight
-</Front Right Equipment>
-
-<Rear Left Equipment>
-Manipulator
-Tank Sprayer
-</Rear Left Equipment>
-
-<Rear Right Equipment>
-Manipulator
-Tank Sprayer
-</Rear Right Equipment>
-
-<Rear Equipment>
-Backhoe
-Searchlight
-</Rear Equipment>
-
-<Body Equipment>
-Paramedic Equipment
-Environmental Sealed Chassis
-Tractor
-</Body Equipment>
-
-<transporters>
-liquidcargobay:22.91:1
-</transporters>
-
-<type>
-IS Level 3
-</type>
-
-<year>
-2822
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Tracked
-</motion_type>
-
 <source>
 TRO 3075 - Succession Wars
 </source>
+
+<tonnage>
+150.0
+</tonnage>
+
+<fuel>
+0.0
+</fuel>
+

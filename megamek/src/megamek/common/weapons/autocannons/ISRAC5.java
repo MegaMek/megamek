@@ -45,7 +45,7 @@ public class ISRAC5 extends RACWeapon {
         this.mediumRange = 10;
         this.longRange = 15;
         this.extremeRange = 20;
-        this.tonnage = 10.0f;
+        this.tonnage = 10.0;
         this.criticals = 6;
         this.bv = 247;
         this.cost = 275000;

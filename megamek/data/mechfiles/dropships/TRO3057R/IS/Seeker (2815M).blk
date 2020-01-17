@@ -84,7 +84,6 @@ crewquarters:112.0:0
 </armor>
 
 <Nose Equipment>
-MASH core component
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -110,6 +109,10 @@ MASH core component
 Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Hull Equipment>
+MASH Core Component
+</Hull Equipment>
 
 <structural_integrity>
 10

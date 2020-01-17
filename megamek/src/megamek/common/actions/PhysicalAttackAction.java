@@ -1,16 +1,18 @@
 /*
- * MegaMek - Copyright (C) 2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2001, 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common.actions;
 
@@ -31,6 +33,7 @@ import megamek.common.MechWarrior;
 import megamek.common.RangeType;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.TagInfo;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
@@ -41,6 +44,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
      *
      */
     private static final long serialVersionUID = -4702357516725749181L;
+    // equipment that affects this attack (AMS, ECM?, etc)
 
     public PhysicalAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
@@ -54,8 +58,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
      * Common checking whether is it possible to physically attack the target
      *
      * @param game
-     * @param attackerId
-     * @param target
+     * @param ae        Attacking Entity
+     * @param target    Target
      * @return reason the attack is impossible, or null if it is possible
      */
     protected static String toHitIsImpossible(IGame game, Entity ae,
@@ -170,7 +174,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // Ejected MechWarriors are also more difficult targets.
         if (target instanceof MechWarrior) {
-            toHit.addModifier(2, "ejected MechWarrior target");
+            toHit.addModifier(2, "ejected Pilot target");
         }
         // attacker movement
         toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
@@ -208,7 +212,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         }
 
         // if we're spotting for indirect fire, add +1
-        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()
+                && game.getTagInfo().stream().noneMatch(inf -> inf.attackerId == ae.getId())) {
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
 

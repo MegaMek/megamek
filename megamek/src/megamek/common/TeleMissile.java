@@ -16,8 +16,6 @@
  */
 package megamek.common;
 
-
-
 /**
  * @author Jay Lawson
  */
@@ -45,8 +43,14 @@ public class TeleMissile extends Aero {
         super();
         damThresh = new int[] {0};
     }
+    
+    @Override
+    //Telemissiles shouldn't get a firing phase
+    public boolean isEligibleForFiring() {
+        return false;
+    }
 
-    public TeleMissile(Entity originalRide, int damageValue, double weight, int type, int capMisMod) {
+    public TeleMissile(Entity originalRide, int damageValue, int armorValue, double weight, int type, int capMisMod) {
         this();
                 
         //fuel
@@ -81,7 +85,7 @@ public class TeleMissile extends Aero {
         setModel("");
         setWeight(weight);
         setDamageValue(damageValue);
-        initializeArmor(damageValue*10, LOC_BODY);
+        initializeArmor(armorValue, LOC_BODY);
         autoSetInternal();
         initializeSI(0);
         setMovementMode(EntityMovementMode.AERODYNE);
@@ -149,10 +153,33 @@ public class TeleMissile extends Aero {
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
+    
+    //Telemissiles don't mount Stealth systems. Would be kind of cool if they did, though.
+    @Override
+    public boolean hasStealth() {
+        return false;
+    }
 
     @Override
     public int calculateBattleValue() {
         return 0;
+    }
+    
+    /**
+     * Returns this entity's safe thrust, factored for heat, extreme
+     * temperatures, gravity, partial repairs and bomb load (not that
+     * telemissiles are affected by anything but remaining fuel...).
+     */
+    @Override
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        int j = getCurrentFuel();
+        return j;
+    }
+    
+    //Telemissiles don't have runMP like other units
+    @Override
+    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     @Override

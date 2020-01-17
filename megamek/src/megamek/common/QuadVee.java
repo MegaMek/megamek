@@ -521,11 +521,11 @@ public class QuadVee extends QuadMech {
                 roll.addModifier(1, "thin snow");
             }
             // VDNI bonus?
-            if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                    && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+            if (hasAbility(OptionsConstants.MD_VDNI)
+                    && !hasAbility(OptionsConstants.MD_BVDNI)) {
                 roll.addModifier(-1, "VDNI");
             }
-            if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
+            if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
                 roll.addModifier(1, "cramped cockpit");
             }
 

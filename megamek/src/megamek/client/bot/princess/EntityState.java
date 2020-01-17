@@ -13,6 +13,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -63,8 +64,8 @@ public class EntityState {
             building = false;
             aero = target.isAero();
             airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
-            naturalAptGun = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-            naturalAptPilot = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+            naturalAptGun = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+            naturalAptPilot = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         } else { // for buildings and such
             position = target.getPosition();
             facing = 0;
@@ -105,12 +106,20 @@ public class EntityState {
         immobile = path.getEntity().isImmobile();
         jumping = path.isJumping();
         movementType = path.getLastStepMovementType();
-        naturalAptGun = path.getEntity().getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        naturalAptPilot = path.getEntity().getCrew().getOptions()
-                              .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        naturalAptGun = path.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        naturalAptPilot = path.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         setSecondaryFacing(getFacing());
     }
 
+    /**
+     * Create an entity state from a Targetable, but pretend it's in a different hex facing in a different direction.
+     */
+    EntityState(Targetable target, CoordFacingCombo projectedTargetLocation) {
+        this(target);
+        position = projectedTargetLocation.getCoords();
+        facing = projectedTargetLocation.getFacing();
+    }
+    
     public Coords getPosition() {
         return position;
     }

@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.annotations.Nullable;
@@ -539,4 +540,46 @@ public interface IBoard {
     public abstract boolean isValid();
 
     public abstract boolean isValid(StringBuffer errBuff);
+
+
+    /**
+     * Gets the description of the map.
+     * @return The description of the map, if one exists, otherwise null.
+     */
+    @Nullable
+    public abstract String getDescription();
+
+    /**
+     * Sets the description of the map.
+     * @param s The description of the map; may be null.
+     */
+    public abstract void setDescription(@Nullable String s);
+
+    /**
+     * Gets every annotations on the map.
+     * @return A read-only map of per-hex annotations.
+     */
+    public abstract Map<Coords, Collection<String>> getAnnotations();
+
+    /**
+     * Gets the annotations associated with a hex.
+     * @param x The X-Coordinate of the hex.
+     * @param y The Y-Coordinate of the hex.
+     * @return A collection of annotations for the hex.
+     */
+    public abstract Collection<String> getAnnotations(int x, int y);
+
+    /**
+     * Gets the annotations associated with a hex.
+     * @param c Coordinates of the hex.
+     * @return A collection of annotations for the hex.
+     */
+    public abstract Collection<String> getAnnotations(Coords c);
+
+    /**
+     * Sets annotations on a given hex.
+     * @param c Coordinates of the hex to apply the annotations to.
+     * @param a A collection of annotations to assign to the hex. This may be null.
+     */
+    public abstract void setAnnotations(Coords c, @Nullable Collection<String> a);
 }

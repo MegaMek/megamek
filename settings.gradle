@@ -1,0 +1,5 @@
+rootProject.name = 'MegaMekRoot'
+
+include 'megamek'
+
+enableFeaturePreview('STABLE_PUBLISHING')

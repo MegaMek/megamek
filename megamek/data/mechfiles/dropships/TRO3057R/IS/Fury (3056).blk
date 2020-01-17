@@ -25,7 +25,7 @@ Fury
 </year>
 
 <originalBuildYear>
-0
+3056
 </originalBuildYear>
 
 <type>
@@ -109,6 +109,9 @@ Medium Laser
 (B) Autocannon/10
 IS Ammo AC/10:20
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 7

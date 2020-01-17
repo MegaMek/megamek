@@ -39,6 +39,7 @@ public class InfantryPistolTKEnforcerAutoPistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 110;
 		bv = 0.18;
+		tonnage = .0016;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.20;
 		infantryRange = 0;

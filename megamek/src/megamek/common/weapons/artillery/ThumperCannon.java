@@ -48,7 +48,7 @@ public class ThumperCannon extends ArtilleryCannonWeapon {
         mediumRange = 9;
         longRange = 14;
         extremeRange = 18;
-        tonnage = 10f;
+        tonnage = 10;
         criticals = 7;
         bv = 41;
         cost = 200000;

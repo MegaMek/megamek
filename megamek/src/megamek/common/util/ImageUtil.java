@@ -1,16 +1,19 @@
 /*
- * MegaMek - Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.common.util;
 
 import java.awt.Graphics2D;
@@ -35,7 +38,6 @@ import java.util.List;
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.common.Coords;
-import sun.awt.image.ToolkitImage;
 
 /**
  * Generic utility methods for image data
@@ -122,7 +124,7 @@ public final class ImageUtil {
 
             ImageProducer prod;
             prod = new FilteredImageSource(img.getSource(), filter);
-            ToolkitImage result = (ToolkitImage)Toolkit.getDefaultToolkit().createImage(prod);
+            Image result = Toolkit.getDefaultToolkit().createImage(prod);
             waitUntilLoaded(result);
             return ImageUtil.createAcceleratedImage(result);
         }
@@ -136,14 +138,14 @@ public final class ImageUtil {
         IMAGE_LOADERS.add(new TileMapImageLoader());
         IMAGE_LOADERS.add(new AWTImageLoader());
     }
-    
+
     /** Add a new image loader to the first position of the list, if it isn't there already */
     public static void addImageLoader(ImageLoader loader) {
         if (null != loader && !IMAGE_LOADERS.contains(loader)) {
             IMAGE_LOADERS.add(0, loader);
         }
     }
-    
+
     public static Image loadImageFromFile(String fileName) {
         if(null == fileName) {
             return null;
@@ -156,19 +158,18 @@ public final class ImageUtil {
         }
         return null;
     }
-    
+
     private ImageUtil() {}
-    
+
     /**
      * Interface that defines methods for an ImageLoader.
      *
      */
     public interface ImageLoader {
-        
+
         /**
-         * Given a string representation of a file, 
+         * Given a string representation of a file,
          * @param fileName
-         * @param toolkit
          * @return
          */
         Image loadImage(String fileName);
@@ -187,12 +188,12 @@ public final class ImageUtil {
                 System.out.println("Trying to load image for a non-existant "
                         + "file! Path: " + fileName);
             }
-            ToolkitImage result = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(fileName);
+            Image result = Toolkit.getDefaultToolkit().getImage(fileName);
             if(null == result) {
                 return null;
             }
             boolean isAnimated = waitUntilLoaded(result);
-            return isAnimated ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
+            return isAnimated ? result : ImageUtil.createAcceleratedImage(result);
         }
     }
 
@@ -225,7 +226,7 @@ public final class ImageUtil {
                 return null;
             }
         }
-        
+
         /**
          * Given a string with the format <imageFile>(X,Y-W,H), load the image file and then use X,Y and W,H to find a
          * subimage within the original image and return that subimage.
@@ -254,7 +255,7 @@ public final class ImageUtil {
                 return null;
             }
             System.out.println("Loading atlas: " + baseFile);
-            ToolkitImage base = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
+            Image base = Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
             if(null == base) {
                 return null;
             }
@@ -346,16 +347,13 @@ public final class ImageUtil {
      * @param result  Returns true if the given image is animated.
      * @return
      */
-    private static boolean waitUntilLoaded(ToolkitImage result) {
+    private static boolean waitUntilLoaded(Image result) {
         FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
         // Check to see if the image is loaded
-        int infoFlags = result.check(observer);
-        if ((infoFlags & ImageObserver.ALLBITS) == 0) {
-            // Image not loaded, wait for it to load
+        if (!Toolkit.getDefaultToolkit().prepareImage(result, -1, -1, observer)) {
             long startTime = System.currentTimeMillis();
             long maxRuntime = 10000;
             long runTime = 0;
-            result.preload(observer);
             while (!observer.isLoaded() && runTime < maxRuntime) {
                 try {
                     Thread.sleep(10);
@@ -371,7 +369,7 @@ public final class ImageUtil {
     private static class FinishedLoadingObserver implements ImageObserver {
         private static final int DONE
             = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.FRAMEBITS | ImageObserver.ALLBITS;
-        
+
         private final Thread mainThread;
         private volatile boolean loaded = false;
         private volatile boolean animated = false;
@@ -379,10 +377,10 @@ public final class ImageUtil {
         public FinishedLoadingObserver(Thread mainThread) {
             this.mainThread = mainThread;
         }
-        
+
         @Override
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-            if((infoflags & DONE) > 0) {
+            if ((infoflags & DONE) > 0) {
                 loaded = true;
                 animated = ((infoflags & ImageObserver.FRAMEBITS) > 0);
                 mainThread.interrupt();
@@ -390,11 +388,11 @@ public final class ImageUtil {
             }
             return true;
         }
-        
+
         public boolean isLoaded() {
             return loaded;
         }
-        
+
         public boolean isAnimated() {
             return animated;
         }

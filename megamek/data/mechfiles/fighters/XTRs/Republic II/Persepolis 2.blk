@@ -1,0 +1,124 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Persepolis
+</Name>
+
+<Model>
+2
+</Model>
+
+<year>
+3134
+</year>
+
+<originalBuildYear>
+3134
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+16
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+58
+42
+42
+40
+</armor>
+
+<Nose Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLTargeting Computer
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLLRM20
+CLArtemisV
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLLRM20
+CLArtemisV
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLImprovedSmallHeavyLaser
+CLImprovedSmallHeavyLaser
+CLCASE
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+CLCASE
+</Fuselage Equipment>
+
+<source>
+XTRO Republic II - Dark Ages
+</source>
+
+<tonnage>
+70.0
+</tonnage>
+

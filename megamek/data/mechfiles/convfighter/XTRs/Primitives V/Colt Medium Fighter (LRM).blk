@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,55 +20,32 @@ Colt Medium Fighter
 (LRM)
 </Model>
 
-<Tonnage>
-40
-</Tonnage>
+<year>
+2354
+</year>
+
+<originalBuildYear>
+2354
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-12
-12
-12
-8
-</Armor>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
-
-<barrating>
-5
-</barrating>
-
-<Nose Equipment>
-ISLRM5
-ISLRM5
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Body Equipment>
-Advanced Fire Control
-External Stores Hardpoint
-External Stores Hardpoint
-External Stores Hardpoint
-External Stores Hardpoint
-ISLRM5 Ammo
-</Body Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<transporters>
-</transporters>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 0
@@ -79,25 +56,67 @@ ISLRM5 Ammo
 </sink_type>
 
 <fuel>
-320
+140
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-2354
-</year>
-
-<source>
-XTRO Primitives IV - Age of War
-</source>
-
-<engine_type>				
+<engine_type>
 1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+12
+12
+12
+8
+</armor>
+
+<Nose Equipment>
+LRM 5
+LRM 5
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Body Equipment>
+Advanced Fire Control
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+IS Ammo LRM-5
+</Body Equipment>
+
+<barrating>
+5
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
+<source>
+XTRO Primitives V - Age of War
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+

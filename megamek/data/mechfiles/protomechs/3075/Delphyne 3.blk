@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,13 +16,28 @@ ProtoMech
 Delphyne
 </Name>
 
-<model>
+<Model>
 3
-</model>
+</Model>
 
-<Tonnage>
-9
-</Tonnage>
+<year>
+3072
+</year>
+
+<originalBuildYear>
+3072
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -32,13 +47,32 @@ Delphyne
 5
 </jumpingMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 6
 18
 4
 4
 10
-</Armor>
+</armor>
+
+<Body Equipment>
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
 CLERMediumLaser
@@ -48,30 +82,17 @@ CLERMediumLaser
 CLMicroPulseLaser
 </Right Arm Equipment>
 
-<type>
-Clan
-</type>
+<Left Arm Equipment>
+</Left Arm Equipment>
 
-<year>
-3072
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
+<Legs Equipment>
+</Legs Equipment>
 
 <source>
 TRO 3075 - Jihad
 </source>
+
+<tonnage>
+9.0
+</tonnage>
+

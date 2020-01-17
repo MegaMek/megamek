@@ -43,6 +43,7 @@ public class ISAC2Primitive extends ACWeapon {
         addLookupName("AC/2p");
         addLookupName("ISAC2p");
         addLookupName("IS Autocannon/2 Primitive");
+        this.shortName = "AC/2p";
         ammoType = AmmoType.T_AC_PRIMITIVE;
         heat = 1;
         damage = 2;
@@ -52,7 +53,7 @@ public class ISAC2Primitive extends ACWeapon {
         mediumRange = 16;
         longRange = 24;
         extremeRange = 32;
-        tonnage = 6.0f;
+        tonnage = 6.0;
         criticals = 1;
         bv = 37;
         cost = 75000;

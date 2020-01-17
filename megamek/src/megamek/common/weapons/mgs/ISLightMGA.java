@@ -49,13 +49,13 @@ public class ISLightMGA extends AmmoWeapon {
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
-        tonnage = 0.5f;
+        tonnage = 0.5;
         criticals = 1;
         bv = 0; // we'll have to calculate this in calculateBV(),
         // because it depends on the number of MGs linked to
         // the MGA
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-                .or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA);
+                .or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA).or(F_PROTO_WEAPON);
         cost = 1250;
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);

@@ -3,13 +3,13 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
 
 <UnitType>
-ConvFighter
+FixedWingSupport
 </UnitType>
 
 <Name>
@@ -20,51 +20,35 @@ Mosquito Light Fighter
 (Standard)
 </Model>
 
-<Tonnage>
-20
-</Tonnage>
+<year>
+2302
+</year>
+
+<originalBuildYear>
+2302
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-9
-6
-6
-3
-</Armor>
-
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
-<Nose Equipment>
-Advanced Fire Control
-IS LRM-5
-ISLRM5 Ammo
-ISMG Ammo (200)
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISMG
-External Stores Hardpoint
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISMG
-External Stores Hardpoint
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-10
+0
 </heatsinks>
 
 <sink_type>
@@ -75,30 +59,68 @@ External Stores Hardpoint
 150
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-2302
-</year>
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+9
+6
+6
+3
+</armor>
+
+<Nose Equipment>
+LRM 5
+</Nose Equipment>
+
+<Left Wing Equipment>
+Machine Gun
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Machine Gun
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Body Equipment>
+IS Ammo LRM-5
+IS Ammo MG - Full
+Advanced Fire Control
+External Stores Hardpoint
+External Stores Hardpoint
+</Body Equipment>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
 
 <source>
 XTRO Primitives II - Age of War
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+20.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-1
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

@@ -17,6 +17,7 @@ package megamek.client.ui.swing;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +34,7 @@ import javax.swing.UIManager;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.event.BoardViewEvent;
 import megamek.common.AmmoType;
 import megamek.common.BipedMech;
 import megamek.common.Building;
@@ -1368,10 +1370,10 @@ public class MapMenu extends JPopupMenu {
     void plotCourse(ActionEvent e) {
         ((MovementDisplay) currentPanel).actionPerformed(e);
 
-        // Drag
-        ((BoardView1) gui.bv).mouseAction(coords, 3, 16);
+        // Cursor over the hex.
+        ((BoardView1) gui.bv).mouseAction(coords, BoardViewEvent.BOARD_HEX_CURSOR, InputEvent.BUTTON1_MASK);
         // Click
-        ((BoardView1) gui.bv).mouseAction(coords, 1, 16);
+        ((BoardView1) gui.bv).mouseAction(coords, BoardViewEvent.BOARD_HEX_CLICKED, InputEvent.BUTTON1_MASK);
     }
 
     Targetable decodeTargetInfo(String info) {

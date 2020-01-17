@@ -14,12 +14,11 @@
  */
 package megamek.common;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import megamek.common.options.OptionsConstants;
@@ -39,9 +38,11 @@ public class Jumpship extends Aero {
     public static final int LOC_FRS = 2;
     public static final int LOC_ALS = 4;
     public static final int LOC_ARS = 5;
+    public static final int LOC_HULL = 6;
 
     public static final int GRAV_DECK_STANDARD_MAX = 100;
     public static final int GRAV_DECK_LARGE_MAX = 250;
+    public static final int GRAV_DECK_HUGE_MAX = 1500;
     
     public static final int DRIVE_CORE_STANDARD    = 0;
     public static final int DRIVE_CORE_COMPACT     = 1;
@@ -53,14 +54,28 @@ public class Jumpship extends Aero {
     // given for primitive assumes a 30ly range, but the final value has to be computed.
     private static double[] DRIVE_CORE_WEIGHT_PCT = { 0.95, 0.4525, 0.5, 0.0, 0.95 };
 
-    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side",
-            "Aft Right Side" };
+    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
+            "Aft", "Aft Left Side", "Aft Right Side", "Hull" };
 
+    //K-F Drive Stuff
+    private int original_kf_integrity = 0;
     private int kf_integrity = 0;
+    private int original_sail_integrity = 0;
     private int sail_integrity = 0;
+    private int helium_tankage = 0;
+    private boolean heliumTankHit = false;
+    private boolean driveCoilHit = false;
+    private boolean fieldInitiatorHit = false;
+    private boolean chargingSystemHit = false;
+    private boolean driveControllerHit = false;
+    private boolean lfBatteryHit = false;
+    private boolean sail = true;
     private int driveCoreType = DRIVE_CORE_STANDARD;
     private int jumpRange = 30; // Primitive jumpships can have a reduced range
+    
+    // lithium fusion
+    boolean hasLF = false;
 
     // crew and passengers
     private int nCrew = 0;
@@ -68,12 +83,11 @@ public class Jumpship extends Aero {
     private int nMarines = 0;
     private int nBattleArmor = 0;
     private int nOtherCrew = 0;
+    private int nOfficers = 0;
+    private int nGunners = 0;
     // lifeboats and escape pods
     private int lifeBoats = 0;
     private int escapePods = 0;
-
-    // lithium fusion
-    boolean hasLF = false;
 
     // Battlestation
     private boolean isBattleStation = false;
@@ -89,6 +103,13 @@ public class Jumpship extends Aero {
      * deck.
      */
     private List<Integer> gravDecks = new ArrayList<>();
+    
+    /**
+     * Keep track of all of the grav decks and their damage status
+     *
+     * Stores the number of hits on each grav deck by the index value from the list gravDecks
+     */
+    private Map<Integer,Integer> damagedGravDecks = new HashMap<>();
 
     // station-keeping thrust and accumulated thrust
     private double stationThrust = 0.2;
@@ -96,13 +117,31 @@ public class Jumpship extends Aero {
 
     public Jumpship() {
         super();
-        damThresh = new int[] { 0, 0, 0, 0, 0, 0 };
+        damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0 };
     }
-    
-    
+
+    @Override
+    public boolean tracksHeat() {
+        return false;
+    }
+
+    @Override
+    public int getUnitType() {
+        // While large craft perform heat calculations, they are not considered heat-tracking units
+        // because they cannot generate more heat than they can dissipate in the same turn.
+        return UnitType.JUMPSHIP;
+    }
+
     //ASEW Missile Effects, per location
     //Values correspond to Locations: NOS,FLS,FRS,AFT,ALS,ARS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
+    
+    /*
+     * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
+     */
+    protected int[] getAsewAffectedTurns() {
+        return asewAffectedTurns;
+    }
     
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
@@ -111,7 +150,9 @@ public class Jumpship extends Aero {
      * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
      */
     public void setASEWAffected(int arc, int turns) {
-        asewAffectedTurns[arc] = turns;
+        if (arc < getAsewAffectedTurns().length) {
+            getAsewAffectedTurns()[arc] = turns;
+        }
     }
     
     /*
@@ -119,8 +160,18 @@ public class Jumpship extends Aero {
      * @param arc - integer representing the desired firing arc
      */
     public int getASEWAffected(int arc) {
-        return asewAffectedTurns[arc];
+        if (arc < getAsewAffectedTurns().length) {
+            return getAsewAffectedTurns()[arc];
+        }
+        return 0;
     }
+    
+    /**
+     * Primitive Jumpships may be constructed with standard docking collars, or with pre-boom collars. 
+     * 
+     */
+    public static final int COLLAR_STANDARD  = 0;
+    public static final int COLLAR_NO_BOOM = 1;
 
     protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2300).setISApproximate(false, true)
@@ -138,23 +189,158 @@ public class Jumpship extends Aero {
     public TechAdvancement getConstructionTechAdvancement() {
         return isPrimitive()? TA_JUMPSHIP_PRIMITIVE : TA_JUMPSHIP;
     }
+    
+    /**
+     * Tech advancement data for lithium fusion batteries
+     */
+    public static TechAdvancement getLFBatteryTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setISAdvancement(2520, 2529, DATE_NONE, 2819, 3043)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_FS)
+                .setClanAdvancement(2520, 2529)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+    
+    /**
+     * Tech advancement data for the jump sail
+     */
+    public static TechAdvancement getJumpSailTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(2200, 2300, 2325)
+                .setPrototypeFactions(F_TA).setProductionFactions(F_TA)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
 
+    public String getCritDamageString() {
+        StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
+        boolean first = toReturn.length() == 0;
+        if (getTotalDamagedGravDeck() > 0) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(String.format(Messages.getString("Jumpship.gravDeckDamageString"), getTotalDamagedGravDeck()));
+            first = false;
+        }
+        if (getTotalDamagedDockingCollars() > 0) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(String.format(Messages.getString("Jumpship.dockingCollarsDamageString"), getTotalDamagedDockingCollars()));
+            first = false;
+        }
+        if (getKFDriveCoilHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.driveCoilDamageString"));
+            first = false;
+        }
+        if (getKFDriveControllerHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.driveControllerDamageString"));
+            first = false;
+        }
+        if (getKFHeliumTankHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.heliumTankDamageString"));
+            first = false;
+        }
+        if (getKFFieldInitiatorHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.fieldInitiatorDamageString"));
+            first = false;
+        }
+        if (getKFChargingSystemHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.chargingSystemDamageString"));
+            first = false;
+        }
+        if (getLFBatteryHit()) {
+            if (!first) {
+                toReturn.append(", ");
+            }
+            toReturn.append(Messages.getString("Jumpship.lfBatteryDamageString"));
+            first = false;
+        }
+        return toReturn.toString();
+    }
+
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }
     
     @Override
     public int locations() {
-        return 6;
+        return 7;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_HULL;
+    }
+    
+    /**
+     * Get the docking collar type used by the ship.
+     *
+     * @return the docking collar type
+     */
+    public int getDockingCollarType() {
+        return (isPrimitive() ? Jumpship.COLLAR_NO_BOOM : Jumpship.COLLAR_STANDARD);
+    }
+    
+    /**
+     * Get the number of damaged docking collars on the ship.
+     * Used by crit damage string on unit display
+     *
+     * @return the number of damaged docking collars
+     */
+    public int getTotalDamagedDockingCollars() {
+        int count = 0;
+        for (DockingCollar collar : getDockingCollars()) {
+            if (collar.isDamaged()) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
      * Get the number of grav decks on the ship.
      *
-     * @return
+     * @return the total number of grav decks
      */
     public int getTotalGravDeck() {
         return gravDecks.size();
+    }
+    
+    /**
+     * Get the number of damaged grav decks on the ship.
+     * Used by JS/WS MapSet widget to display critical hits
+     *
+     * @return the number of damaged grav decks
+     */
+    public int getTotalDamagedGravDeck() {
+        int count = 0;
+        for (int hits : damagedGravDecks.values()) {
+            if (hits == 1) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
@@ -167,13 +353,39 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Get a list of all grav decks mounted on this ship, where each value
-     * represents the size in meters of the grav deck.
+     * Get a list of all grav decks mounted on this ship. Returns the size in meters of the deck
      *
-     * @return
+     * @return a list of grav deck diameters, in meters
      */
     public List<Integer> getGravDecks() {
         return gravDecks;
+    }
+    
+    /**
+     * Adds a grav deck damage value that maps to the index of each deck size in meters
+     *
+     */
+    public void initializeGravDeckDamage(int index) {
+        damagedGravDecks.put(index, 0);
+    }
+
+    /**
+     * Gets the damage flag for the grav deck with the specified key
+     *
+     * @return the damage status for the deck 0 (undamaged) or 1 (damaged)
+     */
+    public int getGravDeckDamageFlag(int key) {
+        return damagedGravDecks.get(key);
+    }
+    
+    /**
+     * Sets the damage flag for the grav deck with the specified key to the specified value
+     *
+     * @param key - the id of the deck to affect
+     * @param damaged - 0 (undamaged), 1 (damaged)
+     */
+    public void setGravDeckDamageFlag(int key, int damaged) {
+        damagedGravDecks.replace(key, damaged);
     }
 
     /**
@@ -184,18 +396,18 @@ public class Jumpship extends Aero {
      */
     public void setGravDeck(int n) {
         for (int i = 0; i < n; i++) {
-            gravDecks.add(GRAV_DECK_STANDARD_MAX / 2);
+            addGravDeck(GRAV_DECK_STANDARD_MAX / 2);
         }
     }
 
     /**
      * Get the number of standard grav decks
-     * @return
+     * @return the number of 0-99 meter grav decks installed
      */
     public int getGravDeck() {
         int count = 0;
-        for (int size : gravDecks) {
-            if (size < GRAV_DECK_STANDARD_MAX) {
+        for (int deck : gravDecks) {
+            if (deck < GRAV_DECK_STANDARD_MAX) {
                 count++;
             }
         }
@@ -210,19 +422,19 @@ public class Jumpship extends Aero {
      */
     public void setGravDeckLarge(int n) {
         for (int i = 0; i < n; i++) {
-            gravDecks.add(GRAV_DECK_STANDARD_MAX + (GRAV_DECK_LARGE_MAX - GRAV_DECK_STANDARD_MAX) / 2);
+            addGravDeck(GRAV_DECK_STANDARD_MAX + (GRAV_DECK_LARGE_MAX - GRAV_DECK_STANDARD_MAX) / 2);
         }
     }
 
     /**
      * Get the number of large grav decks.
      *
-     * @return
+     * @return the number of 100-249 meter grav decks installed
      */
     public int getGravDeckLarge() {
         int count = 0;
-        for (int size : gravDecks) {
-            if (size >= GRAV_DECK_STANDARD_MAX && size < GRAV_DECK_LARGE_MAX) {
+        for (int deck : gravDecks) {
+            if (deck >= GRAV_DECK_STANDARD_MAX && deck <= GRAV_DECK_LARGE_MAX) {
                 count++;
             }
         }
@@ -237,19 +449,19 @@ public class Jumpship extends Aero {
      */
     public void setGravDeckHuge(int n) {
         for (int i = 0; i < n; i++) {
-            gravDecks.add(GRAV_DECK_LARGE_MAX + (GRAV_DECK_LARGE_MAX) / 2);
+            addGravDeck(GRAV_DECK_LARGE_MAX + (GRAV_DECK_LARGE_MAX) / 2);
         }
     }
 
     /**
      * Get the number of huge grav decks.
      *
-     * @return
+     * @return the number of 250 meter and larger grav decks installed
      */
     public int getGravDeckHuge() {
         int count = 0;
-        for (int size : gravDecks) {
-            if (size >= GRAV_DECK_LARGE_MAX) {
+        for (int deck : gravDecks) {
+            if (deck > GRAV_DECK_LARGE_MAX) {
                 count++;
             }
         }
@@ -285,6 +497,7 @@ public class Jumpship extends Aero {
         escapePods = n;
     }
 
+    @Override
     public int getEscapePods() {
         return escapePods;
     }
@@ -293,6 +506,7 @@ public class Jumpship extends Aero {
         lifeBoats = n;
     }
 
+    @Override
     public int getLifeBoats() {
         return lifeBoats;
     }
@@ -310,6 +524,24 @@ public class Jumpship extends Aero {
         nPassenger = pass;
     }
 
+    public void setNOfficers(int officer) {
+        nOfficers = officer;
+    }
+    
+    @Override
+    public int getNOfficers() {
+        return nOfficers;
+    }
+    
+    public void setNGunners(int gunners) {
+        nGunners = gunners;
+    }
+    
+    @Override
+    public int getNGunners() {
+        return nGunners;
+    }
+    
     @Override
     public int getNPassenger() {
         return nPassenger;
@@ -358,19 +590,23 @@ public class Jumpship extends Aero {
     @Override
     public double getStrategicFuelUse() {
         double fuelUse;
-    	if (weight >= 200000) {
-    		fuelUse = 3.95;
-    	} else if (weight >= 100000) {
-    	    fuelUse = 1.98;
-    	} else if (weight >= 50000) {
-    	    fuelUse = 0.98;
-    	} else {
-    	    fuelUse = 0.28;
-    	}
-    	if (isPrimitive()) {
-    	    return fuelUse * primitiveFuelFactor();
-    	}
-    	return fuelUse;
+        if (weight >= 200000) {
+            fuelUse = 39.52;
+        } else if (weight >= 100000) {
+            fuelUse = 19.75;
+        } else if (weight >= 50000) {
+            fuelUse = 9.77;
+        } else {
+            fuelUse = 2.82;
+        }
+        if (isPrimitive()) {
+            return fuelUse * primitiveFuelFactor();
+        }
+        // JS and SS (and WS without transit drives) use fuel at 10% the rate.
+        if (hasStationKeepingDrive()) {
+            fuelUse *= 0.1;
+        }
+        return fuelUse;
     }
 
     @Override
@@ -398,31 +634,165 @@ public class Jumpship extends Aero {
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
-
+    
+    //Methods for dealing with the K-F Drive, Sail and L-F Battery
+    
+    //Set the current KF Drive integrity
     public void setKFIntegrity(int kf) {
         kf_integrity = kf;
     }
-
+    
+    //Return the current KF Drive integrity
     public int getKFIntegrity() {
         return kf_integrity;
     }
+    
+    //Set the original/undamaged KF Drive integrity
+    public void setOKFIntegrity(int kf) {
+        original_kf_integrity = kf;
+    }
+    
+    //Return the original/undamaged KF Drive integrity
+    public int getOKFIntegrity() {
+        return original_kf_integrity;
+    }
+    
+    //Return the damage taken to the KF Drive
+    public int getKFDriveDamage() {
+        return (getOKFIntegrity() - getKFIntegrity());
+    }
+    
+    //Is any part of the KF Drive damaged?  Used by MHQ for repairs.
+    public boolean isKFDriveDamaged() {
+        return (getKFHeliumTankHit() 
+                || getKFDriveCoilHit() 
+                || getKFDriveControllerHit() 
+                || getLFBatteryHit() 
+                || getKFChargingSystemHit()
+                || getKFFieldInitiatorHit());
+    }
+    
+    //Set the portion of the total drive integrity represented by the helium tanks
+    public void setKFHeliumTankIntegrity(int ht) {
+        helium_tankage = ht;
+    }
+    
+    //Used by MHQ when repairing the helium tanks. Allows restoration of up to 2/3 of the total drive integrity
+    public int getKFHeliumTankIntegrity() {
+        return helium_tankage;
+    }
+    
+    //Record a hit on the KF Drive Helium Tank
+    public void setKFHeliumTankHit(boolean hit) {
+        heliumTankHit = hit;
+    }
+    
+    //Return the status of the KF Drive Helium Tank
+    public boolean getKFHeliumTankHit() {
+        return heliumTankHit;
+    }
+    
+    //Record a hit on the KF Drive Coil
+    public void setKFDriveCoilHit(boolean hit) {
+        driveCoilHit = hit;
+    }
+    
+    //Return the status of the KF Drive Coil
+    public boolean getKFDriveCoilHit() {
+        return driveCoilHit;
+    }
+    
+    //Record a hit on the KF Field Initiator
+    public void setKFFieldInitiatorHit(boolean hit) {
+        fieldInitiatorHit = hit;
+    }
+    
+    //Return the status of the KF Field Initiator
+    public boolean getKFFieldInitiatorHit() {
+        return fieldInitiatorHit;
+    }
+    
+    //Record a hit on the KF Charging System
+    public void setKFChargingSystemHit(boolean hit) {
+        chargingSystemHit = hit;
+    }
+    
+    //Return the status of the KF Charging System
+    public boolean getKFChargingSystemHit() {
+        return chargingSystemHit;
+    }
+    
+    //Record a hit on the KF Drive Controller
+    public void setKFDriveControllerHit(boolean hit) {
+        driveControllerHit = hit;
+    }
+    
+    //Return the status of the KF Drive Controller
+    public boolean getKFDriveControllerHit() {
+        return driveControllerHit;
+    }
+    
+    //Return the status of the LF Battery
+    public boolean getLFBatteryHit() {
+        return lfBatteryHit;
+    }
+    
+    //Record a hit on the LF Battery
+    public void setLFBatteryHit(boolean hit) {
+        lfBatteryHit = hit;
+    }
+    
+    //Set the original/undamaged Jump Sail integrity
+    public void setOSailIntegrity(int sail) {
+        original_sail_integrity = sail;
+    }
+    
+    //Return the original/undamaged Jump Sail integrity
+    public int getOSailIntegrity() {
+        return original_sail_integrity;
+    }
+    
+    //Return the damage taken to the Jump Sail
+    public int getSailDamage() {
+        return (getOSailIntegrity() - getSailIntegrity());
+    }
 
+    //Set the current integrity of the jump sail
     public void setSailIntegrity(int sail) {
         sail_integrity = sail;
     }
-
+    
+    //Return the current integrity of the jump sail
     public int getSailIntegrity() {
         return sail_integrity;
+    }
+    
+    /**
+     * @return Whether this ship has a jump sail (optional on space stations and primitive jumpships)
+     */
+    public boolean hasSail() {
+        return sail;
+    }
+    
+    /**
+     * @param sail Whether this ship has an energy collection sail
+     */
+    public void setSail(boolean sail) {
+        this.sail = sail;
     }
 
     public void initializeSailIntegrity() {
         int integrity = 1 + (int) Math.ceil((30.0 + (weight / 7500.0)) / 20.0);
+        setOSailIntegrity(integrity);
         setSailIntegrity(integrity);
     }
 
     public void initializeKFIntegrity() {
-        int integrity = (int) Math.ceil(1.2 + (((0.95) * weight) / 60000.0));
+        int integrity = (int) Math.ceil(1.2 + (getJumpDriveWeight() / 60000.0));
+        setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
+        //Helium Tanks make up about 2/3 of the drive core. 
+        setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
 
     public boolean canJump() {
@@ -471,21 +841,45 @@ public class Jumpship extends Aero {
         int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
         case LOC_NOSE:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_NOSE_WPL;
+                break;
+            }
             arc = Compute.ARC_NOSE;
             break;
         case LOC_FRS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_RIGHTSIDE_SPHERE;
             break;
         case LOC_FLS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_LEFTSIDE_SPHERE;
             break;
         case LOC_ARS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_RIGHTSIDEA_SPHERE;
             break;
         case LOC_ALS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_LEFTSIDEA_SPHERE;
             break;
         case LOC_AFT:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_AFT_WPL;
+                break;
+            }
             arc = Compute.ARC_AFT;
             break;
         default:
@@ -667,20 +1061,61 @@ public class Jumpship extends Aero {
         if (useManualBV) {
             return manualBV;
         }
+        bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
+
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
+        bvText.append(nl);
+
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
-        int modularArmor = 0;
-        for (Mounted mounted : getEquipment()) {
-            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
-            }
-        }
+        bvText.append(startTable);
+        bvText.append(startRow);
+        bvText.append(startColumn);
 
-        dbv += (getTotalArmor() + modularArmor) * 25.0;
+        bvText.append("Total Armor Factor x 25");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
 
-        dbv += getSI() * 20.0;
+        dbv += getTotalArmor();
 
+        bvText.append(dbv);
+        bvText.append(" x 25 ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        
+        dbv *= 25.0;
+
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Total SI x 20");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        double dbvSI = getSI() * 20.0;
+        dbv += dbvSI;
+
+        bvText.append(getSI());
+        bvText.append(" x 20");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(dbvSI);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
         // add defensive equipment
         double amsBV = 0;
         double amsAmmoBV = 0;
@@ -696,126 +1131,387 @@ public class Jumpship extends Aero {
             }
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))) {
                 amsBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
-                amsAmmoBV += etype.getBV(this);
+                // we need to deal with cases where ammo is loaded in multi-ton
+                // increments
+                // (on dropships and jumpships) - lets take the ratio of shots
+                // to shots left
+                double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
+
+                // if the ratio is less than one, we will treat as a full ton
+                // since
+                // we don't make that adjustment elsewhere
+                if (ratio < 1.0) {
+                    ratio = 1.0;
+                }
+                amsAmmoBV += ratio * etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(ratio * etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof AmmoType)
                     && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
-                screenAmmoBV += etype.getBV(this);
+                // we need to deal with cases where ammo is loaded in multi-ton
+                // increments
+                // (on dropships and jumpships) - lets take the ratio of shots
+                // to shots left
+                double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
+
+                // if the ratio is less than one, we will treat as a full ton
+                // since
+                // we don't make that adjustment elsewhere
+                if (ratio < 1.0) {
+                    ratio = 1.0;
+                }
+                screenAmmoBV += ratio * etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(ratio * etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof WeaponType)
                     && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
                 screenBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof MiscType)
                     && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP))) {
                 defEqBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             }
         }
-        dbv += amsBV;
-        dbv += screenBV;
-        dbv += Math.min(amsBV, amsAmmoBV);
-        dbv += Math.min(screenBV, screenAmmoBV);
-        dbv += defEqBV;
+        if (amsBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total AMS BV:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(amsBV);
+            dbv += amsBV;
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if (screenBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total Screen BV:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(screenBV);
+            dbv += screenBV;
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if (amsAmmoBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total AMS Ammo BV (to a maximum of AMS BV):");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(Math.min(amsBV, amsAmmoBV));
+            dbv += Math.min(amsBV, amsAmmoBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if (screenAmmoBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total Screen Ammo BV (to a maximum of Screen BV):");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(Math.min(screenBV, screenAmmoBV));
+            dbv += Math.min(screenBV, screenAmmoBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if (defEqBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total misc defensive equipment BV:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(defEqBV);
+            dbv += defEqBV;
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // unit type multiplier
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Multiply by Unit type Modifier");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(getBVTypeModifier());
         dbv *= getBVTypeModifier();
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("x" + getBVTypeModifier());
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // calculate heat efficiency
         int aeroHeatEfficiency = getHeatCapacity();
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Base Heat Efficiency ");
+
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(aeroHeatEfficiency);
+
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // get arc BV and heat
         // and add up BVs for ammo-using weapon types for excessive ammo rule
         TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<String, Double>();
         TreeMap<Integer, Double> arcBVs = new TreeMap<Integer, Double>();
         TreeMap<Integer, Double> arcHeat = new TreeMap<Integer, Double>();
-        for (Mounted mounted : getTotalWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            double weaponHeat = wtype.getHeat();
-            int arc = getWeaponArc(getEquipmentNum(mounted));
-            double dBV = wtype.getBV(this);
-            // skip bays
-            if (wtype instanceof BayWeapon) {
-                continue;
-            }
-            // don't count defensive weapons
-            if (wtype.hasFlag(WeaponType.F_AMS)) {
-                continue;
-            }
-            // don't count screen launchers, they are defensive
-            if (wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
-                continue;
-            }
-            // only count non-damaged equipment
-            if (mounted.isMissing() || mounted.isHit() || mounted.isDestroyed() || mounted.isBreached()) {
-                continue;
-            }
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Arc BV and Heat");
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
-            // double heat for ultras
-            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
-                weaponHeat *= 2;
+        Map<Integer, String> arcNameLookup = new HashMap<>();
+        // cycle through locations
+        for (int loc = 0; loc < locations(); loc++) {
+            int l = loc;
+            boolean isRear = (loc >= locations());
+            String rear = "";
+            if (isRear) {
+                l = l - 3;
+                rear = " (R)";
             }
-            // Six times heat for RAC
-            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                weaponHeat *= 6;
-            }
-            // add up BV of ammo-using weapons for each type of weapon,
-            // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA))
-                    || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY)
-                    || (wtype.getAmmoType() == AmmoType.T_NA))) {
-                String key = wtype.getAmmoType() + ":" + wtype.getRackSize() + ";" + arc;
-                if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
-                } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
+            this.getLocationName(l);
+
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("<i>" + getLocationName(l) + rear + "</i>");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("<i>BV</i>");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("<i>Heat</i>");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+
+            for (Mounted mounted : getTotalWeaponList()) {
+                if (mounted.getLocation() != loc) {
+                    continue;
                 }
-            }
-            // calc MG Array here:
-            if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getTotalWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == mounted.getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                WeaponType wtype = (WeaponType) mounted.getType();
+                double weaponHeat = wtype.getHeat();
+                int arc = getWeaponArc(getEquipmentNum(mounted));
+                arcNameLookup.put(arc, getLocationName(loc));
+                double dBV = wtype.getBV(this);
+                // skip bays
+                if (wtype instanceof BayWeapon) {
+                    continue;
+                }
+                // don't count defensive weapons
+                if (wtype.hasFlag(WeaponType.F_AMS)) {
+                    continue;
+                }
+                // don't count screen launchers, they are defensive
+                if (wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
+                    continue;
+                }
+                // only count non-damaged equipment
+                if (mounted.isMissing() || mounted.isHit() || mounted.isDestroyed() || mounted.isBreached()) {
+                    continue;
+                }
+    
+                // double heat for ultras
+                if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+                    weaponHeat *= 2;
+                }
+                // Six times heat for RAC
+                if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                    weaponHeat *= 6;
+                }
+                // add up BV of ammo-using weapons for each type of weapon,
+                // to compare with ammo BV later for excessive ammo BV rule
+                if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA))
+                        || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY)
+                        || (wtype.getAmmoType() == AmmoType.T_NA))) {
+                    String key = wtype.getAmmoType() + ":" + wtype.getRackSize() + ";" + arc;
+                    if (!weaponsForExcessiveAmmo.containsKey(key)) {
+                        weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
+                    } else {
+                        weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
                     }
                 }
-                dBV = mgaBV * 0.67;
-            }
-            // and we'll add the tcomp here too
-            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                if (hasTargComp()) {
-                    dBV *= 1.25;
+                // calc MG Array here:
+                if (wtype.hasFlag(WeaponType.F_MGA)) {
+                    double mgaBV = 0;
+                    for (Mounted possibleMG : getTotalWeaponList()) {
+                        if (possibleMG.getType().hasFlag(WeaponType.F_MG)
+                                && (possibleMG.getLocation() == mounted.getLocation())) {
+                            mgaBV += possibleMG.getType().getBV(this);
+                        }
+                    }
+                    dBV = mgaBV * 0.67;
                 }
-            }
-            // artemis bumps up the value
-            if (mounted.getLinkedBy() != null) {
-                Mounted mLinker = mounted.getLinkedBy();
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    dBV *= 1.2;
+                // and we'll add the tcomp here too
+                if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                    if (hasTargComp()) {
+                        dBV *= 1.25;
+                    }
                 }
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
-                    dBV *= 1.1;
+                // artemis bumps up the value
+                if (mounted.getLinkedBy() != null) {
+                    Mounted mLinker = mounted.getLinkedBy();
+                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                        dBV *= 1.2;
+                    }
+                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                        dBV *= 1.1;
+                    }
+                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                        dBV *= 1.3;
+                    }
+                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                        dBV *= 1.15;
+                    }
+                    if ((mLinker.getType() instanceof MiscType)
+                            && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                        dBV *= 1.25;
+                    }
                 }
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                    dBV *= 1.3;
-                }
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                    dBV *= 1.15;
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
-                }
-            }
 
-            double currentArcBV = 0.0;
-            double currentArcHeat = 0.0;
-            if (null != arcBVs.get(arc)) {
-                currentArcBV = arcBVs.get(arc);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(wtype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+" + dBV);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+" + weaponHeat);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+
+                double currentArcBV = 0.0;
+                double currentArcHeat = 0.0;
+                if (null != arcBVs.get(arc)) {
+                    currentArcBV = arcBVs.get(arc);
+                }
+                if (null != arcHeat.get(arc)) {
+                    currentArcHeat = arcHeat.get(arc);
+                }
+                arcBVs.put(arc, currentArcBV + dBV);
+                arcHeat.put(arc, currentArcHeat + weaponHeat);
             }
-            if (null != arcHeat.get(arc)) {
-                currentArcHeat = arcHeat.get(arc);
-            }
-            arcBVs.put(arc, currentArcBV + dBV);
-            arcHeat.put(arc, currentArcHeat + weaponHeat);
         }
         double weaponBV = 0.0;
         // lets traverse the hash and find the highest value BV arc
@@ -826,19 +1522,24 @@ public class Jumpship extends Aero {
         double oppArcMult = 0.5;
         double highBV = 0.0;
         double heatUsed = 0.0;
-        Set<Integer> set = arcBVs.keySet();
-        Iterator<Integer> iter = set.iterator();
-        while (iter.hasNext()) {
-            int key = iter.next();
-            if ((arcBVs.get(key) > highBV) && ((key == Compute.ARC_NOSE) || (key == Compute.ARC_LEFT_BROADSIDE)
-                    || (key == Compute.ARC_RIGHT_BROADSIDE) || (key == Compute.ARC_AFT))) {
+        for (int key : arcBVs.keySet()) {
+            // Warships only look at nose, aft, and broadsides for primary arc. Jumpships and space stations
+            // look at all six arcs.
+            if (hasETypeFlag(ETYPE_WARSHIP)
+                    && (key != Compute.ARC_NOSE)
+                    && (key != Compute.ARC_LEFT_BROADSIDE)
+                    && (key != Compute.ARC_RIGHT_BROADSIDE)
+                    && (key != Compute.ARC_AFT)) {
+                continue;
+            }
+            if (arcBVs.get(key) > highBV) {
                 highArc = key;
                 highBV = arcBVs.get(key);
             }
         }
         // now lets identify the adjacent and opposite arcs
         if (highArc > Integer.MIN_VALUE) {
-            heatUsed += arcHeat.get(highArc);
+            heatUsed += arcHeat.getOrDefault(highArc, 0.0);
             // now get the BV and heat for the two adjacent arcs
             int adjArcCW = getAdjacentArcCW(highArc);
             int adjArcCCW = getAdjacentArcCCW(highArc);
@@ -846,13 +1547,13 @@ public class Jumpship extends Aero {
             double adjArcCWHeat = 0.0;
             if ((adjArcCW > Integer.MIN_VALUE) && (null != arcBVs.get(adjArcCW))) {
                 adjArcCWBV = arcBVs.get(adjArcCW);
-                adjArcCWHeat = arcHeat.get(adjArcCW);
+                adjArcCWHeat = arcHeat.getOrDefault(adjArcCW, 0.0);
             }
             double adjArcCCWBV = 0.0;
             double adjArcCCWHeat = 0.0;
             if ((adjArcCCW > Integer.MIN_VALUE) && (null != arcBVs.get(adjArcCCW))) {
                 adjArcCCWBV = arcBVs.get(adjArcCCW);
-                adjArcCCWHeat = arcHeat.get(adjArcCCW);
+                adjArcCCWHeat = arcHeat.getOrDefault(adjArcCCW, 0.0);
             }
             if (adjArcCWBV > adjArcCCWBV) {
                 adjArc = adjArcCW;
@@ -860,20 +1561,16 @@ public class Jumpship extends Aero {
                     adjArcMult = 0.5;
                 }
                 heatUsed += adjArcCWHeat;
-                oppArc = adjArcCCW;
-                if ((heatUsed + adjArcCCWHeat) > aeroHeatEfficiency) {
-                    oppArcMult = 0.25;
-                }
             } else {
                 adjArc = adjArcCCW;
                 if ((heatUsed + adjArcCCWHeat) > aeroHeatEfficiency) {
                     adjArcMult = 0.5;
                 }
                 heatUsed += adjArcCCWHeat;
-                oppArc = adjArcCW;
-                if ((heatUsed + adjArcCWHeat) > aeroHeatEfficiency) {
-                    oppArcMult = 0.25;
-                }
+            }
+            oppArc = getOppositeArc(highArc);
+            if ((heatUsed + arcHeat.getOrDefault(oppArc, 0.0)) > aeroHeatEfficiency) {
+                oppArcMult = 0.25;
             }
         }
         // According to an email with Welshman, ammo should be now added into
@@ -904,6 +1601,15 @@ public class Jumpship extends Aero {
                 continue;
             }
             String key = atype.getAmmoType() + ":" + atype.getRackSize() + ";" + arc;
+            String key2 = atype.getName() + ";" + key;
+            // MML needs special casing so they don't count double
+            if (atype.getAmmoType() == AmmoType.T_MML) {
+                key2 = "MML " + atype.getRackSize() + " Ammo;" + key;
+            }
+            // same for the different AR10 ammos
+            if (atype.getAmmoType() == AmmoType.T_AR10) {
+                key2 = "AR10 Ammo;" + key;
+            }
             double ammoWeight = mounted.getType().getTonnage(this);
             if (atype.isCapital()) {
                 ammoWeight = mounted.getUsableShotsLeft() * atype.getAmmoRatio();
@@ -913,8 +1619,8 @@ public class Jumpship extends Aero {
             if (atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
                 ammoWeight = mounted.getUsableShotsLeft();
             }
-            if (!keys.contains(key)) {
-                keys.add(key);
+            if (!keys.contains(key2)) {
+                keys.add(key2);
             }
             if (!ammo.containsKey(key)) {
                 ammo.put(key, ammoWeight * atype.getBV(this));
@@ -926,17 +1632,31 @@ public class Jumpship extends Aero {
         // Excessive ammo rule:
         // Only count BV for ammo for a weapontype until the BV of all weapons
         // in that arc is reached
-        for (String key : keys) {
+        for (String fullkey : keys) {
             double ammoBV = 0.0;
-            int arc = Integer.parseInt(key.split(";")[1]);
+            String[] k = fullkey.split(";");
+            String key = k[1] + ";" + k[2];
+            int arc = Integer.parseInt(k[2]);
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(k[0]);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
             // get the arc
             if (weaponsForExcessiveAmmo.get(key) != null) {
                 if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
+                    bvText.append("+" + weaponsForExcessiveAmmo.get(key) + "*");
                     ammoBV += weaponsForExcessiveAmmo.get(key);
                 } else {
+                    bvText.append("+" + ammo.get(key));
                     ammoBV += ammo.get(key);
                 }
             }
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("");
+            bvText.append(endColumn);
+            bvText.append(endRow);
             double currentArcBV = 0.0;
             if (null != arcBVs.get(arc)) {
                 currentArcBV = arcBVs.get(arc);
@@ -947,24 +1667,96 @@ public class Jumpship extends Aero {
         // ok now lets go in and add the arcs
         if (highArc > Integer.MIN_VALUE) {
             // ok now add the BV from this arc and reset to zero
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Highest BV Arc (" + arcNameLookup.get(highArc) + ")" + arcBVs.get(highArc) + "*1.0");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("+" + arcBVs.get(highArc));
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            bvText.append(startColumn);
+            double totalHeat = arcHeat.getOrDefault(highArc, 0.0);
+            bvText.append("Total Heat: " + totalHeat);
+            bvText.append(endColumn);
+            bvText.append(endRow);
             weaponBV += arcBVs.get(highArc);
             arcBVs.put(highArc, 0.0);
             if ((adjArc > Integer.MIN_VALUE) && (null != arcBVs.get(adjArc))) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(
+                        "Adjacent High BV Arc (" + arcNameLookup.get(adjArc) + ") " + arcBVs.get(adjArc) + "*" + adjArcMult);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+" + (arcBVs.get(adjArc) * adjArcMult));
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                totalHeat += arcHeat.getOrDefault(adjArc, 0.0);
+                String over = "";
+                if (totalHeat > aeroHeatEfficiency) {
+                    over = " (Greater than heat efficiency)";
+                }
+                bvText.append("Total Heat: " + totalHeat + over);
+                bvText.append(endColumn);
+                bvText.append(endRow);
                 weaponBV += adjArcMult * arcBVs.get(adjArc);
                 arcBVs.put(adjArc, 0.0);
             }
             if ((oppArc > Integer.MIN_VALUE) && (null != arcBVs.get(oppArc))) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(
+                        "Adjacent Low BV Arc (" + arcNameLookup.get(oppArc) + ") " + arcBVs.get(oppArc) + "*" + oppArcMult);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+" + (oppArc * arcBVs.get(oppArc)));
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                totalHeat += arcHeat.getOrDefault(oppArc, 0.0);
+                String over = "";
+                if (totalHeat > aeroHeatEfficiency) {
+                    over = " (Greater than heat efficiency)";
+                }
+                bvText.append("Total Heat: " + totalHeat + over);
+                bvText.append(endColumn);
+                bvText.append(endRow);
                 weaponBV += oppArcMult * arcBVs.get(oppArc);
                 arcBVs.put(oppArc, 0.0);
             }
             // ok now we can cycle through the rest and add 25%
-            set = arcBVs.keySet();
-            iter = set.iterator();
-            while (iter.hasNext()) {
-                int key = iter.next();
-                weaponBV += (0.25 * arcBVs.get(key));
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Remaining Arcs");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            for (int loc : arcBVs.keySet()) {
+                if (arcBVs.get(loc) > 0) {
+                    bvText.append(startRow);
+                    bvText.append(startColumn);
+                    bvText.append(arcNameLookup.get(loc) + " " + arcBVs.get(loc) + "*0.25");
+                    bvText.append(endColumn);
+                    bvText.append(startColumn);
+                    bvText.append("+" + (0.25 * arcBVs.get(loc)));
+                    bvText.append(endColumn);
+                    bvText.append(endRow);
+                    weaponBV += (0.25 * arcBVs.get(loc));
+                }
             }
         }
+
+        bvText.append("Total Weapons BV Adjusted For Heat:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(weaponBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
         // BMR p152)
@@ -981,29 +1773,127 @@ public class Jumpship extends Aero {
                 continue;
             }
             double bv = mtype.getBV(this);
-            oEquipmentBV += bv;
+            if (bv > 0) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+
+                bvText.append(mtype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(bv);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+
+                oEquipmentBV += bv;
+            }
         }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Total Misc Offensive Equipment BV: ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(oEquipmentBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
         weaponBV += oEquipmentBV;
 
         // adjust further for speed factor
-        int runMp = getRunMP();
-        if (!(this instanceof Warship) && !(this instanceof SpaceStation)) {
-            runMp = 1;
+        int runMp = 1;
+        if (hasETypeFlag(ETYPE_WARSHIP)) {
+            runMp = getRunMP();
+        } else if (hasETypeFlag(ETYPE_SPACE_STATION)) {
+            runMp = 0;
         }
         double speedFactor = Math.pow(1 + (((double) runMp - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Final Speed Factor: ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(speedFactor);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
         obv = weaponBV * speedFactor;
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Weapons BV * Speed Factor ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(weaponBV);
+        bvText.append(" * ");
+        bvText.append(speedFactor);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(" = ");
+        bvText.append(obv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
 
         double finalBV;
         if (useGeometricMeanBV()) {
+            bvText.append("2 * sqrt(Offensive BV * Defensive BV");
             finalBV = 2 * Math.sqrt(obv * dbv);
             if (finalBV == 0) {
                 finalBV = dbv + obv;
             }
+            bvText.append("2 * sqrt(");
+            bvText.append(obv);
+            bvText.append(" + ");
+            bvText.append(dbv);
+            bvText.append(")");
         } else {
+            bvText.append("Offensive BV + Defensive BV");
             finalBV = dbv + obv;
+            bvText.append(obv);
+            bvText.append(" + ");
+            bvText.append(dbv);
         }
+
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Final BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(finalBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
 
         // we get extra bv from some stuff
         double xbv = 0.0;
@@ -1063,10 +1953,21 @@ public class Jumpship extends Aero {
 
         return points;
     }
-
+    
     @Override
-    public double getArmorWeight(int loc) {
+    public double getArmorWeight() {
+        return getArmorWeight(locations());
+    }
+    
+    @Override
+    public double getArmorWeight(int locCount) {
         double armorPoints = getTotalOArmor();
+
+        if (!isPrimitive()) {
+            armorPoints -= Math.round(get0SI() / 10.0) * locCount;
+        } else {
+            armorPoints -= Math.round(get0SI() / 10.0) * locCount * 0.66;
+        }
 
         // now I need to determine base armor points by type and weight
         double baseArmor = 0.8;
@@ -1092,19 +1993,16 @@ public class Jumpship extends Aero {
             baseArmor += 0.4;
         } else if (armorType[0] == EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE) {
             baseArmor += 0.6;
+        } else if (armorType[0] == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
+            baseArmor *= 0.66;
         }
 
-        double armorPerTon = baseArmor;
-        double armWeight = 0.0;
-        for (; (armWeight * armorPerTon) < armorPoints; armWeight += .5) {
-            // add armor in discrete batches
-        }
-        return armWeight;
+        return RoundWeight.standard(armorPoints / baseArmor, this);
     }
 
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[22];
+        double[] costs = new double[23];
         int costIdx = 0;
         double cost = 0;
 
@@ -1135,17 +2033,17 @@ public class Jumpship extends Aero {
         int driveIdx = 0;
         double driveCosts = 0;
         // Drive Coil
-        driveCost[driveIdx++] += 60000000 + (75000000 * getDocks());
+        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks());
         // Initiator
-        driveCost[driveIdx++] += 25000000 + (5000000 * getDocks());
+        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks());
         // Controller
-        driveCost[driveIdx++] += 50000000;
+        driveCost[driveIdx++] += 50000000.0;
         // Tankage
-        driveCost[driveIdx++] += 50000 * getKFIntegrity();
+        driveCost[driveIdx++] += 50000.0 * getKFIntegrity();
         // Sail
-        driveCost[driveIdx++] += 50000 * (30 + (weight / 7500));
+        driveCost[driveIdx++] += 50000.0 * (30 + (weight / 7500.0));
         // Charging System
-        driveCost[driveIdx++] += 500000 + (200000 * getDocks()); 
+        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks()); 
         
         for (int i = 0; i < driveIdx; i++) {
             driveCosts += driveCost[i];
@@ -1169,7 +2067,7 @@ public class Jumpship extends Aero {
         costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
         // Armor
-        costs[costIdx++] += getArmorWeight(locations()) * EquipmentType.getArmorCost(armorType[0]);
+        costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
         // Heat Sinks
         int sinkCost = 2000 + (4000 * getHeatType());
@@ -1187,18 +2085,19 @@ public class Jumpship extends Aero {
 
         // Transport Bays
         int baydoors = 0;
-        int bayCost = 0;
+        long bayCost = 0;
+        long quartersCost = 0;
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if ((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
-                bayCost += 20000 * next.totalSpace;
-            }
-            if ((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
-                bayCost += 20000 * next.totalSpace;
+            if (next.isQuarters()) {
+                quartersCost += next.getCost();
+            } else {
+                bayCost += next.getCost();
             }
         }
 
-        costs[costIdx++] += bayCost + (baydoors * 1000);
+        costs[costIdx++] += bayCost + (baydoors * 1000L);
+        costs[costIdx++] = quartersCost;
 
         // Weapons and Equipment
         // HPG
@@ -1219,9 +2118,73 @@ public class Jumpship extends Aero {
 
         costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
         cost = Math.round(cost * weightMultiplier);
-
+        addCostDetails(cost, costs);
         return cost;
 
+    }
+
+    private void addCostDetails(double cost, double[] costs) {
+        bvText = new StringBuffer();
+        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
+                "Structural Integrity", "Engine", "Engine Control Unit",
+                "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
+                "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
+                "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
+
+        NumberFormat commafy = NumberFormat.getInstance();
+
+        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append(startTable);
+        // find the maximum length of the columns.
+        for (int l = 0; l < left.length; l++) {
+
+            if (l == 20) {
+                getWeaponsAndEquipmentCost(true);
+            } else {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(left[l]);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                if (costs[l] == 0) {
+                    bvText.append("N/A");
+                } else if (costs[l] < 0) {
+                    bvText.append("x ");
+                    bvText.append(commafy.format(-costs[l]));
+                } else {
+                    bvText.append(commafy.format(costs[l]));
+
+                }
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
+        }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Cost:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(commafy.format(cost));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
     }
 
     @Override
@@ -1378,10 +2341,17 @@ public class Jumpship extends Aero {
 
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (this instanceof Warship) {
+        if (!hasStationKeepingDrive()) {
             return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
         return (int) Math.floor(getAccumulatedThrust());
+    }
+    
+    /**
+     * @return Whether this ship has station-keeping drive instead of transit drive.
+     */
+    public boolean hasStationKeepingDrive() {
+        return walkMP == 0;
     }
 
     /**
@@ -1425,6 +2395,35 @@ public class Jumpship extends Aero {
             return Compute.ARC_RIGHTSIDEA_SPHERE;
         default:
             return Integer.MIN_VALUE;
+        }
+    }
+
+    /**
+     * Finds the arc on the opposite side of the ship. Used in BV calculations.
+     * 
+     * @param arc A firing arc constant from <code>Compute</code>
+     * @return    The arc on the opposite side of the ship.
+     */
+    public int getOppositeArc(int arc) {
+        switch (arc) {
+            case Compute.ARC_NOSE:
+                return Compute.ARC_AFT;
+            case Compute.ARC_LEFTSIDE_SPHERE:
+                return Compute.ARC_RIGHTSIDEA_SPHERE;
+            case Compute.ARC_RIGHTSIDE_SPHERE:
+                return Compute.ARC_LEFTSIDEA_SPHERE;
+            case Compute.ARC_LEFTSIDEA_SPHERE:
+                return Compute.ARC_RIGHTSIDE_SPHERE;
+            case Compute.ARC_RIGHTSIDEA_SPHERE:
+                return Compute.ARC_LEFTSIDE_SPHERE;
+            case Compute.ARC_LEFT_BROADSIDE:
+                return Compute.ARC_RIGHT_BROADSIDE;
+            case Compute.ARC_RIGHT_BROADSIDE:
+                return Compute.ARC_LEFT_BROADSIDE;
+            case Compute.ARC_AFT:
+                return Compute.ARC_NOSE;
+            default:
+                return Integer.MIN_VALUE;
         }
     }
 
@@ -1525,17 +2524,23 @@ public class Jumpship extends Aero {
     public boolean isFighter() {
         return false;
     }
+    
+    @Override
+    public boolean isPrimitive() {
+        return getDriveCoreType() == DRIVE_CORE_PRIMITIVE;
+    }
 
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP;
     }
 
-    /**
+    /*
      * Do not recalculate walkMP when adding engine.
      */
     @Override
     protected int calculateWalk() {
     	return walkMP;
     }
+    
 }

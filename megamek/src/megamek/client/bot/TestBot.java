@@ -227,7 +227,7 @@ public class TestBot extends BotClient {
                     lance.evolve();
                     min = lance.getResult();
                     old_moves = lance;
-                } else if ((possible.get(0) != null)
+                } else if (possible.size() > 0 && (possible.get(0) != null)
                            && (possible.get(0).length > 0)) {
                     min = possible.get(0)[0];
                 }
@@ -435,8 +435,7 @@ public class TestBot extends BotClient {
                            + move_array.length + " moves");
         for (MoveOption option : move_array) {
             option.setState();
-            boolean aptPiloting = option.getEntity().getCrew().getOptions()
-                                        .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+            boolean aptPiloting = option.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
             for (int e = 0; e < enemies.size(); e++) { // for each enemy
                 Entity en = enemies.get(e);
 
@@ -900,8 +899,7 @@ public class TestBot extends BotClient {
                                         enemy_option, modifiers[1],
                                         modifiers[MoveOption.DEFENCE_PC]);
                             } else {
-                                boolean enemyAptGunnery = enemy.getEntity().getCrew().getOptions()
-                                                               .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+                                boolean enemyAptGunnery = enemy.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
                                 max_threat = .8 * enemy
                                         .getModifiedDamage(
                                                 (modifiers[MoveOption.DEFENCE_PC] == 1) ? CEntity.TT
@@ -1133,9 +1131,8 @@ public class TestBot extends BotClient {
         WeaponAttackAction wep_test;
         WeaponType spinner;
         AttackOption a = null;
-        AttackOption max = new AttackOption(null, null, 0, null, 1, en.getCrew().getOptions()
-                                                                      .booleanOption(
-                                                                              OptionsConstants.PILOT_APTITUDE_GUNNERY));
+        AttackOption max = new AttackOption(null, null, 0, null, 1, 
+                en.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
         for (Entity e : ents) {
             CEntity enemy = centities.get(e);
             // long entry = System.currentTimeMillis();
@@ -1191,7 +1188,7 @@ public class TestBot extends BotClient {
                 }
 
                 a = new AttackOption(enemy, mw, expectedDmg, th, starg_mod,
-                                     en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY));
+                                     en.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
                 if (a.value > max.value) {
                     if (best_only) {
                         max = a;
@@ -1207,9 +1204,7 @@ public class TestBot extends BotClient {
             result.add(max);
         }
         if (result.size() > 0) {
-            result.add(new AttackOption(null, mw, 0, null, 1, en.getCrew().getOptions()
-                                                                .booleanOption(OptionsConstants
-                                                                                       .PILOT_APTITUDE_GUNNERY)));
+            result.add(new AttackOption(null, mw, 0, null, 1, en.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY)));
         }
         return result;
     }
@@ -2198,8 +2193,7 @@ public class TestBot extends BotClient {
                     // Get the weapon
 
                     Mounted test_weapon = current_option.weapon;
-                    boolean aptGunnery = current_option.target.getEntity().getCrew().getOptions()
-                                                              .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+                    boolean aptGunnery = current_option.target.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
 
                     // If the weapon is not LBX cannon or LBX cannon loaded with
                     // slug

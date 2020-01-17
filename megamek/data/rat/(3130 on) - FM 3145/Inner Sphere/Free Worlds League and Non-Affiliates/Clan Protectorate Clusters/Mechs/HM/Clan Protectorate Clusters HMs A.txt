@@ -9,4 +9,4 @@ Scourge SCG-WF1,5
 Pandarus LFA-1A,4
 Guillotine IIC 2,3
 Rifleman IIC 8,2
-Wendigo (Prime),1
+Mad Cat Mk IV (Savage Wolf) (Prime),1

@@ -39,10 +39,10 @@ public class CLSRM2IOS extends SRMWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 0.25f;
+        tonnage = 0.25;
         criticals = 1;
         bv = 4;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 8000;
         shortAV = 2;
         maxRange = RANGE_SHORT;

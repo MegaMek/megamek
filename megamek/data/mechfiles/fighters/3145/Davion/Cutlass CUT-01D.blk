@@ -1,9 +1,9 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,42 +20,32 @@ Cutlass
 CUT-01D
 </Model>
 
-<Tonnage>
-70
-</Tonnage>
+<year>
+3102
+</year>
+
+<originalBuildYear>
+3102
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<Armor>
-71
-54
-54
-53
-</Armor>
-
-<Nose Equipment>
-ISGaussRifle
-ISERLargeLaser
-ISGuardianECMSuite
-ISBeagleActiveProbe
-ISGaussRifle Ammo
-ISGaussRifle Ammo
-</Nose Equipment>
-
-<Left Wing Equipment> 
-ISERMediumLaser
-ISERMediumLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISERMediumLaser
-ISERMediumLaser
-</Right Wing Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 12
@@ -69,38 +59,58 @@ ISERMediumLaser
 400
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-3102
-</year>
-
-<source>
-TRO 3145 Federated Suns - Late Republic
-</source>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 3
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+71
+54
+54
+53
+</armor>
 
-<history>
-</history>
+<Nose Equipment>
+ISGaussRifle
+ISERLargeLaser
+ISGuardianECMSuite
+BeagleActiveProbe
+</Nose Equipment>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Left Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Gauss Ammo
+IS Gauss Ammo
+</Fuselage Equipment>
+
+<source>
+TRO 3145 Federated Suns - Late Republic
+</source>
+
+<tonnage>
+70.0
+</tonnage>
 

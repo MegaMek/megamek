@@ -1,0 +1,109 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Vendetta Medium Fighter
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2328
+</year>
+
+<originalBuildYear>
+2328
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+3
+</cockpit_type>
+
+<heatsinks>
+15
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+15
+15
+15
+10
+</armor>
+
+<Nose Equipment>
+Large Laser
+Small Laser
+Advanced Fire Control
+</Nose Equipment>
+
+<Left Wing Equipment>
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
+<source>
+XTRO Prim III - Age of War
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

@@ -24,6 +24,10 @@ CMT-6T
 3079
 </year>
 
+<originalBuildYear>
+3079
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,10 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
 
 <SafeThrust>
 6
@@ -92,13 +100,15 @@ ISSmallVSPLaser
 
 <Aft Equipment>
 ISAntiMissileSystem
-ISAMS Ammo
-ISCASE
 </Aft Equipment>
 
-<transporters>
-troopspace:4
-</transporters>
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISAMS Ammo
+ISCASE
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Jihad

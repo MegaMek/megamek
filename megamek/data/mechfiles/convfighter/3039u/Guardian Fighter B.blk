@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,20 +20,55 @@ Guardian Fighter
 B
 </Model>
 
-<Tonnage>
-20
-</Tonnage>
+<year>
+3012
+</year>
+
+<originalBuildYear>
+3012
+</originalBuildYear>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+3
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
 6
 3
 3
 4
-</Armor>
+</armor>
 
 <Nose Equipment>
 Medium Laser
@@ -48,47 +83,17 @@ Medium Laser
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-3
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-320
-</fuel>
-
-<type>
-IS Level 1
-</type>
-
-<year>
-3012
-</year>
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+20.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-1
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<vstol>
-
-1
-</vstol>

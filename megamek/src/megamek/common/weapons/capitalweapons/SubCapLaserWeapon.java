@@ -33,7 +33,7 @@ public abstract class SubCapLaserWeapon extends EnergyWeapon {
         atClass = CLASS_CAPITAL_LASER;
         capital = true;
         subCapital = true;
-        flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY);
+        flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY).andNot(F_PROTO_WEAPON);;
 
     }
     

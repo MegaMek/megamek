@@ -94,6 +94,7 @@ import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.Targetable;
 import megamek.common.WeaponOrderHandler;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -131,6 +132,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
     public static final String VIEW_LOS_SETTING = "viewLOSSetting"; //$NON-NLS-1$
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
+    public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_OUT = "viewZoomOut"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$
@@ -152,6 +154,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private CommonAboutDialog about;
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
+    private AccessibilityWindow aw;
     private String helpFileName = 
             SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
                                                           Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
@@ -423,6 +426,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         bv.addDisplayable(cb2);
         bv.addKeyListener(cb2);
         uo = new UnitOverview(this);
+        aw = new AccessibilityWindow(cb, this);
+        aw.setLocation(0, 0);
+        aw.addWindowListener(this);
+        aw.setSize(300, 300);
         bv.addDisplayable(uo);
         int x;
         int y;
@@ -603,7 +610,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } catch (MalformedURLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR", 
                     JOptionPane.ERROR_MESSAGE);
-            DefaultMmLogger.getInstance().log(getClass(), "showSkinningHowTo", e);
+            DefaultMmLogger.getInstance().error(getClass(), "showSkinningHowTo", e);
         }
     }
 
@@ -767,6 +774,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             replacePlayer();
         } else if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
             toggleDisplay();
+        } else if (event.getActionCommand().equals(VIEW_ACCESSIBILITY_WINDOW)) {
+            toggleAccessibilityWindow();
         } else if (event.getActionCommand().equals(VIEW_MINI_MAP)) {
             toggleMap();
         } else if (event.getActionCommand().equals(VIEW_UNIT_OVERVIEW)) {
@@ -1288,6 +1297,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private void toggleDisplay() {
         mechW.setVisible(!mechW.isVisible());
         if (mechW.isVisible()) {
+            frame.requestFocus();
+        }
+    }
+    
+    /**
+     * Toggles the accessibility window
+     */
+    private void toggleAccessibilityWindow() {
+        aw.setVisible(!aw.isVisible());
+        if (aw.isVisible()) {
             frame.requestFocus();
         }
     }
@@ -2110,7 +2129,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     }
                     break;
                 case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
-                    List<String> targetDescriptions = evt.getTelemissileTargetDescriptions();
+                    List<Integer> targetIds = evt.getTelemissileTargetIds();
+                    List<Integer> toHitValues = evt.getTmToHitValues();
+                    List<String> targetDescriptions = new ArrayList<String>();
+                    for (int i = 0; i < targetIds.size(); i++) {
+                        int id = targetIds.get(i);
+                        int th = toHitValues.get(i);
+                        Entity tgt = client.getGame().getEntity(id);
+                        if (tgt != null) {
+                            targetDescriptions.add(String.format(Messages.getString("TeleMissileTargetDialog.target"), tgt.getDisplayName(), th));
+                        }
+                    }
                     //Set up the selection pane
                     String i18nString = "TeleMissileTargetDialog.message"; //$NON-NLS-1$;
                     msg = Messages.getString(i18nString);
@@ -2130,6 +2159,38 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         //If input IS null, as in the case of pressing the close or cancel buttons...
                         //Just pick the first target in the list, or server will be left waiting indefinitely.
                         client.sendTelemissileTargetCFRResponse(0);
+                    }
+                case Packet.COMMAND_CFR_TAG_TARGET:
+                    List<Integer> TAGTargets = evt.getTAGTargets();
+                    List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
+                    List<String> TAGTargetDescriptions = new ArrayList<String>();
+                    for (int i = 0; i < TAGTargets.size(); i++) {
+                        int id = TAGTargets.get(i);
+                        int nType = TAGTargetTypes.get(i);
+                        Targetable tgt = client.getGame().getTarget(nType, id);
+                        if (tgt != null) {
+                            TAGTargetDescriptions.add(tgt.getDisplayName());
+                        }
+                    }
+                    //Set up the selection pane
+                    i18nString = "TAGTargetDialog.message"; //$NON-NLS-1$;
+                    msg = Messages.getString(i18nString);
+                    i18nString = "TAGTargetDialog.title"; //$NON-NLS-1$
+                    title = Messages.getString(i18nString);
+                    input = (String) JOptionPane.showInputDialog(frame, msg,
+                            title, JOptionPane.QUESTION_MESSAGE, null,
+                            TAGTargetDescriptions.toArray(), TAGTargetDescriptions.get(0));
+                    if (input != null) {
+                        for (int i = 0; i < TAGTargetDescriptions.size(); i++) {
+                            if (input.equals(TAGTargetDescriptions.get(i))) {
+                                client.sendTAGTargetCFRResponse(i);
+                                break;
+                            }
+                        }
+                    } else {
+                        //If input IS null, as in the case of pressing the close or cancel buttons...
+                        //Just pick the first target in the list, or server will be left waiting indefinitely.
+                        client.sendTAGTargetCFRResponse(0);
                     }
             }
         }

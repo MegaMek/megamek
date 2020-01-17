@@ -32,16 +32,16 @@ RTC Armor:12
 
 Weapons:12
 Large Pulse Laser, Left Arm
-Medium Pulse Laser, Right Torso
-Small Pulse Laser, Left Arm
-ER Medium Laser, Right Torso
-Medium Pulse Laser, Right Torso
 Medium Pulse Laser, Left Arm
+Small Pulse Laser, Left Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
 ER Medium Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+ER Medium Laser, Right Torso
 Medium Pulse Laser, Center Torso
-Medium Pulse Laser, Left Torso
 Flamer, Center Torso
-Medium Pulse Laser, Left Torso
 Small Laser, Head
 
 Left Arm:
@@ -78,13 +78,13 @@ Fusion Engine
 Fusion Engine
 ISMediumPulseLaser
 ISMediumPulseLaser
-ISERMediumLaser
+ISERMediumLaser (R)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
-TSM
-TSM
-TSM
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
 
 Right Torso:
 Fusion Engine
@@ -92,13 +92,13 @@ Fusion Engine
 Fusion Engine
 ISMediumPulseLaser
 ISMediumPulseLaser
-ISERMediumLaser
+ISERMediumLaser (R)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
-TSM
-TSM
-TSM
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
 
 Center Torso:
 Fusion Engine

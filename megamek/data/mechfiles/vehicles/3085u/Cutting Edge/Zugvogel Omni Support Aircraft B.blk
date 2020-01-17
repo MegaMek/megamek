@@ -24,6 +24,10 @@ B
 3086
 </year>
 
+<originalBuildYear>
+3086
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -33,7 +37,8 @@ Aerodyne
 </motion_type>
 
 <transporters>
-troopspace:4.0
+lightvehiclebay:1.0:1:1:omni
+troopspace:4.0:omni
 </transporters>
 
 <SafeThrust>
@@ -89,7 +94,7 @@ Searchlight:OMNI
 </Wings Equipment>
 
 <Body Equipment>
-MASH core component:OMNI
+MASH Core Component:OMNI
 MASH Operation Theater:OMNI
 MASH Operation Theater:OMNI
 MASH Operation Theater:OMNI
@@ -104,10 +109,11 @@ Paramedic Equipment:OMNI
 Paramedic Equipment:OMNI
 Paramedic Equipment:OMNI
 FieldKitchen:OMNI
-ISCASE:OMNI
-Advanced Fire Control
+ISCASE
 Armored Chassis
 STOLChassisMod
+OmniChassisMod
+Advanced Fire Control
 </Body Equipment>
 
 <barrating>
@@ -125,4 +131,8 @@ TRO 3085
 <tonnage>
 200.0
 </tonnage>
+
+<baseChassisFireConWeight>
+5.5
+</baseChassisFireConWeight>
 

@@ -14,7 +14,9 @@
 package megamek.client.bot.princess;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.common.Coords;
@@ -101,15 +103,15 @@ public class BotGeometry {
      * Coords stores x and y values. Since these are hexes, coordinates with odd x
      * values are a half-hex down. Directions work clockwise around the hex,
      * starting with zero at the top.
-     * -y
-     * 0
-     * _____
-     * 5 /     \ 1
+     *        -y
+     *        0
+     *      _____
+     *   5 /     \ 1
      * -x /       \ +x
-     * \       /
-     * 4 \_____/ 2
-     * 3
-     * +y
+     *    \       /
+     *   4 \_____/ 2
+     *        3
+     *        +y
      * ------------------------------
      * Direction is stored as above, but the meaning of 'intercept' depends
      * on the direction.  For directions 0,3, intercept means the y=0 intercept
@@ -239,7 +241,7 @@ public class BotGeometry {
                 if (getDirection() == 2) {
                     return h.getIntersection(this);
                 }
-                if (getDirection() == 0) {
+                if (getDirection() == 0 || getDirection() == 3) {
                     return new Coords(getIntercept(), h.getYfromX(getIntercept()));
                 }
                 //direction must be 1 here, and h.direction=2
@@ -392,7 +394,7 @@ public class BotGeometry {
             try {
                 while (cfit.hasNext()) {
                     CoordFacingCombo cf = cfit.next();
-                    if(cf != null) {
+                    if(cf != null && owner.getGame().getBoard().contains(cf.coords)) {
                         expandToInclude(cf.getCoords());
                     }
                 }
@@ -405,7 +407,7 @@ public class BotGeometry {
          * returns true if a point is inside the area
          * false if it is not
          */
-        boolean contains(Coords c) {
+        public boolean contains(Coords c) {
             final String METHOD_NAME = "contains(Coords)";
             owner.methodBegin(getClass(), METHOD_NAME);
 
@@ -448,7 +450,7 @@ public class BotGeometry {
         /**
          * Returns a vertex, with zero starting at the upper left of the hex
          */
-        Coords getVertexNum(int i) {
+        public Coords getVertexNum(int i) {
             final String METHOD_NAME = "getVertexNum(int)";
             owner.methodBegin(getClass(), METHOD_NAME);
 
@@ -505,7 +507,7 @@ public class BotGeometry {
             }
         }
 
-        HexLine[] getEdges() {
+        public HexLine[] getEdges() {
             EDGES_LOCK.readLock().lock();
             try {
                 return Arrays.copyOf(edges, edges.length);
@@ -542,6 +544,36 @@ public class BotGeometry {
         }
     }
 
+    /**
+     * Gets all hexes that form a larger hex around the given coordinates with the given "radius".
+     * @param coords The coordinates around which we want to draw the donut
+     * @param radius The donut's radius. 0 returns a single hex.
+     * @return
+     */
+    public static Set<Coords> getHexDonut(Coords coords, int radius) { 
+        Set<Coords> retval = new HashSet<>();
+        
+        // algorithm outline: travel to the southwest a number of hexes equal to the radius
+        // then, "draw" the hex sides in sequence, moving north first to draw the west side, 
+        // then rotating clockwise and moving northeast to draw the northwest side and so on, until we circle around. 
+        // the length of a hex side is equivalent to the radius
+        Coords currentHex = coords.translated(4, radius);
+        retval.add(currentHex);
+        
+        if(radius == 0) {
+            return retval;
+        }
+        
+        for(int direction = 0; direction < 6; direction++) {
+            for(int translation = 0; translation < radius; translation++) {
+                currentHex = currentHex.translated(direction);
+                retval.add(currentHex);
+            }
+        }
+        
+        return retval;
+    }
+    
     /**
      * runs a series of self tests to make sure geometry is done correctly
      */

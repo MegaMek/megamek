@@ -36,6 +36,7 @@ public class MassDriverHeavy extends MassDriverWeapon {
         this.name = "Mass Driver (Heavy)";
         this.setInternalName(this.name);
         this.addLookupName("HeavyMassDriver");
+        this.shortName = "Heavy Mass Driver";
         this.heat = 90;
         this.damage = 140;
         this.ammoType = AmmoType.T_HMASS;
@@ -43,7 +44,7 @@ public class MassDriverHeavy extends MassDriverWeapon {
         this.mediumRange = 24;
         this.longRange = 40;
         this.tonnage = 100000;
-        this.bv = 0;
+        this.bv = 16464;
         this.cost = 500000000;
         this.shortAV = 140;
         this.medAV = 140;

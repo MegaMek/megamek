@@ -17,12 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.KrakenTHandler;
-import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -42,6 +36,10 @@ public class CapMissTeleKrakenWeapon extends CapitalMissileWeapon {
         this.setInternalName(this.name);
         this.addLookupName("KrakenT");
         this.addLookupName("Kraken T");
+        this.shortName = "Kraken T";
+        String[] modeStrings = { "Normal", "Tele-Operated" };
+        setModes(modeStrings);
+        setInstantModeSwitch(false);
         this.heat = 50;
         this.damage = 10;
         this.ammoType = AmmoType.T_KRAKEN_T;
@@ -49,7 +47,7 @@ public class CapMissTeleKrakenWeapon extends CapitalMissileWeapon {
         this.mediumRange = 22;
         this.longRange = 34;
         this.extremeRange = 46;
-        this.tonnage = 220.0f;
+        this.tonnage = 220.0;
         this.bv = 2306;
         this.cost = 500000;
         this.flags = flags.or(F_MISSILE);
@@ -70,19 +68,5 @@ public class CapMissTeleKrakenWeapon extends CapitalMissileWeapon {
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_CS,F_DC)
             .setProductionFactions(F_DC);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
-     * megamek.server.Server)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new KrakenTHandler(toHit, waa, game, server);
     }
 }

@@ -17,12 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PiranhaHandler;
-import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -41,6 +35,7 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         name = "Sub-Capital Missile Launcher (Piranha)";
         setInternalName(name);
         addLookupName("Piranha");
+        this.shortName = "Piranha";
         heat = 9;
         damage = 3;
         ammoType = AmmoType.T_PIRANHA;
@@ -48,16 +43,16 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        tonnage = 100.0f;
+        tonnage = 100.0;
         bv = 670;
         cost = 75000;
-        this.flags = flags.or(F_MISSILE);
         shortAV = 3;
         medAV = 3;
         longAV = 3;
         this.missileArmor = 30;
         maxRange = RANGE_LONG;
         flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
+        this.atClass = CLASS_CAPITAL_MISSILE;
         rulesRefs = "345,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
             .setIntroLevel(false)
@@ -70,18 +65,5 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
             .setISApproximate(true, false, false, false, false)
             .setPrototypeFactions(F_WB)
             .setProductionFactions(F_WB);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new PiranhaHandler(toHit, waa, game, server);
     }
 }

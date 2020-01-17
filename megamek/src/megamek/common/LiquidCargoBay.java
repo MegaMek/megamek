@@ -107,4 +107,10 @@ public final class LiquidCargoBay extends Bay {
         return true;
     }
 
+    @Override
+    public long getCost() {
+        // Based on the weight of the equipment (not capacity), rounded up to the whole ton
+        return 100L * (long) Math.ceil(getWeight());
+    }
+
 }

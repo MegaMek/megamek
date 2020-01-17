@@ -4,6 +4,7 @@ Name=The Ice Storm
 Description=A Clan Ice Hellion Trinary faces a Binary of heavier units from Clan Fire Mandrill
 BoardWidth=3
 BoardHeight=2
+RandomDirs=MapSet2,MapSet3,MapSet4,MapSet5,MapSet6,MapSet7
 Maps=RANDOM
 Factions=Hellion,Mandrill
 Location_Hellion=W

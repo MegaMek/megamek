@@ -50,9 +50,10 @@ public abstract class InfantryWeapon extends Weapon {
         longRange = 0;
         extremeRange = 0;
         heat = 0;
-        tonnage = 0.0f;
+        tonnage = 0.0;
         criticals = 0;
         tankslots = 0;
+        svslots = 1;
         infantryDamage = 0;
         crew = 1;
         infantryRange = 0;
@@ -69,6 +70,30 @@ public abstract class InfantryWeapon extends Weapon {
 
     public int getCrew() {
         return crew;
+    }
+    
+    /**
+     * The long range of this weapon type. Infantry weapons calculate ranges based on the "infantry range" value rather than
+     * explicit short/long/medium ranges
+     */
+    @Override
+    public int getLongRange() {
+        if (longRange == 0) {
+            return infantryRange * 3;
+        }
+        return longRange;
+    }
+
+    /**
+     * The extreme range of this weapon type. Infantry weapons calculate ranges based on the "infantry range" value rather than
+     * explicit short/long/medium ranges
+     */
+    @Override
+    public int getExtremeRange() {
+        if (extremeRange == 0) {
+            return infantryRange * 4;
+        }
+        return extremeRange;
     }
 
     /*

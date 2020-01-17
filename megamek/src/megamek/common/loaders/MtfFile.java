@@ -24,7 +24,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.EnumMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -33,6 +35,7 @@ import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
+import megamek.common.EntityFluff;
 import megamek.common.EquipmentType;
 import megamek.common.LandAirMech;
 import megamek.common.LocationFullException;
@@ -88,6 +91,11 @@ public class MtfFile implements IMechLoader {
     String deployment = "";
     String overview = "";
     String history = "";
+    String manufacturer = "";
+    String primaryFactory = "";
+    Map<EntityFluff.System, String> systemManufacturers = new EnumMap<>(EntityFluff.System.class);
+    Map<EntityFluff.System, String> systemModels = new EnumMap<>(EntityFluff.System.class);
+    String notes = "";
     String imagePath = "";
 
     int bv = 0;
@@ -533,6 +541,11 @@ public class MtfFile implements IMechLoader {
             mech.getFluff().setOverview(overview);
             mech.getFluff().setDeployment(deployment);
             mech.getFluff().setHistory(history);
+            mech.getFluff().setManufacturer(manufacturer);
+            mech.getFluff().setPrimaryFactory(primaryFactory);
+            mech.getFluff().setNotes(notes);
+            systemManufacturers.forEach((k, v) -> mech.getFluff().setSystemManufacturer(k, v));
+            systemModels.forEach((k, v) -> mech.getFluff().setSystemModel(k, v));
             mech.getFluff().setMMLImagePath(imagePath);
 
             mech.setArmorTonnage(mech.getArmorWeight());
@@ -1041,6 +1054,44 @@ public class MtfFile implements IMechLoader {
         
         if (line.trim().toLowerCase().startsWith("history:")) {
             history = line.substring("history:".length());
+            return true;
+        }
+
+        if (line.trim().toLowerCase().startsWith("manufacturer:")) {
+        	manufacturer = line.substring("manufacturer:".length());
+        	return true;
+        }
+
+        if (line.trim().toLowerCase().startsWith("primaryfactory:")) {
+        	primaryFactory = line.substring("primaryfactory:".length());
+        	return true;
+        }
+
+        if (line.toLowerCase().startsWith("systemmanufacturer:")) {
+        	String[] fields = line.split(":");
+        	if (fields.length > 2) {
+        		EntityFluff.System system = EntityFluff.System.parse(fields[1]);
+        		if (null != system) {
+        			systemManufacturers.put(system, fields[2].trim());
+        		}
+        	}
+        	return true;
+        }
+
+        if (line.toLowerCase().startsWith("systemmodel:")) {
+        	String[] fields = line.split(":");
+        	if (fields.length > 2) {
+        		EntityFluff.System system = EntityFluff.System.parse(fields[1]);
+        		if (null != system) {
+        			systemModels.put(system, fields[2].trim());
+        		}
+        	}
+        	return true;
+        }
+
+
+        if (line.trim().toLowerCase().startsWith("notes:")) {
+            notes = line.substring("notes:".length());
             return true;
         }
 

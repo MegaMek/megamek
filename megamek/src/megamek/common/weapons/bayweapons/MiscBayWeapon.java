@@ -16,6 +16,8 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.EquipmentTypeLookup;
+
 /**
  * @author Jay Lawson
  */
@@ -32,14 +34,14 @@ public class MiscBayWeapon extends BayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "Misc Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.MISC_BAY);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 0;
         this.mediumRange = 0;
         this.longRange = 0;
         this.extremeRange = 0;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_NONE;

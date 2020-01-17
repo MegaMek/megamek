@@ -85,34 +85,29 @@ CLERPPC:OMNI
 
 <Left Wing Equipment>
 CLLBXAC2:OMNI
-Clan LB 2-X Cluster Ammo:OMNI
 CLLargePulseLaser:OMNI
 CLLargePulseLaser:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLLBXAC2:OMNI
-Clan LB 2-X Cluster Ammo:OMNI
 CLLargePulseLaser:OMNI
 CLLargePulseLaser:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 CLERSmallLaser:OMNI
 CLERLargeLaser:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan LB 2-X Cluster Ammo:OMNI
+Clan LB 2-X Cluster Ammo:OMNI
+CLCASE
+</Fuselage Equipment>
 
 <source>
 TRO 3055u - Succession Wars

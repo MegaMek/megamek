@@ -40,6 +40,7 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 50;
 		bv = 0.92;
+		tonnage = .0006;
 		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
 		infantryDamage = 0.30;
 		infantryRange = 1;

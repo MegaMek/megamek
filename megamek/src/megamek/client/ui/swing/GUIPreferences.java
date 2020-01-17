@@ -181,6 +181,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_MAPHEX_POPUP = "ShowMapHexPopup";
     public static final String SHOW_WPS_IN_TT = "ShowWpsinTT";
     public static final String SHOW_ARMOR_MINIVIS_TT = "showArmorMiniVisTT";
+    public static final String SHOW_PILOT_PORTRAIT_TT = "showPilotPortraitTT";
     public static final String SHOW_MOVE_STEP = "ShowMoveStep";
     public static final String SHOW_WRECKS = "ShowWrecks";
     public static final String SOUND_BING_FILENAME = "SoundBingFilename";
@@ -363,6 +364,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_MAPSHEETS, false);
         store.setDefault(SHOW_WPS_IN_TT, false);
         store.setDefault(SHOW_ARMOR_MINIVIS_TT, false);
+        store.setDefault(SHOW_PILOT_PORTRAIT_TT, false);
         store.setDefault(USE_ISOMETRIC, false);
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
@@ -722,6 +724,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getshowArmorMiniVisTT() {
         return store.getBoolean(SHOW_ARMOR_MINIVIS_TT);
+    }
+    
+    public boolean getshowPilotPortraitTT() {
+        return store.getBoolean(SHOW_PILOT_PORTRAIT_TT);
     }
 
     public boolean getShowMoveStep() {
@@ -1095,6 +1101,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setshowArmorMiniVisTT(boolean state) {
         store.setValue(SHOW_ARMOR_MINIVIS_TT, state);
+    }
+    
+    public void setshowPilotPortraitTT(boolean state) {
+        store.setValue(SHOW_PILOT_PORTRAIT_TT, state);
     }
 
     public void setShowMoveStep(boolean state) {

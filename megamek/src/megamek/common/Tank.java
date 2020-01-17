@@ -102,8 +102,13 @@ public class Tank extends Entity {
     private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front",
             "Right", "Left", "Rear", "Rear Turret", "Front Turret" };
 
-    public static float[] BAR_ARMOR_COST_MULT = { 0, 0, 50, 100, 150, 200, 250,
-            300, 400, 500, 625 };
+    @Override
+    public int getUnitType() {
+        EntityMovementMode mm = getMovementMode();
+        return (mm == EntityMovementMode.NAVAL) || (mm == EntityMovementMode.HYDROFOIL) || (mm == EntityMovementMode.SUBMARINE)
+             ? UnitType.NAVAL
+             : UnitType.TANK;
+    }
 
     @Override
     public String[] getLocationAbbrs() {
@@ -133,6 +138,8 @@ public class Tank extends Entity {
     //If there is a cockpit command console, the tank does not suffer the effects of the first commander critical,
     //but the command console benefits are lost as the backup has to take command.
     private boolean usingConsoleCommander = false;
+    /** Vehicles can be constructed with seating for additional crew. This has no effect on play */
+    private int extraCrewSeats = 0;
 
     // set up some vars for what the critical effects would be
     private int potCrit = CRIT_NONE;
@@ -147,14 +154,26 @@ public class Tank extends Entity {
     /**
      * Keeps track of the base weight of the turret for omni tanks.
      */
-    private double baseChassisTurretWeight = -1;
-    private double baseChassisTurret2Weight = -1;
+    public static final int BASE_CHASSIS_TURRET_WT_UNASSIGNED = -1;
+    private double baseChassisTurretWeight = BASE_CHASSIS_TURRET_WT_UNASSIGNED;
+    private double baseChassisTurret2Weight = BASE_CHASSIS_TURRET_WT_UNASSIGNED;
+    private double baseChassisSponsonPintleWeight = BASE_CHASSIS_TURRET_WT_UNASSIGNED;
 
+    /**
+     * Flag to indicate unit is constructed as a trailer. Trailers do not require
+     * control systems or engines unless they are intended for independent operation.
+     */
+    private boolean trailer = false;
     /**
      * Keeps track of whether this vehicle has control systems.  Trailers aren't
      * required to have control systems.
      */
     private boolean hasNoControlSystems = false;
+
+    /**
+     * Alternate fuel for ICEs that affects operating range
+     */
+    private FuelType fuelType = FuelType.PETROCHEMICALS;
 
     public CrewType defaultCrewType() {
         return CrewType.CREW;
@@ -246,11 +265,11 @@ public class Tank extends Entity {
     public int getWalkMP(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
-        if (engineHit) {
+        if (engineHit || isImmobile()) {
             return 0;
         }
         j = Math.max(0, j - motiveDamage);
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions()
                     .getMovementMods(this);
@@ -268,6 +287,26 @@ public class Tank extends Entity {
 
         if (gravity) {
             j = applyGravityEffectsOnMP(j);
+        }
+        
+        //If the unit is towing trailers, adjust its walkMP, TW p205
+        if (!getAllTowedUnits().isEmpty()) {
+            double tractorWeight = getWeight();
+            double trailerWeight = 0;
+            //Add up the trailers
+            for (int id : getAllTowedUnits()) {
+                Entity tr = game.getEntity(id);
+                if (tr == null) {
+                    //this isn't supposed to happen, but it can in rare cases when tr is destroyed
+                    continue;
+                }
+                trailerWeight += tr.getWeight();
+            }
+            if (trailerWeight <= (tractorWeight / 4)) {
+                j = Math.max((j - 3), (j / 2));
+            } else {
+                j = (j / 2);
+            }
         }
 
         return j;
@@ -317,6 +356,11 @@ public class Tank extends Entity {
             return m_bHasNoTurret ? 5 : 6;
         }
         return 7;
+    }
+    
+    @Override
+    public int getBodyLocation() {
+        return LOC_BODY;
     }
 
     @Override
@@ -405,6 +449,17 @@ public class Tank extends Entity {
         usingConsoleCommander = b;
     }
 
+    /**
+     * @return Additional seats beyond the minimum crew requirements
+     */
+    public int getExtraCrewSeats() {
+        return extraCrewSeats;
+    }
+
+    public void setExtraCrewSeats(int seats) {
+        this.extraCrewSeats = seats;
+    }
+
     public boolean isDriverHitPS() {
         return driverHitPS;
     }
@@ -456,7 +511,21 @@ public class Tank extends Entity {
                 && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES)) {
             return super.isImmobile();
         }
+        //Towed trailers need to reference the tractor, or they return Immobile due to 0 MP...
+        //We do run into some double-blind entityList differences though, so include a null check
+        if (isTrailer() && getTractor() != Entity.NONE) {
+            return (game.getEntity(getTractor()) != null ? game.getEntity(getTractor()).isImmobile() : super.isImmobile() || m_bImmobile);
+        }
         return super.isImmobile() || m_bImmobile;
+    }
+    
+    /**
+     * Whether this unit is irreversibly immobilized for the rest of the game.
+     * Tanks have some additional criteria.
+     */
+    @Override
+    public boolean isPermanentlyImmobilized(boolean checkCrew) {
+        return super.isPermanentlyImmobilized(checkCrew) || isMovementHit();
     }
     
     @Override
@@ -646,6 +715,12 @@ public class Tank extends Entity {
     @Override
     public void applyDamage() {
         m_bImmobile |= m_bImmobileHit;
+        //Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
+        if (isTrailer() && getTractor() != Entity.NONE && game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
+            Tank Tractor = (Tank) game.getEntity(getTractor());
+            m_bImmobile = Tractor.m_bImmobile;
+            m_bImmobileHit = Tractor.m_bImmobileHit;
+        }
         super.applyDamage();
     }
 
@@ -736,6 +811,11 @@ public class Tank extends Entity {
     public boolean hasRearArmor(int loc) {
         return false;
     }
+    
+    @Override
+    public int firstArmorIndex() {
+        return LOC_FRONT;
+    }
 
     /**
      * Returns the Compute.ARC that the weapon fires into.
@@ -751,20 +831,7 @@ public class Tank extends Entity {
         }
         // VGLs base arc on their facing
         if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
-            switch (mounted.getFacing()) {
-                case 0:
-                    return Compute.ARC_HEXSIDE_0;
-                case 1:
-                    return Compute.ARC_HEXSIDE_1;
-                case 2:
-                    return Compute.ARC_HEXSIDE_2;
-                case 3:
-                    return Compute.ARC_HEXSIDE_3;
-                case 4:
-                    return Compute.ARC_HEXSIDE_4;
-                case 5:
-                    return Compute.ARC_HEXSIDE_5;
-            }
+            return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
         switch (mounted.getLocation()) {
             case LOC_BODY:
@@ -2046,8 +2113,8 @@ public class Tank extends Entity {
         }
 
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        if (hasAbility(OptionsConstants.MD_VDNI)
+                && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }
 
@@ -2526,6 +2593,9 @@ public class Tank extends Entity {
             if (hasMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 chassisCost *= 1.75;
             }
+            if (hasMisc(MiscType.F_EXTERNAL_POWER_PICKUP)) {
+                chassisCost *= 1.1;
+            }
             if (hasMisc(MiscType.F_HYDROFOIL)) {
                 chassisCost *= 1.1;
             }
@@ -2566,30 +2636,8 @@ public class Tank extends Entity {
         double engineCost = 0.0;
         if(hasEngine()) {
             if (isSupportVehicle()) {
-                engineCost = 5000 * getEngine().getWeightEngine(this);
-                switch (getEngine().getEngineType()) {
-                    case Engine.STEAM:
-                        engineCost *= 0.8;
-                        break;
-                    case Engine.COMBUSTION_ENGINE:
-                        engineCost *= 1.0;
-                        break;
-                    case Engine.BATTERY:
-                        engineCost *= 1.2;
-                        break;
-                    case Engine.FUEL_CELL:
-                        engineCost *= 1.4;
-                        break;
-                    case Engine.SOLAR:
-                        engineCost *= 1.6;
-                        break;
-                    case Engine.FISSION:
-                        engineCost *= 3;
-                        break;
-                    case Engine.NORMAL_ENGINE:
-                        engineCost *= 2;
-                        break;
-                }
+                engineCost = 5000 * getEngine().getWeightEngine(this)
+                        * Engine.getSVCostMultiplier(getEngine().getEngineType());
             } else {
                 engineCost = (getEngine().getBaseCost() *
                         getEngine().getRating() * weight) / 75.0;
@@ -2603,8 +2651,8 @@ public class Tank extends Entity {
             for (int loc = 0; loc < locations(); loc++) {
                 totalArmorPoints += getOArmor(loc);
             }
-            costs[i++] = totalArmorPoints *
-                    BAR_ARMOR_COST_MULT[getBARRating(LOC_BODY)];
+            costs[i++] = totalArmorPoints
+                    * EquipmentType.getSupportVehicleArmorCostPerPoint(getBARRating(firstArmorIndex()));
         } else {
             if (hasPatchworkArmor()) {
                 for (int loc = 0; loc < locations(); loc++) {
@@ -2698,28 +2746,38 @@ public class Tank extends Entity {
 
 
         double multiplier = 1.0;
-        switch (movementMode) {
-            case HOVER:
-            case SUBMARINE:
-                multiplier += weight / 50.0;
-                break;
-            case HYDROFOIL:
-                multiplier += weight / 75.0;
-                break;
-            case NAVAL:
-            case WHEELED:
-                multiplier += weight / 200.0;
-                break;
-            case TRACKED:
-                multiplier += weight / 100.0;
-                break;
-            case VTOL:
-                multiplier += weight / 30.0;
-                break;
-            case WIGE:
-                multiplier += weight / 25.0;
-                break;
-            default:
+        if (isSupportVehicle()
+            && (movementMode.equals(EntityMovementMode.NAVAL)
+                || movementMode.equals(EntityMovementMode.HYDROFOIL)
+                || movementMode.equals(EntityMovementMode.SUBMARINE))) {
+            multiplier += weight / 100000.0;
+        } else {
+            switch (movementMode) {
+                case HOVER:
+                case SUBMARINE:
+                    multiplier += weight / 50.0;
+                    break;
+                case HYDROFOIL:
+                    multiplier += weight / 75.0;
+                    break;
+                case NAVAL:
+                case WHEELED:
+                    multiplier += weight / 200.0;
+                    break;
+                case TRACKED:
+                    multiplier += weight / 100.0;
+                    break;
+                case VTOL:
+                    multiplier += weight / 30.0;
+                    break;
+                case WIGE:
+                    multiplier += weight / 25.0;
+                    break;
+                case RAIL:
+                case MAGLEV:
+                    multiplier += weight / 250.0;
+                    break;
+            }
         }
         cost *= multiplier;
         costs[i++] = -multiplier;
@@ -3184,6 +3242,77 @@ public class Tank extends Entity {
             addTransporter(new ClampMountTank());
         }
     }
+    
+    /**
+     * Adds a trailer hitch to any tracked or wheeled military vehicle, or SupportVee with 
+     * Tractor chassis mod that doesn't already have one
+     */
+    @Override
+    public void addTrailerHitchEquipment() {
+        //If we already have a hitch, don't add a new one
+        if (hasWorkingMisc(MiscType.F_HITCH)) {
+            return;
+        }
+        boolean hitchNeeded = false;
+        //Only support vees designed as Tractors should have a hitch
+        if (isSupportVehicle()) {
+            if (hasWorkingMisc(MiscType.F_TRACTOR_MODIFICATION)) {
+                hitchNeeded = true;
+            }
+        } else {
+            //but all tracked and wheeled military vees should get one
+            if (getMovementMode() == EntityMovementMode.TRACKED || getMovementMode() == EntityMovementMode.WHEELED) {
+                hitchNeeded = true;
+            }
+        }
+        if (hitchNeeded) {
+            //Add hitch to the rear by default
+            if (isSuperHeavy()) {
+                try {
+                    addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), SuperHeavyTank.LOC_REAR);
+               } catch (LocationFullException ex) {
+                   //For vehicles, this shouldn't happen
+               }
+            } else {
+                try {
+                    addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), Tank.LOC_REAR);
+               } catch (LocationFullException ex) {
+                   //ditto
+               }
+            }
+        }
+    }
+    
+    /**
+     * Add a transporter for each trailer hitch the unit is equipped with
+     */
+    public void setTrailerHitches() {
+        if (hasTrailerHitchTransporter()) {
+            return;
+        }
+        boolean rearMounted = false;
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_HITCH)) {
+                if (m.getLocation() == Tank.LOC_REAR || (isSuperHeavy() && m.getLocation() == SuperHeavyTank.LOC_REAR)) {
+                    rearMounted = true;
+                }
+                addTransporter(new TankTrailerHitch(rearMounted));
+            }
+        }
+    }
+    
+    /**
+     * Check to see if the unit has a trailer hitch transporter already
+     * We need this to prevent duplicate transporters being created
+     */
+    protected boolean hasTrailerHitchTransporter() {
+        for (Transporter t : getTransports()) {
+            if (t instanceof TankTrailerHitch) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Tanks can't spot when stunned.
@@ -3191,6 +3320,22 @@ public class Tank extends Entity {
     @Override
     public boolean canSpot() {
         return super.canSpot() && (getStunnedTurns() == 0);
+    }
+    
+    /**
+     * Convenience function that determines if this tank can issue an "unjam weapon" command.
+     * @return True if there are any jammed weapons and the crew isn't stunned
+     */
+    public boolean canUnjamWeapon() {
+        return getJammedWeapons().size() > 0 && getStunnedTurns() <= 0;
+    }
+    
+    /** 
+     * Convenience function that determines if this tank can issue a "clear turret" command.
+     * @return True if there are any jammed turrets and the crew isn't stunned
+     */
+    public boolean canClearTurret() {
+        return (m_bTurretJammed || m_bDualTurretJammed) && getStunnedTurns() <= 0;
     }
 
     public void addJammedWeapon(Mounted weapon) {
@@ -3441,17 +3586,16 @@ public class Tank extends Entity {
         }
         // for ammo, each type of ammo takes one slots, regardless of
         // submunition type
-        Map<String, Boolean> foundAmmo = new HashMap<String, Boolean>();
+        Set<String> foundAmmo = new HashSet<>();
         for (Mounted ammo : getAmmo()) {
             // don't count oneshot ammo
-            if ((ammo.getLocation() == Entity.LOC_NONE)
-                    && (ammo.getBaseShotsLeft() == 1)) {
+            if (ammo.isOneShotAmmo()) {
                 continue;
             }
             AmmoType at = (AmmoType) ammo.getType();
-            if (foundAmmo.get(at.getAmmoType() + ":" + at.getRackSize()) == null) {
+            if (!foundAmmo.contains(at.getAmmoType() + ":" + at.getRackSize())) {
                 usedSlots++;
-                foundAmmo.put(at.getAmmoType() + ":" + at.getRackSize(), true);
+                foundAmmo.add(at.getAmmoType() + ":" + at.getRackSize());
             }
         }
         // if a tank has an infantry bay, add 1 slots (multiple bays take 1 slot
@@ -3474,6 +3618,7 @@ public class Tank extends Entity {
                 usedSlots++;
             }
         }
+        usedSlots += extraCrewSeats;
         // different armor types take different amount of slots
         if (!hasPatchworkArmor()) {
             int type = getArmorType(1);
@@ -3492,9 +3637,11 @@ public class Tank extends Entity {
                 case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
                 case EquipmentType.T_ARMOR_REFLECTIVE:
                 case EquipmentType.T_ARMOR_HARDENED:
+                case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
+                case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
                     usedSlots++;
                     break;
-                case EquipmentType.T_ARMOR_STEALTH:
+                case EquipmentType.T_ARMOR_STEALTH_VEHICLE:
                     usedSlots += 2;
                     break;
                 case EquipmentType.T_ARMOR_REACTIVE:
@@ -3507,7 +3654,26 @@ public class Tank extends Entity {
                 default:
                     break;
             }
-
+        } else {
+            for (int loc = 1; loc < locations(); loc++) {
+                switch (getArmorType(loc)) {
+                    case EquipmentType.T_ARMOR_HEAVY_FERRO:
+                        usedSlots += 2;
+                        break;
+                    case EquipmentType.T_ARMOR_FERRO_FIBROUS:
+                    case EquipmentType.T_ARMOR_LIGHT_FERRO:
+                    case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                    case EquipmentType.T_ARMOR_REFLECTIVE:
+                    case EquipmentType.T_ARMOR_STEALTH_VEHICLE:
+                    case EquipmentType.T_ARMOR_REACTIVE:
+                    case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
+                    case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
+                        usedSlots++;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         return availableSlots - usedSlots;
     }
@@ -3893,7 +4059,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgHeavy() {
-        if (((double) getWalkMP() / getOriginalJumpMP()) <= 0.5) {
+        if (((double) getWalkMP() / getOriginalWalkMP()) <= 0.5) {
             return true;
         }
 
@@ -3967,17 +4133,87 @@ public class Tank extends Entity {
         return ((double) totalInoperable / totalWeapons) >= 0.25;
     }
 
-    public boolean isSuperHeavy() {
-        return false;
-    }
-
     /**
-     * Returns a Support units fuel allotment.
-     * 
+     * Returns the mass of the fuel, which is used for calculating operating range.
+     * For combat vehicles this is considered part of the engine weight. For support vehicles it is in
+     * addition to the engine weight.
+     *
      * @return fuel tonnage
      */
     public double getFuelTonnage() {
-        return 0;
+        if (hasEngine()) {
+            // For combat vehicles the fuel tonnage is 10% of the engine.
+            return getEngine().getWeightEngine(this) * 0.1;
+        }
+        return 0.0;
+    }
+
+    /**
+     * Sets the fuel mass for support vehicles. Has no effect on combat vehicles.
+     *
+     * @param fuel The mass of the fuel in tons
+     */
+    public void setFuelTonnage(double fuel) {
+        // do nothing
+    }
+
+    /**
+     * Calculates the operating range of the vehicle based on engine type and fuel mass.
+     * Vehicles that do not require fuel report an operating range of {@code Integer.MAX_VALUE}.
+     *
+     * @return The vehicle's operating range in km
+     */
+    public int operatingRange() {
+        if (getFuelTonnage() <= 0) {
+            return 0;
+        }
+        double fuelUnit = fuelTonnagePer100km();
+        if (fuelUnit > 0) {
+            return (int) (getFuelTonnage() / fuelUnit * 100);
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Calculates fuel mass based on engine type and mass. Engines that do not require allocating
+     * fuel mass return a value of 0.0.
+     *
+     * @return The fuel mass required for every 100 km of vehicle range.
+     */
+    public double fuelTonnagePer100km() {
+        if (!hasEngine()) {
+            return 0.0;
+        }
+        switch (getEngine().getEngineType()) {
+            case Engine.STEAM:
+                return getEngine().getWeightEngine(this) * 0.03;
+            case Engine.COMBUSTION_ENGINE:
+                if (getICEFuelType() == FuelType.PETROCHEMICALS) {
+                    return getEngine().getWeightEngine(this) * 0.01;
+                } else {
+                    return getEngine().getWeightEngine(this) * 0.0125;
+                }
+            case Engine.BATTERY:
+                return getEngine().getWeightEngine(this) * 0.05;
+            case Engine.FUEL_CELL:
+                return getEngine().getWeightEngine(this) * 0.015;
+            default:
+                return 0.0;
+        }
+    }
+
+    /**
+     * The type of fuel for internal combustion engines. This has no meaning for
+     * other engine types.
+     *
+     * @return The ICE fuel type
+     */
+    public FuelType getICEFuelType() {
+        return fuelType;
+    }
+
+    public void setICEFuelType(FuelType fuelType) {
+        this.fuelType = fuelType;
     }
 
     /**
@@ -4018,20 +4254,63 @@ public class Tank extends Entity {
                 && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 
+    /**
+     * Used for omni vehicles, which must set the weight of turrets
+     * the base chassis, limiting the amount of pod space in the turret.
+     *
+     * @return The weight of the primary turret
+     */
     public double getBaseChassisTurretWeight() {
         return baseChassisTurretWeight;
     }
 
+    /**
+     * Sets the fixed weight of the primary turret on a dual-turret omnivehicle.
+     *
+     * @param baseChassisTurretWeight The weight of the turret
+     */
     public void setBaseChassisTurretWeight(double baseChassisTurretWeight) {
         this.baseChassisTurretWeight = baseChassisTurretWeight;
     }
 
+    /**
+     * Used for omni vehicles, which must set the weight of turrets
+     * the base chassis, limiting the amount of pod space in the turret.
+     *
+     * @return The weight of the second turret
+     */
     public double getBaseChassisTurret2Weight() {
         return baseChassisTurret2Weight;
     }
 
+    /**
+     * Sets the fixed weight of the second turret on a dual-turret omnivehicle.
+     *
+     * @param baseChassisTurret2Weight The weight of the turret
+     */
     public void setBaseChassisTurret2Weight(double baseChassisTurret2Weight) {
         this.baseChassisTurret2Weight = baseChassisTurret2Weight;
+    }
+
+    /**
+     * Used for omni vehicles, which must set the weight of sponson or pintle mounts in
+     * the base chassis, limiting the amount of pod space in the turret(s).
+     *
+     * @return The weight of any pintle mounts (small support vee) or sponson mounts
+     *         (combat vee and M/L support vee)
+     */
+    public double getBaseChassisSponsonPintleWeight() {
+        return baseChassisSponsonPintleWeight;
+    }
+
+    /**
+     * Sets the fixed weight of any pintle (small SV) or sponson (CV, M/L SV) turrets
+     * on an omnivehicle.
+     *
+     * @param baseChassisSponsonPintleWeight The weight of the sponson/pintle turrets.
+     */
+    public void setBaseChassisSponsonPintleWeight(double baseChassisSponsonPintleWeight) {
+        this.baseChassisSponsonPintleWeight = baseChassisSponsonPintleWeight;
     }
 
     public boolean hasNoControlSystems() {
@@ -4052,4 +4331,41 @@ public class Tank extends Entity {
     public int getSpriteDrawPriority() {
         return 4;
     }
+    
+    //Specific road/rail train rules
+    
+    /**
+     * Used to determine if this vehicle can be towed by a tractor
+     * 
+     * @return Whether the unit is constructed as a trailer
+     */
+    @Override
+    public boolean isTrailer() {
+        return trailer;
+    }
+
+    /**
+     * Marks whether the tank is constructed as a trailer. This has no effect on
+     * support vehicles, which determine trailer status by the trailer chassis modification.
+     *
+     * @param trailer Whether the tank is constructed as a trailer.
+     */
+    public void setTrailer(boolean trailer) {
+        this.trailer = trailer;
+    }
+    
+    /**
+     * Used to determine if this vehicle can be the engine/tractor 
+     * for a bunch of trailers
+     * 
+     * @return
+     */
+    @Override
+    public boolean isTractor() {
+        if (hasWorkingMisc(MiscType.F_HITCH) && !isTrailer()) {
+            return true;
+        }
+        return false;
+    }
+    
 }

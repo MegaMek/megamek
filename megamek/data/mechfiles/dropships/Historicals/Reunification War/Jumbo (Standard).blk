@@ -38,13 +38,13 @@ Spheroid
 
 <transporters>
 smallcraftbay:2.0:2:1
-cargobay:4400.0:2:3
-cargobay:4400.0:2:4
-steeragequarters:50.0:0
-2ndclassquarters:56.0:0
 crewquarters:301.0:0
 1stclassquarters:90.0:0
-cargobay:1220.0:2:2
+cargobay:4200.0:2:4
+cargobay:4200.0:2:5
+cargobay:1331.0:1:8
+2ndclassquarters:56.0:0
+steeragequarters:50.0:0
 </transporters>
 
 <SafeThrust>
@@ -52,7 +52,7 @@ cargobay:1220.0:2:2
 </SafeThrust>
 
 <heatsinks>
-67
+71
 </heatsinks>
 
 <sink_type>
@@ -113,6 +113,9 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 12
 </structural_integrity>
@@ -130,7 +133,7 @@ H:Reunification War - Age of War
 </designtype>
 
 <crew>
-53
+62
 </crew>
 
 <officers>

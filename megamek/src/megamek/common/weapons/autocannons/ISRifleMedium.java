@@ -47,7 +47,7 @@ public class ISRifleMedium extends RifleWeapon {
         mediumRange = 10;
         longRange = 15;
         extremeRange = 22;
-        tonnage = 5.0f;
+        tonnage = 5.0;
         criticals = 2;
         bv = 51;
         cost = 75750;

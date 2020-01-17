@@ -108,7 +108,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                             entity.addEquipment(mounted, row.bay.getLocation(), row.bay.isRearMounted());
                             row.bay.addAmmoToBay(entity.getEquipmentNum(mounted));
                         } catch (LocationFullException e) {
-                            DefaultMmLogger.getInstance().log(BayMunitionsChoicePanel.class,
+                            DefaultMmLogger.getInstance().error(BayMunitionsChoicePanel.class,
                                     "apply()", e);
                         }
 
@@ -231,7 +231,7 @@ public class BayMunitionsChoicePanel extends JPanel {
         }
         
         private boolean includeMunition(AmmoType atype) {
-            if (!atype.canAeroUse()
+            if (!atype.canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))
                     || (atype.getAmmoType() != at)
                     || (atype.getRackSize() != rackSize)
                     || ((atype.getTechBase() != techBase)
@@ -288,6 +288,24 @@ public class BayMunitionsChoicePanel extends JPanel {
                 return Messages.getString("CustomMechDialog.Artemis"); //$NON-NLS-1$
             }
             
+            // ATM munitions
+            if ((atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
+                    || (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
+                return atype.getDesc();
+            }
+            
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)) {
+                if (atype.getAmmoType() == AmmoType.T_ARROW_IV
+                        || atype.getAmmoType() == AmmoType.T_LONG_TOM
+                        || atype.getAmmoType() == AmmoType.T_SNIPER
+                        || atype.getAmmoType() == AmmoType.T_THUMPER
+                        || atype.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
+                    if (atype.getMunitionType() == AmmoType.M_STANDARD) {
+                        return Messages.getString("CustomMechDialog.StandardMunition"); //$NON-NLS-1$
+                    }
+                    return atype.getShortName(); //$NON-NLS-1$
+                }
+            }
             return Messages.getString("CustomMechDialog.StandardMunition"); //$NON-NLS-1$
         }
         

@@ -42,7 +42,7 @@ asfbay:2.0:2:2
 1stclassquarters:60.0:0
 2ndclassquarters:0.0:0
 crewquarters:168.0:0
-cargobay:844.0:2:3
+cargobay:844.0:2:6
 </transporters>
 
 <SafeThrust>
@@ -142,6 +142,9 @@ Large Laser
 Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 22

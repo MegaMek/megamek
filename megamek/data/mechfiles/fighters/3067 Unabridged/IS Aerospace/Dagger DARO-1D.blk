@@ -24,6 +24,10 @@ DARO-1D
 3068
 </year>
 
+<originalBuildYear>
+3068
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -99,6 +106,12 @@ ISMediumPulseLaser:OMNI
 <Aft Equipment>
 ISGuardianECMSuite:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Jihad

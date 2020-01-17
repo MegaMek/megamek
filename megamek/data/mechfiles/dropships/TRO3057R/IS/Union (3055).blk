@@ -25,7 +25,7 @@ Union
 </year>
 
 <originalBuildYear>
-0
+3055
 </originalBuildYear>
 
 <type>
@@ -133,6 +133,9 @@ Medium Laser
 Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 11

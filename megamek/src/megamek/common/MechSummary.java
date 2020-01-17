@@ -178,45 +178,11 @@ public class MechSummary implements Serializable {
         }
         return Entity.getEntityMajorTypeName(-1);
     }
-
+    
+    // This is here for legacy purposes to not break the API
+    @Deprecated
     public static String determineUnitType(Entity e) {
-        EntityMovementMode mm = e.getMovementMode();
-        if (e instanceof BattleArmor) {
-            return "BattleArmor";
-        } else if (e instanceof Infantry) {
-            return "Infantry";
-        } else if (e instanceof VTOL) { // for now
-            return "VTOL";
-        } else if ((mm == EntityMovementMode.NAVAL)
-                || (mm == EntityMovementMode.HYDROFOIL)
-                || (mm == EntityMovementMode.SUBMARINE)) {
-            return "Naval";
-        } else if (e instanceof GunEmplacement) {
-            return "Gun Emplacement";
-        } else if (e instanceof Tank) {
-            return "Tank";
-        } else if (e instanceof Mech) {
-            return "Mek";
-        } else if (e instanceof Protomech) {
-            return "ProtoMek";
-        } else if (e instanceof SpaceStation) {
-            return "Space Station";
-        } else if (e instanceof Warship) {
-            return "Warship";
-        } else if (e instanceof Jumpship) {
-            return "Jumpship";
-        } else if (e instanceof Dropship) {
-            return "Dropship";
-        } else if (e instanceof SmallCraft) {
-            return "Small Craft";
-        } else if (e instanceof ConvFighter) {
-            return "Conventional Fighter";
-        } else if (e instanceof Aero) {
-            return "Aero";
-        } else {
-            // Hmm...this is not a good case, should throw excep. instead?
-            return "Unknown";
-        }
+        return UnitType.determineUnitType(e);
     }
 
     public File getSourceFile() {

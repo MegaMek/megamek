@@ -38,6 +38,7 @@ public class InfantryPistolDartGunWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 40;
 		bv = 0.01;
+		tonnage = .00065;
 		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.01;
 		infantryRange = 0;

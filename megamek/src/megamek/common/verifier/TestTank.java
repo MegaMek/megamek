@@ -163,7 +163,12 @@ public class TestTank extends TestEntity {
     }
     
     @Override
-    public boolean isJumpship() {
+    public boolean isAdvancedAerospace() {
+        return false;
+    }
+
+    @Override
+    public boolean isProtomech() {
         return false;
     }
 
@@ -177,7 +182,9 @@ public class TestTank extends TestEntity {
             // For non-omnis, count up the weight of eq in the turret
             for (Mounted m : tank.getEquipment()) {
                 if ((m.getLocation() == tank.getLocTurret())
-                        && !(m.getType() instanceof AmmoType)) {
+                        && !(m.getType() instanceof AmmoType)
+                        // Skip any patchwork armor mounts
+                        && (EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
                     weight += m.getType().getTonnage(tank);
                 }
             }
@@ -245,49 +252,6 @@ public class TestTank extends TestEntity {
         }
     }
 
-    private int getTankCountHeatLaserWeapons() {
-        int heat = 0;
-        for (Mounted m : tank.getWeaponList()) {
-            WeaponType wt = (WeaponType) m.getType();
-            if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
-                    || wt.hasFlag(WeaponType.F_PPC)
-                    || wt.hasFlag(WeaponType.F_PLASMA)
-                    || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
-                heat += wt.getHeat();
-            }
-            // laser insulator reduce heat by 1, to a minimum of 1
-            if (wt.hasFlag(WeaponType.F_LASER) && (m.getLinkedBy() != null)
-                    && !m.getLinkedBy().isInoperable()
-                    && m.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-                heat -= 1;
-                if (heat == 0) {
-                    heat++;
-                }
-            }
-
-            if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
-                    MiscType) && m.getLinkedBy().getType().
-                    hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                heat += 5;
-            }
-        }
-        for (Mounted m : tank.getMisc()) {
-            MiscType mtype = (MiscType)m.getType();
-            // mobile HPGs count as energy weapons for construction purposes
-            if (mtype.hasFlag(MiscType.F_MOBILE_HPG)) {
-                heat += 20;
-            }
-            if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                heat += 2;
-            }
-            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
-                heat += 12;
-            }
-        }
-        return heat;
-    }
-
     @Override
     public boolean hasDoubleHeatSinks() {
         // tanks can't have DHS
@@ -296,8 +260,7 @@ public class TestTank extends TestEntity {
 
     @Override
     public int getCountHeatSinks() {
-        float heat = getTankCountHeatLaserWeapons();
-        return Math.round(heat);
+        return heatNeutralHSRequirement();
     }
 
     @Override
@@ -331,6 +294,21 @@ public class TestTank extends TestEntity {
     public String printWeightControls() {
         return StringUtil.makeLength("Controls:", getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightControls()) + "\n";
+    }
+
+    @Override
+    public double getWeightCarryingSpace() {
+        return super.getWeightCarryingSpace() + tank.getExtraCrewSeats() * 0.5;
+    }
+
+    public String printWeightCarryingSpace() {
+        if (tank.getExtraCrewSeats() > 0) {
+            return super.printWeightCarryingSpace()
+                    + StringUtil.makeLength("Combat Seats:", getPrintSize() - 5)
+                    + TestEntity.makeWeightString(tank.getExtraCrewSeats() * 0.5) + "\n";
+        } else {
+            return super.printWeightCarryingSpace();
+        }
     }
 
     public Tank getTank() {
@@ -550,6 +528,10 @@ public class TestTank extends TestEntity {
                 buff.append(mount.getType().getTankslots(tank)).append("\n");
             }
         }
+        if (tank.getExtraCrewSeats() > 0) {
+            buff.append(StringUtil.makeLength("Combat Crew Seats:", 30));
+            buff.append(tank.getExtraCrewSeats()).append("\n");
+        }
         // different armor types take different amount of slots
         int armorSlots = 0;
         if (!tank.hasPatchworkArmor()) {
@@ -747,6 +729,15 @@ public class TestTank extends TestEntity {
                     illegal = true;
                     buff.append("bulldozer must be mounted in unit with tracked or wheeled movement mode\n");
                 }
+            }
+        }
+        
+        for (Mounted m : tank.getWeaponList()) {
+            if ((((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
+                    && ((m.getLocation() == Tank.LOC_TURRET)
+                        || (m.getLocation() == Tank.LOC_TURRET_2))) {
+                buff.append("Improved Heavy Gauss cannot be mounted in a turret.\n");
+                illegal = true;
             }
         }
         

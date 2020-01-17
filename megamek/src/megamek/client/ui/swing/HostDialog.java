@@ -25,8 +25,8 @@ import megamek.common.preference.PreferenceManager;
  */
 public class HostDialog extends JDialog implements ActionListener {
     /**
-     *
-     */
+     *	
+     */			
     private static final long serialVersionUID = -103094006944170081L;
     public String playerName;
     public String serverPass;
@@ -55,13 +55,16 @@ public class HostDialog extends JDialog implements ActionListener {
                 Messages.getString("MegaMek.portL"), SwingConstants.RIGHT); //$NON-NLS-1$
         yourNameF = new JTextField(PreferenceManager.getClientPreferences()
                 .getLastPlayerName(), 16);
+        yourNameL.setLabelFor(yourNameF);
         yourNameF.addActionListener(this);
         serverPassF = new JTextField(PreferenceManager.getClientPreferences()
                 .getLastServerPass(), 16);
+        serverPassL.setLabelFor(serverPassF);
         serverPassF.addActionListener(this);
         portF = new JTextField(PreferenceManager.getClientPreferences()
                 .getLastServerPort()
                 + "", 4); //$NON-NLS-1$
+        portL.setLabelFor(portF);
         portF.addActionListener(this);
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         metaserver = cs.getMetaServerName();
@@ -69,6 +72,7 @@ public class HostDialog extends JDialog implements ActionListener {
                 Messages.getString("MegaMek.metaserverL"), SwingConstants.RIGHT); //$NON-NLS-1$
         metaserverF = new JTextField(metaserver);
         metaserverL.setEnabled(register);
+        metaserverL.setLabelFor(metaserverF);
         metaserverF.setEnabled(register);
         registerC = new JCheckBox(Messages.getString("MegaMek.registerC")); //$NON-NLS-1$
         register = false;

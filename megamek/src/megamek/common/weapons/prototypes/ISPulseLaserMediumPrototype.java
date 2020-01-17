@@ -43,6 +43,7 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
         setInternalName("ISMediumPulseLaserPrototype");
         addLookupName("IS Pulse Med Laser Prototype");
         addLookupName("IS Medium Pulse Laser Prototype");
+        shortName = "Medium Pulse Laser (P)";
         flags = flags.or(F_PROTOTYPE);
         heat = 4;
         damage = 6;
@@ -55,7 +56,7 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
         waterMediumRange = 3;
         waterLongRange = 4;
         waterExtremeRange = 6;
-        tonnage = 2.0f;
+        tonnage = 2.0;
         criticals = 1;
         bv = 48;
         cost = 300000;

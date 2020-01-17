@@ -46,13 +46,13 @@ public class CLProtoMechAC8 extends ProtoMechACWeapon {
         mediumRange = 7;
         longRange = 10;
         extremeRange = 14;
-        tonnage = 5.5f;
+        tonnage = 5.5;
         criticals = 4;
         bv = 66;
         cost = 175000;
-        shortAV = 7;
-        medAV = 7;
-        longAV = 7;
+        shortAV = 8;
+        medAV = 8;
+        longAV = 8;
         maxRange = RANGE_SHORT;
         explosionDamage = damage;
         rulesRefs = "286,TO";
@@ -60,6 +60,6 @@ public class CLProtoMechAC8 extends ProtoMechACWeapon {
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setClanAdvancement(3070, 3073, 3145).setClanApproximate(true, true, false)
             .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

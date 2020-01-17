@@ -43,7 +43,8 @@ public class DiveBombAttack extends Weapon {
         mediumRange = 0;
         longRange = 0;
         extremeRange = 0;
-        tonnage = 0.0f;
+        maxRange = 0;
+        tonnage = 0.0;
         criticals = 0;
         bv = 0;
         cost = 0;

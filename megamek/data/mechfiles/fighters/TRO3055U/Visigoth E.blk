@@ -24,6 +24,10 @@ E
 3072
 </year>
 
+<originalBuildYear>
+3072
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -77,13 +84,6 @@ Aerodyne
 
 <Nose Equipment>
 CLHAG30:OMNI
-HAG/30 Ammo:OMNI
-HAG/30 Ammo:OMNI
-HAG/30 Ammo:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 CLCASE
 </Nose Equipment>
 
@@ -102,6 +102,15 @@ CLERMediumLaser:OMNI
 <Aft Equipment>
 CLTargeting Computer:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Hyper-Assault Gauss Rifle/30 Ammo:OMNI
+Hyper-Assault Gauss Rifle/30 Ammo:OMNI
+Hyper-Assault Gauss Rifle/30 Ammo:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3055u - Jihad

@@ -34,6 +34,7 @@ public class CLLB2XACPrototype extends CLLBXACPrototypeWeapon {
         super();
         name = "Prototype LB 2-X Autocannon";
         setInternalName("CLLBXAC2Prototype");
+        shortName = "LB 2-X (P)";
         heat = 1;
         damage = 2;
         rackSize = 2;
@@ -42,7 +43,7 @@ public class CLLB2XACPrototype extends CLLBXACPrototypeWeapon {
         mediumRange = 18;
         longRange = 27;
         extremeRange = 36;
-        tonnage = 6.0f;
+        tonnage = 6.0;
         criticals = 5;
         bv = 42;
         cost = 150000;

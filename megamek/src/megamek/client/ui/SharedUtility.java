@@ -22,6 +22,7 @@ import megamek.client.Client;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.EjectedCrew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
@@ -38,6 +39,7 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.TeleMissile;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
 import megamek.common.options.OptionsConstants;
@@ -53,7 +55,7 @@ public class SharedUtility {
     public static List<TargetRoll> getPSRList(MovePath md) {
         // certain types of entities, such as airborne aero units, do not require many of the checks
         // carried out in the full PSR Check. So, we call a method that skips most of those.
-        if(md.getEntity().isAirborne()) {
+        if(md.getEntity().isAirborne() && md.getEntity().isAero()) {
             return (List<TargetRoll>) getAeroSpecificPSRList(md, false);
         } else {
             return (List<TargetRoll>) doPSRCheck(md, false);
@@ -130,7 +132,7 @@ public class SharedUtility {
 
             // Check for Ejecting
             if (step.getType() == MoveStepType.EJECT 
-                    && (entity instanceof Mech)) {
+                    && (entity.isFighter())) {
                 rollTarget = Server.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
@@ -332,7 +334,7 @@ public class SharedUtility {
                     && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString(
                         "MovementDisplay.FireMoving",
-                        new Object[] { new Integer(8) }));
+                        new Object[] { Integer.valueOf(8) }));
             }
 
             // check for magma
@@ -703,7 +705,13 @@ public class SharedUtility {
     public static MovePath moveAero(MovePath md, Client client) {
         final Entity entity = md.getEntity();
         final IGame game = entity.getGame();
-        if (!entity.isAero()) {
+        // Don't process further unless the entity belongs in space
+        if (!entity.isAero() && !(entity instanceof EjectedCrew)) {
+            return md;
+        }
+        // Ejected crew/pilots can't move, so just add the inherited move steps and be done with it
+        if (entity instanceof EjectedCrew) {
+            md = addSteps(md, client);
             return md;
         }
         IAero a = (IAero) entity;
@@ -736,14 +744,20 @@ public class SharedUtility {
                 if(game.getBoard().onGround()) {
                     steps = 16;
                 }
-                while(steps > 0) {
+                while(steps > 0 &&
+                        game.getBoard().contains(md.getFinalCoords())) {
                     md.addStep(MoveStepType.FORWARDS);
                     steps--;
                 }
-                if (!game.getBoard().contains(md.getLastStep().getPosition())) {
+                if (!game.getBoard().contains(md.getFinalCoords())) {
                     md.removeLastStep();
                     if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
-                        md.addStep(MoveStepType.RETURN);
+                        //Telemissiles shouldn't get a return option
+                        if (entity instanceof TeleMissile) {
+                            md.addStep(MoveStepType.OFF);
+                        } else {
+                            md.addStep(MoveStepType.RETURN);
+                        }
                     } else {
                         md.addStep(MoveStepType.OFF);
                     }
@@ -853,7 +867,9 @@ public class SharedUtility {
                 // for purposes of bombing
                 en.addPassedThrough(right);
                 en.addPassedThrough(left);
-                client.sendUpdateEntity(en);
+                if(client !=  null) {
+                    client.sendUpdateEntity(en);
+                }
 
                 // if the left is preferred, increment i so next one is skipped
                 if ((leftTonnage < rightTonnage)
@@ -866,7 +882,12 @@ public class SharedUtility {
 
             if(!game.getBoard().contains(c)) {
                 if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
-                    md.addStep(MoveStepType.RETURN);
+                    //Telemissiles shouldn't get a return option
+                    if (en instanceof TeleMissile) {
+                        md.addStep(MoveStepType.OFF);
+                    } else {
+                        md.addStep(MoveStepType.RETURN);
+                    }
                 } else {
                     md.addStep(MoveStepType.OFF);
                 }

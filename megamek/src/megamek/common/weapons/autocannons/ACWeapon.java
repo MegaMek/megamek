@@ -35,6 +35,7 @@ import megamek.common.weapons.ACWeaponHandler;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RapidfireACWeaponHandler;
+import megamek.common.weapons.Weapon;
 import megamek.server.Server;
 
 /**
@@ -78,11 +79,6 @@ public abstract class ACWeapon extends AmmoWeapon {
 
         if (weapon.curMode().equals("Rapid")) {
             RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, server);
-            if (weapon.isKindRapidFire()) {
-                ah.setKindRapidFire(true);
-            } else {
-                ah.setKindRapidFire(false);
-            }
             return ah;
         }
         if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
@@ -144,4 +140,19 @@ public abstract class ACWeapon extends AmmoWeapon {
     public int getBattleForceClass() {
         return BFCLASS_AC;
     }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Modes for allowing standard and light AC rapid fire
+        if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
+            addMode("");
+            addMode(Weapon.MODE_AC_RAPID);
+        } else {
+            removeMode("");
+            removeMode(Weapon.MODE_AC_RAPID);
+        }
+    }
+    
 }

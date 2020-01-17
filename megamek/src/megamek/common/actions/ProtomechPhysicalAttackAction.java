@@ -23,6 +23,7 @@ import megamek.common.ILocationExposureStatus;
 import megamek.common.Infantry;
 import megamek.common.IPlayer;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Protomech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -30,7 +31,7 @@ import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
 
 /**
- * The attacking Protomech makes it's combo physical attack action.
+ * The attacking Protomech makes its combo physical attack action.
  */
 public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
 
@@ -60,6 +61,12 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         } else {
             toReturn = 3;
         }
+        // Protomech weapon (TacOps, p. 337) or quad melee system (IO, p. 67)
+        if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE, MiscType.S_PROTO_QMS)) {
+            toReturn += Math.ceil(entity.getWeight() / 5.0) * 2;
+        } else if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE)) {
+            toReturn += Math.ceil(entity.getWeight() / 5.0);
+        }
         if (((Protomech) entity).isEDPCharged() && (target instanceof Infantry)
                 && !(target instanceof BattleArmor)) {
             toReturn++;
@@ -72,7 +79,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
             toReturn = (int) Math.ceil(toReturn * 0.5f);
         }
         if ((null != entity.getCrew())
-                && entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER)) {
+                && entity.hasAbility(OptionsConstants.PILOT_MELEE_MASTER)) {
             toReturn *= 2;
         }
   return toReturn;

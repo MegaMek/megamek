@@ -31,13 +31,14 @@ public class PrototypeRL10 extends PrototypeRLWeapon {
 
         name = "Prototype Rocket Launcher 10";
         setInternalName("CLRocketLauncher10Prototype");
+        shortName = "RL/10 (P)";
         heat = 3;
         rackSize = 10;
         shortRange = 5;
         mediumRange = 11;
         longRange = 18;
         extremeRange = 22;
-        tonnage = .5f;
+        tonnage = .5;
         criticals = 1;
         bv = 17;
         cost = 15000;

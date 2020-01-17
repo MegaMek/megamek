@@ -45,7 +45,7 @@ battlearmorbay:10.0:1:4
 2ndclassquarters:0.0:0
 crewquarters:98.0:0
 steeragequarters:0.0:0
-cargobay:1814.0:1:5
+cargobay:1814.0:1:9
 </transporters>
 
 <SafeThrust>
@@ -168,6 +168,9 @@ CLAntiMissileSystem
 CLAMS Ammo:72
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 20
 </structural_integrity>
@@ -179,6 +182,10 @@ TRO 3067 - Jihad
 <tonnage>
 7000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 224

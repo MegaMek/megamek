@@ -241,6 +241,30 @@ public class MechFileParser {
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_SEISMIC));
             ent.setNextSensor(ent.getSensors().firstElement());
+        } else if (ent.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
+            //Conventional Fighters get a combined sensor suite
+            ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
+            ent.setNextSensor(ent.getSensors().firstElement());
+        } else if (ent.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
+                || ent.hasETypeFlag(Entity.ETYPE_SPACE_STATION)
+                || ent.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                || ent.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+        //Large craft get active radar
+        //And both a passive sensor suite and thermal/optical sensors, which only work in space
+        ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
+        ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_RADAR));
+            //Only military craft get ESM, which detects active radar
+            Aero lc = (Aero) ent;
+            if (lc.getDesignType() == Aero.MILITARY) {
+                ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
+            }
+        ent.setNextSensor(ent.getSensors().firstElement());
+        } else if (ent.isAero()) {
+            //ASFs and small craft get a combined sensor suite
+            //And thermal/optical sensors, which only work in space
+            ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
+            ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent instanceof BattleArmor) {
             if (ent.hasWorkingMisc(MiscType.F_HEAT_SENSOR)) {
                 ent.getSensors().add(new Sensor(Sensor.TYPE_BA_HEAT));
@@ -619,7 +643,7 @@ public class MechFileParser {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     //Handle weapon bays
-                    if (wtype.getBayType().equals(EquipmentType.get("PPC Bay"))){
+                    if (wtype.getBayType().equals(EquipmentType.get(EquipmentTypeLookup.PPC_BAY))){
                         for (int wId : mWeapon.getBayWeapons())
                         {
                             Mounted bayMountedWeapon = ent.getEquipment(wId);
@@ -868,6 +892,11 @@ public class MechFileParser {
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }
+        }
+        
+        // If we're a tank, add a rear-mounted trailer hitch if one should be there and isn't
+        if (ent.hasETypeFlag(Entity.ETYPE_TANK)) {
+            ((Tank) ent).addTrailerHitchEquipment();
         }
 
         // Check if it's canon; if it is, mark it as such.

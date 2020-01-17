@@ -46,7 +46,7 @@ public class CLHeavyLaserSmall extends LaserWeapon {
         this.waterMediumRange = 2;
         this.waterLongRange = 2;
         this.waterExtremeRange = 4;
-        this.tonnage = 0.5f;
+        this.tonnage = 0.5;
         this.criticals = 1;
         this.bv = 15;
         this.cost = 20000;

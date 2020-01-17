@@ -40,8 +40,8 @@ Spheroid
 1stclassquarters:30.0:0
 2ndclassquarters:0.0:0
 crewquarters:98.0:0
-asfbay:1.0:1:1
-cargobay:149.0:3:2
+asfbay:1.0:1:4
+cargobay:149.0:3:5
 </transporters>
 
 <SafeThrust>
@@ -118,6 +118,9 @@ ISLargeXPulseLaser
 (B) ISLaserAntiMissileSystem
 ISLaserAntiMissileSystem
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 20

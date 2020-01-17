@@ -33,7 +33,7 @@ import megamek.common.options.OptionsConstants;
  * @author Jay Lawson Fighter squadrons are basically "containers" for a bunch
  *         of fighters.
  */
-public class FighterSquadron extends Aero {
+public class FighterSquadron extends Aero implements IAero {
     private static final long serialVersionUID = 3491212296982370726L;
 
     public static int MAX_SIZE = 6;
@@ -111,6 +111,16 @@ public class FighterSquadron extends Aero {
                 .mapToInt(fid -> ((IAero) game.getEntity(fid)).getCap0Armor())
                 .sum();
     }
+    
+    /*
+     * Per SO, fighter squadrons can't actually be crippled
+     * Individual crippled fighters should be detached and sent home, but it isn't required by the rules
+     * @see megamek.common.Aero#isCrippled()
+     */
+    @Override
+    public boolean isCrippled() {
+        return false;
+    }
 
     /**
      * Returns the percent of the armor remaining
@@ -131,6 +141,14 @@ public class FighterSquadron extends Aero {
                 .mapToInt(ent -> ent.getWalkMP(gravity, ignoreheat)).min()
                 .orElse(0);
     }
+    
+    @Override
+    public int getCurrentThrust() {
+        return fighters.stream().map(fid -> game.getEntity(fid))
+                .filter(ACTIVE_CHECK)
+                .mapToInt(ent -> ((IAero) ent).getCurrentThrust()).min()
+                .orElse(0);
+    }
 
     @Override
     public int getFuel() {
@@ -145,12 +163,11 @@ public class FighterSquadron extends Aero {
     }
 
     /*
-     * base this on the max size of the fighter squadron, since the initial size
-     * can fluctuate due to joining and splitting
+     * Squadrons have an SI for PSR purposes, but don't take SI damage. This should return 100%.
      */
     @Override
     public double getInternalRemainingPercent() {
-        return (getActiveSubEntities().orElse(Collections.emptyList()).size() * 1.0 / getMaxSize());
+        return 1.0;
     }
 
     @Override
@@ -197,7 +214,7 @@ public class FighterSquadron extends Aero {
         }
         int vel = getCurrentVelocity();
         int vmod = vel - (2 * getWalkMP());
-        if (vmod > 0) {
+        if (!getGame().getBoard().inSpace() && (vmod > 0)) {
             prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
         }
 
@@ -353,9 +370,38 @@ public class FighterSquadron extends Aero {
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
         updateWeaponGroups();
+        updateSensors();
         loadAllWeapons();
         updateSkills();
         resetHeatCapacity();
+    }
+    
+    /**
+     * Update sensors. Use the active sensor of the first fighter in the squadron that hasn't taken 3 sensor hits
+     * BAPs don't count as active sensors in space, but they do make detection rolls easier
+     */
+    public void updateSensors() {
+        if (getActiveSensor() == null) {
+            for (Integer fId : fighters) {
+                Entity entity = game.getEntity(fId);
+                Aero fighter = (Aero) entity;
+                if (fighter.getSensorHits() > 2) {
+                    // Sensors destroyed. Check the next fighter
+                    continue;
+                }
+                if (fighter.getActiveSensor().isBAP()) {
+                    //BAP active. Check the next fighter
+                    continue;
+                }
+                if (fighter.getActiveSensor() != null) {
+                    for (Sensor sensor : fighter.getSensors()) {
+                        getSensors().add(sensor);
+                    }
+                    setNextSensor(getSensors().firstElement());
+                    break;
+                }            
+            }
+        }
     }
 
     /**
@@ -848,7 +894,7 @@ public class FighterSquadron extends Aero {
     }
 
     @Override
-    public int getCargoMpReduction() {
+    public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
 

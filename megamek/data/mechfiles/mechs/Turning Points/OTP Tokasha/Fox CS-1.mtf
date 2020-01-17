@@ -1,0 +1,158 @@
+Version:1.0
+Fox
+CS-1
+
+Config:Biped
+TechBase:Mixed (Clan Chassis)
+Era:2824
+Source:Succession Wars
+Rules Level:4
+
+Mass:50
+Engine:300 XL (Clan) Engine
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:15
+RA Armor:15
+LT Armor:18
+RT Armor:18
+CT Armor:24
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:11
+Improved LRM 15, Right Arm
+Improved LRM 15, Left Arm
+Streak SRM 2, Right Leg
+Streak SRM 2, Left Leg
+Medium Laser, Right Arm
+Medium Laser, Center Torso
+Medium Laser, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Right Arm
+Machine Gun, Left Arm
+Machine Gun, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Improved LRM 15
+Improved LRM 15
+Medium Laser
+Machine Gun
+Machine Gun
+Clan Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Improved LRM 15
+Improved LRM 15
+Medium Laser
+Machine Gun
+Machine Gun
+Clan Endo Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ClanImprovedLRM15Ammo
+ClanImprovedLRM15Ammo
+IS Machine Gun Ammo - Half
+ISCASE
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ClanImprovedLRM15Ammo
+ClanImprovedLRM15Ammo
+IS Machine Gun Ammo - Half
+ISCASE
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+IS Streak SRM 2 Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISStreakSRM2
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISStreakSRM2
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -18,12 +18,15 @@ import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.util.StringUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -41,11 +44,21 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
     private double utility; // calculated elsewhere
     private Targetable target;
     private int twist;
-
-    FiringPlan(Targetable target) {
+    private boolean flipArms;
+    
+    FiringPlan() {
         setTwist(0);
         setUtility(0);
+    }
+    
+    FiringPlan(Targetable target) {
+        this();
         this.target = target;
+    }
+    
+    FiringPlan(Targetable target, boolean flipArms) {
+        this(target);
+        this.flipArms = flipArms;
     }
 
     /**
@@ -132,6 +145,10 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
         		FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
         }
         
+        if(flipArms) {
+            actionVector.addElement(new FlipArmsAction(get(0).getShooter().getId(), flipArms));
+        }
+        
         for (WeaponFireInfo weaponFireInfo : this) {
             actionVector.add(weaponFireInfo.getWeaponAttackAction());
         }
@@ -145,11 +162,25 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
         if (size() == 0) {
             return "Empty FiringPlan!";
         }
+        
         StringBuilder description = new StringBuilder("Firing Plan for ").append(get(0).getShooter().getChassis())
-                                                                         .append(" at ")
-                                                                         .append(getTarget().getDisplayName())
-                                                                         .append("; ").append(Integer.toString(size()))
-                                                                         .append(" weapons fired ");
+                                                                         .append(" at ");
+        Set<Integer> targets = new HashSet<>();
+        // loop through all the targets for this firing plan, only show each target once.
+        for(WeaponFireInfo weaponFireInfo : this) {
+            if(!targets.contains(weaponFireInfo.getTarget().getTargetId())) {
+                description.append(weaponFireInfo.getTarget().getDisplayName()).append(", ");
+                targets.add(weaponFireInfo.getTarget().getTargetId());
+            }
+        }
+        
+        // chop off the last ", "
+        description.deleteCharAt(description.length() - 1);
+        description.deleteCharAt(description.length() - 1);
+        
+        description.append("; ").append(Integer.toString(size()))
+                                .append(" weapons fired ");
+        
         if (detailed) {
             for (WeaponFireInfo weaponFireInfo : this) {
                 description.append("\n\t\t").append(weaponFireInfo.getDebugDescription());
@@ -177,6 +208,14 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
 
     public void setTwist(int twist) {
         this.twist = twist;
+    }
+    
+    public boolean getFlipArms() {
+        return flipArms;
+    }
+    
+    public void setFlipArms(boolean flipArms) {
+        this.flipArms = flipArms;
     }
 
     /**

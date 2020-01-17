@@ -62,58 +62,59 @@ import megamek.common.util.MegaMekFile;
  * @author Ben
  */
 public class MechTileset {
-    private String ULTRA_LIGHT_STRING = "default_ultra_light"; //$NON-NLS-1$
-    private String LIGHT_STRING = "default_light"; //$NON-NLS-1$
-    private String MEDIUM_STRING = "default_medium"; //$NON-NLS-1$
-    private String HEAVY_STRING = "default_heavy"; //$NON-NLS-1$
-    private String ASSAULT_STRING = "default_assault"; //$NON-NLS-1$
-    private String SUPER_HEAVY_MECH_STRING = "default_super_heavy_mech"; //$NON-NLS-1$
-    private String QUAD_STRING = "default_quad"; //$NON-NLS-1$
-    private String QUADVEE_STRING = "default_quadvee"; //$NON-NLS-1$
-    private String QUADVEE_VEHICLE_STRING = "default_quadvee_vehicle"; //$NON-NLS-1$
-    private String LAM_MECH_STRING = "default_lam_mech"; //$NON-NLS-1$
-    private String LAM_AIRMECH_STRING = "default_lam_airmech"; //$NON-NLS-1$
-    private String LAM_FIGHTER_STRING = "default_lam_fighter"; //$NON-NLS-1$
-    private String TRIPOD_STRING = "default_tripod"; //$NON-NLS-1$
-    private String TRACKED_STRING = "default_tracked"; //$NON-NLS-1$
-    private String TRACKED_HEAVY_STRING = "default_tracked_heavy"; //$NON-NLS-1$
-    private String TRACKED_ASSAULT_STRING = "default_tracked_assault"; //$NON-NLS-1$
-    private String WHEELED_STRING = "default_wheeled"; //$NON-NLS-1$
-    private String WHEELED_HEAVY_STRING = "default_wheeled_heavy"; //$NON-NLS-1$
-    private String HOVER_STRING = "default_hover"; //$NON-NLS-1$
-    private String NAVAL_STRING = "default_naval"; //$NON-NLS-1$
-    private String SUBMARINE_STRING = "default_submarine"; //$NON-NLS-1$
-    private String HYDROFOIL_STRING = "default_hydrofoil"; //$NON-NLS-1$
-    private String VTOL_STRING = "default_vtol"; //$NON-NLS-1$
-    private String INF_STRING = "default_infantry"; //$NON-NLS-1$
-    private String BA_STRING = "default_ba"; //$NON-NLS-1$
-    private String PROTO_STRING = "default_proto"; //$NON-NLS-1$
-    private String GUN_EMPLACEMENT_STRING = "default_gun_emplacement"; //$NON-NLS-1$
-    private String WIGE_STRING = "default_wige"; //$NON-NLS-1$
-    private String AERO_STRING = "default_aero"; //$NON-NLS-1$
-    private String SMALL_CRAFT_AERO_STRING = "default_small_craft_aero"; //$NON-NLS-1$
-    private String SMALL_CRAFT_SPHERE_STRING = "default_small_craft_sphere"; //$NON-NLS-1$
-    private String DROPSHIP_AERO_STRING = "default_dropship_aero"; //$NON-NLS-1$
-    private String DROPSHIP_AERO_STRING_0 = "default_dropship_aero_0"; //$NON-NLS-1$
-    private String DROPSHIP_AERO_STRING_1 = "default_dropship_aero_1"; //$NON-NLS-1$
-    private String DROPSHIP_AERO_STRING_2 = "default_dropship_aero_2"; //$NON-NLS-1$
-    private String DROPSHIP_AERO_STRING_3 = "default_dropship_aero_3"; //$NON-NLS-1$
-    private String DROPSHIP_AERO_STRING_4 = "default_dropship_aero_4"; //$NON-NLS-1$
-    private String DROPSHIP_AERO_STRING_5 = "default_dropship_aero_5"; //$NON-NLS-1$
-    private String DROPSHIP_AERO_STRING_6 = "default_dropship_aero_6"; //$NON-NLS-1$
-    private String DROPSHIP_SPHERE_STRING = "default_dropship_sphere"; //$NON-NLS-1$
-    private String DROPSHIP_SPHERE_STRING_0 = "default_dropship_sphere_0"; //$NON-NLS-1$
-    private String DROPSHIP_SPHERE_STRING_1 = "default_dropship_sphere_1"; //$NON-NLS-1$
-    private String DROPSHIP_SPHERE_STRING_2 = "default_dropship_sphere_2"; //$NON-NLS-1$
-    private String DROPSHIP_SPHERE_STRING_3 = "default_dropship_sphere_3"; //$NON-NLS-1$
-    private String DROPSHIP_SPHERE_STRING_4 = "default_dropship_sphere_4"; //$NON-NLS-1$
-    private String DROPSHIP_SPHERE_STRING_5 = "default_dropship_sphere_5"; //$NON-NLS-1$
-    private String DROPSHIP_SPHERE_STRING_6 = "default_dropship_sphere_6"; //$NON-NLS-1$
-    private String JUMPSHIP_STRING = "default_jumpship"; //$NON-NLS-1$
-    private String WARSHIP_STRING = "default_warship"; //$NON-NLS-1$
-    private String SPACE_STATION_STRING = "default_space_station"; //$NON-NLS-1$
-    private String FIGHTER_SQUADRON_STRING = "default_fighter_squadron"; //$NON-NLS-1$
-    private String TELE_MISSILE_STRING = "default_tele_missile"; //$NON-NLS-1$
+    private static final String ULTRA_LIGHT_STRING = "default_ultra_light"; //$NON-NLS-1$
+    private static final String LIGHT_STRING = "default_light"; //$NON-NLS-1$
+    private static final String MEDIUM_STRING = "default_medium"; //$NON-NLS-1$
+    private static final String HEAVY_STRING = "default_heavy"; //$NON-NLS-1$
+    private static final String ASSAULT_STRING = "default_assault"; //$NON-NLS-1$
+    private static final String SUPER_HEAVY_MECH_STRING = "default_super_heavy_mech"; //$NON-NLS-1$
+    private static final String QUAD_STRING = "default_quad"; //$NON-NLS-1$
+    private static final String QUADVEE_STRING = "default_quadvee"; //$NON-NLS-1$
+    private static final String QUADVEE_VEHICLE_STRING = "default_quadvee_vehicle"; //$NON-NLS-1$
+    private static final String LAM_MECH_STRING = "default_lam_mech"; //$NON-NLS-1$
+    private static final String LAM_AIRMECH_STRING = "default_lam_airmech"; //$NON-NLS-1$
+    private static final String LAM_FIGHTER_STRING = "default_lam_fighter"; //$NON-NLS-1$
+    private static final String TRIPOD_STRING = "default_tripod"; //$NON-NLS-1$
+    private static final String TRACKED_STRING = "default_tracked"; //$NON-NLS-1$
+    private static final String TRACKED_HEAVY_STRING = "default_tracked_heavy"; //$NON-NLS-1$
+    private static final String TRACKED_ASSAULT_STRING = "default_tracked_assault"; //$NON-NLS-1$
+    private static final String WHEELED_STRING = "default_wheeled"; //$NON-NLS-1$
+    private static final String WHEELED_HEAVY_STRING = "default_wheeled_heavy"; //$NON-NLS-1$
+    private static final String HOVER_STRING = "default_hover"; //$NON-NLS-1$
+    private static final String NAVAL_STRING = "default_naval"; //$NON-NLS-1$
+    private static final String SUBMARINE_STRING = "default_submarine"; //$NON-NLS-1$
+    private static final String HYDROFOIL_STRING = "default_hydrofoil"; //$NON-NLS-1$
+    private static final String VTOL_STRING = "default_vtol"; //$NON-NLS-1$
+    private static final String INF_STRING = "default_infantry"; //$NON-NLS-1$
+    private static final String BA_STRING = "default_ba"; //$NON-NLS-1$
+    private static final String PROTO_STRING = "default_proto"; //$NON-NLS-1$
+    private static final String GUN_EMPLACEMENT_STRING = "default_gun_emplacement"; //$NON-NLS-1$
+    private static final String WIGE_STRING = "default_wige"; //$NON-NLS-1$
+    private static final String AERO_STRING = "default_aero"; //$NON-NLS-1$
+    private static final String SMALL_CRAFT_AERO_STRING = "default_small_craft_aero"; //$NON-NLS-1$
+    private static final String SMALL_CRAFT_SPHERE_STRING = "default_small_craft_sphere"; //$NON-NLS-1$
+    private static final String DROPSHIP_AERO_STRING = "default_dropship_aero"; //$NON-NLS-1$
+    private static final String DROPSHIP_AERO_STRING_0 = "default_dropship_aero_0"; //$NON-NLS-1$
+    private static final String DROPSHIP_AERO_STRING_1 = "default_dropship_aero_1"; //$NON-NLS-1$
+    private static final String DROPSHIP_AERO_STRING_2 = "default_dropship_aero_2"; //$NON-NLS-1$
+    private static final String DROPSHIP_AERO_STRING_3 = "default_dropship_aero_3"; //$NON-NLS-1$
+    private static final String DROPSHIP_AERO_STRING_4 = "default_dropship_aero_4"; //$NON-NLS-1$
+    private static final String DROPSHIP_AERO_STRING_5 = "default_dropship_aero_5"; //$NON-NLS-1$
+    private static final String DROPSHIP_AERO_STRING_6 = "default_dropship_aero_6"; //$NON-NLS-1$
+    private static final String DROPSHIP_SPHERE_STRING = "default_dropship_sphere"; //$NON-NLS-1$
+    private static final String DROPSHIP_SPHERE_STRING_0 = "default_dropship_sphere_0"; //$NON-NLS-1$
+    private static final String DROPSHIP_SPHERE_STRING_1 = "default_dropship_sphere_1"; //$NON-NLS-1$
+    private static final String DROPSHIP_SPHERE_STRING_2 = "default_dropship_sphere_2"; //$NON-NLS-1$
+    private static final String DROPSHIP_SPHERE_STRING_3 = "default_dropship_sphere_3"; //$NON-NLS-1$
+    private static final String DROPSHIP_SPHERE_STRING_4 = "default_dropship_sphere_4"; //$NON-NLS-1$
+    private static final String DROPSHIP_SPHERE_STRING_5 = "default_dropship_sphere_5"; //$NON-NLS-1$
+    private static final String DROPSHIP_SPHERE_STRING_6 = "default_dropship_sphere_6"; //$NON-NLS-1$
+    private static final String JUMPSHIP_STRING = "default_jumpship"; //$NON-NLS-1$
+    private static final String WARSHIP_STRING = "default_warship"; //$NON-NLS-1$
+    private static final String SPACE_STATION_STRING = "default_space_station"; //$NON-NLS-1$
+    private static final String FIGHTER_SQUADRON_STRING = "default_fighter_squadron"; //$NON-NLS-1$
+    private static final String TELE_MISSILE_STRING = "default_tele_missile"; //$NON-NLS-1$
+    private static final String UNKNOWN_STRING = "default_unknown"; //$NON-NLS-1$
 
     private MechEntry default_ultra_light;
     private MechEntry default_light;
@@ -167,11 +168,12 @@ public class MechTileset {
     private MechEntry default_space_station;
     private MechEntry default_fighter_squadron;
     private MechEntry default_tele_missile;
+    private MechEntry default_unknown;
 
-    private HashMap<String, MechEntry> exact = new HashMap<String, MechEntry>();
-    private HashMap<String, MechEntry> chassis = new HashMap<String, MechEntry>();
+    private final HashMap<String, MechEntry> exact = new HashMap<>();
+    private final HashMap<String, MechEntry> chassis = new HashMap<>();
 
-    File dir;
+    private final File dir;
 
     /**
      * Creates new MechTileset.
@@ -410,8 +412,7 @@ public class MechTileset {
             return default_aero;
         }
 
-        // TODO: better exception?
-        throw new IndexOutOfBoundsException("can't find an image for that mech"); //$NON-NLS-1$
+        return default_unknown;
     }
 
     public void loadFromFile(String filename) throws IOException {
@@ -424,8 +425,8 @@ public class MechTileset {
         st.quoteChar('"');
         st.wordChars('_', '_');
         while (st.nextToken() != StreamTokenizer.TT_EOF) {
-            String name = null;
-            String imageName = null;
+            String name;
+            String imageName;
             if ((st.ttype == StreamTokenizer.TT_WORD)
                     && st.sval.equalsIgnoreCase("include")) { //$NON-NLS-1$
                 st.nextToken();
@@ -517,6 +518,7 @@ public class MechTileset {
         default_space_station = exact.get(SPACE_STATION_STRING.toUpperCase());
         default_fighter_squadron = exact.get(FIGHTER_SQUADRON_STRING.toUpperCase());
         default_tele_missile = exact.get(TELE_MISSILE_STRING.toUpperCase());
+        default_unknown = exact.get(UNKNOWN_STRING.toUpperCase());
     }
 
     /**

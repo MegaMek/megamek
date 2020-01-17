@@ -13,20 +13,22 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
+import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.ConvFighter;
 import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
+import megamek.common.Hex;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
-import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
@@ -35,7 +37,6 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
-import megamek.common.VTOL;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
@@ -51,8 +52,10 @@ import org.mockito.Mockito;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -72,6 +75,8 @@ public class BasicPathRankerTest {
 
     private Princess mockPrincess;
     private FireControl mockFireControl;
+    private FireControlState mockFireControlState;
+    private PathRankerState mockPathRankerState;
 
     @Before
     public void setUp() {
@@ -82,21 +87,31 @@ public class BasicPathRankerTest {
         Mockito.when(mockBehavior.getHerdMentalityValue()).thenReturn(BehaviorSettings.HERD_MENTALITY_VALUES[5]);
         Mockito.when(mockBehavior.getSelfPreservationValue()).thenReturn(BehaviorSettings.SELF_PRESERVATION_VALUES[5]);
 
-        final List<Targetable> testAdditionalTargets = new ArrayList<>();
-
         mockFireControl = Mockito.mock(FireControl.class);
-        Mockito.when(mockFireControl.getAdditionalTargets()).thenReturn(testAdditionalTargets);
 
         final IHonorUtil mockHonorUtil = Mockito.mock(IHonorUtil.class);
         Mockito.when(mockHonorUtil.isEnemyBroken(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyBoolean()))
                .thenReturn(false);
+        
+        final List<Targetable> testAdditionalTargets = new ArrayList<>();
+        mockFireControlState = Mockito.mock(FireControlState.class);
+        Mockito.when(mockFireControlState.getAdditionalTargets()).thenReturn(testAdditionalTargets);
 
+        
+        final Map<MovePath.Key, Double> testSuccessProbabilities = new HashMap<>();
+        mockPathRankerState = Mockito.mock(PathRankerState.class);
+        Mockito.when(mockPathRankerState.getPathSuccessProbabilities()).thenReturn(testSuccessProbabilities);
+        
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
-        Mockito.when(mockPrincess.getFireControl()).thenReturn(mockFireControl);
-        Mockito.when(mockPrincess.getHomeEdge()).thenReturn(HomeEdge.NORTH);
+        Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
+        Mockito.when(mockPrincess.getFireControl(Mockito.any(Entity.class))).thenReturn(mockFireControl);
+        Mockito.when(mockPrincess.getHomeEdge(Mockito.any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
+        Mockito.when(mockPrincess.getFireControlState()).thenReturn(mockFireControlState);
+        Mockito.when(mockPrincess.getPathRankerState()).thenReturn(mockPathRankerState);
+        Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class), Mockito.anyBoolean())).thenReturn(21);
     }
 
     private void assertRankedPathEquals(final RankedPath expected,
@@ -175,7 +190,7 @@ public class BasicPathRankerTest {
 
         final Entity mockMyUnit = Mockito.mock(BipedMech.class);
         Mockito.when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
-        Mockito.doReturn(10.0).when(testRanker).getMaxDamageAtRange(Mockito.any(FireControl.class),
+        Mockito.doReturn(10.0).when(testRanker).getMaxDamageAtRange(Mockito.nullable(FireControl.class),
                                                                     Mockito.eq(mockMyUnit), Mockito.anyInt(),
                                                                     Mockito.anyBoolean(), Mockito.anyBoolean());
 
@@ -188,6 +203,8 @@ public class BasicPathRankerTest {
         final Entity mockAero = Mockito.mock(Aero.class);
         Mockito.when(mockAero.getId()).thenReturn(2);
         Mockito.when(mockAero.isAero()).thenReturn(true);
+        Mockito.when(mockAero.isAirborne()).thenReturn(true);
+        Mockito.when(mockAero.isAirborneAeroOnGroundMap()).thenReturn(true);
         EntityEvaluationResponse expected = new EntityEvaluationResponse();
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockAero, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
@@ -207,7 +224,7 @@ public class BasicPathRankerTest {
                           Mockito.any(BotGeometry.HexLine.class));
         Mockito.doReturn(8.5)
                .when(testRanker)
-               .getMaxDamageAtRange(Mockito.any(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt(),
+               .getMaxDamageAtRange(Mockito.nullable(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt(),
                                     Mockito.anyBoolean(), Mockito.anyBoolean());
         Mockito.doReturn(false)
                .when(testRanker)
@@ -235,7 +252,7 @@ public class BasicPathRankerTest {
                           Mockito.any(BotGeometry.HexLine.class));
         Mockito.doReturn(8.5)
                .when(testRanker)
-               .getMaxDamageAtRange(Mockito.any(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt(),
+               .getMaxDamageAtRange(Mockito.nullable(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt(),
                                     Mockito.anyBoolean(), Mockito.anyBoolean());
         Mockito.doReturn(false)
                .when(testRanker)
@@ -263,7 +280,7 @@ public class BasicPathRankerTest {
                           Mockito.any(BotGeometry.HexLine.class));
         Mockito.doReturn(8.5)
                .when(testRanker)
-               .getMaxDamageAtRange(Mockito.any(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt(),
+               .getMaxDamageAtRange(Mockito.nullable(FireControl.class), Mockito.eq(mockEnemyMech), Mockito.anyInt(),
                                     Mockito.anyBoolean(), Mockito.anyBoolean());
         Mockito.doReturn(true)
                .when(testRanker)
@@ -283,6 +300,16 @@ public class BasicPathRankerTest {
         Mockito.doReturn(mockPrincess).when(testRanker).getOwner();
 
         final MovePath mockPath = Mockito.mock(MovePath.class);
+        final Entity mockMyUnit = Mockito.mock(BipedMech.class);
+        final Crew mockCrew = Mockito.mock(Crew.class);
+        final PilotOptions mockOptions = Mockito.mock(PilotOptions.class);
+        
+        
+        // we need to initialize the unit's crew and options
+        Mockito.when(mockPath.getEntity()).thenReturn(mockMyUnit);
+        Mockito.when(mockMyUnit.getCrew()).thenReturn(mockCrew);
+        Mockito.when(mockCrew.getOptions()).thenReturn(mockOptions);
+        Mockito.when(mockOptions.booleanOption(Mockito.any(String.class))).thenReturn(false);
         Mockito.when(mockPath.getFinalCoords()).thenReturn(new Coords(0, 0));
 
         final IGame mockGame = Mockito.mock(IGame.class);
@@ -292,6 +319,8 @@ public class BasicPathRankerTest {
         final Entity mockEnemyMech = Mockito.mock(BipedMech.class);
         Mockito.when(mockEnemyMech.getId()).thenReturn(mockEnemyMechId);
         Mockito.when(mockEnemyMech.getPosition()).thenReturn(new Coords(1, 0));
+        Mockito.when(mockEnemyMech.getCrew()).thenReturn(mockCrew);
+        
         Mockito.doReturn(15.0)
                .when(testRanker)
                .calculateDamagePotential(Mockito.eq(mockEnemyMech), Mockito.any(EntityState.class),
@@ -348,7 +377,7 @@ public class BasicPathRankerTest {
                .distanceToClosestEdge(Mockito.any(Coords.class), Mockito.any(IGame.class));
         Mockito.doReturn(20)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
         Mockito.doReturn(12.0)
                .when(testRanker)
                .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(IGame.class));
@@ -378,7 +407,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockBoard.getCenter()).thenReturn(boardCenter);
         Mockito.doReturn(3)
                .when(boardCenter)
-               .direction(Mockito.any(Coords.class));
+               .direction(Mockito.nullable(Coords.class));
 
         final GameOptions mockGameOptions = Mockito.mock(GameOptions.class);
         Mockito.when(mockGameOptions.booleanOption(Mockito.eq("no_clan_physical"))).thenReturn(false);
@@ -386,6 +415,8 @@ public class BasicPathRankerTest {
         final IGame mockGame = Mockito.mock(IGame.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
         Mockito.when(mockGame.getOptions()).thenReturn(mockGameOptions);
+        Mockito.when(mockGame.getArtilleryAttacks()).thenReturn(Collections.emptyEnumeration());
+        Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
 
         final List<Entity> testEnemies = new ArrayList<>();
 
@@ -395,7 +426,7 @@ public class BasicPathRankerTest {
         final Coords enemyMech1Position = Mockito.spy(new Coords(10, 10));
         Mockito.doReturn(3)
                .when(enemyMech1Position)
-               .direction(Mockito.any(Coords.class));
+               .direction(Mockito.nullable(Coords.class));
         final Entity mockEnemyMech1 = Mockito.mock(BipedMech.class);
         Mockito.when(mockEnemyMech1.isOffBoard()).thenReturn(false);
         Mockito.when(mockEnemyMech1.getPosition()).thenReturn(enemyMech1Position);
@@ -413,7 +444,7 @@ public class BasicPathRankerTest {
         testEnemies.add(mockEnemyMech1);
         Mockito.doReturn(mockEnemyMech1)
                .when(testRanker)
-               .findClosestEnemy(Mockito.eq(mockMover), Mockito.any(Coords.class), Mockito.any(IGame.class));
+               .findClosestEnemy(Mockito.eq(mockMover), Mockito.nullable(Coords.class), Mockito.any(IGame.class));
 
         final Entity mockEnemyMech2 = Mockito.mock(BipedMech.class);
         Mockito.when(mockEnemyMech2.isOffBoard()).thenReturn(false);
@@ -807,7 +838,7 @@ public class BasicPathRankerTest {
         assertRankedPathEquals(expected, actual);
         Mockito.doReturn(10)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
         expected = new RankedPath(-201.25, mockPath, "Calculation: " +
                                                      "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
@@ -836,7 +867,7 @@ public class BasicPathRankerTest {
         }
         Mockito.doReturn(30)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
         expected = new RankedPath(-501.25, mockPath, "Calculation: " +
                                                      "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
@@ -865,7 +896,7 @@ public class BasicPathRankerTest {
         }
         Mockito.doReturn(20)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.nullable(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
         Mockito.when(mockPrincess.wantsToFallBack(Mockito.eq(mockMover))).thenReturn(false);
         Mockito.when(mockMover.isCrippled()).thenReturn(false);
 
@@ -946,7 +977,7 @@ public class BasicPathRankerTest {
         // Test not being able to find an enemy.
         Mockito.doReturn(null)
                .when(testRanker)
-               .findClosestEnemy(Mockito.eq(mockMover), Mockito.any(Coords.class), Mockito.any(IGame.class));
+               .findClosestEnemy(Mockito.eq(mockMover), Mockito.nullable(Coords.class), Mockito.any(IGame.class));
         expected = new RankedPath(-51.25, mockPath, "Calculation: " +
                                                     "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
@@ -969,7 +1000,7 @@ public class BasicPathRankerTest {
         assertRankedPathEquals(expected, actual);
         Mockito.doReturn(mockEnemyMech1)
                .when(testRanker)
-               .findClosestEnemy(Mockito.eq(mockMover), Mockito.any(Coords.class), Mockito.any(IGame.class));
+               .findClosestEnemy(Mockito.eq(mockMover), Mockito.nullable(Coords.class), Mockito.any(IGame.class));
     }
 
     @Test
@@ -1021,6 +1052,7 @@ public class BasicPathRankerTest {
         final Entity mockAero = Mockito.mock(ConvFighter.class);
         Mockito.when(mockAero.isAero()).thenReturn(true);
         Mockito.when(mockAero.isAirborne()).thenReturn(true);
+        Mockito.when(mockAero.isAirborneAeroOnGroundMap()).thenReturn(true);
         Mockito.when(mockAero.getPosition()).thenReturn(new Coords(1, 1)); // Right on top of me, but being an aero, it
         // shouldn't count.
         Mockito.when(mockAero.isSelectableThisTurn()).thenReturn(false);
@@ -1118,82 +1150,75 @@ public class BasicPathRankerTest {
 
     @Test
     public void testCalculateDamagePotential() {
+        final Entity mockMe = generateMockEntity(10, 10);
+        
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
-        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl();
+        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
 
-        final LosEffects mockLosEffects = Mockito.mock(LosEffects.class);
-        Mockito.when(mockLosEffects.canSee()).thenReturn(true);
-        Mockito.doReturn(mockLosEffects).when(testRanker).calcLosEffects(Mockito.any(IGame.class), Mockito.anyInt(),
-                                                                         Mockito.any(Targetable.class));
+        final IBoard mockBoard = generateMockBoard();
+        final Entity mockEnemy = generateMockEntity(10, 5);
+        final MovePath mockPath = generateMockPath(10, 5, mockEnemy);
+        final List<Entity> entities = new ArrayList<>();
+        entities.add(mockMe);
+        entities.add(mockEnemy);
+        
+        final IGame mockGame = generateMockGame(entities, mockBoard);
 
         final FiringPlan mockFiringPlan = Mockito.mock(FiringPlan.class);
         Mockito.when(mockFiringPlan.getUtility()).thenReturn(12.5);
         Mockito.when(mockFireControl.determineBestFiringPlan(
                 Mockito.any(FiringPlanCalculationParameters.class)))
                .thenReturn(mockFiringPlan);
-
-
-        // Test an enemy that's out of range.
-        final Entity mockEnemy = Mockito.mock(BipedMech.class);
-        Mockito.when(mockEnemy.getMaxWeaponRange()).thenReturn(21); // LRM Range
-        Mockito.when(mockEnemy.getHeatCapacity()).thenReturn(20);
-        Mockito.when(mockEnemy.getHeat()).thenReturn(0);
+        
         final EntityState mockShooterState = Mockito.mock(EntityState.class);
+        final Coords mockEnemyPosition = mockEnemy.getPosition();
+        Mockito.when(mockShooterState.getPosition()).thenReturn(mockEnemyPosition);
         final EntityState mockTargetState = Mockito.mock(EntityState.class);
-        final MovePath mockPath = Mockito.mock(MovePath.class);
-        Mockito.when(mockPath.getEntity()).thenReturn(mockEnemy);
+        final Coords mockTargetPosition = mockMe.getPosition();
+        Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetPosition);
+        
+        // test an enemy that is out of range
         int testDistance = 30;
-        final IGame mockGame = Mockito.mock(IGame.class);
-        Assert.assertEquals(0, testRanker.calculateDamagePotential(mockEnemy, mockShooterState, mockPath,
+        Assert.assertEquals(0.0, testRanker.calculateDamagePotential(mockEnemy, mockShooterState, mockPath,
                                                                    mockTargetState, testDistance, mockGame),
                             TOLERANCE);
 
-        // Test an enemy that's in range but out of Line of Sight.
+        // Test an enemy that's in range and in Line of Sight.
         testDistance = 10;
-        Mockito.when(mockLosEffects.canSee()).thenReturn(false);
-        Assert.assertEquals(0, testRanker.calculateDamagePotential(mockEnemy, mockShooterState, mockPath,
-                                                                   mockTargetState, testDistance, mockGame),
-                            TOLERANCE);
-
-        // Test an enemy both in range and in LoS.
-        Mockito.when(mockLosEffects.canSee()).thenReturn(true);
         Assert.assertEquals(12.5,
-                            testRanker.calculateDamagePotential(mockEnemy,
-                                                                mockShooterState,
-                                                                mockPath,
-                                                                mockTargetState,
-                                                                testDistance,
-                                                                mockGame),
-                            TOLERANCE);
+                testRanker.calculateDamagePotential(mockEnemy,
+                                                    mockShooterState,
+                                                    mockPath,
+                                                    mockTargetState,
+                                                    testDistance,
+                                                    mockGame),
+                TOLERANCE);
+        
+        // Test an enemy both in range but out of LoS.
+        Mockito.when(mockEnemy.getPosition()).thenReturn(null);
+        Mockito.when(mockTargetState.getPosition()).thenReturn(null);
+        Assert.assertEquals(0.0, testRanker.calculateDamagePotential(mockEnemy, mockShooterState, mockPath,
+                mockTargetState, testDistance, mockGame),
+                TOLERANCE);
     }
 
     @Test
     public void testCalculateMyDamagePotential() {
+        final Entity mockMe = generateMockEntity(10, 10);
+        
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
-        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl();
+        Mockito.doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
+       
+        final IBoard mockBoard = generateMockBoard();
+        final MovePath mockPath = generateMockPath(10, 10, mockMe);
+        final Entity mockEnemy = generateMockEntity(10, 15);
+        final List<Entity> entities = new ArrayList<>();
+        entities.add(mockMe);
+        entities.add(mockEnemy);
 
-        final LosEffects mockLos = Mockito.mock(LosEffects.class);
-        Mockito.when(mockLos.canSee()).thenReturn(true);
-        Mockito.doReturn(mockLos).when(testRanker).calcLosEffects(Mockito.any(IGame.class), Mockito.anyInt(),
-                                                                  Mockito.any(Targetable.class));
-
-        final Entity mockEnemy = Mockito.mock(BipedMech.class);
         int testDistance = 10;
-        final IGame mockGame = Mockito.mock(IGame.class);
-
-        final Entity mockMe = Mockito.mock(BipedMech.class);
-        Mockito.when(mockMe.getMaxWeaponRange()).thenReturn(21);
-        Mockito.when(mockMe.getId()).thenReturn(1);
-        final MovePath mockPath = Mockito.mock(MovePath.class);
-        Mockito.when(mockPath.getEntity()).thenReturn(mockMe);
-
-        final Crew mockCrew = Mockito.mock(Crew.class);
-        Mockito.when(mockMe.getCrew()).thenReturn(mockCrew);
-
-        final PilotOptions mockOptions = Mockito.mock(PilotOptions.class);
-        Mockito.when(mockCrew.getOptions()).thenReturn(mockOptions);
-        Mockito.when(mockOptions.booleanOption(Mockito.anyString())).thenReturn(false);
-
+        final IGame mockGame = generateMockGame(entities, mockBoard);
+        
         final FiringPlan mockFiringPlan = Mockito.mock(FiringPlan.class);
         Mockito.when(mockFiringPlan.getUtility()).thenReturn(25.2);
         Mockito.when(mockFireControl.determineBestFiringPlan(
@@ -1212,13 +1237,92 @@ public class BasicPathRankerTest {
         Assert.assertEquals(expected, actual, TOLERANCE);
 
         // Test being in range but out of LoS.
+        // Take the enemy off the board
         testDistance = 10;
-        Mockito.when(mockLos.canSee()).thenReturn(false);
+        Mockito.when(mockEnemy.getPosition()).thenReturn(null);
         expected = 0;
         actual = testRanker.calculateMyDamagePotential(mockPath, mockEnemy, testDistance, mockGame);
         Assert.assertEquals(expected, actual, TOLERANCE);
     }
 
+    private IBoard generateMockBoard() {
+        // we'll be on a nice, empty, 20x20 board, not in space.
+        final IBoard mockBoard = Mockito.mock(Board.class);
+        final IHex mockHex = new Hex();
+        Mockito.when(mockBoard.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
+        Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
+        Mockito.when(mockBoard.inSpace()).thenReturn(false);
+        
+        return mockBoard;
+    }
+    
+    /**
+     * Generates an entity at specific coordinates
+     * Vital statistics:
+     * ID: 1
+     * Max weapon range: 21 (LRMs, obviously)
+     * Final path coordinates: (10, 10)
+     * Final path facing: straight north
+     * No SPAs
+     * Default crew
+     * @return
+     */
+    private Entity generateMockEntity(int x, int y) {
+        final Entity mockEntity = Mockito.mock(BipedMech.class);
+        Mockito.when(mockEntity.getMaxWeaponRange()).thenReturn(21);
+        
+        final Crew mockCrew = Mockito.mock(Crew.class);
+        Mockito.when(mockEntity.getCrew()).thenReturn(mockCrew);
+
+        final PilotOptions mockOptions = Mockito.mock(PilotOptions.class);
+        Mockito.when(mockCrew.getOptions()).thenReturn(mockOptions);
+        Mockito.when(mockOptions.booleanOption(Mockito.anyString())).thenReturn(false);
+        
+        final Coords mockMyCoords = new Coords(x, y);
+        Mockito.when(mockEntity.getPosition()).thenReturn(mockMyCoords);
+        
+        Mockito.when(mockEntity.getHeatCapacity()).thenReturn(20);
+        Mockito.when(mockEntity.getHeat()).thenReturn(0);
+        Mockito.when(mockEntity.isAirborne()).thenReturn(false);
+        
+        return mockEntity;
+    }
+    
+    private MovePath generateMockPath(int x, int y, Entity mockEntity) {
+        final MovePath mockPath = Mockito.mock(MovePath.class);
+        Mockito.when(mockPath.getEntity()).thenReturn(mockEntity);
+        
+        final Coords mockMyCoords = new Coords(x, y);
+        Mockito.when(mockPath.getFinalCoords()).thenReturn(mockMyCoords);
+        Mockito.when(mockPath.getFinalFacing()).thenReturn(0);
+        
+        return mockPath;
+    }
+   
+    /** 
+     * Generates a mock game object.
+     * Sets up some values for the passed-in entities as well (game IDs, and the game object itself)
+     * @param entities
+     * @return
+     */ 
+    private IGame generateMockGame(List<Entity> entities, IBoard mockBoard) {
+       
+        final IGame mockGame = Mockito.mock(IGame.class);
+        
+        Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
+        final GameOptions mockGameOptions = Mockito.mock(GameOptions.class);
+        Mockito.when(mockGame.getOptions()).thenReturn(mockGameOptions);
+        Mockito.when(mockGameOptions.booleanOption(Mockito.anyString())).thenReturn(false);
+         
+        for(int x = 0; x < entities.size(); x++) {
+            Mockito.when(mockGame.getEntity(x + 1)).thenReturn(entities.get(x));
+            Mockito.when(entities.get(x).getGame()).thenReturn(mockGame);
+            Mockito.when(entities.get(x).getId()).thenReturn(x + 1);
+        }
+        
+        return mockGame;
+    }
+    
     @Test
     public void testCheckPathForHazards() {
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));

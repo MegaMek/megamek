@@ -47,9 +47,9 @@ cargobay:220.0:0:8
 cargobay:220.0:0:9
 2ndclassquarters:42.0:0
 crewquarters:112.0:0
-infantrybay:1.0:6:3:Foot
+infantrybay:1.0:6:11:Foot
 1stclassquarters:40.0:0
-cargobay:633.5:0:10
+cargobay:633.5:0:13
 </transporters>
 
 <SafeThrust>
@@ -109,7 +109,6 @@ ISArtemisIV
 (B) ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
-ISDroneCarrierControlSystem
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -188,13 +187,17 @@ ISLargeVSPLaser
 (B) ISLaserAntiMissileSystem
 ISLaserAntiMissileSystem
 ISLaserAntiMissileSystem
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
-ISDroneExtra
 </Aft Equipment>
+
+<Hull Equipment>
+ISDroneCarrierControlSystem
+ISDroneExtra
+ISDroneExtra
+ISDroneExtra
+ISDroneExtra
+ISDroneExtra
+ISDroneExtra
+</Hull Equipment>
 
 <structural_integrity>
 27
@@ -207,6 +210,10 @@ TRO 3145 Republic of the Sphere - Dark Ages
 <tonnage>
 8500.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 92

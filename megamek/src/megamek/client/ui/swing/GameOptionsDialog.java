@@ -53,7 +53,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -69,6 +68,8 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * Responsible for displaying the current game options and allowing the user to
@@ -116,7 +117,6 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     private JPanel panPassword = new JPanel();
     private JLabel labPass = new JLabel(Messages.getString("GameOptionsDialog.Password")); //$NON-NLS-1$
     private JTextField texPass = new JTextField(15);
-
     private JPanel panButtons = new JPanel();
     private JButton butSave = new JButton(Messages.getString("GameOptionsDialog.Save")); //$NON-NLS-1$
     private JButton butLoad = new JButton(Messages.getString("GameOptionsDialog.Load")); //$NON-NLS-1$
@@ -331,6 +331,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         JPanel panText = new JPanel();
         JLabel lblSearch = new JLabel(Messages.getString("GameOptionsDialog.Search") + ":");
         txtSearch = new JTextField("");
+	lblSearch.setLabelFor(txtSearch);
         lblSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
         txtSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
@@ -478,6 +479,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 optionComp.setEditable(editable);
             } else {
                 optionComp.setEditable(false);
+            }
+        } else if (option.getName().equals(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY)) {
+            if (option.intValue() < CapitalMissileBayWeapon.CAPITAL_MISSILE_MIN_VELOCITY) {
+                //Set to the minimum velocity if under
+                option.setValue(CapitalMissileBayWeapon.CAPITAL_MISSILE_MIN_VELOCITY);
+            } else if (option.intValue() > CapitalMissileBayWeapon.CAPITAL_MISSILE_MAX_VELOCITY) {
+                //Set to the maximum velocity if over
+                option.setValue(CapitalMissileBayWeapon.CAPITAL_MISSILE_MAX_VELOCITY);
             }
         } else if (option.getName().equals(OptionsConstants.RPG_BEGIN_SHUTDOWN)) {
             if ((options.getOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)).booleanValue()) {
@@ -772,7 +781,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
 
     private void setupPassword() {
         panPassword.setLayout(new BorderLayout());
-
+	labPass.setLabelFor(texPass);
         panPassword.add(labPass, BorderLayout.WEST);
         panPassword.add(texPass, BorderLayout.CENTER);
     }
@@ -839,9 +848,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 if (dir.isDirectory()) {
                     return true;
                 } else if (dir.getName().endsWith(".xml")) {
-                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     try {
-                        DocumentBuilder builder = dbf.newDocumentBuilder();
+                        DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
                         Document doc = builder.parse(dir);
                         NodeList listOfComponents = doc.getElementsByTagName("options");
                         if (listOfComponents.getLength() > 0) {

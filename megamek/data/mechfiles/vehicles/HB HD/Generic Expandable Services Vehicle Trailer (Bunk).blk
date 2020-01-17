@@ -24,6 +24,10 @@ Generic Expandable Services Vehicle Trailer
 3066
 </year>
 
+<originalBuildYear>
+3066
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -33,11 +37,9 @@ Wheeled
 </motion_type>
 
 <transporters>
-cargobay:1.5:1
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
+cargobay:1.5:1:1:omni
+infantrybay:2.0:1:2:Foot:omni
 </transporters>
 
 <cruiseMP>
@@ -60,8 +62,9 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-Tractor
-Trailer
+SV Chassis Mod [Tractor]
+SV Chassis Mod [Trailer]
+OmniChassisMod
 </Body Equipment>
 
 <Front Equipment>
@@ -74,6 +77,7 @@ Trailer
 </Left Equipment>
 
 <Rear Equipment>
+Hitch
 </Rear Equipment>
 
 <barrating>
@@ -91,4 +95,12 @@ HB:House Davion - Civil War
 <tonnage>
 15.0
 </tonnage>
+
+<baseChassisFireConWeight>
+0.0
+</baseChassisFireConWeight>
+
+<fuel>
+0.0
+</fuel>
 

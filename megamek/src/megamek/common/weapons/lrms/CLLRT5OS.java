@@ -40,10 +40,10 @@ public class CLLRT5OS extends LRTWeapon {
         waterMediumRange = 14;
         waterLongRange = 21;
         waterExtremeRange = 28;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 1;
         bv = 11;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 15000;
         rulesRefs = "230,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

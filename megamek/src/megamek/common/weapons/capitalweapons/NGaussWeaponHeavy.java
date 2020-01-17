@@ -45,7 +45,7 @@ public class NGaussWeaponHeavy extends NGaussWeapon {
         this.mediumRange = 24;
         this.longRange = 36;
         this.extremeRange = 48;
-        this.tonnage = 7 - 00.0f;
+        this.tonnage = 7000;
         this.bv = 6048;
         this.cost = 50050000;
         this.shortAV = 30;

@@ -61,7 +61,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.PILOT_TM_MOUNTAINEER, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.PILOT_TM_SWAMP_BEAST, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_WIND_WALKER, false); //$NON-NLS-1$
-        // addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false); //$NON-NLS-1$
 
         // Gunnery Abilities
         // addOption(adv, OptionsConstants.GUNNERY_BLOOD_STALKER, false); //$NON-NLS-1$
@@ -109,23 +109,40 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.UNOFF_ALLWEATHER, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.UNOFF_BLIND_FIGHTER, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.UNOFF_SENSOR_GEEK, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.UNOFF_SMALL_PILOT, false); //$NON-NLS-1$
 
         IBasicOptionGroup edge = addGroup("edge", EDGE_ADVANTAGES); //$NON-NLS-1$
         addOption(edge, "edge", 0); //$NON-NLS-1$
         /* different edge triggers */
+        // Mech Triggers
         addOption(edge, "edge_when_headhit", false); //$NON-NLS-1$
         addOption(edge, "edge_when_tac", false); //$NON-NLS-1$
         addOption(edge, "edge_when_ko", false); //$NON-NLS-1$
         addOption(edge, "edge_when_explosion", false); //$NON-NLS-1$
         addOption(edge, "edge_when_masc_fails", false); //$NON-NLS-1$
+        //Aero Triggers
+        addOption(edge, "edge_when_aero_alt_loss", false); //$NON-NLS-1$
+        addOption(edge, "edge_when_aero_explosion", false); //$NON-NLS-1$
+        addOption(edge, "edge_when_aero_ko", false); //$NON-NLS-1$
+        addOption(edge, "edge_when_aero_lucky_crit", false); //$NON-NLS-1$
+        addOption(edge, "edge_when_aero_nuke_crit", false); //$NON-NLS-1$
+        addOption(edge, "edge_when_aero_unit_cargo_lost", false); //$NON-NLS-1$
         
         addOption(edge, OptionsConstants.EDGE, 0); //$NON-NLS-1$
         //different edge triggers 
+        //Mech Triggers
         addOption(edge, OptionsConstants.EDGE_WHEN_HEADHIT, false); //$NON-NLS-1$
         addOption(edge, OptionsConstants.EDGE_WHEN_TAC, false); //$NON-NLS-1$
         addOption(edge, OptionsConstants.EDGE_WHEN_KO, false); //$NON-NLS-1$
         addOption(edge, OptionsConstants.EDGE_WHEN_EXPLOSION, false); //$NON-NLS-1$
         addOption(edge, OptionsConstants.EDGE_WHEN_MASC_FAILS, false); //$NON-NLS-1$
+        //Aero Triggers
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS, false); //$NON-NLS-1$
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_EXPLOSION, false); //$NON-NLS-1$
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_KO, false); //$NON-NLS-1$
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, false); //$NON-NLS-1$
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, false); //$NON-NLS-1$
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, false); //$NON-NLS-1$
 
         // manei domini
         IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES); //$NON-NLS-1$

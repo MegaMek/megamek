@@ -172,6 +172,9 @@ ISERMediumLaser
 ISERMediumLaser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 15
 </structural_integrity>
@@ -183,6 +186,10 @@ TRO 3145 Lyran Commonwealth - Late Republic
 <tonnage>
 6000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 90

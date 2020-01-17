@@ -17,13 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.CapitalMissileHandler;
-import megamek.common.weapons.TeleMissileHandler;
-import megamek.server.Server;
 
 /**
  * @author Ben Grills
@@ -42,6 +35,7 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
         this.name = "Capital Missile Launcher (Kraken)";
         this.setInternalName(this.name);
         this.addLookupName("Kraken");
+        this.shortName = "Kraken";
         this.heat = 50;
         this.damage = 10;
         this.ammoType = AmmoType.T_KRAKENM;
@@ -49,10 +43,11 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
         this.mediumRange = 22;
         this.longRange = 34;
         this.extremeRange = 46;
-        this.tonnage = 190.0f;
+        this.tonnage = 190.0;
         this.bv = 1914;
         this.cost = 455000;
         this.flags = flags.or(F_MISSILE);
+        this.atClass = CLASS_CAPITAL_MISSILE;
         this.shortAV = 10;
         this.medAV = 10;
         this.longAV = 10;
@@ -70,23 +65,5 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
         .setPrototypeFactions(F_CS,F_DC)
         .setProductionFactions(F_DC);
         
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
-            return new TeleMissileHandler(toHit, waa, game, server);
-        }
-        return new CapitalMissileHandler (toHit, waa, game, server);
     }
 }

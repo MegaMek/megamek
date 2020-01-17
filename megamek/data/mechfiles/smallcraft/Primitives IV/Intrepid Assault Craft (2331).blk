@@ -99,6 +99,9 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 10
 </structural_integrity>
@@ -112,7 +115,7 @@ XTRO Primitives IV - Age of War
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>

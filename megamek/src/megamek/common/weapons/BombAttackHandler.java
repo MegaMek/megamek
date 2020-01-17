@@ -205,7 +205,7 @@ public class BombAttackHandler extends WeaponHandler {
                     vPhaseReport.add(r);
                 } else {
                     int moF = -typeModifiedToHit.getMoS();
-                    if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
+                    if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
                         if ((-typeModifiedToHit.getMoS() - 2) < 1) {
                             moF = 0;
                         } else {

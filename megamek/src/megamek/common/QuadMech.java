@@ -211,8 +211,17 @@ public class QuadMech extends Mech {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return false;
+    	return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !isProne();
     }
+    
+	@Override
+	public boolean isValidSecondaryFacing(int dir) {
+		int rotate = dir - getFacing();
+		if (canChangeSecondaryFacing()) {
+			return (rotate <= 1) || (rotate == 5);
+		} else
+			return rotate == 0;
+	}	 
 
     /**
      * Returns true is the location is a leg
@@ -233,6 +242,10 @@ public class QuadMech extends Mech {
         if ((mounted.getType() instanceof WeaponType) &&
                 mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
+        }
+        // VGLs base arc on their facing
+        if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+            return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
         // rear mounted?
         if (mounted.isRearMounted()) {
@@ -319,7 +332,7 @@ public class QuadMech extends Mech {
             roll.addModifier(-2, "Quad bonus");
         }
 
-        if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
+        if (hasAbility(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
             roll.addModifier(-1, "Animal Mimicry");
         }
 

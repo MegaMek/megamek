@@ -55,6 +55,10 @@ Hover
 5
 </structural_tech_rating>
 
+<armor_tech_rating>
+5
+</armor_tech_rating>
+
 <Body Equipment>
 BicycleChassisMod
 Advanced Fire Control
@@ -82,7 +86,7 @@ AToW Companion
 </source>
 
 <tonnage>
-.5
+.75
 </tonnage>
 
 <range>

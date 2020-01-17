@@ -42,6 +42,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         name = "Prototype ER Large Laser";
         setInternalName("ISERLargeLaserPrototype");
         addLookupName("IS ER Large Laser Prototype");
+        shortName = "ER Large Laser (P)";
         toHitModifier = 1;
         flags = flags.or(F_PROTOTYPE);
         heat = 12;
@@ -54,7 +55,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         waterMediumRange = 9;
         waterLongRange = 12;
         waterExtremeRange = 18;
-        tonnage = 5.0f;
+        tonnage = 5.0;
         criticals = 2;
         bv = 163;
         cost = 600000;

@@ -24,6 +24,10 @@ Galaport Ground Trailer
 2457
 </year>
 
+<originalBuildYear>
+2457
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,10 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+cargobay:88.0:1:1
+</transporters>
 
 <cruiseMP>
 0
@@ -49,17 +57,10 @@ Tracked
 5
 </armor>
 
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
-
 <Body Equipment>
-Tractor
-Trailer
+SV Chassis Mod [Tractor]
+SV Chassis Mod [Trailer]
+Environmental Sealing
 Environmental Sealed Chassis
 </Body Equipment>
 
@@ -71,7 +72,7 @@ Environmental Sealed Chassis
 
 <Front Left Equipment>
 </Front Left Equipment>
-.
+
 <Rear Right Equipment>
 </Rear Right Equipment>
 
@@ -79,11 +80,16 @@ Environmental Sealed Chassis
 </Rear Left Equipment>
 
 <Rear Equipment>
+Hitch
 </Rear Equipment>
 
-<transporters>
-cargobay:88:1
-</transporters>
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
 
 <source>
 TRO VAr - Age of War
@@ -92,3 +98,8 @@ TRO VAr - Age of War
 <tonnage>
 200.0
 </tonnage>
+
+<fuel>
+0.0
+</fuel>
+

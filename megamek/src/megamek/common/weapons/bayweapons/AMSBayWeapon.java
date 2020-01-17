@@ -16,6 +16,7 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.EquipmentTypeLookup;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
@@ -40,11 +41,11 @@ public class AMSBayWeapon extends AmmoBayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "AMS Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.AMS_BAY);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 1;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_AMS;

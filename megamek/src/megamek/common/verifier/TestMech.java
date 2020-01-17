@@ -30,22 +30,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import megamek.common.AmmoType;
-import megamek.common.BipedMech;
-import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.ITechManager;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadMech;
-import megamek.common.QuadVee;
-import megamek.common.SimpleTechLevel;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
@@ -58,12 +43,12 @@ import megamek.common.weapons.ppc.PPCWeapon;
 public class TestMech extends TestEntity {
 
     public enum MechJumpJets {
-        JJ_STANDARD ("JumpJet", true, Mech.JUMP_STANDARD),
-        JJ_IMPROVED ("ImprovedJump Jet", false, Mech.JUMP_IMPROVED),
-        JJ_PROTOTYPE ("ISPrototypeJumpJet", true, Mech.JUMP_PROTOTYPE),
-        JJ_PROTOTYPE_IMPROVED ("ISPrototypeImprovedJumpJet", false, Mech.JUMP_PROTOTYPE_IMPROVED),
-        JJ_UMU ("UMU", false, Mech.JUMP_NONE),
-        JJ_BOOSTER ("Mech Mechanical Jump Boosters", true, Mech.JUMP_BOOSTER);
+        JJ_STANDARD (EquipmentTypeLookup.JUMP_JET, true, Mech.JUMP_STANDARD),
+        JJ_IMPROVED (EquipmentTypeLookup.IMPROVED_JUMP_JET, false, Mech.JUMP_IMPROVED),
+        JJ_PROTOTYPE (EquipmentTypeLookup.PROTOTYPE_JUMP_JET, true, Mech.JUMP_PROTOTYPE),
+        JJ_PROTOTYPE_IMPROVED (EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ, false, Mech.JUMP_PROTOTYPE_IMPROVED),
+        JJ_UMU (EquipmentTypeLookup.MECH_UMU, false, Mech.JUMP_NONE),
+        JJ_BOOSTER (EquipmentTypeLookup.MECH_JUMP_BOOSTER, true, Mech.JUMP_BOOSTER);
         
         private String internalName;
         private boolean industrial;
@@ -133,7 +118,7 @@ public class TestMech extends TestEntity {
                         && eq2.hasFlag(MiscType.F_MECH_EQUIPMENT)
                         && techManager.isLegal(eq2)
                         && (!isLam || (eq2.getCriticals(null) == 0))
-                        && (!industrialOnly || ((MiscType)eq).isIndustrial())) {
+                        && (!industrialOnly || ((null != eq) && ((MiscType)eq).isIndustrial()))) {
                     retVal.add(eq2);
                 }
             }
@@ -221,17 +206,26 @@ public class TestMech extends TestEntity {
     }
     
     @Override
-    public boolean isJumpship() {
+    public boolean isAdvancedAerospace() {
+        return false;
+    }
+    
+    @Override
+    public boolean isProtomech() {
         return false;
     }
 
     @Override
     public double getWeightMisc() {
-        if (mech instanceof LandAirMech || mech instanceof QuadVee) {
-            // 10% of weight is conversion equipment
-            return Math.ceil(mech.getWeight() / 10);
+        // LAM/QuadVee equipment is 10% of mass, rounded up to whole number (15% for bimodal LAM).
+        // IO p. 113 (LAM), 134 (QV)
+        if (mech instanceof LandAirMech) {
+            return Math.ceil(mech.getWeight()) *
+                    (((LandAirMech) mech).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.15 : 0.1);
+        } else if (mech instanceof QuadVee) {
+            return Math.ceil(mech.getWeight() * 0.1);
         }
-        return 0.0f;
+        return 0.0;
     }
 
     @Override
@@ -286,6 +280,12 @@ public class TestMech extends TestEntity {
             weight = 4.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_QUADVEE) {
             weight = 4.0;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
+            // Like as normal command console, it is technically two seperate 4-ton and 3-ton pieces of equipment.
+            weight = 7.0;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
+            // Like as normal command console, it is technically two seperate 2-ton and 3-ton pieces of equipment. 
+            weight = 5.0;
         }
 
         return weight;
@@ -396,10 +396,6 @@ public class TestMech extends TestEntity {
             StringBuffer buff) {
         MiscType mt = (MiscType) mounted.getType();
         if (mt.hasFlag(MiscType.F_STEALTH) && !entity.hasPatchworkArmor()) {
-            if (!entity.hasWorkingMisc(MiscType.F_ECM)) {
-                buff.append("stealth armor needs ECM suite\n");
-                return false;
-            }
             // stealth needs to have 2 crits in legs arm and side torso
             if (countCriticalSlotsFromEquipInLocation(entity, mounted,
                     Mech.LOC_LARM) != 2) {
@@ -540,8 +536,8 @@ public class TestMech extends TestEntity {
         }
 
         allocation.addElement(mounted);
-        allocation.addElement(new Integer(criticals));
-        allocation.addElement(new Integer(count));
+        allocation.addElement(Integer.valueOf(criticals));
+        allocation.addElement(Integer.valueOf(count));
         return false;
     }
 
@@ -607,7 +603,7 @@ public class TestMech extends TestEntity {
                         .integralHeatSinkCapacity(mech.hasCompactHeatSinks()))
                         && (countInternalHeatSinks != ((Mech) entity)
                                 .heatSinks()) && !entity.isOmni())) {
-            heatSinks.addElement(new Integer(countInternalHeatSinks));
+            heatSinks.addElement(Integer.valueOf(countInternalHeatSinks));
         }
         return legal;
     }
@@ -734,7 +730,7 @@ public class TestMech extends TestEntity {
     public boolean correctMovement(StringBuffer buff) {
         // Mechanical Jump Boosts can be greater then Running as long as
         // the unit can handle the weight.
-        if ((mech.getJumpMP(false) > mech.getOriginalRunMPwithoutMASC())
+        if ((mech.getJumpMP(false) > mech.getOriginalRunMP())
                 && !mech.hasJumpBoosters()
                 && !mech.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             buff.append("Jump MP exceeds run MP\n");
@@ -845,7 +841,7 @@ public class TestMech extends TestEntity {
     public double getArmoredComponentWeight() {
         double weight = 0.0;
 
-        for (int location = Mech.LOC_HEAD; location <= Mech.LOC_LLEG; location++) {
+        for (int location = Mech.LOC_HEAD; location < mech.locations(); location++) {
             for (int slot = 0; slot < mech.getNumberOfCriticals(location); slot++) {
                 CriticalSlot cs = mech.getCritical(location, slot);
                 if ((cs != null) && cs.isArmored()) {
@@ -1310,6 +1306,10 @@ public class TestMech extends TestEntity {
                                 || (((WeaponType)m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY))) {
                     buff.append("LAMs cannot mount heavy gauss rifles.\n");
                     illegal = true;
+                } else if ((m.getType() instanceof MiscType)
+                        && m.getType().hasFlag(MiscType.F_CLUB)) {
+                    buff.append("LAMs cannot be constructed with physical weapons.\n");
+                    illegal = true;
                 } else if (m.getType().isSpreadable()) {
                     if (spread.containsKey(m.getType())) {
                         spread.get(m.getType()).add(m.getLocation());
@@ -1489,16 +1489,31 @@ public class TestMech extends TestEntity {
                 }
             }
         }
+        
+        for (Mounted m : mech.getWeaponList()) {
+            if ((((WeaponType) m.getType()).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                    || (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)) {
+                boolean torso = mech.locationIsTorso(m.getLocation());
+                if (m.getSecondLocation() != Entity.LOC_NONE) {
+                    torso = torso && mech.locationIsTorso(m.getSecondLocation());
+                }
+                if (!mech.isSuperHeavy() && !torso) {
+                    buff.append("Heavy Gauss can only be mounted in a torso location.\n");
+                    illegal = true;
+                }
+            }
+            if ((m.getType().hasFlag(WeaponType.F_TASER)
+                    || m.getType().hasFlag(WeaponType.F_HYPER))
+                    && !(mech.hasEngine() && mech.getEngine().isFusion())) {
+                buff.append(m.getType().getName()).append(" needs fusion engine\n");
+                illegal = true;
+            }
+        }
 
-		if (mech.hasWorkingWeapon(WeaponType.F_TASER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
-			buff.append("Mek Taser needs fusion engine\n");
-			illegal = true;
-		}
-
-		if (mech.hasWorkingWeapon(WeaponType.F_HYPER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
-			buff.append("RISC Hyper Laser needs fusion engine\n");
-			illegal = true;
-		}
+        if (mech.hasWorkingWeapon(WeaponType.F_HYPER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
+            buff.append("RISC Hyper Laser needs fusion engine\n");
+            illegal = true;
+        }
         
         if (mech.hasFullHeadEject()) {
             if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)

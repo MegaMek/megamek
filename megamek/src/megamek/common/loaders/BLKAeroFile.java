@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -12,17 +13,6 @@
  * details.
  */
 
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author taharqa
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.Aero;
@@ -30,12 +20,22 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.IArmorState;
 import megamek.common.LocationFullException;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestEntity;
 
+/**
+ * BLkFile.java
+ *
+ * Created on April 6, 2002, 2:06 AM
+ *
+ * @author taharqa
+ */
 public class BLKAeroFile extends BLKFile implements IMechLoader {
 
     // armor locatioms
@@ -48,6 +48,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Aero a = new Aero();
@@ -105,7 +106,12 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
         int engineFlags = 0;
-        if (a.isClan()) {
+        // Support for mixed tech units with an engine with a different tech base
+        if (dataFile.exists("clan_engine")) {
+            if (Boolean.parseBoolean(dataFile.getDataAsString("clan_engine")[0])) {
+                engineFlags |= Engine.CLAN_ENGINE;
+            }
+        } else if (a.isClan()) {
             engineFlags |= Engine.CLAN_ENGINE;
         }
         if (!dataFile.exists("SafeThrust")) {
@@ -174,6 +180,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         a.initializeArmor(armor[BLKAeroFile.LW], Aero.LOC_LWING);
         a.initializeArmor(armor[BLKAeroFile.AFT], Aero.LOC_AFT);
         a.initializeArmor(0, Aero.LOC_WINGS);
+        a.initializeArmor(IArmorState.ARMOR_NA, Aero.LOC_FUSELAGE);
 
         a.autoSetCapArmor();
         a.autoSetFatalThresh();
@@ -184,10 +191,9 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         // This is not working right for arrays for some reason
         a.autoSetThresh();
 
-        loadEquipment(a, "Nose", Aero.LOC_NOSE);
-        loadEquipment(a, "Right Wing", Aero.LOC_RWING);
-        loadEquipment(a, "Left Wing", Aero.LOC_LWING);
-        loadEquipment(a, "Aft", Aero.LOC_AFT);
+        for (int loc = 0; loc < a.locations(); loc++) {
+            loadEquipment(a, a.getLocationName(loc), loc);
+        }
 
         // now organize the weapons into groups for capital fighters
         a.updateWeaponGroups();
@@ -207,6 +213,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
     @Override
     protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
+        boolean addedCase = false;
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
         if (saEquip == null) {
             return;
@@ -257,6 +264,13 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                 }                 
 
                 EquipmentType etype = EquipmentType.get(equipName);
+                
+                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_CASE)) {
+                    if (etype.isClan() || addedCase) {
+                        continue;
+                    }
+                    addedCase = true;
+                }
 
                 if (etype == null) {
                     // try w/ prefix
@@ -265,18 +279,14 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        Mounted mount = t.addEquipment(etype, nLoc, rearMount);
+                        int useLoc = TestEntity.eqRequiresLocation(t, etype)? nLoc : Aero.LOC_FUSELAGE;
+                        Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {
-                            // If no facing specified, assume front
                             if (facing == -1) {
-                                if (rearMount) {
-                                    mount.setFacing(3);
-                                } else {
-                                    mount.setFacing(0);
-                                }
+                                mount.setFacing(defaultVGLFacing(useLoc, rearMount));
                             } else {
                                 mount.setFacing(facing);
                             }

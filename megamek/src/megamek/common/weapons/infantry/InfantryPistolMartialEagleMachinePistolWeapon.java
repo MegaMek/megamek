@@ -39,6 +39,7 @@ public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapo
 		ammoType = AmmoType.T_NA;
 		cost = 180;
 		bv = 0.23;
+		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.25;
 		infantryRange = 0;

@@ -34,6 +34,7 @@ public class CLUAC20Prototype extends CLPrototypeUACWeapon {
         super();
         name = "Prototype Ultra Autocannon/20";
         setInternalName("CLUltraAC20Prototype");
+        shortName = "Ultra AC/20 (P)";
         heat = 8;
         damage = 20;
         rackSize = 20;
@@ -41,7 +42,7 @@ public class CLUAC20Prototype extends CLPrototypeUACWeapon {
         mediumRange = 7;
         longRange = 10;
         extremeRange = 14;
-        tonnage = 15.0f;
+        tonnage = 15.0;
         criticals = 11;
         bv = 281;
         cost = 480000;
@@ -50,6 +51,7 @@ public class CLUAC20Prototype extends CLPrototypeUACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         rulesRefs = "97, IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

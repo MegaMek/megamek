@@ -24,6 +24,10 @@ DFC-O
 3067
 </year>
 
+<originalBuildYear>
+3067
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -69,8 +76,6 @@ Aerodyne
 
 <Nose Equipment>
 ISGaussRifle:OMNI
-IS Gauss Ammo:OMNI
-IS Gauss Ammo:OMNI
 ISMediumPulseLaser:OMNI
 ISMediumPulseLaser:OMNI
 </Nose Equipment>
@@ -89,6 +94,14 @@ ISERMediumLaser:OMNI
 ISERSmallLaser:OMNI
 ISERSmallLaser:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War

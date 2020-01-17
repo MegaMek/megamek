@@ -38,7 +38,7 @@ public class CLStreakSRM4 extends StreakSRMWeapon {
         this.mediumRange = 8;
         this.longRange = 12;
         this.extremeRange = 16;
-        this.tonnage = 2.0f;
+        this.tonnage = 2.0;
         this.criticals = 1;
         this.bv = 79;
         this.cost = 90000;

@@ -35,6 +35,8 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.Weapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -63,6 +65,7 @@ public class WeaponFireInfo {
     private IGame game;
     private EntityState shooterState = null;
     private EntityState targetState = null;
+    private Integer updatedFiringMode = null;
     private final Princess owner;
 
     /**
@@ -276,14 +279,14 @@ public class WeaponFireInfo {
     }
 
     ToHitData calcToHit() {
-        return owner.getFireControl().guessToHitModifierForWeapon(getShooter(), getShooterState(), getTarget(),
+        return owner.getFireControl(getShooter()).guessToHitModifierForWeapon(getShooter(), getShooterState(), getTarget(),
                                                                   getTargetState(),
                                                                   getWeapon(), getGame());
     }
 
     private ToHitData calcToHit(final MovePath shooterPath,
                                 final boolean assumeUnderFlightPath) {
-        return owner.getFireControl().guessAirToGroundStrikeToHitModifier(getShooter(), null, getTarget(),
+        return owner.getFireControl(getShooter()).guessAirToGroundStrikeToHitModifier(getShooter(), null, getTarget(),
                                                                           getTargetState(),
                                                                           shooterPath, getWeapon(), getGame(),
                                                                           assumeUnderFlightPath);
@@ -345,7 +348,9 @@ public class WeaponFireInfo {
     }
 
     WeaponAttackAction buildWeaponAttackAction() {
-        if (!getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)) {
+        if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY) 
+                || (getWeapon().getType() instanceof CapitalMissileWeapon
+                        && Compute.isGroundToGround(shooter, target)))) {
             return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
                                           getShooter().getEquipmentNum(getWeapon()));
         } else {
@@ -413,6 +418,31 @@ public class WeaponFireInfo {
     }
     
     /**
+     * Compute the heat output by firing a given weapon.
+     * Contains special logic for bay weapons when using individual bay heat.
+     * TODO: Make some kind of assumption about variable-heat weapons?
+     * @param weapon The weapon to check.
+     * @return Generated heat.
+     */
+    int computeHeat(Mounted weapon) {
+     // bay weapons require special consideration, by looping through all weapons and adding up the damage
+        // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
+        // varies with distance to target.
+        if((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
+            int bayHeat = 0;
+            for(int weaponID : weapon.getBayWeapons()) {
+                Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
+                WeaponType weaponType = (WeaponType) bayWeapon.getType();
+                bayHeat += weaponType.getHeat();
+            }
+            
+            return bayHeat;
+        } else {
+            return ((WeaponType) weapon.getType()).getHeat();
+        }
+    }
+    
+    /**
      * Worker function to compute expected bomb damage given the shooter
      * @param shooter The unit making the attack.
      * @param weapon The weapon being used in the attack.
@@ -464,7 +494,7 @@ public class WeaponFireInfo {
      * @param shooterPath The path the attacker has moved.
      * @param assumeUnderFlightPath If TRUE, aero units will not check to make sure the target is under their flight
      *                              path.
-     * @param guess Set TRUE to esitmate the chance to hit rather than doing the full calculation.
+     * @param guess Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     void initDamage(@Nullable final MovePath shooterPath,
                     final boolean assumeUnderFlightPath,
@@ -497,7 +527,16 @@ public class WeaponFireInfo {
 
             // If we can't hit, set everything zero and return..
             if (12 < getToHit().getValue()) {
-                owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
+                int indirectMode = switchMissileMode();
+                
+                if(indirectMode > -1) {
+                    setUpdatedFiringMode(indirectMode);
+                    initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
+                    getWeapon().setMode(""); // make sure to reset the weapon firing mode
+                    return;
+                }
+                
+            	owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
                                                                       .append(getToHit().getValue()).toString());
                 setProbabilityToHit(0);
                 setMaxDamage(0);
@@ -507,14 +546,22 @@ public class WeaponFireInfo {
                 setExpectedDamageOnHit(0);
                 return;
             }
-
+            
             if (getShooterState().hasNaturalAptGun()) {
                 msg.append("\n\tAttacker has Natural Aptitude Gunnery");
             }
             setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
             msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
 
-            setHeat(((WeaponType) getWeapon().getType()).getHeat());
+            // now that we've calculated hit odds, if we're shooting
+            // a weapon capable of rapid fire, it's time to decide whether we're going to spin it up
+            String currentFireMode = getWeapon().curMode().getName();
+            int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinupThreshold());
+            if(!currentFireMode.equals(getWeapon().curMode().getName())) {
+            	setUpdatedFiringMode(spinMode);
+            }
+            
+            setHeat(computeHeat(weapon));
             msg.append("\n\tHeat: ").append(getHeat());
 
             setExpectedDamageOnHit(computeExpectedDamage());
@@ -586,6 +633,25 @@ public class WeaponFireInfo {
             owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
         }
     }
+    
+    /**
+     * Attempts to switch the current weapon's firing mode between direct and indirect
+     * or vice versa. Returns -1 if the mode switch fails, or the weapon mode index if it succeeds.
+     * @return Mode switch result.
+     */
+    int switchMissileMode() {
+        //if we've already switched before, don't do it again
+        if(getUpdatedFiringMode() != null) {
+            return -1;
+        }
+        
+        // if we are able to switch the weapon to indirect fire mode, do so and try again
+        if(!getWeapon().curMode().equals(Weapon.MODE_MISSILE_INDIRECT)) {
+            return getWeapon().setMode(Weapon.MODE_MISSILE_INDIRECT);
+        } else {
+            return getWeapon().setMode("");
+        }
+    }
 
     WeaponAttackAction getWeaponAttackAction() {
         final String METHOD_NAME = "getWeaponAttackAction(IGame)";
@@ -595,7 +661,9 @@ public class WeaponFireInfo {
             if (null != getAction()) {
                 return getAction();
             }
-            if (!getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)
+                    || (getWeapon().getType() instanceof CapitalMissileWeapon
+                            && Compute.isGroundToGround(shooter, target)))) {
                 setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
                         getShooter().getEquipmentNum(getWeapon())));
             } else {
@@ -622,5 +690,17 @@ public class WeaponFireInfo {
                 + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
                 + ", Kill Prob: " + LOG_PER.format(getKillProbability());
 
+    }
+
+    /**
+     * The updated firing mode, if any of the weapon involved in this attack.
+     * Null if no update required.
+     */
+    public Integer getUpdatedFiringMode() {
+    	return updatedFiringMode;
+    }
+    
+    public void setUpdatedFiringMode(int mode) {
+    	updatedFiringMode = mode;
     }
 }

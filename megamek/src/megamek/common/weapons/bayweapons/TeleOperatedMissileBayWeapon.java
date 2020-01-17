@@ -16,21 +16,19 @@
  */
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBayHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
+import megamek.common.weapons.TeleMissileHandler;
+import megamek.common.weapons.Weapon;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class TeleOperatedMissileBayWeapon extends AmmoBayWeapon {
+public class TeleOperatedMissileBayWeapon extends CapitalMissileBayWeapon {
     /**
      * 
      */
@@ -43,14 +41,17 @@ public class TeleOperatedMissileBayWeapon extends AmmoBayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "Tele-Operated Capital Missile Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.TELE_CAPITAL_MISSILE_BAY);
+        String[] modeStrings = { "Normal", "Tele-Operated" };
+        setModes(modeStrings);
+        setInstantModeSwitch(false);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 12;
         this.mediumRange = 24;
         this.longRange = 40;
         this.extremeRange = 50;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.flags = flags.or(F_MISSILE);
@@ -75,6 +76,8 @@ public class TeleOperatedMissileBayWeapon extends AmmoBayWeapon {
         if (weapon.isInBearingsOnlyMode()
                 && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
             return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, server);
+        } else if (weapon.curMode().equals(Weapon.MODE_CAP_MISSILE_TELE_OPERATED)) {
+            return new TeleMissileHandler(toHit, waa, game, server);
         } else {    
             return new CapitalMissileBayHandler(toHit, waa, game, server);
         }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,36 +16,37 @@ ConvFighter
 Planetlifter Air Transport
 </Name>
 
-<model>
+<Model>
 (Standard)
-</model>
+</Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+2598
+</year>
+
+<originalBuildYear>
+2598
+</originalBuildYear>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:20.5:1:1
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
 
-<Armor>
-22
-7
-7
-12
-</Armor>
-
-<Nose Equipment>
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 0
@@ -59,38 +60,40 @@ Planetlifter Air Transport
 320
 </fuel>
 
-<type>
-IS Level 1
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2598
-</year>
+<armor>
+22
+7
+7
+12
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Star League
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-1
-</engine_type>
-
-<transporters>
-cargobay:20.5:1
-</transporters>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<vstol>
-1
-</vstol>

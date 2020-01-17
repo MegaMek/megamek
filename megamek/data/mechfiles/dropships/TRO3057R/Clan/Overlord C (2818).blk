@@ -44,8 +44,8 @@ cargobay:406.0:0:6
 2ndclassquarters:0.0:0
 1stclassquarters:80.0:0
 crewquarters:245.0:0
-cargobay:406.0:0:4
-cargobay:406.0:0:2
+cargobay:406.0:0:8
+cargobay:406.0:0:9
 </transporters>
 
 <SafeThrust>
@@ -142,6 +142,9 @@ CLArtemisIV
 (B) CLERPPC
 CLERPPC
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 18

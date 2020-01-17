@@ -43,7 +43,7 @@ infantrybay:2.0:1:3:Foot
 steeragequarters:120.0:0
 crewquarters:0.0:0
 1stclassquarters:50.0:0
-cargobay:24.5:1:2
+cargobay:24.5:1:7
 </transporters>
 
 <SafeThrust>
@@ -126,8 +126,11 @@ ISArtemisIV
 (B) SRM 6
 IS Ammo SRM-6 Artemis-capable:15
 ISArtemisIV
-ISMobileHPG
 </Aft Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <structural_integrity>
 15
@@ -181,6 +184,3 @@ XTRO Liao - Jihad
 2
 </escape_pod>
 
-<History>
-Remaking this ship to current construction standards involves adding 200 tons to ships weight.
-</history>

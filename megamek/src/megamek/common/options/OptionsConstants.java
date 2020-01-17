@@ -170,7 +170,7 @@ public class OptionsConstants {
     public static final String PILOT_TM_MOUNTAINEER= "tm_mountaineer"; //$NON-NLS$
     public static final String PILOT_TM_SWAMP_BEAST= "tm_swamp_beast"; //$NON-NLS$
     // public static final String PILOT_WIND_WALKER= "wind_walker"; //$NON-NLS$
-    // public static final String PILOT_ZWEIHANDER= "zweihander"; //$NON-NLS$
+    public static final String PILOT_ZWEIHANDER= "zweihander"; //$NON-NLS$
 
     // GUNNERY SKILLS
     // public static final String GUNNERY_BLOOD_STALKER= "blood_stalker";
@@ -223,17 +223,25 @@ public class OptionsConstants {
     public static final String UNOFF_ALLWEATHER = "allweather"; // $NON-NLS$
     public static final String UNOFF_BLIND_FIGHTER = "blind_fighter"; // $NON-NLS$
     public static final String UNOFF_SENSOR_GEEK = "sensor_geek"; // $NON-NLS$
+    public static final String UNOFF_SMALL_PILOT = "small_pilot"; // $NON-NLS$
 
     
       //EDGE 
     public static final String EDGE = "edge"; //$NON-NLS$ 
-    //different edge triggers 
+    //different edge triggers
+    //Mech Triggers
     public static final String EDGE_WHEN_HEADHIT= "edge_when_headhit"; //$NON-NLS$ 
     public static final String EDGE_WHEN_TAC= "edge_when_tac"; //$NON-NLS$ 
     public static final String EDGE_WHEN_KO= "edge_when_ko"; //$NON-NLS$ 
     public static final String EDGE_WHEN_EXPLOSION= "edge_when_explosion"; //$NON-NLS$ 
     public static final String EDGE_WHEN_MASC_FAILS= "edge_when_masc_fails"; //$NON-NLS$
-     
+    //Aero Triggers
+    public static final String EDGE_WHEN_AERO_ALT_LOSS= "edge_when_aero_alt_loss"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_EXPLOSION= "edge_when_aero_explosion"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_KO= "edge_when_aero_ko"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_LUCKY_CRIT= "edge_when_aero_lucky_crit"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_NUKE_CRIT= "edge_when_aero_nuke_crit"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_UNIT_CARGO_LOST= "edge_when_aero_unit_cargo_lost"; //$NON-NLS$
 
     // Manei Domini
     public static final String MD_PAIN_SHUNT = "artificial_pain_shunt"; // $NON-NLS$
@@ -362,6 +370,7 @@ public class OptionsConstants {
     public static final String ADVANCED_ALTERNATE_PILOT_BV_MOD= "alternate_pilot_bv_mod";  //$NON-NLS$
 
     public static final String ADVCOMBAT_TACOPS_AMS= "tacops_ams";  //$NON-NLS$
+    public static final String ADVCOMBAT_TACOPS_MANUAL_AMS= "tacops_manual_ams";  //$NON-NLS$
     public static final String ADVCOMBAT_FLOATING_CRITS= "floating_crits";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_CRIT_ROLL= "tacops_crit_roll";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS= "tacops_engine_explosions";  //$NON-NLS$
@@ -477,14 +486,18 @@ public class OptionsConstants {
     public static final String ADVAERORULES_STRATOPS_OVER_PENETRATE= "stratops_over_penetrate";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_SPACE_BOMB= "stratops_space_bomb";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH= "stratops_bearings_only";  //$NON-NLS$
+    public static final String ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY= "stratops_bearings_only_velocity";  //$NON-NLS$
+    public static final String ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH= "stratops_waypoint_launch";  //$NON-NLS$
+    public static final String ADVAERORULES_STRATOPS_ADVANCED_SENSORS= "stratops_advanced_sensors";  //$NON-NLS$
     public static final String ADVAERORULES_VARIABLE_DAMAGE_THRESH= "variable_damage_thresh";  //$NON-NLS$
     public static final String ADVAERORULES_AT2_NUKES= "at2_nukes";  //$NON-NLS$
     public static final String ADVAERORULES_AERO_SANITY= "aero_sanity";  //$NON-NLS$
-    public static final String ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER= "ind_weapons_grounded_dropper";  //$NON-NLS$
     public static final String ADVAERORULES_RETURN_FLYOVER= "return_flyover";  //$NON-NLS$
     public static final String ADVAERORULES_AA_MOVE_MOD= "aa_move_mod";  //$NON-NLS$
     public static final String ADVAERORULES_ALLOW_LARGE_SQUADRONS= "allow_large_squadrons";  //$NON-NLS$
     public static final String ADVAERORULES_SINGLE_NO_CAP= "single_no_cap";  //$NON-NLS$
+    public static final String ADVAERORULES_AERO_ARTILLERY_MUNITIONS= "aero_artillery_munitions"; //$NON-NLS$
+    public static final String ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE= "expanded_kf_drive_damage";  //$NON-NLS$
 
     public static final String INIT_INF_MOVE_EVEN= "inf_move_even";  //$NON-NLS$
     public static final String INIT_INF_DEPLOY_EVEN= "inf_deploy_even";  //$NON-NLS$

@@ -23,7 +23,6 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.FlamerHandler;
-import megamek.common.weapons.FlamerHeatHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.server.Server;
 
@@ -37,22 +36,16 @@ public abstract class FlamerWeapon extends EnergyWeapon {
      */
     private static final long serialVersionUID = -8198014543155920036L;
 
-    public FlamerWeapon() {
+	public FlamerWeapon() {
         super();
-        flags = flags.or(F_FLAMER).or(F_BURST_FIRE);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON).or(F_FLAMER).or(F_BURST_FIRE);
         ammoType = AmmoType.T_NA;
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
         atClass = CLASS_POINT_DEFENSE;
     }
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())
-                .curMode().equals("Heat"))) {
-            return new FlamerHeatHandler(toHit, waa, game, server);
-        }
         return new FlamerHandler(toHit, waa, game, server);
     }
     

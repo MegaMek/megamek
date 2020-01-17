@@ -32,6 +32,7 @@ public abstract class NPPCWeapon extends EnergyWeapon {
         super();
         this.atClass = CLASS_CAPITAL_PPC;
         this.capital = true;
+        flags = flags.andNot(F_PROTO_WEAPON);
     }
     
     @Override

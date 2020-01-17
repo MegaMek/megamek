@@ -185,6 +185,9 @@ CLAntiMissileSystem
 CLAMS Ammo:96
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 14
 </structural_integrity>

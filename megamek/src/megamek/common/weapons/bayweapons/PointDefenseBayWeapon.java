@@ -16,8 +16,8 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.EquipmentTypeLookup;
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoBayWeaponHandler;
@@ -40,24 +40,20 @@ public class PointDefenseBayWeapon extends AmmoBayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "Point Defense Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.POINT_DEFENSE_BAY);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 6;
         this.mediumRange = 12;
         this.longRange = 20;
         this.extremeRange = 25;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_POINT_DEFENSE;
 		flags = flags.or(F_PDBAY).or(F_AERO_WEAPON);
 		setModes(new String[] { "Point Defense", "Normal" });
 		setInstantModeSwitch(false);
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
     
     @Override

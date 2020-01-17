@@ -51,7 +51,7 @@ public class ISGaussRifle extends GaussWeapon {
         this.mediumRange = 15;
         this.longRange = 22;
         this.extremeRange = 30;
-        this.tonnage = 15.0f;
+        this.tonnage = 15.0;
         this.criticals = 7;
         this.bv = 320;
         this.cost = 300000;
@@ -61,6 +61,7 @@ public class ISGaussRifle extends GaussWeapon {
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
         rulesRefs = "219,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)

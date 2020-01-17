@@ -25,7 +25,6 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.VehicleFlamerCoolHandler;
 import megamek.common.weapons.VehicleFlamerHandler;
-import megamek.common.weapons.VehicleFlamerHeatHandler;
 import megamek.server.Server;
 
 /**
@@ -42,11 +41,9 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
      */
     public VehicleFlamerWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON)
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_PROTO_WEAPON)
                 .or(F_FLAMER).or(F_ENERGY).or(F_BURST_FIRE);
         ammoType = AmmoType.T_VEHICLE_FLAMER;
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
         atClass = CLASS_POINT_DEFENSE;
     }
 
@@ -55,10 +52,8 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())
-                .curMode().equals("Heat"))) {
-            return new VehicleFlamerHeatHandler(toHit, waa, game, server);
-        } else if (atype.getMunitionType() == AmmoType.M_COOLANT) {
+        
+        if (atype.getMunitionType() == AmmoType.M_COOLANT) {
             return new VehicleFlamerCoolHandler(toHit, waa, game, server);
         } else {
             return new VehicleFlamerHandler(toHit, waa, game, server);

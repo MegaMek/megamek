@@ -46,12 +46,13 @@ public class CLAAAMissileWeapon extends ThunderBoltWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 9000;
-        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON);
+        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON).andNot(F_MECH_WEAPON);;
         this.shortAV = 20;
         this.medAV = 20;
         this.maxRange = RANGE_MED;
         this.ammoType = AmmoType.T_AAA_MISSILE;
         this.capital = false;
+        this.missileArmor = 20;
         cost = 9000;
         this.rulesRefs = "357,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

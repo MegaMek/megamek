@@ -168,7 +168,7 @@ public class BipedMech extends Mech {
                 wmp += 2;
             }
         }
-        wmp = Math.max(wmp - getCargoMpReduction(), 0);
+        wmp = Math.max(wmp - getCargoMpReduction(this), 0);
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
@@ -835,6 +835,20 @@ public class BipedMech extends Mech {
     @Override
     public long getEntityType() {
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH;
+    }
+    
+    /**
+     * 
+     * @return true if this unit is capable of Zweihandering (melee attack with both hands)
+     */
+    public boolean canZweihander() {
+        return (getCrew() != null)
+                && hasAbility(OptionsConstants.PILOT_ZWEIHANDER)
+                && hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
+                && hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)
+                && !isLocationBad(Mech.LOC_RARM)
+                && !isLocationBad(Mech.LOC_LARM)
+                && !isProne();
     }
 
 }

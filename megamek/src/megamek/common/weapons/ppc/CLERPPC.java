@@ -44,7 +44,7 @@ public class CLERPPC extends PPCWeapon {
         this.waterMediumRange = 10;
         this.waterLongRange = 16;
         this.waterExtremeRange = 20;
-        this.tonnage = 6.0f;
+        this.tonnage = 6.0;
         this.criticals = 2;
         this.bv = 412;
         this.cost = 300000;

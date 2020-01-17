@@ -44,6 +44,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
     //booleans for retractable blade extension
     private boolean leftBlade = false;
     private boolean rightBlade = false;
+    private boolean zweihandering = false;
 
     public PunchAttackAction(int entityId, int targetId, int arm) {
         super(entityId, targetId);
@@ -51,11 +52,12 @@ public class PunchAttackAction extends PhysicalAttackAction {
     }
 
     public PunchAttackAction(int entityId, int targetType, int targetId, int arm, boolean leftBlade,
-                             boolean rightBlade) {
+                             boolean rightBlade, boolean zweihandering) {
         super(entityId, targetType, targetId);
         this.arm = arm;
         this.leftBlade = leftBlade;
         this.rightBlade = rightBlade;
+        this.zweihandering = zweihandering;
     }
 
     public int getArm() {
@@ -64,6 +66,14 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
     public void setArm(int arm) {
         this.arm = arm;
+    }
+    
+    /**
+     * 
+     * @return true if the entity is zweihandering (attacking with both hands)
+     */
+    public boolean isZweihandering() {
+        return zweihandering;
     }
 
     public boolean isBladeExtended(int arm) {
@@ -78,7 +88,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
     public ToHitData toHit(IGame game) {
         return PunchAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                                                                           getTargetId()), getArm());
+                                                                           getTargetId()), getArm(), isZweihandering());
     }
 
     /**
@@ -167,7 +177,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
      * To-hit number for the specified arm to punch
      */
     public static ToHitData toHit(IGame game, int attackerId,
-                                  Targetable target, int arm) {
+                                  Targetable target, int arm, boolean zweihandering) {
         final Entity ae = game.getEntity(attackerId);
 
         if ((ae == null) || (target == null)) {
@@ -231,6 +241,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
                                                             : Mech.LOC_LARM;
+        final int otherArm = armLoc == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
 
         // damaged or missing actuators
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLoc)) {
@@ -238,6 +249,15 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
             toHit.addModifier(2, "Lower arm actuator missing or destroyed");
+        }
+        
+        if(zweihandering) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, otherArm)) {
+                toHit.addModifier(2, "Upper arm actuator destroyed");
+            }
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, otherArm)) {
+                toHit.addModifier(2, "Lower arm actuator missing or destroyed");
+            }
         }
 
         if (ae.hasFunctionalArmAES(armLoc)) {
@@ -321,7 +341,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
      * Damage that the specified mech does with a punch.
      */
     public static int getDamageFor(Entity entity, int arm,
-                                   boolean targetInfantry) {
+                                   boolean targetInfantry, boolean zweihandering) {
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
                                                             : Mech.LOC_LARM;
         int damage = (int) Math.ceil(entity.getWeight() / 10.0);
@@ -329,6 +349,11 @@ public class PunchAttackAction extends PhysicalAttackAction {
         // Rules state tonnage/7 for claws
         if (((Mech) entity).hasClaw(armLoc)) {
             damage = (int) Math.ceil(entity.getWeight() / 7.0);
+        }
+        
+        //CamOps, pg. 82
+        if(zweihandering) {
+            damage += (int) Math.floor(entity.getWeight() / 10.0);
         }
 
         float multiplier = 1.0f;
@@ -342,11 +367,12 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
             damage = 0;
         }
-        if ((entity.heat >= 9) && ((Mech) entity).hasTSM()) {
+        if (((entity.heat >= 9) && ((Mech) entity).hasTSM())
+                || ((Mech) entity).hasIndustrialTSM()) {
             multiplier *= 2.0f;
         }
         int toReturn = (int) Math.floor(damage * multiplier)
-                       + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+                       + entity.modifyPhysicalDamageForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(armLoc) == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);

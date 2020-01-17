@@ -236,9 +236,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
             }
         }
         
-        PilotOptions pOpts = attacker.getCrew().getOptions();
         if ((toHit.getValue() > 0) && (null != attacker.getCrew())
-                && pOpts.booleanOption(OptionsConstants.UNOFF_BLIND_FIGHTER)) {
+                && attacker.hasAbility(OptionsConstants.UNOFF_BLIND_FIGHTER)) {
             toHit.addModifier(-1, "blind fighter");
         }
 

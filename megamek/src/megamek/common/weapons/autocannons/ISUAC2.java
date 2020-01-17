@@ -43,7 +43,7 @@ public class ISUAC2 extends UACWeapon {
         this.mediumRange = 17;
         this.longRange = 25;
         this.extremeRange = 34;
-        this.tonnage = 7.0f;
+        this.tonnage = 7.0;
         this.criticals = 3;
         this.bv = 56;
         this.cost = 120000;

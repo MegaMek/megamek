@@ -14,9 +14,12 @@
 package megamek.common.weapons.lrms;
 
 import megamek.common.AmmoType;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LRMAntiTSMHandler;
 import megamek.common.weapons.LRMDeadFireHandler;
@@ -44,14 +47,23 @@ public abstract class LRMWeapon extends MissileWeapon {
     public LRMWeapon() {
         super();
         ammoType = AmmoType.T_LRM;
-        setModes(new String[] { "", "Indirect" });
         shortRange = 7;
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
         atClass = CLASS_LRM;
+        flags = flags.or(F_PROTO_WEAPON);
     }
 
+    
+    @Override
+    public double getTonnage(Entity entity, int location) {
+        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            return getRackSize() * 0.2;
+        } else {
+            return super.getTonnage(entity, location);
+        }
+    }
     /*
      * (non-Javadoc)
      *
@@ -107,5 +119,19 @@ public abstract class LRMWeapon extends MissileWeapon {
     @Override
     public boolean hasIndirectFire() {
         return true;
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 }

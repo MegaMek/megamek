@@ -54,6 +54,11 @@ public class VTOL extends Tank implements IBomber {
     public static final int CRIT_FLIGHT_STABILIZER = 19;
 
     @Override
+    public int getUnitType() {
+        return UnitType.VTOL;
+    }
+
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
@@ -553,8 +558,8 @@ public class VTOL extends Tank implements IBomber {
         }
 
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        if (hasAbility(OptionsConstants.MD_VDNI)
+                && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }
 
@@ -581,7 +586,7 @@ public class VTOL extends Tank implements IBomber {
             return 0;
         }
         j = Math.max(0, j - motiveDamage);
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {

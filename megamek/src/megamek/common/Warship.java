@@ -16,6 +16,7 @@
  */
 package megamek.common;
 
+import java.text.NumberFormat;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
@@ -31,45 +32,34 @@ public class Warship extends Jumpship {
     private static final long serialVersionUID = 4650692419224312511L;
 
     // additional Warship locations
-    public static final int LOC_LBS = 6;
-    public static final int LOC_RBS = 7;
+    public static final int LOC_LBS = 7;
+    public static final int LOC_RBS = 8;
 
-    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "LBS", "RBS" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side",
-            "Aft Right Side", "Left Broadsides", "Right Broadsides" };
-
-    private int kf_integrity = 0;
-    private int sail_integrity = 0;
+    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL", "LBS", "RBS" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
+            "Aft", "Aft Left Side", "Aft Right Side", "Hull", "Left Broadsides", "Right Broadsides" };
 
     public Warship() {
         super();
-        damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         setDriveCoreType(DRIVE_CORE_COMPACT);
     }
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.WARSHIP;
+    }
+
     //ASEW Missile Effects, per location
     //Values correspond to Locations, as seen above: NOS,FLS,FRS,AFT,ALS,ARS,LBS,RBS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0, 0, 0};
     
     /*
-     * Sets the number of rounds a specified firing arc is affected by an ASEW missile
-     * @param arc - integer representing the desired firing arc
-     * @param turns - integer specifying the number of end phases that the effects last through
-     * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
-     * Because Warships have 8 arcs instead of 6, this overrides the method in Jumpship
+     * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
      */
     @Override
-    public void setASEWAffected(int arc, int turns) {
-        asewAffectedTurns[arc] = turns;
-    }
-    
-    /*
-     * Returns the number of rounds a specified firing arc is affected by an ASEW missile
-     * @param arc - integer representing the desired firing arc
-     */
-    @Override
-    public int getASEWAffected(int arc) {
-        return asewAffectedTurns[arc];
+    protected int[] getAsewAffectedTurns() {
+        return asewAffectedTurns;
     }
  
     
@@ -83,6 +73,10 @@ public class Warship extends Jumpship {
     
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
+        // Primitives don't distinguish between jumpships and warships.
+        if (isPrimitive()) {
+            return super.getConstructionTechAdvancement();
+        }
         return TA_WARSHIP;
     }
 
@@ -98,81 +92,86 @@ public class Warship extends Jumpship {
 
     @Override
     public int locations() {
-        return 8;
-    }
-
-    @Override
-    public void setKFIntegrity(int kf) {
-        kf_integrity = kf;
-    }
-
-    @Override
-    public int getKFIntegrity() {
-        return kf_integrity;
-    }
-
-    @Override
-    public void setSailIntegrity(int sail) {
-        sail_integrity = sail;
-    }
-
-    @Override
-    public int getSailIntegrity() {
-        return sail_integrity;
+        return 9;
     }
 
     @Override
     public void initializeSailIntegrity() {
         int integrity = 1 + (int) Math.ceil((30.0 + weight / 20000.0) / 20.0);
+        setOSailIntegrity(integrity);
         setSailIntegrity(integrity);
     }
 
     @Override
     public void initializeKFIntegrity() {
-        int integrity = (int) Math.ceil(2 + 0.4525 * weight / 25000.0);
+        int integrity = (int) Math.ceil(2 + getJumpDriveWeight() / 25000.0);
+        setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
-    }
-
-    @Override
-    public boolean canJump() {
-        return kf_integrity > 0;
+        //Helium Tanks make up about 2/3 of the drive core.
+        setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
     
-    @Override
-    public double getJumpDriveWeight() {
-        double pct = 0.45; //TODO: compact
-        return Math.ceil(getWeight() * pct); 
-    }
-
     // broadside weapon arcs
     @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-
+        
         int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
         case LOC_NOSE:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_NOSE_WPL;
+                break;
+            }
             arc = Compute.ARC_NOSE;
             break;
         case LOC_FRS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_RIGHTSIDE_SPHERE;
             break;
         case LOC_FLS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_LEFTSIDE_SPHERE;
             break;
         case LOC_ARS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_RIGHTSIDEA_SPHERE;
             break;
         case LOC_ALS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_LEFTSIDEA_SPHERE;
             break;
         case LOC_AFT:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_AFT_WPL;
+                break;
+            }
             arc = Compute.ARC_AFT;
             break;
         case LOC_LBS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_LEFT_BROADSIDE_WPL;
+                break;
+            }
             arc = Compute.ARC_LEFT_BROADSIDE;
             break;
         case LOC_RBS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_RIGHT_BROADSIDE_WPL;
+                break;
+            }
             arc = Compute.ARC_RIGHT_BROADSIDE;
             break;
         default:
@@ -182,69 +181,13 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public double getArmorWeight(int loc) {
-        // first I need to subtract SI bonus from total armor
-        double armorPoints = getTotalOArmor();
-
-        armorPoints -= Math.round((get0SI() * loc) / 10.0);
-        // this roundabout method is actually necessary to avoid rounding
-        // weirdness. Yeah, it's dumb.
-        // now I need to determine base armor points by type and weight
-
-        double baseArmor = 0.8;
-        if (isClan()) {
-            baseArmor = 1.0;
-        }
-
-        if (weight >= 250000) {
-            baseArmor = 0.4;
-            if (isClan()) {
-                baseArmor = 0.5;
-            }
-        } else if (weight >= 150000) {
-            baseArmor = 0.6;
-            if (isClan()) {
-                baseArmor = 0.7;
-            }
-        }
-
-        if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_IMP) {
-            baseArmor += 0.2;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_CARBIDE) {
-            baseArmor += 0.4;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE) {
-            baseArmor += 0.6;
-        }
-
-        double armorPerTon = baseArmor;
-        double armWeight = 0.0;
-        for (; (armWeight * armorPerTon) < armorPoints; armWeight += .5) {
-            // add armor in discrete batches
-        }
-        return armWeight;
+    public double getArmorWeight() {
+        return getArmorWeight(locations() - 3);
     }
     
     @Override
-    //Jumpships and Space Stations use 10% of the fuel Warships do...
-    public double getStrategicFuelUse() {
-        double fuelUse;
-        if (weight >= 200000) {
-            fuelUse = 39.52;
-        } else if (weight >= 100000) {
-            fuelUse = 19.75;
-        } else {
-            //Per Stratops, this is impossible for Warships, but Primitive Jumpships in IO can be this small
-            fuelUse = 9.77;
-        } 
-        if (isPrimitive()) {
-            return fuelUse * primitiveFuelFactor();
-        }
-        return fuelUse;
-    }
-
-    @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[23];
+        double[] costs = new double[24];
         int costIdx = 0;
         double cost = 0;
 
@@ -277,17 +220,17 @@ public class Warship extends Jumpship {
         int driveIdx = 0;
         double driveCosts = 0;
         // Drive Coil
-        driveCost[driveIdx++] += 60000000 + (75000000 * getDocks());
+        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks());
         // Initiator
-        driveCost[driveIdx++] += 25000000 + (5000000 * getDocks());
+        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks());
         // Controller
-        driveCost[driveIdx++] += 50000000;
+        driveCost[driveIdx++] += 50000000.0;
         // Tankage
-        driveCost[driveIdx++] += 50000 * getKFIntegrity();
+        driveCost[driveIdx++] += 50000.0 * getKFIntegrity();
         // Sail
-        driveCost[driveIdx++] += 50000 * (30 + (weight / 20000));
+        driveCost[driveIdx++] += 50000.0 * (30 + (weight / 20000.0));
         // Charging System
-        driveCost[driveIdx++] += 500000 + (200000 * getDocks()); 
+        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks()); 
         
         for (int i = 0; i < driveIdx; i++) {
             driveCosts += driveCost[i];
@@ -312,7 +255,7 @@ public class Warship extends Jumpship {
         costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
         // Armor
-        costs[costIdx++] += getArmorWeight(locations() - 2) * EquipmentType.getArmorCost(armorType[0]);
+        costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
         // Heat Sinks
         int sinkCost = 2000 + (4000 * getHeatType());
@@ -330,18 +273,19 @@ public class Warship extends Jumpship {
 
         // Transport Bays
         int baydoors = 0;
-        int bayCost = 0;
+        long bayCost = 0;
+        long quartersCost = 0;
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if ((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
-                bayCost += 20000 * next.totalSpace;
-            }
-            if ((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
-                bayCost += 20000 * next.totalSpace;
+            if (next.isQuarters()) {
+                quartersCost += next.getCost();
+            } else {
+                bayCost += next.getCost();
             }
         }
 
-        costs[costIdx++] += bayCost + (baydoors * 1000);
+        costs[costIdx++] += bayCost + (baydoors * 1000L);
+        costs[costIdx++] = quartersCost;
 
         // Weapons and Equipment
         // HPG
@@ -362,8 +306,72 @@ public class Warship extends Jumpship {
 
         costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
         cost = Math.round(cost * weightMultiplier);
-
+        addCostDetails(cost, costs);
         return cost;
+    }
+    
+    private void addCostDetails(double cost, double[] costs) {
+        bvText = new StringBuffer();
+        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
+                "Structural Integrity", "Drive Unit", "Engine", "Engine Control Unit",
+                "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
+                "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
+                "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
+
+        NumberFormat commafy = NumberFormat.getInstance();
+
+        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append(startTable);
+        // find the maximum length of the columns.
+        for (int l = 0; l < left.length; l++) {
+
+            if (l == 21) {
+                getWeaponsAndEquipmentCost(true);
+            } else {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(left[l]);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                if (costs[l] == 0) {
+                    bvText.append("N/A");
+                } else if (costs[l] < 0) {
+                    bvText.append("x ");
+                    bvText.append(commafy.format(-costs[l]));
+                } else {
+                    bvText.append(commafy.format(costs[l]));
+
+                }
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
+        }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Cost:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(commafy.format(cost));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
     }
 
     /**
@@ -485,6 +493,7 @@ public class Warship extends Jumpship {
         return 8;
     }
 
+    @Override
     public int getNumAlphaStrikeWeaponsLocations() {
         return 4;
     }
@@ -497,6 +506,7 @@ public class Warship extends Jumpship {
         return 0;
     }
     
+    @Override
     public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (location) {
         case LOC_NOSE:
@@ -547,6 +557,7 @@ public class Warship extends Jumpship {
         return "";
     }
     
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;
     }

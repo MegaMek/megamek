@@ -23,14 +23,14 @@ import megamek.common.options.OptionsConstants;
  */
 public class SmallCraft extends Aero {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 6708788176436555036L;
+    
+    public static final int LOC_HULL = 4;
+    
     private static String[] LOCATION_ABBRS =
-        { "NOS", "LS", "RS", "AFT" };
+        { "NOS", "LS", "RS", "AFT", "HULL" };
     private static String[] LOCATION_NAMES =
-        { "Nose", "Left Side", "Right Side", "Aft" };
+        { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
 
     // crew and passengers
     private int nCrew = 0;
@@ -40,11 +40,6 @@ public class SmallCraft extends Aero {
     private int nBattleArmor = 0;
     private int nMarines = 0;
     private int nOtherPassenger = 0;
-
-    // Is it Civilian or Military
-    public static final int CIVILIAN = 0;
-    public static final int MILITARY = 1;
-    private int designType = 0;
     
     // escape pods and lifeboats
     private int escapePods = 0;
@@ -63,6 +58,11 @@ public class SmallCraft extends Aero {
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
+    public int getUnitType() {
+        return UnitType.SMALL_CRAFT;
+    }
+
+    @Override
     public TechAdvancement getConstructionTechAdvancement() {
         if (isPrimitive()) {
             return TA_SM_CRAFT_PRIMITIVE;
@@ -74,14 +74,6 @@ public class SmallCraft extends Aero {
     @Override
     public boolean isPrimitive() {
         return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;
-    }
-
-    public void setDesignType(int design) {
-        designType = design;
-    }
-
-    public int getDesignType() {
-        return designType;
     }
     
     public void setNCrew(int crew) {
@@ -150,6 +142,7 @@ public class SmallCraft extends Aero {
         escapePods = n;
     }
 
+    @Override
     public int getEscapePods() {
         return escapePods;
     }
@@ -158,6 +151,7 @@ public class SmallCraft extends Aero {
         lifeBoats = n;
     }
 
+    @Override
     public int getLifeBoats() {
         return lifeBoats;
     }
@@ -202,7 +196,12 @@ public class SmallCraft extends Aero {
 
     @Override
     public int locations() {
-        return 4;
+        return 5;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_HULL;
     }
 
     // what is different - hit table is about it
@@ -449,23 +448,47 @@ public class SmallCraft extends Aero {
         if (!isSpheroid()) {
             switch (mounted.getLocation()) {
                 case LOC_NOSE:
+                    if (mounted.isInWaypointLaunchMode()) {
+                        arc = Compute.ARC_NOSE_WPL;
+                        break;
+                    }
                     arc = Compute.ARC_NOSE;
                     break;
                 case LOC_RWING:
                     if (mounted.isRearMounted()) {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_RWINGA_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_RWINGA;
                     } else {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_RWING_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_RWING;
                     }
                     break;
                 case LOC_LWING:
                     if (mounted.isRearMounted()) {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_LWINGA_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_LWINGA;
                     } else {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_LWING_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_LWING;
                     }
                     break;
                 case LOC_AFT:
+                    if (mounted.isInWaypointLaunchMode()) {
+                        arc = Compute.ARC_AFT_WPL;
+                        break;
+                    }
                     arc = Compute.ARC_AFT;
                     break;
                 default:
@@ -475,23 +498,47 @@ public class SmallCraft extends Aero {
             if ((game != null) && game.getBoard().inSpace()) {
                 switch (mounted.getLocation()) {
                     case LOC_NOSE:
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_NOSE_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_NOSE;
                         break;
                     case LOC_RWING:
                         if (mounted.isRearMounted()) {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_RIGHTSIDEA_SPHERE;
                         } else {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_RIGHTSIDE_SPHERE;
                         }
                         break;
                     case LOC_LWING:
                         if (mounted.isRearMounted()) {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_LEFTSIDEA_SPHERE;
                         } else {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_LEFTSIDE_SPHERE;
                         }
                         break;
                     case LOC_AFT:
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_AFT_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_AFT;
                         break;
                     default:
@@ -555,7 +602,7 @@ public class SmallCraft extends Aero {
         double armorPerTon = SmallCraft.armorPointsPerTon(getWeight(), isSpheroid(),
                 getArmorType(0), TechConstants.isClan(getArmorTechLevel(0)));
 
-        return Math.ceil(2.0 * armorPoints / armorPerTon) / 2.0;
+        return RoundWeight.nextHalfTon(armorPoints / armorPerTon);
     }
     
     public static double armorPointsPerTon(double craftWeight, boolean spheroid, int at, boolean isClan) {

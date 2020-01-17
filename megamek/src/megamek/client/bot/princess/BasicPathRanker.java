@@ -29,6 +29,7 @@ import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
+import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -57,24 +58,25 @@ import megamek.common.options.OptionsConstants;
 /**
  * A very basic pathranker
  */
-public class BasicPathRanker extends PathRanker {
+public class BasicPathRanker extends PathRanker implements IPathRanker {
 
-    private final DecimalFormat LOG_DECIMAL =
+    protected final DecimalFormat LOG_DECIMAL =
             new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
-    private final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
+    protected final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
 
-    private FireControl fireControl;
     private PathEnumerator pathEnumerator;
 
     // the best damage enemies could expect were I not here. Used to determine 
     // whether they will target me.
     private Map<Integer, Double> bestDamageByEnemies;
-
+    
     public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
         final String METHOD_NAME = "BasicPathRanker(Princess)";
+        
         bestDamageByEnemies = new TreeMap<>();
+        
         getOwner().log(
                 getClass(),
                 METHOD_NAME,
@@ -82,17 +84,17 @@ public class BasicPathRanker extends PathRanker {
                 "Using " + getOwner().getBehaviorSettings().getDescription()
                         + " behavior");
     }
-
-    FireControl getFireControl() {
-        return fireControl;
-    }
-
-    void setFireControl(FireControl fireControl) {
-        this.fireControl = fireControl;
+    
+    FireControl getFireControl(Entity entity) {
+        return getOwner().getFireControl(entity);
     }
 
     void setPathEnumerator(PathEnumerator pathEnumerator) {
         this.pathEnumerator = pathEnumerator;
+    }
+    
+    PathEnumerator getPathEnumerator() {
+        return pathEnumerator;
     }
 
     Map<Integer, Double> getBestDamageByEnemies() {
@@ -159,10 +161,10 @@ public class BasicPathRanker extends PathRanker {
             EntityEvaluationResponse returnResponse =
                     new EntityEvaluationResponse();
 
-            //Aeros always move after other units, and would require an 
+            //Airborne aeros on ground maps always move after other units, and would require an 
             // entirely different evaluation
             //TODO (low priority) implement a way to see if I can dodge aero units
-            if (enemy.isAero()) {
+            if (enemy.isAirborneAeroOnGroundMap()) {
                 return returnResponse;
             }
             
@@ -197,7 +199,7 @@ public class BasicPathRanker extends PathRanker {
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {
                 returnResponse.addToMyEstimatedDamage(
-                        getMaxDamageAtRange(fireControl,
+                        getMaxDamageAtRange(getFireControl(path.getEntity()),
                                             path.getEntity(),
                                             range,
                                             useExtremeRange,
@@ -206,7 +208,7 @@ public class BasicPathRanker extends PathRanker {
 
             //in general if an enemy can end its position in range, it can hit me
             returnResponse.addToEstimatedEnemyDamage(
-                    getMaxDamageAtRange(fireControl,
+                    getMaxDamageAtRange(getFireControl(enemy),
                                         enemy,
                                         range,
                                         useExtremeRange,
@@ -247,10 +249,6 @@ public class BasicPathRanker extends PathRanker {
         return fallMod;
     }
 
-    LosEffects calcLosEffects(IGame game, int shooterId, Targetable target) {
-        return LosEffects.calculateLos(game, shooterId, target);
-    }
-
     double calculateDamagePotential(Entity enemy,
                                     EntityState shooterState,
                                     MovePath path,
@@ -259,33 +257,37 @@ public class BasicPathRanker extends PathRanker {
                                     IGame game) {
 
         // If they don't have the range, they can't do damage.
-        int maxRange = enemy.getMaxWeaponRange();
+        int maxRange = getOwner().getMaxWeaponRange(enemy, path.getEntity().isAirborne());
         if (distance > maxRange) {
             return 0;
         }
 
         //  If they don't have LoS, they can't do damage.
-        LosEffects losEffects = calcLosEffects(game,
-                                               enemy.getId(),
-                                               path.getEntity());
+        LosEffects losEffects = 
+                LosEffects.calculateLos(game, enemy.getId(), path.getEntity(), shooterState.getPosition(), targetState.getPosition(), false);
+        
         if (!losEffects.canSee()) {
             return 0;
         }
-
-        if (targetState == null) {
-            targetState = new EntityState(path);
+        
+        Targetable actualTarget = path.getEntity();
+        
+        // if the target is infantry protected by a building, we have to fire at the building instead. 
+        if(losEffects.infantryProtected()) {
+            actualTarget = new BuildingTarget(targetState.getPosition(), game.getBoard(), false);
+            targetState = new EntityState(actualTarget);            
         }
 
-        int maxHeat = (enemy.getHeatCapacity() - enemy.heat) + 5;
+        int maxHeat = (enemy.getHeatCapacity() - enemy.heat) + (enemy.isAero() ? 0 : 5);
         FiringPlanCalculationParameters guess =
                 new FiringPlanCalculationParameters.Builder()
                         .buildGuess(enemy,
                                     shooterState,
-                                    path.getEntity(),
+                                    actualTarget,
                                     targetState,
                                     maxHeat,
                                     null);
-        return getFireControl().determineBestFiringPlan(guess).getUtility();
+        return getFireControl(path.getEntity()).determineBestFiringPlan(guess).getUtility();
     }
 
     double calculateKickDamagePotential(Entity enemy, MovePath path,
@@ -312,15 +314,16 @@ public class BasicPathRanker extends PathRanker {
 
         // If I don't have range, I can't do damage.
         // exception: I might, if I'm an aero on a ground map attacking a ground unit because aero unit ranges are a "special case"
-        boolean aeroAttackingGroundUnitOnGroundMap = path.getEntity().isAirborne() && !enemy.isAero() && game.getBoard().onGround();
-        
-        int maxRange = me.getMaxWeaponRange();
+        boolean aeroAttackingGroundUnitOnGroundMap = me.isAirborne() && !enemy.isAero() && game.getBoard().onGround();
+
+        int maxRange = getOwner().getMaxWeaponRange(me, enemy.isAirborne());
         if (distance > maxRange && !aeroAttackingGroundUnitOnGroundMap) {
             return 0;
         }
 
         // If I don't have LoS, I can't do damage.  ToDo: Account for indirect fire.
-        LosEffects losEffects = calcLosEffects(game, me.getId(), enemy);
+        LosEffects losEffects = 
+                LosEffects.calculateLos(game, me.getId(), enemy, path.getFinalCoords(), enemy.getPosition(), false);
         if (!losEffects.canSee()) {
             return 0;
         }
@@ -336,7 +339,7 @@ public class BasicPathRanker extends PathRanker {
         FiringPlan myFiringPlan;
         // we're only going to do air to ground attack plans if we're an airborne aero attacking a ground unit
         if (aeroAttackingGroundUnitOnGroundMap) {
-            myFiringPlan = getFireControl().guessFullAirToGroundPlan(path.getEntity(), enemy,
+            myFiringPlan = getFireControl(path.getEntity()).guessFullAirToGroundPlan(me, enemy,
                                                                      new EntityState(enemy), path, game, false);
         } else {
             FiringPlanCalculationParameters guess =
@@ -345,9 +348,9 @@ public class BasicPathRanker extends PathRanker {
                                         new EntityState(path),
                                         enemy,
                                         null,
-                                        FireControl.DOES_NOT_TRACK_HEAT,
+                                        getFireControl(me).calcHeatTolerance(me, me.isAero()),
                                         null);
-            myFiringPlan = getFireControl().determineBestFiringPlan(guess);
+            myFiringPlan = getFireControl(me).determineBestFiringPlan(guess);
         }
         return myFiringPlan.getUtility();
     }
@@ -373,12 +376,12 @@ public class BasicPathRanker extends PathRanker {
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
         int distance = enemy.getPosition().distance(path.getFinalCoords());
-
+        
         // How much damage can they do to me?
         double theirDamagePotential = calculateDamagePotential(enemy,
-                                                               null,
+                                                               new EntityState(enemy),
                                                                path,
-                                                               null,
+                                                               new EntityState(path),
                                                                distance,
                                                                game);
 
@@ -394,7 +397,7 @@ public class BasicPathRanker extends PathRanker {
                                                                        enemy,
                                                                        distance,
                                                                        game));
-
+       
         // How much physical damage can I do to them?
         if (distance <= 1) {
             returnResponse.setMyEstimatedPhysicalDamage(
@@ -406,7 +409,7 @@ public class BasicPathRanker extends PathRanker {
 
     // The further I am from a target, the lower this path ranks (weighted by 
     // Hyper Aggression.
-    private double calculateAggreesionMod(Entity movingUnit, MovePath path,
+    protected double calculateAggressionMod(Entity movingUnit, MovePath path,
                                           IGame game, StringBuilder formula) {
         double distToEnemy = distanceToClosestEnemy(movingUnit,
                                                     path.getFinalCoords(),
@@ -426,7 +429,7 @@ public class BasicPathRanker extends PathRanker {
 
     // The further I am from my teammates, the lower this path ranks (weighted 
     // by Herd Mentality).
-    private double calculateHerdingMod(Coords friendsCoords, MovePath path,
+    protected double calculateHerdingMod(Coords friendsCoords, MovePath path,
                                        StringBuilder formula) {
         if (friendsCoords == null) {
             formula.append(" - herdingMod [0 no friends]");
@@ -480,13 +483,13 @@ public class BasicPathRanker extends PathRanker {
     }
 
     // If I need to flee the board, I want to get closer to my home edge.
-    private double calculateSelfPreservationMod(Entity movingUnit,
+    protected double calculateSelfPreservationMod(Entity movingUnit,
                                                 MovePath path,
                                                 IGame game,
                                                 StringBuilder formula) {
         if (getOwner().getFallBack() || movingUnit.isCrippled()) {
             int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(),
-                                                       getOwner().getHomeEdge(),
+                                                       getOwner().getHomeEdge(movingUnit),
                                                        game);
             double selfPreservation = getOwner().getBehaviorSettings()
                                                 .getSelfPreservationValue();
@@ -500,12 +503,22 @@ public class BasicPathRanker extends PathRanker {
         }
         return 0.0;
     }
+    
+    /**
+     * Tells me whether this path will result in me flying to a location
+     * from which there is absolutely no way to remain on the board the following turn.
+     * 
+     * Not applicable for ground units, so the default behavior is to return 0.
+     */
+    protected double calculateOffBoardMod(MovePath path) {
+        return 0.0;
+    }
 
     /**
      * A path ranking
      */
     @Override
-    public RankedPath rankPath(MovePath path, IGame game, int maxRange,
+    protected RankedPath rankPath(MovePath path, IGame game, int maxRange,
                                double fallTolerance, int distanceHome,
                                List<Entity> enemies, Coords friendsCoords) {
         final String METHOD_NAME = "rankPath(MovePath, IGame, Targetable, int, " +
@@ -525,9 +538,9 @@ public class BasicPathRanker extends PathRanker {
                                                                       formula);
             double utility = -calculateFallMod(successProbability, formula);
 
-            // look at all of my enemies
-            double maximumDamageDone = 0;
-            double maximumPhysicalDamage = 0;
+            // look at all of my enemies          
+            FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
+            
             double expectedDamageTaken = checkPathForHazards(pathCopy,
                                                              movingUnit,
                                                              game);
@@ -557,60 +570,38 @@ public class BasicPathRanker extends PathRanker {
                 }
 
                 EntityEvaluationResponse eval;
-                // TODO: Always consider Aeros to have moved, as right now we
-                // don't try to predict their movement.
-                if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile()
-                        || enemy.isAero()) { //For units that have already moved
+
+                if (evaluateAsMoved(enemy)) { //For units that have already moved
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
                     eval = evaluateUnmovedEnemy(enemy, path, extremeRange,
                                                 losRange);
                 }
-                if (maximumDamageDone < eval.getMyEstimatedDamage()) {
-                    maximumDamageDone = eval.getMyEstimatedDamage();
+                if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
+                    damageEstimate.firingDamage = eval.getMyEstimatedDamage();
                 }
-                if (maximumPhysicalDamage < eval.getMyEstimatedPhysicalDamage()) {
-                    maximumPhysicalDamage = eval.getMyEstimatedPhysicalDamage();
+                if (damageEstimate.physicalDamage < eval.getMyEstimatedPhysicalDamage()) {
+                    damageEstimate.physicalDamage = eval.getMyEstimatedPhysicalDamage();
                 }
                 expectedDamageTaken += eval.getEstimatedEnemyDamage();
             }
 
-            // Include damage I can do to strategic targets
-            for (int i = 0; i < getOwner().getFireControl()
-                                          .getAdditionalTargets().size(); i++) {
-                Targetable target = getOwner().getFireControl()
-                                              .getAdditionalTargets().get(i);
-                if (target.isOffBoard() || (target.getPosition() == null)
-                    || !game.getBoard().contains(target.getPosition())) {
-                    continue; // Skip targets not actually on the board.
+            // if we're not in the air, we may get hit by friendly artillery
+            if(!path.getEntity().isAirborne() && !path.getEntity().isAirborneVTOLorWIGE()) {
+                double friendlyArtilleryDamage = 0;
+                Map<Coords, Double> artyDamage = getOwner().getPathRankerState().getIncomingFriendlyArtilleryDamage();
+                
+                if(!artyDamage.containsKey(path.getFinalCoords())) {
+                    friendlyArtilleryDamage = ArtilleryTargetingControl.evaluateIncomingArtilleryDamage(path.getFinalCoords(), getOwner());
+                    artyDamage.put(path.getFinalCoords(), friendlyArtilleryDamage);
+                } else {
+                    friendlyArtilleryDamage = artyDamage.get(path.getFinalCoords());
                 }
-                FiringPlanCalculationParameters guess =
-                        new FiringPlanCalculationParameters.Builder()
-                                .buildGuess(path.getEntity(),
-                                            new EntityState(path),
-                                            target,
-                                            null,
-                                            FireControl.DOES_NOT_TRACK_HEAT,
-                                            null);
-                FiringPlan myFiringPlan = fireControl.determineBestFiringPlan(guess);
-                double myDamagePotential = myFiringPlan.getUtility();
-                if (myDamagePotential > maximumDamageDone) {
-                    maximumDamageDone = myDamagePotential;
-                }
-                if (path.getEntity() instanceof Mech) {
-                    PhysicalInfo myKick = new PhysicalInfo(
-                            path.getEntity(), new EntityState(path), target,
-                            null,
-                            PhysicalAttackType.RIGHT_KICK, game, getOwner(),
-                            true);
-                    double expectedKickDamage =
-                            myKick.getExpectedDamageOnHit() *
-                            myKick.getProbabilityToHit();
-                    if (expectedKickDamage > maximumPhysicalDamage) {
-                        maximumPhysicalDamage = expectedKickDamage;
-                    }
-                }
+                
+                expectedDamageTaken += friendlyArtilleryDamage;
             }
+            
+            calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
 
             // If I cannot kick because I am a clan unit and "No physical 
             // attacks for the clans"
@@ -618,12 +609,12 @@ public class BasicPathRanker extends PathRanker {
             if (game.getOptions()
                     .booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) &&
                 path.getEntity().isClan()) {
-                maximumPhysicalDamage = 0;
+                damageEstimate.physicalDamage = 0;
             }
 
             // I can kick a different target than I shoot, so add physical to 
             // total damage after I've looked at all enemies
-            maximumDamageDone += maximumPhysicalDamage;
+            double maximumDamageDone = damageEstimate.firingDamage + damageEstimate.physicalDamage;
 
             // My bravery modifier is based on my chance of getting to the 
             // firing position (successProbability), how much damage I can do 
@@ -643,15 +634,12 @@ public class BasicPathRanker extends PathRanker {
                    .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
             utility += braveryMod;
 
-            //noinspection StatementWithEmptyBody
-            if (path.getEntity().isAero()) {
-                // No idea what original implementation was meant to be.
-
-            } else {
-
+            // the only critters not subject to aggression and herding mods are
+            // airborne aeros on ground maps, as they move incredibly fast
+            if (!path.getEntity().isAirborneAeroOnGroundMap()) {
                 // The further I am from a target, the lower this path ranks 
                 // (weighted by Hyper Aggression.
-                utility -= calculateAggreesionMod(movingUnit, pathCopy, game,
+                utility -= calculateAggressionMod(movingUnit, pathCopy, game,
                                                   formula);
 
                 // The further I am from my teammates, the lower this path 
@@ -670,6 +658,10 @@ public class BasicPathRanker extends PathRanker {
             // If I need to flee the board, I want to get closer to my home edge.
             utility -= calculateSelfPreservationMod(movingUnit, pathCopy, game,
                                                     formula);
+            
+            // if we're an aircraft, we want to de-value paths that will force us off the board
+            // on the subsequent turn.
+            utility -= utility * calculateOffBoardMod(pathCopy);
 
             RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
             rankedPath.setExpectedDamage(maximumDamageDone);
@@ -679,12 +671,16 @@ public class BasicPathRanker extends PathRanker {
         }
 
     }
-
-    @Override
-    Entity findClosestEnemy(Entity me, Coords position, IGame game) {
-        return super.findClosestEnemy(me, position, game);
+    
+    /**
+     * Worker function that determines if a given enemy entity should be evaluated as if it has moved.
+     */
+    protected boolean evaluateAsMoved(Entity enemy) {
+        // Aerospace units on ground maps can go pretty much anywhere they want, so it's
+        // somewhat pointless to try to predict their movement.
+        return !enemy.isSelectableThisTurn() || enemy.isImmobile() || enemy.isAirborneAeroOnGroundMap();
     }
-
+    
     /**
      * Calculate who all other units would shoot at if I weren't around
      */
@@ -708,7 +704,7 @@ public class BasicPathRanker extends PathRanker {
                                                 null,
                                                 (e.getHeatCapacity() - e.getHeat()) + 5,
                                                 null);
-                    double damage = fireControl.determineBestFiringPlan(guess)
+                    double damage = getFireControl(f).determineBestFiringPlan(guess)
                                                .getExpectedDamage();
                     if (damage > max_damage) {
                         max_damage = damage;
@@ -723,6 +719,47 @@ public class BasicPathRanker extends PathRanker {
     }
 
 
+    protected void calcDamageToStrategicTargets(MovePath path, IGame game, 
+            FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
+        for (int i = 0; i < fireControlState.getAdditionalTargets().size(); i++) {
+            Targetable target = fireControlState.getAdditionalTargets().get(i);
+            
+            if (target.isOffBoard() || (target.getPosition() == null)
+                || !game.getBoard().contains(target.getPosition())) {
+                continue; // Skip targets not actually on the board.
+            }
+            
+            FiringPlanCalculationParameters guess =
+                    new FiringPlanCalculationParameters.Builder()
+                            .buildGuess(path.getEntity(),
+                                        new EntityState(path),
+                                        target,
+                                        null,
+                                        FireControl.DOES_NOT_TRACK_HEAT,
+                                        null);
+            FiringPlan myFiringPlan = getFireControl(path.getEntity()).determineBestFiringPlan(guess);
+            
+            double myDamagePotential = myFiringPlan.getUtility();
+            if (myDamagePotential > damageStructure.firingDamage) {
+                damageStructure.firingDamage = myDamagePotential;
+            }
+            
+            if (path.getEntity() instanceof Mech) {
+                PhysicalInfo myKick = new PhysicalInfo(
+                        path.getEntity(), new EntityState(path), target,
+                        null,
+                        PhysicalAttackType.RIGHT_KICK, game, getOwner(),
+                        true);
+                double expectedKickDamage =
+                        myKick.getExpectedDamageOnHit() *
+                        myKick.getProbabilityToHit();
+                if (expectedKickDamage > damageStructure.physicalDamage) {
+                    damageStructure.physicalDamage = expectedKickDamage;
+                }
+            }
+        }
+    }
+    
     /**
      * Gives the distance to the closest enemy unit, or zero if none exist
      *
@@ -730,7 +767,7 @@ public class BasicPathRanker extends PathRanker {
      * @param position Coords from which the closest enemy is found
      * @param game     IGame that we're playing
      */
-    double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
+    public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
         final String METHOD_NAME = "distanceToClosestEnemy(Entity, Coords, IGame)";
         getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
 
@@ -781,7 +818,7 @@ public class BasicPathRanker extends PathRanker {
      * @return The distance to the unit's home edge.
      */
     @Override
-    public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
+    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
         final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
         getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
 
@@ -890,7 +927,8 @@ public class BasicPathRanker extends PathRanker {
                                               Terrains.MAGMA,
                                               Terrains.ICE,
                                               Terrains.WATER,
-                                              Terrains.BUILDING));
+                                              Terrains.BUILDING,
+                                              Terrains.BRIDGE));
 
         int[] terrainTypes = hex.getTerrainTypes();
         Set<Integer> hazards = new HashSet<>();
@@ -928,8 +966,10 @@ public class BasicPathRanker extends PathRanker {
                     }
                     break;
                 case Terrains.BUILDING:
-                    hazardValue += calcBuildingHazard(step, movingUnit,
-                                                      movePath, board, logMsg);
+                    hazardValue += calcBuildingHazard(step, movingUnit, jumpLanding, board, logMsg);
+                    break;
+                case Terrains.BRIDGE:
+                    hazardValue += calcBridgeHazard(movingUnit, hex, step, jumpLanding, board, logMsg);
                     break;
             }
         }
@@ -941,7 +981,7 @@ public class BasicPathRanker extends PathRanker {
 
     // Building collapse and basements are handled in PathRanker.validatePaths.
     private double calcBuildingHazard(MoveStep step, Entity movingUnit,
-                                      MovePath movePath, IBoard board,
+                                      boolean jumpLanding, IBoard board,
                                       StringBuilder logMsg) {
         logMsg.append("\n\tCalculating building hazard:  ");
 
@@ -952,7 +992,7 @@ public class BasicPathRanker extends PathRanker {
         }
 
         // Jumping onto a building is handled in PathRanker validatePaths.
-        if (movePath.isJumping()) {
+        if (jumpLanding) {
             return 0;
         }
 
@@ -972,6 +1012,20 @@ public class BasicPathRanker extends PathRanker {
         logMsg.append("\n\t\tHazard value (")
               .append(LOG_DECIMAL.format(hazard)).append(").");
         return hazard;
+    }
+    
+    private double calcBridgeHazard(Entity movingUnit, IHex hex, MoveStep step, boolean jumpLanding, IBoard board, StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating bridge hazard:  ");
+        
+        // if we are going to BWONGGG into a bridge from below, then it's treated as a building.
+        // Otherwise, bridge collapse checks have already been handled in validatePaths
+        int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+        if ((bridgeElevation > step.getElevation()) &&
+                (bridgeElevation <= (step.getElevation() + movingUnit.getHeight()))) {
+            return calcBuildingHazard(step, movingUnit, jumpLanding, board, logMsg);
+        }
+        
+        return 0;
     }
 
     private double calcIceHazard(Entity movingUnit, IHex hex, MoveStep step,
@@ -1017,8 +1071,9 @@ public class BasicPathRanker extends PathRanker {
 
         // Hover units are above the surface.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-            EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
-            logMsg.append("Hovering above water (0).");
+            EntityMovementMode.WIGE == movingUnit.getMovementMode() ||
+            EntityMovementMode.NAVAL == movingUnit.getMovementMode()) {
+            logMsg.append("Hovering or swimming above water (0).");
             return 0;
         }
 
@@ -1029,6 +1084,17 @@ public class BasicPathRanker extends PathRanker {
             return 0;
         }
 
+        // if we are crossing a bridge, then we'll be fine. Trust me.
+        // 1. Determine bridge elevation
+        // 2. If unit elevation is equal to bridge elevation, skip.
+        if(hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+            int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+            if(bridgeElevation == step.getElevation()) {
+                logMsg.append("Unit (0) crossing bridge.");
+                return 0;
+            }
+        }
+        
         // Most other units are automatically destroyed.
         if (!(movingUnit instanceof Mech || movingUnit instanceof Protomech ||
               movingUnit instanceof BattleArmor)) {
@@ -1228,5 +1294,14 @@ public class BasicPathRanker extends PathRanker {
         hazardValue += dmg;
 
         return hazardValue;
+    }
+    
+    /**
+     * Simple data structure that holds a separate firing and physical damage number.
+     *
+     */
+    protected class FiringPhysicalDamage {
+        public double firingDamage;
+        public double physicalDamage;
     }
 }

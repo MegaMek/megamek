@@ -39,9 +39,8 @@ Spheroid
 <transporters>
 2ndclassquarters:0.0:0
 1stclassquarters:20.0:0
-crewquarters:77.0:0
-steeragequarters:85.0:0
-cargobay:273.5:1:1
+steeragequarters:140.0:0
+cargobay:29.0:2:5
 </transporters>
 
 <SafeThrust>
@@ -53,7 +52,7 @@ cargobay:273.5:1:1
 </collartype>
 
 <heatsinks>
-28
+29
 </heatsinks>
 
 <sink_type>
@@ -136,6 +135,9 @@ Machine Gun
 Machine Gun
 IS Ammo MG - Full:200
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 15

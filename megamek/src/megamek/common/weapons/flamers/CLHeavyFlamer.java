@@ -48,16 +48,14 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         mediumRange = 3;
         longRange = 4;
         extremeRange = 6;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 1;
         bv = 15;
         shortAV = 4;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         cost = 11250;
-        flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MECH_WEAPON)
-                .or(WeaponType.F_TANK_WEAPON);
-        rulesRefs = "312,TO";;
+        rulesRefs = "312,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

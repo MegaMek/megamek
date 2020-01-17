@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -16,60 +17,13 @@ package megamek.common.loaders;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
-import megamek.common.ASFBay;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.BayType;
-import megamek.common.CargoBay;
-import megamek.common.ConvFighter;
-import megamek.common.CrewQuartersCargoBay;
-import megamek.common.Dropship;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.FirstClassQuartersCargoBay;
-import megamek.common.FixedWingSupport;
-import megamek.common.GunEmplacement;
-import megamek.common.HeavyVehicleBay;
-import megamek.common.Infantry;
-import megamek.common.InfantryBay;
+import megamek.common.*;
 import megamek.common.InfantryBay.PlatoonType;
-import megamek.common.InsulatedCargoBay;
-import megamek.common.Jumpship;
-import megamek.common.LargeSupportTank;
-import megamek.common.LightVehicleBay;
-import megamek.common.LiquidCargoBay;
-import megamek.common.LivestockCargoBay;
-import megamek.common.LocationFullException;
-import megamek.common.Mech;
-import megamek.common.MechBay;
-import megamek.common.Mounted;
-import megamek.common.PillionSeatCargoBay;
-import megamek.common.Protomech;
-import megamek.common.ProtomechBay;
-import megamek.common.RefrigeratedCargoBay;
-import megamek.common.SecondClassQuartersCargoBay;
-import megamek.common.SmallCraft;
-import megamek.common.SmallCraftBay;
-import megamek.common.SpaceStation;
-import megamek.common.StandardSeatCargoBay;
-import megamek.common.SteerageQuartersCargoBay;
-import megamek.common.SuperHeavyVehicleBay;
-import megamek.common.SupportTank;
-import megamek.common.SupportVTOL;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.TroopSpace;
-import megamek.common.VTOL;
-import megamek.common.Warship;
-import megamek.common.WeaponType;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.BuildingBlock;
@@ -92,9 +46,22 @@ public class BLKFile {
     public static final int STEAM = 10;
     public static final int BATTERY = 11;
     public static final int SOLAR = 12;
+    public static final int EXTERNAL = 13;
     
-    private static final String BAY_DATA_SEPARATOR = ":"; 
     private static final String COMSTAR_BAY = "c*";
+    
+    /**
+     * If a vehicular grenade launcher does not have a facing provided, assign a default facing.
+     * For vehicles this is determined by location. For protomechs the only legal location is
+     * the torso, but it may be mounted rear-facing.
+     * 
+     * @param location The location where the VGL is mounted.
+     * @param rear     Whether the VGL is rear-facing.
+     * @return         The facing to assign to the VGL.
+     */
+    protected int defaultVGLFacing(int location, boolean rear) {
+        return rear ? 3 : 0;
+    }
 
     protected void loadEquipment(Entity t, String sName, int nLoc)
             throws EntityLoadingException {
@@ -170,9 +137,8 @@ public class BLKFile {
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
-                            // If no facing specified, assume front
                             if (facing == -1) {
-                                mount.setFacing(0);
+                                mount.setFacing(defaultVGLFacing(nLoc, false));
                             } else {
                                 mount.setFacing(facing);
                             }
@@ -224,7 +190,8 @@ public class BLKFile {
             return Engine.BATTERY;
         } else if (code == BLKFile.SOLAR) {
             return Engine.SOLAR;
-          
+        } else if (code == BLKFile.EXTERNAL) {
+            return Engine.EXTERNAL;
         } else {
             return -1;
         }
@@ -247,6 +214,34 @@ public class BLKFile {
         if (dataFile.exists("history")) {
             e.getFluff().setHistory(dataFile.getDataAsString("history")[0]);
         }
+        
+        if (dataFile.exists("manufacturer")) {
+        	e.getFluff().setManufacturer(dataFile.getDataAsString("manufacturer")[0]);
+        }
+
+        if (dataFile.exists("primaryFactory")) {
+        	e.getFluff().setPrimaryFactory(dataFile.getDataAsString("primaryFactory")[0]);
+        }
+        
+        if (dataFile.exists("systemManufacturers")) {
+        	for (String line : dataFile.getDataAsString("systemManufacturers")) {
+        		String[] fields = line.split(":");
+        		EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+        		if ((null != comp) && (fields.length > 1)) {
+        			e.getFluff().setSystemManufacturer(comp, fields[1]);
+        		}
+        	}
+        }
+
+        if (dataFile.exists("systemModels")) {
+        	for (String line : dataFile.getDataAsString("systemModels")) {
+        		String[] fields = line.split(":");
+        		EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+        		if ((null != comp) && (fields.length > 1)) {
+        			e.getFluff().setSystemModel(comp, fields[1]);
+        		}
+        	}
+        }
 
 
         if (dataFile.exists("imagepath")) {
@@ -254,6 +249,26 @@ public class BLKFile {
                     dataFile.getDataAsString("imagepath")[0]);
         }
 
+        if (dataFile.exists("notes")) {
+            e.getFluff().setNotes(dataFile.getDataAsString("notes")[0]);
+        }
+        
+        if (dataFile.exists("use")) {
+            e.getFluff().setUse(dataFile.getDataAsString("use")[0]);
+        }
+        
+        if (dataFile.exists("length")) {
+            e.getFluff().setLength(dataFile.getDataAsString("length")[0]);
+        }
+        
+        if (dataFile.exists("width")) {
+            e.getFluff().setWidth(dataFile.getDataAsString("width")[0]);
+        }
+        
+        if (dataFile.exists("height")) {
+            e.getFluff().setHeight(dataFile.getDataAsString("height")[0]);
+        }
+        
         if (dataFile.exists("source")) {
             e.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -451,8 +466,13 @@ public class BLKFile {
         blk.writeBlockData("motion_type", t.getMovementModeAsString());
 
         String[] transporter_array = new String[t.getTransports().size()];
-        for (int i = 0; i < t.getTransports().size(); i++) {
-            transporter_array[i] = t.getTransports().get(i).toString();
+        int index = 0;
+        for (Transporter transporter : t.getTransports()) {
+            transporter_array[index] = transporter.toString();
+            if (t.isPodMountedTransport(transporter)) {
+                transporter_array[index] += ":omni";
+            }
+            index++;
         }
         blk.writeBlockData("transporters", transporter_array);
 
@@ -461,17 +481,15 @@ public class BLKFile {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
                 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
+                if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    blk.writeBlockData("jumpingMP", t.getOriginalJumpMP());
+                    blk.writeBlockData("interface_cockpit",
+                            String.valueOf(((Protomech) t).hasInterfaceCockpit()));
+                }
             }
         }
 
         int numLocs = t.locations();
-        // Aeros have an extra special location called "wings" that we
-        //  don't want to consider, but Fixed Wing Support vehicles have a "Body" location that will
-        // not index right if the wings locations is removed.
-        if (t instanceof Aero && t.isFighter() && !(t instanceof FixedWingSupport)) {
-            numLocs--;
-        }
-
         if (!(t instanceof Infantry)) {
             if (t instanceof Aero){
                 if (t.isFighter()) {
@@ -510,8 +528,26 @@ public class BLKFile {
                     case Engine.NONE:
                         engineCode = BLKFile.NONE;
                         break;
+                    case Engine.MAGLEV:
+                        engineCode = BLKFile.MAGLEV;
+                        break;
+                    case Engine.STEAM:
+                        engineCode = BLKFile.STEAM;
+                        break;
+                    case Engine.BATTERY:
+                        engineCode = BLKFile.BATTERY;
+                        break;
+                    case Engine.SOLAR:
+                        engineCode = BLKFile.SOLAR;
+                        break;
+                    case Engine.EXTERNAL:
+                        engineCode = BLKFile.EXTERNAL;
+                        break;
                 }
                 blk.writeBlockData("engine_type", engineCode);
+                if (t.getEngine().isClan() != t.isClan()) {
+                    blk.writeBlockData("clan_engine", Boolean.toString(t.getEngine().isClan()));
+                }
             }
             if (!t.hasPatchworkArmor() && (t.getArmorType(1) != 0)) {
                 blk.writeBlockData("armor_type", t.getArmorType(1));
@@ -519,7 +555,7 @@ public class BLKFile {
             } else if (t.hasPatchworkArmor()) {
                 blk.writeBlockData("armor_type",
                         EquipmentType.T_ARMOR_PATCHWORK);
-                for (int i = 1; i < numLocs; i++) {
+                for (int i = 1; i < t.locations(); i++) {
                     blk.writeBlockData(t.getLocationName(i) + "_armor_type",
                             t.getArmorType(i));
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
@@ -532,13 +568,13 @@ public class BLKFile {
             if (t.isOmni()) {
                 blk.writeBlockData("omni", 1);
             }
+            
             int armor_array[];
-            if (t instanceof Aero){
-                if (t instanceof FixedWingSupport) {
-                    //exclude body and wings
-                    armor_array = new int[numLocs - 2];
+            if (t.hasETypeFlag(Entity.ETYPE_AERO)) {
+                if (t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                    armor_array = new int[6];
                 } else {
-                    armor_array = new int[numLocs];
+                    armor_array = new int[4];
                 }
                 for (int i = 0; i < armor_array.length; i++) {
                     armor_array[i] = t.getOArmor(i);
@@ -646,11 +682,14 @@ public class BLKFile {
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET){
                 name += ":TU";
             }
-            // For BattleArmor, we need to save how many shots are in this
-            //  location
+            // For BattleArmor and ProtoMechs, we need to save how many shots are in this
+            //  location but they have different formats, yay!
             if ((t instanceof BattleArmor)
                     && (m.getType() instanceof AmmoType)){
                 name += ":Shots" + m.getBaseShotsLeft() + "#";
+            } else if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                    && (m.getType() instanceof AmmoType)) {
+                name += " (" + m.getBaseShotsLeft() + ")";
             }
             int loc = m.getLocation();
             if (loc != Entity.LOC_NONE) {
@@ -669,6 +708,8 @@ public class BLKFile {
         
         if (t.isSupportVehicle() || (t instanceof FixedWingSupport)) {
             blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating());
+            blk.writeBlockData("engine_tech_rating", t.getEngineTechRating());
+            blk.writeBlockData("armor_tech_rating", t.getArmorTechRating());
         }
         
         if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
@@ -688,12 +729,50 @@ public class BLKFile {
             blk.writeBlockData("deployment", t.getFluff().getDeployment());
         }
 
-        if (t.getFluff().getDeployment().trim().length() > 0) {
+        if (t.getFluff().getHistory().trim().length() > 0) {
             blk.writeBlockData("history", t.getFluff().getHistory());
+        }
+
+        if (t.getFluff().getManufacturer().trim().length() > 0) {
+            blk.writeBlockData("manufacturer", t.getFluff().getManufacturer());
+        }
+
+        if (t.getFluff().getPrimaryFactory().trim().length() > 0) {
+            blk.writeBlockData("primaryFactory", t.getFluff().getPrimaryFactory());
+        }
+        
+        List<String> list = t.getFluff().createSystemManufacturersList();
+        if (!list.isEmpty()) {
+        	blk.writeBlockData("systemManufacturers", list);
+        }
+
+        list = t.getFluff().createSystemModelsList();
+        if (!list.isEmpty()) {
+        	blk.writeBlockData("systemModels", list);
         }
 
         if (t.getFluff().getMMLImagePath().trim().length() > 0) {
             blk.writeBlockData("imagepath", t.getFluff().getMMLImagePath());
+        }
+
+        if (t.getFluff().getNotes().trim().length() > 0) {
+            blk.writeBlockData("notes", t.getFluff().getNotes());
+        }
+
+        if (t.getFluff().getUse().trim().length() > 0) {
+            blk.writeBlockData("use", t.getFluff().getUse());
+        }
+
+        if (t.getFluff().getLength().trim().length() > 0) {
+            blk.writeBlockData("length", t.getFluff().getLength());
+        }
+
+        if (t.getFluff().getWidth().trim().length() > 0) {
+            blk.writeBlockData("width", t.getFluff().getWidth());
+        }
+
+        if (t.getFluff().getHeight().trim().length() > 0) {
+            blk.writeBlockData("height", t.getFluff().getHeight());
         }
 
         if (t.getSource().trim().length() > 0) {
@@ -794,12 +873,30 @@ public class BLKFile {
                 blk.writeBlockData("baseChassisTurret2Weight",
                         tank.getBaseChassisTurret2Weight());
             }
+            if (tank.getBaseChassisSponsonPintleWeight() >= 0) {
+                blk.writeBlockData("baseChassisSponsonPintleWeight",
+                        tank.getBaseChassisSponsonPintleWeight());
+            }
+        }
+
+        if (t.isSupportVehicle() && t.isOmni()) {
+            blk.writeBlockData("baseChassisFireConWeight",
+                    t.getBaseChassisFireConWeight());
         }
 
         if (t instanceof Tank) {
             Tank tank = (Tank) t;
+            if (tank.isSupportVehicle()) {
+                blk.writeBlockData("fuel", tank.getFuelTonnage());
+            }
+            if (tank.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) {
+                blk.writeBlockData("fuelType", tank.getICEFuelType().toString());
+            }
             if (tank.hasNoControlSystems()) {
                 blk.writeBlockData("hasNoControlSystems", 1);
+            }
+            if (!t.isSupportVehicle() && t.isTrailer()) {
+                blk.writeBlockData("trailer", 1);
             }
         }
         
@@ -817,6 +914,40 @@ public class BLKFile {
             blk.writeBlockData("escape_pod", sc.getEscapePods());
         }
 
+        if (t instanceof Warship) {
+            Warship ws = (Warship) t;
+            blk.writeBlockData("kf_core", ws.getDriveCoreType());
+            if (ws.getDriveCoreType() == Warship.DRIVE_CORE_PRIMITIVE) {
+                blk.writeBlockData("jump_range", ws.getJumpRange());
+            }
+        } else if ((t instanceof SpaceStation)
+                && ((SpaceStation) t).isModular()) {
+            blk.writeBlockData("modular", 1);
+        }
+        
+        if (t instanceof Jumpship) {
+            Jumpship js = (Jumpship) t;
+            if (js.hasHPG()) {
+                blk.writeBlockData("hpg", 1);
+            }
+            if (js.hasLF()) {
+                blk.writeBlockData("lithium-fusion", 1);
+            }
+            blk.writeBlockData("sail", js.hasSail()? 1 : 0);
+            if (js.getTotalGravDeck() > 0) {
+                blk.writeBlockData("grav_decks", (Vector<String>)js.getGravDecks().stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.toCollection(Vector::new)));
+            }
+            blk.writeBlockData("crew", js.getNCrew());
+            blk.writeBlockData("officers", js.getNOfficers());
+            blk.writeBlockData("gunners", js.getNGunners());
+            blk.writeBlockData("passengers", js.getNPassenger());
+            blk.writeBlockData("marines", js.getNMarines());
+            blk.writeBlockData("battlearmor", js.getNBattleArmor());
+            blk.writeBlockData("life_boat", js.getLifeBoats());
+            blk.writeBlockData("escape_pod", js.getEscapePods());
+        }
         return blk;
     }
 
@@ -835,100 +966,122 @@ public class BLKFile {
                 transporter = transporter.toLowerCase();
             	boolean isPod = transporter.endsWith(":omni");
             	transporter = transporter.replace(":omni", "");
-                // for bays, we have to save the baynumber in each bay, because
-                // one conceptual bay can contain several different ones
-                // we default to bay 1
-                int bayNumber = 1;
-                // TroopSpace:
+
+            	// TroopSpace:
                 if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.
-                    Double fsize = new Double(transporter.substring(11));
+                    double fsize = Double.parseDouble(transporter.substring(11));
                     e.addTransporter(new TroopSpace(fsize), isPod);
                 } else if (transporter.startsWith("cargobay:", 0)) {
                     String numbers = transporter.substring(9);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new CargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new CargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("liquidcargobay:", 0)) {
                     String numbers = transporter.substring(15);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new LiquidCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new LiquidCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("insulatedcargobay:", 0)) {
                     String numbers = transporter.substring(18);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new InsulatedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new InsulatedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("refrigeratedcargobay:", 0)) {
                     String numbers = transporter.substring(21);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new RefrigeratedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new RefrigeratedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("livestockcargobay:", 0)) {
                     String numbers = transporter.substring(18);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new LivestockCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new LivestockCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("asfbay:", 0)) {
                     String numbers = transporter.substring(7);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("smallcraftbay:", 0)) {
                     String numbers = transporter.substring(14);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("mechbay:", 0)) {
                     String numbers = transporter.substring(8);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new MechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new MechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("lightvehiclebay:", 0)) {
                     String numbers = transporter.substring(16);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new LightVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new LightVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("heavyvehiclebay:", 0)) {
                     String numbers = transporter.substring(16);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new HeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new HeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("superheavyvehiclebay:", 0)) {
                     String numbers = transporter.substring(21);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new SuperHeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new SuperHeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("infantrybay:", 0)) {
                     String numbers = transporter.substring(12);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new InfantryBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getPlatoonType()));
+                    e.addTransporter(new InfantryBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getPlatoonType()), isPod);
                 } else if (transporter.startsWith("battlearmorbay:", 0)) {
                     String numbers = transporter.substring(15);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new BattleArmorBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(),
-                            e.isClan(), pbi.isComstarBay()));
+                            e.isClan(), pbi.isComstarBay()), isPod);
                 } else if (transporter.startsWith("bay:", 0)) {
                     String numbers = transporter.substring(4);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new Bay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new Bay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                 } else if (transporter.startsWith("protomechbay:", 0)) {
                     String numbers = transporter.substring(13);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new ProtomechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new ProtomechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                } else if (transporter.startsWith("dropshuttlebay:")) {
+                    String numbers = transporter.substring("dropshuttlebay:".length());
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new DropshuttleBay(pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()), isPod);
+                } else if (transporter.startsWith("navalrepairpressurized:")) {
+                    String numbers = transporter.substring("navalrepairpressurized:".length());
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing(), true), isPod);
+                } else if (transporter.startsWith("navalrepairunpressurized:")) {
+                    String numbers = transporter.substring("navalrepairunpressurized:".length());
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing(), false), isPod);
+                } else if (transporter.startsWith("reinforcedrepairfacility:")) {
+                    String numbers = transporter.substring("reinforcedrepairfacility:".length());
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new ReinforcedRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()), isPod);
                 } else if (transporter.startsWith("crewquarters:", 0)) {
                     String numbers = transporter.substring(13);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new CrewQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
+                    e.addTransporter(new CrewQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
                 } else if (transporter.startsWith("steeragequarters:", 0)) {
                     String numbers = transporter.substring(17);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new SteerageQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
+                    e.addTransporter(new SteerageQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
                 } else if (transporter.startsWith("2ndclassquarters:", 0)) {
                     String numbers = transporter.substring(17);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new SecondClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
+                    e.addTransporter(new SecondClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
                 } else if (transporter.startsWith("1stclassquarters:", 0)) {
                     String numbers = transporter.substring(17);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new FirstClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
+                    e.addTransporter(new FirstClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
                 } else if (transporter.startsWith("pillionseats:", 0)) {
                     String numbers = transporter.substring(13);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new PillionSeatCargoBay(pbi.getSize(), pbi.getDoors()));
+                    e.addTransporter(new PillionSeatCargoBay(pbi.getSize()), isPod);
                 } else if (transporter.startsWith("standardseats:", 0)) {
                     String numbers = transporter.substring(14);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new StandardSeatCargoBay(pbi.getSize(), pbi.getDoors()));
+                    e.addTransporter(new StandardSeatCargoBay(pbi.getSize()), isPod);
+                } else if (transporter.startsWith("ejectionseats:", 0)) {
+                    String numbers = transporter.substring("ejectionseats:".length());
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new EjectionSeatCargoBay(pbi.getSize()), isPod);
+                } else if (transporter.startsWith("dockingcollar", 0)) {
+                    //Add values for collars so they can be parsed and assigned a 'bay' number
+                    String numbers = "1.0:0";
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new DockingCollar(1,pbi.getBayNumber()));
                 }
 
             } // Handle the next transportation component.
@@ -942,12 +1095,13 @@ public class BLKFile {
      * @author NickAragua
      *
      */
-    public class ParsedBayInfo {
+    public static class ParsedBayInfo {
         private double size;
         private int doors;
         private int bayNumber = -1;
         private PlatoonType platoonType = InfantryBay.PlatoonType.FOOT;
         private boolean isComstarBay;
+        private int facing = Entity.LOC_NONE;
         
         public ParsedBayInfo(String numbers, HashSet<Integer> usedBayNumbers) {
             // expected format of "numbers" string:
@@ -957,7 +1111,7 @@ public class BLKFile {
             // c is the bay number OR an indicator that this bay is a comstar bay OR an indicator of the kind of infantry bay it is, and is optional
             // d is like c except that it's not going to be the bay number
             
-            String temp[] = numbers.split(BAY_DATA_SEPARATOR);
+            String temp[] = numbers.split(Bay.FIELD_SEPARATOR);
             size = Double.parseDouble(temp[0]);
             doors = Integer.parseInt(temp[1]);
             
@@ -979,10 +1133,14 @@ public class BLKFile {
                     isComstarBay = true;
                 } else if (potentialBayTypeIndicator.equalsIgnoreCase("jump")) {
                     platoonType = InfantryBay.PlatoonType.JUMP;
+                } else if (potentialBayTypeIndicator.equalsIgnoreCase("foot")) {
+                    platoonType = InfantryBay.PlatoonType.FOOT;
                 } else if (potentialBayTypeIndicator.equalsIgnoreCase("motorized")) {
                     platoonType = InfantryBay.PlatoonType.MOTORIZED;
                 } else if (potentialBayTypeIndicator.equalsIgnoreCase("mechanized")) {
                     platoonType = InfantryBay.PlatoonType.MECHANIZED;
+                } else if (potentialBayTypeIndicator.startsWith(Bay.FACING_PREFIX)) {
+                    facing = Integer.parseInt(potentialBayTypeIndicator.replace(Bay.FACING_PREFIX, ""));
                 } else {
                     // if we looked at the 
                     bayNumberPresent = temp.length == 3; 
@@ -1027,6 +1185,10 @@ public class BLKFile {
         
         public boolean isComstarBay() {
             return isComstarBay;
+        }
+        
+        public int getFacing() {
+            return facing;
         }
     }
 }

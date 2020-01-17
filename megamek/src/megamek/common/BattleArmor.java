@@ -295,7 +295,7 @@ public class BattleArmor extends Infantry {
         return MOUNT_LOC_NAMES;
     }
 
-    public String getBaMountLocAbbr(int loc) {
+    public static String getBaMountLocAbbr(int loc) {
         if (loc == MOUNT_LOC_NONE) {
             return "None";
         }
@@ -317,7 +317,7 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public int locations() {
-        int retVal = Math.round(getTroopers());
+        int retVal = getTroopers();
         if (retVal == 0) {
             // Return one more than the maximum number of men in the unit.
             if (!isInitialized) {
@@ -352,7 +352,12 @@ public class BattleArmor extends Infantry {
         // Construction complete.
         isInitialized = true;
     }
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.BATTLE_ARMOR;
+    }
+
     protected static final TechAdvancement[] TA_BATTLEARMOR = {
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
                 .setClanAdvancement(2710, DATE_NONE, 3058).setPrototypeFactions(F_TH)
@@ -697,15 +702,20 @@ public class BattleArmor extends Infantry {
                 }
                 break;
             case Tank.LOC_REAR:
-                if ((getInternal(5) > 0) && (getInternal(6) > 0)) {
+                //Troopers 5 and 6 only exist when you have Clan and CS/WoB units, so we need
+                //to ensure the array is large enough before checking their status.
+                if (locations() >= 7 && ((getInternal(5) > 0) && (getInternal(6) > 0))) {
+                    //If we have a live trooper 5 and 6, randomize who gets hit
                     loc = Compute.randomInt(2) + 5;
-                } else if (getInternal(5) > 0) {
-                    loc = 5;
-                } else {
+                } else if ((locations() >= 7) && (getInternal(5) <= 0)) {
+                    //If trooper 5 is dead, hit trooper 6
                     loc = 6;
+                } else {
+                    loc = 5;
                 }
                 break;
             }
+            //If we get here with an invalid loc for this squad, this next test should fail
             if (loc < locations()) {
                 return new HitData(loc);
             }

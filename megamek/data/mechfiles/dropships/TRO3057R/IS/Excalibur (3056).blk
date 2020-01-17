@@ -25,7 +25,7 @@ Excalibur
 </year>
 
 <originalBuildYear>
-0
+3056
 </originalBuildYear>
 
 <type>
@@ -123,6 +123,9 @@ ISMediumPulseLaser
 (B) ISMediumPulseLaser
 ISMediumPulseLaser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 14

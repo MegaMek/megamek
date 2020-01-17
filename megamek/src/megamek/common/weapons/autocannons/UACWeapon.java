@@ -41,10 +41,10 @@ public abstract class UACWeapon extends AmmoWeapon {
      */
     public UACWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON)
                 .or(F_BALLISTIC).or(F_DIRECT_FIRE);
         ammoType = AmmoType.T_AC_ULTRA;
-        String[] modeStrings = { "Single", "Ultra" };
+        String[] modeStrings = {MODE_AC_SINGLE, MODE_UAC_ULTRA};
         setModes(modeStrings);
         atClass = CLASS_AC;
     }

@@ -104,7 +104,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         }
         if((ae instanceof Infantry)
                 && nRange == 0
-                && ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+                && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
@@ -113,7 +113,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         }
         if((ae instanceof Infantry)
                 && nRange == 0
-                && ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+                && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
 
         }
         if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {

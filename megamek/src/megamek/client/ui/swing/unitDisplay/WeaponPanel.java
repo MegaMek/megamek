@@ -281,6 +281,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 wn.append('/'); //$NON-NLS-1$
                 wn.append(totalShotsLeft);
                 wn.append(')'); //$NON-NLS-1$
+            } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+                int shotsLeft = 0;
+                int totalShots = 0;
+                for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
+                    shotsLeft += current.getUsableShotsLeft();
+                    totalShots++;
+                }
+                wn.append(" (").append(shotsLeft) //$NON-NLS-1$
+                    .append("/").append(totalShots).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             // MG rapidfire
@@ -1845,7 +1854,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 m_chBayWeapon.addItem(formatBayWeapon(curWeapon));
             }
 
-            if (chosen == -1) {
+            if (chosen == -1 || chosen >= m_chBayWeapon.getItemCount()) {
                 m_chBayWeapon.setSelectedIndex(0);
             } else {
                 m_chBayWeapon.setSelectedIndex(chosen);
@@ -1867,7 +1876,23 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         
         if (wtype.getAmmoType() == AmmoType.T_NA) {
             m_chAmmo.setEnabled(false);
-        
+        } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+            int count = 0;
+            vAmmo = new ArrayList<>();
+            for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
+                if (current.getUsableShotsLeft() > 0) {
+                    vAmmo.add(current);
+                    m_chAmmo.addItem(formatAmmo(current));
+                    count++;
+                }
+            }
+            // If there is no remaining ammo, show the last one linked and disable
+            if (count == 0) {
+                m_chAmmo.addItem(formatAmmo(mounted.getLinked()));
+            }
+            m_chAmmo.setSelectedIndex(0);
+            m_chAmmo.setEnabled(count > 0);
+
         // this is the situation where there's some kind of ammo but it's not changeable
         } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
             m_chAmmo.setEnabled(false);
@@ -1923,7 +1948,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
 
         // send event to other parts of the UI which care
-        setFieldofFire(mounted);
+        if (oldmount.isInWaypointLaunchMode()) {
+            setFieldofFire(oldmount);
+        } else {
+            setFieldofFire(mounted);
+        }
         unitDisplay.processMechDisplayEvent(new MechDisplayEvent(this, entity, mounted));
         onResize();
         addListeners();
@@ -2024,15 +2053,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
 
         // Aero
-        if (entity.isAirborne() 
-                || entity.usesWeaponBays()) {
+        if (entity.isAirborne()) {
 
             // prepare fresh ranges, no underwater
             ranges[0] = new int[] { 0, 0, 0, 0, 0 };  
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
             int maxr = WeaponType.RANGE_SHORT;
-
-            maxr = WeaponType.RANGE_SHORT;
+            
             // In the WeaponPanel, when the weapon is out of ammo
             // or otherwise nonfunctional, SHORT range will be listed;
             // the field of fire is instead disabled
@@ -2059,22 +2086,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 }
 
                 // set the standard ranges, depending on capital or no
-                boolean isCap = wtype.isCapital();
-                ranges[0][0] = 0;
-                ranges[0][1] = isCap ? 12 : 6;
-                if (maxr > WeaponType.RANGE_SHORT) 
-                    ranges[0][2] = isCap ? 24 : 12;
-                if (maxr > WeaponType.RANGE_MED)
-                    ranges[0][3] = isCap ? 40 : 20;
-                if (maxr > WeaponType.RANGE_LONG) 
-                    ranges[0][4] = isCap ? 50 : 25;
-                
+                //boolean isCap = wtype.isCapital();
+                int rangeMultiplier = wtype.isCapital() ? 2 : 1;
                 final IGame game = unitDisplay.getClientGUI().getClient().getGame();
                 if (game.getBoard().onGround()) {
-                    ranges[0][1] *= 8;
-                    ranges[0][2] *= 8;
-                    ranges[0][3] *= 8;
-                    ranges[0][4] *= 8;
+                    rangeMultiplier *= 8;
+                }
+                
+                for(int rangeIndex = RangeType.RANGE_MINIMUM; rangeIndex <= RangeType.RANGE_EXTREME; rangeIndex++) {
+                    if(maxr >= rangeIndex) {
+                        ranges[0][rangeIndex] = WeaponType.AIRBORNE_WEAPON_RANGES[rangeIndex] * rangeMultiplier;
+                    }
                 }
             }
         }

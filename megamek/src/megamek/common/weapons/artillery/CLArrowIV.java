@@ -18,6 +18,7 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -47,18 +48,21 @@ public class CLArrowIV extends ArtilleryWeapon {
         mediumRange = 2;
         longRange = 9;
         extremeRange = 9; // No extreme range.
-        tonnage = 12f;
+        tonnage = 12;
         criticals = 12;
+        svslots = 6;
         bv = 240;
         cost = 450000;
         this.flags = flags.or(F_MISSILE);
+        this.missileArmor = 20;
         rulesRefs = "284,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
             .setClanAdvancement(DATE_NONE, 2844, 2850, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CHH);
+            .setPrototypeFactions(F_CHH)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
 }

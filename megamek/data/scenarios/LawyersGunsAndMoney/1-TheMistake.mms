@@ -16,7 +16,7 @@ Description=LG&M first mission
 BoardWidth=1
 BoardHeight=2
 
-Maps=battletech,battletech
+Maps=MapSet2/16x17 BattleTech,MapSet2/16x17 BattleTech
 
 
 Factions=RedfieldsRenegades,LoneStar

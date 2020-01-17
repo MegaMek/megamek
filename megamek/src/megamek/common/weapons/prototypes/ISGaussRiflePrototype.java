@@ -43,6 +43,7 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         name = "Prototype Gauss Rifle";
         setInternalName("ISGaussRiflePrototype");
         addLookupName("IS Gauss Rifle Prototype");
+        shortName = "Gauss Rifle (P)";
         heat = 1;
         damage = 15;
         ammoType = AmmoType.T_GAUSS;
@@ -51,7 +52,7 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         mediumRange = 15;
         longRange = 22;
         extremeRange = 30;
-        tonnage = 15.0f;
+        tonnage = 15.0;
         bv = 320;
         cost = 1200000;
         criticals = 8;

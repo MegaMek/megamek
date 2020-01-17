@@ -29,6 +29,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,9 +38,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import megamek.common.Configuration;
 import megamek.common.util.MegaMekFile;
+import megamek.utils.MegaMekXmlUtil;
 
 public class PreferenceManager {
 
@@ -102,7 +107,7 @@ public class PreferenceManager {
             JAXBContext jc = JAXBContext.newInstance(Settings.class);
             
             Unmarshaller um = jc.createUnmarshaller();
-            Settings opts = (Settings) um.unmarshal(is);
+            Settings opts = (Settings) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
 
             for (Store store : opts.stores) {
                 if (CLIENT_SETTINGS_STORE_NAME.equals(store.name)) {
@@ -116,7 +121,7 @@ public class PreferenceManager {
                     }
                 }
             }
-        } catch (JAXBException ex) {
+        } catch (JAXBException | SAXException | ParserConfigurationException ex) {
             System.err.println("Error loading XML for client settings: " + ex.getMessage()); //$NON-NLS-1$
             ex.printStackTrace();
         }
@@ -135,7 +140,11 @@ public class PreferenceManager {
             
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-            marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+            try {
+            	marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+            } catch (PropertyException ex) {
+            	marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+            }
             
             JAXBElement<Settings> element = new JAXBElement<>(new QName(ROOT_NODE_NAME), Settings.class, new Settings(clientPreferenceStore, stores));
             

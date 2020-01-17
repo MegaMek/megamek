@@ -17,10 +17,14 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 public class EjectedCrew extends Infantry {
     protected int originalRideId;
     protected String originalRideExternalId;
+    // set up movement for Aero pilots and vessel crews
+    protected int currentVelocity = 0;
+    protected int nextVelocity = currentVelocity;
     
     private static final long serialVersionUID = 8136710237585797372L;
     
     public static final String VEE_EJECT_NAME = "Vehicle Crew";
+    public static final String PILOT_EJECT_NAME = "Pilot";
     public static final String MW_EJECT_NAME = "MechWarrior";
 
     public EjectedCrew(Entity originalRide) {
@@ -55,9 +59,9 @@ public class EjectedCrew extends Infantry {
             && (!(this instanceof MechWarrior) 
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
             try {
-                addEquipment(EquipmentType.get("InfantryAssaultRifle"),
+                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
                         Infantry.LOC_INFANTRY);
-                setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get("InfantryAssaultRifle"));
+                setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -105,9 +109,9 @@ public class EjectedCrew extends Infantry {
             && (!(this instanceof MechWarrior) 
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
             try {
-                addEquipment(EquipmentType.get("InfantryAssaultRifle"),
+                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
                         Infantry.LOC_INFANTRY);
-                setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get("InfantryAssaultRifle"));
+                setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -174,6 +178,35 @@ public class EjectedCrew extends Infantry {
     public boolean isCrippled() {
         // Ejected crew should always attempt to flee according to Forced Withdrawal.
         return true;
+    }
+    
+    // Handle pilot/escape pod velocity for Aeros
+    
+    public int getCurrentVelocity() {
+        // if using advanced movement then I just want to sum up
+        // the different vectors
+        if ((game != null) && game.useVectorMove()) {
+            return getVelocity();
+        }
+        return currentVelocity;
+    }
+
+    public void setCurrentVelocity(int velocity) {
+        currentVelocity = velocity;
+    }
+
+    public int getNextVelocity() {
+        return nextVelocity;
+    }
+
+    public void setNextVelocity(int velocity) {
+        nextVelocity = velocity;
+    }
+    
+    //Is this pilot/crew suited for vacuum/harsh environmental conditions?
+    @Override
+    public boolean doomedInSpace() {
+        return !hasSpaceSuit();
     }
 
 }

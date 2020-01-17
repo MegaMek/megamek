@@ -24,6 +24,10 @@ Prime
 3086
 </year>
 
+<originalBuildYear>
+3086
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -33,7 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-cargobay:23.5:1
+cargobay:23.5:1:1:omni
 </transporters>
 
 <SafeThrust>
@@ -93,7 +97,6 @@ ISLightGaussRifle:OMNI
 </Wings Equipment>
 
 <Body Equipment>
-Advanced Fire Control
 Armored Chassis
 STOLChassisMod
 IS Ammo LRM-15:OMNI
@@ -104,7 +107,9 @@ IS Ammo LRM-15:OMNI
 IS Ammo LAC/2:OMNI
 IS Ammo LAC/2:OMNI
 IS Light Gauss Ammo:OMNI
-ISCASE:OMNI
+ISCASE
+OmniChassisMod
+Advanced Fire Control
 </Body Equipment>
 
 <barrating>
@@ -122,4 +127,8 @@ TRO 3085
 <tonnage>
 200.0
 </tonnage>
+
+<baseChassisFireConWeight>
+5.5
+</baseChassisFireConWeight>
 

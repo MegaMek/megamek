@@ -17,11 +17,17 @@
  */
 package megamek.common.weapons.capitalweapons;
 
+import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.ArtilleryWeaponIndirectFireHandler;
 import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.CapitalMissileHandler;
 import megamek.server.Server;
 
@@ -50,6 +56,18 @@ public abstract class CapitalMissileWeapon extends AmmoWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
+        Mounted weapon = game.getEntity(waa.getEntityId())
+                .getEquipment(waa.getWeaponId());
+        Entity attacker = game.getEntity(waa.getEntityId());
+        int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
+        // Capital missiles work like artillery for surface to surface fire
+        if (Compute.isGroundToGround(attacker, waa.getTarget(game))) {
+            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, server);
+        }
+        if (weapon.isInBearingsOnlyMode()
+                && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+            return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, server);
+        }
         return new CapitalMissileHandler(toHit, waa, game, server);
     }
     

@@ -370,7 +370,7 @@ public class Terrains implements ITerrainFactory {
         if (hash == null) {
             hash = new Hashtable<String, Integer>(SIZE);
             for (int i = 0; i < names.length; i++) {
-                hash.put(names[i], new Integer(i));
+                hash.put(names[i], Integer.valueOf(i));
             }
         }
         return hash;

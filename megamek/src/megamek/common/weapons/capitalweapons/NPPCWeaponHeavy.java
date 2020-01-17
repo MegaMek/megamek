@@ -42,7 +42,7 @@ public class NPPCWeaponHeavy extends NPPCWeapon {
         this.mediumRange = 26;
         this.longRange = 39;
         this.extremeRange = 52;
-        this.tonnage = 3000.0f;
+        this.tonnage = 3000.0;
         this.bv = 3780;
         this.cost = 9050000;
         this.shortAV = 15;

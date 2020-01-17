@@ -1,6 +1,6 @@
 Pesht Regulars Dropship
 Gazelle (2531),1
-Vulture (Standard),2
+Vulture (2405),2
 Leopard (2537),3
 Lion (2595),4
 Dictator (Standard),5

@@ -17,12 +17,10 @@
  */
 package megamek.common.weapons.capitalweapons;
 
-import megamek.common.weapons.AmmoWeapon;
-
 /**
  * @author Jay Lawson
  */
-public abstract class SubCapMissileWeapon extends AmmoWeapon {
+public abstract class SubCapMissileWeapon extends CapitalMissileWeapon {
     /**
      * 
      */
@@ -33,11 +31,6 @@ public abstract class SubCapMissileWeapon extends AmmoWeapon {
         atClass = CLASS_CAPITAL_MISSILE;
         capital = true;
         subCapital = true;
-        flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
-    }
-    
-    @Override
-    public int getBattleForceClass() {
-        return BFCLASS_CAPITAL_MISSILE;
+        flags = flags.or(F_AERO_WEAPON).or(F_MISSILE).andNot(F_PROTO_WEAPON);;
     }
 }

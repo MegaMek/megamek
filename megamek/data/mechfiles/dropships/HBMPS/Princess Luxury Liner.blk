@@ -42,10 +42,10 @@ smallcraftbay:4.0:2:1
 1stclassquarters:1600.0:0
 steeragequarters:605.0:0
 crewquarters:0.0:0
-cargobay:450.0:0:3
-cargobay:952.5:4:2
-liquidcargobay:1291.5:0:4
-refrigeratedcargobay:841.0:0:5
+cargobay:450.0:0:6
+cargobay:952.5:4:7
+liquidcargobay:1291.5:0:8
+refrigeratedcargobay:841.0:0:9
 </transporters>
 
 <SafeThrust>
@@ -118,6 +118,9 @@ IS Machine Gun Ammo - Half:100
 Machine Gun
 IS Machine Gun Ammo - Half:100
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 10

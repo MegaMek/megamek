@@ -39,9 +39,14 @@ import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
+import megamek.common.pathfinder.AeroLowAltitudePathFinder;
+import megamek.common.pathfinder.AeroSpacePathFinder;
+import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.MovePathFinder;
+import megamek.common.pathfinder.NewtonianAerospacePathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
+import megamek.common.pathfinder.SpheroidPathFinder;
 
 public class PathEnumerator {
 
@@ -194,10 +199,7 @@ public class PathEnumerator {
             
             // Aero movement on atmospheric ground maps
             // currently only applies to a) conventional aircraft, b) aerotech units, c) lams in air mode
-            if(mover.isAirborne() &&
-               mover.isOnAtmosphericGroundMap() &&
-               mover.isAero() &&                    // guards against the edge case of airborne non-aero units
-               !((IAero) mover).isSpheroid()) {
+            if(mover.isAirborneAeroOnGroundMap() && !((IAero) mover).isSpheroid()) {
                 AeroGroundPathFinder apf = AeroGroundPathFinder.getInstance(getGame());
                 MovePath startPath = new MovePath(getGame(), mover);
                 apf.run(startPath);
@@ -239,36 +241,32 @@ public class PathEnumerator {
                 for(Integer length : pathLengths.keySet()) {
                     this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Paths of length " + length + ": " + pathLengths.get(length));
                 }
-            } else if (mover.isAero()) {
-                IAero aeroMover = (IAero)mover;
-                // Get the shortest paths possible.
-                ShortestPathFinder spf;
-                
-                if (aeroMover.isSpheroid()) {
-                    spf = ShortestPathFinder.newInstanceOfOneToAllSpheroid(
-                            MoveStepType.FORWARDS, getGame());
-                } else { // Aerodynes must expend all velocity
-                    spf = ShortestPathFinder.newInstanceOfOneToAllAerodyne(
-                            MoveStepType.FORWARDS, getGame());
-                }
-                spf.setAdjacencyMap(new MovePathFinder.NextStepsAeroAdjacencyMap(
-                        MoveStepType.FORWARDS));
-                
-                // Make sure we accelerate to avoid stalling as needed.
-                MovePath startPath = new MovePath(getGame(), mover);
-                spf.run(startPath);
+            // this handles the case of the mover being an aerospace unit and "advances space flight" rules being on
+            } else if(mover.isAero() && game.useVectorMove()) {
+                NewtonianAerospacePathFinder npf = NewtonianAerospacePathFinder.getInstance(getGame());
+                npf.run(new MovePath(game, mover));
+                paths.addAll(npf.getAllComputedPathsUncategorized());
+            // this handles the case of the mover being an aerospace unit on a space map
+            } else if(mover.isAero() && game.getBoard().inSpace()) {
+                AeroSpacePathFinder apf = AeroSpacePathFinder.getInstance(getGame());
+                apf.run(new MovePath(game, mover));
+                paths.addAll(apf.getAllComputedPathsUncategorized());
+            // this handles the case of the mover being a winged aerospace unit on a low-atmo map
+            } else if(mover.isAero() && game.getBoard().inAtmosphere() && !Compute.useSpheroidAtmosphere(game, mover)) {
+                AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
+                apf.run(new MovePath(game, mover));
+                paths.addAll(apf.getAllComputedPathsUncategorized());
+            // this handles the case of the mover acting like a spheroid aerospace unit in an atmosphere
+            } else if(Compute.useSpheroidAtmosphere(game, mover)) {
+                SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game);
+                spf.run(new MovePath(game, mover));
                 paths.addAll(spf.getAllComputedPathsUncategorized());
-
-                // Remove illegal paths.
-                Filter<MovePath> filter = new Filter<MovePath>() {
-                    @Override
-                    public boolean shouldStay(MovePath movePath) {
-                        return isLegalAeroMove(movePath);
-                    }
-                };
-                paths = new ArrayList<>(filter.doFilter(paths));
+            // this handles the case of the mover being an infantry unit of some kind
+            } else if(mover.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+                InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
+                ipf.run(new MovePath(game, mover));
+                paths.addAll(ipf.getAllComputedPathsUncategorized());
             } else { // Non-Aero movement
-                //add running moves
                 // TODO: Will this cause Princess to never use MASC?
                 LongestPathFinder lpf = LongestPathFinder
                         .newInstanceOfLongestPath(mover.getRunMPwithoutMASC(),
@@ -292,6 +290,10 @@ public class PathEnumerator {
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
+                for(MovePath path : paths) {
+                    this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
+                }
+                
                 // Try climbing over obstacles and onto bridges
                 adjustPathsForBridges(paths);
 
@@ -429,7 +431,7 @@ public class PathEnumerator {
         return unitPaths;
     }
 
-    protected Map<Integer, ConvexBoardArea> getUnitMovableAreas() {
+    public Map<Integer, ConvexBoardArea> getUnitMovableAreas() {
         return unitMovableAreas;
     }
 

@@ -24,6 +24,10 @@ Jetta Coruna 4X
 3066
 </year>
 
+<originalBuildYear>
+3066
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,11 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+1stclassquarters:10.0:1
+cargobay:1.5:1:1
+</transporters>
 
 <SafeThrust>
 4
@@ -63,14 +72,6 @@ Aerodyne
 6
 </armor>
 
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
 <Nose Equipment>
 </Nose Equipment>
 
@@ -80,23 +81,29 @@ Aerodyne
 <Right Wing Equipment>
 </Right Wing Equipment>
 
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
 <Body Equipment>
 Environmental Sealed Chassis
 </Body Equipment>
 
-<Aft Equipment>
-</Aft Equipment>
+<barrating>
+2
+</barrating>
 
-<transporters>
-cargospace:1.5:1
-1stclassquarters:10:1
-</transporters>
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <source>
 TRO Vehicle Annex (r) - Jihad
 </source>
 
 <tonnage>
-35
+35.0
 </tonnage>
 

@@ -88,6 +88,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem filePrint;
     private JMenuItem viewMiniMap;
     private JMenuItem viewMekDisplay;
+    private JMenuItem viewAccessibilityWindow;
     private JMenuItem viewZoomIn;
     private JMenuItem viewZoomOut;
     private JCheckBoxMenuItem toggleIsometric;
@@ -123,6 +124,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem moveLayMine;
     private JMenuItem moveLoad;
     private JMenuItem moveUnload;
+    private JMenuItem moveTow;
+    private JMenuItem moveDisconnect;
     private JMenuItem moveJump;
     private JMenuItem moveSwim;
     private JMenuItem moveModeConvert;
@@ -354,6 +357,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewMekDisplay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
                 getToolkit().getMenuShortcutKeyMask()));
         menu.add(viewMekDisplay);
+        viewAccessibilityWindow = new JMenuItem(Messages.getString("CommonMenuBar.viewAccessibilityWindow")); //$NON-NLS-1$
+        viewAccessibilityWindow.addActionListener(this);
+        viewAccessibilityWindow.setActionCommand(ClientGUI.VIEW_ACCESSIBILITY_WINDOW);
+        menu.add(viewAccessibilityWindow);
         viewMiniMap = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewMiniMap")); //$NON-NLS-1$
         viewMiniMap.addActionListener(this);
@@ -614,6 +621,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         moveUnload = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.MoveUnload"), MovementDisplay.MoveCommand.MOVE_UNLOAD.getCmd()); //$NON-NLS-1$
+        moveTow = createMenuItem(submenu, Messages
+                .getString("CommonMenuBar.moveTow"), MovementDisplay.MoveCommand.MOVE_TOW.getCmd()); //$NON-NLS-1$
+        moveDisconnect = createMenuItem(
+                submenu,
+                Messages.getString("CommonMenuBar.moveDisconnect"), MovementDisplay.MoveCommand.MOVE_DISCONNECT.getCmd()); //$NON-NLS-1$
         moveLaunch = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLaunch"), MovementDisplay.MoveCommand.MOVE_LAUNCH.getCmd()); //$NON-NLS-1$
         moveRecover = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveRecover"), MovementDisplay.MoveCommand.MOVE_RECOVER.getCmd()); //$NON-NLS-1$
         moveJoin = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveJoin"), MovementDisplay.MoveCommand.MOVE_JOIN.getCmd()); //$NON-NLS-1$
@@ -1130,6 +1142,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
 
     public synchronized void setMoveUnloadEnabled(boolean enabled) {
         moveUnload.setEnabled(enabled);
+    }
+    
+    public synchronized void setMoveTowEnabled(boolean enabled) {
+        moveTow.setEnabled(enabled);
+    }
+
+    public synchronized void setMoveDisconnectEnabled(boolean enabled) {
+        moveDisconnect.setEnabled(enabled);
     }
 
     public synchronized void setMoveJumpEnabled(boolean enabled) {

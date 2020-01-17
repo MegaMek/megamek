@@ -16,6 +16,8 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.EquipmentTypeLookup;
+
 /**
  * @author Jay Lawson
  */
@@ -32,14 +34,14 @@ public class SubCapCannonBayWeapon extends AmmoBayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "Sub-Capital Cannon Bay";
-        this.setInternalName(this.name);
+        this.setInternalName(EquipmentTypeLookup.SCC_BAY);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 12;
         this.mediumRange = 24;
         this.longRange = 40;
         this.extremeRange = 50;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_CAPITAL_AC;

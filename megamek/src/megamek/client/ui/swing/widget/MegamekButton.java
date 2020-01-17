@@ -300,7 +300,7 @@ public class MegamekButton extends JButton implements MouseListener {
             textLabel.setFont(specificFont);
         }
         if (this.isEnabled()) {
-            if (isMousedOver) {
+            if (isMousedOver || hasFocus()) {
                 Font font = textLabel.getFont();
                 if (shouldBold) {
                     // same font but bold

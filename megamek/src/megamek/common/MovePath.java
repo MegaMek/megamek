@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
@@ -48,11 +49,11 @@ public class MovePath implements Cloneable, Serializable {
         return game;
     }
 
-    protected void setGame(IGame game) {
+    public void setGame(IGame game) {
         this.game = game;
     }
 
-    protected void setEntity(Entity entity) {
+    public void setEntity(Entity entity) {
         this.entity = entity;
     }
 
@@ -63,7 +64,7 @@ public class MovePath implements Cloneable, Serializable {
         CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
         SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
         RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
-        CONVERT_MODE, BOOTLEGGER;
+        CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT;
     }
 
     public static class Key {
@@ -132,6 +133,7 @@ public class MovePath implements Cloneable, Serializable {
         sb.append(this.getKey().hashCode());
         sb.append(' '); // it's useful to know for debugging purposes which path you're looking at.
         sb.append("Length: " + this.length());
+        sb.append("Final Coords: " + this.getFinalCoords());
         sb.append(System.lineSeparator());
         
         for (final Enumeration<MoveStep> i = steps.elements(); i.hasMoreElements(); ) {
@@ -312,8 +314,12 @@ public class MovePath implements Cloneable, Serializable {
             // isn't legal.
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         } else {
-            final int distance = start.distance(land);
-            if (isJumping() && (getEntity().getJumpType() != Mech.JUMP_BOOSTER)) {
+            // if we're jumping without a mechanical jump booster (?)
+            // or we're acting like a spheroid dropship in the atmosphere
+            if ((isJumping() && (getEntity().getJumpType() != Mech.JUMP_BOOSTER)) ||
+                    (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
+                int distance = start.distance(land);
+                
                 if (step.isThisStepBackwards() || (step.getDistance() > distance)) {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                 }
@@ -408,6 +414,13 @@ public class MovePath implements Cloneable, Serializable {
         
         if (shouldMechanicalJumpCauseFallDamage()) {
             step.setDanger(true);
+        }
+       
+        // If a tractor connects a new trailer this round, it can't do anything but add more trailers
+        // This prevents the tractor from moving before its MP, stacking limitations and prohibited terrain can be updated by its trailers
+        // It makes sense, too. You can't just connect a trailer and drive off with it in <10 seconds. 
+        if (contains(MoveStepType.TOW) && !(step.getType() == MoveStepType.TOW)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
         
         // If the new step is legal and is a different position than
@@ -526,7 +539,7 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // Can't move out of a hex with an enemy unit unless we started
-        // there, BUT we're allowed to turn, unload, or go prone.
+        // there, BUT we're allowed to turn, unload/disconnect, or go prone.
         Coords pos = getEntity().getPosition();
         boolean isMech = getEntity() instanceof Mech;
         int elev = getEntity().getElevation();
@@ -553,10 +566,11 @@ public class MovePath implements Cloneable, Serializable {
                     }
                     continue;
                 }
-                // We've returned, only following 4 types are legal
+                // We've returned, only following 5 types are legal
                 if ((step.getType() != MovePath.MoveStepType.TURN_LEFT)
                         && (step.getType() != MovePath.MoveStepType.TURN_RIGHT)
                         && (step.getType() != MovePath.MoveStepType.UNLOAD)
+                        && (step.getType() != MovePath.MoveStepType.DISCONNECT)
                         && (step.getType() != MovePath.MoveStepType.GO_PRONE)) {
                     // we only need to identify the first illegal move
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -683,8 +697,29 @@ public class MovePath implements Cloneable, Serializable {
      * if the target moves.
      * @return Whether or not this flight path takes us over an enemy unit
      */
-    private boolean getFliesOverEnemy() {
+    public boolean getFliesOverEnemy() {
     	return fliesOverEnemy;
+    }
+    
+    /**
+     * Method that determines whether a given path goes through a given set of x/y coordinates
+     * Useful for debugging mainly.
+     * Note that battletech map coordinates begin at 1, while the internal representation begins at 0
+     * so subtract 1 from each axis to get the actual coordinates.
+     * @param x X-coordinate
+     * @param y Y-coordinate
+     * @return Whether this path goes through the set of coordinates.
+     */
+    public boolean goesThroughCoords(int x, int y) {
+        Enumeration<MoveStep> steps = getSteps();
+        while(steps.hasMoreElements()) {
+            MoveStep step = steps.nextElement();
+            if(step.getPosition().getX() == x && step.getPosition().getY() == y) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     /**
@@ -719,9 +754,14 @@ public class MovePath implements Cloneable, Serializable {
      * this path.
      */
     public Coords getFinalCoords() {
+        if(getGame().useVectorMove()) {
+            return Compute.getFinalPosition(getEntity().getPosition(), getFinalVectors());
+        }
+        
         if (getLastStep() != null) {
             return getLastStep().getPosition();
         }
+        
         return getEntity().getPosition();
     }
 
@@ -1239,6 +1279,7 @@ public class MovePath implements Cloneable, Serializable {
     @SuppressWarnings("unused")
     private void notSoLazyPathfinder(final Coords dest, final MoveStepType type,
                                      final int timeLimit) {
+        final int MAX_CANDIDATES = 100;
         final long endTime = System.currentTimeMillis() + timeLimit;
 
         MoveStepType step = type;
@@ -1292,12 +1333,11 @@ public class MovePath implements Cloneable, Serializable {
                     if (discovered.containsKey(expandedPath.getKey())) {
                         continue;
                     }
-                    candidates.add(expandedPath);
-                    discovered.put(expandedPath.getKey(), expandedPath);
                     // Make sure the candidate list doesn't get too big
-                    if (candidates.size() > 100) {
-                        candidates.remove(candidates.size() - 1);
+                    if (candidates.size() <= MAX_CANDIDATES) {
+                        candidates.add(expandedPath);
                     }
+                    discovered.put(expandedPath.getKey(), expandedPath);
                 }
             }
             // If we're doing a special movement, like charging or DFA, we will
@@ -1314,12 +1354,11 @@ public class MovePath implements Cloneable, Serializable {
                     if (discovered.containsKey(expandedPath.getKey())) {
                         continue;
                     }
-                    candidates.add(expandedPath);
-                    discovered.put(expandedPath.getKey(), expandedPath);
                     // Make sure the candidate list doesn't get too big
-                    if (candidates.size() > 100) {
-                        candidates.remove(candidates.size() - 1);
+                    if (candidates.size() <= MAX_CANDIDATES) {
+                        candidates.add(expandedPath);
                     }
+                    discovered.put(expandedPath.getKey(), expandedPath);
                 }
             }
 
@@ -1564,9 +1603,12 @@ public class MovePath implements Cloneable, Serializable {
      * land unless it has taken off in the same phase or it is a LAM or glider ProtoMech that is using hover
      * movement.
      * 
+     * @param includeMovePathHexes  Whether to include the hexes plotted in this MovePath in the total distance
+     *                              moved. This should be true when plotting movement in the client and
+     *                              false when the server checks for automatic landing at the end of movement. 
      * @return whether the unit is an airborne WiGE that must land at the end of movement.
      */
-    public boolean automaticWiGELanding() {
+    public boolean automaticWiGELanding(boolean includeMovePathHexes) {
         if (getEntity().getMovementMode() != EntityMovementMode.WIGE
                 || getEntity().isAirborne()) {
             return false;
@@ -1580,9 +1622,17 @@ public class MovePath implements Cloneable, Serializable {
                 return getEntity().isAirborneVTOLorWIGE();
             }
         }
-        if ((getHexesMoved() + getEntity().delta_distance >= 5)
-                || (getEntity() instanceof Protomech
-                        && getHexesMoved() + getEntity().delta_distance == 4)) {
+        // If movement has been interrupted (such as by a sideslip) and remaining movement points have
+        // been spent, this MovePath only contains the hexes moved after the interruption. The hexes already
+        // moved this turn are in delta_distance. WHen the server checks at the end of movement, delta_distance
+        // already includes the hexes in this MovePath.
+        int moved = getEntity().delta_distance;
+        if (includeMovePathHexes) {
+            moved += getHexesMoved();
+        }
+        if ((moved >= 5)
+                || (getEntity().hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                        && moved == 4)) {
             return false;
         }
         if (getEntity().wigeLiftoffHover() || steps.stream().map(s -> s.getType())
@@ -1651,7 +1701,7 @@ public class MovePath implements Cloneable, Serializable {
 
         for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
-            if (step.getPosition() != finalPos) {
+            if (!step.getPosition().equals(finalPos)) {
                 priorPos = step.getPosition();
             }
         }

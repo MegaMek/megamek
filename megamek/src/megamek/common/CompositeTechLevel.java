@@ -349,7 +349,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             if (end == null) {
                 sb.append("+");
             } else {
-                if (end != start) {
+                if (!end.equals(start)) {
                     sb.append("-").append(formatYear(end, endApproximate));
                 }
             }
@@ -426,7 +426,8 @@ public class CompositeTechLevel implements ITechnology, Serializable {
 
     @Override
     public int getBaseAvailability(int era) {
-        if (era < 0 || era > availability.length) {
+        if ((era < 0) || (era >= availability.length)
+                || (ITechnology.getTechEra(introYear) > era)) {
             return RATING_X;
         }
         return availability[era];

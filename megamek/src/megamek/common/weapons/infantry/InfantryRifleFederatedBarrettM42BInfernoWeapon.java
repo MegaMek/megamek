@@ -39,6 +39,7 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
 		ammoType = AmmoType.T_NA;
 		cost = 1385;
 		bv = 2.3;
+		tonnage = .006;
 		flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.82;
 		infantryRange = 1;

@@ -36,6 +36,7 @@ public class MassDriverMedium extends MassDriverWeapon {
         this.name = "Mass Driver (Medium)";
         this.setInternalName(this.name);
         this.addLookupName("MediumMassDriver");
+        this.shortName = "Medium Mass Driver";
         this.heat = 60;
         this.damage = 100;
         this.ammoType = AmmoType.T_MMASS;
@@ -43,13 +44,12 @@ public class MassDriverMedium extends MassDriverWeapon {
         this.mediumRange = 24;
         this.longRange = 40;
         this.tonnage = 50000;
-        this.bv = 0;
+        this.bv = 11760;
         this.cost = 280000000;
         this.shortAV = 100;
         this.medAV = 100;
         this.longAV = 100;
         this.maxRange = RANGE_LONG;
-        rulesRefs = "323,TO";
         rulesRefs = "323,TO";
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
             .setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)

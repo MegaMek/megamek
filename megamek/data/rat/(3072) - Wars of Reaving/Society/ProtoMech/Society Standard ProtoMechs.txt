@@ -1,5 +1,5 @@
 Society Standard ProtoMechs (WoRS)
-Sprite 3,1
+Sprite Ultraheavy ProtoMech 3,1
 Erinyes (Standard), 2
 Procyon Z, 3
 Erinyes 2, 4

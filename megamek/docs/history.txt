@@ -18,6 +18,7 @@ v0.47.3-SNAPSHOT
 + Issue #1562: Critical Hit on Protomech Near Miss
 + PR #1574: Grounded dropships no longer able to fire nose-mounted weapons at ground targets
 + PR #1598: Bot will no longer attempt to indirect-fire LRMs from airborne aircraft
++ Issue #1576: Target on Predesignated Artillery Hex is automatically hit
 
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor

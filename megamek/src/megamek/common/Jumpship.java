@@ -1967,6 +1967,7 @@ public class Jumpship extends Aero {
             armorPoints -= Math.round(get0SI() / 10.0) * locCount;
         } else {
             armorPoints -= Math.floor(Math.round(get0SI() / 10.0) * locCount * 0.66);
+            armorPoints = Math.ceil(armorPoints / 0.66);
         }
 
         // now I need to determine base armor points by type and weight
@@ -1993,8 +1994,6 @@ public class Jumpship extends Aero {
             baseArmor += 0.4;
         } else if (armorType[0] == EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE) {
             baseArmor += 0.6;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
-            baseArmor *= 0.66;
         }
 
         return RoundWeight.standard(armorPoints / baseArmor, this);

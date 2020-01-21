@@ -352,7 +352,8 @@ public class BLKFile {
             case "Mixed":
                 throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
             default:
-                throw new EntityLoadingException("Unsupported tech level: " + dataFile.getDataAsString("type")[0]);
+                throw new EntityLoadingException("Unsupported tech level: "
+                        + dataFile.getDataAsString("type")[0]);
         }
     }
 
@@ -476,7 +477,8 @@ public class BLKFile {
                 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
                 if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
                     blk.writeBlockData("jumpingMP", t.getOriginalJumpMP());
-                    blk.writeBlockData("interface_cockpit", String.valueOf(((Protomech) t).hasInterfaceCockpit()));
+                    blk.writeBlockData("interface_cockpit",
+                            String.valueOf(((Protomech) t).hasInterfaceCockpit()));
                 }
             }
         }
@@ -633,7 +635,8 @@ public class BLKFile {
                 continue;
             }
 
-            if (t.usesWeaponBays() && ((m.getType() instanceof WeaponType) || (m.getType() instanceof AmmoType))) {
+            if (t.usesWeaponBays() && ((m.getType() instanceof WeaponType)
+                    || (m.getType() instanceof AmmoType))) {
                 continue;
             }
             

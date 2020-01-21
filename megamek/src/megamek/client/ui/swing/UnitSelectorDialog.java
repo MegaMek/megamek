@@ -226,12 +226,12 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         panelTROView = new MechViewPanel();
         panPreview.addTab("TRO", panelTROView);
 
-        lstTechLevel = new JList<String>();
+        lstTechLevel = new JList<>();
         lstTechLevel.setToolTipText(Messages
                 .getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
         tlLstToIdx = new HashMap<>();
-        comboWeight = new JComboBox<String>();
-        comboUnitType = new JComboBox<String>();
+        comboWeight = new JComboBox<>();
+        comboUnitType = new JComboBox<>();
         txtFilter = new JTextField();
 
         btnSelect = new JButton();
@@ -255,7 +255,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         lblPlayer = new JLabel(
                 Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
         lblPlayer.setVisible(!useAlternate);
-        comboPlayer = new JComboBox<String>();
+        comboPlayer = new JComboBox<>();
         comboPlayer.setVisible(!useAlternate);
 
         getContentPane().setLayout(new GridBagLayout());
@@ -265,21 +265,18 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
         tableUnits.setModel(unitModel);
         tableUnits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        sorter = new TableRowSorter<MechTableModel>(unitModel);
+        sorter = new TableRowSorter<>(unitModel);
         tableUnits.setRowSorter(sorter);
         tableUnits.getSelectionModel().addListSelectionListener(
-                new javax.swing.event.ListSelectionListener() {
-                    public void valueChanged(
-                            javax.swing.event.ListSelectionEvent evt) {
-                        // There can be multiple events for one selection. Check
-                        // to
-                        // see if this is the last.
-                        if (!evt.getValueIsAdjusting()) {
-                            refreshUnitView();
-                        }
+                evt -> {
+                    // There can be multiple events for one selection. Check
+                    // to
+                    // see if this is the last.
+                    if (!evt.getValueIsAdjusting()) {
+                        refreshUnitView();
                     }
                 });
-        TableColumn column = null;
+        TableColumn column;
         for (int i = 0; i < MechTableModel.N_COL; i++) {
             column = tableUnits.getColumnModel().getColumn(i);
             if (i == MechTableModel.COL_CHASSIS) {
@@ -332,7 +329,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         c.anchor = GridBagConstraints.WEST;
         panelFilterBtns.add(lblWeight, c);
 
-        DefaultComboBoxModel<String> weightModel = new DefaultComboBoxModel<String>();
+        DefaultComboBoxModel<String> weightModel = new DefaultComboBoxModel<>();
         for (int i = 0; i < EntityWeightClass.SIZE; i++) {
             weightModel.addElement(EntityWeightClass.getClassName(i));
         }
@@ -357,7 +354,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         c.anchor = GridBagConstraints.WEST;
         panelFilterBtns.add(lblUnitType, c);
 
-        DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<String>();
+        DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
         unitTypeModel.setSelectedItem(Messages
                 .getString("MechSelectorDialog.All"));
@@ -543,7 +540,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             gameTL = TechConstants.T_SIMPLE_UNOFFICIAL;
         }
 
-        int maxTech = 0;
+        int maxTech;
         switch (gameTL) {
             case TechConstants.T_SIMPLE_INTRO:
                 maxTech = TechConstants.T_INTRO_BOXSET;
@@ -565,7 +562,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         }
 
         tlLstToIdx.clear();
-        DefaultComboBoxModel<String> techModel = new DefaultComboBoxModel<String>();
+        DefaultComboBoxModel<String> techModel = new DefaultComboBoxModel<>();
         int selectionIdx = 0;
         for (int tl = 0; tl <= maxTech; tl++) {
             if ((tl != TechConstants.T_IS_TW_ALL)
@@ -605,7 +602,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     }
 
     void filterUnits() {
-        RowFilter<MechTableModel, Integer> unitTypeFilter = null;
+        RowFilter<MechTableModel, Integer> unitTypeFilter;
 
         ArrayList<Integer> tlLvls = new ArrayList<>();
         for (Integer selectedIdx : lstTechLevel.getSelectedIndices()) {
@@ -706,7 +703,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             // error unit didn't load right. this is bad news.
             populateTextFields = false;
         }
-        if (populateTextFields && (mechView != null)) {
+        if (populateTextFields) {
             panelMekView.setMech(selectedUnit, mechView);
             panelTROView.setMech(selectedUnit, troView);
         } else {
@@ -714,9 +711,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             panelTROView.reset();
         }
 
-        if (null != clientgui) {
-            clientgui.loadPreviewImage(lblImage, selectedUnit,
-                    client.getLocalPlayer());
+        if (clientgui != null) {
+            clientgui.loadPreviewImage(lblImage, selectedUnit, client.getLocalPlayer());
         }
     }
 
@@ -732,9 +728,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         try {
             // For some unknown reason the base path gets screwed up after you
             // print so this sets the source file to the full path.
-            Entity entity = new MechFileParser(ms.getSourceFile(),
-                    ms.getEntryName()).getEntity();
-            return entity;
+            return new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
         } catch (EntityLoadingException ex) {
             System.out.println("Unable to load mech: " + ms.getSourceFile()
                     + ": " + ms.getEntryName() + ": " + ex.getMessage());
@@ -751,16 +745,14 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         }
         int selected = tableUnits.convertRowIndexToModel(view);
         // else
-        MechSummary ms = mechs[selected];
-        return ms;
+        return mechs[selected];
     }
 
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
             if (cs.useAverageSkills()) {
-                int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e,
-                        true);
+                int[] skills = client.getRandomSkillsGenerator().getRandomSkills(e, true);
     
                 int gunnery = skills[0];
                 int piloting = skills[1];
@@ -802,7 +794,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
          filterUnits();
 
          //initialize with the units sorted alphabetically by chassis
-         ArrayList<SortKey> sortlist = new ArrayList<SortKey>();
+         ArrayList<SortKey> sortlist = new ArrayList<>();
          sortlist.add(new SortKey(MechTableModel.COL_CHASSIS,SortOrder.ASCENDING));
          //sortlist.add(new RowSorter.SortKey(MechTableModel.COL_MODEL,SortOrder.ASCENDING));
          tableUnits.getRowSorter().setSortKeys(sortlist);

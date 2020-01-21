@@ -106,7 +106,7 @@ public class TROView {
         } else {
             view = new TROView();
         }
-        if (null != view.getTemplateFileName(html)) {
+        if (view.getTemplateFileName(html) != null) {
             try {
                 view.template = TemplateConfiguration.getInstance()
                         .getTemplate("tro/" + view.getTemplateFileName(html));
@@ -146,14 +146,13 @@ public class TROView {
      */
     @Nullable
     public String processTemplate() {
-        if (null != template) {
+        if (template != null) {
             model.put("includeFluff", includeFluff);
 
             final ByteArrayOutputStream os = new ByteArrayOutputStream();
             final Writer out = new OutputStreamWriter(os);
             try {
                 template.process(model, out);
-
             } catch (TemplateException | IOException e) {
                 DefaultMmLogger.getInstance().error(getClass(), "processTemplate()", e);
                 e.printStackTrace();
@@ -451,7 +450,7 @@ public class TROView {
                 }
                 fields.put("tonnage", eq.getTonnage(entity) * count);
                 if (eq instanceof WeaponType) {
-                    fields.put("heat", ((WeaponType) eq).getHeat());
+                    fields.put("heat", eq.getHeat());
                     fields.put("srv", (int) ((WeaponType) eq).getShortAV());
                     fields.put("mrv", (int) ((WeaponType) eq).getMedAV());
                     fields.put("lrv", (int) ((WeaponType) eq).getLongAV());
@@ -682,7 +681,7 @@ public class TROView {
 
         final private BiFunction<String, Integer, String> pad;
 
-        private Justification(BiFunction<String, Integer, String> pad) {
+        Justification(BiFunction<String, Integer, String> pad) {
             this.pad = pad;
         }
 
@@ -693,7 +692,7 @@ public class TROView {
                 return str;
             }
         }
-    };
+    }
 
     /**
      * Removes parenthetical and bracketed notes from a String
@@ -725,7 +724,7 @@ public class TROView {
         }
 
         @Override
-        public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
+        public Object exec(@SuppressWarnings("rawtypes") List arguments) {
             final StringBuilder sb = new StringBuilder();
             int col = 0;
             for (final Object o : arguments) {

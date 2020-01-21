@@ -963,7 +963,7 @@ public class TestAero extends TestEntity {
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
         boolean correct = true;
         
-        // We only support Convetional Fighters and ASF
+        // We only support Conventional Fighters and ASF
         if (aero.getEntityType() == Entity.ETYPE_DROPSHIP || 
                 aero.getEntityType() == Entity.ETYPE_SMALL_CRAFT ||
                 aero.getEntityType() == Entity.ETYPE_FIGHTER_SQUADRON ||

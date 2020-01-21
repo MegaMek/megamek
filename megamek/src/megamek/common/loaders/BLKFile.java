@@ -486,6 +486,9 @@ public class BLKFile {
             if (t instanceof Aero){
                 if (t.isFighter()) {
                     blk.writeBlockData("cockpit_type", ((Aero)t).getCockpitType());
+                    if (t.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER) && ((Aero) t).isVSTOL()) {
+                        blk.writeBlockData("vstol", 1);
+                    }
                 } else if ((t instanceof Dropship) && ((Aero)t).isPrimitive()) {
                     blk.writeBlockData("collartype", ((Dropship)t).getCollarType());
                 }
@@ -548,8 +551,7 @@ public class BLKFile {
                 blk.writeBlockData("armor_type",
                         EquipmentType.T_ARMOR_PATCHWORK);
                 for (int i = 1; i < t.locations(); i++) {
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_type",
-                            t.getArmorType(i));
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_type", t.getArmorType(i));
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
                             TechConstants.getTechName(t.getArmorTechLevel(i)));
                 }
@@ -581,7 +583,7 @@ public class BLKFile {
         }
 
         // Write out armor_type and armor_tech entries for BA
-        if (t instanceof BattleArmor){
+        if (t instanceof BattleArmor) {
             blk.writeBlockData("armor_type", t.getArmorType(1));
             blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));
         }
@@ -598,8 +600,7 @@ public class BLKFile {
             }
 
             // Ignore ammo for one-shot launchers
-            if (m.getLinkedBy() != null
-                    && m.getLinkedBy().isOneShot()){
+            if ((m.getLinkedBy() != null) && (m.getLinkedBy().isOneShot())) {
                 continue;
             }
             
@@ -632,8 +633,7 @@ public class BLKFile {
                 continue;
             }
 
-            if (t.usesWeaponBays() && ((m.getType() instanceof WeaponType)
-                    || (m.getType() instanceof AmmoType))) {
+            if (t.usesWeaponBays() && ((m.getType() instanceof WeaponType) || (m.getType() instanceof AmmoType))) {
                 continue;
             }
             
@@ -650,37 +650,35 @@ public class BLKFile {
             if (m.isPintleTurretMounted()) {
                 name = name + "(PT)";
             }
-            if (m.isDWPMounted()){
+            if (m.isDWPMounted()) {
                 name += ":DWP";
             }
-            if (m.isAPMMounted()){
+            if (m.isAPMMounted()) {
                 name += ":APM";
             }
-            if (m.isSquadSupportWeapon()){
+            if (m.isSquadSupportWeapon()) {
                 name += ":SSWM";
             }
             if (m.isOmniPodMounted()) {
             	name += ":OMNI";
             }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY){
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
                 name += ":Body";
             }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM){
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
                 name += ":LA";
             }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM){
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
                 name += ":RA";
             }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET){
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
                 name += ":TU";
             }
             // For BattleArmor and ProtoMechs, we need to save how many shots are in this
             //  location but they have different formats, yay!
-            if ((t instanceof BattleArmor)
-                    && (m.getType() instanceof AmmoType)){
+            if ((t instanceof BattleArmor) && (m.getType() instanceof AmmoType)) {
                 name += ":Shots" + m.getBaseShotsLeft() + "#";
-            } else if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)
-                    && (m.getType() instanceof AmmoType)) {
+            } else if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (m.getType() instanceof AmmoType)) {
                 name += " (" + m.getBaseShotsLeft() + ")";
             }
             int loc = m.getLocation();
@@ -690,8 +688,7 @@ public class BLKFile {
         }
         for (int i = 0; i < numLocs; i++) {
             if (!(((t instanceof Infantry) && !(t instanceof BattleArmor)) && (i == Infantry.LOC_INFANTRY))) {
-                blk.writeBlockData(t.getLocationName(i) + " Equipment",
-                        eq.get(i));
+                blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
             }
         }
         if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {

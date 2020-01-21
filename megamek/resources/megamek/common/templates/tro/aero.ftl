@@ -4,7 +4,11 @@ ${fullName}
 <#include "fluff.ftl">
 </#if>
 
+<#if !isVSTOL || >
 Type: ${chassis}
+<#else>
+Type: ${chassis} with VSTOL
+</#if>
 Technology Base: ${techBase} 
 Tonnage: ${tonnage}
 Battle Value: ${battleValue}

@@ -83,12 +83,13 @@ public class TROView {
     }
 
     public static TROView createView(Entity entity, boolean html) {
-        TROView view = null;
+        TROView view;
         if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
             view = new MechTROView((Mech) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
             view = new ProtomechTROView((Protomech) entity);
-        } else if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK) || (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL))) {
+        } else if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK)
+                || (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL))) {
             view = new SupportVeeTROView((Tank) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
             view = new VehicleTROView((Tank) entity);

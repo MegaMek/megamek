@@ -6909,6 +6909,11 @@ public class Compute {
             double tonnage = entity.getWeaponList().stream().filter(m -> !m.getType().hasFlag(WeaponType.F_AMS))
                     .mapToDouble(m -> m.getType().getTonnage(entity)).sum();
             if (advFireCon) {
+                if (entity.getStructuralTechRating() == ITechnology.RATING_F) {
+                    return (int) Math.ceil(tonnage / 6.0);
+                } else if (entity.getStructuralTechRating() == ITechnology.RATING_E) {
+                    return (int) Math.ceil(tonnage / 5.0);
+                }
                 return (int) Math.ceil(tonnage / 4.0);
             } else if (basicFireCon) {
                 return (int) Math.ceil(tonnage / 3.0);
@@ -6946,11 +6951,10 @@ public class Compute {
         if (entity.isSupportVehicle()) {
             int crew = getSVBaseCrewNeeds(entity) + getSupportVehicleGunnerNeeds(entity)
                     + getAdditionalNonGunner(entity);
-            // Add officers. Older editions of the rules give the officer ratio as 1:6 and 4 as the threshold to require officers
-            if (crew < 5) {
+            if (crew < 4) {
                 return crew;
             }
-            return (int) Math.ceil(crew * 1.2);
+            return crew + (int) Math.ceil(crew / 6.0);
         } else if (entity instanceof Tank) {
             return (int) Math.ceil(entity.getWeight() / 15.0);
         } else if (entity instanceof BattleArmor) {

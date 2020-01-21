@@ -1124,7 +1124,7 @@
 	</chassis>
 	<chassis name='Riga Frigate' unitType='Warship'>
 		<availability>TH:5</availability>
-		<model name='(Standard)'>
+		<model name='(2440)'>
 			<roles>frigate</roles>
 			<availability>General:8</availability>
 		</model>

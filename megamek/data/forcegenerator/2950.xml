@@ -5210,13 +5210,13 @@
 	</chassis>
 	<chassis name='Magellan Jumpship' unitType='Jumpship'>
 		<availability>CS:5</availability>
-		<model name='(Standard)'>
+		<model name='(2960)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Merchant Jumpship' unitType='Jumpship'>
 		<availability>MOC:6,CC:5,HL:4,IS:5,Periphery.Deep:5,MERC:6,FS:5,CIR:6,Periphery:6,TC:6,CS:5,OA:6,LA:5,FWL:5,NIOPS:5,DC:5</availability>
-		<model name='(Standard)'>
+		<model name='(2503)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -5352,7 +5352,7 @@
 	</chassis>
 	<chassis name='Kimagure Pursuit Cruiser' unitType='Warship'>
 		<availability>CSR:2,CLAN:1</availability>
-		<model name='(Standard)'>
+		<model name='(2582)'>
 			<roles>cruiser</roles>
 			<availability>General:8</availability>
 		</model>

@@ -85,13 +85,11 @@ public class BLKFile {
                 boolean isPintleTurreted = false;
                 if (equipName.toUpperCase().endsWith("(ST)")) {
                     isTurreted = true;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4)0.trim();
                 }
                 if (equipName.toUpperCase().endsWith("(PT)")) {
                     isPintleTurreted = true;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 boolean isOmniMounted = equipName.toUpperCase().endsWith(":OMNI");
                 equipName = equipName.replace(":OMNI", "");
@@ -99,28 +97,23 @@ public class BLKFile {
                 int facing = -1;
                 if (equipName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(FR)")) {
                     facing = 1;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(RL)")) {
                     facing = 4;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(RR)")) {
                     facing = 2;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(R)")) {
                     facing = 3;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 EquipmentType etype = EquipmentType.get(equipName);
 
@@ -154,13 +147,11 @@ public class BLKFile {
     }
 
     public boolean isMine() {
-
         if (dataFile.exists("blockversion")) {
             return true;
         }
 
         return false;
-
     }
 
     static int translateEngineCode(int code) {
@@ -243,7 +234,6 @@ public class BLKFile {
         	}
         }
 
-
         if (dataFile.exists("imagepath")) {
             e.getFluff().setMMLImagePath(
                     dataFile.getDataAsString("imagepath")[0]);
@@ -272,7 +262,6 @@ public class BLKFile {
         if (dataFile.exists("source")) {
             e.setSource(dataFile.getDataAsString("source")[0]);
         }
-
     }
 
     public void checkManualBV(Entity e) throws EntityLoadingException {
@@ -284,7 +273,6 @@ public class BLKFile {
                 e.setManualBV(bv);
             }
         }
-
     }
 
     public void setTechLevel(Entity e) throws EntityLoadingException {
@@ -706,7 +694,7 @@ public class BLKFile {
             blk.writeBlockData("barrating", t.getBARRating(1));
         }
         
-        if (t.isSupportVehicle() || (t instanceof FixedWingSupport)) {
+        if (t.isSupportVehicle()) {
             blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating());
             blk.writeBlockData("engine_tech_rating", t.getEngineTechRating());
             blk.writeBlockData("armor_tech_rating", t.getArmorTechRating());

@@ -37,7 +37,7 @@ import megamek.common.util.CircularIntegerBuffer;
 /**
  * Generic bidirectional connection between client and server
  */
-public abstract class AbstractConnection implements IConnection {
+public abstract class AbstractSocketConnection implements IConnection {
 
     private static PacketMarshallerFactory marshallerFactory = PacketMarshallerFactory
             .getInstance();
@@ -123,7 +123,7 @@ public abstract class AbstractConnection implements IConnection {
      * @param port target port
      * @param id connection ID
      */
-    public AbstractConnection(String host, int port, int id) {
+    public AbstractSocketConnection(String host, int port, int id) {
         this.host = host;
         this.port = port;
         this.id = id;
@@ -136,7 +136,7 @@ public abstract class AbstractConnection implements IConnection {
      * @param socket accepted socket
      * @param id connection ID
      */
-    public AbstractConnection(Socket socket, int id) {
+    public AbstractSocketConnection(Socket socket, int id) {
         this.socket = socket;
         this.id = id;
         setMarshallingType(DEFAULT_MARSHALLING);
@@ -152,15 +152,7 @@ public abstract class AbstractConnection implements IConnection {
     }
 
     /**
-     * Returns the type of the marshalling used to send packets
      *
-     * @return the type of the marshalling used to send packets
-     */
-    protected int getMarshallingType() {
-        return marshallingType;
-    }
-
-    /**
      * Sets the type of the marshalling used to send packets
      *
      * @param marshallingType new marhalling type
@@ -247,24 +239,8 @@ public abstract class AbstractConnection implements IConnection {
     }
 
     /**
-     * Returns <code>true</code> if this connection compress the sent data
      *
-     * @return <code>true</code> if this connection compress the sent data
-     */
-    public boolean isCompressed() {
-        return zipData;
-    }
-
-    /**
-     * Sets the compression
      *
-     * @param compress
-     */
-    public void setCompression(boolean compress) {
-        zipData = compress;
-    }
-
-    /**
      * Adds a packet to the send queue to be send on a seperate thread.
      */
     public synchronized void send(Packet packet) {
@@ -460,7 +436,7 @@ public abstract class AbstractConnection implements IConnection {
             close();
         } catch (IOException e) {
             System.out
-                    .println("IOException during AbstractConnection#update()");
+                    .println("IOException during AbstractSocketConnection#update()");
             close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -506,14 +482,14 @@ public abstract class AbstractConnection implements IConnection {
         if (packet != null) {
             debugLastFewCommandsReceived.push(packet.getCommand());
             processConnectionEvent(new PacketReceivedEvent(
-                    AbstractConnection.this, packet));
+                    AbstractSocketConnection.this, packet));
         }
     }
 
     /**
      * process a packet to be sent
      */
-    protected void processPacket(SendPacket packet) throws Exception {
+    protected void processPacket(SendPacket packet) {
         sendNow(packet);
     }
 
@@ -584,7 +560,7 @@ public abstract class AbstractConnection implements IConnection {
 
     /**
      * Processes game events occurring on this connection by dispatching them to
-     * any registered GameListener objects.
+     * any registered GameListener objects.unused
      *
      * @param event the game event.
      */
@@ -658,20 +634,20 @@ public abstract class AbstractConnection implements IConnection {
          *
          * @return data marshalling type
          */
-        public abstract int getMarshallingType();
+        int getMarshallingType();
 
         /**
          * Returns packet data
          *
          * @return packet data
          */
-        public abstract byte[] getData();
+        byte[] getData();
 
         /**
          * Returns <code>true</code> if data is compressed
          *
          * @return <code>true</code> if data is compressed
          */
-        public abstract boolean isCompressed();
+        boolean isCompressed();
     }
 }

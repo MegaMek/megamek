@@ -154,7 +154,7 @@ RUNPATH=`ls -1 $MEGAMEK_CLASSPATH/*.jar | awk 'BEGIN {ORS=":"} {print $1}' | sed
 # We'll just test both versions to see if they are greater than 8
 JAVA_VERSION1=`java -version 2>&1 | grep "version" | awk '{print $3}' | tr -d \" | awk '{split($0, array, ".")} END{print array[1]}'`
 JAVA_VERSION2=`java -version 2>&1 | grep "version" | awk '{print $3}' | tr -d \" | awk '{split($0, array, ".")} END{print array[2]}'`
-if [ $JAVA_VERSION1 -gt 8 -o $JAVA_VERSION2 -gt 8 ]; then
+if [ "0$JAVA_VERSION1" -gt 8 -o "0$JAVA_VERSION2" -gt 8 ]; then
     JAVA_MODULES="--add-modules java.se.ee"
 else
     JAVA_MODULES=""

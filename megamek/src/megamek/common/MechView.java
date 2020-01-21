@@ -1124,7 +1124,7 @@ public class MechView {
         
         void setColNames(String... colNames) {
             Arrays.fill(this.colNames, "");
-            System.arraycopy(colNames, 0, this.colNames,0,
+            System.arraycopy(colNames, 0, this.colNames, 0,
                     Math.min(colNames.length, this.colNames.length));
             colWidth.clear();
             for (int i = 0; i < colNames.length; i++) {
@@ -1134,7 +1134,7 @@ public class MechView {
         
         void setJustification(int... justification) {
             Arrays.fill(this.justification, JUSTIFIED_LEFT);
-            System.arraycopy(justification, 0, this.justification,0,
+            System.arraycopy(justification, 0, this.justification, 0,
                     Math.min(justification.length, this.justification.length));
         }
         

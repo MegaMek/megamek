@@ -298,8 +298,8 @@ public class MechView {
 
             // TODO : Add STOL message as part of the movement line
             if (isConvFighter && ((Aero) entity).isVSTOL()) {
-                sBasic.add(new LabeledElement(Messages.getString("MechView.Movement").concat(" (VSTOL)"),
-                        moveString.toString())); //$NON-NLS-1$
+                sBasic.add(new LabeledElement(Messages.getString("MechView.Movement"),
+                        moveString.toString().concat(" (VSTOL)"))); //$NON-NLS-1$
             } else {
                 sBasic.add(new LabeledElement(Messages.getString("MechView.Movement"), moveString.toString())); //$NON-NLS-1$
             }

@@ -28,13 +28,11 @@ import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.TagInfo;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
@@ -437,126 +435,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             Vector<Report> vPhaseReport) {
         return true;
     }
-        
-    protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
-        if ((target == null)
-                || target.getTargetType() != Targetable.TYPE_ENTITY
-                || CounterAV > 0) {
-            return 0;
-        }
-        int apdsMod = 0;
-        int amsMod = 0;
-        Entity entityTarget = (Entity) target;
-        // any AMS attacks by the target?
-        ArrayList<Mounted> lCounters = waa.getCounterEquipment();
-        if (null != lCounters) {
-            // resolve AMS counter-fire
-            for (Mounted counter : lCounters) {
-                boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
-                if (isAMS && counter.isAPDS() && !apdsEngaged) {
-                    Mounted mAmmo = counter.getLinked();
-                    Entity apdsEnt = counter.getEntity();
-                    boolean isInArc;
-                    // If the apdsUnit is the target, use attacker for arc
-                    if (entityTarget.equals(apdsEnt)) {
-                        isInArc = Compute.isInArc(game, apdsEnt.getId(),
-                                apdsEnt.getEquipmentNum(counter),
-                                ae);
-                    } else { // Otherwise, the attack target must be in arc
-                        isInArc = Compute.isInArc(game, apdsEnt.getId(),
-                                apdsEnt.getEquipmentNum(counter),
-                                entityTarget);
-                    }
-                    if (!(counter.getType() instanceof WeaponType)
-                            || !counter.isReady() || counter.isMissing()
-                            // no AMS when a shield in the AMS location
-                            || (apdsEnt.hasShield() && apdsEnt.hasActiveShield(
-                                    counter.getLocation(), false))
-                            // shutdown means no AMS
-                            || apdsEnt.isShutDown()
-                            // AMS only fires vs attacks in arc covered by ams
-                            || !isInArc) {
-                        continue;
-                    }
-
-                    // build up some heat (assume target is ams owner)
-                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
-                        apdsEnt.heatBuildup += Compute.d6(counter
-                                .getCurrentHeat());
-                    } else {
-                        apdsEnt.heatBuildup += counter.getCurrentHeat();
-                    }
-
-                    // decrement the ammo
-                    if (mAmmo != null) {
-                        mAmmo.setShotsLeft(Math.max(0,
-                                mAmmo.getBaseShotsLeft() - 1));
-                    }
-
-                    // Determine Modifier
-                    int dist = target.getPosition().distance(
-                            apdsEnt.getPosition());
-                    int minApdsMod = -4;
-                    if (apdsEnt instanceof BattleArmor) {
-                        int numTroopers = ((BattleArmor) apdsEnt)
-                                .getNumberActiverTroopers();
-                        switch (numTroopers) {
-                            case 1:
-                                minApdsMod = -2;
-                                break;
-                            case 2:
-                            case 3:
-                                minApdsMod = -3;
-                                break;
-                            default: // 4+
-                                minApdsMod = -4;
-                        }
-                    }
-                    apdsMod = Math.min(minApdsMod + dist, 0);
-
-                    // set the ams as having fired
-                    counter.setUsedThisRound(true);
-                    apdsEngaged = true;
-
-                } else if (isAMS && !amsEngaged) {
-                    Mounted mAmmo = counter.getLinked();
-                    if (!(counter.getType() instanceof WeaponType)
-                            || !counter.isReady() || counter.isMissing()
-                            // no AMS when a shield in the AMS location
-                            || (entityTarget.hasShield() && entityTarget
-                                    .hasActiveShield(counter.getLocation(),
-                                            false))
-                            // shutdown means no AMS
-                            || entityTarget.isShutDown()
-                            // AMS only fires vs attacks in arc covered by ams
-                            || !Compute.isInArc(game, entityTarget.getId(),
-                                    entityTarget.getEquipmentNum(counter), ae)) {
-                        continue;
-                    }
-
-                    // build up some heat (assume target is ams owner)
-                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
-                        entityTarget.heatBuildup += Compute.d6(counter
-                                .getCurrentHeat());
-                    } else {
-                        entityTarget.heatBuildup += counter.getCurrentHeat();
-                    }
-
-                    // decrement the ammo
-                    if (mAmmo != null) {
-                        mAmmo.setShotsLeft(Math.max(0,
-                                mAmmo.getBaseShotsLeft() - 1));
-                    }
-
-                    // set the ams as having fired
-                    counter.setUsedThisRound(true);
-                    amsEngaged = true;
-                    amsMod = -4;
-                }
-            }
-        }
-        return apdsMod + amsMod;
-    }
     
     /**
      * Checks to see if the basic conditions needed for point defenses to work are in place
@@ -606,7 +484,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             //this has to be called here or it fires before the TAG shot and we have no target
             server.assignAMS();
             calcCounterAV();
-            getAMSHitsMod(vPhaseReport);
             // Report AMS/Pointdefense failure due to Overheating.
             if (pdOverheated 
                     && (!(amsBayEngaged
@@ -646,34 +523,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                         nDamPerHit = 0;
                         hits = 0;
                     }
-                }
-            } else if (amsEngaged || apdsEngaged) {
-                //Single AMS/APDS should continue to engage per TW rules, which have not changed
-                bSalvo = true;
-                Report r = new Report(3235);
-                r.subject = subjectId;
-                vPhaseReport.add(r);
-                r = new Report(3230);
-                r.indent(1);
-                r.subject = subjectId;
-                vPhaseReport.add(r);
-                int destroyRoll = Compute.d6();
-                if (destroyRoll <= 3) {
-                    r = new Report(3240);
-                    r.subject = subjectId;
-                    r.add("missile");
-                    r.add(destroyRoll);
-                    vPhaseReport.add(r);
-                    nDamPerHit = 0;
-                    hits = 0;
-                                           
-                } else {
-                    r = new Report(3241);
-                    r.add("missile");
-                    r.add(destroyRoll);
-                    r.subject = subjectId;
-                    vPhaseReport.add(r);
-                    hits = 1;
                 }
             }
         }

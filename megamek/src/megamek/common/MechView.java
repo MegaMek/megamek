@@ -243,7 +243,7 @@ public class MechView {
         }
         sHead.add(new LabeledElement(Messages.getString("MechView.Cost"), //$NON-NLS-1$//
                 dFormatter.format(cost) + " C-bills"));
-        if (!entity.getSource().equals("")){
+        if (!entity.getSource().isEmpty()) {
             sHead.add(new LabeledElement(Messages.getString("MechView.Source"), entity.getSource())); //$NON-NLS-1$//
         }
         UnitRole role = UnitRoleHandler.getRoleFor(entity);
@@ -299,7 +299,8 @@ public class MechView {
             // TODO : Add STOL message as part of the movement line
             if (isConvFighter && ((Aero) entity).isVSTOL()) {
                 sBasic.add(new LabeledElement(Messages.getString("MechView.Movement"),
-                        moveString.toString().concat(" (VSTOL)"))); //$NON-NLS-1$
+                        moveString.toString().concat(
+                                String.format(" (%s)", Messages.getString("MechView.VSTOL"))))); //$NON-NLS-1$
             } else {
                 sBasic.add(new LabeledElement(Messages.getString("MechView.Movement"), moveString.toString())); //$NON-NLS-1$
             }
@@ -410,7 +411,7 @@ public class MechView {
 
         if (isAero) {
             Aero a = (Aero) entity;
-            if (!a.getCritDamageString().equals("")) {
+            if (!a.getCritDamageString().isEmpty()) {
                 sBasic.add(new LabeledElement(Messages.getString("MechView.SystemDamage"), //$NON-NLS-1$
                         warningStart() + a.getCritDamageString() + warningEnd()));
             }
@@ -459,19 +460,19 @@ public class MechView {
             sFluff.add(list);
         }
         
-        if (!entity.getFluff().getOverview().equals("")) {
+        if (!entity.getFluff().getOverview().isEmpty()) {
             sFluff.add(new LabeledElement("Overview", entity.getFluff().getOverview()));
         }
         
-        if (!entity.getFluff().getCapabilities().equals("")) {
+        if (!entity.getFluff().getCapabilities().isEmpty()) {
             sFluff.add(new LabeledElement("Capabilities", entity.getFluff().getCapabilities()));
         }
         
-        if (!entity.getFluff().getDeployment().equals("")) {
+        if (!entity.getFluff().getDeployment().isEmpty()) {
             sFluff.add(new LabeledElement("Deployment", entity.getFluff().getDeployment()));
         }
         
-        if (!entity.getFluff().getHistory().equals("")) {
+        if (!entity.getFluff().getHistory().isEmpty()) {
             sFluff.add(new LabeledElement("History", entity.getFluff().getHistory()));
         }
         sFluff.add(new SingleLine());

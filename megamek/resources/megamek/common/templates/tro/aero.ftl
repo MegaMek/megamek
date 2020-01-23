@@ -14,7 +14,7 @@ ${formatBasicDataRow("Engine", engineName, engineMass)}
 	Safe Thrust: ${safeThrust}
 	Max Thrust: ${maxThrust}
 ${formatBasicDataRow("Structural Integrity:", si, "")}
-<#if isVSTOL && isConventional>
+<#if isVSTOL && isConventional && !isSupportVehicle>
 ${formatBasicDataRow("VSTOL Equipment:", "", vstolMass)}
 </#if>
 ${formatBasicDataRow("Heat Sinks:", hsCount, hsMass)}
@@ -44,8 +44,6 @@ None
 
 Weapons
 ${formatEquipmentRow("and Ammo", "Location", "Tonnage", "Heat", "SRV", "MRV", "LRV", "ERV")}
-
-
 <#list equipment as eq>
 ${formatEquipmentRow(eq.name, eq.location, eq.tonnage, eq.heat, eq.srv, eq.mrv, eq.lrv, eq.erv)}
 </#list>

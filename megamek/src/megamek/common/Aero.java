@@ -3373,14 +3373,6 @@ public class Aero extends Entity implements IAero, IBomber {
         vstol = b;
     }
 
-    public double getVSTOLGearTonnage(){
-        if ((hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) && isVSTOL()){
-            // Weight = tonnage * 0.05 rounded up to nearest half ton
-            return Math.ceil(0.05 * getWeight()*2) / 2.0;
-        }
-        return 0.0f;
-    }
-
     @Override
     public boolean didFailManeuver() {
         return failedManeuver;

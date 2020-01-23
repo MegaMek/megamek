@@ -13,22 +13,7 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.SystemColor;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -73,6 +58,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -241,6 +227,7 @@ public class BoardEditor extends JComponent
  
     private static final long serialVersionUID = 4689863639249616192L;
     JFrame frame = new JFrame();
+    JScrollPane scrollPane;
     private Game game = new Game();
     IBoard board = game.getBoard();
     BoardView1 bv;
@@ -474,11 +461,14 @@ public class BoardEditor extends JComponent
      * Sets up the frame that will display the editor.
      */
     private void setupFrame() {
+        scrollPane = new JScrollPane(this, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
         frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
         frame.getContentPane().setLayout(new BorderLayout());
 
         frame.getContentPane().add(bvc, BorderLayout.CENTER);
-        frame.getContentPane().add(this, BorderLayout.EAST);
+        frame.getContentPane().add(scrollPane, BorderLayout.EAST);
         menuBar.addActionListener(this);
         frame.setJMenuBar(menuBar);
         frame.setBackground(SystemColor.menu);
@@ -602,7 +592,7 @@ public class BoardEditor extends JComponent
         buttonTu = prepareButton("ButtonTu", "Tundra", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonMg = prepareButton("ButtonMg", "Magma", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonCl = prepareButton("ButtonCl", "Clear", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        
+
         ArrayList<JToggleButton> brushButtons = new ArrayList<>();
         buttonBrush1 = addTerrainTButton("ButtonHex1", "Brush1", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonBrush2 = addTerrainTButton("ButtonHex7", "Brush2", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
@@ -613,7 +603,7 @@ public class BoardEditor extends JComponent
         brushGroup.add(buttonBrush3);
         buttonOOC = addTerrainTButton("ButtonOOC", "OOC", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonUpDn = addTerrainTButton("ButtonUpDn", "UpDown", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        
+
         ArrayList<JButton> undoButtons = new ArrayList<>();
         buttonUndo = prepareButton("ButtonUndo", "Undo", undoButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonRedo = prepareButton("ButtonRedo", "Redo", undoButtons); //$NON-NLS-1$ //$NON-NLS-2$
@@ -702,7 +692,7 @@ public class BoardEditor extends JComponent
             refreshTerrainList();
             repaintWorkingHex();
         });
-        
+
         // Mouse wheel behaviour for the BRIDGE button
         buttonBr.addMouseWheelListener(e -> {
             setBasicBridge();
@@ -730,7 +720,7 @@ public class BoardEditor extends JComponent
             refreshTerrainList();
             repaintWorkingHex();
         });
-        
+
         // Mouse wheel behaviour for the FUELTANKS button
         buttonFT.addMouseWheelListener(e -> {
             setBasicFuelTank();
@@ -761,21 +751,21 @@ public class BoardEditor extends JComponent
 
         JPanel terrainButtonPanel = new JPanel(new GridLayout(0, 3, 2, 2));
         addManyButtons(terrainButtonPanel, terrainButtons);
-        
+
         JPanel brushButtonPanel = new JPanel(new GridLayout(0, 3, 2, 2));
         addManyTButtons(brushButtonPanel, brushButtons);
         buttonBrush1.setSelected(true);
-        
+
         JPanel undoButtonPanel = new JPanel(new GridLayout(1, 2, 2, 2));
         addManyButtons(undoButtonPanel, buttonUndo, buttonRedo);
-        
+
         // Hex Elevation Control
         texElev = new EditorTextField("0", 3); //$NON-NLS-1$
         texElev.addActionListener(this);
         texElev.getDocument().addDocumentListener(this);
         butElevUp = prepareButton("ButtonHexUP", "Raise Hex Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
         butElevDown = prepareButton("ButtonHexDN", "Lower Hex Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
-        
+
         // Terrain List
         lisTerrainRenderer = new ComboboxToolTipRenderer();
         lisTerrain = new JList<>(new DefaultListModel<>());
@@ -793,8 +783,8 @@ public class BoardEditor extends JComponent
         panlisHex.add(butDelTerrain);
         panlisHex.add(new JScrollPane(lisTerrain));
         panlisHex.add(canHex);
-        
-        // Terrain Type Chooser, Level 
+
+        // Terrain Type Chooser, Level
         TerrainHelper[] terrains = new TerrainHelper[Terrains.SIZE - 1];
         for (int i = 1; i < Terrains.SIZE; i++) {
             terrains[i - 1] = new TerrainHelper(i);
@@ -814,7 +804,7 @@ public class BoardEditor extends JComponent
         butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
         butTerrUp = prepareButton("ButtonTLUP", "Increase Terrain Level", null); //$NON-NLS-1$ //$NON-NLS-2$
         butTerrDown = prepareButton("ButtonTLDN", "Decrease Terrain Level", null); //$NON-NLS-1$ //$NON-NLS-2$
-        
+
         // Minimap Toggle
         butMiniMap = new JButton(Messages.getString("BoardEditor.butMiniMap")); //$NON-NLS-1$
         butMiniMap.setActionCommand("viewMiniMap"); //$NON-NLS-1$
@@ -846,13 +836,13 @@ public class BoardEditor extends JComponent
         panDN.add(butTerrDown);
         panDN.add(butExitDown);
         panDN.add(Box.createHorizontalStrut(5));
-        
+
         // Auto Exits to Pavement
         cheRoadsAutoExit = new JCheckBox(Messages
                 .getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
         cheRoadsAutoExit.addItemListener(this);
         cheRoadsAutoExit.setSelected(true);
-        
+
         // Theme
         JPanel panTheme = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
         JLabel labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT); //$NON-NLS-1$
@@ -871,16 +861,16 @@ public class BoardEditor extends JComponent
         panelHexSettings.add(texElev);
         panelHexSettings.add(butElevDown);
         panelHexSettings.add(panTheme);
-        
+
         // The terrain settings panel (type, level, exits)
         JPanel panelTerrSettings = new JPanel(new GridLayout(0, 2, 4, 4));
         panelTerrSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Terrain Settings")); //$NON-NLS-1$
         panelTerrSettings.add(Box.createVerticalStrut(5));
         panelTerrSettings.add(panUP);
-        
+
         panelTerrSettings.add(choTerrainType);
         panelTerrSettings.add(panTex);
-        
+
         panelTerrSettings.add(butAddTerrain);
         panelTerrSettings.add(panDN);
 
@@ -888,7 +878,7 @@ public class BoardEditor extends JComponent
         JPanel panelBoardSettings = new JPanel();
         panelBoardSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Board Settings")); //$NON-NLS-1$
         panelBoardSettings.add(cheRoadsAutoExit);
-        
+
         // Board Buttons (Save, Load...)
         JLabel labBoard = new JLabel(Messages.getString("BoardEditor.labBoard"), SwingConstants.LEFT); //$NON-NLS-1$
         butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew")); //$NON-NLS-1$
@@ -911,39 +901,38 @@ public class BoardEditor extends JComponent
 
         butBoardValidate = new JButton(Messages.getString("BoardEditor.butBoardValidate")); //$NON-NLS-1$
         butBoardValidate.setActionCommand("fileBoardValidate"); //$NON-NLS-1$
-        
+
         addManyActionListeners(butBoardValidate, butBoardSaveAsImage, butBoardSaveAs, butBoardSave);
-        addManyActionListeners(butBoardLoad, butExpandMap, butBoardNew, butMiniMap); 
+        addManyActionListeners(butBoardLoad, butExpandMap, butBoardNew, butMiniMap);
         addManyActionListeners(butDelTerrain, butAddTerrain);
 
         JPanel panButtons = new JPanel(new GridLayout(4, 2, 2, 2));
         panButtons.add(labBoard);
         panButtons.add(new JLabel("")); // Spacer Label
         panButtons.add(new JLabel("")); // Spacer Label
-        addManyButtons(panButtons, butBoardNew, butBoardSave, butBoardLoad, 
+        addManyButtons(panButtons, butBoardNew, butBoardSave, butBoardLoad,
                 butExpandMap, butBoardSaveAs, butBoardSaveAsImage);
         panButtons.add(Box.createHorizontalStrut(5));
         panButtons.add(butBoardValidate);
-        
+
         // ------------------
         // Arrange everything
         //
-        GridBagLayout gridbag = new GridBagLayout();
+        setLayout(new GridBagLayout());
         GridBagConstraints cfullLine = new GridBagConstraints();
         GridBagConstraints cYFiller = new GridBagConstraints();
-        setLayout(gridbag);
-        
+
         cfullLine.fill = GridBagConstraints.HORIZONTAL;
         cfullLine.gridwidth = GridBagConstraints.REMAINDER;
         cfullLine.gridx = 0;
         cfullLine.insets = new Insets(4, 4, 1, 1);
-        
+
         cYFiller.fill = GridBagConstraints.HORIZONTAL;
         cYFiller.gridwidth = GridBagConstraints.REMAINDER;
         cYFiller.gridx = 0;
         cYFiller.weighty = 1;
         cYFiller.insets = new Insets(4, 4, 1, 1);
-        
+
         // Easy Access Terrain Buttons
         add(genHelpText1, cfullLine);
         add(terrainButtonHelp, cfullLine);
@@ -952,22 +941,22 @@ public class BoardEditor extends JComponent
         add(new JLabel(""), cYFiller); //$NON-NLS-1$
         add(undoButtonPanel, cfullLine);
         add(new JLabel(""), cYFiller); //$NON-NLS-1$
-        
+
         // Terrain and Hex Control
         add(panelBoardSettings, cfullLine);
         add(panelHexSettings, cfullLine);
         add(panelTerrSettings, cfullLine);
-        
+
         // Terrain List and Preview Hex
         add(panlisHex, cfullLine);
-        
+
         // Minimap Toggle
-        add(new JLabel(""), cYFiller); //$NON-NLS-1$ 
+        add(new JLabel(""), cYFiller); //$NON-NLS-1$
         add(butMiniMap, cfullLine);
-         
+
         // Board buttons
         add(panButtons, cfullLine);
-        
+
         minimapW = new JDialog(frame, Messages
                 .getString("BoardEditor.minimapW"), false); //$NON-NLS-1$
         minimapW.setLocation(GUIPreferences.getInstance().getMinimapPosX(),

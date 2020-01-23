@@ -9,4 +9,4 @@ Longbow LGB-12C,5
 BattleMaster BLR-1Gb,4
 Albatross ALB-3Ur,3
 Awesome AWS-10KM,2
-Berserker BZR-C3,1
+Berserker BRZ-C3,1

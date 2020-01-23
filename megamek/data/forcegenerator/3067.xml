@@ -12413,12 +12413,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Boggart' unitType='ProtoMek'>
+	<chassis name='Boggart Ultraheavy ProtoMech' unitType='ProtoMek'>
 		<availability>SOC:4,CCO:1</availability>
-		<model name='(Quad) 2' unitRole='striker'>
+		<model name='2' unitRole='striker'>
 			<availability>General:6</availability>
 		</model>
-		<model name='(Quad) 1' unitRole='striker'>
+		<model name='(Standard)' unitRole='striker'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -15096,13 +15096,13 @@
 	</chassis>
 	<chassis name='Magellan Jumpship' unitType='Jumpship'>
 		<availability>CS:6,WOB:5</availability>
-		<model name='(Standard)'>
+		<model name='(2960)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Merchant Jumpship' unitType='Jumpship'>
 		<availability>MOC:6,CC:5,HL:5,FRR:5,IS:5,Periphery.Deep:5,WOB:5,MERC:6,FS:5,CIR:6,Periphery:6,TC:6,CS:5,OA:6,LA:5,FWL:5,NIOPS:5,DC:5</availability>
-		<model name='(Standard)'>
+		<model name='(2503)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -15302,7 +15302,7 @@
 	</chassis>
 	<chassis name='Kimagure Pursuit Cruiser' unitType='Warship'>
 		<availability>CB:1</availability>
-		<model name='(Standard)'>
+		<model name='(2582)'>
 			<roles>cruiser</roles>
 			<availability>General:8</availability>
 		</model>
@@ -15355,7 +15355,7 @@
 	</chassis>
 	<chassis name='Mako Corvette' unitType='Warship'>
 		<availability>CB:2</availability>
-		<model name='(Standard)'>
+		<model name='(2692)'>
 			<roles>corvette</roles>
 			<availability>General:8</availability>
 		</model>
@@ -15412,7 +15412,7 @@
 	</chassis>
 	<chassis name='Riga Frigate' unitType='Warship'>
 		<availability>CB:1</availability>
-		<model name='(Standard)'>
+		<model name='(2440)'>
 			<roles>frigate</roles>
 			<availability>General:8</availability>
 		</model>
@@ -15437,7 +15437,7 @@
 	</chassis>
 	<chassis name='Suffren Destroyer' unitType='Warship'>
 		<availability>CS:2</availability>
-		<model name='(Standard)'>
+		<model name='(3062)'>
 			<roles>destroyer</roles>
 			<availability>General:8</availability>
 		</model>
@@ -15451,7 +15451,7 @@
 	</chassis>
 	<chassis name='Texas Battleship' unitType='Warship'>
 		<availability>CSR:1,CW:1,CCO:1,CJF:1</availability>
-		<model name='(Clan)'>
+		<model name='(2835)'>
 			<roles>battleship</roles>
 			<availability>CLAN:8</availability>
 		</model>

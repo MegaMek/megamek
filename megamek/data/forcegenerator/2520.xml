@@ -1517,7 +1517,7 @@
 	</chassis>
 	<chassis name='Merchant Jumpship' unitType='Jumpship'>
 		<availability>MOC:6,CC:4,IS:4,Periphery.Deep:6,RWR:4,MERC:6,FS:4,Periphery:6,TC:6,OA:6,TH:4,LA:4,FWL:4,DC:4</availability>
-		<model name='(Standard)'>
+		<model name='(2503)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -1708,7 +1708,7 @@
 	</chassis>
 	<chassis name='Riga Frigate' unitType='Warship'>
 		<availability>TH:5</availability>
-		<model name='(Standard)'>
+		<model name='(2440)'>
 			<roles>frigate</roles>
 			<availability>General:8</availability>
 		</model>

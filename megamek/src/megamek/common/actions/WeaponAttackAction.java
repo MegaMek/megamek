@@ -684,8 +684,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Is this an Artillery attack?
-        toHit = handleArtilleryAttacks(game, ae, target, ttype, losMods, toHit, wtype, weapon, atype, isArtilleryDirect,
-                isArtilleryFLAK, isArtilleryIndirect, isHoming, usesAmmo, srt);
+        if (isArtilleryDirect || isArtilleryIndirect) {
+            toHit = handleArtilleryAttacks(game, ae, target, ttype, losMods, toHit, wtype, weapon, atype, isArtilleryDirect,
+                    isArtilleryFLAK, isArtilleryIndirect, isHoming, usesAmmo, srt);
+        }
         if (srt.isSpecialResolution()) {
             return toHit;
         }

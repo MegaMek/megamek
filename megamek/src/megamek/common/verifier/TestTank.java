@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleArmorBay;
@@ -56,7 +55,7 @@ public class TestTank extends TestEntity {
      */
     public static int VTOL_MAX_ROTOR_ARMOR = 2;
 
-    private Tank tank = null;
+    private final Tank tank;
 
     public TestTank(Tank tank, TestEntityOption options, String fileString) {
         super(options, tank.getEngine(), getArmor(tank), getStructure(tank));
@@ -103,9 +102,9 @@ public class TestTank extends TestEntity {
     /**
      * Filters all vehicle armor according to given tech constraints
      *
-     * @param noHardened
-     * @param techManager
-     * @return
+     * @param movementMode The vehicle movement mode
+     * @param techManager  The tech constraints
+     * @return             The armors legal for the unit
      */
     public static List<EquipmentType> legalArmorsFor(EntityMovementMode movementMode, ITechManager techManager) {
         List<EquipmentType> retVal = new ArrayList<>();
@@ -136,7 +135,34 @@ public class TestTank extends TestEntity {
         }
         return retVal;
     }
-    
+
+    /**
+     * Maximum construction weight by vehicle type
+     *
+     * @param mode        The vehicle's movement mode
+     * @param superheavy  Whether the vehicle is superheavy
+     * @return            The maximum construction tonnage
+     */
+    public static double maxTonnage(EntityMovementMode mode, boolean superheavy) {
+        switch(mode) {
+            case WHEELED:
+            case WIGE:
+                return superheavy ? 160.0 : 80.0;
+            case HOVER:
+                return superheavy ? 100.0 : 50.0;
+            case VTOL:
+                return superheavy ? 60.0 : 30.0;
+            case NAVAL:
+            case SUBMARINE:
+                return superheavy ? 555.0 : 300.0;
+            case HYDROFOIL:
+                return 100.0; // not eligible for superheavy
+            case TRACKED:
+            default:
+                return superheavy ? 200.0 : 100.0;
+        }
+    }
+
     @Override
     public Entity getEntity() {
         return tank;
@@ -368,8 +394,8 @@ public class TestTank extends TestEntity {
             }
             if (tank.getOArmor(VTOL.LOC_ROTOR) > VTOL_MAX_ROTOR_ARMOR) {
                 buff.append(tank.getOArmor(VTOL.LOC_ROTOR));
-                buff.append(" points of VTOL rotor armor exceed "
-                        + VTOL_MAX_ROTOR_ARMOR + "-point limit.\n\n");
+                buff.append(" points of VTOL rotor armor exceed ")
+                        .append(VTOL_MAX_ROTOR_ARMOR).append("-point limit.\n\n");
                 correct = false;
             }
         }
@@ -425,8 +451,21 @@ public class TestTank extends TestEntity {
         return correct;
     }
 
+    @Override
+    public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
+        boolean correct = super.correctWeight(buff, showO, showU);
+        double max = maxTonnage(getEntity().getMovementMode(), getEntity().isSuperHeavy());
+        if (getEntity().getWeight() > max) {
+            correct = false;
+            buff.append("Exceeds maximum tonnage of ").append(max).append(" for ")
+                    .append(getEntity().getMovementModeAsString())
+                    .append(" combat vehicle.\n");
+        }
+        return correct;
+    }
+
     public boolean correctCriticals(StringBuffer buff) {
-        Vector<Mounted> unallocated = new Vector<Mounted>();
+        List<Mounted> unallocated = new ArrayList<>();
         boolean correct = true;
 
         for (Mounted mount : tank.getMisc()) {
@@ -575,7 +614,7 @@ public class TestTank extends TestEntity {
 
         // for ammo, each type of ammo takes one slots, regardless of
         // submunition type
-        Map<String, Boolean> foundAmmo = new HashMap<String, Boolean>();
+        Map<String, Boolean> foundAmmo = new HashMap<>();
         for (Mounted ammo : tank.getAmmo()) {
             // don't count oneshot ammo
             if ((ammo.getLocation() == Entity.LOC_NONE)
@@ -636,7 +675,7 @@ public class TestTank extends TestEntity {
                 if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
                         MiscType) && m.getLinkedBy().getType().
                         hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                    weight += ((MiscType)m.getLinkedBy().getType()).getTonnage(tank);
+                    weight += (m.getLinkedBy().getType()).getTonnage(tank);
                 }
             }
             return TestEntity.ceil(weight / 10, getWeightCeilingPowerAmp());
@@ -785,18 +824,19 @@ public class TestTank extends TestEntity {
             }
             if ((tank.getBaseChassisTurretWeight() >= 0)
                     && (turretWeight > tank.getBaseChassisTurretWeight())) {
-                buff.append("Unit has more weight in the turret than allowed "
-                        + "by base chassis!  Current weight: " + turretWeight
-                        + ", base chassis turret weight: "
-                        + tank.getBaseChassisTurretWeight() + "\n");
+                buff.append("Unit has more weight in the turret than allowed ")
+                        .append("by base chassis!  Current weight: ")
+                        .append(turretWeight)
+                        .append(", base chassis turret weight: ")
+                        .append(tank.getBaseChassisTurretWeight()).append("\n");
                 illegal = true;
             }
             if ((tank.getBaseChassisTurret2Weight() >= 0)
                     && (turret2Weight > tank.getBaseChassisTurret2Weight())) {
-                buff.append("Unit has more weight in the second turret than "
-                        + "allowed by base chassis!  Current weight: "
-                        + turret2Weight + ", base chassis turret weight: "
-                        + tank.getBaseChassisTurret2Weight() + "\n");
+                buff.append("Unit has more weight in the second turret than ")
+                        .append("allowed by base chassis!  Current weight: ")
+                        .append(turret2Weight).append(", base chassis turret weight: ")
+                        .append(tank.getBaseChassisTurret2Weight()).append("\n");
                 illegal = true;
             }
         }

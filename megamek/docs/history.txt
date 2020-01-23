@@ -21,6 +21,7 @@ v0.47.3-SNAPSHOT
 + Issue #1576: Target on Predesignated Artillery Hex is automatically hit
 + PR #1611: Individual AMS will no longer engage homing Arrow IV missiles
 + PR #1600: House Arano sourcebook RATs
++ PR #1610: VSTOL Equipment Now Saves Properly and is shown on Unit Summary and TRO
 
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor

@@ -3514,6 +3514,18 @@
 			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
+        <availability>IS:2+</availability>
+        <model name='PHX-HK1'>
+            <availability>IS:4</availability>
+        </model>
+    </chassis>
+    <chassis name='Phoenix Hawk LAM' unitType='Mek'>
+        <availability>IS:4</availability>
+        <model name='PHX-HK2'>
+            <availability>IS:4</availability>
+        </model>
+    </chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
 		<availability>CS:7,CLAN:3,IS:9,FWL:9,NIOPS:7,Periphery.Deep:5,Periphery:5,CGB:3</availability>
 		<model name='PXH-1c (Special)'>

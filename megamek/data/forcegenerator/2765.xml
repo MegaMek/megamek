@@ -2599,6 +2599,21 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
+        <availability>SL:4,IS:2+</availability>
+        <model name='PHX-HK1'>
+            <availability>SL:5,IS:4</availability>
+        </model>
+        <model name='PHX-HK1R'>
+            <availability>SL:3,IS:2+</availability>
+        </model>
+    </chassis>
+    <chassis name='Phoenix Hawk LAM' unitType='Mek'>
+        <availability>IS:3</availability>
+        <model name='PHX-HK2'>
+            <availability>IS:4</availability>
+        </model>
+    </chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
 		<availability>TH:7,SL:4,IS:7,FWL:7,Periphery.Deep:5,Periphery:5</availability>
 		<model name='PXH-1D'>

@@ -4236,6 +4236,15 @@
 			<availability>CCC:6,CSR:6,CDS:6,CSV:6,CNC:6,CFM:6,CCO:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Phoenix Hawk LAM' unitType='Mek'>
+        <availability>IS:3</availability>
+        <model name='PHX-HK2'>
+            <availability>IS:4</availability>
+        </model>
+        <model name='PHX-HK2M'>
+            <availability>IS:2,FWL:4</availability>
+        </model>
+    </chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
 		<availability>CS:7,HL:2,CLAN:2,IS:9,FWL:10,NIOPS:7,Periphery.Deep:4,Periphery:4,CGB:2</availability>
 		<model name='PXH-1c (Special)'>

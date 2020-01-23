@@ -12506,6 +12506,27 @@
 			<availability>CCC:2,CSR:3,CDS:2,CNC:2,CCO:2</availability>
 		</model>
 	</chassis>
+	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
+        <availability>IS:2</availability>
+        <model name='PHX-HK1'>
+            <availability>IS:4</availability>
+        </model>
+        <model name='PHX-HK1R'>
+            <availability>IS:2</availability>
+        </model>
+    </chassis>
+    <chassis name='Phoenix Hawk LAM' unitType='Mek'>
+        <availability>IS:3</availability>
+        <model name='PHX-HK2'>
+            <availability>IS:4</availability>
+        </model>
+        <model name='PHX-HK2M'>
+            <availability>IS:2,FWL:4</availability>
+        </model>
+        <model name='PHX-HK1RB'>
+            <availability>WOB:2</availability>
+        </model>
+    </chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
 		<availability>CS:5,HL:5,CLAN:1,IS:8,FWL:9,NIOPS:5,Periphery.Deep:4,WOB:3,Periphery:6,CGB:2</availability>
 		<model name='PXH-6D'>
@@ -12942,6 +12963,12 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Pwwka' unitType='Mek'>
+        <availability>WOB:3</availability>
+        <model name='S-PW-1LAM'>
+            <availability>WOB:3</availability>
+        </model>
+    </chassis>
 	<chassis name='Quasit MilitiaMech' unitType='Mek'>
 		<availability>Periphery:2-</availability>
 		<model name='QUA-51T'>
@@ -16937,6 +16964,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Waneta' unitType='Mek'>
+        <availability>WOB:3</availability>
+        <model name='S-WN-2LAM'>
+            <availability>WOB:3</availability>
+        </model>
+    </chassis>
 	<chassis name='War Dog' unitType='Mek'>
 		<availability>CS:5,MOC:1,FVC:6,LA:7,ROS:5,IS:1,WOB:1,FS:7,MERC:7</availability>
 		<model name='WR-DG-03FC'>
@@ -17486,6 +17519,12 @@
 			<availability>CC:3</availability>
 		</model>
 	</chassis>
+	<chassis name='Yurei' unitType='Mek'>
+        <availability>WOB:3</availability>
+        <model name='S-YR-1LAM'>
+            <availability>WOB:3</availability>
+        </model>
+    </chassis>
 	<chassis name='Zechetinu Corvette' unitType='Warship'>
 		<availability>FWL:2</availability>
 		<model name='(Standard)'>

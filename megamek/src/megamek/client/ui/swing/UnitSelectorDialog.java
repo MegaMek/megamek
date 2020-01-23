@@ -161,11 +161,9 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     public UnitSelectorDialog(ClientGUI cl, UnitLoadingDialog uld) {
         super(cl.frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
         unitLoadingDialog = uld;
-        if (null != cl) {
-            frame = cl.getFrame();
-            client = cl.getClient();
-            clientgui = cl;
-        }
+        frame = cl.getFrame();
+        client = cl.getClient();
+        clientgui = cl;
 
         unitModel = new MechTableModel();
         initComponents();
@@ -173,11 +171,9 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         int width = guip.getMechSelectorSizeWidth();
         int height = guip.getMechSelectorSizeHeight();
         setSize(width,height);
-        if (null != cl) {
-            setLocationRelativeTo(cl.frame);
-            asd = new AdvancedSearchDialog(cl.frame,
-                    client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
-        }
+        setLocationRelativeTo(cl.frame);
+        asd = new AdvancedSearchDialog(cl.frame,
+                client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
     }
 
     public UnitSelectorDialog(JFrame frame, UnitLoadingDialog uld, boolean useAlternate) {
@@ -612,8 +608,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         tlLvls.toArray(nTypes);
         final int nClass = comboWeight.getSelectedIndex();
         final int nUnit = comboUnitType.getSelectedIndex() - 1;
-        final boolean checkSupportVee = comboUnitType.getSelectedItem().equals(
-                Messages.getString("MechSelectorDialog.SupportVee"));
+        final boolean checkSupportVee = Messages.getString("MechSelectorDialog.SupportVee")
+                .equals(comboUnitType.getSelectedItem());
         final boolean cannonOnly = (null != client)
                 && client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
         //If current expression doesn't parse, don't update.
@@ -635,6 +631,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                     for (int tl : nTypes) {
                         if (type == tl) {
                             techLevelMatch = true;
+                            break;
                         }
                     }
                     if (/* Weight */
@@ -711,7 +708,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             panelTROView.reset();
         }
 
-        if (clientgui != null) {
+        if (null != clientgui) {
             clientgui.loadPreviewImage(lblImage, selectedUnit, client.getLocalPlayer());
         }
     }
@@ -833,7 +830,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
              comboUnitType.setSelectedIndex(guip.getMechSelectorUnitType());
              comboWeight.setSelectedIndex(guip.getMechSelectorWeightClass());
              String option = guip.getMechSelectorRulesLevels().replaceAll("\\[", "");
-             option = option.replaceAll("\\]", "");
+             option = option.replaceAll("]", "");
              if (option.length() > 0) {
                  String[] strSelections = option.split("[,]");
                  int[] intSelections = new int[strSelections.length];

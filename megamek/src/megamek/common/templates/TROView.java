@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
-import freemarker.template.TemplateModelException;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -106,7 +105,7 @@ public class TROView {
         } else {
             view = new TROView();
         }
-        if (view.getTemplateFileName(html) != null) {
+        if (null != view.getTemplateFileName(html)) {
             try {
                 view.template = TemplateConfiguration.getInstance()
                         .getTemplate("tro/" + view.getTemplateFileName(html));
@@ -146,7 +145,7 @@ public class TROView {
      */
     @Nullable
     public String processTemplate() {
-        if (template != null) {
+        if (null != template) {
             model.put("includeFluff", includeFluff);
 
             final ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -702,7 +701,7 @@ public class TROView {
      * @return The same String with notes removed
      */
     protected String stripNotes(String str) {
-        return str.replaceAll("\\s+\\[.*?\\]", "").replaceAll("\\s+\\(.*?\\)", "");
+        return str.replaceAll("\\s+\\[.*?]", "").replaceAll("\\s+\\(.*?\\)", "");
     }
 
     protected static class FormatTableRowMethod implements TemplateMethodModelEx {
@@ -724,7 +723,7 @@ public class TROView {
         }
 
         @Override
-        public Object exec(@SuppressWarnings("rawtypes") List arguments) {
+        public Object exec(List arguments) {
             final StringBuilder sb = new StringBuilder();
             int col = 0;
             for (final Object o : arguments) {

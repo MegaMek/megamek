@@ -137,7 +137,7 @@ public class MechViewPanel extends JPanel {
         txtMek.setCaretPosition(0);
         Image image = FluffImageHelper.getFluffImage(entity);
         icon = null;
-        if(image != null) {
+        if (null != image) {
             // We don't want this window to be too big, so scale large images
             if (image.getWidth(this) > DEFAULT_WIDTH)
             {

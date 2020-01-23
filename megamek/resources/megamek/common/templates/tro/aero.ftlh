@@ -71,6 +71,7 @@
 	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Safe Thrust:</td><td align="center">${safeThrust}</td><td></td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Max Thrust:</td><td align="center">${maxThrust}</td><td></td></tr>
 	<tr><td>Structural Integrity:</td><td align="center">${si}</td><td></td></tr>
+	<tr><td>VSTOL Equipment:</td><td align="center"></td><td align="center">${vstolMass}</td></tr>
 	<tr><td>Heat Sinks:</td><td align="center">${hsCount}</td><td align="center">${hsMass}</td></tr>
 	<tr><td>Fuel:</td><td align="center">${fuelPoints}</td><td align="center">${fuelMass}</td></tr>
 	<tr><td>${cockpitType}:</td><td></td><td align="center">${cockpitMass}</td></tr>

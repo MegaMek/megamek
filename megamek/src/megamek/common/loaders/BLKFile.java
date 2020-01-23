@@ -79,48 +79,41 @@ public class BLKFile {
         }
 
         if (saEquip[0] != null) {
-            for (int x = 0; x < saEquip.length; x++) {
-                String equipName = saEquip[x].trim();
+            for (String s : saEquip) {
+                String equipName = s.trim();
                 boolean isTurreted = false;
                 boolean isPintleTurreted = false;
                 if (equipName.toUpperCase().endsWith("(ST)")) {
                     isTurreted = true;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(PT)")) {
                     isPintleTurreted = true;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 boolean isOmniMounted = equipName.toUpperCase().endsWith(":OMNI");
                 equipName = equipName.replace(":OMNI", "");
-                
+
                 int facing = -1;
                 if (equipName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(FR)")) {
                     facing = 1;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(RL)")) {
                     facing = 4;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(RR)")) {
                     facing = 2;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(R)")) {
                     facing = 3;
-                    equipName = equipName.substring(0, equipName.length() - 4)
-                            .trim();
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 EquipmentType etype = EquipmentType.get(equipName);
 
@@ -154,13 +147,7 @@ public class BLKFile {
     }
 
     public boolean isMine() {
-
-        if (dataFile.exists("blockversion")) {
-            return true;
-        }
-
-        return false;
-
+        return dataFile.exists("blockversion");
     }
 
     static int translateEngineCode(int code) {
@@ -197,7 +184,7 @@ public class BLKFile {
         }
     }
 
-    public void setFluff(Entity e) throws EntityLoadingException {
+    public void setFluff(Entity e) {
 
         if (dataFile.exists("capabilities")) {
             e.getFluff().setCapabilities(dataFile.getDataAsString("capabilities")[0]);
@@ -243,7 +230,6 @@ public class BLKFile {
         	}
         }
 
-
         if (dataFile.exists("imagepath")) {
             e.getFluff().setMMLImagePath(
                     dataFile.getDataAsString("imagepath")[0]);
@@ -272,10 +258,9 @@ public class BLKFile {
         if (dataFile.exists("source")) {
             e.setSource(dataFile.getDataAsString("source")[0]);
         }
-
     }
 
-    public void checkManualBV(Entity e) throws EntityLoadingException {
+    public void checkManualBV(Entity e) {
         if (dataFile.exists("bv")) {
             int bv = dataFile.getDataAsInt("bv")[0];
 
@@ -284,7 +269,6 @@ public class BLKFile {
                 e.setManualBV(bv);
             }
         }
-
     }
 
     public void setTechLevel(Entity e) throws EntityLoadingException {
@@ -297,69 +281,79 @@ public class BLKFile {
             throw new EntityLoadingException("Could not find type block.");
         }
 
-        if (dataFile.getDataAsString("type")[0].equals("IS")) {
-            if (e.getYear() == 3025) {
+        switch (dataFile.getDataAsString("type")[0]) {
+            case "IS":
+                if (e.getYear() == 3025) {
+                    e.setTechLevel(TechConstants.T_INTRO_BOXSET);
+                } else {
+                    e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                }
+                break;
+            case "IS Level 1":
                 e.setTechLevel(TechConstants.T_INTRO_BOXSET);
-            } else {
+                break;
+            case "IS Level 2":
                 e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-            }
-        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 1")) {
-            e.setTechLevel(TechConstants.T_INTRO_BOXSET);
-        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 2")) {
-            e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 3")) {
-            e.setTechLevel(TechConstants.T_IS_ADVANCED);
-        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 4")) {
-            e.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
-        } else if (dataFile.getDataAsString("type")[0].equals("IS Level 5")) {
-            e.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
-        } else if (dataFile.getDataAsString("type")[0].equals("Clan")
-                || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
-            e.setTechLevel(TechConstants.T_CLAN_TW);
-        } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
-            e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-        } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 4")) {
-            e.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
-        } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 5")) {
-            e.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
-        } else if (dataFile.getDataAsString("type")[0]
-                .equals("Mixed (IS Chassis)")) {
-            e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-            e.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0]
-                .equals("Mixed (IS Chassis) Advanced")) {
-            e.setTechLevel(TechConstants.T_IS_ADVANCED);
-            e.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0]
-                .equals("Mixed (IS Chassis) Experimental")) {
-            e.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
-            e.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0]
-                .equals("Mixed (IS Chassis) Unofficial")) {
-            e.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
-            e.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0]
-                .equals("Mixed (Clan Chassis)")) {
-            e.setTechLevel(TechConstants.T_CLAN_TW);
-            e.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0]
-                .equals("Mixed (Clan Chassis) Advanced")) {
-            e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-            e.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0]
-                .equals("Mixed (Clan Chassis) Experimental")) {
-            e.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
-            e.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0]
-                .equals("Mixed (Clan Chassis) Unofficial")) {
-            e.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
-            e.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0].equals("Mixed")) {
-            throw new EntityLoadingException(
-                    "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
-        } else {
-            throw new EntityLoadingException("Unsupported tech level: "
-                    + dataFile.getDataAsString("type")[0]);
+                break;
+            case "IS Level 3":
+                e.setTechLevel(TechConstants.T_IS_ADVANCED);
+                break;
+            case "IS Level 4":
+                e.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+                break;
+            case "IS Level 5":
+                e.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
+                break;
+            case "Clan":
+            case "Clan Level 2":
+                e.setTechLevel(TechConstants.T_CLAN_TW);
+                break;
+            case "Clan Level 3":
+                e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+                break;
+            case "Clan Level 4":
+                e.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+                break;
+            case "Clan Level 5":
+                e.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+                break;
+            case "Mixed (IS Chassis)":
+                e.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (IS Chassis) Advanced":
+                e.setTechLevel(TechConstants.T_IS_ADVANCED);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (IS Chassis) Experimental":
+                e.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (IS Chassis) Unofficial":
+                e.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (Clan Chassis)":
+                e.setTechLevel(TechConstants.T_CLAN_TW);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (Clan Chassis) Advanced":
+                e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (Clan Chassis) Experimental":
+                e.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+                e.setMixedTech(true);
+                break;
+            case "Mixed (Clan Chassis) Unofficial":
+                e.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+                e.setMixedTech(true);
+                break;
+            case "Mixed":
+                throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+            default:
+                throw new EntityLoadingException("Unsupported tech level: "
+                        + dataFile.getDataAsString("type")[0]);
         }
     }
 
@@ -494,6 +488,9 @@ public class BLKFile {
             if (t instanceof Aero){
                 if (t.isFighter()) {
                     blk.writeBlockData("cockpit_type", ((Aero)t).getCockpitType());
+                    if (t.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER) && ((Aero) t).isVSTOL()) {
+                        blk.writeBlockData("vstol", 1);
+                    }
                 } else if ((t instanceof Dropship) && ((Aero)t).isPrimitive()) {
                     blk.writeBlockData("collartype", ((Dropship)t).getCollarType());
                 }
@@ -556,8 +553,7 @@ public class BLKFile {
                 blk.writeBlockData("armor_type",
                         EquipmentType.T_ARMOR_PATCHWORK);
                 for (int i = 1; i < t.locations(); i++) {
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_type",
-                            t.getArmorType(i));
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_type", t.getArmorType(i));
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
                             TechConstants.getTechName(t.getArmorTechLevel(i)));
                 }
@@ -569,7 +565,7 @@ public class BLKFile {
                 blk.writeBlockData("omni", 1);
             }
             
-            int armor_array[];
+            int[] armor_array;
             if (t.hasETypeFlag(Entity.ETYPE_AERO)) {
                 if (t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
                     armor_array = new int[6];
@@ -589,15 +585,15 @@ public class BLKFile {
         }
 
         // Write out armor_type and armor_tech entries for BA
-        if (t instanceof BattleArmor){
+        if (t instanceof BattleArmor) {
             blk.writeBlockData("armor_type", t.getArmorType(1));
             blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));
         }
 
-        Vector<Vector<String>> eq = new Vector<Vector<String>>(numLocs);
+        Vector<Vector<String>> eq = new Vector<>(numLocs);
 
         for (int i = 0; i < numLocs; i++) {
-            eq.add(new Vector<String>());
+            eq.add(new Vector<>());
         }
         for (Mounted m : t.getEquipment()) {
             // Ignore Mounteds that represent a WeaponGroup
@@ -606,8 +602,7 @@ public class BLKFile {
             }
 
             // Ignore ammo for one-shot launchers
-            if (m.getLinkedBy() != null
-                    && m.getLinkedBy().isOneShot()){
+            if ((m.getLinkedBy() != null) && (m.getLinkedBy().isOneShot())) {
                 continue;
             }
             
@@ -658,37 +653,35 @@ public class BLKFile {
             if (m.isPintleTurretMounted()) {
                 name = name + "(PT)";
             }
-            if (m.isDWPMounted()){
+            if (m.isDWPMounted()) {
                 name += ":DWP";
             }
-            if (m.isAPMMounted()){
+            if (m.isAPMMounted()) {
                 name += ":APM";
             }
-            if (m.isSquadSupportWeapon()){
+            if (m.isSquadSupportWeapon()) {
                 name += ":SSWM";
             }
             if (m.isOmniPodMounted()) {
             	name += ":OMNI";
             }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY){
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
                 name += ":Body";
             }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM){
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
                 name += ":LA";
             }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM){
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
                 name += ":RA";
             }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET){
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
                 name += ":TU";
             }
             // For BattleArmor and ProtoMechs, we need to save how many shots are in this
             //  location but they have different formats, yay!
-            if ((t instanceof BattleArmor)
-                    && (m.getType() instanceof AmmoType)){
+            if ((t instanceof BattleArmor) && (m.getType() instanceof AmmoType)) {
                 name += ":Shots" + m.getBaseShotsLeft() + "#";
-            } else if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)
-                    && (m.getType() instanceof AmmoType)) {
+            } else if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (m.getType() instanceof AmmoType)) {
                 name += " (" + m.getBaseShotsLeft() + ")";
             }
             int loc = m.getLocation();
@@ -698,22 +691,20 @@ public class BLKFile {
         }
         for (int i = 0; i < numLocs; i++) {
             if (!(((t instanceof Infantry) && !(t instanceof BattleArmor)) && (i == Infantry.LOC_INFANTRY))) {
-                blk.writeBlockData(t.getLocationName(i) + " Equipment",
-                        eq.get(i));
+                blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
             }
         }
         if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
             blk.writeBlockData("barrating", t.getBARRating(1));
         }
         
-        if (t.isSupportVehicle() || (t instanceof FixedWingSupport)) {
+        if (t.isSupportVehicle()) {
             blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating());
             blk.writeBlockData("engine_tech_rating", t.getEngineTechRating());
             blk.writeBlockData("armor_tech_rating", t.getArmorTechRating());
         }
         
-        if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
-                || t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+        if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT) || t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             blk.writeBlockData("structural_integrity", ((Aero)t).get0SI());
         }
 
@@ -968,68 +959,68 @@ public class BLKFile {
             	transporter = transporter.replace(":omni", "");
 
             	// TroopSpace:
-                if (transporter.startsWith("troopspace:", 0)) {
+                if (transporter.startsWith("troopspace:")) {
                     // Everything after the ':' should be the space's size.
                     double fsize = Double.parseDouble(transporter.substring(11));
                     e.addTransporter(new TroopSpace(fsize), isPod);
-                } else if (transporter.startsWith("cargobay:", 0)) {
+                } else if (transporter.startsWith("cargobay:")) {
                     String numbers = transporter.substring(9);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new CargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("liquidcargobay:", 0)) {
+                } else if (transporter.startsWith("liquidcargobay:")) {
                     String numbers = transporter.substring(15);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new LiquidCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("insulatedcargobay:", 0)) {
+                } else if (transporter.startsWith("insulatedcargobay:")) {
                     String numbers = transporter.substring(18);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new InsulatedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("refrigeratedcargobay:", 0)) {
+                } else if (transporter.startsWith("refrigeratedcargobay:")) {
                     String numbers = transporter.substring(21);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new RefrigeratedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("livestockcargobay:", 0)) {
+                } else if (transporter.startsWith("livestockcargobay:")) {
                     String numbers = transporter.substring(18);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new LivestockCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("asfbay:", 0)) {
+                } else if (transporter.startsWith("asfbay:")) {
                     String numbers = transporter.substring(7);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("smallcraftbay:", 0)) {
+                } else if (transporter.startsWith("smallcraftbay:")) {
                     String numbers = transporter.substring(14);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("mechbay:", 0)) {
+                } else if (transporter.startsWith("mechbay:")) {
                     String numbers = transporter.substring(8);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new MechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("lightvehiclebay:", 0)) {
+                } else if (transporter.startsWith("lightvehiclebay:")) {
                     String numbers = transporter.substring(16);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new LightVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("heavyvehiclebay:", 0)) {
+                } else if (transporter.startsWith("heavyvehiclebay:")) {
                     String numbers = transporter.substring(16);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new HeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("superheavyvehiclebay:", 0)) {
+                } else if (transporter.startsWith("superheavyvehiclebay:")) {
                     String numbers = transporter.substring(21);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new SuperHeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("infantrybay:", 0)) {
+                } else if (transporter.startsWith("infantrybay:")) {
                     String numbers = transporter.substring(12);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new InfantryBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getPlatoonType()), isPod);
-                } else if (transporter.startsWith("battlearmorbay:", 0)) {
+                } else if (transporter.startsWith("battlearmorbay:")) {
                     String numbers = transporter.substring(15);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new BattleArmorBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(),
                             e.isClan(), pbi.isComstarBay()), isPod);
-                } else if (transporter.startsWith("bay:", 0)) {
+                } else if (transporter.startsWith("bay:")) {
                     String numbers = transporter.substring(4);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new Bay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
-                } else if (transporter.startsWith("protomechbay:", 0)) {
+                } else if (transporter.startsWith("protomechbay:")) {
                     String numbers = transporter.substring(13);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new ProtomechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
@@ -1049,35 +1040,35 @@ public class BLKFile {
                     String numbers = transporter.substring("reinforcedrepairfacility:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new ReinforcedRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()), isPod);
-                } else if (transporter.startsWith("crewquarters:", 0)) {
+                } else if (transporter.startsWith("crewquarters:")) {
                     String numbers = transporter.substring(13);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new CrewQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
-                } else if (transporter.startsWith("steeragequarters:", 0)) {
+                } else if (transporter.startsWith("steeragequarters:")) {
                     String numbers = transporter.substring(17);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new SteerageQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
-                } else if (transporter.startsWith("2ndclassquarters:", 0)) {
+                } else if (transporter.startsWith("2ndclassquarters:")) {
                     String numbers = transporter.substring(17);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new SecondClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
-                } else if (transporter.startsWith("1stclassquarters:", 0)) {
+                } else if (transporter.startsWith("1stclassquarters:")) {
                     String numbers = transporter.substring(17);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new FirstClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
-                } else if (transporter.startsWith("pillionseats:", 0)) {
+                } else if (transporter.startsWith("pillionseats:")) {
                     String numbers = transporter.substring(13);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new PillionSeatCargoBay(pbi.getSize()), isPod);
-                } else if (transporter.startsWith("standardseats:", 0)) {
+                } else if (transporter.startsWith("standardseats:")) {
                     String numbers = transporter.substring(14);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new StandardSeatCargoBay(pbi.getSize()), isPod);
-                } else if (transporter.startsWith("ejectionseats:", 0)) {
+                } else if (transporter.startsWith("ejectionseats:")) {
                     String numbers = transporter.substring("ejectionseats:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new EjectionSeatCargoBay(pbi.getSize()), isPod);
-                } else if (transporter.startsWith("dockingcollar", 0)) {
+                } else if (transporter.startsWith("dockingcollar")) {
                     //Add values for collars so they can be parsed and assigned a 'bay' number
                     String numbers = "1.0:0";
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
@@ -1111,7 +1102,7 @@ public class BLKFile {
             // c is the bay number OR an indicator that this bay is a comstar bay OR an indicator of the kind of infantry bay it is, and is optional
             // d is like c except that it's not going to be the bay number
             
-            String temp[] = numbers.split(Bay.FIELD_SEPARATOR);
+            String[] temp = numbers.split(Bay.FIELD_SEPARATOR);
             size = Double.parseDouble(temp[0]);
             doors = Integer.parseInt(temp[1]);
             

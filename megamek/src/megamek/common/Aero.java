@@ -121,7 +121,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int structIntegrity;
     private int orig_structIntegrity;
     // set up damage threshold
-    protected int damThresh[] = { 0, 0, 0, 0, 0, 0 };
+    protected int[] damThresh = { 0, 0, 0, 0, 0, 0 };
     // set up an int for what the critical effect would be
     private int potCrit = CRIT_NONE;
 
@@ -201,7 +201,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private boolean wingsHit = false;
     // a hash map of the current weapon groups - the key is the
     // location:internal name, and the value is the weapon id
-    Map<String, Integer> weaponGroups = new HashMap<String, Integer>();
+    Map<String, Integer> weaponGroups = new HashMap<>();
 
     /*
      * According to the rules if two units of the same type and with the same
@@ -1031,33 +1031,31 @@ public class Aero extends Entity implements IAero, IBomber {
                 || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
             return Compute.ARC_360;
         }
-        int arc = Compute.ARC_NOSE;
+        int arc;
         switch (mounted.getLocation()) {
-        case LOC_NOSE:
-            arc = Compute.ARC_NOSE;
-            break;
-        case LOC_RWING:
-            if (mounted.isRearMounted()) {
-                arc = Compute.ARC_RWINGA;
-            } else {
-                arc = Compute.ARC_RWING;
-            }
-            break;
-        case LOC_LWING:
-            if (mounted.isRearMounted()) {
-                arc = Compute.ARC_LWINGA;
-            } else {
-                arc = Compute.ARC_LWING;
-            }
-            break;
-        case LOC_AFT:
-            arc = Compute.ARC_AFT;
-            break;
-        case LOC_WINGS:
-            arc = Compute.ARC_NOSE;
-            break;
-        default:
-            arc = Compute.ARC_360;
+            case LOC_NOSE:
+            case LOC_WINGS:
+                arc = Compute.ARC_NOSE;
+                break;
+            case LOC_RWING:
+                if (mounted.isRearMounted()) {
+                    arc = Compute.ARC_RWINGA;
+                } else {
+                    arc = Compute.ARC_RWING;
+                }
+                break;
+            case LOC_LWING:
+                if (mounted.isRearMounted()) {
+                    arc = Compute.ARC_LWINGA;
+                } else {
+                    arc = Compute.ARC_LWING;
+                }
+                break;
+            case LOC_AFT:
+                arc = Compute.ARC_AFT;
+                break;
+            default:
+                arc = Compute.ARC_360;
         }
 
         return rollArcs(arc);
@@ -1875,12 +1873,12 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // here we store the modified BV and heat of all heat-using weapons,
         // to later be sorted by BV
-        ArrayList<ArrayList<Object>> heatBVs = new ArrayList<ArrayList<Object>>();
+        ArrayList<ArrayList<Object>> heatBVs = new ArrayList<>();
         // BVs of non-heat-using weapons
-        ArrayList<ArrayList<Object>> nonHeatBVs = new ArrayList<ArrayList<Object>>();
+        ArrayList<ArrayList<Object>> nonHeatBVs = new ArrayList<>();
         // total up maximum heat generated
         // and add up BVs for ammo-using weapon types for excessive ammo rule
-        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
+        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
         double maximumHeat = 0;
         for (Mounted mounted : getTotalWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
@@ -2037,7 +2035,7 @@ public class Aero extends Entity implements IAero, IBomber {
             // stores a double first (BV), then an Integer (heat),
             // then a String (weapon name)
             // for 0 heat weapons, just stores BV and name
-            ArrayList<Object> weaponValues = new ArrayList<Object>();
+            ArrayList<Object> weaponValues = new ArrayList<>();
             if (weaponHeat > 0) {
                 // store heat and BV, for sorting a few lines down;
                 weaponValues.add(dBV);
@@ -3373,6 +3371,14 @@ public class Aero extends Entity implements IAero, IBomber {
 
     public void setVSTOL(boolean b) {
         vstol = b;
+    }
+
+    public double getVSTOLGearTonnage(){
+        if ((hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) && isVSTOL()){
+            // Weight = tonnage * 0.05 rounded up to nearest half ton
+            return Math.ceil(0.05 * getWeight()*2) / 2.0;
+        }
+        return 0.0f;
     }
 
     @Override

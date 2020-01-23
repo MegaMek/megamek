@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
-import freemarker.template.TemplateModelException;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -83,12 +82,13 @@ public class TROView {
     }
 
     public static TROView createView(Entity entity, boolean html) {
-        TROView view = null;
+        TROView view;
         if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
             view = new MechTROView((Mech) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
             view = new ProtomechTROView((Protomech) entity);
-        } else if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK) || (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL))) {
+        } else if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK)
+                || (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL))) {
             view = new SupportVeeTROView((Tank) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
             view = new VehicleTROView((Tank) entity);
@@ -152,7 +152,6 @@ public class TROView {
             final Writer out = new OutputStreamWriter(os);
             try {
                 template.process(model, out);
-
             } catch (TemplateException | IOException e) {
                 DefaultMmLogger.getInstance().error(getClass(), "processTemplate()", e);
                 e.printStackTrace();
@@ -450,7 +449,7 @@ public class TROView {
                 }
                 fields.put("tonnage", eq.getTonnage(entity) * count);
                 if (eq instanceof WeaponType) {
-                    fields.put("heat", ((WeaponType) eq).getHeat());
+                    fields.put("heat", eq.getHeat());
                     fields.put("srv", (int) ((WeaponType) eq).getShortAV());
                     fields.put("mrv", (int) ((WeaponType) eq).getMedAV());
                     fields.put("lrv", (int) ((WeaponType) eq).getLongAV());
@@ -681,7 +680,7 @@ public class TROView {
 
         final private BiFunction<String, Integer, String> pad;
 
-        private Justification(BiFunction<String, Integer, String> pad) {
+        Justification(BiFunction<String, Integer, String> pad) {
             this.pad = pad;
         }
 
@@ -692,7 +691,7 @@ public class TROView {
                 return str;
             }
         }
-    };
+    }
 
     /**
      * Removes parenthetical and bracketed notes from a String
@@ -702,7 +701,7 @@ public class TROView {
      * @return The same String with notes removed
      */
     protected String stripNotes(String str) {
-        return str.replaceAll("\\s+\\[.*?\\]", "").replaceAll("\\s+\\(.*?\\)", "");
+        return str.replaceAll("\\s+\\[.*?]", "").replaceAll("\\s+\\(.*?\\)", "");
     }
 
     protected static class FormatTableRowMethod implements TemplateMethodModelEx {
@@ -724,7 +723,7 @@ public class TROView {
         }
 
         @Override
-        public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
+        public Object exec(List arguments) {
             final StringBuilder sb = new StringBuilder();
             int col = 0;
             for (final Object o : arguments) {

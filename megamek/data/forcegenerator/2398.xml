@@ -172,13 +172,9 @@
 			<roles>apc,support</roles>
 			<availability>General:7</availability>
 		</model>
-		<model name='(Hover Primitive)'>
+		<model name='(Tracked MG)'>
 			<roles>apc,support</roles>
-			<availability>General:7</availability>
-		</model>
-		<model name='(Wheeled Primitive)'>
-			<roles>apc,support</roles>
-			<availability>General:6</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='(Wheeled Primitive)'>
 			<roles>apc,support</roles>
@@ -316,12 +312,12 @@
 	</chassis>
 	<chassis name='Estevez MBT' unitType='Tank'>
 		<availability>FWL:6,FS:8</availability>
+		<model name='(Standard)'>
+			<availability>General:8</availability>
+		</model>
 		<model name='(Anti-Aircraft)'>
 			<roles>anti_aircraft</roles>
 			<availability>General:4</availability>
-		</model>
-		<model name='(Standard)'>
-			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Field Artillery' unitType='Infantry'>
@@ -348,6 +344,10 @@
 		<model name='(AC5)'>
 			<roles>field_gun</roles>
 			<availability>General:8</availability>
+		</model>
+		<model name='(AC2)'>
+			<roles>field_gun</roles>
+			<availability>General:7</availability>
 		</model>
 	</chassis>
 	<chassis name='Firebird' unitType='Aero'>
@@ -510,10 +510,7 @@
 		<model name='(Laser)'>
 			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
-		<model name='(Laser)'>
-			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
-		</model>
-		<model name='(Rifle)'>
+		<model name='(Flamer)'>
 			<availability>General:8</availability>
 		</model>
 		<model name='(SRM)'>
@@ -551,12 +548,6 @@
 		</model>
 		<model name='(Flamer)'>
 			<availability>General:8</availability>
-		</model>
-		<model name='(SRM)'>
-			<availability>General:5</availability>
-		</model>
-		<model name='(Laser)'>
-			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
 		<model name='(MG)'>
 			<availability>General:7</availability>
@@ -603,9 +594,6 @@
 		</model>
 		<model name='(SRM)'>
 			<availability>General:5</availability>
-		</model>
-		<model name='(Flamer)'>
-			<availability>General:8</availability>
 		</model>
 		<model name='(Rifle)'>
 			<availability>General:8</availability>

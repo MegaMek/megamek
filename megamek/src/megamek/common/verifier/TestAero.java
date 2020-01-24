@@ -579,10 +579,9 @@ public class TestAero extends TestEntity {
     @Override
     public double getWeightMisc() {
         // VSTOL equipment weighs extra for conventional fighters
-        if ((aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) &&
-                aero.isVSTOL()){
+        if ((aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) && aero.isVSTOL()) {
             // Weight = tonnage * 0.05 rounded up to nearest half ton
-            return Math.ceil(0.05 * aero.getWeight()*2) / 2.0;
+            return Math.ceil(0.05 * aero.getWeight() * 2) / 2.0;
         }
         return 0.0f;
     }

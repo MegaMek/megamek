@@ -73,13 +73,15 @@ public class AeroTROView extends TROView {
         addFluff();
         setModelData("isOmni", aero.isOmni());
         setModelData("isConventional", aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER));
+        setModelData("isSupportVehicle", aero.isSupportVehicle());
+        setModelData("isVSTOL", aero.isVSTOL());
         final TestAero testAero = new TestAero(aero, verifier.aeroOption, null);
         setModelData("engineName", stripNotes(aero.getEngine().getEngineName()));
         setModelData("engineMass", NumberFormat.getInstance().format(testAero.getWeightEngine()));
         setModelData("safeThrust", aero.getWalkMP());
         setModelData("maxThrust", aero.getRunMP());
         setModelData("si", aero.get0SI());
-        setModelData("vstolMass", aero.getVSTOLGearTonnage());
+        setModelData("vstolMass", testAero.getWeightMisc());
         setModelData("hsCount",
                 aero.getHeatType() == Aero.HEAT_DOUBLE ? aero.getOHeatSinks() + " [" + (aero.getOHeatSinks() * 2) + "]"
                         : aero.getOHeatSinks());

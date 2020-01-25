@@ -3081,7 +3081,7 @@
 		</model>
 	</chassis>
 	<chassis name='Bluehawk Combat Support Fighter' unitType='Conventional Fighter'>
-		<availability>MOC:6,FS:2,Periphery:4,DC:2</availability>
+		<availability>MOC:6,FS:2,Periphery:4,DC:2,OA.RA:5</availability>
 		<model name='MSF-42'>
 			<availability>General:6</availability>
 		</model>
@@ -13154,7 +13154,7 @@
 		</model>
 	</chassis>
 	<chassis name='Protector Combat Support Fighter' unitType='Conventional Fighter'>
-		<availability>MOC:5,FS:2,Periphery:4,DC:2</availability>
+		<availability>MOC:5,FS:2,Periphery:4,DC:2,OA.RA:5</availability>
 		<model name='ASF-23'>
 			<availability>General:6</availability>
 		</model>

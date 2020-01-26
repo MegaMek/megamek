@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import megamek.common.Aero;
+import megamek.common.Entity;
 import megamek.common.Jumpship;
 import megamek.common.Messages;
 import megamek.common.Mounted;
@@ -72,7 +73,7 @@ public class CapitalShipTROView extends AeroTROView {
         setModelData("escapePods", aero.getEscapePods());
         setModelData("lifeBoats", aero.getLifeBoats());
         setModelData("gravDecks", aero.getGravDecks().stream().map(size -> size + " m").collect(Collectors.toList()));
-        setModelData("sailIntegrity", aero.hasSail() ? aero.getSailIntegrity() : Messages.getString("TROView.NA"));
+        setModelData("sailIntegrity", aero.hasSail() ? aero.getSailIntegrity() : null);
         if (aero.getDriveCoreType() != Jumpship.DRIVE_CORE_NONE) {
             setModelData("kfIntegrity", aero.getKFIntegrity());
         }
@@ -145,7 +146,7 @@ public class CapitalShipTROView extends AeroTROView {
             { Jumpship.LOC_ARS, Jumpship.LOC_ALS }, { Jumpship.LOC_AFT } };
 
     private void addArmor() {
-        setModelData("armorValues", addArmorStructureEntries(aero, (en, loc) -> en.getOArmor(loc), ARMOR_LOCS));
+        setModelData("armorValues", addArmorStructureEntries(aero, Entity::getOArmor, ARMOR_LOCS));
     }
 
     protected void addCrew() {

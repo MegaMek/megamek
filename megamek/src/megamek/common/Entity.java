@@ -14663,21 +14663,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if ((typeId & ETYPE_MECH) == ETYPE_MECH) {
             return "Mech";
         } else if ((typeId & ETYPE_JUMPSHIP) == ETYPE_JUMPSHIP) {
-            return "Jumpship";
+            return "JumpShip";
         } else if ((typeId & ETYPE_WARSHIP) == ETYPE_WARSHIP) {
-            return "Warship";
+            return "WarShip";
         } else if ((typeId & ETYPE_SPACE_STATION) == ETYPE_SPACE_STATION) {
-            return "Space station";
+            return "Space Station";
         } else if ((typeId & ETYPE_CONV_FIGHTER) == ETYPE_CONV_FIGHTER) {
-            return "Convetional Fighter";
+            return "Conventional Fighter";
         } else if ((typeId & ETYPE_FIXED_WING_SUPPORT) == ETYPE_FIXED_WING_SUPPORT) {
             return "Fixed Wing Support";
         } else if ((typeId & ETYPE_FIGHTER_SQUADRON) == ETYPE_FIGHTER_SQUADRON) {
-            return "Fighter squadron";
+            return "Fighter Squadron";
         } else if ((typeId & ETYPE_SMALL_CRAFT) == ETYPE_SMALL_CRAFT) {
-            return "Small craft";
+            return "Small Craft";
         } else if ((typeId & ETYPE_DROPSHIP) == ETYPE_DROPSHIP) {
-            return "Dropship";
+            return "DropShip";
         } else if ((typeId & ETYPE_TELEMISSILE) == ETYPE_TELEMISSILE) {
             return "Telemissile";
         } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
@@ -14687,7 +14687,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if ((typeId & ETYPE_MECHWARRIOR) == ETYPE_MECHWARRIOR) {
             return "Mechwarrior";
         } else if ((typeId & ETYPE_PROTOMECH) == ETYPE_PROTOMECH) {
-            return "Protomech";
+            return "ProtoMech";
         } else if ((typeId & ETYPE_INFANTRY) == ETYPE_INFANTRY) {
             return "Infantry";
         } else if ((typeId & ETYPE_GUN_EMPLACEMENT) == ETYPE_GUN_EMPLACEMENT) {

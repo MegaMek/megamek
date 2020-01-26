@@ -265,7 +265,7 @@ public class TestAero extends TestEntity {
      *  Computes the maximum number of armor points for a given Aero
      *  at the given tonnage.
      *   
-     * @param entity_type
+     * @param aero
      * @param tonnage
      * @return
      */
@@ -382,13 +382,12 @@ public class TestAero extends TestEntity {
     /**
      * Computes the engine rating for the given entity type.
      * 
-     * @param entity_type
+     * @param unit
      * @param tonnage
      * @param desiredSafeThrust
      * @return
      */
-    public static int calculateEngineRating(Aero unit, int tonnage, 
-            int desiredSafeThrust){
+    public static int calculateEngineRating(Aero unit, int tonnage, int desiredSafeThrust){
         int rating;
         long eType = unit.getEntityType();
         if (unit.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
@@ -579,11 +578,10 @@ public class TestAero extends TestEntity {
 
     @Override
     public double getWeightMisc() {
-        // VSTOL equipment weighs extra forr conventional fighters
-        if ((aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) &&
-                aero.isVSTOL()){
+        // VSTOL equipment weighs extra for conventional fighters
+        if ((aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) && aero.isVSTOL()) {
             // Weight = tonnage * 0.05 rounded up to nearest half ton
-            return Math.ceil(0.05 * aero.getWeight()*2) / 2.0;
+            return Math.ceil(0.05 * aero.getWeight() * 2) / 2.0;
         }
         return 0.0f;
     }
@@ -963,7 +961,7 @@ public class TestAero extends TestEntity {
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
         boolean correct = true;
         
-        // We only support Convetional Fighters and ASF
+        // We only support Conventional Fighters and ASF
         if (aero.getEntityType() == Entity.ETYPE_DROPSHIP || 
                 aero.getEntityType() == Entity.ETYPE_SMALL_CRAFT ||
                 aero.getEntityType() == Entity.ETYPE_FIGHTER_SQUADRON ||

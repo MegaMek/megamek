@@ -86,8 +86,7 @@ public final class ImageUtil {
         if(null == GC) {
             return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         }
-        BufferedImage acceleratedImage = GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
-        return acceleratedImage;
+        return GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
     }
 
     /**
@@ -185,7 +184,7 @@ public final class ImageUtil {
         public Image loadImage(String fileName) {
             File fin = new File(fileName);
             if (!fin.exists()) {
-                System.out.println("Trying to load image for a non-existent " + "file! Path: " + fileName);
+                System.out.println(String.format("Trying to load image for a non-existent file! Path: %s", fileName));
                 return null;
             }
             Image result = Toolkit.getDefaultToolkit().getImage(fileName);

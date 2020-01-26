@@ -13,7 +13,22 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -110,7 +125,6 @@ public class BoardEditor extends JComponent
      * @author arlith
      */
     private static class TerrainHelper implements Comparable<TerrainHelper> {
-
         private int terrainType;
 
         TerrainHelper (int terrain) {

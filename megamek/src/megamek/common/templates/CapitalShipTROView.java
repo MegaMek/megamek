@@ -73,7 +73,7 @@ public class CapitalShipTROView extends AeroTROView {
         setModelData("escapePods", aero.getEscapePods());
         setModelData("lifeBoats", aero.getLifeBoats());
         setModelData("gravDecks", aero.getGravDecks().stream().map(size -> size + " m").collect(Collectors.toList()));
-        setModelData("sailIntegrity", aero.hasSail() ? aero.getSailIntegrity() : null);
+        setModelData("sailIntegrity", aero.hasSail() ? aero.getSailIntegrity() : Messages.getString("TROView.NA"));
         if (aero.getDriveCoreType() != Jumpship.DRIVE_CORE_NONE) {
             setModelData("kfIntegrity", aero.getKFIntegrity());
         }

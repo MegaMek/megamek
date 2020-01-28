@@ -25,6 +25,7 @@ v0.47.3-SNAPSHOT
 + PR #1612: RAT Generator will now produce Bluehawk/Protector fighters, Hover Scout/Falcon tanks (occasionally) and LAMs (occasionally). 
             Bot still doesn't know how to transform, but can use them just fine in each individual form.
 + Data: New Sprites and a couple of new maps from Simon Landmine.
++ PR #1620: Allow indirect LRMs to miss legs if target in water [Errata]
 
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor

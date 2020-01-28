@@ -1560,7 +1560,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         //For indirect fire, remove leg hits only if target is in water partial cover
         //Per TW errata for indirect fire
-        if ((!isIndirect || (isIndirect && targetHex.containsTerrain(Terrains.WATER)))
+        if ((!isIndirect 
+                || (isIndirect 
+                        && targetHex.containsTerrain(Terrains.WATER) 
+                        && entityTarget.relHeight() <= targetHex.surface()))
                 && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                         .getCover(), Compute.targetSideTable(ae, entityTarget,
                         weapon.getCalledShot().getCall()))) {

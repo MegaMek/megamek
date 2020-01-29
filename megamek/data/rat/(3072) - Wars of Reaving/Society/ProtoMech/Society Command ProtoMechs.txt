@@ -4,9 +4,9 @@ Hobgoblin Ultraheavy ProtoMech (Standard), 2
 Boggart Ultraheavy ProtoMech 2, 3
 Basilisk ProtoMech (Quad) B, 4
 Minotaur Z, 5
-Sprite (Standard), 6
+Sprite Ultraheavy ProtoMech (Standard), 6
 Hobgoblin Ultraheavy ProtoMech 2, 5
 Basilisk (Standard), 4
 Roc (Standard), 3
 Roc Z, 2
-Sprite 2, 1
+Sprite Ultraheavy ProtoMech 2, 1

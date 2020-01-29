@@ -420,7 +420,35 @@ public enum MissionRole {
 					break;
 				//Large craft roles
 				case CIVILIAN:
-				
+				    if (!mRec.getRoles().contains(CIVILIAN)) {
+				        return null;
+				    }
+				    break;
+				case CORVETTE:
+                    if (!mRec.getRoles().contains(CORVETTE)) {
+                        return null;
+                    }
+                    break;
+				case DESTROYER:
+				    if (!mRec.getRoles().contains(DESTROYER)) {
+                        return null;
+                    }
+                    break;
+				case FRIGATE:
+				    if (!mRec.getRoles().contains(FRIGATE)) {
+                        return null;
+                    }
+                    break;
+				case CRUISER:
+				    if (!mRec.getRoles().contains(CRUISER)) {
+                        return null;
+                    }
+                    break;
+				case BATTLESHIP:
+				    if (!mRec.getRoles().contains(BATTLESHIP)) {
+                        return null;
+                    }
+                    break;
 				default:
 					roleApplied = false;
 				}

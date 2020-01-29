@@ -52,9 +52,9 @@ public enum MissionRole {
 		case RECON:
 		case CIVILIAN:
 		case COMMAND:
+		case SUPPORT:
 			return true;
 			
-		case SUPPORT:
 		case SPECOPS:
 			return unitType < UnitType.JUMPSHIP;
 			
@@ -418,6 +418,9 @@ public enum MissionRole {
 						avRating += avAdj[2] * (mRec.getSpeed() - (7 - mRec.getWeightClass()));					
 					}
 					break;
+				//Large craft roles
+				case CIVILIAN:
+				
 				default:
 					roleApplied = false;
 				}

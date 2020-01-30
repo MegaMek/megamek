@@ -8,5 +8,5 @@ Orc (Standard),6
 Orc 3,5
 Minotaur 2,4
 Hydra (Standard),3
-Procyon (Quad),2
+Procyon ProtoMech (Quad),2
 Orc 2,1

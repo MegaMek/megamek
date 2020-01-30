@@ -7,6 +7,6 @@ Delphyne (Standard), 5
 Delphyne 2, 6
 Chrysaor 2, 5
 Roc (Standard), 4
-Sprite (Standard), 3
+Sprite Ultraheavy ProtoMech (Standard), 3
 Minotaur (Standard), 2
 Procyon (Standard), 1

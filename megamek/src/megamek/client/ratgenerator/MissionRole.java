@@ -50,11 +50,15 @@ public enum MissionRole {
 	public boolean fitsUnitType(int unitType) {
 		switch (this) {
 		case RECON:
-		case CIVILIAN:
-		case COMMAND:
 		case SUPPORT:
 			return true;
-			
+		
+		case CIVILIAN:
+		    return unitType >= UnitType.SMALL_CRAFT && unitType != UnitType.WARSHIP;
+		    
+		case COMMAND:
+		    return unitType <= UnitType.GUN_EMPLACEMENT;
+		    
 		case SPECOPS:
 			return unitType < UnitType.JUMPSHIP;
 			
@@ -71,7 +75,7 @@ public enum MissionRole {
 			
         case ARTILLERY:
         case MISSILE_ARTILLERY:
-            return unitType < UnitType.CONV_FIGHTER;
+            return unitType < UnitType.CONV_FIGHTER || unitType == UnitType.SMALL_CRAFT || unitType == UnitType.DROPSHIP;
             
 		case INCENDIARY:
 		case ANTI_AIRCRAFT:
@@ -424,6 +428,27 @@ public enum MissionRole {
 				        return null;
 				    }
 				    break;
+				case CARGO:
+				    if (mRec.getRoles().contains(CARGO)) {
+				        avRating += avAdj[2];
+                    } else if (mRec.getRoles().contains(CIVILIAN)) {
+                        avRating += avAdj[1];
+                    } else {
+                        avRating -= avAdj[2];
+                    }
+                    break;
+				case SUPPORT:
+                    if (mRec.getRoles().contains(SUPPORT)) {
+                        avRating += avAdj[2];
+                    } else if (mRec.getRoles().contains(TUG)) {
+                        avRating += avAdj[1];
+                    } else if (mRec.getRoles().contains(CARGO)
+                                || mRec.getRoles().contains(CIVILIAN)) {
+                        avRating += avAdj[0];
+                    } else {
+                        avRating -= avAdj[2];
+                    }
+                    break;
 				case CORVETTE:
                     if (!mRec.getRoles().contains(CORVETTE)) {
                         return null;

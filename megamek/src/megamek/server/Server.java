@@ -10837,7 +10837,7 @@ public class Server implements Runnable {
     }
 
     public void deliverChaffGrenade(Coords coords, Vector<Report> vPhaseReport) {
-        Report r = new Report(5186, Report.PUBLIC);
+        Report r = new Report(5187, Report.PUBLIC);
         r.indent(2);
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
@@ -27877,7 +27877,7 @@ public class Server implements Runnable {
      *
      * @param en    the landing glider protomech
      * @param pos   the <code>Coords</code> of the landing hex
-     * @param elevation    the elevation from which the landing is attempted (usually 1, but may be higher
+     * @param startElevation    the elevation from which the landing is attempted (usually 1, but may be higher
      *                          if the unit is forced to land due to insufficient movement
      * @param distance  the distance the unit moved in the turn prior to landing
      */
@@ -27968,7 +27968,7 @@ public class Server implements Runnable {
      * Crash a VTOL
      *
      * @param en the <code>VTOL</code> to be crashed
-     * @return the <code>Vector<Report></code> containg phasereports
+     * @return the <code>Vector<Report></code> containing phasereports
      */
     private Vector<Report> crashVTOLorWiGE(Tank en) {
         return crashVTOLorWiGE(en, false, false, 0, en.getPosition(),
@@ -27994,7 +27994,7 @@ public class Server implements Runnable {
      * @param en              The {@code VTOL} or {@code WiGE} to crash.
      * @param rerollRotorHits Whether any rotor hits from the crash should be rerolled,
      *                        typically after a "rotor destroyed" critical hit.
-     * @param sideSlipCrash   A <code>boolean</code> value indicating wether this is a
+     * @param sideSlipCrash   A <code>boolean</code> value indicating whether this is a
      *                        sideslip crash or not.
      * @param hexesMoved      The <code>int</code> number of hexes moved.
      * @param crashPos        The <code>Coords</code> of the crash

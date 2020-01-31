@@ -37,7 +37,7 @@ public enum MissionRole {
 	BOMBER, ESCORT, INTERCEPTOR, GROUND_SUPPORT, //unused: STRIKE,
 	/* DropShip roles */
 	ASSAULT, MECH_CARRIER, ASF_CARRIER, VEE_CARRIER, INFANTRY_CARRIER, BA_CARRIER, TROOP_CARRIER,
-	TUG, POCKET_WARSHIP,
+	TUG, POCKET_WARSHIP, PROTOMECH_CARRIER,
 	/* WarShip roles */
 	CORVETTE, DESTROYER, FRIGATE, CRUISER, BATTLESHIP,
 	/* Mechanized Battle armor */
@@ -106,15 +106,18 @@ public enum MissionRole {
 			return unitType == UnitType.AERO || unitType == UnitType.CONV_FIGHTER;
 			
 		case ASSAULT:
-		case MECH_CARRIER:
-		case ASF_CARRIER:
 		case VEE_CARRIER:
 		case INFANTRY_CARRIER:
 		case BA_CARRIER:
-		case TROOP_CARRIER:
+	    case MECH_CARRIER:
 		case TUG:
 		case POCKET_WARSHIP:
+		case PROTOMECH_CARRIER:
 			return unitType == UnitType.DROPSHIP;
+			
+		case TROOP_CARRIER:
+		case ASF_CARRIER:
+		    return unitType == UnitType.DROPSHIP || unitType == UnitType.WARSHIP;
 			
 		case CORVETTE:
 		case DESTROYER:
@@ -394,12 +397,6 @@ public enum MissionRole {
 						avRating -= avAdj[2];
 					}
 					break;
-				case ASSAULT:
-					if (!mRec.getRoles().contains(ASSAULT)) {
-						return null;
-					}
-					break;
-					
 				case BOMBER:
 					if (mRec.getRoles().contains(BOMBER)) {
 						avRating += avAdj[2];
@@ -447,6 +444,80 @@ public enum MissionRole {
                         avRating += avAdj[0];
                     } else {
                         avRating -= avAdj[2];
+                    }
+                    break;
+				case TUG:
+                    if (!mRec.getRoles().contains(TUG)) {
+                        return null;
+                    }
+                    break;
+				case POCKET_WARSHIP:
+				    if (mRec.getRoles().contains(POCKET_WARSHIP)) {
+                        avRating += avAdj[2];
+                    } else if (mRec.getRoles().contains(ASSAULT)) {
+                        avRating += avAdj[0];
+                    } else {
+                        return null;
+                    }
+				    break;
+				case ASSAULT:
+                    if (mRec.getRoles().contains(ASSAULT)) {
+                        avRating += avAdj[2];
+                    } else if (mRec.getRoles().contains(POCKET_WARSHIP)) {
+                        avRating += avAdj[0];
+                    } else {
+                        return null;
+                    }
+                    break;
+				case MECH_CARRIER:
+				    if (mRec.getRoles().contains(MECH_CARRIER)) {
+                        avRating += avAdj[2];
+                    } else if (mRec.getRoles().contains(TROOP_CARRIER)) {
+                        avRating += avAdj[0];
+                    } else {
+                        return null;
+                    }
+                    break;
+				case ASF_CARRIER:
+				    if (mRec.getRoles().contains(ASF_CARRIER)) {
+                        avRating += avAdj[2];
+                    } else if (mRec.getRoles().contains(ASSAULT)) {
+                        avRating += avAdj[0];
+                    } else {
+                        return null;
+                    }
+                    break;
+				case BA_CARRIER:
+				    if (!mRec.getRoles().contains(BA_CARRIER)) {
+                        return null;
+                    }
+                    break;
+				case INFANTRY_CARRIER:
+				    if (mRec.getRoles().contains(INFANTRY_CARRIER)) {
+                        avRating += avAdj[2];
+                    } else if (mRec.getRoles().contains(TROOP_CARRIER)) {
+                        avRating += avAdj[0];
+                    } else {
+                        return null;
+                    }
+                    break;
+				case VEE_CARRIER:
+				    if (mRec.getRoles().contains(VEE_CARRIER)) {
+                        avRating += avAdj[2];
+                    } else if (mRec.getRoles().contains(TROOP_CARRIER)) {
+                        avRating += avAdj[0];
+                    } else {
+                        return null;
+                    }
+                    break;
+				case PROTOMECH_CARRIER:
+				    if (!mRec.getRoles().contains(PROTOMECH_CARRIER)) {
+                        return null;
+                    }
+                    break;
+				case TROOP_CARRIER:
+				    if (!mRec.getRoles().contains(TROOP_CARRIER)) {
+                        return null;
                     }
                     break;
 				case CORVETTE:
@@ -603,11 +674,14 @@ public enum MissionRole {
 			return INFANTRY_CARRIER;
 		case "ba carrier":
 			return BA_CARRIER;
+		case "protomech carrier":
+		    return PROTOMECH_CARRIER;
 		case "tug":
 			return TUG;
 		case "troop carrier":
 			return TROOP_CARRIER;
 		case "pocket ws":
+		case "pocket warship":
 			return POCKET_WARSHIP;
 		case "corvette":
 			return CORVETTE;

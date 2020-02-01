@@ -7,12 +7,12 @@
      MegaMek GitHub Organization <https://github.com/MegaMek>
 
   Lead Developers:
-     Sebastian Brocks <beerockxs@users.sourceforge.net>
-	 Dave Nawton <hammer-gs@users.sourceforge.net>
-	 Nicholas Walczak <arlith@users.sourceforge.net>
-	 Deric "Netzilla" Page <dericpage@users.sourceforge.net>
-     Dylan Myers <https://github.com/Dylan-M>
+	 Carl "Neoancient" Spain
+	 NickAragua
+	 Christopher Watford
 
+  Data Lead
+	 Dave Nawton <hammer-gs@users.sourceforge.net>
 
   AI Coding:
      Steven Hawkins <skh_mail@yahoo.com>
@@ -98,6 +98,7 @@
      Michael Rowlett <eventsbeyondme@users.sourceforge.net>
 	 Juliez <juliez@users.sourceforge.net>
 	 Derrick Turk <derrickturk@users.sourceforge.net>
+	 Justin "Windchild" Bowen
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
@@ -222,7 +223,7 @@
      Colonel Sanders Light (Folders noted with CSL)
 	 
   Splash Screen
-	 Florian "SpOoKy777" Mellies <spooky777@t-online.de>
+ 	 Florian "SpOoKy777" Mellies (https://www.deviantart.com/spooky777)
 	 
   Princess Behaviours
 	 Peter Farland
@@ -243,6 +244,10 @@
 
   MegaMek Developers, Emeritus
      James Lacy <freakboy2571@users.sourceforge.net>
+     Sebastian Brocks <beerockxs@users.sourceforge.net>
+ 	 Nicholas Walczak <arlith@users.sourceforge.net>
+	 Deric "Netzilla" Page <dericpage@users.sourceforge.net>
+     Dylan Myers <https://github.com/Dylan-M>
 
   Icons and Images
       FatCow (http://www.fatcow.com), licensed under CC Attribution (http://creativecommons.org/licenses/by/3.0/)

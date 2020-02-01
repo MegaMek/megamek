@@ -27,6 +27,7 @@ v0.47.3-SNAPSHOT
 + Data: New Sprites and a couple of new maps from Simon Landmine.
 + PR #1620: Allow indirect LRMs to miss legs if target in water [Errata]
 + Issue #1597: Fix RATs referencing 'Nuberu Anti Aircraft Tank', 'Sprite Ultraheavy ProtoMech', and 'Procyon ProtoMech' #1597
++ PR #918 #1613: Improve map editor GUI
 
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor

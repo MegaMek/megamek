@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.47.3-SNAPSHOT
+v0.47.3 (2020-2-11 2200 UTC) 
 + Issue #1546: Large VSP + Targeting Computer applies to-hit mod twice, resulting in too-easy to-hit number
 + PR #1543: Fighter Ejection
 + Issue #920: Selecting a terrain feature in the map editor selects the right terrain type in the terrain type dropdown

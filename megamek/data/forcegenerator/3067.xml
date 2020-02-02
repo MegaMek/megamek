@@ -11418,9 +11418,6 @@
 			<availability>HL:2,CM:6,Periphery:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Quetzalcoatl-Scout JumpShip' unitType='Jumpship'>
-		<availability>IS:1</availability>
-	</chassis>
 	<chassis name='Quickdraw' unitType='Mek'>
 		<availability>MOC:5,CC:3,HL:3,FRR:7,IS:5,Periphery.Deep:4,WOB:3-,FS:3,CIR:4,CDP:4,Periphery:4,TC:5,CS:3-,OA:5,FVC:4,LA:5,FWL:7,NIOPS:3-,DC:5</availability>
 		<model name='QKD-4H'>

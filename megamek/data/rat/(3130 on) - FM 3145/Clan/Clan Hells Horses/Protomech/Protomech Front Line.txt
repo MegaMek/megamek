@@ -1,6 +1,6 @@
 3145 Clan Hell's Horses Protomechs - Front Line
 Hydra (Standard),1
-Procyon (Quad),2
+Procyon ProtoMech (Quad),2
 Orc 2,3
 Orc (Standard),4
 Minotaur P2,5

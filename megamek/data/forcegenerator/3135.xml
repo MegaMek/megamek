@@ -12115,7 +12115,7 @@
 			<availability>CLAN:6</availability>
 		</model>
 	</chassis>
-	<chassis name='Nuberu Anti Aircraft Tank 2' unitType='Tank'>
+	<chassis name='Nuberu Anti Aircraft Tank' unitType='Tank'>
 		<availability>RA.OA:3,RA:4-</availability>
 		<model name='2 &apos;Numantia&apos;'>
 			<roles>fire_support</roles>

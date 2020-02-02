@@ -625,6 +625,14 @@ public class Terrain implements ITerrain, Serializable {
             rv = false;
         } else if (type == Terrains.MAGMA && (level < 1 || level > 2)) {
             rv = false;
+        } else if (type == Terrains.MUD && (level < 1 || level > 2)) {
+            rv = false;
+        } else if (type == Terrains.PAVEMENT && level < 1) {
+            rv = false;
+        } else if (type == Terrains.SNOW && (level < 1 || level > 2)) {
+            rv = false;
+        } else if (type == Terrains.TUNDRA && level != 1) {
+            rv = false;
         }
 
         if (!rv && (errBuff != null)) {

@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-v0.47.3-SNAPSHOT
+v0.47.4-SNAPSHOT
+
+v0.47.3 (2020-2-11 2200 UTC) 
 + Issue #1546: Large VSP + Targeting Computer applies to-hit mod twice, resulting in too-easy to-hit number
 + PR #1543: Fighter Ejection
 + Issue #920: Selecting a terrain feature in the map editor selects the right terrain type in the terrain type dropdown
@@ -26,6 +28,9 @@ v0.47.3-SNAPSHOT
             Bot still doesn't know how to transform, but can use them just fine in each individual form.
 + Data: New Sprites and a couple of new maps from Simon Landmine.
 + PR #1620: Allow indirect LRMs to miss legs if target in water [Errata]
++ Issue #1597: Fix RATs referencing 'Nuberu Anti Aircraft Tank', 'Sprite Ultraheavy ProtoMech', and 'Procyon ProtoMech' #1597
++ PR #918 #1613: Improve map editor GUI
++ Data: RAT Fixes, and adding EVS Map pack (very large maps for anyone interested)
 
 v0.47.2 (2019-11-15 2000 UTC) 
 +PR #1535: Use correct cost for Protomech EDP armor

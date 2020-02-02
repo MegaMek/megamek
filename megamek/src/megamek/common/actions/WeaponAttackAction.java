@@ -1484,7 +1484,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // firing arcs are more complicated
         // TW errata 2.1
         if ((Compute.useSpheroidAtmosphere(game, ae) ||
-                (ae.isAero() && ((IAero) ae).isSpheroid() && ae.getAltitude() == 0))
+                (ae.isAero() && ((IAero) ae).isSpheroid() && (ae.getAltitude() == 0) && game.getBoard().onGround()))
                 && weapon != null) {
             int altDif = target.getAltitude() - ae.getAltitude();
             int range = Compute.effectiveDistance(game, ae, target, false);

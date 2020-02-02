@@ -57,7 +57,7 @@ public class LRMFragHandler extends LRMHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        float toReturn = 1;
+        double toReturn = 1;
         // during a swarm, all damage gets applied as one block to one location
         if ((ae instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
@@ -78,10 +78,8 @@ public class LRMFragHandler extends LRMHandler {
             toReturn = 0;
         }
 
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
-        return (int) Math.ceil(toReturn);
+        toReturn = applyGlancingBlowModifier(toReturn, true);
+        return (int) toReturn;
     }
 
     /*

@@ -61,9 +61,9 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
 
         if (bDirect) {
             toReturn += toHit.getMoS() / 3;
-        } else if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
         }
+        
+        toReturn = applyGlancingBlowModifier(toReturn, false);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
             && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {

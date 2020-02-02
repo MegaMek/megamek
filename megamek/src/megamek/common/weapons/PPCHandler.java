@@ -75,7 +75,7 @@ public class PPCHandler extends EnergyWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage(nRange);
+        double toReturn = wtype.getDamage(nRange);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
                 && wtype.hasModes()) {
@@ -128,9 +128,8 @@ public class PPCHandler extends EnergyWeaponHandler {
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
+        
+        toReturn = applyGlancingBlowModifier(toReturn, false);
 
         return (int) Math.ceil(toReturn);
     }

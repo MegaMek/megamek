@@ -74,9 +74,8 @@ public class GRHandler extends AmmoWeaponHandler {
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
+        
+        toReturn = applyGlancingBlowModifier(toReturn, false);
         return (int) Math.ceil(toReturn);
     }
 }

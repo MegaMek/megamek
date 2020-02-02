@@ -198,13 +198,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         
         // are we a glancing hit?  Check for this here, report it later
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-            } else {
-                bGlancing = false;
-            }
-        }
+        setGlancingBlowFlags(entityTarget);
         
         //Point Defense fire vs Capital Missiles
         
@@ -279,18 +273,15 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
         //TODO: Can't figure out a good way to make Capital Missile bays report direct/glancing blows
         //when Advanced Point Defense is on, but they work correctly.
-        if ((bGlancing) && !(amsBayEngagedCap || pdBayEngagedCap)) {
-            r = new Report(3186);
-            r.subject = ae.getId();
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-        } 
-
-        if ((bDirect) && !(amsBayEngagedCap || pdBayEngagedCap)) {
-            r = new Report(3189);
-            r.subject = ae.getId();
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
+        if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+            addGlancingBlowReports(vPhaseReport);
+    
+            if (bDirect) {
+                r = new Report(3189);
+                r.subject = ae.getId();
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
         }
 
         // we may still have to use ammo, if direct fire
@@ -828,9 +819,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             if (bDirect) {
                 av = Math.min(av + (toHit.getMoS() / 3), av * 2);
             }
-            if (bGlancing) {
-                av = (int) Math.floor(av / 2.0);
-            }
+            av = applyGlancingBlowModifier(av, false);
             av = (int) Math.floor(getBracketingMultiplier() * av);
             return (int) Math.ceil(av);
     }
@@ -874,9 +863,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
 
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
+        toReturn = applyGlancingBlowModifier(toReturn, false);
 
         return (int) toReturn;
     }

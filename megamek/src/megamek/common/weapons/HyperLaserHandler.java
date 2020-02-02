@@ -138,10 +138,8 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
 
         }
 
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
-        return (int) Math.ceil(toReturn);
+        toReturn = applyGlancingBlowModifier(toReturn, true);
+        return (int) toReturn;
     }
 
 }

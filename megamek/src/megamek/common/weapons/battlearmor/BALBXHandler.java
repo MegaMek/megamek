@@ -51,10 +51,8 @@ public class BALBXHandler extends WeaponHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            if (bGlancing) {
-                toReturn /= 2;
-            }
-            return (int) Math.floor(toReturn);
+            toReturn = applyGlancingBlowModifier(toReturn, false);
+            return (int) toReturn;
         }
         return 1;
     }

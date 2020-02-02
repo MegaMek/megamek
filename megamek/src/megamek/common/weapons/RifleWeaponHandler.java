@@ -87,9 +87,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
+        toReturn = applyGlancingBlowModifier(toReturn, false);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
             && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {

@@ -195,9 +195,9 @@ public class SRMTandemChargeHandler extends SRMHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            if (bGlancing) {
-                toReturn /= 2;
-            }
+
+            toReturn = applyGlancingBlowModifier(toReturn, false);
+
             return (int) Math.floor(toReturn);
         }
         return 2;

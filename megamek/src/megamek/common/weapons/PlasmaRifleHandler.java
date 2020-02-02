@@ -112,9 +112,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         if ((target instanceof Mech) || (target instanceof Aero)) {
             int toReturn = 10;
-            if (bGlancing) {
-                toReturn = (int) Math.floor(toReturn / 2.0);
-            }
+            toReturn = applyGlancingBlowModifier(toReturn, false);
             if (game.getOptions().booleanOption(
                     OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                     && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
@@ -175,9 +173,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             } else {
                 toReturn = 10 + Compute.d6(2);
             }
-            if (bGlancing) {
-                toReturn = (int) Math.floor(toReturn / 2.0);
-            }
+            toReturn = applyGlancingBlowModifier(toReturn, false);
         }
         return toReturn;
     }

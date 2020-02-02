@@ -128,9 +128,8 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 toReturn /= 2;
             }
-            if (bGlancing) {
-                toReturn = Math.ceil(toReturn / 2.0);
-            }
+
+            toReturn = applyGlancingBlowModifier(toReturn, false);
         } else {
             toReturn = super.calcDamagePerHit();
         }

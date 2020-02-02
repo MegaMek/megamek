@@ -322,10 +322,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            if (bGlancing) {
-                toReturn /= 2;
-            }
-            return (int) Math.floor(toReturn);
+            toReturn = applyGlancingBlowModifier(toReturn, false);
+            return (int) toReturn;
         }
         return 1;
     }
@@ -405,10 +403,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
-        if (bGlancing) {
-            av = (int) Math.floor(av / 2.0);
-
-        }
+        
+        av = applyGlancingBlowModifier(av, false);
+        
         av = (int) Math.floor(getBracketingMultiplier() * av);
         return (av);
     }
@@ -830,19 +827,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-                r = new Report(3186);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                bGlancing = false;
-            }
-        } else {
-            bGlancing = false;
-        }
+        setGlancingBlowFlags(entityTarget);
+        addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));

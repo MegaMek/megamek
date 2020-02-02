@@ -108,13 +108,10 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                     //Use the to-hit value for the bay handler, otherwise toHit is set to Automatic Success
                     WeaponHandler bayHandler = getParentBayHandler();
                     bGlancing = (roll == bayHandler.toHit.getValue());
+                    bLowProfileGlancing = isLowProfileGlancingBlow(entityTarget, bayHandler.toHit);
                 }
             } else {
-                if (roll == toHit.getValue()) {
-                    bGlancing = true;
-                } else {
-                bGlancing = false;
-                }
+                setGlancingBlowFlags(entityTarget);
             }
         }
         
@@ -207,18 +204,15 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         bMissed = roll < toHit.getValue();
 
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
-        if ((bGlancing) && !(amsBayEngagedCap || pdBayEngagedCap)) {
-            r = new Report(3186);
-            r.subject = ae.getId();
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-        } 
-
-        if ((bDirect) && !(amsBayEngagedCap || pdBayEngagedCap)) {
-            r = new Report(3189);
-            r.subject = ae.getId();
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
+        if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+            addGlancingBlowReports(vPhaseReport);
+    
+            if (bDirect) {
+                r = new Report(3189);
+                r.subject = ae.getId();
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
         }
         
         CounterAV = getCounterAV();
@@ -392,10 +386,8 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
-        if (bGlancing) {
-            av = (int) Math.floor(av / 2.0);
 
-        }
+        av = applyGlancingBlowModifier(av, false);
         av = (int) Math.floor(getBracketingMultiplier() * av);
         
         return av;
@@ -440,9 +432,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
 
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
+        toReturn = applyGlancingBlowModifier(toReturn, false);
 
         return (int) toReturn;
     }

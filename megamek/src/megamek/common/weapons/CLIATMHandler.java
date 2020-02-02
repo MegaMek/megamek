@@ -95,11 +95,9 @@ public class CLIATMHandler extends ATMHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            if (bGlancing) {
-                toReturn /= 2; // Is this correct for partial streak missiles??
-                // it seems as if this only affects infantry -
-                // I'm going to ignore this.
-            }
+            
+            // some question here about "partial streak missiles"
+            toReturn = applyGlancingBlowModifier(toReturn, false);
         }
 
         return (int) toReturn;
@@ -548,19 +546,8 @@ public class CLIATMHandler extends ATMHandler {
             bMissed = roll < toHit.getValue();
 
             // are we a glancing hit?
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-                if (roll == toHit.getValue()) {
-                    bGlancing = true;
-                    r = new Report(3186);
-                    r.subject = subjectId;
-                    r.newlines = 0;
-                    vPhaseReport.addElement(r);
-                } else {
-                    bGlancing = false;
-                }
-            } else {
-                bGlancing = false;
-            }
+            setGlancingBlowFlags(entityTarget);
+            addGlancingBlowReports(vPhaseReport);
 
             // Set Margin of Success/Failure.
             toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -733,19 +720,8 @@ public class CLIATMHandler extends ATMHandler {
             bMissed = roll < toHit.getValue();
 
             // are we a glancing hit?
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-                if (roll == toHit.getValue()) {
-                    bGlancing = true;
-                    r = new Report(3186);
-                    r.subject = subjectId;
-                    r.newlines = 0;
-                    vPhaseReport.addElement(r);
-                } else {
-                    bGlancing = false;
-                }
-            } else {
-                bGlancing = false;
-            }
+            setGlancingBlowFlags(entityTarget);
+            addGlancingBlowReports(vPhaseReport);
 
             // Set Margin of Success/Failure.
             toHit.setMoS(roll - Math.max(2, toHit.getValue()));

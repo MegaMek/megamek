@@ -133,9 +133,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             toReturn = Math.ceil(toReturn);
         }
-        if (bGlancing) {
-            return (int) Math.floor(toReturn / 2.0);
-        }
+        toReturn = applyGlancingBlowModifier(toReturn, false);
         return (int) toReturn;
     }
 }

@@ -139,10 +139,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
-        if (bGlancing) {
-            av = (int) Math.floor(av / 2.0);
 
-        }        
+        av = applyGlancingBlowModifier(av, false);
 
         return (int) Math.ceil(av);
        
@@ -350,19 +348,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         bMissed = roll < toHit.getValue();
                 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-                r = new Report(3186);
-                r.subject = ae.getId();
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                bGlancing = false;
-            }
-        } else {
-            bGlancing = false;
-        }
+        setGlancingBlowFlags(entityTarget);
+        addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));

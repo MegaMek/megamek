@@ -83,9 +83,7 @@ public class ATMHandler extends MissileWeaponHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            if (bGlancing) {
-                toReturn /= 2;
-            }
+            toReturn = applyGlancingBlowModifier(toReturn, false);
         }
 
         return (int) toReturn;
@@ -173,10 +171,7 @@ public class ATMHandler extends MissileWeaponHandler {
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
-        if (bGlancing) {
-            av = (int) Math.floor(av / 2.0);
-
-        }
+        av = applyGlancingBlowModifier(av, false);
         av = (int) Math.floor(getBracketingMultiplier() * av);
         return av;
     }

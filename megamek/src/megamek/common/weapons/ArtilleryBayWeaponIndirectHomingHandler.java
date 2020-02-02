@@ -172,19 +172,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-                r = new Report(3186);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                bGlancing = false;
-            }
-        } else {
-            bGlancing = false;
-        }
+        setGlancingBlowFlags(entityTarget);
+        addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -219,9 +208,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             nDamPerHit -= 10;
         }
         
-        if (bGlancing) {
-            nDamPerHit /= 2;
-        }
+        nDamPerHit = applyGlancingBlowModifier(nDamPerHit, false);
 
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget)) {

@@ -78,6 +78,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bSalvo = false;
     protected boolean bGlancing = false;
     protected boolean bDirect = false;
+    protected boolean bLowProfileGlancing = false;
     protected boolean nukeS2S = false;
     protected WeaponType wtype;
     protected String typeName;
@@ -873,13 +874,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             //Point Defense fire vs Capital Missiles
             
             // are we a glancing hit?  Check for this here, report it later
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-                if (roll == toHit.getValue()) {
-                	bGlancing = true;
-                } else {
-                    bGlancing = false;
-                }
-            }
+            setGlancingBlowFlags(entityTarget);
             
             // Set Margin of Success/Failure and check for Direct Blows
             toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -977,18 +972,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
             //Report Glancing/Direct Blow here because of Capital Missile weirdness
             //TODO: Can't figure out a good way to make Capital Missile bays report direct/glancing blows
             //when Advanced Point Defense is on, but they work correctly.
-            if ((bGlancing) && !(amsBayEngagedCap || pdBayEngagedCap)) {
-                r = new Report(3186);
-                r.subject = ae.getId();
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } 
-
-            if ((bDirect) && !(amsBayEngagedCap || pdBayEngagedCap)) {
-                r = new Report(3189);
-                r.subject = ae.getId();
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
+            if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+                addGlancingBlowReports(vPhaseReport);
+    
+                if (bDirect) {
+                    r = new Report(3189);
+                    r.subject = ae.getId();
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                }
             }
 
             // Do this stuff first, because some weapon's miss report reference
@@ -1291,15 +1283,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
 
-        if (bGlancing) {
-            // Round up glancing blows against conventional infantry
-            if ((target instanceof Infantry)
-                    && !(target instanceof BattleArmor)) {
-                toReturn = (int) Math.ceil(toReturn / 2.0);
-            } else {
-                toReturn = (int) Math.floor(toReturn / 2.0);
-            }
-        }
+        toReturn = applyGlancingBlowModifier(toReturn, 
+                            (target instanceof Infantry) && !(target instanceof BattleArmor));
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
@@ -1348,10 +1333,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
-        if (bGlancing) {
-            av = (int) Math.floor(av / 2.0);
-
-        }
+        
+        av = applyGlancingBlowModifier(av, false);
+        
         av = (int) Math.floor(getBracketingMultiplier() * av);
 
         return av;
@@ -2145,4 +2129,78 @@ public class WeaponHandler implements AttackHandler, Serializable {
         this.isStrafingFirstShot = isStrafingFirstShot;
     }
 
+    /**
+     * Determine the "glancing blow" divider.
+     * 2 if the shot is "glancing" or "glancing due to low profile"
+     * 4 if both
+     * int version
+     */
+    protected int applyGlancingBlowModifier(int initialValue, boolean roundup) {
+        return (int) applyGlancingBlowModifier((double) initialValue, roundup);
+    }
+    
+    /**
+     * Determine the "glancing blow" divider.
+     * 2 if the shot is "glancing" or "glancing due to low profile"
+     * 4 if both
+     * double version
+     */
+    protected double applyGlancingBlowModifier(double initialValue, boolean roundup) {
+        // if we're not going to be applying any glancing blow modifiers, just return what we came in with
+        if(!bGlancing && !bLowProfileGlancing) {
+            return initialValue;
+        }
+        
+        double multiplier = (bGlancing ? 2.0 : 1.0) * (bLowProfileGlancing ? 2.0 : 1.0);        
+        double intermediateValue = initialValue / multiplier;
+        return roundup ? Math.ceil(intermediateValue) : Math.floor(intermediateValue);
+    }
+    
+    /**
+     * Worker function that sets the glancing blow flags for this attack for the target when appropriate
+     */
+    protected void setGlancingBlowFlags(Entity entityTarget) {
+        // are we a glancing hit?  Check for this here, report it later
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
+            if (roll == toHit.getValue()) {
+                bGlancing = true;
+            } else {
+                bGlancing = false;
+            }
+        }
+        
+        // low profile glancing blows are triggered on roll = toHit or toHit - 1
+        bLowProfileGlancing = isLowProfileGlancingBlow(entityTarget, toHit);
+    }
+    
+    /**
+     * Worker function that determines if the given hit on the given entity is a glancing blow
+     * as per narrow/low profile quirk rules
+     */
+    protected boolean isLowProfileGlancingBlow(Entity entityTarget, ToHitData hitData) {
+        return (entityTarget != null) &&
+                entityTarget.hasQuirk(OptionsConstants.QUIRK_POS_LOW_PROFILE) &&
+                ((roll == hitData.getValue()) || (roll == hitData.getValue() - 1));
+    }
+    
+    /**
+     * Worker function that adds the 'glancing blow' reports
+     */
+    protected void addGlancingBlowReports(Vector<Report> vPhaseReport) {
+        Report r;
+        
+        if (bGlancing) {
+            r = new Report(3186);
+            r.subject = ae.getId();
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        }
+        
+        if (bLowProfileGlancing) {
+            r = new Report(9985);
+            r.subject = ae.getId();
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        }
+    }
 }

@@ -165,9 +165,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if(bDirect) {
             av = Math.min(av+(toHit.getMoS()/3), av*2);
         }
-        if(bGlancing) {
-            av = (int) Math.floor(av / 2.0);
-        }
+        av = applyGlancingBlowModifier(av, false);
         return av;
     }
 

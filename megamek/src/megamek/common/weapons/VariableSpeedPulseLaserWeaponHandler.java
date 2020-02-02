@@ -104,9 +104,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
 
         }
 
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
+        toReturn = applyGlancingBlowModifier(toReturn, false);
         return (int) Math.ceil(toReturn);
     }
 

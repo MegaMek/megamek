@@ -62,6 +62,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -250,6 +252,8 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JLabel gameLogFilenameLabel;
     
     private JComboBox<String> skinFiles;
+
+    private JComboBox<UITheme> uiThemes;
 
     // Avanced Settings
     private JList<AdvancedOptionData> keys;
@@ -842,6 +846,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         skinFiles.setSelectedItem(SkinXMLHandler.defaultSkinXML);
         // If this select fials, the default skin will be selected
         skinFiles.setSelectedItem(GUIPreferences.getInstance().getSkinFile());
+
+        uiThemes.removeAllItems();
+        for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
+            uiThemes.addItem(new UITheme(lafInfo.getClassName(), lafInfo.getName()));
+        }
+        uiThemes.setSelectedItem(new UITheme(GUIPreferences.getInstance().getUITheme()));
         
         fovInsideEnabled.setSelected(gs.getFovHighlight());
         fovHighlightAlpha.setValue((int) ((100./255.) * gs.getFovHighlightAlpha()));
@@ -948,6 +958,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
+
+        UITheme newUITheme = (UITheme)uiThemes.getSelectedItem();
+        String oldUITheme = gs.getUITheme();
+        if (!oldUITheme.equals(newUITheme.getClassName())) {
+            gs.setUITheme(newUITheme.getClassName());
+        }
 
         String newSkinFile = (String)skinFiles.getSelectedItem();
         String oldSkinFile = gs.getSkinFile();
@@ -1308,6 +1324,20 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(mmSymbol);
         comps.add(row);
 
+        // UI Theme
+        uiThemes = new JComboBox<UITheme>();
+        uiThemes.setMaximumSize(new Dimension(400,uiThemes.getMaximumSize().height));
+        //JLabel uiThemesLabel = new JLabel(Messages.getString("CommonSettingsDialog.skinFile")); //$NON-NLS-1$
+        JLabel uiThemesLabel = new JLabel("UI Theme"); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(uiThemesLabel);
+        row.add(uiThemes);
+        comps.add(row);   
+        
+        // Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        comps.add(row);
 
         // Skin
         skinFiles = new JComboBox<String>();

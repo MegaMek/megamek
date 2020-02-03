@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.47.4-SNAPSHOT
 + PR #1626: Add LargeCraft Roles to RatGen
++ Issue #1630: Fixed an issue introduced in 47.3 which prevented spheroid dropships from firing nose/aft weapons on space maps
 
 v0.47.3 (2020-2-11 2200 UTC) 
 + Issue #1546: Large VSP + Targeting Computer applies to-hit mod twice, resulting in too-easy to-hit number

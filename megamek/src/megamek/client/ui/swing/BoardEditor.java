@@ -1232,7 +1232,7 @@ public class BoardEditor extends JComponent
     }
     
     /**
-     * Sets valid basic Fueltank values as far as they are missing
+     * Sets valid basic Fuel Tank values as far as they are missing
      */
     private void setBasicFuelTank() {
         // There is only fuel_tank:1, so this can be set
@@ -1386,15 +1386,12 @@ public class BoardEditor extends JComponent
 
     public void boardLoad() {
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
-        fc
-                .setLocation(frame.getLocation().x + 150,
-                             frame.getLocation().y + 100);
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return ((null != dir.getName())
-                        && (dir.getName().endsWith(".board") || dir.isDirectory())); //$NON-NLS-1$
+                return (dir.getName().endsWith(".board") || dir.isDirectory()); //$NON-NLS-1$
             }
 
             @Override
@@ -1403,8 +1400,7 @@ public class BoardEditor extends JComponent
             }
         });
         int returnVal = fc.showOpenDialog(frame);
-        if ((returnVal != JFileChooser.APPROVE_OPTION)
-            || (fc.getSelectedFile() == null)) {
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -1449,10 +1445,8 @@ public class BoardEditor extends JComponent
         // save!
         try {
             OutputStream os = new FileOutputStream(curfile);
-            // tell the board to save!
-            board.save(os);
-            // okay, done!
-            os.close();
+            board.save(os);// tell the board to save!
+            os.close(); // okay, done!
         } catch (IOException ex) {
             System.err.println("error opening file to save!"); //$NON-NLS-1$
             System.err.println(ex);
@@ -1467,23 +1461,19 @@ public class BoardEditor extends JComponent
             boardSaveAsImage(ignoreUnits);
             return;
         }
-        JDialog waitD = new JDialog(frame, Messages
-                .getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
-        waitD.add(new JLabel(Messages
-                                     .getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
+        JDialog waitD = new JDialog(frame, Messages.getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
+        waitD.add(new JLabel(Messages.getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
         waitD.setSize(250, 130);
         // move to middle of screen
         waitD.setLocation(
-                (frame.getSize().width / 2) - (waitD.getSize().width / 2), (frame
-                                                                                    .getSize().height
-                                                                            / 2) - (waitD.getSize().height / 2));
+                (frame.getSize().width / 2) - (waitD.getSize().width / 2),
+                (frame.getSize().height / 2) - (waitD.getSize().height / 2));
         waitD.setVisible(true);
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(bv.getEntireBoardImage(ignoreUnits), "png",
-                    curfileImage);
+            ImageIO.write(bv.getEntireBoardImage(ignoreUnits), "png", curfileImage);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1497,15 +1487,12 @@ public class BoardEditor extends JComponent
      */
     private void boardSaveAs() {
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
-        fc
-                .setLocation(frame.getLocation().x + 150,
-                             frame.getLocation().y + 100);
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return ((null != dir.getName())
-                        && (dir.getName().endsWith(".board") || dir.isDirectory())); //$NON-NLS-1$
+                return (dir.getName().endsWith(".board") || dir.isDirectory()); //$NON-NLS-1$
             }
 
             @Override
@@ -1514,10 +1501,8 @@ public class BoardEditor extends JComponent
             }
         });
         int returnVal = fc.showSaveDialog(frame);
-        if ((returnVal != JFileChooser.APPROVE_OPTION)
-            || (fc.getSelectedFile() == null)) {
-            // I want a file, y'know!
-            return;
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+            return; // I want a file, y'know!
         }
         curfile = fc.getSelectedFile();
 
@@ -1540,13 +1525,12 @@ public class BoardEditor extends JComponent
      */
     private void boardSaveAsImage(boolean ignoreUnits) {
         JFileChooser fc = new JFileChooser(".");
-        fc.setLocation(frame.getLocation().x + 150,
-                       frame.getLocation().y + 100);
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return (null != dir.getName()) && (dir.getName().endsWith(".png") || dir.isDirectory()); //$NON-NLS-1$
+                return (dir.getName().endsWith(".png") || dir.isDirectory()); //$NON-NLS-1$
             }
 
             @Override
@@ -1565,8 +1549,7 @@ public class BoardEditor extends JComponent
         // make sure the file ends in png
         if (!curfileImage.getName().toLowerCase().endsWith(".png")) { //$NON-NLS-1$
             try {
-                curfileImage = new File(curfileImage.getCanonicalPath()
-                                        + ".png"); //$NON-NLS-1$
+                curfileImage = new File(curfileImage.getCanonicalPath() + ".png"); //$NON-NLS-1$
             } catch (IOException ie) {
                 // failure!
                 return;
@@ -1650,8 +1633,8 @@ public class BoardEditor extends JComponent
     private void showHelp() {
         // Do we need to create the "help" dialog?
         if (help == null) {
-            File helpfile = new File("docs\\Boards Stuff", "Map Editor-readme.txt"); //$NON-NLS-1$
-            help = new CommonHelpDialog(frame, helpfile);
+            File helpFile = new File("docs\\Boards Stuff", "Map Editor-readme.txt"); //$NON-NLS-1$
+            help = new CommonHelpDialog(frame, helpFile);
         }
 
         // Show the help dialog.

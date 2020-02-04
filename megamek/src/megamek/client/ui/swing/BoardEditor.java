@@ -1448,7 +1448,7 @@ public class BoardEditor extends JComponent
             boardSaveAs();
             return;
         }
-        // save!b
+        // save!
         try {
             OutputStream os = new FileOutputStream(curfile);
             board.save(os);// tell the board to save!

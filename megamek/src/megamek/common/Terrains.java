@@ -341,10 +341,8 @@ public class Terrains implements ITerrainFactory {
     /**
      * This function converts the name of a terrain into the constant.
      *
-     * @param name
-     *            the name of the terrain (from the names list.
-     * @return an integer corresponding to the terrain, or 0 if no match (terrain
-     *         none)
+     * @param name the name of the terrain (from the names list above)
+     * @return an integer corresponding to the terrain, or 0 if no match (terrain none)
      */
     public static int getType(String name) {
         Integer o = getHash().get(name);

@@ -174,7 +174,6 @@ public class Terrains implements ITerrainFactory {
      * @param level the level of the terrain to get the specific name
      * @return a displayable name for this terrain (for tooltips)
      */
-
     public static String getDisplayName(int type, int level) {
         switch (type) {
         case (BUILDING):
@@ -503,5 +502,4 @@ public class Terrains implements ITerrainFactory {
             return 0;
         }
     }
-
 }

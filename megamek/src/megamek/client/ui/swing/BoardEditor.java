@@ -524,21 +524,25 @@ public class BoardEditor extends JComponent
             // When there is an icon, then the text can be removed
             button.setText("");
         }
+
         // Get the hover icon
         file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
-        if (imageButton != null)
+        if (imageButton != null) {
             button.setRolloverIcon(new ImageIcon(imageButton));
+        }
         
         // Get the disabled icon, if any
         file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_G.png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
-        if (imageButton != null)
+        if (imageButton != null) {
             button.setDisabledIcon(new ImageIcon(imageButton));
-        
+        }
+
         String tt = Messages.getString("BoardEditor."+iconName+"TT");
-        if (tt.length() != 0)
+        if (tt.length() != 0) {
             button.setToolTipText(tt); //$NON-NLS-1$ //$NON-NLS-2$
+        }
         button.setMargin(new Insets(0,0,0,0));
         if (bList != null) bList.add(button);
         return button;
@@ -1581,7 +1585,7 @@ public class BoardEditor extends JComponent
     //
     public void itemStateChanged(ItemEvent ie) {
         if (ie.getSource().equals(cheRoadsAutoExit)) {
-            // Set the new value for the option, and refrest the board.
+            // Set the new value for the option, and refresh the board.
             board.setRoadsAutoExit(cheRoadsAutoExit.isSelected());
             bv.updateBoard();
             repaintWorkingHex();

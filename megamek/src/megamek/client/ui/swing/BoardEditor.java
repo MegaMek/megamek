@@ -691,7 +691,13 @@ public class BoardEditor extends JComponent
             else if (e.isControlDown()) {
                 terrainType = Terrains.BUILDING;
                 int oldLevel = curHex.getTerrain(terrainType).getLevel();
-                newLevel = Math.min(5, oldLevel + wheelDir);
+                if ((oldLevel == 1) && (wheelDir == -1)) {
+                    newLevel = oldLevel;
+                } else if ((oldLevel == 4) && (wheelDir == 1)) { //TODO : Implement Walls
+                    newLevel = oldLevel;
+                } else {
+                    newLevel = oldLevel + wheelDir;
+                }
             }
             else {
                 terrainType = Terrains.BLDG_ELEV;
@@ -1442,7 +1448,7 @@ public class BoardEditor extends JComponent
             boardSaveAs();
             return;
         }
-        // save!
+        // save!b
         try {
             OutputStream os = new FileOutputStream(curfile);
             board.save(os);// tell the board to save!

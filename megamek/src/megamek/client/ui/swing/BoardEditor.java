@@ -417,8 +417,7 @@ public class BoardEditor extends JComponent
                     if (hexLeveltoDraw != -1000) {
                         LinkedList<Coords> allBrushHexes = getBrushCoords(c) ;
                         for (Coords h: allBrushHexes) {
-                            if (!buttonOOC.isSelected() ||
-                                    (buttonOOC.isSelected() && board.getHex(h).isClearHex()))
+                            if (!buttonOOC.isSelected() || board.getHex(h).isClearHex())
                             {
                                 saveToUndo(h);
                                 relevelHex(h);
@@ -434,9 +433,7 @@ public class BoardEditor extends JComponent
                         LinkedList<Coords> allBrushHexes = getBrushCoords(c);
                         for (Coords h: allBrushHexes) {
                             // test if texture overwriting is active
-                            if ((!buttonOOC.isSelected() ||
-                                    (buttonOOC.isSelected() && board.getHex(h).isClearHex() )  )
-                                    && curHex.isValid(null))
+                            if ((!buttonOOC.isSelected() || board.getHex(h).isClearHex()) && curHex.isValid(null))
                             {
                                 saveToUndo(h);
                                 if (isCTRL) { // CTRL-Click
@@ -856,8 +853,7 @@ public class BoardEditor extends JComponent
         panDN.add(Box.createHorizontalStrut(5));
 
         // Auto Exits to Pavement
-        cheRoadsAutoExit = new JCheckBox(Messages
-                .getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
+        cheRoadsAutoExit = new JCheckBox(Messages.getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
         cheRoadsAutoExit.addItemListener(this);
         cheRoadsAutoExit.setSelected(true);
 
@@ -1756,21 +1752,39 @@ public class BoardEditor extends JComponent
         } else if (ae.getSource().equals(texTerrainLevel)) {
             updateWhenSelected();
         } else if (ae.getSource().equals(texTerrExits)) {
+            int exitsVal = texTerrExits.getNumber();
+            if (exitsVal == 0) {
+                cheTerrExitSpecified.setSelected(false);
+            } else if (exitsVal > 63) {
+                texTerrExits.setNumber(63);
+            }
             updateWhenSelected();
         } else if (ae.getSource().equals(butTerrExits)) {
             ExitsDialog ed = new ExitsDialog(frame);
-            cheTerrExitSpecified.setSelected(true);
-            ed.setExits(texTerrExits.getNumber());
+            int exitsVal = texTerrExits.getNumber();
+            ed.setExits(exitsVal);
             ed.setVisible(true);
-            texTerrExits.setNumber(ed.getExits());
+            exitsVal = ed.getExits();
+            texTerrExits.setNumber(exitsVal);
+            if (exitsVal != 0) {
+                cheTerrExitSpecified.setSelected(true);
+            } else {
+                cheTerrExitSpecified.setSelected(false);
+            }
             updateWhenSelected();
         } else if (ae.getSource().equals(butExitUp)) {
             cheTerrExitSpecified.setSelected(true);
-            texTerrExits.incValue();
+            if (texTerrExits.getNumber() < 63) {
+                texTerrExits.incValue();
+            }
             updateWhenSelected();
         } else if (ae.getSource().equals(butExitDown)) {
-            cheTerrExitSpecified.setSelected(true);
             texTerrExits.decValue();
+            if (texTerrExits.getNumber() != 0) {
+                cheTerrExitSpecified.setSelected(true);
+            } else {
+                cheTerrExitSpecified.setSelected(false);
+            }
             updateWhenSelected();
         } else if ("viewMiniMap".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             minimapW.setVisible(!minimapW.isVisible());

@@ -204,6 +204,13 @@ public class Compute {
     }
 
     /**
+     * Wrapper to random#randomFloat()
+     */
+    public static float randomFloat() {
+        return random.randomFloat();
+    }
+
+    /**
      * Sets the RNG to the desired type
      */
     public static void setRNG(int type) {

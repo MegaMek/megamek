@@ -5,7 +5,7 @@ v0.47.4-SNAPSHOT
 + Issue #1630: Fixed an issue introduced in 47.3 which prevented spheroid dropships from firing nose/aft weapons on space maps
 + PR #1650: When a bay door gets blown out, only blow out one bay door instead of two
 + PR #1648: Don't auto-eject crew from large space craft due to ammo explosions and such
-+ Issue #1641: Fixes for undesired map editor behavior involving buildings
++ Issue #1641, #1643: Fixes for undesired map editor behavior involving buildings
 
 v0.47.3 (2020-2-11 2200 UTC) 
 + Issue #1546: Large VSP + Targeting Computer applies to-hit mod twice, resulting in too-easy to-hit number

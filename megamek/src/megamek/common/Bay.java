@@ -133,7 +133,8 @@ public class Bay implements Transporter, ITechnology {
     }
 
     public int getCurrentDoors() {
-        return currentdoors;
+        // defense against invalid values
+        return Math.min(doors, Math.max(currentdoors, 0));
     }
 
     public void setCurrentDoors(int d) {

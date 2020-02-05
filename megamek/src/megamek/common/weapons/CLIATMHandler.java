@@ -254,6 +254,10 @@ public class CLIATMHandler extends ATMHandler {
         if (bGlancing && streakInactive()) {
             nMissilesModifier -= 4;
         }
+        
+        if (bLowProfileGlancing && streakInactive()) {
+            nMissilesModifier -= 4;
+        }
 
         // Seems to affect even streak, potentially countering the AMS penalty?
         if (bDirect) {

@@ -148,7 +148,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
             vPhaseReport.addElement(r);
             missed = true;
         } else {
-            if (bGlancing) {
+            if (bGlancing || bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             if (bDirect
@@ -165,7 +165,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 }
             } else if ((target instanceof Tank) || (target instanceof Mech)) {
 
-                if (bGlancing) {
+                if (bGlancing || bLowProfileGlancing) {
                     hit.setSpecCritmod(-4);
                 } else if (bDirect) {
                     hit.setSpecCritmod((toHit.getMoS() / 3) - 2);

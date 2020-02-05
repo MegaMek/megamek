@@ -196,7 +196,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
             missed = true;
         } else {
-            if (bGlancing) {
+            if (bGlancing || bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             vPhaseReport

@@ -2151,9 +2151,19 @@ public class WeaponHandler implements AttackHandler, Serializable {
             return initialValue;
         }
         
-        double multiplier = (bGlancing ? 2.0 : 1.0) * (bLowProfileGlancing ? 2.0 : 1.0);        
-        double intermediateValue = initialValue / multiplier;
+        double divisor = getTotalGlancingBlowFactor();        
+        double intermediateValue = initialValue / divisor;
         return roundup ? Math.ceil(intermediateValue) : Math.floor(intermediateValue);
+    }
+    
+    /**
+     * Logic to determine the glancing blow multiplier:
+     * 1 if no glancing blow
+     * 2 if one type of glancing blow (either usual or narrow/low profile)
+     * 4 if both types of glancing blow
+     */
+    protected double getTotalGlancingBlowFactor() {
+        return (bGlancing ? 2.0 : 1.0) * (bLowProfileGlancing ? 2.0 : 1.0);
     }
     
     /**

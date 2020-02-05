@@ -153,7 +153,7 @@ public class ACAPHandler extends ACWeaponHandler {
             vPhaseReport.addElement(r);
         } else {
             int critModifer = 0;
-            if (bGlancing) {
+            if (bGlancing || bLowProfileGlancing) {
                 hit.makeGlancingBlow();
                 critModifer -= 2;
             } else if (bDirect) {

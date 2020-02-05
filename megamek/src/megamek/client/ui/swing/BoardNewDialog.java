@@ -33,7 +33,7 @@ public class BoardNewDialog extends JDialog implements ActionListener {
     private JButton butCancel;
 
     BoardNewDialog(JFrame frame) {
-        super(frame, Messages.getString("BoardEditor.SetDimentions"), true); //$NON-NLS-1$
+        super(frame, Messages.getString("BoardEditor.SetDimensions"), true); //$NON-NLS-1$
         xvalue = 0;
         yvalue = 0;
         labWidth = new JLabel(

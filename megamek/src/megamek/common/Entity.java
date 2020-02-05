@@ -8055,7 +8055,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                                           .size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
-            chosenBay.setCurrentDoors(chosenBay.getCurrentDoors() - 1);
             bayType = chosenBay.getType();
         }
 

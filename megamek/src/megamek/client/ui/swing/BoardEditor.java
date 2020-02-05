@@ -1755,11 +1755,7 @@ public class BoardEditor extends JComponent
             ed.setVisible(true);
             exitsVal = ed.getExits();
             texTerrExits.setNumber(exitsVal);
-            if (exitsVal != 0) {
-                cheTerrExitSpecified.setSelected(true);
-            } else {
-                cheTerrExitSpecified.setSelected(false);
-            }
+            cheTerrExitSpecified.setSelected(exitsVal != 0);
             updateWhenSelected();
         } else if (ae.getSource().equals(butExitUp)) {
             cheTerrExitSpecified.setSelected(true);
@@ -1769,11 +1765,7 @@ public class BoardEditor extends JComponent
             updateWhenSelected();
         } else if (ae.getSource().equals(butExitDown)) {
             texTerrExits.decValue();
-            if (texTerrExits.getNumber() != 0) {
-                cheTerrExitSpecified.setSelected(true);
-            } else {
-                cheTerrExitSpecified.setSelected(false);
-            }
+            cheTerrExitSpecified.setSelected(texTerrExits.getNumber() != 0);
             updateWhenSelected();
         } else if ("viewMiniMap".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             minimapW.setVisible(!minimapW.isVisible());

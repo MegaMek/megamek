@@ -92,8 +92,8 @@ public class RandomNameGenerator implements Serializable {
 
     private static RandomNameGenerator rng;
 
-    Map<String, Vector<String>> firstm;
-    Map<String, Vector<String>> firstf;
+    Map<String, Vector<String>> firstM;
+    Map<String, Vector<String>> firstF;
     Map<String, Vector<String>> last;
     Map<String, Vector<String>> factionLast;
     Map<String, Map<String, Vector<String>>> factionFirst;
@@ -112,22 +112,21 @@ public class RandomNameGenerator implements Serializable {
     }
 
     public void populateNames() {
-        // TODO: how do I weight name vectors by frequency, without making them
-        // gargantuan?
-        if (null == firstm) {
-            firstm = new HashMap<String, Vector<String>>();
+        // TODO: how do I weight name vectors by frequency, without making them gargantuan?
+        if (null == firstM) {
+            firstM = new HashMap<>();
         }
-        if (null == firstf) {
-            firstf = new HashMap<String, Vector<String>>();
+        if (null == firstF) {
+            firstF = new HashMap<>();
         }
         if (null == last) {
-            last = new HashMap<String, Vector<String>>();
+            last = new HashMap<>();
         }
         if (null == factionLast) {
-            factionLast = new HashMap<String, Vector<String>>();
+            factionLast = new HashMap<>();
         }
         if (null == factionFirst) {
-            factionFirst = new HashMap<String, Map<String, Vector<String>>>();
+            factionFirst = new HashMap<>();
         }
 
         // READ IN MALE FIRST NAMES
@@ -148,16 +147,16 @@ public class RandomNameGenerator implements Serializable {
                 int weight = Integer.parseInt(values[1]);
                 String key = values[2];
                 int i = 0;
-                if (!firstm.containsKey(key)) {
-                    Vector<String> v = new Vector<String>();
+                if (!firstM.containsKey(key)) {
+                    Vector<String> v = new Vector<>();
                     while (i < weight) {
                         v.add(name);
                         i++;
                     }
-                    firstm.put(key, v);
+                    firstM.put(key, v);
                 } else {
                     while (i < weight) {
-                        firstm.get(key).add(name);
+                        firstM.get(key).add(name);
                         i++;
                     }
                 }
@@ -184,16 +183,16 @@ public class RandomNameGenerator implements Serializable {
                 int weight = Integer.parseInt(values[1]);
                 String key = values[2];
                 int i = 0;
-                if (!firstf.containsKey(key)) {
-                    Vector<String> v = new Vector<String>();
+                if (!firstF.containsKey(key)) {
+                    Vector<String> v = new Vector<>();
                     while (i < weight) {
                         v.add(name);
                         i++;
                     }
-                    firstf.put(key, v);
+                    firstF.put(key, v);
                 } else {
                     while (i < weight) {
-                        firstf.get(key).add(name);
+                        firstF.get(key).add(name);
                         i++;
                     }
                 }
@@ -221,7 +220,7 @@ public class RandomNameGenerator implements Serializable {
                 String key = values[2];
                 int i = 0;
                 if (!last.containsKey(key)) {
-                    Vector<String> v = new Vector<String>();
+                    Vector<String> v = new Vector<>();
                     while (i < weight) {
                         v.add(name);
                         i++;
@@ -241,21 +240,20 @@ public class RandomNameGenerator implements Serializable {
         // READ IN FACTION FILES
         // all faction files should be in the faction directory
         File factions_dir_path = new MegaMekFile(Configuration.namesDir(), DIR_NAME_FACTIONS).getFile();
-        String[] filenames = factions_dir_path.list();
-        if (null == filenames) {
+        String[] fileNames = factions_dir_path.list();
+        if (null == fileNames) {
             return;
         }
-        for (int filen = 0; filen < filenames.length; filen++) {
-            String filename = filenames[filen];
+        for (String filename : fileNames) {
             String key = filename.split("\\.txt")[0]; //$NON-NLS-1$
             if ((key.length() < 1) || factionLast.containsKey(key)) {
                 continue;
             }
-            factionLast.put(key, new Vector<String>());
-            factionFirst.put(key, new HashMap<String, Vector<String>>());
+            factionLast.put(key, new Vector<>());
+            factionFirst.put(key, new HashMap<>());
             File ff = new MegaMekFile(factions_dir_path, filename).getFile();
-            try(Scanner factionInput = new Scanner(new FileInputStream(ff), "UTF-8")) { //$NON-NLS-1$
-                Map<String, Vector<String>> hash = new HashMap<String, Vector<String>>();
+            try (Scanner factionInput = new Scanner(new FileInputStream(ff), "UTF-8")) { //$NON-NLS-1$
+                Map<String, Vector<String>> hash = new HashMap<>();
                 while (factionInput.hasNextLine()) {
                     String line = factionInput.nextLine();
                     String[] values = line.split(","); //$NON-NLS-1$
@@ -265,12 +263,11 @@ public class RandomNameGenerator implements Serializable {
                         factionLast.get(key).add(ethnicity);
                         freq--;
                     }
-                    Vector<String> v = new Vector<String>();
+                    Vector<String> v = new Vector<>();
                     for (int i = 3; i < values.length; i++) {
                         freq = Integer.parseInt(values[i]);
-                        // TODO: damm - I don't have the integer codes for ethnicity
-                        // here, for now just assume they are the
-                        // same as i-2
+                        // TODO: damn - I don't have the integer codes for ethnicity
+                        // TODO: here, for now just assume they are the same as i-2
                         while (freq > 0) {
                             v.add(Integer.toString(i - 2));
                             freq--;
@@ -281,7 +278,6 @@ public class RandomNameGenerator implements Serializable {
                 factionFirst.put(key, hash);
             } catch (IOException fne) {
                 System.err.println("RandomNameGenerator.populateNames(): Could not find '" + ff + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-                continue;
             }
         }
     }
@@ -294,18 +290,18 @@ public class RandomNameGenerator implements Serializable {
             pcs.removePropertyChangeListener(listener);
         }
     }
-    
+
     protected void setInitialized(boolean initialized) {
         pcs.firePropertyChange(PROP_INITIALIZED, this.initialized, this.initialized = initialized);
     }
-    
+
     public boolean isInitialized() {
         return initialized;
     }
-    
+
     /**
      * Generate a single random name
-     * 
+     *
      * @return - a string giving the name
      */
     public String generate() {
@@ -314,8 +310,8 @@ public class RandomNameGenerator implements Serializable {
 
     public String generate(boolean isFemale) {
         if ((null != chosenFaction) && (null != factionLast)
-                && (null != factionFirst) && (null != firstm)
-                && (null != firstf) && (null != last)) {
+                && (null != factionFirst) && (null != firstM)
+                && (null != firstF) && (null != last)) {
             // this is a total hack, but for now lets assume that
             // if the chosenFaction name contains the word "clan"
             // we should only spit out first names
@@ -323,28 +319,24 @@ public class RandomNameGenerator implements Serializable {
 
             Vector<String> ethnicities = factionLast.get(chosenFaction);
             if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                String eLast = ethnicities.get(Compute.randomInt(ethnicities
-                        .size()));
+                String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
                 // ok now we need to decide on a first name list
                 ethnicities = factionFirst.get(chosenFaction).get(eLast);
                 if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                    String eFirst = ethnicities.get(Compute
-                            .randomInt(ethnicities.size()));
+                    String eFirst = ethnicities.get(Compute.randomInt(ethnicities.size()));
                     // ok now we can get the first and last name vectors
                     if (isClan) {
                         eFirst = eLast;
                     }
-                    Vector<String> fnames = firstm.get(eFirst);
+                    Vector<String> firstNames = firstM.get(eFirst);
                     if (isFemale) {
-                        fnames = firstf.get(eFirst);
+                        firstNames = firstF.get(eFirst);
                     }
-                    Vector<String> lnames = last.get(eLast);
-                    if ((null != fnames) && (null != lnames)
-                            && (fnames.size() > 0) && (lnames.size() > 0)) {
-                        String first = fnames.get(Compute.randomInt(fnames
-                                .size()));
-                        String last = lnames.get(Compute.randomInt(lnames
-                                .size()));
+                    Vector<String> lastNames = last.get(eLast);
+                    if ((null != firstNames) && (null != lastNames)
+                            && (firstNames.size() > 0) && (lastNames.size() > 0)) {
+                        String first = firstNames.get(Compute.randomInt(firstNames.size()));
+                        String last = lastNames.get(Compute.randomInt(lastNames.size()));
                         if (isClan) {
                             return first;
                         }
@@ -354,6 +346,48 @@ public class RandomNameGenerator implements Serializable {
             }
         }
         return "Unnamed";
+    }
+
+    public String[] generateGivenNameSurnameSplit(boolean isFemale) {
+        String[] name = {"", ""};
+        if ((chosenFaction != null) && (factionLast != null)
+                && (factionFirst != null) && (firstM != null)
+                && (firstF != null) && (last != null)) {
+            // this is a total hack, but for now lets assume that
+            // if the chosenFaction name contains the word "clan"
+            // we should only spit out first names
+            boolean isClan = chosenFaction.toLowerCase().contains("clan");
+
+            Vector<String> ethnicities = factionLast.get(chosenFaction);
+            if ((null != ethnicities) && (ethnicities.size() > 0)) {
+                String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
+                // ok now we need to decide on a first name list
+                ethnicities = factionFirst.get(chosenFaction).get(eLast);
+                if ((null != ethnicities) && (ethnicities.size() > 0)) {
+                    String eFirst = ethnicities.get(Compute.randomInt(ethnicities.size()));
+                    // ok now we can get the first and last name vectors
+                    if (isClan) {
+                        eFirst = eLast;
+                    }
+                    Vector<String> firstNames = firstM.get(eFirst);
+                    if (isFemale) {
+                        firstNames = firstF.get(eFirst);
+                    }
+                    Vector<String> lastNames = last.get(eLast);
+                    if ((null != firstNames) && (null != lastNames)
+                            && (firstNames.size() > 0) && (lastNames.size() > 0)) {
+                        name[0] = firstNames.get(Compute.randomInt(firstNames.size()));
+                        if (!isClan) {
+                            name[1] = lastNames.get(Compute.randomInt(lastNames.size()));
+                        }
+                    }
+                }
+            }
+        } else {
+            name[0] = "Unnamed";
+            name[1] = "Person";
+        }
+        return name;
     }
 
     public Iterator<String> getFactions() {
@@ -375,7 +409,7 @@ public class RandomNameGenerator implements Serializable {
         return percentFemale;
     }
 
-    public void setPerentFemale(int i) {
+    public void setPercentFemale(int i) {
         percentFemale = i;
     }
 
@@ -396,13 +430,11 @@ public class RandomNameGenerator implements Serializable {
             rng = new RandomNameGenerator();
         }
         if (!rng.initialized && !rng.initializing) {
-            rng.loader = new Thread(new Runnable() {
-                public void run() {
-                    rng.initializing = true;
-                    rng.populateNames();
-                    if (rng != null) {
-                        rng.setInitialized(true);
-                    }
+            rng.loader = new Thread(() -> {
+                rng.initializing = true;
+                rng.populateNames();
+                if (rng != null) {
+                    rng.setInitialized(true);
                 }
             }, "Random Name Generator name populator");
             rng.loader.setPriority(Thread.NORM_PRIORITY - 1);

@@ -71,6 +71,14 @@ public class SmallCraft extends Aero {
         }
     }
     
+    /**
+     * @return Returns the autoEject setting (always off for large craft)
+     */
+    @Override
+    public boolean isAutoEject() {
+        return false;
+    }
+    
     @Override
     public boolean isPrimitive() {
         return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;

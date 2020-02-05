@@ -215,6 +215,14 @@ public class Jumpship extends Aero {
                 .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
+    
+    /**
+     * @return Returns the autoEject setting (always off for large craft)
+     */
+    @Override
+    public boolean isAutoEject() {
+        return false;
+    }
 
     public String getCritDamageString() {
         StringBuilder toReturn = new StringBuilder(super.getCritDamageString());

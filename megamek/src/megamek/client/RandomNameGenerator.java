@@ -348,6 +348,17 @@ public class RandomNameGenerator implements Serializable {
         return "Unnamed";
     }
 
+    /**
+     * Generate a single random name split between a given name and surname
+     *
+     * @return - a String[] containing the name,
+     *              with the given name at String[0]
+     *              and the surname at String[1]
+     */
+    public String[] generateGivenNameSurnameSplit() {
+        return generateGivenNameSurnameSplit(isFemale());
+    }
+
     public String[] generateGivenNameSurnameSplit(boolean isFemale) {
         String[] name = {"", ""};
         if ((chosenFaction != null) && (factionLast != null)

@@ -848,7 +848,7 @@ public class TestMech extends TestEntity {
                     // Armored cockpit (including command console) adds 1 ton, regardless of number of slots
                     if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
                             && (cs.getIndex() == Mech.SYSTEM_COCKPIT)) {
-                        cockpitWeight = 1.0;;
+                        cockpitWeight = 1.0;
                     } else {
                         weight += 0.5;
                     }

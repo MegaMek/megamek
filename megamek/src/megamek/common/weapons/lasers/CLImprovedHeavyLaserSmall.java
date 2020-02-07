@@ -35,7 +35,7 @@ public class CLImprovedHeavyLaserSmall extends LaserWeapon {
     public CLImprovedHeavyLaserSmall() {
         super();
         name = "Improved Heavy Small Laser";
-        shortName = "Imp. Heavy Medium Laser";
+        shortName = "Imp. Heavy Small Laser";
         setInternalName("CLImprovedSmallHeavyLaser");
         addLookupName("CLImprovedHeavySmallLaser");
         addLookupName("Clan Improved Small Heavy Laser");

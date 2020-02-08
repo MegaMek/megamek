@@ -24,6 +24,10 @@ Trinity Medium Battle Armor
 3073
 </year>
 
+<originalBuildYear>
+3073
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Leg
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -45,14 +52,14 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-ISBARL4:LA
+ISBARL4:RA
 ISBARL5:Body
 BABattleClaw:RA
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-ISBAGrenadeLauncher:RA
+ISBAMicroGrenadeLauncher:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -66,6 +73,13 @@ ISBAGrenadeLauncher:RA
 
 <Trooper 4 Equipment>
 </Trooper 4 Equipment>
+
+<notes>
+Dev Level Errata:
+Replace "Auto Grenade Launcher" with "Micro Grenade Launcher"
+
+(GL = LA, RL4 = RA, RL5 = Body & detachable)
+</notes>
 
 <source>
 TRO 3085 - Jihad

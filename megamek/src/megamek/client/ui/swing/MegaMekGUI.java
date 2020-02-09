@@ -23,6 +23,7 @@ import java.awt.DisplayMode;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
@@ -37,6 +38,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -53,6 +55,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
@@ -144,9 +147,15 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         System.setProperty("com.apple.mrj.application.apple.menu.about.name",
                 "MegaMek");
 
+        // Add additional themes
+        UIManager.installLookAndFeel("Flat Light", "com.formdev.flatlaf.FlatLightLaf");
+        UIManager.installLookAndFeel("Flat IntelliJ", "com.formdev.flatlaf.FlatIntelliJLaf");
+        UIManager.installLookAndFeel("Flat Dark", "com.formdev.flatlaf.FlatDarkLaf");
+        UIManager.installLookAndFeel("Flat Darcula", "com.formdev.flatlaf.FlatDarculaLaf");
+
         // this should also help to make MegaMek look more system-specific
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(GUIPreferences.getInstance().getUITheme());
         } catch (Exception e) {
             System.err.println("Error setting look and feel!");
             e.printStackTrace();
@@ -1168,6 +1177,23 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         if (e.getName().equals(GUIPreferences.SKIN_FILE)) {
             showMainMenu();
             frame.repaint();
+        } else if (e.getName().equals(GUIPreferences.UI_THEME)) {
+            try {
+                UIManager.setLookAndFeel((String)e.getNewValue());
+                // We went all Oprah and gave everybody frames...
+                // so now we have to let everybody who got a frame
+                // under their chair know that we updated our look
+                // and feel.
+                for (Frame f : Frame.getFrames()) {
+                    SwingUtilities.updateComponentTreeUI(f);
+                }
+                // ...and also all of our windows and dialogs, etc.
+                for (Window w : Window.getWindows()) {
+                    SwingUtilities.updateComponentTreeUI(w);
+                }
+            } catch (Exception ex) {
+                DefaultMmLogger.getInstance().error(getClass(), "preferenceChange(GUIPreferences.UI_THEME)", ex);
+            }
         }
     }
     

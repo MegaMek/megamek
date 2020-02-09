@@ -355,6 +355,7 @@ public class BoardEditor extends JComponent
             //$NON-NLS-2$
             frame.dispose();
         }
+
         // Add a mouse listener for mouse button release 
         // to handle Undo
         bv.addMouseListener(new MouseAdapter() {
@@ -506,7 +507,7 @@ public class BoardEditor extends JComponent
             }
         });
     }
-    
+
     /**
      * Sets up JButtons
      */

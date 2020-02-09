@@ -156,7 +156,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
                                                TitledBorder.LEFT,
                                                TitledBorder.DEFAULT_POSITION);
         panel.setBorder(border);
-        panel.setBackground(Color.white);
         String longestEntry = title;
 
         Vector<String> playerList = new Vector<>(ghostPlayers.size());

@@ -42,6 +42,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeModelListener;
@@ -508,12 +509,11 @@ public class ForceGeneratorViewUi {
                     tree, value, sel,
                     expanded, leaf, row,
                     hasFocus);
-            setOpaque(true);
-            setBackground(Color.WHITE);
-            setForeground(Color.BLACK);
+            setBackground(UIManager.getColor("Tree.textBackground"));
+            setForeground(UIManager.getColor("Tree.textForeground"));
             if(sel) {
-                setBackground(Color.DARK_GRAY);
-                setForeground(Color.WHITE);
+                setBackground(UIManager.getColor("Tree.selectionBackground"));
+                setForeground(UIManager.getColor("Tree.selectionForeground"));
             }
 
             ForceDescriptor fd = (ForceDescriptor)value;

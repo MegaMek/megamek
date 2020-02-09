@@ -15,7 +15,6 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -56,8 +55,6 @@ public class PlayerListDialog extends JDialog implements ActionListener {
         getContentPane().setLayout(new BorderLayout());
 
         JPanel listPan = new JPanel();
-        listPan.setBackground(Color.white);
-        playerList.setBackground(Color.white);
         listPan.add(playerList, BorderLayout.NORTH);
         listPan.add(Box.createVerticalStrut(40), BorderLayout.SOUTH);
 

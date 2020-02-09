@@ -1979,6 +1979,10 @@ public class Infantry extends Entity {
         dest = b;
     }
 
+    public boolean hasSpecialization() {
+        return infSpecs != 0;
+    }
+
     public boolean hasSpecialization(int spec) {
         return (infSpecs & spec) > 0;
     }
@@ -2034,7 +2038,6 @@ public class Infantry extends Entity {
             getMisc().removeAll(eqToRemove);
         }
         infSpecs = spec;
-
     }
 
     public static String getSpecializationName(int spec) {

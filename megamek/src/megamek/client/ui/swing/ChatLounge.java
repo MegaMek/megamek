@@ -75,6 +75,7 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
@@ -3466,16 +3467,35 @@ public class ChatLounge extends AbstractPhaseDisplay
                                         .booleanOption(OptionsConstants.RPG_TOUGHNESS)));
                     }
                 }
+
                 if (isSelected) {
-                    c.setBackground(Color.DARK_GRAY);
+                    c.setForeground(table.getSelectionForeground());
+                    c.setBackground(table.getSelectionBackground());
                 } else {
-                    // tiger stripes
-                    if ((row % 2) == 0) {
-                        c.setBackground(new Color(220, 220, 220));
-                    } else {
-                        c.setBackground(Color.WHITE);
+                    Color background = table.getBackground();
+                    if (row % 2 != 0) {
+                        Color alternateColor = UIManager.getColor("Table.alternateRowColor");
+                        if (alternateColor != null) {
+                            background = alternateColor;
+                        }
+                    }
+                    c.setForeground(table.getForeground());
+                    c.setBackground(background);
+                }
+
+                if (hasFocus) {
+                    if (!isSelected ) {
+                        Color col = UIManager.getColor("Table.focusCellForeground");
+                        if (col != null) {
+                            c.setForeground(col);
+                        }
+                        col = UIManager.getColor("Table.focusCellBackground");
+                        if (col != null) {
+                            c.setBackground(col);
+                        }
                     }
                 }
+
                 return c;
             }
 
@@ -4399,7 +4419,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
     }
-
+    
     public class MekInfo extends JPanel {
 
         /**
@@ -4447,11 +4467,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         public void setText(String s, boolean isSelected) {
-            String color = "black";
-            if (isSelected) {
-                color = "white";
-            }
-            lblImage.setText("<html><font size='2' color='" + color + "'>" + s + "</font></html>");
+            lblImage.setText(String.format("<html>%s</html>", s));
         }
 
         public void clearImage() {

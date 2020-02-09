@@ -835,6 +835,9 @@ public class BLKFile {
             if (infantry.hasSneakECM()) {
                 blk.writeBlockData("sneakecm", "true");
             }
+            if (infantry.hasSpecialization()) {
+                blk.writeBlockData("specialization", infantry.getSpecializations());
+            }
             ArrayList<String> augmentations = new ArrayList<>();
             for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
             		e.hasMoreElements();) {

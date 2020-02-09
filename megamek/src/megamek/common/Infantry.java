@@ -1979,6 +1979,22 @@ public class Infantry extends Entity {
         dest = b;
     }
 
+    public boolean hasSpecialization() {
+        return hasSpecialization(BRIDGE_ENGINEERS)
+                || hasSpecialization(DEMO_ENGINEERS)
+                || hasSpecialization(FIRE_ENGINEERS)
+                || hasSpecialization(MINE_ENGINEERS)
+                || hasSpecialization(SENSOR_ENGINEERS)
+                || hasSpecialization(TRENCH_ENGINEERS)
+                || hasSpecialization(MARINES)
+                || hasSpecialization(MOUNTAIN_TROOPS)
+                || hasSpecialization(PARAMEDICS)
+                || hasSpecialization(PARATROOPS)
+                || hasSpecialization(TAG_TROOPS)
+                || hasSpecialization(XCT)
+                || hasSpecialization(SCUBA);
+    }
+
     public boolean hasSpecialization(int spec) {
         return (infSpecs & spec) > 0;
     }
@@ -2034,7 +2050,6 @@ public class Infantry extends Entity {
             getMisc().removeAll(eqToRemove);
         }
         infSpecs = spec;
-
     }
 
     public static String getSpecializationName(int spec) {

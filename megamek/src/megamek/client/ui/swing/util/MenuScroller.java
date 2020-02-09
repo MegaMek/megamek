@@ -4,7 +4,6 @@
 
 package megamek.client.ui.swing.util;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -19,6 +18,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.MenuSelectionManager;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
@@ -578,10 +578,10 @@ public class MenuScroller {
     public void paintIcon(Component c, Graphics g, int x, int y) {
       Dimension size = c.getSize();
       Graphics g2 = g.create(size.width / 2 - 5, size.height / 2 - 5, 10, 10);
-      g2.setColor(Color.GRAY);
+      g2.setColor(UIManager.getColor("MenuItem.disabledForeground"));
       g2.drawPolygon(xPoints, yPoints, 3);
       if (c.isEnabled()) {
-        g2.setColor(Color.BLACK);
+        g2.setColor(UIManager.getColor("MenuItem.foreground"));
         g2.fillPolygon(xPoints, yPoints, 3);
       }
       g2.dispose();

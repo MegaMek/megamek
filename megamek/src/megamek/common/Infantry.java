@@ -1980,19 +1980,7 @@ public class Infantry extends Entity {
     }
 
     public boolean hasSpecialization() {
-        return hasSpecialization(BRIDGE_ENGINEERS)
-                || hasSpecialization(DEMO_ENGINEERS)
-                || hasSpecialization(FIRE_ENGINEERS)
-                || hasSpecialization(MINE_ENGINEERS)
-                || hasSpecialization(SENSOR_ENGINEERS)
-                || hasSpecialization(TRENCH_ENGINEERS)
-                || hasSpecialization(MARINES)
-                || hasSpecialization(MOUNTAIN_TROOPS)
-                || hasSpecialization(PARAMEDICS)
-                || hasSpecialization(PARATROOPS)
-                || hasSpecialization(TAG_TROOPS)
-                || hasSpecialization(XCT)
-                || hasSpecialization(SCUBA);
+        return infSpecs != 0;
     }
 
     public boolean hasSpecialization(int spec) {

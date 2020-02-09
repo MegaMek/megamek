@@ -45,6 +45,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -555,14 +556,15 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
                     Object value, boolean isSelected, boolean hasFocus,
                     int row, int column) {
                 Component c = this;
-                setOpaque(true);
                 String name = getValueAt(row, column).toString();
                 setText(getValueAt(row, column).toString());
                 setImage(category, name);
                 if (isSelected) {
-                    setBackground(new Color(220, 220, 220));
+                    setBackground(UIManager.getColor("Table.selectionBackground"));
+                    setForeground(UIManager.getColor("Table.selectionForeground"));
                 } else {
-                    setBackground(Color.WHITE);
+                    setBackground(UIManager.getColor("Table.background"));
+                    setForeground(UIManager.getColor("Table.foreground"));
                 }
 
                 return c;

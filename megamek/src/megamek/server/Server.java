@@ -5322,10 +5322,6 @@ public class Server implements Runnable {
             // but VTOL keep altitude
             if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                 nextAltitude = Math.max(nextAltitude, curAltitude);
-            } else if (entity.getMovementMode() == EntityMovementMode.WIGE
-                    && elevation > 0 && nextAltitude < curAltitude) {
-                // Airborne WiGEs drop to one level above the surface
-                nextAltitude++;
             } else {
                 // Is there a building to "catch" the unit?
                 if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -5363,16 +5359,25 @@ public class Server implements Runnable {
                 }
                 if ((nextAltitude <= nextHex.surface())
                     && (curAltitude >= curHex.surface())) {
-                    // Hovercraft can "skid" over water.
+                    // Hovercraft and WiGEs can "skid" over water.
                     // all units can skid over ice.
-                    if ((entity instanceof Tank)
-                            && (entity.getMovementMode() == EntityMovementMode.HOVER)
+                    if ((entity.getMovementMode().equals(EntityMovementMode.HOVER)
+                                || entity.getMovementMode().equals(EntityMovementMode.WIGE))
                             && nextHex.containsTerrain(Terrains.WATER)) {
                         nextAltitude = nextHex.surface();
                     } else {
                         if (nextHex.containsTerrain(Terrains.ICE)) {
                             nextAltitude = nextHex.surface();
                         }
+                    }
+                }
+                if (entity.getMovementMode() == EntityMovementMode.WIGE
+                        && elevation > 0 && nextAltitude < curAltitude) {
+                    // Airborne WiGEs drop to one level above the surface
+                    if (entity.climbMode()) {
+                        nextAltitude = curAltitude;
+                    } else {
+                        nextAltitude++;
                     }
                 }
             }

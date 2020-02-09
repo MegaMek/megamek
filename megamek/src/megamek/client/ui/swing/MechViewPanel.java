@@ -20,7 +20,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -67,8 +66,6 @@ public class MechViewPanel extends JPanel {
     
     public MechViewPanel(int width, int height, boolean noBorder) {
  
-        setBackground(Color.WHITE);
-        
         icon = null;
         
         txtMek = new JTextPane();

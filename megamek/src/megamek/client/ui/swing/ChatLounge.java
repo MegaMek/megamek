@@ -3475,6 +3475,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                     Color background = table.getBackground();
                     if (row % 2 != 0) {
                         Color alternateColor = UIManager.getColor("Table.alternateRowColor");
+                        if (alternateColor == null) {
+                            // If we don't have an alternate row color, use 'controlHighlight'
+                            // as it is pretty reasonable across the various themes.
+                            alternateColor = UIManager.getColor("controlHighlight");
+                        }
                         if (alternateColor != null) {
                             background = alternateColor;
                         }
@@ -4419,7 +4424,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
     }
-    
+
     public class MekInfo extends JPanel {
 
         /**

@@ -1327,8 +1327,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         // UI Theme
         uiThemes = new JComboBox<UITheme>();
         uiThemes.setMaximumSize(new Dimension(400,uiThemes.getMaximumSize().height));
-        //JLabel uiThemesLabel = new JLabel(Messages.getString("CommonSettingsDialog.skinFile")); //$NON-NLS-1$
-        JLabel uiThemesLabel = new JLabel("UI Theme"); //$NON-NLS-1$
+        JLabel uiThemesLabel = new JLabel(Messages.getString("CommonSettingsDialog.uiTheme")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(uiThemesLabel);
         row.add(uiThemes);

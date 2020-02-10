@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+0.47.5-SNAPSHOT
+
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen
 + Issue #1630: Fixed an issue introduced in 47.3 which prevented spheroid dropships from firing nose/aft weapons on space maps

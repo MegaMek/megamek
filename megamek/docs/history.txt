@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.47.5-SNAPSHOT
++ Data: Removing broken Unit from Fan Council TRO
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

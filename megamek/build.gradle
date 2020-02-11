@@ -361,7 +361,7 @@ task assembleDist(overwrite: true) {
     group = 'distribution'
     dependsOn unixDistTar
     dependsOn windowsDistZip
-    dependsOn macDistTar
+//    dependsOn macDistTar
 }
 
 task buildFromRepo (type: GradleBuild) {

@@ -68,7 +68,7 @@ ext {
 }
 
 jar {
-    archiveName = 'MegaMek.jar'
+    archiveFileName = 'MegaMek.jar'
     manifest {
         attributes "Main-Class": mainClassName
         attributes 'Class-Path' : project.sourceSets.main.runtimeClasspath.files
@@ -146,8 +146,8 @@ task unitFilesZip (dependsOn: copyFiles) {
     file(unitFiles).eachDir {subDir ->
         dependsOn tasks.create("${name}${subDir.name}", Zip) {
             from subDir
-            archiveName "${subDir.name}.zip"
-            destinationDir file("${fileStagingDir}/${unitFiles}")
+            archiveFileName = "${subDir.name}.zip"
+            destinationDirectory = file("${fileStagingDir}/${unitFiles}")
         }
     }
     inputs.dir "${projectDir}/${unitFiles}"
@@ -157,8 +157,8 @@ task unitFilesZip (dependsOn: copyFiles) {
 task ratZip (type: Zip) {
     description = 'Creates a zip archive of all the random assignment tables.'
     from rats
-    archiveName "rat_default.zip"
-    destinationDir file("${fileStagingDir}/${rats}")
+    archiveFileName = "rat_default.zip"
+    destinationDirectory = file("${fileStagingDir}/${rats}")
     doFirst {
         mkdir "${fileStagingDir}/${rats}"
     }
@@ -219,7 +219,7 @@ task createOSXBundle (dependsOn: jar) {
                 mainClass: project.mainClassName,
                 stubfile: osxApplicationStub,
                 dir: osxBundleDir,
-                jar: "${jar.destinationDir}/${jar.archiveName}",
+                jar: "${jar.destinationDirectory}/${jar.archiveFileName}",
                 jvmversion: '1.8+',
                 icon: "${projectDir}/${data}/images/misc/megamek.icns",
                 useJavaXKey: 'true',
@@ -281,6 +281,7 @@ createExe {
     outfile = 'MegaMek.exe'
     icon = "${projectDir}/data/images/misc/megamek.ico"
     def inifile = outfile.replace('.exe', '.l4j.ini')
+    jar = "${project.tasks.getByName("jar").archiveFile.get()}"
     inputs.file  jar
     outputs.file "${buildDir}/launch4j/${outfile}"
     outputs.file "${buildDir}/launch4j/${inifile}"
@@ -301,7 +302,7 @@ unixDistTar {
     description = 'Creates *nix distribution packaged as a tar ball'
     dependsOn stageFiles
     dependsOn createStartScripts
-    extension = 'tar.gz'
+    archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
 
@@ -309,7 +310,7 @@ macDistTar {
     description = 'Creates mac OSX distribution'
     dependsOn stageFiles
     dependsOn createOSXBundle
-    extension = 'tar.bz2'
+    archiveExtension = 'tar.bz2'
     compression = Compression.BZIP2
 }
 
@@ -333,8 +334,8 @@ task sourceZip (type: Zip) {
         exclude "**/build/**"
         exclude "**/.*"
     }
-    archiveName "megamek-${version}-source.zip"
-    destinationDir file(distributionDir)
+    archiveFileName = "megamek-${archiveVersion}-source.zip"
+    destinationDirectory = file(distributionDir)
 }
 
 task sourceTar (type: Tar) {
@@ -343,9 +344,9 @@ task sourceTar (type: Tar) {
         exclude "**/build/**"
         exclude "**/.*"
     }
-    archiveName "megamek-${version}-source.tar.gz"
+    archiveFileName = "megamek-${archiveVersion}-source.tar.gz"
     compression = Compression.GZIP
-    destinationDir file(distributionDir)
+    destinationDirectory = file(distributionDir)
 }
 
 // The distribution plugin adds the distro packages to the assemble task, which causes the build task
@@ -360,7 +361,7 @@ task assembleDist(overwrite: true) {
     group = 'distribution'
     dependsOn unixDistTar
     dependsOn windowsDistZip
-    dependsOn macDistTar
+//    dependsOn macDistTar
 }
 
 task buildFromRepo (type: GradleBuild) {
@@ -385,13 +386,13 @@ task release (type: Copy) {
 task sourcesJar(type: Jar) {
     description = 'Creates a source archive for publication to a maven repository'
     from sourceSets.main.allJava
-    classifier = 'sources'
+    archiveClassifier = 'sources'
 }
 
 task javadocJar(type: Jar) {
     description = 'Creates a documentation archive for publication to a maven repository'
     from javadoc
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
 }
 
 publishing {

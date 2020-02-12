@@ -329,7 +329,7 @@ public class LRMSwarmHandler extends LRMHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             int missiles = waa.isSwarmingMissiles() ? waa.getSwarmMissiles()
                     : wtype.getRackSize();
             double toReturn = Compute.directBlowInfantryDamage(
@@ -338,7 +338,7 @@ public class LRMSwarmHandler extends LRMHandler {
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             
-            toReturn = applyGlancingBlowModifier(toReturn, false);
+            toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }
         return 1;

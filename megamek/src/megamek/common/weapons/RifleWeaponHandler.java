@@ -63,7 +63,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
 
         double toReturn = wtype.getDamage();
         // we default to direct fire weapons for anti-infantry damage
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                     bDirect ? toHit.getMoS() : 0,
                     wtype.getInfantryDamageClass(),
@@ -87,7 +87,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        toReturn = applyGlancingBlowModifier(toReturn, false);
+        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
             && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
@@ -196,7 +196,11 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
             missed = true;
         } else {
-            if (bGlancing || bLowProfileGlancing) {
+            if (bGlancing) {
+                hit.makeGlancingBlow();
+            }
+            
+            if(bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             vPhaseReport

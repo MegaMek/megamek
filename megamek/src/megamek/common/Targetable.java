@@ -87,7 +87,13 @@ public interface Targetable extends Serializable {
 
     /** @return if this is off the board */
     boolean isOffBoard();
-    
+
+    /**
+     * @return true if this is an entity subject to rules for conventional infantry
+     */
+    default boolean isConventionalInfantry() {
+        return false;
+    }
 
     /**
      * @return if this is an <code>Entity</code> capable of aerospace movement

@@ -83,7 +83,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
         }
         
 
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
                     toReturn, bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
@@ -93,7 +93,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
         
-        toReturn = applyGlancingBlowModifier(toReturn, false);
+        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
         return (int) Math.ceil(toReturn);
     }
 

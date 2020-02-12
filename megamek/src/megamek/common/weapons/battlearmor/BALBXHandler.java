@@ -45,13 +45,13 @@ public class BALBXHandler extends WeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
                     wtype.getRackSize() * 2, bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            toReturn = applyGlancingBlowModifier(toReturn, false);
+            toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }
         return 1;

@@ -64,8 +64,7 @@ public class MGHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         double toReturn = nDamPerHit;
-        if (weapon.isRapidfire()
-            && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
+        if (weapon.isRapidfire() && !(target.isConventionalInfantry())) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             // nDamPerHit was already set in useAmmo
             toReturn = applyGlancingBlowModifier(toReturn, false);
@@ -75,15 +74,14 @@ public class MGHandler extends AmmoWeaponHandler {
                                     toReturn * 2);
             }
         } else {
-            if ((target instanceof Infantry)
-                    && !(target instanceof BattleArmor)) {
+            if (target.isConventionalInfantry()) {
                 toReturn = Compute.directBlowInfantryDamage(
                         wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
                         wtype.getInfantryDamageClass(),
                         ((Infantry) target).isMechanized(),
                         toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
                 
-                toReturn = applyGlancingBlowModifier(toReturn, false);
+                toReturn = applyGlancingBlowModifier(toReturn, true);
             } else {
                 toReturn = wtype.getDamage();
                 if (bDirect) {

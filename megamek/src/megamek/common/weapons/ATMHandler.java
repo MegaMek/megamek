@@ -77,13 +77,13 @@ public class ATMHandler extends MissileWeaponHandler {
         } else {
             toReturn = 2;
         }
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
                     wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            toReturn = applyGlancingBlowModifier(toReturn, false);
+            toReturn = applyGlancingBlowModifier(toReturn, true);
         }
 
         return (int) toReturn;

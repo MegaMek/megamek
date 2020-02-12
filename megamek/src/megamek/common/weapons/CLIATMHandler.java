@@ -89,7 +89,7 @@ public class CLIATMHandler extends ATMHandler {
             toReturn = 2;
         }
 
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
                     wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
@@ -97,7 +97,9 @@ public class CLIATMHandler extends ATMHandler {
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             
             // some question here about "partial streak missiles"
-            toReturn = applyGlancingBlowModifier(toReturn, false);
+            if(streakInactive()) {
+                toReturn = applyGlancingBlowModifier(toReturn, true);
+            }
         }
 
         return (int) toReturn;

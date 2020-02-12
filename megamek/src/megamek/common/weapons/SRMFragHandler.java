@@ -66,13 +66,13 @@ public class SRMFragHandler extends SRMHandler {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // against infantry, we have 1 hit
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn *= wtype.getRackSize();
             if (bDirect) {
                 toReturn += toHit.getMoS() / 3;
             }
             
-            toReturn = applyGlancingBlowModifier(toReturn, false);
+            toReturn = applyGlancingBlowModifier(toReturn, true);
         }
 
         if (((target instanceof Entity) && !(target instanceof Infantry))

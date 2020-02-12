@@ -152,14 +152,21 @@ public class ACAPHandler extends ACWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         } else {
-            int critModifer = 0;
-            if (bGlancing || bLowProfileGlancing) {
+            int critModifier = 0;
+            if (bGlancing) {
                 hit.makeGlancingBlow();
-                critModifer -= 2;
-            } else if (bDirect) {
-                critModifer += toHit.getMoS() / 3;
+                critModifier -= 2;
             }
-            hit.makeArmorPiercing(atype, critModifer);
+            
+            if(bLowProfileGlancing) {
+                hit.makeGlancingBlow();
+                critModifier -= 2;
+            }
+            
+            if (bDirect) {
+                critModifier += toHit.getMoS() / 3;
+            }
+            hit.makeArmorPiercing(atype, critModifier);
             vPhaseReport
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget

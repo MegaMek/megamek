@@ -65,7 +65,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
             }
         }
 
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                     bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
@@ -85,8 +85,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
             && (nRange > nRanges[RangeType.RANGE_LONG])) {
             // Against conventional infantry, treat as direct fire energy
-            if ((target instanceof Infantry) 
-                    && !(target instanceof BattleArmor) ) {
+            if (target.isConventionalInfantry()) {
                 toReturn -= 1;
             } else { // Else, treat as pulse weapon
                 toReturn = (int) Math.floor(toReturn / 2.0);
@@ -95,8 +94,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > nRanges[RangeType.RANGE_EXTREME])) {
          // Against conventional infantry, treat as direct fire energy
-            if ((target instanceof Infantry) 
-                    && !(target instanceof BattleArmor) ) {
+            if (target.isConventionalInfantry()) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             } else { // Else, treat as pulse weapon
                 toReturn = (int) Math.floor(toReturn / 3.0);
@@ -104,7 +102,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
 
         }
 
-        toReturn = applyGlancingBlowModifier(toReturn, false);
+        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
         return (int) Math.ceil(toReturn);
     }
 

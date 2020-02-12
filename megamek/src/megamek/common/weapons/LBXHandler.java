@@ -59,13 +59,13 @@ public class LBXHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
                     wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
                     WeaponType.WEAPON_CLUSTER_BALLISTIC,
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            toReturn = applyGlancingBlowModifier(toReturn, false);
+            toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }
         return 1;

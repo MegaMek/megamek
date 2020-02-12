@@ -287,7 +287,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
             mapHeight = (Integer) spnMapHeight.getModel().getValue();
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(clientGUI.frame, Messages
-                    .getString("BoardSelectionDialog.InvalidNumberOfmaps"),
+                    .getString("BoardSelectionDialog.InvalidNumberOfMaps"),
                     Messages.getString("BoardSelectionDialog.InvalidMapSize"),
                     JOptionPane.ERROR_MESSAGE);
             return;
@@ -297,7 +297,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         if ((boardWidth <= 0) || (boardHeight <= 0) || (mapWidth <= 0)
                 || (mapHeight <= 0)) {
             JOptionPane.showMessageDialog(clientGUI.frame, Messages
-                    .getString("BoardSelectionDialog.MapSizeMustBeGreateter0"),
+                    .getString("BoardSelectionDialog.MapSizeMustBeGreaterThan0"),
                     Messages.getString("BoardSelectionDialog.InvalidMapSize"),
                     JOptionPane.ERROR_MESSAGE);
             return;

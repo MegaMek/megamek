@@ -48,6 +48,14 @@ BattleArmorHandles - troopers:-1
 2
 </engine_type>
 
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <omni>
 1
 </omni>
@@ -80,6 +88,7 @@ Flamer:OMNI
 </Left Equipment>
 
 <Rear Equipment>
+Hitch
 </Rear Equipment>
 
 <Turret Equipment>

@@ -1,10 +1,21 @@
 VERSION HISTORY:
 ----------------
-v0.47.4-SNAPSHOT
+0.47.5-SNAPSHOT
++ Data: Removing broken Unit from Fan Council TRO
++ Issue #1661: Grounded Aero Penalty for AirMech or Mech Mode LAMs
+
+v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen
 + Issue #1630: Fixed an issue introduced in 47.3 which prevented spheroid dropships from firing nose/aft weapons on space maps
++ PR #1650: When a bay door gets blown out, only blow out one bay door instead of two
++ PR #1648: Don't auto-eject crew from large space craft due to ammo explosions and such
++ Issue #1641, #1643: Fixes for undesired map editor behavior involving buildings
++ Issue #1655: Printing wrong weapon
++ Data: Various Fixes (#1652,#1615,#1545,#1534) and some errata.
++ Issue #1647: WiGEs can't sideslip across water
++ Issue #1479: Add theme selection and dark themes
 
-v0.47.3 (2020-2-11 2200 UTC) 
+v0.47.3 (2020-2-01 2200 UTC) 
 + Issue #1546: Large VSP + Targeting Computer applies to-hit mod twice, resulting in too-easy to-hit number
 + PR #1543: Fighter Ejection
 + Issue #920: Selecting a terrain feature in the map editor selects the right terrain type in the terrain type dropdown

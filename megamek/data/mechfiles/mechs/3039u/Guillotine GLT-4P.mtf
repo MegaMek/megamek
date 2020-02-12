@@ -10,7 +10,7 @@ Rules Level:1
 
 Mass:70
 Engine:280 Fusion Engine(IS)
-Structure:Standard
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:22 Single
@@ -112,9 +112,9 @@ Head:
 Life Support
 Sensors
 Cockpit
+-Empty-
 Sensors
 Life Support
--Empty-
 -Empty-
 -Empty-
 -Empty-

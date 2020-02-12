@@ -69,7 +69,7 @@ public abstract class MMRandom {
      *            value is less than or equal to zero, an
      *            <code>IllegalArgumentException</code> will be thrown.
      * @return a <code>Roll</code> object containing the roll results.
-     * @throws <code>IllegalArgumentException</code> will be thrown if the
+     * @throws IllegalArgumentException will be thrown if the
      *             input is <= 0.
      */
     Roll d6(int nDice) {
@@ -121,6 +121,12 @@ public abstract class MMRandom {
     abstract int randomInt(int maxValue);
 
     /**
+     * Returns a random <code>float</code> in the range of 0 to 1
+     * @return a random <code>float</code> from the value set [0,1]
+     */
+    abstract float randomFloat();
+
+    /**
      * Uses com.sun.java.util.collections.Random
      */
     static class SunRandom extends MMRandom {
@@ -129,6 +135,11 @@ public abstract class MMRandom {
         @Override
         public int randomInt(int maxValue) {
             return random.nextInt(maxValue);
+        }
+
+        @Override
+        public float randomFloat() {
+            return random.nextFloat();
         }
     }
 
@@ -139,7 +150,7 @@ public abstract class MMRandom {
         java.security.SecureRandom random;
 
         /**
-         * Contruct, making a new thread to init the RNG
+         * Construct, making a new thread to init the RNG
          */
         public CryptoRandom() throws NoSuchMethodException {
             // hack: just check to see if there's java.util.Random@nextInt(int)
@@ -149,17 +160,18 @@ public abstract class MMRandom {
             // all clear, get on with the normal init
             random = new java.security.SecureRandom();
 
-            Thread initRNG = new Thread(new Runnable() {
-                public void run() {
-                    random.nextInt();
-                }
-            }, "Random Number Init (CryptoRandom)");
+            Thread initRNG = new Thread(() -> random.nextInt(), "Random Number Init (CryptoRandom)");
             initRNG.start();
         }
 
         @Override
         public int randomInt(int maxValue) {
             return random.nextInt(maxValue);
+        }
+
+        @Override
+        public float randomFloat() {
+            return random.nextFloat();
         }
     }
 
@@ -230,5 +242,4 @@ public abstract class MMRandom {
             index = 0;
         }
     }
-
 }

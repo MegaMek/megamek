@@ -24,6 +24,10 @@ Thumper Artillery Vehicle
 2734
 </year>
 
+<originalBuildYear>
+2734
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -49,7 +56,6 @@ Wheeled
 42
 42
 28
-0
 </armor>
 
 <Body Equipment>
@@ -74,10 +80,8 @@ Machine Gun
 <Rear Equipment>
 Machine Gun
 Machine Gun
+Hitch
 </Rear Equipment>
-
-<Turret Equipment>
-</Turret Equipment>
 
 <source>
 Star League
@@ -86,4 +90,8 @@ Star League
 <tonnage>
 60.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
 

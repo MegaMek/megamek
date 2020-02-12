@@ -17,7 +17,7 @@ Heat Sinks:10 Double
 Walk MP:6
 Jump MP:4
 
-Armor:Standard(Inner Sphere)
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:12
 RA Armor:12
 LT Armor:15
@@ -31,13 +31,13 @@ RTR Armor:5
 RTC Armor:6
 
 Weapons:7
+Small Pulse Laser, Left Arm
+Small Pulse Laser, Left Arm
+Small Pulse Laser, Left Arm
+Small Pulse Laser, Left Arm
 Medium Laser, Right Arm
 Medium Laser, Right Arm
 ER Large Laser, Right Torso
-Small Pulse Laser, Left Arm
-Small Pulse Laser, Left Arm
-Small Pulse Laser, Left Arm
-Small Pulse Laser, Left Arm
 
 Left Arm:
 Shoulder
@@ -48,8 +48,8 @@ ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
--Empty-
--Empty-
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -60,10 +60,10 @@ Lower Arm Actuator
 Hand Actuator
 Medium Laser
 Medium Laser
--Empty-
--Empty-
--Empty-
--Empty-
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -76,10 +76,10 @@ IS Endo Steel
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
--Empty-
--Empty-
--Empty-
--Empty-
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 ISDoubleHeatSink
@@ -93,7 +93,7 @@ IS Endo Steel
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
--Empty-
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -129,7 +129,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 IS Endo Steel
--Empty-
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

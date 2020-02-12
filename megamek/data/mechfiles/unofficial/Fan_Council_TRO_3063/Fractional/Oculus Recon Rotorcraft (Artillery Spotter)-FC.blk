@@ -90,3 +90,4 @@ RS 3063 - Civil War
 5.0
 </tonnage>
 
+<history>This unit makes use of fractional accounting. MegaMek does not currently support this feature, thus this unit will appear overweight.</history>

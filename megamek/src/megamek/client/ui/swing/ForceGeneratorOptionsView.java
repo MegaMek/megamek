@@ -35,6 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
@@ -1174,12 +1175,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     tree, value, sel,
                     expanded, leaf, row,
                     hasFocus);
-            setOpaque(true);
-            setBackground(Color.WHITE);
-            setForeground(Color.BLACK);
+            setBackground(UIManager.getColor("Tree.textBackground"));
+            setForeground(UIManager.getColor("Tree.textForeground"));
             if(sel) {
-                setBackground(Color.DARK_GRAY);
-                setForeground(Color.WHITE);
+                setBackground(UIManager.getColor("Tree.selectionBackground"));
+                setForeground(UIManager.getColor("Tree.selectionForeground"));
             }
 
             ForceDescriptor fd = (ForceDescriptor)value;

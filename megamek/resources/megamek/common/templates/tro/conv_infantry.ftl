@@ -1,5 +1,5 @@
 ${fullName}
-<#if showFluff>
+<#if includeFluff>
 <#if fluffOverview??>
 
 Overview

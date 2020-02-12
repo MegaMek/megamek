@@ -47,6 +47,14 @@ Tracked
 0
 </engine_type>
 
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <armor>
 40
 32
@@ -77,6 +85,7 @@ ISC3SlaveUnit
 </Left Equipment>
 
 <Rear Equipment>
+Hitch
 </Rear Equipment>
 
 <Turret Equipment>

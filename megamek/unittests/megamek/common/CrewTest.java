@@ -58,7 +58,7 @@ public class CrewTest {
         gunnery = 3;
         piloting = 4;
         Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(false);
-        expected = 1.38;
+        expected = 1.32;
         actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
         TestCase.assertEquals(expected, actual, 0.001);
         // Test turning the option on.
@@ -84,7 +84,7 @@ public class CrewTest {
         gunnery = 2;
         piloting = 6;
         Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(false);
-        expected = 1.33;
+        expected = 1.35;
         actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
         TestCase.assertEquals(expected, actual, 0.001);
         // Test turning the option on.
@@ -97,7 +97,7 @@ public class CrewTest {
         gunnery = 0;
         piloting = 0;
         Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(false);
-        expected = 2.8;
+        expected = 2.42;
         actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
         TestCase.assertEquals(expected, actual, 0.001);
         // Test turning the option on.

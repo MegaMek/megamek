@@ -1646,6 +1646,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
+            
+            if (bLowProfileGlancing) {
+                hit.makeGlancingBlow();
+            }
+            
             vPhaseReport
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
@@ -2085,6 +2090,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (bGlancing) {
             nMissilesModifier -= 4;
         }
+        
+        if (bLowProfileGlancing) {
+            nMissilesModifier -= 4;
+        }
 
         if (bDirect) {
             nMissilesModifier += (toHit.getMoS() / 3) * 2;
@@ -2190,7 +2199,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean isLowProfileGlancingBlow(Entity entityTarget, ToHitData hitData) {
         return (entityTarget != null) &&
                 entityTarget.hasQuirk(OptionsConstants.QUIRK_POS_LOW_PROFILE) &&
-                ((roll == hitData.getValue()) || (roll == hitData.getValue() - 1));
+                ((roll == hitData.getValue()) || (roll == hitData.getValue() + 1));
     }
     
     /**

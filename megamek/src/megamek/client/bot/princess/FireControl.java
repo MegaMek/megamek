@@ -956,13 +956,6 @@ public class FireControl {
             toHit.addModifier(TH_TARGETTING_COMP);
         }
 
-        // target quirks
-        if (null != targetEntity) {
-            if (targetEntity.hasQuirk(OptionsConstants.QUIRK_POS_LOW_PROFILE)) {
-                toHit.addModifier(TH_TAR_LOW_PROFILE);
-            }
-        }
-
         // shooter quirks
         if (RangeType.RANGE_SHORT == range) {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_S)) {

@@ -82,7 +82,7 @@ public class BotGUI implements GameListener {
             }
 
             if (confirm.getAnswer()) {
-                File helpfile = new File("docs/ai-readme.txt"); //$NON-NLS-1$
+                File helpfile = new File("docs/Bot Stuff/ai-readme.txt"); //$NON-NLS-1$
                 new CommonHelpDialog(frame, helpfile).setVisible(true);
             }
         }

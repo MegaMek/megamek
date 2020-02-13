@@ -19,6 +19,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -26,6 +28,8 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+
+import javax.print.DocFlavor;
 
 /**
  *  Health status, skills, and miscellanea for an Entity crew.
@@ -42,6 +46,8 @@ public class Crew implements Serializable {
      *
      */
     private static final long serialVersionUID = -141169182388269619L;
+
+    private Map<Integer, Map<String, String>> extraData;
 
     private final CrewType crewType;
     private int size;
@@ -138,19 +144,18 @@ public class Crew implements Serializable {
     public static final String SPECIAL_BALLISTIC = "Ballistic";
     public static final String SPECIAL_MISSILE = "Missile";
 
-    private static double[][] bvMod = new double[][]
-            {
-                    {2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50},
-                    {2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38},
-                    {1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21},
-                    {1.66, 1.58, 1.51, 1.44, 1.32, 1.20, 1.16, 1.10, 1.04},
-                    {1.38, 1.32, 1.26, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85},
-                    {1.31, 1.19, 1.13, 1.08, 0.99, 0.90, 0.86, 0.81, 0.77},
-                    {1.24, 1.12, 1.07, 1.02, 0.94, 0.85, 0.81, 0.77, 0.72},
-                    {1.17, 1.06, 1.01, 0.96, 0.88, 0.80, 0.76, 0.72, 0.68},
-                    {1.10, 0.99, 0.95, 0.90, 0.83, 0.75, 0.71, 0.68, 0.64},
-            };
-    private static double[][] alternateBvMod = new double[][]{
+    private static double[][] bvMod = new double[][] {
+            {2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50},
+            {2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38},
+            {1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21},
+            {1.66, 1.58, 1.51, 1.44, 1.32, 1.20, 1.16, 1.10, 1.04},
+            {1.38, 1.32, 1.26, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85},
+            {1.31, 1.19, 1.13, 1.08, 0.99, 0.90, 0.86, 0.81, 0.77},
+            {1.24, 1.12, 1.07, 1.02, 0.94, 0.85, 0.81, 0.77, 0.72},
+            {1.17, 1.06, 1.01, 0.96, 0.88, 0.80, 0.76, 0.72, 0.68},
+            {1.10, 0.99, 0.95, 0.90, 0.83, 0.75, 0.71, 0.68, 0.64},
+    };
+    private static double[][] alternateBvMod = new double[][] {
             {2.70, 2.52, 2.34, 2.16, 1.98, 1.80, 1.75, 1.67, 1.59},
             {2.40, 2.24, 2.08, 1.98, 1.76, 1.60, 1.58, 1.51, 1.44},
             {2.10, 1.96, 1.82, 1.68, 1.54, 1.40, 1.33, 1.31, 1.25},
@@ -187,14 +192,14 @@ public class Crew implements Serializable {
      * Creates a basic crew for a self-piloted unit. Using this constructor for a naval vessel will
      * result in a secondary target modifier for additional targets past the first.
      *
-     * @param name
-     * @param size
-     * @param gunnery
-     * @param piloting
+     * @param name     the name of the crew or commander.
+     * @param size     the crew size.
+     * @param gunnery  the crew's Gunnery skill.
+     * @param piloting the crew's Piloting or Driving skill.
      */
     @Deprecated
     public Crew(String name, int size, int gunnery, int piloting) {
-        this(CrewType.SINGLE, name, size, gunnery, gunnery, gunnery, piloting);
+        this(CrewType.SINGLE, name, size, gunnery, gunnery, gunnery, piloting, null);
     }
 
     /**
@@ -205,7 +210,20 @@ public class Crew implements Serializable {
      * @param piloting the crew's Piloting or Driving skill.
      */
     public Crew(CrewType crewType, String name, int size, int gunnery, int piloting) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, piloting);
+        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, null);
+    }
+
+    /**
+     * @param crewType the type of crew
+     * @param name     the name of the crew or commander.
+     * @param size     the crew size.
+     * @param gunnery  the crew's Gunnery skill.
+     * @param piloting the crew's Piloting or Driving skill.
+     * @param extraData any extra data passed to be stored with this Crew.
+     */
+    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, Map<Integer,
+            Map<String, String>> extraData) {
+        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, extraData);
     }
 
     /**
@@ -218,9 +236,26 @@ public class Crew implements Serializable {
      * @param piloting the crew's Piloting or Driving skill.
      */
     public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
-            int piloting) {
+                int piloting) {
+        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting, null);
+    }
+
+    /**
+     * @param crewType the type of crew.
+     * @param name     the name of the crew or commander.
+     * @param size     the crew size.
+     * @param gunneryL the crew's "laser" Gunnery skill.
+     * @param gunneryM the crew's "missile" Gunnery skill.
+     * @param gunneryB the crew's "ballistic" Gunnery skill.
+     * @param piloting the crew's Piloting or Driving skill.
+     * @param extraData any extra data passed to be stored with this Crew.
+     */
+    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
+                int piloting, Map<Integer, Map<String, String>> extraData) {
         this.crewType = crewType;
         this.size = Math.max(size, crewType.getCrewSlots());
+
+        this.extraData = extraData;
 
         int slots = crewType.getCrewSlots();
         this.name = new String[slots];
@@ -890,9 +925,9 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Returns the BV multiplyer for a pilots gunnery/piloting. This function is
+     * Returns the BV multiplier for a pilots gunnery/piloting. This function is
      * static to evaluate the BV of a unit, even when they have not yet been
-     * assinged a pilot.
+     * assigned a pilot.
      *
      * @param gunnery  the gunnery skill of the pilot
      * @param piloting the piloting skill of the pilot
@@ -941,14 +976,12 @@ public class Crew implements Serializable {
      * @return a string description of the gunnery skills when using RPG
      */
     public String getGunneryRPG() {
-        return new StringBuilder()
-            .append(Arrays.toString(gunneryL))
-            .append("(L)/")
-            .append(Arrays.toString(gunneryM))
-            .append("(M)/")
-            .append(Arrays.toString(gunneryB))
-            .append("(B)")
-            .toString();
+        return Arrays.toString(gunneryL) +
+                "(L)/" +
+                Arrays.toString(gunneryM) +
+                "(M)/" +
+                Arrays.toString(gunneryB) +
+                "(B)";
     }
 
     /**
@@ -1289,7 +1322,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Superheavy tripods gain benefits from having a technical officer.
+     * Super heavy tripods gain benefits from having a technical officer.
      *
      * @return Whether the tech officer is alive and conscious.
      */
@@ -1354,10 +1387,64 @@ public class Crew implements Serializable {
         return false;
     }
 
+    //region extraData
+    public void initializeExtraDataAsHashMap(int crewNumber) {
+        this.extraData = new HashMap<>(crewNumber);
+        for (int i = 0; i < crewNumber; i++) {
+            this.extraData.put(i, new HashMap<>());
+        }
+    }
+
+    public void initializeExtraDataAsHashMap() {
+        this.extraData = new HashMap<>();
+    }
+
+    public static Map<Integer, Map<String, String>> getNewInitializedExtraDataAsHashMap(int crewNumber) {
+        Map<Integer, Map<String, String>> extraData = new HashMap<>(crewNumber);
+        for (int i = 0; i < crewNumber; i++) {
+            extraData.put(i, new HashMap<>());
+        }
+
+        return extraData;
+    }
+
+    public void setExtraData(Map<Integer, Map<String, String>> extraData) {
+        this.extraData = extraData;
+    }
+
+    public void setExtraDataForCrewMember(int crewIndex, Map<String, String> dataMap) {
+        this.extraData.put(crewIndex, dataMap);
+    }
+
+    public void addExtraDataDataPoint(int crewIndex, String key, String value) {
+        this.extraData.get(crewIndex).put(key, value);
+    }
+
+    public Map<Integer, Map<String, String>> getExtraData() {
+        return extraData;
+    }
+
+    public Map<String, String> getExtraDataForCrewMember(int crewIndex) {
+        return extraData.get(crewIndex);
+    }
+
+    public String getExtraDataValue(int crewIndex, String key) {
+        return extraData.get(crewIndex).get(key);
+    }
+
+    public void clearExtraData() {
+        this.extraData = null;
+    }
+
+    public void clearExtraDataForCrewMember(int crewIndex) {
+        this.extraData.put(crewIndex, null);
+    }
+    //endregion extraData
+
+    //region MekWars
     /*
      * Legacy methods used by MekWars
      */
-
     /**
      * @deprecated by multi-crew cockpits. Replaced by {@link #setHits(int)}
      */
@@ -1379,4 +1466,5 @@ public class Crew implements Serializable {
     public void setGunnery(int gunnery) {
         setGunnery(gunnery, crewType.getGunnerPos());
     }
+    //endregion MekWars
 }

@@ -29,8 +29,6 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 
-import javax.print.DocFlavor;
-
 /**
  *  Health status, skills, and miscellanea for an Entity crew.
  *

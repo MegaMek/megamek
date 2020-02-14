@@ -835,7 +835,7 @@ public class BoardEditor extends JComponent
 
         // Minimap Toggle
         butMiniMap = new JButton(Messages.getString("BoardEditor.butMiniMap")); //$NON-NLS-1$
-        butMiniMap.setActionCommand(ClientGUI.VIEW_MINI_MAP); //$NON-NLS-1$
+        butMiniMap.setActionCommand(ClientGUI.VIEW_MINI_MAP);
 
         // Exits
         cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified")); //$NON-NLS-1$
@@ -1774,13 +1774,13 @@ public class BoardEditor extends JComponent
             texTerrExits.decValue();
             cheTerrExitSpecified.setSelected(texTerrExits.getNumber() != 0);
             updateWhenSelected();
-        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
             minimapW.setVisible(!minimapW.isVisible());
-        } else if (ae.getActionCommand().equals(ClientGUI.HELP_ABOUT)) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.HELP_ABOUT)) {
             showAbout();
-        } else if (ae.getActionCommand().equals(ClientGUI.HELP_CONTENTS)) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.HELP_CONTENTS)) {
             showHelp();
-        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_CLIENT_SETTINGS)) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_CLIENT_SETTINGS)) {
             showSettings();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_IN)) {
             bv.zoomIn();

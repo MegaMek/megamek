@@ -275,7 +275,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         submenu.add(fileBoardOpen);
         fileBoardSave = new JMenuItem(Messages.getString("CommonMenuBar.fileBoardSave")); //$NON-NLS-1$
         fileBoardSave.addActionListener(this);
-        fileBoardSave.setActionCommand(ClientGUI.FILE_BOARD_SAVE_AS_IMAGE);
+        fileBoardSave.setActionCommand(ClientGUI.FILE_BOARD_SAVE);
         submenu.add(fileBoardSave);
         fileBoardSaveAs = new JMenuItem(Messages.getString("CommonMenuBar.fileBoardSaveAs")); //$NON-NLS-1$
         fileBoardSaveAs.addActionListener(this);

@@ -1077,10 +1077,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         System.gc();
         System.runFinalization();
     }
-
-    //
-// ActionListener
-//
+    
     private ActionListener actionListener = ev -> {
         switch (ev.getActionCommand()) {
             case ClientGUI.FILE_BOARD_NEW:

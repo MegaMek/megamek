@@ -240,6 +240,12 @@ public class BoardEditor extends JComponent
     }
  
     private static final long serialVersionUID = 4689863639249616192L;
+
+    //region action commands
+    private static final String FILE_BOARD_EDITOR_EXPAND = "fileBoardExpand";
+    private static final String FILE_BOARD_EDITOR_VALIDATE = "fileBoardValidate";
+    //endregion action commands
+
     JFrame frame = new JFrame();
     JScrollPane scrollPane;
     private Game game = new Game();
@@ -292,7 +298,7 @@ public class BoardEditor extends JComponent
     private JButton butTerrDown, butTerrUp;
     private JButton butAddTerrain;
     private JButton butBoardNew;
-    private JButton butBoardLoad;
+    private JButton butBoardOpen;
     private JButton butBoardSave;
     private JButton butBoardSaveAs;
     private JButton butBoardSaveAsImage;
@@ -829,7 +835,7 @@ public class BoardEditor extends JComponent
 
         // Minimap Toggle
         butMiniMap = new JButton(Messages.getString("BoardEditor.butMiniMap")); //$NON-NLS-1$
-        butMiniMap.setActionCommand("viewMiniMap"); //$NON-NLS-1$
+        butMiniMap.setActionCommand(ClientGUI.VIEW_MINI_MAP); //$NON-NLS-1$
 
         // Exits
         cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified")); //$NON-NLS-1$
@@ -903,35 +909,35 @@ public class BoardEditor extends JComponent
         // Board Buttons (Save, Load...)
         JLabel labBoard = new JLabel(Messages.getString("BoardEditor.labBoard"), SwingConstants.LEFT); //$NON-NLS-1$
         butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew")); //$NON-NLS-1$
-        butBoardNew.setActionCommand("fileBoardNew"); //$NON-NLS-1$
+        butBoardNew.setActionCommand(ClientGUI.FILE_BOARD_NEW);
 
         butExpandMap = new JButton(Messages.getString("BoardEditor.butExpandMap")); //$NON-NLS-1$
-        butExpandMap.setActionCommand("fileBoardExpand"); //$NON-NLS-1$
+        butExpandMap.setActionCommand(FILE_BOARD_EDITOR_EXPAND);
 
-        butBoardLoad = new JButton(Messages.getString("BoardEditor.butBoardLoad")); //$NON-NLS-1$
-        butBoardLoad.setActionCommand("fileBoardOpen"); //$NON-NLS-1$
+        butBoardOpen = new JButton(Messages.getString("BoardEditor.butBoardOpen")); //$NON-NLS-1$
+        butBoardOpen.setActionCommand(ClientGUI.FILE_BOARD_OPEN);
 
         butBoardSave = new JButton(Messages.getString("BoardEditor.butBoardSave")); //$NON-NLS-1$
-        butBoardSave.setActionCommand("fileBoardSave"); //$NON-NLS-1$
+        butBoardSave.setActionCommand(ClientGUI.FILE_BOARD_SAVE);
 
         butBoardSaveAs = new JButton(Messages.getString("BoardEditor.butBoardSaveAs")); //$NON-NLS-1$
-        butBoardSaveAs.setActionCommand("fileBoardSaveAs"); //$NON-NLS-1$
+        butBoardSaveAs.setActionCommand(ClientGUI.FILE_BOARD_SAVE_AS);
 
         butBoardSaveAsImage = new JButton(Messages.getString("BoardEditor.butBoardSaveAsImage")); //$NON-NLS-1$
-        butBoardSaveAsImage.setActionCommand("fileBoardSaveAsImage"); //$NON-NLS-1$
+        butBoardSaveAsImage.setActionCommand(ClientGUI.FILE_BOARD_SAVE_AS_IMAGE);
 
         butBoardValidate = new JButton(Messages.getString("BoardEditor.butBoardValidate")); //$NON-NLS-1$
-        butBoardValidate.setActionCommand("fileBoardValidate"); //$NON-NLS-1$
+        butBoardValidate.setActionCommand(FILE_BOARD_EDITOR_VALIDATE);
 
         addManyActionListeners(butBoardValidate, butBoardSaveAsImage, butBoardSaveAs, butBoardSave);
-        addManyActionListeners(butBoardLoad, butExpandMap, butBoardNew, butMiniMap);
+        addManyActionListeners(butBoardOpen, butExpandMap, butBoardNew, butMiniMap);
         addManyActionListeners(butDelTerrain, butAddTerrain);
 
         JPanel panButtons = new JPanel(new GridLayout(4, 2, 2, 2));
         panButtons.add(labBoard);
         panButtons.add(new JLabel("")); // Spacer Label
         panButtons.add(new JLabel("")); // Spacer Label
-        addManyButtons(panButtons, butBoardNew, butBoardSave, butBoardLoad,
+        addManyButtons(panButtons, butBoardNew, butBoardSave, butBoardOpen,
                 butExpandMap, butBoardSaveAs, butBoardSaveAsImage);
         panButtons.add(Box.createHorizontalStrut(5));
         panButtons.add(butBoardValidate);
@@ -1677,34 +1683,34 @@ public class BoardEditor extends JComponent
     // ActionListener
     //
     public void actionPerformed(ActionEvent ae) {
-        if ("fileBoardNew".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+        if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_NEW)) {
             ignoreHotKeys = true;
             boardNew();
             ignoreHotKeys = false;
             resetUndo();
-        } else if ("fileBoardExpand".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(FILE_BOARD_EDITOR_EXPAND)) {
             ignoreHotKeys = true;
             boardResize();
             ignoreHotKeys = false;
             resetUndo();
-        } else if ("fileBoardOpen".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_OPEN)) {
             ignoreHotKeys = true;
             boardLoad();
             ignoreHotKeys = false;
             resetUndo();
-        } else if ("fileBoardSave".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_SAVE)) {
             ignoreHotKeys = true;
             boardSave();
             ignoreHotKeys = false;
-        } else if ("fileBoardSaveAs".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_SAVE_AS)) {
             ignoreHotKeys = true;
             boardSaveAs();
             ignoreHotKeys = false;
-        } else if ("fileBoardSaveAsImage".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_SAVE_AS_IMAGE)) {
             ignoreHotKeys = true;
             boardSaveAsImage(false);
             ignoreHotKeys = false;
-        } else if ("fileBoardValidate".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$StringBuffer errBuff = new StringBuffer();
+        } else if (ae.getActionCommand().equals(FILE_BOARD_EDITOR_VALIDATE)) {
             StringBuffer errBuff = new StringBuffer();
             board.isValid(errBuff);
             if (errBuff.length() > 0) {
@@ -1768,14 +1774,18 @@ public class BoardEditor extends JComponent
             texTerrExits.decValue();
             cheTerrExitSpecified.setSelected(texTerrExits.getNumber() != 0);
             updateWhenSelected();
-        } else if ("viewMiniMap".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) { //$NON-NLS-1$
             minimapW.setVisible(!minimapW.isVisible());
-        } else if ("helpAbout".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.HELP_ABOUT)) { //$NON-NLS-1$
             showAbout();
-        } else if ("helpContents".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.HELP_CONTENTS)) { //$NON-NLS-1$
             showHelp();
-        } else if ("viewClientSettings".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_CLIENT_SETTINGS)) { //$NON-NLS-1$
             showSettings();
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_IN)) {
+            bv.zoomIn();
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_OUT)) {
+            bv.zoomOut();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_ISOMETRIC)) {
             bv.toggleIsometric();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_CHANGE_THEME)) {

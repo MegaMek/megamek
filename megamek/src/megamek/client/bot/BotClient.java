@@ -166,7 +166,7 @@ public abstract class BotClient extends Client {
             }
 
             @Override
-            public void gameClientFeedbackRquest(GameCFREvent evt) {
+            public void gameClientFeedbackRequest(GameCFREvent evt) {
                 switch (evt.getCFRType()) {
                     case Packet.COMMAND_CFR_DOMINO_EFFECT:
                         // This will always send a "no action" response.

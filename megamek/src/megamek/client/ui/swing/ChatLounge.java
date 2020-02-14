@@ -2671,7 +2671,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     @Override
-    public void gameClientFeedbackRquest(GameCFREvent evt) {
+    public void gameClientFeedbackRequest(GameCFREvent evt) {
         // Do nothing
     }
 

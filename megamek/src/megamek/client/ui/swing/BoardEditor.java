@@ -1430,6 +1430,7 @@ public class BoardEditor extends JComponent
                     new IBoard[]{board}, Collections.singletonList(false), MapSettings.MEDIUM_GROUND);
             game.setBoard(board);
             menuBar.setBoard(true);
+            bvc.doLayout();
         } catch (IOException ex) {
             System.err.println("error opening file to save!"); //$NON-NLS-1$
             System.err.println(ex);

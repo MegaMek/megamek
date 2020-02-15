@@ -1445,26 +1445,6 @@ public class Crew implements Serializable {
     }
 
     //region extraData
-    public void initializeExtraDataAsHashMap(int crewNumber) {
-        this.extraData = new HashMap<>(crewNumber);
-        for (int i = 0; i < crewNumber; i++) {
-            this.extraData.put(i, new HashMap<>());
-        }
-    }
-
-    public void initializeExtraDataAsHashMap() {
-        this.extraData = new HashMap<>();
-    }
-
-    public static Map<Integer, Map<String, String>> getNewInitializedExtraDataAsHashMap(int crewNumber) {
-        Map<Integer, Map<String, String>> extraData = new HashMap<>(crewNumber);
-        for (int i = 0; i < crewNumber; i++) {
-            extraData.put(i, new HashMap<>());
-        }
-
-        return extraData;
-    }
-
     public void setExtraData(Map<Integer, Map<String, String>> extraData) {
         this.extraData = extraData;
     }

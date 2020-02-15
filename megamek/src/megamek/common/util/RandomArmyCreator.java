@@ -336,7 +336,6 @@ public class RandomArmyCreator {
         units.addAll(generateArmy(allMechs, p.mechs, mechBV + tankBV + baBV
                 - countBV(units), allowedVariance));
         if (p.padWithInfantry) {
-            // TODO : WINDCHILD FIX ME - divide by 0
             int inf = (p.maxBV - countBV(units)) / averageInfBV;
             units.addAll(generateArmy(allInfantry, inf, p.maxBV
                     - countBV(units), allowedVariance));

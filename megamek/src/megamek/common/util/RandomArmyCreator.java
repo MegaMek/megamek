@@ -17,6 +17,7 @@ package megamek.common.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import megamek.common.Compute;
 import megamek.common.MechSearchFilter;
@@ -97,10 +98,9 @@ public class RandomArmyCreator {
      */
     static Comparator<MechSummary> bvComparator = Comparator.comparingInt(MechSummary::getBV);
 
-    private static ArrayList<MechSummary> generateArmy(
-            ArrayList<MechSummary> unitList, int count, int targetBV,
-            int allowedVariance) {
-        ArrayList<MechSummary> units = new ArrayList<>();
+    private static List<MechSummary> generateArmy(
+            List<MechSummary> unitList, int count, int targetBV, int allowedVariance) {
+        List<MechSummary> units = new ArrayList<>();
         if ((count < 1) || (unitList.size() < 1)) {
             return units;
         }
@@ -148,7 +148,7 @@ public class RandomArmyCreator {
         return units;
     }
 
-    private static int countBV(ArrayList<MechSummary> units) {
+    private static int countBV(List<MechSummary> units) {
         int bv = 0;
         for (MechSummary m : units) {
             bv += m.getBV();
@@ -169,7 +169,7 @@ public class RandomArmyCreator {
         p.tech = TechConstants.T_IS_TW_NON_BOX;
         p.canon = true;
         p.padWithInfantry = true;
-        ArrayList<MechSummary> units = generateArmy(p);
+        List<MechSummary> units = generateArmy(p);
 
         int totalBV = 0;
         for (MechSummary m : units) {
@@ -185,13 +185,13 @@ public class RandomArmyCreator {
 
     }
 
-    public static ArrayList<MechSummary> generateArmy(Parameters p) {
+    public static List<MechSummary> generateArmy(Parameters p) {
         int allowedVariance = java.lang.Math.abs(p.maxBV - p.minBV);
         MechSummary[] all = MechSummaryCache.getInstance().getAllMechs();
-        ArrayList<MechSummary> allMechs = new ArrayList<>();
-        ArrayList<MechSummary> allTanks = new ArrayList<>();
-        ArrayList<MechSummary> allInfantry = new ArrayList<>();
-        ArrayList<MechSummary> allBA = new ArrayList<>();
+        List<MechSummary> allMechs = new ArrayList<>();
+        List<MechSummary> allTanks = new ArrayList<>();
+        List<MechSummary> allInfantry = new ArrayList<>();
+        List<MechSummary> allBA = new ArrayList<>();
         for (MechSummary m : all) {
             if ((p.tech != TechConstants.T_ALL) && (p.tech != m.getType())) {
                 // advanced rules includes basic too
@@ -307,7 +307,7 @@ public class RandomArmyCreator {
         }
 
         // add the units in roughly increasing BV order
-        ArrayList<MechSummary> units = generateArmy(allBA, p.ba, baBV, allowedVariance);
+        List<MechSummary> units = generateArmy(allBA, p.ba, baBV, allowedVariance);
         units.addAll(generateArmy(allTanks, p.tanks, tankBV + baBV
                 - countBV(units), allowedVariance));
         units.addAll(generateArmy(allMechs, p.mechs, mechBV + tankBV + baBV

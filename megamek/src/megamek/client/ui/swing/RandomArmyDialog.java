@@ -826,7 +826,7 @@ WindowListener, TreeSelectionListener {
         .hasNext();) {
             Client client = i.next();
             IPlayer player = m_client.getGame().getPlayer(client.getLocalPlayerNumber());
-            
+
             if(!player.isObserver()) {
                 m_chPlayer.addItem(client.getName());
             }
@@ -1011,7 +1011,7 @@ WindowListener, TreeSelectionListener {
     /**
      * A table model for displaying units
      */
-    public class UnitTableModel extends AbstractTableModel {
+    public static class UnitTableModel extends AbstractTableModel {
 
         private static final long serialVersionUID = 4819661751806908535L;
 
@@ -1020,10 +1020,10 @@ WindowListener, TreeSelectionListener {
         private static final int COL_MOVE = 2;
         private static final int N_COL = 3;
 
-        private ArrayList<MechSummary> data;
+        private List<MechSummary> data;
 
         public UnitTableModel() {
-            data = new ArrayList<MechSummary>();
+            data = new ArrayList<>();
         }
 
         public int getRowCount() {
@@ -1031,7 +1031,7 @@ WindowListener, TreeSelectionListener {
         }
 
         public void clearData() {
-            data = new ArrayList<MechSummary>();
+            data = new ArrayList<>();
             fireTableDataChanged();
         }
 
@@ -1044,7 +1044,7 @@ WindowListener, TreeSelectionListener {
             fireTableDataChanged();
         }
 
-        public void setData(ArrayList<MechSummary> mechs) {
+        public void setData(List<MechSummary> mechs) {
             data = mechs;
             fireTableDataChanged();
         }
@@ -1089,7 +1089,7 @@ WindowListener, TreeSelectionListener {
             return data.get(row);
         }
 
-        public ArrayList<MechSummary> getAllUnits() {
+        public List<MechSummary> getAllUnits() {
             return data;
         }
     }

@@ -17,13 +17,16 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.Vector;
 
+import megamek.client.RandomNameGenerator;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
@@ -51,6 +54,9 @@ public class Crew implements Serializable {
     private int size;
 
     private final String[] name;
+    private final int[] gender;
+    public static final int G_MALE = 0;
+    public static final int G_FEMALE = 1;
     private final int[] gunnery;
     private final int[] piloting;
     private final int[] hits; // hits taken
@@ -142,7 +148,7 @@ public class Crew implements Serializable {
     public static final String SPECIAL_BALLISTIC = "Ballistic";
     public static final String SPECIAL_MISSILE = "Missile";
 
-    private static double[][] bvMod = new double[][] {
+    private static double[][] bvMod = new double[][]{
             {2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50},
             {2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38},
             {1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21},
@@ -153,7 +159,7 @@ public class Crew implements Serializable {
             {1.17, 1.06, 1.01, 0.96, 0.88, 0.80, 0.76, 0.72, 0.68},
             {1.10, 0.99, 0.95, 0.90, 0.83, 0.75, 0.71, 0.68, 0.64},
     };
-    private static double[][] alternateBvMod = new double[][] {
+    private static double[][] alternateBvMod = new double[][]{
             {2.70, 2.52, 2.34, 2.16, 1.98, 1.80, 1.75, 1.67, 1.59},
             {2.40, 2.24, 2.08, 1.98, 1.76, 1.60, 1.58, 1.51, 1.44},
             {2.10, 1.96, 1.82, 1.68, 1.54, 1.40, 1.33, 1.31, 1.25},
@@ -165,6 +171,12 @@ public class Crew implements Serializable {
             {1.28, 1.19, 1.10, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64},
     };
 
+    //region extraData inner map keys
+    public static final String MAP_GIVEN_NAME = "givenName";
+    public static final String MAP_SURNAME = "surname";
+    public static final String MAP_BLOODNAME = "bloodname";
+    public static final String MAP_PHENOTYPE = "phenotype";
+    //endregion extraData inner map keys
     /**
      * The number of hits that a pilot can take before he dies.
      */
@@ -185,15 +197,14 @@ public class Crew implements Serializable {
     }
 
     /**
-     * @deprecated by multi-crew cockpit support. Replaced by {@link #Crew(CrewType, String, int, int, int)}.
-     *
-     * Creates a basic crew for a self-piloted unit. Using this constructor for a naval vessel will
-     * result in a secondary target modifier for additional targets past the first.
-     *
      * @param name     the name of the crew or commander.
      * @param size     the crew size.
      * @param gunnery  the crew's Gunnery skill.
      * @param piloting the crew's Piloting or Driving skill.
+     * @deprecated by multi-crew cockpit support. Replaced by {@link #Crew(CrewType, String, int, int, int)}.
+     * <p>
+     * Creates a basic crew for a self-piloted unit. Using this constructor for a naval vessel will
+     * result in a secondary target modifier for additional targets past the first.
      */
     @Deprecated
     public Crew(String name, int size, int gunnery, int piloting) {
@@ -212,16 +223,17 @@ public class Crew implements Serializable {
     }
 
     /**
-     * @param crewType the type of crew
-     * @param name     the name of the crew or commander.
-     * @param size     the crew size.
-     * @param gunnery  the crew's Gunnery skill.
-     * @param piloting the crew's Piloting or Driving skill.
+     * @param crewType  the type of crew
+     * @param name      the name of the crew or commander.
+     * @param size      the crew size.
+     * @param gunnery   the crew's Gunnery skill.
+     * @param piloting  the crew's Piloting or Driving skill.
+     * @param gender    the gender of the crew or commander
      * @param extraData any extra data passed to be stored with this Crew.
      */
-    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, Map<Integer,
-            Map<String, String>> extraData) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, extraData);
+    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, int gender,
+                Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, extraData);
     }
 
     /**
@@ -239,17 +251,34 @@ public class Crew implements Serializable {
     }
 
     /**
-     * @param crewType the type of crew.
-     * @param name     the name of the crew or commander.
-     * @param size     the crew size.
-     * @param gunneryL the crew's "laser" Gunnery skill.
-     * @param gunneryM the crew's "missile" Gunnery skill.
-     * @param gunneryB the crew's "ballistic" Gunnery skill.
-     * @param piloting the crew's Piloting or Driving skill.
+     * @param crewType  the type of crew.
+     * @param name      the name of the crew or commander.
+     * @param size      the crew size.
+     * @param gunneryL  the crew's "laser" Gunnery skill.
+     * @param gunneryM  the crew's "missile" Gunnery skill.
+     * @param gunneryB  the crew's "ballistic" Gunnery skill.
+     * @param piloting  the crew's Piloting or Driving skill.
      * @param extraData any extra data passed to be stored with this Crew.
      */
     public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
                 int piloting, Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting,
+                getGenderAsInt(RandomNameGenerator.getInstance().isFemale()), extraData);
+    }
+
+    /**
+     * @param crewType  the type of crew.
+     * @param name      the name of the crew or commander.
+     * @param size      the crew size.
+     * @param gunneryL  the crew's "laser" Gunnery skill.
+     * @param gunneryM  the crew's "missile" Gunnery skill.
+     * @param gunneryB  the crew's "ballistic" Gunnery skill.
+     * @param piloting  the crew's Piloting or Driving skill.
+     * @param gender    the gender of the crew or commander
+     * @param extraData any extra data passed to be stored with this Crew.
+     */
+    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
+                int piloting, int gender, Map<Integer, Map<String, String>> extraData) {
         this.crewType = crewType;
         this.size = Math.max(size, crewType.getCrewSlots());
 
@@ -260,6 +289,8 @@ public class Crew implements Serializable {
         Arrays.fill(this.name, name);
         this.nickname = new String[slots];
         Arrays.fill(this.nickname, "");
+        this.gender = new int[slots];
+        Arrays.fill(this.gender, gender);
 
         int avGunnery = (int) Math.round((gunneryL + gunneryM + gunneryB) / 3.0);
         this.gunnery = new int[slots];
@@ -327,10 +358,22 @@ public class Crew implements Serializable {
         return nickname[pos];
     }
 
+    public int getGender() {
+        return gender[0];
+    }
+
+    public int getGender(int pos) {
+        return gender[pos];
+    }
+
+    public static int getGenderAsInt(boolean gender) {
+        return gender ? G_FEMALE : G_MALE;
+    }
+
     /**
      * @param pos The slot index for multi-crewed cockpits
-     * @return    For multi-slot crews, the crew member's name followed by the role. For-slot crews, the
-     *            crew name only.
+     * @return For multi-slot crews, the crew member's name followed by the role. For-slot crews, the
+     * crew name only.
      */
     public String getNameAndRole(int pos) {
         if (getSlotCount() < 2) {
@@ -483,8 +526,16 @@ public class Crew implements Serializable {
         this.name[pos] = name;
     }
 
-    public void setNickname(String nick, int pos) {
-        nickname[pos] = nick;
+    public void setNickname(String nickname, int pos) {
+        this.nickname[pos] = nickname;
+    }
+
+    public void setGender(int gender, int pos) {
+        this.gender[pos] = gender;
+    }
+
+    public void setGender(boolean gender, int pos) {
+        this.gender[pos] = getGenderAsInt(gender);
     }
 
     /**
@@ -540,6 +591,7 @@ public class Crew implements Serializable {
 
     /**
      * The crew is considered unconscious as a whole if none are active and at least one is not dead.
+     *
      * @return Whether at least one crew member is alive but none are conscious.
      */
     public boolean isUnconscious() {
@@ -565,6 +617,7 @@ public class Crew implements Serializable {
 
     /**
      * The crew is considered dead as a whole if all members are dead.
+     *
      * @return Whether all members of the crew are dead.
      */
     public boolean isDead() {
@@ -619,6 +672,7 @@ public class Crew implements Serializable {
 
     /**
      * Doomed status only applies to the crew as a whole.
+     *
      * @return Whether the crew is scheduled to die at the end of the phase.
      */
     public boolean isDoomed() {
@@ -627,6 +681,7 @@ public class Crew implements Serializable {
 
     /**
      * Doomed status only applies to the crew as a whole.
+     *
      * @param doomed Whether the crew is scheduled to die at the end of the phase.
      */
     public void setDoomed(boolean doomed) {
@@ -643,6 +698,7 @@ public class Crew implements Serializable {
 
     /**
      * The crew as a whole is considered active if any member is active.
+     *
      * @return Whether the crew has at least one active member.
      */
     public boolean isActive() {
@@ -660,6 +716,7 @@ public class Crew implements Serializable {
 
     /**
      * The crew as a whole is considered ko this round if all active members are ko this round.
+     *
      * @return
      */
     public boolean isKoThisRound() {
@@ -1085,6 +1142,7 @@ public class Crew implements Serializable {
 
     /**
      * Use the first assigned slot as a general id for the crew.
+     *
      * @return The id of the first slot that is not set to "-1"
      */
     public String getExternalIdAsString() {
@@ -1352,7 +1410,7 @@ public class Crew implements Serializable {
 
     /**
      * @return Whether the crew members in a command console-equipped unit are scheduled to swap roles at
-     *         the end of the turn.
+     * the end of the turn.
      */
     public boolean getSwapConsoleRoles() {
         return swapConsoleRoles;
@@ -1360,6 +1418,7 @@ public class Crew implements Serializable {
 
     /**
      * Schedules or clears a scheduled swap of roles in a command console-equipped unit.
+     *
      * @param swap
      */
     public void setSwapConsoleRoles(boolean swap) {

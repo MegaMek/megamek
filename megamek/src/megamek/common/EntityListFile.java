@@ -1090,6 +1090,7 @@ public class EntityListFile {
         output.write("\" name=\"" + crew.getName(pos).replaceAll("\"", "&quot;"));
         output.write("\" nick=\"");
         output.write(crew.getNickname(pos).replaceAll("\"", "&quot;"));
+        output.write("\" gender=\"" + crew.getGender(pos));
         output.write("\" gunnery=\"");
         output.write(String.valueOf(crew.getGunnery(pos)));
         if ((null != entity.getGame())

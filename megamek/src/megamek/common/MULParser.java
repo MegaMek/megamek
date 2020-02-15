@@ -103,6 +103,7 @@ public class MULParser {
     private static final String EXT_ID = "externalId";
     private static final String PICKUP_ID = "pickUpId";
     private static final String NICK = "nick";
+    private static final String GENDER = "gender";
     private static final String CAT_PORTRAIT = "portraitCat";
     private static final String FILE_PORTRAIT = "portraitFile";
     private static final String GUNNERY = "gunnery";
@@ -615,22 +616,20 @@ public class MULParser {
                         .parseInt(entityTag.getAttribute(OFFBOARD_DIRECTION)));
                 entity.setOffBoard(distance, dir);
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         // deployment round
         try {
-            int deployround =
-                    Integer.parseInt(entityTag.getAttribute(DEPLOYMENT));
-            entity.setDeployRound(deployround);
+            int deployRound = Integer.parseInt(entityTag.getAttribute(DEPLOYMENT));
+            entity.setDeployRound(deployRound);
         } catch (Exception e) {
             entity.setDeployRound(0);
         }
 
         // deployment zone
         try {
-            int deployZone =
-                    Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE));
+            int deployZone = Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE));
             entity.setStartingPos(deployZone);
         } catch (Exception e) {
             entity.setStartingPos(Board.START_NONE);
@@ -1029,8 +1028,7 @@ public class MULParser {
      * @param slot The slot of the crew object that corresponds to these attributes.
      * @param attributes A map of attribute values keyed to the attribute names.
      */
-    private void setPilotAttributes(Crew crew, int slot, Map<String,String> attributes) {
-
+    private void setPilotAttributes(Crew crew, int slot, Map<String, String> attributes) {
         // Did we find required attributes?
         if (!attributes.containsKey(GUNNERY) || (attributes.get(GUNNERY).length() == 0)) {
             warning.append("Could not find gunnery for pilot.\n");
@@ -1084,8 +1082,7 @@ public class MULParser {
                 } catch (NumberFormatException excep) {
                     // Handled by the next if test.
                 }
-                if ((gunneryLVal < 0)
-                        || (gunneryLVal > Crew.MAX_SKILL)) {
+                if ((gunneryLVal < 0) || (gunneryLVal > Crew.MAX_SKILL)) {
                     warning.append("Found invalid piloting value: ")
                             .append(attributes.get(GUNNERYL)).append(".\n");
                     return;
@@ -1097,8 +1094,7 @@ public class MULParser {
                 } catch (NumberFormatException excep) {
                     // Handled by the next if test.
                 }
-                if ((gunneryMVal < 0)
-                        || (gunneryMVal > Crew.MAX_SKILL)) {
+                if ((gunneryMVal < 0) || (gunneryMVal > Crew.MAX_SKILL)) {
                     warning.append("Found invalid piloting value: ")
                             .append(attributes.get(GUNNERYM)).append(".\n");
                     return;
@@ -1110,8 +1106,7 @@ public class MULParser {
                 } catch (NumberFormatException excep) {
                     // Handled by the next if test.
                 }
-                if ((gunneryBVal < 0)
-                        || (gunneryBVal > Crew.MAX_SKILL)) {
+                if ((gunneryBVal < 0) || (gunneryBVal > Crew.MAX_SKILL)) {
                     warning.append("Found invalid piloting value: ")
                             .append(attributes.get(GUNNERYB)).append(".\n");
                     return;
@@ -1125,8 +1120,7 @@ public class MULParser {
                 } catch (NumberFormatException excep) {
                     // Handled by the next if test.
                 }
-                if ((artVal < 0)
-                        || (artVal > Crew.MAX_SKILL)) {
+                if ((artVal < 0) || (artVal > Crew.MAX_SKILL)) {
                     warning.append("Found invalid artillery value: ")
                             .append(attributes.get(ARTILLERY)).append(".\n");
                     return;
@@ -1142,14 +1136,19 @@ public class MULParser {
             crew.setToughness(toughVal, slot);
 
             if ((attributes.containsKey(NAME)) && (attributes.get(NAME).length() > 0)) {
-                crew.setName(attributes.get(NAME), slot);;
+                crew.setName(attributes.get(NAME), slot);
             } else {
-                crew.setName("Unnamed", slot);;
+                crew.setName("Unnamed", slot);
             }
 
             if ((attributes.containsKey(NICK)) && (attributes.get(NICK).length() > 0)) {
                 crew.setNickname(attributes.get(NICK), 0);
             }
+
+            if ((attributes.containsKey(GENDER)) && (attributes.get(GENDER).length() > 0)){
+                crew.setGender(Integer.parseInt(attributes.get(GENDER)), 0);
+            }
+
             if ((attributes.containsKey(CAT_PORTRAIT)) && (attributes.get(CAT_PORTRAIT).length() > 0)) {
                 crew.setPortraitCategory(attributes.get(CAT_PORTRAIT), 0);
             }
@@ -1264,8 +1263,6 @@ public class MULParser {
                         ((Tank) entity).setStabiliserHit(loc);
                     }
                 }
-            } else {
-                continue;
             }
         }
     }

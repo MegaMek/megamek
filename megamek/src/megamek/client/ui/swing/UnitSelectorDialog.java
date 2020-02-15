@@ -768,8 +768,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                     ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
                 }
             }
-            if(cs.generateNames()) {
-                e.getCrew().setName(client.getRandomNameGenerator().generate(), i);
+            if (cs.generateNames()) {
+                boolean gender = client.getRandomNameGenerator().isFemale();
+                e.getCrew().setName(client.getRandomNameGenerator().generate(gender), i);
+                e.getCrew().setGender(gender, i);
             }
         }
         e.getCrew().sortRandomSkills();

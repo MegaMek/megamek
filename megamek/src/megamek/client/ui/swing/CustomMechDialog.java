@@ -1114,6 +1114,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (int i = 0; i < entities.get(0).getCrew().getSlotCount(); i++) {
                 String name = panCrewMember[i].getPilotName();
                 String nick = panCrewMember[i].getNickname();
+                int gender = panCrewMember[i].getGender();
                 boolean missing = panCrewMember[i].getMissing();
                 int gunnery;
                 int gunneryL;
@@ -1170,11 +1171,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         pilot.setGunneryMechL(gunneryL);
                         pilot.setGunneryMechB(gunneryB);
                         pilot.setGunneryMechM(gunneryM);
-                        pilot.setGunneryMech((int)Math.round((gunneryL + gunneryB + gunneryM) / 3.0));
+                        pilot.setGunneryMech((int) Math.round((gunneryL + gunneryB + gunneryM) / 3.0));
                         pilot.setGunneryAeroL(gunneryAeroL);
                         pilot.setGunneryAeroB(gunneryAeroB);
                         pilot.setGunneryAeroM(gunneryAeroM);
-                        pilot.setGunneryAero((int)Math.round((gunneryAeroL + gunneryAeroB + gunneryAeroM) / 3.0));
+                        pilot.setGunneryAero((int) Math.round((gunneryAeroL + gunneryAeroB + gunneryAeroM) / 3.0));
                     } else {
                         pilot.setGunneryMechL(gunnery);
                         pilot.setGunneryMechB(gunnery);
@@ -1192,7 +1193,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         entity.getCrew().setGunneryL(gunneryL, i);
                         entity.getCrew().setGunneryB(gunneryB, i);
                         entity.getCrew().setGunneryM(gunneryM, i);
-                        entity.getCrew().setGunnery((int)Math.round((gunneryL + gunneryB + gunneryM) / 3.0), i);
+                        entity.getCrew().setGunnery((int) Math.round((gunneryL + gunneryB + gunneryM) / 3.0), i);
                     } else {
                         entity.getCrew().setGunnery(gunnery, i);
                         entity.getCrew().setGunneryL(gunnery, i);
@@ -1210,6 +1211,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 entity.getCrew().setToughness(tough, i);
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
+                entity.getCrew().setGender(gender, i);
                 entity.getCrew().setPortraitCategory(panCrewMember[i].getPortraitCategory(), i);
                 entity.getCrew().setPortraitFileName(panCrewMember[i].getPortraitFilename(), i);
                 if (backup >= 0) {

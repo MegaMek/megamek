@@ -160,7 +160,9 @@ public class RandomNameDialog extends JDialog implements ActionListener {
             for (Entity ent : units) {
                 if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
                     for (int i = 0; i < ent.getCrew().getSlotCount(); i++) {
-                        ent.getCrew().setName(rng.generate(), i);
+                        boolean gender = rng.isFemale();
+                        ent.getCrew().setName(rng.generate(gender), i);
+                        ent.getCrew().setGender(gender, i);
                     }
                     c.sendUpdateEntity(ent);
                 }

@@ -32,6 +32,7 @@ import javax.swing.SwingConstants;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Infantry;
@@ -57,6 +58,7 @@ public class CustomPilotView extends JPanel {
     private static final long serialVersionUID = 345126674612500365L;
 
     private final Entity entity;
+    private int gender;
 
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMechDialog.chkMissing"));
     private final JTextField fldName = new JTextField(20);
@@ -75,10 +77,10 @@ public class CustomPilotView extends JPanel {
     private final JTextField fldArtillery = new JTextField(3);
     private final JTextField fldTough = new JTextField(3);
     
-    private final JComboBox<String> cbBackup = new JComboBox<String>();
+    private final JComboBox<String> cbBackup = new JComboBox<>();
     
-    private final ArrayList<Entity> entityUnitNum = new ArrayList<Entity>();
-    private final JComboBox<String> choUnitNum = new JComboBox<String>();
+    private final ArrayList<Entity> entityUnitNum = new ArrayList<>();
+    private final JComboBox<String> choUnitNum = new JComboBox<>();
 
     public CustomPilotView(CustomMechDialog parent, Entity entity, int slot, boolean editable) {
         this.entity = entity;
@@ -103,13 +105,16 @@ public class CustomPilotView extends JPanel {
             }
         });
         
-        portraitDialog = new PortraitChoiceDialog(parent.clientgui.getFrame(),
-                button);
+        portraitDialog = new PortraitChoiceDialog(parent.clientgui.getFrame(), button);
         portraitDialog.setPilot(entity.getCrew(), slot);
         add(button, GBC.std().gridheight(2));
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomName")); //$NON-NLS-1$
-        button.addActionListener(e -> fldName.setText(parent.clientgui.getClient().getRandomNameGenerator().generate()));
+        button.addActionListener(e -> {
+            boolean gender = parent.clientgui.getClient().getRandomNameGenerator().isFemale();
+            this.gender = Crew.getGenderAsInt(gender);
+            fldName.setText(parent.clientgui.getClient().getRandomNameGenerator().generate(gender));
+        });
         add(button, GBC.eop());
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomSkill")); //$NON-NLS-1$
@@ -197,11 +202,9 @@ public class CustomPilotView extends JPanel {
 
         label = new JLabel(Messages.getString("CustomMechDialog.labPiloting"), SwingConstants.RIGHT); //$NON-NLS-1$
         if (entity instanceof Tank) {
-            label.setText(Messages
-                    .getString("CustomMechDialog.labDriving"));
+            label.setText(Messages.getString("CustomMechDialog.labDriving"));
         } else if (entity instanceof Infantry) {
-            label.setText(Messages
-                    .getString("CustomMechDialog.labAntiMech"));
+            label.setText(Messages.getString("CustomMechDialog.labAntiMech"));
         }
         if (entity.getCrew() instanceof LAMPilot) {
             add(label, GBC.std());
@@ -254,18 +257,15 @@ public class CustomPilotView extends JPanel {
         }
 
         if (entity instanceof Protomech) {
-            // All Protomechs have a callsign.
-            StringBuffer callsign = new StringBuffer(
-                    Messages.getString("CustomMechDialog.Callsign")); //$NON-NLS-1$
-            callsign.append(": "); //$NON-NLS-1$
-            callsign.append(
+            // All ProtoMechs have a callsign.
+            String callsign = Messages.getString("CustomMechDialog.Callsign") + ": " + //$NON-NLS-1$
                     (entity.getUnitNumber() + PreferenceManager
-                            .getClientPreferences().getUnitStartChar()))
-                    .append('-').append(entity.getId());
-            label = new JLabel(callsign.toString(), SwingConstants.CENTER);
+                            .getClientPreferences().getUnitStartChar()) +
+                    '-' + entity.getId();//$NON-NLS-1$
+            label = new JLabel(callsign, SwingConstants.CENTER);
             add(label, GBC.eol().anchor(GridBagConstraints.CENTER));
 
-            // Get the Protomechs of this entity's player
+            // Get the ProtoMechs of this entity's player
             // that *aren't* in the entity's unit.
             Iterator<Entity> otherUnitEntities = parent.clientgui.getClient().getGame()
                     .getSelectedEntities(new EntitySelector() {
@@ -274,17 +274,13 @@ public class CustomPilotView extends JPanel {
                         private final short unitNumber = entity.getUnitNumber();
 
                         public boolean accept(Entity unitEntity) {
-                            if ((unitEntity instanceof Protomech)
+                            return (unitEntity instanceof Protomech)
                                     && (ownerId == unitEntity.getOwnerId())
-                                    && (unitNumber != unitEntity
-                                            .getUnitNumber())) {
-                                return true;
-                            }
-                            return false;
+                                    && (unitNumber != unitEntity.getUnitNumber());
                         }
                     });
 
-            // If we got any other entites, show the unit number controls.
+            // If we got any other entities, show the unit number controls.
             if (otherUnitEntities.hasNext()) {
                 label = new JLabel(Messages.getString("CustomMechDialog.labUnitNum"), SwingConstants.CENTER); //$NON-NLS-1$
                 add(choUnitNum, GBC.eop());
@@ -343,12 +339,10 @@ public class CustomPilotView extends JPanel {
             entityUnitNum.add(other);
 
             // Show the other entity's name and callsign.
-            StringBuffer callsign = new StringBuffer(other.getDisplayName());
-            callsign.append(" (")//$NON-NLS-1$
-                    .append((other.getUnitNumber() + PreferenceManager
-                            .getClientPreferences().getUnitStartChar()))
-                    .append('-').append(other.getId()).append(')');
-            choUnitNum.addItem(callsign.toString());
+            String callsign = other.getDisplayName() + " (" +
+                    (other.getUnitNumber() + PreferenceManager.getClientPreferences().getUnitStartChar())
+                    + '-' + other.getId() + ')';
+            choUnitNum.addItem(callsign);
         }
         choUnitNum.setSelectedIndex(0);
     }
@@ -363,6 +357,10 @@ public class CustomPilotView extends JPanel {
     
     public String getNickname() {
         return fldNick.getText();
+    }
+
+    public int getGender() {
+        return gender;
     }
     
     public int getGunnery() {

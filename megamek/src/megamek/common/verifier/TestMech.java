@@ -553,7 +553,7 @@ public class TestMech extends TestEntity {
                         && (m.getUsableShotsLeft() <= 1)) {
                     continue;
                 }
-                if ((mech instanceof Mech) && (m.getType().getCriticals(mech) == 0)) {
+                if (m.getType().getCriticals(mech) == 0) {
                     continue;
                 }
                 if (!(m.getType() instanceof MiscType)) {

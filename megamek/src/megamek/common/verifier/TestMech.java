@@ -840,21 +840,22 @@ public class TestMech extends TestEntity {
     @Override
     public double getArmoredComponentWeight() {
         double weight = 0.0;
-
+        double cockpitWeight = 0.0;
         for (int location = Mech.LOC_HEAD; location < mech.locations(); location++) {
             for (int slot = 0; slot < mech.getNumberOfCriticals(location); slot++) {
                 CriticalSlot cs = mech.getCritical(location, slot);
                 if ((cs != null) && cs.isArmored()) {
-                    weight += 0.5;
-
+                    // Armored cockpit (including command console) adds 1 ton, regardless of number of slots
                     if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
                             && (cs.getIndex() == Mech.SYSTEM_COCKPIT)) {
+                        cockpitWeight = 1.0;
+                    } else {
                         weight += 0.5;
                     }
                 }
             }
         }
-        return weight;
+        return weight + cockpitWeight;
     }
 
     /**

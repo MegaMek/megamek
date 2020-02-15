@@ -68,7 +68,7 @@ false
 30
 6
 6
-15
+14
 </armor>
 
 <Body Equipment>
@@ -77,7 +77,7 @@ ExtendedJumpJetSystem
 ExtendedJumpJetSystem
 ExtendedJumpJetSystem
 ExtendedJumpJetSystem
-CLMediumChemLaserAmmo (1)
+CLMediumChemLaserAmmo (30)
 </Body Equipment>
 
 <Head Equipment>
@@ -98,6 +98,22 @@ CLMediumChemLaser
 
 <Legs Equipment>
 </Legs Equipment>
+
+<capabilities>
+The five Extended Jump Jets mounted on the unit allow the Sprite to keep up with its lighter partner. One very valuable feature of the Sprite is its heavy armor. The ProtoMech can survive an Autocannon/20 hit to the torso.
+</capabilities>
+
+<overview>
+The Sprite Ultraheavy ProtoMech was created by The Society to act as a fire support platform. While coupled with the Boggart, the Sprite would rain down long range fire on enemy units, allowing the Boggart to get closer and inflict more damage.
+</overview>
+
+<systemModels>
+CHASSIS:SPT/15
+ARMOR:Proto-Type 4
+JUMPJET:X5 Series
+COMMUNICATIONS:Proto-Type 4
+TARGETING:SAT-PM1
+</systemModels>
 
 <source>
 Wars of Reaving - Jihad

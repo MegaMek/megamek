@@ -355,6 +355,7 @@ public class BoardEditor extends JComponent
             //$NON-NLS-2$
             frame.dispose();
         }
+
         // Add a mouse listener for mouse button release 
         // to handle Undo
         bv.addMouseListener(new MouseAdapter() {
@@ -506,7 +507,7 @@ public class BoardEditor extends JComponent
             }
         });
     }
-    
+
     /**
      * Sets up JButtons
      */
@@ -1429,6 +1430,7 @@ public class BoardEditor extends JComponent
                     new IBoard[]{board}, Collections.singletonList(false), MapSettings.MEDIUM_GROUND);
             game.setBoard(board);
             menuBar.setBoard(true);
+            bvc.doLayout();
         } catch (IOException ex) {
             System.err.println("error opening file to save!"); //$NON-NLS-1$
             System.err.println(ex);

@@ -717,7 +717,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Collect the modifiers for the attacker's condition/actions
         if (ae != null) {
             //Conventional fighter, Aerospace and fighter LAM attackers
-            if (ae instanceof IAero) {
+            if (ae.isAero()) {
                 toHit = compileAeroAttackerToHitMods(game, ae, target, ttype, toHit, aimingAt, aimingMode, eistatus,
                             wtype, weapon, atype, munition, isArtilleryIndirect, isFlakAttack, isNemesisConfused, isStrafing,
                             usesAmmo);
@@ -821,7 +821,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Collect the modifiers for the attacker's condition/actions
         if (ae != null) {
             //Conventional fighter, Aerospace and fighter LAM attackers
-            if (ae instanceof IAero) {
+            if (ae.isAero()) {
                 toHit = compileAeroAttackerToHitMods(game, ae, target, ttype, toHit, Entity.LOC_NONE,
                             IAimingModes.AIM_MODE_NONE, eistatus,
                             null, null, null, AmmoType.M_STANDARD, false, false, false, false,
@@ -3540,13 +3540,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Modifiers for aero units, including fighter LAMs
-        if (ae instanceof IAero) {
+        if (ae.isAero()) {
             IAero aero = (IAero) ae;
 
             // check for heavy gauss rifle on fighter of small craft
             // Arguably a weapon effect, except that it only applies when used by a fighter (isn't recoil fun?)
             // So it's here instead of with other weapon mods that apply across the board
-            if ((wtype != null && wtype instanceof ISHGaussRifle) && !(ae instanceof Dropship)
+            if ((wtype instanceof ISHGaussRifle) && !(ae instanceof Dropship)
                     && !(ae instanceof Jumpship)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FighterHeavyGauss"));
             }

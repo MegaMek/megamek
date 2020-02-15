@@ -401,6 +401,19 @@ public class RandomUnitGenerator implements Serializable {
         ArrayList<MechSummary> units = new ArrayList<>();
 
         try {
+            int retryCount = 0;
+            
+            // give the RATs a few seconds to load
+            while(!initialized && retryCount < 5) {
+                try {
+                    Thread.sleep(1000);
+                } catch(Exception e) {
+                    
+                }
+                
+                retryCount++;
+            }
+            
             Map<String, RatEntry> ratMap = getRatMap();
             if (null != ratMap) {
                 RatEntry re = ratMap.get(ratName);

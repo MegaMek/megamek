@@ -37,6 +37,7 @@ Tracked
 </motion_type>
 
 <transporters>
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -46,6 +47,14 @@ Tracked
 <engine_type>
 2
 </engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
 
 <omni>
 1
@@ -78,6 +87,7 @@ ISTargeting Computer:OMNI
 </Left Equipment>
 
 <Rear Equipment>
+Hitch
 </Rear Equipment>
 
 <Turret Equipment>

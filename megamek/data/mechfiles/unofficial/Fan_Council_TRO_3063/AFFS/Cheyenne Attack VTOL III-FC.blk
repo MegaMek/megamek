@@ -47,6 +47,14 @@ VTOL
 2
 </engine_type>
 
+<armor_type>
+5
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
 <armor>
 36
 26

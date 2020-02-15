@@ -71,6 +71,7 @@ Tramp JumpShip (Lithium-Fusion)|Tramp JumpShip (3071)
 
 #Mechs
 Jagermech JM6-DG|JagerMech JM6-DG
+Mad Cat III (Eve)|Mad Cat III 3 (Eve)
 
 #Protomechs
 Boggart (Quad) 1|Boggart Ultraheavy ProtoMech (Standard)

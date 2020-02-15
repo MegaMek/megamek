@@ -15,7 +15,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -38,6 +37,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -374,9 +374,11 @@ public class PortraitChoiceDialog extends JDialog {
                    setText(getValueAt(row, column).toString());
                    setImage(category, name);
                    if(isSelected) {
-                       setBackground(new Color(220,220,220));
+                       setBackground(UIManager.getColor("Table.selectionBackground"));
+                       setForeground(UIManager.getColor("Table.selectionForeground"));
                    } else {
-                       setBackground(Color.WHITE);
+                    setBackground(UIManager.getColor("Table.background"));
+                    setForeground(UIManager.getColor("Table.foreground"));
                    }
     
                    return c;

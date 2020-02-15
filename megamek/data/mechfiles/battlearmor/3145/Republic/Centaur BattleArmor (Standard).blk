@@ -24,13 +24,20 @@ Centaur Battle Armor
 3136
 </year>
 
+<originalBuildYear>
+3136
+</originalBuildYear>
+
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
 Leg
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 2
@@ -53,13 +60,13 @@ BA-Magnetic Clamp:Body
 ISBASmallLaser:LA
 ISBATubeArtilleryAmmo:DWP:Shots4#
 ISBATubeArtilleryAmmo:DWP:Shots4#
-IS BA Reactive:Body
-IS BA Reactive:Body
-IS BA Reactive:RA
-IS BA Reactive:LA
-IS BA Reactive:RA
-IS BA Reactive:LA
-IS BA Reactive:Body
+IS BA Reactive (Blazer):Body
+IS BA Reactive (Blazer):Body
+IS BA Reactive (Blazer):RA
+IS BA Reactive (Blazer):LA
+IS BA Reactive (Blazer):RA
+IS BA Reactive (Blazer):LA
+IS BA Reactive (Blazer):Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>

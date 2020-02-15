@@ -201,6 +201,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
     public static final String SKIN_FILE = "SkinFile";
     public static final String DEFAULT_WEAP_SORT_ORDER = "DefaultWeaponSortOrder";
+    public static final String UI_THEME = "UITheme";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -370,6 +371,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
         store.setDefault(SOFTCENTER, false);
+        store.setDefault(UI_THEME, javax.swing.UIManager.getSystemLookAndFeelClassName());
 
         store.setDefault(RAT_TECH_LEVEL, 0);
         store.setDefault(RAT_BV_MIN, "5800");
@@ -794,6 +796,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getString(SKIN_FILE);
     }
 
+    public String getUITheme() {
+        return store.getString(UI_THEME);
+    }
+
     public int getDefaultWeaponSortOrder() {
         return store.getInt(DEFAULT_WEAP_SORT_ORDER);
     }
@@ -1181,6 +1187,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setSkinFile(String s) {
         store.setValue(SKIN_FILE, s);
+    }
+
+    public void setUITheme(String s) {
+        store.setValue(UI_THEME, s);
     }
     
     public void setDefaultWeaponSortOrder(int i) {

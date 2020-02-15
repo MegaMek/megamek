@@ -1498,7 +1498,7 @@ public abstract class TestEntity implements TestEntityOption {
 } // End class TestEntity
 
 class Armor {
-    public final static int CLAN_ARMOR = 0x01;
+    public static final int CLAN_ARMOR = 0x01;
 
     private int armorType;
 

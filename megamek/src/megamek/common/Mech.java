@@ -3152,7 +3152,7 @@ public abstract class Mech extends Entity {
         return getTechAdvancement(getEntityType(), isPrimitive(), isIndustrial(), getWeightClass());
     }
 
-    private final static TechAdvancement[] GYRO_TA =  {
+    private static final TechAdvancement[] GYRO_TA =  {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, 2505)
                 .setApproximate(true, false, false).setPrototypeFactions(F_TA)
                 .setProductionFactions(F_TH).setTechRating(RATING_D)
@@ -3184,7 +3184,7 @@ public abstract class Mech extends Entity {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy
     };
 
-    private final static TechAdvancement[] COCKPIT_TA = {
+    private static final TechAdvancement[] COCKPIT_TA = {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
                 .setApproximate(true, false, false).setTechRating(RATING_D)
                 .setPrototypeFactions(F_TH).setProductionFactions(F_TH)

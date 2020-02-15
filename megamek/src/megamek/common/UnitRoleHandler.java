@@ -38,9 +38,9 @@ import megamek.common.util.MegaMekFile;
 
 public class UnitRoleHandler {
     
-    private final static String FILE_LOC = "unit_roles.txt"; //$NON-NLS-1$
+    private static final String FILE_LOC = "unit_roles.txt"; //$NON-NLS-1$
     
-    private final static UnitRoleHandler instance = new UnitRoleHandler();
+    private static final UnitRoleHandler instance = new UnitRoleHandler();
     
     private final Map<String,UnitRole> roleMap = new HashMap<>();
     private volatile boolean initialized = false;

@@ -31,8 +31,8 @@ public class Bay implements Transporter, ITechnology {
 
     private static final long serialVersionUID = -9056450317468016272L;
 
-    public final static String FIELD_SEPARATOR = ":";
-    public final static String FACING_PREFIX = "f";
+    public static final String FIELD_SEPARATOR = ":";
+    public static final String FACING_PREFIX = "f";
 
     int doors = 1;
     int doorsNext = 1;

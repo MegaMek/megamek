@@ -36,23 +36,23 @@ import megamek.common.actions.PushAttackAction;
  * are the conditions for multiple physical attacks?
  */
 public class PhysicalOption {
-    public final static int NONE = 0;
-    public final static int PUNCH_LEFT = 1;
-    public final static int PUNCH_RIGHT = 2;
-    public final static int PUNCH_BOTH = 3;
-    public final static int KICK_LEFT = 4;
-    public final static int KICK_RIGHT = 5;
-    public final static int USE_CLUB = 6; // Includes sword, hatchet, mace,
+    public static final int NONE = 0;
+    public static final int PUNCH_LEFT = 1;
+    public static final int PUNCH_RIGHT = 2;
+    public static final int PUNCH_BOTH = 3;
+    public static final int KICK_LEFT = 4;
+    public static final int KICK_RIGHT = 5;
+    public static final int USE_CLUB = 6; // Includes sword, hatchet, mace,
                                             // and found clubs
-    public final static int USE_CLAW = 7; // Level 3 rules, not incorporated
+    public static final int USE_CLAW = 7; // Level 3 rules, not incorporated
                                             // yet
-    public final static int PUSH_ATTACK = 8;
-    public final static int TRIP_ATTACK = 9; // Level 3 rules, not
+    public static final int PUSH_ATTACK = 8;
+    public static final int TRIP_ATTACK = 9; // Level 3 rules, not
                                                 // incorporated yet
-    public final static int BRUSH_LEFT = 10;
-    public final static int BRUSH_RIGHT = 11;
-    public final static int BRUSH_BOTH = 12;
-    public final static int THRASH_INF = 13;
+    public static final int BRUSH_LEFT = 10;
+    public static final int BRUSH_RIGHT = 11;
+    public static final int BRUSH_BOTH = 12;
+    public static final int THRASH_INF = 13;
 
     Entity attacker;
     Entity target;

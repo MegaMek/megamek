@@ -30,7 +30,7 @@ public class Engine implements Serializable, ITechnology {
      */
     private static final long serialVersionUID = -246032529363109609L;
 
-    public final static double[] ENGINE_RATINGS = { 0.0, 0.25, 0.5, 0.5,
+    public static final double[] ENGINE_RATINGS = { 0.0, 0.25, 0.5, 0.5,
             0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.5, 1.5, 1.5, 2.0, 2.0,
             2.0, 2.5, 2.5, 3.0, 3.0, 3.0, 3.5, 3.5, 4.0, 4.0, 4.0,
             4.5, 4.5, 5.0, 5.0, 5.5, 5.5, 6.0, 6.0, 6.0, 7.0, 7.0,
@@ -48,31 +48,31 @@ public class Engine implements Serializable, ITechnology {
     
   
     // flags
-    public final static int CLAN_ENGINE = 0x1;
-    public final static int TANK_ENGINE = 0x2;
-    public final static int LARGE_ENGINE = 0x4;
-    public final static int SUPERHEAVY_ENGINE = 0x8;
-    public final static int SUPPORT_VEE_ENGINE = 0x10;
+    public static final int CLAN_ENGINE = 0x1;
+    public static final int TANK_ENGINE = 0x2;
+    public static final int LARGE_ENGINE = 0x4;
+    public static final int SUPERHEAVY_ENGINE = 0x8;
+    public static final int SUPPORT_VEE_ENGINE = 0x10;
 
     // types
-    public final static int COMBUSTION_ENGINE = 0;
-    public final static int NORMAL_ENGINE = 1;
-    public final static int XL_ENGINE = 2;
-    public final static int XXL_ENGINE = 3;
-    public final static int FUEL_CELL = 4;
-    public final static int LIGHT_ENGINE = 5;
-    public final static int COMPACT_ENGINE = 6;
-    public final static int FISSION = 7;
-    public final static int NONE = 8;
-    public final static int MAGLEV = 9;
-    public final static int STEAM = 10;
-    public final static int BATTERY = 11;
-    public final static int SOLAR = 12;
-    public final static int EXTERNAL = 13;
-    private final static int NUM_ENGINE_TYPES = 14;
+    public static final int COMBUSTION_ENGINE = 0;
+    public static final int NORMAL_ENGINE = 1;
+    public static final int XL_ENGINE = 2;
+    public static final int XXL_ENGINE = 3;
+    public static final int FUEL_CELL = 4;
+    public static final int LIGHT_ENGINE = 5;
+    public static final int COMPACT_ENGINE = 6;
+    public static final int FISSION = 7;
+    public static final int NONE = 8;
+    public static final int MAGLEV = 9;
+    public static final int STEAM = 10;
+    public static final int BATTERY = 11;
+    public static final int SOLAR = 12;
+    public static final int EXTERNAL = 13;
+    private static final int NUM_ENGINE_TYPES = 14;
 
     /** Keys for retrieving engine name from {@link Messages} */
-    private final static String[] TYPE_KEYS = {
+    private static final String[] TYPE_KEYS = {
             "ICE", "Fusion", "XL", "XXL", "FuelCell", "Light", "Compact", "Fission", "None",
             "MagLev", "Steam", "Battery", "Solar", "External"
     };
@@ -80,7 +80,7 @@ public class Engine implements Serializable, ITechnology {
     //These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127
     //The other engine types are assumed to have a value of ) in the array
     //if not listed.
-    private final static double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][6];
+    private static final double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][6];
     static { 
         SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_A] = 4.0;
         SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_B] = 3.5;

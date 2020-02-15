@@ -116,21 +116,21 @@ public class MiniMap extends JPanel {
      *
      */
     private static final long serialVersionUID = 6964529682842424060L;
-    private final static Color[] m_terrainColors = new Color[Terrains.SIZE];
+    private static final Color[] m_terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
     private static Color ULTRA_HEAVY_WOODS;
     private static Color BACKGROUND;
     private static Color SINKHOLE;
     private static Color SMOKE_AND_FIRE;
 
-    private final static int SHOW_NO_HEIGHT = 0;
-    private final static int SHOW_GROUND_HEIGHT = 1;
-    private final static int SHOW_BUILDING_HEIGHT = 2;
-    private final static int SHOW_TOTAL_HEIGHT = 3;
-    private final static int NBR_MODES = 3;
+    private static final int SHOW_NO_HEIGHT = 0;
+    private static final int SHOW_GROUND_HEIGHT = 1;
+    private static final int SHOW_BUILDING_HEIGHT = 2;
+    private static final int SHOW_TOTAL_HEIGHT = 3;
+    private static final int NBR_MODES = 3;
 
-    private final static int SCROLL_PANE_WIDTH = 160;
-    private final static int SCROLL_PANE_HEIGHT = 200;
+    private static final int SCROLL_PANE_WIDTH = 160;
+    private static final int SCROLL_PANE_HEIGHT = 200;
 
     private Image m_mapImage;
     private IBoardView m_bview;
@@ -174,19 +174,19 @@ public class MiniMap extends JPanel {
     
     // Here come the Strat Ops / NATO unit symbols
     Map<Coords, Integer> multiUnits = new HashMap<Coords, Integer>();
-    private final static Path2D STRAT_BASERECT;
-    private final static Path2D STRAT_INFANTRY;
-    private final static Path2D STRAT_MECH;
-    private final static Path2D STRAT_VTOL;
-    private final static Path2D STRAT_TANKTRACKED;
-    private final static Path2D STRAT_AERO;
-    private final static Path2D STRAT_SPHEROID;
-    private final static Path2D STRAT_HOVER;
-    private final static Path2D STRAT_WHEELED;
-    private final static Path2D STRAT_NAVAL;
-    private final static Dimension SYMBOLSIZE = new Dimension(167,103);
-    private final static String[] STRAT_WEIGHTS = { "L", "L", "M", "H", "A", "A" };
-    private final static double STRAT_CX = SYMBOLSIZE.getWidth()/5; // X center for two symbols
+    private static final Path2D STRAT_BASERECT;
+    private static final Path2D STRAT_INFANTRY;
+    private static final Path2D STRAT_MECH;
+    private static final Path2D STRAT_VTOL;
+    private static final Path2D STRAT_TANKTRACKED;
+    private static final Path2D STRAT_AERO;
+    private static final Path2D STRAT_SPHEROID;
+    private static final Path2D STRAT_HOVER;
+    private static final Path2D STRAT_WHEELED;
+    private static final Path2D STRAT_NAVAL;
+    private static final Dimension SYMBOLSIZE = new Dimension(167,103);
+    private static final String[] STRAT_WEIGHTS = { "L", "L", "M", "H", "A", "A" };
+    private static final double STRAT_CX = SYMBOLSIZE.getWidth()/5; // X center for two symbols
     
     static {
         // Base rectangle for all units

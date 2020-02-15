@@ -138,7 +138,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     private StringBuffer searchBuffer = new StringBuffer();
     private long lastSearch = 0;
     // how long after a key is typed does a new search begin
-    private final static int KEY_TIMEOUT = 1000;
+    private static final int KEY_TIMEOUT = 1000;
 
     private MechSummary[] mechs;
 
@@ -873,14 +873,14 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
              *
              */
         private static final long serialVersionUID = -5457068129532709857L;
-        private final static int COL_CHASSIS = 0;
-        private final static int COL_MODEL = 1;
-        private final static int COL_WEIGHT = 2;
-        private final static int COL_BV = 3;
-        private final static int COL_YEAR = 4;
-        private final static int COL_COST = 5;
-        private final static int COL_LEVEL = 6;
-        private final static int N_COL = 7;
+        private static final int COL_CHASSIS = 0;
+        private static final int COL_MODEL = 1;
+        private static final int COL_WEIGHT = 2;
+        private static final int COL_BV = 3;
+        private static final int COL_YEAR = 4;
+        private static final int COL_COST = 5;
+        private static final int COL_LEVEL = 6;
+        private static final int N_COL = 7;
 
         private MechSummary[] data = new MechSummary[0];
 

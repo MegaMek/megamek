@@ -227,9 +227,9 @@ public class Server implements Runnable {
         NONPENETRATING
     }
 
-    // public final static String LEGAL_CHARS =
+    // public static final String LEGAL_CHARS =
     // "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
-    private final static String DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
+    private static final String DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
 
     // server setup
     private String password;

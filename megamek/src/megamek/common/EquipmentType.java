@@ -82,17 +82,17 @@ public class EquipmentType implements ITechnology {
     public static final int T_ARMOR_IMPACT_RESISTANT = 25;
     public static final int T_ARMOR_BALLISTIC_REINFORCED = 26;
     public static final int T_ARMOR_FERRO_ALUM_PROTO = 27;
-    public final static int T_ARMOR_BA_STANDARD = 28;
-    public final static int T_ARMOR_BA_STANDARD_PROTOTYPE = 29;
-    public final static int T_ARMOR_BA_STANDARD_ADVANCED = 30;
-    public final static int T_ARMOR_BA_STEALTH_BASIC = 31;
-    public final static int T_ARMOR_BA_STEALTH = 32;
-    public final static int T_ARMOR_BA_STEALTH_IMP = 33;
-    public final static int T_ARMOR_BA_STEALTH_PROTOTYPE = 34;
-    public final static int T_ARMOR_BA_FIRE_RESIST = 35;
-    public final static int T_ARMOR_BA_MIMETIC = 36;
-    public final static int T_ARMOR_BA_REFLECTIVE = 37;
-    public final static int T_ARMOR_BA_REACTIVE = 38;
+    public static final int T_ARMOR_BA_STANDARD = 28;
+    public static final int T_ARMOR_BA_STANDARD_PROTOTYPE = 29;
+    public static final int T_ARMOR_BA_STANDARD_ADVANCED = 30;
+    public static final int T_ARMOR_BA_STEALTH_BASIC = 31;
+    public static final int T_ARMOR_BA_STEALTH = 32;
+    public static final int T_ARMOR_BA_STEALTH_IMP = 33;
+    public static final int T_ARMOR_BA_STEALTH_PROTOTYPE = 34;
+    public static final int T_ARMOR_BA_FIRE_RESIST = 35;
+    public static final int T_ARMOR_BA_MIMETIC = 36;
+    public static final int T_ARMOR_BA_REFLECTIVE = 37;
+    public static final int T_ARMOR_BA_REACTIVE = 38;
     public static final int T_ARMOR_PRIMITIVE_FIGHTER = 39;
     public static final int T_ARMOR_PRIMITIVE_AERO = 40;
     public static final int T_ARMOR_AEROSPACE = 41;
@@ -924,15 +924,15 @@ public class EquipmentType implements ITechnology {
      * does not have its own TechAdvancement.
      */
 
-    protected final static TechAdvancement TA_STANDARD_ARMOR = new TechAdvancement(TECH_BASE_ALL)
+    protected static final TechAdvancement TA_STANDARD_ARMOR = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    protected final static TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL)
+    protected static final TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2430, 2439, 2505).setApproximate(true, false, false).setIntroLevel(true)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    protected final static TechAdvancement TA_NONE = new TechAdvancement(TECH_BASE_ALL)
+    protected static final TechAdvancement TA_NONE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE).setTechRating(RATING_A)
             .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);

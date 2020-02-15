@@ -1062,17 +1062,17 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
          */
         private static final long serialVersionUID = 1L;
 
-        private final static int COL_QTY = 0;
-        private final static int COL_NAME = 1;
-        private final static int COL_DMG = 2;
-        private final static int COL_HEAT = 3;
-        private final static int COL_SHORT = 4;
-        private final static int COL_MED = 5;
-        private final static int COL_LONG = 6;
-        private final static int COL_IS_CLAN = 7;
-        private final static int COL_LEVEL = 8;
-        private final static int N_COL = 9;
-        private final static int COL_INTERNAL_NAME = 9;
+        private static final int COL_QTY = 0;
+        private static final int COL_NAME = 1;
+        private static final int COL_DMG = 2;
+        private static final int COL_HEAT = 3;
+        private static final int COL_SHORT = 4;
+        private static final int COL_MED = 5;
+        private static final int COL_LONG = 6;
+        private static final int COL_IS_CLAN = 7;
+        private static final int COL_LEVEL = 8;
+        private static final int N_COL = 9;
+        private static final int COL_INTERNAL_NAME = 9;
 
 
         private int[] qty;
@@ -1199,13 +1199,13 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
          */
         private static final long serialVersionUID = 1L;
 
-        private final static int COL_QTY = 0;
-        private final static int COL_NAME = 1;
-        private final static int COL_COST = 2;
-        private final static int COL_IS_CLAN = 3;
-        private final static int COL_LEVEL = 4;
-        private final static int N_COL = 5;
-        private final static int COL_INTERNAL_NAME = 5;
+        private static final int COL_QTY = 0;
+        private static final int COL_NAME = 1;
+        private static final int COL_COST = 2;
+        private static final int COL_IS_CLAN = 3;
+        private static final int COL_LEVEL = 4;
+        private static final int N_COL = 5;
+        private static final int COL_INTERNAL_NAME = 5;
 
         private int[] qty;
         private Vector<EquipmentType> equipment = new Vector<EquipmentType>();

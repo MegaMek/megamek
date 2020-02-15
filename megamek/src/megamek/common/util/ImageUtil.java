@@ -47,7 +47,7 @@ public final class ImageUtil {
      * The graphics configuration of the local graphic card/monitor combination,
      * if we aren't running in "headless" mode.
      */
-    private final static GraphicsConfiguration GC;
+    private static final GraphicsConfiguration GC;
     static {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = null;

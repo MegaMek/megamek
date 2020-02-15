@@ -50,28 +50,28 @@ import megamek.common.weapons.tag.TAGWeapon;
  */
 public class FormationType {
     
-    public final static int FLAG_MEK = 1 << UnitType.MEK; 
-    public final static int FLAG_TANK = 1 << UnitType.TANK; 
-    public final static int FLAG_BATTLE_ARMOR = 1 << UnitType.BATTLE_ARMOR; 
-    public final static int FLAG_INFANTRY = 1 << UnitType.INFANTRY; 
-    public final static int FLAG_PROTOMEK = 1 << UnitType.PROTOMEK; 
-    public final static int FLAG_VTOL = 1 << UnitType.VTOL;
-    public final static int FLAG_NAVAL = 1 << UnitType.NAVAL;
+    public static final int FLAG_MEK = 1 << UnitType.MEK;
+    public static final int FLAG_TANK = 1 << UnitType.TANK;
+    public static final int FLAG_BATTLE_ARMOR = 1 << UnitType.BATTLE_ARMOR;
+    public static final int FLAG_INFANTRY = 1 << UnitType.INFANTRY;
+    public static final int FLAG_PROTOMEK = 1 << UnitType.PROTOMEK;
+    public static final int FLAG_VTOL = 1 << UnitType.VTOL;
+    public static final int FLAG_NAVAL = 1 << UnitType.NAVAL;
     
-    public final static int FLAG_CONV_FIGHTER = 1 << UnitType.CONV_FIGHTER; 
-    public final static int FLAG_AERO = 1 << UnitType.AERO; 
-    public final static int FLAG_SMALL_CRAFT = 1 << UnitType.SMALL_CRAFT; 
-    public final static int FLAG_DROPSHIP = 1 << UnitType.DROPSHIP;
+    public static final int FLAG_CONV_FIGHTER = 1 << UnitType.CONV_FIGHTER;
+    public static final int FLAG_AERO = 1 << UnitType.AERO;
+    public static final int FLAG_SMALL_CRAFT = 1 << UnitType.SMALL_CRAFT;
+    public static final int FLAG_DROPSHIP = 1 << UnitType.DROPSHIP;
 
-    public final static int FLAG_GROUND = FLAG_MEK | FLAG_TANK | FLAG_BATTLE_ARMOR | FLAG_INFANTRY
+    public static final int FLAG_GROUND = FLAG_MEK | FLAG_TANK | FLAG_BATTLE_ARMOR | FLAG_INFANTRY
             | FLAG_PROTOMEK | FLAG_VTOL | FLAG_NAVAL;
-    public final static int FLAG_GROUND_NO_LIGHT = FLAG_MEK | FLAG_TANK | FLAG_BATTLE_ARMOR
+    public static final int FLAG_GROUND_NO_LIGHT = FLAG_MEK | FLAG_TANK | FLAG_BATTLE_ARMOR
             | FLAG_PROTOMEK | FLAG_NAVAL;
-    public final static int FLAG_FIGHTER = FLAG_CONV_FIGHTER | FLAG_AERO;
-    public final static int FLAG_AIR = FLAG_CONV_FIGHTER | FLAG_AERO | FLAG_SMALL_CRAFT
+    public static final int FLAG_FIGHTER = FLAG_CONV_FIGHTER | FLAG_AERO;
+    public static final int FLAG_AIR = FLAG_CONV_FIGHTER | FLAG_AERO | FLAG_SMALL_CRAFT
             | FLAG_DROPSHIP;
-    public final static int FLAG_VEHICLE = FLAG_TANK | FLAG_NAVAL | FLAG_VTOL;
-    public final static int FLAG_ALL = FLAG_GROUND | FLAG_AIR;
+    public static final int FLAG_VEHICLE = FLAG_TANK | FLAG_NAVAL | FLAG_VTOL;
+    public static final int FLAG_ALL = FLAG_GROUND | FLAG_AIR;
     
     private static HashMap<String,FormationType> allFormationTypes = null;
     public static FormationType getFormationType(String key) {

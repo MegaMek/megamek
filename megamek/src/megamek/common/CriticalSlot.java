@@ -22,8 +22,8 @@ public class CriticalSlot implements Serializable {
      *
      */
     private static final long serialVersionUID = -8744251501251495923L;
-    public final static int TYPE_SYSTEM = 0;
-    public final static int TYPE_EQUIPMENT = 1;
+    public static final int TYPE_SYSTEM = 0;
+    public static final int TYPE_EQUIPMENT = 1;
 
     /**
      * Determines what the type of this CriticalSlot is, either system or

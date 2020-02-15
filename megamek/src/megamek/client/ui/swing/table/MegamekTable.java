@@ -16,7 +16,7 @@ public class MegamekTable extends JTable {
      */
     private static final long serialVersionUID = 1L;
 
-    private final static int KEY_TIMEOUT = 1000;
+    private static final int KEY_TIMEOUT = 1000;
 
     private long lastSearch;
 

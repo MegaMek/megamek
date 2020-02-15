@@ -248,7 +248,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Map each phase to the name of the card for the main display area.
      */
-    private HashMap<String, String> mainNames = new HashMap<>();
+    private Map<String, String> mainNames = new HashMap<>();
 
     /**
      * The <code>JPanel</code> containing the main display area.
@@ -263,7 +263,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Map each phase to the name of the card for the secondary area.
      */
-    private HashMap<String, String> secondaryNames = new HashMap<>();
+    private Map<String, String> secondaryNames = new HashMap<>();
 
     /**
      * The <code>JPanel</code> containing the secondary display area.
@@ -280,7 +280,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Map phase component names to phase component objects.
      */
-    HashMap<String, JComponent> phaseComponents = new HashMap<>();
+    Map<String, JComponent> phaseComponents = new HashMap<>();
 
     /**
      * Current Selected entity

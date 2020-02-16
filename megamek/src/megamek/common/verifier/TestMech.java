@@ -541,19 +541,19 @@ public class TestMech extends TestEntity {
         return false;
     }
 
-    public boolean checkCriticalSlotsForEquipment(Entity entity,
+    public boolean checkCriticalSlotsForEquipment(Mech mech,
             Vector<Mounted> unallocated, Vector<Serializable> allocation,
             Vector<Integer> heatSinks, StringBuffer buff) {
         boolean legal = true;
         int countInternalHeatSinks = 0;
-        for (Mounted m : entity.getEquipment()) {
+        for (Mounted m : mech.getEquipment()) {
             int loc = m.getLocation();
             if (loc == Entity.LOC_NONE) {
                 if ((m.getType() instanceof AmmoType)
                         && (m.getUsableShotsLeft() <= 1)) {
                     continue;
                 }
-                if ((entity instanceof Mech) && (m.getType().getCriticals(entity) == 0)) {
+                if (m.getType().getCriticals(mech) == 0) {
                     continue;
                 }
                 if (!(m.getType() instanceof MiscType)) {
@@ -571,8 +571,8 @@ public class TestMech extends TestEntity {
                 }
             }
             // Check for illegal allocations
-            if (entity.isOmni()
-                    && (entity instanceof BipedMech)
+            if (mech.isOmni()
+                    && (mech instanceof BipedMech)
                     && ((loc == Mech.LOC_LARM) || (loc == Mech.LOC_RARM))
                     && ((m.getType() instanceof GaussWeapon)
                             || (m.getType() instanceof ACWeapon)
@@ -589,21 +589,19 @@ public class TestMech extends TestEntity {
                 } else if (m.getType() instanceof PPCWeapon) {
                     weapon = "PPCs";
                 }
-                if (entity.hasSystem(Mech.ACTUATOR_LOWER_ARM, loc)
-                        || entity.hasSystem(Mech.ACTUATOR_HAND, loc)) {
-                    buff.append("Omni mechs with arm mounted " + weapon
-                            + " cannot have lower armor or hand actuators!\n");
+                if (mech.hasSystem(Mech.ACTUATOR_LOWER_ARM, loc)
+                        || mech.hasSystem(Mech.ACTUATOR_HAND, loc)) {
+                    buff.append("Omni mechs with arm mounted ").append(weapon)
+                            .append(" cannot have lower armor or hand actuators!\n");
                     legal = false;
                 }
             }
         }
-        if ((countInternalHeatSinks > engine.integralHeatSinkCapacity(mech
-                .hasCompactHeatSinks()))
-                || ((countInternalHeatSinks < engine
-                        .integralHeatSinkCapacity(mech.hasCompactHeatSinks()))
-                        && (countInternalHeatSinks != ((Mech) entity)
-                                .heatSinks()) && !entity.isOmni())) {
-            heatSinks.addElement(Integer.valueOf(countInternalHeatSinks));
+        if ((countInternalHeatSinks > engine.integralHeatSinkCapacity(this.mech.hasCompactHeatSinks()))
+                || ((countInternalHeatSinks < engine.integralHeatSinkCapacity(this.mech.hasCompactHeatSinks()))
+                        && (countInternalHeatSinks != mech.heatSinks(false))
+                && !mech.isOmni())) {
+            heatSinks.addElement(countInternalHeatSinks);
         }
         return legal;
     }

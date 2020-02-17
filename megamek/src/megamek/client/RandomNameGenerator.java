@@ -328,10 +328,7 @@ public class RandomNameGenerator implements Serializable {
                     if (isClan) {
                         eFirst = eLast;
                     }
-                    Vector<String> firstNames = firstM.get(eFirst);
-                    if (isFemale) {
-                        firstNames = firstF.get(eFirst);
-                    }
+                    Vector<String> firstNames = isFemale ? firstF.get(eFirst) : firstM.get(eFirst);
                     Vector<String> lastNames = last.get(eLast);
                     if ((null != firstNames) && (null != lastNames)
                             && (firstNames.size() > 0) && (lastNames.size() > 0)) {
@@ -380,10 +377,7 @@ public class RandomNameGenerator implements Serializable {
                     if (isClan) {
                         eFirst = eLast;
                     }
-                    Vector<String> firstNames = firstM.get(eFirst);
-                    if (isFemale) {
-                        firstNames = firstF.get(eFirst);
-                    }
+                    Vector<String> firstNames = isFemale ? firstF.get(eFirst) : firstM.get(eFirst);
                     Vector<String> lastNames = last.get(eLast);
                     if ((null != firstNames) && (null != lastNames)
                             && (firstNames.size() > 0) && (lastNames.size() > 0)) {

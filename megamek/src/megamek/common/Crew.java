@@ -202,7 +202,7 @@ public class Crew implements Serializable {
      * @param gunnery  the crew's Gunnery skill.
      * @param piloting the crew's Piloting or Driving skill.
      * @deprecated by multi-crew cockpit support. Replaced by {@link #Crew(CrewType, String, int, int, int)}.
-     * <p>
+     *
      * Creates a basic crew for a self-piloted unit. Using this constructor for a naval vessel will
      * result in a secondary target modifier for additional targets past the first.
      */
@@ -1450,10 +1450,20 @@ public class Crew implements Serializable {
     }
 
     public void setExtraDataForCrewMember(int crewIndex, Map<String, String> dataMap) {
+        if (this.extraData == null) {
+            this.extraData = new HashMap<>();
+        }
+
         this.extraData.put(crewIndex, dataMap);
     }
 
     public void addExtraDataDataPoint(int crewIndex, String key, String value) {
+        if (this.extraData == null) {
+            this.extraData = new HashMap<>();
+        }
+
+        this.extraData.computeIfAbsent(crewIndex, k -> new HashMap<>());
+
         this.extraData.get(crewIndex).put(key, value);
     }
 
@@ -1462,19 +1472,21 @@ public class Crew implements Serializable {
     }
 
     public Map<String, String> getExtraDataForCrewMember(int crewIndex) {
-        return extraData.get(crewIndex);
+        if (this.extraData == null) {
+            return null;
+        } else {
+            return extraData.get(crewIndex);
+        }
     }
 
     public String getExtraDataValue(int crewIndex, String key) {
-        return extraData.get(crewIndex).get(key);
-    }
-
-    public void clearExtraData() {
-        this.extraData = null;
-    }
-
-    public void clearExtraDataForCrewMember(int crewIndex) {
-        this.extraData.put(crewIndex, null);
+        if (this.extraData == null) {
+            return null;
+        } else if (this.extraData.get(crewIndex) == null) {
+            return null;
+        } else {
+            return extraData.get(crewIndex).get(key);
+        }
     }
     //endregion extraData
 

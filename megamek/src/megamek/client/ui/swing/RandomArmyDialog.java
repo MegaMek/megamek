@@ -1020,7 +1020,7 @@ WindowListener, TreeSelectionListener {
         private static final int COL_MOVE = 2;
         private static final int N_COL = 3;
 
-        private ArrayList<MechSummary> data;
+        private List<MechSummary> data;
 
         public UnitTableModel() {
             data = new ArrayList<>();
@@ -1044,7 +1044,7 @@ WindowListener, TreeSelectionListener {
             fireTableDataChanged();
         }
 
-        public void setData(ArrayList<MechSummary> mechs) {
+        public void setData(List<MechSummary> mechs) {
             data = mechs;
             fireTableDataChanged();
         }
@@ -1089,7 +1089,7 @@ WindowListener, TreeSelectionListener {
             return data.get(row);
         }
 
-        public ArrayList<MechSummary> getAllUnits() {
+        public List<MechSummary> getAllUnits() {
             return data;
         }
     }

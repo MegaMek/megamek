@@ -181,6 +181,7 @@ public class MULParser {
     private static final String BA_MEA_TYPE_NAME = "baMEATypeName";
     private static final String KILLED = "killed";
     private static final String KILLER = "killer";
+    private static final String EXTRA_DATA = "extraData";
 
     public static final String ARMOR_DIVISOR = "armorDivisor";
     public static final String ARMOR_ENC = "armorEncumbering";
@@ -864,11 +865,7 @@ public class MULParser {
                 final Map<String, String> pilotAttr = new HashMap<>(crewAttr);
                 for (int i = 0; i < pilotNode.getAttributes().getLength(); i++) {
                     final Node node = pilotNode.getAttributes().item(i);
-                    if (node.getNodeName().equals("extraData")) {
-
-                    } else {
-                        pilotAttr.put(node.getNodeName(), node.getTextContent());
-                    }
+                    pilotAttr.put(node.getNodeName(), node.getTextContent());
                 }
                 int slot = -1;
                 if (pilotAttr.containsKey(SLOT) && pilotAttr.get(SLOT).length() > 0) {
@@ -1014,9 +1011,6 @@ public class MULParser {
      * @param attributes A map of attribute values keyed to the attribute names.
      */
     private void setPilotAttributes(Crew crew, int slot, Map<String, String> attributes) {
-        setPilotAttributes(crew, slot, attributes, null);
-    }
-    private void setPilotAttributes(Crew crew, int slot, Map<String, String> attributes, Map<Integer, Map<String, String>> extraData) {
         // Did we find required attributes?
         if (!attributes.containsKey(GUNNERY) || (attributes.get(GUNNERY).length() == 0)) {
             warning.append("Could not find gunnery for pilot.\n");
@@ -1167,6 +1161,14 @@ public class MULParser {
                 crew.setExternalIdAsString(attributes.get(EXT_ID), slot);
             }
 
+            if (attributes.containsKey(EXTRA_DATA)) {
+                Map<String, String> extraData = new HashMap<>();
+                String[] valuePairs = attributes.get(EXTRA_DATA).split(",");
+                for (int i = 0; i < valuePairs.length; i = i + 2) {
+                    extraData.put(valuePairs[i], valuePairs[i + 1]);
+                }
+                crew.setExtraDataForCrewMember(slot, extraData);
+            }
         } // End have-required-fields
     }
 

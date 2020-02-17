@@ -96,7 +96,6 @@ import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.Targetable;
 import megamek.common.WeaponOrderHandler;
-import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEndEvent;
@@ -127,12 +126,43 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     private static final long serialVersionUID = 3913466735610109147L;
 
-    // Action commands.
+    //region action commands
+    //region main menu
+    //Note: anything located in menu bars is not located here but in their menu
+    public static final String MAIN_SKIN_NEW = "mainSkinNew";
+    public static final String MAIN_QUIT = "mainQuit";
+    //region file menu
+    //game submenu
+    public static final String FILE_GAME_NEW = "fileGameNew";
+    public static final String FILE_GAME_OPEN = "fileGameOpen";
+    public static final String FILE_GAME_SAVE = "fileGameSave";
+    public static final String FILE_GAME_SAVE_SERVER = "fileGameSaveServer";
+    public static final String FILE_GAME_SCENARIO = "fileGameScenario";
+    public static final String FILE_GAME_CONNECT_BOT = "fileGameConnectBot";
+    public static final String FILE_GAME_CONNECT = "fileGameConnect";
+    public static final String FILE_GAME_REPLACE_PLAYER = "replacePlayer";
+    //board submenu
+    public static final String FILE_BOARD_NEW = "fileBoardNew";
+    public static final String FILE_BOARD_OPEN = "fileBoardOpen";
+    public static final String FILE_BOARD_SAVE = "fileBoardSave";
+    public static final String FILE_BOARD_SAVE_AS = "fileBoardSaveAs";
+    public static final String FILE_BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
+    public static final String FILE_BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    //unit list submenu
+    public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
+    public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";
+    public static final String FILE_UNITS_OPEN = "fileUnitsOpen";
+    public static final String FILE_UNITS_CLEAR = "fileUnitsClear";
+    public static final String FILE_UNITS_SAVE = "fileUnitsSave";
+    //file menu
+    public static final String FILE_PRINT = "filePrint";
+    //endregion file menu
+
+    //region view menu
     public static final String VIEW_MEK_DISPLAY = "viewMekDisplay"; //$NON-NLS-1$
-    public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
-    public static final String VIEW_LOS_SETTING = "viewLOSSetting"; //$NON-NLS-1$
-    public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow"; //$NON-NLS-1$
+    public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
+    public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_OUT = "viewZoomOut"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$
@@ -143,8 +173,24 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope"; //$NON-NLS-1$
     public static final String VIEW_MOVE_MOD_ENV = "viewMovModEnvelope"; //$NON-NLS-1$
     public static final String VIEW_CHANGE_THEME = "viewChangeTheme"; //$NON-NLS-1$
-    
-    public static final String SAVE_WEAP_ORDER = "saveWeapOrder";
+    public static final String VIEW_ROUND_REPORT = "viewRoundReport";
+    public static final String VIEW_GAME_OPTIONS = "viewGameOptions";
+    public static final String VIEW_CLIENT_SETTINGS = "viewClientSettings";
+    public static final String VIEW_LOS_SETTING = "viewLOSSetting"; //$NON-NLS-1$
+    public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
+    public static final String VIEW_PLAYER_LIST = "viewPlayerList";
+    //endregion view menu
+
+    //region fire menu
+    public static final String FIRE_SAVE_WEAPON_ORDER = "saveWeaponOrder";
+    //endregion fire menu
+
+    //region help menu
+    public static final String HELP_CONTENTS = "helpContents";
+    public static final String HELP_SKINNING = "helpSkinning";
+    public static final String HELP_ABOUT = "helpAbout";
+    //endregion help menu
+    //endregion action commands
 
     // a frame, to show stuff in
     public JFrame frame;
@@ -159,7 +205,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
                                                           Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
 
-    public MegaMekController controller = null;
+    public MegaMekController controller;
     // keep me
     ChatterBox cb;
     public ChatterBox2 cb2;
@@ -202,7 +248,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Map each phase to the name of the card for the main display area.
      */
-    private HashMap<String, String> mainNames = new HashMap<String, String>();
+    private Map<String, String> mainNames = new HashMap<>();
 
     /**
      * The <code>JPanel</code> containing the main display area.
@@ -217,7 +263,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Map each phase to the name of the card for the secondary area.
      */
-    private HashMap<String, String> secondaryNames = new HashMap<String, String>();
+    private Map<String, String> secondaryNames = new HashMap<>();
 
     /**
      * The <code>JPanel</code> containing the secondary display area.
@@ -234,7 +280,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Map phase component names to phase component objects.
      */
-    HashMap<String, JComponent> phaseComponents = new HashMap<String, JComponent>();
+    Map<String, JComponent> phaseComponents = new HashMap<>();
 
     /**
      * Current Selected entity
@@ -358,7 +404,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         frame.setMinimumSize(new Dimension(640,480));
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
-        List<Image> iconList = new ArrayList<Image>();
+        List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit().getImage(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()
         ));
@@ -669,180 +715,197 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Implement the <code>ActionListener</code> interface.
      */
     public void actionPerformed(ActionEvent event) {
-        if ("fileGameSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            ignoreHotKeys = true;
-            JFileChooser fc = new JFileChooser("./savegames");
-            fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-            fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
+        switch (event.getActionCommand()) {
+            case FILE_GAME_SAVE:
+                ignoreHotKeys = true;
+                JFileChooser fc = new JFileChooser("./savegames");
+                fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+                fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
 
-            int returnVal = fc.showSaveDialog(frame);
-            if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-                // I want a file, y'know!
-                return;
-            }
-            if (fc.getSelectedFile() != null) {
-                String file = fc.getSelectedFile().getName();
-                // stupid hack to allow for savegames in folders with spaces in
-                // the name
-                String path = fc.getSelectedFile().getParentFile().getPath();
-                path = path.replace(" ", "|");
-                client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
-            }
-            ignoreHotKeys = false;
-        }
-        if ("fileGameSaveServer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            ignoreHotKeys = true;
-            String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
-            if (filename != null) {
-                client.sendChat("/save " + filename);
-            }
-            ignoreHotKeys = false;
-        }
-        if ("helpAbout".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            showAbout();
-        }
-        if ("helpSkinning".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            showSkinningHowTo();
-        }
-        if ("helpContents".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            showHelp();
-        }
-        if ("fileUnitsSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            ignoreHotKeys = true;
-            doSaveUnit();
-            ignoreHotKeys = false;
-        }
-        if ("fileUnitsOpen".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            ignoreHotKeys = true;
-            loadListFile();
-            ignoreHotKeys = false;
-        }
-        if ("fileUnitsClear".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            deleteAllUnits(client);
-        }
-        if ("fileUnitsReinforce".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            ignoreHotKeys = true;
-            loadListFile(client.getLocalPlayer(), true);
-            ignoreHotKeys = false;
-        }
-        if ("fileUnitsReinforceRAT".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            ignoreHotKeys = true;
-            if (client.getLocalPlayer().getTeam() == IPlayer.TEAM_UNASSIGNED){
-                String title = Messages.getString(
-                        "ClientGUI.openUnitListFileDialog.noReinforceTitle"); //$NON-NLS-1$
-                String msg = Messages.getString(
-                        "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$          
-                JOptionPane.showMessageDialog(frame, msg, title,
-                        JOptionPane.OK_OPTION, null);
-                return;
-            }
-            getRandomArmyDialog().setVisible(true);
-            ignoreHotKeys = false;
-        }
-        if ("viewClientSettings".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            showSettings();
-        }
-        if ("viewGameOptions".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            showOptions();
-        }
-        if ("viewPlayerSettings".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            customizePlayer();
-        }
-        if ("viewPlayerList".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            showPlayerList();
-        }
-        if ("viewRoundReport".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            showRoundReport();
-        }
-        if ("fileBoardSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            ignoreHotKeys = true;
-            boardSave();
-            ignoreHotKeys = false;
-        } else if ("fileBoardSaveAs".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            ignoreHotKeys = true;
-            boardSaveAs();
-            ignoreHotKeys = false;
-        } else if ("fileBoardSaveAsImage".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            ignoreHotKeys = true;
-            boardSaveAsImage(true);
-            ignoreHotKeys = false;
-        } else if ("fileBoardSaveAsImageUnits".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            ignoreHotKeys = true;
-            boardSaveAsImage(false);
-            ignoreHotKeys = false;
-        } else if ("replacePlayer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            replacePlayer();
-        } else if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
-            toggleDisplay();
-        } else if (event.getActionCommand().equals(VIEW_ACCESSIBILITY_WINDOW)) {
-            toggleAccessibilityWindow();
-        } else if (event.getActionCommand().equals(VIEW_MINI_MAP)) {
-            toggleMap();
-        } else if (event.getActionCommand().equals(VIEW_UNIT_OVERVIEW)) {
-            toggleUnitOverview();
-        } else if (event.getActionCommand().equals(VIEW_LOS_SETTING)) {
-            showLOSSettingDialog();
-        } else if (event.getActionCommand().equals(VIEW_ZOOM_IN)) {
-            bv.zoomIn();
-        } else if (event.getActionCommand().equals(VIEW_ZOOM_OUT)) {
-            bv.zoomOut();
-        } else if (event.getActionCommand().equals(VIEW_TOGGLE_ISOMETRIC)) {
-            GUIPreferences.getInstance().setIsometricEnabled(
-                    bv.toggleIsometric());
-        } else if (event.getActionCommand().equals(VIEW_TOGGLE_FOV_HIGHLIGHT)) {
-            GUIPreferences.getInstance().setFovHighlight(
-                    !GUIPreferences.getInstance().getFovHighlight());
-            bv.refreshDisplayables();
-            if (client.getGame().getPhase() == Phase.PHASE_MOVEMENT) {
-                bv.clearHexImageCache();
-            }
-        } else if (event.getActionCommand().equals(VIEW_TOGGLE_FIELD_OF_FIRE)) {
-            GUIPreferences.getInstance().setShowFieldOfFire(
-                    !GUIPreferences.getInstance().getShowFieldOfFire());
-            bv.repaint();
-        } else if (event.getActionCommand().equals(VIEW_TOGGLE_FOV_DARKEN)) {
-            GUIPreferences.getInstance().setFovDarken(
-                    !GUIPreferences.getInstance().getFovDarken());
-            bv.refreshDisplayables();
-            if (client.getGame().getPhase() == Phase.PHASE_MOVEMENT) {
-                bv.clearHexImageCache();
-            }
-        } else if (event.getActionCommand()
-                .equals(VIEW_TOGGLE_FIRING_SOLUTIONS)) {
-            GUIPreferences.getInstance().setFiringSolutions(
-                    !GUIPreferences.getInstance().getFiringSolutions());
-            if (!GUIPreferences.getInstance().getFiringSolutions()) {
-                bv.clearFiringSolutionData();
-            } else {
-                if (curPanel instanceof FiringDisplay) {
-                    ((FiringDisplay) curPanel).setFiringSolutions();
+                int returnVal = fc.showSaveDialog(frame);
+                if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+                    // I want a file, y'know!
+                    return;
                 }
-            }
-            bv.refreshDisplayables();
-        } else if (event.getActionCommand().equals(VIEW_MOVE_ENV)) {
-            if (curPanel instanceof MovementDisplay){
-                GUIPreferences.getInstance().setMoveEnvelope(
-                        !GUIPreferences.getInstance().getMoveEnvelope());
-                ((MovementDisplay) curPanel).computeMovementEnvelope(mechD
-                        .getCurrentEntity());
-            }
-        } else if (event.getActionCommand().equals(VIEW_MOVE_MOD_ENV)) {
-            if (curPanel instanceof MovementDisplay) {
-                ((MovementDisplay) curPanel).computeModifierEnvelope();
-            }
-        } else if (event.getActionCommand().equals(VIEW_CHANGE_THEME)) {
-            bv.changeTheme();
-        } else if (event.getActionCommand().equals(SAVE_WEAP_ORDER)) {
-            Entity ent = mechD.getCurrentEntity();
-            if (ent != null) {
-                WeaponOrderHandler.setWeaponOrder(ent.getChassis(),
-                        ent.getModel(), ent.getWeaponSortOrder(),
-                        ent.getCustomWeaponOrder());
-                getMenuBar().updateSaveWeaponOrderMenuItem();
-                client.sendEntityWeaponOrderUpdate(ent);
-            }
+                if (fc.getSelectedFile() != null) {
+                    String file = fc.getSelectedFile().getName();
+                    // stupid hack to allow for savegames in folders with spaces in
+                    // the name
+                    String path = fc.getSelectedFile().getParentFile().getPath();
+                    path = path.replace(" ", "|");
+                    client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
+                }
+                ignoreHotKeys = false;
+                break;
+            case FILE_GAME_SAVE_SERVER:
+                ignoreHotKeys = true;
+                String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
+                if (filename != null) {
+                    client.sendChat("/save " + filename);
+                }
+                ignoreHotKeys = false;
+                break;
+            case HELP_ABOUT:
+                showAbout();
+                break;
+            case HELP_SKINNING:
+                showSkinningHowTo();
+                break;
+            case HELP_CONTENTS:
+                showHelp();
+                break;
+            case FILE_UNITS_SAVE:
+                ignoreHotKeys = true;
+                doSaveUnit();
+                ignoreHotKeys = false;
+                break;
+            case FILE_UNITS_OPEN:
+                ignoreHotKeys = true;
+                loadListFile();
+                ignoreHotKeys = false;
+                break;
+            case FILE_UNITS_CLEAR:
+                deleteAllUnits(client);
+                break;
+            case FILE_UNITS_REINFORCE:
+                ignoreHotKeys = true;
+                loadListFile(client.getLocalPlayer(), true);
+                ignoreHotKeys = false;
+                break;
+            case FILE_UNITS_REINFORCE_RAT:
+                ignoreHotKeys = true;
+                if (client.getLocalPlayer().getTeam() == IPlayer.TEAM_UNASSIGNED) {
+                    String title = Messages.getString(
+                            "ClientGUI.openUnitListFileDialog.noReinforceTitle"); //$NON-NLS-1$
+                    String msg = Messages.getString(
+                            "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$
+                    JOptionPane.showMessageDialog(frame, msg, title,
+                            JOptionPane.OK_OPTION, null);
+                    return;
+                }
+                getRandomArmyDialog().setVisible(true);
+                ignoreHotKeys = false;
+                break;
+            case VIEW_CLIENT_SETTINGS:
+                showSettings();
+                break;
+            case VIEW_GAME_OPTIONS:
+                showOptions();
+                break;
+            case VIEW_PLAYER_SETTINGS:
+                customizePlayer();
+                break;
+            case VIEW_PLAYER_LIST:
+                showPlayerList();
+                break;
+            case VIEW_ROUND_REPORT:
+                showRoundReport();
+                break;
+            case FILE_BOARD_SAVE:
+                ignoreHotKeys = true;
+                boardSave();
+                ignoreHotKeys = false;
+                break;
+            case FILE_BOARD_SAVE_AS:
+                ignoreHotKeys = true;
+                boardSaveAs();
+                ignoreHotKeys = false;
+                break;
+            case FILE_BOARD_SAVE_AS_IMAGE:
+                ignoreHotKeys = true;
+                boardSaveAsImage(true);
+                ignoreHotKeys = false;
+                break;
+            case FILE_BOARD_SAVE_AS_IMAGE_UNITS:
+                ignoreHotKeys = true;
+                boardSaveAsImage(false);
+                ignoreHotKeys = false;
+                break;
+            case FILE_GAME_REPLACE_PLAYER:
+                replacePlayer();
+                break;
+            case VIEW_MEK_DISPLAY:
+                toggleDisplay();
+                break;
+            case VIEW_ACCESSIBILITY_WINDOW:
+                toggleAccessibilityWindow();
+                break;
+            case VIEW_MINI_MAP:
+                toggleMap();
+                break;
+            case VIEW_UNIT_OVERVIEW:
+                toggleUnitOverview();
+                break;
+            case VIEW_LOS_SETTING:
+                showLOSSettingDialog();
+                break;
+            case VIEW_ZOOM_IN:
+                bv.zoomIn();
+                break;
+            case VIEW_ZOOM_OUT:
+                bv.zoomOut();
+                break;
+            case VIEW_TOGGLE_ISOMETRIC:
+                GUIPreferences.getInstance().setIsometricEnabled(bv.toggleIsometric());
+                break;
+            case VIEW_TOGGLE_FOV_HIGHLIGHT:
+                GUIPreferences.getInstance().setFovHighlight(
+                        !GUIPreferences.getInstance().getFovHighlight());
+                bv.refreshDisplayables();
+                if (client.getGame().getPhase() == Phase.PHASE_MOVEMENT) {
+                    bv.clearHexImageCache();
+                }
+                break;
+            case VIEW_TOGGLE_FIELD_OF_FIRE:
+                GUIPreferences.getInstance().setShowFieldOfFire(
+                        !GUIPreferences.getInstance().getShowFieldOfFire());
+                bv.repaint();
+                break;
+            case VIEW_TOGGLE_FOV_DARKEN:
+                GUIPreferences.getInstance().setFovDarken(!GUIPreferences.getInstance().getFovDarken());
+                bv.refreshDisplayables();
+                if (client.getGame().getPhase() == Phase.PHASE_MOVEMENT) {
+                    bv.clearHexImageCache();
+                }
+                break;
+            case VIEW_TOGGLE_FIRING_SOLUTIONS:
+                GUIPreferences.getInstance().setFiringSolutions(
+                        !GUIPreferences.getInstance().getFiringSolutions());
+                if (!GUIPreferences.getInstance().getFiringSolutions()) {
+                    bv.clearFiringSolutionData();
+                } else {
+                    if (curPanel instanceof FiringDisplay) {
+                        ((FiringDisplay) curPanel).setFiringSolutions();
+                    }
+                }
+                bv.refreshDisplayables();
+                break;
+            case VIEW_MOVE_ENV:
+                if (curPanel instanceof MovementDisplay) {
+                    GUIPreferences.getInstance().setMoveEnvelope(
+                            !GUIPreferences.getInstance().getMoveEnvelope());
+                    ((MovementDisplay) curPanel).computeMovementEnvelope(mechD.getCurrentEntity());
+                }
+                break;
+            case VIEW_MOVE_MOD_ENV:
+                if (curPanel instanceof MovementDisplay) {
+                    ((MovementDisplay) curPanel).computeModifierEnvelope();
+                }
+                break;
+            case VIEW_CHANGE_THEME:
+                bv.changeTheme();
+                break;
+            case FIRE_SAVE_WEAPON_ORDER:
+                Entity ent = mechD.getCurrentEntity();
+                if (ent != null) {
+                    WeaponOrderHandler.setWeaponOrder(ent.getChassis(),
+                            ent.getModel(), ent.getWeaponSortOrder(),
+                            ent.getCustomWeaponOrder());
+                    getMenuBar().updateSaveWeaponOrderMenuItem();
+                    client.sendEntityWeaponOrderUpdate(ent);
+                }
+                break;
         }
-
     }
 
     /**
@@ -866,7 +929,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
 
         // save all destroyed units in a separate "salvage MUL"
-        ArrayList<Entity> destroyed = new ArrayList<Entity>();
+        ArrayList<Entity> destroyed = new ArrayList<>();
         Enumeration<Entity> graveyard = getClient().getGame().getGraveyardEntities();
         while (graveyard.hasMoreElements()) {
             Entity entity = graveyard.nextElement();
@@ -940,9 +1003,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             //cleanup our timers first
             bv.die();
         }
-        Iterator<String> names = phaseComponents.keySet().iterator();
-        while (names.hasNext()) {
-            JComponent component = phaseComponents.get(names.next());
+        for (String s : phaseComponents.keySet()) {
+            JComponent component = phaseComponents.get(s);
             if (component instanceof ReportDisplay) {
                 if (reportHandled) {
                     continue;
@@ -1513,8 +1575,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             dlgLoadList.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File dir) {
-                    return ((dir.getName() != null) && (dir.getName().endsWith(
-                            ".mul") || dir.isDirectory())); //$NON-NLS-1$
+                    return (dir.getName().endsWith(".mul") || dir.isDirectory()); //$NON-NLS-1$
                 }
 
                 @Override
@@ -1574,7 +1635,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void deleteAllUnits(Client c) {
         ArrayList<Entity> currentUnits = c.getGame().getPlayerEntities(
                 c.getLocalPlayer(), false);
-        ArrayList<Integer> ids = new ArrayList<Integer>(currentUnits.size());
+        ArrayList<Integer> ids = new ArrayList<>(currentUnits.size());
         for (Entity e : currentUnits){
             ids.add(e.getId());
         }
@@ -1598,7 +1659,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     protected void saveListFile(ArrayList<Entity> unitList, String filename) {
-
         // Handle empty lists.
         if ((unitList == null) || unitList.isEmpty()) {
             return;
@@ -1751,7 +1811,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = null;
+        Image camo;
         if (entity.getCamoFileName() != null) {
             camo = bv.getTilesetManager().getEntityCamo(entity);
         } else {
@@ -1782,8 +1842,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
              if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
              }
-             if ((curPanel instanceof ReportDisplay) 
-                     && !client.getLocalPlayer().isDone()) {
+             if ((curPanel instanceof ReportDisplay) && !client.getLocalPlayer().isDone()) {
                  ((ReportDisplay) curPanel).resetReadyButton();
              }
         }
@@ -1946,14 +2005,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         
         @Override
-        public void gameClientFeedbackRquest(GameCFREvent evt) {
+        public void gameClientFeedbackRequest(GameCFREvent evt) {
             Entity e = client.getGame().getEntity(evt.getEntityId());
             Object result;
             switch (evt.getCFRType()){
                 case Packet.COMMAND_CFR_DOMINO_EFFECT:                    
                     // If the client connects to a game as a bot, it's possible
-                    //  to have the bot respond AND have the client ask the
-                    //  player.  This is bad, ignore this if the client is a bot
+                    // to have the bot respond AND have the client ask the
+                    // player. This is bad, ignore this if the client is a bot
                     if (client instanceof BotClient){
                         return;
                     }
@@ -1968,8 +2027,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     String msg = Messages.getString("CFRDomino.Message",
                             new Object[] { e.getDisplayName() });
                     int choice;
-                    Object options[];
-                    MovePath paths[];
+                    Object[] options;
+                    MovePath[] paths;
                     int optionType;
                     if (stepForward.isMoveLegal() 
                             && stepBackward.isMoveLegal()){
@@ -2113,10 +2172,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         // Send a non-null response to indicate PBS is accepted
                         // This allows the servers to notify the clients,
                         // as they may be in for a wait
-                        client.sendHiddenPBSCFRResponse(new Vector<EntityAction>());
+                        client.sendHiddenPBSCFRResponse(new Vector<>());
                         // Used to indicate it's this player's turn
                         setPointblankEID(evt.getEntityId());
-                        // Switch to the right d isplay
+                        // Switch to the right display
                         switchPanel(IGame.Phase.PHASE_POINTBLANK_SHOT);
                         PointblankShotDisplay curDisp = ((PointblankShotDisplay) curPanel);
                         // Set targeting info
@@ -2131,7 +2190,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
                     List<Integer> targetIds = evt.getTelemissileTargetIds();
                     List<Integer> toHitValues = evt.getTmToHitValues();
-                    List<String> targetDescriptions = new ArrayList<String>();
+                    List<String> targetDescriptions = new ArrayList<>();
                     for (int i = 0; i < targetIds.size(); i++) {
                         int id = targetIds.get(i);
                         int th = toHitValues.get(i);
@@ -2163,7 +2222,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 case Packet.COMMAND_CFR_TAG_TARGET:
                     List<Integer> TAGTargets = evt.getTAGTargets();
                     List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
-                    List<String> TAGTargetDescriptions = new ArrayList<String>();
+                    List<String> TAGTargetDescriptions = new ArrayList<>();
                     for (int i = 0; i < TAGTargets.size(); i++) {
                         int id = TAGTargets.get(i);
                         int nType = TAGTargetTypes.get(i);
@@ -2290,15 +2349,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     private void boardSaveAs() {
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
-        fc
-                .setLocation(frame.getLocation().x + 150,
-                        frame.getLocation().y + 100);
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return ((null != dir.getName())
-                        && (dir.getName().endsWith(".board") || dir.isDirectory())); //$NON-NLS-1$
+                return (dir.getName().endsWith(".board") || dir.isDirectory()); //$NON-NLS-1$
             }
 
             @Override
@@ -2307,8 +2363,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
         });
         int returnVal = fc.showSaveDialog(frame);
-        if ((returnVal != JFileChooser.APPROVE_OPTION)
-                || (fc.getSelectedFile() == null)) {
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -2332,14 +2387,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     private void boardSaveAsImage(boolean ignoreUnits) {
         JFileChooser fc = new JFileChooser(".");
-        fc
-                .setLocation(frame.getLocation().x + 150,
-                        frame.getLocation().y + 100);
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return (null != dir.getName()) && (dir.getName().endsWith(".png") || dir.isDirectory()); //$NON-NLS-1$
+                return (dir.getName().endsWith(".png") || dir.isDirectory()); //$NON-NLS-1$
             }
 
             @Override
@@ -2348,8 +2401,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
         });
         int returnVal = fc.showSaveDialog(frame);
-        if ((returnVal != JFileChooser.APPROVE_OPTION)
-                || (fc.getSelectedFile() == null)) {
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -2358,8 +2410,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         // make sure the file ends in png
         if (!curfileBoardImage.getName().toLowerCase().endsWith(".png")) { //$NON-NLS-1$
             try {
-                curfileBoardImage = new File(curfileBoardImage.getCanonicalPath()
-                        + ".png"); //$NON-NLS-1$
+                curfileBoardImage = new File(curfileBoardImage.getCanonicalPath() + ".png"); //$NON-NLS-1$
             } catch (IOException ie) {
                 // failure!
                 return;
@@ -2454,7 +2505,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         AddBotUtil util = new AddBotUtil();
         BotClient botClient = botConfigDialog.getSelectedBot(client.getHost(), client.getPort());
-        String args[];
+        String[] args;
         Collection<String> playersToReplace = botConfigDialog.getPlayerToReplace();
         Collection<String[]> replaceCommands = new HashSet<>(playersToReplace.size());
         if (botClient instanceof Princess) {

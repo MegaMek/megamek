@@ -28,41 +28,41 @@ package megamek.common.event;
  * @see GameEvent
  */
 public interface GameListener extends java.util.EventListener {
-    public void gamePlayerConnected(GamePlayerConnectedEvent e);
+    void gamePlayerConnected(GamePlayerConnectedEvent e);
 
-    public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e);
+    void gamePlayerDisconnected(GamePlayerDisconnectedEvent e);
 
-    public void gamePlayerChange(GamePlayerChangeEvent e);
+    void gamePlayerChange(GamePlayerChangeEvent e);
 
-    public void gamePlayerChat(GamePlayerChatEvent e);
+    void gamePlayerChat(GamePlayerChatEvent e);
 
-    public void gameTurnChange(GameTurnChangeEvent e);
+    void gameTurnChange(GameTurnChangeEvent e);
 
-    public void gamePhaseChange(GamePhaseChangeEvent e);
+    void gamePhaseChange(GamePhaseChangeEvent e);
 
-    public void gameReport(GameReportEvent e);
+    void gameReport(GameReportEvent e);
 
-    public void gameEnd(GameEndEvent e);
+    void gameEnd(GameEndEvent e);
 
-    public void gameBoardNew(GameBoardNewEvent e);
+    void gameBoardNew(GameBoardNewEvent e);
 
-    public void gameBoardChanged(GameBoardChangeEvent e);
+    void gameBoardChanged(GameBoardChangeEvent e);
 
-    public void gameSettingsChange(GameSettingsChangeEvent e);
+    void gameSettingsChange(GameSettingsChangeEvent e);
 
-    public void gameMapQuery(GameMapQueryEvent e);
+    void gameMapQuery(GameMapQueryEvent e);
 
-    public void gameEntityNew(GameEntityNewEvent e);
+    void gameEntityNew(GameEntityNewEvent e);
 
-    public void gameEntityNewOffboard(GameEntityNewOffboardEvent e);
+    void gameEntityNewOffboard(GameEntityNewOffboardEvent e);
 
-    public void gameEntityRemove(GameEntityRemoveEvent e);
+    void gameEntityRemove(GameEntityRemoveEvent e);
 
-    public void gameEntityChange(GameEntityChangeEvent e);
+    void gameEntityChange(GameEntityChangeEvent e);
 
-    public void gameNewAction(GameNewActionEvent e);
+    void gameNewAction(GameNewActionEvent e);
     
-    public void gameClientFeedbackRquest(GameCFREvent e);
+    void gameClientFeedbackRequest(GameCFREvent e);
     
-    public void gameVictory(GameVictoryEvent e);
+    void gameVictory(GameVictoryEvent e);
 }

@@ -89,7 +89,7 @@ public class GameCFREvent extends GameEvent {
      * @param gl GameListener recipient.
      */
     public void fireEvent(GameListener gl) {
-        gl.gameClientFeedbackRquest(this);
+        gl.gameClientFeedbackRequest(this);
     }
     
     public String getEventName() {

@@ -425,7 +425,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // Disable conversions for loaded units so we don't get fighter LAMs in mech bays and vice-versa
             choStartingMode.setEnabled(entities.get(0).getTransportId() == Entity.NONE);
         }
-        if (isVTOL || isLAM || isGlider) {
+        if (isVTOL || isLAM || isGlider || ((entity instanceof BattleArmor) && (entity.getMovementMode == EntityMovementMode.VTOL)) ) {
             panDeploy.add(labStartHeight, GBC.std());
             panDeploy.add(fldStartHeight, GBC.eol());
         }
@@ -528,7 +528,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldCurrentFuel.addActionListener(this);
         }
 
-        if (isVTOL || isLAM || isGlider) {
+        if (isVTOL || isLAM || isGlider || ((entity instanceof BattleArmor) && (entity.getMovementMode == EntityMovementMode.VTOL))) {
             fldStartHeight.setText(Integer.valueOf(entity.getElevation()).toString());
             fldStartHeight.addActionListener(this);
         }
@@ -1052,7 +1052,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 altitude = Integer.parseInt(fldStartAltitude.getText());
                 currentfuel = Integer.parseInt(fldCurrentFuel.getText());
             }
-            if (isVTOL || isAirMech) {
+            if (isVTOL || isAirMech || ((entity instanceof BattleArmor) && (entity.getMovementMode == EntityMovementMode.VTOL))) {
                 height = Integer.parseInt(fldStartHeight.getText());
             }
             if (isWiGE) {

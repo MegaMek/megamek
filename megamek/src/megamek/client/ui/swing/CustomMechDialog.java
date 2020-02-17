@@ -1022,7 +1022,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isAirMech = true;
         boolean isGlider = true;
         boolean isVTOLBattleArmor = true;
-        boolean eligibleForOffBoard = true;
+        boolean isVTOLInfantry = true;
             
         for (Entity e : entities) {
             isAero &= ((e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship)))

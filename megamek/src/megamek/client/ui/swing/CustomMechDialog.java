@@ -285,6 +285,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isQuadVee = true;
         boolean isLAM = true;
         boolean isGlider = true;
+        boolean isVTOLInfantry = true;
+        boolean isVTOLBattleArmor = true;
         boolean eligibleForOffBoard = true;
         
         for (Entity e : entities) {
@@ -296,6 +298,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isQuadVee &= (e instanceof QuadVee);
             isLAM &= (e instanceof LandAirMech);
             isGlider &= (e instanceof Protomech) && (e.getMovementMode() == EntityMovementMode.WIGE);
+            isVTOLInfantry &= (e instanceof Infantry) && (e.getMovementMode() == EntityMovementMode.VTOL);
+            isVTOLBattleArmor &= (e instanceof BattleArmor) && (e.getMovementMode() == EntityMovementMode.VTOL);
             boolean entityEligibleForOffBoard = false;
             boolean space = clientgui.getClient().getMapSettings().getMedium() == Board.T_SPACE;
             //TODO: This check is good for now, but at some point we want atmospheric flying droppers to be able to lob
@@ -425,8 +429,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // Disable conversions for loaded units so we don't get fighter LAMs in mech bays and vice-versa
             choStartingMode.setEnabled(entities.get(0).getTransportId() == Entity.NONE);
         }
-        if (isVTOL || isLAM || isGlider 
-            || (((entity instanceof BattleArmor)||(entity instanceof Infantry)) && (entity.getMovementMode == EntityMovementMode.VTOL)) ) {
+        if (isVTOL || isLAM || isGlider || isVTOLInfantry || isVTOLBattleArmor) ) {
             panDeploy.add(labStartHeight, GBC.std());
             panDeploy.add(fldStartHeight, GBC.eol());
         }
@@ -529,8 +532,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldCurrentFuel.addActionListener(this);
         }
 
-        if (isVTOL || isLAM || isGlider 
-            || (((entity instanceof BattleArmor)||(entity instanceof Infantry)) && (entity.getMovementMode == EntityMovementMode.VTOL))) {
+        if (isVTOL || isLAM || isGlider || isVTOLInfantry || isVTOLBattleArmor) {
             fldStartHeight.setText(Integer.valueOf(entity.getElevation()).toString());
             fldStartHeight.addActionListener(this);
         }
@@ -1019,6 +1021,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isLAM = true;
         boolean isAirMech = true;
         boolean isGlider = true;
+        boolean isVTOLBattleArmor = true;
+        boolean eligibleForOffBoard = true;
+            
         for (Entity e : entities) {
             isAero &= ((e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship)))
                     || ((e instanceof LandAirMech)
@@ -1034,6 +1039,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     && (((LandAirMech)e).getLAMType() == LandAirMech.LAM_STANDARD)
                     && (choStartingMode.getSelectedIndex() == 1);
             isGlider &= (e instanceof Protomech) && (e.getMovementMode() == EntityMovementMode.WIGE);
+            isVTOLInfantry &= (e instanceof Infantry) && (e.getMovementMode() == EntityMovementMode.VTOL);
+            isVTOLBattleArmor &= (e instanceof BattleArmor) && (e.getMovementMode() == EntityMovementMode.VTOL);
         }
 
         // get values
@@ -1054,8 +1061,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 altitude = Integer.parseInt(fldStartAltitude.getText());
                 currentfuel = Integer.parseInt(fldCurrentFuel.getText());
             }
-            if (isVTOL || isAirMech 
-                || (((entity instanceof BattleArmor)||(entity instanceof Infantry)) && (entity.getMovementMode == EntityMovementMode.VTOL))) {
+            if (isVTOL || isAirMech || isVTOLInfantry || isVTOLBattleArmor) {
                 height = Integer.parseInt(fldStartHeight.getText());
             }
             if (isWiGE) {
@@ -1101,7 +1107,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
         }
 
-        if (isVTOL && (height > 50)
+        if ((isVTOL || isVTOLInfantry || isVTOLBattleArmor) && (height > 50)
                 || (isAirMech && height > 25)
                 || (isGlider && height > 12)) {
             msg = Messages.getString("CustomMechDialog.EnterCorrectHeight"); //$NON-NLS-1$
@@ -1313,7 +1319,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 }
             }
             
-            if (isVTOL || isWiGE || isAirMech || isGlider) {
+            if (isVTOL || isWiGE || isAirMech || isGlider || isVTOLInfantry || isVTOLBattleArmor) {
                 entity.setElevation(height);
             }
             

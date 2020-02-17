@@ -312,7 +312,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     }
     
     @Override
-    public void gameClientFeedbackRquest(GameCFREvent evt) {
+    public void gameClientFeedbackRequest(GameCFREvent evt) {
         //noaction default
     }
     

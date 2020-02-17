@@ -5,6 +5,7 @@ VERSION HISTORY:
 + Issue #1661: Grounded Aero Penalty for AirMech or Mech Mode LAMs
 + Issues #1636 #1637: Main menu and minimap now work when loading a new map
 + PR #1670: Fixing AI Documentation location
++ Issue #1634: Zoom in/out on map editor now works
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

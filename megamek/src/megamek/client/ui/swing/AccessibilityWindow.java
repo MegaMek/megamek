@@ -83,7 +83,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
             }
 
             @Override
-            public void gameClientFeedbackRquest(GameCFREvent e) {
+            public void gameClientFeedbackRequest(GameCFREvent e) {
                 systemEvent("New feedback event.");
             }
 

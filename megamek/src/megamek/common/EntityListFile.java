@@ -1093,6 +1093,7 @@ public class EntityListFile {
         output.write("\" gender=\"" + crew.getGender(pos));
         output.write("\" gunnery=\"");
         output.write(String.valueOf(crew.getGunnery(pos)));
+
         if ((null != entity.getGame())
                 && entity.getGame().getOptions()
                         .booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
@@ -1138,6 +1139,14 @@ public class EntityListFile {
         if (!crew.getExternalIdAsString(pos).equals("-1")) {
             output.write("\" externalId=\"");
             output.write(crew.getExternalIdAsString(pos));
+        }
+
+        Map<String, String> extraData = crew.getExtraDataForCrewMember(pos);
+        if (extraData != null) {
+            output.write("\" extraData=\"");
+            for (String key : extraData.keySet()) {
+                output.write(key + "," + extraData.get(key));
+            }
         }
     }
     

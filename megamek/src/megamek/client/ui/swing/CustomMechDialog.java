@@ -429,7 +429,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // Disable conversions for loaded units so we don't get fighter LAMs in mech bays and vice-versa
             choStartingMode.setEnabled(entities.get(0).getTransportId() == Entity.NONE);
         }
-        if (isVTOL || isLAM || isGlider || isVTOLInfantry || isVTOLBattleArmor) ) {
+        if (isVTOL || isLAM || isGlider || isVTOLInfantry || isVTOLBattleArmor) {
             panDeploy.add(labStartHeight, GBC.std());
             panDeploy.add(fldStartHeight, GBC.eol());
         }

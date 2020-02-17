@@ -6832,7 +6832,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "71, IO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2559, DATE_NONE, DATE_NONE, 2567, DATE_NONE)
                 .setISApproximate(true, false, false, true, false).setPrototypeFactions(F_TH).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X);
+                .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 
@@ -6850,7 +6850,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "71, IO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3022, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setISApproximate(true, false, false, true, false).setPrototypeFactions(F_FS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X);
+                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

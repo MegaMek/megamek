@@ -406,6 +406,10 @@ public class TestTank extends TestEntity {
                     correct = false;
                 }
             }
+            if (!legalForMotiveType(m.getType(), tank.getMovementMode())) {
+                buff.append(m.getType().getName()).append(" is incompatible with ").append(tank.getMovementModeAsString());
+                correct = false;
+            }
         }
         for (int loc = 0; loc < tank.locations(); loc++) {
             int count = 0;
@@ -449,6 +453,55 @@ public class TestTank extends TestEntity {
             correct = false;
         }
         return correct;
+    }
+
+    /**
+     * Checks whether the equipment is compatible with the vehicle's motive type
+     *
+     * @param eq   The equipment to check
+     * @param mode The vehicle's motive type
+     * @return     Whether the equipment and motive type are compatible
+     */
+    public static boolean legalForMotiveType(EquipmentType eq, EntityMovementMode mode) {
+        if (eq.hasFlag(MiscType.F_FLOTATION_HULL)) {
+            // Per errata, WiGE vehicles automatically include flotation hull
+            return mode.equals(EntityMovementMode.HOVER) || mode.equals(EntityMovementMode.VTOL);
+        }
+        if (eq.hasFlag(MiscType.F_FULLY_AMPHIBIOUS)
+                || eq.hasFlag(MiscType.F_LIMITED_AMPHIBIOUS)
+                || eq.hasFlag(MiscType.F_BULLDOZER)
+                || (eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_COMBINE))) {
+            return mode.equals(EntityMovementMode.WHEELED) || mode.equals(EntityMovementMode.TRACKED);
+        }
+        if (eq.hasFlag(MiscType.F_DUNE_BUGGY)) {
+            return mode.equals(EntityMovementMode.WHEELED);
+        }
+        if (eq.hasFlag(MiscType.F_CLUB)
+                && eq.hasSubType(MiscType.S_CHAINSAW | MiscType.S_DUAL_SAW | MiscType.S_MINING_DRILL)) {
+            return mode.equals(EntityMovementMode.WHEELED) || mode.equals(EntityMovementMode.TRACKED)
+                    || mode.equals(EntityMovementMode.HOVER) || mode.equals(EntityMovementMode.WIGE);
+        }
+        if (eq.hasFlag(MiscType.F_LIFEBOAT)) {
+            // Need to filter out atmospheric lifeboat
+            return eq.hasFlag(MiscType.F_TANK_EQUIPMENT)
+                    && (mode.equals(EntityMovementMode.NAVAL)
+                    || mode.equals(EntityMovementMode.HYDROFOIL)
+                    || mode.equals(EntityMovementMode.SUBMARINE));
+        }
+        if (eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
+                || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                || (eq.hasFlag(MiscType.F_CLUB)
+                && eq.hasSubType(MiscType.S_BACKHOE | MiscType.S_ROCK_CUTTER
+                | MiscType.S_SPOT_WELDER | MiscType.S_WRECKING_BALL))) {
+            return !mode.equals(EntityMovementMode.VTOL);
+        }
+        if (eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_PILE_DRIVER)) {
+            return !mode.equals(EntityMovementMode.VTOL)
+                    && !mode.equals(EntityMovementMode.HOVER)
+                    && !mode.equals(EntityMovementMode.WIGE);
+        }
+        return true;
     }
 
     @Override

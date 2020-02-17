@@ -83,36 +83,36 @@ public class CEntity {
     // table
 
     // Tank armor is either the side hit or the turret
-    final static double TANK_ARMOR[][] = { { 0, 1.0, 0, 0, 0 },
+    static final double TANK_ARMOR[][] = { { 0, 1.0, 0, 0, 0 },
             { 0, 0, 0, 0, 1.0 }, { 0, 0, 0, 1.0, 0 }, { 0, 0, 1.0, 0, 0 } };
-    final static double TANK_WT_ARMOR[][] = {
+    static final double TANK_WT_ARMOR[][] = {
             { 0, 31.0 / 36, 0, 0, 0, 5.0 / 36 },
             { 0, 0, 0, 0, 31.0 / 36, 5.0 / 36 },
             { 0, 0, 0, 31.0 / 36, 0, 5.0 / 36 },
             { 0, 0, 31.0 / 36, 0, 0, 5.0 / 36 } };
 
     // Infantry don't have a facing. In fact, they don't have armor...
-    final static double INFANTRY_ARMOR[][] = { { 1.0 }, { 1.0 }, { 1.0 },
+    static final double INFANTRY_ARMOR[][] = { { 1.0 }, { 1.0 }, { 1.0 },
             { 1.0 } };
 
     // Battle armor units have multiple suits
-    final static double ISBA_ARMOR[][] = { { 0.25, 0.25, 0.25, 0.25 },
+    static final double ISBA_ARMOR[][] = { { 0.25, 0.25, 0.25, 0.25 },
             { 0.25, 0.25, 0.25, 0.25 }, { 0.25, 0.25, 0.25, 0.25 },
             { 0.25, 0.25, 0.25, 0.25 } };
-    final static double CLBA_ARMOR[][] = { { 0.2, 0.2, 0.2, 0.2, 0.2 },
+    static final double CLBA_ARMOR[][] = { { 0.2, 0.2, 0.2, 0.2, 0.2 },
             { 0.2, 0.2, 0.2, 0.2, 0.2 }, { 0.2, 0.2, 0.2, 0.2, 0.2 },
             { 0.2, 0.2, 0.2, 0.2, 0.2 } };
-    final static double PROTOMECH_ARMOR[][] = {
+    static final double PROTOMECH_ARMOR[][] = {
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 } };
-    final static double PROTOMECH_MG_ARMOR[][] = {
+    static final double PROTOMECH_MG_ARMOR[][] = {
             { 1.0 / 32, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
             { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
             { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
             { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 } };
-    final static double MECH_ARMOR[][] = {
+    static final double MECH_ARMOR[][] = {
             { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
                     4.0 / 36, 4.0 / 36 },
             { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
@@ -121,9 +121,9 @@ public class CEntity {
                     2.0 / 36, 8.0 / 36 },
             { 1.0 / 36, 6.0 / 36, 7.0 / 36, 4.0 / 36, 6.0 / 36, 2.0 / 36,
                     8.0 / 36, 2.0 / 36 } };
-    final static double GUN_EMPLACEMENT_ARMOR[][] = { { 1.0 / 4, 0, 0, 0 },
+    static final double GUN_EMPLACEMENT_ARMOR[][] = { { 1.0 / 4, 0, 0, 0 },
             { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 } };
-    final static double GUN_EMPLACEMENT_TURRET_ARMOR[][] = {
+    static final double GUN_EMPLACEMENT_TURRET_ARMOR[][] = {
             { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 },
             { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 } };
 

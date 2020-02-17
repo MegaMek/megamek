@@ -56,14 +56,14 @@ public class HexTileset {
     /**
      * The image width of a hex image.
      */
-    public final static int HEX_W = 84;
+    public static final int HEX_W = 84;
 
     /**
      * The image height of a hex image.
      */
-    public final static int HEX_H = 72;
+    public static final int HEX_H = 72;
 
-    public final static String TRANSPARENT_THEME = "transparent";
+    public static final String TRANSPARENT_THEME = "transparent";
 
     private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();

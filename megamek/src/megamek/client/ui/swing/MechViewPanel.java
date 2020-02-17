@@ -53,8 +53,8 @@ public class MechViewPanel extends JPanel {
     private JScrollPane scrMek;
     private Icon icon;
     
-    public final static int DEFAULT_WIDTH = 350;
-    public final static int DEFAULT_HEIGHT = 600;
+    public static final int DEFAULT_WIDTH = 350;
+    public static final int DEFAULT_HEIGHT = 600;
     
     public MechViewPanel() {
         this(DEFAULT_WIDTH, DEFAULT_HEIGHT,true);

@@ -164,7 +164,7 @@ public class CrewDescriptor {
         }
     }
 
-    private final static int[][] PILOTING_SKILL_TABLE = {
+    private static final int[][] PILOTING_SKILL_TABLE = {
             {7, 7, 6, 6, 6, 6, 5, 5, 4},
             {6, 6, 6, 5, 5, 4, 4, 3, 3},
             {6, 5, 5, 4, 4, 3, 3, 2, 2},
@@ -172,7 +172,7 @@ public class CrewDescriptor {
 
     };
 
-    private final static int[][] GUNNERY_SKILL_TABLE = {
+    private static final int[][] GUNNERY_SKILL_TABLE = {
             {7, 6, 5, 5, 4, 4, 4, 4, 3},
             {5, 4, 4, 4, 4, 3, 3, 2, 2},
             {4, 4, 4, 3, 3, 2, 2, 1, 1},

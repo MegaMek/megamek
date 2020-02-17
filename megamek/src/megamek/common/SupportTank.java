@@ -30,7 +30,7 @@ public class SupportTank extends Tank {
     private int[] barRating;
     private double fuelTonnage = 0;
     
-    public final static double[] SV_TR_MULTIPLIERS = {1.60, 1.30, 1.15, 1.00, 0.85, 0.66}; 
+    public static final double[] SV_TR_MULTIPLIERS = {1.60, 1.30, 1.15, 1.00, 0.85, 0.66};
 
     public SupportTank() {
         super();

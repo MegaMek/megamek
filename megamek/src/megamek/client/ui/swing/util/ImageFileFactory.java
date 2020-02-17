@@ -41,7 +41,7 @@ public class ImageFileFactory implements ItemFileFactory {
     /**
      * Accepted image file extentions
      */
-    private final static String JPG = "JPG", JPEG = "JPEG", GIF = "GIF", PNG = "PNG"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    private static final String JPG = "JPG", JPEG = "JPEG", GIF = "GIF", PNG = "PNG"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
     /**
      * Implement the Singleton pattern.

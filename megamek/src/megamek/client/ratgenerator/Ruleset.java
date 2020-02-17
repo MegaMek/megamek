@@ -67,8 +67,8 @@ public class Ruleset {
         }
     };
 
-    private final static String directory = "data/forcegenerator/faction_rules";
-    private final static String CONSTANTS_FILE = "constants.txt";
+    private static final String directory = "data/forcegenerator/faction_rules";
+    private static final String CONSTANTS_FILE = "constants.txt";
 
     private static HashMap<String,String> constants;
     private static Pattern constantPattern = Pattern.compile("%(.*?)%");

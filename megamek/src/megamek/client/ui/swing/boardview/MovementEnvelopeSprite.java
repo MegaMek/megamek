@@ -15,9 +15,9 @@ import megamek.common.Coords;
 class MovementEnvelopeSprite extends HexSprite {
 
     // control values
-    private final static int borderThickness = 10;
-    private final static int borderOpacity = 60;
-    private final static float lineThickness = 2;
+    private static final int borderThickness = 10;
+    private static final int borderOpacity = 60;
+    private static final float lineThickness = 2;
     
     // sprite settings
     protected final Color drawColor;

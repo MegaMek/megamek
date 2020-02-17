@@ -1034,7 +1034,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return getConversionMode() != CONV_MODE_FIGHTER && !isAirborneVTOLorWIGE();
     }
     
-    private final static TechAdvancement[] TA_LAM = {
+    private static final TechAdvancement[] TA_LAM = {
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(2683, 2688, DATE_NONE, 3085)
                 .setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825)
                 .setPrototypeFactions(F_TH).setProductionFactions(F_TH)

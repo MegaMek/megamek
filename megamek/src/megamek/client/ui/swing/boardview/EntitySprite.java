@@ -54,9 +54,9 @@ import megamek.common.options.PilotOptions;
 class EntitySprite extends Sprite {
 
     // Statics
-    private final static int SMALL = 0;
-    private final static boolean DIRECT = true;
-    private final static Color LABEL_TEXT_COLOR = Color.WHITE;
+    private static final int SMALL = 0;
+    private static final boolean DIRECT = true;
+    private static final Color LABEL_TEXT_COLOR = Color.WHITE;
     private static final Color LABEL_CRITICAL_BACK = new Color(200,0,0,200);
     private static final Color LABEL_SPACE_BACK = new Color(0,0,200,200);
     private static final Color LABEL_GROUND_BACK = new Color(50,50,50,200);

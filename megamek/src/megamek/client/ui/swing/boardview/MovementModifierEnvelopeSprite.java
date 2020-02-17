@@ -23,10 +23,10 @@ import megamek.common.VTOL;
  */
 public class MovementModifierEnvelopeSprite extends HexSprite {
     
-    private final static Color fontColor = Color.BLACK;
-    private final static float fontSize = 9;
-    private final static double borderW = 15;
-    private final static double inset = 1;
+    private static final Color fontColor = Color.BLACK;
+    private static final float fontSize = 9;
+    private static final double borderW = 15;
+    private static final double inset = 1;
 
     private final Color color;
     private final Facing facing;

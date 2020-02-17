@@ -3368,7 +3368,7 @@ v0.37.0 (2013-12-21, 13:13 UTC1+)
 + Bug [#3747]: Custom RATs don't always show up
 + Bug [#3921]: charges and DFAs not working
 + Feature: Implemented Anti-penetrative Ablation armor
-+ Changed several state variables in IPlayer to public final static and changed
++ Changed several state variables in IPlayer to public static final and changed
     many of the references to them to be static, removing a slew of warnings
 + Made the HitData hit variable a protected state variable in Weaponhandler.
     This enables weapons that do damage+heat to properly check for armor types.

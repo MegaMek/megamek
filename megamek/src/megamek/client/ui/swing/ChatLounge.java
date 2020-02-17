@@ -1451,8 +1451,8 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     private static StringBuffer tooltipString;
-    private final static boolean BR = true;
-    private final static boolean NOBR = false;
+    private static final boolean BR = true;
+    private static final boolean NOBR = false;
 
     /**
      * Adds a resource string to the entity tooltip

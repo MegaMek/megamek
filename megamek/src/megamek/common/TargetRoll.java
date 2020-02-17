@@ -37,15 +37,15 @@ public class TargetRoll implements Serializable {
      *
      */
     private static final long serialVersionUID = -7453086182585457422L;
-    public final static int IMPOSSIBLE = Integer.MAX_VALUE;
-    public final static int AUTOMATIC_FAIL = Integer.MAX_VALUE - 1;
-    public final static int AUTOMATIC_SUCCESS = Integer.MIN_VALUE;
+    public static final int IMPOSSIBLE = Integer.MAX_VALUE;
+    public static final int AUTOMATIC_FAIL = Integer.MAX_VALUE - 1;
+    public static final int AUTOMATIC_SUCCESS = Integer.MIN_VALUE;
     /*
      * The CHECK_FALSE value is returned when a function that normally would
      * return a target roll number determines that the roll wasn't needed after
      * all.
      */
-    public final static int CHECK_FALSE = Integer.MIN_VALUE + 1;
+    public static final int CHECK_FALSE = Integer.MIN_VALUE + 1;
 
     private ArrayList<TargetRollModifier> modifiers = new ArrayList<TargetRollModifier>();
 

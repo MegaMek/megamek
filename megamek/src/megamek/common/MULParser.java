@@ -461,47 +461,47 @@ public class MULParser {
             }
             int nodeType = currNode.getNodeType();
             if (nodeType == Node.ELEMENT_NODE) {
-                Element currEle = (Element)currNode;
+                Element currEle = (Element) currNode;
                 String nodeName = currNode.getNodeName();
-                if (nodeName.equalsIgnoreCase(PILOT)){
+                if (nodeName.equalsIgnoreCase(PILOT)) {
                     parsePilot(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(CREW)){
+                } else if (nodeName.equalsIgnoreCase(CREW)) {
                     parseCrew(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(LOCATION)){
+                } else if (nodeName.equalsIgnoreCase(LOCATION)) {
                     parseLocation(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(MOVEMENT)){
+                } else if (nodeName.equalsIgnoreCase(MOVEMENT)) {
                     parseMovement(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(TURRETLOCK)){
+                } else if (nodeName.equalsIgnoreCase(TURRETLOCK)) {
                     parseTurretLock(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(TURRET2LOCK)){
+                } else if (nodeName.equalsIgnoreCase(TURRET2LOCK)) {
                     parseTurret2Lock(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(SI)){
+                } else if (nodeName.equalsIgnoreCase(SI)) {
                     parseSI(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(HEAT)){
+                } else if (nodeName.equalsIgnoreCase(HEAT)) {
                     parseHeat(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(FUEL)){
+                } else if (nodeName.equalsIgnoreCase(FUEL)) {
                     parseFuel(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(KF)){
+                } else if (nodeName.equalsIgnoreCase(KF)) {
                     parseKF(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(SAIL)){
+                } else if (nodeName.equalsIgnoreCase(SAIL)) {
                     parseSail(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(BAY)){
+                } else if (nodeName.equalsIgnoreCase(BAY)) {
                     parseTransportBay(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(AEROCRIT)){
+                } else if (nodeName.equalsIgnoreCase(AEROCRIT)) {
                     parseAeroCrit(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(DROPCRIT)){
+                } else if (nodeName.equalsIgnoreCase(DROPCRIT)) {
                     parseDropCrit(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(TANKCRIT)){
+                } else if (nodeName.equalsIgnoreCase(TANKCRIT)) {
                     parseTankCrit(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(BOMBS)){
+                } else if (nodeName.equalsIgnoreCase(BOMBS)) {
                     parseBombs(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(C3I)){
+                } else if (nodeName.equalsIgnoreCase(C3I)) {
                     parseC3I(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(NC3)){
+                } else if (nodeName.equalsIgnoreCase(NC3)) {
                     parseNC3(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(BA_MEA)){
+                } else if (nodeName.equalsIgnoreCase(BA_MEA)) {
                     parseBAMEA(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(BA_APM)){
+                } else if (nodeName.equalsIgnoreCase(BA_APM)) {
                     parseBAAPM(currEle, entity);
                 }
             }
@@ -864,8 +864,8 @@ public class MULParser {
                 final Map<String, String> pilotAttr = new HashMap<>(crewAttr);
                 for (int i = 0; i < pilotNode.getAttributes().getLength(); i++) {
                     final Node node = pilotNode.getAttributes().item(i);
-                    if (node.getNodeName() == "extraData") {
-                        
+                    if (node.getNodeName().equals("extraData")) {
+
                     } else {
                         pilotAttr.put(node.getNodeName(), node.getTextContent());
                     }
@@ -1014,6 +1014,9 @@ public class MULParser {
      * @param attributes A map of attribute values keyed to the attribute names.
      */
     private void setPilotAttributes(Crew crew, int slot, Map<String, String> attributes) {
+        setPilotAttributes(crew, slot, attributes, null);
+    }
+    private void setPilotAttributes(Crew crew, int slot, Map<String, String> attributes, Map<Integer, Map<String, String>> extraData) {
         // Did we find required attributes?
         if (!attributes.containsKey(GUNNERY) || (attributes.get(GUNNERY).length() == 0)) {
             warning.append("Could not find gunnery for pilot.\n");

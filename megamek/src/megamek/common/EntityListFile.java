@@ -22,18 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.util.StringUtil;
 
 /**
  * This class provides static methods to save a list of <code>Entity</code>s to,
@@ -1141,12 +1136,9 @@ public class EntityListFile {
             output.write(crew.getExternalIdAsString(pos));
         }
 
-        Map<String, String> extraData = crew.getExtraDataForCrewMember(pos);
-        if (extraData != null) {
-            output.write("\" extraData=\"");
-            for (String key : extraData.keySet()) {
-                output.write(key + "," + extraData.get(key));
-            }
+        String extraData = crew.writeExtraDataToXMLLine(pos);
+        if (!StringUtil.isNullOrEmpty(extraData)) {
+            output.write(extraData);
         }
     }
     

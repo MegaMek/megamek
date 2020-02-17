@@ -1488,6 +1488,30 @@ public class Crew implements Serializable {
             return extraData.get(crewIndex).get(key);
         }
     }
+
+    public String writeExtraDataToXMLLine(int pos) {
+        Map<String, String> dataRow = getExtraDataForCrewMember(pos);
+
+        if (dataRow != null) {
+            StringBuilder output = new StringBuilder();
+
+            output.append("\" extraData=\"");
+
+            String[] keySet = new String[dataRow.keySet().size()];
+            dataRow.keySet().toArray(keySet);
+
+            for (int k = 0; k < keySet.length; k++) {
+                output.append(keySet[k]).append(",").append(dataRow.get(keySet[k]));
+                if (k < keySet.length - 1) {
+                    output.append(",");
+                }
+            }
+
+            return output.toString();
+        } else {
+            return null;
+        }
+    }
     //endregion extraData
 
     //region MekWars

@@ -555,7 +555,7 @@ public class ScenarioLoader {
             System.out.println(String.format("Loading %s", ms.getName())); //$NON-NLS-1$
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
             e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1, Integer.parseInt(parts[2]),
-                    Integer.parseInt(parts[3])));
+                    Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), null));
             if(parts.length >= 7) {
                 String direction = parts[4].toUpperCase(Locale.ROOT);
                 switch(direction) {

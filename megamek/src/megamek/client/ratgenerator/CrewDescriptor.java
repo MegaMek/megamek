@@ -333,6 +333,6 @@ public class CrewDescriptor {
     }
 
     public Crew createCrew(CrewType crewType) {
-        return new Crew(crewType, name, 1, gunnery, piloting);
+        return new Crew(crewType, name, 1, gunnery, piloting, gender, null);
     }
 }

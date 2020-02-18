@@ -988,9 +988,9 @@ WindowListener, TreeSelectionListener {
             }
             e.getCrew().sortRandomSkills();
             if (cs.generateNames()) {
-                boolean gender = m_client.getRandomNameGenerator().isFemale();
-                e.getCrew().setName(m_client.getRandomNameGenerator().generate(gender), i);
-                e.getCrew().setGender(gender, i);
+                boolean isFemale = m_client.getRandomNameGenerator().isFemale();
+                e.getCrew().setGender(isFemale, i);
+                e.getCrew().setName(m_client.getRandomNameGenerator().generate(isFemale), i);
             }
         }
     }

@@ -1118,22 +1118,22 @@ public class MULParser {
             if ((attributes.containsKey(NAME)) && (attributes.get(NAME).length() > 0)) {
                 crew.setName(attributes.get(NAME), slot);
             } else {
-                crew.setName("Unnamed", slot);
+                crew.setName(Crew.UNNAMED, slot);
             }
 
             if ((attributes.containsKey(NICK)) && (attributes.get(NICK).length() > 0)) {
-                crew.setNickname(attributes.get(NICK), 0);
+                crew.setNickname(attributes.get(NICK), slot);
             }
 
             if ((attributes.containsKey(GENDER)) && (attributes.get(GENDER).length() > 0)){
-                crew.setGender(Integer.parseInt(attributes.get(GENDER)), 0);
+                crew.setGender(Integer.parseInt(attributes.get(GENDER)), slot);
             }
 
             if ((attributes.containsKey(CAT_PORTRAIT)) && (attributes.get(CAT_PORTRAIT).length() > 0)) {
-                crew.setPortraitCategory(attributes.get(CAT_PORTRAIT), 0);
+                crew.setPortraitCategory(attributes.get(CAT_PORTRAIT), slot);
             }
             if ((attributes.containsKey(FILE_PORTRAIT)) && (attributes.get(FILE_PORTRAIT).length() > 0)) {
-                crew.setPortraitFileName(attributes.get(FILE_PORTRAIT), 0);
+                crew.setPortraitFileName(attributes.get(FILE_PORTRAIT), slot);
             }
 
             // Was the crew wounded?
@@ -1165,6 +1165,7 @@ public class MULParser {
                 Map<String, String> extraData = new HashMap<>();
                 String[] valuePairs = attributes.get(EXTRA_DATA).split(",");
                 for (int i = 0; i < valuePairs.length; i = i + 2) {
+                    //this is always in pairs, so it will not cause an out of bounds error
                     extraData.put(valuePairs[i], valuePairs[i + 1]);
                 }
                 crew.setExtraDataForCrewMember(slot, extraData);

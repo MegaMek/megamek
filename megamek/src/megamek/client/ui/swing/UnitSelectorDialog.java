@@ -769,9 +769,9 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                 }
             }
             if (cs.generateNames()) {
-                boolean gender = client.getRandomNameGenerator().isFemale();
-                e.getCrew().setName(client.getRandomNameGenerator().generate(gender), i);
-                e.getCrew().setGender(gender, i);
+                boolean isFemale = client.getRandomNameGenerator().isFemale();
+                e.getCrew().setGender(isFemale, i);
+                e.getCrew().setName(client.getRandomNameGenerator().generate(isFemale), i);
             }
         }
         e.getCrew().sortRandomSkills();

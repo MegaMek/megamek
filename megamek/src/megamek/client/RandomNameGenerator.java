@@ -304,10 +304,16 @@ public class RandomNameGenerator implements Serializable {
      *
      * @return - a string giving the name
      */
+    @Deprecated //17-Feb-2020 as part of the addition of gender tracking to MegaMek
     public String generate() {
         return generate(isFemale());
     }
 
+    /**
+     * Generate a single random name
+     *
+     * @return - a string giving the name
+     */
     public String generate(boolean isFemale) {
         if ((null != chosenFaction) && (null != factionLast)
                 && (null != factionFirst) && (null != firstM)

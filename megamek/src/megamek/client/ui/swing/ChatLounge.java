@@ -3659,9 +3659,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                 }
                 for (Entity e : entities) {
                     for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-                        boolean gender = c.getRandomNameGenerator().isFemale();
-                        e.getCrew().setName(c.getRandomNameGenerator().generate(gender), i);
-                        e.getCrew().setGender(gender, i);
+                        boolean isFemale = c.getRandomNameGenerator().isFemale();
+                        e.getCrew().setGender(isFemale, i);
+                        e.getCrew().setName(c.getRandomNameGenerator().generate(isFemale), i);
                     }
                     c.sendUpdateEntity(e);
                 }

@@ -4188,7 +4188,10 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-     * @return The total passenger capacity.
+     * Returns the number of passengers on this unit
+     * Intended for spacecraft, where we want to get the crews of transported units
+     * plus actual passengers assigned to quarters
+     * @return
      */
     public int getNPassenger() {
         return 0;
@@ -4207,6 +4210,15 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getNMarines() {
         return 0;
     }
+    
+    /**
+     * Returns the number of marines assigned to a unit
+     * Used for abandoning a unit
+     * @return
+     */
+    public int getMarineCount() {
+        return 0;
+    }
 
     /**
      * @return The number of escape pods carried by the unit
@@ -4220,6 +4232,34 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public int getLifeBoats() {
         return 0;
+    }
+    
+    /**
+     * Calculates the total number of people that can be carried in this unit's escape systems
+     * 6 people per lifeboat/escape pod + troop capacity of any small craft
+     * Most small craft use cargo space instead of infantry bays, so we'll assume 0.1 tons/person
+     * @return The total escape count for the unit
+     */
+    public int getEscapeCapacity() {
+        int people = 0;
+        // We can cram 6 people in an escape pod
+        people += getEscapePods() * 6;
+        // Lifeboats hold 6 comfortably
+        people += getLifeBoats() * 6;
+        
+        // Any small craft aboard and able to launch?
+        for (Entity sc : getLaunchableSmallCraft()) {
+            // There could be an ASF in the bay...
+            if (sc instanceof SmallCraft) {
+                for (Bay b : sc.getTransportBays()) {
+                    if (b instanceof InfantryBay || b instanceof BattleArmorBay || b instanceof CargoBay) {
+                        // Use the available tonnage
+                        people += (b.getCapacity() / 0.1);
+                    }
+                }
+            }
+        }
+        return people;
     }
 
     @Override

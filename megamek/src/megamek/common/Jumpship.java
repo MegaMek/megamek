@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -85,6 +86,10 @@ public class Jumpship extends Aero {
     private int nOtherCrew = 0;
     private int nOfficers = 0;
     private int nGunners = 0;
+    
+    //Maps unique id of each assigned marine to marine point value
+    private Map<UUID,Integer> marines;
+    
     // lifeboats and escape pods
     private int lifeBoats = 0;
     private int escapePods = 0;
@@ -559,6 +564,11 @@ public class Jumpship extends Aero {
         nMarines = m;
     }
 
+    /**
+     * Returns the number of marines assigned to a unit
+     * Used for abandoning a unit
+     * @return
+     */
     public int getNMarines() {
         return nMarines;
     }

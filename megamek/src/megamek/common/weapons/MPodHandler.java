@@ -72,8 +72,14 @@ public class MPodHandler extends LBXHandler {
 
         int hitMod = 0;
         if (bGlancing) {
-            hitMod = 4;
+            hitMod -= 4;
         }
+        
+        if(bLowProfileGlancing) {
+            hitMod -= 4;
+        }
+        
+        
         if (game.getPlanetaryConditions().hasEMI()) {
             hitMod -= 2;
         }

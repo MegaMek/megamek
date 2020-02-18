@@ -4134,11 +4134,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         
-        // Units with the narrow/low profile quirk are harder to hit
-        if ((te != null) && te.hasQuirk(OptionsConstants.QUIRK_POS_LOW_PROFILE)) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.LowProfile"));
-        }
-        
         // Movement and Position modifiers
         
         // target movement - ignore for pointblank shots from hidden units

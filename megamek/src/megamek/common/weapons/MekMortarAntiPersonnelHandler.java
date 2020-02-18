@@ -125,9 +125,7 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
                 numDice += (toHit.getMoS() / 3);
             }
             damage = Compute.d6(numDice);
-            if (bGlancing) {
-                damage /= 2;
-            }
+            damage = applyGlancingBlowModifier(damage, true);
             // Burst fire damage rounds up
             return (int) Math.ceil(damage);
         }

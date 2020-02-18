@@ -2639,6 +2639,10 @@ public class Infantry extends Entity {
         addCritical(loc, new CriticalSlot(mounted));
 
     }
+    
+    public boolean isConventionalInfantry() {
+        return true;
+    }
 
     @Override
     public long getEntityType(){

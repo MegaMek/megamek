@@ -72,10 +72,9 @@ public class SpaceBombAttackHandler extends WeaponHandler {
         if (bDirect) {
             nbombs = Math.min(nbombs + (toHit.getMoS() / 3), nbombs * 2);
         }
-        if (bGlancing) {
-            nbombs = (int) Math.floor(nbombs / 2.0);
-
-        }
+        
+        nbombs = applyGlancingBlowModifier(nbombs, false);
+        
         return nbombs;
     }
 

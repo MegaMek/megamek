@@ -71,10 +71,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            if (bGlancing) {
-                toReturn /= 2;
-            }
-            toReturn = Math.ceil(toReturn);
+            toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }
         return 1;

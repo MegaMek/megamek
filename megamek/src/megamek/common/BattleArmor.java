@@ -2195,6 +2195,9 @@ public class BattleArmor extends Infantry {
         return damage;
     }
 
+    public boolean isConventionalInfantry() {
+        return false;
+    }
 
     @Override
     public long getEntityType(){

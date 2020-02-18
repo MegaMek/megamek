@@ -6,6 +6,7 @@ VERSION HISTORY:
 + Issues #1636 #1637: Main menu and minimap now work when loading a new map
 + PR #1670: Fixing AI Documentation location
 + Issue #1634: Zoom in/out on map editor now works
++ Issue #1660: Narrow/Low Profile quirk implementation matches most recent errata (glancing blow on TN or TN + 1 hits)
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

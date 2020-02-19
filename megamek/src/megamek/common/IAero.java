@@ -368,6 +368,7 @@ public interface IAero {
         // level of all surrounding hexes is greater than what we are sitting on
         boolean allAdjacentHigher = true;
         Set<Coords> positions = new HashSet<Coords>(((Entity) this).getSecondaryPositions().values());
+        positions.add(pos);
         IHex adjHex;
         for (Coords currPos : positions) {
             hex = ((Entity) this).getGame().getBoard().getHex(currPos);

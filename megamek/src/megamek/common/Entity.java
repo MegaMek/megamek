@@ -10585,7 +10585,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     bayCost += bay.getCost() + 1000L * bay.getDoors();
                 }
             }
-            if (seatCost > 0) {
+            if (null != bvText && seatCost > 0) {
                 bvText.append(startColumn);
                 bvText.append("Seating");
                 bvText.append(endColumn);
@@ -10595,7 +10595,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 bvText.append(endRow);
                 cost += seatCost;
             }
-            if (quartersCost > 0) {
+            if (null != bvText && quartersCost > 0) {
                 bvText.append(startColumn);
                 bvText.append("Quarters");
                 bvText.append(endColumn);
@@ -10605,7 +10605,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 bvText.append(endRow);
                 cost += quartersCost;
             }
-            if (bayCost > 0) {
+            if (null != bvText && bayCost > 0) {
                 bvText.append(startColumn);
                 bvText.append("Bays");
                 bvText.append(endColumn);

@@ -21,6 +21,7 @@ v0.47.4 (2020-2-09 2200 UTC)
 + Data: Various Fixes (#1652,#1615,#1545,#1534) and some errata.
 + Issue #1647: WiGEs can't sideslip across water
 + Issue #1479: Add theme selection and dark themes
++ Issue #1679: Small aerospace units no longer incorrectly get crater penalty when attempting vertical liftoff
 
 v0.47.3 (2020-2-01 2200 UTC) 
 + Issue #1546: Large VSP + Targeting Computer applies to-hit mod twice, resulting in too-easy to-hit number

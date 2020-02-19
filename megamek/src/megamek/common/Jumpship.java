@@ -524,6 +524,7 @@ public class Jumpship extends Aero {
         return lifeBoats;
     }
 
+    @Override
     public void setNCrew(int crew) {
         nCrew = crew;
     }
@@ -533,6 +534,7 @@ public class Jumpship extends Aero {
         return nCrew;
     }
 
+    @Override
     public void setNPassenger(int pass) {
         nPassenger = pass;
     }
@@ -560,6 +562,7 @@ public class Jumpship extends Aero {
         return nPassenger;
     }
 
+    @Override
     public void setNMarines(int m) {
         nMarines = m;
     }

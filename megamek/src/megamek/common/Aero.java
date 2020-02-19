@@ -4171,7 +4171,9 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getNCrew() {
         return 1;
     }
-
+    
+    public void setNCrew(int crew) {
+    }
 
     /**
      * @return The total number of officers for vessels.
@@ -4196,6 +4198,9 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getNPassenger() {
         return 0;
     }
+    
+    public void setNPassenger(int pass) {
+    }
 
     /**
      * @return The number battlearmored marines available to vessels for boarding actions.
@@ -4212,12 +4217,27 @@ public class Aero extends Entity implements IAero, IBomber {
     }
     
     /**
+     * Updates the number of marines aboard
+     * @param marines The number of marines to add/subtract
+     */
+    public void setNMarines(int marines) {
+    }
+    
+    /**
      * Returns the number of marines assigned to a unit
      * Used for abandoning a unit
      * @return
      */
     public int getMarineCount() {
         return 0;
+    }
+    
+    /**
+     * Convenience method that compiles the total number of people aboard a ship - Crew, Marines, Passengers...
+     * @return An integer representing everyone aboard
+     */
+    public int getTotalAboard() {
+        return (getNCrew() + getNPassenger() + getMarineCount());
     }
 
     /**
@@ -4238,6 +4258,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * Calculates the total number of people that can be carried in this unit's escape systems
      * 6 people per lifeboat/escape pod + troop capacity of any small craft
      * Most small craft use cargo space instead of infantry bays, so we'll assume 0.1 tons/person
+     * (Taken from Infantry.getWeight() - foot trooper + .015t for the spacesuit everyone aboard is wearing ;) )
      * @return The total escape count for the unit
      */
     public int getEscapeCapacity() {

@@ -88,6 +88,7 @@ public class SmallCraft extends Aero {
         return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;
     }
     
+    @Override
     public void setNCrew(int crew) {
         nCrew = crew;
     }
@@ -100,6 +101,7 @@ public class SmallCraft extends Aero {
         nGunners = gunners;
     }
     
+    @Override
     public void setNPassenger(int pass) {
         nPassenger = pass;
     }
@@ -108,6 +110,7 @@ public class SmallCraft extends Aero {
         nBattleArmor = ba;
     }
 
+    @Override
     public void setNMarines(int marines) {
         nMarines = marines;
     }

@@ -851,6 +851,12 @@ public abstract class TestEntity implements TestEntityOption {
             }
         }
         for (Mounted m : getEntity().getMisc()) {
+            // Spot welders are treated as energy weapons on units that don't have a fusion or fission engine
+            if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)
+                && getEntity().hasEngine() && (getEntity().getEngine().isFusion()
+                                                || getEntity().getEngine().getEngineType() == Engine.FISSION)) {
+                continue;
+            }
             heat += m.getType().getHeat();
         }
         if (getEntity().hasStealth()) {

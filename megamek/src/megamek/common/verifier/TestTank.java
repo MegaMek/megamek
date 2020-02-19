@@ -750,6 +750,11 @@ public class TestTank extends TestEntity {
                     weight += (m.getLinkedBy().getType()).getTonnage(tank);
                 }
             }
+            for (Mounted m : tank.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
+                    weight += m.getType().getTonnage(tank);
+                }
+            }
             return TestEntity.ceil(weight / 10, getWeightCeilingPowerAmp());
         }
         return 0;

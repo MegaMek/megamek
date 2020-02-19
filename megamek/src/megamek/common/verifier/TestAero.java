@@ -603,12 +603,17 @@ public class TestAero extends TestEntity {
                 if ((linkedBy != null) && 
                         (linkedBy.getType() instanceof MiscType) && 
                         linkedBy.getType().hasFlag(MiscType.F_PPC_CAPACITOR)){
-                    weight += ((MiscType)linkedBy.getType()).getTonnage(aero);
+                    weight += linkedBy.getType().getTonnage(aero);
                 }
             }
-            // Power amp weighs: 
+            for (Mounted m : aero.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
+                    weight += m.getType().getTonnage(aero);
+                }
+            }
+            // Power amp weighs:
             //   energy weapon tonnage * 0.1 rounded to nearest half ton
-            return Math.ceil(0.1 * weight*2) / 2.0;
+            return Math.ceil(0.1 * weight * 2) / 2.0;
         }
         return 0;
     }

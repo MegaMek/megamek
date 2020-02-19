@@ -2516,7 +2516,7 @@ public class Tank extends Entity {
         // find the maximum length of the columns.
         for (int l = 0; l < left.size(); l++) {
 
-            if (l == 8) {
+            if (l == 7) {
                 getWeaponsAndEquipmentCost(true);
             }else {
                 if (left.get(l).equals("Final Structural Cost")) {

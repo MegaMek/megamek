@@ -256,6 +256,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * The pilot of the entity. Even infantry has a 'pilot'.
      */
     private Crew crew;
+    
+    // Crew and passenger numbers
+    protected int nCrew;
+    protected int nPassenger;
+    protected int nMarines;
 
     private Quirks quirks = new Quirks();
     private PartialRepairs partReps = new PartialRepairs();
@@ -845,6 +850,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public Entity() {
         crew = new Crew(defaultCrewType());
+        nCrew = 0;
+        nPassenger = 0;
+        nMarines = 0;
         armor = new int[locations()];
         internal = new int[locations()];
         orig_armor = new int[locations()];
@@ -1484,6 +1492,44 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setCrew(Crew crew) {
         this.crew = crew;
+    }
+    
+    /**
+     * @return The total number of crew available to supplement marines on boarding actions.
+     *         Includes officers, enlisted, and bay personnel, but not marines/ba or passengers.
+     */
+    public int getNCrew() {
+        return nCrew;
+    }
+    
+    public void setNCrew(int crew) {
+    }
+    
+    /**
+     * Returns the number of passengers on this unit
+     * Intended for spacecraft, where we want to get the crews of transported units
+     * plus actual passengers assigned to quarters
+     * @return
+     */
+    public int getNPassenger() {
+        return nPassenger;
+    }
+    
+    public void setNPassenger(int pass) {
+    }
+    
+    /**
+     * @return The number conventional marines available to vessels for boarding actions.
+     */
+    public int getNMarines() {
+        return nMarines;
+    }
+    
+    /**
+     * Updates the number of marines aboard
+     * @param marines The number of marines to add/subtract
+     */
+    public void setNMarines(int marines) {
     }
 
     /**

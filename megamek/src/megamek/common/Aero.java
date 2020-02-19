@@ -4168,10 +4168,12 @@ public class Aero extends Entity implements IAero, IBomber {
      * @return The total number of crew available to supplement marines on boarding actions.
      *         Includes officers, enlisted, and bay personnel, but not marines/ba or passengers.
      */
+    @Override
     public int getNCrew() {
         return 1;
     }
     
+    @Override
     public void setNCrew(int crew) {
     }
 
@@ -4195,10 +4197,12 @@ public class Aero extends Entity implements IAero, IBomber {
      * plus actual passengers assigned to quarters
      * @return
      */
+    @Override
     public int getNPassenger() {
         return 0;
     }
     
+    @Override
     public void setNPassenger(int pass) {
     }
 
@@ -4220,6 +4224,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * Updates the number of marines aboard
      * @param marines The number of marines to add/subtract
      */
+    @Override
     public void setNMarines(int marines) {
     }
     

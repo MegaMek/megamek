@@ -34,12 +34,9 @@ public class SmallCraft extends Aero {
         { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
 
     // crew and passengers
-    private int nCrew = 0;
-    private int nPassenger = 0;
     private int nOfficers = 0;
     private int nGunners = 0;
     private int nBattleArmor = 0;
-    private int nMarines = 0;
     private int nOtherPassenger = 0;
     
     //Maps unique id of each assigned marine to marine point value

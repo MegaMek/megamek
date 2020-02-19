@@ -79,9 +79,6 @@ public class Jumpship extends Aero {
     boolean hasLF = false;
 
     // crew and passengers
-    private int nCrew = 0;
-    private int nPassenger = 0;
-    private int nMarines = 0;
     private int nBattleArmor = 0;
     private int nOtherCrew = 0;
     private int nOfficers = 0;

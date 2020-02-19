@@ -19986,7 +19986,6 @@ public class Server implements Runnable {
             int radicalHSBonus = 0;
             Vector<Report> rhsReports = new Vector<Report>();
             if (entity.hasActivatedRadicalHS()) {
-                entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
                 if (entity instanceof Mech) {
                     radicalHSBonus = ((Mech) entity).getActiveSinks();
                 } else if (entity instanceof Aero) {
@@ -19997,6 +19996,9 @@ public class Server implements Runnable {
                 int rhsRoll = Compute.d6(2);
                 int targetNumber = 2;
                 switch (entity.getConsecutiveRHSUses()) {
+                    case 0:
+                        targetNumber = 2;
+                        break;
                     case 1:
                         targetNumber = 3;
                         break;
@@ -20032,6 +20034,7 @@ public class Server implements Runnable {
                 r.add(rhsRoll);
                 r.choose(rhsFailure);
                 rhsReports.add(r);
+                entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
 
                 if (rhsFailure) {
                     entity.setHasDamagedRHS(true);

@@ -7242,7 +7242,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.tonnage = .5;
         misc.cost = 1000;
-        misc.flags = misc.flags.or(F_FLUID_SUCTION_SYSTEM).or(F_MECH_EQUIPMENT).andNot(F_SC_EQUIPMENT)
+        misc.flags = misc.flags.or(F_LIGHT_FLUID_SUCTION_SYSTEM).or(F_MECH_EQUIPMENT).andNot(F_SC_EQUIPMENT)
                 .andNot(F_DS_EQUIPMENT).andNot(F_JS_EQUIPMENT).andNot(F_WS_EQUIPMENT).andNot(F_SS_EQUIPMENT);
         misc.rulesRefs = "248,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -7260,7 +7260,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.criticals = 1;
         misc.tankslots = 1;
-        misc.tonnage = .5;
+        misc.tonnage = 0.015;
         misc.cost = 1000;
         misc.flags = misc.flags.or(F_LIGHT_FLUID_SUCTION_SYSTEM).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .andNot(F_SC_EQUIPMENT).andNot(F_DS_EQUIPMENT).andNot(F_JS_EQUIPMENT).andNot(F_WS_EQUIPMENT)

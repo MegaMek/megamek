@@ -367,9 +367,8 @@ public interface IAero {
         // TW doesn't define what a crater is, assume it means that the hex
         // level of all surrounding hexes is greater than what we are sitting on
         boolean allAdjacentHigher = true;
-        Set<Coords> positions = new HashSet<>();
+        Set<Coords> positions = new HashSet<Coords>(((Entity) this).getSecondaryPositions().values());
         positions.add(pos);
-        positions.addAll((((Entity) this).getSecondaryPositions().values()));
         IHex adjHex;
         for (Coords currPos : positions) {
             hex = ((Entity) this).getGame().getBoard().getHex(currPos);

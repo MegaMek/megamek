@@ -867,7 +867,7 @@ public class MiscType extends EquipmentType {
                             * entity.getWeight() * 0.025f);
                 } else if (entity instanceof BattleArmor) {
                     costValue = entity.getOriginalWalkMP() * 75000;
-                } else if (hasSubType(MiscType.S_SUPERCHARGER)) {
+                } else if (hasSubType(MiscType.S_SUPERCHARGER) || hasSubType(MiscType.S_JETBOOSTER)) {
                     Engine e = entity.getEngine();
                     if (e == null) {
                         costValue = 0;

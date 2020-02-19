@@ -597,7 +597,8 @@ public class BLKFile {
         }
         for (Mounted m : t.getEquipment()) {
             // Ignore Mounteds that represent a WeaponGroup
-            if (m.isWeaponGroup()){
+            // BA anti-personnel weapons are written just after the mount
+            if (m.isWeaponGroup() || m.isAPMMounted()){
                 continue;
             }
 
@@ -639,54 +640,14 @@ public class BLKFile {
                     || (m.getType() instanceof AmmoType))) {
                 continue;
             }
-            
-            String name = m.getType().getInternalName();
-            if (m.isRearMounted()) {
-                name = "(R) " + name;
-            }
-            if (m.isSponsonTurretMounted()) {
-                name = name + "(ST)";
-            }
-            if (m.isMechTurretMounted()) {
-                name = name + "(T)";
-            }
-            if (m.isPintleTurretMounted()) {
-                name = name + "(PT)";
-            }
-            if (m.isDWPMounted()) {
-                name += ":DWP";
-            }
-            if (m.isAPMMounted()) {
-                name += ":APM";
-            }
-            if (m.isSquadSupportWeapon()) {
-                name += ":SSWM";
-            }
-            if (m.isOmniPodMounted()) {
-            	name += ":OMNI";
-            }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
-                name += ":Body";
-            }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
-                name += ":LA";
-            }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
-                name += ":RA";
-            }
-            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
-                name += ":TU";
-            }
-            // For BattleArmor and ProtoMechs, we need to save how many shots are in this
-            //  location but they have different formats, yay!
-            if ((t instanceof BattleArmor) && (m.getType() instanceof AmmoType)) {
-                name += ":Shots" + m.getBaseShotsLeft() + "#";
-            } else if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (m.getType() instanceof AmmoType)) {
-                name += " (" + m.getBaseShotsLeft() + ")";
-            }
+
+            String name = encodeEquipmentLine(m);
             int loc = m.getLocation();
             if (loc != Entity.LOC_NONE) {
                 eq.get(loc).add(name);
+            }
+            if ((m.getLinked() != null) && m.getLinked().isAPMMounted()) {
+                eq.get(loc).add(encodeEquipmentLine(m.getLinked()));
             }
         }
         for (int i = 0; i < numLocs; i++) {
@@ -943,6 +904,54 @@ public class BLKFile {
             blk.writeBlockData("escape_pod", js.getEscapePods());
         }
         return blk;
+    }
+
+    private static String encodeEquipmentLine(Mounted m) {
+        String name = m.getType().getInternalName();
+        if (m.isRearMounted()) {
+            name = "(R) " + name;
+        }
+        if (m.isSponsonTurretMounted()) {
+            name = name + "(ST)";
+        }
+        if (m.isMechTurretMounted()) {
+            name = name + "(T)";
+        }
+        if (m.isPintleTurretMounted()) {
+            name = name + "(PT)";
+        }
+        if (m.isDWPMounted()) {
+            name += ":DWP";
+        }
+        if (m.isSquadSupportWeapon()) {
+            name += ":SSWM";
+        }
+        if (m.isAPMMounted()) {
+            name += ":APM";
+        }
+        if (m.isOmniPodMounted()) {
+            name += ":OMNI";
+        }
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY) {
+            name += ":Body";
+        }
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
+            name += ":LA";
+        }
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
+            name += ":RA";
+        }
+        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
+            name += ":TU";
+        }
+        // For BattleArmor and ProtoMechs, we need to save how many shots are in this
+        //  location but they have different formats, yay!
+        if ((m.getEntity() instanceof BattleArmor) && (m.getType() instanceof AmmoType)) {
+            name += ":Shots" + m.getBaseShotsLeft() + "#";
+        } else if (m.getEntity() instanceof Protomech && (m.getType() instanceof AmmoType)) {
+            name += " (" + m.getBaseShotsLeft() + ")";
+        }
+        return name;
     }
 
     public static void encode(String fileName, Entity t) {

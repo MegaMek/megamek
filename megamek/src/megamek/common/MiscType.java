@@ -859,8 +859,6 @@ public class MiscType extends EquipmentType {
                 costValue = getTonnage(entity, loc) * 1000;
             } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
                 costValue = getTonnage(entity, loc) * 100000;
-            } else if (hasFlag(F_JET_BOOSTER)) {
-                costValue = (entity.hasEngine() ? entity.getEngine().getRating() * 10000 : 0);
             } else if (hasFlag(F_DRONE_OPERATING_SYSTEM)) {
                 costValue = (getTonnage(entity, loc) * 10000) + 5000;
             } else if (hasFlag(MiscType.F_MASC)) {
@@ -869,10 +867,12 @@ public class MiscType extends EquipmentType {
                             * entity.getWeight() * 0.025f);
                 } else if (entity instanceof BattleArmor) {
                     costValue = entity.getOriginalWalkMP() * 75000;
-                } else if (hasSubType(MiscType.S_SUPERCHARGER)) {
+                } else if (hasSubType(MiscType.S_SUPERCHARGER) || hasSubType(MiscType.S_JETBOOSTER)) {
                     Engine e = entity.getEngine();
                     if (e == null) {
                         costValue = 0;
+                    } else if (entity.isSupportVehicle()) {
+                        costValue = e.getWeightEngine(entity) * 10000;
                     } else {
                         costValue = e.getRating() * 10000;
                     }

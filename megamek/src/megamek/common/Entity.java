@@ -10573,22 +10573,47 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
         if (isSupportVehicle()) {
-            for (Transporter t : getTransports()) {
-                int seatCost = 0;
-                if (t instanceof PillionSeatCargoBay) {
-                    seatCost += 10;
-                } else if (t instanceof StandardSeatCargoBay) {
-                    seatCost += 100;
+            long seatCost = 0;
+            long quartersCost = 0;
+            long bayCost = 0;
+            for (Bay bay : getTransportBays()) {
+                if (bay instanceof StandardSeatCargoBay) {
+                    seatCost += bay.getCost();
+                } else if (bay.isQuarters()) {
+                    quartersCost += bay.getCost();
+                } else {
+                    bayCost += bay.getCost() + 1000L * bay.getDoors();
                 }
-                if (seatCost > 0) {
-                    bvText.append(startColumn);
-                    bvText.append("Seating");
-                    bvText.append(endColumn);
-                    bvText.append(startColumn);
-                    bvText.append(commafy.format(seatCost));
-                    bvText.append(endColumn);
-                    bvText.append(endRow);
-                }
+            }
+            if (seatCost > 0) {
+                bvText.append(startColumn);
+                bvText.append("Seating");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(commafy.format(seatCost));
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                cost += seatCost;
+            }
+            if (quartersCost > 0) {
+                bvText.append(startColumn);
+                bvText.append("Quarters");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(commafy.format(quartersCost));
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                cost += quartersCost;
+            }
+            if (bayCost > 0) {
+                bvText.append(startColumn);
+                bvText.append("Bays");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(commafy.format(bayCost));
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                cost += bayCost;
             }
         }
         return cost;

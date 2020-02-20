@@ -2678,8 +2678,8 @@ public class Tank extends Entity {
             costs[structCostIdx] *= techRatingMultiplier;
         } else {
             // IS has no variations, no Endo etc.
-            costs[i++] = (weight / 10.0) * 10000;
-            double controlWeight = Math.ceil(weight * 0.05 * 2.0) / 2.0; // ?
+            costs[i++] = RoundWeight.nextHalfTon(weight / 10.0) * 10000;
+            double controlWeight = hasNoControlSystems() ? 0.0 : RoundWeight.nextHalfTon(weight * 0.05); // ?
             // should be rounded up to nearest half-ton
             costs[i++] = 10000 * controlWeight;
         }

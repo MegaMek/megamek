@@ -2702,7 +2702,8 @@ public class Tank extends Entity {
             }
         }
         paWeight = Math.ceil(paWeight * 2) / 2;
-        if(hasEngine() && getEngine().isFusion()) {
+        if ((hasEngine() && (getEngine().isFusion() || getEngine().getEngineType() == Engine.FISSION))
+                || getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             paWeight = 0;
         }
         turretWeight = Math.ceil(turretWeight * 2) / 2;

@@ -9987,7 +9987,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
@@ -10012,7 +10012,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;

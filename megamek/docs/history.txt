@@ -10,6 +10,7 @@ VERSION HISTORY:
 + Issue #1687: Missing Ti Ts'ang (Jason)
 + Issue #1689: Communication gear missing costs.
 + PR #1694: Supercharger and VTOL jet booster cost for support vehicles
++ Issue #1701: SRT ammo has extinction and reintroduction dates for One-Shot launchers
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

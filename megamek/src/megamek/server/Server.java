@@ -1300,12 +1300,13 @@ public class Server implements Runnable {
             }
 
             sFinalFile = sDir + File.separator + sFinalFile;
-            GZIPOutputStream gzo = new GZIPOutputStream(new FileOutputStream(
-                    sFinalFile + ".gz"));
+            FileOutputStream fos = new FileOutputStream(sFinalFile + ".gz");
+            GZIPOutputStream gzo = new GZIPOutputStream(fos);
             Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8);
             xstream.toXML(game, writer);
             writer.close();
             gzo.close();
+            fos.close();
         } catch (Exception e) {
             getLogger().error(getClass(), "saveGame(String,boolean)",
                     "Unable to save file: " + sFinalFile, e);
@@ -1368,7 +1369,9 @@ public class Server implements Runnable {
         getLogger().info(getClass(), METHOD_NAME, "s: loading saved game file '" + f + "'"); //$NON-NLS-1$
 
         IGame newGame;
-        try(InputStream is = new GZIPInputStream(new FileInputStream(f))) {
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            InputStream is = new GZIPInputStream(fis);
             XStream xstream = new XStream();
 
             // This mirrors the settings is saveGame
@@ -1410,6 +1413,8 @@ public class Server implements Runnable {
                 }
             });
             newGame = (IGame) xstream.fromXML(is);
+            fis.close();
+            is.close();
         } catch (Exception e) {
             getLogger().error(getClass(), METHOD_NAME, "Unable to load file: " + f, e); //$NON-NLS-1$
             return false;
@@ -2170,8 +2175,7 @@ public class Server implements Runnable {
 
         // Unless overridden by the "protos_move_multi" option, all ProtoMechs
         // in a unit declare fire, and they don't mix with infantry.
-        if (protosMoved && !protosMoveMulti && !isMultiTurn
-            && (entityUsed != null)) {
+        if (protosMoved && !protosMoveMulti && !isMultiTurn && (entityUsed != null)) {
 
             // What's the unit number and ID of the entity used?
             final short movingUnit = entityUsed.getUnitNumber();
@@ -3180,11 +3184,7 @@ public class Server implements Runnable {
             // activity of the button but to be sure do it on the server too.
             boolean isGeneralMoveTurn = !(turn instanceof GameTurn.SpecificEntityTurn)
                     && !(turn instanceof GameTurn.UnitNumberTurn)
-                    && !(turn instanceof GameTurn.UnloadStrandedTurn)
-                    && !(turn instanceof GameTurn.TriggerBPodTurn)
-                    && !(turn instanceof GameTurn.TriggerAPPodTurn);
-            // TODO : Windchild my IDE has noticed that GameTurn.TriggerBPodTurn
-            // TODO : and GameTurn.TriggerAPPodTurn are always false, and can probably be removed
+                    && !(turn instanceof GameTurn.UnloadStrandedTurn);
             if (!isGeneralMoveTurn) {
                 // if this is not a general turn the player cannot forward his turn.
                 return;
@@ -3779,13 +3779,13 @@ public class Server implements Runnable {
                 // If there's only one team moving, we don't need to bother
                 // with the evenTracker, just make sure the even turns are
                 // evenly distributed
-                numEven += (teamEvenTurns / min) + 0.5;
+                numEven += (int) Math.round((teamEvenTurns / min) + 0.5);
             } else if (prevTeam == null) {
                 // Increment the number of times we've checked for "leftovers".
                 evenTracker[0]++;
 
                 // The first team to move just adds the "baseline" turns.
-                numEven += teamEvenTurns / min;
+                numEven += Math.round(teamEvenTurns / min);
             } else if (!team.equals(prevTeam)) {
                 // Increment the number of times we've checked for "leftovers".
                 evenTracker[0]++;
@@ -3796,14 +3796,14 @@ public class Server implements Runnable {
                 // "leftovers" the number of "leftovers" we started with,
                 // the number of times we've added a turn for a "leftover",
                 // and the total number of times we're going to check.
-                numEven += Math.ceil(((evenTracker[0] * (teamEvenTurns % min)) / min) - 0.5)
+                numEven += (int) Math.ceil(((evenTracker[0] * (teamEvenTurns % min)) / min) - 0.5)
                            - evenTracker[1];
 
                 // Update the number of turns actually added for "leftovers".
                 evenTracker[1] += numEven;
 
                 // Add the "baseline" number of turns.
-                numEven += teamEvenTurns / min;
+                numEven += Math.round(teamEvenTurns / min);
             }
 
             // Record this team for the next move.
@@ -19528,7 +19528,7 @@ public class Server implements Runnable {
                         addReport(r);
                         // okay, now mark shut down
                         entity.setShutDown(true);
-                    } else if (entity.heat >= 14) {
+                    } else {
                         // Again, pilot KO means shutdown is automatic.
                         if (!entity.getCrew().isActive()) {
                             r = new Report(5056);
@@ -20060,7 +20060,7 @@ public class Server implements Runnable {
                     }
                     // okay, now mark shut down
                     entity.setShutDown(true);
-                } else if (entity.heat >= 14) {
+                } else {
                     // Again, pilot KO means shutdown is automatic.
                     if (!entity.getCrew().isActive()) {
                         r = new Report(5056);
@@ -20220,12 +20220,12 @@ public class Server implements Runnable {
                     && !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 // Crew may take damage from heat if MaxTech option is set
                 int heatRoll = Compute.d6(2);
-                int avoidNumber = -1;
+                int avoidNumber;
                 if (entity.heat >= 47) {
                     avoidNumber = 12;
                 } else if (entity.heat >= 39) {
                     avoidNumber = 10;
-                } else if (entity.heat >= 32) {
+                } else {
                     avoidNumber = 8;
                 }
                 avoidNumber -= hotDogMod;
@@ -20259,10 +20259,10 @@ public class Server implements Runnable {
             if (mtHeat) {
                 if (entity.heat >= 36) {
                     int damageRoll = Compute.d6(2);
-                    int damageNumber = -1;
+                    int damageNumber;
                     if (entity.heat >= 44) {
                         damageNumber = 10;
-                    } else if (entity.heat >= 36) {
+                    } else {
                         damageNumber = 8;
                     }
                     damageNumber -= hotDogMod;
@@ -22558,7 +22558,7 @@ public class Server implements Runnable {
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (isPlatoon) {
-                    damage *= 1.5;
+                    damage = (int) Math.round(damage * 1.5);
                     r = new Report(6062);
                     r.subject = te_n;
                     r.indent(2);

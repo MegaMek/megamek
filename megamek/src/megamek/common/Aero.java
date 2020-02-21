@@ -4244,6 +4244,20 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getTotalAboard() {
         return (getNCrew() + getNPassenger() + getMarineCount());
     }
+    
+    /**
+     * Returns the total number of people who have escaped so far
+     */
+    public int getEscaped() {
+        return 0;
+    }
+    
+    /**
+     * Updates the total number of people who have gotten off this ship via escape systems
+     * @param n The number to change
+     */
+    public void setEscaped(int n) {
+    }
 
     /**
      * @return The number of escape pods carried by the unit

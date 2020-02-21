@@ -38,6 +38,7 @@ public class SmallCraft extends Aero {
     private int nGunners = 0;
     private int nBattleArmor = 0;
     private int nOtherPassenger = 0;
+    private int escaped = 0;
     
     //Maps unique id of each assigned marine to marine point value
     private Map<UUID,Integer> marines;
@@ -148,6 +149,22 @@ public class SmallCraft extends Aero {
 
     public int getNOtherPassenger() {
         return nOtherPassenger;
+    }
+    
+    /**
+     * Returns the total number of people who have escaped so far
+     */
+    public int getEscaped() {
+        return escaped;
+    }
+    
+    /**
+     * Updates the total number of people who have gotten off this ship via escape systems
+     * @param n The number to change
+     */
+    @Override
+    public void setEscaped(int n) {
+        escaped = n;
     }
     
     public void setEscapePods(int n) {

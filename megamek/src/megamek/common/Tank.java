@@ -1473,15 +1473,15 @@ public class Tank extends Entity {
                 typeModifier = 0.6;
         }
 
-        if (!(this instanceof SupportTank)
+        if (!isSupportVehicle()
                 && (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS)
                         || hasWorkingMisc(MiscType.F_DUNE_BUGGY)
                         || hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                        || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
-                        || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING) || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM))) {
+                        || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)
+                        || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM))) {
             typeModifier += .1;
         } else if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)
-                && !(this instanceof SupportTank)) {
+                && !isSupportVehicle()) {
             typeModifier += .2;
         }
         bvText.append(startColumn);
@@ -2790,7 +2790,6 @@ public class Tank extends Entity {
 
         if (!isSupportVehicle()) {
             if (hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                    || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
                     || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 cost *= 1.25;
                 costs[i++] = -1.25;
@@ -2834,15 +2833,12 @@ public class Tank extends Entity {
 
     @Override
     public boolean doomedInVacuum() {
-        for (Mounted m : getEquipment()) {
-            if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_VACUUM_PROTECTION)) {
-                return false;
-            }
-            if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
-                return false;
-            }
+        if (hasEngine() && (getEngine().isFusion() || getEngine().getEngineType() == Engine.FISSION
+                || getEngine().getEngineType() == Engine.FUEL_CELL)) {
+            return !hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)
+                && !getMovementMode().equals(EntityMovementMode.SUBMARINE);
+            // That's right, automatic environmental sealing means submarines with the right
+            // engines can function in space. Your enemies never saw that coming.
         }
         return true;
     }

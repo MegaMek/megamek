@@ -640,16 +640,14 @@ public class MiscType extends EquipmentType {
             return defaultRounding.round(entity.getWeight() * 0.2, entity);
         } else if (hasFlag(F_ENDO_COMPOSITE)) {
             return defaultRounding.round(entity.getWeight() * 0.075, entity);
-        } else if (hasFlag(F_VACUUM_PROTECTION)) {
-            return RoundWeight.nextTon(entity.getWeight() * 0.1);
         } else if (hasFlag(F_DUNE_BUGGY)) {
             return entity.getWeight() / 10.0f;
         } else if (hasFlag(F_ENVIRONMENTAL_SEALING)) {
-            if ((entity instanceof SupportTank)
-                    || (entity instanceof FixedWingSupport) || (entity instanceof SupportVTOL)) {
+            if (entity.isSupportVehicle()) {
+                // SV Chassis mods are accounted for in the structure weight
                 return 0;
             } else {
-                return entity.getWeight() / 10.0;
+                return RoundWeight.standard(entity.getWeight() / 10.0, entity);
             }
 
             // Per TO Pg 413 BA Mechanical Jump Boosters weight is 2 times jump
@@ -10065,8 +10063,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.cost = COST_VARIABLE; // Cost accounted as part of unit cost
         misc.tankslots = 0;
-        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_VACUUM_PROTECTION)
-                .or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "303,TO";
@@ -10208,7 +10205,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.cost = COST_VARIABLE;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_VACUUM_PROTECTION).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_MECH_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "216,TM";

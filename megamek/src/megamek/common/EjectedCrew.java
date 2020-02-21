@@ -26,6 +26,7 @@ public class EjectedCrew extends Infantry {
     public static final String VEE_EJECT_NAME = "Vehicle Crew";
     public static final String PILOT_EJECT_NAME = "Pilot";
     public static final String MW_EJECT_NAME = "MechWarrior";
+    public static final String SPACE_EJECT_NAME = "Escape Pods";
 
     public EjectedCrew(Entity originalRide) {
         super();
@@ -66,6 +67,29 @@ public class EjectedCrew extends Infantry {
                 ex.printStackTrace();
             }
         }
+    }
+    
+    /**
+     * Used to set up an ejected crew for large spacecraft per rules in SO p27
+     * Multiple entities will be set up, each with a different strength
+     * @param originalRide - the launching spacecraft
+     * @param escapedThisRound - The number of people that got out this round
+     */
+    public EjectedCrew(Aero originalRide, int escapedThisRound) {
+        super();
+        setCrew(originalRide.getCrew());
+        setChassis(SPACE_EJECT_NAME);
+        setModel(originalRide.getCrew().getName());
+
+        // Generate the display name, then add the original ride's name.
+        StringBuffer newName = new StringBuffer(getDisplayName());
+        newName.append(" of ").append(originalRide.getDisplayName());
+        displayName = newName.toString();
+        
+        setInternal(escapedThisRound, Infantry.LOC_INFANTRY);
+        
+        setOriginalRideId(originalRide.getId());
+        setOriginalRideExternalId(originalRide.getExternalIdAsString());
     }
     
     /**

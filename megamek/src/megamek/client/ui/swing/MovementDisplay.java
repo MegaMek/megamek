@@ -3240,7 +3240,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         //tractor in the center isn't going to work well...
         for (Entity e : thisTrain) {
             for (Transporter t : e.getTransports()) {
-                if (t.canLoad(choice) && (t instanceof TankTrailerHitch)) {
+                if (t.canTow(choice)) {
                     TankTrailerHitch h = (TankTrailerHitch) t;
                     HitchChoice hitch = new HitchChoice(e.getId(), e.getTransports().indexOf(t), h);
                     hitchChoices.add(hitch);

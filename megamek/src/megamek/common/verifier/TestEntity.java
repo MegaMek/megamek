@@ -365,6 +365,8 @@ public abstract class TestEntity implements TestEntityOption {
             return TestAero.eqRequiresLocation(eq, entity.isFighter());
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
             return TestProtomech.requiresSlot(eq);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
+            return !TestTank.isBodyEquipment(eq);
         }
         return true;
     }

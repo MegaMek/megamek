@@ -91,6 +91,8 @@ public class Jumpship extends Aero {
     // lifeboats and escape pods
     private int lifeBoats = 0;
     private int escapePods = 0;
+    private int escapePodsLaunched = 0;
+    private int lifeBoatsLaunched = 0;
 
     // Battlestation
     private boolean isBattleStation = false;
@@ -512,6 +514,23 @@ public class Jumpship extends Aero {
     public int getEscapePods() {
         return escapePods;
     }
+    
+    /**
+     * Returns the total number of escape pods launched so far
+     */
+    @Override
+    public int getLaunchedEscapePods() {
+        return escapePodsLaunched;
+    }
+    
+    /**
+     * Updates the total number of escape pods launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedEscapePods(int n) {
+        escapePodsLaunched = n;
+    }
 
     public void setLifeBoats(int n) {
         lifeBoats = n;
@@ -520,6 +539,23 @@ public class Jumpship extends Aero {
     @Override
     public int getLifeBoats() {
         return lifeBoats;
+    }
+    
+    /**
+     * Returns the total number of life boats launched so far
+     */
+    @Override
+    public int getLaunchedLifeBoats() {
+        return lifeBoatsLaunched;
+    }
+    
+    /**
+     * Updates the total number of life boats launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedLifeBoats(int n) {
+        lifeBoatsLaunched = n;
     }
 
     @Override

@@ -4274,6 +4274,34 @@ public class Aero extends Entity implements IAero, IBomber {
     }
     
     /**
+     * Returns the total number of escape pods launched so far
+     */
+    public int getLaunchedEscapePods() {
+        return 0;
+    }
+    
+    /**
+     * Updates the total number of escape pods launched so far
+     * @param n The number to change
+     */
+    public void setLaunchedEscapePods(int n) {
+    }
+    
+    /**
+     * Returns the total number of life boats launched so far
+     */
+    public int getLaunchedLifeBoats() {
+        return 0;
+    }
+    
+    /**
+     * Updates the total number of life boats launched so far
+     * @param n The number to change
+     */
+    public void setLaunchedLifeBoats(int n) {
+    }
+    
+    /**
      * Calculates the total number of people that can be carried in this unit's escape systems
      * 6 people per lifeboat/escape pod + troop capacity of any small craft
      * Most small craft use cargo space instead of infantry bays, so we'll assume 0.1 tons/person

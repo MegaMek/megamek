@@ -46,6 +46,8 @@ public class SmallCraft extends Aero {
     // escape pods and lifeboats
     private int escapePods = 0;
     private int lifeBoats = 0;
+    private int escapePodsLaunched = 0;
+    private int lifeBoatsLaunched = 0;
     
     private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2350, 2400).setISApproximate(false, true, false)
@@ -175,6 +177,23 @@ public class SmallCraft extends Aero {
     public int getEscapePods() {
         return escapePods;
     }
+    
+    /**
+     * Returns the total number of escape pods launched so far
+     */
+    @Override
+    public int getLaunchedEscapePods() {
+        return escapePodsLaunched;
+    }
+    
+    /**
+     * Updates the total number of escape pods launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedEscapePods(int n) {
+        escapePodsLaunched = n;
+    }
 
     public void setLifeBoats(int n) {
         lifeBoats = n;
@@ -183,6 +202,23 @@ public class SmallCraft extends Aero {
     @Override
     public int getLifeBoats() {
         return lifeBoats;
+    }
+    
+    /**
+     * Returns the total number of life boats launched so far
+     */
+    @Override
+    public int getLaunchedLifeBoats() {
+        return lifeBoatsLaunched;
+    }
+    
+    /**
+     * Updates the total number of life boats launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedLifeBoats(int n) {
+        lifeBoatsLaunched = n;
     }
     
     @Override

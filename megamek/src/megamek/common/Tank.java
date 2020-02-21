@@ -2835,12 +2835,15 @@ public class Tank extends Entity {
     public boolean doomedInVacuum() {
         if (hasEngine() && (getEngine().isFusion() || getEngine().getEngineType() == Engine.FISSION
                 || getEngine().getEngineType() == Engine.FUEL_CELL)) {
-            return !hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)
-                && !getMovementMode().equals(EntityMovementMode.SUBMARINE);
-            // That's right, automatic environmental sealing means submarines with the right
-            // engines can function in space. Your enemies never saw that coming.
+            return !hasEnvironmentalSealing();
         }
         return true;
+    }
+
+    @Override
+    public boolean hasEnvironmentalSealing() {
+        return getMovementMode().equals(EntityMovementMode.SUBMARINE)
+                || super.hasEnvironmentalSealing();
     }
 
     @Override

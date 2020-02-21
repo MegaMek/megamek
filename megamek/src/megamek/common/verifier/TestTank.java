@@ -483,6 +483,10 @@ public class TestTank extends TestEntity {
             if (eq.hasFlag(MiscType.F_DUNE_BUGGY)) {
                 return mode.equals(EntityMovementMode.WHEELED);
             }
+            // Submarines have environmental sealing as part of their base construction
+            if (eq.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                return !mode.equals(EntityMovementMode.SUBMARINE);
+            }
             if (eq.hasFlag(MiscType.F_CLUB)
                     && eq.hasSubType(MiscType.S_CHAINSAW | MiscType.S_DUAL_SAW | MiscType.S_MINING_DRILL)) {
                 return mode.equals(EntityMovementMode.WHEELED) || mode.equals(EntityMovementMode.TRACKED)

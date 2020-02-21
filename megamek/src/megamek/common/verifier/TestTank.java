@@ -919,4 +919,21 @@ public class TestTank extends TestEntity {
         
         return illegal;
     }
+
+    /**
+     * Determines whether a piece of equipment should be mounted in the body location.
+     *
+     * @param eq       The equipment
+     * @return         Whether the equipment needs to be assigned to the body location.
+     */
+    public static boolean isBodyEquipment(EquipmentType eq) {
+        if (eq instanceof MiscType) {
+            return eq.hasFlag(MiscType.F_CHASSIS_MODIFICATION)
+                    || eq.hasFlag(MiscType.F_CASE)
+                    || eq.hasFlag(MiscType.F_CASEII)
+                    || eq.hasFlag(MiscType.F_JUMP_JET);
+        } else {
+            return eq instanceof AmmoType;
+        }
+    }
 }

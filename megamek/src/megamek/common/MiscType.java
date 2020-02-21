@@ -1443,6 +1443,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createHeavyBridgeLayer());
 
         // For industrials and tanks
+        EquipmentType.addType(MiscType.createCVEnvironmentalSealedChassis());
         EquipmentType.addType(MiscType.createIndustrialMechEnvironmentalSealing());
         EquipmentType.addType(MiscType.createFieldKitchen());
 
@@ -1712,7 +1713,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBicycleModification());
         EquipmentType.addType(MiscType.createConvertibleModification());
         EquipmentType.addType(MiscType.createISCVDuneBuggyChassis());
-        EquipmentType.addType(MiscType.createEnvironmentalSealedChassis());
+        EquipmentType.addType(MiscType.createEnvironmentalSealingChassisMod());
         EquipmentType.addType(MiscType.createExternalPowerPickup());
         EquipmentType.addType(MiscType.createHydroFoilChassisModification());
         EquipmentType.addType(MiscType.createMonocycleModification());
@@ -9944,6 +9945,27 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createIndustrialMechEnvironmentalSealing() {
+        MiscType misc = new MiscType();
+        misc.name = "Environmental Sealing (Mech)";
+        misc.shortName = "Environmental Sealing";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 8;
+        misc.tankslots = 0;
+        misc.cost = COST_VARIABLE;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
+        misc.bv = 0;
+        misc.rulesRefs = "216,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(2300, 2350, 2495)
+                .setApproximate(true, false, false).setPrototypeFactions(F_TA)
+                .setProductionFactions(F_TH).setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+        return misc;
+    }
+
     // Gyros - IO pg 48 - Located in Techconstants.java
 
     /*
@@ -10051,7 +10073,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createEnvironmentalSealedChassis() {
+    public static MiscType createCVEnvironmentalSealedChassis() {
         MiscType misc = new MiscType();
 
         misc.name = "Combat Vehicle Chassis Mod [Environmental Sealing]";
@@ -10196,7 +10218,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createIndustrialMechEnvironmentalSealing() {
+    public static MiscType createEnvironmentalSealingChassisMod() {
         MiscType misc = new MiscType();
         misc.name = "Environmental Sealing";
         misc.setInternalName(misc.name);
@@ -10205,10 +10227,10 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.cost = COST_VARIABLE;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "216,TM";
+        misc.rulesRefs = "122,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(RATING_C);

@@ -2499,7 +2499,7 @@ public class Tank extends Entity {
         left.add("Tonnage Multiplier");
         if (!isSupportVehicle()) {
 
-            left.add("Flotation Hull/Vacuum Protection/Environmental Sealing multiplier");
+            left.add("Flotation Hull/Environmental Sealing multiplier");
             left.add("Off-Road Multiplier");
         }
 

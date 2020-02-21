@@ -807,6 +807,11 @@ public class TestSupportVehicle extends TestEntity {
                     weight += m.getLinkedBy().getType().getTonnage(supportVee);
                 }
             }
+            for (Mounted m : supportVee.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
+                    weight += m.getType().getTonnage(supportVee);
+                }
+            }
             return ceilWeight(weight / 10);
         }
         return 0.0;

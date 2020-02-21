@@ -1374,7 +1374,8 @@ public class MiscType extends EquipmentType {
                 || hasFlag(F_VIRAL_JAMMER_HOMING)) {
             return 12;
         } else if (hasFlag(F_RISC_LASER_PULSE_MODULE)
-                || hasFlag(F_NOVA)) {
+                || hasFlag(F_NOVA)
+                || (hasFlag(F_CLUB) && hasSubType(S_SPOT_WELDER))) {
             return 2;
         }
         return 0;

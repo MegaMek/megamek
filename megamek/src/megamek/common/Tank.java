@@ -3249,60 +3249,12 @@ public class Tank extends Entity {
     }
     
     /**
-     * Adds a trailer hitch to any tracked or wheeled military vehicle, or SupportVee with 
-     * Tractor chassis mod that doesn't already have one
-     */
-    @Override
-    public void addTrailerHitchEquipment() {
-        //If we already have a hitch, don't add a new one
-        if (hasWorkingMisc(MiscType.F_HITCH)) {
-            return;
-        }
-        boolean hitchNeeded = false;
-        //Only support vees designed as Tractors should have a hitch
-        if (isSupportVehicle()) {
-            if (hasWorkingMisc(MiscType.F_TRACTOR_MODIFICATION)) {
-                hitchNeeded = true;
-            }
-        } else {
-            //but all tracked and wheeled military vees should get one
-            if (getMovementMode() == EntityMovementMode.TRACKED || getMovementMode() == EntityMovementMode.WHEELED) {
-                hitchNeeded = true;
-            }
-        }
-        if (hitchNeeded) {
-            //Add hitch to the rear by default
-            if (isSuperHeavy()) {
-                try {
-                    addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), SuperHeavyTank.LOC_REAR);
-               } catch (LocationFullException ex) {
-                   //For vehicles, this shouldn't happen
-               }
-            } else {
-                try {
-                    addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), Tank.LOC_REAR);
-               } catch (LocationFullException ex) {
-                   //ditto
-               }
-            }
-        }
-    }
-    
-    /**
      * Add a transporter for each trailer hitch the unit is equipped with
      */
     public void setTrailerHitches() {
-        if (hasTrailerHitchTransporter()) {
-            return;
-        }
-        boolean rearMounted = false;
-        for (Mounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_HITCH)) {
-                if (m.getLocation() == Tank.LOC_REAR || (isSuperHeavy() && m.getLocation() == SuperHeavyTank.LOC_REAR)) {
-                    rearMounted = true;
-                }
-                addTransporter(new TankTrailerHitch(rearMounted));
-            }
+        if (isTractor() && !hasTrailerHitchTransporter()) {
+            // The hitch is located in the rear unless a hitch is explicitly installed at the front.
+            addTransporter(new TankTrailerHitch(!hasWorkingMisc(MiscType.F_HITCH, 0, Tank.LOC_FRONT)));
         }
     }
     
@@ -4367,8 +4319,13 @@ public class Tank extends Entity {
      */
     @Override
     public boolean isTractor() {
-        if (hasWorkingMisc(MiscType.F_HITCH) && !isTrailer()) {
-            return true;
+        if (getMovementMode().equals(EntityMovementMode.TRACKED)
+                || getMovementMode().equals(EntityMovementMode.WHEELED)) {
+            // Any tracked or wheeled combat vehicle can be used as a tractor
+            // if it is capable of independent operations or it is equipped with
+            // a hitch (making it a trailer that is part of a train).
+            return (hasEngine() && !hasNoControlSystems())
+                    || hasWorkingMisc(MiscType.F_HITCH);
         }
         return false;
     }

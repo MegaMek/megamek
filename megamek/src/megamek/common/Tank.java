@@ -3249,12 +3249,32 @@ public class Tank extends Entity {
     }
     
     /**
-     * Add a transporter for each trailer hitch the unit is equipped with
+     * Add a transporter for each trailer hitch the unit is equipped with, with a maximum of
+     * one each in the front and the rear. Any tractor that does not have an explicit hitch
+     * installed as equipment will get a rear-facing transporter.
      */
     public void setTrailerHitches() {
         if (isTractor() && !hasTrailerHitchTransporter()) {
-            // The hitch is located in the rear unless a hitch is explicitly installed at the front.
-            addTransporter(new TankTrailerHitch(!hasWorkingMisc(MiscType.F_HITCH, 0, Tank.LOC_FRONT)));
+            // look for explicit installed trailer hitches and note location
+            boolean front = false;
+            boolean rear = false;
+            for (Mounted m : getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_HITCH)) {
+                    if (m.getLocation() == Tank.LOC_FRONT) {
+                        front = true;
+                    } else {
+                        rear = true;
+                    }
+                }
+            }
+            // Install a transporter anywhere there is an explicit hitch. If no hitch is found,
+            // put it in the back.
+            if (front) {
+                addTransporter(new TankTrailerHitch(false));
+            }
+            if (rear || !front) {
+                addTransporter(new TankTrailerHitch(true));
+            }
         }
     }
     

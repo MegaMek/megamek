@@ -23,7 +23,6 @@ package megamek.common;
 
 import java.math.BigInteger;
 
-import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
 import megamek.common.weapons.ppc.ISHeavyPPC;
@@ -641,16 +640,14 @@ public class MiscType extends EquipmentType {
             return defaultRounding.round(entity.getWeight() * 0.2, entity);
         } else if (hasFlag(F_ENDO_COMPOSITE)) {
             return defaultRounding.round(entity.getWeight() * 0.075, entity);
-        } else if (hasFlag(F_VACUUM_PROTECTION)) {
-            return RoundWeight.nextTon(entity.getWeight() * 0.1);
         } else if (hasFlag(F_DUNE_BUGGY)) {
             return entity.getWeight() / 10.0f;
         } else if (hasFlag(F_ENVIRONMENTAL_SEALING)) {
-            if ((entity instanceof SupportTank)
-                    || (entity instanceof FixedWingSupport) || (entity instanceof SupportVTOL)) {
+            if (entity.isSupportVehicle()) {
+                // SV Chassis mods are accounted for in the structure weight
                 return 0;
             } else {
-                return entity.getWeight() / 10.0;
+                return RoundWeight.standard(entity.getWeight() / 10.0, entity);
             }
 
             // Per TO Pg 413 BA Mechanical Jump Boosters weight is 2 times jump
@@ -841,8 +838,9 @@ public class MiscType extends EquipmentType {
         if (costValue == EquipmentType.COST_VARIABLE) {
             if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
                 costValue = getTonnage(entity, loc) * 10000;
-            } else if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_VACUUM_PROTECTION) || hasFlag(F_ENVIRONMENTAL_SEALING)
-                    || hasFlag(F_OFF_ROAD)) {
+            } if (hasFlag(F_ENVIRONMENTAL_SEALING) && hasFlag(F_MECH_EQUIPMENT)) {
+                costValue = 10000 * entity.getWeight();
+            } else if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_OFF_ROAD)) {
                 costValue = 0;
             } else if (hasFlag(F_LIMITED_AMPHIBIOUS) || hasFlag((F_FULLY_AMPHIBIOUS))) {
                 costValue = getTonnage(entity, loc) * 10000;
@@ -1374,7 +1372,8 @@ public class MiscType extends EquipmentType {
                 || hasFlag(F_VIRAL_JAMMER_HOMING)) {
             return 12;
         } else if (hasFlag(F_RISC_LASER_PULSE_MODULE)
-                || hasFlag(F_NOVA)) {
+                || hasFlag(F_NOVA)
+                || (hasFlag(F_CLUB) && hasSubType(S_SPOT_WELDER))) {
             return 2;
         }
         return 0;
@@ -1391,7 +1390,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createGirderClub());
         EquipmentType.addType(MiscType.createLimbClub());
         EquipmentType.addType(MiscType.createHatchet());
-        EquipmentType.addType(MiscType.createVacuumProtection());
         EquipmentType.addType(MiscType.createStandard());
 
         // Start of Level2 stuff
@@ -1446,7 +1444,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createHeavyBridgeLayer());
 
         // For industrials and tanks
-        EquipmentType.addType(MiscType.createEnvironmentalSealing());
+        EquipmentType.addType(MiscType.createCVEnvironmentalSealedChassis());
+        EquipmentType.addType(MiscType.createIndustrialMechEnvironmentalSealing());
         EquipmentType.addType(MiscType.createFieldKitchen());
 
         EquipmentType.addType(MiscType.createImprovedJumpJet());
@@ -1715,7 +1714,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBicycleModification());
         EquipmentType.addType(MiscType.createConvertibleModification());
         EquipmentType.addType(MiscType.createISCVDuneBuggyChassis());
-        EquipmentType.addType(MiscType.createEnvironmentalSealedChassis());
+        EquipmentType.addType(MiscType.createEnvironmentalSealingChassisMod());
         EquipmentType.addType(MiscType.createExternalPowerPickup());
         EquipmentType.addType(MiscType.createHydroFoilChassisModification());
         EquipmentType.addType(MiscType.createMonocycleModification());
@@ -9420,7 +9419,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
         misc.bv = 1;
-        misc.rulesRefs = "228,TM";
+        misc.rulesRefs = "66,IO";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
                 .setClanAdvancement(3070, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -9947,6 +9946,27 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createIndustrialMechEnvironmentalSealing() {
+        MiscType misc = new MiscType();
+        misc.name = "Environmental Sealing (Mech)";
+        misc.shortName = "Environmental Sealing";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 8;
+        misc.tankslots = 0;
+        misc.cost = COST_VARIABLE;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
+        misc.bv = 0;
+        misc.rulesRefs = "216,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(2300, 2350, 2495)
+                .setApproximate(true, false, false).setPrototypeFactions(F_TA)
+                .setProductionFactions(F_TH).setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+        return misc;
+    }
+
     // Gyros - IO pg 48 - Located in Techconstants.java
 
     /*
@@ -9987,7 +10007,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
@@ -10012,7 +10032,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
@@ -10054,19 +10074,19 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createEnvironmentalSealedChassis() {
+    public static MiscType createCVEnvironmentalSealedChassis() {
         MiscType misc = new MiscType();
 
         misc.name = "Combat Vehicle Chassis Mod [Environmental Sealing]";
         misc.shortName = "Environmental Sealing";
         misc.setInternalName("Environmental Sealed Chassis");
         misc.addLookupName("EnvironmentalSealingChassisMod");
+        misc.addLookupName("Vacuum Protection");
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.cost = COST_VARIABLE; // Cost accounted as part of unit cost
         misc.tankslots = 0;
-        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
-                .or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "303,TO";
@@ -10199,28 +10219,23 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createEnvironmentalSealing() {
+    public static MiscType createEnvironmentalSealingChassisMod() {
         MiscType misc = new MiscType();
-        // TODO - Review how this impacts the chassis stuff. See
-        // IO pg 48 and search in here for IndustrialMech Structure w/
-        // Environmental Sealing. Also likely needs to have a SV version split
-        // out from it.
         misc.name = "Environmental Sealing";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 8;
         misc.tankslots = 0;
-        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.cost = COST_VARIABLE;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
-                .or(F_CHASSIS_MODIFICATION);
+        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-
+        misc.rulesRefs = "122,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_D, RATING_C, RATING_C });
+        misc.techAdvancement.setAvailability(RATING_B, RATING_D, RATING_C, RATING_C);
         return misc;
     }
 
@@ -10298,7 +10313,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.cost = COST_VARIABLE; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_OFF_ROAD).or(F_CHASSIS_MODIFICATION)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
@@ -11497,7 +11512,6 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(true);
         misc.bv = 1;
         misc.rulesRefs = "259,TM";
-        misc.rulesRefs = "CHECK";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(3057, 3062, 3067, DATE_NONE, DATE_NONE)
@@ -11888,26 +11902,6 @@ public class MiscType extends EquipmentType {
      * misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X,
      * RATING_E, RATING_X }); return misc; }
      */
-
-    public static MiscType createVacuumProtection() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Vacuum Protection";
-        misc.setInternalName(misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 0;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_VACUUM_PROTECTION).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
-        ;
-        misc.bv = 0;
-        // TODO - Should be part of Environmental Sealing.
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setUnofficial(true);
-        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
-        return misc;
-    }
 
     public static MiscType createLAMBombBay() {
         MiscType misc = new MiscType();

@@ -1473,15 +1473,15 @@ public class Tank extends Entity {
                 typeModifier = 0.6;
         }
 
-        if (!(this instanceof SupportTank)
+        if (!isSupportVehicle()
                 && (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS)
                         || hasWorkingMisc(MiscType.F_DUNE_BUGGY)
                         || hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                        || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
-                        || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING) || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM))) {
+                        || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)
+                        || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM))) {
             typeModifier += .1;
         } else if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)
-                && !(this instanceof SupportTank)) {
+                && !isSupportVehicle()) {
             typeModifier += .2;
         }
         bvText.append(startColumn);
@@ -2499,7 +2499,7 @@ public class Tank extends Entity {
         left.add("Tonnage Multiplier");
         if (!isSupportVehicle()) {
 
-            left.add("Flotation Hull/Vacuum Protection/Environmental Sealing multiplier");
+            left.add("Flotation Hull/Environmental Sealing multiplier");
             left.add("Off-Road Multiplier");
         }
 
@@ -2677,9 +2677,14 @@ public class Tank extends Entity {
             double techRatingMultiplier = 0.5 + (getStructuralTechRating() * 0.25);
             costs[structCostIdx] *= techRatingMultiplier;
         } else {
-            // IS has no variations, no Endo etc.
-            costs[i++] = (weight / 10.0) * 10000;
-            double controlWeight = Math.ceil(weight * 0.05 * 2.0) / 2.0; // ?
+            // IS has no variations, no Endo etc., but non-naval superheavies have heavier structure
+            if (!isSuperHeavy() || getMovementMode().equals(EntityMovementMode.NAVAL)
+                    || getMovementMode().equals(EntityMovementMode.SUBMARINE)) { // There are no superheavy hydrofoils
+                costs[i++] = RoundWeight.nextHalfTon(weight / 10.0) * 10000;
+            } else {
+                costs[i++] = RoundWeight.nextHalfTon(weight / 5.0) * 10000;
+            }
+            double controlWeight = hasNoControlSystems() ? 0.0 : RoundWeight.nextHalfTon(weight * 0.05); // ?
             // should be rounded up to nearest half-ton
             costs[i++] = 10000 * controlWeight;
         }
@@ -2702,7 +2707,8 @@ public class Tank extends Entity {
             }
         }
         paWeight = Math.ceil(paWeight * 2) / 2;
-        if(hasEngine() && getEngine().isFusion()) {
+        if ((hasEngine() && (getEngine().isFusion() || getEngine().getEngineType() == Engine.FISSION))
+                || getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             paWeight = 0;
         }
         turretWeight = Math.ceil(turretWeight * 2) / 2;
@@ -2784,7 +2790,6 @@ public class Tank extends Entity {
 
         if (!isSupportVehicle()) {
             if (hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                    || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
                     || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 cost *= 1.25;
                 costs[i++] = -1.25;
@@ -2828,17 +2833,17 @@ public class Tank extends Entity {
 
     @Override
     public boolean doomedInVacuum() {
-        for (Mounted m : getEquipment()) {
-            if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_VACUUM_PROTECTION)) {
-                return false;
-            }
-            if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
-                return false;
-            }
+        if (hasEngine() && (getEngine().isFusion() || getEngine().getEngineType() == Engine.FISSION
+                || getEngine().getEngineType() == Engine.FUEL_CELL)) {
+            return !hasEnvironmentalSealing();
         }
         return true;
+    }
+
+    @Override
+    public boolean hasEnvironmentalSealing() {
+        return getMovementMode().equals(EntityMovementMode.SUBMARINE)
+                || super.hasEnvironmentalSealing();
     }
 
     @Override

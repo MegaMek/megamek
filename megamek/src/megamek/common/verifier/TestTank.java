@@ -440,18 +440,6 @@ public class TestTank extends TestEntity {
         if (hasIllegalEquipmentCombinations(buff)) {
             correct = false;
         }
-        // only tanks with fusion engine can be vacuum protected
-        if(tank.hasEngine() && !(tank.getEngine().isFusion() 
-                || (tank.getEngine().getEngineType() == Engine.FUEL_CELL)
-                || (tank.getEngine().getEngineType() == Engine.SOLAR)
-                || (tank.getEngine().getEngineType() == Engine.BATTERY)
-                || (tank.getEngine().getEngineType() == Engine.FISSION)
-                || (tank.getEngine().getEngineType() == Engine.NONE))
-                && !tank.doomedInVacuum()) {
-                buff.append("Vacuum protection requires fusion engine.\n");
-                correct = false;
-                }
-
         if (!correctCriticals(buff)) {
             correct = false;
         }
@@ -482,6 +470,10 @@ public class TestTank extends TestEntity {
             }
             if (eq.hasFlag(MiscType.F_DUNE_BUGGY)) {
                 return mode.equals(EntityMovementMode.WHEELED);
+            }
+            // Submarines have environmental sealing as part of their base construction
+            if (eq.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                return !mode.equals(EntityMovementMode.SUBMARINE);
             }
             if (eq.hasFlag(MiscType.F_CLUB)
                     && eq.hasSubType(MiscType.S_CHAINSAW | MiscType.S_DUAL_SAW | MiscType.S_MINING_DRILL)) {
@@ -750,6 +742,11 @@ public class TestTank extends TestEntity {
                     weight += (m.getLinkedBy().getType()).getTonnage(tank);
                 }
             }
+            for (Mounted m : tank.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
+                    weight += m.getType().getTonnage(tank);
+                }
+            }
             return TestEntity.ceil(weight / 10, getWeightCeilingPowerAmp());
         }
         return 0;
@@ -914,5 +911,22 @@ public class TestTank extends TestEntity {
         }
         
         return illegal;
+    }
+
+    /**
+     * Determines whether a piece of equipment should be mounted in the body location.
+     *
+     * @param eq       The equipment
+     * @return         Whether the equipment needs to be assigned to the body location.
+     */
+    public static boolean isBodyEquipment(EquipmentType eq) {
+        if (eq instanceof MiscType) {
+            return eq.hasFlag(MiscType.F_CHASSIS_MODIFICATION)
+                    || eq.hasFlag(MiscType.F_CASE)
+                    || eq.hasFlag(MiscType.F_CASEII)
+                    || eq.hasFlag(MiscType.F_JUMP_JET);
+        } else {
+            return eq instanceof AmmoType;
+        }
     }
 }

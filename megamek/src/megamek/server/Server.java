@@ -22970,8 +22970,6 @@ public class Server implements Runnable {
                                     : te.getOArmor(hit)) / (double) game.getOptions().intOption(
                                             OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR));
 
-                    // TODO : Windchild fix integer division in floating point context
-
                     // adjust for hardened armor
                     if (hardenedArmor
                             && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
@@ -23854,8 +23852,6 @@ public class Server implements Runnable {
                         && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
                 impactArmor = (te instanceof Mech)
                         && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
-                bar5 = te.getBARRating(hit.getLocation()) <= 5;
-                // TODO : Windchild the above is never used?
             }
             if (damageIS) {
                 wasDamageIS = true;
@@ -26702,15 +26698,6 @@ public class Server implements Runnable {
      */
     public Vector<Report> oneCriticalEntity(Entity en, int loc, boolean isRear, int damage) {
         return criticalEntity(en, loc, isRear, 0, false, false, damage);
-    }
-
-    /**
-     * Rolls one critical hit
-     */
-    // TODO : Windchild can this be removed? - never called
-    public Vector<Report> oneCriticalEntity(Entity en, int loc, boolean isRear, int damage,
-                                            boolean damagedByFire) {
-        return criticalEntity(en, loc, isRear, 0, false, false, damage, damagedByFire);
     }
 
     /**
@@ -35989,7 +35976,7 @@ public class Server implements Runnable {
             String content;
             content = "port="
                       + URLEncoder.encode(
-                              Integer.toString(serverSocket.getLocalPort()), StandardCharsets.UTF_8);
+                              Integer.toString(serverSocket.getLocalPort()), "UTF-8");
             if (register) {
                 for (IConnection iconn : connections) {
                     content += "&players[]=" + (getPlayer(iconn.getId()).getName());

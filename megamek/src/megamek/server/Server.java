@@ -32251,11 +32251,8 @@ public class Server implements Runnable {
                         }
                         Report.addNewline(vDesc);
                     }
-
                 } // End infantry-inside-building
-
             } // End entity-is-infantry-in-building-hex
-
         } // Handle the next entity
 
         // If we found any infantry, add a line to the phase report.

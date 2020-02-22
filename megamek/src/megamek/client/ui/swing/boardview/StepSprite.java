@@ -382,6 +382,25 @@ class StepSprite extends Sprite {
                 graph.setColor(col);
                 graph.drawString(recover, recoverX - 1, recoverY);
                 break;
+            case EJECT:
+                // If we're a large spacecraft, ejecting takes a while, so display a label
+                if (step.getEntity().isLargeCraft()) {
+                    String ejecting = Messages.getString("BoardView1.EJECTING"); //$NON-NLS-1$
+                    if (step.isPastDanger()) {
+                        ejecting = "(" + ejecting + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int ejectingX = (stepPos.x + 42)
+                            - (graph.getFontMetrics(graph.getFont())
+                                    .stringWidth(ejecting) / 2);
+                    int ejectingY = stepPos.y + 38
+                            + graph.getFontMetrics(graph.getFont()).getHeight();
+                    graph.setColor(Color.red);
+                    graph.drawString(ejecting, ejectingX, ejectingY + 1);
+                    graph.setColor(col);
+                    graph.drawString(ejecting, ejectingX - 1, ejectingY);
+                }
+                break;
             case JOIN:
                 // announce launch
                 String join = Messages.getString("BoardView1.Join"); //$NON-NLS-1$

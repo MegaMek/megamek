@@ -1507,7 +1507,6 @@ public class Infantry extends Entity {
   */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double multiplier = 1;     //Cost Multiplier per TM
         double pweaponCost = 0;  //Primary Weapon Cost
         double sweaponCost = 0; // Secondary Weapon Cost
         double armorcost = 0; //Armor Cost
@@ -1577,67 +1576,8 @@ public class Infantry extends Entity {
         //Cost of armor on a per man basis added
         cost += (armorcost * menStarting);
 
-
-        //Anti-Mek Trained Multiplier
-        if (isAntiMekTrained()) {
-            multiplier = 1;
-        }
-
-        //Add in motive type costs
-        switch (getMovementMode()){
-            case INF_UMU:
-            	multiplier *= getAllUMUCount() > 1? 2.5 : 2;
-            	break;
-            case INF_LEG:
-                multiplier *= 1.0;
-                break;
-            case INF_MOTORIZED:
-                multiplier *= 1.6;
-                break;
-            case INF_JUMP:
-                multiplier *= 2.6;
-                break;
-            case HOVER:
-                multiplier *= 3.2;
-                break;
-            case WHEELED:
-                multiplier *= 3.2;
-                break;
-            case TRACKED:
-                multiplier *= 3.2;
-                break;
-            case VTOL:
-                multiplier *= hasMicrolite()? 4 : 4.5;
-                break;
-            case SUBMARINE:
-            	/* No cost given in TacOps, using basic mechanized cost for now */
-                multiplier *= 3.2;
-            	break;
-            default:
-                break;
-        }
-
-        //add in specialization costs
-        if (hasSpecialization(COMBAT_ENGINEERS)) {
-        	multiplier *= 5;
-        }
-        if (hasSpecialization(MARINES)) {
-        	multiplier *= 3;
-        }
-        if (hasSpecialization(MOUNTAIN_TROOPS)) {
-        	multiplier *= 2;
-        }
-        if (hasSpecialization(PARATROOPS)) {
-        	multiplier *= 3;
-        }
-
-        if (hasSpecialization(XCT)) {
-            multiplier *= 5;
-        }
-
-        /* TODO: paramedics cost an addition x0.375 per paramedic */
-
-        cost = cost * multiplier;
+        // Price multiplier includes anti-mech training, motive type, and specializations
+        cost = cost * getPriceMultiplier();
 
         //add in field gun costs
         for (Mounted mounted : getEquipment()) {
@@ -1646,6 +1586,69 @@ public class Infantry extends Entity {
             }
         }
         return cost;
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        double priceMultiplier = 1.0;
+
+        //Anti-Mek Trained Multiplier
+        if (isAntiMekTrained()) {
+            priceMultiplier *= 5.0;
+        }
+
+        // Motive type costs
+        switch (getMovementMode()){
+            case INF_UMU:
+                priceMultiplier *= getAllUMUCount() > 1? 2.5 : 2;
+                break;
+            case INF_LEG:
+                priceMultiplier *= 1.0;
+                break;
+            case INF_MOTORIZED:
+                priceMultiplier *= 1.6;
+                break;
+            case INF_JUMP:
+                priceMultiplier *= 2.6;
+                break;
+            case HOVER:
+                priceMultiplier *= 3.2;
+                break;
+            case WHEELED:
+                priceMultiplier *= 3.2;
+                break;
+            case TRACKED:
+                priceMultiplier *= 3.2;
+                break;
+            case VTOL:
+                priceMultiplier *= hasMicrolite()? 4 : 4.5;
+                break;
+            case SUBMARINE:
+                /* No cost given in TacOps, using basic mechanized cost for now */
+                priceMultiplier *= 3.2;
+                break;
+            default:
+                break;
+        }
+
+        // Specialization costs
+        if (hasSpecialization(COMBAT_ENGINEERS)) {
+            priceMultiplier *= 5;
+        }
+        if (hasSpecialization(MARINES)) {
+            priceMultiplier *= 3;
+        }
+        if (hasSpecialization(MOUNTAIN_TROOPS)) {
+            priceMultiplier *= 2;
+        }
+        if (hasSpecialization(PARATROOPS)) {
+            priceMultiplier *= 3;
+        }
+        if (hasSpecialization(XCT)) {
+            priceMultiplier *= 5;
+        }
+        // TODO: paramedics cost an addition x0.375 per paramedic
+        return priceMultiplier;
     }
 
     /**

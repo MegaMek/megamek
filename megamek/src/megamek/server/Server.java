@@ -1080,18 +1080,6 @@ public class Server implements Runnable {
     public void validatePlayerInfo(int playerId) {
         final IPlayer player = getPlayer(playerId);
 
-        // TODO : Windchild can this be removed?
-        // maybe this isn't actually useful
-        // // replace characters we don't like with "X"
-        // StringBuffer nameBuff = new StringBuffer(player.getName());
-        // for (int i = 0; i < nameBuff.length(); i++) {
-        // int chr = nameBuff.charAt(i);
-        // if (LEGAL_CHARS.indexOf(chr) == -1) {
-        // nameBuff.setCharAt(i, 'X');
-        // }
-        // }
-        // player.setName(nameBuff.toString());
-
         // TODO : check for duplicate or reserved names
 
         // make sure colorIndex is unique
@@ -2836,7 +2824,6 @@ public class Server implements Runnable {
                 changePhase(IGame.Phase.PHASE_EXCHANGE);
                 break;
             case PHASE_EXCHANGE:
-                // TODO : Windchild this might have been a bug
             case PHASE_STARTING_SCENARIO:
                 game.addReports(vPhaseReport);
                 changePhase(IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES);
@@ -4147,60 +4134,6 @@ public class Server implements Runnable {
                 alreadyHit = artilleryDamageHex(pos, centralPos, damageDice, null, killer.getId(),
                         killer, null, false, 0, vPhaseReport, false,
                         alreadyHit, true);
-
-                // TODO : Windchild can this be removed?
-                /*
-                 * IHex hex = game.getBoard().getHex(pos); if (null == hex) {
-                 * continue; }
-                 *
-                 * // code borrowed heavily from artilleryDamageHex bldg =
-                 * game.getBoard().getBuildingAt(pos); int bldgAbsorbs = 0; if
-                 * ((bldg != null)) { bldgAbsorbs = bldg.getAbsorption(pos);
-                 * addReport(damageBuilding(bldg, Compute.d6(damageDice), pos));
-                 * addAffectedBldg(bldg,false); }
-                 *
-                 * // get units in hex for (Enumeration<Entity> victims =
-                 * game.getEntities(pos); victims .hasMoreElements();) { Entity
-                 * entity = victims.nextElement(); int hits =
-                 * Compute.d6(damageDice); ToHitData toHit = new ToHitData();
-                 * int cluster = 5;
-                 *
-                 * // Check: is entity excluded? if (entity.isAirborne()) {
-                 * continue; }
-                 *
-                 * // Check: is entity inside building? if ((bldg != null) &&
-                 * (bldgAbsorbs > 0) && (entity.getElevation() < hex
-                 * .terrainLevel(Terrains.BLDG_ELEV))) { cluster -= bldgAbsorbs;
-                 * // some buildings scale remaining damage that is not //
-                 * absorbed // TODO : this isn't quite right for castles brian
-                 * cluster = (int) Math.floor(bldg.getDamageToScale() cluster);
-                 * if (entity instanceof Infantry) { continue; // took its
-                 * damage already from building // damage } else if (cluster <=
-                 * 0) { // entity takes no damage r = new Report(6426);
-                 * r.subject = entity.getId(); r.addDesc(entity); addReport(r);
-                 * continue; } else { r = new Report(6428); r.subject =
-                 * entity.getId(); r.add(bldgAbsorbs); addReport(r); } }
-                 *
-                 * // Work out hit table to use
-                 * toHit.setSideTable(entity.sideTable(centralPos));
-                 *
-                 * // Do the damage r = new Report(6480); r.subject =
-                 * entity.getId(); r.addDesc(entity);
-                 * r.add(toHit.getTableDesc()); r.add(hits);
-                 * vPhaseReport.add(r); while (hits > 0) { HitData hit =
-                 * entity.rollHitLocation( toHit.getHitTable(),
-                 * toHit.getSideTable()); addReport(damageEntity(entity, hit,
-                 * Math.min(cluster, hits), false, DamageType.NONE, false, true,
-                 * false)); hits -= Math.min(5, hits); } // Has the target been
-                 * destroyed? if (entity.isDoomed()) { // Has the target taken a
-                 * turn? if (!entity.isDone()) { // Dead entities don't take
-                 * turns. game.removeTurnFor(entity);
-                 * send(createTurnVectorPacket()); } // End target-still-to-move
-                 * // Clean out the entity. entity.setDestroyed(true);
-                 * game.moveToGraveyard(entity.getId());
-                 * send(createRemoveEntityPacket(entity.getId())); }
-                 * entityUpdate(entity.getId()); }
-                 */
             }
         }
         destroyDoomedEntities(alreadyHit);
@@ -6069,7 +6002,7 @@ public class Server implements Runnable {
                 break;
             case 1:
                 hit = new HitData(Tank.LOC_TURRET);
-                break; //TODO : Windchild Ensure this change is correct
+                break;
             case 2:
                 hit = new HitData(startRight ? Tank.LOC_LEFT : Tank.LOC_RIGHT);
                 break;
@@ -11653,21 +11586,6 @@ public class Server implements Runnable {
         }
         return boom;
     }
-
-    /**
-     * Remove all minefields in the specified coords from the game
-     *
-     * @param coords
-     *            The <code>Coords</code> from which to remove minefields
-     */
-    // TODO : Windchild Can this be removed?
-    /*
-     * public void removeMinefieldsFrom(Coords coords) { Vector<Minefield> v =
-     * game.getMinefields(coords); while (v.elements().hasMoreElements()) {
-     * Minefield mf = v.elements().nextElement(); removeMinefield(mf); }
-     *
-     * }
-     */
 
     /**
      * Removes the minefield from the game.
@@ -18993,8 +18911,7 @@ public class Server implements Runnable {
             || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
 
             // The building takes the full brunt of the attack.
-            Vector<Report> buildingReport = damageBuilding(bldg, damage,
-                                                           target.getPosition());
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -23047,11 +22964,11 @@ public class Server implements Runnable {
                         && game.getOptions()
                                 .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
                         && !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
-                    int thresh = (int) Math.ceil((game.getOptions()
-                            .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE) ? te
-                            .getArmor(hit) : te.getOArmor(hit))
-                            / game.getOptions().intOption(
-                                    OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR));
+                    int thresh = (int) Math.ceil(
+                            (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE)
+                                    ? te.getArmor(hit)
+                                    : te.getOArmor(hit)) / (double) game.getOptions().intOption(
+                                            OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR));
 
                     // TODO : Windchild fix integer division in floating point context
 
@@ -24170,11 +24087,7 @@ public class Server implements Runnable {
      * <code>false</code> if not.
      */
     private boolean checkEngineExplosion(Entity en, Vector<Report> vDesc, int hits) {
-        // TODO : Windchild can I be simplified? - en instance of QuadMech is always false, as is
-        // TODO : en instanceof BipedMech according to my IDE
-        if (!(en instanceof Mech) && !(en instanceof QuadMech)
-                && !(en instanceof BipedMech) && !(en instanceof Aero)
-                && !(en instanceof Tank)) {
+        if (!(en instanceof Mech) && !(en instanceof Aero) && !(en instanceof Tank)) {
             return false;
         }
         // If this method gets called for an entity that's already destroyed or
@@ -31647,7 +31560,6 @@ public class Server implements Runnable {
             return;
         }
 
-        // System.out.println("s(" + cn + "): received command");
         if (packet == null) {
             getLogger().error(getClass(), METHOD_NAME, "Got null packet");
             return;
@@ -31936,23 +31848,6 @@ public class Server implements Runnable {
             } catch (InterruptedIOException ignored) {
                 // ignore , just SOTimeout blowing..
             } catch (IOException ignored) { }
-
-            // TODO : Windchild Can this be removed?
-            /* update all connections */
-            // Changed method to using clones of the connections &
-            // connectionsPending in order to avoid
-            // ConcurrentModificationExceptions.
-            /*
-             * toUpdate.clear(); Vector<IConnection> clone =
-             * (Vector<IConnection>) connections .clone(); Vector<IConnection>
-             * connectionsClone = clone; toUpdate.addAll(connectionsClone);
-             * connectionsClone = (Vector<IConnection>)
-             * connectionsPending.clone(); toUpdate.addAll(connectionsClone); //
-             * process stuff Iterator<IConnection> it = toUpdate.iterator();
-             * while (it.hasNext()) { it.next().update(); } // then make sure
-             * stuff is sent away it = toUpdate.iterator(); while (it.hasNext())
-             * { it.next().flush(); }
-             */
         }
     }
 
@@ -36094,8 +35989,7 @@ public class Server implements Runnable {
             String content;
             content = "port="
                       + URLEncoder.encode(
-                    Integer.toString(serverSocket.getLocalPort()),
-                    "UTF-8");
+                              Integer.toString(serverSocket.getLocalPort()), StandardCharsets.UTF_8);
             if (register) {
                 for (IConnection iconn : connections) {
                     content += "&players[]=" + (getPlayer(iconn.getId()).getName());
@@ -36114,24 +36008,15 @@ public class Server implements Runnable {
             if (serverAccessKey != null) {
                 content += "&key=" + serverAccessKey;
             }
-            // System.out.println(content);
             printout.writeBytes(content);
             printout.flush();
             BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
-            // System.out.println(conn.getResponseCode()+
-            // " "+conn.getResponseMessage());
             if (conn.getResponseCode() == 200) {
                 while ((line = rd.readLine()) != null) {
-                    // System.out.println(line);
                     if (serverAccessKey == null) {
                         serverAccessKey = line;
                     }
-                }
-            } else {
-                // TODO : Windchild Can this be removed?
-                while ((line = rd.readLine()) != null) {
-                    // System.out.println(line);
                 }
             }
             rd.close();

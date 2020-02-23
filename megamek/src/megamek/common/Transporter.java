@@ -36,6 +36,11 @@ public interface Transporter extends Serializable {
      *         otherwise.
      */
     public boolean canLoad(Entity unit);
+    
+    /**
+     * Determines if this transporter can tow the given unit. By default, no.
+     */
+    public default boolean canTow(Entity unit) { return false; }
 
     /**
      * Load the given unit.

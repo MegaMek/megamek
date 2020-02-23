@@ -15356,7 +15356,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             }
             for (Transporter t : e.getTransports()) {
-                if (t.canLoad(trailer)) {
+                if (t.canTow(trailer)) {
                     result = true;
                     hitchFound = true;
                     //stop looking

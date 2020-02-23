@@ -14,21 +14,9 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.server;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -1240,17 +1228,15 @@ public class Server implements Runnable {
         }
         sLocalPath = sLocalPath.replaceAll("\\|", " ");
         String localFile = "savegames" + File.separator + sFinalFile;
-        try {
+        try (InputStream in = new FileInputStream(localFile); InputStream bin = new BufferedInputStream(in)) {
             List<Integer> data = new ArrayList<>();
-            BufferedInputStream fin = new BufferedInputStream(new FileInputStream(localFile));
             int input;
-            while ((input = fin.read()) != -1) {
+            while ((input = bin.read()) != -1) {
                 data.add(input);
             }
             send(connId, new Packet(Packet.COMMAND_SEND_SAVEGAME, new Object[]{
                     sFinalFile, data, sLocalPath}));
             sendChat(connId, "***Server", "Save game has been sent to you.");
-            fin.close();
         } catch (Exception e) {
             getLogger().error(getClass(), "sendSaveGame(int,String,String)",
                     "Unable to load file: " + localFile, e);
@@ -1281,20 +1267,17 @@ public class Server implements Runnable {
         if (!sFinalFile.endsWith(".sav")) {
             sFinalFile = sFile + ".sav";
         }
-        try {
+        try (OutputStream os = new FileOutputStream(sFinalFile + ".gz");
+             OutputStream gzo = new GZIPOutputStream(os);
+             Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8)) {
+
             File sDir = new File("savegames");
             if (!sDir.exists()) {
                 sDir.mkdir();
             }
 
             sFinalFile = sDir + File.separator + sFinalFile;
-            FileOutputStream fos = new FileOutputStream(sFinalFile + ".gz");
-            GZIPOutputStream gzo = new GZIPOutputStream(fos);
-            Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8);
             xstream.toXML(game, writer);
-            writer.close();
-            gzo.close();
-            fos.close();
         } catch (Exception e) {
             getLogger().error(getClass(), "saveGame(String,boolean)",
                     "Unable to save file: " + sFinalFile, e);
@@ -1357,9 +1340,7 @@ public class Server implements Runnable {
         getLogger().info(getClass(), METHOD_NAME, "s: loading saved game file '" + f + "'"); //$NON-NLS-1$
 
         IGame newGame;
-        try {
-            FileInputStream fis = new FileInputStream(f);
-            InputStream is = new GZIPInputStream(fis);
+        try (InputStream is = new FileInputStream(f); InputStream gzi = new GZIPInputStream(is)) {
             XStream xstream = new XStream();
 
             // This mirrors the settings is saveGame
@@ -1400,9 +1381,7 @@ public class Server implements Runnable {
                     // Unused here
                 }
             });
-            newGame = (IGame) xstream.fromXML(is);
-            fis.close();
-            is.close();
+            newGame = (IGame) xstream.fromXML(gzi);
         } catch (Exception e) {
             getLogger().error(getClass(), METHOD_NAME, "Unable to load file: " + f, e); //$NON-NLS-1$
             return false;
@@ -3766,7 +3745,7 @@ public class Server implements Runnable {
                 // If there's only one team moving, we don't need to bother
                 // with the evenTracker, just make sure the even turns are
                 // evenly distributed
-                numEven += (int) Math.round((teamEvenTurns / min) + 0.5);
+                numEven += (int) Math.ceil(teamEvenTurns / min);
             } else if (prevTeam == null) {
                 // Increment the number of times we've checked for "leftovers".
                 evenTracker[0]++;
@@ -22475,7 +22454,7 @@ public class Server implements Runnable {
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (isPlatoon) {
-                    damage = (int) Math.round(damage * 1.5);
+                    damage = (int) Math.ceil(damage * 1.5);
                     r = new Report(6062);
                     r.subject = te_n;
                     r.indent(2);
@@ -23089,10 +23068,9 @@ public class Server implements Runnable {
                         absorbed = (absorbed * 2)
                                    - ((te.isHardenedArmorDamaged(hit)) ? 1 : 0);
                     }
-                    if (reflectiveArmor
-                        && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)
-                        && !isBattleArmor) {
-                        absorbed = (int) Math.round(Math.ceil(absorbed / 2.0));
+                    if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)
+                            && !isBattleArmor) {
+                        absorbed = (int) Math.ceil(absorbed / 2.0);
                         damage = tmpDamageHold;
                         tmpDamageHold = 0;
                     }

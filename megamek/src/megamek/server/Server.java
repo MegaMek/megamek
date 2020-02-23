@@ -15221,7 +15221,7 @@ public class Server implements Runnable {
         if (null != en) {
             allowed = en.getAllowedPhysicalAttacks();
         }
-        Vector<EntityAction> toKeep = new Vector<>(/*game.actionsSize()*/); //TODO : Windchild Can this be removed?
+        Vector<EntityAction> toKeep = new Vector<>();
 
         for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             EntityAction action = i.nextElement();
@@ -29387,11 +29387,10 @@ public class Server implements Runnable {
                 if (smokeHex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY) {
                     // heavy smoke fills hex
                     r = new Report(5180, Report.PUBLIC);
-                    smokeLevel = SmokeCloud.SMOKE_HEAVY;
                 } else {
                     r = new Report(5185, Report.PUBLIC);
-                    smokeLevel = Math.max(smokeLevel, SmokeCloud.SMOKE_HEAVY); // TODO : Windchild verify this change is correct
                 }
+                smokeLevel = SmokeCloud.SMOKE_HEAVY;
                 r.add(smokeCoords.getBoardNum());
                 addReport(r);
             } else {
@@ -31811,7 +31810,6 @@ public class Server implements Runnable {
         final String METHOD_NAME = "run()";
         Thread currentThread = Thread.currentThread();
         getLogger().info(getClass(), METHOD_NAME, "s: listening for clients...");
-        // HashSet<IConnection> toUpdate = new HashSet<IConnection>(); // TODO : Windchild Can this be removed?
         while (connector == currentThread) {
             try {
                 Socket s = serverSocket.accept();
@@ -32201,16 +32199,12 @@ public class Server implements Runnable {
         // TODO : Windchild this is never used?
         damage = (int) Math.floor(bldg.getDamageToScale() * toInf);
 
-        // Record if we find any infantry.
-        boolean foundInfantry = false;
-
         // Walk through the entities in the game.
         for (Entity entity : game.getEntitiesVector()) {
             final Coords coords = entity.getPosition();
 
             // If the entity is infantry in the affected hex?
             if ((entity instanceof Infantry) && bldg.isIn(coords) && coords.equals(hexCoords)) {
-
                 // Is the entity is inside of the building
                 // (instead of just on top of it)?
                 if (Compute.isInBuilding(game, entity, coords)) {
@@ -32249,16 +32243,12 @@ public class Server implements Runnable {
                             vDesc.addAll((damageEntity(entity, hit, next)));
                             remaining -= next;
                         }
-                        Report.addNewline(vDesc);
                     }
+
+                    Report.addNewline(vDesc);
                 } // End infantry-inside-building
             } // End entity-is-infantry-in-building-hex
         } // Handle the next entity
-
-        // If we found any infantry, add a line to the phase report.
-        if (foundInfantry) { // TODO : Windchild this is always false?
-            Report.addNewline(vDesc);
-        }
 
         return vDesc;
     } // End private void damageInfantryIn( Building, int )
@@ -32379,9 +32369,7 @@ public class Server implements Runnable {
                         continue;
                     }
 
-                    // Add the weight to the
-                    // correct floor.
-
+                    // Add the weight to the correct floor.
                     double load = entity.getWeight();
                     int floor = entityElev;
                     if (floor == bridgeEl) {
@@ -32410,9 +32398,7 @@ public class Server implements Runnable {
                                 basementCollapse = true;
                             }
                         }
-                    }
-                    // End increase-load
-
+                    } // End increase-load
                 } // Handle the next entity.
 
                 // Track all entities that fell into the basement.
@@ -32420,30 +32406,26 @@ public class Server implements Runnable {
                     basementMap.put(coords, basement);
                 }
 
-            } // End have-entities-here
-
-            // did anyone fall into the basement?
-            if (!basementMap.isEmpty() && (bldg.getBasement(coords) != BasementType.NONE) && !collapse) {
-                collapseBasement(bldg, basementMap, coords, vPhaseReport);
-                if (currentCF == 0) {
-                    collapse = true;
-                    recheckLoop = false;
+                // did anyone fall into the basement?
+                if (!basementMap.isEmpty() && (bldg.getBasement(coords) != BasementType.NONE) && !collapse) {
+                    collapseBasement(bldg, basementMap, coords, vPhaseReport);
+                    if (currentCF == 0) {
+                        collapse = true;
+                        recheckLoop = false;
+                    } else {
+                        recheckLoop = true; // basement collapse might cause a further collapse
+                    }
                 } else {
-                    recheckLoop = true; // basement collapse might cause a
-                    // further collapse
+                    recheckLoop = false; // don't check again, we didn't change the CF
                 }
-            } else {
-                recheckLoop = false; // don't check again, we didn't change the
-                // CF
-            }
-            if (collapse) {
-                recheckLoop = false;
-                // recheck if the basement collapsed since the basement falls
-                // might trigger a greater collapse.
-
-                // TODO : Windchild the recheck loop in this region all register as issues on my IDE
-            }
+                if (collapse) {
+                    recheckLoop = false;
+                    // recheck if the basement collapsed since the basement falls
+                    // might trigger a greater collapse.
+                }
+            } // End have-entities-here
         }
+
         // Collapse the building if the flag is set.
         if (collapse) {
             Report r = new Report(2375, Report.PUBLIC);
@@ -32682,8 +32664,7 @@ public class Server implements Runnable {
 
                 // Infantry suffer more damage.
                 if (entity instanceof Infantry) {
-                    if ((entity instanceof BattleArmor)
-                            || ((Infantry) entity).isMechanized()) {
+                    if ((entity instanceof BattleArmor) || ((Infantry) entity).isMechanized()) {
                         damage *= 2;
                     } else {
                         damage *= 3;
@@ -35803,25 +35784,6 @@ public class Server implements Runnable {
     /**
      * create a <code>SmokeCloud</code> object and add it to the server list
      *
-     * @param coords the location to create the cloud
-     */
-    public void createSmoke(Coords coords) { // TODO : Windchild is this needed? No usages
-        createSmoke(coords, 1, 0);
-    }
-
-    /**
-     * create a <code>SmokeCloud</code> object and add it to the server list
-     *
-     * @param coords the location to create the smoke
-     * @param level  1=Light 2=Heavy Smoke 3:light LI smoke 4: Heavy LI smoke
-     */
-    public void createSmoke(Coords coords, int level) { // TODO : Windchild is this needed? No usages
-        createSmoke(coords, level, 0);
-    }
-
-    /**
-     * create a <code>SmokeCloud</code> object and add it to the server list
-     *
      * @param coords   the location to create the smoke
      * @param level    1=Light 2=Heavy Smoke 3:light LI smoke 4: Heavy LI smoke
      * @param duration How long the smoke will last.
@@ -36011,10 +35973,5 @@ public class Server implements Runnable {
 
     public Set<Coords> getHexUpdateSet() {
         return hexUpdateSet;
-    }
-
-    // TODO : Windchild can this be removed?
-    public void setHexUpdateSet(HashSet<Coords> hexUpdateSet) {
-        this.hexUpdateSet = hexUpdateSet;
     }
 }

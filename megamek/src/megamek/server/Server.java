@@ -35373,7 +35373,7 @@ public class Server implements Runnable {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
-        }
+        } //End ground vehicles
 
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected(true);
@@ -35389,6 +35389,108 @@ public class Server implements Runnable {
             send(createRemoveEntityPacket(entity.getId(),
                     IEntityRemovalConditions.REMOVE_EJECTED));
         }
+        return vDesc;
+    }
+    
+    /**
+     * Abandon a spacecraft (large or small).
+     *
+     * @param entity  The <code>Entity</code> to eject.
+     * @param inSpace Is this ship spaceborne?
+     * @param airborne Is this ship in atmospheric flight?
+     * @return a <code>Vector</code> of report objects for the gamelog.
+     */
+    public Vector<Report> ejectSpacecraft(Entity entity, boolean inSpace,
+                                      boolean airborne) {
+        final String METHOD_NAME = "ejectSpacecraft(Entity,boolean,boolean)";
+        Vector<Report> vDesc = new Vector<Report>();
+        Report r;
+
+        // An entity can only eject it's crew once.
+        if (entity.getCrew().isEjected()) {
+            return vDesc;
+        }
+
+        // If the crew are already dead, don't bother
+        if (entity.isCarcass()) {
+            return vDesc;
+        }
+        
+        Aero ship = (Aero) entity;
+        
+        if (ship.isEjecting()) {
+            if (inSpace || airborne) {
+                // Report the ejection
+                PilotingRollData rollTarget = getEjectModifiers(game, entity,
+                        entity.getCrew().getCurrentPilotIndex(), false);
+                r = new Report(2180);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(rollTarget.getLastPlainDesc(), true);
+                r.indent();
+                vDesc.addElement(r);
+                //Per SO p27, you get a certain number of escape pods away per 100k tons of ship
+                int escapeMultiplier = (int) (ship.getWeight() / 100000);
+                EjectedCrew crew = new EjectedCrew(ship,0);
+                // Need to set game manually; since game.addEntity not called yet
+                // Don't want to do this yet, as Entity may not be added
+                crew.setGame(game);
+                crew.setDeployed(true);
+                crew.setId(getFreeEntityId());
+                // Make them not get a move this turn
+                crew.setDone(true);
+                
+                // Add Entity to game
+                game.addEntity(crew);
+                // Tell clients about new entity
+                send(createAddEntityPacket(crew.getId()));
+                // Sent entity info to clients
+                entityUpdate(crew.getId());
+                // Check if the crew lands in a minefield
+                vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
+                        entity.getPosition(), entity.getPosition(),
+                        entity.getElevation()));
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+                    game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                    send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+                }
+            } // End Space/Atmosphere Ejection
+            /*else {
+                // Place on board
+                // Vehicles don't have ejection systems, so crew must abandon into
+                // a legal hex
+                Coords legalPosition = null;
+                if (!crew.isLocationProhibited(entity.getPosition())) {
+                    legalPosition = entity.getPosition();
+                } else {
+                    for (int dir = 0; (dir < 6) && (legalPosition == null); dir++) {
+                        Coords adjCoords = entity.getPosition().translated(dir);
+                        if (!crew.isLocationProhibited(adjCoords)) {
+                            legalPosition = adjCoords;
+                        }
+                    }
+                }
+                // Cannot abandon if there is no legal hex.  This shoudln't have
+                // been allowed
+                if (legalPosition == null) {
+                    getLogger().error(getClass(), METHOD_NAME, "vehicle crews cannot abandon if there is no legal hex!");
+                    return vDesc;
+                }
+                crew.setPosition(legalPosition);
+            } */
+            return vDesc;
+        }
+        
+        // Once the ejection is done, mark the entity's crew as "ejected" and tidy up.
+        ship.setEjecting(false);
+        entity.getCrew().setEjected(true);
+        vDesc.addAll(destroyEntity(entity, "ejection", true, true));
+
+        // Remove the unit that ejected manually
+        game.removeEntity(entity.getId(),
+                IEntityRemovalConditions.REMOVE_EJECTED);
+        send(createRemoveEntityPacket(entity.getId(),
+                IEntityRemovalConditions.REMOVE_EJECTED));
         return vDesc;
     }
 

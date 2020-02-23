@@ -9582,8 +9582,7 @@ public class Server implements Runnable {
                 } else if (tractor.isSuperHeavy()) {
                     // If the tractor is superheavy, we can put two trailers in each hex
                     // starting trailer 0 in the hex behind the tractor
-                    // TODO : Windchild the update to trailerPositionOffset is never used?
-                    trailerPositionOffset = (Math.ceil((trailerPositionOffset /= 2.0)) + 1);
+                    trailerPositionOffset = (Math.ceil((trailerPositionOffset / 2.0)) + 1);
                     stepNumber = (trainPath.size() - (int) trailerPositionOffset);
                     trailerPos = trainPath.get(stepNumber);
                     trailer.setPosition(trailerPos);
@@ -9594,8 +9593,7 @@ public class Server implements Runnable {
                     // Otherwise, we can put two trailers in each hex
                     // starting trailer 1 in the hex behind the tractor
                     trailerPositionOffset ++;
-                    // TODO : Windchild the update to trailerPositionOffset is never used?
-                    trailerPositionOffset = Math.ceil((trailerPositionOffset /= 2.0));
+                    trailerPositionOffset = Math.ceil((trailerPositionOffset / 2.0));
                     stepNumber = (trainPath.size() - (int) trailerPositionOffset);
                     trailerPos = trainPath.get(stepNumber);
                     trailer.setPosition(trailerPos);
@@ -17018,8 +17016,7 @@ public class Server implements Runnable {
         if (caa.getClub().getType().hasSubType(MiscType.S_WRECKING_BALL)
                 && (ae instanceof SupportTank) && (te instanceof Mech)) {
             // forces a PSR like a charge
-            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
-                // TODO : Windchild I think the above if statement is a bug that should instead be ||
+            if (te instanceof LandAirMech && te.isAirborneVTOLorWIGE()) {
                 game.addControlRoll(new PilotingRollData(te.getId(), 2,
                         "was hit by wrecking ball"));
             } else {
@@ -32173,9 +32170,7 @@ public class Server implements Runnable {
         int toInf = Math.round(damage * percent);
 
         // some buildings scale remaining damage
-        // TODO : this isn't quite right for castles brian
-        // TODO : Windchild this is never used?
-        damage = (int) Math.floor(bldg.getDamageToScale() * toInf);
+        toInf = (int) Math.floor(bldg.getDamageToScale() * toInf);
 
         // Walk through the entities in the game.
         for (Entity entity : game.getEntitiesVector()) {

@@ -458,6 +458,7 @@ public class Dropship extends SmallCraft {
         // Life Boats and Escape Pods
         costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
 
+        // TODO Decouple cost calculation from addCostDetails and eliminate duplicate code in getPriceMultiplier
         double weightMultiplier = 36.0;
         if (isSpheroid()) {
             weightMultiplier = 28.0;
@@ -472,6 +473,11 @@ public class Dropship extends SmallCraft {
         cost = Math.round(cost * weightMultiplier);
         addCostDetails(cost, costs);
         return cost;
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        return isSpheroid() ? 28.0 : 36.0;
     }
 
     private void addCostDetails(double cost, double[] costs) {

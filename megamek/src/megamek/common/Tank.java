@@ -2743,6 +2743,8 @@ public class Tank extends Entity {
         for (int x = structCostIdx; x < i; x++) {
             cost += costs[x];
         }
+
+        // TODO Decouple cost calculation from addCostDetails and eliminate duplicate code in getPriceMultiplier
         if (isOmni()) { // Omni conversion cost goes here.
             cost *= 1.25;
             costs[i++] = -1.25;
@@ -2804,6 +2806,59 @@ public class Tank extends Entity {
 
         addCostDetails(cost, costs);
         return Math.round(cost);
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        double priceMultiplier = 1.0;
+        if (isOmni()) {
+            priceMultiplier *= 1.25;
+        }
+        if (isSupportVehicle()
+                && (movementMode.equals(EntityMovementMode.NAVAL)
+                || movementMode.equals(EntityMovementMode.HYDROFOIL)
+                || movementMode.equals(EntityMovementMode.SUBMARINE))) {
+            priceMultiplier *= weight / 100000.0;
+        } else {
+            switch (movementMode) {
+                case HOVER:
+                case SUBMARINE:
+                    priceMultiplier *= weight / 50.0;
+                    break;
+                case HYDROFOIL:
+                    priceMultiplier *= weight / 75.0;
+                    break;
+                case NAVAL:
+                case WHEELED:
+                    priceMultiplier *= weight / 200.0;
+                    break;
+                case TRACKED:
+                    priceMultiplier *= weight / 100.0;
+                    break;
+                case VTOL:
+                    priceMultiplier *= weight / 30.0;
+                    break;
+                case WIGE:
+                    priceMultiplier *= weight / 25.0;
+                    break;
+                case RAIL:
+                case MAGLEV:
+                    priceMultiplier *= weight / 250.0;
+                    break;
+            }
+        }
+        if (!isSupportVehicle()) {
+            if (hasWorkingMisc(MiscType.F_FLOTATION_HULL)
+                    || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
+                    || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                priceMultiplier *= 1.25;
+
+            }
+            if (hasWorkingMisc(MiscType.F_OFF_ROAD)) {
+                priceMultiplier *= 1.2;
+            }
+        }
+        return priceMultiplier;
     }
 
     @Override

@@ -10525,6 +10525,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public abstract double getCost(boolean ignoreAmmo);
 
+    /**
+     * Returns a multiplier that combines multiplicative construction cost modifiers for this Entity.
+     *
+     * This includes only modifiers that apply to an Entity's final, total cost (e.g. - the 1.25x modifier for being
+     * an omni-unit, or the 32.0x for being an aerodyne dropship). It does NOT include multipliers that only apply to
+     * a sub-part of the unit (e.g. the weight based multiplier that applies to a vehicle's internal structure cost).
+     *
+     * This allows MekHQ to scale the price of a Unit's Parts in a more appropriate manner.
+     *
+     * Defaults to 1.0
+     */
+    public double getPriceMultiplier() {
+        return 1.0;
+    };
+
     public long getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
         // bvText = new StringBuffer();
         long cost = 0;

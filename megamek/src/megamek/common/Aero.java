@@ -4304,6 +4304,16 @@ public class Aero extends Entity implements IAero, IBomber {
     }
     
     /**
+     * Calculates whether this ship has any available escape systems remaining
+     * return
+     */
+    public boolean hasEscapeSystemsLeft() {
+        return ((getLaunchedLifeBoats() < getLifeBoats()) 
+                || (getLaunchedEscapePods() < getEscapePods())
+                || !getLaunchableSmallCraft().isEmpty());
+    }
+    
+    /**
      * Calculates the total number of people that can be carried in this unit's escape systems
      * 6 people per lifeboat/escape pod + troop capacity of any small craft
      * Most small craft use cargo space instead of infantry bays, so we'll assume 0.1 tons/person

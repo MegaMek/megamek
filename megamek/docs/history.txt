@@ -13,6 +13,7 @@ VERSION HISTORY:
 + Issue #1701: SRT ammo has extinction and reintroduction dates for One-Shot launchers
 + Data: Updating Maps and couple of variant Dropships.
 + Issue #1446: Units with trailer hitches properly distinguish between loading infantry and towing other units
++ PR #1711: Add Entity.getPriceMultiplier() method
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

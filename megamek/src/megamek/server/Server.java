@@ -6937,14 +6937,22 @@ public class Server implements Runnable {
                 r.add(entity.getCrew().getName());
                 r.addDesc(entity);
                 addReport(r);
+                addReport(ejectEntity(entity, false));
             } else if ((entity instanceof Tank) && !entity.isCarcass()) {
                 r = new Report(2025);
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 addReport(r);
+                addReport(ejectEntity(entity, false));
+            } else if (entity.isLargeCraft() && !entity.isCarcass()) {
+                r = new Report(2026);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                addReport(r);
+                //Don't deal with atmo ejection yet
+                addReport(ejectSpacecraft(entity, entity.isSpaceborne(), false));
             }
-            addReport(ejectEntity(entity, false));
-
+            
             return;
         }
 

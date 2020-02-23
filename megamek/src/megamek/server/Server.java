@@ -6931,7 +6931,16 @@ public class Server implements Runnable {
         }
 
         if (md.contains(MoveStepType.EJECT)) {
-            if ((entity instanceof Mech) || (entity instanceof Aero)) {
+            if (entity.isLargeCraft() && !entity.isCarcass()) {
+                r = new Report(2026);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                addReport(r);
+                Aero ship = (Aero) entity;
+                //Don't deal with atmo ejection yet
+                ship.setEjecting(true);
+                addReport(ejectSpacecraft(ship, ship.isSpaceborne(), false));
+            } else if ((entity instanceof Mech) || (entity instanceof Aero)) {
                 r = new Report(2020);
                 r.subject = entity.getId();
                 r.add(entity.getCrew().getName());
@@ -6944,15 +6953,7 @@ public class Server implements Runnable {
                 r.addDesc(entity);
                 addReport(r);
                 addReport(ejectEntity(entity, false));
-            } else if (entity.isLargeCraft() && !entity.isCarcass()) {
-                r = new Report(2026);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                addReport(r);
-                //Don't deal with atmo ejection yet
-                addReport(ejectSpacecraft(entity, entity.isSpaceborne(), false));
             }
-            
             return;
         }
 
@@ -35403,12 +35404,12 @@ public class Server implements Runnable {
     /**
      * Abandon a spacecraft (large or small).
      *
-     * @param entity  The <code>Entity</code> to eject.
+     * @param entity  The <code>Aero</code> to eject.
      * @param inSpace Is this ship spaceborne?
      * @param airborne Is this ship in atmospheric flight?
      * @return a <code>Vector</code> of report objects for the gamelog.
      */
-    public Vector<Report> ejectSpacecraft(Entity entity, boolean inSpace,
+    public Vector<Report> ejectSpacecraft(Aero entity, boolean inSpace,
                                       boolean airborne) {
         final String METHOD_NAME = "ejectSpacecraft(Entity,boolean,boolean)";
         Vector<Report> vDesc = new Vector<Report>();
@@ -35423,10 +35424,8 @@ public class Server implements Runnable {
         if (entity.isCarcass()) {
             return vDesc;
         }
-        
-        Aero ship = (Aero) entity;
-        
-        if (ship.isEjecting()) {
+
+        if (entity.isEjecting()) {
             if (inSpace || airborne) {
                 // Report the ejection
                 PilotingRollData rollTarget = getEjectModifiers(game, entity,
@@ -35438,16 +35437,28 @@ public class Server implements Runnable {
                 r.indent();
                 vDesc.addElement(r);
                 //Per SO p27, you get a certain number of escape pods away per 100k tons of ship
-                int escapeMultiplier = (int) (ship.getWeight() / 100000);
-                EjectedCrew crew = new EjectedCrew(ship,0);
+                int escapeMultiplier = (int) (entity.getWeight() / 100000);
+                EjectedCrew crew = new EjectedCrew(entity,entity.getEscapePods());
                 // Need to set game manually; since game.addEntity not called yet
                 // Don't want to do this yet, as Entity may not be added
+                crew.setPosition(entity.getPosition());
                 crew.setGame(game);
                 crew.setDeployed(true);
                 crew.setId(getFreeEntityId());
                 // Make them not get a move this turn
                 crew.setDone(true);
-                
+                if (inSpace) {
+                    //In space, ejected pilots retain the heading and velocity of the unit they eject from
+                    crew.setVectors(entity.getVectors());
+                    crew.setFacing(entity.getFacing());
+                    crew.setCurrentVelocity(entity.getVelocity());
+                    //If the pilot ejects, he should no longer be accelerating
+                    crew.setNextVelocity(entity.getVelocity());
+                } else if (entity.isAirborne()) {
+                    crew.setAltitude(entity.getAltitude());
+                }
+                //We're going to be nice and assume a ship has enough spacesuits for everyone aboard...
+                crew.setSpaceSuit(true);
                 // Add Entity to game
                 game.addEntity(crew);
                 // Tell clients about new entity
@@ -35490,7 +35501,7 @@ public class Server implements Runnable {
         }
         
         // Once the ejection is done, mark the entity's crew as "ejected" and tidy up.
-        ship.setEjecting(false);
+        entity.setEjecting(false);
         entity.getCrew().setEjected(true);
         vDesc.addAll(destroyEntity(entity, "ejection", true, true));
 

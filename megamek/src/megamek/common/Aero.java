@@ -134,6 +134,8 @@ public class Aero extends Entity implements IAero, IBomber {
     private boolean condEjectAmmo = true;
     private boolean condEjectFuel = true;
     private boolean condEjectSIDest = true;
+    
+    private boolean ejecting = false;
 
     // track straight movement from last turn
     private int straightMoves = 0;
@@ -4562,5 +4564,21 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public void setCondEjectSIDest(boolean condEjectSIDest) {
         this.condEjectSIDest = condEjectSIDest;
+    }
+    
+    /**
+     * Intended for large craft. Indicates that the ship is being abandoned.
+     * @return
+     */
+    public boolean isEjecting() {
+        return ejecting;
+    }
+
+    /**
+     * Changes the ejecting flag when the order to abandon ship is given
+     * @param ejecting Change to the ejecting status of this ship
+     */
+    public void setEjecting(boolean ejecting) {
+        this.ejecting = ejecting;
     }
 }

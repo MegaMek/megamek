@@ -3304,59 +3304,31 @@ public class Tank extends Entity {
     }
     
     /**
-     * Adds a trailer hitch to any tracked or wheeled military vehicle, or SupportVee with 
-     * Tractor chassis mod that doesn't already have one
-     */
-    @Override
-    public void addTrailerHitchEquipment() {
-        //If we already have a hitch, don't add a new one
-        if (hasWorkingMisc(MiscType.F_HITCH)) {
-            return;
-        }
-        boolean hitchNeeded = false;
-        //Only support vees designed as Tractors should have a hitch
-        if (isSupportVehicle()) {
-            if (hasWorkingMisc(MiscType.F_TRACTOR_MODIFICATION)) {
-                hitchNeeded = true;
-            }
-        } else {
-            //but all tracked and wheeled military vees should get one
-            if (getMovementMode() == EntityMovementMode.TRACKED || getMovementMode() == EntityMovementMode.WHEELED) {
-                hitchNeeded = true;
-            }
-        }
-        if (hitchNeeded) {
-            //Add hitch to the rear by default
-            if (isSuperHeavy()) {
-                try {
-                    addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), SuperHeavyTank.LOC_REAR);
-               } catch (LocationFullException ex) {
-                   //For vehicles, this shouldn't happen
-               }
-            } else {
-                try {
-                    addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), Tank.LOC_REAR);
-               } catch (LocationFullException ex) {
-                   //ditto
-               }
-            }
-        }
-    }
-    
-    /**
-     * Add a transporter for each trailer hitch the unit is equipped with
+     * Add a transporter for each trailer hitch the unit is equipped with, with a maximum of
+     * one each in the front and the rear. Any tractor that does not have an explicit hitch
+     * installed as equipment will get a rear-facing transporter.
      */
     public void setTrailerHitches() {
-        if (hasTrailerHitchTransporter()) {
-            return;
-        }
-        boolean rearMounted = false;
-        for (Mounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_HITCH)) {
-                if (m.getLocation() == Tank.LOC_REAR || (isSuperHeavy() && m.getLocation() == SuperHeavyTank.LOC_REAR)) {
-                    rearMounted = true;
+        if (isTractor() && !hasTrailerHitchTransporter()) {
+            // look for explicit installed trailer hitches and note location
+            boolean front = false;
+            boolean rear = false;
+            for (Mounted m : getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_HITCH)) {
+                    if (m.getLocation() == Tank.LOC_FRONT && !isTrailer()) {
+                        front = true;
+                    } else {
+                        rear = true;
+                    }
                 }
-                addTransporter(new TankTrailerHitch(rearMounted));
+            }
+            // Install a transporter anywhere there is an explicit hitch. If no hitch is found,
+            // put it in the back.
+            if (front) {
+                addTransporter(new TankTrailerHitch(false));
+            }
+            if (rear || !front) {
+                addTransporter(new TankTrailerHitch(true));
             }
         }
     }
@@ -4422,8 +4394,13 @@ public class Tank extends Entity {
      */
     @Override
     public boolean isTractor() {
-        if (hasWorkingMisc(MiscType.F_HITCH) && !isTrailer()) {
-            return true;
+        if (getMovementMode().equals(EntityMovementMode.TRACKED)
+                || getMovementMode().equals(EntityMovementMode.WHEELED)) {
+            // Any tracked or wheeled combat vehicle can be used as a tractor
+            // if it is capable of independent operations or it is equipped with
+            // a hitch (making it a trailer that is part of a train).
+            return (hasEngine() && !hasNoControlSystems())
+                    || hasWorkingMisc(MiscType.F_HITCH);
         }
         return false;
     }

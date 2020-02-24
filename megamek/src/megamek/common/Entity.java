@@ -15228,20 +15228,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Entity trailer = game.getEntity(id);
             thisTrain.add(trailer);
         }
-        //Check each entity in the train for working hitches
+        //Check each Entity in the train for working hitches. When found, add the hex
+        // that Entity is in and the hex the hitch faces.
         for (Entity e : thisTrain) {
-            for (Mounted m : e.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_HITCH) && m.isReady()) {
-                    //Add the coords of the unit with the empty hitch
+            for (Transporter t : e.getTransports()) {
+                if ((t instanceof TankTrailerHitch) && (t.getUnused() > 0)) {
                     trailerPos.add(e.getPosition());
-
-                    //Now, check the location of the hitch (which should just be front or rear)
-                    //and add the hex adjacent to the entity in the appropriate direction
-                    //Offset the location value to match the directions in Coords.
                     int dir = e.getFacing();
-                    if (m.getLocation() == Tank.LOC_REAR
-                            || m.getLocation() == SuperHeavyTank.LOC_REAR) {
-                        dir = ((dir + 3) % 6);
+                    if (((TankTrailerHitch) t).getRearMounted()) {
+                        dir = (dir + 3) % 6;
                     }
                     trailerPos.add(e.getPosition().translated(dir));
                 }

@@ -7780,6 +7780,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLLaserInsulator");
         misc.tonnage = 0.5;
         misc.criticals = 1;
+	misc.tankslots = 0;
         misc.cost = 3500;
         misc.flags = misc.flags.or(MiscType.F_LASER_INSULATOR).or(MiscType.F_SUPPORT_TANK_EQUIPMENT)
                 .or(MiscType.F_MECH_EQUIPMENT).or(MiscType.F_FIGHTER_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);

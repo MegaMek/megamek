@@ -93,9 +93,10 @@ public class RandomNameGenerator implements Serializable {
 
     private static RandomNameGenerator rng;
 
-    private static Map<String, Map<Integer, WeightedMap<WeightedMap<String>>>> factionMaleGivenNames;
-    private static Map<String, Map<Integer, WeightedMap<WeightedMap<String>>>> factionFemaleGivenNames;
+    private static Map<Integer, WeightedMap<String>> femaleGivenNames;
+    private static Map<Integer, WeightedMap<String>> maleGivenNames;
     private static Map<Integer, WeightedMap<String>> surnames;
+    private static Map<String, Map<Integer, WeightedMap<Integer>>> factionGivenNames;
     private static Map<String, WeightedMap<Integer>> factionEthnicCodes;
 
     private int percentFemale;
@@ -158,10 +159,11 @@ public class RandomNameGenerator implements Serializable {
         if (initialized) {
             faction = factionEthnicCodes.containsKey(faction) ? faction : "General";
             int ethnicCode = factionEthnicCodes.get(faction).randomItem();
+            int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
             name = isFemale
-                    ? factionFemaleGivenNames.get(faction).get(ethnicCode).randomItem().randomItem()
-                    : factionMaleGivenNames.get(faction).get(ethnicCode).randomItem().randomItem();
+                    ? femaleGivenNames.get(givenNameEthnicCode).randomItem()
+                    : maleGivenNames.get(givenNameEthnicCode).randomItem();
 
             if (!isClan) {
                 name += " " + surnames.get(ethnicCode).randomItem();
@@ -188,10 +190,11 @@ public class RandomNameGenerator implements Serializable {
         if (initialized) {
             faction = factionEthnicCodes.containsKey(faction) ? faction : "General";
             int ethnicCode = factionEthnicCodes.get(faction).randomItem();
+            int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
             name[0] = isFemale
-                    ? factionFemaleGivenNames.get(faction).get(ethnicCode).randomItem().randomItem()
-                    : factionMaleGivenNames.get(faction).get(ethnicCode).randomItem().randomItem();
+                    ? femaleGivenNames.get(givenNameEthnicCode).randomItem()
+                    : maleGivenNames.get(givenNameEthnicCode).randomItem();
 
             if (!isClan) {
                 name[1] = surnames.get(ethnicCode).randomItem();
@@ -267,12 +270,10 @@ public class RandomNameGenerator implements Serializable {
         //endregion Variable Instantiation
 
         //region Map Instantiation
-        Map<Integer, WeightedMap<String>> maleGivenNames = new HashMap<>();
-        Map<Integer, WeightedMap<String>> femaleGivenNames = new HashMap<>();
-
-        factionMaleGivenNames = new HashMap<>();
-        factionFemaleGivenNames = new HashMap<>();
+        maleGivenNames = new HashMap<>();
+        femaleGivenNames = new HashMap<>();
         surnames = new HashMap<>();
+        factionGivenNames = new HashMap<>();
         factionEthnicCodes = new HashMap<>();
 
         // Determine the number of ethnic codes
@@ -315,16 +316,13 @@ public class RandomNameGenerator implements Serializable {
             String key = "General";
 
             // Initialize Maps
-            factionMaleGivenNames.put(key, new HashMap<>());
-            factionFemaleGivenNames.put(key, new HashMap<>());
+            factionGivenNames.put(key, new HashMap<>());
             factionEthnicCodes.put(key, new WeightedMap<>());
 
             // Add information to maps
             for (int i = 0; i <= numEthnicCodes; i++) {
-                factionMaleGivenNames.get(key).put(i, new WeightedMap<>());
-                factionMaleGivenNames.get(key).get(i).add(1, maleGivenNames.get(i));
-                factionFemaleGivenNames.get(key).put(i, new WeightedMap<>());
-                factionFemaleGivenNames.get(key).get(i).add(1, femaleGivenNames.get(i));
+                factionGivenNames.get(key).put(i, new WeightedMap<>());
+                factionGivenNames.get(key).get(i).add(1, i);
                 factionEthnicCodes.get(key).add(1, i);
             }
             //endregion No Factions Specified
@@ -340,8 +338,7 @@ public class RandomNameGenerator implements Serializable {
                 }
 
                 // Initialize Maps
-                factionMaleGivenNames.put(key, new HashMap<>());
-                factionFemaleGivenNames.put(key, new HashMap<>());
+                factionGivenNames.put(key, new HashMap<>());
                 factionEthnicCodes.put(key, new WeightedMap<>());
 
                 File factionFile = new MegaMekFile(factionsDir, filename).getFile();
@@ -356,12 +353,9 @@ public class RandomNameGenerator implements Serializable {
                         // The weights for ethnic given names for each surname ethnicity will be
                         // stored in the file at i + 2, so that is where we will parse them from
                         for (int i = 0; i <= numEthnicCodes; i++) {
-                            factionMaleGivenNames.get(key).put(ethnicCode, new WeightedMap<>());
-                            factionMaleGivenNames.get(key).get(ethnicCode).add(
-                                    Integer.parseInt(values[i + 2]), maleGivenNames.get(i));
-                            factionFemaleGivenNames.get(key).put(ethnicCode, new WeightedMap<>());
-                            factionFemaleGivenNames.get(key).get(ethnicCode).add(
-                                    Integer.parseInt(values[i + 2]), femaleGivenNames.get(i));
+                            factionGivenNames.get(key).put(ethnicCode, new WeightedMap<>());
+                            factionGivenNames.get(key).get(ethnicCode).add(
+                                    Integer.parseInt(values[i + 2]), i);
                         }
 
                         factionEthnicCodes.get(key).add(Integer.parseInt(values[2]), ethnicCode);

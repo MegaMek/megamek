@@ -17,10 +17,7 @@ package megamek.client;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,9 +38,10 @@ import megamek.common.util.WeightedMap;
  * </p>
  * <p>
  * The masterancestry.txt file shows the correspondence between the different ethnic names and their numeric
- * code in the database. This file is currently not actually read in by MM, but is provided as a reference. The same
- * numeric code must be used across all of the files listed below. Currently the numeric codes must be listed in exact
- * sequential order (i.e. no skipping numbers) for the program to work correctly.</p>
+ * code in the database. This file is used to initialize the name mapping, and must be kept current
+ * for all additions. The same numeric code must be used across all of the files listed below.
+ * The numeric codes MUST be listed in exact sequential order (i.e. no skipping numbers)
+ * for the program to work correctly.</p>
  * <p>
  * The name database is located in three files: firstname_males.txt, firstname_females.txt, and surnames.txt.
  * There ar three comma-delimited fields in each of these data files: fld1,fld2,fld3
@@ -88,6 +86,8 @@ public class RandomNameGenerator implements Serializable {
     /** Default filename for the list of surnames names. */
     private static final String FILENAME_SURNAMES = "surnames.txt";
 
+    private static final String FILENAME_MASTER_ANCESTRY = "masterancestry.txt";
+
     private static final long serialVersionUID = 5765118329881301375L;
 
     private static RandomNameGenerator rng;
@@ -97,6 +97,10 @@ public class RandomNameGenerator implements Serializable {
     Map<String, Vector<String>> last;
     Map<String, Vector<String>> factionLast;
     Map<String, Map<String, Vector<String>>> factionFirst;
+
+    Map<String, Map<Integer, WeightedMap<WeightedMap<String>>>> factionMaleGivenNames;
+    Map<String, Map<Integer, WeightedMap<WeightedMap<String>>>> factionFemaleGivenNames;
+    Map<String, WeightedMap<WeightedMap<String>>> factionSurnames;
 
     private int percentFemale;
     private String chosenFaction;
@@ -108,180 +112,141 @@ public class RandomNameGenerator implements Serializable {
 
     public RandomNameGenerator() {
         percentFemale = 50;
-        chosenFaction = "General"; //$NON-NLS-1$
+        chosenFaction = "General";
     }
 
     public void populateNames() {
-        // TODO: how do I weight name vectors by frequency, without making them gargantuan?
-        if (null == firstM) {
-            firstM = new HashMap<>();
-        }
-        if (null == firstF) {
-            firstF = new HashMap<>();
-        }
-        if (null == last) {
-            last = new HashMap<>();
-        }
-        if (null == factionLast) {
-            factionLast = new HashMap<>();
-        }
-        if (null == factionFirst) {
-            factionFirst = new HashMap<>();
-        }
+        //region Variable Instantiation
+        int numEthnicCodes = 0;
+        //endregion Variable Instantiation
 
-        int lineNumber = 0;
+        //region Map Instantiation
+        Map<Integer, WeightedMap<String>> maleGivenNames = new HashMap<>();
+        Map<Integer, WeightedMap<String>> femaleGivenNames = new HashMap<>();
+        Map<Integer, WeightedMap<String>> surnames = new HashMap<>();
 
-        // READ IN MALE FIRST NAMES
-        File male_firstnames_path = new MegaMekFile(Configuration.namesDir(), FILENAME_FIRSTNAMES_MALE).getFile();
-        try (Scanner input = new Scanner(new FileInputStream(male_firstnames_path), "UTF-8")) {
+        factionMaleGivenNames = new HashMap<>();
+        factionFemaleGivenNames = new HashMap<>();
+        factionSurnames = new HashMap<>();
+
+        // Determine the number of ethnic codes
+        File masterAncestryFile = new MegaMekFile(Configuration.namesDir(), FILENAME_MASTER_ANCESTRY).getFile();
+        try (InputStream is = new FileInputStream(masterAncestryFile);
+             Scanner input = new Scanner(is, "UTF-8")) {
+
             while (input.hasNextLine()) {
-                String line = input.nextLine();
-                lineNumber++;
-                String[] values = line.split(","); //$NON-NLS-1$
-                if (values.length < 3) {
-                    System.err.println(
-                            "Not enough fields in '" + male_firstnames_path.toString() + "' on " + lineNumber
-                    );
-                    continue;
-                }
-                String name = values[0];
-                int weight = Integer.parseInt(values[1]);
-                String key = values[2];
-                int i = 0;
-                if (!firstM.containsKey(key)) {
-                    Vector<String> v = new Vector<>();
-                    while (i < weight) {
-                        v.add(name);
-                        i++;
-                    }
-                    firstM.put(key, v);
-                } else {
-                    while (i < weight) {
-                        firstM.get(key).add(name);
-                        i++;
-                    }
-                }
+                input.nextLine();
+                numEthnicCodes++;
             }
-        } catch (IOException fne) {
-            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + male_firstnames_path + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+        } catch (IOException e) {
+            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + masterAncestryFile + "'");
         }
 
-        lineNumber = 0;
-
-        // READ IN FEMALE FIRST NAMES
-        File female_firstnames_path = new MegaMekFile(Configuration.namesDir(), FILENAME_FIRSTNAMES_FEMALE).getFile();
-        try (Scanner input = new Scanner(new FileInputStream(female_firstnames_path), "UTF-8")) {
-            while (input.hasNextLine()) {
-                String line = input.nextLine();
-                lineNumber++;
-                String[] values = line.split(","); //$NON-NLS-1$
-                if (values.length < 3) {
-                    System.err.println(
-                            "RandomNameGenerator.populateNames(): Not enough fields in '" + female_firstnames_path.toString() + "' on " + lineNumber
-                    );
-                    continue;
-                }
-                String name = values[0];
-                int weight = Integer.parseInt(values[1]);
-                String key = values[2];
-                int i = 0;
-                if (!firstF.containsKey(key)) {
-                    Vector<String> v = new Vector<>();
-                    while (i < weight) {
-                        v.add(name);
-                        i++;
-                    }
-                    firstF.put(key, v);
-                } else {
-                    while (i < weight) {
-                        firstF.get(key).add(name);
-                        i++;
-                    }
-                }
-            }
-        } catch (IOException fne) {
-            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + female_firstnames_path + "'");
+        // Then immediately instantiate the number of weighted maps needed for Given Names and Surnames
+        for (int i = 1; i <= numEthnicCodes; i++) {
+            maleGivenNames.put(i, new WeightedMap<>());
+            femaleGivenNames.put(i, new WeightedMap<>());
+            surnames.put(i, new WeightedMap<>());
         }
+        //endregion Map Instantiation
 
-        lineNumber = 0;
+        //region Read Names
+        readNamesFileToMap(maleGivenNames, FILENAME_FIRSTNAMES_MALE);
+        readNamesFileToMap(femaleGivenNames, FILENAME_FIRSTNAMES_FEMALE);
+        readNamesFileToMap(surnames, FILENAME_SURNAMES);
+        //endregion Read Names
 
-        // READ IN SURNAMES
-        File surnames_path = new MegaMekFile(Configuration.namesDir(), FILENAME_SURNAMES).getFile();
-        try(Scanner input = new Scanner(new FileInputStream(surnames_path), "UTF-8")) {
-            while (input.hasNextLine()) {
-                String line = input.nextLine();
-                lineNumber++;
-                String[] values = line.split(","); //$NON-NLS-1$
-                if (values.length < 3) {
-                    System.err.println(
-                            "Not enough fields in '" + surnames_path + "' on " + lineNumber
-                    );
-                    continue;
-                }
-                String name = values[0];
-                int weight = Integer.parseInt(values[1]);
-                String key = values[2];
-                int i = 0;
-                if (!last.containsKey(key)) {
-                    Vector<String> v = new Vector<>();
-                    while (i < weight) {
-                        v.add(name);
-                        i++;
-                    }
-                    last.put(key, v);
-                } else {
-                    while (i < weight) {
-                        last.get(key).add(name);
-                        i++;
-                    }
-                }
-            }
-        } catch (IOException fne) {
-            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + surnames_path + "'");
-        }
-
-        // READ IN FACTION FILES
+        //region Faction Files
         // all faction files should be in the faction directory
-        File factions_dir_path = new MegaMekFile(Configuration.namesDir(), DIR_NAME_FACTIONS).getFile();
-        String[] fileNames = factions_dir_path.list();
-        if (null == fileNames) {
-            return;
-        }
-        for (String filename : fileNames) {
-            String key = filename.split("\\.txt")[0]; //$NON-NLS-1$
-            if ((key.length() < 1) || factionLast.containsKey(key)) {
-                continue;
+        File factionsDir = new MegaMekFile(Configuration.namesDir(), DIR_NAME_FACTIONS).getFile();
+        String[] fileNames = factionsDir.list();
+
+        if (fileNames == null) {
+            //region No Factions Specified
+            System.err.println("RandomNameGenerator.populateNames(): No faction files found!");
+            // We will create a general list where everything is weighted at one to allow player to
+            // play with named characters, indexing it at 1
+            String key = "General";
+
+            // Initialize Maps
+            factionMaleGivenNames.put(key, new HashMap<>());
+            factionFemaleGivenNames.put(key, new HashMap<>());
+            factionSurnames.put(key, new WeightedMap<>());
+
+            // Add information to maps
+            for (int i = 0; i <= numEthnicCodes; i++) {
+                factionMaleGivenNames.get(key).put(i, new WeightedMap<>());
+                factionMaleGivenNames.get(key).get(i).add(1, maleGivenNames.get(i));
+                factionFemaleGivenNames.get(key).put(i, new WeightedMap<>());
+                factionFemaleGivenNames.get(key).get(i).add(1, femaleGivenNames.get(i));
+                factionSurnames.get(key).add(1, surnames.get(i));
             }
-            factionLast.put(key, new Vector<>());
-            factionFirst.put(key, new HashMap<>());
-            File ff = new MegaMekFile(factions_dir_path, filename).getFile();
-            try (Scanner factionInput = new Scanner(new FileInputStream(ff), "UTF-8")) { //$NON-NLS-1$
-                Map<String, Vector<String>> hash = new HashMap<>();
-                while (factionInput.hasNextLine()) {
-                    String line = factionInput.nextLine();
-                    String[] values = line.split(","); //$NON-NLS-1$
-                    String ethnicity = values[0];
-                    int freq = Integer.parseInt(values[2]);
-                    while (freq > 0) {
-                        factionLast.get(key).add(ethnicity);
-                        freq--;
-                    }
-                    Vector<String> v = new Vector<>();
-                    for (int i = 3; i < values.length; i++) {
-                        freq = Integer.parseInt(values[i]);
-                        // TODO: damn - I don't have the integer codes for ethnicity
-                        // TODO: here, for now just assume they are the same as i-2
-                        while (freq > 0) {
-                            v.add(Integer.toString(i - 2));
-                            freq--;
-                        }
-                    }
-                    hash.put(ethnicity, v);
+            //endregion No Factions Specified
+        } else {
+            for (String filename : fileNames) {
+                // Determine the key based on the file name
+                String key = filename.split("\\.txt")[0];
+
+                // Just check with surnames, as if it has the key then the other two do
+                if ((key.length() < 1) || factionSurnames.containsKey(key)) {
+                    continue;
                 }
-                factionFirst.put(key, hash);
-            } catch (IOException fne) {
-                System.err.println("RandomNameGenerator.populateNames(): Could not find '" + ff + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+
+                // Initialize Maps
+                factionMaleGivenNames.put(key, new HashMap<>());
+                factionFemaleGivenNames.put(key, new HashMap<>());
+                factionSurnames.put(key, new WeightedMap<>());
+
+                File factionFile = new MegaMekFile(factionsDir, filename).getFile();
+                try (InputStream is = new FileInputStream(factionFile);
+                     Scanner input = new Scanner(is, "UTF-8")) {
+
+                    while (input.hasNextLine()) {
+                        String[] values = input.nextLine().split(",");
+                        int ethnicCode = Integer.parseInt(values[0]);
+
+                        // Add information to maps
+                        // The weights for ethnic given names for each surname ethnicity will be
+                        // stored in the file at i + 2, so that is where we will parse them from
+                        for (int i = 0; i <= numEthnicCodes; i++) {
+                            factionMaleGivenNames.get(key).put(ethnicCode, new WeightedMap<>());
+                            factionMaleGivenNames.get(key).get(ethnicCode).add(
+                                    Integer.parseInt(values[i + 2]), maleGivenNames.get(i));
+                            factionFemaleGivenNames.get(key).put(ethnicCode, new WeightedMap<>());
+                            factionFemaleGivenNames.get(key).get(ethnicCode).add(
+                                    Integer.parseInt(values[i + 2]), femaleGivenNames.get(i));
+                        }
+
+                        factionSurnames.get(key).add(Integer.parseInt(values[2]),
+                                surnames.get(ethnicCode));
+                    }
+                } catch (IOException fne) {
+                    System.err.println("RandomNameGenerator.populateNames(): Could not find '" + factionFile + "'");
+                }
             }
+        }
+        //endregion Faction Files
+    }
+
+    private void readNamesFileToMap(Map<Integer, WeightedMap<String>> map, String fileName) {
+        int lineNumber = 0;
+        File file = new MegaMekFile(Configuration.namesDir(), fileName).getFile();
+
+        try (InputStream is = new FileInputStream(file);
+             Scanner input = new Scanner(is, "UTF-8")) {
+
+            while (input.hasNextLine()) {
+                lineNumber++;
+                String[] values = input.nextLine().split(",");
+                if (values.length < 3) {
+                    System.err.println("Not enough fields in '" + file.toString() + "' on " + lineNumber);
+                    continue;
+                }
+
+                map.get(Integer.parseInt(values[2])).add(Integer.parseInt(values[1]), values[0]);
+            }
+        } catch (IOException e) {
+            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + file + "'");
         }
     }
 
@@ -312,19 +277,24 @@ public class RandomNameGenerator implements Serializable {
         return generate(isFemale());
     }
 
+    @Deprecated //24-Feb-2020, this is included to keep current functionality working while other
+                //improvements are being finished
+    public String generate(boolean isFemale) {
+        // this is a total hack, but for now lets assume that
+        // if the chosenFaction name contains the word "clan"
+        // we should only spit out first names
+        return generate(isFemale, chosenFaction.toLowerCase().contains("clan"));
+    }
+
     /**
      * Generate a single random name
      *
      * @return - a string containing the randomly generated name
      */
-    public String generate(boolean isFemale) {
+    public String generate(boolean isFemale, boolean isClan) {
         if ((null != chosenFaction) && (null != factionLast)
                 && (null != factionFirst) && (null != firstM)
                 && (null != firstF) && (null != last)) {
-            // this is a total hack, but for now lets assume that
-            // if the chosenFaction name contains the word "clan"
-            // we should only spit out first names
-            boolean isClan = chosenFaction.toLowerCase().contains("clan");
 
             Vector<String> ethnicities = factionLast.get(chosenFaction);
             if ((null != ethnicities) && (ethnicities.size() > 0)) {
@@ -361,16 +331,11 @@ public class RandomNameGenerator implements Serializable {
      *              with the given name at String[0]
      *              and the surname at String[1]
      */
-    public String[] generateGivenNameSurnameSplit(boolean isFemale) {
-        String[] name = {"", ""};
+    public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan) {
+        String[] name = { "", "" };
         if ((chosenFaction != null) && (factionLast != null)
                 && (factionFirst != null) && (firstM != null)
                 && (firstF != null) && (last != null)) {
-            // this is a total hack, but for now lets assume that
-            // if the chosenFaction name contains the word "clan"
-            // we should only spit out first names
-            boolean isClan = chosenFaction.toLowerCase().contains("clan");
-
             Vector<String> ethnicities = factionLast.get(chosenFaction);
             if ((null != ethnicities) && (ethnicities.size() > 0)) {
                 String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
@@ -433,12 +398,12 @@ public class RandomNameGenerator implements Serializable {
     }
 
     public static void initialize() {
-        if ((rng != null) && (rng.surnames != null)) {
+        if ((rng != null) && (rng.factionSurnames != null)) {
             return;
-        }
-        if (null == rng) {
+        } else if (null == rng) {
             rng = new RandomNameGenerator();
         }
+
         if (!rng.initialized && !rng.initializing) {
             rng.loader = new Thread(() -> {
                 rng.initializing = true;

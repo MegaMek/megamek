@@ -621,17 +621,13 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
      */
     @Override
     protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage();
+        double toReturn = wtype.getDamage();
         // area effect damage is double
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn /= 0.5;
         }
 
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
-
-        // System.err.println("Attack is doing " + toReturn + " damage.");
+        toReturn = applyGlancingBlowModifier(toReturn, false);
 
         return (int) Math.ceil(toReturn);
     }

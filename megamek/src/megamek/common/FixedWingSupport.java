@@ -378,7 +378,8 @@ public class FixedWingSupport extends ConvFighter {
             }
         }
         paWeight = Math.ceil(paWeight * 2) / 2;
-        if(hasEngine() && getEngine().isFusion()) {
+        if ((hasEngine() && (getEngine().isFusion() || getEngine().getEngineType() == Engine.FISSION))
+                || getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             paWeight = 0;
         }
         costs[i++] = 20000 * paWeight;
@@ -397,23 +398,28 @@ public class FixedWingSupport extends ConvFighter {
             costs[i++] = 0;
         }
 
-        double multiplier = 1.0;
-        switch (movementMode) {
-            case AERODYNE:
-                multiplier += weight / 50.0;
-                break;
-            case AIRSHIP:
-                multiplier += weight / 10000;
-                break;
-            case STATION_KEEPING:
-                multiplier += weight / 75.0;
-                break;
-        }
-        cost *= multiplier;
-        costs[i++] = -multiplier;
+        cost *= getPriceMultiplier();
+        costs[i++] = -getPriceMultiplier();
 
         addCostDetails(cost, costs);
         return Math.round(cost);
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        double priceMultiplier = 1.0;
+        switch (movementMode) {
+            case AERODYNE:
+                priceMultiplier = 1 + weight / 50.0;
+                break;
+            case AIRSHIP:
+                priceMultiplier = 1 + weight / 10000;
+                break;
+            case STATION_KEEPING:
+                priceMultiplier = 1 + weight / 75.0;
+                break;
+        }
+        return priceMultiplier;
     }
 
     private void addCostDetails(double cost, double[] costs) {

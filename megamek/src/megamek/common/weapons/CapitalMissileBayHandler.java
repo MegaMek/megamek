@@ -107,13 +107,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         //Point Defense fire vs Capital Missiles
         
         // are we a glancing hit?  Check for this here, report it later
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-            } else {
-                bGlancing = false;
-            }
-        }
+            setGlancingBlowFlags(entityTarget);
         
         // Set Margin of Success/Failure and check for Direct Blows
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -187,18 +181,15 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         bMissed = roll < toHit.getValue();
 
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
-        if ((bGlancing) && !(amsBayEngagedCap || pdBayEngagedCap)) {
-            r = new Report(3186);
-            r.subject = ae.getId();
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-        } 
-
-        if ((bDirect) && !(amsBayEngagedCap || pdBayEngagedCap)) {
-            r = new Report(3189);
-            r.subject = ae.getId();
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
+        if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+            addGlancingBlowReports(vPhaseReport);
+    
+            if (bDirect) {
+                r = new Report(3189);
+                r.subject = ae.getId();
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
         }
         
         CounterAV = getCounterAV();
@@ -368,9 +359,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             if (bDirect) {
                 av = Math.min(av + (toHit.getMoS() / 3), av * 2);
             }
-            if (bGlancing) {
-                av = (int) Math.floor(av / 2.0);
-            }
+            av = applyGlancingBlowModifier(av, false);
             av = (int) Math.floor(getBracketingMultiplier() * av);
             return (int) Math.ceil(av);
         // }
@@ -598,13 +587,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         vPhaseReport.addElement(r);
         
         // are we a glancing hit?  Check for this here, report it later
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-            } else {
-                bGlancing = false;
-            }
-        }
+        setGlancingBlowFlags(entityTarget);
         
         // Set Margin of Success/Failure and check for Direct Blows
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -684,18 +667,15 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         bMissed = roll < toHit.getValue();
 
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
-        if ((bGlancing) && !(amsBayEngagedCap || pdBayEngagedCap)) {
-            r = new Report(3186);
-            r.subject = ae.getId();
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-        } 
-
-        if ((bDirect) && !(amsBayEngagedCap || pdBayEngagedCap)) {
-            r = new Report(3189);
-            r.subject = ae.getId();
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
+        if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+            addGlancingBlowReports(vPhaseReport);
+    
+            if (bDirect) {
+                r = new Report(3189);
+                r.subject = ae.getId();
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
         }
         
         //use this if AMS counterfire destroys all the Capital missiles

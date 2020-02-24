@@ -5457,7 +5457,7 @@ public abstract class Mech extends Entity {
         for (int x = 0; x < i; x++) {
             cost += costs[x];
         }
-
+        // TODO Decouple cost calculation from addCostDetails and eliminate duplicate code in getPriceMultiplier
         double quirkMultiplier = 0;
         if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_1)) {
         	quirkMultiplier = 1.1f;
@@ -5483,6 +5483,28 @@ public abstract class Mech extends Entity {
         cost = Math.round(cost * weightMultiplier);
         addCostDetails(cost, costs);
         return cost;
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        double priceMultiplier = 1.0f;
+        if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_1)) {
+            priceMultiplier *= 1.1f;
+        } else if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_2)) {
+            priceMultiplier *= 1.25f;
+        }
+        // TODO Negative price quirks (Bad Reputation)
+
+        if (isOmni()) {
+            priceMultiplier *= 1.25f;
+        }
+
+        // Weight multiplier
+        priceMultiplier *= 1 + (weight / 100f);
+        if (isIndustrial()) {
+            priceMultiplier = 1 + (weight / 400f);
+        }
+        return priceMultiplier;
     }
 
     @Override

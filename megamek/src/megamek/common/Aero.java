@@ -2912,16 +2912,17 @@ public class Aero extends Entity implements IAero, IBomber {
         // weapons
         cost += getWeaponsAndEquipmentCost(ignoreAmmo);
 
-        // omni multiplier
-        double omniMultiplier = 1;
+        return Math.round(cost * getPriceMultiplier());
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        double priceModifier = 1.0;
         if (isOmni()) {
-            omniMultiplier = 1.25f;
+            priceModifier *= 1.25f;
         }
-
-        double weightMultiplier = 1 + (weight / 200f);
-
-        return Math.round(cost * omniMultiplier * weightMultiplier);
-
+        priceModifier *= 1 + (weight / 200f);
+        return priceModifier;
     }
 
     @Override

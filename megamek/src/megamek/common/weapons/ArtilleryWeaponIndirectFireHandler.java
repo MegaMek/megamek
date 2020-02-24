@@ -482,7 +482,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        float toReturn = wtype.rackSize;
+        double toReturn = wtype.rackSize;
         if (wtype instanceof CapitalMissileWeapon) {
             toReturn = wtype.getRoundShortAV();
         }
@@ -493,15 +493,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             toReturn *= ba.getNumberActiverTroopers();
         }
         // area effect damage is double
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn /= 0.5;
         }
 
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
-
-        // System.err.println("Attack is doing " + toReturn + " damage.");
+        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
 
         return (int) Math.ceil(toReturn);
     }

@@ -89,16 +89,16 @@ public class CLIATMHandler extends ATMHandler {
             toReturn = 2;
         }
 
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
                     wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            if (bGlancing) {
-                toReturn /= 2; // Is this correct for partial streak missiles??
-                // it seems as if this only affects infantry -
-                // I'm going to ignore this.
+            
+            // some question here about "partial streak missiles"
+            if(streakInactive()) {
+                toReturn = applyGlancingBlowModifier(toReturn, true);
             }
         }
 
@@ -254,6 +254,10 @@ public class CLIATMHandler extends ATMHandler {
         // streak is deactivated by AECM - at least if the Streak Handler is
         // correct.
         if (bGlancing && streakInactive()) {
+            nMissilesModifier -= 4;
+        }
+        
+        if (bLowProfileGlancing && streakInactive()) {
             nMissilesModifier -= 4;
         }
 
@@ -548,19 +552,8 @@ public class CLIATMHandler extends ATMHandler {
             bMissed = roll < toHit.getValue();
 
             // are we a glancing hit?
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-                if (roll == toHit.getValue()) {
-                    bGlancing = true;
-                    r = new Report(3186);
-                    r.subject = subjectId;
-                    r.newlines = 0;
-                    vPhaseReport.addElement(r);
-                } else {
-                    bGlancing = false;
-                }
-            } else {
-                bGlancing = false;
-            }
+            setGlancingBlowFlags(entityTarget);
+            addGlancingBlowReports(vPhaseReport);
 
             // Set Margin of Success/Failure.
             toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -733,19 +726,8 @@ public class CLIATMHandler extends ATMHandler {
             bMissed = roll < toHit.getValue();
 
             // are we a glancing hit?
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-                if (roll == toHit.getValue()) {
-                    bGlancing = true;
-                    r = new Report(3186);
-                    r.subject = subjectId;
-                    r.newlines = 0;
-                    vPhaseReport.addElement(r);
-                } else {
-                    bGlancing = false;
-                }
-            } else {
-                bGlancing = false;
-            }
+            setGlancingBlowFlags(entityTarget);
+            addGlancingBlowReports(vPhaseReport);
 
             // Set Margin of Success/Failure.
             toHit.setMoS(roll - Math.max(2, toHit.getValue()));

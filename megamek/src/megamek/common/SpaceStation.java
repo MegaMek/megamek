@@ -160,21 +160,21 @@ public class SpaceStation extends Jumpship {
         // Weapons and Equipment
         costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
-        double weightMultiplier = 5.00f;
-        if (modular) {
-            weightMultiplier = 50.00f;
-        }
-
         // Sum Costs
         for (int i = 0; i < costIdx; i++) {
             cost += costs[i];
         }
 
-        costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
-        cost = Math.round(cost * weightMultiplier);
+        costs[costIdx++] = -getPriceMultiplier(); // Negative indicates multiplier
+        cost = Math.round(cost * getPriceMultiplier());
         addCostDetails(cost, costs);
         return cost;
 
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        return modular ? 50.0 : 5.0; // weight multiplier
     }
 
     private void addCostDetails(double cost, double[] costs) {

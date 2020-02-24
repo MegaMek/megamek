@@ -83,9 +83,15 @@ public class InfantryWeaponHandler extends WeaponHandler {
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         int nHitMod = 0;
+        
         if (bGlancing) {
             nHitMod -= 4;
         }
+        
+        if(this.bLowProfileGlancing) {
+            nHitMod -= 4;
+        }
+        
         int troopersHit = 0;
         //when swarming all troopers hit
         if (ae.getSwarmTargetId() == target.getTargetId()) {
@@ -94,7 +100,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             troopersHit = 1;
         } else {
             troopersHit = Compute.missilesHit(((Infantry) ae)
-                .getShootingStrength(), nHitMod, bGlancing);
+                .getShootingStrength(), nHitMod);
         }
         double damage = ((InfantryWeapon)wtype).getInfantryDamage();
         if((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
@@ -165,9 +171,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if(bDirect) {
             av = Math.min(av+(toHit.getMoS()/3), av*2);
         }
-        if(bGlancing) {
-            av = (int) Math.floor(av / 2.0);
-        }
+        av = applyGlancingBlowModifier(av, false);
         return av;
     }
 

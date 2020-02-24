@@ -206,8 +206,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
 
-        if (bGlancing && (howManyShots == 1 || twoRollsUltra)) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
+        if (howManyShots == 1 || twoRollsUltra) {
+            toReturn = applyGlancingBlowModifier(toReturn, false);
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)

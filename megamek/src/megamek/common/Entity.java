@@ -10525,6 +10525,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public abstract double getCost(boolean ignoreAmmo);
 
+    /**
+     * Returns a multiplier that combines multiplicative construction cost modifiers for this Entity.
+     *
+     * This includes only modifiers that apply to an Entity's final, total cost (e.g. - the 1.25x modifier for being
+     * an omni-unit, or the 32.0x for being an aerodyne dropship). It does NOT include multipliers that only apply to
+     * a sub-part of the unit (e.g. the weight based multiplier that applies to a vehicle's internal structure cost).
+     *
+     * This allows MekHQ to scale the price of a Unit's Parts in a more appropriate manner.
+     *
+     * Defaults to 1.0
+     */
+    public double getPriceMultiplier() {
+        return 1.0;
+    };
+
     public long getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
         // bvText = new StringBuffer();
         long cost = 0;
@@ -10573,22 +10588,47 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
         if (isSupportVehicle()) {
-            for (Transporter t : getTransports()) {
-                int seatCost = 0;
-                if (t instanceof PillionSeatCargoBay) {
-                    seatCost += 10;
-                } else if (t instanceof StandardSeatCargoBay) {
-                    seatCost += 100;
+            long seatCost = 0;
+            long quartersCost = 0;
+            long bayCost = 0;
+            for (Bay bay : getTransportBays()) {
+                if (bay instanceof StandardSeatCargoBay) {
+                    seatCost += bay.getCost();
+                } else if (bay.isQuarters()) {
+                    quartersCost += bay.getCost();
+                } else {
+                    bayCost += bay.getCost() + 1000L * bay.getDoors();
                 }
-                if (seatCost > 0) {
-                    bvText.append(startColumn);
-                    bvText.append("Seating");
-                    bvText.append(endColumn);
-                    bvText.append(startColumn);
-                    bvText.append(commafy.format(seatCost));
-                    bvText.append(endColumn);
-                    bvText.append(endRow);
-                }
+            }
+            if (null != bvText && seatCost > 0) {
+                bvText.append(startColumn);
+                bvText.append("Seating");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(commafy.format(seatCost));
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                cost += seatCost;
+            }
+            if (null != bvText && quartersCost > 0) {
+                bvText.append(startColumn);
+                bvText.append("Quarters");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(commafy.format(quartersCost));
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                cost += quartersCost;
+            }
+            if (null != bvText && bayCost > 0) {
+                bvText.append(startColumn);
+                bvText.append("Bays");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(commafy.format(bayCost));
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                cost += bayCost;
             }
         }
         return cost;
@@ -15327,7 +15367,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             }
             for (Transporter t : e.getTransports()) {
-                if (t.canLoad(trailer)) {
+                if (t.canTow(trailer)) {
                     result = true;
                     hitchFound = true;
                     //stop looking

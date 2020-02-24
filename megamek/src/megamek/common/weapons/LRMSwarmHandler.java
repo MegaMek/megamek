@@ -134,19 +134,8 @@ public class LRMSwarmHandler extends LRMHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-                r = new Report(3186);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                bGlancing = false;
-            }
-        } else {
-            bGlancing = false;
-        }
+        setGlancingBlowFlags(entityTarget);
+        addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -340,7 +329,7 @@ public class LRMSwarmHandler extends LRMHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             int missiles = waa.isSwarmingMissiles() ? waa.getSwarmMissiles()
                     : wtype.getRackSize();
             double toReturn = Compute.directBlowInfantryDamage(
@@ -348,10 +337,9 @@ public class LRMSwarmHandler extends LRMHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            if (bGlancing) {
-                toReturn /= 2;
-            }
-            return (int) Math.floor(toReturn);
+            
+            toReturn = applyGlancingBlowModifier(toReturn, true);
+            return (int) toReturn;
         }
         return 1;
     }

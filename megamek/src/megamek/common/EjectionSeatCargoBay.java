@@ -56,6 +56,11 @@ public final class EjectionSeatCargoBay extends StandardSeatCargoBay {
     }
 
     @Override
+    public long getCost() {
+        return 25000 * (long) totalSpace;
+    }
+
+    @Override
     public TechAdvancement getTechAdvancement() {
         return EjectionSeatCargoBay.techAdvancement();
     }

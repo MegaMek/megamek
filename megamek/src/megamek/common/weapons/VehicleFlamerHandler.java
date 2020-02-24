@@ -112,7 +112,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         double toReturn;
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             if (ae instanceof BattleArmor) {
                 toReturn = Compute.d6(3);
             } else if ((wtype instanceof ISHeavyFlamer)
@@ -128,9 +128,8 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 toReturn /= 2;
             }
-            if (bGlancing) {
-                toReturn = Math.ceil(toReturn / 2.0);
-            }
+
+            toReturn = applyGlancingBlowModifier(toReturn, true);
         } else {
             toReturn = super.calcDamagePerHit();
         }

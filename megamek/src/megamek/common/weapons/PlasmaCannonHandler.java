@@ -284,7 +284,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             return 0;
         }
         int toReturn = 1;
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn = Compute.d6(3);
             // pain shunted infantry get half damage
             if (bDirect) {
@@ -296,9 +296,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
+        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
         return toReturn;
     }
 

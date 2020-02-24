@@ -219,7 +219,7 @@ task createOSXBundle (dependsOn: jar) {
                 mainClass: project.mainClassName,
                 stubfile: osxApplicationStub,
                 dir: osxBundleDir,
-                jar: "${jar.destinationDirectory}/${jar.archiveFileName}",
+                jar: "${jar.destinationDirectory.get()}/${jar.archiveFileName.get()}",
                 jvmversion: '1.8+',
                 icon: "${projectDir}/${data}/images/misc/megamek.icns",
                 useJavaXKey: 'true',

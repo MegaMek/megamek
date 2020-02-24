@@ -807,6 +807,11 @@ public class TestSupportVehicle extends TestEntity {
                     weight += m.getLinkedBy().getType().getTonnage(supportVee);
                 }
             }
+            for (Mounted m : supportVee.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
+                    weight += m.getType().getTonnage(supportVee);
+                }
+            }
             return ceilWeight(weight / 10);
         }
         return 0.0;
@@ -1006,6 +1011,15 @@ public class TestSupportVehicle extends TestEntity {
                 && (weaponWeight / 10.0 > supportVee.getBaseChassisFireConWeight())) {
             buff.append("Omni configuration exceeds weapon capacity of base chassis fire control system.\n");
             correct = false;
+        }
+        if (supportVee instanceof Tank) {
+            for (Mounted m : supportVee.getEquipment()) {
+                if (!TestTank.legalForMotiveType(m.getType(), supportVee.getMovementMode())) {
+                    buff.append(m.getType().getName()).append(" is incompatible with ")
+                            .append(supportVee.getMovementModeAsString());
+                    correct = false;
+                }
+            }
         }
         for (int loc = 0; loc < supportVee.locations(); loc++) {
             int count = 0;

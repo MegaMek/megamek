@@ -713,10 +713,13 @@ public class SmallCraft extends Aero {
         // weapons
         cost += getWeaponsAndEquipmentCost(ignoreAmmo);
 
-        double weightMultiplier = 1 + (weight / 50f);
+        return Math.round(cost * getPriceMultiplier());
 
-        return Math.round(cost * weightMultiplier);
+    }
 
+    @Override
+    public double getPriceMultiplier() {
+        return 1 + (weight / 50f);
     }
 
     @Override

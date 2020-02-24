@@ -93,10 +93,34 @@ public class RandomNameGenerator implements Serializable {
 
     private static RandomNameGenerator rng;
 
+    /**
+     * femaleGivenNames, maleGivenNames, and surnames contain values in the following format:
+     * Map<Integer Ethnic Code, WeightedMap<String Name>>
+     * The ethnic code is an Integer value that is used to determine the ethnicity of the name, while
+     * the name is a String value. The name is stored in a WeightedMap for each ethnic code to ensure
+     * that there is a range from common to rare names. This is determined based on the input weights
+     */
     private static Map<Integer, WeightedMap<String>> femaleGivenNames;
     private static Map<Integer, WeightedMap<String>> maleGivenNames;
     private static Map<Integer, WeightedMap<String>> surnames;
+
+    /**
+     * factionGivenNames contains values in the following format:
+     * Map<String Faction Name, Map<Integer Surname Ethnic Code, WeightedMap<Integer Given Name Ethnic Code>>>
+     * The faction name is the key to determining which list of names should be used, with the default being "General"
+     * The Surname Ethnic Code is the code that the surname will be generated from
+     * The Given Name Ethnic Code is the code to generate the given name from, from the femaleGivenNames or maleGivenNames
+     * maps, and this is weighted to ensure that more common pairings are more common
+     */
     private static Map<String, Map<Integer, WeightedMap<Integer>>> factionGivenNames;
+
+    /**
+     * factionEthnicCodes contains values in the following format:
+     * Map<String Faction Name, WeightedMap<Integer Surname Ethnic Code>>
+     * The faction name is the key to determining which list of names should be used, with the default being "General"
+     * The Surname Ethnic Code is the code that the surname will be generated from, and
+     * this is weighted to ensure that more common pairings for the faction are more common
+     */
     private static Map<String, WeightedMap<Integer>> factionEthnicCodes;
 
     private int percentFemale;

@@ -129,7 +129,6 @@ public class RandomNameGenerator implements Serializable {
             factionFirst = new HashMap<>();
         }
 
-
         int lineNumber = 0;
 
         // READ IN MALE FIRST NAMES
@@ -353,6 +352,52 @@ public class RandomNameGenerator implements Serializable {
             }
         }
         return "Unnamed";
+    }
+
+    /**
+     * Generate a single random name split between a given name and surname
+     *
+     * @return - a String[] containing the name,
+     *              with the given name at String[0]
+     *              and the surname at String[1]
+     */
+    public String[] generateGivenNameSurnameSplit(boolean isFemale) {
+        String[] name = {"", ""};
+        if ((chosenFaction != null) && (factionLast != null)
+                && (factionFirst != null) && (firstM != null)
+                && (firstF != null) && (last != null)) {
+            // this is a total hack, but for now lets assume that
+            // if the chosenFaction name contains the word "clan"
+            // we should only spit out first names
+            boolean isClan = chosenFaction.toLowerCase().contains("clan");
+
+            Vector<String> ethnicities = factionLast.get(chosenFaction);
+            if ((null != ethnicities) && (ethnicities.size() > 0)) {
+                String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
+                // ok now we need to decide on a first name list
+                ethnicities = factionFirst.get(chosenFaction).get(eLast);
+                if ((null != ethnicities) && (ethnicities.size() > 0)) {
+                    String eFirst = ethnicities.get(Compute.randomInt(ethnicities.size()));
+                    // ok now we can get the first and last name vectors
+                    if (isClan) {
+                        eFirst = eLast;
+                    }
+                    Vector<String> firstNames = isFemale ? firstF.get(eFirst) : firstM.get(eFirst);
+                    Vector<String> lastNames = last.get(eLast);
+                    if ((null != firstNames) && (null != lastNames)
+                            && (firstNames.size() > 0) && (lastNames.size() > 0)) {
+                        name[0] = firstNames.get(Compute.randomInt(firstNames.size()));
+                        if (!isClan) {
+                            name[1] = lastNames.get(Compute.randomInt(lastNames.size()));
+                        }
+                    }
+                }
+            }
+        } else {
+            name[0] = "Unnamed";
+            name[1] = "Person";
+        }
+        return name;
     }
 
     public Iterator<String> getFactions() {

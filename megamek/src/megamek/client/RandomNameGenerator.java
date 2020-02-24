@@ -93,15 +93,10 @@ public class RandomNameGenerator implements Serializable {
 
     private static RandomNameGenerator rng;
 
-    Map<String, Vector<String>> firstM;
-    Map<String, Vector<String>> firstF;
-    Map<String, Vector<String>> last;
-    Map<String, Vector<String>> factionLast;
-    Map<String, Map<String, Vector<String>>> factionFirst;
-
     Map<String, Map<Integer, WeightedMap<WeightedMap<String>>>> factionMaleGivenNames;
     Map<String, Map<Integer, WeightedMap<WeightedMap<String>>>> factionFemaleGivenNames;
-    Map<String, WeightedMap<WeightedMap<String>>> factionSurnames;
+    Map<Integer, WeightedMap<String>> surnames;
+    Map<String, WeightedMap<Integer>> factionEthnicCodes;
 
     private int percentFemale;
     private String chosenFaction;
@@ -117,6 +112,7 @@ public class RandomNameGenerator implements Serializable {
         chosenFaction = "General";
     }
 
+    //region Name Generators
     /**
      * Generate a single random name
      *
@@ -139,87 +135,77 @@ public class RandomNameGenerator implements Serializable {
     /**
      * Generate a single random name
      *
+     * @param isFemale true if the name should be female, otherwise false
+     * @param isClan true if the name should be for a clanner, otherwise false
      * @return - a string containing the randomly generated name
      */
     public String generate(boolean isFemale, boolean isClan) {
-        if ((null != chosenFaction) && (null != factionLast)
-                && (null != factionFirst) && (null != firstM)
-                && (null != firstF) && (null != last)) {
+        return generate(isFemale, isClan, chosenFaction);
+    }
 
-            Vector<String> ethnicities = factionLast.get(chosenFaction);
-            if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
-                // ok now we need to decide on a first name list
-                ethnicities = factionFirst.get(chosenFaction).get(eLast);
-                if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                    String eFirst = ethnicities.get(Compute.randomInt(ethnicities.size()));
-                    // ok now we can get the first and last name vectors
-                    if (isClan) {
-                        eFirst = eLast;
-                    }
-                    Vector<String> firstNames = isFemale ? firstF.get(eFirst) : firstM.get(eFirst);
-                    Vector<String> lastNames = last.get(eLast);
-                    if ((null != firstNames) && (null != lastNames)
-                            && (firstNames.size() > 0) && (lastNames.size() > 0)) {
-                        String first = firstNames.get(Compute.randomInt(firstNames.size()));
-                        String last = lastNames.get(Compute.randomInt(lastNames.size()));
-                        if (isClan) {
-                            return first;
-                        }
-                        return first + " " + last;
-                    }
-                }
+    /**
+     * Generate a single random name
+     *
+     * @param isFemale true if the name should be female, otherwise false
+     * @param isClan true if the name should be for a clanner, otherwise false
+     * @param faction a string containing the faction list to generate the name for. If the faction
+     *                is not a key for the <code>factionSurnames</code> Map, it will instead generate based on the
+     *                General list
+     * @return - a string containing the randomly generated name
+     */
+    public String generate(boolean isFemale, boolean isClan, String faction) {
+        String name = "Unnamed";
+        if (initialized) {
+            faction = factionEthnicCodes.containsKey(faction) ? faction : "General";
+            int ethnicCode = factionEthnicCodes.get(faction).randomItem();
+
+            name = isFemale
+                    ? factionFemaleGivenNames.get(faction).get(ethnicCode).randomItem().randomItem()
+                    : factionMaleGivenNames.get(faction).get(ethnicCode).randomItem().randomItem();
+
+            if (!isClan) {
+                name += " " + surnames.get(ethnicCode).randomItem();
             }
         }
-        return "Unnamed";
+        return name;
     }
 
     /**
      * Generate a single random name split between a given name and surname
      *
+     * @param isFemale true if the name should be female, otherwise false
+     * @param isClan true if the name should be for a clanner, otherwise false
      * @return - a String[] containing the name,
      *              with the given name at String[0]
      *              and the surname at String[1]
      */
     public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan) {
-        String[] name = { "", "" };
-        if ((chosenFaction != null) && (factionLast != null)
-                && (factionFirst != null) && (firstM != null)
-                && (firstF != null) && (last != null)) {
-            Vector<String> ethnicities = factionLast.get(chosenFaction);
-            if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
-                // ok now we need to decide on a first name list
-                ethnicities = factionFirst.get(chosenFaction).get(eLast);
-                if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                    String eFirst = ethnicities.get(Compute.randomInt(ethnicities.size()));
-                    // ok now we can get the first and last name vectors
-                    if (isClan) {
-                        eFirst = eLast;
-                    }
-                    Vector<String> firstNames = isFemale ? firstF.get(eFirst) : firstM.get(eFirst);
-                    Vector<String> lastNames = last.get(eLast);
-                    if ((null != firstNames) && (null != lastNames)
-                            && (firstNames.size() > 0) && (lastNames.size() > 0)) {
-                        name[0] = firstNames.get(Compute.randomInt(firstNames.size()));
-                        if (!isClan) {
-                            name[1] = lastNames.get(Compute.randomInt(lastNames.size()));
-                        }
-                    }
-                }
+        return generateGivenNameSurnameSplit(isFemale, isClan, chosenFaction);
+    }
+
+    public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan, String faction) {
+        String[] name = { "Unnamed", "Person" };
+        if (initialized) {
+            faction = factionEthnicCodes.containsKey(faction) ? faction : "General";
+            int ethnicCode = factionEthnicCodes.get(faction).randomItem();
+
+            name[0] = isFemale
+                    ? factionFemaleGivenNames.get(faction).get(ethnicCode).randomItem().randomItem()
+                    : factionMaleGivenNames.get(faction).get(ethnicCode).randomItem().randomItem();
+
+            if (!isClan) {
+                name[1] = surnames.get(ethnicCode).randomItem();
             }
-        } else {
-            name[0] = "Unnamed";
-            name[1] = "Person";
         }
         return name;
     }
+    //endregion Name Generators
 
     public Iterator<String> getFactions() {
-        if (null == factionLast) {
+        if (null == factionEthnicCodes) {
             return null;
         }
-        return factionLast.keySet().iterator();
+        return factionEthnicCodes.keySet().iterator();
     }
 
     public String getChosenFaction() {
@@ -256,7 +242,7 @@ public class RandomNameGenerator implements Serializable {
 
     //region Initialization
     public static void initialize() {
-        if ((rng != null) && (rng.factionSurnames != null)) {
+        if ((rng != null) && (rng.factionEthnicCodes != null)) {
             return;
         } else if (null == rng) {
             rng = new RandomNameGenerator();
@@ -283,11 +269,11 @@ public class RandomNameGenerator implements Serializable {
         //region Map Instantiation
         Map<Integer, WeightedMap<String>> maleGivenNames = new HashMap<>();
         Map<Integer, WeightedMap<String>> femaleGivenNames = new HashMap<>();
-        Map<Integer, WeightedMap<String>> surnames = new HashMap<>();
 
         factionMaleGivenNames = new HashMap<>();
         factionFemaleGivenNames = new HashMap<>();
-        factionSurnames = new HashMap<>();
+        surnames = new HashMap<>();
+        factionEthnicCodes = new HashMap<>();
 
         // Determine the number of ethnic codes
         File masterAncestryFile = new MegaMekFile(Configuration.namesDir(), FILENAME_MASTER_ANCESTRY).getFile();
@@ -331,7 +317,7 @@ public class RandomNameGenerator implements Serializable {
             // Initialize Maps
             factionMaleGivenNames.put(key, new HashMap<>());
             factionFemaleGivenNames.put(key, new HashMap<>());
-            factionSurnames.put(key, new WeightedMap<>());
+            factionEthnicCodes.put(key, new WeightedMap<>());
 
             // Add information to maps
             for (int i = 0; i <= numEthnicCodes; i++) {
@@ -339,7 +325,7 @@ public class RandomNameGenerator implements Serializable {
                 factionMaleGivenNames.get(key).get(i).add(1, maleGivenNames.get(i));
                 factionFemaleGivenNames.get(key).put(i, new WeightedMap<>());
                 factionFemaleGivenNames.get(key).get(i).add(1, femaleGivenNames.get(i));
-                factionSurnames.get(key).add(1, surnames.get(i));
+                factionEthnicCodes.get(key).add(1, i);
             }
             //endregion No Factions Specified
         } else {
@@ -347,15 +333,16 @@ public class RandomNameGenerator implements Serializable {
                 // Determine the key based on the file name
                 String key = filename.split("\\.txt")[0];
 
-                // Just check with surnames, as if it has the key then the other two do
-                if ((key.length() < 1) || factionSurnames.containsKey(key)) {
+                // Just check with the ethnic codes, as if it has the key then the two names
+                // maps do
+                if ((key.length() < 1) || factionEthnicCodes.containsKey(key)) {
                     continue;
                 }
 
                 // Initialize Maps
                 factionMaleGivenNames.put(key, new HashMap<>());
                 factionFemaleGivenNames.put(key, new HashMap<>());
-                factionSurnames.put(key, new WeightedMap<>());
+                factionEthnicCodes.put(key, new WeightedMap<>());
 
                 File factionFile = new MegaMekFile(factionsDir, filename).getFile();
                 try (InputStream is = new FileInputStream(factionFile);
@@ -377,8 +364,7 @@ public class RandomNameGenerator implements Serializable {
                                     Integer.parseInt(values[i + 2]), femaleGivenNames.get(i));
                         }
 
-                        factionSurnames.get(key).add(Integer.parseInt(values[2]),
-                                surnames.get(ethnicCode));
+                        factionEthnicCodes.get(key).add(Integer.parseInt(values[2]), ethnicCode);
                     }
                 } catch (IOException fne) {
                     System.err.println("RandomNameGenerator.populateNames(): Could not find '" + factionFile + "'");

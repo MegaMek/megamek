@@ -93,16 +93,16 @@ public class RandomNameGenerator implements Serializable {
 
     private static RandomNameGenerator rng;
 
-    Map<String, Map<Integer, WeightedMap<WeightedMap<String>>>> factionMaleGivenNames;
-    Map<String, Map<Integer, WeightedMap<WeightedMap<String>>>> factionFemaleGivenNames;
-    Map<Integer, WeightedMap<String>> surnames;
-    Map<String, WeightedMap<Integer>> factionEthnicCodes;
+    private static Map<String, Map<Integer, WeightedMap<WeightedMap<String>>>> factionMaleGivenNames;
+    private static Map<String, Map<Integer, WeightedMap<WeightedMap<String>>>> factionFemaleGivenNames;
+    private static Map<Integer, WeightedMap<String>> surnames;
+    private static Map<String, WeightedMap<Integer>> factionEthnicCodes;
 
     private int percentFemale;
     private String chosenFaction;
     private Thread loader;
-    private boolean initialized;
-    private boolean initializing;
+    private static boolean initialized;
+    private static boolean initializing;
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     //endregion Variable Declarations
@@ -149,8 +149,8 @@ public class RandomNameGenerator implements Serializable {
      * @param isFemale true if the name should be female, otherwise false
      * @param isClan true if the name should be for a clanner, otherwise false
      * @param faction a string containing the faction list to generate the name for. If the faction
-     *                is not a key for the <code>factionSurnames</code> Map, it will instead generate based on the
-     *                General list
+     *                is not a key for the <code>factionSurnames</code> Map, it will instead generate
+     *                based on the General list
      * @return - a string containing the randomly generated name
      */
     public String generate(boolean isFemale, boolean isClan, String faction) {
@@ -242,15 +242,15 @@ public class RandomNameGenerator implements Serializable {
 
     //region Initialization
     public static void initialize() {
-        if ((rng != null) && (rng.factionEthnicCodes != null)) {
+        if (rng != null) {
             return;
-        } else if (null == rng) {
-            rng = new RandomNameGenerator();
         }
 
-        if (!rng.initialized && !rng.initializing) {
+        rng = new RandomNameGenerator();
+
+        if (!initialized && !initializing) {
             rng.loader = new Thread(() -> {
-                rng.initializing = true;
+                initializing = true;
                 rng.populateNames();
                 if (rng != null) {
                     rng.setInitialized();
@@ -307,7 +307,7 @@ public class RandomNameGenerator implements Serializable {
         File factionsDir = new MegaMekFile(Configuration.namesDir(), DIR_NAME_FACTIONS).getFile();
         String[] fileNames = factionsDir.list();
 
-        if (fileNames == null) {
+        if ((fileNames == null) || (fileNames.length == 0)) {
             //region No Factions Specified
             System.err.println("RandomNameGenerator.populateNames(): No faction files found!");
             // We will create a general list where everything is weighted at one to allow player to
@@ -406,7 +406,7 @@ public class RandomNameGenerator implements Serializable {
     }
 
     protected void setInitialized() {
-        pcs.firePropertyChange(PROP_INITIALIZED, this.initialized, this.initialized = true);
+        pcs.firePropertyChange(PROP_INITIALIZED, initialized, initialized = true);
     }
 
     public boolean isInitialized() {

@@ -1,7 +1,7 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2020 - MegaMek team
+ * Copyright (C) 2020 - The MegaMek Team
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -72,6 +72,7 @@ import megamek.common.util.WeightedMap;
  * @author Jay Lawson
  */
 public class RandomNameGenerator implements Serializable {
+    //region Variable Declarations
     private static final String PROP_INITIALIZED = "initialized";
 
     /** Default directory containing the faction-specific name files. */
@@ -109,10 +110,169 @@ public class RandomNameGenerator implements Serializable {
     private boolean initializing;
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    //endregion Variable Declarations
 
     public RandomNameGenerator() {
         percentFemale = 50;
         chosenFaction = "General";
+    }
+
+    /**
+     * Generate a single random name
+     *
+     * @return - a string giving the name
+     */
+    @Deprecated //17-Feb-2020 as part of the addition of gender tracking to MegaMek
+    public String generate() {
+        return generate(isFemale());
+    }
+
+    @Deprecated //24-Feb-2020, this is included to keep current functionality working while other
+                //improvements are being finished
+    public String generate(boolean isFemale) {
+        // this is a total hack, but for now lets assume that
+        // if the chosenFaction name contains the word "clan"
+        // we should only spit out first names
+        return generate(isFemale, chosenFaction.toLowerCase().contains("clan"));
+    }
+
+    /**
+     * Generate a single random name
+     *
+     * @return - a string containing the randomly generated name
+     */
+    public String generate(boolean isFemale, boolean isClan) {
+        if ((null != chosenFaction) && (null != factionLast)
+                && (null != factionFirst) && (null != firstM)
+                && (null != firstF) && (null != last)) {
+
+            Vector<String> ethnicities = factionLast.get(chosenFaction);
+            if ((null != ethnicities) && (ethnicities.size() > 0)) {
+                String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
+                // ok now we need to decide on a first name list
+                ethnicities = factionFirst.get(chosenFaction).get(eLast);
+                if ((null != ethnicities) && (ethnicities.size() > 0)) {
+                    String eFirst = ethnicities.get(Compute.randomInt(ethnicities.size()));
+                    // ok now we can get the first and last name vectors
+                    if (isClan) {
+                        eFirst = eLast;
+                    }
+                    Vector<String> firstNames = isFemale ? firstF.get(eFirst) : firstM.get(eFirst);
+                    Vector<String> lastNames = last.get(eLast);
+                    if ((null != firstNames) && (null != lastNames)
+                            && (firstNames.size() > 0) && (lastNames.size() > 0)) {
+                        String first = firstNames.get(Compute.randomInt(firstNames.size()));
+                        String last = lastNames.get(Compute.randomInt(lastNames.size()));
+                        if (isClan) {
+                            return first;
+                        }
+                        return first + " " + last;
+                    }
+                }
+            }
+        }
+        return "Unnamed";
+    }
+
+    /**
+     * Generate a single random name split between a given name and surname
+     *
+     * @return - a String[] containing the name,
+     *              with the given name at String[0]
+     *              and the surname at String[1]
+     */
+    public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan) {
+        String[] name = { "", "" };
+        if ((chosenFaction != null) && (factionLast != null)
+                && (factionFirst != null) && (firstM != null)
+                && (firstF != null) && (last != null)) {
+            Vector<String> ethnicities = factionLast.get(chosenFaction);
+            if ((null != ethnicities) && (ethnicities.size() > 0)) {
+                String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
+                // ok now we need to decide on a first name list
+                ethnicities = factionFirst.get(chosenFaction).get(eLast);
+                if ((null != ethnicities) && (ethnicities.size() > 0)) {
+                    String eFirst = ethnicities.get(Compute.randomInt(ethnicities.size()));
+                    // ok now we can get the first and last name vectors
+                    if (isClan) {
+                        eFirst = eLast;
+                    }
+                    Vector<String> firstNames = isFemale ? firstF.get(eFirst) : firstM.get(eFirst);
+                    Vector<String> lastNames = last.get(eLast);
+                    if ((null != firstNames) && (null != lastNames)
+                            && (firstNames.size() > 0) && (lastNames.size() > 0)) {
+                        name[0] = firstNames.get(Compute.randomInt(firstNames.size()));
+                        if (!isClan) {
+                            name[1] = lastNames.get(Compute.randomInt(lastNames.size()));
+                        }
+                    }
+                }
+            }
+        } else {
+            name[0] = "Unnamed";
+            name[1] = "Person";
+        }
+        return name;
+    }
+
+    public Iterator<String> getFactions() {
+        if (null == factionLast) {
+            return null;
+        }
+        return factionLast.keySet().iterator();
+    }
+
+    public String getChosenFaction() {
+        return chosenFaction;
+    }
+
+    public void setChosenFaction(String s) {
+        chosenFaction = s;
+    }
+
+    public int getPercentFemale() {
+        return percentFemale;
+    }
+
+    public void setPercentFemale(int i) {
+        percentFemale = i;
+    }
+
+    /**
+     * randomly select gender
+     *
+     * @return true if female
+     */
+    public boolean isFemale() {
+        return Compute.randomInt(100) < percentFemale;
+    }
+
+    public static RandomNameGenerator getInstance() {
+        if (rng == null) {
+            initialize();
+        }
+        return rng;
+    }
+
+    //region Initialization
+    public static void initialize() {
+        if ((rng != null) && (rng.factionSurnames != null)) {
+            return;
+        } else if (null == rng) {
+            rng = new RandomNameGenerator();
+        }
+
+        if (!rng.initialized && !rng.initializing) {
+            rng.loader = new Thread(() -> {
+                rng.initializing = true;
+                rng.populateNames();
+                if (rng != null) {
+                    rng.setInitialized();
+                }
+            }, "Random Name Generator name populator");
+            rng.loader.setPriority(Thread.NORM_PRIORITY - 1);
+            rng.loader.start();
+        }
     }
 
     public void populateNames() {
@@ -252,177 +412,21 @@ public class RandomNameGenerator implements Serializable {
 
     public synchronized void addInitializationListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
-        if(initialized) {
+        if (initialized) {
             // Fire and remove
             pcs.firePropertyChange(PROP_INITIALIZED, false, true);
             pcs.removePropertyChangeListener(listener);
         }
     }
 
-    protected void setInitialized(boolean initialized) {
-        pcs.firePropertyChange(PROP_INITIALIZED, this.initialized, this.initialized = initialized);
+    protected void setInitialized() {
+        pcs.firePropertyChange(PROP_INITIALIZED, this.initialized, this.initialized = true);
     }
 
     public boolean isInitialized() {
         return initialized;
     }
-
-    /**
-     * Generate a single random name
-     *
-     * @return - a string giving the name
-     */
-    @Deprecated //17-Feb-2020 as part of the addition of gender tracking to MegaMek
-    public String generate() {
-        return generate(isFemale());
-    }
-
-    @Deprecated //24-Feb-2020, this is included to keep current functionality working while other
-                //improvements are being finished
-    public String generate(boolean isFemale) {
-        // this is a total hack, but for now lets assume that
-        // if the chosenFaction name contains the word "clan"
-        // we should only spit out first names
-        return generate(isFemale, chosenFaction.toLowerCase().contains("clan"));
-    }
-
-    /**
-     * Generate a single random name
-     *
-     * @return - a string containing the randomly generated name
-     */
-    public String generate(boolean isFemale, boolean isClan) {
-        if ((null != chosenFaction) && (null != factionLast)
-                && (null != factionFirst) && (null != firstM)
-                && (null != firstF) && (null != last)) {
-
-            Vector<String> ethnicities = factionLast.get(chosenFaction);
-            if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
-                // ok now we need to decide on a first name list
-                ethnicities = factionFirst.get(chosenFaction).get(eLast);
-                if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                    String eFirst = ethnicities.get(Compute.randomInt(ethnicities.size()));
-                    // ok now we can get the first and last name vectors
-                    if (isClan) {
-                        eFirst = eLast;
-                    }
-                    Vector<String> firstNames = isFemale ? firstF.get(eFirst) : firstM.get(eFirst);
-                    Vector<String> lastNames = last.get(eLast);
-                    if ((null != firstNames) && (null != lastNames)
-                            && (firstNames.size() > 0) && (lastNames.size() > 0)) {
-                        String first = firstNames.get(Compute.randomInt(firstNames.size()));
-                        String last = lastNames.get(Compute.randomInt(lastNames.size()));
-                        if (isClan) {
-                            return first;
-                        }
-                        return first + " " + last;
-                    }
-                }
-            }
-        }
-        return "Unnamed";
-    }
-
-    /**
-     * Generate a single random name split between a given name and surname
-     *
-     * @return - a String[] containing the name,
-     *              with the given name at String[0]
-     *              and the surname at String[1]
-     */
-    public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan) {
-        String[] name = { "", "" };
-        if ((chosenFaction != null) && (factionLast != null)
-                && (factionFirst != null) && (firstM != null)
-                && (firstF != null) && (last != null)) {
-            Vector<String> ethnicities = factionLast.get(chosenFaction);
-            if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
-                // ok now we need to decide on a first name list
-                ethnicities = factionFirst.get(chosenFaction).get(eLast);
-                if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                    String eFirst = ethnicities.get(Compute.randomInt(ethnicities.size()));
-                    // ok now we can get the first and last name vectors
-                    if (isClan) {
-                        eFirst = eLast;
-                    }
-                    Vector<String> firstNames = isFemale ? firstF.get(eFirst) : firstM.get(eFirst);
-                    Vector<String> lastNames = last.get(eLast);
-                    if ((null != firstNames) && (null != lastNames)
-                            && (firstNames.size() > 0) && (lastNames.size() > 0)) {
-                        name[0] = firstNames.get(Compute.randomInt(firstNames.size()));
-                        if (!isClan) {
-                            name[1] = lastNames.get(Compute.randomInt(lastNames.size()));
-                        }
-                    }
-                }
-            }
-        } else {
-            name[0] = "Unnamed";
-            name[1] = "Person";
-        }
-        return name;
-    }
-
-    public Iterator<String> getFactions() {
-        if (null == factionLast) {
-            return null;
-        }
-        return factionLast.keySet().iterator();
-    }
-
-    public String getChosenFaction() {
-        return chosenFaction;
-    }
-
-    public void setChosenFaction(String s) {
-        chosenFaction = s;
-    }
-
-    public int getPercentFemale() {
-        return percentFemale;
-    }
-
-    public void setPercentFemale(int i) {
-        percentFemale = i;
-    }
-
-    /**
-     * randomly select gender
-     *
-     * @return true if female
-     */
-    public boolean isFemale() {
-        return Compute.randomInt(100) < percentFemale;
-    }
-
-    public static void initialize() {
-        if ((rng != null) && (rng.factionSurnames != null)) {
-            return;
-        } else if (null == rng) {
-            rng = new RandomNameGenerator();
-        }
-
-        if (!rng.initialized && !rng.initializing) {
-            rng.loader = new Thread(() -> {
-                rng.initializing = true;
-                rng.populateNames();
-                if (rng != null) {
-                    rng.setInitialized(true);
-                }
-            }, "Random Name Generator name populator");
-            rng.loader.setPriority(Thread.NORM_PRIORITY - 1);
-            rng.loader.start();
-        }
-    }
-
-    public static RandomNameGenerator getInstance() {
-        if (rng == null) {
-            initialize();
-        }
-        return rng;
-    }
+    //endregion Initialization
 
     // Deactivated methods
     public void dispose() {}

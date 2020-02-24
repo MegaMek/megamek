@@ -3260,7 +3260,7 @@ public class Tank extends Entity {
             boolean rear = false;
             for (Mounted m : getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_HITCH)) {
-                    if (m.getLocation() == Tank.LOC_FRONT) {
+                    if (m.getLocation() == Tank.LOC_FRONT && !isTrailer()) {
                         front = true;
                     } else {
                         rear = true;

@@ -3745,7 +3745,7 @@ public class Server implements Runnable {
                 // If there's only one team moving, we don't need to bother
                 // with the evenTracker, just make sure the even turns are
                 // evenly distributed
-                numEven += (int) Math.ceil(teamEvenTurns / min);
+                numEven += (int) Math.round(teamEvenTurns / min);
             } else if (prevTeam == null) {
                 // Increment the number of times we've checked for "leftovers".
                 evenTracker[0]++;
@@ -17013,6 +17013,7 @@ public class Server implements Runnable {
             }
         }
 
+        // TODO : Verify this is correct according to latest rules
         if (caa.getClub().getType().hasSubType(MiscType.S_WRECKING_BALL)
                 && (ae instanceof SupportTank) && (te instanceof Mech)) {
             // forces a PSR like a charge

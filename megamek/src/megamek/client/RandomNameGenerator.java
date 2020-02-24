@@ -1,7 +1,8 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
+ * Copyright (C) 2020 - MegaMek team
+ *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -12,7 +13,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.client;
 
 import java.beans.PropertyChangeListener;
@@ -30,8 +30,9 @@ import java.util.Vector;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.WeightedMap;
 
-/** 
+/**
  * This class sets up a random name generator that can then
  * be used to generate random pilot names. it will have a couple different
  * settings and flexible input files
@@ -48,8 +49,7 @@ import megamek.common.util.MegaMekFile;
  * There ar three comma-delimited fields in each of these data files: fld1,fld2,fld3
  * <ul>
  * <li>fld1 - The name itself, either a male/female first name or a surname.</li>
- * <li>fld2 - a frequency weight to account for some names being more common than others. Currently this is
- *           not being used.</li>
+ * <li>fld2 - a frequency weight to account for some names being more common than others.</li>
  * <li>fld3 - the numeric code identifying the "ethnic" group this name belongs to.</li>
  * </ul>
  * </p>
@@ -67,33 +67,33 @@ import megamek.common.util.MegaMekFile;
  * <li>fld1 - the id for the ethnic group
  * <li>fld2 - the ethnic group name. Not currently read in, just for easy reference.
  * <li>fld3 - The relative frequency of this ethnic surname in the faction.
- * <li>fld4-fldn - These fields identify the relative frequency of first names from an ethnic group given the surname
- *                 listed in fld1.
+ * <li>fld4-fldn - These fields identify the relative frequency of first names from an ethnic group
+ *                 given the surname listed in fld1.
  * </ul>
  * </p>
  * @author Jay Lawson
  */
 public class RandomNameGenerator implements Serializable {
-    private static final String PROP_INITIALIZED = "initialized"; //$NON-NLS-1$
+    private static final String PROP_INITIALIZED = "initialized";
 
     /** Default directory containing the faction-specific name files. */
-    private static final String DIR_NAME_FACTIONS = "factions"; //$NON-NLS-1$
+    private static final String DIR_NAME_FACTIONS = "factions";
 
     /** Default filename for the list of male first names. */
-    private static final String FILENAME_FIRSTNAMES_MALE = "firstnames_male.txt"; //$NON-NLS-1$
-    
+    private static final String FILENAME_FIRSTNAMES_MALE = "firstnames_male.txt";
+
     /** Default filename for the list of female first names. */
-    private static final String FILENAME_FIRSTNAMES_FEMALE = "firstnames_female.txt"; //$NON-NLS-1$
+    private static final String FILENAME_FIRSTNAMES_FEMALE = "firstnames_female.txt";
 
     /** Default filename for the list of surnames names. */
-    private static final String FILENAME_SURNAMES = "surnames.txt"; //$NON-NLS-1$
+    private static final String FILENAME_SURNAMES = "surnames.txt";
 
     private static final long serialVersionUID = 5765118329881301375L;
 
     private static RandomNameGenerator rng;
 
-    Map<String, Vector<String>> firstm;
-    Map<String, Vector<String>> firstf;
+    Map<String, Vector<String>> firstM;
+    Map<String, Vector<String>> firstF;
     Map<String, Vector<String>> last;
     Map<String, Vector<String>> factionLast;
     Map<String, Map<String, Vector<String>>> factionFirst;
@@ -112,35 +112,36 @@ public class RandomNameGenerator implements Serializable {
     }
 
     public void populateNames() {
-        // TODO: how do I weight name vectors by frequency, without making them
-        // gargantuan?
-        if (null == firstm) {
-            firstm = new HashMap<String, Vector<String>>();
+        // TODO: how do I weight name vectors by frequency, without making them gargantuan?
+        if (null == firstM) {
+            firstM = new HashMap<>();
         }
-        if (null == firstf) {
-            firstf = new HashMap<String, Vector<String>>();
+        if (null == firstF) {
+            firstF = new HashMap<>();
         }
         if (null == last) {
-            last = new HashMap<String, Vector<String>>();
+            last = new HashMap<>();
         }
         if (null == factionLast) {
-            factionLast = new HashMap<String, Vector<String>>();
+            factionLast = new HashMap<>();
         }
         if (null == factionFirst) {
-            factionFirst = new HashMap<String, Map<String, Vector<String>>>();
+            factionFirst = new HashMap<>();
         }
+
+
+        int lineNumber = 0;
 
         // READ IN MALE FIRST NAMES
         File male_firstnames_path = new MegaMekFile(Configuration.namesDir(), FILENAME_FIRSTNAMES_MALE).getFile();
-        try(Scanner input = new Scanner(new FileInputStream(male_firstnames_path), "UTF-8")) { //$NON-NLS-1$
-            int linen = 0;
+        try (Scanner input = new Scanner(new FileInputStream(male_firstnames_path), "UTF-8")) {
             while (input.hasNextLine()) {
                 String line = input.nextLine();
-                linen++;
+                lineNumber++;
                 String[] values = line.split(","); //$NON-NLS-1$
                 if (values.length < 3) {
                     System.err.println(
-                            "Not enough fields in '" + male_firstnames_path.toString() + "' on " + linen //$NON-NLS-1$ //$NON-NLS-2$
+                            "Not enough fields in '" + male_firstnames_path.toString() + "' on " + lineNumber
                     );
                     continue;
                 }
@@ -148,16 +149,16 @@ public class RandomNameGenerator implements Serializable {
                 int weight = Integer.parseInt(values[1]);
                 String key = values[2];
                 int i = 0;
-                if (!firstm.containsKey(key)) {
-                    Vector<String> v = new Vector<String>();
+                if (!firstM.containsKey(key)) {
+                    Vector<String> v = new Vector<>();
                     while (i < weight) {
                         v.add(name);
                         i++;
                     }
-                    firstm.put(key, v);
+                    firstM.put(key, v);
                 } else {
                     while (i < weight) {
-                        firstm.get(key).add(name);
+                        firstM.get(key).add(name);
                         i++;
                     }
                 }
@@ -166,17 +167,18 @@ public class RandomNameGenerator implements Serializable {
             System.err.println("RandomNameGenerator.populateNames(): Could not find '" + male_firstnames_path + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
+        lineNumber = 0;
+
         // READ IN FEMALE FIRST NAMES
         File female_firstnames_path = new MegaMekFile(Configuration.namesDir(), FILENAME_FIRSTNAMES_FEMALE).getFile();
-        try(Scanner input = new Scanner(new FileInputStream(female_firstnames_path), "UTF-8")) { //$NON-NLS-1$
-            int linen = 0;
+        try (Scanner input = new Scanner(new FileInputStream(female_firstnames_path), "UTF-8")) {
             while (input.hasNextLine()) {
                 String line = input.nextLine();
-                linen++;
+                lineNumber++;
                 String[] values = line.split(","); //$NON-NLS-1$
                 if (values.length < 3) {
                     System.err.println(
-                            "RandomNameGenerator.populateNames(): Not enough fields in '" + female_firstnames_path.toString() + "' on " + linen //$NON-NLS-1$ //$NON-NLS-2$
+                            "RandomNameGenerator.populateNames(): Not enough fields in '" + female_firstnames_path.toString() + "' on " + lineNumber
                     );
                     continue;
                 }
@@ -184,35 +186,36 @@ public class RandomNameGenerator implements Serializable {
                 int weight = Integer.parseInt(values[1]);
                 String key = values[2];
                 int i = 0;
-                if (!firstf.containsKey(key)) {
-                    Vector<String> v = new Vector<String>();
+                if (!firstF.containsKey(key)) {
+                    Vector<String> v = new Vector<>();
                     while (i < weight) {
                         v.add(name);
                         i++;
                     }
-                    firstf.put(key, v);
+                    firstF.put(key, v);
                 } else {
                     while (i < weight) {
-                        firstf.get(key).add(name);
+                        firstF.get(key).add(name);
                         i++;
                     }
                 }
             }
         } catch (IOException fne) {
-            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + female_firstnames_path + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + female_firstnames_path + "'");
         }
+
+        lineNumber = 0;
 
         // READ IN SURNAMES
         File surnames_path = new MegaMekFile(Configuration.namesDir(), FILENAME_SURNAMES).getFile();
-        try(Scanner input = new Scanner(new FileInputStream(surnames_path), "UTF-8")) { //$NON-NLS-1$
-            int linen = 0;
+        try(Scanner input = new Scanner(new FileInputStream(surnames_path), "UTF-8")) {
             while (input.hasNextLine()) {
                 String line = input.nextLine();
-                linen++;
+                lineNumber++;
                 String[] values = line.split(","); //$NON-NLS-1$
                 if (values.length < 3) {
                     System.err.println(
-                            "Not enough fields in '" + surnames_path + "' on " + linen //$NON-NLS-1$ //$NON-NLS-2$
+                            "Not enough fields in '" + surnames_path + "' on " + lineNumber
                     );
                     continue;
                 }
@@ -221,7 +224,7 @@ public class RandomNameGenerator implements Serializable {
                 String key = values[2];
                 int i = 0;
                 if (!last.containsKey(key)) {
-                    Vector<String> v = new Vector<String>();
+                    Vector<String> v = new Vector<>();
                     while (i < weight) {
                         v.add(name);
                         i++;
@@ -235,27 +238,26 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         } catch (IOException fne) {
-            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + surnames_path + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + surnames_path + "'");
         }
 
         // READ IN FACTION FILES
         // all faction files should be in the faction directory
         File factions_dir_path = new MegaMekFile(Configuration.namesDir(), DIR_NAME_FACTIONS).getFile();
-        String[] filenames = factions_dir_path.list();
-        if (null == filenames) {
+        String[] fileNames = factions_dir_path.list();
+        if (null == fileNames) {
             return;
         }
-        for (int filen = 0; filen < filenames.length; filen++) {
-            String filename = filenames[filen];
+        for (String filename : fileNames) {
             String key = filename.split("\\.txt")[0]; //$NON-NLS-1$
             if ((key.length() < 1) || factionLast.containsKey(key)) {
                 continue;
             }
-            factionLast.put(key, new Vector<String>());
-            factionFirst.put(key, new HashMap<String, Vector<String>>());
+            factionLast.put(key, new Vector<>());
+            factionFirst.put(key, new HashMap<>());
             File ff = new MegaMekFile(factions_dir_path, filename).getFile();
-            try(Scanner factionInput = new Scanner(new FileInputStream(ff), "UTF-8")) { //$NON-NLS-1$
-                Map<String, Vector<String>> hash = new HashMap<String, Vector<String>>();
+            try (Scanner factionInput = new Scanner(new FileInputStream(ff), "UTF-8")) { //$NON-NLS-1$
+                Map<String, Vector<String>> hash = new HashMap<>();
                 while (factionInput.hasNextLine()) {
                     String line = factionInput.nextLine();
                     String[] values = line.split(","); //$NON-NLS-1$
@@ -265,12 +267,11 @@ public class RandomNameGenerator implements Serializable {
                         factionLast.get(key).add(ethnicity);
                         freq--;
                     }
-                    Vector<String> v = new Vector<String>();
+                    Vector<String> v = new Vector<>();
                     for (int i = 3; i < values.length; i++) {
                         freq = Integer.parseInt(values[i]);
-                        // TODO: damm - I don't have the integer codes for ethnicity
-                        // here, for now just assume they are the
-                        // same as i-2
+                        // TODO: damn - I don't have the integer codes for ethnicity
+                        // TODO: here, for now just assume they are the same as i-2
                         while (freq > 0) {
                             v.add(Integer.toString(i - 2));
                             freq--;
@@ -281,7 +282,6 @@ public class RandomNameGenerator implements Serializable {
                 factionFirst.put(key, hash);
             } catch (IOException fne) {
                 System.err.println("RandomNameGenerator.populateNames(): Could not find '" + ff + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-                continue;
             }
         }
     }
@@ -294,28 +294,34 @@ public class RandomNameGenerator implements Serializable {
             pcs.removePropertyChangeListener(listener);
         }
     }
-    
+
     protected void setInitialized(boolean initialized) {
         pcs.firePropertyChange(PROP_INITIALIZED, this.initialized, this.initialized = initialized);
     }
-    
+
     public boolean isInitialized() {
         return initialized;
     }
-    
+
     /**
      * Generate a single random name
-     * 
+     *
      * @return - a string giving the name
      */
+    @Deprecated //17-Feb-2020 as part of the addition of gender tracking to MegaMek
     public String generate() {
         return generate(isFemale());
     }
 
+    /**
+     * Generate a single random name
+     *
+     * @return - a string containing the randomly generated name
+     */
     public String generate(boolean isFemale) {
         if ((null != chosenFaction) && (null != factionLast)
-                && (null != factionFirst) && (null != firstm)
-                && (null != firstf) && (null != last)) {
+                && (null != factionFirst) && (null != firstM)
+                && (null != firstF) && (null != last)) {
             // this is a total hack, but for now lets assume that
             // if the chosenFaction name contains the word "clan"
             // we should only spit out first names
@@ -323,28 +329,21 @@ public class RandomNameGenerator implements Serializable {
 
             Vector<String> ethnicities = factionLast.get(chosenFaction);
             if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                String eLast = ethnicities.get(Compute.randomInt(ethnicities
-                        .size()));
+                String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
                 // ok now we need to decide on a first name list
                 ethnicities = factionFirst.get(chosenFaction).get(eLast);
                 if ((null != ethnicities) && (ethnicities.size() > 0)) {
-                    String eFirst = ethnicities.get(Compute
-                            .randomInt(ethnicities.size()));
+                    String eFirst = ethnicities.get(Compute.randomInt(ethnicities.size()));
                     // ok now we can get the first and last name vectors
                     if (isClan) {
                         eFirst = eLast;
                     }
-                    Vector<String> fnames = firstm.get(eFirst);
-                    if (isFemale) {
-                        fnames = firstf.get(eFirst);
-                    }
-                    Vector<String> lnames = last.get(eLast);
-                    if ((null != fnames) && (null != lnames)
-                            && (fnames.size() > 0) && (lnames.size() > 0)) {
-                        String first = fnames.get(Compute.randomInt(fnames
-                                .size()));
-                        String last = lnames.get(Compute.randomInt(lnames
-                                .size()));
+                    Vector<String> firstNames = isFemale ? firstF.get(eFirst) : firstM.get(eFirst);
+                    Vector<String> lastNames = last.get(eLast);
+                    if ((null != firstNames) && (null != lastNames)
+                            && (firstNames.size() > 0) && (lastNames.size() > 0)) {
+                        String first = firstNames.get(Compute.randomInt(firstNames.size()));
+                        String last = lastNames.get(Compute.randomInt(lastNames.size()));
                         if (isClan) {
                             return first;
                         }
@@ -375,13 +374,13 @@ public class RandomNameGenerator implements Serializable {
         return percentFemale;
     }
 
-    public void setPerentFemale(int i) {
+    public void setPercentFemale(int i) {
         percentFemale = i;
     }
 
     /**
      * randomly select gender
-     * 
+     *
      * @return true if female
      */
     public boolean isFemale() {
@@ -389,20 +388,18 @@ public class RandomNameGenerator implements Serializable {
     }
 
     public static void initialize() {
-        if ((rng != null) && (rng.last != null)) {
+        if ((rng != null) && (rng.surnames != null)) {
             return;
         }
         if (null == rng) {
             rng = new RandomNameGenerator();
         }
         if (!rng.initialized && !rng.initializing) {
-            rng.loader = new Thread(new Runnable() {
-                public void run() {
-                    rng.initializing = true;
-                    rng.populateNames();
-                    if (rng != null) {
-                        rng.setInitialized(true);
-                    }
+            rng.loader = new Thread(() -> {
+                rng.initializing = true;
+                rng.populateNames();
+                if (rng != null) {
+                    rng.setInitialized(true);
                 }
             }, "Random Name Generator name populator");
             rng.loader.setPriority(Thread.NORM_PRIORITY - 1);
@@ -411,12 +408,12 @@ public class RandomNameGenerator implements Serializable {
     }
 
     public static RandomNameGenerator getInstance() {
-        if (null == rng) {
+        if (rng == null) {
             initialize();
         }
         return rng;
     }
-    
+
     // Deactivated methods
     public void dispose() {}
     public void clear() {}

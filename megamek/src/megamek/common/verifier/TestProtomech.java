@@ -448,7 +448,7 @@ public class TestProtomech extends TestEntity {
                 continue;
             }
             slotsByLoc.merge(mount.getLocation(), 1, Integer::sum);
-            weightByLoc.merge(mount.getLocation(),  mount.getTonnage(), Double::sum);
+            weightByLoc.merge(mount.getLocation(), mount.getTonnage(), Double::sum);
             if (mount.isRearMounted() && (mount.getLocation() != Protomech.LOC_TORSO)) {
                 buff.append("Equipment can only be rear-mounted on the torso\n");
                 illegal = true;

@@ -597,13 +597,13 @@ public class TestAero extends TestEntity {
                 if (wt.hasFlag(WeaponType.F_ENERGY) && 
                         !(wt instanceof CLChemicalLaserWeapon) && 
                         !(wt instanceof VehicleFlamerWeapon)) {
-                    weight += wt.getTonnage(aero);
+                    weight += m.getTonnage();
                 }
                 Mounted linkedBy = m.getLinkedBy();
                 if ((linkedBy != null) && 
                         (linkedBy.getType() instanceof MiscType) && 
                         linkedBy.getType().hasFlag(MiscType.F_PPC_CAPACITOR)){
-                    weight += linkedBy.getType().getTonnage(aero);
+                    weight += linkedBy.getTonnage();
                 }
             }
             // Power amp weighs:

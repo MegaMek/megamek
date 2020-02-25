@@ -1260,7 +1260,7 @@ public class TestBattleArmor extends TestEntity {
                     || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 continue;
             }
-            weightSum += mt.getTonnage(getEntity(), m.getLocation());
+            weightSum += m.getTonnage();
         }
         return weightSum;
     }
@@ -1288,18 +1288,7 @@ public class TestBattleArmor extends TestEntity {
                 continue;
             }
 
-            WeaponType wt = (WeaponType) m.getType();
-            if (m.isDWPMounted()) {
-                weight += wt.getTonnage(getEntity()) * 0.75;
-            } else if (m.isSquadSupportWeapon()){
-                if (ba.isClan()){
-                    weight += wt.getTonnage(getEntity()) * 0.4;
-                } else {
-                    weight += wt.getTonnage(getEntity()) * 0.5;
-                }
-            } else {
-                weight += wt.getTonnage(getEntity());
-            }
+            weight += m.getTonnage();
         }
         // Round weight to prevent odd behavior
         return Math.round(weight * 1000) / 1000.0;

@@ -2155,14 +2155,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             return Messages.getString("WeaponAttackAction.FieldGunOrSAOnly");
                         }
                         if ((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (weaponId != prevAttack.getWeaponId())) {
-                            fieldGunWeight += prevWeapon.getType().getTonnage(ae);
+                            fieldGunWeight += prevWeapon.getTonnage();
                         }
                     }
                 }
                 // the total tonnage of field guns fired has to be less than or
                 // equal to the men in the platoon
                 if (weapon.getLocation() == Infantry.LOC_FIELD_GUNS) {
-                    if (((Infantry) ae).getShootingStrength() < Math.ceil(fieldGunWeight + wtype.getTonnage(ae))) {
+                    if (((Infantry) ae).getShootingStrength() < Math.ceil(fieldGunWeight + weapon.getTonnage())) {
                         return Messages.getString("WeaponAttackAction.NoFieldGunCrew");
                     }
                 }

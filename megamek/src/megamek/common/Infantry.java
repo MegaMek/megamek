@@ -2390,7 +2390,7 @@ public class Infantry extends Entity {
         //add in field gun weight
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {
-                ton += mounted.getType().getTonnage(this);
+                ton += mounted.getTonnage();
             }
         }
 
@@ -2469,8 +2469,8 @@ public class Infantry extends Entity {
             }
             if(wpn.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 hasArtillery = true;
-                if(wpn.getType().getTonnage(this) < smallestGun) {
-                    smallestGun = wpn.getType().getTonnage(this);
+                if(wpn.getTonnage() < smallestGun) {
+                    smallestGun = wpn.getTonnage();
                 }
             }
         }

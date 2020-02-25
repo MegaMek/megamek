@@ -3496,8 +3496,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mounted.setByShot(true);
             mounted.setShotsLeft(nAmmo);
             mounted.setOriginalShots(nAmmo);
-            double tonnage = Math.max(1, nAmmo / ((AmmoType) mounted.getType()).getShots())
-                    * ((AmmoType) mounted.getType()).getTonnage(this);
+            double tonnage = Math.max(1, nAmmo / ((AmmoType) mounted.getType()).getShots()) * mounted.getTonnage();
             mounted.setAmmoCapacity(tonnage);
         }
 
@@ -12180,7 +12179,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted mounted : miscList) {
             if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)
                 && !mounted.isInoperable()) {
-                i += mounted.getType().getTonnage(this);
+                i += mounted.getTonnage();
             }
         }
         return i;
@@ -13398,9 +13397,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     		} else if (m.getType().hasFlag(MiscType.F_MOBILE_HPG)) {
     			specialAbilities.put(BattleForceSPA.HPG, null);
     		} else if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
-    			specialAbilities.merge(BattleForceSPA.MHQ, (int)m.getType().getTonnage(this) * 2,
+    			specialAbilities.merge(BattleForceSPA.MHQ, (int) m.getTonnage() * 2,
     					Integer::sum);
-    			if (m.getType().getTonnage(this) >= getWeight() / 20.0) {
+    			if (m.getTonnage() >= getWeight() / 20.0) {
     				specialAbilities.put(BattleForceSPA.RCN, null);
     			}
     		} else if (m.getType().hasFlag(MiscType.F_SENSOR_DISPENSER)) {
@@ -13641,7 +13640,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 || wt.hasFlag(WeaponType.F_PLASMA)
                 || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
                 || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
-                total += wt.getTonnage(this);
+                total += m.getTonnage();
             }
         }
         // Finally use that total to compute and return the actual power

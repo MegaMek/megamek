@@ -348,7 +348,7 @@ public class TestProtomech extends TestEntity {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
-                    TestEntity.makeWeightString(round(mt.getTonnage(getEntity()), Ceil.KILO), true));
+                    TestEntity.makeWeightString(round(m.getTonnage(), Ceil.KILO), true));
             buff.append("\n");
         }
         return buff;
@@ -363,8 +363,7 @@ public class TestProtomech extends TestEntity {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
-                    .append(TestEntity.makeWeightString(round(mt
-                            .getTonnage(getEntity()), Ceil.KILO), true)).append("\n");
+                    .append(TestEntity.makeWeightString(m.getTonnage(), true)).append("\n");
         }
         return buff;
     }
@@ -449,8 +448,7 @@ public class TestProtomech extends TestEntity {
                 continue;
             }
             slotsByLoc.merge(mount.getLocation(), 1, Integer::sum);
-            weightByLoc.merge(mount.getLocation(),
-                    mount.getType().getTonnage(proto, mount.getLocation()), Double::sum);
+            weightByLoc.merge(mount.getLocation(),  mount.getTonnage(), Double::sum);
             if (mount.isRearMounted() && (mount.getLocation() != Protomech.LOC_TORSO)) {
                 buff.append("Equipment can only be rear-mounted on the torso\n");
                 illegal = true;

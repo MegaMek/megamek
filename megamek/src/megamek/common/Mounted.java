@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
@@ -79,6 +81,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private Mounted linkedBy = null; // reverse link for convenience
 
     private Mounted crossLinkedBy = null; // Weapons with crossLinked capacitors
+    private int linkedBayId = -1;
 
     private Entity entity; // what I'm mounted on
 
@@ -544,6 +547,36 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return desc.toString();
     }
 
+    /**
+     * @return The weight of the equipment in this mount, using the default rounding method for the {@link Entity}.
+     */
+    public double getTonnage() {
+        return getTonnage(RoundWeight.STANDARD);
+    }
+
+    /**
+     * @param defaultRounding The method to use in rounding the weight
+     * @return                The weight of the equipment in this mount
+     */
+    public double getTonnage(RoundWeight defaultRounding) {
+        if ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_DUMPER)) {
+            final Bay bay = getEntity().getBayById(getLinkedBayId());
+            if (bay != null) {
+                return defaultRounding.round(bay.getCapacity() * 0.05, getEntity());
+            }
+            DefaultMmLogger.getInstance().warning(getClass(), "getTonnage(RoundWeight)",
+                    "Found dumper not linked to a cargo bay. Using zero for the weight.");
+            return 0.0;
+        }
+        double retVal = getType().getTonnage(getEntity(), getLocation(), defaultRounding);
+        if (isDWPMounted()) {
+            retVal *= 0.75;
+        } else if (isSquadSupportWeapon()) {
+            retVal *= getEntity().isClan() ? 1.4 : 1.5;
+        }
+        return defaultRounding.round(retVal, getEntity());
+    }
+
     public boolean isReady() {
         return isReady(false);
     }
@@ -1006,6 +1039,21 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             return;
         }
         crossLinkedBy = linker;
+    }
+
+    /**
+     * Used for associating the equipment mount with a cargo bay. This is for dumpers and transient bays
+     * created on load for use by 'Mech cargo equipment.
+     *
+     * @return The index of the bay this mount is linked to, or -1 if it is not linked.
+     * @see Entity#getBayById(int)
+     */
+    public int getLinkedBayId() {
+        return linkedBayId;
+    }
+
+    public void setLinkedBayId(int id) {
+        linkedBayId = id;
     }
 
     public int getFoundCrits() {

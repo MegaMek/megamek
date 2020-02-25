@@ -10499,7 +10499,7 @@ Anne,1,7
 Annelie,1,7
 Annelise,1,7
 Antonia,1,7
-_se,1,7
+Åse,1,7
 Aslaug,1,7
 Asløg,1,7
 Asta,1,7
@@ -22851,7 +22851,7 @@ Joana,1,11
 Josefa,1,11
 Jovita,1,11
 Judite,1,11
-J_lia,1,11
+Júlia,1,11
 Juliana,1,11
 Laura,1,11
 Leocádia,1,11
@@ -22866,7 +22866,7 @@ Liliana,1,11
 Livia,1,11
 Lívia,1,11
 Lorena,1,11
-L_cia,1,11
+Lúcia,1,11
 Luciana,1,11
 Lucinda,1,11
 Luísa,1,11
@@ -22898,7 +22898,7 @@ Neves,1,11
 Nilda,1,11
 Noemí,1,11
 Noêmia,1,11
-N_ria,1,11
+Núria,1,11
 Ofélia,1,11
 Olga,1,11
 Olívia,1,11
@@ -22936,7 +22936,7 @@ Teresa,1,11
 Teresinha,1,11
 Tereza,1,11
 Terezinha,1,11
-_rsula,1,11
+Úrsula,1,11
 Valéria,1,11
 Vera,1,11
 Verônica,1,11
@@ -24782,10 +24782,10 @@ Johana,1,13
 Jolana,1,13
 Josefa,1,13
 Judita,1,13
-J_lia,1,13
+Júlia,1,13
 Justina,1,13
 Justína,1,13
-Just_na,1,13
+Justýna,1,13
 Kája,1,13
 Kamila,1,13
 Karolína,1,13
@@ -24796,7 +24796,7 @@ Klaudia,1,13
 Klaudie,1,13
 Kristina,1,13
 Kristína,1,13
-Krist_na,1,13
+Kristýna,1,13
 Kveta,1,13
 Ladislava,1,13
 Lenka,1,13
@@ -24810,8 +24810,8 @@ Lucia,1,13
 Lucie,1,13
 Ludmila,1,13
 Ludmilla,1,13
-L_dia,1,13
-L_die,1,13
+Lýdia,1,13
+Lýdie,1,13
 Madlenka,1,13
 Magda,1,13
 Magdalena,1,13

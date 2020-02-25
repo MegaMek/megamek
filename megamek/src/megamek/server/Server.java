@@ -35426,20 +35426,59 @@ public class Server implements Runnable {
         }
 
         if (entity.isEjecting()) {
+            EjectedCrew crew;
             if (inSpace || airborne) {
-                // Report the ejection
-                PilotingRollData rollTarget = getEjectModifiers(game, entity,
-                        entity.getCrew().getCurrentPilotIndex(), false);
-                r = new Report(2180);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(rollTarget.getLastPlainDesc(), true);
-                r.indent();
-                vDesc.addElement(r);
-                int roll = Compute.d6(2);
-                //Per SO p27, you get a certain number of escape pods away per turn per 100k tons of ship
-                int escapeMultiplier = (int) (entity.getWeight() / 100000);
-                EjectedCrew crew = new EjectedCrew(entity,entity.getEscapePods());
+                // Try to launch some escape pods and lifeboats, if any are left
+                //if (entity.getPodsLeft() > 0 || entity.getLifeBoatsLeft() > 0) {
+                    // Report the ejection
+                    PilotingRollData rollTarget = getEjectModifiers(game, entity,
+                            entity.getCrew().getCurrentPilotIndex(), false);
+                    r = new Report(2180);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(rollTarget.getLastPlainDesc(), true);
+                    r.indent();
+                    vDesc.addElement(r);
+                    int roll = Compute.d6(2);
+                    int MOS = (roll - Math.max(2, rollTarget.getValue()));
+                    //Report the roll
+                    r = new Report(2190);
+                    r.subject = entity.getId();
+                    r.add(rollTarget.getValueAsString());
+                    r.add(rollTarget.getDesc());
+                    r.add(roll);
+                    r.indent();
+                    r.choose(roll >= rollTarget.getValue());
+                    vDesc.addElement(r);
+                    //Per SO p27, you get a certain number of escape pods away per turn per 100k tons of ship
+                    int escapeMultiplier = (int) (entity.getWeight() / 100000);
+                    //Set up the maximum number that CAN launch
+                    int launched = (1 + MOS) * Math.max(1, escapeMultiplier);
+                    //And now modify it based on what the unit actually has TO launch
+                    int podsLeft = (entity.getEscapePods() - entity.getLaunchedEscapePods());
+                    int lifeBoatsLeft = (entity.getLifeBoats() - entity.getLaunchedLifeBoats());
+                    //Entity has only escape pods to launch
+                    if (podsLeft > 0 && lifeBoatsLeft <= 0) {
+                        launched = Math.min(launched, podsLeft);
+                        entity.setLaunchedEscapePods(entity.getLaunchedEscapePods() + launched);
+                    } else if (lifeBoatsLeft > 0 && podsLeft <= 0) {
+                        //Only Lifeboats
+                        launched = Math.min(launched, lifeBoatsLeft);
+                        entity.setLaunchedLifeBoats(entity.getLaunchedLifeBoats() + launched);
+                    } else {
+                        //We have both available. Launch them alternately up to our maximum for the round
+                        launched = 0;
+                    }
+                    //Report how many pods launched
+                    if (launched > 0) {
+                        r = new Report(6401);
+                        r.subject = entity.getId();
+                        r.indent();
+                        r.add(launched);
+                        vDesc.addElement(r);
+                    }
+                    crew = new EjectedCrew(entity,launched);
+                //}
                 // Need to set game manually; since game.addEntity not called yet
                 // Don't want to do this yet, as Entity may not be added
                 crew.setPosition(entity.getPosition());

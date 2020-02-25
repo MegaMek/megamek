@@ -4267,6 +4267,14 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getEscapePods() {
         return 0;
     }
+    
+    /**
+     * Convenience method to return the number of escape pods remaining
+     * @return
+     */
+    public int getPodsLeft() {
+        return getEscapePods() - getLaunchedEscapePods();
+    }
 
     /**
      * @return The number of lifeboats carried by the unit
@@ -4294,6 +4302,14 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public int getLaunchedLifeBoats() {
         return 0;
+    }
+    
+    /**
+     * Convenience method to return the number of life boats remaining
+     * @return
+     */
+    public int getLifeBoatsLeft() {
+        return getLifeBoats() - getLaunchedLifeBoats();
     }
     
     /**

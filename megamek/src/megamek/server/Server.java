@@ -35436,7 +35436,8 @@ public class Server implements Runnable {
                 r.add(rollTarget.getLastPlainDesc(), true);
                 r.indent();
                 vDesc.addElement(r);
-                //Per SO p27, you get a certain number of escape pods away per 100k tons of ship
+                int roll = Compute.d6(2);
+                //Per SO p27, you get a certain number of escape pods away per turn per 100k tons of ship
                 int escapeMultiplier = (int) (entity.getWeight() / 100000);
                 EjectedCrew crew = new EjectedCrew(entity,entity.getEscapePods());
                 // Need to set game manually; since game.addEntity not called yet
@@ -35545,7 +35546,8 @@ public class Server implements Runnable {
         if (autoEject) {
             rollTarget.addModifier(1, "automatic ejection");
         }
-        if ((entity.isFighter() && ((IAero)entity).isOutControl())
+        // Per SO p27, Large Craft roll too, to see how many escape pods launch successfully
+        if ((entity.isAero() && ((IAero)entity).isOutControl())
                 || (entity.isPartOfFighterSquadron() && ((IAero)game.getEntity(entity.getTransportId())).isOutControl())) {
             rollTarget.addModifier(5, "Out of Control");
         }

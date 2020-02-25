@@ -68,7 +68,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_JUMP_BOOSTER = BigInteger.valueOf(1).shiftLeft(28);
     public static final BigInteger F_HARJEL = BigInteger.valueOf(1).shiftLeft(29);
     public static final BigInteger F_UMU = BigInteger.valueOf(1).shiftLeft(30);
-    public static final BigInteger F_COOLANT_SYSTEM = BigInteger.valueOf(1).shiftLeft(31);
+    public static final BigInteger F_BA_VTOL = BigInteger.valueOf(1).shiftLeft(31);
     public static final BigInteger F_SPIKES = BigInteger.valueOf(1).shiftLeft(32);
     public static final BigInteger F_COMMUNICATIONS = BigInteger.valueOf(1).shiftLeft(33);
     public static final BigInteger F_PPC_CAPACITOR = BigInteger.valueOf(1).shiftLeft(34);
@@ -11453,7 +11453,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 0;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BA_VTOL);
         misc.rulesRefs = "271,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)

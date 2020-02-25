@@ -1031,6 +1031,31 @@ public class EquipmentType implements ITechnology {
         return cost;
     }
 
+    /**
+     * @return Whether the item weight varies according to the unit it's installed on
+     */
+    public boolean isVariableTonnage() {
+        return tonnage == TONNAGE_VARIABLE;
+    }
+
+    /**
+     * @return Whether the item BV varies according to the unit it's installed on
+     */
+    public boolean isVariableBV() {
+        return bv == BV_VARIABLE;
+    }
+
+    /**
+     * @return Whether the item cost varies according to the unit it's installed on
+     */
+    public boolean isVariableCost() {
+        return cost == COST_VARIABLE;
+    }
+
+    public boolean isVariableCriticals() {
+        return criticals == CRITICALS_VARIABLE;
+    }
+
     public TechAdvancement getTechAdvancement() {
         return techAdvancement;
     }

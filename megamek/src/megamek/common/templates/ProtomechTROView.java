@@ -77,11 +77,11 @@ public class ProtomechTROView extends TROView {
             setModelData("jumpMP", proto.getOriginalJumpMP());
             setModelData("jumpMass",
                     Math.round(1000 * proto.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
-                            .mapToDouble(m -> m.getType().getTonnage(proto)).sum()));
+                            .mapToDouble(Mounted::getTonnage).sum()));
         } else {
             setModelData("umuMP", umu.size());
             setModelData("umuMass",
-                    Math.round(1000 * umu.stream().mapToDouble(m -> m.getType().getTonnage(proto)).sum()));
+                    Math.round(1000 * umu.stream().mapToDouble(Mounted::getTonnage).sum()));
         }
         setModelData("hsCount", testproto.getCountHeatSinks());
         setModelData("hsMass", NumberFormat.getInstance().format(testproto.getWeightHeatSinks() * 1000));

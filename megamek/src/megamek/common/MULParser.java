@@ -1620,7 +1620,7 @@ public class MULParser {
                                          * ((AmmoType) mounted.getType()).getKgPerShot() * 1000);
                             } else {
                                 mounted.setAmmoCapacity(mounted.getOriginalShots()
-                                        * mounted.getType().getTonnage(entity)
+                                        * mounted.getTonnage()
                                         / ((AmmoType) mounted.getType()).getShots());
                             }
                         }

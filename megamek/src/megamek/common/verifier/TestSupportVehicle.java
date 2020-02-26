@@ -744,7 +744,7 @@ public class TestSupportVehicle extends TestEntity {
         for (Mounted m : supportVee.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
                     || m.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
-                return m.getType().getTonnage(supportVee);
+                return m.getTonnage();
             }
         }
         return 0.0;
@@ -799,17 +799,17 @@ public class TestSupportVehicle extends TestEntity {
             for (Mounted m : supportVee.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_ENERGY) && !(wt instanceof CLChemicalLaserWeapon) && !(wt instanceof VehicleFlamerWeapon)) {
-                    weight += wt.getTonnage(supportVee);
+                    weight += m.getTonnage();
                 }
                 if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
                         MiscType) && m.getLinkedBy().getType().
                         hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                    weight += m.getLinkedBy().getType().getTonnage(supportVee);
+                    weight += m.getLinkedBy().getTonnage();
                 }
             }
             for (Mounted m : supportVee.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
-                    weight += m.getType().getTonnage(supportVee);
+                    weight += m.getTonnage();
                 }
             }
             return ceilWeight(weight / 10);
@@ -864,7 +864,7 @@ public class TestSupportVehicle extends TestEntity {
             if (m.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
                     || m.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
                 fireCon = StringUtil.makeLength(m.getName(), getPrintSize() - 5)
-                        + TestEntity.makeWeightString(m.getType().getTonnage(supportVee), usesKgStandard()) + "\n";
+                        + TestEntity.makeWeightString(m.getTonnage(), usesKgStandard()) + "\n";
                 break;
             }
         }
@@ -1004,7 +1004,7 @@ public class TestSupportVehicle extends TestEntity {
                 buff.append(m.getType().getName()).append(" is not a valid weapon for this unit.\n");
                 correct = false;
             }
-            weaponWeight += m.getType().getTonnage(supportVee, m.getLocation());
+            weaponWeight += m.getTonnage();
         }
         if (supportVee.isOmni() && (supportVee.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
                     || supportVee.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))

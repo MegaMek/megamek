@@ -1959,7 +1959,7 @@ public class FireControl {
                     continue;
                 } else if (!(shooter instanceof BattleArmor) && Infantry.LOC_FIELD_GUNS == weaponFireInfo.getWeapon()
                                                                                                          .getLocation()) {
-                    final double fieldGunMass = weaponFireInfo.getWeapon().getType().getTonnage(shooter);
+                    final double fieldGunMass = weaponFireInfo.getWeapon().getTonnage();
                     //Only fire field guns up until we no longer have the men to fire more, since going over that limit results in nothing firing.
                     //In theory we could adapt the heat system to handle this(with tonnage as heat and shooting strength as heat capacity, no heat tolerance).
                     //This would behave much better for units with mixed type field guns, but given that those are rare, this should serve for now.

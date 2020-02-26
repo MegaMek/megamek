@@ -524,7 +524,7 @@ public class MiscType extends EquipmentType {
             double weaponWeight = 0;
             for (Mounted m : entity.getWeaponList()) {
                 if ((m.getLocation() == locationToCheck) && m.isMechTurretMounted()) {
-                    weaponWeight += m.getType().getTonnage(entity);
+                    weaponWeight += m.getTonnage();
                 }
             }
             // round to half ton
@@ -545,7 +545,7 @@ public class MiscType extends EquipmentType {
             double weaponWeight = 0;
             for (Mounted m : entity.getWeaponList()) {
                 if (m.isSponsonTurretMounted()) {
-                    weaponWeight += m.getType().getTonnage(entity);
+                    weaponWeight += m.getTonnage();
                 }
             }
             return defaultRounding.round(weaponWeight / 10.0,
@@ -562,7 +562,7 @@ public class MiscType extends EquipmentType {
             // 5% of linked weapons' weight
             for (Mounted m : entity.getWeaponList()) {
                 if (m.isPintleTurretMounted() && (m.getLocation() == location)) {
-                    weaponWeight += m.getType().getTonnage(entity);
+                    weaponWeight += m.getTonnage();
                 }
             }
             return defaultRounding.round(weaponWeight / 20.0, entity);
@@ -578,13 +578,13 @@ public class MiscType extends EquipmentType {
             for (Mounted m : entity.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    fTons += wt.getTonnage(entity);
+                    fTons += m.getTonnage();
                 }
             }
             for (Mounted m : entity.getMisc()) {
                 MiscType mt = (MiscType) m.getType();
                 if (mt.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    fTons += mt.getTonnage(entity);
+                    fTons += m.getTonnage();
                 }
             }
             if (isClan()) {
@@ -688,15 +688,6 @@ public class MiscType extends EquipmentType {
             return defaultRounding.round(entity.getWeight() / 25.0, entity);
         } else if (hasFlag(F_FULLY_AMPHIBIOUS)) {
             return defaultRounding.round(entity.getWeight() / 10.0, entity);
-        } else if (hasFlag(F_DUMPER)) {
-            // 5% of cargo
-            double cargoTonnage = 0;
-            for (Mounted mount : entity.getMisc()) {
-                if (mount.getType().hasFlag(F_CARGO) && (mount.getLocation() == location)) {
-                    cargoTonnage += mount.getType().getTonnage(entity);
-                }
-            }
-            return defaultRounding.round(cargoTonnage / 20.0, entity);
         } else if (hasFlag(F_BASIC_FIRECONTROL) || hasFlag(F_ADVANCED_FIRECONTROL)) {
             // Omni support vees have a fixed weight for the chassis, which may be
             // higher than what is required for the current configuration
@@ -710,7 +701,7 @@ public class MiscType extends EquipmentType {
                 if (!mount.getType().hasFlag(WeaponType.F_AMS)
                         && (!mount.getType().hasFlag(WeaponType.F_INFANTRY)
                         || mount.getType().hasFlag(WeaponType.F_INF_SUPPORT))) {
-                    weaponWeight += mount.getType().getTonnage(entity);
+                    weaponWeight += mount.getTonnage();
                 }
             }
             double weight = weaponWeight / (hasFlag(F_BASIC_FIRECONTROL) ? 20.0 : 10.0);
@@ -889,14 +880,14 @@ public class MiscType extends EquipmentType {
                 for (Mounted mo : entity.getWeaponList()) {
                     WeaponType wt = (WeaponType) mo.getType();
                     if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                        fTons += wt.getTonnage(entity);
+                        fTons += mo.getTonnage();
                     }
                 }
 
                 for (Mounted mo : entity.getMisc()) {
                     MiscType mt = (MiscType) mo.getType();
                     if (mt.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                        fTons += mt.getTonnage(entity);
+                        fTons += mo.getTonnage();
                     }
                 }
                 if (getInternalName().equals("ISTargeting Computer")) {
@@ -1040,14 +1031,14 @@ public class MiscType extends EquipmentType {
             for (Mounted m : entity.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    fTons += wt.getTonnage(entity);
+                    fTons += m.getTonnage();
                 }
             }
 
             for (Mounted mo : entity.getMisc()) {
                 MiscType mt = (MiscType) mo.getType();
                 if (mt.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    fTons += mt.getTonnage(entity);
+                    fTons += mo.getTonnage();
                 }
             }
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {

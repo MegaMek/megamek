@@ -367,10 +367,6 @@ public class Crew implements Serializable {
         return nickname[pos];
     }
 
-    public int[] getGenderArray() {
-        return gender;
-    }
-
     public int getGender() {
         return gender[0];
     }
@@ -1151,12 +1147,12 @@ public class Crew implements Serializable {
         externalId[pos] = i;
     }
 
-    public void setExternalId(int i, int pos) {
-        externalId[pos] = Integer.toString(i);
-    }
-
     public String getExternalIdAsString(int pos) {
-        return externalId[pos];
+        if (pos < externalId.length) {
+            return externalId[pos];
+        } else {
+            return "-1";
+        }
     }
 
     /**

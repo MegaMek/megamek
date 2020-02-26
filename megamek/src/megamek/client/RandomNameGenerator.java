@@ -22,10 +22,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import megamek.MegaMek;
 import megamek.common.Compute;
 import megamek.common.Configuration;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.MMLogger;
 import megamek.common.util.MegaMekFile;
 import megamek.common.util.WeightedMap;
 
@@ -34,7 +37,8 @@ import megamek.common.util.WeightedMap;
  * be used to generate random pilot names. it will have a couple different
  * settings and flexible input files
  * <p>
- * Files are located in {@link Configuration#namesDir()}. All files are comma-delimited text files.
+ * Files are located in {@link Configuration#namesDir()}. All files are comma-delimited text files
+ * that MUST end in .txt.
  * </p>
  * <p>
  * The masterancestry.txt file shows the correspondence between the different ethnic names and their numeric
@@ -123,18 +127,20 @@ public class RandomNameGenerator implements Serializable {
      */
     private static Map<String, WeightedMap<Integer>> factionEthnicCodes;
 
+    private static final String KEY_DEFAULT_FACTION = "General";
+
     private int percentFemale;
     private String chosenFaction;
-    private Thread loader;
-    private static boolean initialized;
-    private static boolean initializing;
+    private static AtomicBoolean initializeLock = new AtomicBoolean(false);
+    private static boolean initialized = false;
 
+    private static final MMLogger logger = DefaultMmLogger.getInstance();
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     //endregion Variable Declarations
 
     public RandomNameGenerator() {
         percentFemale = 50;
-        chosenFaction = "General";
+        chosenFaction = KEY_DEFAULT_FACTION;
     }
 
     //region Name Generators
@@ -173,15 +179,15 @@ public class RandomNameGenerator implements Serializable {
      *
      * @param isFemale true if the name should be female, otherwise false
      * @param isClan true if the name should be for a clanner, otherwise false
-     * @param faction a string containing the faction list to generate the name for. If the faction
-     *                is not a key for the <code>factionSurnames</code> Map, it will instead generate
-     *                based on the General list
+     * @param faction a string containing the faction key with which to generate the name from.
+     *                If the faction is not a key for the <code>factionSurnames</code> Map,
+     *                it will instead generate based on the General list
      * @return - a string containing the randomly generated name
      */
     public String generate(boolean isFemale, boolean isClan, String faction) {
         String name = "Unnamed";
         if (initialized) {
-            faction = factionEthnicCodes.containsKey(faction) ? faction : "General";
+            faction = factionEthnicCodes.containsKey(faction) ? faction : KEY_DEFAULT_FACTION;
             int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
@@ -209,10 +215,22 @@ public class RandomNameGenerator implements Serializable {
         return generateGivenNameSurnameSplit(isFemale, isClan, chosenFaction);
     }
 
+    /**
+     * Generate a single random name split between a given name and surname
+     *
+     * @param isFemale true if the name should be female, otherwise false
+     * @param isClan true if the name should be for a clanner, otherwise false
+     * @param faction a string containing the faction key with which to generate the name from.
+     *                If the faction is not a key for the <code>factionSurnames</code> Map,
+     *                it will instead generate based on the General list
+     * @return - a String[] containing the name,
+     *              with the given name at String[0]
+     *              and the surname at String[1]
+     */
     public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan, String faction) {
         String[] name = { "Unnamed", "Person" };
         if (initialized) {
-            faction = factionEthnicCodes.containsKey(faction) ? faction : "General";
+            faction = factionEthnicCodes.containsKey(faction) ? faction : KEY_DEFAULT_FACTION;
             int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
@@ -220,7 +238,9 @@ public class RandomNameGenerator implements Serializable {
                     ? femaleGivenNames.get(givenNameEthnicCode).randomItem()
                     : maleGivenNames.get(givenNameEthnicCode).randomItem();
 
-            if (!isClan) {
+            if (isClan) {
+                name[1] = "";
+            } else {
                 name[1] = surnames.get(ethnicCode).randomItem();
             }
         }
@@ -228,6 +248,7 @@ public class RandomNameGenerator implements Serializable {
     }
     //endregion Name Generators
 
+    //region Getters and Setters
     public Iterator<String> getFactions() {
         if (null == factionEthnicCodes) {
             return null;
@@ -266,27 +287,36 @@ public class RandomNameGenerator implements Serializable {
         }
         return rng;
     }
+    //endregion Getters and Setters
 
     //region Initialization
     public static void initialize() {
-        if (rng != null) {
-            return;
-        }
-
-        rng = new RandomNameGenerator();
-
-        if (!initialized && !initializing) {
-            rng.loader = new Thread(() -> {
-                initializing = true;
-                rng.populateNames();
-                if (rng != null) {
-                    rng.setInitialized();
-                }
-            }, "Random Name Generator name populator");
-            rng.loader.setPriority(Thread.NORM_PRIORITY - 1);
-            rng.loader.start();
+        if (initializeLock.compareAndSet(false, true)) {
+            rng = new RandomNameGenerator();
+            rng.runThreadLoader();
         }
     }
+
+    private void runThreadLoader() {
+        Thread loader = new Thread(() -> {
+            rng.populateNames();
+            rng.removeInitializationListener();
+        }, "Random Name Generator name populator");
+        loader.setPriority(Thread.NORM_PRIORITY - 1);
+        loader.start();
+    }
+
+    public void addInitializationListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removeInitializationListener() {
+        pcs.firePropertyChange(PROP_INITIALIZED, initialized, initialized = true);
+        for (PropertyChangeListener listener : pcs.getPropertyChangeListeners()) {
+            pcs.removePropertyChangeListener(listener);
+        }
+    }
+
 
     public void populateNames() {
         //region Variable Instantiation
@@ -310,7 +340,8 @@ public class RandomNameGenerator implements Serializable {
                 numEthnicCodes++;
             }
         } catch (IOException e) {
-            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + masterAncestryFile + "'");
+            logger.error(RandomNameGenerator.class, "populateNames",
+                    "Could not find " + masterAncestryFile + "!");
         }
 
         // Then immediately instantiate the number of weighted maps needed for Given Names and Surnames
@@ -334,10 +365,12 @@ public class RandomNameGenerator implements Serializable {
 
         if ((fileNames == null) || (fileNames.length == 0)) {
             //region No Factions Specified
-            System.err.println("RandomNameGenerator.populateNames(): No faction files found!");
+            logger.error(RandomNameGenerator.class, "populateNames",
+                    "No faction files found!");
+
             // We will create a general list where everything is weighted at one to allow player to
             // play with named characters, indexing it at 1
-            String key = "General";
+            String key = KEY_DEFAULT_FACTION;
 
             // Initialize Maps
             factionGivenNames.put(key, new HashMap<>());
@@ -385,7 +418,8 @@ public class RandomNameGenerator implements Serializable {
                         factionEthnicCodes.get(key).add(Integer.parseInt(values[2]), ethnicCode);
                     }
                 } catch (IOException fne) {
-                    System.err.println("RandomNameGenerator.populateNames(): Could not find '" + factionFile + "'");
+                    logger.error(RandomNameGenerator.class, "populateNames",
+                            "Could not find " + factionFile + "!");
                 }
             }
         }
@@ -403,36 +437,17 @@ public class RandomNameGenerator implements Serializable {
                 lineNumber++;
                 String[] values = input.nextLine().split(",");
                 if (values.length < 3) {
-                    System.err.println("Not enough fields in '" + file.toString() + "' on " + lineNumber);
+                    logger.error(RandomNameGenerator.class, "readNamesFileToMap",
+                            "Not enough fields in '" + file.toString() + "' on " + lineNumber);
                     continue;
                 }
 
                 map.get(Integer.parseInt(values[2])).add(Integer.parseInt(values[1]), values[0]);
             }
         } catch (IOException e) {
-            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + file + "'");
+            logger.error(RandomNameGenerator.class, "populateNames",
+                    "Could not find " + file + "!");
         }
-    }
-
-    public synchronized void addInitializationListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
-        if (initialized) {
-            // Fire and remove
-            pcs.firePropertyChange(PROP_INITIALIZED, false, true);
-            pcs.removePropertyChangeListener(listener);
-        }
-    }
-
-    protected void setInitialized() {
-        pcs.firePropertyChange(PROP_INITIALIZED, initialized, initialized = true);
-    }
-
-    public boolean isInitialized() {
-        return initialized;
     }
     //endregion Initialization
-
-    // Deactivated methods
-    public void dispose() {}
-    public void clear() {}
 }

@@ -367,12 +367,22 @@ public class Crew implements Serializable {
         return nickname[pos];
     }
 
+    public int[] getGenderArray() {
+        return gender;
+    }
+
     public int getGender() {
         return gender[0];
     }
 
     public int getGender(int pos) {
-        return gender[pos];
+        // The randomize return value is used in MekHQ to create new personnel following a battle,
+        // and should not be changed without ensuring it doesn't break on that side
+        if (pos < gender.length) {
+            return gender[pos];
+        } else {
+            return G_RANDOMIZE;
+        }
     }
 
     public static int getGenderAsInt(boolean isFemale) {

@@ -154,8 +154,6 @@ public class RandomNameGenerator implements Serializable {
         return generate(isFemale());
     }
 
-    @Deprecated //24-Feb-2020, this is included to keep current functionality working while other
-                //improvements are being finished
     public String generate(boolean isFemale) {
         // this is a total hack, but for now lets assume that
         // if the chosenFaction name contains the word "clan"
@@ -164,7 +162,7 @@ public class RandomNameGenerator implements Serializable {
     }
 
     /**
-     * Generate a single random name
+     * Generate a single random name for MegaMek only
      *
      * @param isFemale true if the name should be female, otherwise false
      * @param isClan true if the name should be for a clanner, otherwise false

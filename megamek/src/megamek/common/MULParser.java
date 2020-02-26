@@ -25,6 +25,8 @@ import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.MMLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -43,6 +45,8 @@ import megamek.utils.MegaMekXmlUtil;
 public class MULParser {
 
     public static final String VERSION = "version";
+
+    public static final MMLogger logger = DefaultMmLogger.getInstance();
     /**
      * The names of the various elements recognized by this parser.
      */
@@ -1162,13 +1166,19 @@ public class MULParser {
             }
 
             if (attributes.containsKey(EXTRA_DATA)) {
-                Map<String, String> extraData = new HashMap<>();
-                String[] valuePairs = attributes.get(EXTRA_DATA).split(",");
-                for (int i = 0; i < valuePairs.length; i = i + 2) {
-                    //this is always in pairs, so it will not cause an out of bounds error
-                    extraData.put(valuePairs[i], valuePairs[i + 1]);
+                try {
+                    Map<String, String> extraData = new HashMap<>();
+                    String[] valuePairs = attributes.get(EXTRA_DATA).split("\\|");
+                    String[] values;
+                    for (String valuePair : valuePairs) {
+                        values = valuePair.split("=");
+                        extraData.put(values[0], values[1]);
+                    }
+                    crew.setExtraDataForCrewMember(slot, extraData);
+                } catch (Exception e) {
+                    logger.error(getClass(), "setPilotAttributes",
+                            "Error in loading MUL, issues with extraData elements!");
                 }
-                crew.setExtraDataForCrewMember(slot, extraData);
             }
         } // End have-required-fields
     }
@@ -1180,7 +1190,7 @@ public class MULParser {
      * @param locationTag
      * @param entity
      */
-    private void parseLocation(Element locationTag, Entity entity){
+    private void parseLocation(Element locationTag, Entity entity) {
         // Look for the element's attributes.
         String index = locationTag.getAttribute(INDEX);
         String destroyed = locationTag.getAttribute(IS_DESTROYED);
@@ -2156,8 +2166,8 @@ public class MULParser {
             }
         }
         if (!foundMea){
-            warning.append("No modular equipment mount found in specified " +
-                    "location! Location: " + meaMountLoc + "\n");
+            warning.append("No modular equipment mount found in specified " + "location! Location: ")
+                    .append(meaMountLoc).append("\n");
             return;
         }
         if (meaMountLoc == BattleArmor.MOUNT_LOC_LARM){
@@ -2267,7 +2277,6 @@ public class MULParser {
      * @param loc The location index on the entity
      * @param type The ammo type string
      * @param bayIndex The crit index of the bay where we want to load the ammo on the location where the bay is
-     * @return A generated critical slot entry
      */
     private void addExtraAmmoToBay(Entity entity, int loc, String type, String bayIndex) {
         // here, we need to do the following:

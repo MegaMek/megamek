@@ -1512,14 +1512,14 @@ public class Crew implements Serializable {
 
             output.append("\" extraData=\"");
 
-            String[] keySet = new String[dataRow.keySet().size()];
-            dataRow.keySet().toArray(keySet);
-
-            for (int k = 0; k < keySet.length; k++) {
-                output.append(keySet[k]).append(",").append(dataRow.get(keySet[k]));
-                if (k < keySet.length - 1) {
-                    output.append(",");
+            boolean first = true;
+            for (Map.Entry<String, String> row : dataRow.entrySet()) {
+                if (!first) {
+                    output.append("|");
+                } else {
+                    first = false;
                 }
+                output.append(row.getKey()).append("=").append(row.getValue());
             }
 
             return output.toString();

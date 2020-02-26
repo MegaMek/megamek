@@ -3568,7 +3568,7 @@ public class Tank extends Entity {
             if ((mount.getType() instanceof MiscType)
                     && mount.getType().hasFlag(MiscType.F_CARGO)) {
                 if (!addedCargo) {
-                    usedSlots += mount.getType().getTankslots(this);
+                    usedSlots += mount.getType().getTankSlots(this);
                     addedCargo = true;
                     continue;
                 } else {
@@ -3583,7 +3583,7 @@ public class Tank extends Entity {
             if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
                     EquipmentType.armorNames).contains(
                     mount.getType().getName()))) {
-                usedSlots += mount.getType().getTankslots(this);
+                usedSlots += mount.getType().getTankSlots(this);
             }
         }
         // JJs take just 1 slot

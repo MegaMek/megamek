@@ -1235,6 +1235,10 @@ public class MiscType extends EquipmentType {
                 return 4;
             } else if ((entity instanceof BipedMech) || (entity instanceof QuadMech)) {
                 return 7;
+            } else if (entity instanceof TripodMech) {
+                return 8;
+            } else if (entity instanceof Tank) {
+                return entity.locations();
             }
 
         } else if (hasFlag(F_ENDO_STEEL)) {

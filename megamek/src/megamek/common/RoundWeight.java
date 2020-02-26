@@ -64,7 +64,7 @@ public enum RoundWeight {
     public static boolean usesKilogramStandard(Entity entity) {
         return entity instanceof Protomech
                 || entity instanceof BattleArmor
-                || entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT;
+                || (entity.isSupportVehicle() && entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
     }
 
     /**

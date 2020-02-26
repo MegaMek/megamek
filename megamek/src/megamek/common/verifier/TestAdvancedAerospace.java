@@ -236,10 +236,10 @@ public class TestAdvancedAerospace extends TestAero {
                 } else {
                     weaponsPerArc[arc]++;
                 }
-                weaponTonnage[arc] += m.getType().getTonnage(vessel);
+                weaponTonnage[arc] += m.getTonnage();
             }
         }
-        double retVal[] = new double[arcs];
+        double[] retVal = new double[arcs];
         for (int arc = 0; arc < arcs; arc++) {
             int excess = (weaponsPerArc[arc] - 1) / slotsPerArc;
             if (excess > 0) {
@@ -550,8 +550,8 @@ public class TestAdvancedAerospace extends TestAero {
             }
 
             AmmoType mt = (AmmoType) m.getType();
-            int slots = (int)Math.ceil(m.getBaseShotsLeft() / mt.getShots());
-            weight += ceil(mt.getTonnage(getEntity()) * slots, Ceil.HALFTON);
+            int slots = (int) Math.ceil((double) m.getBaseShotsLeft() / mt.getShots());
+            weight += ceil(m.getTonnage() * slots, Ceil.HALFTON);
         }
         return weight;
     }
@@ -642,12 +642,12 @@ public class TestAdvancedAerospace extends TestAero {
             for (Integer wNum : m.getBayWeapons()) {
                 final Mounted w = getEntity().getEquipment(wNum);
                 buffer.append("   ").append(StringUtil.makeLength(w.getName(),
-                        getPrintSize() - 25)).append(w.getType().getTonnage(getEntity()))
+                        getPrintSize() - 25)).append(w.getTonnage())
                     .append("\n");
             }
             for (Integer aNum : m.getBayAmmo()) {
                 final Mounted a = getEntity().getEquipment(aNum);
-                double weight = ceil(a.getType().getTonnage(getEntity())
+                double weight = ceil(a.getTonnage()
                         * a.getBaseShotsLeft() / ((AmmoType)a.getType()).getShots(), Ceil.HALFTON);
                 buffer.append("   ").append(StringUtil.makeLength(a.getName(),
                         getPrintSize() - 25)).append(weight).append("\n");

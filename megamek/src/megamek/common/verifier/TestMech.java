@@ -238,13 +238,12 @@ public class TestMech extends TestEntity {
             for (Mounted m : mech.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt instanceof EnergyWeapon) {
-                    powerAmpWeight += wt.getTonnage(mech);
+                    powerAmpWeight += m.getTonnage();
                 }
                 if ((m.getLinkedBy() != null)
                         && (m.getLinkedBy().getType() instanceof MiscType)
                         && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                    powerAmpWeight += ((MiscType) m.getLinkedBy().getType())
-                            .getTonnage(mech);
+                    powerAmpWeight += m.getLinkedBy().getTonnage();
                 }
             }
             return TestEntity.ceil(powerAmpWeight / 10f, getWeightCeilingPowerAmp());
@@ -324,7 +323,7 @@ public class TestMech extends TestEntity {
         for (Mounted misc : mech.getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
                 hasCompact = true;
-                compactHsTons += misc.getType().getTonnage(mech);
+                compactHsTons += misc.getTonnage();
             }
         }
         if (hasCompact) {

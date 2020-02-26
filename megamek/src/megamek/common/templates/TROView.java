@@ -254,7 +254,7 @@ public class TROView {
         double podSpace = 0.0;
         for (final Mounted m : entity.getEquipment()) {
             if (m.isOmniPodMounted()) {
-                podSpace += m.getType().getTonnage(entity, m.getLocation());
+                podSpace += m.getTonnage();
             } else if (m.getType() instanceof WeaponType) {
                 weaponCount.merge(m.getType().getName(), 1, Integer::sum);
             }
@@ -518,7 +518,7 @@ public class TROView {
                     } else if (!crit.getMount().isWeaponGroup()) {
                         final String key = stripNotes(crit.getMount().getType().getName());
                         fixedCount.merge(key, 1, Integer::sum);
-                        fixedWeight.merge(key, crit.getMount().getType().getTonnage(entity), Double::sum);
+                        fixedWeight.merge(key, crit.getMount().getTonnage(), Double::sum);
                     }
                 }
             }

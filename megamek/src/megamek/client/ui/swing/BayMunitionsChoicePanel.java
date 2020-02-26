@@ -138,7 +138,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                 Mounted m = row.ammoMounts.get(0);
                 AmmoType at = (AmmoType) m.getType();
                 m.setAmmoCapacity(m.getAmmoCapacity() + remainingWeight);
-                m.setOriginalShots((int) Math.floor(m.getAmmoCapacity() / (at.getShots() * at.getTonnage(entity))));
+                m.setOriginalShots((int) Math.floor(m.getAmmoCapacity() / (at.getShots() * m.getTonnage())));
             }
         }
     }

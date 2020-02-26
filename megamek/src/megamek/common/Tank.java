@@ -2697,13 +2697,13 @@ public class Tank extends Entity {
             WeaponType wt = (WeaponType) m.getType();
             if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
                 sinks += wt.getHeat();
-                paWeight += wt.getTonnage(this) / 10.0;
+                paWeight += m.getTonnage() / 10.0;
             }
             if (!hasNoTurret() && (m.getLocation() == getLocTurret())) {
-                turretWeight += wt.getTonnage(this) / 10.0;
+                turretWeight += m.getTonnage() / 10.0;
             }
             if (!hasNoDualTurret() && (m.getLocation() == getLocTurret2())) {
-                turretWeight += wt.getTonnage(this) / 10.0;
+                turretWeight += m.getTonnage() / 10.0;
             }
         }
         paWeight = Math.ceil(paWeight * 2) / 2;

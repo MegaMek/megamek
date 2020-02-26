@@ -187,6 +187,11 @@ public class RandomNameGenerator implements Serializable {
     public String generate(boolean isFemale, boolean isClan, String faction) {
         String name = "Unnamed";
         if (initialized) {
+            // This checks to see if we've got a name map for the faction. If we do not, then we
+            // go to check if the person is a clanner. If they are, then they default to the default
+            // clan key provided that exists.
+            // If the key isn't set by either case above, then the name is generated based on the
+            // default faction key
             faction = factionEthnicCodes.containsKey(faction) ? faction
                     : ((isClan && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
                         ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);
@@ -219,6 +224,11 @@ public class RandomNameGenerator implements Serializable {
     public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan, String faction) {
         String[] name = { "Unnamed", "Person" };
         if (initialized) {
+            // This checks to see if we've got a name map for the faction. If we do not, then we
+            // go to check if the person is a clanner. If they are, then they default to the default
+            // clan key provided that exists.
+            // If the key isn't set by either case above, then the name is generated based on the
+            // default faction key
             faction = factionEthnicCodes.containsKey(faction) ? faction
                     : ((isClan && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
                         ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);

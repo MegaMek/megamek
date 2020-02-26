@@ -131,11 +131,10 @@ public class RandomNameGenerator implements Serializable {
 
     private int percentFemale;
     private String chosenFaction;
-    private static AtomicBoolean initializeLock = new AtomicBoolean(false);
-    private static boolean initialized = false;
 
     private static final MMLogger logger = DefaultMmLogger.getInstance();
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private static volatile boolean initialized = false; // volatile to ensure readers get the current version
     //endregion Variable Declarations
 
     public RandomNameGenerator() {
@@ -281,27 +280,28 @@ public class RandomNameGenerator implements Serializable {
         return Compute.randomInt(100) < percentFemale;
     }
 
-    public static RandomNameGenerator getInstance() {
+    /**
+     *
+     * @return the instance of the RandomNameGenerator to use
+     */
+    public static synchronized RandomNameGenerator getInstance() {
+        // only this code reads and writes `rng`
         if (rng == null) {
-            initialize();
+            // synchronized ensures this will only be entered exactly once
+            rng = new RandomNameGenerator();
+            rng.runThreadLoader();
         }
+        // when getInstance returns, rng will always be non-null
         return rng;
     }
     //endregion Getters and Setters
 
     //region Initialization
-    public static void initialize() {
-        if (initializeLock.compareAndSet(false, true)) {
-            rng = new RandomNameGenerator();
-            rng.runThreadLoader();
-        }
-    }
-
     private void runThreadLoader() {
         Thread loader = new Thread(() -> {
             rng.populateNames();
             rng.removeInitializationListener();
-        }, "Random Name Generator name populator");
+        }, "Random Name Generator name initializer");
         loader.setPriority(Thread.NORM_PRIORITY - 1);
         loader.start();
     }
@@ -310,7 +310,7 @@ public class RandomNameGenerator implements Serializable {
         pcs.addPropertyChangeListener(listener);
     }
 
-    public void removeInitializationListener() {
+    private void removeInitializationListener() {
         pcs.firePropertyChange(PROP_INITIALIZED, initialized, initialized = true);
         for (PropertyChangeListener listener : pcs.getPropertyChangeListeners()) {
             pcs.removePropertyChangeListener(listener);
@@ -318,7 +318,7 @@ public class RandomNameGenerator implements Serializable {
     }
 
 
-    public void populateNames() {
+    private void populateNames() {
         //region Variable Instantiation
         int numEthnicCodes = 0;
         //endregion Variable Instantiation

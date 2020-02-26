@@ -317,7 +317,6 @@ public class RandomNameGenerator implements Serializable {
         }
     }
 
-
     private void populateNames() {
         //region Variable Instantiation
         int numEthnicCodes = 0;

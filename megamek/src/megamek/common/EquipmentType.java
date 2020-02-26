@@ -358,7 +358,7 @@ public class EquipmentType implements ITechnology {
         return criticals;
     }
 
-    public int getTankslots(Entity entity) {
+    public int getTankSlots(Entity entity) {
         return tankslots;
     }
 

@@ -617,7 +617,7 @@ public class TestTank extends TestEntity {
                     && mount.getType().hasFlag(MiscType.F_CARGO)) {
                 if (!addedCargo) {
                     buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
-                    buff.append(mount.getType().getTankslots(tank)).append("\n");
+                    buff.append(mount.getType().getTankSlots(tank)).append("\n");
                     addedCargo = true;
                     continue;
                 } else {
@@ -628,7 +628,7 @@ public class TestTank extends TestEntity {
                     EquipmentType.armorNames).contains(
                     mount.getType().getName()))) {
                 buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
-                buff.append(mount.getType().getTankslots(tank)).append("\n");
+                buff.append(mount.getType().getTankSlots(tank)).append("\n");
             }
         }
         if (tank.getExtraCrewSeats() > 0) {
@@ -924,7 +924,8 @@ public class TestTank extends TestEntity {
             return eq.hasFlag(MiscType.F_CHASSIS_MODIFICATION)
                     || eq.hasFlag(MiscType.F_CASE)
                     || eq.hasFlag(MiscType.F_CASEII)
-                    || eq.hasFlag(MiscType.F_JUMP_JET);
+                    || eq.hasFlag(MiscType.F_JUMP_JET)
+                    || eq.hasFlag(MiscType.F_BLUE_SHIELD);
         } else {
             return eq instanceof AmmoType;
         }

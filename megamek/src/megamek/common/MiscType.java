@@ -1224,10 +1224,12 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_BLUE_SHIELD)) {
             if (entity instanceof Aero) {
                 return 4;
-            } else if ((entity instanceof BipedMech) || (entity instanceof QuadMech)) {
-                return 7;
+            } else {
+                // Mechs: one per location except head
+                // Support vehicles: one per location except body
+                // Combat vehicles: Handled by getTankSlots
+                return entity.locations() - 1;
             }
-
         } else if (hasFlag(F_ENDO_STEEL)) {
             if ((entity instanceof Mech) && ((Mech) entity).isSuperHeavy()) {
                 return 7;
@@ -1245,6 +1247,14 @@ public class MiscType extends EquipmentType {
         }
         // right, well I'll just guess then
         return 1;
+    }
+
+    @Override
+    public int getTankSlots(Entity entity) {
+        if (hasFlag(MiscType.F_BLUE_SHIELD)) {
+            return entity.locations() - 1;
+        }
+        return super.getTankSlots(entity);
     }
 
     public double getBV(Entity entity, Mounted linkedTo) {

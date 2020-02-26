@@ -530,7 +530,7 @@ public abstract class TestEntity implements TestEntityOption {
                     || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 continue;
             }
-            weightSum += mt.getTonnage(getEntity(), m.getLocation());
+            weightSum += m.getTonnage();
         }
         return weightSum;
     }
@@ -566,7 +566,7 @@ public abstract class TestEntity implements TestEntityOption {
                 continue;
             }
 
-            if (mt.getTonnage(getEntity(), m.getLocation()) == 0f) {
+            if (m.getTonnage() == 0f) {
                 continue;
             }
 
@@ -574,7 +574,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
-                    TestEntity.makeWeightString(mt.getTonnage(getEntity()), usesKgStandard()));
+                    TestEntity.makeWeightString(m.getTonnage(), usesKgStandard()));
             buff.append("\n");
         }
         return buff;
@@ -586,12 +586,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.isWeaponGroup()) {
                 continue;
             }
-            WeaponType wt = (WeaponType) m.getType();
-            if (m.isDWPMounted()){
-                weight += wt.getTonnage(getEntity()) * 0.75;
-            } else {
-                weight += wt.getTonnage(getEntity());
-            }
+            weight += m.getTonnage();
         }
         return weight;
     }
@@ -617,8 +612,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
-                    .append(TestEntity.makeWeightString(mt
-                            .getTonnage(getEntity()), usesKgStandard())).append("\n");
+                    .append(TestEntity.makeWeightString(m.getTonnage(), usesKgStandard())).append("\n");
         }
         return buff;
     }
@@ -637,8 +631,7 @@ public abstract class TestEntity implements TestEntityOption {
                 continue;
             }
 
-            AmmoType mt = (AmmoType) m.getType();
-            weight += mt.getTonnage(getEntity());
+            weight += m.getTonnage();
         }
         return weight;
     }
@@ -666,8 +659,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append(" ").append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
-                    .append(TestEntity.makeWeightString(mt
-                            .getTonnage(getEntity()), usesKgStandard())).append("\n");
+                    .append(TestEntity.makeWeightString(m.getTonnage(), usesKgStandard())).append("\n");
         }
         return buff;
     }
@@ -742,13 +734,13 @@ public abstract class TestEntity implements TestEntityOption {
             for (Mounted mo : getEntity().getWeaponList()) {
                 WeaponType wt = (WeaponType) mo.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    fTons += wt.getTonnage(getEntity());
+                    fTons += mo.getTonnage();
                 }
             }
             for (Mounted mo : getEntity().getMisc()) {
                 MiscType mt2 = (MiscType) mo.getType();
                 if (mt2.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    fTons += mt.getTonnage(getEntity());
+                    fTons += mo.getTonnage();
                 }
             }
             double weight = 0.0f;

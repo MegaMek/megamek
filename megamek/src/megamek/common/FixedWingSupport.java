@@ -374,7 +374,7 @@ public class FixedWingSupport extends ConvFighter {
             WeaponType wt = (WeaponType) m.getType();
             if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
                 sinks += wt.getHeat();
-                paWeight += wt.getTonnage(this) / 10.0;
+                paWeight += m.getTonnage() / 10.0;
             }
         }
         paWeight = Math.ceil(paWeight * 2) / 2;

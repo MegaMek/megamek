@@ -1618,7 +1618,7 @@ public class Jumpship extends Aero {
             if (atype.getAmmoType() == AmmoType.T_AR10) {
                 key2 = "AR10 Ammo;" + key;
             }
-            double ammoWeight = mounted.getType().getTonnage(this);
+            double ammoWeight = mounted.getTonnage();
             if (atype.isCapital()) {
                 ammoWeight = mounted.getUsableShotsLeft() * atype.getAmmoRatio();
             }

@@ -128,6 +128,7 @@ public class RandomNameGenerator implements Serializable {
     private static Map<String, WeightedMap<Integer>> factionEthnicCodes;
 
     private static final String KEY_DEFAULT_FACTION = "General";
+    private static final String KEY_DEFAULT_CLAN = "Clan";
 
     private int percentFemale;
     private String chosenFaction;
@@ -186,7 +187,9 @@ public class RandomNameGenerator implements Serializable {
     public String generate(boolean isFemale, boolean isClan, String faction) {
         String name = "Unnamed";
         if (initialized) {
-            faction = factionEthnicCodes.containsKey(faction) ? faction : KEY_DEFAULT_FACTION;
+            faction = factionEthnicCodes.containsKey(faction) ? faction
+                    : ((isClan && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
+                        ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);
             int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
@@ -206,19 +209,6 @@ public class RandomNameGenerator implements Serializable {
      *
      * @param isFemale true if the name should be female, otherwise false
      * @param isClan true if the name should be for a clanner, otherwise false
-     * @return - a String[] containing the name,
-     *              with the given name at String[0]
-     *              and the surname at String[1]
-     */
-    public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan) {
-        return generateGivenNameSurnameSplit(isFemale, isClan, chosenFaction);
-    }
-
-    /**
-     * Generate a single random name split between a given name and surname
-     *
-     * @param isFemale true if the name should be female, otherwise false
-     * @param isClan true if the name should be for a clanner, otherwise false
      * @param faction a string containing the faction key with which to generate the name from.
      *                If the faction is not a key for the <code>factionSurnames</code> Map,
      *                it will instead generate based on the General list
@@ -229,7 +219,9 @@ public class RandomNameGenerator implements Serializable {
     public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan, String faction) {
         String[] name = { "Unnamed", "Person" };
         if (initialized) {
-            faction = factionEthnicCodes.containsKey(faction) ? faction : KEY_DEFAULT_FACTION;
+            faction = factionEthnicCodes.containsKey(faction) ? faction
+                    : ((isClan && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
+                        ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);
             int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
@@ -367,19 +359,17 @@ public class RandomNameGenerator implements Serializable {
             logger.error(RandomNameGenerator.class, "populateNames",
                     "No faction files found!");
 
-            // We will create a general list where everything is weighted at one to allow player to
-            // play with named characters, indexing it at 1
-            String key = KEY_DEFAULT_FACTION;
-
+            // We will create a general list where everything is weighted at one to allow players to
+            // continue to play with named characters, indexing it at 1
             // Initialize Maps
-            factionGivenNames.put(key, new HashMap<>());
-            factionEthnicCodes.put(key, new WeightedMap<>());
+            factionGivenNames.put(KEY_DEFAULT_FACTION, new HashMap<>());
+            factionEthnicCodes.put(KEY_DEFAULT_FACTION, new WeightedMap<>());
 
             // Add information to maps
             for (int i = 0; i <= numEthnicCodes; i++) {
-                factionGivenNames.get(key).put(i, new WeightedMap<>());
-                factionGivenNames.get(key).get(i).add(1, i);
-                factionEthnicCodes.get(key).add(1, i);
+                factionGivenNames.get(KEY_DEFAULT_FACTION).put(i, new WeightedMap<>());
+                factionGivenNames.get(KEY_DEFAULT_FACTION).get(i).add(1, i);
+                factionEthnicCodes.get(KEY_DEFAULT_FACTION).add(1, i);
             }
             //endregion No Factions Specified
         } else {

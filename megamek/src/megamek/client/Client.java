@@ -501,7 +501,7 @@ public class Client implements IClientCommandHandler {
                 e.printStackTrace();
             }
             UnitRoleHandler.initialize();
-            RandomNameGenerator.initialize();
+            RandomNameGenerator.getInstance();
             MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
                 public void doneLoading() {
                     RandomUnitGenerator.getInstance();

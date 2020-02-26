@@ -464,8 +464,6 @@ public class Client implements IClientCommandHandler {
         // Handle phase-specific items.
         switch (phase) {
         case PHASE_STARTING_SCENARIO:
-            sendDone(true);
-            break;
         case PHASE_EXCHANGE:
             sendDone(true);
             break;
@@ -501,12 +499,8 @@ public class Client implements IClientCommandHandler {
                 e.printStackTrace();
             }
             UnitRoleHandler.initialize();
-            RandomNameGenerator.initialize();
-            MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
-                public void doneLoading() {
-                    RandomUnitGenerator.getInstance();
-                }
-            });
+            RandomNameGenerator.getInstance();
+            MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
             if (MechSummaryCache.getInstance().isInitialized()) {
                 RandomUnitGenerator.getInstance();
             }

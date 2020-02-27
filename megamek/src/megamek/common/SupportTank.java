@@ -573,6 +573,11 @@ public class SupportTank extends Tank {
     }
 
     @Override
+    public boolean isTractor() {
+        return hasWorkingMisc(MiscType.F_TRACTOR_MODIFICATION);
+    }
+
+    @Override
     public boolean isTrailer() {
         return hasWorkingMisc(MiscType.F_TRAILER_MODIFICATION);
     }

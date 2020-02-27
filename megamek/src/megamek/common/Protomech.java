@@ -2037,9 +2037,14 @@ public class Protomech extends Entity {
         retVal += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         // Finally, apply the Final ProtoMech Cost Multiplier
-        retVal *= 1 + (weight / 100.0);
+        retVal *= getPriceMultiplier();
 
         return retVal;
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        return 1 + (weight / 100.0); // weight multiplier
     }
 
     @Override

@@ -144,18 +144,19 @@ public class ConvFighter extends Aero {
         // power amplifiers, if any
         cost += 20000 * getPowerAmplifierWeight();
 
-        // omni multiplier (leaving this in for now even though conventional
-        // fighters
-        // don't make for legal omnis)
-        double omniMultiplier = 1;
+        return Math.round(cost * getPriceMultiplier());
+
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        double priceMultiplier = 1.0;
+        // omni multiplier (leaving this in for now even though conventional fighters don't make for legal omnis)
         if (isOmni()) {
-            omniMultiplier = 1.25f;
+            priceMultiplier *= 1.25f;
         }
-
-        double weightMultiplier = 1 + (weight / 200.0);
-
-        return Math.round(cost * omniMultiplier * weightMultiplier);
-
+        priceMultiplier *= 1 + (weight / 200.0); // weight multiplier
+        return priceMultiplier;
     }
 
     @Override

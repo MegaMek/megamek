@@ -3496,8 +3496,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mounted.setByShot(true);
             mounted.setShotsLeft(nAmmo);
             mounted.setOriginalShots(nAmmo);
-            double tonnage = Math.max(1, nAmmo / ((AmmoType) mounted.getType()).getShots())
-                    * ((AmmoType) mounted.getType()).getTonnage(this);
+            double tonnage = Math.max(1, nAmmo / ((AmmoType) mounted.getType()).getShots()) * mounted.getTonnage();
             mounted.setAmmoCapacity(tonnage);
         }
 
@@ -10525,6 +10524,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public abstract double getCost(boolean ignoreAmmo);
 
+    /**
+     * Returns a multiplier that combines multiplicative construction cost modifiers for this Entity.
+     *
+     * This includes only modifiers that apply to an Entity's final, total cost (e.g. - the 1.25x modifier for being
+     * an omni-unit, or the 32.0x for being an aerodyne dropship). It does NOT include multipliers that only apply to
+     * a sub-part of the unit (e.g. the weight based multiplier that applies to a vehicle's internal structure cost).
+     *
+     * This allows MekHQ to scale the price of a Unit's Parts in a more appropriate manner.
+     *
+     * Defaults to 1.0
+     */
+    public double getPriceMultiplier() {
+        return 1.0;
+    };
+
     public long getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
         // bvText = new StringBuffer();
         long cost = 0;
@@ -12165,7 +12179,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted mounted : miscList) {
             if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)
                 && !mounted.isInoperable()) {
-                i += mounted.getType().getTonnage(this);
+                i += mounted.getTonnage();
             }
         }
         return i;
@@ -13383,9 +13397,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     		} else if (m.getType().hasFlag(MiscType.F_MOBILE_HPG)) {
     			specialAbilities.put(BattleForceSPA.HPG, null);
     		} else if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
-    			specialAbilities.merge(BattleForceSPA.MHQ, (int)m.getType().getTonnage(this) * 2,
+    			specialAbilities.merge(BattleForceSPA.MHQ, (int) m.getTonnage() * 2,
     					Integer::sum);
-    			if (m.getType().getTonnage(this) >= getWeight() / 20.0) {
+    			if (m.getTonnage() >= getWeight() / 20.0) {
     				specialAbilities.put(BattleForceSPA.RCN, null);
     			}
     		} else if (m.getType().hasFlag(MiscType.F_SENSOR_DISPENSER)) {
@@ -13626,7 +13640,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 || wt.hasFlag(WeaponType.F_PLASMA)
                 || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
                 || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
-                total += wt.getTonnage(this);
+                total += m.getTonnage();
             }
         }
         // Finally use that total to compute and return the actual power
@@ -15213,20 +15227,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Entity trailer = game.getEntity(id);
             thisTrain.add(trailer);
         }
-        //Check each entity in the train for working hitches
+        //Check each Entity in the train for working hitches. When found, add the hex
+        // that Entity is in and the hex the hitch faces.
         for (Entity e : thisTrain) {
-            for (Mounted m : e.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_HITCH) && m.isReady()) {
-                    //Add the coords of the unit with the empty hitch
+            for (Transporter t : e.getTransports()) {
+                if ((t instanceof TankTrailerHitch) && (t.getUnused() > 0)) {
                     trailerPos.add(e.getPosition());
-
-                    //Now, check the location of the hitch (which should just be front or rear)
-                    //and add the hex adjacent to the entity in the appropriate direction
-                    //Offset the location value to match the directions in Coords.
                     int dir = e.getFacing();
-                    if (m.getLocation() == Tank.LOC_REAR
-                            || m.getLocation() == SuperHeavyTank.LOC_REAR) {
-                        dir = ((dir + 3) % 6);
+                    if (((TankTrailerHitch) t).getRearMounted()) {
+                        dir = (dir + 3) % 6;
                     }
                     trailerPos.add(e.getPosition().translated(dir));
                 }
@@ -15356,7 +15365,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             }
             for (Transporter t : e.getTransports()) {
-                if (t.canLoad(trailer)) {
+                if (t.canTow(trailer)) {
                     result = true;
                     hitchFound = true;
                     //stop looking

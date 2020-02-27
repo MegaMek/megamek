@@ -211,7 +211,7 @@ public class TestTank extends TestEntity {
                         && !(m.getType() instanceof AmmoType)
                         // Skip any patchwork armor mounts
                         && (EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
-                    weight += m.getType().getTonnage(tank);
+                    weight += m.getTonnage();
                 }
             }
             // Turrets weight 10% of the weight of weapons in them
@@ -240,7 +240,7 @@ public class TestTank extends TestEntity {
             for (Mounted m : tank.getEquipment()) {
                 if ((m.getLocation() == tank.getLocTurret2())
                         && !(m.getType() instanceof AmmoType)) {
-                    weight += m.getType().getTonnage(tank);
+                    weight += m.getTonnage();
                 }
             }
             // Turrets weight 10% of the weight of weapons in them
@@ -617,7 +617,7 @@ public class TestTank extends TestEntity {
                     && mount.getType().hasFlag(MiscType.F_CARGO)) {
                 if (!addedCargo) {
                     buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
-                    buff.append(mount.getType().getTankslots(tank)).append("\n");
+                    buff.append(mount.getType().getTankSlots(tank)).append("\n");
                     addedCargo = true;
                     continue;
                 } else {
@@ -628,7 +628,7 @@ public class TestTank extends TestEntity {
                     EquipmentType.armorNames).contains(
                     mount.getType().getName()))) {
                 buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
-                buff.append(mount.getType().getTankslots(tank)).append("\n");
+                buff.append(mount.getType().getTankSlots(tank)).append("\n");
             }
         }
         if (tank.getExtraCrewSeats() > 0) {
@@ -734,17 +734,17 @@ public class TestTank extends TestEntity {
             for (Mounted m : tank.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_ENERGY) && !(wt instanceof CLChemicalLaserWeapon) && !(wt instanceof VehicleFlamerWeapon)) {
-                    weight += wt.getTonnage(tank);
+                    weight += m.getTonnage();
                 }
                 if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
                         MiscType) && m.getLinkedBy().getType().
                         hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                    weight += (m.getLinkedBy().getType()).getTonnage(tank);
+                    weight += m.getLinkedBy().getTonnage();
                 }
             }
             for (Mounted m : tank.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
-                    weight += m.getType().getTonnage(tank);
+                    weight += m.getTonnage();
                 }
             }
             return TestEntity.ceil(weight / 10, getWeightCeilingPowerAmp());
@@ -868,11 +868,11 @@ public class TestTank extends TestEntity {
             for (Mounted m : tank.getEquipment()) {
                 if ((m.getLocation() == tank.getLocTurret2())
                         && !(m.getType() instanceof AmmoType)) {
-                    turret2Weight += m.getType().getTonnage(tank);
+                    turret2Weight += m.getTonnage();
                 }
                 if ((m.getLocation() == tank.getLocTurret())
                         && !(m.getType() instanceof AmmoType)) {
-                    turretWeight += m.getType().getTonnage(tank);
+                    turretWeight += m.getTonnage();
                 }
             }
             turretWeight *= 0.1;
@@ -924,7 +924,8 @@ public class TestTank extends TestEntity {
             return eq.hasFlag(MiscType.F_CHASSIS_MODIFICATION)
                     || eq.hasFlag(MiscType.F_CASE)
                     || eq.hasFlag(MiscType.F_CASEII)
-                    || eq.hasFlag(MiscType.F_JUMP_JET);
+                    || eq.hasFlag(MiscType.F_JUMP_JET)
+                    || eq.hasFlag(MiscType.F_BLUE_SHIELD);
         } else {
             return eq instanceof AmmoType;
         }

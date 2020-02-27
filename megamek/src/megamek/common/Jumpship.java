@@ -1618,7 +1618,7 @@ public class Jumpship extends Aero {
             if (atype.getAmmoType() == AmmoType.T_AR10) {
                 key2 = "AR10 Ammo;" + key;
             }
-            double ammoWeight = mounted.getType().getTonnage(this);
+            double ammoWeight = mounted.getTonnage();
             if (atype.isCapital()) {
                 ammoWeight = mounted.getUsableShotsLeft() * atype.getAmmoRatio();
             }
@@ -2116,18 +2116,21 @@ public class Jumpship extends Aero {
         // Weapons and Equipment
         costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
-        double weightMultiplier = 1.25f;
-
         // Sum Costs
         for (int i = 0; i < costIdx; i++) {
             cost += costs[i];
         }
 
-        costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
-        cost = Math.round(cost * weightMultiplier);
+        costs[costIdx++] = -getPriceMultiplier(); // Negative indicates multiplier
+        cost = Math.round(cost * getPriceMultiplier());
         addCostDetails(cost, costs);
         return cost;
 
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        return 1.25; // weight multiplier
     }
 
     private void addCostDetails(double cost, double[] costs) {

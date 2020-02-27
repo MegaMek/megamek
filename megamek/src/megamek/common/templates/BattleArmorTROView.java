@@ -131,7 +131,7 @@ public class BattleArmorTROView extends TROView {
                 name = name.replaceAll(".*\\[", "").replaceAll("\\].*", "");
             }
             retVal.put("eqName", name);
-            retVal.put("eqMass", manipulator.getType().getTonnage(null) * 1000);
+            retVal.put("eqMass", manipulator.getTonnage() * 1000);
         }
         return retVal;
     }
@@ -166,7 +166,7 @@ public class BattleArmorTROView extends TROView {
             if (m.getType() instanceof AmmoType) {
                 row.put("mass", ((AmmoType) m.getType()).getKgPerShot() * m.getOriginalShots());
             } else {
-                row.put("mass", m.getType().getTonnage(ba) * 1000);
+                row.put("mass", m.getTonnage() * 1000);
             }
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
                 row.put("location", "-");

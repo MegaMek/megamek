@@ -102,6 +102,11 @@ public class TankTrailerHitch implements Transporter {
      */
     @Override
     public boolean canLoad(Entity unit) {
+        return false;
+    }
+    
+    @Override
+    public boolean canTow(Entity unit) {
         // Only trailers can be towed.
         if (!unit.isTrailer()) {
             return false;
@@ -111,9 +116,10 @@ public class TankTrailerHitch implements Transporter {
         if (towed != Entity.NONE) {
             return false;
         }
+        
         return true;
     }
-
+    
     /**
      * Load the given unit.
      *
@@ -127,7 +133,7 @@ public class TankTrailerHitch implements Transporter {
     @Override
     public final void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
-        if (!canLoad(unit)) {
+        if (!canTow(unit)) {
             throw new IllegalArgumentException("Can not load " + unit.getShortName() + " onto this hitch.");
         }
 

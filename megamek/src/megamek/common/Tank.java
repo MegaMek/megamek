@@ -2697,13 +2697,13 @@ public class Tank extends Entity {
             WeaponType wt = (WeaponType) m.getType();
             if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
                 sinks += wt.getHeat();
-                paWeight += wt.getTonnage(this) / 10.0;
+                paWeight += m.getTonnage() / 10.0;
             }
             if (!hasNoTurret() && (m.getLocation() == getLocTurret())) {
-                turretWeight += wt.getTonnage(this) / 10.0;
+                turretWeight += m.getTonnage() / 10.0;
             }
             if (!hasNoDualTurret() && (m.getLocation() == getLocTurret2())) {
-                turretWeight += wt.getTonnage(this) / 10.0;
+                turretWeight += m.getTonnage() / 10.0;
             }
         }
         paWeight = Math.ceil(paWeight * 2) / 2;
@@ -2743,6 +2743,8 @@ public class Tank extends Entity {
         for (int x = structCostIdx; x < i; x++) {
             cost += costs[x];
         }
+
+        // TODO Decouple cost calculation from addCostDetails and eliminate duplicate code in getPriceMultiplier
         if (isOmni()) { // Omni conversion cost goes here.
             cost *= 1.25;
             costs[i++] = -1.25;
@@ -2804,6 +2806,59 @@ public class Tank extends Entity {
 
         addCostDetails(cost, costs);
         return Math.round(cost);
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        double priceMultiplier = 1.0;
+        if (isOmni()) {
+            priceMultiplier *= 1.25;
+        }
+        if (isSupportVehicle()
+                && (movementMode.equals(EntityMovementMode.NAVAL)
+                || movementMode.equals(EntityMovementMode.HYDROFOIL)
+                || movementMode.equals(EntityMovementMode.SUBMARINE))) {
+            priceMultiplier *= weight / 100000.0;
+        } else {
+            switch (movementMode) {
+                case HOVER:
+                case SUBMARINE:
+                    priceMultiplier *= weight / 50.0;
+                    break;
+                case HYDROFOIL:
+                    priceMultiplier *= weight / 75.0;
+                    break;
+                case NAVAL:
+                case WHEELED:
+                    priceMultiplier *= weight / 200.0;
+                    break;
+                case TRACKED:
+                    priceMultiplier *= weight / 100.0;
+                    break;
+                case VTOL:
+                    priceMultiplier *= weight / 30.0;
+                    break;
+                case WIGE:
+                    priceMultiplier *= weight / 25.0;
+                    break;
+                case RAIL:
+                case MAGLEV:
+                    priceMultiplier *= weight / 250.0;
+                    break;
+            }
+        }
+        if (!isSupportVehicle()) {
+            if (hasWorkingMisc(MiscType.F_FLOTATION_HULL)
+                    || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
+                    || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                priceMultiplier *= 1.25;
+
+            }
+            if (hasWorkingMisc(MiscType.F_OFF_ROAD)) {
+                priceMultiplier *= 1.2;
+            }
+        }
+        return priceMultiplier;
     }
 
     @Override
@@ -3249,59 +3304,31 @@ public class Tank extends Entity {
     }
     
     /**
-     * Adds a trailer hitch to any tracked or wheeled military vehicle, or SupportVee with 
-     * Tractor chassis mod that doesn't already have one
-     */
-    @Override
-    public void addTrailerHitchEquipment() {
-        //If we already have a hitch, don't add a new one
-        if (hasWorkingMisc(MiscType.F_HITCH)) {
-            return;
-        }
-        boolean hitchNeeded = false;
-        //Only support vees designed as Tractors should have a hitch
-        if (isSupportVehicle()) {
-            if (hasWorkingMisc(MiscType.F_TRACTOR_MODIFICATION)) {
-                hitchNeeded = true;
-            }
-        } else {
-            //but all tracked and wheeled military vees should get one
-            if (getMovementMode() == EntityMovementMode.TRACKED || getMovementMode() == EntityMovementMode.WHEELED) {
-                hitchNeeded = true;
-            }
-        }
-        if (hitchNeeded) {
-            //Add hitch to the rear by default
-            if (isSuperHeavy()) {
-                try {
-                    addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), SuperHeavyTank.LOC_REAR);
-               } catch (LocationFullException ex) {
-                   //For vehicles, this shouldn't happen
-               }
-            } else {
-                try {
-                    addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), Tank.LOC_REAR);
-               } catch (LocationFullException ex) {
-                   //ditto
-               }
-            }
-        }
-    }
-    
-    /**
-     * Add a transporter for each trailer hitch the unit is equipped with
+     * Add a transporter for each trailer hitch the unit is equipped with, with a maximum of
+     * one each in the front and the rear. Any tractor that does not have an explicit hitch
+     * installed as equipment will get a rear-facing transporter.
      */
     public void setTrailerHitches() {
-        if (hasTrailerHitchTransporter()) {
-            return;
-        }
-        boolean rearMounted = false;
-        for (Mounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_HITCH)) {
-                if (m.getLocation() == Tank.LOC_REAR || (isSuperHeavy() && m.getLocation() == SuperHeavyTank.LOC_REAR)) {
-                    rearMounted = true;
+        if (isTractor() && !hasTrailerHitchTransporter()) {
+            // look for explicit installed trailer hitches and note location
+            boolean front = false;
+            boolean rear = false;
+            for (Mounted m : getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_HITCH)) {
+                    if (m.getLocation() == Tank.LOC_FRONT && !isTrailer()) {
+                        front = true;
+                    } else {
+                        rear = true;
+                    }
                 }
-                addTransporter(new TankTrailerHitch(rearMounted));
+            }
+            // Install a transporter anywhere there is an explicit hitch. If no hitch is found,
+            // put it in the back.
+            if (front) {
+                addTransporter(new TankTrailerHitch(false));
+            }
+            if (rear || !front) {
+                addTransporter(new TankTrailerHitch(true));
             }
         }
     }
@@ -3541,7 +3568,7 @@ public class Tank extends Entity {
             if ((mount.getType() instanceof MiscType)
                     && mount.getType().hasFlag(MiscType.F_CARGO)) {
                 if (!addedCargo) {
-                    usedSlots += mount.getType().getTankslots(this);
+                    usedSlots += mount.getType().getTankSlots(this);
                     addedCargo = true;
                     continue;
                 } else {
@@ -3556,7 +3583,7 @@ public class Tank extends Entity {
             if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
                     EquipmentType.armorNames).contains(
                     mount.getType().getName()))) {
-                usedSlots += mount.getType().getTankslots(this);
+                usedSlots += mount.getType().getTankSlots(this);
             }
         }
         // JJs take just 1 slot
@@ -4367,8 +4394,13 @@ public class Tank extends Entity {
      */
     @Override
     public boolean isTractor() {
-        if (hasWorkingMisc(MiscType.F_HITCH) && !isTrailer()) {
-            return true;
+        if (getMovementMode().equals(EntityMovementMode.TRACKED)
+                || getMovementMode().equals(EntityMovementMode.WHEELED)) {
+            // Any tracked or wheeled combat vehicle can be used as a tractor
+            // if it is capable of independent operations or it is equipped with
+            // a hitch (making it a trailer that is part of a train).
+            return (hasEngine() && !hasNoControlSystems())
+                    || hasWorkingMisc(MiscType.F_HITCH);
         }
         return false;
     }

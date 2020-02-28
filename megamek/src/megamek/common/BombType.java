@@ -393,6 +393,8 @@ public class BombType extends AmmoType {
 	    .setPrototypeFactions(F_TH)	
 	    .setProductionFactions(F_TH)
 	    .setReintroductionFactions(F_CC);
+		
+		blastRadius.put(BombType.getBombInternalName(BombType.B_ARROW), 1);
 
 		return bomb;
 	}
@@ -418,6 +420,8 @@ public class BombType extends AmmoType {
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false);
+		
+		blastRadius.put(BombType.getBombInternalName(BombType.B_CLUSTER), 1);
 
 		return bomb;
 	}
@@ -439,7 +443,7 @@ public class BombType extends AmmoType {
         bomb.tonnage = .5;
         bomb.rulesRefs = "166, IO";
         bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -668,6 +672,8 @@ public class BombType extends AmmoType {
 		        .setClanAdvancement(2600, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
 		        .setProductionFactions(F_TH);
+		
+		blastRadius.put(BombType.getBombInternalName(BombType.B_THUNDER), 1);
 
 		return bomb;
 	}

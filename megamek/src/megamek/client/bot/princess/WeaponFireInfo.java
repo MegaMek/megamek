@@ -459,15 +459,12 @@ public class WeaponFireInfo {
             for (final Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
                 final int damagePerShot = ((BombType) bomb.getType()).getDamagePerShot();
         
-                // HE, thunder, laser and inferno bombs just affect the target hex 
+                // some bombs affect a blast radius, so we take that into account
                 final List<Coords> affectedHexes = new ArrayList<>();
-                affectedHexes.add(bombedHex);
                 
-                // a cluster bomb affects all hexes around the target
-                if (BombType.B_CLUSTER == ((BombType) bomb.getType()).getBombType()) {
-                    for (int dir = 0; 5 >= dir; dir++) {
-                        affectedHexes.add(bombedHex.translated(dir));
-                    }
+                int blastRadius = BombType.getBombBlastRadius(bomb.getType().getInternalName()); 
+                for(int radius = 0; radius <= blastRadius; radius++) {
+                    affectedHexes.addAll(BotGeometry.getHexDonut(bombedHex, radius));
                 }
                 
                 // now we go through all affected hexes and add up the damage done

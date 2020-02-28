@@ -26,7 +26,8 @@ public class EjectedCrew extends Infantry {
     public static final String VEE_EJECT_NAME = "Vehicle Crew";
     public static final String PILOT_EJECT_NAME = "Pilot";
     public static final String MW_EJECT_NAME = "MechWarrior";
-    public static final String SPACE_EJECT_NAME = "Escape Pods";
+    public static final String SPACE_EJECT_NAME = "Spacecraft Crew from ";
+    public static final int EJ_CREW_MAX_MEN = 50; //See SO p27
 
     public EjectedCrew(Entity originalRide) {
         super();
@@ -79,7 +80,7 @@ public class EjectedCrew extends Infantry {
         super();
         setCrew(originalRide.getCrew());
         setChassis(SPACE_EJECT_NAME);
-        setModel(originalRide.getCrew().getName());
+        setModel(originalRide.getDisplayName());
 
         // Generate the display name, then add the original ride's name.
         StringBuffer newName = new StringBuffer(getDisplayName());

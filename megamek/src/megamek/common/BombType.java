@@ -15,6 +15,8 @@
 
 package megamek.common;
 
+import java.util.HashMap;
+import java.util.Map;
 
 public class BombType extends AmmoType {
 
@@ -34,15 +36,16 @@ public class BombType extends AmmoType {
     public static final int B_THUNDER = 12;
     public static final int B_TORPEDO = 13;
     public static final int B_ALAMO   = 14;
-    public static final int B_NUM     = 15;
-//    public static final int B_FAE     = 16;  TODO - Implement Fuel Air Explosives
+    public static final int B_FAE_SMALL = 15;
+    public static final int B_FAE_LARGE = 16;
+    public static final int B_NUM     = 17;
 
     public static final String[] bombNames = {"HE Bomb","Cluster Bomb","Laser-guided Bomb",
                                               "Rocket", "TAG", "AAA Missile", "AS Missile",
                                               "ASEW Missile", "Arrow IV Missile",
                                               "Arrow IV Homing Missile", "Inferno Bomb",
                                               "LAA Missile", "Thunder Bomb", "Torpedo Bomb",
-                                              "Alamo Missile"};
+                                              "Alamo Missile", "Fuel-Air Bomb (small)", "Fuel-Air Bomb (large)"};
     
     public static final String[] bombInternalNames = {"HEBomb","ClusterBomb","LGBomb",
                                                       "RL 10 Ammo (Bomb)", "TAGBomb", "AAAMissile Ammo",
@@ -50,16 +53,29 @@ public class BombType extends AmmoType {
                                                       "ASEWMissile Ammo", "ArrowIVMissile Ammo",
                                                       "ArrowIVHomingMissile Ammo", "InfernoBomb",
                                                       "LAAMissile Ammo", "ThunderBomb", "TorpedoBomb",
-                                                      "AlamoMissile Ammo"};
+                                                      "AlamoMissile Ammo", "FABombSmall Ammo", "FABombLarge Ammo"};
 
     public static final String[] bombWeaponNames = {null, null, null, "BombRL", "BombTAG", "AAA Missile",
                                                     "AS Missile", "ASEWMissile", "BombArrowIV", "BombArrowIV",
-                                                    null,"LAAMissile",null,null,"AlamoMissile"};
+                                                    null, "LAAMissile", null, null, "AlamoMissile", null, null};
 
 
-    public static final int[] bombCosts = {1,1,1,1,1,5,6,6,5,5,1,2,1,1,10};
+    public static final int[] bombCosts = {1,1,1,1,1,5,6,6,5,5,1,2,1,1,10,1,2};
+    
+    public static final Map<String, Integer> blastRadius;
     private int bombType;
 
+    static {
+        blastRadius = new HashMap<>();
+    }
+    
+    /**
+     * Get the blast radius of a particular bomb type, given the internal name.
+     */
+    public static int getBombBlastRadius(String name) {
+        return blastRadius.getOrDefault(name, 0);
+    }
+    
     public static String getBombName(int type) {
         if((type >= B_NUM) || (type < 0)) {
             return "Unknown bomb type";
@@ -124,6 +140,8 @@ public class BombType extends AmmoType {
         case B_INFERNO:
         case B_THUNDER:
         case B_TORPEDO:
+        case B_FAE_SMALL:
+        case B_FAE_LARGE:
             return true;
         default:
             return false;
@@ -171,6 +189,8 @@ public class BombType extends AmmoType {
         EquipmentType.addType(BombType.createThunderBomb());
         EquipmentType.addType(BombType.createTorpedoBomb());
         EquipmentType.addType(BombType.createAlamoBomb());
+        EquipmentType.addType(BombType.createSmallFuelAirBomb());
+        EquipmentType.addType(BombType.createLargeFuelAirBomb());
     }
     
     public static BombType createBombByType(int bType)    {
@@ -205,6 +225,10 @@ public class BombType extends AmmoType {
                 return createTorpedoBomb();
             case B_ALAMO:
                 return createAlamoBomb();
+            case B_FAE_SMALL:
+                return createSmallFuelAirBomb();
+            case B_FAE_LARGE:
+                return createLargeFuelAirBomb();
             default:
                 return null;
         }
@@ -398,7 +422,61 @@ public class BombType extends AmmoType {
 		return bomb;
 	}
 
-	// TODO Fuel-Air Bombs (See IO 165)
+	private static BombType createSmallFuelAirBomb() {
+        BombType bomb = new BombType();
+
+        bomb.name = "Fuel-Air Bomb (Small)";
+        bomb.shortName = "FAEBomb_s";
+        bomb.setInternalName(BombType.getBombInternalName(BombType.B_FAE_SMALL));
+        bomb.damagePerShot = 20;
+        bomb.rackSize = 1;
+        bomb.ammoType = AmmoType.T_BOMB;
+        bomb.bombType = BombType.B_FAE_SMALL;
+        bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
+        bomb.shots = 1;
+        bomb.bv = 37;
+        bomb.cost = 18000;
+        bomb.tonnage = .5;
+        bomb.rulesRefs = "166, IO";
+        bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+                .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false);
+
+        blastRadius.put(BombType.getBombInternalName(BombType.B_FAE_SMALL), 2);
+        
+        return bomb;
+    }
+	
+	private static BombType createLargeFuelAirBomb() {
+        BombType bomb = new BombType();
+
+        bomb.name = "Fuel-Air Bomb (Large)";
+        bomb.shortName = "FAEBomb_l";
+        bomb.setInternalName(BombType.getBombInternalName(BombType.B_FAE_LARGE));
+        bomb.damagePerShot = 30;
+        bomb.rackSize = 2;
+        bomb.ammoType = AmmoType.T_BOMB;
+        bomb.bombType = BombType.B_FAE_LARGE;
+        bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
+        bomb.shots = 1;
+        bomb.bv = 63;
+        bomb.cost = 35000;
+        bomb.tonnage = 1.0;
+        bomb.rulesRefs = "165, IO";
+        bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+                .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false);
+        
+        blastRadius.put(BombType.getBombInternalName(BombType.B_FAE_LARGE), 3);
+
+        return bomb;
+    }
 
 	private static BombType createHighExplosiveBomb() {
 		BombType bomb = new BombType();

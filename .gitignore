@@ -14,3 +14,4 @@ Thumbs.db
 /out/
 /.vscode
 .idea
+*.sav.gz

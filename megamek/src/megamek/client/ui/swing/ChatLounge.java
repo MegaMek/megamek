@@ -355,7 +355,6 @@ public class ChatLounge extends AbstractPhaseDisplay
      * Sets up the unit configuration panel
      */
     private void setupUnitConfiguration() {
-
         butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList")); //$NON-NLS-1$
         butLoadList.setActionCommand("load_list"); //$NON-NLS-1$
         butLoadList.addActionListener(this);
@@ -371,13 +370,11 @@ public class ChatLounge extends AbstractPhaseDisplay
         butNames = new JButton(Messages.getString("ChatLounge.butNames")); //$NON-NLS-1$
 
         RandomNameGenerator rng = RandomNameGenerator.getInstance();
-        rng.addInitializationListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                rngLoaded = (boolean) evt.getNewValue();
-                butLoad.setEnabled(mscLoaded && rngLoaded);
-                butArmy.setEnabled(mscLoaded && rngLoaded);
-            }
+        rng.addInitializationListener(evt -> {
+            rngLoaded = (boolean) evt.getNewValue();
+            butLoad.setEnabled(mscLoaded && rngLoaded);
+            butArmy.setEnabled(mscLoaded && rngLoaded);
+
         });
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);

@@ -35453,7 +35453,12 @@ public class Server implements Runnable {
                     //Per SO p27, you get a certain number of escape pods away per turn per 100k tons of ship
                     int escapeMultiplier = (int) (entity.getWeight() / 100000);
                     //Set up the maximum number that CAN launch
-                    int toLaunch = (1 + MOS) * Math.max(1, escapeMultiplier);
+                    int toLaunch = 0;
+                    if (roll < rollTarget.getValue()) {
+                        toLaunch = 1;
+                    } else {
+                        toLaunch = (1 + MOS) * Math.max(1, escapeMultiplier);
+                    }
                     //And now modify it based on what the unit actually has TO launch
                     int launchCounter = toLaunch;
                     int totalLaunched = 0;
@@ -35461,13 +35466,13 @@ public class Server implements Runnable {
                         int launched = 0;
                         if (entity.getPodsLeft() > 0 && (entity.getPodsLeft() >= entity.getLifeBoatsLeft())) {
                             //Entity has more escape pods than lifeboats (or equal numbers)
-                            launched = Math.min(toLaunch, entity.getPodsLeft());
+                            launched = Math.min(launchCounter, entity.getPodsLeft());
                             entity.setLaunchedEscapePods(entity.getLaunchedEscapePods() + launched);
                             totalLaunched += launched;
                             launchCounter -= launched;
                         } else if (entity.getLifeBoatsLeft() > 0 && (entity.getLifeBoatsLeft() > entity.getPodsLeft())) {
                             //Entity has more lifeboats left
-                            launched = Math.min(toLaunch, entity.getLifeBoatsLeft());
+                            launched = Math.min(launchCounter, entity.getLifeBoatsLeft());
                             entity.setLaunchedLifeBoats(entity.getLaunchedLifeBoats() + launched);
                             totalLaunched += launched;
                             launchCounter -= launched;

@@ -37,7 +37,6 @@ import megamek.common.Report;
 import megamek.common.TagInfo;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
-import megamek.common.UnitType;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
@@ -299,6 +298,15 @@ public class BombAttackHandler extends WeaponHandler {
         int[] radiusChart = { 5, 10, 20, 30 };
         int bombRadius = BombType.getBombBlastRadius(bombType.getInternalName());
         
+        if(thinAtmo) {
+            Report r = new Report(9990);
+            r.indent(1);
+            r.subject = attacker.getId();
+            r.newlines = 1;
+            vPhaseReport.addElement(r);
+            return;
+        }
+        
         Vector<Integer> alreadyHit = new Vector<>();
         
         // assemble collection of hexes at ranges 0 to radius
@@ -317,42 +325,51 @@ public class BombAttackHandler extends WeaponHandler {
                     damage = (int) Math.ceil(damage / 2.0);
                 }
                 
+                checkInfantryDestruction(coords, distFromCenter, attacker, alreadyHit, vPhaseReport, game, server);
+                
                 server.artilleryDamageHex(coords, center, damage, (BombType) bombType, attacker.getId(), attacker, null, false, 0, vPhaseReport, false,
                         alreadyHit, false);
-                
-                for(Entity entity : game.getEntitiesVector(coords)) {
-                    int rollTarget = -1;
-                    if(entity instanceof BattleArmor) {
-                        rollTarget = 7;
-                    } else if(entity instanceof Infantry) {
-                        rollTarget = 9;
-                    } else {
-                        continue;
-                    }
-                    
-                    int roll = Compute.d6(2);
-                    int result = roll + distFromCenter;
-                    boolean destroyed = result > rollTarget;
-                    
-                    Report r = new Report(9987);
-                    r.indent(1);
-                    r.subject = attacker.getId();
-                    r.newlines = 1;
-                    r.add(UnitType.getTypeDisplayableName(entity.getUnitType()));
-                    r.add(distFromCenter);
-                    r.add(rollTarget);
-                    r.choose(destroyed);
-                    vPhaseReport.addElement(r);
-                    
-                    if(destroyed) {
-                        server.destroyEntity(entity, "fuel-air bomb detonation", false);
-                    }
-                    return;
-                }
                 
                 TargetRoll fireRoll = new TargetRoll(7, "fuel-air bomb");
                 server.tryIgniteHex(coords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
             }
+        }
+    }
+    
+    /**
+     * Worker function that checks for and implements instant infantry destruction if necessary
+     */
+    public static void checkInfantryDestruction(Coords coords, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
+            Vector<Report> vPhaseReport, IGame game, Server server) {
+        for(Entity entity : game.getEntitiesVector(coords)) {
+            int rollTarget = -1;
+            if(entity instanceof BattleArmor) {
+                rollTarget = 7;
+            } else if(entity instanceof Infantry) {
+                rollTarget = 9;
+            } else {
+                continue;
+            }
+            
+            int roll = Compute.d6(2);
+            int result = roll + distFromCenter;
+            boolean destroyed = result > rollTarget;
+            
+            Report r = new Report(9987);
+            r.indent(1);
+            r.subject = attacker.getId();
+            r.newlines = 1;
+            r.add(rollTarget);
+            r.add(roll);
+            r.add(distFromCenter);
+            r.choose(destroyed);
+            vPhaseReport.addElement(r);
+            
+            if(destroyed) {
+                vPhaseReport.addAll(server.destroyEntity(entity, "fuel-air bomb detonation", false, false));
+                alreadyHit.add(entity.getId());
+            }
+            return;
         }
     }
 }

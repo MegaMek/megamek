@@ -35455,15 +35455,13 @@ public class Server implements Runnable {
                     //Set up the maximum number that CAN launch
                     int launched = (1 + MOS) * Math.max(1, escapeMultiplier);
                     //And now modify it based on what the unit actually has TO launch
-                    int podsLeft = (entity.getEscapePods() - entity.getLaunchedEscapePods());
-                    int lifeBoatsLeft = (entity.getLifeBoats() - entity.getLaunchedLifeBoats());
                     //Entity has only escape pods to launch
-                    if (podsLeft > 0 && lifeBoatsLeft <= 0) {
-                        launched = Math.min(launched, podsLeft);
+                    if (entity.getPodsLeft() > 0 && entity.getLifeBoatsLeft() <= 0) {
+                        launched = Math.min(launched, entity.getPodsLeft());
                         entity.setLaunchedEscapePods(entity.getLaunchedEscapePods() + launched);
-                    } else if (lifeBoatsLeft > 0 && podsLeft <= 0) {
+                    } else if (entity.getLifeBoatsLeft() > 0 && entity.getPodsLeft() <= 0) {
                         //Only Lifeboats
-                        launched = Math.min(launched, lifeBoatsLeft);
+                        launched = Math.min(launched, entity.getLifeBoatsLeft());
                         entity.setLaunchedLifeBoats(entity.getLaunchedLifeBoats() + launched);
                     } else {
                         //We have both available. Launch them alternately up to our maximum for the round

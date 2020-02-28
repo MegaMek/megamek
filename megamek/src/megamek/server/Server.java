@@ -1267,16 +1267,17 @@ public class Server implements Runnable {
         if (!sFinalFile.endsWith(".sav")) {
             sFinalFile = sFile + ".sav";
         }
+        File sDir = new File("savegames");
+        if (!sDir.exists()) {
+            sDir.mkdir();
+        }
+
+        sFinalFile = sDir + File.separator + sFinalFile;
+
         try (OutputStream os = new FileOutputStream(sFinalFile + ".gz");
              OutputStream gzo = new GZIPOutputStream(os);
              Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8)) {
 
-            File sDir = new File("savegames");
-            if (!sDir.exists()) {
-                sDir.mkdir();
-            }
-
-            sFinalFile = sDir + File.separator + sFinalFile;
             xstream.toXML(game, writer);
         } catch (Exception e) {
             getLogger().error(getClass(), "saveGame(String,boolean)",

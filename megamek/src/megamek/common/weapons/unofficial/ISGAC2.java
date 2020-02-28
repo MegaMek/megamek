@@ -66,7 +66,7 @@ public class ISGAC2 extends ACWeapon {
         ammoType = AmmoType.T_AC;
         atClass = CLASS_AC;
         //Going to Assume these are like IS RACs
-        rulesRefs = "207,TO";
+        rulesRefs = "207,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(true)

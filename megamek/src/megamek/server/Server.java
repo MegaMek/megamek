@@ -35480,20 +35480,21 @@ public class Server implements Runnable {
                             break;
                         }
                     }
-                    //Report how many pods launched
+                    int nEscaped = Math.min(entity.getNCrew(), (totalLaunched * 6));
+                    //Report how many pods launched and how many escaped
                     if (totalLaunched > 0) {
                         r = new Report(6401);
                         r.subject = entity.getId();
                         r.indent();
                         r.add(totalLaunched);
+                        r.add(nEscaped);
                         vDesc.addElement(r);
                     }
                     //Update the personnel numbers
-                    int nEscaped = Math.min(entity.getNCrew(), (totalLaunched * 6));
                     entity.setNCrew(entity.getNCrew() - nEscaped);
+                    entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
                     //*Damage* the host ship's crew to account for the people that left
-                    int crewHits = (entity.getCrew().getSize() / nEscaped);
-                    damageCrew(entity,Math.min(entity.getCrew().getHits() + crewHits, Crew.DEATH));
+                    damageCrew(entity,entity.getCrew().calculateHits());
                     EscapePods pods = new EscapePods(entity,totalLaunched,nEscaped);
                     // Need to set game manually; since game.addEntity not called yet
                     // Don't want to do this yet, as Entity may not be added

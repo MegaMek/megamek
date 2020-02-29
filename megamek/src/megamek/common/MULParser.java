@@ -99,6 +99,7 @@ public class MULParser {
 
     private static final String NAME = "name";
     private static final String SIZE = "size";
+    private static final String CURRENTSIZE = "currentsize";
 
     private static final String EXT_ID = "externalId";
     private static final String PICKUP_ID = "pickUpId";
@@ -937,6 +938,23 @@ public class MULParser {
                 crew.setSize(crewSize);
             } else if (null != entity) {
                 crew.setSize(Compute.getFullCrewSize(entity));
+                //Reset the currentSize equal to the max size
+                crew.setCurrentSize(Compute.getFullCrewSize(entity));
+            }
+        }
+        
+        if (attributes.containsKey(CURRENTSIZE)) {
+            if (attributes.get(CURRENTSIZE).length() > 0) {
+                int crewCurrentSize = 1;
+                try {
+                    crewCurrentSize = Integer.parseInt(attributes.get(CURRENTSIZE));
+                } catch (NumberFormatException e) {
+                    // Do nothing, this field isn't required
+                }
+                crew.setCurrentSize(crewCurrentSize);
+            } else if (null != entity) {
+                //Reset the currentSize equal to the max size
+                crew.setCurrentSize(Compute.getFullCrewSize(entity));
             }
         }
 

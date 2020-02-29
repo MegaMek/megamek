@@ -20,10 +20,7 @@
 
 package megamek.common.loaders;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 import megamek.common.AmmoType;
@@ -102,6 +99,37 @@ public class MtfFile implements IMechLoader {
     public static final int[] rearLocationOrder =
             {Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT};
 
+    public static final String COCKPIT = "cockpit:";
+    public static final String GYRO = "gyro:";
+    public static final String MOTIVE = "motive:";
+    public static final String EJECTION = "ejection:";
+    public static final String MASS = "mass:";
+    public static final String ENGINE = "engine:";
+    public static final String STRUCTURE = "structure:";
+    public static final String MYOMER = "myomer:";
+    public static final String LAM = "lam:";
+    public static final String CONFIG = "config:";
+    public static final String TECH_BASE = "techbase:";
+    public static final String ERA = "era:";
+    public static final String SOURCE = "source:";
+    public static final String RULES_LEVEL = "rules level:";
+    public static final String HEAT_SINKS = "heat sinks:";
+    public static final String BASE_CHASSIS_HEAT_SINKS = "base chassis heat sinks:";
+    public static final String WALK_MP = "walk mp:";
+    public static final String JUMP_MP = "jump mp:";
+    public static final String ARMOR = "armor:";
+    public static final String OVERVIEW = "overview:";
+    public static final String CAPABILITIES = "capabilities:";
+    public static final String DEPLOYMENT = "deployment:";
+    public static final String HISTORY = "history:";
+    public static final String MANUFACTURER = "manufacturer:";
+    public static final String PRIMARY_FACTORY = "primaryfactory:";
+    public static final String SYSTEM_MANUFACTURER = "systemmanufacturer:";
+    public static final String SYSTEM_MODEL = "systemmode:";
+    public static final String NOTES = "notes:";
+    public static final String IMAGE_FILE = "imagefile:";
+    public static final String BV = "bv:";
+    public static final String WEAPONS = "weapons:";
     public static final String EMPTY = "-Empty-";
     public static final String ARMORED = "(armored)";
     public static final String OMNIPOD = "(omnipod)";
@@ -148,7 +176,7 @@ public class MtfFile implements IMechLoader {
         int armorLocation;
         while (r.ready()) {
             crit = r.readLine();
-            if (crit.trim().length() < 1) {
+            if (crit.trim().isEmpty()) {
                 continue;
             }
 
@@ -246,7 +274,6 @@ public class MtfFile implements IMechLoader {
                 mech = new BipedMech(iGyroType, iCockpitType);
             }
             mech.setFullHeadEject(fullHead);
-
             mech.setChassis(name.trim());
             mech.setModel(model.trim());
             mech.setYear(Integer.parseInt(techYear.substring(4).trim()));
@@ -255,91 +282,7 @@ public class MtfFile implements IMechLoader {
             if (chassisConfig.contains("Omni")) {
                 mech.setOmni(true);
             }
-
-            switch (techBase.substring(9).trim()) {
-                case "Inner Sphere":
-                    switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
-                        case 1:
-                            mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
-                            break;
-                        case 2:
-                            mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-                            break;
-                        case 3:
-                            mech.setTechLevel(TechConstants.T_IS_ADVANCED);
-                            break;
-                        case 4:
-                            mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
-                            break;
-                        case 5:
-                            mech.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
-                            break;
-                        default:
-                            throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
-                    }
-                    break;
-                case "Clan":
-                    switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
-                        case 2:
-                            mech.setTechLevel(TechConstants.T_CLAN_TW);
-                            break;
-                        case 3:
-                            mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-                            break;
-                        case 4:
-                            mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
-                            break;
-                        case 5:
-                            mech.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
-                            break;
-                        default:
-                            throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
-                    }
-                    break;
-                case "Mixed (IS Chassis)":
-                    switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
-                        case 2:
-                            mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
-                            break;
-                        case 3:
-                            mech.setTechLevel(TechConstants.T_IS_ADVANCED);
-                            break;
-                        case 4:
-                            mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
-                            break;
-                        case 5:
-                            mech.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
-                            break;
-                        default:
-                            throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
-                    }
-                    mech.setMixedTech(true);
-                    break;
-                case "Mixed (Clan Chassis)":
-                    switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
-                        case 2:
-                            mech.setTechLevel(TechConstants.T_CLAN_TW);
-                            break;
-                        case 3:
-                            mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-                            break;
-                        case 4:
-                            mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
-                            break;
-                        case 5:
-                            mech.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
-                            break;
-                        default:
-                            throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
-                    }
-                    mech.setMixedTech(true);
-                    break;
-                case "Mixed":
-                    throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
-                default:
-                    throw new EntityLoadingException("Unsupported tech base: " + techBase.substring(9).trim());
-            }
-
+            setTechLevel(mech);
             mech.setWeight(Integer.parseInt(tonnage.substring(5)));
 
             int engineFlags = 0;
@@ -554,6 +497,92 @@ public class MtfFile implements IMechLoader {
         } catch (StringIndexOutOfBoundsException ex) {
             ex.printStackTrace();
             throw new EntityLoadingException("StringIndexOutOfBoundsException parsing file");
+        }
+    }
+
+    private void setTechLevel(Mech mech) throws EntityLoadingException {
+        switch (techBase.substring(9).trim()) {
+            case "Inner Sphere":
+                switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                    case 1:
+                        mech.setTechLevel(TechConstants.T_INTRO_BOXSET);
+                        break;
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                        break;
+                    case 3:
+                        mech.setTechLevel(TechConstants.T_IS_ADVANCED);
+                        break;
+                    case 4:
+                        mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+                        break;
+                    case 5:
+                        mech.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
+                        break;
+                    default:
+                        throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
+                }
+                break;
+            case "Clan":
+                switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_CLAN_TW);
+                        break;
+                    case 3:
+                        mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+                        break;
+                    case 4:
+                        mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+                        break;
+                    case 5:
+                        mech.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+                        break;
+                    default:
+                        throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
+                }
+                break;
+            case "Mixed (IS Chassis)":
+                switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                        break;
+                    case 3:
+                        mech.setTechLevel(TechConstants.T_IS_ADVANCED);
+                        break;
+                    case 4:
+                        mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
+                        break;
+                    case 5:
+                        mech.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
+                        break;
+                    default:
+                        throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
+                }
+                mech.setMixedTech(true);
+                break;
+            case "Mixed (Clan Chassis)":
+                switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_CLAN_TW);
+                        break;
+                    case 3:
+                        mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+                        break;
+                    case 4:
+                        mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
+                        break;
+                    case 5:
+                        mech.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
+                        break;
+                    default:
+                        throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
+                }
+                mech.setMixedTech(true);
+                break;
+            case "Mixed":
+                throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+            default:
+                throw new EntityLoadingException("Unsupported tech base: " + techBase.substring(9).trim());
         }
     }
 
@@ -932,132 +961,131 @@ public class MtfFile implements IMechLoader {
     }
 
     private boolean isProcessedComponent(String line) {
-
-        if (line.trim().toLowerCase().startsWith("cockpit:")) {
+        if (line.trim().toLowerCase().startsWith(COCKPIT)) {
             cockpitType = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("gyro:")) {
+        if (line.trim().toLowerCase().startsWith(GYRO)) {
             gyroType = line;
             return true;
         }
         
-        if (line.trim().toLowerCase().startsWith("motive:")) {
+        if (line.trim().toLowerCase().startsWith(MOTIVE)) {
             motiveType = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("ejection:")) {
+        if (line.trim().toLowerCase().startsWith(EJECTION)) {
             ejectionType = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("mass:")) {
+        if (line.trim().toLowerCase().startsWith(MASS)) {
             tonnage = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("engine:")) {
+        if (line.trim().toLowerCase().startsWith(ENGINE)) {
             engine = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("structure:")) {
+        if (line.trim().toLowerCase().startsWith(STRUCTURE)) {
             internalType = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("myomer:")) {
+        if (line.trim().toLowerCase().startsWith(MYOMER)) {
             myomerType = line;
             return true;
         }
         
-        if (line.trim().toLowerCase().startsWith("lam:")) {
+        if (line.trim().toLowerCase().startsWith(LAM)) {
             lamType = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("config:")) {
+        if (line.trim().toLowerCase().startsWith(CONFIG)) {
             chassisConfig = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("techbase:")) {
+        if (line.trim().toLowerCase().startsWith(TECH_BASE)) {
             techBase = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("era:")) {
+        if (line.trim().toLowerCase().startsWith(ERA)) {
             techYear = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("source:")) {
+        if (line.trim().toLowerCase().startsWith(SOURCE)) {
             source = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("rules level:")) {
+        if (line.trim().toLowerCase().startsWith(RULES_LEVEL)) {
             rulesLevel = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("heat sinks:")) {
+        if (line.trim().toLowerCase().startsWith(HEAT_SINKS)) {
             heatSinks = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("base chassis heat sinks:")) {
+        if (line.trim().toLowerCase().startsWith(BASE_CHASSIS_HEAT_SINKS)) {
             baseChassieHeatSinks = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("walk mp:")) {
+        if (line.trim().toLowerCase().startsWith(WALK_MP)) {
             walkMP = line;
             return true;
         }
-        if (line.trim().toLowerCase().startsWith("jump mp:")) {
+        if (line.trim().toLowerCase().startsWith(JUMP_MP)) {
             jumpMP = line;
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("armor:")) {
+        if (line.trim().toLowerCase().startsWith(ARMOR)) {
             armorType = line;
             return true;
         }
         
-        if (line.trim().toLowerCase().startsWith("overview:")) {
-            overview = line.substring("overview:".length());
+        if (line.trim().toLowerCase().startsWith(OVERVIEW)) {
+            overview = line.substring(OVERVIEW.length());
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("capabilities:")) {
-            capabilities = line.substring("capabilities:".length());
+        if (line.trim().toLowerCase().startsWith(CAPABILITIES)) {
+            capabilities = line.substring(CAPABILITIES.length());
             return true;
         }
                 
-        if (line.trim().toLowerCase().startsWith("deployment:")) {
-            deployment = line.substring("deployment:".length());
+        if (line.trim().toLowerCase().startsWith(DEPLOYMENT)) {
+            deployment = line.substring(DEPLOYMENT.length());
             return true;
         }
         
-        if (line.trim().toLowerCase().startsWith("history:")) {
-            history = line.substring("history:".length());
+        if (line.trim().toLowerCase().startsWith(HISTORY)) {
+            history = line.substring(HISTORY.length());
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("manufacturer:")) {
-        	manufacturer = line.substring("manufacturer:".length());
+        if (line.trim().toLowerCase().startsWith(MANUFACTURER)) {
+        	manufacturer = line.substring(MANUFACTURER.length());
         	return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("primaryfactory:")) {
-        	primaryFactory = line.substring("primaryfactory:".length());
+        if (line.trim().toLowerCase().startsWith(PRIMARY_FACTORY)) {
+        	primaryFactory = line.substring(PRIMARY_FACTORY.length());
         	return true;
         }
 
-        if (line.toLowerCase().startsWith("systemmanufacturer:")) {
+        if (line.toLowerCase().startsWith(SYSTEM_MANUFACTURER)) {
         	String[] fields = line.split(":");
         	if (fields.length > 2) {
         		EntityFluff.System system = EntityFluff.System.parse(fields[1]);
@@ -1068,7 +1096,7 @@ public class MtfFile implements IMechLoader {
         	return true;
         }
 
-        if (line.toLowerCase().startsWith("systemmodel:")) {
+        if (line.toLowerCase().startsWith(SYSTEM_MODEL)) {
         	String[] fields = line.split(":");
         	if (fields.length > 2) {
         		EntityFluff.System system = EntityFluff.System.parse(fields[1]);
@@ -1080,18 +1108,18 @@ public class MtfFile implements IMechLoader {
         }
 
 
-        if (line.trim().toLowerCase().startsWith("notes:")) {
-            notes = line.substring("notes:".length());
+        if (line.trim().toLowerCase().startsWith(NOTES)) {
+            notes = line.substring(NOTES.length());
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("imagefile:")) {
-            imagePath = line.substring("imagefile:".length());
+        if (line.trim().toLowerCase().startsWith(IMAGE_FILE)) {
+            imagePath = line.substring(IMAGE_FILE.length());
             return true;
         }
 
-        if (line.trim().toLowerCase().startsWith("bv:")) {
-            bv = Integer.parseInt(line.substring("bv:".length()));
+        if (line.trim().toLowerCase().startsWith(BV)) {
+            bv = Integer.parseInt(line.substring(BV.length()));
             return true;
         }
 
@@ -1099,8 +1127,8 @@ public class MtfFile implements IMechLoader {
     }
 
     private int weaponsList(String line) {
-        if (line.trim().toLowerCase().startsWith("weapons:")) {
-            return Integer.parseInt(line.substring(8));
+        if (line.trim().toLowerCase().startsWith(WEAPONS)) {
+            return Integer.parseInt(line.substring(WEAPONS.length()));
         }
 
         return -1;

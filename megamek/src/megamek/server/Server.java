@@ -3418,7 +3418,7 @@ public class Server implements Runnable {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
                 sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name
-                        + ".board").getFile());
+                        + IBoard.BOARD_FILE_EXTENSION).getFile());
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
             rotateBoard.add(isRotated);
@@ -29404,7 +29404,7 @@ public class Server implements Runnable {
      * Scans the boards directory for map boards of the appropriate size and
      * returns them.
      *
-     * @return A list of relative paths to the board files, without the '.board'
+     * @return A list of relative paths to the board files, without the file extension
      * extension.
      */
     private List<String> scanForBoardsInDir(final File boardDir, final String basePath,
@@ -29509,7 +29509,7 @@ public class Server implements Runnable {
      * Scan for map boards with the specified dimensions.
      *
      * @param dimensions The desired board dimensions.
-     * @return A list of path names, minus the '.board' extension, relative to
+     * @return A list of path names, minus the file extension, relative to
      * the boards data directory.
      */
     private ArrayList<String> scanForBoards(final BoardDimensions dimensions) {

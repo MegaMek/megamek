@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import megamek.MegaMek;
 import megamek.common.Compute;
 import megamek.common.Configuration;
+import megamek.common.Crew;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.util.MegaMekFile;
@@ -183,7 +184,7 @@ public class RandomNameGenerator implements Serializable {
      * @return - a string containing the randomly generated name
      */
     public String generate(boolean isFemale, boolean isClan, String faction) {
-        String name = "Unnamed";
+        String name = Crew.UNNAMED_FULL_NAME;
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
             // go to check if the person is a clanner. If they are, then they default to the default
@@ -220,7 +221,7 @@ public class RandomNameGenerator implements Serializable {
      *              and the surname at String[1]
      */
     public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan, String faction) {
-        String[] name = { "Unnamed", "Person" };
+        String[] name = { Crew.UNNAMED, Crew.UNNAMED_SURNAME };
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
             // go to check if the person is a clanner. If they are, then they default to the default

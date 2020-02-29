@@ -39,7 +39,7 @@ public class LAMPilot extends Crew {
     private int pilotingAero;
 
     public LAMPilot(LandAirMech lam) {
-        this(lam, "Unnamed", 4, 5, 4, 5, G_RANDOMIZE, null);
+        this(lam, Crew.UNNAMED_FULL_NAME, 4, 5, 4, 5, G_RANDOMIZE, null);
     }
 
     public LAMPilot(LandAirMech lam, String name, int gunneryMech, int pilotingMech, int gunneryAero,

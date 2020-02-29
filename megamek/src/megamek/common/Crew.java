@@ -52,6 +52,8 @@ public class Crew implements Serializable {
 
     private final String[] name;
     public static final String UNNAMED = "Unnamed";
+    public static final String UNNAMED_SURNAME = "Person";
+    public static final String UNNAMED_FULL_NAME = "Unnamed Person";
     private final int[] gender;
     public static final int G_RANDOMIZE = -1; //this is used in generation methods to randomize the gender
     public static final int G_MALE = 0;

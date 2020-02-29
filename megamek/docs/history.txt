@@ -16,6 +16,7 @@ VERSION HISTORY:
 + PR #1711: Add Entity.getPriceMultiplier() method
 + PR #1717: Fixing name issues
 + PR #1716: Use weights when randomizing names
++ Issue #1688: Fixing Radical Heat Sink Target Number
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

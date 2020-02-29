@@ -15,7 +15,6 @@
 package megamek.common;
 
 import java.util.Map;
-import java.util.UUID;
 
 import megamek.common.options.OptionsConstants;
 
@@ -39,9 +38,6 @@ public class SmallCraft extends Aero {
     private int nBattleArmor = 0;
     private int nOtherPassenger = 0;
     private int escaped = 0;
-    
-    //Maps unique id of each assigned marine to marine point value
-    private Map<UUID,Integer> marines;
     
     // escape pods and lifeboats
     private int escapePods = 0;

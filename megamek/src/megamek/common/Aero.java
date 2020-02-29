@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
@@ -217,6 +218,12 @@ public class Aero extends Entity implements IAero, IBomber {
     private int whoFirst = 0;
 
     private int eccmRoll = 0;
+    
+    //List of unique individuals aboard. Used for shuffling people around with small craft and such
+    private Set<UUID> passengerList = new HashSet<>();
+    
+    //Maps unique id of each assigned marine to marine point value
+    private Map<UUID,Integer> marines;
 
     public Aero() {
         super();
@@ -4207,6 +4214,30 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public void setNPassenger(int pass) {
     }
+    
+    /**
+     * Returns our list of unique individuals being transported as passengers
+     * @return
+     */
+    public Set<UUID> getPassengerList() {
+        return passengerList;
+    }
+    
+    /**
+     * Adds a passenger. Used by MHQ to track where a given person ends up.
+     * @param personId The unique ID of the person to add.
+     */
+    public void addPassenger(UUID personId) {
+        passengerList.add(personId);
+    }
+    
+    /**
+     * Removes a passenger. Used by MHQ to track where a given person ends up.
+     * @param personId The unique ID of the person to remove.
+     */
+    public void removePassenger(UUID personId) {
+        passengerList.remove(personId);
+    }
 
     /**
      * @return The number battlearmored marines available to vessels for boarding actions.
@@ -4228,6 +4259,33 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public void setNMarines(int marines) {
+    }
+    
+    /**
+     * Returns our list of unique individuals being transported as marines
+     * @return
+     */
+    public Map<UUID,Integer> getMarines() {
+        return marines;
+    }
+    
+    /**
+     * Adds a marine. Used by MHQ to track where a given person ends up. 
+     * Also used by MM to move marines around between ships
+     * @param personId The unique ID of the person to add.
+     * @param pointValue The marine point value of the person being added
+     */
+    public void addMarine(UUID personId, int pointValue) {
+        marines.put(personId, pointValue);
+    }
+    
+    /**
+     * Removes a marine. Used by MHQ to track where a given person ends up.
+     * Also used by MM to move marines around between ships
+     * @param personId The unique ID of the person to remove.
+     */
+    public void removeMarine(UUID personId) {
+        marines.remove(personId);
     }
     
     /**

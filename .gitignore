@@ -3,19 +3,76 @@
 /RemoteSystemsTempFiles/
 /bin/
 /.settings/
+*/.settings/
 /logs/
+*/logs/
+*.log
 .DS_Store
 Thumbs.db
-/.gradle/
-/properties_local.gradle
-/.classpath
-/.project
-/build/
+/megamek/*.blame
+/megamek/*.diff
+/megamek/*.patch
+/megamek/classes/
+/megamek/bin/
+
+# IDE directories
 /out/
+*/out/
+/.idea/
+*/.idea/
 /.vscode
-.idea
+/.classpath
+*/.classpath
+/.project
+*/.project
+/.classpath
+*/.classpath
+/settings_local.gradle
+/properties_local.gradle
+
+# Build directories
+/build/
+*/build/
+/.gradle/
+*/.gradle/
+/megamek/MegaMekLab.jar
+/megamek/MegaMek.jar
+
+#MegaMek Data Folders
+# mmconf
+/megamek/mmconf/clientsettings.xml
+/megamek/mmconf/*gameoptions.xml
+/megamek/mmconf/*.properties
+!/megamek/mmconf/shared.properties
+/megamek/mmconf/*.properties.bak
+
+# UserData
+/megamek/userdata/
+!/megamek/userdata/userDataReadMe.txt
+
+# Save Games
+/megamek/savegames
 *.sav.gz
 
+# MUL Files
+*.mul
+
+#MegaMek/data Folders
+/megamek/data/misc/
+/megamek/data/recordsheets/
+/megamek/data/splash/
+
+# mechfiles
+/megamek/data/mechfiles/units.cache
+/megamek/data/mechfiles/IrTech/
+/megamek/data/mechfiles/Special/
+/megamek/data/mechfiles/customs/
+# Images
+/megamek/data/images/hexes/defaulthexset.txt
+/megamek/data/images/*_atlas.png
+/megamek/data/images/imgFileAtlasMap.xml
+
+# Boards
 /megamek/data/boards/
 !/megamek/data/boards/Beginner Box/
 !/megamek/data/boards/buildings_no_basement/
@@ -31,3 +88,16 @@ Thumbs.db
 !/megamek/data/boards/unofficial/
 !/megamek/data/boards/_ReadMe.txt
 !/megamek/data/boards/Carver V - Airraid.board
+#End MegaMek/data Folders
+#End MegaMek data Folders
+
+#MegaMek Other Outputs
+/megamek/mechs.csv
+/megamek/*.pdf
+/megamek/*.ps
+/megamek/*.png
+/megamek/*.ps
+/megamek/atlasedImages.txt
+/megamek/Entity Issues.txt
+/megamek/apidocs/
+#End MegaMek Other Outputs

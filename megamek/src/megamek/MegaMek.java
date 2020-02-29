@@ -74,7 +74,7 @@ import megamek.utils.RATGeneratorEditor;
  */
 public class MegaMek {
 
-    private static final MMLogger logger = DefaultMmLogger.getInstance();
+    private static MMLogger logger = null;
 
     public static String VERSION = "0.47.5-SNAPSHOT"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
@@ -193,6 +193,24 @@ public class MegaMek {
     }
 
     /**
+     * @param logger The logger to be used.
+     */
+    public static void setLogger(final MMLogger logger) {
+        MegaMek.logger = logger;
+    }
+
+    /**
+     * @return The logger that will handle log file output.  Will return the
+     * {@link DefaultMmLogger} if a different logger has not been set.
+     */
+    public static MMLogger getLogger() {
+        if (null == logger) {
+            logger = DefaultMmLogger.getInstance();
+        }
+        return logger;
+    }
+
+    /**
      * Calculates the SHA-256 hash of the MegaMek.jar file
      * Used primarily for purposes of checksum comparison when
      * connecting a new client.
@@ -226,9 +244,7 @@ public class MegaMek {
             }
         } catch (IOException | NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
-            logger.error(MegaMek.class,
-                       "getMegaMekSHA256()",
-                       e);
+            getLogger().error(MegaMek.class, "getMegaMekSHA256()", e);
             return null;
         } finally {
             try {
@@ -236,10 +252,7 @@ public class MegaMek {
                     in.close();
                 }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                logger.error(MegaMek.class,
-                           "getMegaMekSHA256()",
-                           e);
+                getLogger().error(MegaMek.class, "getMegaMekSHA256()", e);
                 return null;
             }
         }
@@ -321,12 +334,12 @@ public class MegaMek {
     private static void startGUI(String guiName, String[] args) {
         final String METHOD_NAME = "startGUI(String, String[])";
         if (null == guiName) {
-            logger.log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
+            getLogger().log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
                        "guiName must be non-null");
             return;
         }
         if (null == args) {
-            logger.log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
+            getLogger().log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
                        "args must be non-null");
             return;
         }
@@ -430,7 +443,7 @@ public class MegaMek {
      * @param message
      */
     private static void displayMessage(String message, String methodName) {
-        logger.log(MegaMek.class, methodName, LogLevel.INFO, message);
+        getLogger().log(MegaMek.class, methodName, LogLevel.INFO, message);
     }
 
     /**
@@ -672,7 +685,7 @@ public class MegaMek {
                 }
 
                 if (ms == null) {
-                    logger.error(MegaMek.class, METHOD_NAME,
+                    getLogger().error(MegaMek.class, METHOD_NAME,
                                new IOException(filename + " not found.  Try using \"cassis model\" for input."));
                 } else {
                     try {
@@ -775,10 +788,8 @@ public class MegaMek {
                         bfe.writeCsv(w);
                     }
                     w.close();
-                } catch (Exception ex) {
-                    logger.error(getClass(),
-                               "processUnitBattleForceConverter()",
-                               ex);
+                } catch (Exception e) {
+                    getLogger().error(getClass(), "processUnitBattleForceConverter()", e);
                 }
             }
 
@@ -819,9 +830,7 @@ public class MegaMek {
                    }
                     w.close();
                 } catch (Exception ex) {
-                    logger.error(getClass(),
-                               "processUnitAlphaStrikeConverter()",
-                               ex);
+                    getLogger().error(getClass(), "processUnitAlphaStrikeConverter()", ex);
                 }
             }
 
@@ -922,9 +931,7 @@ public class MegaMek {
                     }
                     w.close();
                 } catch (Exception ex) {
-                    logger.error(getClass(),
-                               "processUnitExporter(boolean)",
-                               ex);
+                    getLogger().error(getClass(), "processUnitExporter(boolean)", ex);
                 }
             }
 

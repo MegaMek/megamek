@@ -74,7 +74,7 @@ import megamek.utils.RATGeneratorEditor;
  */
 public class MegaMek {
 
-    private static final MMLogger logger = DefaultMmLogger.getInstance();
+    private static MMLogger logger = null;
 
     public static String VERSION = "0.47.5-SNAPSHOT"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
@@ -132,7 +132,7 @@ public class MegaMek {
                     .append(e.getMessage()).append('\n');
             message.append(ARGUMENTS_DESCRIPTION_MESSAGE);
             MegaMek.displayMessageAndExit(message.toString(),
-                                          "main(String[])");
+                    "main(String[])");
         }
     }
 
@@ -185,11 +185,29 @@ public class MegaMek {
     private static void configureLogging(@Nullable final String logFileName) {
         final String qualifiedLogFilename =
                 PreferenceManager.getClientPreferences().getLogDirectory() +
-                File.separator +
-                logFileName;
+                        File.separator +
+                        logFileName;
         resetLogFile(qualifiedLogFilename);
         configureLegacyLogging(logFileName);
         configureLog4j(logFileName);
+    }
+
+    /**
+     * @param logger The logger to be used.
+     */
+    public static void setLogger(final MMLogger logger) {
+        MegaMek.logger = logger;
+    }
+
+    /**
+     * @return The logger that will handle log file output.  Will return the
+     * {@link DefaultMmLogger} if a different logger has not been set.
+     */
+    public static MMLogger getLogger() {
+        if (null == logger) {
+            logger = DefaultMmLogger.getInstance();
+        }
+        return logger;
     }
 
     /**
@@ -208,7 +226,7 @@ public class MegaMek {
         // If it isn't UNIX/Linux, maybe it's Windows where we've stashed it in the lib folder
         if (new File("lib/"+filename).exists()) {
             filename = "lib/"+filename;
-        // And if it isn't either UNIX/Linux or Windows it's got to be Mac, where it's buried inside the app
+            // And if it isn't either UNIX/Linux or Windows it's got to be Mac, where it's buried inside the app
         } else if (new File("MegaMek.app/Contents/Resources/Java/"+filename).exists()) {
             filename = "MegaMek.app/Contents/Resources/Java/"+filename;
         }
@@ -226,9 +244,7 @@ public class MegaMek {
             }
         } catch (IOException | NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
-            logger.error(MegaMek.class,
-                       "getMegaMekSHA256()",
-                       e);
+            getLogger().error(MegaMek.class, "getMegaMekSHA256()", e);
             return null;
         } finally {
             try {
@@ -236,10 +252,7 @@ public class MegaMek {
                     in.close();
                 }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                logger.error(MegaMek.class,
-                           "getMegaMekSHA256()",
-                           e);
+                getLogger().error(MegaMek.class, "getMegaMekSHA256()", e);
                 return null;
             }
         }
@@ -277,7 +290,7 @@ public class MegaMek {
             }
             PrintStream ps = new PrintStream(
                     new BufferedOutputStream(new FileOutputStream(sLogDir
-                                                                  + File.separator + logFileName, true) {
+                            + File.separator + logFileName, true) {
                         @Override
                         public void flush() throws IOException {
                             super.flush();
@@ -305,7 +318,7 @@ public class MegaMek {
         StringBuffer message = new StringBuffer("Starting Dedicated Server. "); //$NON-NLS-1$
         MegaMek.dumpArgs(message, args);
         MegaMek.displayMessage(message.toString(),
-                               "startDedicatedServer(String[])");
+                "startDedicatedServer(String[])");
         DedicatedServer.start(args);
     }
 
@@ -321,25 +334,25 @@ public class MegaMek {
     private static void startGUI(String guiName, String[] args) {
         final String METHOD_NAME = "startGUI(String, String[])";
         if (null == guiName) {
-            logger.log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
-                       "guiName must be non-null");
+            getLogger().log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
+                    "guiName must be non-null");
             return;
         }
         if (null == args) {
-            logger.log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
-                       "args must be non-null");
+            getLogger().log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
+                    "args must be non-null");
             return;
         }
         IMegaMekGUI mainGui = MegaMek.getGui(guiName);
         if (mainGui == null) {
             MegaMek.displayMessageAndExit(UNKNOWN_GUI_MESSAGE + guiName,
-                                          METHOD_NAME);
+                    METHOD_NAME);
         } else {
             StringBuffer message = new StringBuffer("Starting GUI "); //$NON-NLS-1$
             message.append(guiName).append(". "); //$NON-NLS-1$
             MegaMek.dumpArgs(message, args);
             MegaMek.displayMessage(message.toString(),
-                                   METHOD_NAME);
+                    METHOD_NAME);
             mainGui.start(args);
         }
     }
@@ -366,7 +379,7 @@ public class MegaMek {
                 }
             } catch (Exception e) {
                 MegaMek.displayMessage(GUI_CLASS_NOT_FOUND_MESSAGE
-                                       + guiClassName, "getGui(String)");
+                        + guiClassName, "getGui(String)");
             }
         }
         return null;
@@ -384,7 +397,7 @@ public class MegaMek {
             }
         } catch (IOException e) {
             MegaMek.displayMessage("Property file load failed.",
-                                   "getGUIClassName(String)"); //$NON-NLS-1$
+                    "getGUIClassName(String)"); //$NON-NLS-1$
         }
         return null;
     }
@@ -430,7 +443,7 @@ public class MegaMek {
      * @param message
      */
     private static void displayMessage(String message, String methodName) {
-        logger.log(MegaMek.class, methodName, LogLevel.INFO, message);
+        getLogger().log(MegaMek.class, methodName, LogLevel.INFO, message);
     }
 
     /**
@@ -446,12 +459,12 @@ public class MegaMek {
         msg += "\n\tJava vendor " + System.getProperty("java.vendor"); //$NON-NLS-1$ //$NON-NLS-2$
         msg += "\n\tJava version " + System.getProperty("java.version"); //$NON-NLS-1$ //$NON-NLS-2$
         msg += "\n\tPlatform " //$NON-NLS-1$
-               + System.getProperty("os.name") //$NON-NLS-1$
-               + " " //$NON-NLS-1$
-               + System.getProperty("os.version") //$NON-NLS-1$
-               + " (" //$NON-NLS-1$
-               + System.getProperty("os.arch") //$NON-NLS-1$
-               + ")"; //$NON-NLS-1$
+                + System.getProperty("os.name") //$NON-NLS-1$
+                + " " //$NON-NLS-1$
+                + System.getProperty("os.version") //$NON-NLS-1$
+                + " (" //$NON-NLS-1$
+                + System.getProperty("os.arch") //$NON-NLS-1$
+                + ")"; //$NON-NLS-1$
         long maxMemory = Runtime.getRuntime().maxMemory() / 1024;
         msg += "\n\tTotal memory available to MegaMek: " + MegaMek.commafy.format(maxMemory) + " kB"; //$NON-NLS-1$ //$NON-NLS-2$
         displayMessage(msg, METHOD_NAME);
@@ -659,7 +672,7 @@ public class MegaMek {
                         filename);
                 if (ms == null) {
                     MechSummary[] units = MechSummaryCache.getInstance()
-                                                          .getAllMechs();
+                            .getAllMechs();
                     // System.err.println("units: "+units.length);
                     for (MechSummary unit : units) {
                         // System.err.println(unit.getSourceFile().getName());
@@ -672,53 +685,53 @@ public class MegaMek {
                 }
 
                 if (ms == null) {
-                    logger.error(MegaMek.class, METHOD_NAME,
-                               new IOException(filename + " not found.  Try using \"cassis model\" for input."));
+                    getLogger().error(MegaMek.class, METHOD_NAME,
+                            new IOException(filename + " not found.  Try using \"cassis model\" for input."));
                 } else {
                     try {
                         Entity entity = new MechFileParser(ms.getSourceFile(),
-                                                           ms.getEntryName()).getEntity();
+                                ms.getEntryName()).getEntity();
                         displayMessage("Validating Entity: " +
-                                       entity.getShortNameRaw(), METHOD_NAME); //$NON-NLS-1$
+                                entity.getShortNameRaw(), METHOD_NAME); //$NON-NLS-1$
                         EntityVerifier entityVerifier = EntityVerifier.getInstance(
                                 new MegaMekFile(Configuration.unitsDir(),
-                                                EntityVerifier.CONFIG_FILENAME).getFile());
+                                        EntityVerifier.CONFIG_FILENAME).getFile());
                         MechView mechView = new MechView(entity, false);
                         StringBuffer sb = new StringBuffer(
                                 mechView.getMechReadout());
                         if ((entity instanceof Mech)
-                            || (entity instanceof Tank)
-                            || (entity instanceof Aero)
-                            || (entity instanceof BattleArmor)) {
+                                || (entity instanceof Tank)
+                                || (entity instanceof Aero)
+                                || (entity instanceof BattleArmor)) {
                             TestEntity testEntity = null;
                             if (entity instanceof Mech) {
                                 testEntity = new TestMech((Mech) entity,
-                                                          entityVerifier.mechOption, null);
+                                        entityVerifier.mechOption, null);
                             }
                             if ((entity instanceof Tank)
-                                && !(entity instanceof GunEmplacement)) {
+                                    && !(entity instanceof GunEmplacement)) {
                                 if (entity.isSupportVehicle()) {
                                     testEntity = new TestSupportVehicle(
                                             (Tank) entity,
                                             entityVerifier.tankOption, null);
                                 } else {
                                     testEntity = new TestTank((Tank) entity,
-                                                              entityVerifier.tankOption, null);
+                                            entityVerifier.tankOption, null);
                                 }
                             }
                             if ((entity.getEntityType() == Entity.ETYPE_AERO)
-                                && (entity.getEntityType() !=
+                                    && (entity.getEntityType() !=
                                     Entity.ETYPE_DROPSHIP)
-                                && (entity.getEntityType() !=
+                                    && (entity.getEntityType() !=
                                     Entity.ETYPE_SMALL_CRAFT)
-                                && (entity.getEntityType() !=
+                                    && (entity.getEntityType() !=
                                     Entity.ETYPE_FIGHTER_SQUADRON)
-                                && (entity.getEntityType() !=
+                                    && (entity.getEntityType() !=
                                     Entity.ETYPE_JUMPSHIP)
-                                && (entity.getEntityType() !=
+                                    && (entity.getEntityType() !=
                                     Entity.ETYPE_SPACE_STATION)) {
                                 testEntity = new TestAero((Aero)entity,
-                                                          entityVerifier.aeroOption, null);
+                                        entityVerifier.aeroOption, null);
                             }
                             if (entity instanceof BattleArmor){
                                 testEntity = new TestBattleArmor(
@@ -770,15 +783,13 @@ public class MegaMek {
                         Entity entity = new MechFileParser(
                                 unit.getSourceFile(), unit.getEntryName())
                                 .getEntity();
-                        
+
                         BattleForceElement bfe = new BattleForceElement(entity);
                         bfe.writeCsv(w);
                     }
                     w.close();
-                } catch (Exception ex) {
-                    logger.error(getClass(),
-                               "processUnitBattleForceConverter()",
-                               ex);
+                } catch (Exception e) {
+                    getLogger().error(getClass(), "processUnitBattleForceConverter()", e);
                 }
             }
 
@@ -813,15 +824,13 @@ public class MegaMek {
                         Entity entity = new MechFileParser(
                                 unit.getSourceFile(), unit.getEntryName())
                                 .getEntity();
-                        
+
                         AlphaStrikeElement ase = new AlphaStrikeElement(entity);
                         ase.writeCsv(w);
-                   }
+                    }
                     w.close();
                 } catch (Exception ex) {
-                    logger.error(getClass(),
-                               "processUnitAlphaStrikeConverter()",
-                               ex);
+                    getLogger().error(getClass(), "processUnitAlphaStrikeConverter()", ex);
                 }
             }
 
@@ -916,15 +925,13 @@ public class MegaMek {
                         } else {
                             w.write(unit.getChassis()
                                     + (unit.getModel().equals("") ? "|" : " "
-                                            + unit.getModel() + "|"));
+                                    + unit.getModel() + "|"));
                         }
                         w.newLine();
                     }
                     w.close();
                 } catch (Exception ex) {
-                    logger.error(getClass(),
-                               "processUnitExporter(boolean)",
-                               ex);
+                    getLogger().error(getClass(), "processUnitExporter(boolean)", ex);
                 }
             }
 

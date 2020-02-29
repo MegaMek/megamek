@@ -14,6 +14,8 @@
  */
 package megamek.test;
 
+import megamek.common.IBoard;
+
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
@@ -25,14 +27,14 @@ import javax.imageio.ImageIO;
 
 /**
  * This program was designed to test the idea of turning an image into a board
- * file for Megamek.  It takes an image, and then cuts the image the image into
- * hex-sized bits and saves each of those hex images as a file.  It also
+ * file for MegaMek. It takes an image, and then cuts the image the image into
+ * hex-sized bits and saves each of those hex images as a file. It also
  * generates a board file with each hex image mapped to a fluff number for the
- * hex it belongs to.  The fluff numbers are also written to a file that can be
- * added to a tileset file.
+ * hex it belongs to. The fluff numbers are also written to a file that can be
+ * added to a tileSet file.
  * 
  * This program really isn't complete, so many of the parameters are just hard
- * coded.  The basic premise works, although it needs more refinement.  I also
+ * coded. The basic premise works, although it needs more refinement. I also
  * think that using terrain fluff to map an image to each hex is kind of an
  * abuse of the framework.
  * 
@@ -40,26 +42,13 @@ import javax.imageio.ImageIO;
  * @date October 2014
  */
 public class ImageToBoard {
-    
     boolean loaded = false;
-    
     int hexCols = 41;
-    
     int hexRows = 51;
-    
     int colOffset = 6;
-    
     int rowOffset = 12;
-    
-    /**
-     * Width of a hex in MegaMek.
-     */
-    int hexWidth = 84;
-    
-    /**
-     * Height of a hex in Megamek.
-     */
-    int hexHeight = 72;
+    int hexWidth = 84; //Width of a hex in MegaMek.
+    int hexHeight = 72; // Height of a hex in MegaMek.
     
     BufferedImage src, hexTemplate;     
     
@@ -83,7 +72,7 @@ public class ImageToBoard {
             tilesetOut = new BufferedWriter(new FileWriter(new File(outputDir,
                     "new.tileset")));
             boardOut = new BufferedWriter(new FileWriter(new File(outputDir,
-                    "new.board")));
+                    "new" + IBoard.BOARD_FILE_EXTENSION)));
         } catch (IOException e) {
             e.printStackTrace();
             return;

@@ -45,6 +45,7 @@ public class Crew implements Serializable {
 
     private final CrewType crewType;
     private int size;
+    private int currentSize;
 
     private final String[] name;
     private final int[] gunnery;
@@ -221,6 +222,7 @@ public class Crew implements Serializable {
             int piloting) {
         this.crewType = crewType;
         this.size = Math.max(size, crewType.getCrewSlots());
+        this.currentSize = size;
 
         int slots = crewType.getCrewSlots();
         this.name = new String[slots];
@@ -313,6 +315,15 @@ public class Crew implements Serializable {
      */
     public int getSize() {
         return size;
+    }
+    
+    /**
+     * The currentsize of this crew.
+     *
+     * @return the current number of crew members.
+     */
+    public int getCurrentSize() {
+        return currentSize;
     }
 
     public CrewType getCrewType() {
@@ -429,9 +440,32 @@ public class Crew implements Serializable {
      *
      * @return The damage level of the least damaged crew member.
      */
-    //TODO: The boarding actions rules reflect casualties to overall crew size by tracking hits.
     public int getHits() {
         return Arrays.stream(hits).min().orElse(0);
+    }
+    
+    /**
+     * Uses the table on TO p206 to calculate the number of crew hits based on percentage
+     * of total casualties. Used for ejection, boarding actions and such
+     * @return 
+     */
+    public int calculateHits() {
+        double percentage = currentSize / size;
+        int hits = 0;
+        if (percentage > 0.05 && percentage <= 0.20) {
+            hits = 1;
+        } else if (percentage > 0.20 && percentage <= 0.35) {
+            hits = 2;
+        } else if (percentage > 0.35 && percentage <= 0.50) {
+            hits = 3;
+        } else if (percentage > 0.50 && percentage <= 0.65) {
+            hits = 4;
+        } else if (percentage > 0.65 && percentage <= 0.80) {
+            hits = 5;
+        } else if (percentage > 0.80) {
+            hits = 6;
+        }
+        return hits;
     }
 
     public int getHits(int pos) {
@@ -461,6 +495,15 @@ public class Crew implements Serializable {
      */
     public void setSize(int newSize) {
         size = newSize;
+    }
+    
+    /**
+     * Accessor method to set the current crew size.
+     *
+     * @param newSize The new size of this crew.
+     */
+    public void setCurrentSize(int newSize) {
+        currentSize = newSize;
     }
 
     public void setGunnery(int gunnery, int pos) {

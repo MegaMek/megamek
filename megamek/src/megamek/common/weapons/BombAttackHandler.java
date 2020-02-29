@@ -304,7 +304,6 @@ public class BombAttackHandler extends WeaponHandler {
             r.subject = attacker.getId();
             r.newlines = 1;
             vPhaseReport.addElement(r);
-            return;
         }
         
         Vector<Integer> alreadyHit = new Vector<>();

@@ -463,7 +463,7 @@ public class WeaponFireInfo {
                 final List<Coords> affectedHexes = new ArrayList<>();
                 
                 int blastRadius = BombType.getBombBlastRadius(bomb.getType().getInternalName()); 
-                for(int radius = 0; radius <= blastRadius; radius++) {
+                for (int radius = 0; radius <= blastRadius; radius++) {
                     affectedHexes.addAll(BotGeometry.getHexDonut(bombedHex, radius));
                 }
                 

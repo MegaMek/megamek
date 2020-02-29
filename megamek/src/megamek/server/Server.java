@@ -35158,9 +35158,7 @@ public class Server implements Runnable {
         }
 
         // get units in hex
-        for (Entity entity : game.getEntitiesVector(coords)) {
-            boolean entityIsInfantryButNotBattleArmor = (entity instanceof Infantry) && !(entity instanceof BattleArmor);
-            
+        for (Entity entity : game.getEntitiesVector(coords)) {           
             int hits = damage;
             if (variableDamage) {
                 hits = Compute.d6(damage);
@@ -35247,7 +35245,7 @@ public class Server implements Runnable {
             }
 
             // convention infantry take x2 damage from AE weapons
-            if (entityIsInfantryButNotBattleArmor) {
+            if (entity.isConventionalInfantry()) {
                 hits *= 2;
                 
                 // if it's fuel-air, we take even more damage!
@@ -35260,7 +35258,7 @@ public class Server implements Runnable {
             // Entity/ammo specific damage modifiers
             if (ammo != null) {
                 if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
-                    if (hex.containsTerrain(Terrains.FORTIFIED) && entityIsInfantryButNotBattleArmor) {
+                    if (hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
                         hits *= 2;
                     }
                 }

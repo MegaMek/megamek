@@ -17,7 +17,7 @@ Thumbs.db
 *.sav.gz
 
 /megamek/data/boards/
-!/megamek/data/boards/Beginner Boxd/
+!/megamek/data/boards/Beginner Box/
 !/megamek/data/boards/buildings_no_basement/
 !/megamek/data/boards/German/
 !/megamek/data/boards/MapSet2/

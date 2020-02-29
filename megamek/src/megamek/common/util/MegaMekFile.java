@@ -29,13 +29,14 @@ import java.util.TreeSet;
 import megamek.common.Configuration;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
+import sun.reflect.generics.tree.Tree;
 
 /**
  * This is a local MegaMek version of java.io.File and is designed to support
  * having files that could exist in two locations: the MM install location and
- * a userData directory.  When a file is opened, the path is first checked to
+ * a userData directory. When a file is opened, the path is first checked to
  * see if it exists within the userData directory, and if it does, that file is
- * opened.  However, if it doesn't exist, then the file is opened from MM's
+ * opened. However, if it doesn't exist, then the file is opened from MM's
  * install directory instead.
  * 
  * @author arlith
@@ -43,7 +44,6 @@ import megamek.common.logging.MMLogger;
  */
 public class MegaMekFile {
     private List<File> fileList = new ArrayList<>();
-    private List<File> subdirectoryList = new ArrayList<>();
     private boolean isDirectory;
     private static MMLogger logger = DefaultMmLogger.getInstance();
 
@@ -53,39 +53,12 @@ public class MegaMekFile {
 
     public MegaMekFile(String pathName) {
         File standardVersion = new File(pathName);
-        File userDataVersion = new File(Configuration.userdataDir(), pathName);
         isDirectory = standardVersion.isDirectory();
 
         if (isDirectory) {
-            // Create an array of files located in the standard file directory
-            List<File> standardFiles = splitFilesAndSubdirectories(standardVersion.listFiles(), true);
-
-            if (userDataVersion.exists()) {
-                // If we have a user data version of the directory, then we need to do some additional
-                // processing based on the files located within it
-                List<File> userDataSubdirectories = splitFilesAndSubdirectories(standardVersion.listFiles(), false);
-
-                // Note: subdirectories are always pulled from the standard folder path if possible
-                Set<File> fileSet = new TreeSet<>(new FileComparator());
-
-                // Handle FileList
-                fileSet.addAll(fileList);
-                fileSet.addAll(standardFiles);
-                fileList.clear();
-                fileList.addAll(fileSet);
-                fileSet.clear();
-
-                // Handle subdirectoriesList
-                fileSet.addAll(subdirectoryList);
-                fileSet.addAll(userDataSubdirectories);
-                fileList.clear();
-                fileList.addAll(fileSet);
-            } else {
-                // If we do not, then we just return the standard files list based on the files within
-                fileList.addAll(standardFiles);
-            }
+            recursivelyAddAllFiles(standardVersion);
         } else {
-            fileList = new ArrayList<>();
+            File userDataVersion = new File(Configuration.userdataDir(), pathName);
             if (userDataVersion.exists()) {
                 fileList.add(userDataVersion);
             } else {
@@ -94,38 +67,80 @@ public class MegaMekFile {
         }
     }
 
-    /**
-     *
-     * @param files an array of files to split between subdirectories and files
-     * @param type true if you want to return files, false for subdirectories
-     * @return a list of either files or subdirectories based on the value of type
-     */
-    private List<File> splitFilesAndSubdirectories(File[] files, boolean type) {
-        List<File> returnList = new ArrayList<>();
 
-        if (type) {
-            // Returning files, and saving subdirectories to the subdirectory list
-            for (File file : files) {
+    private void recursivelyAddAllFiles(File inputDirectory) {
+        File[] files = inputDirectory.listFiles();
+
+        File[] userDataFiles = new File(Configuration.userdataDir(), inputDirectory.getPath()).listFiles();
+        if ((files != null) && (userDataFiles != null)) {
+            // This is the primary and hardest case. We will first divide the files into files and
+            // subdirectories, with userData being taken as the primary source for any files while
+            // any subdirectories are listed as the standard directory
+            Set<File> fileSet = new TreeSet<>(new FileComparator());
+            Set<File> subdirectorySet = new TreeSet<>(new FileComparator());
+            List<File> userDataSubdirectories = new ArrayList<>();
+
+            // We start with the userData files, and save any files to the fileSet while
+            // subdirectories are stored in the userDataSubdirectories to wait for further processing
+            for (File file : userDataFiles) {
                 if (file.isFile()) {
-                    returnList.add(file);
+                    fileSet.add(file);
                 } else {
-                    subdirectoryList.add(file);
+                    userDataSubdirectories.add(file);
                 }
             }
-        } else {
-            // Returning subdirectories, and saving files to the file list
+
+            // We can just add everything here to the sets, as userData has been processed already
+            for (File file : fileSet) {
+                if (file.isFile()) {
+                    fileSet.add(file);
+                } else {
+                    subdirectorySet.add(file);
+                }
+            }
+
+            // We've removed any duplicate files as they were added to the fileSet, so we can just
+            // add all of the files to the fileList
+            fileList.addAll(fileSet);
+
+            // Now we add the userData subdirectories to the subdirectory set, to give us a list of
+            // unique subdirectories
+            subdirectorySet.addAll(userDataSubdirectories);
+
+            // And finally we recursively search through the subdirectories
+            for (File file : subdirectorySet) {
+                recursivelyAddAllFiles(file);
+            }
+        } else if (files != null) {
+            // This folder is only located in the standard folder path, so we can just recursively
+            // add all files under it to the file list without needing to check for whether or not
+            // they are in the userData directory path
+            recursivelyAddAllFilesSinglePath(files);
+        } else if (userDataFiles != null) {
+            // This folder is only located in the userData folder path, so we can just recursively
+            // add all files under it to the file list without needing to check for whether or not
+            // they are in the standard directory path
+            recursivelyAddAllFilesSinglePath(userDataFiles);
+        }
+    }
+
+    /**
+     * This recursively searches through a file tree to find all of the files located within it
+     * @param files the file array to parse through
+     */
+    private void recursivelyAddAllFilesSinglePath(File[] files) {
+        if (files != null) { //need this null check because listFile returns an array not a list
             for (File file : files) {
                 if (file.isFile()) {
+                    // Add the file to the file list
                     fileList.add(file);
                 } else {
-                    returnList.add(file);
+                    // Recursively search and add any found files to the file list
+                    recursivelyAddAllFilesSinglePath(file.listFiles());
                 }
             }
         }
-
-        return returnList;
     }
-
 
     /**
      * getFile() is used to get a single file, and should not be used for directories
@@ -134,12 +149,13 @@ public class MegaMekFile {
     public File getFile() {
         if (isDirectory) {
             logger.warning(MegaMekFile.class, "getFile",
-                    "Called getFile for a directory. Did you mean to call getFiles instead?");
+                    "Called getFile for a directory, " + fileList.get(0).getParent()
+                            + ". Did you mean to call getFiles instead?");
         }
-        if (fileList.size() < 1) {
-            return null;
-        } else {
+        if (fileList.size() > 0) {
             return fileList.get(0);
+        } else {
+            return null;
         }
     }
 
@@ -155,16 +171,24 @@ public class MegaMekFile {
         return fileList;
     }
 
+    /**
+     *
+     * @return the paths of the files located within as a string
+     */
     public String toString() {
         if (isDirectory) {
             return fileList.toString();
-        } else if (fileList.size() < 1) {
-            return "";
-        } else {
+        } else if (fileList.size() > 0) {
             return fileList.get(0).toString();
+        } else {
+            return "";
         }
     }
 
+    /**
+     * This is a custom comparator that compares if two files have the same file name. It returns 0
+     * if they do, otherwise it returns 1 (keep the pre-existing key)
+     */
     private static class FileComparator implements Comparator<File> {
         @Override
         public int compare(File f1, File f2) {
@@ -172,6 +196,7 @@ public class MegaMekFile {
                     .equals(Paths.get(f2.getPath()).getFileName().toString())) {
                 return 0;
             } else {
+                // This is purposeful, we want it to not add anything new that was
                 return 1;
             }
         }

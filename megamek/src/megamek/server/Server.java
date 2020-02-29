@@ -35426,10 +35426,9 @@ public class Server implements Runnable {
         }
 
         if (entity.isEjecting()) {
-            EjectedCrew crew;
             if (inSpace || airborne) {
                 // Try to launch some escape pods and lifeboats, if any are left
-                //if (entity.getPodsLeft() > 0 || entity.getLifeBoatsLeft() > 0) {
+                if (entity.getPodsLeft() > 0 || entity.getLifeBoatsLeft() > 0) {
                     // Report the ejection
                     PilotingRollData rollTarget = getEjectModifiers(game, entity,
                             entity.getCrew().getCurrentPilotIndex(), false);
@@ -35489,41 +35488,43 @@ public class Server implements Runnable {
                         r.add(totalLaunched);
                         vDesc.addElement(r);
                     }
-                    crew = new EjectedCrew(entity,totalLaunched);
-                //}
-                // Need to set game manually; since game.addEntity not called yet
-                // Don't want to do this yet, as Entity may not be added
-                crew.setPosition(entity.getPosition());
-                crew.setGame(game);
-                crew.setDeployed(true);
-                crew.setId(getFreeEntityId());
-                // Make them not get a move this turn
-                crew.setDone(true);
-                if (inSpace) {
-                    //In space, ejected pilots retain the heading and velocity of the unit they eject from
-                    crew.setVectors(entity.getVectors());
-                    crew.setFacing(entity.getFacing());
-                    crew.setCurrentVelocity(entity.getVelocity());
-                    //If the pilot ejects, he should no longer be accelerating
-                    crew.setNextVelocity(entity.getVelocity());
-                } else if (entity.isAirborne()) {
-                    crew.setAltitude(entity.getAltitude());
-                }
-                //We're going to be nice and assume a ship has enough spacesuits for everyone aboard...
-                crew.setSpaceSuit(true);
-                // Add Entity to game
-                game.addEntity(crew);
-                // Tell clients about new entity
-                send(createAddEntityPacket(crew.getId()));
-                // Sent entity info to clients
-                entityUpdate(crew.getId());
-                // Check if the crew lands in a minefield
-                vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
-                        entity.getPosition(), entity.getPosition(),
-                        entity.getElevation()));
-                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
-                    game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
-                    send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+                    //Update the personnel numbers
+                    int nEscaped = Math.min(entity.getNCrew(), (totalLaunched * 6));
+                    entity.setNCrew(entity.getNCrew() - nEscaped);
+                    //*Damage* the host ship's crew to account for the people that left
+                    int crewHits = (entity.getCrew().getSize() / nEscaped);
+                    damageCrew(entity,Math.min(entity.getCrew().getHits() + crewHits, Crew.DEATH));
+                    EscapePods pods = new EscapePods(entity,totalLaunched,nEscaped);
+                    // Need to set game manually; since game.addEntity not called yet
+                    // Don't want to do this yet, as Entity may not be added
+                    pods.setPosition(entity.getPosition());
+                    pods.setGame(game);
+                    pods.setDeployed(true);
+                    pods.setId(getFreeEntityId());
+                    // Make them not get a move this turn
+                    pods.setDone(true);
+                    if (inSpace) {
+                        //In space, ejected pilots retain the heading and velocity of the unit they eject from
+                        pods.setVectors(entity.getVectors());
+                        pods.setFacing(entity.getFacing());
+                        pods.setCurrentVelocity(entity.getVelocity());
+                        //If the pilot ejects, he should no longer be accelerating
+                        pods.setNextVelocity(entity.getVelocity());
+                    } else if (entity.isAirborne()) {
+                        pods.setAltitude(entity.getAltitude());
+                    }
+                    //We're going to be nice and assume a ship has enough spacesuits for everyone aboard...
+                    //crew.setSpaceSuit(true);
+                    // Add Entity to game
+                    game.addEntity(pods);
+                    // Tell clients about new entity
+                    send(createAddEntityPacket(pods.getId()));
+                    // Sent entity info to clients
+                    entityUpdate(pods.getId());
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+                        game.removeEntity(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                        send(createRemoveEntityPacket(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+                    }
                 }
             } // End Space/Atmosphere Ejection
             /*else {

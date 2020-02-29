@@ -32,10 +32,12 @@ public class EscapePods extends SmallCraft {
     /**
      * Used to set up a group of launched pods/boats for large spacecraft per rules in SO p27
      * @param originalRide - the launching spacecraft
-     * @param escapedThisRound - The number of pods that launched this round
+     * @param nPods - the number of escape craft in this flight
+     * @param escapedThisRound - The number of people aboard these pods
      */
-    public EscapePods(Aero originalRide, int escapedThisRound) {
+    public EscapePods(Aero originalRide, int nPods, int escapedThisRound) {
         super();
+        //We care about the passengers, not the crew of the escape craft
         setCrew(new Crew(CrewType.CREW));
         setChassis(POD_EJECT_NAME);
         setModel(originalRide.getDisplayName());
@@ -46,12 +48,16 @@ public class EscapePods extends SmallCraft {
         displayName = newName.toString();
         
         //Pods and boats have an SI of 1 each
-        setSI(escapedThisRound);
+        setSI(nPods);
         
-        //and an armor value of 4 each -- 1 point per location
+        //and an armor value of 4 per craft -- 1 point per location
         for (int i = 0; i < 4; i++) {
-            setArmor(escapedThisRound, i);
+            setArmor(nPods, i);
         }
+        
+        setNPassenger(escapedThisRound);
+        
+        //Placeholder for adding individuals
         
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalIdAsString());
@@ -68,31 +74,6 @@ public class EscapePods extends SmallCraft {
         //assign some arbitrarily large number here for the internal so that locations will get 
         //the actual current number of pods correct.
         initializeSI(Integer.MAX_VALUE);
-    }
-    
-    public EscapePods(Crew crew, IPlayer owner, IGame game) {
-        super();
-        setCrew(crew);
-        setChassis(POD_EJECT_NAME);
-        setModel(crew.getName());
-        //setWeight(1);
-
-        // Generate the display name, then add the original ride's name.
-        StringBuffer newName = new StringBuffer(getDisplayName());
-        displayName = newName.toString();
-
-        // Finish initializing this unit.
-        setOwner(owner);
-        initializeInternal(crew.getSize(), Infantry.LOC_INFANTRY);
-        if (crew.getSlotCount() > 1) {
-            int dead = 0;
-            for (int i = 0; i < crew.getSlotCount(); i++) {
-                if (crew.isDead(i)) {
-                    dead++;
-                }
-            }
-            setInternal(crew.getSize() - dead, Infantry.LOC_INFANTRY);
-        }
     }
 
     /**

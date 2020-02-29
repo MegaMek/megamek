@@ -43,9 +43,6 @@ import megamek.common.options.PilotOptions;
  */
 
 public class Crew implements Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = -141169182388269619L;
 
     private Map<Integer, Map<String, String>> extraData;
@@ -734,7 +731,7 @@ public class Crew implements Serializable {
     /**
      * The crew as a whole is considered ko this round if all active members are ko this round.
      *
-     * @return
+     * @return true if all active members of the crew as knocked out this round
      */
     public boolean isKoThisRound() {
         for (int i = 0; i < getSlotCount(); i++) {
@@ -768,19 +765,6 @@ public class Crew implements Serializable {
 
     public PilotOptions getOptions() {
         return options;
-    }
-
-    public void clearOptions() {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
-            IOptionGroup group = i.nextElement();
-
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
-                IOption option = j.nextElement();
-
-                option.clearValue();
-            }
-        }
-
     }
 
     public void clearOptions(String grpKey) {
@@ -849,7 +833,7 @@ public class Crew implements Serializable {
         if (index == -1) {
             return Boolean.TRUE;
         }
-        String t = s.substring(index + 1, s.length());
+        String t = s.substring(index + 1);
         Object result;
         try {
             result = Integer.valueOf(t);
@@ -870,7 +854,7 @@ public class Crew implements Serializable {
         if (isMissing(pos)) {
             return "[missing]";
         }
-        String s = new String(name[pos]);
+        String s = name[pos];
         if (hits[pos] > 0) {
             s += " (" + hits[pos] + " hit(s)";
             if (isUnconscious(pos)) {
@@ -893,7 +877,7 @@ public class Crew implements Serializable {
      * @param gunneryOnly Do not show the piloting skill
      */
     public Vector<Report> getDescVector(boolean gunneryOnly) {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
         Report r;
 
         for (int i = 0; i < getSlotCount(); i++) {
@@ -955,7 +939,7 @@ public class Crew implements Serializable {
     /**
      * Returns the BV multiplier for this pilot's gunnery/piloting
      *
-     * @param game
+     * @param game the game to use to determine the modifier
      */
     public double getBVSkillMultiplier(IGame game) {
         return getBVSkillMultiplier(true, game);
@@ -966,7 +950,7 @@ public class Crew implements Serializable {
      *
      * @param usePiloting whether or not to use the default value non-anti-mech
      *                    infantry/BA should not use the anti-mech skill
-     * @param game
+     * @param game the game to use to determine the modifier
      */
     public double getBVSkillMultiplier(boolean usePiloting, IGame game) {
         int pilotVal = getPiloting();
@@ -990,9 +974,7 @@ public class Crew implements Serializable {
             level = 5;
         }
 
-        double mod = (level / 4.0) + 0.75;
-
-        return mod;
+        return (level / 4.0) + 0.75;
 
     }
 
@@ -1111,29 +1093,13 @@ public class Crew implements Serializable {
     }
 
     /**
-     * @return A description of the status of crew as a whole
-     */
-    public String getStatusDesc() {
-        String s = new String("");
-        if (getHits() > 0) {
-            s += getHits() + " hits";
-            if (isUnconscious()) {
-                s += " (KO)";
-            } else if (isDead()) {
-                s += " (dead)";
-            }
-        }
-        return s;
-    }
-
-    /**
      * @return A description of the status of a single crew member
      */
     public String getStatusDesc(int pos) {
         if (isMissing(pos)) {
             return "Missing";
         }
-        String s = new String("");
+        String s = "";
         if (getHits(pos) > 0) {
             s += hits[pos] + " hits";
             if (isUnconscious(pos)) {
@@ -1275,20 +1241,6 @@ public class Crew implements Serializable {
         pilotPos = pos;
         if (crewType.getPilotPos() == crewType.getGunnerPos()) {
             gunnerPos = pos;
-        }
-        actedThisTurn[pos] = true;
-    }
-
-    /**
-     * Set the gunner slot. If a multicrew cockpit uses the same crew member as both pilot and gunner
-     * (i.e. cockpit command console), sets the pilot as well.
-     *
-     * @param pos The slot index to set as gunner.
-     */
-    public void setCurrentGunner(int pos) {
-        gunnerPos = pos;
-        if (crewType.getPilotPos() == crewType.getGunnerPos()) {
-            pilotPos = pos;
         }
         actedThisTurn[pos] = true;
     }
@@ -1436,7 +1388,8 @@ public class Crew implements Serializable {
     /**
      * Schedules or clears a scheduled swap of roles in a command console-equipped unit.
      *
-     * @param swap
+     * @param swap true for crew slots in a command console to swap roles at the end of the turn,
+     *             otherwise false
      */
     public void setSwapConsoleRoles(boolean swap) {
         swapConsoleRoles = swap;
@@ -1472,16 +1425,6 @@ public class Crew implements Serializable {
         }
 
         this.extraData.put(crewIndex, dataMap);
-    }
-
-    public void addExtraDataDataPoint(int crewIndex, String key, String value) {
-        if (this.extraData == null) {
-            this.extraData = new HashMap<>();
-        }
-
-        this.extraData.computeIfAbsent(crewIndex, k -> new HashMap<>());
-
-        this.extraData.get(crewIndex).put(key, value);
     }
 
     public Map<Integer, Map<String, String>> getExtraData() {
@@ -1536,7 +1479,7 @@ public class Crew implements Serializable {
      * Legacy methods used by MekWars
      */
     /**
-     * @deprecated by multi-crew cockpits. Replaced by {@link #setHits(int)}
+     * @deprecated by multi-crew cockpits. Replaced by {@link #setHits(int, int)}
      */
     @Deprecated
     public void setHits(int hits) {

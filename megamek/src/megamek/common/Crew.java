@@ -450,11 +450,11 @@ public class Crew implements Serializable {
      * @return 
      */
     public int calculateHits() {
-        double percentage = (double) currentSize / (double) size;
         if (currentSize == 0) {
             //100% casualties
             return 6;
         }
+        double percentage = 1 - ((double) currentSize / (double) size);
         int hits = 0;
         if (percentage > 0.05 && percentage <= 0.20) {
             hits = 1;

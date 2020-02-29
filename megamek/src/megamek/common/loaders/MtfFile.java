@@ -47,52 +47,49 @@ import megamek.common.WeaponType;
  */
 public class MtfFile implements IMechLoader {
 
-    String version;
+    private String name;
+    private String model;
 
-    String name;
-    String model;
+    private String chassisConfig;
+    private String techBase;
+    private String techYear;
+    private String rulesLevel;
+    private String source = "Source:";
 
-    String chassisConfig;
-    String techBase;
-    String techYear;
-    String rulesLevel;
-    String source = "Source:";
+    private String tonnage;
+    private String engine;
+    private String internalType;
+    private String gyroType;
+    private String cockpitType;
+    private String lamType;
+    private String motiveType;
+    private String ejectionType;
 
-    String tonnage;
-    String engine;
-    String internalType;
-    String myomerType;
-    String gyroType;
-    String cockpitType;
-    String lamType;
-    String motiveType;
-    String ejectionType;
+    private String heatSinks;
+    private String jumpMP;
+    private String baseChassieHeatSinks = "base chassis heat sinks:-1";
 
-    String heatSinks;
-    String walkMP;
-    String jumpMP;
-    String baseChassieHeatSinks = "base chassis heat sinks:-1";
+    private String armorType;
+    private String[] armorValues = new String[12];
 
-    String armorType;
-    String[] armorValues = new String[12];
+    private String[][] critData;
+    private List<String> noCritEquipment = new ArrayList<>();
 
-    String[][] critData;
+    private String capabilities = "";
+    private String deployment = "";
+    private String overview = "";
+    private String history = "";
+    private String manufacturer = "";
+    private String primaryFactory = "";
+    private Map<EntityFluff.System, String> systemManufacturers = new EnumMap<>(EntityFluff.System.class);
+    private Map<EntityFluff.System, String> systemModels = new EnumMap<>(EntityFluff.System.class);
+    private String notes = "";
+    private String imagePath = "";
 
-    String capabilities = "";
-    String deployment = "";
-    String overview = "";
-    String history = "";
-    String manufacturer = "";
-    String primaryFactory = "";
-    Map<EntityFluff.System, String> systemManufacturers = new EnumMap<>(EntityFluff.System.class);
-    Map<EntityFluff.System, String> systemModels = new EnumMap<>(EntityFluff.System.class);
-    String notes = "";
-    String imagePath = "";
+    private int bv = 0;
 
-    int bv = 0;
-
-    Map<EquipmentType, Mounted> hSharedEquip = new HashMap<>();
-    List<Mounted> vSplitWeapons = new ArrayList<>();
+    private Map<EquipmentType, Mounted> hSharedEquip = new HashMap<>();
+    private List<Mounted> vSplitWeapons = new ArrayList<>();
 
     public static final int[] locationOrder =
             {Mech.LOC_LARM, Mech.LOC_RARM, Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT, Mech.LOC_HEAD, Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_CLEG};
@@ -133,13 +130,14 @@ public class MtfFile implements IMechLoader {
     public static final String EMPTY = "-Empty-";
     public static final String ARMORED = "(armored)";
     public static final String OMNIPOD = "(omnipod)";
+    public static final String NO_CRIT = "nocrit:";
 
     /**
      * Creates new MtfFile
      */
     public MtfFile(InputStream is) throws EntityLoadingException {
         try (BufferedReader r = new BufferedReader(new InputStreamReader(is))) {
-            version = r.readLine();
+            String version = r.readLine();
             if (version == null) {
                 throw new EntityLoadingException("MTF File empty!");
             }
@@ -445,7 +443,9 @@ public class MtfFile implements IMechLoader {
             for (int i = mech.locations() - 1; i >= 0; i--) {
                 parseCrits(mech, i);
             }
-
+            for (String equipment : noCritEquipment) {
+                parseNoCritEquipment(mech, equipment);
+            }
             if (mech.isClan()) {
                 mech.addClanCase();
             }
@@ -486,7 +486,6 @@ public class MtfFile implements IMechLoader {
                 mech.setUseManualBV(true);
                 mech.setManualBV(bv);
             }
-
             return mech;
         } catch (NumberFormatException ex) {
             ex.printStackTrace();
@@ -815,6 +814,25 @@ public class MtfFile implements IMechLoader {
         }
     }
 
+    private void parseNoCritEquipment(Mech mech, String name) throws EntityLoadingException {
+        int loc = Mech.LOC_NONE;
+        int splitIndex = name.indexOf(":");
+        if (splitIndex > 0) {
+            loc = mech.getLocationFromAbbr(name.substring(splitIndex + 1));
+            name = name.substring(0, splitIndex);
+        }
+        EquipmentType eq = EquipmentType.get(name);
+        if (eq != null) {
+            try {
+                Mounted mount = mech.addEquipment(eq, loc);
+            } catch (LocationFullException ex) {
+                throw new EntityLoadingException(ex.getMessage());
+            }
+        } else {
+            mech.addFailedEquipment(name);
+        }
+    }
+
     /**
      * This function moves all "empty" slots to the end of a location's critical
      * list. MegaMek adds equipment to the first empty slot available in a
@@ -997,7 +1015,6 @@ public class MtfFile implements IMechLoader {
         }
 
         if (line.trim().toLowerCase().startsWith(MYOMER)) {
-            myomerType = line;
             return true;
         }
         
@@ -1042,7 +1059,6 @@ public class MtfFile implements IMechLoader {
         }
 
         if (line.trim().toLowerCase().startsWith(WALK_MP)) {
-            walkMP = line;
             return true;
         }
         if (line.trim().toLowerCase().startsWith(JUMP_MP)) {
@@ -1052,6 +1068,11 @@ public class MtfFile implements IMechLoader {
 
         if (line.trim().toLowerCase().startsWith(ARMOR)) {
             armorType = line;
+            return true;
+        }
+
+        if (line.trim().toLowerCase().startsWith(NO_CRIT)) {
+            noCritEquipment.add(line.substring(NO_CRIT.length()));
             return true;
         }
         

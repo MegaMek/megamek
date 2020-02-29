@@ -6721,6 +6721,14 @@ public abstract class Mech extends Entity {
             sb.append(hasEngine() ? getEngine().getBaseChassisHeatSinks(hasCompactHeatSinks()) : 0);
             sb.append(newLine);
         }
+        for (Mounted mounted : getMisc()) {
+            if ((mounted.getType().getCriticals(this) == 0)
+                    && !mounted.getType().hasFlag(MiscType.F_CASE)) {
+                sb.append(MtfFile.NO_CRIT).append(mounted.getType().getInternalName())
+                        .append(":").append(getLocationAbbr(mounted.getLocation()))
+                        .append(newLine);
+            }
+        }
 
         sb.append(MtfFile.WALK_MP).append(walkMP).append(newLine);
         sb.append(MtfFile.JUMP_MP).append(jumpMP).append(newLine);
@@ -6738,7 +6746,7 @@ public abstract class Mech extends Entity {
             if ((element == Mech.LOC_CLEG) && !(this instanceof TripodMech)) {
                 continue;
             }
-            sb.append(getLocationAbbr(element)).append(MtfFile.ARMOR);
+            sb.append(getLocationAbbr(element)).append(" ").append(MtfFile.ARMOR);
             if (hasPatchworkArmor()) {
                 sb.append(EquipmentType.getArmorTypeName(getArmorType(element), isClan()))
                         .append('(').append(TechConstants.getTechName(getArmorTechLevel(element)))
@@ -6747,7 +6755,7 @@ public abstract class Mech extends Entity {
             sb.append(getOArmor(element, false)).append(newLine);
         }
         for (int element : MtfFile.rearLocationOrder) {
-            sb.append("RT").append(getLocationAbbr(element).charAt(0)).append(MtfFile.ARMOR);
+            sb.append("RT").append(getLocationAbbr(element).charAt(0)).append(" ").append(MtfFile.ARMOR);
             sb.append(getOArmor(element, true)).append(newLine);
         }
         sb.append(newLine);
@@ -6758,7 +6766,6 @@ public abstract class Mech extends Entity {
                     .append(getLocationName(m.getLocation())).append(newLine);
         }
         sb.append(newLine);
-
         for (int l : MtfFile.locationOrder) {
             if ((l == Mech.LOC_CLEG) && !(this instanceof TripodMech)) {
                 continue;

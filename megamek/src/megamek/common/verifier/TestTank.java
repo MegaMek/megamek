@@ -412,6 +412,10 @@ public class TestTank extends TestEntity {
                     buff.append("combat vehicle escape pod must be placed in rear");
                     correct = false;
                 }
+            } else if (m.getType().hasFlag(MiscType.F_MASC) && m.getType().hasSubType(MiscType.S_SUPERCHARGER)
+                    && (tank instanceof VTOL)) {
+                buff.append("VTOLS cannot mount superchargers.");
+                correct = false;
             }
         }
         for (int loc = 0; loc < tank.locations(); loc++) {
@@ -491,6 +495,7 @@ public class TestTank extends TestEntity {
             if (eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
                     || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                     || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                    || (eq.hasFlag(MiscType.F_MASC) && eq.hasSubType(MiscType.S_SUPERCHARGER))
                     || (eq.hasFlag(MiscType.F_CLUB)
                     && eq.hasSubType(MiscType.S_BACKHOE | MiscType.S_ROCK_CUTTER
                     | MiscType.S_SPOT_WELDER | MiscType.S_WRECKING_BALL))) {

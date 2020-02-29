@@ -138,7 +138,11 @@ public enum BayData {
      * @return        The new bay.
      */
     public Bay newBay(double size, int bayNum) {
-        return init.apply(size, bayNum);
+        if (isCargoBay()) {
+            return init.apply(size / weight, bayNum);
+        } else {
+            return init.apply(size, bayNum);
+        }
     }
     
     /**

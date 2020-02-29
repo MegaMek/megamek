@@ -28,6 +28,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardListener;
 
 public interface IBoard {
+    String BOARD_FILE_EXTENSION = ".board"; // TODO : Move all file extensions into a single file
+
     /**
      * @return Map width in hexes
      */

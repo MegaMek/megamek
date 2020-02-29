@@ -12,7 +12,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.common;
 
 import java.io.File;
@@ -28,19 +27,16 @@ import java.util.Vector;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardListener;
 
-/**
- */
 public interface IBoard {
-
     /**
      * @return Map width in hexes
      */
-    public abstract int getWidth();
+    int getWidth();
 
     /**
      * @return Map height in hexes
      */
-    public abstract int getHeight();
+    int getHeight();
 
     Coords getCenter();
 
@@ -57,7 +53,7 @@ public interface IBoard {
      * @param errBuff
      *            A buffer for storing error messages, if any.  This is allowed to be null.
      */
-    public abstract void newData(int width, int height, IHex[] data, @Nullable StringBuffer errBuff);
+    void newData(int width, int height, IHex[] data, @Nullable StringBuffer errBuff);
 
     /**
      * Creates a new data set for the board, with the specified dimensions;
@@ -68,7 +64,7 @@ public interface IBoard {
      * @param height
      *            the height dimension.
      */
-    public abstract void newData(int width, int height);
+    void newData(int width, int height);
 
     /**
      * Determines if this Board contains the (x, y) Coords, and if so, returns
@@ -81,7 +77,7 @@ public interface IBoard {
      * @return the <code>Hex</code>, if this Board contains the (x, y) location;
      *         <code>null</code> otherwise.
      */
-    public abstract IHex getHex(int x, int y);
+    IHex getHex(int x, int y);
 
     /**
      * Gets the hex in the specified direction from the specified starting
@@ -94,9 +90,9 @@ public interface IBoard {
      * @return the hex in the specified direction from the specified starting
      *         coordinates.
      */
-    public abstract IHex getHexInDir(Coords c, int dir);
+    IHex getHexInDir(Coords c, int dir);
 
-    public abstract Enumeration<Coords> getHexesAtDistance(Coords coords, int distance);
+    Enumeration<Coords> getHexesAtDistance(Coords coords, int distance);
 
     /**
      * Gets the hex in the specified direction from the specified starting
@@ -112,12 +108,12 @@ public interface IBoard {
      * @return the hex in the specified direction from the specified starting
      *         coordinates.
      */
-    public abstract IHex getHexInDir(int x, int y, int dir);
+    IHex getHexInDir(int x, int y, int dir);
 
     /**
      * Initialize a hex and the hexes around it
      */
-    public abstract void initializeAround(int x, int y);
+    void initializeAround(int x, int y);
 
     /**
      * Determines whether this Board "contains" the specified Coords.
@@ -128,7 +124,7 @@ public interface IBoard {
      *            the y Coords.
      * @return <code>true</code> if the board contains the specified coords
      */
-    public abstract boolean contains(int x, int y);
+    boolean contains(int x, int y);
 
     /**
      * Determines whether this Board "contains" the specified Coords.
@@ -137,7 +133,7 @@ public interface IBoard {
      *            the Coords.
      * @return <code>true</code> if the board contains the specified coords
      */
-    public abstract boolean contains(Coords c);
+    boolean contains(Coords c);
 
     /**
      * Returns the Hex at the specified Coords.
@@ -145,7 +141,7 @@ public interface IBoard {
      * @param c
      *            the Coords.
      */
-    public abstract IHex getHex(Coords c);
+    IHex getHex(Coords c);
 
     /**
      * Determines if this Board contains the (x, y) Coords, and if so, sets the
@@ -158,13 +154,13 @@ public interface IBoard {
      * @param hex
      *            the hex to be set into position.
      */
-    public abstract void setHex(int x, int y, IHex hex);
+    void setHex(int x, int y, IHex hex);
 
     /**
      * Similar to the setHex function for a collection of coordinates and hexes.
      * For each coord/hex pair in the supplied collections, this method
      * determines if the Board contains the coords and if so updates the
-     * specified hex into that position and intializes it.
+     * specified hex into that position and initializes it.
      * <p/>
      * The method ensures that each hex that needs to be updated is only updated
      * once.
@@ -173,9 +169,8 @@ public interface IBoard {
      *            A list of coordinates to be updated
      * @param hexes
      *            The hex to be updated for each coordinate
-     * @see setHex
      */
-    public abstract void setHexes(List<Coords> coords, List<IHex> hexes);
+    void setHexes(List<Coords> coords, List<IHex> hexes);
 
     /**
      * Sets the hex into the location specified by the Coords.
@@ -185,7 +180,7 @@ public interface IBoard {
      * @param hex
      *            the hex to be set into position.
      */
-    public abstract void setHex(Coords c, IHex hex);
+    void setHex(Coords c, IHex hex);
 
     /**
      * Adds the specified board listener to receive board events from this
@@ -194,7 +189,7 @@ public interface IBoard {
      * @param listener
      *            the board listener.
      */
-    public abstract void addBoardListener(BoardListener listener);
+    void addBoardListener(BoardListener listener);
 
     /**
      * Removes the specified board listener.
@@ -202,13 +197,13 @@ public interface IBoard {
      * @param listener
      *            the board listener.
      */
-    public abstract void removeBoardListener(BoardListener listener);
+    void removeBoardListener(BoardListener listener);
 
     /**
      * Can the player deploy an entity here? There are no canon rules for the
      * deployment phase (?!). I'm using 3 hexes from map edge.
      */
-    public abstract boolean isLegalDeployment(Coords c, int nDir);
+    boolean isLegalDeployment(Coords c, int nDir);
 
     /**
      * Determine the opposite edge from the given edge
@@ -216,10 +211,10 @@ public interface IBoard {
      * @param cardinalEdge The edge to return the opposite off
      * @return Constant representing the opposite edge
      */
-    public abstract int getOppositeEdge(int cardinalEdge);
+    int getOppositeEdge(int cardinalEdge);
     
     /**
-     * Record that the given coordinates have recieved a hit from an inferno.
+     * Record that the given coordinates have received a hit from an inferno.
      *
      * @param coords
      *            - the <code>Coords</code> of the hit.
@@ -230,7 +225,7 @@ public interface IBoard {
      *            negative number is passed, then an
      *            <code>IllegalArgumentException</code> will be thrown.
      */
-    public abstract void addInfernoTo(Coords coords, InfernoTracker.Inferno round, int hits);
+    void addInfernoTo(Coords coords, InfernoTracker.Inferno round, int hits);
 
     /**
      * Extinguish inferno at the target hex.
@@ -238,7 +233,7 @@ public interface IBoard {
      * @param coords
      *            - the <code>Coords</code> of the hit.
      */
-    public abstract void removeInfernoFrom(Coords coords);
+    void removeInfernoFrom(Coords coords);
 
     /**
      * Determine if the given coordinates has a burning inferno.
@@ -249,7 +244,7 @@ public interface IBoard {
      *         round. <code>false</code> if no inferno has hit those coordinates
      *         or if it has burned out.
      */
-    public abstract boolean isInfernoBurning(Coords coords);
+    boolean isInfernoBurning(Coords coords);
 
     /**
      * Record that a new round of burning has passed for the given coordinates.
@@ -261,7 +256,7 @@ public interface IBoard {
      *         round. <code>false</code> if no inferno has hit those coordinates
      *         or if it has burned out.
      */
-    public abstract boolean burnInferno(Coords coords);
+    boolean burnInferno(Coords coords);
 
     /**
      * Get an enumeration of all coordinates with infernos still burning.
@@ -269,7 +264,7 @@ public interface IBoard {
      * @return an <code>Enumeration</code> of <code>Coords</code> that have
      *         infernos still burning.
      */
-    public abstract Enumeration<Coords> getInfernoBurningCoords();
+    Enumeration<Coords> getInfernoBurningCoords();
 
     /**
      * returns a hash of the inferno trackers
@@ -277,7 +272,7 @@ public interface IBoard {
      * @return an <code>Hashtable</code of <code>InfernoTrackers</code> on the
      *         board.
      */
-    public abstract Hashtable<Coords, InfernoTracker> getInfernos();
+    Hashtable<Coords, InfernoTracker> getInfernos();
 
     /**
      * Determine the remaining number of turns the given coordinates will have a
@@ -289,7 +284,7 @@ public interface IBoard {
      * @return the <code>int</code> number of burn turns left for all infernos
      *         This value will be non-negative.
      */
-    public abstract int getInfernoBurnTurns(Coords coords);
+    int getInfernoBurnTurns(Coords coords);
 
     /**
      * Determine the remaining number of turns the given coordinates will have a
@@ -301,28 +296,28 @@ public interface IBoard {
      * @return the <code>int</code> number of burn turns left for Arrow IV
      *         infernos. This value will be non-negative.
      */
-    public abstract int getInfernoIVBurnTurns(Coords coords);
+    int getInfernoIVBurnTurns(Coords coords);
 
     /**
-     * This returns special events that should be makred on hexes, such as
-     * artilery fire.
+     * This returns special events that should be marked on hexes, such as
+     * artillery fire.
      */
-    public abstract Collection<SpecialHexDisplay> getSpecialHexDisplay(Coords coords);
+    Collection<SpecialHexDisplay> getSpecialHexDisplay(Coords coords);
 
-    public abstract void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd);
+    void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd);
 
-    public abstract void removeSpecialHexDisplay(Coords coords, SpecialHexDisplay shd);
+    void removeSpecialHexDisplay(Coords coords, SpecialHexDisplay shd);
 
-    public abstract void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd);
+    void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd);
 
-    public abstract Hashtable<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable();
+    Hashtable<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable();
 
     /**
      * Get an enumeration of all buildings on the board.
      *
      * @return an <code>Enumeration</code> of <code>Building</code>s.
      */
-    public abstract Enumeration<Building> getBuildings();
+    Enumeration<Building> getBuildings();
 
     /**
      * Get the building at the given coordinates.
@@ -332,7 +327,7 @@ public interface IBoard {
      * @return a <code>Building</code> object, if there is one at the given
      *         coordinates, otherwise a <code>null</code> will be returned.
      */
-    public abstract Building getBuildingAt(Coords coords);
+    Building getBuildingAt(Coords coords);
 
     /**
      * Collapse an array of buildings.
@@ -341,7 +336,7 @@ public interface IBoard {
      *            - the <code>Vector</code> of <code>Building</code> objects to
      *            be collapsed.
      */
-    public abstract void collapseBuilding(Vector<Coords> bldgs);
+    void collapseBuilding(Vector<Coords> bldgs);
 
     /**
      * The given building has collapsed. Remove it from the board and replace it
@@ -350,7 +345,7 @@ public interface IBoard {
      * @param bldg
      *            - the <code>Building</code> that has collapsed.
      */
-    public abstract void collapseBuilding(Building bldg);
+    void collapseBuilding(Building bldg);
 
     /**
      * The given building hex has collapsed. Remove it from the board and
@@ -359,7 +354,7 @@ public interface IBoard {
      * @param coords
      *            - the <code>Building</code> that has collapsed.
      */
-    public abstract void collapseBuilding(Coords coords);
+    void collapseBuilding(Coords coords);
 
     /**
      * Update the construction factors on an array of buildings.
@@ -368,7 +363,7 @@ public interface IBoard {
      *            - the <code>Vector</code> of <code>Building</code> objects to
      *            be updated.
      */
-    public abstract void updateBuildings(Vector<Building> bldgs);
+    void updateBuildings(Vector<Building> bldgs);
 
     /**
      * Get the current value of the "road auto-exit" option.
@@ -376,7 +371,7 @@ public interface IBoard {
      * @return <code>true</code> if roads should automatically exit onto all
      *         adjacent pavement hexes. <code>false</code> otherwise.
      */
-    public abstract boolean getRoadsAutoExit();
+    boolean getRoadsAutoExit();
 
     /**
      * Set the value of the "road auto-exit" option.
@@ -386,7 +381,7 @@ public interface IBoard {
      *            should automatically exit onto all adjacent pavement hexes.
      *            <code>false</code> otherwise.
      */
-    public abstract void setRoadsAutoExit(boolean value);
+    void setRoadsAutoExit(boolean value);
 
     /**
      * Set the CF of bridges
@@ -394,19 +389,19 @@ public interface IBoard {
      * @param value
      *            - The value to set the bridge CF to.
      */
-    public abstract void setBridgeCF(int value);
+    void setBridgeCF(int value);
 
-    public abstract void setRandomBasementsOff();
+    void setRandomBasementsOff();
 
-    public abstract void setType(int t);
+    void setType(int t);
 
-    public abstract int getType();
+    int getType();
 
-    public abstract boolean onGround();
+    boolean onGround();
 
-    public abstract boolean inAtmosphere();
+    boolean inAtmosphere();
 
-    public abstract boolean inSpace();
+    boolean inSpace();
 
     /**
      * Load board data from a file in the boards data directory.
@@ -416,7 +411,7 @@ public interface IBoard {
      * @deprecated Use {@link #load(File)} instead.
      */
     @Deprecated
-    public abstract void load(final String filename);
+    void load(final String filename);
 
     /**
      * Load board data from a file.
@@ -424,7 +419,7 @@ public interface IBoard {
      * @param filepath
      *            The path to the file.
      */
-    public abstract void load(final File filepath);
+    void load(final File filepath);
 
     /**
      * Loads this board from an InputStream
@@ -432,7 +427,7 @@ public interface IBoard {
      * @param is
      *            input stream
      */
-    public abstract void load(InputStream is);
+    void load(InputStream is);
 
     /**
      * 
@@ -440,7 +435,7 @@ public interface IBoard {
      * @param errBuff
      * @param continueLoadOnError
      */
-    public abstract void load(InputStream is, @Nullable StringBuffer errBuff, boolean continueLoadOnError);
+    void load(InputStream is, @Nullable StringBuffer errBuff, boolean continueLoadOnError);
 
     /**
      * Writes data for the board, as text to the OutputStream
@@ -448,62 +443,56 @@ public interface IBoard {
      * @param os
      *            output stream
      */
-    public abstract void save(OutputStream os);
+    void save(OutputStream os);
 
     /**
-     * Returns the lowest elevation hex on the board.
      *
-     * @return
+     * @return the lowest elevation hex on the board.
      */
-    public abstract int getMinElevation();
+    int getMinElevation();
 
     /**
-     * Returns the highest elevation hex on the board.
      *
-     * @return
+     * @return the highest elevation hex on the board.
      */
-    public abstract int getMaxElevation();
+    int getMaxElevation();
 
     /**
      * Resets the Min and Max elevations to their default values.
      */
-    public abstract void resetStoredElevation();
+    void resetStoredElevation();
 
     boolean containsBridges();
 
     /**
-     * Returns the list of background images associated with this board. If
-     * created from a single board file, then the list should only have one
-     * element. Multiple elements exist when the board is created by combinging
-     * multiple board files.
+     * Returns
      *
-     * @return
+     * @return the list of background images associated with this board. If
+     *         created from a single board file, then the list should only have one
+     *         element. Multiple elements exist when the board is created by combining
+     *         multiple board files.
      */
-    public abstract List<String> getBackgroundPaths();
+    List<String> getBackgroundPaths();
 
     /**
-     * Returns the first element of the background path list, or null if it is
-     * empty.
      *
-     * @return
+     * @return the first element of the background path list, or null if it is empty
      */
-    public abstract String getBackgroundPath();
+    String getBackgroundPath();
 
     /**
-     * Returns the number of boards in width that were used to created this
-     * board. Only used when background paths are set.
      *
-     * @return
+     * @return the number of boards in width that were used to created this
+     *         board. Only used when background paths are set.
      */
-    public abstract int getNumBoardsWidth();
+    int getNumBoardsWidth();
 
     /**
-     * Returns the number of boards in height that were used to created this
-     * board. Only used when background paths are set.
      *
-     * @return
+     * @return the number of boards in height that were used to created this
+     *         board. Only used when background paths are set.
      */
-    public abstract int getNumBoardsHeight();
+    int getNumBoardsHeight();
 
     /**
      * Flag that determines if the board background image should be flipped
@@ -511,7 +500,7 @@ public interface IBoard {
      *
      * @return
      */
-    public abstract List<Boolean> getFlipBGHoriz();
+    List<Boolean> getFlipBGHoriz();
 
     /**
      * Flag that determines if the board background image should be flipped
@@ -519,27 +508,27 @@ public interface IBoard {
      *
      * @return
      */
-    public abstract List<Boolean> getFlipBGVert();
+    List<Boolean> getFlipBGVert();
 
-    public int getSubBoardWidth();
+    int getSubBoardWidth();
 
-    public int getSubBoardHeight();
+    int getSubBoardHeight();
 
-    public void setSubBoardWidth(int width);
+    void setSubBoardWidth(int width);
 
-    public void setSubBoardHeight(int height);
+    void setSubBoardHeight(int height);
 
-    public abstract void setNumBoardsWidth(int width);
+    void setNumBoardsWidth(int width);
 
-    public abstract void setNumBoardsHeight(int height);
+    void setNumBoardsHeight(int height);
 
-    public abstract void addBackgroundPath(String path, boolean flipVert, boolean flipHorz);
+    void addBackgroundPath(String path, boolean flipVert, boolean flipHorz);
 
-    public abstract boolean hasBoardBackground();
+    boolean hasBoardBackground();
 
-    public abstract boolean isValid();
+    boolean isValid();
 
-    public abstract boolean isValid(StringBuffer errBuff);
+    boolean isValid(StringBuffer errBuff);
 
 
     /**
@@ -547,19 +536,19 @@ public interface IBoard {
      * @return The description of the map, if one exists, otherwise null.
      */
     @Nullable
-    public abstract String getDescription();
+    String getDescription();
 
     /**
      * Sets the description of the map.
      * @param s The description of the map; may be null.
      */
-    public abstract void setDescription(@Nullable String s);
+    void setDescription(@Nullable String s);
 
     /**
      * Gets every annotations on the map.
      * @return A read-only map of per-hex annotations.
      */
-    public abstract Map<Coords, Collection<String>> getAnnotations();
+    Map<Coords, Collection<String>> getAnnotations();
 
     /**
      * Gets the annotations associated with a hex.
@@ -567,19 +556,19 @@ public interface IBoard {
      * @param y The Y-Coordinate of the hex.
      * @return A collection of annotations for the hex.
      */
-    public abstract Collection<String> getAnnotations(int x, int y);
+    Collection<String> getAnnotations(int x, int y);
 
     /**
      * Gets the annotations associated with a hex.
      * @param c Coordinates of the hex.
      * @return A collection of annotations for the hex.
      */
-    public abstract Collection<String> getAnnotations(Coords c);
+    Collection<String> getAnnotations(Coords c);
 
     /**
      * Sets annotations on a given hex.
      * @param c Coordinates of the hex to apply the annotations to.
      * @param a A collection of annotations to assign to the hex. This may be null.
      */
-    public abstract void setAnnotations(Coords c, @Nullable Collection<String> a);
+    void setAnnotations(Coords c, @Nullable Collection<String> a);
 }

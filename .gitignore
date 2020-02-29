@@ -15,3 +15,19 @@ Thumbs.db
 /.vscode
 .idea
 *.sav.gz
+
+/megamek/data/boards/
+!/megamek/data/boards/Beginner Boxd/
+!/megamek/data/boards/buildings_no_basement/
+!/megamek/data/boards/German/
+!/megamek/data/boards/MapSet2/
+!/megamek/data/boards/MapSet3/
+!/megamek/data/boards/MapSet4/
+!/megamek/data/boards/MapSet5/
+!/megamek/data/boards/MapSet6/
+!/megamek/data/boards/MapSet7/
+!/megamek/data/boards/scenarios/
+!/megamek/data/boards/solaris/
+!/megamek/data/boards/unofficial/
+!/megamek/data/boards/_ReadMe.txt
+!/megamek/data/boards/Carver V - Airraid.board

@@ -62,7 +62,6 @@ import megamek.utils.RATGeneratorEditor;
  * @author mev This is the class where the execution of the megamek game starts.
  */
 public class MegaMek {
-
     private static MMLogger logger = null;
 
     public static String VERSION = "0.47.5-SNAPSHOT";
@@ -112,12 +111,10 @@ public class MegaMek {
                 }
                 MegaMek.startGUI(interfaceName, restArgs);
             }
-
         } catch (CommandLineParser.ParseException e) {
             String message = INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
                     + ARGUMENTS_DESCRIPTION_MESSAGE;
             getLogger().log(MegaMek.class, "main(String[])", LogLevel.INFO, message);
-            TimerSingleton.getInstance().killTimer();
             System.exit(1);
         }
     }
@@ -259,7 +256,7 @@ public class MegaMek {
         if (!logDir.exists()) {
             if (!logDir.mkdir()) {
                 getLogger().error(MegaMek.class, "redirectOutput",
-                        "Error in creating directory ./docs. We know this is annoying, and apologise. "
+                        "Error in creating directory ./logs. We know this is annoying, and apologise. "
                                 + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
                                 + " and we will try to resolve your issue.");
             }
@@ -320,7 +317,6 @@ public class MegaMek {
         if (mainGui == null) {
             getLogger().log(MegaMek.class, METHOD_NAME, LogLevel.INFO,
                     UNKNOWN_GUI_MESSAGE + guiName);
-            TimerSingleton.getInstance().killTimer();
             System.exit(1);
         } else {
             StringBuffer message = new StringBuffer("Starting GUI ");

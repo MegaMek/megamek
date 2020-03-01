@@ -537,7 +537,7 @@ public class MegaMek {
             }
             processRestOfInput();
             if (getToken() != TOK_EOF) {
-                error("unexpected input");
+                throw new ParseException("unexpected input");
             }
         }
 
@@ -546,7 +546,7 @@ public class MegaMek {
                 logFilename = getTokenValue();
                 nextToken();
             } else {
-                error("log file name expected");
+                throw new ParseException("log file name expected");
             }
         }
 
@@ -555,7 +555,7 @@ public class MegaMek {
                 guiName = getTokenValue();
                 nextToken();
             } else {
-                error("GUI name expected");
+                throw new ParseException("GUI name expected");
             }
         }
 
@@ -566,7 +566,7 @@ public class MegaMek {
                 nextToken();
                 megamek.common.EquipmentType.writeEquipmentDatabase(new File(filename));
             } else {
-                error("file name expected");
+                throw new ParseException("file name expected");
             }
             System.exit(0);
         }
@@ -578,7 +578,7 @@ public class MegaMek {
                 nextToken();
                 megamek.common.EquipmentType.writeEquipmentExtendedDatabase(new File(filename));
             } else {
-                error("file name expected");
+                throw new ParseException("file name expected");
             }
             System.exit(0);
         }
@@ -590,7 +590,7 @@ public class MegaMek {
                 nextToken();
                 Configuration.setDataDir(new File(dataDirName));
             } else {
-                error("directory name expected");
+                throw new ParseException("directory name expected");
             }
         }
 
@@ -659,11 +659,11 @@ public class MegaMek {
                         }
                         getLogger().log(MegaMek.class, METHOD_NAME, LogLevel.INFO, sb.toString());
                     } catch (Exception ex) {
-                        error("\"chassis model\" expected as input");
+                        throw new ParseException("\"chassis model\" expected as input");
                     }
                 }
             } else {
-                error("\"chassis model\" expected as input");
+                throw new ParseException("\"chassis model\" expected as input");
             }
             System.exit(0);
         }

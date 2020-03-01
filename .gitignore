@@ -2,10 +2,8 @@
 /.recommenders/
 /RemoteSystemsTempFiles/
 /bin/
-/.settings/
-*/.settings/
-/logs/
-*/logs/
+**/.settings/
+**/logs/
 *.log
 .DS_Store
 Thumbs.db
@@ -16,25 +14,20 @@ Thumbs.db
 /megamek/bin/
 
 # IDE directories
-/out/
-*/out/
-/.idea/
-*/.idea/
-/.vscode
-/.classpath
-*/.classpath
-/.project
-*/.project
-/.classpath
-*/.classpath
-/settings_local.gradle
-/properties_local.gradle
+**/out/
+**/.idea/
+**/.vscode
+**/.classpath
+**/.project
+**/.classpath
+**/settings_local.gradle
+**/properties_local.gradle
 
 # Build directories
-/build/
-*/build/
-/.gradle/
-*/.gradle/
+**/build/
+**/.gradle/
+
+# Jars
 /megamek/MegaMekLab.jar
 /megamek/MegaMek.jar
 
@@ -67,6 +60,7 @@ Thumbs.db
 /megamek/data/mechfiles/IrTech/
 /megamek/data/mechfiles/Special/
 /megamek/data/mechfiles/customs/
+
 # Images
 /megamek/data/images/hexes/defaulthexset.txt
 /megamek/data/images/*_atlas.png

@@ -35414,8 +35414,7 @@ public class Server implements Runnable {
      * @param airborne Is this ship in atmospheric flight?
      * @return a <code>Vector</code> of report objects for the gamelog.
      */
-    public Vector<Report> ejectSpacecraft(Aero entity, boolean inSpace,
-                                      boolean airborne) {
+    public Vector<Report> ejectSpacecraft(Aero entity, boolean inSpace, boolean airborne) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
@@ -35429,139 +35428,139 @@ public class Server implements Runnable {
             return vDesc;
         }
 
-        if (entity.isEjecting()) {
-            if (inSpace || airborne) {
-                // Try to launch some escape pods and lifeboats, if any are left
-                if (entity.getPodsLeft() > 0 || entity.getLifeBoatsLeft() > 0) {
-                    // Report the ejection
-                    PilotingRollData rollTarget = getEjectModifiers(game, entity,
-                            entity.getCrew().getCurrentPilotIndex(), false);
-                    r = new Report(2180);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(rollTarget.getLastPlainDesc(), true);
-                    r.indent();
-                    vDesc.addElement(r);
-                    int roll = Compute.d6(2);
-                    int MOS = (roll - Math.max(2, rollTarget.getValue()));
-                    //Report the roll
-                    r = new Report(2190);
-                    r.subject = entity.getId();
-                    r.add(rollTarget.getValueAsString());
-                    r.add(rollTarget.getDesc());
-                    r.add(roll);
-                    r.indent();
-                    r.choose(roll >= rollTarget.getValue());
-                    vDesc.addElement(r);
-                    //Per SO p27, you get a certain number of escape pods away per turn per 100k tons of ship
-                    int escapeMultiplier = (int) (entity.getWeight() / 100000);
-                    //Set up the maximum number that CAN launch
-                    int toLaunch = 0;
-                    if (roll < rollTarget.getValue()) {
-                        toLaunch = 1;
+        if (inSpace || airborne) {
+            // Try to launch some escape pods and lifeboats, if any are left
+            if (entity.getPodsLeft() > 0 || entity.getLifeBoatsLeft() > 0) {
+                // Report the ejection
+                PilotingRollData rollTarget = getEjectModifiers(game, entity,
+                        entity.getCrew().getCurrentPilotIndex(), false);
+                r = new Report(2180);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(rollTarget.getLastPlainDesc(), true);
+                r.indent();
+                vDesc.addElement(r);
+                int roll = Compute.d6(2);
+                int MOS = (roll - Math.max(2, rollTarget.getValue()));
+                //Report the roll
+                r = new Report(2190);
+                r.subject = entity.getId();
+                r.add(rollTarget.getValueAsString());
+                r.add(rollTarget.getDesc());
+                r.add(roll);
+                r.indent();
+                r.choose(roll >= rollTarget.getValue());
+                vDesc.addElement(r);
+                //Per SO p27, you get a certain number of escape pods away per turn per 100k tons of ship
+                int escapeMultiplier = (int) (entity.getWeight() / 100000);
+                //Set up the maximum number that CAN launch
+                int toLaunch = 0;
+                if (roll < rollTarget.getValue()) {
+                    toLaunch = 1;
+                } else {
+                    toLaunch = (1 + MOS) * Math.max(1, escapeMultiplier);
+                }
+                //And now modify it based on what the unit actually has TO launch
+                int launchCounter = toLaunch;
+                int totalLaunched = 0;
+                while (launchCounter > 0) {
+                    int launched = 0;
+                    if (entity.getPodsLeft() > 0 && (entity.getPodsLeft() >= entity.getLifeBoatsLeft())) {
+                        //Entity has more escape pods than lifeboats (or equal numbers)
+                        launched = Math.min(launchCounter, entity.getPodsLeft());
+                        entity.setLaunchedEscapePods(entity.getLaunchedEscapePods() + launched);
+                        totalLaunched += launched;
+                        launchCounter -= launched;
+                    } else if (entity.getLifeBoatsLeft() > 0 && (entity.getLifeBoatsLeft() > entity.getPodsLeft())) {
+                        //Entity has more lifeboats left
+                        launched = Math.min(launchCounter, entity.getLifeBoatsLeft());
+                        entity.setLaunchedLifeBoats(entity.getLaunchedLifeBoats() + launched);
+                        totalLaunched += launched;
+                        launchCounter -= launched;
                     } else {
-                        toLaunch = (1 + MOS) * Math.max(1, escapeMultiplier);
-                    }
-                    //And now modify it based on what the unit actually has TO launch
-                    int launchCounter = toLaunch;
-                    int totalLaunched = 0;
-                    while (launchCounter > 0) {
-                        int launched = 0;
-                        if (entity.getPodsLeft() > 0 && (entity.getPodsLeft() >= entity.getLifeBoatsLeft())) {
-                            //Entity has more escape pods than lifeboats (or equal numbers)
-                            launched = Math.min(launchCounter, entity.getPodsLeft());
-                            entity.setLaunchedEscapePods(entity.getLaunchedEscapePods() + launched);
-                            totalLaunched += launched;
-                            launchCounter -= launched;
-                        } else if (entity.getLifeBoatsLeft() > 0 && (entity.getLifeBoatsLeft() > entity.getPodsLeft())) {
-                            //Entity has more lifeboats left
-                            launched = Math.min(launchCounter, entity.getLifeBoatsLeft());
-                            entity.setLaunchedLifeBoats(entity.getLaunchedLifeBoats() + launched);
-                            totalLaunched += launched;
-                            launchCounter -= launched;
-                        } else {
-                            //We've run out of both. End the loop
-                            break;
-                        }
-                    }
-                    int nEscaped = Math.min((entity.getNCrew() + entity.getNPassenger()), (totalLaunched * 6));
-                    //Report how many pods launched and how many escaped
-                    if (totalLaunched > 0) {
-                        r = new Report(6401);
-                        r.subject = entity.getId();
-                        r.indent();
-                        r.add(totalLaunched);
-                        r.add(nEscaped);
-                        vDesc.addElement(r);
-                    }
-                    EscapePods pods = new EscapePods(entity,totalLaunched,nEscaped);
-                    //Update the personnel numbers
-                    
-                    //If there are passengers aboard, get them out first
-                    if (entity.getNPassenger() > 0) {
-                        int change = Math.min(entity.getNPassenger(), nEscaped);
-                        entity.setNPassenger(Math.max(entity.getNPassenger() - nEscaped, 0));
-                        nEscaped -= change;
-                    }
-                    //Now get the crew out with such space as is left
-                    if (nEscaped > 0) {
-                        entity.setNCrew(entity.getNCrew() - nEscaped);
-                        entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
-                        //*Damage* the host ship's crew to account for the people that left
-                        damageCrew(entity,entity.getCrew().calculateHits());
-                    }
-                    // Need to set game manually; since game.addEntity not called yet
-                    // Don't want to do this yet, as Entity may not be added
-                    pods.setPosition(entity.getPosition());
-                    pods.setGame(game);
-                    pods.setDeployed(true);
-                    pods.setId(getFreeEntityId());
-                    // Make them not get a move this turn
-                    pods.setDone(true);
-                    if (inSpace) {
-                        //In space, ejected pilots retain the heading and velocity of the unit they eject from
-                        pods.setVectors(entity.getVectors());
-                        pods.setFacing(entity.getFacing());
-                        pods.setCurrentVelocity(entity.getVelocity());
-                        //If the pilot ejects, he should no longer be accelerating
-                        pods.setNextVelocity(entity.getVelocity());
-                    } else if (entity.isAirborne()) {
-                        pods.setAltitude(entity.getAltitude());
-                    }
-                    //We're going to be nice and assume a ship has enough spacesuits for everyone aboard...
-                    //crew.setSpaceSuit(true);
-                    // Add Entity to game
-                    game.addEntity(pods);
-                    // Tell clients about new entity
-                    send(createAddEntityPacket(pods.getId()));
-                    // Sent entity info to clients
-                    entityUpdate(pods.getId());
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
-                        game.removeEntity(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
-                        send(createRemoveEntityPacket(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+                        //We've run out of both. End the loop
+                        break;
                     }
                 }
-            } // End Space/Atmosphere Ejection
-            else {
-                // Eject up to 50 spacesuited crewmen out the nearest airlock!
-                // This only works in space or on the ground
-                if (entity.isSpaceborne()) {
-                    
+                int nEscaped = Math.min((entity.getNCrew() + entity.getNPassenger()), (totalLaunched * 6));
+                //Report how many pods launched and how many escaped
+                if (totalLaunched > 0) {
+                    r = new Report(6401);
+                    r.subject = entity.getId();
+                    r.indent();
+                    r.add(totalLaunched);
+                    r.add(nEscaped);
+                    vDesc.addElement(r);
+                }
+                EscapePods pods = new EscapePods(entity,totalLaunched,nEscaped);
+                //Update the personnel numbers
+                
+                //If there are passengers aboard, get them out first
+                if (entity.getNPassenger() > 0) {
+                    int change = Math.min(entity.getNPassenger(), nEscaped);
+                    entity.setNPassenger(Math.max(entity.getNPassenger() - nEscaped, 0));
+                    nEscaped -= change;
+                }
+                //Now get the crew out with such space as is left
+                if (nEscaped > 0) {
+                    entity.setNCrew(entity.getNCrew() - nEscaped);
+                    entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
+                    //*Damage* the host ship's crew to account for the people that left
+                    damageCrew(entity,entity.getCrew().calculateHits());
+                }
+                // Need to set game manually; since game.addEntity not called yet
+                // Don't want to do this yet, as Entity may not be added
+                pods.setPosition(entity.getPosition());
+                pods.setGame(game);
+                pods.setDeployed(true);
+                pods.setId(getFreeEntityId());
+                // Make them not get a move this turn
+                pods.setDone(true);
+                if (inSpace) {
+                    //In space, ejected pilots retain the heading and velocity of the unit they eject from
+                    pods.setVectors(entity.getVectors());
+                    pods.setFacing(entity.getFacing());
+                    pods.setCurrentVelocity(entity.getVelocity());
+                    //If the pilot ejects, he should no longer be accelerating
+                    pods.setNextVelocity(entity.getVelocity());
+                } else if (entity.isAirborne()) {
+                    pods.setAltitude(entity.getAltitude());
+                }
+                //We're going to be nice and assume a ship has enough spacesuits for everyone aboard...
+                //crew.setSpaceSuit(true);
+                // Add Entity to game
+                game.addEntity(pods);
+                // Tell clients about new entity
+                send(createAddEntityPacket(pods.getId()));
+                // Sent entity info to clients
+                entityUpdate(pods.getId());
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+                    game.removeEntity(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                    send(createRemoveEntityPacket(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
                 }
             }
+        } // End Space/Atmosphere Ejection
+        else {
+            // Eject up to 50 spacesuited crewmen out the nearest airlock!
+            // This only works in space or on the ground
+            if (entity.isSpaceborne()) {
+                
+            }
+        }
+        // Once the ejection is done, mark the entity's crew as "ejected" and tidy up.
+        if (entity.getCrew().getHits() >= Crew.DEATH) {
+            entity.setEjecting(false);
+            entity.getCrew().setEjected(true);
+            vDesc.addAll(destroyEntity(entity, "ejection", true, true));
+
+            // Remove the unit that ejected manually
+            game.removeEntity(entity.getId(),
+                    IEntityRemovalConditions.REMOVE_EJECTED);
+            send(createRemoveEntityPacket(entity.getId(),
+                    IEntityRemovalConditions.REMOVE_EJECTED));
             return vDesc;
         }
-        
-        // Once the ejection is done, mark the entity's crew as "ejected" and tidy up.
-        entity.setEjecting(false);
-        entity.getCrew().setEjected(true);
-        vDesc.addAll(destroyEntity(entity, "ejection", true, true));
-
-        // Remove the unit that ejected manually
-        game.removeEntity(entity.getId(),
-                IEntityRemovalConditions.REMOVE_EJECTED);
-        send(createRemoveEntityPacket(entity.getId(),
-                IEntityRemovalConditions.REMOVE_EJECTED));
+        // If we get here, end movement and return the report
         return vDesc;
     }
 

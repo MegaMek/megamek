@@ -4206,7 +4206,14 @@ public class Tank extends Entity {
         }
         double fuelUnit = fuelTonnagePer100km();
         if (fuelUnit > 0) {
-            return (int) (getFuelTonnage() / fuelUnit * 100);
+            int range = (int) (getFuelTonnage() / fuelUnit * 100);
+            int fuelTanks = countWorkingMisc(MiscType.F_FUEL);
+            if (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) {
+                range += fuelTanks * 600;
+            } else if (getEngine().getEngineType() == Engine.FUEL_CELL) {
+                range += fuelTanks * 450;
+            }
+            return range;
         }
         return Integer.MAX_VALUE;
     }

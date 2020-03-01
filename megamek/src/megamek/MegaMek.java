@@ -12,7 +12,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek;
 
 import java.io.*;
@@ -115,10 +114,11 @@ public class MegaMek {
             }
 
         } catch (CommandLineParser.ParseException e) {
-            StringBuilder message = new StringBuilder(INCORRECT_ARGUMENTS_MESSAGE)
-                    .append(e.getMessage()).append('\n');
-            message.append(ARGUMENTS_DESCRIPTION_MESSAGE);
-            MegaMek.displayMessageAndExit(message.toString(), "main(String[])");
+            String message = INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
+                    + ARGUMENTS_DESCRIPTION_MESSAGE;
+            getLogger().log(MegaMek.class, "main(String[])", LogLevel.INFO, message);
+            TimerSingleton.getInstance().killTimer();
+            System.exit(1);
         }
     }
 
@@ -158,15 +158,14 @@ public class MegaMek {
             try (PrintWriter writer = new PrintWriter(file)) {
                 writer.print("");
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                getLogger().error(MegaMek.class, "resetLogFile", e);
             }
         }
     }
 
     private static void configureLogging(@Nullable final String logFileName) {
-        final String qualifiedLogFilename =
-                PreferenceManager.getClientPreferences().getLogDirectory() +
-                        File.separator + logFileName;
+        final String qualifiedLogFilename = PreferenceManager.getClientPreferences().getLogDirectory()
+                + File.separator + logFileName;
         resetLogFile(qualifiedLogFilename);
         configureLegacyLogging(logFileName);
         configureLog4j(logFileName);
@@ -199,42 +198,37 @@ public class MegaMek {
     public static String getMegaMekSHA256() {
         StringBuilder sb = new StringBuilder();
         byte[] buffer = new byte[8192];
-        DigestInputStream in = null;
 
         // Assume UNIX/Linux, which has the jar in the root folder
         String filename = "MegaMek.jar";
         // If it isn't UNIX/Linux, maybe it's Windows where we've stashed it in the lib folder
-        if (new File("lib/"+filename).exists()) {
-            filename = "lib/"+filename;
+        if (new File("lib/" + filename).exists()) {
+            filename = "lib/" + filename;
             // And if it isn't either UNIX/Linux or Windows it's got to be Mac, where it's buried inside the app
-        } else if (new File("MegaMek.app/Contents/Resources/Java/"+filename).exists()) {
-            filename = "MegaMek.app/Contents/Resources/Java/"+filename;
+        } else if (new File("MegaMek.app/Contents/Resources/Java/" + filename).exists()) {
+            filename = "MegaMek.app/Contents/Resources/Java/" + filename;
         }
 
+        MessageDigest md;
         // Calculate the digest for the given file.
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            in = new DigestInputStream(new FileInputStream(filename), md);
-            while (0 < in.read(buffer)) {}
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            getLogger().error(MegaMek.class, "getMegaMekSHA256()", e);
+            return null;
+        }
+        try (InputStream is = new FileInputStream(filename);
+             InputStream dis = new DigestInputStream(is, md)) {
+            while (0 < dis.read(buffer)) { }
             // gets digest
             byte[] digest = md.digest();
             // convert the byte to hex format
             for (byte d : digest) {
                 sb.append(String.format("%02x", d));
             }
-        } catch (IOException | NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
+        } catch (IOException e) {
             getLogger().error(MegaMek.class, "getMegaMekSHA256()", e);
             return null;
-        } finally {
-            try {
-                if (null != in) {
-                    in.close();
-                }
-            } catch (IOException e) {
-                getLogger().error(MegaMek.class, "getMegaMekSHA256()", e);
-                return null;
-            }
         }
         return sb.toString();
     }
@@ -258,13 +252,19 @@ public class MegaMek {
      * @param logFileName The file name to redirect to.
      */
     private static void redirectOutput(String logFileName) {
-        try {
-            System.out.println("Redirecting output to " + logFileName);
-            String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
-            File logDir = new File(sLogDir);
-            if (!logDir.exists()) {
-                logDir.mkdir();
+        getLogger().info(MegaMek.class, "redirectOutput",
+                "Redirecting output to " + logFileName);
+        String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
+        File logDir = new File(sLogDir);
+        if (!logDir.exists()) {
+            if (!logDir.mkdir()) {
+                getLogger().error(MegaMek.class, "redirectOutput",
+                        "Error in creating directory ./docs. We know this is annoying, and apologise. "
+                                + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
+                                + " and we will try to resolve your issue.");
             }
+        }
+        try {
             PrintStream ps = new PrintStream(
                     new BufferedOutputStream(new FileOutputStream(sLogDir
                             + File.separator + logFileName, true) {
@@ -276,8 +276,9 @@ public class MegaMek {
             System.setOut(ps);
             System.setErr(ps);
         } catch (Exception e) {
-            System.err.println("Unable to redirect output to " + logFileName);
-            e.printStackTrace();
+            getLogger().error(MegaMek.class, "redirectOutput",
+                    "Unable to redirect output to " + logFileName);
+            getLogger().error(MegaMek.class, "redirectOutput", e);
         }
     }
 
@@ -291,7 +292,8 @@ public class MegaMek {
     private static void startDedicatedServer(String[] args) {
         StringBuffer message = new StringBuffer("Starting Dedicated Server. ");
         MegaMek.dumpArgs(message, args);
-        MegaMek.displayMessage(message.toString(), "startDedicatedServer(String[])");
+        getLogger().log(MegaMek.class, "startDedicatedServer(String[])", LogLevel.INFO,
+                message.toString());
         DedicatedServer.start(args);
     }
 
@@ -316,12 +318,15 @@ public class MegaMek {
         }
         IMegaMekGUI mainGui = MegaMek.getGui(guiName);
         if (mainGui == null) {
-            MegaMek.displayMessageAndExit(UNKNOWN_GUI_MESSAGE + guiName, METHOD_NAME);
+            getLogger().log(MegaMek.class, METHOD_NAME, LogLevel.INFO,
+                    UNKNOWN_GUI_MESSAGE + guiName);
+            TimerSingleton.getInstance().killTimer();
+            System.exit(1);
         } else {
             StringBuffer message = new StringBuffer("Starting GUI ");
             message.append(guiName).append(". ");
             MegaMek.dumpArgs(message, args);
-            MegaMek.displayMessage(message.toString(), METHOD_NAME);
+            getLogger().log(MegaMek.class, METHOD_NAME, LogLevel.INFO, message.toString());
             mainGui.start(args);
         }
     }
@@ -344,8 +349,8 @@ public class MegaMek {
                     return (IMegaMekGUI) guiClass.newInstance();
                 }
             } catch (Exception e) {
-                MegaMek.displayMessage(GUI_CLASS_NOT_FOUND_MESSAGE
-                        + guiClassName, "getGui(String)");
+                getLogger().log(MegaMek.class, "getGui(String)", LogLevel.INFO,
+                        GUI_CLASS_NOT_FOUND_MESSAGE + guiClassName);
             }
         }
         return null;
@@ -362,7 +367,8 @@ public class MegaMek {
                 return p.getProperty(key);
             }
         } catch (IOException e) {
-            MegaMek.displayMessage("Property file load failed.", "getGUIClassName(String)");
+            getLogger().log(MegaMek.class, "getGUIClassName(String)", LogLevel.INFO,
+                    "Property file load failed.");
         }
         return null;
     }
@@ -388,27 +394,6 @@ public class MegaMek {
     }
 
     /**
-     * Prints the message to stdout and then exits with error code 1.
-     *
-     * @param message
-     *            the message to be displayed.
-     */
-    private static void displayMessageAndExit(String message, String methodName) {
-        MegaMek.displayMessage(message, methodName);
-        TimerSingleton.getInstance().killTimer();
-        System.exit(1);
-    }
-
-    /**
-     * Prints the message and flushes the output stream.
-     *
-     * @param message the message to display
-     */
-    private static void displayMessage(String message, String methodName) {
-        getLogger().log(MegaMek.class, methodName, LogLevel.INFO, message);
-    }
-
-    /**
      * Prints some information about MegaMek. Used in log files to figure out the JVM and
      * version of MegaMek.
      */
@@ -422,7 +407,7 @@ public class MegaMek {
                 + " " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")"
                 + "\n\tTotal memory available to MegaMek: "
                 + MegaMek.commafy.format(Runtime.getRuntime().maxMemory() / 1024) + " kB";
-        displayMessage(msg, METHOD_NAME);
+        getLogger().log(MegaMek.class, METHOD_NAME, LogLevel.INFO, msg);
     }
 
     /**
@@ -438,7 +423,6 @@ public class MegaMek {
      * This class parses the options passed into to MegaMek from the command line.
      */
     private static class CommandLineParser extends AbstractCommandLineParser {
-
         private String logFilename;
         private String guiName;
         private boolean dedicatedServer = false;
@@ -481,8 +465,7 @@ public class MegaMek {
         }
 
         /**
-         * Returns the GUI Name option value or <code>null</code> if it wasn't
-         * set
+         * Returns the GUI Name option value or <code>null</code> if it wasn't set
          *
          * @return GUI Name option value or <code>null</code> if it wasn't set
          */
@@ -491,11 +474,9 @@ public class MegaMek {
         }
 
         /**
-         * Returns the log file name option value or <code>null</code> if it
-         * wasn't set
+         * Returns the log file name option value or <code>null</code> if it wasn't set
          *
-         * @return the log file name option value or <code>null</code> if it
-         *         wasn't set
+         * @return the log file name option value or <code>null</code> if it wasn't set
          */
         String getLogFilename() {
             return logFilename;
@@ -583,8 +564,7 @@ public class MegaMek {
             if (getToken() == TOK_LITERAL) {
                 filename = getTokenValue();
                 nextToken();
-                megamek.common.EquipmentType.writeEquipmentDatabase(new File(
-                        filename));
+                megamek.common.EquipmentType.writeEquipmentDatabase(new File(filename));
             } else {
                 error("file name expected");
             }
@@ -596,8 +576,7 @@ public class MegaMek {
             if (getToken() == TOK_LITERAL) {
                 filename = getTokenValue();
                 nextToken();
-                megamek.common.EquipmentType
-                        .writeEquipmentExtendedDatabase(new File(filename));
+                megamek.common.EquipmentType.writeEquipmentExtendedDatabase(new File(filename));
             } else {
                 error("file name expected");
             }
@@ -640,8 +619,8 @@ public class MegaMek {
                     try {
                         Entity entity = new MechFileParser(ms.getSourceFile(),
                                 ms.getEntryName()).getEntity();
-                        displayMessage("Validating Entity: " + entity.getShortNameRaw(),
-                                METHOD_NAME);
+                        getLogger().log(MegaMek.class, METHOD_NAME, LogLevel.INFO,
+                                "Validating Entity: " + entity.getShortNameRaw());
                         EntityVerifier entityVerifier = EntityVerifier.getInstance(
                                 new MegaMekFile(Configuration.unitsDir(),
                                         EntityVerifier.CONFIG_FILENAME).getFile());
@@ -678,14 +657,13 @@ public class MegaMek {
                                 testEntity.correctEntity(sb);
                             }
                         }
-                        displayMessage(sb.toString(), METHOD_NAME);
+                        getLogger().log(MegaMek.class, METHOD_NAME, LogLevel.INFO, sb.toString());
                     } catch (Exception ex) {
-                        error("\"chassis model\" expected as input"); //$NON-NLS-1$
+                        error("\"chassis model\" expected as input");
                     }
                 }
-
             } else {
-                error("\"chassis model\" expected as input"); //$NON-NLS-1$
+                error("\"chassis model\" expected as input");
             }
             System.exit(0);
         }
@@ -704,16 +682,14 @@ public class MegaMek {
                                         + " and we will try to resolve your issue.");
                     }
                 }
-
-                try {
-                    File file = new File("./docs/" + filename);
-                    BufferedWriter w = new BufferedWriter(new FileWriter(file));
-                    w.write("Megamek Unit BattleForce Converter");
-                    w.newLine();
-                    w.write("This file can be regenerated with java -jar MegaMek.jar -bfc filename");
-                    w.newLine();
-                    w.write("Element\tSize\tMP\tArmor\tStructure\tS/M/L\tOV\tPoint Cost\tAbilities");
-                    w.newLine();
+                File file = new File("./docs/" + filename);
+                try (Writer w = new FileWriter(file); BufferedWriter fw = new BufferedWriter(w)) {
+                    fw.write("Megamek Unit BattleForce Converter");
+                    fw.newLine();
+                    fw.write("This file can be regenerated with java -jar MegaMek.jar -bfc filename");
+                    fw.newLine();
+                    fw.write("Element\tSize\tMP\tArmor\tStructure\tS/M/L\tOV\tPoint Cost\tAbilities");
+                    fw.newLine();
 
                     MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
                     for (MechSummary unit : units) {
@@ -721,16 +697,14 @@ public class MegaMek {
                                 unit.getEntryName()).getEntity();
 
                         BattleForceElement bfe = new BattleForceElement(entity);
-                        bfe.writeCsv(w);
+                        bfe.writeCsv(fw);
                     }
-                    w.close();
                 } catch (Exception e) {
                     getLogger().error(getClass(), "processUnitBattleForceConverter()", e);
                 }
             }
 
             System.exit(0);
-
         }
 
         private void processUnitAlphaStrikeConverter() {

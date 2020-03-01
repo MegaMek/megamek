@@ -2,8 +2,8 @@
 /.recommenders/
 /RemoteSystemsTempFiles/
 /bin/
-**/.settings/
-**/logs/
+.settings/
+logs/
 *.log
 .DS_Store
 Thumbs.db
@@ -14,18 +14,18 @@ Thumbs.db
 /megamek/bin/
 
 # IDE directories
-**/out/
-**/.idea/
-**/.vscode
-**/.classpath
-**/.project
-**/.classpath
-**/settings_local.gradle
-**/properties_local.gradle
+out/
+.idea/
+.vscode
+.classpath
+.project
+.classpath
+settings_local.gradle
+properties_local.gradle
 
 # Build directories
-**/build/
-**/.gradle/
+build/
+.gradle/
 
 # Jars
 /megamek/MegaMekLab.jar

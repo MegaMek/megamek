@@ -16,13 +16,14 @@ package megamek.server;
 import java.io.File;
 import java.io.IOException;
 
+import megamek.MegaMek;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 
 public class DedicatedServer {
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
-
-    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t [-password <pass>] [-port <port>] [<saved game>]";
+    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t "
+            + "[-password <pass>] [-port <port>] [<saved game>]";
 
     public static void start(String[] args) {
         CommandLineParser cp = new CommandLineParser(args);
@@ -48,28 +49,23 @@ public class DedicatedServer {
                 }
                 dedicated = new Server(password, usePort, !announceUrl.equals(""), announceUrl);
             } catch (IOException ex) {
-                String error = "Error: could not start server at localhost" + ":" + usePort + " ("
-                        + ex.getMessage() + ").";
-                System.err.println(error);
+                MegaMek.getLogger().error(DedicatedServer.class, "start",
+                        "Error: could not start server at localhost" + ":" + usePort + " ("
+                        + ex.getMessage() + ").");
                 return;
             }
             if (null != saveGameFileName) {
                 dedicated.loadGame(new File(saveGameFileName));
             }
         } catch (AbstractCommandLineParser.ParseException e) {
-            String message = INCORRECT_ARGUMENTS_MESSAGE +
-                    e.getMessage() + '\n' + ARGUMENTS_DESCRIPTION_MESSAGE;
-            displayMessage(message);
+            MegaMek.getLogger().error(DedicatedServer.class, "start",
+                    INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
+                            + ARGUMENTS_DESCRIPTION_MESSAGE);
         }
     }
 
     public static void main(String[] args) {
         start(args);
-    }
-
-    private static void displayMessage(String message) {
-        System.out.println(message);
-        System.out.flush();
     }
 
     private static class CommandLineParser extends AbstractCommandLineParser {
@@ -79,9 +75,9 @@ public class DedicatedServer {
         private String announceUrl = "";
 
         // Options
-        private static final String OPTION_PORT = "port"; //$NON-NLS-1$
-        private static final String OPTION_PASSWORD = "password"; //$NON-NLS-1$
-        private static final String OPTION_ANNOUNCE = "announce"; //$NON-NLS-1$
+        private static final String OPTION_PORT = "port";
+        private static final String OPTION_PASSWORD = "password";
+        private static final String OPTION_ANNOUNCE = "announce";
 
         public CommandLineParser(String[] args) {
             super(args);

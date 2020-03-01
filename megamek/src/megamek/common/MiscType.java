@@ -818,6 +818,12 @@ public class MiscType extends EquipmentType {
             } else {
                 return 1.0;
             }
+        } else if (hasFlag(MiscType.F_FUEL)) {
+            if (entity.hasEngine()) {
+                return defaultRounding.round(entity.getEngine().getWeightEngine(entity), entity);
+            } else {
+                return 0.0;
+            }
         }
        // okay, I'm out of ideas
         return 1.0f;
@@ -9030,6 +9036,25 @@ public class MiscType extends EquipmentType {
                 .setClanAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TA)
                 .setProductionFactions(F_TH);
+        return misc;
+    }
+
+    public static MiscType createCVExternalFuel() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Extended Fuel Tank";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 2000;
+        misc.flags = misc.flags.or(F_FUEL).or(F_TANK_EQUIPMENT);
+        misc.explosive = true;
+        misc.industrial = true;
+        misc.rulesRefs = "244,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C)
+                .setAdvancement(DATE_NONE, 2300, 2300).setISApproximate(false, true, false)
+                .setProductionFactions(F_TA);
         return misc;
     }
 

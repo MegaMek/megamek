@@ -6940,8 +6940,8 @@ public class Server implements Runnable {
                 //Don't deal with atmo ejection yet
                 ship.setEjecting(true);
                 addReport(ejectSpacecraft(ship, ship.isSpaceborne(), false));
-                //If we're grounded, end movement
-                if (!entity.isSpaceborne() && !entity.isAirborne()) {
+                //If we're grounded or destroyed by crew loss, end movement
+                if (entity.isDoomed() || (!entity.isSpaceborne() && !entity.isAirborne())) {
                     return;
                 }
             } else if ((entity instanceof Mech) || (entity instanceof Aero)) {
@@ -22608,30 +22608,52 @@ public class Server implements Runnable {
                 boolean wasPilot = crew.getCurrentPilotIndex() == pos;
                 boolean wasGunner = crew.getCurrentGunnerIndex() == pos;
                 crew.setHits(crew.getHits(pos) + damage, pos);
-                if (Crew.DEATH > crew.getHits(pos)) {
-                    r = new Report(6025);
-                } else {
-                    r = new Report(6026);
-                }
-                r.subject = en.getId();
-                r.indent(2);
-                r.add(crew.getCrewType().getRoleName(pos));
-                r.addDesc(en);
-                r.add(crew.getName(pos));
-                r.add(damage);
-                r.add(crew.getHits(pos));
-                vDesc.addElement(r);
-                if (crew.isDead(pos)) {
-                    r = createCrewTakeoverReport(en, pos, wasPilot, wasGunner);
-                    if (null != r) {
-                        vDesc.addElement(r);
+                if (en.isLargeCraft()) {
+                    r = new Report (6028);
+                    r.subject = en.getId();
+                    r.indent(2);
+                    r.addDesc(en);
+                    r.add(damage);
+                    if (((Aero)en).isEjecting()) {
+                        r.add("as crew depart the ship");
+                    } else {
+                        //Blank data
+                        r.add("");
                     }
-                }
-                if (Crew.DEATH > crew.getHits()) {
-                    vDesc.addAll(resolveCrewDamage(en, damage, pos));
-                } else if (!crew.isDoomed()) {
-                    crew.setDoomed(true);
-                    vDesc.addAll(destroyEntity(en, "pilot death", true));
+                    r.add(crew.getHits(pos));
+                    vDesc.addElement(r);
+                    if (Crew.DEATH > crew.getHits()) {
+                        vDesc.addAll(resolveCrewDamage(en, damage, pos));
+                    } else if (!crew.isDoomed()) {
+                        crew.setDoomed(true);
+                        vDesc.addAll(destroyEntity(en, "crew casualties", true));
+                    }
+                } else {
+                    if (Crew.DEATH > crew.getHits(pos)) {
+                        r = new Report(6025);
+                    } else {
+                        r = new Report(6026);
+                    }
+                    r.subject = en.getId();
+                    r.indent(2);
+                    r.add(crew.getCrewType().getRoleName(pos));
+                    r.addDesc(en);
+                    r.add(crew.getName(pos));
+                    r.add(damage);
+                    r.add(crew.getHits(pos));
+                    vDesc.addElement(r);
+                    if (crew.isDead(pos)) {
+                        r = createCrewTakeoverReport(en, pos, wasPilot, wasGunner);
+                        if (null != r) {
+                            vDesc.addElement(r);
+                        }
+                    }
+                    if (Crew.DEATH > crew.getHits()) {
+                        vDesc.addAll(resolveCrewDamage(en, damage, pos));
+                    } else if (!crew.isDoomed()) {
+                        crew.setDoomed(true);
+                        vDesc.addAll(destroyEntity(en, "pilot death", true));
+                    }
                 }
             }
         } else {
@@ -35506,7 +35528,7 @@ public class Server implements Runnable {
                     entity.setNCrew(entity.getNCrew() - nEscaped);
                     entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
                     //*Damage* the host ship's crew to account for the people that left
-                    damageCrew(entity,entity.getCrew().calculateHits());
+                    vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
                 }
                 // Need to set game manually; since game.addEntity not called yet
                 // Don't want to do this yet, as Entity may not be added
@@ -35526,8 +35548,6 @@ public class Server implements Runnable {
                 } else if (entity.isAirborne()) {
                     pods.setAltitude(entity.getAltitude());
                 }
-                //We're going to be nice and assume a ship has enough spacesuits for everyone aboard...
-                //crew.setSpaceSuit(true);
                 // Add Entity to game
                 game.addEntity(pods);
                 // Tell clients about new entity
@@ -35541,10 +35561,12 @@ public class Server implements Runnable {
             }
         } // End Space/Atmosphere Ejection
         else {
+            EjectedCrew crew;
             // Eject up to 50 spacesuited crewmen out the nearest airlock!
             // This only works in space or on the ground
             if (entity.isSpaceborne()) {
-                
+                //We're going to be nice and assume a ship has enough spacesuits for everyone aboard...
+                //crew.setSpaceSuit(true);
             }
         }
         // Once the ejection is done, mark the entity's crew as "ejected" and tidy up.
@@ -35602,7 +35624,7 @@ public class Server implements Runnable {
             rollTarget.addModifier(5, "Out of Control");
         }
         // A decreased large craft crew makes it harder to eject large numbers of pods
-        if (entity.isLargeCraft()) {
+        if (entity.isLargeCraft() && entity.getCrew().getHits() > 0) {
             rollTarget.addModifier(entity.getCrew().getHits(), "Crew hits");
         }
         if ((entity instanceof Mech)

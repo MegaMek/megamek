@@ -820,7 +820,7 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(MiscType.F_FUEL)) {
             if (entity.hasEngine()) {
-                return defaultRounding.round(entity.getEngine().getWeightEngine(entity), entity);
+                return defaultRounding.round(entity.getEngine().getWeightEngine(entity) * 0.1, entity);
             } else {
                 return 0.0;
             }

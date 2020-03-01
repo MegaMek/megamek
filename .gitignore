@@ -16,7 +16,7 @@ Thumbs.db
 # IDE directories
 out/
 .idea/
-.vscode
+.vscode/
 .classpath
 .project
 .classpath

@@ -1397,7 +1397,7 @@ public abstract class TestEntity implements TestEntityOption {
             illegal = true;
         }
         if (networks > 1) {
-            buff.append("Cannot multiple multiple network types on the same unit.\n");
+            buff.append("Cannot have multiple network types on the same unit.\n");
             illegal = true;
         }
         if (robotics > 1) {
@@ -1652,4 +1652,3 @@ class Structure {
     }
 
 } // End class Structure
-

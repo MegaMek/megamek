@@ -3948,6 +3948,10 @@ public class Aero extends Entity implements IAero, IBomber {
     public boolean isCrippled() {
         double internalPercent = getInternalRemainingPercent();
         String msg = getDisplayName() + " CRIPPLED: ";
+        
+        if (isEjecting()) {
+            return true;
+        }
         if (internalPercent < 0.5) {
             System.out.println(msg + "only " + NumberFormat.getPercentInstance().format(internalPercent)
                     + " internals remaining.");

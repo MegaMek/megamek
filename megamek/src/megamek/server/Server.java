@@ -35480,7 +35480,7 @@ public class Server implements Runnable {
                             break;
                         }
                     }
-                    int nEscaped = Math.min(entity.getNCrew(), (totalLaunched * 6));
+                    int nEscaped = Math.min((entity.getNCrew() + entity.getNPassenger()), (totalLaunched * 6));
                     //Report how many pods launched and how many escaped
                     if (totalLaunched > 0) {
                         r = new Report(6401);
@@ -35490,12 +35490,22 @@ public class Server implements Runnable {
                         r.add(nEscaped);
                         vDesc.addElement(r);
                     }
-                    //Update the personnel numbers
-                    entity.setNCrew(entity.getNCrew() - nEscaped);
-                    entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
-                    //*Damage* the host ship's crew to account for the people that left
-                    damageCrew(entity,entity.getCrew().calculateHits());
                     EscapePods pods = new EscapePods(entity,totalLaunched,nEscaped);
+                    //Update the personnel numbers
+                    
+                    //If there are passengers aboard, get them out first
+                    if (entity.getNPassenger() > 0) {
+                        int change = Math.min(entity.getNPassenger(), nEscaped);
+                        entity.setNPassenger(Math.max(entity.getNPassenger() - nEscaped, 0));
+                        nEscaped -= change;
+                    }
+                    //Now get the crew out with such space as is left
+                    if (nEscaped > 0) {
+                        entity.setNCrew(entity.getNCrew() - nEscaped);
+                        entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
+                        //*Damage* the host ship's crew to account for the people that left
+                        damageCrew(entity,entity.getCrew().calculateHits());
+                    }
                     // Need to set game manually; since game.addEntity not called yet
                     // Don't want to do this yet, as Entity may not be added
                     pods.setPosition(entity.getPosition());

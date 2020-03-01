@@ -11,7 +11,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.server;
 
 import java.io.File;
@@ -21,7 +20,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 
 public class DedicatedServer {
-
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
 
     private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t [-password <pass>] [-port <port>] [<saved game>]";
@@ -30,13 +28,12 @@ public class DedicatedServer {
         CommandLineParser cp = new CommandLineParser(args);
         try {
             cp.parse();
-            String savegameFileName = cp.getGameFilename();
+            String saveGameFileName = cp.getGameFilename();
             int usePort;
             if (cp.getPort() != -1) {
                 usePort = cp.getPort();
             } else {
-                usePort = PreferenceManager.getClientPreferences()
-                        .getLastServerPort();
+                usePort = PreferenceManager.getClientPreferences().getLastServerPort();
             }
             String announceUrl = cp.getAnnounceUrl();
             String password = cp.getPassword();
@@ -47,28 +44,22 @@ public class DedicatedServer {
             Server dedicated;
             try {
                 if (password == null || password.length() == 0) {
-                    password = PreferenceManager.getClientPreferences()
-                            .getLastServerPass();
+                    password = PreferenceManager.getClientPreferences().getLastServerPass();
                 }
-                dedicated = new Server(password, usePort,
-                        !announceUrl.equals(""), announceUrl);
+                dedicated = new Server(password, usePort, !announceUrl.equals(""), announceUrl);
             } catch (IOException ex) {
-                StringBuffer error = new StringBuffer();
-                error.append("Error: could not start server at localhost")
-                        .append(":").append(usePort).append(" (").append(
-                                ex.getMessage()).append(").");
-                System.err.println(error.toString());
+                String error = "Error: could not start server at localhost" + ":" + usePort + " ("
+                        + ex.getMessage() + ").";
+                System.err.println(error);
                 return;
             }
-            if (null != savegameFileName) {
-                dedicated.loadGame(new File(savegameFileName));
+            if (null != saveGameFileName) {
+                dedicated.loadGame(new File(saveGameFileName));
             }
-            return;
         } catch (AbstractCommandLineParser.ParseException e) {
-            StringBuffer message = new StringBuffer(INCORRECT_ARGUMENTS_MESSAGE)
-                    .append(e.getMessage()).append('\n');
-            message.append(ARGUMENTS_DESCRIPTION_MESSAGE);
-            displayMessage(message.toString());
+            String message = INCORRECT_ARGUMENTS_MESSAGE +
+                    e.getMessage() + '\n' + ARGUMENTS_DESCRIPTION_MESSAGE;
+            displayMessage(message);
         }
     }
 
@@ -82,7 +73,6 @@ public class DedicatedServer {
     }
 
     private static class CommandLineParser extends AbstractCommandLineParser {
-
         private String gameFilename;
         private int port;
         private String password;
@@ -98,7 +88,6 @@ public class DedicatedServer {
         }
 
         /**
-         * Returns the port option value or <code>-1</code> if it wasn't set
          *
          * @return port option value or <code>-1</code> if it wasn't set
          */
@@ -107,9 +96,8 @@ public class DedicatedServer {
         }
         
         /**
-         * Returns the password option value, will be null if not set.
          * 
-         * @return
+         * @return the password option value, will be null if not set.
          */
         public String getPassword() {
             return password;
@@ -120,11 +108,8 @@ public class DedicatedServer {
         }
 
         /**
-         * Returns the game file name option value or <code>null</code> if it
-         * wasn't set
          *
-         * @return the game file name option value or <code>null</code> if it
-         *         wasn't set
+         * @return the game file name option value or <code>null</code> if it wasn't set
          */
         public String getGameFilename() {
             return gameFilename;
@@ -136,15 +121,19 @@ public class DedicatedServer {
                 int tokType = getToken();
                 switch (tokType) {
                 case TOK_OPTION:
-                    if (getTokenValue().equals(OPTION_PORT)) {
-                        nextToken();
-                        parsePort();
-                    } else if (getTokenValue().equals(OPTION_ANNOUNCE)) {
-                        nextToken();
-                        parseAnnounce();
-                    } else if (getTokenValue().equals(OPTION_PASSWORD)) {
-                        nextToken();
-                        parsePassword();
+                    switch (getTokenValue()) {
+                        case OPTION_PORT:
+                            nextToken();
+                            parsePort();
+                            break;
+                        case OPTION_ANNOUNCE:
+                            nextToken();
+                            parseAnnounce();
+                            break;
+                        case OPTION_PASSWORD:
+                            nextToken();
+                            parsePassword();
+                            break;
                     }
                     break;
                 case TOK_LITERAL:
@@ -155,7 +144,7 @@ public class DedicatedServer {
                     // Do nothing, although this shouldn't happen
                     break;
                 default:
-                    error("unexpected input"); //$NON-NLS-1$                        
+                    throw new ParseException("unexpected input");
                 }
                 nextToken();                
             }
@@ -165,16 +154,16 @@ public class DedicatedServer {
             if (getToken() == TOK_LITERAL) {
                 int newPort = -1;
                 try {
-                    newPort = Integer.decode(getTokenValue()).intValue();
-                } catch (NumberFormatException e) {
+                    newPort = Integer.decode(getTokenValue());
+                } catch (NumberFormatException ignored) {
                     //ignore, leave at -1
                 }
                 if ((newPort < 0) || (newPort > 65535)) {
-                    error("invalid port number"); //$NON-NLS-1$
+                    throw new ParseException("invalid port number");
                 }
                 port = newPort;
             } else {
-                error("port number expected"); //$NON-NLS-1$
+                throw new ParseException("port number expected");
             }
         }
 
@@ -182,7 +171,7 @@ public class DedicatedServer {
             if (getToken() == TOK_LITERAL) {
                 announceUrl = getTokenValue();
             } else {
-                error("meta server announce URL expected"); //$NON-NLS-1$
+                throw new ParseException("meta server announce URL expected");
             }
         }
         
@@ -190,10 +179,8 @@ public class DedicatedServer {
             if (getToken() == TOK_LITERAL) {
                 password = getTokenValue();
             } else {
-                error("password expected"); //$NON-NLS-1$
+                throw new ParseException("password expected");
             }
         }
-
     }
-
 }

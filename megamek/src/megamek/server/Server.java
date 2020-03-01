@@ -35528,29 +35528,13 @@ public class Server implements Runnable {
                     }
                 }
             } // End Space/Atmosphere Ejection
-            /*else {
-                // Place on board
-                // Vehicles don't have ejection systems, so crew must abandon into
-                // a legal hex
-                Coords legalPosition = null;
-                if (!crew.isLocationProhibited(entity.getPosition())) {
-                    legalPosition = entity.getPosition();
-                } else {
-                    for (int dir = 0; (dir < 6) && (legalPosition == null); dir++) {
-                        Coords adjCoords = entity.getPosition().translated(dir);
-                        if (!crew.isLocationProhibited(adjCoords)) {
-                            legalPosition = adjCoords;
-                        }
-                    }
+            else {
+                // Eject up to 50 spacesuited crewmen out the nearest airlock!
+                // This only works in space or on the ground
+                if (entity.isSpaceborne()) {
+                    
                 }
-                // Cannot abandon if there is no legal hex.  This shoudln't have
-                // been allowed
-                if (legalPosition == null) {
-                    getLogger().error(getClass(), METHOD_NAME, "vehicle crews cannot abandon if there is no legal hex!");
-                    return vDesc;
-                }
-                crew.setPosition(legalPosition);
-            } */
+            }
             return vDesc;
         }
         
@@ -35603,6 +35587,10 @@ public class Server implements Runnable {
         if ((entity.isAero() && ((IAero)entity).isOutControl())
                 || (entity.isPartOfFighterSquadron() && ((IAero)game.getEntity(entity.getTransportId())).isOutControl())) {
             rollTarget.addModifier(5, "Out of Control");
+        }
+        // A decreased large craft crew makes it harder to eject large numbers of pods
+        if (entity.isLargeCraft()) {
+            rollTarget.addModifier(entity.getCrew().getHits(), "Crew hits");
         }
         if ((entity instanceof Mech)
                 && (entity.getInternal(Mech.LOC_HEAD) < entity

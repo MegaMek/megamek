@@ -6940,6 +6940,10 @@ public class Server implements Runnable {
                 //Don't deal with atmo ejection yet
                 ship.setEjecting(true);
                 addReport(ejectSpacecraft(ship, ship.isSpaceborne(), false));
+                //If we're grounded, end movement
+                if (!entity.isSpaceborne() && !entity.isAirborne()) {
+                    return;
+                }
             } else if ((entity instanceof Mech) || (entity instanceof Aero)) {
                 r = new Report(2020);
                 r.subject = entity.getId();
@@ -6947,14 +6951,15 @@ public class Server implements Runnable {
                 r.addDesc(entity);
                 addReport(r);
                 addReport(ejectEntity(entity, false));
+                return;
             } else if ((entity instanceof Tank) && !entity.isCarcass()) {
                 r = new Report(2025);
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 addReport(r);
                 addReport(ejectEntity(entity, false));
+                return;
             }
-            return;
         }
 
         if (md.contains(MoveStepType.CAREFUL_STAND)) {
@@ -35411,7 +35416,6 @@ public class Server implements Runnable {
      */
     public Vector<Report> ejectSpacecraft(Aero entity, boolean inSpace,
                                       boolean airborne) {
-        final String METHOD_NAME = "ejectSpacecraft(Entity,boolean,boolean)";
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 

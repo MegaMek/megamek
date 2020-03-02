@@ -1302,6 +1302,9 @@ public abstract class TestEntity implements TestEntityOption {
         boolean hasHarjelIII = false;
         boolean hasCoolantPod = false;
         int emergencyCoolantCount = 0;
+        int networks = 0;
+        boolean countedC3 = false;
+        int robotics = 0;
         boolean hasExternalFuelTank = false;
         for (Mounted m : getEntity().getAmmo()) {
             if (((AmmoType)m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
@@ -1338,6 +1341,24 @@ public abstract class TestEntity implements TestEntityOption {
             }
             if (m.getType().hasFlag(MiscType.F_FUEL)) {
                 hasExternalFuelTank = true;
+            }
+            if ((m.getType().hasFlag(MiscType.F_C3S) || m.getType().hasFlag(MiscType.F_C3SBS)) && !countedC3) {
+                networks++;
+                countedC3 = true;
+            }
+            if (m.getType().hasFlag(MiscType.F_C3I) || m.getType().hasFlag(MiscType.F_NOVA)) {
+                networks++;
+            }
+            if (m.getType().hasFlag(MiscType.F_SRCS) || m.getType().hasFlag(MiscType.F_SASRCS)
+                    || m.getType().hasFlag(MiscType.F_CASPAR) || m.getType().hasFlag(MiscType.F_CASPARII)) {
+                robotics++;
+            }
+        }
+        if ((networks > 0) && !countedC3) {
+            for (Mounted m : getEntity().getIndividualWeaponList()) {
+                if (m.getType().hasFlag(WeaponType.F_C3M) || m.getType().hasFlag(WeaponType.F_C3MBS)) {
+                    networks++;
+                }
             }
         }
         if ((isMech() || isTank() || isAero())
@@ -1385,7 +1406,14 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append("Cannot mount HarJel repair system on non-Mech\n");
             illegal = true;
         }
-        
+        if (networks > 1) {
+            buff.append("Cannot have multiple network types on the same unit.\n");
+            illegal = true;
+        }
+        if (robotics > 1) {
+            buff.append("Unit has multiple drone control systems.\n");
+            illegal = true;
+        }
         if (getEntity().hasStealth() && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
             buff.append("Stealth armor requires an ECM generator.\n");
             illegal = true;
@@ -1395,13 +1423,13 @@ public abstract class TestEntity implements TestEntityOption {
             for (Mounted m : getEntity().getEquipment()) {
                 if (m.isOmniPodMounted() && m.getType().isOmniFixedOnly()) {
                     illegal = true;
-                    buff.append(m.getType().getName() + " cannot be pod mounted.");
+                    buff.append(m.getType().getName()).append(" cannot be pod mounted.");
                 }
             }
         } else {
             for (Mounted m : getEntity().getEquipment()) {
                 if (m.isOmniPodMounted()) {
-                    buff.append(m.getType().getName() + " is pod mounted in non-omni unit\n");
+                    buff.append(m.getType().getName()).append(" is pod mounted in non-omni unit\n");
                     illegal = true;
                 }
             }
@@ -1634,4 +1662,3 @@ class Structure {
     }
 
 } // End class Structure
-

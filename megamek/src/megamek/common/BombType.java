@@ -458,7 +458,7 @@ public class BombType extends AmmoType {
         BombType bomb = new BombType();
 
         bomb.name = "Fuel-Air Bomb (Large)";
-        bomb.shortName = "FAE Bomb (l)";
+        bomb.shortName = "FAE Bomb (L)";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_FAE_LARGE));
         bomb.damagePerShot = 30;
         bomb.rackSize = 2;

@@ -18,14 +18,21 @@
 package megamek.common.weapons;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.Vector;
 
+import megamek.client.bot.princess.BotGeometry;
+import megamek.common.BattleArmor;
 import megamek.common.BombType;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Mounted;
+import megamek.common.PlanetaryConditions;
 import megamek.common.Report;
 import megamek.common.TagInfo;
 import megamek.common.TargetRoll;
@@ -258,6 +265,8 @@ public class BombAttackHandler extends WeaponHandler {
                         server.deliverThunderMinefield(c,
                                 ae.getOwner().getId(), 20, ae.getId());
                     }
+                } else if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
+                    processFuelAirDamage(drop, EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, server);
                 } else {
                     server.deliverBombDamage(drop, type, subjectId, ae,
                             vPhaseReport);
@@ -268,5 +277,98 @@ public class BombAttackHandler extends WeaponHandler {
         }
 
         return false;
+    }
+    
+    public static void processFuelAirDamage(Coords center, EquipmentType bombType, Entity attacker, Vector<Report> vPhaseReport, Server server) {
+        IGame game = attacker.getGame();
+        // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early 
+        boolean notEnoughAtmo = game.getBoard().inSpace() ||
+                game.getPlanetaryConditions().getAtmosphere() <= PlanetaryConditions.ATMO_TRACE;
+        
+        if(notEnoughAtmo) {
+            Report r = new Report(9986);
+            r.indent(1);
+            r.subject = attacker.getId();
+            r.newlines = 1;
+            vPhaseReport.addElement(r);
+            return;
+        }
+        
+        boolean thinAtmo = game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_THIN;
+        int[] radiusChart = { 5, 10, 20, 30 };
+        int bombRadius = BombType.getBombBlastRadius(bombType.getInternalName());
+        
+        if(thinAtmo) {
+            Report r = new Report(9990);
+            r.indent(1);
+            r.subject = attacker.getId();
+            r.newlines = 1;
+            vPhaseReport.addElement(r);
+        }
+        
+        Vector<Integer> alreadyHit = new Vector<>();
+        
+        // assemble collection of hexes at ranges 0 to radius
+        // for each hex, invoke artilleryDamageHex, with the damage set according to this:
+        //      radius chart 
+        //      (divided by half, round up for thin atmo)
+        //      not here, but in artilleryDamageHex, make sure to 2x damage for infantry outside of building
+        //      not here, but in artilleryDamageHex, make sure to 1.5x damage for light building or unit with armor BAR < 10
+        //      not here, but in artilleryDamageHex, make sure to .5x damage for "castle brian" or "armored" building
+        // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies on 9-, BA dies on 7-
+        for(int damageBracket = bombRadius, distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
+            Set<Coords> donut = BotGeometry.getHexDonut(center, distFromCenter);
+            for(Coords coords : donut) {
+                int damage = radiusChart[damageBracket];
+                if(thinAtmo) {
+                    damage = (int) Math.ceil(damage / 2.0);
+                }
+                
+                checkInfantryDestruction(coords, distFromCenter, attacker, alreadyHit, vPhaseReport, game, server);
+                
+                server.artilleryDamageHex(coords, center, damage, (BombType) bombType, attacker.getId(), attacker, null, false, 0, vPhaseReport, false,
+                        alreadyHit, false);
+                
+                TargetRoll fireRoll = new TargetRoll(7, "fuel-air bomb");
+                server.tryIgniteHex(coords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
+            }
+        }
+    }
+    
+    /**
+     * Worker function that checks for and implements instant infantry destruction if necessary
+     */
+    public static void checkInfantryDestruction(Coords coords, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
+            Vector<Report> vPhaseReport, IGame game, Server server) {
+        for(Entity entity : game.getEntitiesVector(coords)) {
+            int rollTarget = -1;
+            if(entity instanceof BattleArmor) {
+                rollTarget = 7;
+            } else if(entity instanceof Infantry) {
+                rollTarget = 9;
+            } else {
+                continue;
+            }
+            
+            int roll = Compute.d6(2);
+            int result = roll + distFromCenter;
+            boolean destroyed = result > rollTarget;
+            
+            Report r = new Report(9987);
+            r.indent(1);
+            r.subject = attacker.getId();
+            r.newlines = 1;
+            r.add(rollTarget);
+            r.add(roll);
+            r.add(distFromCenter);
+            r.choose(destroyed);
+            vPhaseReport.addElement(r);
+            
+            if(destroyed) {
+                vPhaseReport.addAll(server.destroyEntity(entity, "fuel-air bomb detonation", false, false));
+                alreadyHit.add(entity.getId());
+            }
+            return;
+        }
     }
 }

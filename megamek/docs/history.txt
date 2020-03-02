@@ -17,6 +17,7 @@ VERSION HISTORY:
 + PR #1717: Fixing name issues
 + PR #1716: Use weights when randomizing names
 + Issue #1688: Fixing Radical Heat Sink Target Number
++ PR #1723: Implemented fuel-air bombs from IntOps. Includes bot capability to drop them, so spread out.
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

@@ -1586,6 +1586,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createFuel3());
         EquipmentType.addType(MiscType.createFuel35());
         EquipmentType.addType(MiscType.createFuel4());
+        EquipmentType.addType(MiscType.createCVExtendedFuelTank());
         EquipmentType.addType(MiscType.createBlueShield());
         EquipmentType.addType(MiscType.createISEndoComposite());
         EquipmentType.addType(MiscType.createClanEndoComposite());
@@ -9039,7 +9040,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createCVExternalFuel() {
+    public static MiscType createCVExtendedFuelTank() {
         MiscType misc = new MiscType();
 
         misc.name = "Extended Fuel Tank";

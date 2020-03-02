@@ -770,7 +770,7 @@ public class TestTank extends TestEntity {
         boolean illegal = super.hasIllegalEquipmentCombinations(buff);
         
         boolean hasSponsonTurret = false;
-        
+
         for (Mounted m : getEntity().getMisc()) {
             if (m.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
                 hasSponsonTurret = true;
@@ -842,6 +842,12 @@ public class TestTank extends TestEntity {
                     illegal = true;
                     buff.append("bulldozer must be mounted in unit with tracked or wheeled movement mode\n");
                 }
+            }
+            if (m.getType().hasFlag(MiscType.F_FUEL)
+                    && (!tank.hasEngine() ||((tank.getEngine().getEngineType() != Engine.COMBUSTION_ENGINE)
+                        && (tank.getEngine().getEngineType() != Engine.FUEL_CELL)))) {
+                illegal = true;
+                buff.append("Extended fuel tanks can only be used with internal combustion or fuel cell engines.\n");
             }
         }
         

@@ -39,6 +39,7 @@ import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
+import sun.util.resources.cldr.es.LocaleNames_es_CL;
 
 public class TestMech extends TestEntity {
 
@@ -1551,5 +1552,80 @@ public class TestMech extends TestEntity {
         }
         
         return illegal;
+    }
+
+    /**
+     * @param mech      The Mech
+     * @param eq        The equipment
+     * @param location  A location index on the Entity
+     * @return          Whether the equipment can be mounted in the location on the Mech
+     */
+    public static boolean isValidMechLocation(Mech mech, EquipmentType eq, int location) {
+        if (eq instanceof MiscType) {
+            if ((eq.hasFlag(MiscType.F_CLUB) || eq.hasFlag(MiscType.F_HAND_WEAPON))) {
+                if (mech.entityIsQuad()) {
+                    return ((location == Mech.LOC_LT)
+                            || (location == Mech.LOC_RT))
+                            && ((eq.getSubType() &
+                            (MiscType.S_DUAL_SAW | MiscType.S_PILE_DRIVER
+                                    | MiscType.S_WRECKING_BALL | MiscType.S_BACKHOE
+                                    | MiscType.S_COMBINE | MiscType.S_CHAINSAW
+                                    | MiscType.S_ROCK_CUTTER | MiscType.S_BUZZSAW
+                                    | MiscType.S_SPOT_WELDER | MiscType.S_PILE_DRIVER)) != 0);
+                } else {
+                    return (location == Mech.LOC_RARM) || (location == Mech.LOC_LARM);
+                }
+            }
+            if (eq.hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                return location == Mech.LOC_LARM
+                        || location == Mech.LOC_RARM
+                        || mech.locationIsLeg(location);
+            }
+            if (eq.hasFlag(MiscType.F_HEAD_TURRET)) {
+                return location == Mech.LOC_CT && mech.hasSystem(Mech.SYSTEM_COCKPIT, location);
+            }
+            if (eq.hasFlag(MiscType.F_QUAD_TURRET)) {
+                return mech.entityIsQuad() && (((location == Mech.LOC_RT) || (location == Mech.LOC_LT)));
+            }
+            if (eq.hasFlag(MiscType.F_SHOULDER_TURRET)) {
+                return !mech.entityIsQuad() && (((location == Mech.LOC_RT) || (location == Mech.LOC_LT)));
+            }
+            if (eq.hasFlag(MiscType.F_HARJEL)
+                    || eq.hasFlag(MiscType.F_HARJEL_II)
+                    || eq.hasFlag(MiscType.F_HARJEL_III)) {
+                return !mech.hasSystem(Mech.SYSTEM_COCKPIT, location);
+            }
+            if (eq.hasFlag(MiscType.F_MASS)) {
+                return mech.hasSystem(Mech.SYSTEM_COCKPIT, location);
+            }
+            if ((eq.hasFlag(MiscType.F_MASC) && eq.hasSubType(MiscType.S_SUPERCHARGER))
+                    || eq.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+                return mech.hasSystem(Mech.SYSTEM_ENGINE, location);
+            }
+            if (eq.hasFlag(MiscType.F_FUEL)) {
+                return mech.locationIsTorso(location);
+            }
+            if (eq.hasFlag(MiscType.F_JUMP_JET)) {
+                return mech.locationIsLeg(location) || mech.locationIsTorso(location);
+            }
+            if (eq.hasFlag(MiscType.F_AP_POD) || eq.hasFlag(MiscType.F_TRACKS) || eq.hasFlag(MiscType.F_TALON)) {
+                return mech.locationIsLeg(location);
+            }
+            if (eq.hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                return location != Mech.LOC_HEAD;
+            }
+            if (eq.hasFlag(MiscType.F_CASE)) {
+                return eq.isClan() || mech.locationIsTorso(location);
+            }
+        } else if (eq instanceof WeaponType) {
+            if (eq.hasFlag(WeaponType.F_VGL)) {
+                return mech.locationIsTorso(location);
+            }
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                    || ((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
+                return mech.isSuperHeavy() || mech.locationIsTorso(location);
+            }
+        }
+        return true;
     }
 }

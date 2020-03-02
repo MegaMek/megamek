@@ -525,6 +525,31 @@ public class TestProtomech extends TestEntity {
         
         return illegal;
     }
+
+    /**
+     * @param protomech  The Protomech
+     * @param eq         The equipment
+     * @param location   A location index on the Entity
+     * @return           Whether the equipment can be mounted in the location on the Protomech
+     */
+    public static boolean isValidProtomechLocation(Protomech protomech, EquipmentType eq, int location) {
+        if ((eq instanceof MiscType) && eq.hasFlag(MiscType.F_CLUB)) {
+            if (eq.hasSubType(MiscType.S_PROTOMECH_WEAPON)
+                    && (location != Protomech.LOC_LARM)
+                    && (location != Protomech.LOC_RARM)) {
+                return false;
+            }
+            if (eq.hasSubType(MiscType.S_PROTO_QMS)
+                    && (location != Protomech.LOC_TORSO)) {
+                return false;
+            }
+        }
+        if (TestProtomech.eqRequiresLocation(protomech, eq)) {
+            return TestProtomech.maxSlotsByLocation(location, protomech) > 0;
+        } else {
+            return location == Protomech.LOC_BODY;
+        }
+    }
     
     /**
      * Checks for exceeding the maximum number of armor points by location for the tonnage.

@@ -1443,6 +1443,27 @@ public abstract class TestEntity implements TestEntityOption {
         return illegal;
     }
 
+    /**
+     * @param entity    The entity
+     * @param eq        The equipment
+     * @param location  A location index on the Entity
+     * @return          Whether the equipment can be mounted in the location on the Entity
+     */
+    public static boolean isValidLocation(Entity entity, EquipmentType eq, int location) {
+        if (entity instanceof Mech) {
+            return TestMech.isValidMechLocation((Mech) entity, eq, location);
+        } else if (entity instanceof Tank) {
+            return TestTank.isValidTankLocation((Tank) entity, eq, location);
+        } else if (entity instanceof Protomech) {
+            return TestProtomech.isValidProtomechLocation((Protomech) entity, eq, location);
+        } else if (entity instanceof BattleArmor) {
+            return TestBattleArmor.isValidBALocation(eq);
+        } else if (entity.isFighter()) {
+            return TestAero.isValidAeroLocation(eq, location);
+        }
+        return true;
+    }
+
     public StringBuffer printFailedEquipment(StringBuffer buff) {
         if (getEntity().getFailedEquipment().hasNext()) {
             buff.append("Equipment that Failed to Load:\n");

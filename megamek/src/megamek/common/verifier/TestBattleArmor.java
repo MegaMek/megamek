@@ -1167,6 +1167,15 @@ public class TestBattleArmor extends TestEntity {
         return correct;
     }
 
+    /**
+     * @param eq        The equipment
+     * @return          Whether the equipment can be mounted in the BattleArmor suit
+     */
+    public static boolean isValidBALocation(EquipmentType eq) {
+        // Infantry weapons can only be mounted in armored gloves/APMs
+        return !((eq instanceof WeaponType) && eq.hasFlag(WeaponType.F_INFANTRY));
+    }
+
     @Override
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();

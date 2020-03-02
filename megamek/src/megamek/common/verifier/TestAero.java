@@ -24,24 +24,7 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Function;
 
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Bay;
-import megamek.common.CrewQuartersCargoBay;
-import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.FirstClassQuartersCargoBay;
-import megamek.common.ITechManager;
-import megamek.common.ITechnology;
-import megamek.common.Jumpship;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.SecondClassQuartersCargoBay;
-import megamek.common.SmallCraft;
-import megamek.common.SteerageQuartersCargoBay;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -1084,6 +1067,41 @@ public class TestAero extends TestEntity {
             illegal = true;
         }
         return illegal;
+    }
+
+    /**
+     * @param eq        The equipment
+     * @param location  A location index on the Entity
+     * @return          Whether the equipment can be mounted in the location on the aerospace fighter,
+     *                  conventional fighter, or fixed wing support vehicle
+     */
+    public static boolean isValidAeroLocation(EquipmentType eq, int location) {
+        if (eq instanceof AmmoType) {
+            // All ammo goes into the fuselage, as does the blue shield system per construction rules.
+            return location == Aero.LOC_FUSELAGE;
+        } else if (eq instanceof MiscType) {
+            // Weapon enhancements go in the same location as the weapon
+            if (eq.hasFlag(MiscType.F_ARTEMIS)
+                    || eq.hasFlag(MiscType.F_ARTEMIS_V)
+                    || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
+                    || eq.hasFlag(MiscType.F_APOLLO)
+                    || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
+                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                return location < Aero.LOC_WINGS;
+            } else if (eq.hasFlag(MiscType.F_BLUE_SHIELD)
+                    || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())) {
+                // Blue Shield and IS CASE always go in the fuselage
+                return location == Aero.LOC_FUSELAGE;
+            }
+        } else if (eq instanceof WeaponType) {
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                    || ((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
+                return location == Aero.LOC_NOSE || location == Aero.LOC_AFT;
+            }
+            // Weapons must have a firing arc. Mostly we don't want them going into the fuselage.
+            return location < Aero.LOC_WINGS;
+        }
+        return true;
     }
 
     public boolean isAeroWeapon(EquipmentType eq, Entity en) {

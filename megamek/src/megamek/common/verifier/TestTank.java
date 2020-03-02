@@ -25,25 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.GunEmplacement;
-import megamek.common.ITechManager;
-import megamek.common.InfantryBay;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.SuperHeavyTank;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.Transporter;
-import megamek.common.TroopSpace;
-import megamek.common.VTOL;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
@@ -916,6 +898,62 @@ public class TestTank extends TestEntity {
         }
         
         return illegal;
+    }
+
+    /**
+     * @param tank      The Tank
+     * @param eq        The equipment
+     * @param location  A location index on the Entity
+     * @return          Whether the equipment can be mounted in the location on the Tank
+     */
+    public static boolean isValidTankLocation(Tank tank, EquipmentType eq, int location) {
+        if (isBodyEquipment(eq)) {
+            return location == Tank.LOC_BODY;
+        }
+        final int rearLocation = (tank instanceof SuperHeavyTank) ? SuperHeavyTank.LOC_REAR : Tank.LOC_REAR;
+        if (eq instanceof MiscType) {
+            if (eq.hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                return !((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR));
+            }
+            if (eq.hasFlag(MiscType.F_HARJEL) || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
+                return location != Tank.LOC_BODY;
+            }
+            if (eq.hasFlag(MiscType.F_BULLDOZER)) {
+                return location == Tank.LOC_FRONT || location == rearLocation;
+            }
+            if (eq.hasFlag(MiscType.F_MAST_MOUNT)) {
+                return location == VTOL.LOC_ROTOR;
+            }
+            if ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
+                /* Per Tech Manual, no equipment can be installed in the rotor, but TacOps
+                 * allows some. This is equipment which is specifically disallowed.
+                 */
+                return !eq.hasFlag(MiscType.F_HARJEL)
+                        && !eq.hasFlag(MiscType.F_MODULAR_ARMOR)
+                        && !eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM);
+            }
+        } else if (eq instanceof WeaponType) {
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                    || ((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
+                return location == Tank.LOC_FRONT || location == rearLocation;
+            }
+            if (eq.hasFlag(WeaponType.F_B_POD)) {
+                //Must be mounted in side or turret
+                if (tank instanceof SuperHeavyTank) {
+                    return location != SuperHeavyTank.LOC_FRONT
+                            && location != SuperHeavyTank.LOC_REAR
+                            && location != SuperHeavyTank.LOC_TURRET
+                            && location != SuperHeavyTank.LOC_TURRET_2;
+                } else {
+                    return location != Tank.LOC_FRONT
+                            && location != Tank.LOC_REAR
+                            && location != Tank.LOC_TURRET
+                            && location != Tank.LOC_TURRET_2;
+                }
+            }
+            return location != Tank.LOC_BODY && !((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR));
+        }
+        return true;
     }
 
     /**

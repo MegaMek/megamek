@@ -24,7 +24,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27989,7 +27988,7 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code> objects that can be
      * sent to the output log.
      */
-    private Vector<Report> destroyEntity(Entity entity, String reason, boolean survivable,
+    public Vector<Report> destroyEntity(Entity entity, String reason, boolean survivable,
                                          boolean canSalvage) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
@@ -29424,10 +29423,8 @@ public class Server implements Runnable {
             for (String filename : fileList) {
                 File filePath = new MegaMekFile(boardDir, filename).getFile();
                 if (filePath.isDirectory()) {
-                    List<String> boardsInDir = scanForBoardsInDir(new MegaMekFile(boardDir, filename).getFile(),
+                    scanForBoardsInDir(new MegaMekFile(boardDir, filename).getFile(),
                             basePath.concat(File.separator).concat(filename), dimensions, boards);
-                    boardsInDir.removeAll(boards);
-                    boards.addAll(boardsInDir);
                 } else {
                     if (filename.endsWith(".board")) { //$NON-NLS-1$
                         if (Board.boardIsSize(filePath, dimensions)) {
@@ -29525,14 +29522,11 @@ public class Server implements Runnable {
         // scan files
         List<String> tempList = new ArrayList<>();
         Comparator<String> sortComp = StringUtil.stringComparator();
-        List<String> boardsInDir = scanForBoardsInDir(boardDir, "", dimensions, tempList);
-        boards.addAll(boardsInDir);
+        scanForBoardsInDir(boardDir, "", dimensions, tempList);
         // Check boards in userData dir
         boardDir = new File(Configuration.userdataDir(), Configuration.boardsDir().toString());
         if (boardDir.isDirectory()) {
-            boardsInDir = scanForBoardsInDir(boardDir, "", dimensions, tempList);
-            boardsInDir.removeAll(boards);
-            boards.addAll(boardsInDir);
+            scanForBoardsInDir(boardDir, "", dimensions, tempList);
         }
         // if there are any boards, add these:
         if (tempList.size() > 0) {
@@ -35110,6 +35104,12 @@ public class Server implements Runnable {
             }
             vPhaseReport.addAll(newReports);
         }
+        
+        boolean isFuelAirBomb = 
+                ammo != null &&
+                (BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_SMALL ||
+                BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_LARGE);
+        
         Building bldg = game.getBoard().getBuildingAt(coords);
         int bldgAbsorbs = 0;
         if ((bldg != null)
@@ -35117,8 +35117,37 @@ public class Server implements Runnable {
                 || (altitude > hex.terrainLevel(Terrains.BRIDGE_ELEV)))))) {
             bldgAbsorbs = bldg.getAbsorbtion(coords);
             if (!((ammo != null) && (ammo.getMunitionType() == AmmoType.M_FLECHETTE))) {
+                int actualDamage = damage;
+                
+                if(isFuelAirBomb) {
+                    // light buildings take 1.5x damage from fuel-air bombs
+                    if(bldg.getType() == Building.LIGHT) {
+                        actualDamage = (int) Math.ceil(actualDamage * 1.5);
+                        
+                        r = new Report(9991);
+                        r.indent(1);
+                        r.subject = killer.getId();
+                        r.newlines = 1;
+                        vPhaseReport.addElement(r);
+                    } 
+
+                    // armored and "castle brian" buildings take .5 damage from fuel-air bombs
+                    // but I have no idea how to determine if a building is a castle or a brian
+                    // note that being armored and being "light" are not mutually exclusive
+                    if(bldg.getArmor(coords) > 0) {
+                        actualDamage = (int) Math.floor(actualDamage * .5);
+                        
+                        r = new Report(9992);
+                        r.indent(1);
+                        r.subject = killer.getId();
+                        r.newlines = 1;
+                        vPhaseReport.addElement(r);
+                    }
+                }             
+                
+                
                 // damage the building
-                Vector<Report> buildingReport = damageBuilding(bldg, damage, coords);
+                Vector<Report> buildingReport = damageBuilding(bldg, actualDamage, coords);
                 for (Report report : buildingReport) {
                     report.subject = subjectId;
                 }
@@ -35134,7 +35163,7 @@ public class Server implements Runnable {
         }
 
         // get units in hex
-        for (Entity entity : game.getEntitiesVector(coords)) {
+        for (Entity entity : game.getEntitiesVector(coords)) {           
             int hits = damage;
             if (variableDamage) {
                 hits = Compute.d6(damage);
@@ -35221,19 +35250,25 @@ public class Server implements Runnable {
             }
 
             // convention infantry take x2 damage from AE weapons
-            if ((entity instanceof Infantry) && !(entity instanceof BattleArmor)) {
+            if (entity.isConventionalInfantry()) {
                 hits *= 2;
+                
+                // if it's fuel-air, we take even more damage!
+                if(isFuelAirBomb) {
+                    hits *= 2;
+                }
             }
             boolean specialCaseFlechette = false;
 
             // Entity/ammo specific damage modifiers
             if (ammo != null) {
                 if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
-                    if (hex.containsTerrain(Terrains.FORTIFIED) && (entity instanceof Infantry)
-                            && !(entity instanceof BattleArmor)) {
+                    if (hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
                         hits *= 2;
                     }
-                } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
+                }
+                // fuel-air bombs do an additional 2x damage to infantry
+                else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
 
                     // wheeled and hover tanks take movement critical
                     if ((entity instanceof Tank)
@@ -35248,6 +35283,7 @@ public class Server implements Runnable {
                         vPhaseReport.addAll(vehicleMotiveDamage((Tank)entity, 0));
                         continue;
                     }
+                    
                     // only infantry and support vees with bar < 5 are affected
                     if ((entity instanceof BattleArmor) || ((entity instanceof SupportTank)
                             && !entity.hasPatchworkArmor() && (entity.getBARRating(1) > 4))) {
@@ -35354,9 +35390,19 @@ public class Server implements Runnable {
                 while (hits > 0) {
                     int damageToDeal = Math.min(cluster, hits);
                     HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                    // per a rules question, for patchwork armor, we do this:
+                    // per a rules question, for patchwork armor being attacked by flechette ammo, we multiply the damage done
+                    // by 5 - the BAR rating of the hit location
                     if (specialCaseFlechette && !(entity instanceof Infantry)) {
                         damageToDeal *= (5 - entity.getBARRating(hit.getLocation()));
+                    // fuel-air bombs do 1.5x damage to locations hit that have a BAR rating of less than 10.
+                    } else if(isFuelAirBomb && !(entity instanceof Infantry) && (entity.getBARRating(hit.getLocation()) < 10)) {
+                        damageToDeal = (int) Math.ceil(damageToDeal * 1.5);
+                        
+                        r = new Report(9991);
+                        r.indent(1);
+                        r.subject = killer.getId();
+                        r.newlines = 1;
+                        vPhaseReport.addElement(r);
                     }
                     vPhaseReport.addAll(damageEntity(entity, hit, damageToDeal,
                             false, DamageType.NONE, false, true, false));

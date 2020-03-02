@@ -770,7 +770,7 @@ public class TestTank extends TestEntity {
         boolean illegal = super.hasIllegalEquipmentCombinations(buff);
         
         boolean hasSponsonTurret = false;
-        
+
         for (Mounted m : getEntity().getMisc()) {
             if (m.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
                 hasSponsonTurret = true;
@@ -930,6 +930,7 @@ public class TestTank extends TestEntity {
                     || eq.hasFlag(MiscType.F_CASE)
                     || eq.hasFlag(MiscType.F_CASEII)
                     || eq.hasFlag(MiscType.F_JUMP_JET)
+                    || eq.hasFlag(MiscType.F_FUEL)
                     || eq.hasFlag(MiscType.F_BLUE_SHIELD);
         } else {
             return eq instanceof AmmoType;

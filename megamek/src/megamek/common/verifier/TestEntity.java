@@ -1305,6 +1305,7 @@ public abstract class TestEntity implements TestEntityOption {
         int networks = 0;
         boolean countedC3 = false;
         int robotics = 0;
+        boolean hasExternalFuelTank = false;
         for (Mounted m : getEntity().getAmmo()) {
             if (((AmmoType)m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
                 hasCoolantPod = true;
@@ -1337,6 +1338,9 @@ public abstract class TestEntity implements TestEntityOption {
             }
             if (m.getType().hasFlag(MiscType.F_HARJEL_III)) {
                 hasHarjelIII = true;
+            }
+            if (m.getType().hasFlag(MiscType.F_FUEL)) {
+                hasExternalFuelTank = true;
             }
             if ((m.getType().hasFlag(MiscType.F_C3S) || m.getType().hasFlag(MiscType.F_C3SBS)) && !countedC3) {
                 networks++;
@@ -1373,6 +1377,12 @@ public abstract class TestEntity implements TestEntityOption {
                     illegal = true;
                 }
             }
+        }
+        if (hasExternalFuelTank
+                && (!getEntity().hasEngine() ||((getEntity().getEngine().getEngineType() != Engine.COMBUSTION_ENGINE)
+                && (getEntity().getEngine().getEngineType() != Engine.FUEL_CELL)))) {
+            illegal = true;
+            buff.append("Extended fuel tanks can only be used with internal combustion or fuel cell engines.\n");
         }
 
         if (minesweeperCount > 1) {

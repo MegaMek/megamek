@@ -1124,8 +1124,9 @@ public class TestMech extends TestEntity {
                 }
             } else {
                 if (misc.hasFlag(MiscType.F_INDUSTRIAL_TSM)
-                        || misc.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
-                    buff.append("Non-industrial mech can't mount " + misc.getName() + "\n");
+                        || misc.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
+                        || misc.hasFlag(MiscType.F_FUEL)) {
+                    buff.append("Non-industrial mech can't mount ").append(misc.getName()).append("\n");
                 }
             }
             
@@ -1141,6 +1142,11 @@ public class TestMech extends TestEntity {
                                     && (misc.getSubType() == MiscType.S_BACKHOE)
                                     || (misc.getSubType() == MiscType.S_COMBINE)))) {
                 buff.append("LAMs may not mount ").append(misc.getName()).append("\n");
+                illegal = true;
+            }
+            if (misc.hasFlag(MiscType.F_FUEL) && (m.getLocation() != Mech.LOC_CT)
+                    && (m.getLocation() != Mech.LOC_RT) && (m.getLocation() != Mech.LOC_LT)) {
+                buff.append("External fuel tanks must be mounted in a torso location.\n");
                 illegal = true;
             }
         }

@@ -1250,6 +1250,8 @@ public class MiscType extends EquipmentType {
                 return 7;
             }
             // Clan Endo Composite doesn't have variable crits
+        } else if (hasFlag(F_FUEL)) {
+            return (int) Math.ceil(getTonnage(entity));
         }
         // right, well I'll just guess then
         return 1;

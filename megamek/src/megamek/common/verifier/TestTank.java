@@ -936,6 +936,7 @@ public class TestTank extends TestEntity {
                     || eq.hasFlag(MiscType.F_CASE)
                     || eq.hasFlag(MiscType.F_CASEII)
                     || eq.hasFlag(MiscType.F_JUMP_JET)
+                    || eq.hasFlag(MiscType.F_FUEL)
                     || eq.hasFlag(MiscType.F_BLUE_SHIELD);
         } else {
             return eq instanceof AmmoType;

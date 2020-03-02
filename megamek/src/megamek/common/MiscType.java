@@ -1579,14 +1579,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createMASHExtraTheater());
         EquipmentType.addType(MiscType.createParamedicEquipment());
         EquipmentType.addType(MiscType.createISMastMount());
-        EquipmentType.addType(MiscType.createFuel1());
-        EquipmentType.addType(MiscType.createFuelHalf());
-        EquipmentType.addType(MiscType.createFuel2());
-        EquipmentType.addType(MiscType.createFuel25());
-        EquipmentType.addType(MiscType.createFuel3());
-        EquipmentType.addType(MiscType.createFuel35());
-        EquipmentType.addType(MiscType.createFuel4());
-        EquipmentType.addType(MiscType.createCVExtendedFuelTank());
+        EquipmentType.addType(MiscType.createExtendedFuelTank());
         EquipmentType.addType(MiscType.createBlueShield());
         EquipmentType.addType(MiscType.createISEndoComposite());
         EquipmentType.addType(MiscType.createClanEndoComposite());
@@ -7222,28 +7215,6 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createFuel1() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Extended Fuel Tank (1 ton)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 1;
-        misc.criticals = 1;
-        misc.cost = 500;
-        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
-        misc.explosive = true;
-        misc.industrial = true;
-        misc.rulesRefs = "244,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
-                .setISAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TH);
-        return misc;
-    }
-
     public static MiscType createLightFluidSuctionSystemMech() {
         MiscType misc = new MiscType();
         misc.name = "Light Fluid Suction System (Mech)";
@@ -8908,147 +8879,22 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createFuelHalf() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Extended Fuel Tank (0.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 0.5;
-        misc.criticals = 1;
-        misc.cost = 500;
-        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
-        misc.explosive = true;
-        misc.industrial = true;
-        misc.rulesRefs = "244,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
-                .setISAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TH);
-        return misc;
-    }
-
-    public static MiscType createFuel2() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Extended Fuel Tank (2 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 2;
-        misc.criticals = 2;
-        misc.cost = 1000;
-        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
-        misc.explosive = true;
-        misc.industrial = true;
-        misc.rulesRefs = "244,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
-                .setISAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TH);
-        return misc;
-    }
-
-    public static MiscType createFuel25() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Extended Fuel Tank (2.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 2.5;
-        misc.criticals = 3;
-        misc.cost = 1500;
-        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
-        misc.explosive = true;
-        misc.industrial = true;
-        misc.rulesRefs = "244,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
-                .setISAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TH);
-        return misc;
-    }
-
-    public static MiscType createFuel3() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Extended Fuel Tank (3 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 3;
-        misc.criticals = 3;
-        misc.cost = 1500;
-        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
-        misc.explosive = true;
-        misc.industrial = true;
-        misc.rulesRefs = "244,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
-                .setISAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TH);
-        return misc;
-    }
-
-    public static MiscType createFuel35() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Extended Fuel Tank (3.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 3.5;
-        misc.criticals = 4;
-        misc.cost = 2000;
-        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
-        misc.explosive = true;
-        misc.industrial = true;
-        misc.rulesRefs = "244,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
-                .setISAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TH);
-        return misc;
-    }
-
-    public static MiscType createFuel4() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Extended Fuel Tank (4 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 4;
-        misc.criticals = 4;
-        misc.cost = 2000;
-        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
-        misc.explosive = true;
-        misc.industrial = true;
-        misc.rulesRefs = "244,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
-                .setISAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TA)
-                .setProductionFactions(F_TH);
-        return misc;
-    }
-
-    public static MiscType createCVExtendedFuelTank() {
+    public static MiscType createExtendedFuelTank() {
         MiscType misc = new MiscType();
 
         misc.name = "Extended Fuel Tank";
         misc.setInternalName(misc.name);
+        misc.addLookupName("Extended Fuel Tank (1 ton)");
+        misc.addLookupName("Extended Fuel Tank (0.5 tons)");
+        misc.addLookupName("Extended Fuel Tank (2 tons)");
+        misc.addLookupName("Extended Fuel Tank (2.5 tons)");
+        misc.addLookupName("Extended Fuel Tank (3 tons)");
+        misc.addLookupName("Extended Fuel Tank (3.5 tons)");
+        misc.addLookupName("Extended Fuel Tank (4 tons)");
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 1;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.cost = 2000;
-        misc.flags = misc.flags.or(F_FUEL).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.explosive = true;
         misc.industrial = true;
         misc.rulesRefs = "244,TM";

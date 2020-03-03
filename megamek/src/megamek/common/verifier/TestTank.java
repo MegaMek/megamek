@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
@@ -877,54 +878,74 @@ public class TestTank extends TestEntity {
      * @param tank      The Tank
      * @param eq        The equipment
      * @param location  A location index on the Entity
+     * @param buffer    If non-null and the location is invalid, will be appended with an explanation
      * @return          Whether the equipment can be mounted in the location on the Tank
      */
-    public static boolean isValidTankLocation(Tank tank, EquipmentType eq, int location) {
-        if (isBodyEquipment(eq)) {
-            return location == Tank.LOC_BODY;
+    public static boolean isValidTankLocation(Tank tank, EquipmentType eq, int location,
+                                              @Nullable StringBuffer buffer) {
+        if (isBodyEquipment(eq) && (location != Tank.LOC_BODY)) {
+            if (buffer != null) {
+                buffer.append(eq.getName()).append(" must be mounted in the body.\n");
+            }
+            return false;
         }
         final int rearLocation = (tank instanceof SuperHeavyTank) ? SuperHeavyTank.LOC_REAR : Tank.LOC_REAR;
         if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                return !((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR));
+            // Equipment explicitly forbidden to a mast mount
+            if ((eq.hasFlag(MiscType.F_MODULAR_ARMOR) || eq.hasFlag(MiscType.F_HARJEL)
+                    || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM))
+                    && (tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
+                }
+                return false;
             }
-            if (eq.hasFlag(MiscType.F_HARJEL) || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
-                return location != Tank.LOC_BODY;
+            if ((eq.hasFlag(MiscType.F_HARJEL) || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM))
+                    && (location == Tank.LOC_BODY)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
+                }
+                return false;
             }
-            if (eq.hasFlag(MiscType.F_BULLDOZER)) {
-                return location == Tank.LOC_FRONT || location == rearLocation;
+            if (eq.hasFlag(MiscType.F_BULLDOZER) && (location != Tank.LOC_FRONT)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted on the front.\n");
+                }
+                return false;
             }
-            if (eq.hasFlag(MiscType.F_MAST_MOUNT)) {
-                return location == VTOL.LOC_ROTOR;
-            }
-            if ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
-                /* Per Tech Manual, no equipment can be installed in the rotor, but TacOps
-                 * allows some. This is equipment which is specifically disallowed.
-                 */
-                return !eq.hasFlag(MiscType.F_HARJEL)
-                        && !eq.hasFlag(MiscType.F_MODULAR_ARMOR)
-                        && !eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM);
+            if (eq.hasFlag(MiscType.F_MAST_MOUNT) && (location != VTOL.LOC_ROTOR)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted on the rotor.\n");
+                }
+                return false;
             }
         } else if (eq instanceof WeaponType) {
-            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
-                    || ((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
-                return location == Tank.LOC_FRONT || location == rearLocation;
-            }
-            if (eq.hasFlag(WeaponType.F_B_POD)) {
-                //Must be mounted in side or turret
-                if (tank instanceof SuperHeavyTank) {
-                    return location != SuperHeavyTank.LOC_FRONT
-                            && location != SuperHeavyTank.LOC_REAR
-                            && location != SuperHeavyTank.LOC_TURRET
-                            && location != SuperHeavyTank.LOC_TURRET_2;
-                } else {
-                    return location != Tank.LOC_FRONT
-                            && location != Tank.LOC_REAR
-                            && location != Tank.LOC_TURRET
-                            && location != Tank.LOC_TURRET_2;
+            if (((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                    || ((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
+                    && (location != Tank.LOC_FRONT) && (location != rearLocation)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" cannot be mounted on the sides or turret.\n");
                 }
+                return false;
             }
-            return location != Tank.LOC_BODY && !((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR));
+            if (eq.hasFlag(WeaponType.F_B_POD) && (location == Tank.LOC_FRONT) || (location == rearLocation)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted on the sides or turret.\n");
+                }
+                return false;
+            }
+            if (location == Tank.LOC_BODY) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
+                }
+                return false;
+            }
+            if ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
+                }
+                return false;
+            }
         }
         return true;
     }

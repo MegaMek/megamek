@@ -515,26 +515,41 @@ public class TestProtomech extends TestEntity {
      * @param protomech  The Protomech
      * @param eq         The equipment
      * @param location   A location index on the Entity
+     * @param buffer    If non-null and the location is invalid, will be appended with an explanation
      * @return           Whether the equipment can be mounted in the location on the Protomech
      */
-    public static boolean isValidProtomechLocation(Protomech protomech, EquipmentType eq, int location) {
+    public static boolean isValidProtomechLocation(Protomech protomech, EquipmentType eq, int location,
+                                                   @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTOMECH_WEAPON)) {
-                return location == Protomech.LOC_LARM
-                        || location == Protomech.LOC_RARM;
+            if (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTOMECH_WEAPON)
+                    && (location != Protomech.LOC_LARM) && (location != Protomech.LOC_RARM)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
+                }
+                return false;
             }
-            if (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)) {
-                return location == Protomech.LOC_TORSO;
-            }
-            if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
-                return location == Protomech.LOC_TORSO;
+            if ((eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)
+                    || (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)))
+                    && (location != Protomech.LOC_TORSO)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in the torso.\n");
+                }
+                return false;
             }
         }
-        if (TestProtomech.eqRequiresLocation(protomech, eq)) {
-            return TestProtomech.maxSlotsByLocation(location, protomech) > 0;
-        } else {
-            return location == Protomech.LOC_BODY;
+        if (!TestProtomech.eqRequiresLocation(protomech, eq) && (location != Protomech.LOC_BODY)) {
+            if (buffer != null) {
+                buffer.append(eq.getName()).append(" must be mounted in the body.\n");
+            }
+            return false;
+        } else if (TestProtomech.maxSlotsByLocation(location, protomech) == 0) {
+            if (buffer != null) {
+                buffer.append(eq.getName()).append(" cannot be mounted in the ")
+                        .append(protomech.getLocationName(location)).append("\n");
+            }
+            return false;
         }
+        return true;
     }
     
     /**

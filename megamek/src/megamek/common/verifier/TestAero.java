@@ -1072,34 +1072,54 @@ public class TestAero extends TestEntity {
     /**
      * @param eq        The equipment
      * @param location  A location index on the Entity
+     * @param buffer    If non-null and the location is invalid, will be appended with an explanation
      * @return          Whether the equipment can be mounted in the location on the aerospace fighter,
      *                  conventional fighter, or fixed wing support vehicle
      */
-    public static boolean isValidAeroLocation(EquipmentType eq, int location) {
+    public static boolean isValidAeroLocation(EquipmentType eq, int location, @Nullable StringBuffer buffer) {
         if (eq instanceof AmmoType) {
-            // All ammo goes into the fuselage, as does the blue shield system per construction rules.
-            return location == Aero.LOC_FUSELAGE;
+            if (location != Aero.LOC_FUSELAGE) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
+                }
+                return false;
+            }
         } else if (eq instanceof MiscType) {
             // Weapon enhancements go in the same location as the weapon
-            if (eq.hasFlag(MiscType.F_ARTEMIS)
+            if ((eq.hasFlag(MiscType.F_ARTEMIS)
                     || eq.hasFlag(MiscType.F_ARTEMIS_V)
                     || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
                     || eq.hasFlag(MiscType.F_APOLLO)
                     || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
-                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                return location < Aero.LOC_WINGS;
-            } else if (eq.hasFlag(MiscType.F_BLUE_SHIELD)
-                    || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())) {
-                // Blue Shield and IS CASE always go in the fuselage
-                return location == Aero.LOC_FUSELAGE;
+                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) && (location >= Aero.LOC_WINGS)) {
+                if (location != Aero.LOC_FUSELAGE) {
+                    if (buffer != null) {
+                        buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
+                    }
+                    return false;
+                }
+            } else if ((eq.hasFlag(MiscType.F_BLUE_SHIELD)
+                    || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())) && (location != Aero.LOC_FUSELAGE)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
+                }
+                return false;
             }
         } else if (eq instanceof WeaponType) {
-            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
-                    || ((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY) {
-                return location == Aero.LOC_NOSE || location == Aero.LOC_AFT;
+            if (((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                    || ((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
+                    && (location != Aero.LOC_NOSE) && (location != Aero.LOC_AFT)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in the nose or aft.\n");
+                }
+                return false;
             }
-            // Weapons must have a firing arc. Mostly we don't want them going into the fuselage.
-            return location < Aero.LOC_WINGS;
+            if (location < Aero.LOC_WINGS) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
+                }
+                return false;
+            }
         }
         return true;
     }

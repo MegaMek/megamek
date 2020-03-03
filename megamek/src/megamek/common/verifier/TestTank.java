@@ -776,20 +776,6 @@ public class TestTank extends TestEntity {
                 }
             }
 
-            if (misc.hasFlag(MiscType.F_HARJEL)
-                    && ((m.getLocation() == Tank.LOC_BODY)
-                            || ((getEntity() instanceof VTOL)
-                                && (m.getLocation() == VTOL.LOC_ROTOR)))) {
-                illegal = true;
-                buff.append("Unable to load harjel in body or rotor.\n");
-            }
-
-            if (misc.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)
-                    && m.getLocation() != Tank.LOC_BODY) {
-                illegal = true;
-                buff.append("Vehicle must not mount light fluid suction system in body\n");                
-            }
-
             if (misc.hasFlag(MiscType.F_BULLDOZER)) {
                 for (Mounted m2 : getEntity().getMisc()) {
                     if (m2.getLocation() == m.getLocation()) {
@@ -815,10 +801,6 @@ public class TestTank extends TestEntity {
                         }
                     }
                 }
-                if ((m.getLocation() != Tank.LOC_FRONT) && (m.getLocation() != Tank.LOC_REAR)) {
-                    illegal = true;
-                    buff.append("bulldozer must be mounted in front\n");
-                }
                 if ((getEntity().getMovementMode() != EntityMovementMode.TRACKED)
                         && (getEntity().getMovementMode() != EntityMovementMode.WHEELED)) {
                     illegal = true;
@@ -826,16 +808,7 @@ public class TestTank extends TestEntity {
                 }
             }
         }
-        
-        for (Mounted m : tank.getWeaponList()) {
-            if ((((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
-                    && ((m.getLocation() == Tank.LOC_TURRET)
-                        || (m.getLocation() == Tank.LOC_TURRET_2))) {
-                buff.append("Improved Heavy Gauss cannot be mounted in a turret.\n");
-                illegal = true;
-            }
-        }
-        
+
         if ((tank.getMovementMode() == EntityMovementMode.VTOL)
                 || (tank.getMovementMode() == EntityMovementMode.WIGE)
                 || (tank.getMovementMode() == EntityMovementMode.HOVER)) {

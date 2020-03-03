@@ -467,10 +467,6 @@ public class TestProtomech extends TestEntity {
                     buff.append("Quad and glider protomechs cannot use a magnetic clamp system.\n");
                     illegal = true;
                 }
-                if (mount.getLocation() != Protomech.LOC_TORSO) {
-                    buff.append("The magnetic clamp system must be mounted in the torso.\n");
-                    illegal = true;
-                }
             }
             if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOMECH_MELEE)) {
                 meleeWeapons++;
@@ -482,19 +478,8 @@ public class TestProtomech extends TestEntity {
                     buff.append(mount.getType().getName() + "can only be used by quad protomechs.\n");
                     illegal = true;
                 }
-                if (mount.getType().hasSubType(MiscType.S_PROTO_QMS)
-                        && (mount.getLocation() != Protomech.LOC_TORSO)) {
-                    buff.append(mount.getType().getName() + " must be mounted in the torso.\n");
-                    illegal = true;
-                }
                 if (mount.getType().hasSubType(MiscType.S_PROTOMECH_WEAPON) && proto.isQuad()) {
                     buff.append(mount.getType().getName() + "cannot be used by quad protomechs.\n");
-                    illegal = true;
-                }
-                if (mount.getType().hasSubType(MiscType.S_PROTOMECH_WEAPON)
-                        && (mount.getLocation() != Protomech.LOC_LARM)
-                        && (mount.getLocation() != Protomech.LOC_RARM)) {
-                    buff.append(mount.getType().getName() + " must be mounted in an arm.\n");
                     illegal = true;
                 }
             }
@@ -533,15 +518,16 @@ public class TestProtomech extends TestEntity {
      * @return           Whether the equipment can be mounted in the location on the Protomech
      */
     public static boolean isValidProtomechLocation(Protomech protomech, EquipmentType eq, int location) {
-        if ((eq instanceof MiscType) && eq.hasFlag(MiscType.F_CLUB)) {
-            if (eq.hasSubType(MiscType.S_PROTOMECH_WEAPON)
-                    && (location != Protomech.LOC_LARM)
-                    && (location != Protomech.LOC_RARM)) {
-                return false;
+        if (eq instanceof MiscType) {
+            if (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTOMECH_WEAPON)) {
+                return location == Protomech.LOC_LARM
+                        || location == Protomech.LOC_RARM;
             }
-            if (eq.hasSubType(MiscType.S_PROTO_QMS)
-                    && (location != Protomech.LOC_TORSO)) {
-                return false;
+            if (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)) {
+                return location == Protomech.LOC_TORSO;
+            }
+            if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                return location == Protomech.LOC_TORSO;
             }
         }
         if (TestProtomech.eqRequiresLocation(protomech, eq)) {

@@ -1440,6 +1440,13 @@ public abstract class TestEntity implements TestEntityOption {
                 }
             }
         }
+        for (Mounted mounted : getEntity().getEquipment()) {
+            if (!isValidLocation(getEntity(), mounted.getType(), mounted.getLocation())) {
+                buff.append(mounted.getType().getName()).append(" cannot be placed in the ")
+                        .append(getEntity().getLocationName(mounted.getLocation())).append("\n");
+                illegal = true;
+            }
+        }
         return illegal;
     }
 

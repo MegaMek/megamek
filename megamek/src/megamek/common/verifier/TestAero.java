@@ -1106,15 +1106,15 @@ public class TestAero extends TestEntity {
                 return false;
             }
         } else if (eq instanceof WeaponType) {
-            if (((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
-                    || ((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
                     && (location != Aero.LOC_NOSE) && (location != Aero.LOC_AFT)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in the nose or aft.\n");
                 }
                 return false;
             }
-            if (location < Aero.LOC_WINGS) {
+            if (!eq.hasFlag(WeaponType.F_C3M) && !eq.hasFlag(WeaponType.F_C3MBS)
+                    && !eq.hasFlag(WeaponType.F_TAG) && (location == Aero.LOC_FUSELAGE)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
                 }

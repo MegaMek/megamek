@@ -40,7 +40,6 @@ import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
-import sun.util.resources.cldr.es.LocaleNames_es_CL;
 
 public class TestMech extends TestEntity {
 

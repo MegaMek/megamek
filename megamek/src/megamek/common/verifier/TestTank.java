@@ -889,7 +889,15 @@ public class TestTank extends TestEntity {
             }
             return false;
         }
-        final int rearLocation = (tank instanceof SuperHeavyTank) ? SuperHeavyTank.LOC_REAR : Tank.LOC_REAR;
+        final boolean isRearLocation;
+        final boolean isTurretLocation;
+        if (tank instanceof SuperHeavyTank) {
+            isRearLocation = location == SuperHeavyTank.LOC_REAR;
+            isTurretLocation = (location == SuperHeavyTank.LOC_TURRET) || (location == SuperHeavyTank.LOC_TURRET_2);
+        } else {
+            isRearLocation = location == Tank.LOC_REAR;
+            isTurretLocation = (location == Tank.LOC_TURRET) || (location == Tank.LOC_TURRET_2);
+        }
         if (eq instanceof MiscType) {
             // Equipment explicitly forbidden to a mast mount
             if ((eq.hasFlag(MiscType.F_MODULAR_ARMOR) || eq.hasFlag(MiscType.F_HARJEL)
@@ -920,27 +928,29 @@ public class TestTank extends TestEntity {
                 return false;
             }
         } else if (eq instanceof WeaponType) {
-            if (((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
-                    || ((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
-                    && (location != Tank.LOC_FRONT) && (location != rearLocation)) {
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                    && (location != Tank.LOC_FRONT) && !isRearLocation) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" cannot be mounted on the sides or turret.\n");
                 }
                 return false;
             }
-            if (eq.hasFlag(WeaponType.F_B_POD) && (location == Tank.LOC_FRONT) || (location == rearLocation)) {
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_IGAUSS_HEAVY)
+                    && isTurretLocation) {
                 if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted on the sides or turret.\n");
+                    buffer.append(eq.getName()).append(" cannot be mounted on a turret.\n");
                 }
                 return false;
             }
-            if (location == Tank.LOC_BODY) {
+            if (!eq.hasFlag(WeaponType.F_C3M) && !eq.hasFlag(WeaponType.F_C3MBS)
+                    && !eq.hasFlag(WeaponType.F_TAG) && (location == Tank.LOC_BODY)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
                 }
                 return false;
             }
-            if ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
+            if ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)
+                    && !eq.hasFlag(WeaponType.F_TAG)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
                 }
@@ -959,7 +969,7 @@ public class TestTank extends TestEntity {
     public static boolean isBodyEquipment(EquipmentType eq) {
         if (eq instanceof MiscType) {
             return eq.hasFlag(MiscType.F_CHASSIS_MODIFICATION)
-                    || eq.hasFlag(MiscType.F_CASE)
+                    || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())
                     || eq.hasFlag(MiscType.F_CASEII)
                     || eq.hasFlag(MiscType.F_JUMP_JET)
                     || eq.hasFlag(MiscType.F_FUEL)

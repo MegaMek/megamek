@@ -1442,7 +1442,9 @@ public abstract class TestEntity implements TestEntityOption {
             }
         }
         for (Mounted mounted : getEntity().getEquipment()) {
-            illegal |= isValidLocation(getEntity(), mounted.getType(), mounted.getLocation(), buff);
+            if (!mounted.isOneShotAmmo()) {
+                illegal |= !isValidLocation(getEntity(), mounted.getType(), mounted.getLocation(), buff);
+            }
         }
         return illegal;
     }
@@ -1462,8 +1464,6 @@ public abstract class TestEntity implements TestEntityOption {
             return TestTank.isValidTankLocation((Tank) entity, eq, location, buffer);
         } else if (entity instanceof Protomech) {
             return TestProtomech.isValidProtomechLocation((Protomech) entity, eq, location, buffer);
-        } else if (entity instanceof BattleArmor) {
-            return TestBattleArmor.isValidBALocation(eq, buffer);
         } else if (entity.isFighter()) {
             return TestAero.isValidAeroLocation(eq, location, buffer);
         }

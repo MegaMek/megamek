@@ -901,14 +901,18 @@ public class TestTank extends TestEntity {
         if (eq instanceof MiscType) {
             // Equipment explicitly forbidden to a mast mount
             if ((eq.hasFlag(MiscType.F_MODULAR_ARMOR) || eq.hasFlag(MiscType.F_HARJEL)
-                    || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM))
+                    || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM) || eq.hasFlag(MiscType.F_LIFTHOIST)
+                    || eq.hasFlag(MiscType.F_MANIPULATOR) || eq.hasFlag(MiscType.F_FLUID_SUCTION_SYSTEM)
+                    || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM) || eq.hasFlag(MiscType.F_SPRAYER))
                     && (tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
                 }
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_HARJEL) || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM))
+            if ((eq.hasFlag(MiscType.F_HARJEL) || eq.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)
+                    || eq.hasFlag(MiscType.F_SPRAYER)
+                    || (eq.hasFlag(MiscType.F_LIFTHOIST) && !(tank instanceof VTOL)))
                     && (location == Tank.LOC_BODY)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
@@ -918,6 +922,34 @@ public class TestTank extends TestEntity {
             if (eq.hasFlag(MiscType.F_BULLDOZER) && (location != Tank.LOC_FRONT)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted on the front.\n");
+                }
+                return false;
+            }
+            if (eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_PILE_DRIVER)
+                    && (location != Tank.LOC_FRONT) && !isRearLocation) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
+                }
+                return false;
+            }
+            if (eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_WRECKING_BALL) && !isTurretLocation) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted on a turret.\n");
+                }
+                return false;
+            }
+            if (eq.hasFlag(MiscType.F_CLUB) && !eq.hasSubType(MiscType.S_PILE_DRIVER | MiscType.S_SPOT_WELDER
+                    | MiscType.S_WRECKING_BALL)
+                    && (location != Tank.LOC_FRONT) && !isRearLocation && !isTurretLocation) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted on the front, rear, or turret.\n");
+                }
+                return false;
+            }
+            if (eq.hasFlag(MiscType.F_LADDER) && ((location == Tank.LOC_FRONT) || isRearLocation
+                    || ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)))) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted on the side or turret.\n");
                 }
                 return false;
             }

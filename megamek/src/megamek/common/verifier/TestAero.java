@@ -1098,7 +1098,7 @@ public class TestAero extends TestEntity {
                     }
                     return false;
                 }
-            } else if ((eq.hasFlag(MiscType.F_BLUE_SHIELD)
+            } else if ((eq.hasFlag(MiscType.F_BLUE_SHIELD) || eq.hasFlag(MiscType.F_LIFTHOIST)
                     || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())) && (location != Aero.LOC_FUSELAGE)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
@@ -1526,11 +1526,7 @@ public class TestAero extends TestEntity {
         } else if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_CASE)) {
                 return eq.isClan();
-            } else if (eq.hasFlag(MiscType.F_BLUE_SHIELD)) {
-                return false;
-            } else {
-                return true;
-            }
+            } else return !eq.hasFlag(MiscType.F_BLUE_SHIELD) && !eq.hasFlag(MiscType.F_LIFTHOIST);
         } else {
             return !(eq instanceof AmmoType);
         }

@@ -1504,6 +1504,13 @@ public class TestMech extends TestEntity {
                     return false;
                 }
             }
+            if (eq.hasFlag(MiscType.F_SALVAGE_ARM) && (mech.entityIsQuad()
+                    || ((location != Mech.LOC_LARM) && (location != Mech.LOC_RARM)))) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
+                }
+                return false;
+            }
             if (eq.hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
                     && ((location == Mech.LOC_HEAD) || mech.locationIsTorso(location))) {
                 if (buffer != null) {
@@ -1546,10 +1553,18 @@ public class TestMech extends TestEntity {
                 }
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_FUEL) || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan()))
+            if ((eq.hasFlag(MiscType.F_FUEL) || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())
+                    || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                    || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_LADDER))
                     && !mech.locationIsTorso(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
+                }
+                return false;
+            }
+            if (eq.hasFlag(MiscType.F_LIFTHOIST) && ((location == Mech.LOC_HEAD) || mech.locationIsLeg(location))) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be placed in a torso or arm location.\n");
                 }
                 return false;
             }

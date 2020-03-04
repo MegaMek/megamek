@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -1165,6 +1166,23 @@ public class TestBattleArmor extends TestEntity {
         correct &= correctMovement(buff);
 
         return correct;
+    }
+
+    /**
+     * @param eq        The equipment
+     * @param buffer    If non-null and the location is invalid, will be appended with an explanation
+     * @return          Whether the equipment can be mounted in the BattleArmor suit
+     */
+    public static boolean isValidBALocation(EquipmentType eq, @Nullable StringBuffer buffer) {
+        // Infantry weapons can only be mounted in armored gloves/APMs
+        if ((eq instanceof WeaponType) && eq.hasFlag(WeaponType.F_INFANTRY)) {
+            if (buffer != null) {
+                buffer.append(eq.getName())
+                        .append(" can only be mounted in an anti-personnel mount or an armored glove.\n");
+            }
+            return false;
+        }
+        return true;
     }
 
     @Override

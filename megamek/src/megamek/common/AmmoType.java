@@ -333,9 +333,11 @@ public class AmmoType extends EquipmentType {
     
     // More SRM+LRM Munitions types
     public static final long M_MINE_CLEARANCE = 1l << 61;
+    
+    public static final long M_FAE = 1l << 63;
   
   
-    // Numbers 62-63 are used for Nuclear munitions, above 
+    // If you want to add another munition type, tough luck: longs can only be bit-shifted 63 times.
       
     /*
      * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
@@ -2758,7 +2760,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_CHH)
                 .setReintroductionFactions(F_CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),"356,TO"));
-
+        
         //TODO - Implement them.
 /*              munitions.add(new MunitionMutator("Thunder-Active-IV", 1, M_ACTIVE_IV,
                 new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
@@ -2786,9 +2788,18 @@ public class AmmoType extends EquipmentType {
                     .setISAdvancement(2412, DATE_NONE, DATE_NONE, 2830, 3044)
                     .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), "174, IO"));
 
+        munitions.add(new MunitionMutator("Fuel-Air", 1, M_FAE,
+                new TechAdvancement(TECH_BASE_ALL)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"165,IO"));
+        
         //TODO:
-/*      Fuel-Air Mutators (See IO 165),
-        Arrow IV [Air-Defense Arrow (ADA) Missiles] - (TO 353), 
+/*      Arrow IV [Air-Defense Arrow (ADA) Missiles] - (TO 353), 
         Arrow IV [Thunder Active-IV] - TO (357)*/
 
         // Walk through both the base types and the
@@ -3061,8 +3072,15 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(false,false,false,false,false)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
                      
-        //TODO:
-        //Fuel-Air Mutators (See IO 165)
+        munitions.add(new MunitionMutator("Fuel-Air", 1, M_FAE,
+                new TechAdvancement(TECH_BASE_ALL)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"165,IO"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -3151,8 +3169,15 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(false,false,false,false,false),"355,TO"));
         
         
-        //TODO:
-        //Fuel-Air Mutators (See IO 165)
+        munitions.add(new MunitionMutator("Fuel-Air", 1, M_FAE,
+                new TechAdvancement(TECH_BASE_ALL)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"165,IO"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -15605,6 +15630,17 @@ public class AmmoType extends EquipmentType {
             double cost = base.cost;
             double bv = base.bv;
 
+            if(((munition.getAmmoType() == T_LONG_TOM) ||
+                    (munition.getAmmoType() == T_LONG_TOM_CANNON) ||
+                    (munition.getAmmoType() == T_SNIPER) ||
+                    (munition.getAmmoType() == T_SNIPER_CANNON) ||
+                    (munition.getAmmoType() == T_THUMPER) ||
+                    (munition.getAmmoType() == T_THUMPER_CANNON)) &&
+                    munition.getMunitionType() == AmmoType.M_FAE) {
+                bv *= 1.4;
+                cost *= 3;
+            }
+            
             if ((munition.getAmmoType() == T_AC) 
                     || (munition.getAmmoType() == T_LAC)
                     || (munition.getAmmoType() == T_PAC)) {

@@ -373,6 +373,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
         }
 
+        if (atype.getMunitionType() == AmmoType.M_FAE) {
+            AreaEffectHelper.processFuelAirDamage(targetPos, 
+                    atype, aaa.getEntity(game), vPhaseReport, server);
+        }
+        
         if (atype.getMunitionType() == AmmoType.M_FLARE) {
             int radius;
             if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {

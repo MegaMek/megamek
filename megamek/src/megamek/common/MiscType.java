@@ -835,8 +835,8 @@ public class MiscType extends EquipmentType {
         if (costValue == EquipmentType.COST_VARIABLE) {
             if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
                 costValue = getTonnage(entity, loc) * 10000;
-            } if (hasFlag(F_ENVIRONMENTAL_SEALING) && hasFlag(F_MECH_EQUIPMENT)) {
-                costValue = 10000 * entity.getWeight();
+            } else if (hasFlag(F_ENVIRONMENTAL_SEALING) && (entity instanceof Mech)) {
+                costValue = 225 * entity.getWeight();
             } else if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_OFF_ROAD)) {
                 costValue = 0;
             } else if (hasFlag(F_LIMITED_AMPHIBIOUS) || hasFlag((F_FULLY_AMPHIBIOUS))) {

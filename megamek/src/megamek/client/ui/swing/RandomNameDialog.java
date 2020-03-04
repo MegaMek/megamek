@@ -122,7 +122,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
     private void saveSettings() {
         rng.setChosenFaction((String)comboFaction.getSelectedItem());
-        rng.setPerentFemale(sldGender.getValue());
+        rng.setPercentFemale(sldGender.getValue());
     }
 
     @Override

@@ -1,6 +1,6 @@
 MMSVersion=1
 Name=Uninvited Guests
-Description=On an unnamed world, forces loyal to Katrina Davion-Steiner face a raiding party loyal to Victor Davio-Steiner
+Description=On an unnamed world, forces loyal to Katrina Steiner-Davion face a raiding party loyal to Victor Steiner-Davion
 BoardWidth=1
 BoardHeight=2
 MapWidth=50

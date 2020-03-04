@@ -2,7 +2,7 @@
 * MegaMek -
 * Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
 * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
-* Copyright (C) 2018 The MegaMek Team
+* Copyright (C) 2018, 2020 The MegaMek Team
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -19133,7 +19133,6 @@ public class Server implements Runnable {
             int radicalHSBonus = 0;
             Vector<Report> rhsReports = new Vector<>();
             if (entity.hasActivatedRadicalHS()) {
-                entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
                 if (entity instanceof Mech) {
                     radicalHSBonus = ((Mech) entity).getActiveSinks();
                 } else if (entity instanceof Aero) {
@@ -19142,8 +19141,11 @@ public class Server implements Runnable {
                     getLogger().error(getClass(), METHOD_NAME, "Radical heat sinks mounted on non-mech, non-aero Entity!");
                 }
                 int rhsRoll = Compute.d6(2);
-                int targetNumber = 2;
+                int targetNumber;
                 switch (entity.getConsecutiveRHSUses()) {
+                    case 0:
+                        targetNumber = 2;
+                        break;
                     case 1:
                         targetNumber = 3;
                         break;
@@ -19161,9 +19163,12 @@ public class Server implements Runnable {
                         break;
                     case 6:
                     default:
-                        targetNumber = 13; // Auto-fail
+                        targetNumber = TargetRoll.AUTOMATIC_FAIL;
+                        break;
                 }
-                // RHS actiavtion report
+                entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
+
+                // RHS activation report
                 r = new Report(5540);
                 r.subject = entity.getId();
                 r.indent();

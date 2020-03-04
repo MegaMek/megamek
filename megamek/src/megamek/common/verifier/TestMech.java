@@ -1588,6 +1588,12 @@ public class TestMech extends TestEntity {
                 }
                 return false;
             }
+            if (eq.hasFlag(MiscType.F_EJECTION_SEAT) && (location != Mech.LOC_HEAD)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be placed in the head.\n");
+                }
+                return false;
+            }
         } else if (eq instanceof WeaponType) {
             if (eq.hasFlag(WeaponType.F_VGL) && !mech.locationIsTorso(location)) {
                 if (buffer != null) {

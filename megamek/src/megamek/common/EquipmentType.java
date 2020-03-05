@@ -347,7 +347,7 @@ public class EquipmentType implements ITechnology {
      * @return              The weight of the equipment in tons
      */
     public double getTonnage(Entity entity, int location, RoundWeight defaultMethod) {
-        return defaultMethod.round(getTonnage(entity, location));
+        return defaultMethod.round(getTonnage(entity, location), entity);
     }
 
     void setTonnage(double tonnage) {
@@ -1083,7 +1083,7 @@ public class EquipmentType implements ITechnology {
     public String getAvailabilityName(int era) {
         return getEraAvailabilityName(era);
     }
-    
+
     public boolean isClan() {
         return techAdvancement.getTechBase() == TECH_BASE_CLAN;
     }

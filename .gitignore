@@ -65,6 +65,10 @@ build/
 /megamek/data/images/hexes/defaulthexset.txt
 /megamek/data/images/*_atlas.png
 /megamek/data/images/imgFileAtlasMap.xml
+#Portraits
+/megamek/data/images/Portraits/
+!/megamek/data/images/portraits/default.gif
+
 
 # Boards
 /megamek/data/boards/

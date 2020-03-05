@@ -1157,7 +1157,11 @@ public class Crew implements Serializable {
     }
 
     public String getPortraitFileName(int pos) {
-        return portraitFileName[pos];
+        if (portraitFileName.length >= pos) {
+            return portraitFileName[pos];
+        } else {
+            return PORTRAIT_NONE;
+        }
     }
 
     public int getToughness(int pos) {

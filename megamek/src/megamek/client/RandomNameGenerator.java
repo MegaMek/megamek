@@ -15,8 +15,6 @@
  */
 package megamek.client;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -78,8 +76,6 @@ import megamek.common.util.WeightedMap;
  */
 public class RandomNameGenerator implements Serializable {
     //region Variable Declarations
-    private static final String PROP_INITIALIZED = "initialized";
-
     /** Default directory containing the faction-specific name files. */
     private static final String DIR_NAME_FACTIONS = "factions";
 
@@ -135,7 +131,6 @@ public class RandomNameGenerator implements Serializable {
     private String chosenFaction;
 
     private static final MMLogger logger = DefaultMmLogger.getInstance();
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private static volatile boolean initialized = false; // volatile to ensure readers get the current version
     //endregion Variable Declarations
 
@@ -301,21 +296,9 @@ public class RandomNameGenerator implements Serializable {
     private void runThreadLoader() {
         Thread loader = new Thread(() -> {
             rng.populateNames();
-            rng.removeInitializationListener();
         }, "Random Name Generator name initializer");
         loader.setPriority(Thread.NORM_PRIORITY - 1);
         loader.start();
-    }
-
-    public void addInitializationListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
-    }
-
-    private void removeInitializationListener() {
-        pcs.firePropertyChange(PROP_INITIALIZED, initialized, initialized = true);
-        for (PropertyChangeListener listener : pcs.getPropertyChangeListeners()) {
-            pcs.removePropertyChangeListener(listener);
-        }
     }
 
     private void populateNames() {
@@ -421,6 +404,7 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         }
+        initialized = true;
         //endregion Faction Files
     }
 

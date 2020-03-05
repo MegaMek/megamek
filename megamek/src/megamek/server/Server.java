@@ -35504,7 +35504,7 @@ public class Server implements Runnable {
                     break;
                 }
             }
-            int nEscaped = Math.min((entity.getNCrew() + entity.getNPassenger()), (totalLaunched * 6));
+            int nEscaped = Math.min((entity.getCrew().getCurrentSize() + entity.getNPassenger()), (totalLaunched * 6));
             //Report how many pods launched and how many escaped
             if (totalLaunched > 0) {
                 r = new Report(6401);
@@ -35570,7 +35570,7 @@ public class Server implements Runnable {
             
             // Eject up to 50 spacesuited crewmen out the nearest airlock!
             // This only works in space or on the ground
-            int nEscaped = Math.min(entity.getNPassenger() + entity.getNCrew(), 50);
+            int nEscaped = Math.min(entity.getNPassenger() + entity.getCrew().getCurrentSize(), 50);
             EjectedCrew crew = new EjectedCrew(entity, nEscaped);
             
             //Report the escape

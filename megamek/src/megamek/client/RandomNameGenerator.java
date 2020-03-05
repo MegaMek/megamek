@@ -297,7 +297,6 @@ public class RandomNameGenerator implements Serializable {
     private void runThreadLoader() {
         Thread loader = new Thread(() -> {
             rng.populateNames();
-            initialized = true;
         }, "Random Name Generator name initializer");
         loader.setPriority(Thread.NORM_PRIORITY - 1);
         loader.start();
@@ -406,6 +405,7 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         }
+        initialized = true;
         //endregion Faction Files
     }
 

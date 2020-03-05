@@ -179,6 +179,7 @@ public class Crew implements Serializable {
     public static final String MAP_SURNAME = "surname";
     public static final String MAP_BLOODNAME = "bloodname";
     public static final String MAP_PHENOTYPE = "phenotype";
+    public static final String MAP_RANK = "rank";
     //endregion extraData inner map keys
     /**
      * The number of hits that a pilot can take before he dies.

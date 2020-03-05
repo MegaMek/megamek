@@ -229,18 +229,14 @@ public class ChatLounge extends AbstractPhaseDisplay
     // keep track of portrait images
     private DirectoryItems portraits;
 
-    private boolean mscLoaded = false;
-    private boolean rngLoaded = false;
-
     private String cmdSelectedTab = null;
 
     private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         @Override
         public void doneLoading() {
-            mscLoaded = true;
-            butLoad.setEnabled(mscLoaded && rngLoaded);
-            butArmy.setEnabled(mscLoaded && rngLoaded);
-            butLoadList.setEnabled(mscLoaded);
+            butLoad.setEnabled(true);
+            butArmy.setEnabled(true);
+            butLoadList.setEnabled(true);
         }
     };
 
@@ -369,18 +365,14 @@ public class ChatLounge extends AbstractPhaseDisplay
         butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
         butNames = new JButton(Messages.getString("ChatLounge.butNames")); //$NON-NLS-1$
 
-        RandomNameGenerator rng = RandomNameGenerator.getInstance();
-        rng.addInitializationListener(evt -> {
-            rngLoaded = (boolean) evt.getNewValue();
-            butLoad.setEnabled(mscLoaded && rngLoaded);
-            butArmy.setEnabled(mscLoaded && rngLoaded);
+        // Initialize the RandomNameGenerator
+        RandomNameGenerator.getInstance();
 
-        });
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
-        mscLoaded = mechSummaryCache.isInitialized();
-        butLoad.setEnabled(mscLoaded && rngLoaded);
-        butArmy.setEnabled(mscLoaded && rngLoaded);
+        boolean mscLoaded = mechSummaryCache.isInitialized();
+        butLoad.setEnabled(mscLoaded);
+        butArmy.setEnabled(mscLoaded);
         butLoadList.setEnabled(mscLoaded);
         butSkills.setEnabled(true);
         butNames.setEnabled(true);

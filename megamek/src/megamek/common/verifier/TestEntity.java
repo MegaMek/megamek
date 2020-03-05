@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 
 /**
@@ -1440,7 +1441,33 @@ public abstract class TestEntity implements TestEntityOption {
                 }
             }
         }
+        for (Mounted mounted : getEntity().getEquipment()) {
+            if (!mounted.isOneShotAmmo()) {
+                illegal |= !isValidLocation(getEntity(), mounted.getType(), mounted.getLocation(), buff);
+            }
+        }
         return illegal;
+    }
+
+    /**
+     * @param entity    The entity
+     * @param eq        The equipment
+     * @param location  A location index on the Entity
+     * @param buffer    If non-null and the location is invalid, will be appended with an explanation
+     * @return          Whether the equipment can be mounted in the location on the Entity
+     */
+    public static boolean isValidLocation(Entity entity, EquipmentType eq, int location,
+                                          @Nullable StringBuffer buffer) {
+        if (entity instanceof Mech) {
+            return TestMech.isValidMechLocation((Mech) entity, eq, location, buffer);
+        } else if (entity instanceof Tank) {
+            return TestTank.isValidTankLocation((Tank) entity, eq, location, buffer);
+        } else if (entity instanceof Protomech) {
+            return TestProtomech.isValidProtomechLocation((Protomech) entity, eq, location, buffer);
+        } else if (entity.isFighter()) {
+            return TestAero.isValidAeroLocation(eq, location, buffer);
+        }
+        return true;
     }
 
     public StringBuffer printFailedEquipment(StringBuffer buff) {

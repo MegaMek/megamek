@@ -1157,7 +1157,7 @@ public class Crew implements Serializable {
     }
 
     public String getPortraitFileName(int pos) {
-        if (portraitFileName.length >= pos) {
+        if (portraitFileName.length > pos) {
             return portraitFileName[pos];
         } else {
             return PORTRAIT_NONE;

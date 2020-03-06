@@ -6947,7 +6947,7 @@ public class Server implements Runnable {
                         .hasMoreElements();) {
                     final MoveStep step = i.nextElement();
                     if (step.getType() == MoveStepType.EJECT) {
-                        legalPos = step.getPosition();
+                        legalPos = step.getTargetPosition();
                     }
                 }
                 addReport(ejectSpacecraft(ship, ship.isSpaceborne(), (ship.isAirborne() && !ship.isSpaceborne()),legalPos));
@@ -35464,7 +35464,7 @@ public class Server implements Runnable {
         }
 
         // Try to launch some escape pods and lifeboats, if any are left
-        if (entity.getPodsLeft() > 0 || entity.getLifeBoatsLeft() > 0 && (inSpace || airborne)) {
+        if ((inSpace || airborne) && (entity.getPodsLeft() > 0 || entity.getLifeBoatsLeft() > 0)) {
             // Report the ejection
             PilotingRollData rollTarget = getEjectModifiers(game, entity,
                     entity.getCrew().getCurrentPilotIndex(), false);

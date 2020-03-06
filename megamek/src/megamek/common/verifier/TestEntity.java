@@ -1542,7 +1542,7 @@ public abstract class TestEntity implements TestEntityOption {
     public String printTechLevel() {
         return "Chassis: " + getEntity().getDisplayName() + " - "
                 + TechConstants.getLevelName(getEntity().getTechLevel()) + " ("
-                + Integer.toString(getEntity().getYear()) + ")\n";
+                + getEntity().getYear() + ")\n";
     }
 
     public double getArmoredComponentWeight() {

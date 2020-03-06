@@ -72,7 +72,7 @@ public class AreaEffectHelper {
         // to acquire a list of the ammo types
         for(AmmoType at : AmmoType.getMunitionsFor(ammoType)) {
             if(at.getMunitionType() == AmmoType.M_FAE) {
-                fuelAirBlastRadiusIndex.put(at.getInternalName(), 3);
+                fuelAirBlastRadiusIndex.put(at.getInternalName(), blastRadius);
             }
         }
     }

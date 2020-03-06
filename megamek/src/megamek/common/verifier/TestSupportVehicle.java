@@ -1063,6 +1063,29 @@ public class TestSupportVehicle extends TestEntity {
         return correct;
     }
 
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buffer) {
+        boolean illegal = super.hasIllegalEquipmentCombinations(buffer);
+        boolean requiresArmor = false;
+        for (Mounted mounted : supportVee.getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_ARMORED_CHASSIS)
+                    || mounted.getType().hasFlag(MiscType.F_AMPHIBIOUS)
+                    || mounted.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
+                    || mounted.getType().hasFlag(MiscType.F_SUBMERSIBLE)) {
+                for (int loc = supportVee.firstArmorIndex(); loc < supportVee.locations(); loc++) {
+                    if (supportVee.getOArmor(loc) == 0) {
+                        buffer.append(mounted.getType().getName())
+                                .append(" requires at least one point of armor in every location.\n");
+                        illegal = true;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        return illegal;
+    }
+
     boolean hasIllegalChassisMods(StringBuffer buff) {
         boolean illegal = false;
         final Set<ChassisModification> chassisMods = supportVee.getMisc().stream()

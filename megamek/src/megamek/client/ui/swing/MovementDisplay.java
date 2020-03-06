@@ -3437,6 +3437,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         Coords pos = abandoned.getPosition();
         //Create a bogus crew entity to use for legal hex calculation
         Entity crew = new EjectedCrew();
+        crew.setId(clientgui.getClient().getGame().getNextEntityId());
+        crew.setGame(clientgui.getClient().getGame());
         int elev = clientgui.getClient().getGame().getBoard().getHex(pos).getLevel() + abandoned.getElevation();
         ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
         if (abandoned instanceof Dropship) {

@@ -6940,9 +6940,17 @@ public class Server implements Runnable {
                 r.addDesc(entity);
                 addReport(r);
                 Aero ship = (Aero) entity;
-                //Don't deal with atmo ejection yet
                 ship.setEjecting(true);
-                addReport(ejectSpacecraft(ship, ship.isSpaceborne(), false));
+                Coords legalPos = entity.getPosition();
+                //Get the step so we can pass it in and get the abandon coords from it
+                for (final Enumeration<MoveStep> i = md.getSteps(); i
+                        .hasMoreElements();) {
+                    final MoveStep step = i.nextElement();
+                    if (step.getType() == MoveStepType.EJECT) {
+                        legalPos = step.getPosition();
+                    }
+                }
+                addReport(ejectSpacecraft(ship, ship.isSpaceborne(), (ship.isAirborne() && !ship.isSpaceborne()),legalPos));
                 //If we're grounded or destroyed by crew loss, end movement
                 if (entity.isDoomed() || (!entity.isSpaceborne() && !entity.isAirborne())) {
                     return;
@@ -35437,9 +35445,10 @@ public class Server implements Runnable {
      * @param entity  The <code>Aero</code> to eject.
      * @param inSpace Is this ship spaceborne?
      * @param airborne Is this ship in atmospheric flight?
+     * @param pos The coords of this ejection. Needed when abandoning a grounded ship
      * @return a <code>Vector</code> of report objects for the gamelog.
      */
-    public Vector<Report> ejectSpacecraft(Aero entity, boolean inSpace, boolean airborne) {
+    public Vector<Report> ejectSpacecraft(Aero entity, boolean inSpace, boolean airborne, Coords pos) {
         final String METHOD_NAME = "ejectSpacecraft(Aero,boolean,boolean)";
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
@@ -35620,12 +35629,8 @@ public class Server implements Runnable {
                 if (!entity.isLargeCraft() && !crew.isLocationProhibited(entity.getPosition())) {
                     legalPosition = entity.getPosition();
                 } else {
-                    for (int dir = 0; (dir < 6) && (legalPosition == null); dir++) {
-                        Coords adjCoords = entity.getPosition().translated(dir);
-                        if (!crew.isLocationProhibited(adjCoords)) {
-                            legalPosition = adjCoords;
-                        }
-                    }
+                    //Use the passed in coords. We already calculated whether they're legal or not
+                    legalPosition = pos;
                 }
                 // Cannot abandon if there is no legal hex.  This shoudln't have
                 // been allowed

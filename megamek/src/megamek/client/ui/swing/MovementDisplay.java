@@ -3425,6 +3425,59 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         return choice;
     }
+    
+    /**
+     * Uses player input to find a legal hex where an EjectedCrew unit can be placed
+     * @param abandoned - The vessel we're escaping from
+     * @param crew - The EjectedCrew unit we're placing
+     * @return
+     */
+    private Coords getEjectPosition(Entity abandoned) {
+        // we need to allow the user to select a hex for offloading the unit's crew
+        Coords pos = abandoned.getPosition();
+        //Create a bogus crew entity to use for legal hex calculation
+        Entity crew = new EjectedCrew();
+        int elev = clientgui.getClient().getGame().getBoard().getHex(pos).getLevel() + abandoned.getElevation();
+        ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
+        if (abandoned instanceof Dropship) {
+            ring = Compute.coordsAtRange(pos, 2);
+        }
+        // ok now we need to go through the ring and identify available
+        // Positions
+        ring = Compute.getAcceptableUnloadPositions(ring, crew, clientgui
+                .getClient().getGame(), elev);
+        if (ring.size() < 1) {
+            String title = Messages
+                    .getString("MovementDisplay.NoPlaceToEject.title"); //$NON-NLS-1$
+            String body = Messages
+                    .getString("MovementDisplay.NoPlaceToEject.message"); //$NON-NLS-1$
+            clientgui.doAlertDialog(title, body);
+            return null;
+        }
+        String[] choices = new String[ring.size()];
+        int i = 0;
+        for (Coords c : ring) {
+            choices[i++] = c.toString();
+        }
+        String selected = (String) JOptionPane.showInputDialog(clientgui,
+                                                               Messages.getString(
+                                                                       "MovementDisplay.ChooseEjectHex" + ".message", new Object[]{//$NON-NLS-1$
+                                                                               abandoned.getShortName(), abandoned.getUnusedString()}), Messages
+                                                                       .getString("MovementDisplay.ChooseHex.title"),
+                                                               //$NON-NLS-1$
+                                                               JOptionPane.QUESTION_MESSAGE, null, choices, null);
+        Coords choice = null;
+        if (selected == null) {
+            return choice;
+        }
+        for (Coords c : ring) {
+            if (selected.equals(c.toString())) {
+                choice = c;
+                break;
+            }
+        }
+        return choice;
+    }
 
     /**
      * FIGHTER RECOVERY fighter recovery will be handled differently than
@@ -4809,6 +4862,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     // $NON-NLS-2$
                     clear();
                     cmd.addStep(MoveStepType.EJECT);
+                    ready();
+                }
+            } else if (ce.isLargeCraft()) {
+                if (clientgui
+                        .doYesNoDialog(
+                                Messages.getString("MovementDisplay.AbandonDialog.title"),
+                                Messages.getString("MovementDisplay.AbandonDialog.message"))) { //$NON-NLS-1$
+                    // $NON-NLS-2$
+                    clear();
+                    // If we're abandoning while grounded, find a legal position to put an EjectedCrew unit
+                    if (!ce.isSpaceborne() && ce.getAltitude() == 0) {
+                        Coords pos = getEjectPosition(ce);
+                        cmd.addStep(MoveStepType.EJECT, ce, pos);
+                    } else {
+                        cmd.addStep(MoveStepType.EJECT);
+                    }
                     ready();
                 }
             } else if (clientgui

@@ -439,7 +439,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             vPhaseReport.addElement(r);
 
-            clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport);
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, server);
         }
 
         server.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
@@ -449,30 +449,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // artillery may unintentially clear minefields, but only if it wasn't
         // trying to
         if (!mineClear) {
-            clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, vPhaseReport);
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, server);
         }
 
         return false;
     }
     
-    /**
-     * Worker function that clears minefields.
-     */
-    private void clearMineFields(Coords targetPos, int targetNum, Vector<Report> vPhaseReport) {
-        Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
-        ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-        while (minefields.hasMoreElements()) {
-            Minefield mf = minefields.nextElement();
-            if (server.clearMinefield(mf, ae, targetNum, vPhaseReport)) {
-                mfRemoved.add(mf);
-            }
-        }
-        // we have to do it this way to avoid a concurrent error problem
-        for (Minefield mf : mfRemoved) {
-            server.removeMinefield(mf);
-        }
-    }
-
     /*
      * (non-Javadoc)
      *

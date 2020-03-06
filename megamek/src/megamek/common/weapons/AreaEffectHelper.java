@@ -14,6 +14,8 @@
 
 package megamek.common.weapons;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +31,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.Minefield;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
@@ -142,6 +145,8 @@ public class AreaEffectHelper {
                 
                 TargetRoll fireRoll = new TargetRoll(7, "fuel-air ordnance");
                 server.tryIgniteHex(coords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
+                
+                clearMineFields(coords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game, server);
             }
         }
     }
@@ -180,6 +185,24 @@ public class AreaEffectHelper {
                 alreadyHit.add(entity.getId());
             }
             return;
+        }
+    }
+    
+    /**
+     * Worker function that clears minefields.
+     */
+    public static void clearMineFields(Coords targetPos, int targetNum, Entity ae, Vector<Report> vPhaseReport, IGame game, Server server) {
+        Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
+        ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+        while (minefields.hasMoreElements()) {
+            Minefield mf = minefields.nextElement();
+            if (server.clearMinefield(mf, ae, targetNum, vPhaseReport)) {
+                mfRemoved.add(mf);
+            }
+        }
+        // we have to do it this way to avoid a concurrent error problem
+        for (Minefield mf : mfRemoved) {
+            server.removeMinefield(mf);
         }
     }
 }

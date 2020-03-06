@@ -35660,56 +35660,6 @@ public class Server implements Runnable {
         // If we get here, end movement and return the report
         return vDesc;
     }
-    
-    /**
-     * Uses player input to find a legal hex where an EjectedCrew unit can be placed
-     * @param abandoned - The vessel we're escaping from
-     * @param crew - The EjectedCrew unit we're placing
-     * @return
-     */
-    private Coords getEjectPosition(Entity abandoned, Entity crew) {
-        // we need to allow the user to select a hex for offloading
-        Coords pos = abandoned.getPosition();
-        int elev = game.getBoard().getHex(pos).getLevel() + abandoned.getElevation();
-        ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
-        if (abandoned instanceof Dropship) {
-            ring = Compute.coordsAtRange(pos, 2);
-        }
-        // ok now we need to go through the ring and identify available
-        // Positions
-        ring = Compute.getAcceptableUnloadPositions(ring, crew, game, elev);
-        if (ring.size() < 1) {
-            String title = Messages
-                    .getString("MovementDisplay.NoPlaceToUnload.title"); //$NON-NLS-1$
-            String body = Messages
-                    .getString("MovementDisplay.NoPlaceToUnload.message"); //$NON-NLS-1$
-            .doAlertDialog(title, body);
-            return null;
-        }
-        String[] choices = new String[ring.size()];
-        int i = 0;
-        for (Coords c : ring) {
-            choices[i++] = c.toString();
-        }
-        String selected = (String) JOptionPane.showInputDialog(clientgui,
-                                                               Messages.getString(
-                                                                       "MovementDisplay.ChooseHex" + ".message", new Object[]{//$NON-NLS-1$
-                                                                               abandoned.getShortName(), abandoned.getUnusedString()}), Messages
-                                                                       .getString("MovementDisplay.ChooseHex.title"),
-                                                               //$NON-NLS-1$
-                                                               JOptionPane.QUESTION_MESSAGE, null, choices, null);
-        Coords choice = null;
-        if (selected == null) {
-            return choice;
-        }
-        for (Coords c : ring) {
-            if (selected.equals(c.toString())) {
-                choice = c;
-                break;
-            }
-        }
-        return choice;
-    }
 
     public static PilotingRollData getEjectModifiers(IGame game,
             Entity entity, int crewPos, boolean autoEject) {

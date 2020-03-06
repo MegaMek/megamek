@@ -78,7 +78,7 @@ public class AreaEffectHelper {
     }
     
     /**
-     * Get the blast radius of a particular bomb type, given the internal name.
+     * Get the blast radius of a particular equipment type, given the internal name.
      */
     public static int getFuelAirBlastRadiusIndex(String name) {
         if(fuelAirBlastRadiusIndex == null) {
@@ -107,7 +107,7 @@ public class AreaEffectHelper {
         }
         
         boolean thinAtmo = game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_THIN;
-        int bombRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
+        int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
         
         if(thinAtmo) {
             Report r = new Report(9990);
@@ -127,7 +127,7 @@ public class AreaEffectHelper {
         //      not here, but in artilleryDamageHex, make sure to 1.5x damage for light building or unit with armor BAR < 10
         //      not here, but in artilleryDamageHex, make sure to .5x damage for "castle brian" or "armored" building
         // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies on 9-, BA dies on 7-
-        for(int damageBracket = bombRadius, distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
+        for(int damageBracket = blastRadius, distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
             Set<Coords> donut = BotGeometry.getHexDonut(center, distFromCenter);
             for(Coords coords : donut) {
                 int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
@@ -176,7 +176,7 @@ public class AreaEffectHelper {
             vPhaseReport.addElement(r);
             
             if(destroyed) {
-                vPhaseReport.addAll(server.destroyEntity(entity, "fuel-air bomb detonation", false, false));
+                vPhaseReport.addAll(server.destroyEntity(entity, "fuel-air ordnance detonation", false, false));
                 alreadyHit.add(entity.getId());
             }
             return;

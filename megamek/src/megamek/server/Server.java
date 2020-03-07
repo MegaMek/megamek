@@ -35495,6 +35495,7 @@ public class Server implements Runnable {
             //And now modify it based on what the unit actually has TO launch
             int launchCounter = toLaunch;
             int totalLaunched = 0;
+            boolean isPod = false;
             while (launchCounter > 0) {
                 int launched = 0;
                 if (entity.getPodsLeft() > 0 && (airborne || entity.getPodsLeft() >= entity.getLifeBoatsLeft())) {
@@ -35503,6 +35504,7 @@ public class Server implements Runnable {
                     entity.setLaunchedEscapePods(entity.getLaunchedEscapePods() + launched);
                     totalLaunched += launched;
                     launchCounter -= launched;
+                    isPod = true;
                 } else if (inSpace && entity.getLifeBoatsLeft() > 0 && (entity.getLifeBoatsLeft() > entity.getPodsLeft())) {
                     //Entity has more lifeboats left
                     launched = Math.min(launchCounter, entity.getLifeBoatsLeft());
@@ -35524,7 +35526,7 @@ public class Server implements Runnable {
                 r.add(nEscaped);
                 vDesc.addElement(r);
             }
-            EscapePods pods = new EscapePods(entity,totalLaunched,nEscaped);
+            EscapePods pods = new EscapePods(entity,totalLaunched,nEscaped,isPod);
             //Update the personnel numbers
             
             //If there are passengers aboard, get them out first
@@ -35546,14 +35548,13 @@ public class Server implements Runnable {
             pods.setGame(game);
             pods.setDeployed(true);
             pods.setId(getFreeEntityId());
-            if (inSpace) {
-                //In space, ejected pilots retain the heading and velocity of the unit they eject from
-                pods.setVectors(entity.getVectors());
-                pods.setFacing(entity.getFacing());
-                pods.setCurrentVelocity(entity.getVelocity());
-                //If the crew ejects, they should no longer be accelerating
-                pods.setNextVelocity(entity.getVelocity());
-            } else if (entity.isAirborne()) {
+            //Escape craft retain the heading and velocity of the unit they eject from
+            pods.setVectors(entity.getVectors());
+            pods.setFacing(entity.getFacing());
+            pods.setCurrentVelocity(entity.getVelocity());
+            //If the crew ejects, they should no longer be accelerating
+            pods.setNextVelocity(entity.getVelocity());
+            if (entity.isAirborne()) {
                 pods.setAltitude(entity.getAltitude());
             }
             // Add Entity to game

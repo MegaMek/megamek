@@ -34,8 +34,9 @@ public class EscapePods extends SmallCraft {
      * @param originalRide - the launching spacecraft
      * @param nPods - the number of escape craft in this flight
      * @param escapedThisRound - The number of people aboard these pods
+     * @param isEscapePod - flag to indicate if this is a flight of escape pods
      */
-    public EscapePods(Aero originalRide, int nPods, int escapedThisRound) {
+    public EscapePods(Aero originalRide, int nPods, int escapedThisRound, boolean isEscapePod) {
         super();
         //We care about the passengers, not the crew of the escape craft
         setCrew(new Crew(CrewType.CREW));
@@ -49,6 +50,12 @@ public class EscapePods extends SmallCraft {
         
         //Pods and boats have an SI of 1 each
         setSI(nPods);
+        
+        //Escape pods have fuel and thrusters to maneuver with
+        if (isEscapePod) {
+            setFuel(10);
+           setOriginalWalkMP(4);
+        }
         
         //and an armor value of 4 per craft -- 1 point per location
         for (int i = 0; i < 4; i++) {
@@ -116,5 +123,11 @@ public class EscapePods extends SmallCraft {
     public boolean isCrippled() {
         // Ejected crew should always attempt to flee according to Forced Withdrawal.
         return true;
+    }
+    
+    @Override
+    public boolean isDropping() {
+        //Atmospheric lifeboats or pods with velocity less than 2 drop like ground units
+        return isAirborne() && (getVelocity() < 2);
     }
 }

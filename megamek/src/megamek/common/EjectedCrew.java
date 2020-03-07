@@ -78,7 +78,7 @@ public class EjectedCrew extends Infantry {
      */
     public EjectedCrew(Aero originalRide, int escapedThisRound) {
         super();
-        setCrew(originalRide.getCrew());
+        setCrew(new Crew(CrewType.CREW));
         setChassis(SPACE_EJECT_NAME);
         setModel(originalRide.getDisplayName());
 

@@ -7146,7 +7146,7 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
             return;
         }
-
+        
         // iterate through steps
         firstStep = true;
         turnOver = false;
@@ -9381,6 +9381,15 @@ public class Server implements Runnable {
                         addReport(
                                 processCrash(entity, 0, entity.getPosition()));
                     }
+                } else if (entity instanceof EscapePods && entity.isAirborne() && md.getFinalVelocity() < 2) {
+                    //Atmospheric Escape Pods that drop below velocity 2 lose altitude as dropping units
+                    entity.setAltitude(entity.getAltitude()
+                            - game.getPlanetaryConditions().getDropRate());
+                    r = new Report(6676);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(game.getPlanetaryConditions().getDropRate());
+                    addReport(r);
                 }
             }
         }
@@ -35551,7 +35560,7 @@ public class Server implements Runnable {
             //Escape craft retain the heading and velocity of the unit they eject from
             pods.setVectors(entity.getVectors());
             pods.setFacing(entity.getFacing());
-            pods.setCurrentVelocity(entity.getVelocity());
+            pods.setCurrentVelocity(entity.getCurrentVelocity());
             //If the crew ejects, they should no longer be accelerating
             pods.setNextVelocity(entity.getVelocity());
             if (entity.isAirborne()) {

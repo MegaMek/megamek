@@ -124,10 +124,4 @@ public class EscapePods extends SmallCraft {
         // Ejected crew should always attempt to flee according to Forced Withdrawal.
         return true;
     }
-    
-    @Override
-    public boolean isDropping() {
-        //Atmospheric lifeboats or pods with velocity less than 2 drop like ground units
-        return isAirborne() && (getVelocity() < 2);
-    }
 }

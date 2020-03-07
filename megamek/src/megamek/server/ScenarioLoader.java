@@ -421,7 +421,7 @@ public class ScenarioLoader {
         // Read the external game id from the scenario file
         g.setExternalGameId(parseExternalGameId(p));
 
-        g.setVictoryContext(new HashMap<String, Object>());
+        g.setVictoryContext(new HashMap<>());
         g.createVictoryConditions();
 
         return g;
@@ -554,9 +554,19 @@ public class ScenarioLoader {
             }
             System.out.println(String.format("Loading %s", ms.getName())); //$NON-NLS-1$
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-            e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1, Integer.parseInt(parts[2]),
-                    Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), null));
-            if(parts.length >= 7) {
+
+            // This if statement ensures that scenarios don't break if they don't have gender, as that
+            // field was only added in MegaMek 0.47.5
+            if (parts.length > 4) {
+                e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
+                        Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
+                        Integer.parseInt(parts[4]), null));
+            } else {
+                e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
+                        Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
+                        Crew.G_RANDOMIZE, null));
+            }
+            if (parts.length >= 7) {
                 String direction = parts[4].toUpperCase(Locale.ROOT);
                 switch(direction) {
                     case "N": //$NON-NLS-1$

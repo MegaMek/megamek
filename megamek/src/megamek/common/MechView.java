@@ -957,7 +957,8 @@ public class MechView {
                     || name.contains("BA Standard")
                     || name.contains("BA Advanced")
                     || name.contains("Reflective")
-                    || name.contains("Ferro-Lamellor")) {
+                    || name.contains("Ferro-Lamellor")
+                    || name.contains("Standard")) {
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }

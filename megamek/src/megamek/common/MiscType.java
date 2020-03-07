@@ -5429,7 +5429,8 @@ public class MiscType extends EquipmentType {
                 .setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030).setISApproximate(true, false, false, true, true)
                 .setClanAdvancement(2625, 2631, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setReintroductionFactions(F_FS);
+                .setProductionFactions(F_TH).setReintroductionFactions(F_FS)
+				.setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 
@@ -5506,7 +5507,8 @@ public class MiscType extends EquipmentType {
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
+                .setClanApproximate(false, false, false, false, false)
+        		.setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 
@@ -5532,7 +5534,8 @@ public class MiscType extends EquipmentType {
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
+                .setClanApproximate(false, false, false, false, false)
+				.setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 
@@ -5552,8 +5555,8 @@ public class MiscType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
                 .setISAdvancement(3125, 3140, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
-                .setProductionFactions(F_RS);
-
+                .setProductionFactions(F_RS)	
+			    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 
@@ -6568,8 +6571,6 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // TODO Per IO pg 71 we should have a ProtoType Artemis IV.
-
     public static MiscType createISProtoArtemis() {
         MiscType misc = new MiscType();
 
@@ -6587,7 +6588,8 @@ public class MiscType extends EquipmentType {
                 .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
                 .setISAdvancement(2592, DATE_NONE, DATE_NONE, 2612, 3035)
                 .setISApproximate(true, false, false, true, true).setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FW);
+                .setReintroductionFactions(F_FW)
+        		.setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

@@ -607,7 +607,7 @@ public class TestProtomech extends TestEntity {
         buff.append("Protomech: ").append(proto.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
-        buff.append("Intro year: ").append(proto.getYear());
+        buff.append("Intro year: ").append(proto.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {

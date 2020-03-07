@@ -1204,7 +1204,7 @@ public class TestSupportVehicle extends TestEntity {
         buff.append(getName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
-        buff.append("Intro year: ").append(supportVee.getYear());
+        buff.append("Intro year: ").append(supportVee.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {

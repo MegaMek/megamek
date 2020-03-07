@@ -809,7 +809,7 @@ public class TestMech extends TestEntity {
         buff.append("Mech: ").append(mech.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
-        buff.append("Intro year: ").append(mech.getYear());
+        buff.append("Intro year: ").append(mech.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {

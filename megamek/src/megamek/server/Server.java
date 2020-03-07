@@ -35461,7 +35461,8 @@ public class Server implements Runnable {
         }
 
         // Try to launch some escape pods and lifeboats, if any are left
-        if ((inSpace || airborne) && (entity.getPodsLeft() > 0 || entity.getLifeBoatsLeft() > 0)) {
+        if ((inSpace && (entity.getPodsLeft() > 0 || entity.getLifeBoatsLeft() > 0))
+                || (airborne && entity.getPodsLeft() > 0)) {
             // Report the ejection
             PilotingRollData rollTarget = getEjectModifiers(game, entity,
                     entity.getCrew().getCurrentPilotIndex(), false);
@@ -35496,13 +35497,13 @@ public class Server implements Runnable {
             int totalLaunched = 0;
             while (launchCounter > 0) {
                 int launched = 0;
-                if (entity.getPodsLeft() > 0 && (entity.getPodsLeft() >= entity.getLifeBoatsLeft())) {
+                if (entity.getPodsLeft() > 0 && (airborne || entity.getPodsLeft() >= entity.getLifeBoatsLeft())) {
                     //Entity has more escape pods than lifeboats (or equal numbers)
                     launched = Math.min(launchCounter, entity.getPodsLeft());
                     entity.setLaunchedEscapePods(entity.getLaunchedEscapePods() + launched);
                     totalLaunched += launched;
                     launchCounter -= launched;
-                } else if (entity.getLifeBoatsLeft() > 0 && (entity.getLifeBoatsLeft() > entity.getPodsLeft())) {
+                } else if (inSpace && entity.getLifeBoatsLeft() > 0 && (entity.getLifeBoatsLeft() > entity.getPodsLeft())) {
                     //Entity has more lifeboats left
                     launched = Math.min(launchCounter, entity.getLifeBoatsLeft());
                     entity.setLaunchedLifeBoats(entity.getLaunchedLifeBoats() + launched);

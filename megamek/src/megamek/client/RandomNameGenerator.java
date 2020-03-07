@@ -272,8 +272,20 @@ public class RandomNameGenerator implements Serializable {
      *
      * @return true if female
      */
+    @Deprecated // March 7th, 2020 by the addition of gender tracking to MegaMek
     public boolean isFemale() {
         return Compute.randomInt(100) < percentFemale;
+    }
+
+    /**
+     * @return the Crew.G_* type containing the randomly generated gender
+     */
+    public int generateGender() {
+        if (Compute.randomInt(100) < percentFemale) {
+            return Crew.G_FEMALE;
+        } else {
+            return Crew.G_MALE;
+        }
     }
 
     /**

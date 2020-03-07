@@ -383,6 +383,11 @@ public class Crew implements Serializable {
         }
     }
 
+    /**
+     * @param isFemale whether a person is female or male
+     * @return the int value of the gender
+     */
+    @Deprecated // March 7th, 2020, this is a temporary method to ensure an easy transition
     public static int getGenderAsInt(boolean isFemale) {
         return isFemale ? G_FEMALE : G_MALE;
     }

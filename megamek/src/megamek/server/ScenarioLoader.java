@@ -35,6 +35,7 @@ import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import megamek.client.RandomNameGenerator;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -547,28 +548,35 @@ public class ScenarioLoader {
     private Entity parseEntityLine(String s) throws ScenarioLoaderException {
         try {
             String[] parts = s.split(SEPARATOR_COMMA, -1);
-            String sRef = parts[0];
-            MechSummary ms = MechSummaryCache.getInstance().getMech(sRef);
+            int i;
+            MechSummary ms = MechSummaryCache.getInstance().getMech(parts[0]);
             if (ms == null) {
-                throw new ScenarioLoaderException("missingRequiredEntity", sRef); //$NON-NLS-1$
+                throw new ScenarioLoaderException("missingRequiredEntity", parts[0]); //$NON-NLS-1$
             }
             System.out.println(String.format("Loading %s", ms.getName())); //$NON-NLS-1$
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
 
-            // This if statement ensures that scenarios don't break if they don't have gender, as that
-            // field was only added in MegaMek 0.47.5
-            if (parts.length > 4) {
+            // The following section is used to determine if part 4 of the string includes gender or not
+            // The regex is used to match a number that might be negative. As the direction is never
+            // a number, if a number is found it must be gender.
+            // The i value must be included to ensure that the correct indexes are used for the
+            // direction calculation below.
+            if ((parts.length > 4) && parts[4].matches("-?\\d+")) {
                 e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
                         Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
                         Integer.parseInt(parts[4]), null));
+                i = 5; // direction will be part 5, as the scenario has the gender of its pilots included
             } else {
                 e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
                         Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-                        Crew.G_RANDOMIZE, null));
+                        RandomNameGenerator.getInstance().generateGender(), null));
+                i = 4; // direction will be part 4, as the scenario does not contain gender
             }
+
+            // This uses the i value to ensure it is calculated correctly
             if (parts.length >= 7) {
-                String direction = parts[4].toUpperCase(Locale.ROOT);
-                switch(direction) {
+                String direction = parts[i++].toUpperCase(Locale.ROOT); //grab value at i, then increment
+                switch (direction) {
                     case "N": //$NON-NLS-1$
                         e.setFacing(0);
                         break;
@@ -590,10 +598,9 @@ public class ScenarioLoader {
                     default:
                         break;
                 }
-                int x = Integer.parseInt(parts[5]) - 1;
-                int y = Integer.parseInt(parts[6]) - 1;
-                Coords coords = new Coords(x, y);
-                e.setPosition(coords);
+                int x = Integer.parseInt(parts[i++]) - 1;
+                int y = Integer.parseInt(parts[i]) - 1;
+                e.setPosition(new Coords(x, y));
                 e.setDeployed(true);
             }
             return e;

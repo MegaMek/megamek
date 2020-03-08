@@ -3648,7 +3648,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                 }
                 for (Entity e : entities) {
                     for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-                        e.getCrew().setName(c.getRandomNameGenerator().generate(), i);
+                        boolean isFemale = c.getRandomNameGenerator().isFemale();
+                        e.getCrew().setGender(isFemale, i);
+                        e.getCrew().setName(c.getRandomNameGenerator().generate(isFemale), i);
                     }
                     c.sendUpdateEntity(e);
                 }

@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import megamek.MegaMek;
 import megamek.common.Compute;
 import megamek.common.Configuration;
+import megamek.common.Crew;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.util.MegaMekFile;
@@ -149,8 +150,6 @@ public class RandomNameGenerator implements Serializable {
         return generate(isFemale());
     }
 
-    @Deprecated //24-Feb-2020, this is included to keep current functionality working while other
-                //improvements are being finished
     public String generate(boolean isFemale) {
         // this is a total hack, but for now lets assume that
         // if the chosenFaction name contains the word "clan"
@@ -159,7 +158,7 @@ public class RandomNameGenerator implements Serializable {
     }
 
     /**
-     * Generate a single random name
+     * Generate a single random name for MegaMek only
      *
      * @param isFemale true if the name should be female, otherwise false
      * @param isClan true if the name should be for a clanner, otherwise false
@@ -180,7 +179,7 @@ public class RandomNameGenerator implements Serializable {
      * @return - a string containing the randomly generated name
      */
     public String generate(boolean isFemale, boolean isClan, String faction) {
-        String name = "Unnamed";
+        String name = Crew.UNNAMED_FULL_NAME;
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
             // go to check if the person is a clanner. If they are, then they default to the default
@@ -217,7 +216,7 @@ public class RandomNameGenerator implements Serializable {
      *              and the surname at String[1]
      */
     public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan, String faction) {
-        String[] name = { "Unnamed", "Person" };
+        String[] name = { Crew.UNNAMED, Crew.UNNAMED_SURNAME };
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
             // go to check if the person is a clanner. If they are, then they default to the default
@@ -273,8 +272,20 @@ public class RandomNameGenerator implements Serializable {
      *
      * @return true if female
      */
+    @Deprecated // March 7th, 2020 by the addition of gender tracking to MegaMek
     public boolean isFemale() {
         return Compute.randomInt(100) < percentFemale;
+    }
+
+    /**
+     * @return the Crew.G_* type containing the randomly generated gender
+     */
+    public int generateGender() {
+        if (Compute.randomInt(100) < percentFemale) {
+            return Crew.G_FEMALE;
+        } else {
+            return Crew.G_MALE;
+        }
     }
 
     /**

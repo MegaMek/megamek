@@ -30,7 +30,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
      *
      */
     private static final long serialVersionUID = 6406883135074654379L;
-    private Hashtable<String, IOption> optionsHash = new Hashtable<String, IOption>();
+    private Hashtable<String, IOption> optionsHash = new Hashtable<>();
 
     protected AbstractOptions() {
         initialize();
@@ -90,7 +90,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
      * @param groupKey The group key to use to filter options. Null signifies to return all options indiscriminately.
      */
     public String getOptionListString(String separator, String groupKey) {
-        StringBuffer listBuilder = new StringBuffer();
+        StringBuilder listBuilder = new StringBuilder();
         
         if (null == separator) {
             separator = "";
@@ -190,17 +190,17 @@ public abstract class AbstractOptions implements IOptions, Serializable {
 
     protected void addOption(IBasicOptionGroup group, String name,
             boolean defaultValue) {
-        addOption(group, name, IOption.BOOLEAN, Boolean.valueOf(defaultValue));
+        addOption(group, name, IOption.BOOLEAN, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
             int defaultValue) {
-        addOption(group, name, IOption.INTEGER, Integer.valueOf(defaultValue));
+        addOption(group, name, IOption.INTEGER, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
             float defaultValue) {
-        addOption(group, name, IOption.FLOAT, Float.valueOf(defaultValue));
+        addOption(group, name, IOption.FLOAT, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name, Vector<String> defaultValue) {

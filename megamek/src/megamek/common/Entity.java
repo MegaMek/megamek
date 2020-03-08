@@ -14201,10 +14201,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     // Make a UUID for this entity and assign it to entity's String c3UUID
     public void setC3UUID() {
         UUID id = UUID.randomUUID();
-        // check for the very rare chance of getting same id
-        /*
-         * while(null != unitIds.get(id)) { id = UUID.randomUUID(); }
-         */
 
         setC3UUIDAsString(id.toString());
     }

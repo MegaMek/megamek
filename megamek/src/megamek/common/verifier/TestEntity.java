@@ -19,12 +19,8 @@
 
 package megamek.common.verifier;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -1307,6 +1303,10 @@ public abstract class TestEntity implements TestEntityOption {
         boolean countedC3 = false;
         int robotics = 0;
         boolean hasExternalFuelTank = false;
+        int liftHoists = 0;
+        Map<Integer, Integer> bridgeLayersByLocation = new HashMap<>();
+        Map<Integer, List<EquipmentType>> physicalWeaponsByLocation = new HashMap<>();
+
         for (Mounted m : getEntity().getAmmo()) {
             if (((AmmoType)m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
                 hasCoolantPod = true;
@@ -1353,6 +1353,18 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.getType().hasFlag(MiscType.F_SRCS) || m.getType().hasFlag(MiscType.F_SASRCS)
                     || m.getType().hasFlag(MiscType.F_CASPAR) || m.getType().hasFlag(MiscType.F_CASPARII)) {
                 robotics++;
+            }
+            if (m.getType().hasFlag(MiscType.F_LIFTHOIST)) {
+                liftHoists++;
+            } else if ((m.getType().hasFlag(MiscType.F_CLUB) && !((MiscType) m.getType()).isShield())
+                    || m.getType().hasFlag(MiscType.F_BULLDOZER)
+                    || m.getType().hasFlag(MiscType.F_HAND_WEAPON)) {
+                physicalWeaponsByLocation.putIfAbsent(m.getLocation(), new ArrayList<>());
+                physicalWeaponsByLocation.get(m.getLocation()).add(m.getType());
+            } else if (m.getType().hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                    || m.getType().hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                    || m.getType().hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)) {
+                bridgeLayersByLocation.merge(m.getLocation(), 1, Integer::sum);
             }
         }
         if ((networks > 0) && !countedC3) {
@@ -1419,7 +1431,27 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append("Stealth armor requires an ECM generator.\n");
             illegal = true;
         }
-        
+        if ((getEntity() instanceof Mech) && (liftHoists > 2)) {
+            illegal = true;
+            buff.append("Can mount a maximum of two lift hoists.\n");
+        } else if (liftHoists > 4) {
+            illegal = true;
+            buff.append("Can mount a maximum of four lift hoists.\n");
+        }
+        for (List<EquipmentType> list : physicalWeaponsByLocation.values()) {
+            if (list.size() > 1) {
+                illegal = true;
+                buff.append(list.stream().map(EquipmentType::getName).collect(Collectors.joining(", ")))
+                        .append(" cannot be mounted in the same location.\n");
+            }
+        }
+        for (int count : bridgeLayersByLocation.values()) {
+            if (count > 1) {
+                illegal = true;
+                buff.append("Cannot mount more than one bridge builder in the same location.\n");
+            }
+        }
+
         if (getEntity().isOmni()) {
             for (Mounted m : getEntity().getEquipment()) {
                 if (m.isOmniPodMounted() && m.getType().isOmniFixedOnly()) {

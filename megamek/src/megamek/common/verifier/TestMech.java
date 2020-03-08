@@ -878,7 +878,7 @@ public class TestMech extends TestEntity {
         boolean hasMASC = false;
         boolean hasAES = false;
         EquipmentType advancedMyomer = null;
-        
+
         //First we find all the equipment that is required or incompatible with other equipment,
         //so we don't have to execute another loop each time one of those situations comes up.
         for (Mounted m : mech.getMisc()) {
@@ -896,7 +896,7 @@ public class TestMech extends TestEntity {
                 advancedMyomer = m.getType();
             }
         }
-        
+
         for (Mounted m : getEntity().getMisc()) {
             final MiscType misc = (MiscType)m.getType();
 
@@ -961,7 +961,6 @@ public class TestMech extends TestEntity {
                     buff.append("Mech requires a lower arm actuator in the arm that mounts ").append(misc.getName()).append("\n");
                 }
             }
-
             if (misc.hasFlag(MiscType.F_HEAD_TURRET)
                     && isCockpitLocation(Mech.LOC_HEAD)) {
                 illegal = true;

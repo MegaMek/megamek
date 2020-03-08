@@ -894,11 +894,6 @@ public class MechFileParser {
             }
         }
         
-        // If we're a tank, add a rear-mounted trailer hitch if one should be there and isn't
-        if (ent.hasETypeFlag(Entity.ETYPE_TANK)) {
-            ((Tank) ent).addTrailerHitchEquipment();
-        }
-
         // Check if it's canon; if it is, mark it as such.
         ent.setCanon(false);// Guilty until proven innocent
         try {

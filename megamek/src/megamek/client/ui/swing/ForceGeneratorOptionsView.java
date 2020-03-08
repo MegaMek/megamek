@@ -1183,10 +1183,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
 
             ForceDescriptor fd = (ForceDescriptor)value;
-            if(fd.isElement()) {
+            if (fd.isElement()) {
                 StringBuilder name = new StringBuilder();
                 String uname = "";
-                if(fd.getCo() == null) {
+                if (fd.getCo() == null) {
                     name.append("<font color='red'>")
                     .append(Messages.getString("ForceGeneratorDialog.noCrew"))
                     .append("</font>");

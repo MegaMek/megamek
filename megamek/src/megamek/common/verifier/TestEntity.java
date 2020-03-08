@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 
 /**
@@ -365,6 +366,8 @@ public abstract class TestEntity implements TestEntityOption {
             return TestAero.eqRequiresLocation(eq, entity.isFighter());
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
             return TestProtomech.requiresSlot(eq);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
+            return !TestTank.isBodyEquipment(eq);
         }
         return true;
     }
@@ -528,7 +531,7 @@ public abstract class TestEntity implements TestEntityOption {
                     || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 continue;
             }
-            weightSum += mt.getTonnage(getEntity(), m.getLocation());
+            weightSum += m.getTonnage();
         }
         return weightSum;
     }
@@ -564,7 +567,7 @@ public abstract class TestEntity implements TestEntityOption {
                 continue;
             }
 
-            if (mt.getTonnage(getEntity(), m.getLocation()) == 0f) {
+            if (m.getTonnage() == 0f) {
                 continue;
             }
 
@@ -572,7 +575,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
-                    TestEntity.makeWeightString(mt.getTonnage(getEntity()), usesKgStandard()));
+                    TestEntity.makeWeightString(m.getTonnage(), usesKgStandard()));
             buff.append("\n");
         }
         return buff;
@@ -584,12 +587,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.isWeaponGroup()) {
                 continue;
             }
-            WeaponType wt = (WeaponType) m.getType();
-            if (m.isDWPMounted()){
-                weight += wt.getTonnage(getEntity()) * 0.75;
-            } else {
-                weight += wt.getTonnage(getEntity());
-            }
+            weight += m.getTonnage();
         }
         return weight;
     }
@@ -615,8 +613,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
-                    .append(TestEntity.makeWeightString(mt
-                            .getTonnage(getEntity()), usesKgStandard())).append("\n");
+                    .append(TestEntity.makeWeightString(m.getTonnage(), usesKgStandard())).append("\n");
         }
         return buff;
     }
@@ -635,8 +632,7 @@ public abstract class TestEntity implements TestEntityOption {
                 continue;
             }
 
-            AmmoType mt = (AmmoType) m.getType();
-            weight += mt.getTonnage(getEntity());
+            weight += m.getTonnage();
         }
         return weight;
     }
@@ -664,8 +660,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append(" ").append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
-                    .append(TestEntity.makeWeightString(mt
-                            .getTonnage(getEntity()), usesKgStandard())).append("\n");
+                    .append(TestEntity.makeWeightString(m.getTonnage(), usesKgStandard())).append("\n");
         }
         return buff;
     }
@@ -740,13 +735,13 @@ public abstract class TestEntity implements TestEntityOption {
             for (Mounted mo : getEntity().getWeaponList()) {
                 WeaponType wt = (WeaponType) mo.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    fTons += wt.getTonnage(getEntity());
+                    fTons += mo.getTonnage();
                 }
             }
             for (Mounted mo : getEntity().getMisc()) {
                 MiscType mt2 = (MiscType) mo.getType();
                 if (mt2.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    fTons += mt.getTonnage(getEntity());
+                    fTons += mo.getTonnage();
                 }
             }
             double weight = 0.0f;
@@ -851,6 +846,12 @@ public abstract class TestEntity implements TestEntityOption {
             }
         }
         for (Mounted m : getEntity().getMisc()) {
+            // Spot welders are treated as energy weapons on units that don't have a fusion or fission engine
+            if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)
+                && getEntity().hasEngine() && (getEntity().getEngine().isFusion()
+                                                || getEntity().getEngine().getEngineType() == Engine.FISSION)) {
+                continue;
+            }
             heat += m.getType().getHeat();
         }
         if (getEntity().hasStealth()) {
@@ -1302,6 +1303,10 @@ public abstract class TestEntity implements TestEntityOption {
         boolean hasHarjelIII = false;
         boolean hasCoolantPod = false;
         int emergencyCoolantCount = 0;
+        int networks = 0;
+        boolean countedC3 = false;
+        int robotics = 0;
+        boolean hasExternalFuelTank = false;
         for (Mounted m : getEntity().getAmmo()) {
             if (((AmmoType)m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
                 hasCoolantPod = true;
@@ -1335,6 +1340,27 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.getType().hasFlag(MiscType.F_HARJEL_III)) {
                 hasHarjelIII = true;
             }
+            if (m.getType().hasFlag(MiscType.F_FUEL)) {
+                hasExternalFuelTank = true;
+            }
+            if ((m.getType().hasFlag(MiscType.F_C3S) || m.getType().hasFlag(MiscType.F_C3SBS)) && !countedC3) {
+                networks++;
+                countedC3 = true;
+            }
+            if (m.getType().hasFlag(MiscType.F_C3I) || m.getType().hasFlag(MiscType.F_NOVA)) {
+                networks++;
+            }
+            if (m.getType().hasFlag(MiscType.F_SRCS) || m.getType().hasFlag(MiscType.F_SASRCS)
+                    || m.getType().hasFlag(MiscType.F_CASPAR) || m.getType().hasFlag(MiscType.F_CASPARII)) {
+                robotics++;
+            }
+        }
+        if ((networks > 0) && !countedC3) {
+            for (Mounted m : getEntity().getIndividualWeaponList()) {
+                if (m.getType().hasFlag(WeaponType.F_C3M) || m.getType().hasFlag(WeaponType.F_C3MBS)) {
+                    networks++;
+                }
+            }
         }
         if ((isMech() || isTank() || isAero())
                 && (!getEntity().hasEngine()
@@ -1352,7 +1378,13 @@ public abstract class TestEntity implements TestEntityOption {
                     illegal = true;
                 }
             }
-        }        
+        }
+        if (hasExternalFuelTank
+                && (!getEntity().hasEngine() ||((getEntity().getEngine().getEngineType() != Engine.COMBUSTION_ENGINE)
+                && (getEntity().getEngine().getEngineType() != Engine.FUEL_CELL)))) {
+            illegal = true;
+            buff.append("Extended fuel tanks can only be used with internal combustion or fuel cell engines.\n");
+        }
 
         if (minesweeperCount > 1) {
             buff.append("Unit has more than one minesweeper!\n");
@@ -1375,7 +1407,14 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append("Cannot mount HarJel repair system on non-Mech\n");
             illegal = true;
         }
-        
+        if (networks > 1) {
+            buff.append("Cannot have multiple network types on the same unit.\n");
+            illegal = true;
+        }
+        if (robotics > 1) {
+            buff.append("Unit has multiple drone control systems.\n");
+            illegal = true;
+        }
         if (getEntity().hasStealth() && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
             buff.append("Stealth armor requires an ECM generator.\n");
             illegal = true;
@@ -1385,13 +1424,13 @@ public abstract class TestEntity implements TestEntityOption {
             for (Mounted m : getEntity().getEquipment()) {
                 if (m.isOmniPodMounted() && m.getType().isOmniFixedOnly()) {
                     illegal = true;
-                    buff.append(m.getType().getName() + " cannot be pod mounted.");
+                    buff.append(m.getType().getName()).append(" cannot be pod mounted.");
                 }
             }
         } else {
             for (Mounted m : getEntity().getEquipment()) {
                 if (m.isOmniPodMounted()) {
-                    buff.append(m.getType().getName() + " is pod mounted in non-omni unit\n");
+                    buff.append(m.getType().getName()).append(" is pod mounted in non-omni unit\n");
                     illegal = true;
                 }
             }
@@ -1402,7 +1441,33 @@ public abstract class TestEntity implements TestEntityOption {
                 }
             }
         }
+        for (Mounted mounted : getEntity().getEquipment()) {
+            if (!mounted.isOneShotAmmo()) {
+                illegal |= !isValidLocation(getEntity(), mounted.getType(), mounted.getLocation(), buff);
+            }
+        }
         return illegal;
+    }
+
+    /**
+     * @param entity    The entity
+     * @param eq        The equipment
+     * @param location  A location index on the Entity
+     * @param buffer    If non-null and the location is invalid, will be appended with an explanation
+     * @return          Whether the equipment can be mounted in the location on the Entity
+     */
+    public static boolean isValidLocation(Entity entity, EquipmentType eq, int location,
+                                          @Nullable StringBuffer buffer) {
+        if (entity instanceof Mech) {
+            return TestMech.isValidMechLocation((Mech) entity, eq, location, buffer);
+        } else if (entity instanceof Tank) {
+            return TestTank.isValidTankLocation((Tank) entity, eq, location, buffer);
+        } else if (entity instanceof Protomech) {
+            return TestProtomech.isValidProtomechLocation((Protomech) entity, eq, location, buffer);
+        } else if (entity.isFighter()) {
+            return TestAero.isValidAeroLocation(eq, location, buffer);
+        }
+        return true;
     }
 
     public StringBuffer printFailedEquipment(StringBuffer buff) {
@@ -1477,7 +1542,7 @@ public abstract class TestEntity implements TestEntityOption {
     public String printTechLevel() {
         return "Chassis: " + getEntity().getDisplayName() + " - "
                 + TechConstants.getLevelName(getEntity().getTechLevel()) + " ("
-                + Integer.toString(getEntity().getYear()) + ")\n";
+                + getEntity().getYear() + ")\n";
     }
 
     public double getArmoredComponentWeight() {
@@ -1624,4 +1689,3 @@ class Structure {
     }
 
 } // End class Structure
-

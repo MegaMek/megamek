@@ -2859,13 +2859,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         // Disable the "Unload" button if we're in the wrong
         // gear or if the entity is not transporting units.
-        if (!legalGear || (loadedUnits.size() == 0) || (cen == Entity.NONE)
-            || (!canUnloadHere)) {
-            setUnloadEnabled(false);
-        } else {
-            setUnloadEnabled(true);
-        }
-        
+        setUnloadEnabled(legalGear && canUnloadHere && !loadedUnits.isEmpty());
+
         boolean canDropTrailerHere = false;
         if(finalCoordinatesOnBoard) {
             for (Entity en : towedUnits) {
@@ -2878,20 +2873,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         // Disable the "Disconnect" button if we're in the wrong
         // gear or if the entity is not transporting units.
-        if (!legalGear || (towedUnits.size() == 0) || (cen == Entity.NONE)
-            || (!canDropTrailerHere)) {
-            setDisconnectEnabled(false);
-        } else {
-            setDisconnectEnabled(true);
-        }
-        
+        setDisconnectEnabled(legalGear && canDropTrailerHere && !towedUnits.isEmpty());
+
         // If the current entity has moved, disable "Load" and "Tow" buttons.
-        if ((cmd.length() > 0) || (cen == Entity.NONE)) {
-            setLoadEnabled(false);
-            setTowEnabled(false);
-        } else {
+        setLoadEnabled(false);
+        setTowEnabled(false);
+        if ((cmd.length() == 0) && (cen != Entity.NONE)) {
             // Check the other entities in the current hex for friendly units.
-            boolean isGood = false;
             for (Entity other : game.getEntitiesVector(ce.getPosition())) {
                 // If the other unit is friendly and not the current entity
                 // and the current entity has at least 1 MP, if it can
@@ -2901,19 +2889,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if ((ce.getWalkMP() > 0) && ce.canLoad(other)
                     && other.isLoadableThisTurn() && !ce.canTow(other.getId())) {
                     setLoadEnabled(true);
-                    isGood = true;
-
-                    // We can stop looking.
                     break;
                 }
-                // Nope. Discard it.
-                other = null;
             } // Check the next entity in this position.
-            if (!isGood) {
-                setLoadEnabled(false);
-            }
             //Now check all eligible hexes for towable trailers
-            isGood = false;
             for (Coords c : ce.getHitchLocations()) {
                 for (Entity other : game.getEntitiesVector(c)) {
                     // If the other unit is friendly and not the current entity
@@ -2921,17 +2900,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     // then enable the "Tow" button.
                     if (ce.canTow(other.getId())) {
                         setTowEnabled(true);
-                        isGood = true;
-
-                        // We can stop looking.
                         break;
                     }
-                    // Nope. Discard it.
-                    other = null;
                 } // Check the next entity.
-            }
-            if (!isGood) {
-                setTowEnabled(false);
             }
         } // End ce-hasn't-moved
     } // private void updateLoadButtons
@@ -3240,7 +3211,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         //tractor in the center isn't going to work well...
         for (Entity e : thisTrain) {
             for (Transporter t : e.getTransports()) {
-                if (t.canLoad(choice) && (t instanceof TankTrailerHitch)) {
+                if (t.canTow(choice)) {
                     TankTrailerHitch h = (TankTrailerHitch) t;
                     HitchChoice hitch = new HitchChoice(e.getId(), e.getTransports().indexOf(t), h);
                     hitchChoices.add(hitch);

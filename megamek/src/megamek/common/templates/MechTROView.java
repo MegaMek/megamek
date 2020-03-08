@@ -16,15 +16,7 @@ package megamek.common.templates;
 import java.text.NumberFormat;
 import java.util.StringJoiner;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityFluff;
-import megamek.common.EquipmentType;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.Messages;
-import megamek.common.Mounted;
-import megamek.common.QuadVee;
+import megamek.common.*;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestMech;
 
@@ -145,8 +137,8 @@ public class MechTROView extends TROView {
     protected void addFluff() {
         addMechVeeAeroFluff(mech);
         setModelData("chassisDesc",
-                formatSystemFluff(EntityFluff.System.CHASSIS, mech.getFluff(), () -> formatChassisDesc()));
-        setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, mech.getFluff(), () -> formatJJDesc()));
+                formatSystemFluff(EntityFluff.System.CHASSIS, mech.getFluff(), this::formatChassisDesc));
+        setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, mech.getFluff(), this::formatJJDesc));
         setModelData("jumpCapacity", mech.getJumpMP() * 30);
     }
 
@@ -157,8 +149,8 @@ public class MechTROView extends TROView {
 
     private void addArmorAndStructure() {
         setModelData("structureValues",
-                addArmorStructureEntries(mech, (en, loc) -> en.getOInternal(loc), MECH_ARMOR_LOCS));
-        setModelData("armorValues", addArmorStructureEntries(mech, (en, loc) -> en.getOArmor(loc), MECH_ARMOR_LOCS));
+                addArmorStructureEntries(mech, Entity::getOInternal, MECH_ARMOR_LOCS));
+        setModelData("armorValues", addArmorStructureEntries(mech, Entity::getOArmor, MECH_ARMOR_LOCS));
         setModelData("rearArmorValues",
                 addArmorStructureEntries(mech, (en, loc) -> en.getOArmor(loc, true), MECH_ARMOR_LOCS_REAR));
         if (mech.hasPatchworkArmor()) {
@@ -251,5 +243,14 @@ public class MechTROView extends TROView {
             loc += "(R)";
         }
         return loc;
+    }
+
+    @Override
+    protected boolean skipMount(Mounted mount, boolean includeAmmo) {
+        if (mount.getLocation() == Entity.LOC_NONE) {
+            return (mount.getType().getCriticals(mech) > 0)
+                    || mount.getType().hasFlag(MiscType.F_CASE);
+        }
+        return super.skipMount(mount, includeAmmo);
     }
 }

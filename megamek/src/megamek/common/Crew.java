@@ -17,11 +17,16 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.Vector;
 
+import megamek.client.RandomNameGenerator;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
@@ -38,16 +43,24 @@ import megamek.common.options.PilotOptions;
  */
 
 public class Crew implements Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = -141169182388269619L;
+
+    private Map<Integer, Map<String, String>> extraData;
 
     private final CrewType crewType;
     private int size;
     private int currentSize;
 
     private final String[] name;
+    public static final String UNNAMED = "Unnamed";
+    public static final String UNNAMED_SURNAME = "Person";
+    public static final String UNNAMED_FULL_NAME = "Unnamed Person";
+    private final int[] gender;
+    public static final int G_RANDOMIZE = -1; //this is used in generation methods to randomize the gender
+    public static final int G_MALE = 0;
+    public static final int G_FEMALE = 1;
+    public static final String GENDER_ERROR = "genderError";
+
     private final int[] gunnery;
     private final int[] piloting;
     private final int[] hits; // hits taken
@@ -139,18 +152,17 @@ public class Crew implements Serializable {
     public static final String SPECIAL_BALLISTIC = "Ballistic";
     public static final String SPECIAL_MISSILE = "Missile";
 
-    private static double[][] bvMod = new double[][]
-            {
-                    {2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50},
-                    {2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38},
-                    {1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21},
-                    {1.66, 1.58, 1.51, 1.44, 1.32, 1.20, 1.16, 1.10, 1.04},
-                    {1.38, 1.32, 1.26, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85},
-                    {1.31, 1.19, 1.13, 1.08, 0.99, 0.90, 0.86, 0.81, 0.77},
-                    {1.24, 1.12, 1.07, 1.02, 0.94, 0.85, 0.81, 0.77, 0.72},
-                    {1.17, 1.06, 1.01, 0.96, 0.88, 0.80, 0.76, 0.72, 0.68},
-                    {1.10, 0.99, 0.95, 0.90, 0.83, 0.75, 0.71, 0.68, 0.64},
-            };
+    private static double[][] bvMod = new double[][]{
+            {2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50},
+            {2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38},
+            {1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21},
+            {1.66, 1.58, 1.51, 1.44, 1.32, 1.20, 1.16, 1.10, 1.04},
+            {1.38, 1.32, 1.26, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85},
+            {1.31, 1.19, 1.13, 1.08, 0.99, 0.90, 0.86, 0.81, 0.77},
+            {1.24, 1.12, 1.07, 1.02, 0.94, 0.85, 0.81, 0.77, 0.72},
+            {1.17, 1.06, 1.01, 0.96, 0.88, 0.80, 0.76, 0.72, 0.68},
+            {1.10, 0.99, 0.95, 0.90, 0.83, 0.75, 0.71, 0.68, 0.64},
+    };
     private static double[][] alternateBvMod = new double[][]{
             {2.70, 2.52, 2.34, 2.16, 1.98, 1.80, 1.75, 1.67, 1.59},
             {2.40, 2.24, 2.08, 1.98, 1.76, 1.60, 1.58, 1.51, 1.44},
@@ -163,6 +175,13 @@ public class Crew implements Serializable {
             {1.28, 1.19, 1.10, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64},
     };
 
+    //region extraData inner map keys
+    public static final String MAP_GIVEN_NAME = "givenName";
+    public static final String MAP_SURNAME = "surname";
+    public static final String MAP_BLOODNAME = "bloodname";
+    public static final String MAP_PHENOTYPE = "phenotype";
+    public static final String MAP_RANK = "rank";
+    //endregion extraData inner map keys
     /**
      * The number of hits that a pilot can take before he dies.
      */
@@ -179,23 +198,22 @@ public class Crew implements Serializable {
      * @param crewType the crew type to use.
      */
     public Crew(CrewType crewType) {
-        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, 5);
+        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, 5, G_RANDOMIZE, null);
     }
 
     /**
-     * @deprecated by multi-crew cockpit support. Replaced by {@link #Crew(CrewType, String, int, int, int)}.
+     * @param name     the name of the crew or commander.
+     * @param size     the crew size.
+     * @param gunnery  the crew's Gunnery skill.
+     * @param piloting the crew's Piloting or Driving skill.
+     * @deprecated by multi-crew cockpit support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, Map)}.
      *
      * Creates a basic crew for a self-piloted unit. Using this constructor for a naval vessel will
      * result in a secondary target modifier for additional targets past the first.
-     *
-     * @param name
-     * @param size
-     * @param gunnery
-     * @param piloting
      */
     @Deprecated
     public Crew(String name, int size, int gunnery, int piloting) {
-        this(CrewType.SINGLE, name, size, gunnery, gunnery, gunnery, piloting);
+        this(CrewType.SINGLE, name, size, gunnery, gunnery, gunnery, piloting, null);
     }
 
     /**
@@ -204,9 +222,11 @@ public class Crew implements Serializable {
      * @param size     the crew size.
      * @param gunnery  the crew's Gunnery skill.
      * @param piloting the crew's Piloting or Driving skill.
+     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, Map)}.
      */
+    @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
     public Crew(CrewType crewType, String name, int size, int gunnery, int piloting) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, piloting);
+        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, null);
     }
 
     /**
@@ -217,18 +237,73 @@ public class Crew implements Serializable {
      * @param gunneryM the crew's "missile" Gunnery skill.
      * @param gunneryB the crew's "ballistic" Gunnery skill.
      * @param piloting the crew's Piloting or Driving skill.
+     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, int, int, Map)}.
+     */
+    @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
+    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
+                int piloting) {
+        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting, null);
+    }
+
+    /**
+     * @param crewType  the type of crew.
+     * @param name      the name of the crew or commander.
+     * @param size      the crew size.
+     * @param gunneryL  the crew's "laser" Gunnery skill.
+     * @param gunneryM  the crew's "missile" Gunnery skill.
+     * @param gunneryB  the crew's "ballistic" Gunnery skill.
+     * @param piloting  the crew's Piloting or Driving skill.
+     * @param extraData any extra data passed to be stored with this Crew.
+     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, int, int, Map)}.
+     */
+    @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
+    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
+                int piloting, Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting,
+                getGenderAsInt(RandomNameGenerator.getInstance().isFemale()), extraData);
+    }
+
+    /**
+     * @param crewType  the type of crew
+     * @param name      the name of the crew or commander.
+     * @param size      the crew size.
+     * @param gunnery   the crew's Gunnery skill.
+     * @param piloting  the crew's Piloting or Driving skill.
+     * @param gender    the gender of the crew or commander
+     * @param extraData any extra data passed to be stored with this Crew.
+     */
+    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, int gender,
+                Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, extraData);
+    }
+
+    /**
+     * @param crewType  the type of crew.
+     * @param name      the name of the crew or commander.
+     * @param size      the crew size.
+     * @param gunneryL  the crew's "laser" Gunnery skill.
+     * @param gunneryM  the crew's "missile" Gunnery skill.
+     * @param gunneryB  the crew's "ballistic" Gunnery skill.
+     * @param piloting  the crew's Piloting or Driving skill.
+     * @param gender    the gender of the crew or commander
+     * @param extraData any extra data passed to be stored with this Crew.
      */
     public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
-            int piloting) {
+                int piloting, int gender, Map<Integer, Map<String, String>> extraData) {
         this.crewType = crewType;
         this.size = Math.max(size, crewType.getCrewSlots());
         this.currentSize = size;
+
+        this.extraData = extraData;
 
         int slots = crewType.getCrewSlots();
         this.name = new String[slots];
         Arrays.fill(this.name, name);
         this.nickname = new String[slots];
         Arrays.fill(this.nickname, "");
+        this.gender = new int[slots];
+        Arrays.fill(this.gender, G_RANDOMIZE);
+        this.gender[0] = gender;
 
         int avGunnery = (int) Math.round((gunneryL + gunneryM + gunneryB) / 3.0);
         this.gunnery = new int[slots];
@@ -273,7 +348,7 @@ public class Crew implements Serializable {
         resetActedFlag();
 
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
-        //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
+        //and should have no effect on MM (but need to make sure it doesn't screw up MekWars)
         externalId = new String[slots];
         for (int i = 0; i < slots; i++) {
             externalId[i] = UUID.randomUUID().toString();
@@ -296,10 +371,33 @@ public class Crew implements Serializable {
         return nickname[pos];
     }
 
+    public int getGender() {
+        return gender[0];
+    }
+
+    public int getGender(int pos) {
+        // The randomize return value is used in MekHQ to create new personnel following a battle,
+        // and should not be changed without ensuring it doesn't break on that side
+        if (pos < gender.length) {
+            return gender[pos];
+        } else {
+            return G_RANDOMIZE;
+        }
+    }
+
+    /**
+     * @param isFemale whether a person is female or male
+     * @return the int value of the gender
+     */
+    @Deprecated // March 7th, 2020, this is a temporary method to ensure an easy transition
+    public static int getGenderAsInt(boolean isFemale) {
+        return isFemale ? G_FEMALE : G_MALE;
+    }
+
     /**
      * @param pos The slot index for multi-crewed cockpits
-     * @return    For multi-slot crews, the crew member's name followed by the role. For-slot crews, the
-     *            crew name only.
+     * @return For multi-slot crews, the crew member's name followed by the role. For-slot crews, the
+     * crew name only.
      */
     public String getNameAndRole(int pos) {
         if (getSlotCount() < 2) {
@@ -488,8 +586,16 @@ public class Crew implements Serializable {
         this.name[pos] = name;
     }
 
-    public void setNickname(String nick, int pos) {
-        nickname[pos] = nick;
+    public void setNickname(String nickname, int pos) {
+        this.nickname[pos] = nickname;
+    }
+
+    public void setGender(int gender, int pos) {
+        this.gender[pos] = gender;
+    }
+
+    public void setGender(boolean isFemale, int pos) {
+        this.gender[pos] = getGenderAsInt(isFemale);
     }
 
     /**
@@ -554,6 +660,7 @@ public class Crew implements Serializable {
 
     /**
      * The crew is considered unconscious as a whole if none are active and at least one is not dead.
+     *
      * @return Whether at least one crew member is alive but none are conscious.
      */
     public boolean isUnconscious() {
@@ -579,6 +686,7 @@ public class Crew implements Serializable {
 
     /**
      * The crew is considered dead as a whole if all members are dead.
+     *
      * @return Whether all members of the crew are dead.
      */
     public boolean isDead() {
@@ -633,6 +741,7 @@ public class Crew implements Serializable {
 
     /**
      * Doomed status only applies to the crew as a whole.
+     *
      * @return Whether the crew is scheduled to die at the end of the phase.
      */
     public boolean isDoomed() {
@@ -641,6 +750,7 @@ public class Crew implements Serializable {
 
     /**
      * Doomed status only applies to the crew as a whole.
+     *
      * @param doomed Whether the crew is scheduled to die at the end of the phase.
      */
     public void setDoomed(boolean doomed) {
@@ -657,6 +767,7 @@ public class Crew implements Serializable {
 
     /**
      * The crew as a whole is considered active if any member is active.
+     *
      * @return Whether the crew has at least one active member.
      */
     public boolean isActive() {
@@ -674,7 +785,8 @@ public class Crew implements Serializable {
 
     /**
      * The crew as a whole is considered ko this round if all active members are ko this round.
-     * @return
+     *
+     * @return true if all active members of the crew as knocked out this round
      */
     public boolean isKoThisRound() {
         for (int i = 0; i < getSlotCount(); i++) {
@@ -708,19 +820,6 @@ public class Crew implements Serializable {
 
     public PilotOptions getOptions() {
         return options;
-    }
-
-    public void clearOptions() {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
-            IOptionGroup group = i.nextElement();
-
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
-                IOption option = j.nextElement();
-
-                option.clearValue();
-            }
-        }
-
     }
 
     public void clearOptions(String grpKey) {
@@ -789,7 +888,7 @@ public class Crew implements Serializable {
         if (index == -1) {
             return Boolean.TRUE;
         }
-        String t = s.substring(index + 1, s.length());
+        String t = s.substring(index + 1);
         Object result;
         try {
             result = Integer.valueOf(t);
@@ -810,7 +909,7 @@ public class Crew implements Serializable {
         if (isMissing(pos)) {
             return "[missing]";
         }
-        String s = new String(name[pos]);
+        String s = name[pos];
         if (hits[pos] > 0) {
             s += " (" + hits[pos] + " hit(s)";
             if (isUnconscious(pos)) {
@@ -833,7 +932,7 @@ public class Crew implements Serializable {
      * @param gunneryOnly Do not show the piloting skill
      */
     public Vector<Report> getDescVector(boolean gunneryOnly) {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
         Report r;
 
         for (int i = 0; i < getSlotCount(); i++) {
@@ -895,7 +994,7 @@ public class Crew implements Serializable {
     /**
      * Returns the BV multiplier for this pilot's gunnery/piloting
      *
-     * @param game
+     * @param game the game to use to determine the modifier
      */
     public double getBVSkillMultiplier(IGame game) {
         return getBVSkillMultiplier(true, game);
@@ -906,7 +1005,7 @@ public class Crew implements Serializable {
      *
      * @param usePiloting whether or not to use the default value non-anti-mech
      *                    infantry/BA should not use the anti-mech skill
-     * @param game
+     * @param game the game to use to determine the modifier
      */
     public double getBVSkillMultiplier(boolean usePiloting, IGame game) {
         int pilotVal = getPiloting();
@@ -930,16 +1029,14 @@ public class Crew implements Serializable {
             level = 5;
         }
 
-        double mod = (level / 4.0) + 0.75;
-
-        return mod;
+        return (level / 4.0) + 0.75;
 
     }
 
     /**
-     * Returns the BV multiplyer for a pilots gunnery/piloting. This function is
+     * Returns the BV multiplier for a pilots gunnery/piloting. This function is
      * static to evaluate the BV of a unit, even when they have not yet been
-     * assinged a pilot.
+     * assigned a pilot.
      *
      * @param gunnery  the gunnery skill of the pilot
      * @param piloting the piloting skill of the pilot
@@ -988,14 +1085,12 @@ public class Crew implements Serializable {
      * @return a string description of the gunnery skills when using RPG
      */
     public String getGunneryRPG() {
-        return new StringBuilder()
-            .append(Arrays.toString(gunneryL))
-            .append("(L)/")
-            .append(Arrays.toString(gunneryM))
-            .append("(M)/")
-            .append(Arrays.toString(gunneryB))
-            .append("(B)")
-            .toString();
+        return Arrays.toString(gunneryL) +
+                "(L)/" +
+                Arrays.toString(gunneryM) +
+                "(M)/" +
+                Arrays.toString(gunneryB) +
+                "(B)";
     }
 
     /**
@@ -1053,29 +1148,13 @@ public class Crew implements Serializable {
     }
 
     /**
-     * @return A description of the status of crew as a whole
-     */
-    public String getStatusDesc() {
-        String s = new String("");
-        if (getHits() > 0) {
-            s += getHits() + " hits";
-            if (isUnconscious()) {
-                s += " (KO)";
-            } else if (isDead()) {
-                s += " (dead)";
-            }
-        }
-        return s;
-    }
-
-    /**
      * @return A description of the status of a single crew member
      */
     public String getStatusDesc(int pos) {
         if (isMissing(pos)) {
             return "Missing";
         }
-        String s = new String("");
+        String s = "";
         if (getHits(pos) > 0) {
             s += hits[pos] + " hits";
             if (isUnconscious(pos)) {
@@ -1091,16 +1170,17 @@ public class Crew implements Serializable {
         externalId[pos] = i;
     }
 
-    public void setExternalId(int i, int pos) {
-        externalId[pos] = Integer.toString(i);
-    }
-
     public String getExternalIdAsString(int pos) {
-        return externalId[pos];
+        if (pos < externalId.length) {
+            return externalId[pos];
+        } else {
+            return "-1";
+        }
     }
 
     /**
      * Use the first assigned slot as a general id for the crew.
+     *
      * @return The id of the first slot that is not set to "-1"
      */
     public String getExternalIdAsString() {
@@ -1129,7 +1209,11 @@ public class Crew implements Serializable {
     }
 
     public String getPortraitFileName(int pos) {
-        return portraitFileName[pos];
+        if (portraitFileName.length > pos) {
+            return portraitFileName[pos];
+        } else {
+            return PORTRAIT_NONE;
+        }
     }
 
     public int getToughness(int pos) {
@@ -1216,20 +1300,6 @@ public class Crew implements Serializable {
         pilotPos = pos;
         if (crewType.getPilotPos() == crewType.getGunnerPos()) {
             gunnerPos = pos;
-        }
-        actedThisTurn[pos] = true;
-    }
-
-    /**
-     * Set the gunner slot. If a multicrew cockpit uses the same crew member as both pilot and gunner
-     * (i.e. cockpit command console), sets the pilot as well.
-     *
-     * @param pos The slot index to set as gunner.
-     */
-    public void setCurrentGunner(int pos) {
-        gunnerPos = pos;
-        if (crewType.getPilotPos() == crewType.getGunnerPos()) {
-            pilotPos = pos;
         }
         actedThisTurn[pos] = true;
     }
@@ -1336,7 +1406,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Superheavy tripods gain benefits from having a technical officer.
+     * Super heavy tripods gain benefits from having a technical officer.
      *
      * @return Whether the tech officer is alive and conscious.
      */
@@ -1368,7 +1438,7 @@ public class Crew implements Serializable {
 
     /**
      * @return Whether the crew members in a command console-equipped unit are scheduled to swap roles at
-     *         the end of the turn.
+     * the end of the turn.
      */
     public boolean getSwapConsoleRoles() {
         return swapConsoleRoles;
@@ -1376,7 +1446,9 @@ public class Crew implements Serializable {
 
     /**
      * Schedules or clears a scheduled swap of roles in a command console-equipped unit.
-     * @param swap
+     *
+     * @param swap true for crew slots in a command console to swap roles at the end of the turn,
+     *             otherwise false
      */
     public void setSwapConsoleRoles(boolean swap) {
         swapConsoleRoles = swap;
@@ -1401,12 +1473,72 @@ public class Crew implements Serializable {
         return false;
     }
 
+    //region extraData
+    public void setExtraData(Map<Integer, Map<String, String>> extraData) {
+        this.extraData = extraData;
+    }
+
+    public void setExtraDataForCrewMember(int crewIndex, Map<String, String> dataMap) {
+        if (this.extraData == null) {
+            this.extraData = new HashMap<>();
+        }
+
+        this.extraData.put(crewIndex, dataMap);
+    }
+
+    public Map<Integer, Map<String, String>> getExtraData() {
+        return extraData;
+    }
+
+    public Map<String, String> getExtraDataForCrewMember(int crewIndex) {
+        if (this.extraData == null) {
+            return null;
+        } else {
+            return extraData.get(crewIndex);
+        }
+    }
+
+    public String getExtraDataValue(int crewIndex, String key) {
+        if (this.extraData == null) {
+            return null;
+        } else if (this.extraData.get(crewIndex) == null) {
+            return null;
+        } else {
+            return extraData.get(crewIndex).get(key);
+        }
+    }
+
+    public String writeExtraDataToXMLLine(int pos) {
+        Map<String, String> dataRow = getExtraDataForCrewMember(pos);
+
+        if (dataRow != null) {
+            StringBuilder output = new StringBuilder();
+
+            output.append("\" extraData=\"");
+
+            boolean first = true;
+            for (Map.Entry<String, String> row : dataRow.entrySet()) {
+                if (!first) {
+                    output.append("|");
+                } else {
+                    first = false;
+                }
+                output.append(row.getKey()).append("=").append(row.getValue());
+            }
+
+            return output.toString();
+        } else {
+            return null;
+        }
+    }
+    //endregion extraData
+
+    //region MekWars
     /*
      * Legacy methods used by MekWars
      */
-
     /**
-     * @deprecated by multi-crew cockpits. Replaced by {@link #setHits(int)}
+     * @deprecated by multi-crew cockpits. Replaced by {@link #setHits(int, int)}
      */
     @Deprecated
     public void setHits(int hits) {
@@ -1426,4 +1558,5 @@ public class Crew implements Serializable {
     public void setGunnery(int gunnery) {
         setGunnery(gunnery, crewType.getGunnerPos());
     }
+    //endregion MekWars
 }

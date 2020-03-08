@@ -64,7 +64,7 @@ public enum RoundWeight {
     public static boolean usesKilogramStandard(Entity entity) {
         return entity instanceof Protomech
                 || entity instanceof BattleArmor
-                || entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT;
+                || (entity.isSupportVehicle() && entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
     }
 
     /**
@@ -77,17 +77,6 @@ public enum RoundWeight {
      */
     public double round(double weight, Entity entity) {
         return calc.apply(weight, entity);
-    }
-
-    /**
-     * Applies the rounding operation to a weight. For methods that depend on whether the unit
-     * uses the ton or kilogram standard, assumes ton.
-     *
-     * @param weight The weight to be rounded, in metric tons.
-     * @return       The result of the rounding operation.
-     */
-    public double round(double weight) {
-        return round(weight, null);
     }
 
     /**
@@ -108,7 +97,7 @@ public enum RoundWeight {
      * @return       The weight in tons, rounded to the closest half ton.
      */
     public static double nearestHalfTon(double weight) {
-        return NEAREST_HALF_TON.round(weight);
+        return NEAREST_HALF_TON.round(weight, null);
     }
 
     /**
@@ -118,7 +107,7 @@ public enum RoundWeight {
      * @return       The weight in tons, rounded to the closest ton.
      */
     public static double nearestTon(double weight) {
-        return NEAREST_TON.round(weight);
+        return NEAREST_TON.round(weight, null);
     }
 
     /**
@@ -128,7 +117,7 @@ public enum RoundWeight {
      * @return       The weight in tons, rounded to the closest kilogram.
      */
     public static double nearestKg(double weight) {
-        return NEAREST_KG.round(weight);
+        return NEAREST_KG.round(weight, null);
     }
 
     /**
@@ -138,7 +127,7 @@ public enum RoundWeight {
      * @return       The weight in tons rounded up to the half ton
      */
     public static double nextHalfTon(double weight) {
-        return NEXT_HALF_TON.round(weight);
+        return NEXT_HALF_TON.round(weight, null);
     }
 
     /**
@@ -148,7 +137,7 @@ public enum RoundWeight {
      * @return       The weight in tons rounded up to the kilogram
      */
     public static double nextKg(double weight) {
-        return NEXT_KG.round(weight);
+        return NEXT_KG.round(weight, null);
     }
 
     /**
@@ -158,7 +147,7 @@ public enum RoundWeight {
      * @return       The weight in tons rounded up to the full ton
      */
     public static double nextTon(double weight) {
-        return NEXT_TON.round(weight);
+        return NEXT_TON.round(weight, null);
     }
 
     /**

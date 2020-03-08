@@ -5457,7 +5457,7 @@ public abstract class Mech extends Entity {
         for (int x = 0; x < i; x++) {
             cost += costs[x];
         }
-
+        // TODO Decouple cost calculation from addCostDetails and eliminate duplicate code in getPriceMultiplier
         double quirkMultiplier = 0;
         if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_1)) {
         	quirkMultiplier = 1.1f;
@@ -5483,6 +5483,28 @@ public abstract class Mech extends Entity {
         cost = Math.round(cost * weightMultiplier);
         addCostDetails(cost, costs);
         return cost;
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        double priceMultiplier = 1.0f;
+        if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_1)) {
+            priceMultiplier *= 1.1f;
+        } else if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_2)) {
+            priceMultiplier *= 1.25f;
+        }
+        // TODO Negative price quirks (Bad Reputation)
+
+        if (isOmni()) {
+            priceMultiplier *= 1.25f;
+        }
+
+        // Weight multiplier
+        priceMultiplier *= 1 + (weight / 100f);
+        if (isIndustrial()) {
+            priceMultiplier = 1 + (weight / 400f);
+        }
+        return priceMultiplier;
     }
 
     @Override
@@ -6572,8 +6594,8 @@ public abstract class Mech extends Entity {
      * Known missing level 3 features: mixed tech, laser heatsinks
      */
     public String getMtf() {
-        StringBuffer sb = new StringBuffer();
-        String newLine = "\r\n"; // DOS friendly
+        StringBuilder sb = new StringBuilder();
+        String newLine = "\n";
 
         boolean standard = (getCockpitType() == Mech.COCKPIT_STANDARD)
                 && (getGyroType() == Mech.GYRO_STANDARD);
@@ -6607,7 +6629,7 @@ public abstract class Mech extends Entity {
         }
 
         sb.append(newLine);
-        sb.append("TechBase:");
+        sb.append(MtfFile.TECH_BASE);
         if (isMixedTech()) {
             if (isClan()) {
                 sb.append("Mixed (Clan Chassis)");
@@ -6618,18 +6640,17 @@ public abstract class Mech extends Entity {
             sb.append(TechConstants.getTechName(techLevel));
         }
         sb.append(newLine);
-        sb.append("Era:").append(year).append(newLine);
+        sb.append(MtfFile.ERA).append(year).append(newLine);
         if ((source != null) && (source.trim().length() > 0)) {
-            sb.append("Source:").append(source).append(newLine);
+            sb.append(MtfFile.SOURCE).append(source).append(newLine);
         }
-        sb.append("Rules Level:").append(
+        sb.append(MtfFile.RULES_LEVEL).append(
                 TechConstants.T_SIMPLE_LEVEL[techLevel]);
         sb.append(newLine);
         sb.append(newLine);
 
-        Double tonnage = Double.valueOf(weight);
-        sb.append("Mass:").append(tonnage.intValue()).append(newLine);
-        sb.append("Engine:");
+        sb.append(MtfFile.MASS).append((int) weight).append(newLine);
+        sb.append(MtfFile.ENGINE);
         if(hasEngine()) {
                 sb.append(getEngine().getEngineName())
                 .append(" Engine")
@@ -6639,12 +6660,12 @@ public abstract class Mech extends Entity {
             sb.append("(none)");
         }
         sb.append(newLine);
-        sb.append("Structure:");
+        sb.append(MtfFile.STRUCTURE);
         sb.append(EquipmentType.getStructureTypeName(getStructureType(),
                 TechConstants.isClan(structureTechLevel)));
         sb.append(newLine);
 
-        sb.append("Myomer:");
+        sb.append(MtfFile.MYOMER);
         if (hasTSM()) {
             sb.append("Triple-Strength");
         } else if (hasIndustrialTSM()) {
@@ -6657,38 +6678,33 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
 
         if (this instanceof LandAirMech) {
-            sb.append("LAM:");
+            sb.append(MtfFile.LAM);
             sb.append(((LandAirMech)this).getLAMTypeString());
             sb.append(newLine);
         } else if (this instanceof QuadVee) {
-            sb.append("Motive:");
+            sb.append(MtfFile.MOTIVE);
             sb.append(((QuadVee)this).getMotiveTypeString());
             sb.append(newLine);
         }
 
 
         if (!standard) {
-            sb.append("Cockpit:");
+            sb.append(MtfFile.COCKPIT);
             sb.append(getCockpitTypeString());
             sb.append(newLine);
 
-            sb.append("Gyro:");
+            sb.append(MtfFile.GYRO);
             sb.append(getGyroTypeString());
             sb.append(newLine);
         }
         if (hasFullHeadEject()) {
-            sb.append("Ejection:");
+            sb.append(MtfFile.EJECTION);
             sb.append(Mech.FULL_HEAD_EJECT_STRING);
-            sb.append(newLine);
-        }
-        if (this instanceof LandAirMech) {
-            sb.append("LAM:");
-            sb.append(((LandAirMech)this).getLAMTypeString());
             sb.append(newLine);
         }
         sb.append(newLine);
 
-        sb.append("Heat Sinks:").append(heatSinks()).append(" ");
+        sb.append(MtfFile.HEAT_SINKS).append(heatSinks()).append(" ");
         if (hasCompactHeatSinks()) {
             sb.append("Compact");
         } else if (hasLaserHeatSinks()) {
@@ -6701,24 +6717,28 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
 
         if (isOmni()) {
-            sb.append("Base Chassis Heat Sinks:");
+            sb.append(MtfFile.BASE_CHASSIS_HEAT_SINKS);
             sb.append(hasEngine() ? getEngine().getBaseChassisHeatSinks(hasCompactHeatSinks()) : 0);
             sb.append(newLine);
         }
+        for (Mounted mounted : getMisc()) {
+            if ((mounted.getType().getCriticals(this) == 0)
+                    && !mounted.getType().hasFlag(MiscType.F_CASE)) {
+                sb.append(MtfFile.NO_CRIT).append(mounted.getType().getInternalName())
+                        .append(":").append(getLocationAbbr(mounted.getLocation()))
+                        .append(newLine);
+            }
+        }
 
-        sb.append("Walk MP:").append(walkMP).append(newLine);
-        sb.append("Jump MP:").append(jumpMP).append(newLine);
+        sb.append(MtfFile.WALK_MP).append(walkMP).append(newLine);
+        sb.append(MtfFile.JUMP_MP).append(jumpMP).append(newLine);
         sb.append(newLine);
 
         if (hasPatchworkArmor()) {
-            sb.append("Armor:").append(
-                    EquipmentType
-                            .getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK));
+            sb.append(MtfFile.ARMOR).append(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK));
         } else {
-            sb.append("Armor:").append(
-                    EquipmentType.getArmorTypeName(getArmorType(0)));
-            sb.append("(" + TechConstants.getTechName(getArmorTechLevel(0))
-                    + ")");
+            sb.append(MtfFile.ARMOR).append(EquipmentType.getArmorTypeName(getArmorType(0)))
+                .append("(").append(TechConstants.getTechName(getArmorTechLevel(0))).append(")");
         }
         sb.append(newLine);
 
@@ -6726,39 +6746,32 @@ public abstract class Mech extends Entity {
             if ((element == Mech.LOC_CLEG) && !(this instanceof TripodMech)) {
                 continue;
             }
-            sb.append(getLocationAbbr(element)).append(" Armor:");
+            sb.append(getLocationAbbr(element)).append(" ").append(MtfFile.ARMOR);
             if (hasPatchworkArmor()) {
-                sb.append(
-                        EquipmentType.getArmorTypeName(getArmorType(element),
-                                isClan()))
-                        .append('(')
-                        .append(TechConstants
-                                .getTechName(getArmorTechLevel(element)))
+                sb.append(EquipmentType.getArmorTypeName(getArmorType(element), isClan()))
+                        .append('(').append(TechConstants.getTechName(getArmorTechLevel(element)))
                         .append("):");
             }
             sb.append(getOArmor(element, false)).append(newLine);
         }
         for (int element : MtfFile.rearLocationOrder) {
-            sb.append("RT").append(getLocationAbbr(element).charAt(0))
-                    .append(" Armor:");
+            sb.append("RT").append(getLocationAbbr(element).charAt(0)).append(" ").append(MtfFile.ARMOR);
             sb.append(getOArmor(element, true)).append(newLine);
         }
         sb.append(newLine);
 
         sb.append("Weapons:").append(weaponList.size()).append(newLine);
-        for (int i = 0; i < weaponList.size(); i++) {
-            Mounted m = weaponList.get(i);
+        for (Mounted m : weaponList) {
             sb.append(m.getName()).append(", ")
                     .append(getLocationName(m.getLocation())).append(newLine);
         }
         sb.append(newLine);
-
         for (int l : MtfFile.locationOrder) {
             if ((l == Mech.LOC_CLEG) && !(this instanceof TripodMech)) {
                 continue;
             }
             String locationName = getLocationName(l);
-            sb.append(locationName + ":");
+            sb.append(locationName).append(":");
             sb.append(newLine);
             for (int y = 0; y < 12; y++) {
                 if (y < getNumberOfCriticals(l)) {
@@ -6772,62 +6785,62 @@ public abstract class Mech extends Entity {
         }
 
         if (getFluff().getOverview().trim().length() > 0) {
-            sb.append("overview:");
+            sb.append(MtfFile.OVERVIEW);
             sb.append(getFluff().getOverview());
             sb.append(newLine);
         }
 
         if (getFluff().getCapabilities().trim().length() > 0) {
-            sb.append("capabilities:");
+            sb.append(MtfFile.CAPABILITIES);
             sb.append(getFluff().getCapabilities());
             sb.append(newLine);
         }
 
         if (getFluff().getDeployment().trim().length() > 0) {
-            sb.append("deployment:");
+            sb.append(MtfFile.DEPLOYMENT);
             sb.append(getFluff().getDeployment());
             sb.append(newLine);
         }
 
         if (getFluff().getHistory().trim().length() > 0) {
-            sb.append("history:");
+            sb.append(MtfFile.HISTORY);
             sb.append(getFluff().getHistory());
             sb.append(newLine);
         }
 
         if (getFluff().getManufacturer().trim().length() > 0) {
-            sb.append("manufacturer:");
+            sb.append(MtfFile.MANUFACTURER);
             sb.append(getFluff().getManufacturer());
             sb.append(newLine);
         }
 
         if (getFluff().getPrimaryFactory().trim().length() > 0) {
-            sb.append("primaryFactory:");
+            sb.append(MtfFile.PRIMARY_FACTORY);
             sb.append(getFluff().getPrimaryFactory());
             sb.append(newLine);
         }
 
         if (getFluff().getNotes().trim().length() > 0) {
-            sb.append("notes:");
+            sb.append(MtfFile.NOTES);
             sb.append(getFluff().getNotes());
             sb.append(newLine);
         }
 
         if (getFluff().getMMLImagePath().trim().length() > 0) {
-            sb.append("imagefile:");
+            sb.append(MtfFile.IMAGE_FILE);
             sb.append(getFluff().getMMLImagePath());
             sb.append(newLine);
         }
 
         for (EntityFluff.System system : EntityFluff.System.values()) {
         	if (getFluff().getSystemManufacturer(system).length() > 0) {
-        		sb.append("systemmanufacturer:");
+        		sb.append(MtfFile.SYSTEM_MANUFACTURER);
         		sb.append(system.toString()).append(":");
         		sb.append(getFluff().getSystemManufacturer(system));
         		sb.append(newLine);
         	}
         	if (getFluff().getSystemModel(system).length() > 0) {
-        		sb.append("systemmodel:");
+        		sb.append(MtfFile.SYSTEM_MODEL);
         		sb.append(system.toString()).append(":");
         		sb.append(getFluff().getSystemModel(system));
         		sb.append(newLine);
@@ -6835,7 +6848,7 @@ public abstract class Mech extends Entity {
         }
 
         if (getUseManualBV()) {
-            sb.append("bv:");
+            sb.append(MtfFile.BV);
             sb.append(getManualBV());
             sb.append(newLine);
         }
@@ -6855,12 +6868,12 @@ public abstract class Mech extends Entity {
             armoredText = " " + MtfFile.ARMORED;
         }
         if (type == CriticalSlot.TYPE_SYSTEM) {
-            if ((getRawSystemName(index).indexOf("Upper") != -1)
-                    || (getRawSystemName(index).indexOf("Lower") != -1)
-                    || (getRawSystemName(index).indexOf("Hand") != -1)
-                    || (getRawSystemName(index).indexOf("Foot") != -1)) {
+            if ((getRawSystemName(index).contains("Upper"))
+                    || (getRawSystemName(index).contains("Lower"))
+                    || (getRawSystemName(index).contains("Hand"))
+                    || (getRawSystemName(index).contains("Foot"))) {
                 return getRawSystemName(index) + " Actuator" + armoredText;
-            } else if (getRawSystemName(index).indexOf("Engine") != -1) {
+            } else if (getRawSystemName(index).contains("Engine")) {
                 return "Fusion " + getRawSystemName(index) + armoredText;
             } else {
                 return getRawSystemName(index) + armoredText;

@@ -279,9 +279,9 @@ public class TestSupportVehicle extends TestEntity {
                     // Can't put a turret on a convertible
                     && (!this.equals(CONVERTIBLE) || !(sv instanceof Tank)
                         || ((Tank) sv).hasNoTurret())
-                    // External power pickup is only valid for RAIL movement mode (not MAGLEV)
+                    // External power pickup (rail) is only valid with the external engine type
                     && (!this.equals(EXTERNAL_POWER_PICKUP)
-                        || sv.getMovementMode().equals(EntityMovementMode.RAIL));
+                        || (sv.getEngine().getEngineType() == Engine.EXTERNAL));
         }
 
         /**
@@ -744,7 +744,7 @@ public class TestSupportVehicle extends TestEntity {
         for (Mounted m : supportVee.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
                     || m.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
-                return m.getType().getTonnage(supportVee);
+                return m.getTonnage();
             }
         }
         return 0.0;
@@ -799,12 +799,17 @@ public class TestSupportVehicle extends TestEntity {
             for (Mounted m : supportVee.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_ENERGY) && !(wt instanceof CLChemicalLaserWeapon) && !(wt instanceof VehicleFlamerWeapon)) {
-                    weight += wt.getTonnage(supportVee);
+                    weight += m.getTonnage();
                 }
                 if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
                         MiscType) && m.getLinkedBy().getType().
                         hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                    weight += m.getLinkedBy().getType().getTonnage(supportVee);
+                    weight += m.getLinkedBy().getTonnage();
+                }
+            }
+            for (Mounted m : supportVee.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
+                    weight += m.getTonnage();
                 }
             }
             return ceilWeight(weight / 10);
@@ -859,7 +864,7 @@ public class TestSupportVehicle extends TestEntity {
             if (m.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
                     || m.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
                 fireCon = StringUtil.makeLength(m.getName(), getPrintSize() - 5)
-                        + TestEntity.makeWeightString(m.getType().getTonnage(supportVee), usesKgStandard()) + "\n";
+                        + TestEntity.makeWeightString(m.getTonnage(), usesKgStandard()) + "\n";
                 break;
             }
         }
@@ -999,7 +1004,7 @@ public class TestSupportVehicle extends TestEntity {
                 buff.append(m.getType().getName()).append(" is not a valid weapon for this unit.\n");
                 correct = false;
             }
-            weaponWeight += m.getType().getTonnage(supportVee, m.getLocation());
+            weaponWeight += m.getTonnage();
         }
         if (supportVee.isOmni() && (supportVee.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
                     || supportVee.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))
@@ -1199,7 +1204,7 @@ public class TestSupportVehicle extends TestEntity {
         buff.append(getName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
-        buff.append("Intro year: ").append(supportVee.getYear());
+        buff.append("Intro year: ").append(supportVee.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {

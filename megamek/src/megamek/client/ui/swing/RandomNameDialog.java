@@ -122,7 +122,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
     private void saveSettings() {
         rng.setChosenFaction((String)comboFaction.getSelectedItem());
-        rng.setPerentFemale(sldGender.getValue());
+        rng.setPercentFemale(sldGender.getValue());
     }
 
     @Override
@@ -160,7 +160,9 @@ public class RandomNameDialog extends JDialog implements ActionListener {
             for (Entity ent : units) {
                 if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
                     for (int i = 0; i < ent.getCrew().getSlotCount(); i++) {
-                        ent.getCrew().setName(rng.generate(), i);
+                        boolean isFemale = rng.isFemale();
+                        ent.getCrew().setGender(isFemale, i);
+                        ent.getCrew().setName(rng.generate(isFemale), i);
                     }
                     c.sendUpdateEntity(ent);
                 }

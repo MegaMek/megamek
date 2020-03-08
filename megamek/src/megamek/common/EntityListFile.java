@@ -22,18 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.util.StringUtil;
 
 /**
  * This class provides static methods to save a list of <code>Entity</code>s to,
@@ -1090,8 +1085,10 @@ public class EntityListFile {
         output.write("\" name=\"" + crew.getName(pos).replaceAll("\"", "&quot;"));
         output.write("\" nick=\"");
         output.write(crew.getNickname(pos).replaceAll("\"", "&quot;"));
+        output.write("\" gender=\"" + crew.getGender(pos));
         output.write("\" gunnery=\"");
         output.write(String.valueOf(crew.getGunnery(pos)));
+
         if ((null != entity.getGame())
                 && entity.getGame().getOptions()
                         .booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
@@ -1137,6 +1134,11 @@ public class EntityListFile {
         if (!crew.getExternalIdAsString(pos).equals("-1")) {
             output.write("\" externalId=\"");
             output.write(crew.getExternalIdAsString(pos));
+        }
+
+        String extraData = crew.writeExtraDataToXMLLine(pos);
+        if (!StringUtil.isNullOrEmpty(extraData)) {
+            output.write(extraData);
         }
     }
     

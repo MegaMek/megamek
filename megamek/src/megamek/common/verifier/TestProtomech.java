@@ -348,7 +348,7 @@ public class TestProtomech extends TestEntity {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
-                    TestEntity.makeWeightString(round(mt.getTonnage(getEntity()), Ceil.KILO), true));
+                    TestEntity.makeWeightString(round(m.getTonnage(), Ceil.KILO), true));
             buff.append("\n");
         }
         return buff;
@@ -363,8 +363,7 @@ public class TestProtomech extends TestEntity {
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
-                    .append(TestEntity.makeWeightString(round(mt
-                            .getTonnage(getEntity()), Ceil.KILO), true)).append("\n");
+                    .append(TestEntity.makeWeightString(m.getTonnage(), true)).append("\n");
         }
         return buff;
     }
@@ -449,8 +448,7 @@ public class TestProtomech extends TestEntity {
                 continue;
             }
             slotsByLoc.merge(mount.getLocation(), 1, Integer::sum);
-            weightByLoc.merge(mount.getLocation(),
-                    mount.getType().getTonnage(proto, mount.getLocation()), Double::sum);
+            weightByLoc.merge(mount.getLocation(), mount.getTonnage(), Double::sum);
             if (mount.isRearMounted() && (mount.getLocation() != Protomech.LOC_TORSO)) {
                 buff.append("Equipment can only be rear-mounted on the torso\n");
                 illegal = true;
@@ -469,10 +467,6 @@ public class TestProtomech extends TestEntity {
                     buff.append("Quad and glider protomechs cannot use a magnetic clamp system.\n");
                     illegal = true;
                 }
-                if (mount.getLocation() != Protomech.LOC_TORSO) {
-                    buff.append("The magnetic clamp system must be mounted in the torso.\n");
-                    illegal = true;
-                }
             }
             if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOMECH_MELEE)) {
                 meleeWeapons++;
@@ -484,19 +478,8 @@ public class TestProtomech extends TestEntity {
                     buff.append(mount.getType().getName() + "can only be used by quad protomechs.\n");
                     illegal = true;
                 }
-                if (mount.getType().hasSubType(MiscType.S_PROTO_QMS)
-                        && (mount.getLocation() != Protomech.LOC_TORSO)) {
-                    buff.append(mount.getType().getName() + " must be mounted in the torso.\n");
-                    illegal = true;
-                }
                 if (mount.getType().hasSubType(MiscType.S_PROTOMECH_WEAPON) && proto.isQuad()) {
                     buff.append(mount.getType().getName() + "cannot be used by quad protomechs.\n");
-                    illegal = true;
-                }
-                if (mount.getType().hasSubType(MiscType.S_PROTOMECH_WEAPON)
-                        && (mount.getLocation() != Protomech.LOC_LARM)
-                        && (mount.getLocation() != Protomech.LOC_RARM)) {
-                    buff.append(mount.getType().getName() + " must be mounted in an arm.\n");
                     illegal = true;
                 }
             }
@@ -526,6 +509,47 @@ public class TestProtomech extends TestEntity {
         }
         
         return illegal;
+    }
+
+    /**
+     * @param protomech  The Protomech
+     * @param eq         The equipment
+     * @param location   A location index on the Entity
+     * @param buffer    If non-null and the location is invalid, will be appended with an explanation
+     * @return           Whether the equipment can be mounted in the location on the Protomech
+     */
+    public static boolean isValidProtomechLocation(Protomech protomech, EquipmentType eq, int location,
+                                                   @Nullable StringBuffer buffer) {
+        if (eq instanceof MiscType) {
+            if (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTOMECH_WEAPON)
+                    && (location != Protomech.LOC_LARM) && (location != Protomech.LOC_RARM)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
+                }
+                return false;
+            }
+            if ((eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)
+                    || (eq.hasFlag(MiscType.F_PROTOMECH_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)))
+                    && (location != Protomech.LOC_TORSO)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in the torso.\n");
+                }
+                return false;
+            }
+        }
+        if (!TestProtomech.eqRequiresLocation(protomech, eq) && (location != Protomech.LOC_BODY)) {
+            if (buffer != null) {
+                buffer.append(eq.getName()).append(" must be mounted in the body.\n");
+            }
+            return false;
+        } else if (TestProtomech.maxSlotsByLocation(location, protomech) == 0) {
+            if (buffer != null) {
+                buffer.append(eq.getName()).append(" cannot be mounted in the ")
+                        .append(protomech.getLocationName(location)).append("\n");
+            }
+            return false;
+        }
+        return true;
     }
     
     /**
@@ -583,7 +607,7 @@ public class TestProtomech extends TestEntity {
         buff.append("Protomech: ").append(proto.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
-        buff.append("Intro year: ").append(proto.getYear());
+        buff.append("Intro year: ").append(proto.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {

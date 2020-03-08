@@ -24,24 +24,7 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Function;
 
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Bay;
-import megamek.common.CrewQuartersCargoBay;
-import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.FirstClassQuartersCargoBay;
-import megamek.common.ITechManager;
-import megamek.common.ITechnology;
-import megamek.common.Jumpship;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.SecondClassQuartersCargoBay;
-import megamek.common.SmallCraft;
-import megamek.common.SteerageQuartersCargoBay;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -597,18 +580,18 @@ public class TestAero extends TestEntity {
                 if (wt.hasFlag(WeaponType.F_ENERGY) && 
                         !(wt instanceof CLChemicalLaserWeapon) && 
                         !(wt instanceof VehicleFlamerWeapon)) {
-                    weight += wt.getTonnage(aero);
+                    weight += m.getTonnage();
                 }
                 Mounted linkedBy = m.getLinkedBy();
                 if ((linkedBy != null) && 
                         (linkedBy.getType() instanceof MiscType) && 
                         linkedBy.getType().hasFlag(MiscType.F_PPC_CAPACITOR)){
-                    weight += ((MiscType)linkedBy.getType()).getTonnage(aero);
+                    weight += linkedBy.getTonnage();
                 }
             }
-            // Power amp weighs: 
+            // Power amp weighs:
             //   energy weapon tonnage * 0.1 rounded to nearest half ton
-            return Math.ceil(0.1 * weight*2) / 2.0;
+            return Math.ceil(0.1 * weight * 2) / 2.0;
         }
         return 0;
     }
@@ -1086,6 +1069,61 @@ public class TestAero extends TestEntity {
         return illegal;
     }
 
+    /**
+     * @param eq        The equipment
+     * @param location  A location index on the Entity
+     * @param buffer    If non-null and the location is invalid, will be appended with an explanation
+     * @return          Whether the equipment can be mounted in the location on the aerospace fighter,
+     *                  conventional fighter, or fixed wing support vehicle
+     */
+    public static boolean isValidAeroLocation(EquipmentType eq, int location, @Nullable StringBuffer buffer) {
+        if (eq instanceof AmmoType) {
+            if (location != Aero.LOC_FUSELAGE) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
+                }
+                return false;
+            }
+        } else if (eq instanceof MiscType) {
+            // Weapon enhancements go in the same location as the weapon
+            if ((eq.hasFlag(MiscType.F_ARTEMIS)
+                    || eq.hasFlag(MiscType.F_ARTEMIS_V)
+                    || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
+                    || eq.hasFlag(MiscType.F_APOLLO)
+                    || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
+                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) && (location >= Aero.LOC_WINGS)) {
+                if (location != Aero.LOC_FUSELAGE) {
+                    if (buffer != null) {
+                        buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
+                    }
+                    return false;
+                }
+            } else if ((eq.hasFlag(MiscType.F_BLUE_SHIELD) || eq.hasFlag(MiscType.F_LIFTHOIST)
+                    || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())) && (location != Aero.LOC_FUSELAGE)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
+                }
+                return false;
+            }
+        } else if (eq instanceof WeaponType) {
+            if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                    && (location != Aero.LOC_NOSE) && (location != Aero.LOC_AFT)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in the nose or aft.\n");
+                }
+                return false;
+            }
+            if (!eq.hasFlag(WeaponType.F_C3M) && !eq.hasFlag(WeaponType.F_C3MBS)
+                    && !eq.hasFlag(WeaponType.F_TAG) && (location == Aero.LOC_FUSELAGE)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean isAeroWeapon(EquipmentType eq, Entity en) {
         if (eq instanceof InfantryWeapon) {
             return false;
@@ -1163,7 +1201,7 @@ public class TestAero extends TestEntity {
         buff.append("Aero: ").append(aero.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");        
         buff.append(printTechLevel());
-        buff.append("Intro year: ").append(aero.getYear());
+        buff.append("Intro year: ").append(aero.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
@@ -1488,11 +1526,7 @@ public class TestAero extends TestEntity {
         } else if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_CASE)) {
                 return eq.isClan();
-            } else if (eq.hasFlag(MiscType.F_BLUE_SHIELD)) {
-                return false;
-            } else {
-                return true;
-            }
+            } else return !eq.hasFlag(MiscType.F_BLUE_SHIELD) && !eq.hasFlag(MiscType.F_LIFTHOIST);
         } else {
             return !(eq instanceof AmmoType);
         }

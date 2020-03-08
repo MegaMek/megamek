@@ -1098,7 +1098,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
         }
 
-        if ((isVTOL) && (height > 50)
+        if ((isVTOL && height > 50)
                 || (isAirMech && height > 25)
                 || (isGlider && height > 12)) {
             msg = Messages.getString("CustomMechDialog.EnterCorrectHeight"); //$NON-NLS-1$

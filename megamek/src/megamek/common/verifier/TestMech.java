@@ -895,7 +895,6 @@ public class TestMech extends TestEntity {
                     || m.getType().hasFlag(MiscType.F_SCM)) {
                 advancedMyomer = m.getType();
             }
-                
         }
         
         for (Mounted m : getEntity().getMisc()) {
@@ -948,23 +947,21 @@ public class TestMech extends TestEntity {
                 buff.append("BattleMech can't mount light fluid suction system\n");
             }
 
-            if (!mech.entityIsQuad() && mech.hasSystem(Mech.ACTUATOR_HAND, m.getLocation())
-                    && (misc.hasFlag(MiscType.F_SALVAGE_ARM)
-                    || (misc.hasFlag(MiscType.F_CLUB)
-                            && (misc.hasSubType(MiscType.S_CHAINSAW)
-                                    || misc.hasSubType(MiscType.S_BACKHOE)
-                                    || misc.hasSubType(MiscType.S_DUAL_SAW)
-                                    || misc.hasSubType(MiscType.S_PILE_DRIVER)
-                                    || misc.hasSubType(MiscType.S_MINING_DRILL)
-                                    || misc.hasSubType(MiscType.S_ROCK_CUTTER)
-                                    || misc.hasSubType(MiscType.S_SPOT_WELDER)
-                                    || misc.hasSubType(MiscType.S_WRECKING_BALL)
-                                    || misc.hasSubType(MiscType.S_COMBINE))))) {
+            if (!mech.entityIsQuad()) {
+                if (replacesHandActuator(misc)
+                        && mech.hasSystem(Mech.ACTUATOR_HAND, m.getLocation())) {
                     illegal = true;
                     buff.append("Mech can only mount ").append(misc.getName())
                             .append(" in arm with no hand actuator.\n");
+                } else if (requiresHandActuator(misc) && !mech.hasSystem(Mech.ACTUATOR_HAND, m.getLocation())) {
+                    illegal = true;
+                    buff.append("Mech requires a hand actuator in the arm that mounts ").append(misc.getName()).append("\n");
+                } else if (requiresLowerArm(misc) && !mech.hasSystem(Mech.ACTUATOR_LOWER_ARM, m.getLocation())) {
+                    illegal = true;
+                    buff.append("Mech requires a lower arm actuator in the arm that mounts ").append(misc.getName()).append("\n");
+                }
             }
-            
+
             if (misc.hasFlag(MiscType.F_HEAD_TURRET)
                     && isCockpitLocation(Mech.LOC_HEAD)) {
                 illegal = true;
@@ -1475,6 +1472,49 @@ public class TestMech extends TestEntity {
         }
         
         return illegal;
+    }
+
+    /**
+     * @param misc A type of equipment
+     * @return     Whether the equipment replaces the hand actuator when mounted in an arm
+     */
+    public static boolean replacesHandActuator(MiscType misc) {
+        return misc.hasFlag(MiscType.F_SALVAGE_ARM)
+                || misc.hasFlag(MiscType.F_HAND_WEAPON)
+                || (misc.hasFlag(MiscType.F_CLUB)
+                    && (misc.hasSubType(MiscType.S_CHAINSAW)
+                    || misc.hasSubType(MiscType.S_BACKHOE)
+                    || misc.hasSubType(MiscType.S_DUAL_SAW)
+                    || misc.hasSubType(MiscType.S_PILE_DRIVER)
+                    || misc.hasSubType(MiscType.S_MINING_DRILL)
+                    || misc.hasSubType(MiscType.S_ROCK_CUTTER)
+                    || misc.hasSubType(MiscType.S_SPOT_WELDER)
+                    || misc.hasSubType(MiscType.S_WRECKING_BALL)
+                    || misc.hasSubType(MiscType.S_FLAIL)));
+    }
+
+    /**
+     * @param misc A type of equipment that can be mounted in a mech arm
+     * @return     Whether the equipment requires the hand acutator
+     */
+    public static boolean requiresHandActuator(MiscType misc) {
+        return misc.hasFlag(MiscType.F_CLUB)
+                && misc.hasSubType(MiscType.S_CHAIN_WHIP
+                | MiscType.S_HATCHET
+                | MiscType.S_MACE
+                | MiscType.S_SWORD
+                | MiscType.S_VIBRO_SMALL
+                | MiscType.S_VIBRO_MEDIUM
+                | MiscType.S_VIBRO_LARGE);
+    }
+
+    /**
+     * @param misc A type of equipment that can be mounted in a mech arm
+     * @return     Whether the equipment requires the lower arm acutator
+     */
+    public static boolean requiresLowerArm(MiscType misc) {
+        return misc.hasFlag(MiscType.F_CLUB)
+                && misc.hasSubType(MiscType.S_LANCE | MiscType.S_RETRACTABLE_BLADE);
     }
 
     /**

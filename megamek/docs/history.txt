@@ -19,6 +19,7 @@ VERSION HISTORY:
 + Issue #1688: Fixing Radical Heat Sink Target Number
 + PR #1723: Implemented fuel-air bombs from IntOps. Includes bot capability to drop them, so spread out.
 + Issue #1746 - Variable Tech Level sometimes changes tech level of equipment the wrong way
++ Issue #1639 - in map editor, set building CF to default values when ctrl-scrolling through building types
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

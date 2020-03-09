@@ -1356,9 +1356,10 @@ public abstract class TestEntity implements TestEntityOption {
             }
             if (m.getType().hasFlag(MiscType.F_LIFTHOIST)) {
                 liftHoists++;
-            } else if ((m.getType().hasFlag(MiscType.F_CLUB) && !((MiscType) m.getType()).isShield())
+            } else if ((m.getLocation() > 0)
+                    && ((m.getType().hasFlag(MiscType.F_CLUB) && !((MiscType) m.getType()).isShield())
                     || m.getType().hasFlag(MiscType.F_BULLDOZER)
-                    || m.getType().hasFlag(MiscType.F_HAND_WEAPON)) {
+                    || m.getType().hasFlag(MiscType.F_HAND_WEAPON))) {
                 physicalWeaponsByLocation.putIfAbsent(m.getLocation(), new ArrayList<>());
                 physicalWeaponsByLocation.get(m.getLocation()).add(m.getType());
             } else if (m.getType().hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
@@ -1474,7 +1475,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
         }
         for (Mounted mounted : getEntity().getEquipment()) {
-            if (!mounted.isOneShotAmmo()) {
+            if (mounted.getLocation() > Entity.LOC_NONE) {
                 illegal |= !isValidLocation(getEntity(), mounted.getType(), mounted.getLocation(), buff);
             }
         }

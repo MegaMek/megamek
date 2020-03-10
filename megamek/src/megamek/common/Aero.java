@@ -220,7 +220,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int eccmRoll = 0;
     
     //List of escape craft used by this ship
-    private Set<Integer> escapeCraftList = new HashSet<>();
+    private Set<String> escapeCraftList = new HashSet<>();
     
     //Maps unique id of each assigned marine to marine point value
     private Map<UUID,Integer> marines;
@@ -4224,7 +4224,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * Returns the list of Entity IDs used by this ship as escape craft
      * @return
      */
-    public Set<Integer> getEscapeCraft() {
+    public Set<String> getEscapeCraft() {
         return escapeCraftList;
     }
     
@@ -4232,7 +4232,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * Adds an Escape Craft. Used by MHQ to track where escaped crew and passengers end up.
      * @param id The Entity ID of the ship to add.
      */
-    public void addEscapeCraft(int id) {
+    public void addEscapeCraft(String id) {
         escapeCraftList.add(id);
     }
     
@@ -4240,7 +4240,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * Removes an Escape Craft. Used by MHQ to track where escaped crew and passengers end up.
      * @param id The Entity ID of the ship to remove.
      */
-    public void removeEscapeCraft(int id) {
+    public void removeEscapeCraft(String id) {
         escapeCraftList.remove(id);
     }
 

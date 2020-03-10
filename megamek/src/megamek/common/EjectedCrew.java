@@ -25,8 +25,8 @@ public class EjectedCrew extends Infantry {
     protected int nextVelocity = currentVelocity;
     
     // Maps "transported" crew,passengers to a host ship so we can match them up again post-game
-    private Map<Integer,Integer> nOtherCrew = new HashMap<>();
-    private Map<Integer,Integer> passengers = new HashMap<>();
+    private Map<String,Integer> nOtherCrew = new HashMap<>();
+    private Map<String,Integer> passengers = new HashMap<>();
     
     private static final long serialVersionUID = 8136710237585797372L;
     
@@ -190,7 +190,7 @@ public class EjectedCrew extends Infantry {
      * Returns a mapping of how many crewmembers from other units this unit is carrying
      * and what ship they're from by external ID 
      */
-    public Map<Integer,Integer> getNOtherCrew() {
+    public Map<String,Integer> getNOtherCrew() {
         return nOtherCrew;
     }
     
@@ -199,7 +199,7 @@ public class EjectedCrew extends Infantry {
      * @param id The external ID of the ship these crew came from
      * @param n The number to add
      */
-    public void addNOtherCrew(int id, int n) {
+    public void addNOtherCrew(String id, int n) {
        if (nOtherCrew.containsKey(id)) {
            nOtherCrew.replace(id, nOtherCrew.get(id) + n);
        } else {
@@ -211,7 +211,7 @@ public class EjectedCrew extends Infantry {
      * Returns a mapping of how many passengers from other units this unit is carrying
      * and what ship they're from by external ID 
      */
-    public Map<Integer,Integer> getPassengers() {
+    public Map<String,Integer> getPassengers() {
         return passengers;
     }
     
@@ -220,7 +220,7 @@ public class EjectedCrew extends Infantry {
      * @param id The external ID of the ship these passengers came from
      * @param n The number to add
      */
-    public void addPassengers(int id, int n) {
+    public void addPassengers(String id, int n) {
        if (passengers.containsKey(id)) {
            passengers.replace(id, passengers.get(id) + n);
        } else {

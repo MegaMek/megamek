@@ -34112,18 +34112,21 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
             }
             EscapePods pods = new EscapePods(entity,totalLaunched,nEscaped,isPod);
+            entity.addEscapeCraft(pods.getExternalIdAsString());
             //Update the personnel numbers
             
             //If there are passengers aboard, get them out first
             if (entity.getNPassenger() > 0) {
                 int change = Math.min(entity.getNPassenger(), nEscaped);
                 entity.setNPassenger(Math.max(entity.getNPassenger() - nEscaped, 0));
+                pods.addPassengers(entity.getExternalIdAsString(), change);
                 nEscaped -= change;
             }
             //Now get the crew out with such space as is left
             if (nEscaped > 0) {
                 entity.setNCrew(entity.getNCrew() - nEscaped);
                 entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
+                pods.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
                 //*Damage* the host ship's crew to account for the people that left
                 vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
             }
@@ -34168,6 +34171,7 @@ public class Server implements Runnable {
             // This only works in space or on the ground
             int nEscaped = Math.min(entity.getNPassenger() + entity.getCrew().getCurrentSize(), 50);
             EjectedCrew crew = new EjectedCrew(entity, nEscaped);
+            entity.addEscapeCraft(crew.getExternalIdAsString());
             
             //Report the escape
             r = new Report(6403);
@@ -34181,12 +34185,14 @@ public class Server implements Runnable {
             if (entity.getNPassenger() > 0) {
                 int change = Math.min(entity.getNPassenger(), nEscaped);
                 entity.setNPassenger(Math.max(entity.getNPassenger() - nEscaped, 0));
+                crew.addPassengers(entity.getExternalIdAsString(), change);
                 nEscaped -= change;
             }
             //Now get the crew out with such airlock space as is left
             if (nEscaped > 0) {
                 entity.setNCrew(entity.getNCrew() - nEscaped);
                 entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
+                crew.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
                 //*Damage* the host ship's crew to account for the people that left
                 vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
             }

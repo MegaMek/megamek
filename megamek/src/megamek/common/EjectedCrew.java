@@ -6,6 +6,9 @@
 
 package megamek.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -20,6 +23,10 @@ public class EjectedCrew extends Infantry {
     // set up movement for Aero pilots and vessel crews
     protected int currentVelocity = 0;
     protected int nextVelocity = currentVelocity;
+    
+    // Maps "transported" crew,passengers to a host ship so we can match them up again post-game
+    private Map<Integer,Integer> nOtherCrew = new HashMap<>();
+    private Map<Integer,Integer> passengers = new HashMap<>();
     
     private static final long serialVersionUID = 8136710237585797372L;
     
@@ -177,6 +184,48 @@ public class EjectedCrew extends Infantry {
 
     public void setOriginalRideExternalId(int originalRideExternalId) {
         this.originalRideExternalId = Integer.toString(originalRideExternalId);
+    }
+    
+    /**
+     * Returns a mapping of how many crewmembers from other units this unit is carrying
+     * and what ship they're from by external ID 
+     */
+    public Map<Integer,Integer> getNOtherCrew() {
+        return nOtherCrew;
+    }
+    
+    /**
+     * Adds a number of crewmembers from another ship keyed by that ship's external ID
+     * @param id The external ID of the ship these crew came from
+     * @param n The number to add
+     */
+    public void addNOtherCrew(int id, int n) {
+       if (nOtherCrew.containsKey(id)) {
+           nOtherCrew.replace(id, nOtherCrew.get(id) + n);
+       } else {
+           nOtherCrew.put(id, n);
+       }
+    }
+    
+    /**
+     * Returns a mapping of how many passengers from other units this unit is carrying
+     * and what ship they're from by external ID 
+     */
+    public Map<Integer,Integer> getPassengers() {
+        return passengers;
+    }
+    
+    /**
+     * Adds a number of passengers from another ship keyed by that ship's external ID
+     * @param id The external ID of the ship these passengers came from
+     * @param n The number to add
+     */
+    public void addPassengers(int id, int n) {
+       if (passengers.containsKey(id)) {
+           passengers.replace(id, passengers.get(id) + n);
+       } else {
+           passengers.put(id, n);
+       }
     }
 
     /*@Override

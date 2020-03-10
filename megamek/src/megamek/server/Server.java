@@ -3135,71 +3135,78 @@ public class Server implements Runnable {
         if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             return;
         }
+        
         // get the next player from the team this player is on.
         IPlayer next = game.getTeamForPlayer(current).getNextValidPlayer(current, game);
-        // if the chosen player is a valid player, we change the turn order and
-        // inform the clients.
-        if ((next != null) && (game.getEntitiesOwnedBy(next) != 0)
-                && (game.getTurnForPlayer(next.getId()) != null)) {
-
-            int currentTurnIndex = game.getTurnIndex();
-            // now look for the next occurrence of player next in the turn order
-            List<GameTurn> turns = game.getTurnVector();
-            GameTurn turn = game.getTurn();
-            // not entirely necessary. As we will also check this for the
-            // activity of the button but to be sure do it on the server too.
-            boolean isGeneralMoveTurn = !(turn instanceof GameTurn.SpecificEntityTurn)
-                    && !(turn instanceof GameTurn.UnitNumberTurn)
-                    && !(turn instanceof GameTurn.UnloadStrandedTurn);
-            if (!isGeneralMoveTurn) {
-                // if this is not a general turn the player cannot forward his turn.
-                return;
-            }
-
-            // if it is an EntityClassTurn we have to check make sure, that the
-            // turn it is exchanged with is the same kind of turn!
-            // in fact this requires an access function to the mask of an
-            // EntityClassTurn.
-            boolean isEntityClassTurn = (turn instanceof GameTurn.EntityClassTurn);
-            int classMask = 0;
-            if (isEntityClassTurn) {
-                classMask = ((GameTurn.EntityClassTurn) turn).getTurnCode();
-            }
-
-            boolean switched = false;
-            int nextTurnId = 0;
-            for (int i = currentTurnIndex; i < turns.size(); i++) {
-                // if we find a turn for the specific player, swap the current
-                // player with the player noted there
-                // and stop
-                if (turns.get(i).isValid(next.getId(), game)) {
-                    nextTurnId = i;
-                    if (isEntityClassTurn) {
-                        // if we had an EntityClassTurn
-                        if ((turns.get(i) instanceof GameTurn.EntityClassTurn)) {
-                            // and found another EntityClassTurn
-                            if (!(((GameTurn.EntityClassTurn) turns.get(i)).getTurnCode() == classMask)) {
-                                // both have to refer to the SAME class(es) or
-                                // they need to be rejected.
+        
+        while(!next.equals(current)) {
+            // if the chosen player is a valid player, we change the turn order and
+            // inform the clients.
+            if ((next != null) && (game.getEntitiesOwnedBy(next) != 0)
+                    && (game.getTurnForPlayer(next.getId()) != null)) {
+    
+                int currentTurnIndex = game.getTurnIndex();
+                // now look for the next occurrence of player next in the turn order
+                List<GameTurn> turns = game.getTurnVector();
+                GameTurn turn = game.getTurn();
+                // not entirely necessary. As we will also check this for the
+                // activity of the button but to be sure do it on the server too.
+                boolean isGeneralMoveTurn = !(turn instanceof GameTurn.SpecificEntityTurn)
+                        && !(turn instanceof GameTurn.UnitNumberTurn)
+                        && !(turn instanceof GameTurn.UnloadStrandedTurn);
+                if (!isGeneralMoveTurn) {
+                    // if this is not a general turn the player cannot forward his turn.
+                    return;
+                }
+    
+                // if it is an EntityClassTurn we have to check make sure, that the
+                // turn it is exchanged with is the same kind of turn!
+                // in fact this requires an access function to the mask of an
+                // EntityClassTurn.
+                boolean isEntityClassTurn = (turn instanceof GameTurn.EntityClassTurn);
+                int classMask = 0;
+                if (isEntityClassTurn) {
+                    classMask = ((GameTurn.EntityClassTurn) turn).getTurnCode();
+                }
+    
+                boolean switched = false;
+                int nextTurnId = 0;
+                for (int i = currentTurnIndex; i < turns.size(); i++) {
+                    // if we find a turn for the specific player, swap the current
+                    // player with the player noted there
+                    // and stop
+                    if (turns.get(i).isValid(next.getId(), game)) {
+                        nextTurnId = i;
+                        if (isEntityClassTurn) {
+                            // if we had an EntityClassTurn
+                            if ((turns.get(i) instanceof GameTurn.EntityClassTurn)) {
+                                // and found another EntityClassTurn
+                                if (!(((GameTurn.EntityClassTurn) turns.get(i)).getTurnCode() == classMask)) {
+                                    // both have to refer to the SAME class(es) or
+                                    // they need to be rejected.
+                                    continue;
+                                }
+                            } else {
                                 continue;
                             }
-                        } else {
-                            continue;
                         }
+                        switched = true;
+                        break;
                     }
-                    switched = true;
-                    break;
                 }
+    
+                // update turn order
+                if (switched) {
+                    game.swapTurnOrder(currentTurnIndex, nextTurnId);
+                    // update the turn packages for all players.
+                    send(createTurnVectorPacket());
+                    send(createTurnIndexPacket(connectionId));
+                    return;
+                }
+                // if nothing changed return without doing anything
             }
-
-            // update turn order
-            if (switched) {
-                game.swapTurnOrder(currentTurnIndex, nextTurnId);
-                // update the turn packages for all players.
-                send(createTurnVectorPacket());
-                send(createTurnIndexPacket(connectionId));
-            }
-            // if nothing changed return without doing anything
+            
+            next = game.getTeamForPlayer(current).getNextValidPlayer(next, game);
         }
     }
 

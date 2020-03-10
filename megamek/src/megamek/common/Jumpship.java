@@ -82,7 +82,6 @@ public class Jumpship extends Aero {
     private int nOtherCrew = 0;
     private int nOfficers = 0;
     private int nGunners = 0;
-    private int escaped = 0;
     
     // lifeboats and escape pods
     private int lifeBoats = 0;
@@ -620,23 +619,6 @@ public class Jumpship extends Aero {
 
     public int getNOtherCrew() {
         return nOtherCrew;
-    }
-    
-    /**
-     * Returns the total number of people who have escaped so far
-     */
-    @Override
-    public int getEscaped() {
-        return escaped;
-    }
-    
-    /**
-     * Updates the total number of people who have gotten off this ship via escape systems
-     * @param n The number to change
-     */
-    @Override
-    public void setEscaped(int n) {
-        escaped = n;
     }
     
     @Override

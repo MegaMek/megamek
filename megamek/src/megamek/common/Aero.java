@@ -219,8 +219,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
     private int eccmRoll = 0;
     
-    //List of unique individuals aboard. Used for shuffling people around with small craft and such
-    private Set<UUID> passengerList = new HashSet<>();
+    //List of escape craft used by this ship
+    private Set<Integer> escapeCraftList = new HashSet<>();
     
     //Maps unique id of each assigned marine to marine point value
     private Map<UUID,Integer> marines;
@@ -4221,27 +4221,27 @@ public class Aero extends Entity implements IAero, IBomber {
     }
     
     /**
-     * Returns our list of unique individuals being transported as passengers
+     * Returns the list of Entity IDs used by this ship as escape craft
      * @return
      */
-    public Set<UUID> getPassengerList() {
-        return passengerList;
+    public Set<Integer> getEscapeCraft() {
+        return escapeCraftList;
     }
     
     /**
-     * Adds a passenger. Used by MHQ to track where a given person ends up.
-     * @param personId The unique ID of the person to add.
+     * Adds an Escape Craft. Used by MHQ to track where escaped crew and passengers end up.
+     * @param id The Entity ID of the ship to add.
      */
-    public void addPassenger(UUID personId) {
-        passengerList.add(personId);
+    public void addEscapeCraft(int id) {
+        escapeCraftList.add(id);
     }
     
     /**
-     * Removes a passenger. Used by MHQ to track where a given person ends up.
-     * @param personId The unique ID of the person to remove.
+     * Removes an Escape Craft. Used by MHQ to track where escaped crew and passengers end up.
+     * @param id The Entity ID of the ship to remove.
      */
-    public void removePassenger(UUID personId) {
-        passengerList.remove(personId);
+    public void removeEscapeCraft(int id) {
+        escapeCraftList.remove(id);
     }
 
     /**
@@ -4308,20 +4308,6 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public int getTotalAboard() {
         return (getNCrew() + getNPassenger() + getMarineCount());
-    }
-    
-    /**
-     * Returns the total number of people who have escaped so far
-     */
-    public int getEscaped() {
-        return 0;
-    }
-    
-    /**
-     * Updates the total number of people who have gotten off this ship via escape systems
-     * @param n The number to change
-     */
-    public void setEscaped(int n) {
     }
 
     /**

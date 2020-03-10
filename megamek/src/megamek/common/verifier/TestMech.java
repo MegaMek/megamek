@@ -1512,8 +1512,9 @@ public class TestMech extends TestEntity {
      * @return     Whether the equipment requires the lower arm acutator
      */
     public static boolean requiresLowerArm(MiscType misc) {
-        return misc.hasFlag(MiscType.F_CLUB)
-                && misc.hasSubType(MiscType.S_LANCE | MiscType.S_RETRACTABLE_BLADE);
+        return replacesHandActuator(misc) ||
+                (misc.hasFlag(MiscType.F_CLUB)
+                && misc.hasSubType(MiscType.S_LANCE | MiscType.S_RETRACTABLE_BLADE));
     }
 
     /**

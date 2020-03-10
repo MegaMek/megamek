@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
@@ -37,7 +38,11 @@ public class SmallCraft extends Aero {
     private int nGunners = 0;
     private int nBattleArmor = 0;
     private int nOtherPassenger = 0;
-    private int escaped = 0;
+    
+    // Maps transported crew,passengers,marines to a host ship so we can match them up again post-game
+    private Map<Integer,Integer> nOtherCrew = new HashMap<>();
+    private Map<Integer,Integer> passengers = new HashMap<>();
+    private Map<Integer,Integer> nOtherMarines = new HashMap<>();
     
     // escape pods and lifeboats
     private int escapePods = 0;
@@ -150,19 +155,45 @@ public class SmallCraft extends Aero {
     }
     
     /**
-     * Returns the total number of people who have escaped so far
+     * Returns a mapping of how many crewmembers from other units this unit is carrying
+     * and what ship they're from by external ID 
      */
-    public int getEscaped() {
-        return escaped;
+    public Map<Integer,Integer> getNOtherCrew() {
+        return nOtherCrew;
     }
     
     /**
-     * Updates the total number of people who have gotten off this ship via escape systems
-     * @param n The number to change
+     * Adds a number of crewmembers from another ship keyed by that ship's external ID
+     * @param id The external ID of the ship these crew came from
+     * @param n The number to add
      */
-    @Override
-    public void setEscaped(int n) {
-        escaped = n;
+    public void addNOtherCrew(int id, int n) {
+       if (nOtherCrew.containsKey(id)) {
+           nOtherCrew.replace(id, nOtherCrew.get(id) + n);
+       } else {
+           nOtherCrew.put(id, n);
+       }
+    }
+    
+    /**
+     * Returns a mapping of how many passengers from other units this unit is carrying
+     * and what ship they're from by external ID 
+     */
+    public Map<Integer,Integer> getPassengers() {
+        return passengers;
+    }
+    
+    /**
+     * Adds a number of passengers from another ship keyed by that ship's external ID
+     * @param id The external ID of the ship these passengers came from
+     * @param n The number to add
+     */
+    public void addPassengers(int id, int n) {
+       if (passengers.containsKey(id)) {
+           passengers.replace(id, passengers.get(id) + n);
+       } else {
+           passengers.put(id, n);
+       }
     }
     
     public void setEscapePods(int n) {

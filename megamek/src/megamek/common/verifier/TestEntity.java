@@ -1435,7 +1435,7 @@ public abstract class TestEntity implements TestEntityOption {
         if ((getEntity() instanceof Mech) && (liftHoists > 2)) {
             illegal = true;
             buff.append("Can mount a maximum of two lift hoists.\n");
-        } else if (liftHoists > 4) {
+        } else if ((getEntity().isSupportVehicle() || (getEntity() instanceof Tank)) &&  (liftHoists > 4)) {
             illegal = true;
             buff.append("Can mount a maximum of four lift hoists.\n");
         }

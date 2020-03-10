@@ -21,6 +21,7 @@ VERSION HISTORY:
 + Issue #1746: Variable Tech Level sometimes changes tech level of equipment the wrong way
 + Issue #1639: in map editor, set building CF to default values when ctrl-scrolling through building types
 + Issue #1638: MapEditor Sidebar Vertical real estate improvements
++ Issue #1635: Errors in classic.tileset
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

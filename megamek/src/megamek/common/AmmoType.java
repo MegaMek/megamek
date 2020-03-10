@@ -334,9 +334,11 @@ public class AmmoType extends EquipmentType {
     // More SRM+LRM Munitions types
     public static final long M_MINE_CLEARANCE = 1l << 61;
     
+    // note that 62 is in use above
+    // this area is a primary target for the introduction of an enum or some other kind of refactoring
     public static final long M_FAE = 1l << 63;
   
-  
+    
     // If you want to add another munition type, tough luck: longs can only be bit-shifted 63 times.
       
     /*

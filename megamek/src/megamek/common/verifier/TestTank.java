@@ -927,6 +927,15 @@ public class TestTank extends TestEntity {
                 }
                 return false;
             }
+            // The minesweeper is also permitted in the front-side/rear-side location for "particularly
+            // large vehicles" (TacOps, 326) but it is not clear how large this needs to be. Superheavy?
+            // multi-hex large naval support?
+            if (eq.hasFlag(MiscType.F_MINESWEEPER) && (location != Tank.LOC_FRONT) && !isRearLocation) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
+                }
+                return false;
+            }
         } else if (eq instanceof WeaponType) {
             if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
                     && (location != Tank.LOC_FRONT) && !isRearLocation) {

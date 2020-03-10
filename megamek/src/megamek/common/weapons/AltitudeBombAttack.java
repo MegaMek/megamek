@@ -31,7 +31,7 @@ public class AltitudeBombAttack extends Weapon {
     private static final long serialVersionUID = 1837670588683382376L;
 
     public AltitudeBombAttack() {
-        name = "Altiude Bomb";
+        name = "Altitude Bomb";
         setInternalName(IBomber.ALT_BOMB_ATTACK);
         heat = 0;
         damage = DAMAGE_SPECIAL;

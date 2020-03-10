@@ -30,7 +30,6 @@ import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
-import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
@@ -373,6 +372,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
         }
 
+        if (atype.getMunitionType() == AmmoType.M_FAE) {
+            AreaEffectHelper.processFuelAirDamage(targetPos, 
+                    atype, aaa.getEntity(game), vPhaseReport, server);
+                        
+            return false;
+        }
+        
         if (atype.getMunitionType() == AmmoType.M_FLARE) {
             int radius;
             if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
@@ -427,27 +433,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // According to the RAW you have to hit the right hex to hit even if the
         // scatter hex has minefields
         boolean mineClear = target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR;
-        if (mineClear && game.containsMinefield(targetPos) && !isFlak
-                && !bMissed) {
+        if (mineClear && !isFlak && !bMissed) {
             r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
 
-            Enumeration<Minefield> minefields = game.getMinefields(targetPos)
-                    .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae,
-                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
-                    mfRemoved.add(mf);
-                }
-            }
-            // we have to do it this way to avoid a concurrent error problem
-            for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
-            }
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, server);
         }
 
         server.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
@@ -456,25 +448,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         // artillery may unintentially clear minefields, but only if it wasn't
         // trying to
-        if (!mineClear && game.containsMinefield(targetPos)) {
-            Enumeration<Minefield> minefields = game.getMinefields(targetPos)
-                    .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae, 10, vPhaseReport)) {
-                    mfRemoved.add(mf);
-                }
-            }
-            // we have to do it this way to avoid a concurrent error problem
-            for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
-            }
+        if (!mineClear) {
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, server);
         }
 
         return false;
     }
-
+    
     /*
      * (non-Javadoc)
      *

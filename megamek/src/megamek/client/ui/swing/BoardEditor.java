@@ -606,11 +606,11 @@ public class BoardEditor extends JComponent
         buttonRo = prepareButton("ButtonRo", "Rough", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonMd = prepareButton("ButtonMd", "Mud", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonPv = prepareButton("ButtonPv", "Pavement", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonSn = prepareButton("ButtonSn", "Snow", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonBu = prepareButton("ButtonBu", "Buildings", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonRd = prepareButton("ButtonRd", "Roads", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonBr = prepareButton("ButtonBr", "Bridges", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonFT = prepareButton("ButtonFT", "Fuel Tanks", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonSn = prepareButton("ButtonSn", "Snow", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonIc = prepareButton("ButtonIc", "Ice", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonTu = prepareButton("ButtonTu", "Tundra", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonMg = prepareButton("ButtonMg", "Magma", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
@@ -777,7 +777,7 @@ public class BoardEditor extends JComponent
             repaintWorkingHex();
         });
 
-        JPanel terrainButtonPanel = new JPanel(new GridLayout(0, 3, 2, 2));
+        JPanel terrainButtonPanel = new JPanel(new GridLayout(0, 4, 2, 2));
         addManyButtons(terrainButtonPanel, terrainButtons);
 
         JPanel brushButtonPanel = new JPanel(new GridLayout(0, 3, 2, 2));
@@ -907,7 +907,6 @@ public class BoardEditor extends JComponent
         panelBoardSettings.add(cheRoadsAutoExit);
 
         // Board Buttons (Save, Load...)
-        JLabel labBoard = new JLabel(Messages.getString("BoardEditor.labBoard"), SwingConstants.LEFT); //$NON-NLS-1$
         butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew")); //$NON-NLS-1$
         butBoardNew.setActionCommand(ClientGUI.FILE_BOARD_NEW);
 
@@ -934,13 +933,11 @@ public class BoardEditor extends JComponent
         addManyActionListeners(butDelTerrain, butAddTerrain);
 
         JPanel panButtons = new JPanel(new GridLayout(4, 2, 2, 2));
-        panButtons.add(labBoard);
-        panButtons.add(new JLabel("")); // Spacer Label
-        panButtons.add(new JLabel("")); // Spacer Label
         addManyButtons(panButtons, butBoardNew, butBoardSave, butBoardOpen,
                 butExpandMap, butBoardSaveAs, butBoardSaveAsImage);
         panButtons.add(Box.createHorizontalStrut(5));
         panButtons.add(butBoardValidate);
+        panButtons.add(butMiniMap);
 
         // ------------------
         // Arrange everything
@@ -976,10 +973,6 @@ public class BoardEditor extends JComponent
 
         // Terrain List and Preview Hex
         add(panlisHex, cfullLine);
-
-        // Minimap Toggle
-        add(new JLabel(""), cYFiller); //$NON-NLS-1$
-        add(butMiniMap, cfullLine);
 
         // Board buttons
         add(panButtons, cfullLine);

@@ -81,19 +81,31 @@ public class UnitOverview implements IDisplayable {
     private Image scrollDown;
     private Image pageUp;
     private Image pageDown;
+    private Image scrollUpG;
+    private Image scrollDownG;
+    private Image pageUpG;
+    private Image pageDownG;
 
     public UnitOverview(ClientGUI clientgui) {
         this.clientgui = clientgui;
         fm = clientgui.getFontMetrics(FONT);
 
         Toolkit toolkit = clientgui.getToolkit();
-        scrollUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp.gif").toString()); //$NON-NLS-1$
+        scrollUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown.gif").toString()); //$NON-NLS-1$
+        scrollDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollDown, clientgui);
-        pageUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp.gif").toString()); //$NON-NLS-1$
+        pageUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageUp, clientgui);
-        pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown.gif").toString()); //$NON-NLS-1$
+        pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown.png").toString()); //$NON-NLS-1$
+        PMUtil.setImage(pageDown, clientgui);
+        scrollUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp_G.png").toString()); //$NON-NLS-1$
+        PMUtil.setImage(scrollUp, clientgui);
+        scrollDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown_G.png").toString()); //$NON-NLS-1$
+        PMUtil.setImage(scrollDown, clientgui);
+        pageUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp_G.png").toString()); //$NON-NLS-1$
+        PMUtil.setImage(pageUp, clientgui);
+        pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown_G.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
         
         visible = GUIPreferences.getInstance().getShowUnitOverview();
@@ -126,11 +138,17 @@ public class UnitOverview implements IDisplayable {
         int y = clipBounds.y + DIST_TOP;
 
         if (scroll) {
-            graph.drawImage(pageUp, x, y, null);
-            graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                    null);
-            y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
-                    + BUTTON_PADDING;
+        	if (scrollOffset > 0) {
+        		graph.drawImage(pageUp, x, y, null);
+        		graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+        				null);
+        	} else {
+        		graph.drawImage(pageUpG, x, y, null);    // Top of list = greyed out buttons
+        		graph.drawImage(scrollUpG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+        				null);
+        	}
+        	y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
+        			+ BUTTON_PADDING;
         }
 
         for (int i = scrollOffset; (i < v.size())
@@ -179,11 +197,18 @@ public class UnitOverview implements IDisplayable {
         }
 
         if (scroll) {
-            y -= PADDING;
-            y += BUTTON_PADDING;
-            graph.drawImage(scrollDown, x, y, null);
-            graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                    null);
+        	y -= PADDING;
+        	y += BUTTON_PADDING;
+        	if (scrollOffset == unitIds.length - actUnitsPerPage) {
+        		graph.drawImage(scrollDownG, x, y, null);   // Bottom of list = greyed out buttons
+        		graph.drawImage(pageDownG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+        				null);
+        	} else {
+        		graph.drawImage(scrollDown, x, y, null);
+        		graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+        				null);
+            }
+           
         }
 
     }

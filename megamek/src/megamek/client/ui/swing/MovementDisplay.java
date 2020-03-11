@@ -41,11 +41,13 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
 import megamek.common.BipedMech;
 import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
+import megamek.common.CargoBay;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.DockingCollar;
@@ -64,6 +66,7 @@ import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
+import megamek.common.InfantryBay;
 import megamek.common.LandAirMech;
 import megamek.common.ManeuverType;
 import megamek.common.Mech;
@@ -3697,6 +3700,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 int[] unitsLaunched = choiceDialog.getChoices();
                 for (int element : unitsLaunched) {
                     bayChoices.add(currentFighters.elementAt(element).getId());
+                    //Prompt the player to load passengers aboard small craft
+                    Entity craft = clientgui.getClient().getGame().getEntity(currentFighters.elementAt(element).getId());
+                    if (craft instanceof SmallCraft) {
+                        int space = 0;
+                        for (Bay b : craft.getTransportBays()) {
+                            if (b instanceof CargoBay || b instanceof InfantryBay || b instanceof BattleArmorBay) {
+                                // Assume a passenger takes up 0.1 tons per single infantryman weight calculations
+                                space += (b.getUnused() / 0.1);
+                            }
+                        }
+                        ConfirmDialog takePassenger = new ConfirmDialog(clientgui.frame,
+                                Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.Title"), //$NON-NLS-1$
+                                Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.message",
+                                        new Object[]{craft.getShortName(), space, ce().getShortName() + "'", ce().getNPassenger()}), false);
+                        takePassenger.setVisible(true);
+                    }
                 }
                 choices.put(i, bayChoices);
                 // now remove them (must be a better way?)

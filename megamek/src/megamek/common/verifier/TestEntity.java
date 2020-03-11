@@ -1360,7 +1360,7 @@ public abstract class TestEntity implements TestEntityOption {
                     && ((m.getType().hasFlag(MiscType.F_CLUB) && !((MiscType) m.getType()).isShield())
                     || m.getType().hasFlag(MiscType.F_BULLDOZER)
                     || m.getType().hasFlag(MiscType.F_HAND_WEAPON))) {
-                physicalWeaponsByLocation.computeIfAbsent(m.getLocation(), new ArrayList<>()).add(m.getType());
+                physicalWeaponsByLocation.computeIfAbsent(m.getLocation(), ArrayList::new).add(m.getType());
             } else if (m.getType().hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
                     || m.getType().hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                     || m.getType().hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)) {

@@ -3701,8 +3701,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 for (int element : unitsLaunched) {
                     bayChoices.add(currentFighters.elementAt(element).getId());
                     //Prompt the player to load passengers aboard small craft
-                    Entity craft = clientgui.getClient().getGame().getEntity(currentFighters.elementAt(element).getId());
-                    if (craft instanceof SmallCraft) {
+                    Entity en = clientgui.getClient().getGame().getEntity(currentFighters.elementAt(element).getId());
+                    if (en instanceof SmallCraft) {
+                        SmallCraft craft = (SmallCraft) en;
                         int space = 0;
                         for (Bay b : craft.getTransportBays()) {
                             if (b instanceof CargoBay || b instanceof InfantryBay || b instanceof BattleArmorBay) {
@@ -3710,11 +3711,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                 space += (b.getUnused() / 0.1);
                             }
                         }
+                        //Passengers don't actually 'load' into bays to consume space, so update what's available for anyone
+                        //already aboard
+                        space -= ((craft.getTotalOtherCrew() + craft.getTotalPassengers()) * 0.1);
+                        //Make sure the text displays either the carrying capacity or the number of passengers left aboard
+                        space = Math.min(space, ce().getNPassenger());
                         ConfirmDialog takePassenger = new ConfirmDialog(clientgui.frame,
                                 Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.Title"), //$NON-NLS-1$
                                 Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.message",
                                         new Object[]{craft.getShortName(), space, ce().getShortName() + "'", ce().getNPassenger()}), false);
                         takePassenger.setVisible(true);
+                        if (takePassenger.getAnswer()) {
+                            //Move the passengers
+                            ce().setNPassenger(ce().getNPassenger() - space);
+                            clientgui.getClient().sendUpdateEntity(ce());
+                            craft.addPassengers(ce().getExternalIdAsString(), space);
+                            clientgui.getClient().sendUpdateEntity(craft);
+                            int placeholder = 0;
+                        }
                     }
                 }
                 choices.put(i, bayChoices);

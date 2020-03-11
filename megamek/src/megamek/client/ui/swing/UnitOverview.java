@@ -61,8 +61,8 @@ public class UnitOverview implements IDisplayable {
     private static final int DIST_SIDE = 5;
     private static final int ICON_WIDTH = 56;
     private static final int ICON_HEIGHT = 48;
-    private static final int BUTTON_HEIGHT = 11;
-    private static final int BUTTON_PADDING = 2;
+    private static final int BUTTON_HEIGHT = 15;
+    private static final int BUTTON_PADDING = 4;
     private static final int PADDING = 5;
 
     private int[] unitIds;
@@ -91,21 +91,21 @@ public class UnitOverview implements IDisplayable {
         fm = clientgui.getFontMetrics(FONT);
 
         Toolkit toolkit = clientgui.getToolkit();
-        scrollUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp.png").toString()); //$NON-NLS-1$
+        scrollUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown.png").toString()); //$NON-NLS-1$
+        scrollDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollDown, clientgui);
-        pageUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp.png").toString()); //$NON-NLS-1$
+        pageUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageUp, clientgui);
-        pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown.png").toString()); //$NON-NLS-1$
+        pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
-        scrollUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp_G.png").toString()); //$NON-NLS-1$
+        scrollUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2_G.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown_G.png").toString()); //$NON-NLS-1$
+        scrollDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2_G.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollDown, clientgui);
-        pageUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp_G.png").toString()); //$NON-NLS-1$
+        pageUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2_G.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageUp, clientgui);
-        pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown_G.png").toString()); //$NON-NLS-1$
+        pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2_G.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
         
         visible = GUIPreferences.getInstance().getShowUnitOverview();
@@ -125,7 +125,7 @@ public class UnitOverview implements IDisplayable {
 
         scroll = v.size() > unitsPerPage;
 
-        actUnitsPerPage = scroll ? unitsPerPage - 1 : unitsPerPage;
+        actUnitsPerPage = scroll ? unitsPerPage - 2 : unitsPerPage;
 
         if (scrollOffset + actUnitsPerPage > unitIds.length) {
             scrollOffset = unitIds.length - actUnitsPerPage;
@@ -221,7 +221,7 @@ public class UnitOverview implements IDisplayable {
             return false;
         }
 
-        int actUnits = scroll ? unitsPerPage - 1 : unitsPerPage;
+        int actUnits = scroll ? unitsPerPage - 2 : unitsPerPage;
 
         int x = p.x;
         int y = p.y;

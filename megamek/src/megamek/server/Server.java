@@ -34111,7 +34111,7 @@ public class Server implements Runnable {
                 r.add(nEscaped);
                 vDesc.addElement(r);
             }
-            EscapePods pods = new EscapePods(entity,totalLaunched,nEscaped,isPod);
+            EscapePods pods = new EscapePods(entity,totalLaunched,isPod);
             entity.addEscapeCraft(pods.getExternalIdAsString());
             //Update the personnel numbers
             

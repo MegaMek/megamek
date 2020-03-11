@@ -33,10 +33,9 @@ public class EscapePods extends SmallCraft {
      * Used to set up a group of launched pods/boats for large spacecraft per rules in SO p27
      * @param originalRide - the launching spacecraft
      * @param nPods - the number of escape craft in this flight
-     * @param escapedThisRound - The number of people aboard these pods
      * @param isEscapePod - flag to indicate if this is a flight of escape pods
      */
-    public EscapePods(Aero originalRide, int nPods, int escapedThisRound, boolean isEscapePod) {
+    public EscapePods(Aero originalRide, int nPods, boolean isEscapePod) {
         super();
         //We care about the passengers, not the crew of the escape craft
         setCrew(new Crew(CrewType.CREW));
@@ -61,8 +60,6 @@ public class EscapePods extends SmallCraft {
         for (int i = 0; i < 4; i++) {
             setArmor(nPods, i);
         }
-        
-        setNPassenger(escapedThisRound);
         
         //Placeholder for adding individuals
         

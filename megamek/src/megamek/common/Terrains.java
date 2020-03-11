@@ -108,7 +108,7 @@ public class Terrains implements ITerrainFactory {
     /**
      * Keeps track of the different type of terrains that can have exits.
      */
-    public static final int[] exitableTerrains = { PAVEMENT, ROAD, BUILDING, FUEL_TANK, BRIDGE };
+    public static final int[] exitableTerrains = { PAVEMENT, ROAD, BUILDING, FUEL_TANK, BRIDGE, WATER };
 
     private static final String[] names = { "none", "woods", "water", "rough", "rubble", "jungle", "sand", "tundra",
             "magma", "planted_fields", "heavy_industrial", "space", "pavement", "road", "swamp", "mud", "rapids", "ice",

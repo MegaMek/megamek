@@ -1682,10 +1682,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         n = 5;
         deltaX = lightDirection[0]/n;
         deltaY = lightDirection[1]/n;
-
-        // 4) woods and bulding shadows
-        for (int shadowed = board.getMinElevation();
-                shadowed <= board.getMaxElevation();
+        // 4) woods and bulding shadows (all Orthos except water!)
+        for (int shadowed = board.getMinElevation(); 
+                shadowed <= board.getMaxElevation(); 
                 shadowed++) {
             if (levelClips.get(shadowed) == null) continue;
 
@@ -1703,10 +1702,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     // Woods Shadow
                     IHex hex = board.getHex(c);
-                    List<Image> supers = tileManager.supersFor(hex);
+                    List<Image> orthos = tileManager.orthoFor(hex);
 
-                    if (!supers.isEmpty()) {
-                        Image lastSuper = createBlurredShadow(supers.get(supers.size()-1));
+                    if (!orthos.isEmpty()) {
+                        Image lastSuper = createBlurredShadow(orthos.get(orthos.size()-1));
                         if (lastSuper == null) {
                             clearShadowMap();
                             return;
@@ -1741,9 +1740,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                     // Bridge Shadow
                     if (hex.containsTerrain(Terrains.BRIDGE)) {
-                        supers = tileManager.orthoFor(hex);
-                        if (supers.isEmpty()) break;
-                        Image maskB = createBlurredShadow(supers.get(supers.size()-1));
+                        orthos = tileManager.orthoFor(hex);
+                        if (orthos.isEmpty()) break; 
+                        Image maskB = createBlurredShadow(orthos.get(orthos.size()-1));
                         if (maskB == null) {
                             clearShadowMap();
                             return;
@@ -2406,6 +2405,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         IHex hex = board.getHex(c);
                         if ((hex != null)) {
                             drawHex(c, g, saveBoardImage);
+//                            drawOrthograph(c, g);
                             if (GUIPreferences.getInstance()
                                     .getShowFieldOfFire()) {
                                 drawHexSpritesForHex(c, g, fieldofFireSprites);
@@ -2597,8 +2597,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // themselves can be checked for roads.
         List<Image> supers = tileManager.supersFor(hex);
         boolean supersUnderShadow = false;
-        if (hex.containsTerrain(Terrains.ROAD) ||
-                hex.containsTerrain(Terrains.WATER)) {
+        if (hex.containsTerrain(Terrains.ROAD) 
+                || hex.containsTerrain(Terrains.WATER) 
+                || hex.containsTerrain(Terrains.PAVEMENT)) {
             supersUnderShadow = true;
             if (supers != null) {
                 for (Image image : supers) {
@@ -2658,7 +2659,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         }
 
-        // Orthos (bridges)
+        // Orthos 
         List<Image> orthos = tileManager.orthoFor(hex);
         if (orthos != null) {
             for (Image image : orthos) {
@@ -2666,16 +2667,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     dontCache = true;
                 }
                 scaledImage = getScaledImage(image, true);
-                if (!useIsometric()) {
+//                if (!useIsometric()) {
                     g.drawImage(scaledImage, 0, 0, this);
-                }
+//                }
                 // draw a shadow for bridge hex.
-                if (useIsometric()
-                        && !guip.getBoolean(GUIPreferences.SHADOWMAP)
-                        && (hex.terrainLevel(Terrains.BRIDGE_ELEV) > 0)) {
-                    Image shadow = createShadowMask(scaledImage);
-                    g.drawImage(shadow, 0, 0, this);
-                }
+//                if (useIsometric()
+//                        && !guip.getBoolean(GUIPreferences.SHADOWMAP)
+//                        && (hex.terrainLevel(Terrains.BRIDGE_ELEV) > 0)) {
+//                    Image shadow = createShadowMask(scaledImage);
+//                    g.drawImage(shadow, 0, 0, this);
+//                }
             }
         }
 
@@ -2933,9 +2934,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         final IHex oHex = game.getBoard().getHex(c);
         final Point oHexLoc = getHexLocation(c);
+        int elevOffset = 0;
 
-        // We need to adjust the height based on several cases
-        int elevOffset = oHex.terrainLevel(Terrains.BRIDGE_ELEV);
+        // Adjust the draw height for bridges according to their elevation
+        if (oHex.containsTerrain(Terrains.BRIDGE_ELEV))
+            elevOffset = oHex.terrainLevel(Terrains.BRIDGE_ELEV);
 
         int orthX = oHexLoc.x;
         int orthY = oHexLoc.y - (int) (HEX_ELEV * scale * elevOffset);

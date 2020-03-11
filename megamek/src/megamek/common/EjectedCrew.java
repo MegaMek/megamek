@@ -195,6 +195,18 @@ public class EjectedCrew extends Infantry {
     }
     
     /**
+     * Convenience method to return all crew from other craft aboard from the above Map
+     * @return
+     */
+    public int getTotalOtherCrew() {
+        int toReturn = 0;
+        for (String name : getNOtherCrew().keySet()) {
+            toReturn += getNOtherCrew().get(name);
+        }
+        return toReturn;
+    }
+    
+    /**
      * Adds a number of crewmembers from another ship keyed by that ship's external ID
      * @param id The external ID of the ship these crew came from
      * @param n The number to add
@@ -213,6 +225,18 @@ public class EjectedCrew extends Infantry {
      */
     public Map<String,Integer> getPassengers() {
         return passengers;
+    }
+    
+    /**
+     * Convenience method to return all passengers aboard from the above Map
+     * @return
+     */
+    public int getTotalPassengers() {
+        int toReturn = 0;
+        for (String name : getPassengers().keySet()) {
+            toReturn += getPassengers().get(name);
+        }
+        return toReturn;
     }
     
     /**

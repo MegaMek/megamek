@@ -3724,6 +3724,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         if (takePassenger.getAnswer()) {
                             //Move the passengers
                             ce().setNPassenger(ce().getNPassenger() - space);
+                            if (ce() instanceof Aero) {
+                                ((Aero)ce()).addEscapeCraft(craft.getExternalIdAsString());
+                            }
                             clientgui.getClient().sendUpdateEntity(ce());
                             craft.addPassengers(ce().getExternalIdAsString(), space);
                             clientgui.getClient().sendUpdateEntity(craft);
@@ -3842,6 +3845,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                 if (takePassenger.getAnswer()) {
                                     //Move the passengers
                                     ce().setNPassenger(ce().getNPassenger() - space);
+                                    if (ce() instanceof Aero) {
+                                        ((Aero)ce()).addEscapeCraft(craft.getExternalIdAsString());
+                                    }
                                     clientgui.getClient().sendUpdateEntity(ce());
                                     craft.addPassengers(ce().getExternalIdAsString(), space);
                                     clientgui.getClient().sendUpdateEntity(craft);

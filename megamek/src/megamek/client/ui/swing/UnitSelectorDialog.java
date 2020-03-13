@@ -148,7 +148,12 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
     private static MMLogger logger = DefaultMmLogger.getInstance();
     //endregion Variable Declarations
 
-    /** Creates new UnitSelectorDialog form */
+    /**
+     * Creates a new UnitSelectorDialog form
+     *
+     * @param clientGUI         the GUI to load from
+     * @param unitLoadingDialog the dialog that displays if the units have loaded or not
+     */
     public UnitSelectorDialog(ClientGUI clientGUI, UnitLoadingDialog unitLoadingDialog) {
         super(clientGUI.getFrame(), Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
         this.unitLoadingDialog = unitLoadingDialog;
@@ -801,6 +806,90 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
          }
      }
 
+    public void keyReleased(KeyEvent ke) {
+    }
+
+    public void keyPressed(KeyEvent ke) {
+        long curTime = System.currentTimeMillis();
+        if ((curTime - lastSearch) > KEY_TIMEOUT) {
+            searchBuffer = new StringBuffer();
+        }
+        lastSearch = curTime;
+        searchBuffer.append(ke.getKeyChar());
+        searchFor(searchBuffer.toString().toLowerCase());
+    }
+
+    public void keyTyped(KeyEvent ke) {
+    }
+
+    public void actionPerformed(ActionEvent ev) {
+        if (ev.getSource().equals(comboWeight) || ev.getSource().equals(comboUnitType)) {
+            filterUnits();
+        } else if (ev.getSource().equals(buttonSelect)) {
+            select(false);
+        } else if (ev.getSource().equals(buttonSelectClose)) {
+            select(true);
+        } else if (ev.getSource().equals(buttonClose)) {
+            close();
+        } else if (ev.getSource().equals(buttonShowBV)) {
+            JEditorPane tEditorPane = new JEditorPane();
+            tEditorPane.setContentType("text/html");
+            tEditorPane.setEditable(false);
+            Entity e = getSelectedEntity();
+            if (null == e) {
+                return;
+            }
+            e.calculateBattleValue();
+            tEditorPane.setText(e.getBVText());
+            tEditorPane.setCaretPosition(0);
+            JScrollPane tScroll = new JScrollPane(tEditorPane,
+                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            Dimension size = new Dimension(550, 300);
+            tScroll.setPreferredSize(size);
+            JOptionPane.showMessageDialog(null, tScroll, "BV",
+                    JOptionPane.INFORMATION_MESSAGE, null);
+        } else if (ev.getSource().equals(buttonAdvancedSearch)) {
+            searchFilter = asd.showDialog();
+            buttonResetSearch.setEnabled((searchFilter != null) && !searchFilter.isDisabled);
+            filterUnits();
+        } else if (ev.getSource().equals(buttonResetSearch)) {
+            asd.clearValues();
+            searchFilter=null;
+            buttonResetSearch.setEnabled(false);
+            filterUnits();
+        }
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent evt) {
+        if (!evt.getValueIsAdjusting() && evt.getSource().equals(listTechLevel)) {
+            filterUnits();
+        }
+    }
+
+    private void searchFor(String search) {
+        for (int i = 0; i < mechs.length; i++) {
+            if (mechs[i].getName().toLowerCase().startsWith(search)) {
+                int selected = tableUnits.convertRowIndexToView(i);
+                if (selected > -1) {
+                    tableUnits.changeSelection(selected, 0, false, false);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * @return the chosenEntity
+     */
+    public Entity getChosenEntity() {
+        return chosenEntity;
+    }
+
+    private void close() {
+        setVisible(false);
+    }
 
     /**
      * A table model for displaying work items
@@ -922,90 +1011,5 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
                 return "?";
             }
         }
-    }
-
-    public void keyReleased(KeyEvent ke) {
-    }
-
-    public void keyPressed(KeyEvent ke) {
-        long curTime = System.currentTimeMillis();
-        if ((curTime - lastSearch) > KEY_TIMEOUT) {
-            searchBuffer = new StringBuffer();
-        }
-        lastSearch = curTime;
-        searchBuffer.append(ke.getKeyChar());
-        searchFor(searchBuffer.toString().toLowerCase());
-    }
-
-    public void keyTyped(KeyEvent ke) {
-    }
-
-    public void actionPerformed(ActionEvent ev) {
-        if (ev.getSource().equals(comboWeight) || ev.getSource().equals(comboUnitType)) {
-            filterUnits();
-        } else if (ev.getSource().equals(buttonSelect)) {
-            select(false);
-        } else if (ev.getSource().equals(buttonSelectClose)) {
-            select(true);
-        } else if (ev.getSource().equals(buttonClose)) {
-            close();
-        } else if (ev.getSource().equals(buttonShowBV)) {
-            JEditorPane tEditorPane = new JEditorPane();
-            tEditorPane.setContentType("text/html");
-            tEditorPane.setEditable(false);
-            Entity e = getSelectedEntity();
-            if (null == e) {
-                return;
-            }
-            e.calculateBattleValue();
-            tEditorPane.setText(e.getBVText());
-            tEditorPane.setCaretPosition(0);
-            JScrollPane tScroll = new JScrollPane(tEditorPane,
-                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            Dimension size = new Dimension(550, 300);
-            tScroll.setPreferredSize(size);
-            JOptionPane.showMessageDialog(null, tScroll, "BV",
-                    JOptionPane.INFORMATION_MESSAGE, null);
-        } else if (ev.getSource().equals(buttonAdvancedSearch)) {
-            searchFilter = asd.showDialog();
-            buttonResetSearch.setEnabled((searchFilter != null) && !searchFilter.isDisabled);
-            filterUnits();
-        } else if (ev.getSource().equals(buttonResetSearch)) {
-            asd.clearValues();
-            searchFilter=null;
-            buttonResetSearch.setEnabled(false);
-            filterUnits();
-        }
-    }
-
-    @Override
-    public void valueChanged(ListSelectionEvent evt) {
-        if (!evt.getValueIsAdjusting() && evt.getSource().equals(listTechLevel)) {
-            filterUnits();
-        }
-    }
-
-    private void searchFor(String search) {
-        for (int i = 0; i < mechs.length; i++) {
-            if (mechs[i].getName().toLowerCase().startsWith(search)) {
-                int selected = tableUnits.convertRowIndexToView(i);
-                if (selected > -1) {
-                    tableUnits.changeSelection(selected, 0, false, false);
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * @return the chosenEntity
-     */
-    public Entity getChosenEntity() {
-        return chosenEntity;
-    }
-
-    private void close() {
-        setVisible(false);
     }
  }

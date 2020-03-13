@@ -137,7 +137,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
     private MechSearchFilter searchFilter;
 
     private Client client;
-    private ClientGUI clientgui;
+    private ClientGUI clientGUI;
     private UnitLoadingDialog unitLoadingDialog;
     private AdvancedSearchDialog asd;
     private JFrame frame;
@@ -148,37 +148,34 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
     //endregion Variable Declarations
 
     /** Creates new UnitSelectorDialog form */
-    public UnitSelectorDialog(ClientGUI cl, UnitLoadingDialog uld) {
-        super(cl.frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
-        unitLoadingDialog = uld;
-        frame = cl.getFrame();
-        client = cl.getClient();
-        clientgui = cl;
+    public UnitSelectorDialog(ClientGUI clientGUI, UnitLoadingDialog unitLoadingDialog) {
+        super(clientGUI.getFrame(), Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
+        this.unitLoadingDialog = unitLoadingDialog;
+        frame = clientGUI.getFrame();
+        client = clientGUI.getClient();
+        this.clientGUI = clientGUI;
 
-        unitModel = new MechTableModel();
-        initComponents();
-        GUIPreferences guiPreferences = GUIPreferences.getInstance();
-        setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
-        setLocationRelativeTo(cl.frame);
-        asd = new AdvancedSearchDialog(cl.frame,
-                client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
+        initialize(client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
     }
 
-    public UnitSelectorDialog(JFrame frame, UnitLoadingDialog uld, boolean useAlternate) {
+    public UnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
         super(frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
-        unitLoadingDialog = uld;
+        this.unitLoadingDialog = unitLoadingDialog;
         this.frame = frame;
-        this.useAlternate = useAlternate;setLocationRelativeTo(frame);
 
+        initialize(ALLOWED_YEAR_ANY);
+
+        run();
+        setVisible(true);
+    }
+
+    private void initialize(int allowedYears) {
         unitModel = new MechTableModel();
         initComponents();
-
         GUIPreferences guiPreferences = GUIPreferences.getInstance();
         setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
         setLocationRelativeTo(frame);
-        asd = new AdvancedSearchDialog(frame, ALLOWED_YEAR_ANY);
-        run();
-        setVisible(true);
+        asd = new AdvancedSearchDialog(frame, allowedYears);
     }
 
     private void initComponents() {
@@ -537,7 +534,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
             Client c = null;
             if (comboPlayer.getSelectedIndex() > 0) {
                 String name = (String) comboPlayer.getSelectedItem();
-                c = clientgui.getBots().get(name);
+                c = clientGUI.getBots().get(name);
             }
             if (c == null) {
                 c = client;
@@ -617,11 +614,11 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
 
     private void updatePlayerChoice() {
         String lastChoice = (String) comboPlayer.getSelectedItem();
-        String clientName = clientgui.getClient().getName();
+        String clientName = clientGUI.getClient().getName();
         comboPlayer.removeAllItems();
         comboPlayer.setEnabled(true);
         comboPlayer.addItem(clientName);
-        for (Client client : clientgui.getBots().values()) {
+        for (Client client : clientGUI.getBots().values()) {
             comboPlayer.addItem(client.getName());
         }
         if (comboPlayer.getItemCount() == 1) {
@@ -662,8 +659,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
             panelTROView.reset();
         }
 
-        if (clientgui != null) {
-            clientgui.loadPreviewImage(labelImage, selectedUnit, client.getLocalPlayer());
+        if (clientGUI != null) {
+            clientGUI.loadPreviewImage(labelImage, selectedUnit, client.getLocalPlayer());
         }
     }
 

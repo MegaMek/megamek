@@ -271,18 +271,14 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         techLevelScroll.setMinimumSize(new Dimension(300, 100));
         techLevelScroll.setPreferredSize(new Dimension(300, 100));
         updateTypeCombo();
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(techLevelScroll, gridBagConstraints);
+        gridBagConstraintsWest.gridx = 1;
+        gridBagConstraintsWest.gridy = 2;
+        panelFilterButtons.add(techLevelScroll, gridBagConstraintsWest);
 
         JLabel labelWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass")); //$NON-NLS-1$
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(labelWeight, gridBagConstraints);
+        gridBagConstraintsWest.gridx = 0;
+        gridBagConstraintsWest.gridy = 1;
+        panelFilterButtons.add(labelWeight, gridBagConstraintsWest);
 
         DefaultComboBoxModel<String> weightModel = new DefaultComboBoxModel<>();
         for (int i = 0; i < EntityWeightClass.SIZE; i++) {
@@ -295,11 +291,9 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         comboWeight.setMinimumSize(new Dimension(300, 27));
         comboWeight.setPreferredSize(new Dimension(300, 27));
         comboWeight.addActionListener(this);
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(comboWeight, gridBagConstraints);
+        gridBagConstraintsWest.gridx = 1;
+        gridBagConstraintsWest.gridy = 1;
+        panelFilterButtons.add(comboWeight, gridBagConstraintsWest);
 
         JLabel labelUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType")); //$NON-NLS-1$
         gridBagConstraints = new GridBagConstraints();
@@ -320,11 +314,9 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         comboUnitType.setMinimumSize(new Dimension(300, 27));
         comboUnitType.setPreferredSize(new Dimension(300, 27));
         comboUnitType.addActionListener(this);
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(comboUnitType, gridBagConstraints);
+        gridBagConstraintsWest.gridx = 1;
+        gridBagConstraintsWest.gridy = 0;
+        panelFilterButtons.add(comboUnitType, gridBagConstraintsWest);
 
         textFilter.setText("");
         textFilter.setMinimumSize(new Dimension(300, 28));
@@ -342,18 +334,14 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
                 filterUnits();
             }
         });
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(textFilter, gridBagConstraints);
+        gridBagConstraintsWest.gridx = 1;
+        gridBagConstraintsWest.gridy = 3;
+        panelFilterButtons.add(textFilter, gridBagConstraintsWest);
 
         JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter")); //$NON-NLS-1$
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(labelFilter, gridBagConstraints);
+        gridBagConstraintsWest.gridx = 0;
+        gridBagConstraintsWest.gridy = 3;
+        panelFilterButtons.add(labelFilter, gridBagConstraintsWest);
 
         labelImage = new JLabel("");
         labelImage.setHorizontalAlignment(SwingConstants.CENTER);
@@ -379,22 +367,16 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
 
         buttonAdvancedSearch = new JButton(Messages.getString("MechSelectorDialog.AdvSearch"));
         buttonAdvancedSearch.addActionListener(this);
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridwidth = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = GridBagConstraints.WEST;
-        panelSearchButtons.add(buttonAdvancedSearch, gridBagConstraints);
+        gridBagConstraintsWest.gridx = 0;
+        gridBagConstraintsWest.gridy = 0;
+        panelSearchButtons.add(buttonAdvancedSearch, gridBagConstraintsWest);
 
         buttonResetSearch = new JButton(Messages.getString("MechSelectorDialog.Reset"));
         buttonResetSearch.addActionListener(this);
         buttonResetSearch.setEnabled(false);
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridwidth = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = GridBagConstraints.WEST;
-        panelSearchButtons.add(buttonResetSearch, gridBagConstraints);
+        gridBagConstraintsWest.gridx = 1;
+        gridBagConstraintsWest.gridy = 0;
+        panelSearchButtons.add(buttonResetSearch, gridBagConstraintsWest);
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;

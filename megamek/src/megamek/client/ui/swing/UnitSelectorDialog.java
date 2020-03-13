@@ -561,14 +561,14 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
                 && client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
         //If current expression doesn't parse, don't update.
         try {
-            unitTypeFilter = new RowFilter<MechTableModel,Integer>() {
+            unitTypeFilter = new RowFilter<MechTableModel, Integer>() {
                 @Override
                 public boolean include(Entry<? extends MechTableModel, ? extends Integer> entry) {
                     MechTableModel mechModel = entry.getModel();
-                    MechSummary mech = mechModel.getMechSummary(entry
-                            .getIdentifier());
-                    int year = (null != client) ? client.getGame().getOptions()
-                            .intOption(OptionsConstants.ALLOWED_YEAR) : 999999;
+                    MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
+                    int year = (null != client)
+                            ? client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR)
+                            : 999999;
                     boolean techLevelMatch = false;
                     int type = mech.getType();
                     if (client != null && client.getGame() != null

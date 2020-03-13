@@ -181,10 +181,13 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
     }
 
     private void initComponents() {
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+
+        GridBagConstraints gridBagConstraintsWest = new GridBagConstraints();
+        gridBagConstraintsWest.anchor = GridBagConstraints.WEST;
+
         setMinimumSize(new Dimension(640, 480));
         getContentPane().setLayout(new GridBagLayout());
-        
-        GridBagConstraints c;
         
         //region Unit Preview Pane
         JTabbedPane panePreview = new JTabbedPane();
@@ -245,14 +248,13 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         tableUnits.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         scrTableUnits.setViewportView(tableUnits);
 
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 2;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        selectionPanel.add(scrTableUnits, c);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        selectionPanel.add(scrTableUnits, gridBagConstraints);
 
         JPanel panelFilterButtons = new JPanel(new GridBagLayout());
         panelFilterButtons.setMinimumSize(new Dimension(300, 180));
@@ -260,29 +262,27 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
 
         JLabel labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType")); //$NON-NLS-1$
         labelType.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 2;
-        c.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(labelType, c);
+        gridBagConstraintsWest.gridx = 0;
+        gridBagConstraintsWest.gridy = 2;
+        panelFilterButtons.add(labelType, gridBagConstraintsWest);
 
         listTechLevel.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
         JScrollPane techLevelScroll = new JScrollPane(listTechLevel);
         techLevelScroll.setMinimumSize(new Dimension(300, 100));
         techLevelScroll.setPreferredSize(new Dimension(300, 100));
         updateTypeCombo();
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 2;
-        c.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(techLevelScroll, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        panelFilterButtons.add(techLevelScroll, gridBagConstraints);
 
         JLabel labelWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass")); //$NON-NLS-1$
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(labelWeight, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        panelFilterButtons.add(labelWeight, gridBagConstraints);
 
         DefaultComboBoxModel<String> weightModel = new DefaultComboBoxModel<>();
         for (int i = 0; i < EntityWeightClass.SIZE; i++) {
@@ -295,19 +295,19 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         comboWeight.setMinimumSize(new Dimension(300, 27));
         comboWeight.setPreferredSize(new Dimension(300, 27));
         comboWeight.addActionListener(this);
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(comboWeight, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        panelFilterButtons.add(comboWeight, gridBagConstraints);
 
         JLabel labelUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType")); //$NON-NLS-1$
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(labelUnitType, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        panelFilterButtons.add(labelUnitType, gridBagConstraints);
 
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
@@ -320,11 +320,11 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         comboUnitType.setMinimumSize(new Dimension(300, 27));
         comboUnitType.setPreferredSize(new Dimension(300, 27));
         comboUnitType.addActionListener(this);
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(comboUnitType, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        panelFilterButtons.add(comboUnitType, gridBagConstraints);
 
         textFilter.setText("");
         textFilter.setMinimumSize(new Dimension(300, 28));
@@ -342,68 +342,68 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
                 filterUnits();
             }
         });
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 3;
-        c.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(textFilter, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        panelFilterButtons.add(textFilter, gridBagConstraints);
 
         JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter")); //$NON-NLS-1$
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 3;
-        c.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(labelFilter, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        panelFilterButtons.add(labelFilter, gridBagConstraints);
 
         labelImage = new JLabel("");
         labelImage.setHorizontalAlignment(SwingConstants.CENTER);
-        c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 0;
-        c.gridheight = 4;
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        panelFilterButtons.add(labelImage, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 4;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        panelFilterButtons.add(labelImage, gridBagConstraints);
 
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 0.0;
-        c.insets = new Insets(10, 10, 5, 0);
-        selectionPanel.add(panelFilterButtons, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.insets = new Insets(10, 10, 5, 0);
+        selectionPanel.add(panelFilterButtons, gridBagConstraints);
 
         JPanel panelSearchButtons = new JPanel(new GridBagLayout());
 
         buttonAdvancedSearch = new JButton(Messages.getString("MechSelectorDialog.AdvSearch"));
         buttonAdvancedSearch.addActionListener(this);
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridwidth = 1;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.WEST;
-        panelSearchButtons.add(buttonAdvancedSearch, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        panelSearchButtons.add(buttonAdvancedSearch, gridBagConstraints);
 
         buttonResetSearch = new JButton(Messages.getString("MechSelectorDialog.Reset"));
         buttonResetSearch.addActionListener(this);
         buttonResetSearch.setEnabled(false);
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridwidth = 1;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.WEST;
-        panelSearchButtons.add(buttonResetSearch, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        panelSearchButtons.add(buttonResetSearch, gridBagConstraints);
 
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 0.0;
-        c.insets = new Insets(10, 10, 10, 0);
-        selectionPanel.add(panelSearchButtons, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.insets = new Insets(10, 10, 10, 0);
+        selectionPanel.add(panelSearchButtons, gridBagConstraints);
         //endregion Selection Panel
         
         JPanel panelOKButtons = new JPanel(new GridBagLayout());
@@ -437,16 +437,16 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
                 selectionPanel, panePreview);
         splitPane.setResizeWeight(0);
-        c = new GridBagConstraints();
-        c.gridx = c.gridy = 0;
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = c.weighty = 1;
-        getContentPane().add(splitPane, c);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = gridBagConstraints.weighty = 1;
+        getContentPane().add(splitPane, gridBagConstraints);
 
-        c.insets = new Insets(5,0,5,0);
-        c.weightx = c.weighty = 0;
-        c.gridy = 1;
-        getContentPane().add(panelOKButtons, c);
+        gridBagConstraints.insets = new Insets(5,0,5,0);
+        gridBagConstraints.weightx = gridBagConstraints.weighty = 0;
+        gridBagConstraints.gridy = 1;
+        getContentPane().add(panelOKButtons, gridBagConstraints);
 
         pack();
 
@@ -535,17 +535,17 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         if (useAlternate) { // For MML
             chosenEntity = e;
         } else if (null != e) {
-            Client c = null;
+            Client client = null;
             if (comboPlayer.getSelectedIndex() > 0) {
                 String name = (String) comboPlayer.getSelectedItem();
-                c = clientGUI.getBots().get(name);
+                client = clientGUI.getBots().get(name);
             }
-            if (c == null) {
-                c = client;
+            if (client == null) {
+                client = this.client;
             }
             autoSetSkillsAndName(e);
-            e.setOwner(c.getLocalPlayer());
-            c.sendAddEntity(e);
+            e.setOwner(client.getLocalPlayer());
+            client.sendAddEntity(e);
         }
         if (close) {
             setVisible(false);
@@ -555,12 +555,12 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
     void filterUnits() {
         RowFilter<MechTableModel, Integer> unitTypeFilter;
 
-        List<Integer> tlLvls = new ArrayList<>();
+        List<Integer> techLevels = new ArrayList<>();
         for (Integer selectedIdx : listTechLevel.getSelectedIndices()) {
-            tlLvls.add(techLevelListToIndex.get(selectedIdx));
+            techLevels.add(techLevelListToIndex.get(selectedIdx));
         }
-        final Integer[] nTypes = new Integer[tlLvls.size()];
-        tlLvls.toArray(nTypes);
+        final Integer[] nTypes = new Integer[techLevels.size()];
+        techLevels.toArray(nTypes);
         final int nClass = comboWeight.getSelectedIndex();
         final int nUnit = comboUnitType.getSelectedIndex() - 1;
         final boolean checkSupportVee = Messages.getString("MechSelectorDialog.SupportVee")
@@ -864,8 +864,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         }
 
         @Override
-        public Class<?> getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
+        public Class<?> getColumnClass(int col) {
+            return getValueAt(0, col).getClass();
         }
 
         @Override

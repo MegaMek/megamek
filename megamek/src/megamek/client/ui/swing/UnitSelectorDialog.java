@@ -75,6 +75,8 @@ import megamek.common.MechView;
 import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
@@ -115,7 +117,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
     private JComboBox<String> comboWeight;
     private JLabel lblImage;
     private JTable tableUnits;
-    JTextField txtFilter;
+    private JTextField txtFilter;
     private MechViewPanel panelMekView;
     private MechViewPanel panelTROView;
     private JComboBox<String> comboPlayer;
@@ -134,13 +136,15 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
     private MechTableModel unitModel;
     private MechSearchFilter searchFilter;
 
-    Client client;
+    private Client client;
     private ClientGUI clientgui;
     private UnitLoadingDialog unitLoadingDialog;
-    AdvancedSearchDialog asd;
-    JFrame frame;
+    private AdvancedSearchDialog asd;
+    private JFrame frame;
 
     private TableRowSorter<MechTableModel> sorter;
+
+    private static MMLogger logger = DefaultMmLogger.getInstance();
     //endregion Variable Declarations
 
     /** Creates new UnitSelectorDialog form */
@@ -656,7 +660,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
             mechView = new MechView(selectedUnit, false);
             troView = TROView.createView(selectedUnit, true);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(getClass(), "refreshUnitView", e);
             // error unit didn't load right. this is bad news.
             populateTextFields = false;
         }
@@ -668,7 +672,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
             panelTROView.reset();
         }
 
-        if (null != clientgui) {
+        if (clientgui != null) {
             clientgui.loadPreviewImage(lblImage, selectedUnit, client.getLocalPlayer());
         }
     }
@@ -686,10 +690,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
             // For some unknown reason the base path gets screwed up after you
             // print so this sets the source file to the full path.
             return new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-        } catch (EntityLoadingException ex) {
-            System.out.println("Unable to load mech: " + ms.getSourceFile()
-                    + ": " + ms.getEntryName() + ": " + ex.getMessage());
-            ex.printStackTrace();
+        } catch (EntityLoadingException e) {
+            logger.error(getClass(), "getSelectedEntity",
+                    "Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName()
+                            + ": " + e.getMessage(), e);
             return null;
         }
     }
@@ -715,8 +719,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
                 int piloting = skills[1];
     
                 e.getCrew().setGunnery(gunnery, i);
-                // For infantry, piloting doubles as antimek skill, and this is
-                // set based on whether the unit has antimek training, which gets
+                // For infantry, piloting doubles as anti-mek skill, and this is
+                // set based on whether the unit has anti-mek training, which gets
                 // set in the BLK file, so we should ignore the defaults
                 if (!(e instanceof Infantry)) {
                     e.getCrew().setPiloting(piloting, i);
@@ -746,7 +750,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
 
          // break out if there are no units to filter
          if (mechs == null) {
-             System.err.println("No units to filter!");
+             logger.error(getClass(), "run", "No units to filter!");
          } else {
              unitModel.setData(mechs);
          }

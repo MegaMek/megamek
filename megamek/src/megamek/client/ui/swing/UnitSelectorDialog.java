@@ -101,24 +101,24 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
 
     public static final int ALLOWED_YEAR_ANY = 999999;
 
-    private JButton btnSelectClose;
-    private JButton btnSelect;
-    private JButton btnClose;
-    private JButton btnShowBV;
-    private JButton btnAdvSearch;
-    private JButton btnResetSearch;
+    private JButton buttonSelectClose;
+    private JButton buttonSelect;
+    private JButton buttonClose;
+    private JButton buttonShowBV;
+    private JButton buttonAdvancedSearch;
+    private JButton buttonResetSearch;
     private JList<String> listTechLevel;
     /**
      * We need to map the selected index of listTechLevel to the actual TL it
      * belongs to
      */
-    private Map<Integer, Integer> tlLstToIdx;
+    private Map<Integer, Integer> techLevelListToIndex;
     private JComboBox<String> comboUnitType;
     private JComboBox<String> comboWeight;
-    private JLabel lblImage;
+    private JLabel labelImage;
     private JTable tableUnits;
-    private JTextField txtFilter;
-    private MechViewPanel panelMekView;
+    private JTextField textFilter;
+    private MechViewPanel panelMechView;
     private MechViewPanel panelTROView;
     private JComboBox<String> comboPlayer;
 
@@ -196,34 +196,27 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         tableUnits.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "");
         JTabbedPane panPreview = new JTabbedPane();
-        panelMekView = new MechViewPanel();
-        panelMekView.setMinimumSize(new Dimension(300, 500));
-        panelMekView.setPreferredSize(new Dimension(300, 600));
-        panPreview.addTab("Summary", panelMekView);
-        
+        panelMechView = new MechViewPanel();
+        panelMechView.setMinimumSize(new Dimension(300, 500));
+        panelMechView.setPreferredSize(new Dimension(300, 600));
+        panPreview.addTab("Summary", panelMechView);
+
         panelTROView = new MechViewPanel();
         panPreview.addTab("TRO", panelTROView);
 
         listTechLevel = new JList<>();
         listTechLevel.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
-        tlLstToIdx = new HashMap<>();
+        techLevelListToIndex = new HashMap<>();
         comboWeight = new JComboBox<>();
         comboUnitType = new JComboBox<>();
-        txtFilter = new JTextField();
-
-        btnSelect = new JButton();
-        btnSelectClose = new JButton();
-        btnClose = new JButton();
-        btnShowBV = new JButton();
-        btnAdvSearch = new JButton();
-        btnResetSearch = new JButton();
+        textFilter = new JTextField();
 
         JLabel lblType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType")); //$NON-NLS-1$
         lblType.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
         JLabel lblWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass")); //$NON-NLS-1$
         JLabel lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType")); //$NON-NLS-1$
         JLabel lblFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter")); //$NON-NLS-1$
-        lblImage = new JLabel();
+        labelImage = new JLabel();
         JLabel lblPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
         lblPlayer.setVisible(!useAlternate);
         comboPlayer = new JComboBox<>();
@@ -303,8 +296,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         weightModel.addElement(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         weightModel.setSelectedItem(EntityWeightClass.getClassName(0));
         comboWeight.setModel(weightModel);
-        comboWeight.setSelectedItem(Messages
-                .getString("MechSelectorDialog.All"));
+        comboWeight.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
         comboWeight.setMinimumSize(new Dimension(300, 27));
         comboWeight.setPreferredSize(new Dimension(300, 27));
         comboWeight.addActionListener(this);
@@ -323,13 +315,11 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
 
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
-        unitTypeModel.setSelectedItem(Messages
-                .getString("MechSelectorDialog.All"));
+        unitTypeModel.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
         for (int i = 0; i < UnitType.SIZE; i++) {
             unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
         }
-        unitTypeModel.addElement(Messages
-                .getString("MechSelectorDialog.SupportVee"));
+        unitTypeModel.addElement(Messages.getString("MechSelectorDialog.SupportVee"));
         comboUnitType.setModel(unitTypeModel);
         comboUnitType.setMinimumSize(new Dimension(300, 27));
         comboUnitType.setPreferredSize(new Dimension(300, 27));
@@ -340,10 +330,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         c.anchor = GridBagConstraints.WEST;
         panelFilterButtons.add(comboUnitType, c);
 
-        txtFilter.setText("");
-        txtFilter.setMinimumSize(new Dimension(300, 28));
-        txtFilter.setPreferredSize(new Dimension(300, 28));
-        txtFilter.getDocument().addDocumentListener(new DocumentListener() {
+        textFilter.setText("");
+        textFilter.setMinimumSize(new Dimension(300, 28));
+        textFilter.setPreferredSize(new Dimension(300, 28));
+        textFilter.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 filterUnits();
             }
@@ -360,7 +350,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         c.gridx = 1;
         c.gridy = 3;
         c.anchor = GridBagConstraints.WEST;
-        panelFilterButtons.add(txtFilter, c);
+        panelFilterButtons.add(textFilter, c);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -368,8 +358,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         c.anchor = GridBagConstraints.WEST;
         panelFilterButtons.add(lblFilter, c);
 
-        lblImage.setHorizontalAlignment(SwingConstants.CENTER);
-        lblImage.setText(""); // NOI18N
+        labelImage = new JLabel("");
+        labelImage.setHorizontalAlignment(SwingConstants.CENTER);
         c = new GridBagConstraints();
         c.gridx = 2;
         c.gridy = 0;
@@ -377,7 +367,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        panelFilterButtons.add(lblImage, c);
+        panelFilterButtons.add(labelImage, c);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -388,26 +378,26 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         c.insets = new Insets(10, 10, 5, 0);
         selectionPanel.add(panelFilterButtons, c);
 
-        JPanel panelSearchBtns = new JPanel(new GridBagLayout());
+        JPanel panelSearchButtons = new JPanel(new GridBagLayout());
 
-        btnAdvSearch.setText(Messages.getString("MechSelectorDialog.AdvSearch")); //$NON-NLS-1$
-        btnAdvSearch.addActionListener(this);
+        buttonAdvancedSearch = new JButton(Messages.getString("MechSelectorDialog.AdvSearch"));
+        buttonAdvancedSearch.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridwidth = 1;
         c.gridy = 0;
         c.anchor = GridBagConstraints.WEST;
-        panelSearchBtns.add(btnAdvSearch, c);
+        panelSearchButtons.add(buttonAdvancedSearch, c);
 
-        btnResetSearch.setText(Messages.getString("MechSelectorDialog.Reset")); //$NON-NLS-1$
-        btnResetSearch.addActionListener(this);
-        btnResetSearch.setEnabled(false);
+        buttonResetSearch = new JButton(Messages.getString("MechSelectorDialog.Reset"));
+        buttonResetSearch.addActionListener(this);
+        buttonResetSearch.setEnabled(false);
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridwidth = 1;
         c.gridy = 0;
         c.anchor = GridBagConstraints.WEST;
-        panelSearchBtns.add(btnResetSearch, c);
+        panelSearchButtons.add(buttonResetSearch, c);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -416,33 +406,33 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 0.0;
         c.insets = new Insets(10, 10, 10, 0);
-        selectionPanel.add(panelSearchBtns, c);
+        selectionPanel.add(panelSearchButtons, c);
 
-        JPanel panelOKBtns= new JPanel(new GridBagLayout());
+        JPanel panelOKButtons = new JPanel(new GridBagLayout());
 
-        btnSelect.setText(Messages.getString("MechSelectorDialog.m_bPick"));
-        btnSelect.addActionListener(this);
-        btnSelect.setVisible(!useAlternate);
-        panelOKBtns.add(btnSelect, new GridBagConstraints());
+        buttonSelect = new JButton(Messages.getString("MechSelectorDialog.m_bPick"));
+        buttonSelect.addActionListener(this);
+        buttonSelect.setVisible(!useAlternate);
+        panelOKButtons.add(buttonSelect, new GridBagConstraints());
 
-        btnSelectClose.setText(Messages.getString("MechSelectorDialog.m_bPickClose"));
-        btnSelectClose.addActionListener(this);
-        panelOKBtns.add(btnSelectClose, new GridBagConstraints());
+        buttonSelectClose = new JButton(Messages.getString("MechSelectorDialog.m_bPickClose"));
+        buttonSelectClose.addActionListener(this);
+        panelOKButtons.add(buttonSelectClose, new GridBagConstraints());
 
-        btnClose.setText(Messages.getString("Close"));
-        btnClose.addActionListener(this);
-        panelOKBtns.add(btnClose, new GridBagConstraints());
+        buttonClose = new JButton(Messages.getString("Close"));
+        buttonClose.addActionListener(this);
+        panelOKButtons.add(buttonClose, new GridBagConstraints());
 
         if (!useAlternate) {
             updatePlayerChoice();
         }
-        panelOKBtns.add(lblPlayer, new GridBagConstraints());
-        panelOKBtns.add(comboPlayer, new GridBagConstraints());
+        panelOKButtons.add(lblPlayer, new GridBagConstraints());
+        panelOKButtons.add(comboPlayer, new GridBagConstraints());
 
-        btnShowBV.setText(Messages.getString("MechSelectorDialog.BV")); //$NON-NLS-1$
-        btnShowBV.addActionListener(this);
-        btnShowBV.setVisible(!useAlternate);
-        panelOKBtns.add(btnShowBV, new GridBagConstraints());
+        buttonShowBV = new JButton(Messages.getString("MechSelectorDialog.BV"));
+        buttonShowBV.addActionListener(this);
+        buttonShowBV.setVisible(!useAlternate);
+        panelOKButtons.add(buttonShowBV, new GridBagConstraints());
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
                 selectionPanel, panPreview);
@@ -455,7 +445,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         c.insets = new Insets(5,0,5,0);
         c.weightx = c.weighty = 0;
         c.gridy = 1;
-        getContentPane().add(panelOKBtns, c);
+        getContentPane().add(panelOKButtons, c);
 
         pack();
 
@@ -521,13 +511,13 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
                 break;
         }
 
-        tlLstToIdx.clear();
+        techLevelListToIndex.clear();
         DefaultComboBoxModel<String> techModel = new DefaultComboBoxModel<>();
         int selectionIdx = 0;
         for (int tl = 0; tl <= maxTech; tl++) {
             if ((tl != TechConstants.T_IS_TW_ALL)
                     && (tl != TechConstants.T_TW_ALL)) {
-                tlLstToIdx.put(selectionIdx, tl);
+                techLevelListToIndex.put(selectionIdx, tl);
                 techModel.addElement(TechConstants.getLevelDisplayableName(tl));
                 selectionIdx++;
             }
@@ -566,7 +556,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
 
         List<Integer> tlLvls = new ArrayList<>();
         for (Integer selectedIdx : listTechLevel.getSelectedIndices()) {
-            tlLvls.add(tlLstToIdx.get(selectedIdx));
+            tlLvls.add(techLevelListToIndex.get(selectedIdx));
         }
         final Integer[] nTypes = new Integer[tlLvls.size()];
         tlLvls.toArray(nTypes);
@@ -610,8 +600,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
                             /*Advanced Search*/
                             && ((searchFilter == null) || MechSearchFilter.isMatch(mech, searchFilter))
                             && !(mech.getYear() > year)) {
-                        if (txtFilter.getText().length() > 0) {
-                            String text = txtFilter.getText();
+                        if (textFilter.getText().length() > 0) {
+                            String text = textFilter.getText();
                             return mech.getName().toLowerCase().contains(text.toLowerCase());
                     }
                     return true;
@@ -649,8 +639,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
         Entity selectedUnit = getSelectedEntity();
         // null entity, so load a default unit.
         if (selectedUnit == null) {
-            panelMekView.reset();
-            lblImage.setIcon(null);
+            panelMechView.reset();
+            labelImage.setIcon(null);
             return;
         }
 
@@ -665,15 +655,15 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
             populateTextFields = false;
         }
         if (populateTextFields) {
-            panelMekView.setMech(selectedUnit, mechView);
+            panelMechView.setMech(selectedUnit, mechView);
             panelTROView.setMech(selectedUnit, troView);
         } else {
-            panelMekView.reset();
+            panelMechView.reset();
             panelTROView.reset();
         }
 
         if (clientgui != null) {
-            clientgui.loadPreviewImage(lblImage, selectedUnit, client.getLocalPlayer());
+            clientgui.loadPreviewImage(labelImage, selectedUnit, client.getLocalPlayer());
         }
     }
 
@@ -757,10 +747,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
          filterUnits();
 
          //initialize with the units sorted alphabetically by chassis
-         List<SortKey> sortlist = new ArrayList<>();
-         sortlist.add(new SortKey(MechTableModel.COL_CHASSIS,SortOrder.ASCENDING));
-         tableUnits.getRowSorter().setSortKeys(sortlist);
-         ((DefaultRowSorter<?, ?>)tableUnits.getRowSorter()).sort();
+         List<SortKey> sortList = new ArrayList<>();
+         sortList.add(new SortKey(MechTableModel.COL_CHASSIS,SortOrder.ASCENDING));
+         tableUnits.getRowSorter().setSortKeys(sortList);
+         ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
 
          tableUnits.invalidate(); // force re-layout of window
          pack();
@@ -770,10 +760,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
          // In some cases, it's possible to get here without an initialized
          // instance (loading a saved game without a cache).  In these cases,
          // we dn't care about the failed loads.
-         if (mscInstance.isInitialized() && !useAlternate)
-         {
-             final Map<String, String> hFailedFiles =
-                 MechSummaryCache.getInstance().getFailedFiles();
+         if (mscInstance.isInitialized() && !useAlternate) {
+             final Map<String, String> hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
              if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
                  // self-showing dialog
                  new UnitFailureDialog(frame, hFailedFiles);
@@ -804,7 +792,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
          }
          asd.clearValues();
          searchFilter = null;
-         btnResetSearch.setEnabled(false);
+         buttonResetSearch.setEnabled(false);
          if (!useAlternate) {
              updatePlayerChoice();
          }
@@ -967,13 +955,13 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource().equals(comboWeight) || ev.getSource().equals(comboUnitType)) {
             filterUnits();
-        } else if (ev.getSource().equals(btnSelect)) {
+        } else if (ev.getSource().equals(buttonSelect)) {
             select(false);
-        } else if (ev.getSource().equals(btnSelectClose)) {
+        } else if (ev.getSource().equals(buttonSelectClose)) {
             select(true);
-        } else if (ev.getSource().equals(btnClose)) {
+        } else if (ev.getSource().equals(buttonClose)) {
             close();
-        } else if (ev.getSource().equals(btnShowBV)) {
+        } else if (ev.getSource().equals(buttonShowBV)) {
             JEditorPane tEditorPane = new JEditorPane();
             tEditorPane.setContentType("text/html");
             tEditorPane.setEditable(false);
@@ -991,14 +979,14 @@ public class UnitSelectorDialog extends JDialog implements Runnable, KeyListener
             tScroll.setPreferredSize(size);
             JOptionPane.showMessageDialog(null, tScroll, "BV",
                     JOptionPane.INFORMATION_MESSAGE, null);
-        } else if (ev.getSource().equals(btnAdvSearch)) {
+        } else if (ev.getSource().equals(buttonAdvancedSearch)) {
             searchFilter = asd.showDialog();
-            btnResetSearch.setEnabled((searchFilter != null) && !searchFilter.isDisabled);
+            buttonResetSearch.setEnabled((searchFilter != null) && !searchFilter.isDisabled);
             filterUnits();
-        } else if (ev.getSource().equals(btnResetSearch)) {
+        } else if (ev.getSource().equals(buttonResetSearch)) {
             asd.clearValues();
             searchFilter=null;
-            btnResetSearch.setEnabled(false);
+            buttonResetSearch.setEnabled(false);
             filterUnits();
         }
     }

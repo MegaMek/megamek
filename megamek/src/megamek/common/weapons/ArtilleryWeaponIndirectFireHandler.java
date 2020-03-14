@@ -28,6 +28,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
+import megamek.common.HexTarget;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
 import megamek.common.LosEffects;
@@ -37,6 +38,7 @@ import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.Team;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -141,6 +143,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             aaa.decrementTurnsTilHit();
             return true;
         }
+        
+        // if we are engaging in counter-battery fire against a specific entity, handle the attack differently.
+        //int alpha
+        
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
         Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
@@ -369,6 +375,27 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
                 return !bMissed;
+            }
+        }
+        
+        // if the round landed on the board, and the attacker is an off-board artillery piece
+        // then check to see if the hex where it landed can be seen by anyone on an opposing team
+        // if so, mark the attacker so that it can be targeted by counter-battery fire
+        if (aaa.getEntity(game).isOffBoard() && game.getBoard().contains(targetPos)) {
+            HexTarget hexTarget = new HexTarget(targetPos, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY);
+            
+            for(Entity entity : game.getEntitiesVector()) {
+                
+                // if the entity is hostile and the attacker has not been designated
+                // as observed already by the entity's team
+                if(entity.isEnemyOf(aaa.getEntity(game)) &&
+                        !aaa.getEntity(game).isOffBoardObserved(entity.getOwner().getTeam())) {
+                    boolean hasLoS = LosEffects.calculateLos(game, entity.getId(), hexTarget).canSee();
+                    
+                    if(hasLoS) {
+                        aaa.getEntity(game).addOffBoardObserver(entity.getOwner().getTeam());
+                    }
+                }
             }
         }
 

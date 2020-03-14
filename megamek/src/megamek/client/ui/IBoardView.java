@@ -29,6 +29,7 @@ import megamek.client.event.MechDisplayListener;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
+import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.actions.AttackAction;
 import megamek.common.util.FiringSolution;
@@ -189,5 +190,7 @@ public interface IBoardView extends MechDisplayListener {
      * @return
      */
     public List<Entity> getEntitiesFlyingOver(Coords c);
+    
+    public Mounted getSelectedArtilleryWeapon();
 
 }

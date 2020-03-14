@@ -81,7 +81,11 @@ public class UnitOverview implements IDisplayable {
     private Image scrollDown;
     private Image pageUp;
     private Image pageDown;
-
+    
+    public static int getUIWidth() {
+        return ICON_WIDTH + DIST_SIDE;
+    }
+    
     public UnitOverview(ClientGUI clientgui) {
         this.clientgui = clientgui;
         fm = clientgui.getFontMetrics(FONT);

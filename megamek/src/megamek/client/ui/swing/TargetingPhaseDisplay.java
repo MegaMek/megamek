@@ -889,6 +889,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 waa.updateTurnsTilHit(clientgui.getClient().getGame());
             } 
         }
+        // put this and the rest of the method into a separate function for access externally.
         if ((null != mounted.getLinked())
                 && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)) {
             Mounted ammoMount = mounted.getLinked();

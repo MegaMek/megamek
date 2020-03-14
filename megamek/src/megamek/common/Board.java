@@ -974,13 +974,12 @@ public class Board implements Serializable, IBoard {
                 
                 // Multi-hex problems 
                 // A building hex must only have exits to other building hexes of the same Building Type and Class
-                if (hex.containsTerrain(Terrains.BUILDING)) {
+                if (hex.containsTerrain(Terrains.BUILDING) && hex.getTerrain(Terrains.BUILDING).hasExitsSpecified()) {
                 	for (int dir = 0; dir < 6; dir++) {
                 		IHex adjHex = getHexInDir(x, y, dir);
                 		if (adjHex != null 
                 				&& adjHex.containsTerrain(Terrains.BUILDING) 
-                				&& hex.containsTerrainExit(Terrains.BUILDING, dir) 
-            					&& hex.getTerrain(Terrains.BUILDING).hasExitsSpecified()) 
+                				&& hex.containsTerrainExit(Terrains.BUILDING, dir)) 
                 		{
                 			if (adjHex.getTerrain(Terrains.BUILDING).getLevel() != hex.getTerrain(Terrains.BUILDING).getLevel()) {
                 				valid = false;

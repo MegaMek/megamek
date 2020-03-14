@@ -1733,15 +1733,9 @@ public class BoardEditor extends JComponent
             boardSaveAsImage(false);
             ignoreHotKeys = false;
         } else if (ae.getActionCommand().equals(FILE_BOARD_EDITOR_VALIDATE)) {
-        	// "Initialize" all hexes of the board to correct the buildings. Will also correct roads.
-        	// This will not change hexes that have their exits actively set ("Exits" checked) 
-        	for (int x = 0; x < board.getWidth(); x++) {
-                for (int y = 0; y < board.getHeight(); y++) {
-                	board.initializeHex(x, y);
-                }
-        	}
-            StringBuffer errBuff = new StringBuffer();
-            board.isValid(errBuff);
+        	correctExits();
+        	StringBuffer errBuff = new StringBuffer();
+        	board.isValid(errBuff);
             if (errBuff.length() > 0) {
                 showBoardValidationReport(errBuff);
             } else {

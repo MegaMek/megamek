@@ -33,14 +33,13 @@ import java.awt.*;
 import java.util.Map;
 
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
+    //region Variable Declarations
     private ClientGUI clientGUI;
     private JComboBox<String> comboPlayer = new JComboBox<>();
-
+    //endregion Variable Declarations
 
     public MegaMekUnitSelectorDialog(ClientGUI clientGUI, UnitLoadingDialog unitLoadingDialog) {
-        super(clientGUI.getFrame());
-        this.unitLoadingDialog = unitLoadingDialog;
-        frame = clientGUI.getFrame();
+        super(clientGUI.getFrame(), unitLoadingDialog);
         client = clientGUI.getClient();
         this.clientGUI = clientGUI;
         allowedYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
@@ -157,11 +156,11 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     protected Entity refreshUnitView() {
-        Entity selectedUnit = super.refreshUnitView(); //we first want it to run through the same code as its parent
-        if (selectedUnit != null) {
-            clientGUI.loadPreviewImage(labelImage, selectedUnit, client.getLocalPlayer());
+        Entity selectedEntity = super.refreshUnitView(); //we first want it to run through the same code as its parent
+        if (selectedEntity != null) {
+            clientGUI.loadPreviewImage(labelImage, selectedEntity, client.getLocalPlayer());
         }
-        return selectedUnit;
+        return selectedEntity;
     }
 
     @Override
@@ -183,6 +182,5 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     public void setVisible(boolean visible) {
         super.setVisible(visible);
         updatePlayerChoice();
-        filterUnits();
     }
 }

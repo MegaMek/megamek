@@ -147,8 +147,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     private static MMLogger logger = DefaultMmLogger.getInstance();
     //endregion Variable Declarations
 
-    protected AbstractUnitSelectorDialog(JFrame frame) {
+    protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
         super(frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
+        setName("Form");
+        this.frame = frame;
+        this.unitLoadingDialog = unitLoadingDialog;
     }
 
     protected void initialize() {
@@ -250,6 +253,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(techLevelScroll, gridBagConstraintsWest);
 
         JLabel labelWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass")); //$NON-NLS-1$
+        labelWeight.setName("labelWeight");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 1;
         panelFilterButtons.add(labelWeight, gridBagConstraintsWest);
@@ -261,6 +265,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         weightModel.addElement(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         weightModel.setSelectedItem(EntityWeightClass.getClassName(0));
         comboWeight.setModel(weightModel);
+        comboWeight.setName("comboWeight");
         comboWeight.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
         comboWeight.setMinimumSize(new Dimension(300, 27));
         comboWeight.setPreferredSize(new Dimension(300, 27));
@@ -270,6 +275,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(comboWeight, gridBagConstraintsWest);
 
         JLabel labelUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType")); //$NON-NLS-1$
+        labelUnitType.setName("labelUnitType");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -285,6 +291,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.SupportVee"));
         comboUnitType.setModel(unitTypeModel);
+        comboUnitType.setName("comboUnitType");
         comboUnitType.setMinimumSize(new Dimension(300, 27));
         comboUnitType.setPreferredSize(new Dimension(300, 27));
         comboUnitType.addActionListener(this);
@@ -292,6 +299,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 0;
         panelFilterButtons.add(comboUnitType, gridBagConstraintsWest);
 
+//        textFilter = new JTextField(MMConstants.EmptyString);
         textFilter = new JTextField("");
         textFilter.setMinimumSize(new Dimension(300, 28));
         textFilter.setPreferredSize(new Dimension(300, 28));
@@ -518,9 +526,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected Entity refreshUnitView() {
         boolean populateTextFields = true;
 
-        Entity selectedUnit = getSelectedEntity();
+        Entity selectedEntity = getSelectedEntity();
         // null entity, so load a default unit.
-        if (selectedUnit == null) {
+        if (selectedEntity == null) {
             panelMechView.reset();
             labelImage.setIcon(null);
             return null;
@@ -529,22 +537,22 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         MechView mechView = null;
         TROView troView = null;
         try {
-            mechView = new MechView(selectedUnit, false);
-            troView = TROView.createView(selectedUnit, true);
+            mechView = new MechView(selectedEntity, false);
+            troView = TROView.createView(selectedEntity, true);
         } catch (Exception e) {
             logger.error(getClass(), "refreshUnitView", e);
             // error: unit didn't load right. this is bad news.
             populateTextFields = false;
         }
         if (populateTextFields) {
-            panelMechView.setMech(selectedUnit, mechView);
-            panelTROView.setMech(selectedUnit, troView);
+            panelMechView.setMech(selectedEntity, mechView);
+            panelTROView.setMech(selectedEntity, troView);
         } else {
             panelMechView.reset();
             panelTROView.reset();
         }
 
-        return selectedUnit;
+        return selectedEntity;
     }
 
     public Entity getSelectedEntity() {
@@ -630,6 +638,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         asd.clearValues();
         searchFilter = null;
         buttonResetSearch.setEnabled(false);
+        filterUnits();
 
         super.setVisible(visible);
     }

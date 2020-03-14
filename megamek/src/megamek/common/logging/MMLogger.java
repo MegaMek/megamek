@@ -1,6 +1,11 @@
 package megamek.common.logging;
 
+import megamek.common.annotations.Nullable;
 import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
 /**
  * Interface for the Logger object.
@@ -482,4 +487,9 @@ public interface MMLogger {
      * Clears all of the logging properties.
      */
     void removeLoggingProperties();
+
+    /**
+     * Resets the supplied log file
+     */
+    void resetLogFile(@Nullable final String logFileName);
 }

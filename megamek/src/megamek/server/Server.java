@@ -19417,7 +19417,6 @@ public class Server implements Runnable {
                         }
                     }
                 }
-
                 // heat effects: shutdown!
                 else if ((entity.heat >= 14) && !entity.isShutDown()) {
                     if (entity.heat >= autoShutDownHeat) {
@@ -19540,6 +19539,7 @@ public class Server implements Runnable {
 
             // heat doesn't matter for non-mechs
             if (!(entity instanceof Mech)) {
+                entity.heat = 0;
                 entity.heatBuildup = 0;
                 entity.heatFromExternal = 0;
                 entity.coolFromExternal = 0;

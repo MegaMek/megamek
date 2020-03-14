@@ -25,6 +25,7 @@ VERSION HISTORY:
 + Issue #1635: Errors in classic.tileset
 + Issue #1755: Battlemech Turrets should all be Tech Base ALL.
 + Issue #1302: Improved visibility on unit list scroll buttons; gray them out to indicate no further scrolling possibility
++ PR #1758: Fixing display with negative heat (e.g. while snowing)
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

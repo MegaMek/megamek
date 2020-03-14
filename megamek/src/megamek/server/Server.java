@@ -3136,10 +3136,16 @@ public class Server implements Runnable {
             return;
         }
         
-        // get the next player from the team this player is on.
-        IPlayer next = game.getTeamForPlayer(current).getNextValidPlayer(current, game);
+        // if the player isn't on a team, there is no next team by definition. Skip the rest.
+        Team currentPlayerTeam = game.getTeamForPlayer(current);
+        if (currentPlayerTeam == null) {
+            return;
+        }
         
-        while(!next.equals(current)) {
+        // get the next player from the team this player is on.
+        IPlayer next = currentPlayerTeam.getNextValidPlayer(current, game);
+        
+        while (!next.equals(current)) {
             // if the chosen player is a valid player, we change the turn order and
             // inform the clients.
             if ((next != null) && (game.getEntitiesOwnedBy(next) != 0)
@@ -3206,7 +3212,7 @@ public class Server implements Runnable {
                 // if nothing changed return without doing anything
             }
             
-            next = game.getTeamForPlayer(current).getNextValidPlayer(next, game);
+            next = currentPlayerTeam.getNextValidPlayer(next, game);
         }
     }
 

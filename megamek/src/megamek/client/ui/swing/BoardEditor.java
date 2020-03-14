@@ -1440,12 +1440,32 @@ public class BoardEditor extends JComponent
         mapSettings.setBoardSize(board.getWidth(), board.getHeight());
         refreshTerrainList();
     }
+    
+    /**
+     * Will do board.initializeHex() for all hexes, correcting 
+     * building and road connection issues for those hexes that do not have
+     * the exits check set.
+     */
+    private void correctExits() {
+    	for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+            	board.initializeHex(x, y);
+            }
+    	}
+    }
 
     /**
      * Checks to see if there is already a path and name stored; if not, calls
      * "save as"; otherwise, saves the board to the specified file.
      */
     private void boardSave() {
+    	// First, correct connection issues and do a validation.
+    	correctExits();
+        StringBuffer errBuff = new StringBuffer();
+        board.isValid(errBuff);
+        if (errBuff.length() > 0) {
+            showBoardValidationReport(errBuff);
+        }
         if (curfile == null) {
             boardSaveAs();
             return;
@@ -1494,6 +1514,13 @@ public class BoardEditor extends JComponent
      * the file.
      */
     private void boardSaveAs() {
+    	// First, correct connection issues and do a validation.
+    	correctExits();
+        StringBuffer errBuff = new StringBuffer();
+        board.isValid(errBuff);
+        if (errBuff.length() > 0) {
+            showBoardValidationReport(errBuff);
+        }
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
@@ -1706,6 +1733,13 @@ public class BoardEditor extends JComponent
             boardSaveAsImage(false);
             ignoreHotKeys = false;
         } else if (ae.getActionCommand().equals(FILE_BOARD_EDITOR_VALIDATE)) {
+        	// "Initialize" all hexes of the board to correct the buildings. Will also correct roads.
+        	// This will not change hexes that have their exits actively set ("Exits" checked) 
+        	for (int x = 0; x < board.getWidth(); x++) {
+                for (int y = 0; y < board.getHeight(); y++) {
+                	board.initializeHex(x, y);
+                }
+        	}
             StringBuffer errBuff = new StringBuffer();
             board.isValid(errBuff);
             if (errBuff.length() > 0) {

@@ -971,12 +971,44 @@ public class Board implements Serializable, IBoard {
                 }
                 StringBuffer currBuff = new StringBuffer();
                 boolean valid = hex.isValid(currBuff);
+                
+                // Multi-hex problems 
+                // A building hex must only have exits to other building hexes of the same Building Type and Class
+                if (hex.containsTerrain(Terrains.BUILDING)) {
+                	for (int dir = 0; dir < 6; dir++) {
+                		IHex adjHex = getHexInDir(x, y, dir);
+                		if (adjHex != null 
+                				&& hex.containsTerrainExit(Terrains.BUILDING, dir) 
+                				&& hex.getTerrain(Terrains.BUILDING).hasExitsSpecified()
+                				&& adjHex.containsTerrain(Terrains.BUILDING) 
+                				&& adjHex.getTerrain(Terrains.BUILDING).getLevel() != hex.getTerrain(Terrains.BUILDING).getLevel()) {
+                			valid = false;
+                			currBuff.append("Building must not have an exit to a building of another type (Light, Medium...)!\n");
+                			break;
+                		}
+                	}
+                }
+                if (hex.containsTerrain(Terrains.BLDG_CLASS)) {
+                	for (int dir = 0; dir < 6; dir++) {
+                		IHex adjHex = getHexInDir(x, y, dir);
+                		if (adjHex != null && hex.containsTerrainExit(Terrains.BUILDING, dir) &&
+                				(adjHex.containsTerrain(Terrains.BLDG_CLASS) 
+                						&& adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() != hex.getTerrain(Terrains.BLDG_CLASS).getLevel())
+                				|| (!adjHex.containsTerrain(Terrains.BLDG_CLASS) && adjHex.containsTerrain(Terrains.BUILDING))) {
+                			valid = false;
+                			currBuff.append("Building has an exit in direction "+dir+" to a building of another Building Class!\n");
+                			break;
+                		}
+                	}
+                }
+                
                 // Return early if we aren't logging errors
                 if (!valid && (errBuff == null)) {
-                    return false;
+                	return false;
                 } else if (!valid) { // Otherwise, log the error for later output
-                    errBuff.append("Hex " + String.format("%1$02d%02$2d", x + 1, y + 1) + " is invalid!\n");
-                    errBuff.append(currBuff.toString().replaceAll("^", "\t"));
+                	errBuff.append("Hex " + String.format("%1$02d%02$2d", x + 1, y + 1) + " is invalid:\n");
+//                	errBuff.append(currBuff.toString().replaceAll("^", "\t"));
+                	errBuff.append(currBuff.toString());
                 }
             }
         }

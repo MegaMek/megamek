@@ -40,8 +40,9 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     public MegaMekUnitSelectorDialog(ClientGUI clientGUI, UnitLoadingDialog unitLoadingDialog) {
         super(clientGUI.getFrame(), unitLoadingDialog);
-        client = clientGUI.getClient();
         this.clientGUI = clientGUI;
+        client = clientGUI.getClient();
+        enableYearLimits = client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
         allowedYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         canonOnly = client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
         gameTechLevel = TechConstants.getSimpleLevel(client.getGame().getOptions()
@@ -70,7 +71,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         updatePlayerChoice();
 
         JLabel labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"),
-                SwingConstants.RIGHT); //$NON-NLS-1$
+                SwingConstants.RIGHT);
         panelButtons.add(labelPlayer, new GridBagConstraints());
 
         panelButtons.add(comboPlayer, new GridBagConstraints());

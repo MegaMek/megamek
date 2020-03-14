@@ -24,6 +24,7 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.UnitFailureDialog;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.common.*;
+import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -48,6 +49,13 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         gameTechLevel = TechConstants.getSimpleLevel(client.getGame().getOptions()
                 .stringOption("techlevel"));
 
+        StringBuilder message = new StringBuilder();
+        message.append("enableYearLimits : ").append(enableYearLimits).append("\n")
+                .append("allowedYear : ").append(allowedYear).append("\n")
+                .append("canonOnly : ").append(canonOnly).append("\n")
+                .append("gameTechLevel : ").append(gameTechLevel).append("\n");
+        DefaultMmLogger.getInstance().error(AbstractUnitSelectorDialog.class, "MegaMekUnitSelectorDialog", message);
+        
         initialize();
     }
 

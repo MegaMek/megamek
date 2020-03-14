@@ -109,12 +109,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     private JButton buttonAdvancedSearch;
     private JButton buttonResetSearch;
-    private JList<String> listTechLevel = new JList<>();
+    protected JList<String> listTechLevel = new JList<>();
     /**
      * We need to map the selected index of listTechLevel to the actual TL it
      * belongs to
      */
-    private Map<Integer, Integer> techLevelListToIndex = new HashMap<>();
+    protected Map<Integer, Integer> techLevelListToIndex = new HashMap<>();
     protected JComboBox<String> comboUnitType = new JComboBox<>();
     protected JComboBox<String> comboWeight = new JComboBox<>();
     protected JLabel labelImage = new JLabel(""); //inline to avoid potential null pointer issues
@@ -146,7 +146,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected boolean canonOnly = false;
     protected int gameTechLevel = TechConstants.T_SIMPLE_INTRO;
 
-    private static MMLogger logger = DefaultMmLogger.getInstance();
+    protected static MMLogger logger = DefaultMmLogger.getInstance();
     //endregion Variable Declarations
 
     protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
@@ -494,6 +494,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
         final Integer[] nTypes = new Integer[techLevels.size()];
         techLevels.toArray(nTypes);
+
         final int nClass = comboWeight.getSelectedIndex();
         final int nUnit = comboUnitType.getSelectedIndex() - 1;
         final boolean checkSupportVee = Messages.getString("MechSelectorDialog.SupportVee")
@@ -506,10 +507,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                     MechTableModel mechModel = entry.getModel();
                     MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
                     boolean techLevelMatch = false;
-                    int type = mech.getType();
-                    if (enableYearLimits) {
-                        type = mech.getType(allowedYear);
-                    }
+                    int type = enableYearLimits ? mech.getType(allowedYear) : mech.getType();
                     for (int tl : nTypes) {
                         if (type == tl) {
                             techLevelMatch = true;
@@ -529,7 +527,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                             && ((nUnit == -1)
                                     || (!checkSupportVee && mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
                                     || (checkSupportVee && mech.isSupport()))
-                            /*Advanced Search*/
+                            /* Advanced Search */
                             && ((searchFilter == null) || MechSearchFilter.isMatch(mech, searchFilter))
                     ) {
                         if (textFilter.getText().length() > 0) {
@@ -542,6 +540,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 }
             };
         } catch (PatternSyntaxException ignored) {
+            logger.error(getClass(), "filterUnits", "I've been ignored, HELP");
             return;
         }
         sorter.setRowFilter(unitTypeFilter);

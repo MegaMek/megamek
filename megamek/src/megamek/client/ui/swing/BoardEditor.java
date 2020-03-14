@@ -1514,13 +1514,8 @@ public class BoardEditor extends JComponent
      * the file.
      */
     private void boardSaveAs() {
-        // First, correct connection issues and do a validation.
+        // First, correct connection issues
         correctExits();
-        StringBuffer errBuff = new StringBuffer();
-        board.isValid(errBuff);
-        if (errBuff.length() > 0) {
-            showBoardValidationReport(errBuff);
-        }
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));

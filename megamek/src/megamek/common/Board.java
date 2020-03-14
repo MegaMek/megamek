@@ -975,25 +975,25 @@ public class Board implements Serializable, IBoard {
                 // Multi-hex problems 
                 // A building hex must only have exits to other building hexes of the same Building Type and Class
                 if (hex.containsTerrain(Terrains.BUILDING) && hex.getTerrain(Terrains.BUILDING).hasExitsSpecified()) {
-                	for (int dir = 0; dir < 6; dir++) {
-                		IHex adjHex = getHexInDir(x, y, dir);
-                		if (adjHex != null 
-                				&& adjHex.containsTerrain(Terrains.BUILDING) 
-                				&& hex.containsTerrainExit(Terrains.BUILDING, dir)) 
-                		{
-                			if (adjHex.getTerrain(Terrains.BUILDING).getLevel() != hex.getTerrain(Terrains.BUILDING).getLevel()) {
-                				valid = false;
-                				currBuff.append("Building has an exit to a building of another Building Type (Light, Medium...).\n");
-                			}
-                			if (hex.containsTerrain(Terrains.BLDG_CLASS) 
-                					&& ((adjHex.containsTerrain(Terrains.BLDG_CLASS) 
-                							&& adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() != hex.getTerrain(Terrains.BLDG_CLASS).getLevel())
-                							|| (!adjHex.containsTerrain(Terrains.BLDG_CLASS) )  )) {
-                				valid = false;
-                				currBuff.append("Building has an exit in direction "+dir+" to a building of another Building Class.\n");
-                			}
-                		}
-                	}
+                    for (int dir = 0; dir < 6; dir++) {
+                        IHex adjHex = getHexInDir(x, y, dir);
+                        if (adjHex != null 
+                                && adjHex.containsTerrain(Terrains.BUILDING) 
+                                && hex.containsTerrainExit(Terrains.BUILDING, dir)) 
+                        {
+                            if (adjHex.getTerrain(Terrains.BUILDING).getLevel() != hex.getTerrain(Terrains.BUILDING).getLevel()) {
+                                valid = false;
+                                currBuff.append("Building has an exit to a building of another Building Type (Light, Medium...).\n");
+                            }
+                            if (hex.containsTerrain(Terrains.BLDG_CLASS) 
+                                    && ((adjHex.containsTerrain(Terrains.BLDG_CLASS) 
+                                            && adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() != hex.getTerrain(Terrains.BLDG_CLASS).getLevel())
+                                            || (!adjHex.containsTerrain(Terrains.BLDG_CLASS) )  )) {
+                                valid = false;
+                                currBuff.append("Building has an exit in direction "+dir+" to a building of another Building Class.\n");
+                            }
+                        }
+                    }
                 }
                 
                 // Return early if we aren't logging errors

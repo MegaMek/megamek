@@ -33,21 +33,21 @@ import java.util.Vector;
  */
 public class Building implements Serializable {
 
-	private static final long serialVersionUID = -8236017592012683793L;
+    private static final long serialVersionUID = -8236017592012683793L;
 
-	// The Building Types
-	public static final int LIGHT = 1;
-	public static final int MEDIUM = 2;
-	public static final int HEAVY = 3;
-	public static final int HARDENED = 4;
-	public static final int WALL = 5;
-	
-	// The Building Class
-	public static final int STANDARD = 0;
-	public static final int HANGAR = 1;
-	public static final int FORTRESS = 2;
-	public static final int GUN_EMPLACEMENT = 3;
-	
+    // The Building Types
+    public static final int LIGHT = 1;
+    public static final int MEDIUM = 2;
+    public static final int HEAVY = 3;
+    public static final int HARDENED = 4;
+    public static final int WALL = 5;
+    
+    // The Building Class
+    public static final int STANDARD = 0;
+    public static final int HANGAR = 1;
+    public static final int FORTRESS = 2;
+    public static final int GUN_EMPLACEMENT = 3;
+    
     /**
      * The ID of this building.
      */

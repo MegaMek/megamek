@@ -21724,10 +21724,12 @@ public class Server implements Runnable {
                     } else if (!crew.isDoomed()) {
                         crew.setDoomed(true);
                         //Safety. We might use this logic for large naval vessels later on
-                        if (en instanceof Aero) {
+                        if (en instanceof Aero && ((Aero)en).isEjecting()) {
+                            vDesc.addAll(destroyEntity(en, "ejection", true));
                             ((Aero)en).setEjecting(false);
+                        } else {
+                            vDesc.addAll(destroyEntity(en, "crew casualties", true));
                         }
-                        vDesc.addAll(destroyEntity(en, "crew casualties", true));
                     }
                 } else {
                     if (Crew.DEATH > crew.getHits(pos)) {

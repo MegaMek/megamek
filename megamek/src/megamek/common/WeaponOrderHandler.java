@@ -31,7 +31,7 @@ import javax.xml.parsers.DocumentBuilder;
 
 import megamek.common.Entity.WeaponSortOrder;
 import megamek.common.annotations.Nullable;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
 import org.w3c.dom.Document;
@@ -98,7 +98,7 @@ public class WeaponOrderHandler {
         }
 
         String path = CUSTOM_WEAPON_ORDER_FILENAME;
-        File file = new MegaMekFile(Configuration.configDir(), path).getFile();
+        File file = new OldMegaMekFile(Configuration.configDir(), path).getFile();
         if (file.exists() && !file.canWrite()) {
             System.err.println("WARN: Could not save custom weapon orders " +
                     "from " + path);
@@ -180,7 +180,7 @@ public class WeaponOrderHandler {
         Map<String, WeaponOrder> weapOrderMap = new HashMap<>();
 
         String path = CUSTOM_WEAPON_ORDER_FILENAME;
-        File file = new MegaMekFile(Configuration.configDir(), path).getFile();
+        File file = new OldMegaMekFile(Configuration.configDir(), path).getFile();
         if (!file.exists() || !file.isFile()) {
             System.err.println("WARN: Could not load custom weapon orders " +
                     "from " + path);

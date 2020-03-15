@@ -28,7 +28,7 @@ import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.common.util.WeightedMap;
 
 /**
@@ -326,7 +326,7 @@ public class RandomNameGenerator implements Serializable {
         factionEthnicCodes = new HashMap<>();
 
         // Determine the number of ethnic codes
-        File masterAncestryFile = new MegaMekFile(Configuration.namesDir(), FILENAME_MASTER_ANCESTRY).getFile();
+        File masterAncestryFile = new OldMegaMekFile(Configuration.namesDir(), FILENAME_MASTER_ANCESTRY).getFile();
         try (InputStream is = new FileInputStream(masterAncestryFile);
              Scanner input = new Scanner(is, "UTF-8")) {
 
@@ -355,7 +355,7 @@ public class RandomNameGenerator implements Serializable {
 
         //region Faction Files
         // all faction files should be in the faction directory
-        File factionsDir = new MegaMekFile(Configuration.namesDir(), DIR_NAME_FACTIONS).getFile();
+        File factionsDir = new OldMegaMekFile(Configuration.namesDir(), DIR_NAME_FACTIONS).getFile();
         String[] fileNames = factionsDir.list();
 
         if ((fileNames == null) || (fileNames.length == 0)) {
@@ -391,7 +391,7 @@ public class RandomNameGenerator implements Serializable {
                 factionGivenNames.put(key, new HashMap<>());
                 factionEthnicCodes.put(key, new WeightedMap<>());
 
-                File factionFile = new MegaMekFile(factionsDir, filename).getFile();
+                File factionFile = new OldMegaMekFile(factionsDir, filename).getFile();
                 try (InputStream is = new FileInputStream(factionFile);
                      Scanner input = new Scanner(is, "UTF-8")) {
 
@@ -422,7 +422,7 @@ public class RandomNameGenerator implements Serializable {
 
     private void readNamesFileToMap(Map<Integer, WeightedMap<String>> map, String fileName) {
         int lineNumber = 0;
-        File file = new MegaMekFile(Configuration.namesDir(), fileName).getFile();
+        File file = new OldMegaMekFile(Configuration.namesDir(), fileName).getFile();
 
         try (InputStream is = new FileInputStream(file);
              Scanner input = new Scanner(is, "UTF-8")) {

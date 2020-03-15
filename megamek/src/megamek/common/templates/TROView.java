@@ -59,7 +59,7 @@ import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
 
@@ -74,7 +74,7 @@ public class TROView {
     private Template template;
     private final Map<String, Object> model = new HashMap<>();
     private final EntityVerifier verifier = EntityVerifier
-            .getInstance(new MegaMekFile(Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
+            .getInstance(new OldMegaMekFile(Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
 
     private boolean includeFluff = true;
 

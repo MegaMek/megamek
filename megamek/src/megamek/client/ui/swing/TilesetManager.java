@@ -66,7 +66,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the
@@ -103,7 +103,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     // mech images
     private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
     private MechTileset wreckTileset = new MechTileset(
-            new MegaMekFile(Configuration.unitImagesDir(), DIR_NAME_WRECKS).getFile());
+            new OldMegaMekFile(Configuration.unitImagesDir(), DIR_NAME_WRECKS).getFile());
     private ArrayList<EntityImage> mechImageList = new ArrayList<EntityImage>();
     private HashMap<ArrayList<Integer>, EntityImage> mechImages = new HashMap<ArrayList<Integer>, EntityImage>();
 
@@ -151,7 +151,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             System.out.println("Error loading tileset, "
                     + "reverting to default hexset! " + "Could not find file: "
                     + PreferenceManager.getClientPreferences().getMapTileset());
-            if (!new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile().exists()){
+            if (!new OldMegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile().exists()){
                 createDefaultHexSet();
             }
             hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);
@@ -415,39 +415,39 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         // load minefield sign
         minefieldSign = ImageUtil
-                .loadImageFromFile(new MegaMekFile(Configuration.hexesDir(), Minefield.FILENAME_IMAGE).toString());
+                .loadImageFromFile(new OldMegaMekFile(Configuration.hexesDir(), Minefield.FILENAME_IMAGE).toString());
         if (minefieldSign.getWidth(null) <= 0 || minefieldSign.getHeight(null) <= 0) {
             System.out.println("Error opening minefield sign image!");
         }
 
         // load night overlay
         nightFog = ImageUtil
-                .loadImageFromFile(new MegaMekFile(Configuration.hexesDir(), FILENAME_NIGHT_IMAGE).toString());
+                .loadImageFromFile(new OldMegaMekFile(Configuration.hexesDir(), FILENAME_NIGHT_IMAGE).toString());
         if (nightFog.getWidth(null) <= 0 || nightFog.getHeight(null) <= 0) {
             System.out.println("Error opening nightFog image!");
         }
 
         // load the hexMask
-        hexMask = ImageUtil.loadImageFromFile(new MegaMekFile(Configuration.hexesDir(), FILENAME_HEX_MASK).toString());
+        hexMask = ImageUtil.loadImageFromFile(new OldMegaMekFile(Configuration.hexesDir(), FILENAME_HEX_MASK).toString());
         if (hexMask.getWidth(null) <= 0 || hexMask.getHeight(null) <= 0) {
             System.out.println("Error opening hexMask image!");
         }
 
         // load artillery targets
         artilleryAutohit = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE).toString());
+                new OldMegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE).toString());
         if (artilleryAutohit.getWidth(null) <= 0 || artilleryAutohit.getHeight(null) <= 0) {
             System.out.println("Error opening artilleryAutohit image!");
         }
 
         artilleryAdjusted = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE).toString());
+                new OldMegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE).toString());
         if (artilleryAdjusted.getWidth(null) <= 0 || artilleryAdjusted.getHeight(null) <= 0) {
             System.out.println("Error opening artilleryAdjusted image!");
         }
 
         artilleryIncoming = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE).toString());
+                new OldMegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE).toString());
         if (artilleryIncoming.getWidth(null) <= 0 || artilleryIncoming.getHeight(null) <= 0) {
             System.out.println("Error opening artilleryIncoming image!");
         }
@@ -832,7 +832,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     public static void createDefaultHexSet(){
         try {
-            FileOutputStream fos = new FileOutputStream(new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile());
+            FileOutputStream fos = new FileOutputStream(new OldMegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile());
             PrintStream p = new PrintStream(fos);
 
             p.println("# suggested hex tileset");

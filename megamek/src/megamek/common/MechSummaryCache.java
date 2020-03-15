@@ -35,7 +35,7 @@ import java.util.zip.ZipFile;
 
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.logging.DefaultMmLogger;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.common.verifier.*;
 
 /**
@@ -180,7 +180,7 @@ public class MechSummaryCache {
         Vector<MechSummary> vMechs = new Vector<>();
         Set<String> sKnownFiles = new HashSet<>();
         long lLastCheck = 0;
-        entityVerifier = EntityVerifier.getInstance(new MegaMekFile(getUnitCacheDir(),
+        entityVerifier = EntityVerifier.getInstance(new OldMegaMekFile(getUnitCacheDir(),
                 EntityVerifier.CONFIG_FILENAME).getFile());
         hFailedFiles = new HashMap<>();
 
@@ -190,7 +190,7 @@ public class MechSummaryCache {
         loadReport.append("Reading unit files:\n");
 
         if (!ignoreUnofficial) {
-            File unit_cache_path = new MegaMekFile(getUnitCacheDir(),
+            File unit_cache_path = new OldMegaMekFile(getUnitCacheDir(),
                     FILENAME_UNITS_CACHE).getFile();
             // check the cache
             try {
@@ -324,7 +324,7 @@ public class MechSummaryCache {
 
     private void saveCache() throws Exception {
         loadReport.append("Saving unit cache.\n");
-        File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
+        File unit_cache_path = new OldMegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
         ObjectOutputStream wr = new ObjectOutputStream(
                 new BufferedOutputStream(new FileOutputStream(unit_cache_path)));
         wr.writeObject(m_data.length);
@@ -500,8 +500,8 @@ public class MechSummaryCache {
                     done();
                     return false;
                 }
-                File f = new MegaMekFile(fDir, element).getFile();
-                if (f.equals(new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile())) {
+                File f = new OldMegaMekFile(fDir, element).getFile();
+                if (f.equals(new OldMegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile())) {
                     continue;
                 }
                 if (f.isDirectory()) {
@@ -703,7 +703,7 @@ public class MechSummaryCache {
 
     private boolean addLookupNames() {
         final String METHOD_NAME = "addLookupNames(long)"; //$NON-NLS-1$
-        File lookupNames = new MegaMekFile(getUnitCacheDir(),
+        File lookupNames = new OldMegaMekFile(getUnitCacheDir(),
                 FILENAME_LOOKUP).getFile();
         boolean needsUpdate = false;
         if (lookupNames.exists()) {

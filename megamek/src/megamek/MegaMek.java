@@ -58,7 +58,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
@@ -681,7 +681,7 @@ public class MegaMek {
                         displayMessage("Validating Entity: " +
                                        entity.getShortNameRaw(), METHOD_NAME); //$NON-NLS-1$
                         EntityVerifier entityVerifier = EntityVerifier.getInstance(
-                                new MegaMekFile(Configuration.unitsDir(),
+                                new OldMegaMekFile(Configuration.unitsDir(),
                                                 EntityVerifier.CONFIG_FILENAME).getFile());
                         MechView mechView = new MechView(entity, false);
                         StringBuffer sb = new StringBuffer(

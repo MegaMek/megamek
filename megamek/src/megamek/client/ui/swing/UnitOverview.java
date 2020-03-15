@@ -45,7 +45,7 @@ import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.common.util.StringUtil;
 
 public class UnitOverview implements IDisplayable {
@@ -91,21 +91,21 @@ public class UnitOverview implements IDisplayable {
         fm = clientgui.getFontMetrics(FONT);
 
         Toolkit toolkit = clientgui.getToolkit();
-        scrollUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2.png").toString()); //$NON-NLS-1$
+        scrollUp = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(), "scrollUp2.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2.png").toString()); //$NON-NLS-1$
+        scrollDown = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(), "scrollDown2.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollDown, clientgui);
-        pageUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2.png").toString()); //$NON-NLS-1$
+        pageUp = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(), "pageUp2.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageUp, clientgui);
-        pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2.png").toString()); //$NON-NLS-1$
+        pageDown = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(), "pageDown2.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
-        scrollUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2_G.png").toString()); //$NON-NLS-1$
+        scrollUpG = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(), "scrollUp2_G.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2_G.png").toString()); //$NON-NLS-1$
+        scrollDownG = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(), "scrollDown2_G.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollDown, clientgui);
-        pageUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2_G.png").toString()); //$NON-NLS-1$
+        pageUpG = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(), "pageUp2_G.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageUp, clientgui);
-        pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2_G.png").toString()); //$NON-NLS-1$
+        pageDownG = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(), "pageDown2_G.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
         
         visible = GUIPreferences.getInstance().getShowUnitOverview();

@@ -25,7 +25,7 @@ import java.util.Map;
 
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.LogLevel;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 
 /**
  * Singleton class that loads the canon unit roles from a text file and provides lookup access.
@@ -116,7 +116,7 @@ public class UnitRoleHandler {
      */
     private void loadRoles() {
         final String METHOD_NAME = "loadRoles()"; //$NON-NLS-1$
-        File f = new MegaMekFile(Configuration.dataDir(), FILE_LOC).getFile();
+        File f = new OldMegaMekFile(Configuration.dataDir(), FILE_LOC).getFile();
         FileInputStream is = null;
         BufferedReader reader = null;
         try {

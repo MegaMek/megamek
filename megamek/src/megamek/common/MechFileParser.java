@@ -56,7 +56,7 @@ import megamek.common.loaders.MepFile;
 import megamek.common.loaders.MtfFile;
 import megamek.common.loaders.TdbFile;
 import megamek.common.util.BuildingBlock;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
 import megamek.common.weapons.ppc.ISHeavyPPC;
@@ -900,7 +900,7 @@ public class MechFileParser {
             if (canonUnitNames == null) {
                 canonUnitNames = new Vector<String>();
                 // init the list.
-                try(BufferedReader br = new BufferedReader(new FileReader(new MegaMekFile(
+                try(BufferedReader br = new BufferedReader(new FileReader(new OldMegaMekFile(
                             Configuration.docsDir(), FILENAME_OFFICIAL_UNITS).getFile()))) {
                     String s;
                     String name;

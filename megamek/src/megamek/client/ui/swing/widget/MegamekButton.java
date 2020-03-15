@@ -27,7 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 
 /**
  * A subclass of JButton that supports specifying the look and feel of the
@@ -215,10 +215,10 @@ public class MegamekButton extends JButton implements MouseListener {
                         + "2 background images!");
                 iconsLoaded = false;
             }
-            java.net.URI imgURL = new MegaMekFile(Configuration.widgetsDir(),
+            java.net.URI imgURL = new OldMegaMekFile(Configuration.widgetsDir(),
                     spec.backgrounds.get(0)).getFile().toURI();
             backgroundIcon = new ImageIcon(imgURL.toURL());
-            imgURL = new MegaMekFile(Configuration.widgetsDir(),
+            imgURL = new OldMegaMekFile(Configuration.widgetsDir(),
                     spec.backgrounds.get(1)).getFile().toURI();
             backgroundPressedIcon = new ImageIcon(imgURL.toURL());
         } catch (Exception e) {

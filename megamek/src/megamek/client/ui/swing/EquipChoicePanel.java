@@ -62,7 +62,7 @@ import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -263,7 +263,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             //  pick legal combinations of manipulators
             BattleArmor ba = (BattleArmor) entity;
             EntityVerifier verifier = EntityVerifier.getInstance(
-                    new MegaMekFile(Configuration.unitsDir(),
+                    new OldMegaMekFile(Configuration.unitsDir(),
                             EntityVerifier.CONFIG_FILENAME).getFile());
             TestBattleArmor testBA = new TestBattleArmor(ba, 
                     verifier.baOption, null);

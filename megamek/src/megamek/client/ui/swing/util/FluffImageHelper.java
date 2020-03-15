@@ -26,7 +26,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Tank;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 
 /**
  * 
@@ -96,7 +96,7 @@ public class FluffImageHelper {
         }
 
         File fluff_image_file = findFluffImage(
-                new MegaMekFile(Configuration.fluffImagesDir(), dir).getFile(), unit);
+                new OldMegaMekFile(Configuration.fluffImagesDir(), dir).getFile(), unit);
         if (fluff_image_file != null) {
             fluff = new ImageIcon(fluff_image_file.toString()).getImage();
         }
@@ -129,10 +129,10 @@ public class FluffImageHelper {
         String sanitizedModel = unit.getModel().replace("\"", "")
                 .replace("/", "");
         String[] basenames = {
-                new MegaMekFile(directory, sanitizedChassis + " " + sanitizedModel)
+                new OldMegaMekFile(directory, sanitizedChassis + " " + sanitizedModel)
                         .toString(),
-                new MegaMekFile(directory, sanitizedModel).toString(),
-                new MegaMekFile(directory, sanitizedChassis).toString(), };
+                new OldMegaMekFile(directory, sanitizedModel).toString(),
+                new OldMegaMekFile(directory, sanitizedChassis).toString(), };
 
         for (String basename : basenames) {
             for (String extension : EXTENSIONS_FLUFF_IMAGE_FORMATS) {

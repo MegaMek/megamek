@@ -47,7 +47,7 @@ import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 
 public class Board implements Serializable, IBoard {
     private static final long serialVersionUID = -5744058872091016636L;
@@ -798,7 +798,7 @@ public class Board implements Serializable, IBoard {
     @Override
     @Deprecated
     public void load(final String filename) {
-        load(new MegaMekFile(Configuration.boardsDir(), filename).getFile());
+        load(new OldMegaMekFile(Configuration.boardsDir(), filename).getFile());
     }
 
     /**
@@ -886,7 +886,7 @@ public class Board implements Serializable, IBoard {
                     }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("background")) {
                     st.nextToken();
-                    File bgFile = new MegaMekFile(Configuration.boardBackgroundsDir(),
+                    File bgFile = new OldMegaMekFile(Configuration.boardBackgroundsDir(),
                             st.sval).getFile();
                     if (bgFile.exists()) {
                         backgroundPaths.add(bgFile.getPath());

@@ -32,7 +32,7 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Mech;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 
 /**
  * Very cumbersome class that handles set of polygonal areas and labels for
@@ -370,13 +370,13 @@ public class QuadMapSet implements DisplayMapSet {
 
         Image tile = comp.getToolkit()
                 .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
+                        new OldMegaMekFile(Configuration.widgetsDir(), udSpec
                                 .getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getMechOutline())
+                new OldMegaMekFile(Configuration.widgetsDir(), udSpec.getMechOutline())
                         .toString());
         PMUtil.setImage(tile, comp);
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER

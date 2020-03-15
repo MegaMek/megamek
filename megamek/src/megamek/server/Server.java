@@ -120,7 +120,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -3429,7 +3429,7 @@ public class Server implements Runnable {
                     || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
-                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name
+                sheetBoards[i].load(new OldMegaMekFile(Configuration.boardsDir(), name
                         + ".board").getFile());
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
@@ -29434,9 +29434,9 @@ public class Server implements Runnable {
         String[] fileList = boardDir.list();
         if (fileList != null) {
             for (String filename : fileList) {
-                File filePath = new MegaMekFile(boardDir, filename).getFile();
+                File filePath = new OldMegaMekFile(boardDir, filename).getFile();
                 if (filePath.isDirectory()) {
-                    scanForBoardsInDir(new MegaMekFile(boardDir, filename).getFile(),
+                    scanForBoardsInDir(new OldMegaMekFile(boardDir, filename).getFile(),
                             basePath.concat(File.separator).concat(filename), dimensions, boards);
                 } else {
                     if (filename.endsWith(".board")) { //$NON-NLS-1$
@@ -30199,7 +30199,7 @@ public class Server implements Runnable {
 
             // Verify the entity's design
             if (Server.entityVerifier == null) {
-                Server.entityVerifier = EntityVerifier.getInstance(new MegaMekFile(
+                Server.entityVerifier = EntityVerifier.getInstance(new OldMegaMekFile(
                         Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
             }
 

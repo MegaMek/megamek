@@ -86,7 +86,7 @@ import megamek.common.options.PartialRepairs;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
@@ -1361,7 +1361,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         // Check validity of units after customization
         for (Entity entity : entities) {
-            EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(
+            EntityVerifier verifier = EntityVerifier.getInstance(new OldMegaMekFile(
                     Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
             TestEntity testEntity = null;
             if (entity instanceof Mech) {

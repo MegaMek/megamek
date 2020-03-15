@@ -27,7 +27,7 @@ import javax.swing.ImageIcon;
 import javax.swing.border.EtchedBorder;
 
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 
 /**
  * A Border that has an image for each corner as well as images for the line
@@ -99,7 +99,7 @@ public class MegamekBorder extends EtchedBorder {
         java.net.URI imgURL;
         File file;
 
-        file = new MegaMekFile(Configuration.widgetsDir(), path).getFile();
+        file = new OldMegaMekFile(Configuration.widgetsDir(), path).getFile();
         imgURL = file.toURI();
         icon = new ImageIcon(imgURL.toURL());
         if (!file.exists()){
@@ -146,7 +146,7 @@ public class MegamekBorder extends EtchedBorder {
             leftLine = new ArrayList<ImageIcon>();
             leftShouldTile = new ArrayList<Boolean>();
             for (int i = 0; i < skin.leftEdge.size(); i++){
-                file = new MegaMekFile(Configuration.widgetsDir(),
+                file = new OldMegaMekFile(Configuration.widgetsDir(),
                         skin.leftEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()){
@@ -168,7 +168,7 @@ public class MegamekBorder extends EtchedBorder {
             rightLine = new ArrayList<ImageIcon>();
             rightShouldTile = new ArrayList<Boolean>();
             for (int i = 0; i < skin.rightEdge.size(); i++){
-                file = new MegaMekFile(Configuration.widgetsDir(),
+                file = new OldMegaMekFile(Configuration.widgetsDir(),
                         skin.rightEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()){
@@ -190,7 +190,7 @@ public class MegamekBorder extends EtchedBorder {
             topLine = new ArrayList<ImageIcon>();
             topShouldTile = new ArrayList<Boolean>();
             for (int i = 0; i < skin.topEdge.size(); i++){
-                file = new MegaMekFile(Configuration.widgetsDir(),
+                file = new OldMegaMekFile(Configuration.widgetsDir(),
                         skin.topEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()){
@@ -212,7 +212,7 @@ public class MegamekBorder extends EtchedBorder {
             bottomLine = new ArrayList<ImageIcon>();
             bottomShouldTile = new ArrayList<Boolean>();
             for (int i = 0; i < skin.bottomEdge.size(); i++){
-                file = new MegaMekFile(Configuration.widgetsDir(),
+                file = new OldMegaMekFile(Configuration.widgetsDir(),
                         skin.bottomEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()){

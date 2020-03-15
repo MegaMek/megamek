@@ -47,7 +47,7 @@ import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.common.util.StringUtil;
 
 /**
@@ -156,19 +156,19 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         fm = bv.getFontMetrics(FONT_CHAT);
 
         Toolkit toolkit = bv.getToolkit();
-        upbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
+        upbutton = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(),
                 FILENAME_BUTTON_UP).toString());
         PMUtil.setImage(upbutton, client);
-        downbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
+        downbutton = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(),
                 FILENAME_BUTTON_DOWN).toString());
         PMUtil.setImage(downbutton, client);
-        minbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
+        minbutton = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(),
                 FILENAME_BUTTON_MINIMISE).toString());
         PMUtil.setImage(minbutton, client);
-        maxbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
+        maxbutton = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(),
                 FILENAME_BUTTON_MAXIMISE).toString());
         PMUtil.setImage(maxbutton, client);
-        resizebutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
+        resizebutton = toolkit.getImage(new OldMegaMekFile(Configuration.widgetsDir(),
                 FILENAME_BUTTON_RESIZE).toString());
         PMUtil.setImage(resizebutton, client);
 

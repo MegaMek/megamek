@@ -43,7 +43,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
 public class PreferenceManager {
@@ -88,7 +88,7 @@ public class PreferenceManager {
         clientPreferenceStore = new PreferenceStore();
         String cfgName = System.getProperty(
                 CFG_FILE_OPTION_NAME,
-                new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).toString()
+                new OldMegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).toString()
         );
         load(cfgName);
         clientPreferences = new ClientPreferences(clientPreferenceStore);
@@ -128,7 +128,7 @@ public class PreferenceManager {
     }
 
     public void save() {
-        save(new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).getFile());
+        save(new OldMegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).getFile());
     }
     
     public void save(final File file) {

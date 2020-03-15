@@ -74,7 +74,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 
 public class ScenarioLoader {
     private static final String COMMENT_MARK = "#"; //$NON-NLS-1$
@@ -406,7 +406,7 @@ public class ScenarioLoader {
         if (optionFile == null) {
             g.getOptions().loadOptions();
         } else {
-            g.getOptions().loadOptions(new MegaMekFile(scenarioFile.getParentFile(), optionFile).getFile(), true);
+            g.getOptions().loadOptions(new OldMegaMekFile(scenarioFile.getParentFile(), optionFile).getFile(), true);
         }
 
         // set wind
@@ -907,12 +907,12 @@ public class ScenarioLoader {
                 } else {
                     sBoardFile = board + FILE_SUFFIX_BOARD;
                 }
-                File fBoard = new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
+                File fBoard = new OldMegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
                 if (!fBoard.exists()) {
                     throw new ScenarioLoaderException("nonexistantBoard", board); //$NON-NLS-1$
                 }
                 ba[n] = new Board();
-                ba[n].load(new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile());
+                ba[n].load(new OldMegaMekFile(Configuration.boardsDir(), sBoardFile).getFile());
                 if(cf > 0) {
                     ba[n].setBridgeCF(cf);
                 }

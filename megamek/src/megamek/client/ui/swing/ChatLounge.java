@@ -144,7 +144,7 @@ import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 
 public class ChatLounge extends AbstractPhaseDisplay
         implements ActionListener, ItemListener, ListSelectionListener, MouseListener, IMapSettingsObserver {
@@ -1176,7 +1176,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         String boardName = lisBoardsAvailable.getSelectedValue();
         if (lisBoardsAvailable.getSelectedIndex() > 2) {
             IBoard board = new Board(16, 17);
-            board.load(new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile());
+            board.load(new OldMegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile());
             if (chkRotateBoard.isSelected()) {
                 BoardUtilities.flip(board, true, true);
             }
@@ -1205,7 +1205,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (name.startsWith(MapSettings.BOARD_GENERATED) || (temp.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(temp);
             } else {
-                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name
+                sheetBoards[i].load(new OldMegaMekFile(Configuration.boardsDir(), name
                         + ".board").getFile());
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
@@ -2572,7 +2572,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             IBoard b = new Board(16, 17);
             if (!MapSettings.BOARD_GENERATED.equals(board) && !MapSettings.BOARD_RANDOM.equals(board)
                     && !MapSettings.BOARD_SURPRISE.equals(board)) {
-                b.load(new MegaMekFile(Configuration.boardsDir(), board + ".board").getFile());
+                b.load(new OldMegaMekFile(Configuration.boardsDir(), board + ".board").getFile());
                 if (!b.isValid()) {
                     JOptionPane.showMessageDialog(this, "The Selected board is invalid, please select another.");
                     return;
@@ -3413,7 +3413,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                             clearImage();
                         } else {
                             Image image = getToolkit().getImage(
-                                    new MegaMekFile(Configuration.miscImagesDir(),
+                                    new OldMegaMekFile(Configuration.miscImagesDir(),
                                             FILENAME_UNKNOWN_UNIT).toString());
                             image = image.getScaledInstance(-1, 72,
                                     Image.SCALE_DEFAULT);
@@ -3424,7 +3424,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                             clearImage();
                         } else {
                             Image image = getToolkit().getImage(
-                                    new MegaMekFile(Configuration.portraitImagesDir(),
+                                    new OldMegaMekFile(Configuration.portraitImagesDir(),
                                             FILENAME_PORTRAIT_DEFAULT)
                                             .toString());
                             image = image.getScaledInstance(-1, 50,

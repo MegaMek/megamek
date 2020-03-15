@@ -43,7 +43,7 @@ import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Terrains;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.common.util.StringUtil;
 
 /**
@@ -240,7 +240,7 @@ public class HexTileset {
     public void loadFromFile(String filename) throws IOException {
         long startTime = System.currentTimeMillis();
         // make input stream for board
-        Reader r = new BufferedReader(new FileReader(new MegaMekFile(Configuration.hexesDir(), filename).getFile()));
+        Reader r = new BufferedReader(new FileReader(new OldMegaMekFile(Configuration.hexesDir(), filename).getFile()));
         // read board, looking for "size"
         StreamTokenizer st = new StreamTokenizer(r);
         st.eolIsSignificant(true);
@@ -547,7 +547,7 @@ public class HexTileset {
         public void loadImage(Component comp) {
             images = new Vector<Image>();
             for (String filename: filenames) {
-                File imgFile = new MegaMekFile(Configuration.hexesDir(), filename).getFile();
+                File imgFile = new OldMegaMekFile(Configuration.hexesDir(), filename).getFile();
                 Image image = ImageUtil.loadImageFromFile(imgFile.toString());
                 if (null != image) {
                     images.add(image);

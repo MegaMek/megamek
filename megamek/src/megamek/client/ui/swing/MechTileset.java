@@ -52,7 +52,7 @@ import megamek.common.TeleMissile;
 import megamek.common.TripodMech;
 import megamek.common.Warship;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
@@ -417,7 +417,7 @@ public class MechTileset {
 
     public void loadFromFile(String filename) throws IOException {
         // make inpustream for board
-        Reader r = new BufferedReader(new FileReader(new MegaMekFile(dir, filename).getFile()));
+        Reader r = new BufferedReader(new FileReader(new OldMegaMekFile(dir, filename).getFile()));
         // read board, looking for "size"
         StreamTokenizer st = new StreamTokenizer(r);
         st.eolIsSignificant(true);
@@ -540,7 +540,7 @@ public class MechTileset {
 
         public void loadImage(Component comp) {
             // System.out.println("loading mech image...");
-            File fin = new MegaMekFile(dir, imageFile).getFile();
+            File fin = new OldMegaMekFile(dir, imageFile).getFile();
             image = ImageUtil.loadImageFromFile(fin.toString());
             if (image == null) {
                 System.out.println("Received null image from "

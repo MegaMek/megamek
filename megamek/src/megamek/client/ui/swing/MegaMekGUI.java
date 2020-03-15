@@ -91,7 +91,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
@@ -126,7 +126,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     private void createGUI() {
         try {
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            File btFontFile = new MegaMekFile(Configuration.fontsDir(), FILENAME_BT_CLASSIC_FONT).getFile();
+            File btFontFile = new OldMegaMekFile(Configuration.fontsDir(), FILENAME_BT_CLASSIC_FONT).getFile();
             Font btFont = Font.createFont(Font.TRUETYPE_FONT, btFontFile);
             System.out.println("Loaded Font: " + btFont.getName());
             ge.registerFont(btFont);
@@ -199,13 +199,13 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
 
         List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()));
+                new OldMegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()));
+                new OldMegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()));
+                new OldMegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
+                new OldMegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
         frame.setIconImages(iconList);
         CommonMenuBar menuBar = new CommonMenuBar();
         menuBar.addActionListener(actionListener);
@@ -312,7 +312,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             splashFilename = determineSplashScreen(skinSpec.backgrounds, 
             		currentMonitor.getWidth(), currentMonitor.getHeight());
             if (skinSpec.backgrounds.size() > 1) {
-                File file = new MegaMekFile(Configuration.widgetsDir(),
+                File file = new OldMegaMekFile(Configuration.widgetsDir(),
                         skinSpec.backgrounds.get(1)).getFile();
                 if (!file.exists()){
                     System.err.println("MainMenu Error: background icon doesn't exist: "
@@ -332,7 +332,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         }
         // initialize splash image
         Image imgSplash = frame.getToolkit()
-                .getImage(new MegaMekFile(Configuration.widgetsDir(), splashFilename).toString());
+                .getImage(new OldMegaMekFile(Configuration.widgetsDir(), splashFilename).toString());
 
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);

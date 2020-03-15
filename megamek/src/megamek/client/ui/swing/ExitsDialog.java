@@ -34,7 +34,7 @@ import javax.swing.JPanel;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 
 /**
  * A dialog of which exits are connected for terrain.
@@ -120,7 +120,7 @@ public class ExitsDialog extends JDialog implements ActionListener {
         JToggleButton button = new JToggleButton(buttonName);
 
         // Get the normal icon
-        File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+        File file = new OldMegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         if (imageButton != null) {
             button.setIcon(new ImageIcon(imageButton));
@@ -129,13 +129,13 @@ public class ExitsDialog extends JDialog implements ActionListener {
         }
 
         // Get the hover icon
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+        file = new OldMegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         if (imageButton != null)
             button.setRolloverIcon(new ImageIcon(imageButton));
 
         // Get the selected icon
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_S.png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+        file = new OldMegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_S.png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         if (imageButton != null)
             button.setSelectedIcon(new ImageIcon(imageButton));

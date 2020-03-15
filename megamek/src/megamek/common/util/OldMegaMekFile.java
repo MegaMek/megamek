@@ -15,15 +15,14 @@ import megamek.common.Configuration;
  * @author arlith
  *
  */
-public class MegaMekFile {
-    
+public class OldMegaMekFile {
     File file;
     
-    public MegaMekFile(File parent, String child) {
+    public OldMegaMekFile(File parent, String child) {
         this(new File(parent, child).toString());
     }
     
-    public MegaMekFile(String pathname) {
+    public OldMegaMekFile(String pathname) {
         File userdataVersion = new File(Configuration.userdataDir(), pathname);
         if (userdataVersion.exists()) {
             file = userdataVersion;
@@ -39,5 +38,4 @@ public class MegaMekFile {
     public String toString() {
         return file.toString();
     }
-    
 }

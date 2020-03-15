@@ -27,7 +27,7 @@ import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.OldMegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
 import org.w3c.dom.Document;
@@ -58,7 +58,7 @@ public class KeyBindParser {
     
     public static void parseKeyBindings(MegaMekController controller){
         // Get the path to the default bindings file.
-        File file = new MegaMekFile(Configuration.configDir(), DEFAULT_BINDINGS_FILE).getFile();
+        File file = new OldMegaMekFile(Configuration.configDir(), DEFAULT_BINDINGS_FILE).getFile();
         if (!file.exists() || !file.isFile()) {
             registerDefaultKeyBinds(controller);
             return;
@@ -162,7 +162,7 @@ public class KeyBindParser {
     public static void writeKeyBindings(){
         try {
             Writer output = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new MegaMekFile(Configuration.configDir(), 
+                    new FileOutputStream(new OldMegaMekFile(Configuration.configDir(),
                             DEFAULT_BINDINGS_FILE).getFile())));
             output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             output.write("<KeyBindings " +

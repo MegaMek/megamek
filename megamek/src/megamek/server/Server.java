@@ -6597,6 +6597,7 @@ public class Server implements Runnable {
                 addReport(r);
                 Aero ship = (Aero) entity;
                 ship.setEjecting(true);
+                entityUpdate(ship.getId());
                 Coords legalPos = entity.getPosition();
                 //Get the step so we can pass it in and get the abandon coords from it
                 for (final Enumeration<MoveStep> i = md.getSteps(); i
@@ -21722,6 +21723,10 @@ public class Server implements Runnable {
                         vDesc.addAll(resolveCrewDamage(en, damage, pos));
                     } else if (!crew.isDoomed()) {
                         crew.setDoomed(true);
+                        //Safety. We might use this logic for large naval vessels later on
+                        if (en instanceof Aero) {
+                            ((Aero)en).setEjecting(false);
+                        }
                         vDesc.addAll(destroyEntity(en, "crew casualties", true));
                     }
                 } else {
@@ -28061,6 +28066,12 @@ public class Server implements Runnable {
                                          boolean canSalvage) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
+        
+        //We'll need this later...
+        Aero ship = null;
+        if (entity.isLargeCraft()) {
+            ship = (Aero) entity;
+        }
 
         // regardless of what was passed in, units loaded onto aeros not on the
         // ground are destroyed
@@ -28130,6 +28141,10 @@ public class Server implements Runnable {
                 Coords curPos = entity.getPosition();
                 int curFacing = entity.getFacing();
                 for (Entity other : entity.getLoadedUnits()) {
+                    //If the unit has been destroyed (as from a cargo hit), skip it
+                    if (other.isDestroyed()) {
+                        continue;
+                    }
                     // Can the other unit survive?
                     boolean survived = false;
                     if (entity instanceof Tank) {
@@ -28155,7 +28170,9 @@ public class Server implements Runnable {
                             survived = Compute.d6() < 3;
                         }
                     }
-                    if (!survivable || (externalUnits.contains(other) && !survived)) {
+                    if (!survivable || (externalUnits.contains(other) && !survived)
+                            //Don't unload from ejecting spacecraft. The crews aren't in their units...
+                            || (ship != null && ship.isEjecting())) {
                         // Nope.
                         other.setDestroyed(true);
                         // We need to unload the unit, since it's ID goes away
@@ -34145,6 +34162,10 @@ public class Server implements Runnable {
                 pods.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
                 //*Damage* the host ship's crew to account for the people that left
                 vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
+                if (entity.getCrew().getHits() >= Crew.DEATH) {
+                    //Then we've finished ejecting
+                    entity.getCrew().setEjected(true);
+                }
             }
             // Need to set game manually; since game.addEntity not called yet
             // Don't want to do this yet, as Entity may not be added
@@ -34163,6 +34184,8 @@ public class Server implements Runnable {
             }
             // Add Entity to game
             game.addEntity(pods);
+            // No movement this turn
+            pods.setDone(true);
             // Tell clients about new entity
             send(createAddEntityPacket(pods.getId()));
             // Sent entity info to clients
@@ -34211,6 +34234,10 @@ public class Server implements Runnable {
                 crew.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
                 //*Damage* the host ship's crew to account for the people that left
                 vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
+                if (entity.getCrew().getHits() >= Crew.DEATH) {
+                    //Then we've finished ejecting
+                    entity.getCrew().setEjected(true);
+                }
             }
             
             // Need to set game manually; since game.addEntity not called yet
@@ -34248,6 +34275,8 @@ public class Server implements Runnable {
             }
             // Add Entity to game
             game.addEntity(crew);
+            // No movement this turn
+            crew.setDone(true);
             // Tell clients about new entity
             send(createAddEntityPacket(crew.getId()));
             // Sent entity info to clients
@@ -34261,14 +34290,9 @@ public class Server implements Runnable {
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
         }
-        // Once the ejection is done, mark the entity's crew as "ejected" and tidy up.
-        if (entity.getCrew().getHits() >= Crew.DEATH) {
-            entity.setEjecting(false);
-            entity.getCrew().setEjected(true);
-            vDesc.addAll(destroyEntity(entity, "ejection", true, true));
-            return vDesc;
-        }
         // If we get here, end movement and return the report
+        entity.setDone(true);
+        entityUpdate(entity.getId());
         return vDesc;
     }
 

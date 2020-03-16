@@ -213,7 +213,7 @@ public class TestSupportVehicle extends TestEntity {
                 EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED)),
         DUNE_BUGGY (1.5,EquipmentTypeLookup.DUNE_BUGGY_CHASSIS_MOD,
                 EnumSet.of(SVType.WHEELED)),
-        ENVIRONMENTAL_SEALING (2.0,EquipmentTypeLookup.ENVIRONMENTAL_SEALING_CHASSIS_MOD,
+        ENVIRONMENTAL_SEALING (2.0,EquipmentTypeLookup.SV_ENVIRONMENTAL_SEALING_CHASSIS_MOD,
                 EnumSet.allOf(SVType.class)),
         EXTERNAL_POWER_PICKUP (1.1,EquipmentTypeLookup.EXTERNAL_POWER_PICKUP_CHASSIS_MOD,
                 EnumSet.of(SVType.RAIL)),

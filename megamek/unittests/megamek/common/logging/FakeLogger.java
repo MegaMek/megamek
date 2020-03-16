@@ -81,6 +81,11 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
+    public void resetLogFile(String logFileName) {
+
+    }
+
+    @Override
     public <T extends Throwable> T debug(String callingClass, String methodName, String message, T throwable) {
 
         return null;

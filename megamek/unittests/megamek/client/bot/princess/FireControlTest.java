@@ -1696,16 +1696,6 @@ public class FireControlTest {
         Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_NEG_POOR_TARG_S))).thenReturn(false);
         Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
 
-        // Test a low-profile target.
-        Mockito.when(mockTarget.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_LOW_PROFILE))).thenReturn(true);
-        expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
-        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
-        expected.addModifier(FireControl.TH_TAR_LOW_PROFILE);
-        assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
-                                                                                    mockTarget, mockTargetState,
-                                                                                    mockWeapon, mockGame));
-        Mockito.when(mockTarget.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_LOW_PROFILE))).thenReturn(false);
-
         // Test a targeting computer.
         Mockito.when(mockShooter.hasTargComp()).thenReturn(true);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);

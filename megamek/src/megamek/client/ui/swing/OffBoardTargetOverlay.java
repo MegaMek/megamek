@@ -11,13 +11,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import megamek.client.ui.IDisplayable;
+import megamek.client.ui.Messages;
+import megamek.client.ui.SharedUtility;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.IPlayer;
 import megamek.common.OffBoardDirection;
+import megamek.common.Targetable;
 
 public class OffBoardTargetOverlay implements IDisplayable {
     private static final int EDGE_OFFSET = 5;
@@ -27,6 +33,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private boolean isHit = false;
     private ClientGUI clientgui;
     private Map<OffBoardDirection, Rectangle> buttons = new HashMap<>();
+    private TargetingPhaseDisplay targetingPhaseDisplay;
     
     private IGame getCurrentGame() {
         return clientgui.getClient().getGame();
@@ -34,6 +41,10 @@ public class OffBoardTargetOverlay implements IDisplayable {
     
     private IPlayer getCurrentPlayer() {
         return clientgui.getClient().getLocalPlayer();
+    }
+    
+    public void setTargetingPhaseDisplay(TargetingPhaseDisplay tpd) {
+        targetingPhaseDisplay = tpd;
     }
     
     
@@ -231,17 +242,45 @@ public class OffBoardTargetOverlay implements IDisplayable {
         return false;
     }
     
+    /**
+     * Worker function that handles a click on a 'counterbattery fire' overlay button.
+     * Possible shows a target selection popup
+     * Generates an artillery attack action that is fed back to the targeting display.
+     */
     private void handleButtonClick(OffBoardDirection direction) {
-        int alpha = 1;
-        for(Entity ent : this.getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
-            //ent.getOffBoardDirection() == direction;
+        List<Targetable> eligibleTargets = new ArrayList<>();
+        
+        for (Entity ent : this.getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
+            if(ent.getOffBoardDirection() == direction &&
+                    ent.isOffBoardObserved(getCurrentPlayer().getTeam())) {
+                eligibleTargets.add(ent);
+            }
+        }
+        
+        Targetable choice;
+        
+        if (eligibleTargets.size() > 1) {
+            String input = (String) JOptionPane
+                    .showInputDialog(clientgui,
+                            Messages.getString("FiringDisplay.ChooseCounterbatteryTargetDialog.message"),
+                            Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
+                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
+                                    .getDisplayArray(eligibleTargets), null);
+            choice = SharedUtility.getTargetPicked(eligibleTargets, input);
+        } else if (eligibleTargets.size() == 1) {
+            choice = eligibleTargets.get(0);
+        } else {
+            return;
         }
         
         // display dropdown containing all observed offboard enemy entities in given direction
         // upon selection, generate an ArtilleryAttackAction vs selected entity as per  TargetingPhaseDisplay, like so:
-        //waa = new ArtilleryAttackAction(cen, target.getTargetType(),
-        //  target.getTargetId(), weaponNum, clientgui.getClient().getGame());
+        WeaponAttackAction waa = new ArtilleryAttackAction(targetingPhaseDisplay.ce().getId(), choice.getTargetType(),
+                choice.getTargetId(), 
+                targetingPhaseDisplay.ce().getEquipmentNum(clientgui.getBoardView().getSelectedArtilleryWeapon()), 
+                clientgui.getClient().getGame());
         
+        targetingPhaseDisplay.updateDisplayForPendingAttack(clientgui.getBoardView().getSelectedArtilleryWeapon(), waa);
         // where cen = clientgui.getBoardView().getSelectedArtilleryWeapon().getEntity()
         // and target = selected target entity from dropdown
         // and weaponNum = clientgui.getBoardView().getSelectedArtilleryWeapon().getEntity().getEquipmentNum(

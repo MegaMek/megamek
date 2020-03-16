@@ -1708,8 +1708,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // check artillery is targeted appropriately for its ammo
                 // Artillery only targets hexes unless making a direct fire flak shot or using
                 // homing ammo.
+                
                 if ((ttype != Targetable.TYPE_HEX_ARTILLERY) && (ttype != Targetable.TYPE_MINEFIELD_CLEAR)
-                        && !isArtilleryFLAK && !isHoming) {
+                        && !isArtilleryFLAK && !isHoming && !target.isOffBoard()) {
                     return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
                 }
                 // Airborne units can't make direct-fire artillery attacks

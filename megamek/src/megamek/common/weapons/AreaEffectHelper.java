@@ -95,6 +95,13 @@ public class AreaEffectHelper {
      * Helper function that processes damage for fuel-air explosives.
      */
     public static void processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Report> vPhaseReport, Server server) {
+        processFuelAirDamage(center, ordnanceType, attacker, new Vector<Integer>(), vPhaseReport, server);
+    }
+    
+    /**
+     * Helper function that processes damage for fuel-air explosives. Includes the capability to exclude entities from the process
+     */
+    public static void processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Integer> entitiesToExclude, Vector<Report> vPhaseReport, Server server) {
         IGame game = attacker.getGame();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early 
         boolean notEnoughAtmo = game.getBoard().inSpace() ||
@@ -120,8 +127,6 @@ public class AreaEffectHelper {
             vPhaseReport.addElement(r);
         }
         
-        Vector<Integer> alreadyHit = new Vector<>();
-        
         // assemble collection of hexes at ranges 0 to radius
         // for each hex, invoke artilleryDamageHex, with the damage set according to this:
         //      radius chart 
@@ -138,10 +143,10 @@ public class AreaEffectHelper {
                     damage = (int) Math.ceil(damage / 2.0);
                 }
                 
-                checkInfantryDestruction(coords, distFromCenter, attacker, alreadyHit, vPhaseReport, game, server);
+                checkInfantryDestruction(coords, distFromCenter, attacker, entitiesToExclude, vPhaseReport, game, server);
                 
                 server.artilleryDamageHex(coords, center, damage, (AmmoType) ordnanceType, attacker.getId(), attacker, null, false, 0, vPhaseReport, false,
-                        alreadyHit, false);
+                        entitiesToExclude, false);
                 
                 TargetRoll fireRoll = new TargetRoll(7, "fuel-air ordnance");
                 server.tryIgniteHex(coords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);

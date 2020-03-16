@@ -1243,7 +1243,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
-                // TODO: add the component to the OffBoardTargetingOverlay for communication
+                offBoardOverlay.setTargetingPhaseDisplay((TargetingPhaseDisplay) component);
                 break;
             case PHASE_MOVEMENT:
                 component = new MovementDisplay(this);

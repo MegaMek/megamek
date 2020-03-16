@@ -144,9 +144,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return true;
         }
         
-        // if we are engaging in counter-battery fire against a specific entity, handle the attack differently.
-        //int alpha
-        
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
         Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
@@ -310,93 +307,23 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (!handledAmmoAndReport) {
             addHeat();
         }
-        if (!bMissed) {
-            if (!isFlak) {
-                r = new Report(3190);
-            } else {
-                r = new Report(3191);
-            }
-            r.subject = subjectId;
-            r.add(targetPos.getBoardNum());
-            vPhaseReport.addElement(r);
-
-            artyMsg = "Artillery hit here on round " + game.getRoundCount() 
-                    + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
-                    + " (this hex is now an auto-hit)";
-            game.getBoard().addSpecialHexDisplay(
-                    targetPos,
-                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
-                            game.getRoundCount(), game.getPlayer(aaa
-                                    .getPlayerId()), artyMsg));
-
-        } else {
-            // direct fire artillery only scatters by one d6
-            // we do this here to avoid duplicating handle()
-            // in the ArtilleryWeaponDirectFireHandler
-            Coords origPos = targetPos;
-            int moF = toHit.getMoS();
-            if (ae.hasAbility("oblique_artillery")) {
-                // getMoS returns a negative MoF
-                // simple math is better so lets make it positive
-                if ((-moF -2) < 1) {
-                    moF = 0;
-                } else {
-                    moF = moF +2;
-                }
-            }
-            targetPos = Compute.scatterDirectArty(targetPos, moF);
-            if (game.getBoard().contains(targetPos)) {
-                // misses and scatters to another hex
-                if (!isFlak) {
-                    r = new Report(3195);
-                    artyMsg = "Artillery missed here on round "
-                            + game.getRoundCount() + ", fired by "
-                            + game.getPlayer(aaa.getPlayerId()).getName();
-                    game.getBoard().addSpecialHexDisplay(
-                            origPos,
-                            new SpecialHexDisplay(
-                                    SpecialHexDisplay.Type.ARTILLERY_HIT, game
-                                            .getRoundCount(), game
-                                            .getPlayer(aaa.getPlayerId()),
-                                    artyMsg));
-                } else {
-                    r = new Report(3192);
-                }
-                r.subject = subjectId;
-                r.add(targetPos.getBoardNum());
-                vPhaseReport.addElement(r);
-            } else {
-                // misses and scatters off-board
-                if (isFlak) {
-                    r = new Report(3193);
-                } else {
-                    r = new Report(3200);
-                }
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-                return !bMissed;
-            }
+        
+        boolean continueResolution = handleReportsAndDirectScatter(isFlak, targetPos, vPhaseReport, aaa);
+        
+        if(!continueResolution) {
+            return false;
         }
         
-        // if the round landed on the board, and the attacker is an off-board artillery piece
-        // then check to see if the hex where it landed can be seen by anyone on an opposing team
-        // if so, mark the attacker so that it can be targeted by counter-battery fire
-        if (aaa.getEntity(game).isOffBoard() && game.getBoard().contains(targetPos)) {
-            HexTarget hexTarget = new HexTarget(targetPos, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY);
-            
-            for(Entity entity : game.getEntitiesVector()) {
-                
-                // if the entity is hostile and the attacker has not been designated
-                // as observed already by the entity's team
-                if(entity.isEnemyOf(aaa.getEntity(game)) &&
-                        !aaa.getEntity(game).isOffBoardObserved(entity.getOwner().getTeam())) {
-                    boolean hasLoS = LosEffects.calculateLos(game, entity.getId(), hexTarget).canSee();
-                    
-                    if(hasLoS) {
-                        aaa.getEntity(game).addOffBoardObserver(entity.getOwner().getTeam());
-                    }
-                }
-            }
+        // if attacker is an off-board artillery piece, check to see if we need to set observation flags
+        if (aaa.getEntity(game).isOffBoard()) {
+            handleCounterBatteryObservation(aaa, targetPos);
+        }
+        
+        // if we are engaging in counter-battery fire against a specific entity, handle the attack differently.
+        // mainly, we need to either a) eliminate all other entities from consideration, or b) set some specific flag 
+        Vector<Integer> entityExclusionList = new Vector<Integer>();
+        if(target.isOffBoard()) {
+           // target
         }
 
         if (atype.getMunitionType() == AmmoType.M_FAE) {
@@ -480,6 +407,124 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
 
         return false;
+    }
+    
+    private void handleCounterBatteryFire() {
+        
+    }
+    
+    /**
+     * Worker function that handles "artillery round landed here" reports,
+     * and direct artillery scatter. 
+     * @return Whether or not we should continue attack resolution afterwards
+     */
+    private boolean handleReportsAndDirectScatter(boolean isFlak, Coords targetPos, Vector<Report> vPhaseReport, ArtilleryAttackAction aaa) {
+        Report r;
+        if (target.isOffBoard()) {
+            r = new Report(9994);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+        
+        if (!bMissed) {
+            if (!isFlak) {
+                r = new Report(3190);
+            } else {
+                r = new Report(3191);
+            }
+            r.subject = subjectId;
+            r.add(targetPos.getBoardNum());
+            vPhaseReport.addElement(r);
+
+            String artyMsg = "Artillery hit here on round " + game.getRoundCount() 
+                    + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
+                    + " (this hex is now an auto-hit)";
+            game.getBoard().addSpecialHexDisplay(
+                    targetPos,
+                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
+                            game.getRoundCount(), game.getPlayer(aaa
+                                    .getPlayerId()), artyMsg));
+
+        } else {
+            // direct fire artillery only scatters by one d6
+            // we do this here to avoid duplicating handle()
+            // in the ArtilleryWeaponDirectFireHandler
+            Coords origPos = targetPos;
+            int moF = toHit.getMoS();
+            if (ae.hasAbility("oblique_artillery")) {
+                // getMoS returns a negative MoF
+                // simple math is better so lets make it positive
+                if ((-moF -2) < 1) {
+                    moF = 0;
+                } else {
+                    moF = moF +2;
+                }
+            }
+            targetPos = Compute.scatterDirectArty(targetPos, moF);
+            if (game.getBoard().contains(targetPos)) {
+                // misses and scatters to another hex
+                if (!isFlak) {
+                    r = new Report(3195);
+                    String artyMsg = "Artillery missed here on round "
+                            + game.getRoundCount() + ", fired by "
+                            + game.getPlayer(aaa.getPlayerId()).getName();
+                    game.getBoard().addSpecialHexDisplay(
+                            origPos,
+                            new SpecialHexDisplay(
+                                    SpecialHexDisplay.Type.ARTILLERY_HIT, game
+                                            .getRoundCount(), game
+                                            .getPlayer(aaa.getPlayerId()),
+                                    artyMsg));
+                } else {
+                    r = new Report(3192);
+                }
+                r.subject = subjectId;
+                r.add(targetPos.getBoardNum());
+                vPhaseReport.addElement(r);
+            } else {
+                // misses and scatters off-board
+                if (isFlak) {
+                    r = new Report(3193);
+                } else {
+                    r = new Report(3200);
+                }
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Worker function that contains logic for "has my shot been observed so that I can be targeted by counter-battery fire"
+     * 
+     */
+    private void handleCounterBatteryObservation(WeaponAttackAction aaa, Coords targetPos) {
+        // if the round landed on the board, and the attacker is an off-board artillery piece
+        // then check to see if the hex where it landed can be seen by anyone on an opposing team
+        // if so, mark the attacker so that it can be targeted by counter-battery fire
+        if (game.getBoard().contains(targetPos)) {
+            HexTarget hexTarget = new HexTarget(targetPos, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY);
+            
+            for(Entity entity : game.getEntitiesVector()) {
+                
+                // if the entity is hostile and the attacker has not been designated
+                // as observed already by the entity's team
+                if(entity.isEnemyOf(aaa.getEntity(game)) &&
+                        !aaa.getEntity(game).isOffBoardObserved(entity.getOwner().getTeam())) {
+                    boolean hasLoS = LosEffects.calculateLos(game, entity.getId(), hexTarget).canSee();
+                    
+                    if(hasLoS) {
+                        aaa.getEntity(game).addOffBoardObserver(entity.getOwner().getTeam());
+                    }
+                }
+            }
+        // an off-board target can observe counter-battery fire attacking it for counter-battery fire (probably)
+        } else if (target.isOffBoard()) {
+            aaa.getEntity(game).addOffBoardObserver(((Entity) target).getOwner().getTeam());
+        }
     }
     
     /*

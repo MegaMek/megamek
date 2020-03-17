@@ -29,6 +29,7 @@ VERSION HISTORY:
 + PR #1754: 'next player' button now properly functions for situations with more than two players on a team
 + PR #1685: Allow Starting Height to VTOL Infantry/Battle Armor
 + PR #1766: Adding tool tips for board editor elevation
++ Issue #1769: Added 'cancel' button to random map dialog; now a user can access that dialog in map editor without a map reset
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

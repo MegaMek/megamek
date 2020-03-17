@@ -1336,18 +1336,21 @@ public class BoardEditor extends JComponent
     }
 
     public void boardNew() {
-        RandomMapDialog rmd = new RandomMapDialog(frame, this, null, mapSettings);
-        rmd.setVisible(true);
-        board = BoardUtilities.generateRandom(mapSettings);
-        game.setBoard(board);
-        curfile = null;
-        frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
-        menuBar.setBoard(true);
-        bvc.doLayout();
+    	RandomMapDialog rmd = new RandomMapDialog(frame, this, null, mapSettings);
+    	boolean userCancel = rmd.activateDialog();
+    	if (!userCancel) {
+    		board = BoardUtilities.generateRandom(mapSettings);
+    		game.setBoard(board);
+    		curfile = null;
+    		frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
+    		menuBar.setBoard(true);
+    		bvc.doLayout();
+    		resetUndo();
+    	}
     }
-    
+
     public void boardResize() {
-        ResizeMapDialog emd = new ResizeMapDialog(frame, this, null, mapSettings);
+    	ResizeMapDialog emd = new ResizeMapDialog(frame, this, null, mapSettings);
         emd.setVisible(true);
         board = BoardUtilities.generateRandom(mapSettings);
 
@@ -1688,7 +1691,6 @@ public class BoardEditor extends JComponent
             ignoreHotKeys = true;
             boardNew();
             ignoreHotKeys = false;
-            resetUndo();
         } else if (ae.getActionCommand().equals(FILE_BOARD_EDITOR_EXPAND)) {
             ignoreHotKeys = true;
             boardResize();

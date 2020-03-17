@@ -334,7 +334,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Get the user-selected file.
         File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", false);
+                                        "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
 
         // If we don't have a file, there's nothing to load.
         if (selectedFile == null) {

@@ -367,7 +367,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Have the user choose a file to save the new settings to.
         File selectedFile = fileBrowser(
                 Messages.getString("RandomMapDialog.FileSaveDialog"), "data"
-                        + File.separator + "boards", null, ".xml", "(*.xml)",
+                        + File.separator + "mapgen", null, ".xml", "(*.xml)",
                 true);
 
         // If no file was selected, we're done.

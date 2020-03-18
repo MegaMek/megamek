@@ -54,6 +54,7 @@ public class EscapePods extends SmallCraft {
         if (isEscapePod) {
             setFuel(10);
            setOriginalWalkMP(4);
+           setMovementMode(EntityMovementMode.AERODYNE);
         }
         
         //and an armor value of 4 per craft -- 1 point per location

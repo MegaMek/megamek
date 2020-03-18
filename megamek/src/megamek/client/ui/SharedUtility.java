@@ -26,6 +26,7 @@ import megamek.common.EjectedCrew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
+import megamek.common.EscapePods;
 import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -709,8 +710,8 @@ public class SharedUtility {
         if (!entity.isAero() && !(entity instanceof EjectedCrew)) {
             return md;
         }
-        // Ejected crew/pilots can't move, so just add the inherited move steps and be done with it
-        if (entity instanceof EjectedCrew) {
+        // Ejected crew/pilots and lifeboats can't move, so just add the inherited move steps and be done with it
+        if (entity instanceof EjectedCrew || (entity instanceof EscapePods && entity.getOriginalWalkMP() <= 0)) {
             md = addSteps(md, client);
             return md;
         }

@@ -129,6 +129,8 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
+import megamek.common.weapons.AreaEffectHelper;
+import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
@@ -34641,7 +34643,7 @@ public class Server implements Runnable {
         return vPhaseReport;
     }
 
-    private Vector<Report> vehicleMotiveDamage(Tank te, int modifier) {
+    public Vector<Report> vehicleMotiveDamage(Tank te, int modifier) {
         return vehicleMotiveDamage(te, modifier, false, -1, false);
     }
 
@@ -35163,255 +35165,18 @@ public class Server implements Runnable {
         }
 
         // get units in hex
-        for (Entity entity : game.getEntitiesVector(coords)) {           
-            int hits = damage;
-            if (variableDamage) {
-                hits = Compute.d6(damage);
-            }
-            ToHitData toHit = new ToHitData();
-            if (entity instanceof Protomech) {
-                toHit.setHitTable(ToHitData.HIT_SPECIAL_PROTO);
-            }
-            int cluster = 5;
-
+        for (Entity entity : game.getEntitiesVector(coords)) {  
             // Check: is entity excluded?
             if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                 continue;
-            }
-
-            // Check: is entity inside building?
-            if ((bldg != null) && (bldgAbsorbs > 0)
-                && (entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV))) {
-                cluster -= bldgAbsorbs;
-                // some buildings scale remaining damage that is not absorbed
-                // TODO : this isn't quite right for castles brian
-                cluster = (int) Math.floor(bldg.getDamageToScale() * cluster);
-                if (entity instanceof Infantry) {
-                    continue; // took its damage already from building damage
-                } else if (cluster <= 0) {
-                    // entity takes no damage
-                    r = new Report(6426);
-                    r.subject = subjectId;
-                    r.addDesc(entity);
-                    vPhaseReport.add(r);
-                    continue;
-                } else {
-                    r = new Report(6425);
-                    r.subject = subjectId;
-                    r.add(bldgAbsorbs);
-                    vPhaseReport.add(r);
-                }
-            }
-
-            // flak against ASF should only hit Aeros, because their elevation
-            // is actually altitude, so shouldn't hit VTOLs
-            if (asfFlak && !entity.isAero()) {
-                continue;
-            }
-
-            if (flak) {
-                // Check: is entity not a VTOL in flight or an ASF
-                if (!((entity instanceof VTOL)
-                        || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                        || entity.isAero())) {
-                    continue;
-                }
-                // Check: is entity at correct elevation?
-                if (entity.getElevation() != altitude) {
-                    continue;
-                }
             } else {
-                // Check: is entity a VTOL or Aero in flight?
-                if ((entity instanceof VTOL)
-                    || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                    || entity.isAero()) {
-                    // VTOLs take no damage from normal artillery unless landed
-                    if ((entity.getElevation() != 0)
-                        && (entity.getElevation() != hex.terrainLevel(Terrains.BLDG_ELEV))
-                        && (entity.getElevation() != hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
-                        continue;
-                    }
-                }
+                alreadyHit.add(entity.getId());
             }
-
-            // Work out hit table to use
-            if (attackSource != null) {
-                toHit.setSideTable(entity.sideTable(attackSource));
-                if ((ammo != null)
-                    && (ammo.getMunitionType() == AmmoType.M_CLUSTER)
-                    && attackSource.equals(coords)) {
-                    if (entity instanceof Mech) {
-                        toHit.setHitTable(ToHitData.HIT_ABOVE);
-                    } else if (entity instanceof Tank) {
-                        toHit.setSideTable(ToHitData.SIDE_FRONT);
-                        toHit.addModifier(2, "cluster artillery hitting a Tank");
-                    }
-                }
-            }
-
-            // convention infantry take x2 damage from AE weapons
-            if (entity.isConventionalInfantry()) {
-                hits *= 2;
-                
-                // if it's fuel-air, we take even more damage!
-                if(isFuelAirBomb) {
-                    hits *= 2;
-                }
-            }
-            boolean specialCaseFlechette = false;
-
-            // Entity/ammo specific damage modifiers
-            if (ammo != null) {
-                if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
-                    if (hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
-                        hits *= 2;
-                    }
-                }
-                // fuel-air bombs do an additional 2x damage to infantry
-                else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
-
-                    // wheeled and hover tanks take movement critical
-                    if ((entity instanceof Tank)
-                            && ((entity.getMovementMode() == EntityMovementMode.WHEELED)
-                            || (entity.getMovementMode() == EntityMovementMode.HOVER))) {
-                        r = new Report(6480);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(toHit.getTableDesc());
-                        r.add(0);
-                        vPhaseReport.add(r);
-                        vPhaseReport.addAll(vehicleMotiveDamage((Tank)entity, 0));
-                        continue;
-                    }
-                    
-                    // only infantry and support vees with bar < 5 are affected
-                    if ((entity instanceof BattleArmor) || ((entity instanceof SupportTank)
-                            && !entity.hasPatchworkArmor() && (entity.getBARRating(1) > 4))) {
-                        continue;
-                    }
-                    if (entity instanceof Infantry) {
-                        hits = Compute.d6(damage);
-                        hits *= 2;
-                    } else {
-                        if ((entity.getBARRating(1) < 5) && !entity.hasPatchworkArmor()) {
-                            switch (ammo.getAmmoType()) {
-                                case AmmoType.T_LONG_TOM:
-                                    // hack: check if damage is still at 4, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 4) {
-                                        damage = (5 - entity.getBARRating(1)) * 5;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_SNIPER:
-                                    // hack: check if damage is still at 2, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 2) {
-                                        damage = (5 - entity.getBARRating(1)) * 3;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_THUMPER:
-                                    // no need to check for damage, because
-                                    // falloff =
-                                    // damage for the thumper
-                                    damage = 5 - entity.getBARRating(1);
-                                    break;
-                            }
-                        } else {
-                            // ugh, patchwork armor
-                            // rules as written don't deal with this
-                            // reset the damage to standard arty damage
-                            // when we have each cluster's hit location,
-                            // we'll multiply by the
-                            // BAR-difference to BAR 5, per a rules question
-                            // email
-                            specialCaseFlechette = true;
-                            switch (ammo.getAmmoType()) {
-                                case AmmoType.T_LONG_TOM:
-                                    // hack: check if damage is still at 4, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 4) {
-                                        damage = 25;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_SNIPER:
-                                    // hack: check if damage is still at 2, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 2) {
-                                        damage = 15;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_THUMPER:
-                                    // no need to check for damage, because
-                                    // falloff =
-                                    // damage for the thumper
-                                    damage = 10;
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            alreadyHit.add(entity.getId());
-
-            // Do the damage
-            r = new Report(6480);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            r.add(toHit.getTableDesc());
-            r.add(hits);
-            vPhaseReport.add(r);
-            if (entity instanceof BattleArmor) {
-                // BA take full damage to each trooper, ouch!
-                for (int loc = 0; loc < entity.locations(); loc++) {
-                    if (entity.getInternal(loc) > 0) {
-                        HitData hit = new HitData(loc);
-                        vPhaseReport.addAll(damageEntity(entity, hit, hits,
-                                false, DamageType.NONE, false, true, false));
-                    }
-                }
-            } else {
-                while (hits > 0) {
-                    int damageToDeal = Math.min(cluster, hits);
-                    HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                    // per a rules question, for patchwork armor being attacked by flechette ammo, we multiply the damage done
-                    // by 5 - the BAR rating of the hit location
-                    if (specialCaseFlechette && !(entity instanceof Infantry)) {
-                        damageToDeal *= (5 - entity.getBARRating(hit.getLocation()));
-                    // fuel-air bombs do 1.5x damage to locations hit that have a BAR rating of less than 10.
-                    } else if(isFuelAirBomb && !(entity instanceof Infantry) && (entity.getBARRating(hit.getLocation()) < 10)) {
-                        damageToDeal = (int) Math.ceil(damageToDeal * 1.5);
-                        
-                        r = new Report(9991);
-                        r.indent(1);
-                        r.subject = killer.getId();
-                        r.newlines = 1;
-                        vPhaseReport.addElement(r);
-                    }
-                    vPhaseReport.addAll(damageEntity(entity, hit, damageToDeal,
-                            false, DamageType.NONE, false, true, false));
-                    hits -= Math.min(cluster, hits);
-                }
-            }
-            if (killer != null) {
-                creditKill(entity, killer);
-            }
+            
+            AreaEffectHelper.artilleryDamageEntity(entity, damage, bldg, bldgAbsorbs, 
+                    variableDamage, asfFlak, flak, altitude,
+                    attackSource, ammo, coords, isFuelAirBomb,
+                    killer, hex, subjectId, vPhaseReport, this);
         }
 
         return alreadyHit;
@@ -35437,76 +35202,14 @@ public class Server implements Runnable {
             AmmoType ammo, int subjectId, Entity killer, boolean flak,
             int altitude, boolean mineClear, Vector<Report> vPhaseReport,
             boolean asfFlak, int attackingBA) {
-        int damage = ammo.getRackSize();
-        int falloff = 10;
-        // Capital and Sub-capital missiles
-        if (ammo.getAmmoType() == AmmoType.T_KRAKEN_T
-                || ammo.getAmmoType() == AmmoType.T_KRAKENM
-                || ammo.getAmmoType() == AmmoType.T_MANTA_RAY) {
-            damage = 50;
-            falloff = 25;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_KILLER_WHALE
-                || ammo.getAmmoType() == AmmoType.T_KILLER_WHALE_T
-                || ammo.getAmmoType() == AmmoType.T_SWORDFISH
-                || ammo.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-            damage = 40;
-            falloff = 20;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_STINGRAY) {
-            damage = 35;
-            falloff = 17;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_WHITE_SHARK
-                || ammo.getAmmoType() == AmmoType.T_WHITE_SHARK_T
-                || ammo.getAmmoType() == AmmoType.T_PIRANHA
-                || ammo.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-            damage = 30;
-            falloff = 15;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_BARRACUDA
-                || ammo.getAmmoType() == AmmoType.T_BARRACUDA_T
-                || ammo.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-            damage = 20;
-            falloff = 10;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
-            falloff = 25;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_BA_TUBE) {
-            falloff = 2 * attackingBA;
-        }
-        if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
-            // non-arrow-iv cluster does 5 less than standard
-            if (ammo.getAmmoType() != AmmoType.T_ARROW_IV) {
-                damage -= 5;
-            }
-            // thumper gets falloff 9 for 1 damage at 1 hex range
-            if (ammo.getAmmoType() == AmmoType.T_THUMPER) {
-                falloff = 9;
-            }
+        DamageFalloff damageFalloff = AreaEffectHelper.calculateDamageFallOff(ammo, attackingBA, mineClear);
+        
+        int damage = damageFalloff.damage;
+        int falloff = damageFalloff.falloff;
+        if(damageFalloff.clusterMunitionsFlag) {
             attackSource = centre;
-        } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
-            switch (ammo.getAmmoType()) {
-                // for flechette, damage and falloff is number of d6, not absolute
-                // damage
-                case AmmoType.T_LONG_TOM:
-                    damage = 4;
-                    falloff = 2;
-                    break;
-                case AmmoType.T_SNIPER:
-                    damage = 2;
-                    falloff = 1;
-                    break;
-                case AmmoType.T_THUMPER:
-                    damage = 1;
-                    falloff = 1;
-            }
-        } else
-            // if this was a mine clearance, then it only affects the hex hit
-            if (mineClear) {
-                falloff = damage;
-            }
+        }
+        
         artilleryDamageArea(centre, attackSource, ammo, subjectId, killer,
                 damage, falloff, flak, altitude, vPhaseReport, asfFlak);
     }

@@ -18,6 +18,7 @@ package megamek.client.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -192,5 +193,7 @@ public interface IBoardView extends MechDisplayListener {
     public List<Entity> getEntitiesFlyingOver(Coords c);
     
     public Mounted getSelectedArtilleryWeapon();
+    
+    public Rectangle getDisplayablesRect();
 
 }

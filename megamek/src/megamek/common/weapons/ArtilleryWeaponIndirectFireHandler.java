@@ -44,6 +44,7 @@ import megamek.common.VTOL;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.server.Server;
 
@@ -308,22 +309,15 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             addHeat();
         }
         
-        boolean continueResolution = handleReportsAndDirectScatter(isFlak, targetPos, vPhaseReport, aaa);
+        targetPos = handleReportsAndDirectScatter(isFlak, targetPos, vPhaseReport, aaa);
         
-        if(!continueResolution) {
+        if(targetPos == null) {
             return false;
         }
         
         // if attacker is an off-board artillery piece, check to see if we need to set observation flags
         if (aaa.getEntity(game).isOffBoard()) {
             handleCounterBatteryObservation(aaa, targetPos);
-        }
-        
-        // if we are engaging in counter-battery fire against a specific entity, handle the attack differently.
-        // mainly, we need to either a) eliminate all other entities from consideration, or b) set some specific flag 
-        Vector<Integer> entityExclusionList = new Vector<Integer>();
-        if(target.isOffBoard()) {
-           // target
         }
 
         if (atype.getMunitionType() == AmmoType.M_FAE) {
@@ -396,9 +390,24 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, server);
         }
 
-        server.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
-                subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                asfFlak, shootingBA);
+        if(aaa.getTarget(game).isOffBoard()) {
+            DamageFalloff df = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
+            int actualDamage = df.damage - (df.falloff * targetPos.distance(target.getPosition()));
+            Coords effectiveTargetPos = aaa.getCoords();
+            
+            if(df.clusterMunitionsFlag) {
+                effectiveTargetPos = targetPos;
+            }
+            
+            if(actualDamage > 0) {
+                AreaEffectHelper.artilleryDamageEntity((Entity) aaa.getTarget(game), actualDamage, null, 0, false, asfFlak, isFlak, altitude, 
+                    effectiveTargetPos, atype, targetPos, false, ae, null, altitude, vPhaseReport, server);
+            }
+        } else {
+            server.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
+                    subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
+                    asfFlak, shootingBA);
+        }
 
         // artillery may unintentially clear minefields, but only if it wasn't
         // trying to
@@ -409,17 +418,16 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         return false;
     }
     
-    private void handleCounterBatteryFire() {
-        
-    }
-    
     /**
      * Worker function that handles "artillery round landed here" reports,
      * and direct artillery scatter. 
      * @return Whether or not we should continue attack resolution afterwards
      */
-    private boolean handleReportsAndDirectScatter(boolean isFlak, Coords targetPos, Vector<Report> vPhaseReport, ArtilleryAttackAction aaa) {
+    private Coords handleReportsAndDirectScatter(boolean isFlak, Coords targetPos, Vector<Report> vPhaseReport, ArtilleryAttackAction aaa) {
+        Coords originalTargetPos = targetPos;
+        
         Report r;
+        // special report for off-board target
         if (target.isOffBoard()) {
             r = new Report(9994);
             r.subject = subjectId;
@@ -427,6 +435,15 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
         
         if (!bMissed) {
+            // off-board targets can just report direct hit and move on
+            if (target.isOffBoard()) {
+                r = new Report(9996);
+                r.subject = subjectId;
+                r.indent();
+                vPhaseReport.addElement(r);
+                return targetPos;
+            } 
+            
             if (!isFlak) {
                 r = new Report(3190);
             } else {
@@ -481,7 +498,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 r.add(targetPos.getBoardNum());
                 vPhaseReport.addElement(r);
-            } else {
+            } else if(target.isOffBoard()) {
+                // off-board targets should report scatter distance
+                r = new Report(9995);
+                r.add(originalTargetPos.distance(targetPos));
+                r.subject = subjectId;
+                r.indent();
+                vPhaseReport.addElement(r);
+            } else if(!target.isOffBoard()) {
                 // misses and scatters off-board
                 if (isFlak) {
                     r = new Report(3193);
@@ -490,11 +514,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 }
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
-                return false;
+                return null;
             }
         }
         
-        return true;
+        return targetPos;
     }
     
     /**

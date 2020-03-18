@@ -1,9 +1,22 @@
+/*  
+* MegaMek - Copyright (C) 2020 - The MegaMek Team  
+*  
+* This program is free software; you can redistribute it and/or modify it under  
+* the terms of the GNU General Public License as published by the Free Software  
+* Foundation; either version 2 of the License, or (at your option) any later  
+* version.  
+*  
+* This program is distributed in the hope that it will be useful, but WITHOUT  
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
+* details.  
+*/  
+
 package megamek.client.ui.swing;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -18,7 +31,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.IGame.Phase;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.IPlayer;
@@ -112,6 +124,10 @@ public class OffBoardTargetOverlay implements IDisplayable {
 
     @Override
     public boolean isHit(Point point, Dimension size) {
+        Point actualPoint = point;
+        actualPoint.x = (int) (point.getX() + clientgui.getBoardView().getDisplayablesRect().getX());
+        actualPoint.y = (int) (point.getY() + clientgui.getBoardView().getDisplayablesRect().getY());
+        
         for(OffBoardDirection direction : OffBoardDirection.values()) {
             if(direction != OffBoardDirection.NONE) {
                 if(buttons.containsKey(direction) &&
@@ -160,8 +176,6 @@ public class OffBoardTargetOverlay implements IDisplayable {
         
         // draw top icon, if necessary
         if(showDirectionalElement(OffBoardDirection.NORTH)) {
-            //xPosition = rect.x + (int) (rect.width / 2) - (int) (elementWidth / 2);
-            //yPosition = rect.y + EDGE_OFFSET;
             button = generateRectangle(OffBoardDirection.NORTH, rect);
             buttons.put(OffBoardDirection.NORTH, button);
             graph.drawRect(button.x, button.y, button.width, button.height);
@@ -196,31 +210,31 @@ public class OffBoardTargetOverlay implements IDisplayable {
      * Worker function that generates a rectangle that can be drawn on screen
      * or evaluated for hit detection.
      */
-    private Rectangle generateRectangle(OffBoardDirection direction, Rectangle rect) {
+    private Rectangle generateRectangle(OffBoardDirection direction, Rectangle boundingRectangle) {
         int xPosition;
         int yPosition;        
         
         switch(direction) {
         // north rectangle is wider than narrower, and at the top of the board view
         case NORTH:
-            xPosition = rect.x + (int) (rect.width / 2) - (int) (WIDE_EDGE_SIZE / 2);
-            yPosition = rect.y + EDGE_OFFSET;
+            xPosition = boundingRectangle.x + (int) (boundingRectangle.width / 2) - (int) (WIDE_EDGE_SIZE / 2);
+            yPosition = boundingRectangle.y + EDGE_OFFSET;
             return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE);
         // west rectangle is narrower than wider, and at the left of the board view
         case WEST:
-            xPosition = rect.x + EDGE_OFFSET;
-            yPosition = rect.y + (int) (rect.height / 2) - (int) (WIDE_EDGE_SIZE / 2);
+            xPosition = boundingRectangle.x + EDGE_OFFSET;
+            yPosition = boundingRectangle.y + (int) (boundingRectangle.height / 2) - (int) (WIDE_EDGE_SIZE / 2);
             return new Rectangle(xPosition, yPosition, NARROW_EDGE_SIZE, WIDE_EDGE_SIZE);
         // south rectangle is wider than narrower, and at the bottom of the board view
         case SOUTH:
-            xPosition = rect.x + (int) (rect.width / 2) - (int) (WIDE_EDGE_SIZE / 2);
-            yPosition = rect.y + rect.height - EDGE_OFFSET - NARROW_EDGE_SIZE;
+            xPosition = boundingRectangle.x + (int) (boundingRectangle.width / 2) - (int) (WIDE_EDGE_SIZE / 2);
+            yPosition = boundingRectangle.y + boundingRectangle.height - EDGE_OFFSET - NARROW_EDGE_SIZE;
             return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE);
         /// east rectangle is narrower than wider, and at the right of the board view, but to the left of the unit overview panel
         case EAST:
             int extraXOffset = GUIPreferences.getInstance().getShowUnitOverview() ? UnitOverview.getUIWidth() : 0;
-            xPosition = rect.x + rect.width - WIDE_EDGE_SIZE - EDGE_OFFSET - extraXOffset;
-            yPosition = rect.y + (int) (rect.height / 2) - (int) (NARROW_EDGE_SIZE / 2);
+            xPosition = boundingRectangle.x + boundingRectangle.width - WIDE_EDGE_SIZE - EDGE_OFFSET - extraXOffset;
+            yPosition = boundingRectangle.y + (int) (boundingRectangle.height / 2) - (int) (NARROW_EDGE_SIZE / 2);
             return new Rectangle(xPosition, yPosition, NARROW_EDGE_SIZE, WIDE_EDGE_SIZE);
         default:
             return null;
@@ -281,11 +295,6 @@ public class OffBoardTargetOverlay implements IDisplayable {
                 clientgui.getClient().getGame());
         
         targetingPhaseDisplay.updateDisplayForPendingAttack(clientgui.getBoardView().getSelectedArtilleryWeapon(), waa);
-        // where cen = clientgui.getBoardView().getSelectedArtilleryWeapon().getEntity()
-        // and target = selected target entity from dropdown
-        // and weaponNum = clientgui.getBoardView().getSelectedArtilleryWeapon().getEntity().getEquipmentNum(
-        //      getBoardView().getSelectedArtilleryWeapon())
-        // then access TargetingPhaseDisplay.houseKeepingForAttack function
     }
 
 }

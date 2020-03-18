@@ -6761,4 +6761,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public boolean getDisplayInvalidHexInfo() {
         return displayInvalidHexInfo;
     }
+    
+    public Rectangle getDisplayablesRect() {
+        return displayablesRect;
+    }
 }

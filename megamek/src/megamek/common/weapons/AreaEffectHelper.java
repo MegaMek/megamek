@@ -25,17 +25,29 @@ import megamek.client.bot.princess.BotGeometry;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BombType;
+import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.HitData;
 import megamek.common.IGame;
+import megamek.common.IHex;
 import megamek.common.Infantry;
+import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.PlanetaryConditions;
+import megamek.common.Protomech;
 import megamek.common.Report;
+import megamek.common.SupportTank;
+import megamek.common.Tank;
 import megamek.common.TargetRoll;
+import megamek.common.Terrains;
+import megamek.common.ToHitData;
+import megamek.common.VTOL;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * Class containing functionality that helps out with area effect weapons. 
@@ -48,7 +60,7 @@ public class AreaEffectHelper {
     public static final int[] fuelAirDamage = { 5, 10, 20, 30 };
     
     /**
-     * Worker funciton that initializes blast radius data for fuel-air explosives of various types.
+     * Worker function that initializes blast radius data for fuel-air explosives of various types.
      */
     private static void initializeFuelAirBlastRadiusIndexData() {
         fuelAirBlastRadiusIndex = new HashMap<>();
@@ -95,13 +107,6 @@ public class AreaEffectHelper {
      * Helper function that processes damage for fuel-air explosives.
      */
     public static void processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Report> vPhaseReport, Server server) {
-        processFuelAirDamage(center, ordnanceType, attacker, new Vector<Integer>(), vPhaseReport, server);
-    }
-    
-    /**
-     * Helper function that processes damage for fuel-air explosives. Includes the capability to exclude entities from the process
-     */
-    public static void processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Integer> entitiesToExclude, Vector<Report> vPhaseReport, Server server) {
         IGame game = attacker.getGame();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early 
         boolean notEnoughAtmo = game.getBoard().inSpace() ||
@@ -126,6 +131,8 @@ public class AreaEffectHelper {
             r.newlines = 1;
             vPhaseReport.addElement(r);
         }
+        
+        Vector<Integer> entitiesToExclude = new Vector<>();
         
         // assemble collection of hexes at ranges 0 to radius
         // for each hex, invoke artilleryDamageHex, with the damage set according to this:
@@ -157,40 +164,50 @@ public class AreaEffectHelper {
     }
     
     /**
-     * Worker function that checks for and implements instant infantry destruction due to fuel air ordnance, if necessary
+     * Worker function that checks for and implements instant infantry destruction due to fuel air ordnance, if necessary.
+     * Checks all units at given coords.
      */
     public static void checkInfantryDestruction(Coords coords, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
             Vector<Report> vPhaseReport, IGame game, Server server) {
         for(Entity entity : game.getEntitiesVector(coords)) {
-            int rollTarget = -1;
-            if(entity instanceof BattleArmor) {
-                rollTarget = 7;
-            } else if(entity instanceof Infantry) {
-                rollTarget = 9;
-            } else {
-                continue;
-            }
-            
-            int roll = Compute.d6(2);
-            int result = roll + distFromCenter;
-            boolean destroyed = result > rollTarget;
-            
-            Report r = new Report(9987);
-            r.indent(1);
-            r.subject = attacker.getId();
-            r.newlines = 1;
-            r.add(rollTarget);
-            r.add(roll);
-            r.add(distFromCenter);
-            r.choose(destroyed);
-            vPhaseReport.addElement(r);
-            
-            if(destroyed) {
-                vPhaseReport.addAll(server.destroyEntity(entity, "fuel-air ordnance detonation", false, false));
-                alreadyHit.add(entity.getId());
-            }
+            checkInfantryDestruction(entity, distFromCenter, attacker, alreadyHit, vPhaseReport, game, server);
+        }
+    }
+    
+    /**
+     * Worker function that checks for and implements instant infantry destruction due to fuel air ordnance, if necessary.
+     * Single-entity version.
+     */
+    public static void checkInfantryDestruction(Entity entity, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
+            Vector<Report> vPhaseReport, IGame game, Server server) {
+        int rollTarget = -1;
+        if(entity instanceof BattleArmor) {
+            rollTarget = 7;
+        } else if(entity instanceof Infantry) {
+            rollTarget = 9;
+        } else {
             return;
         }
+        
+        int roll = Compute.d6(2);
+        int result = roll + distFromCenter;
+        boolean destroyed = result > rollTarget;
+        
+        Report r = new Report(9987);
+        r.indent(1);
+        r.subject = attacker.getId();
+        r.newlines = 1;
+        r.add(rollTarget);
+        r.add(roll);
+        r.add(distFromCenter);
+        r.choose(destroyed);
+        vPhaseReport.addElement(r);
+        
+        if(destroyed) {
+            vPhaseReport.addAll(server.destroyEntity(entity, "fuel-air ordnance detonation", false, false));
+            alreadyHit.add(entity.getId());
+        }
+        return;
     }
     
     /**
@@ -209,5 +226,369 @@ public class AreaEffectHelper {
         for (Minefield mf : mfRemoved) {
             server.removeMinefield(mf);
         }
+    }
+
+    /**
+     * Worker function that does artillery damage to an entity.
+     * Extracted from Server.artilleryDamageHex()
+     * @param entity The entity to damage
+     * @param damage The amount of damage to do
+     * @param bldg The building, if any, in that hex
+     * @param bldgAbsorbs How much damage, if any, the building will absorb
+     * @param variableDamage Whether to roll a d6 for the number of hits
+     * @param asfFlak Whether we are making a flak attack against an aerospace unit
+     * @param flak Whether we are making a flak attack
+     * @param altitude Altitude of the attack
+     * @param attackSource The coordinates at which the shell was targeted, for hit table resolution
+     * @param ammo The ammo type used
+     * @param coords The coordinates where the shell actually landed
+     * @param isFuelAirBomb Whether we are making a fuel-air attack
+     * @param alreadyHit Whether the entity was already hit
+     * @param killer The entity that initiated the attack
+     * @param hex The hex, if any, where the shell landed
+     * @param subjectId The ID of the entity carrying out the attack, for reporting in double blind games
+     * @param vPhaseReport Vector of reports to which we append reports
+     * @param server Server object for invocation of various methods
+     */
+    public static void artilleryDamageEntity(Entity entity, int damage, Building bldg, int bldgAbsorbs, 
+            boolean variableDamage, boolean asfFlak, boolean flak, int altitude,
+            Coords attackSource, AmmoType ammo, Coords coords, boolean isFuelAirBomb,
+            Entity killer, IHex hex, int subjectId, Vector<Report> vPhaseReport, Server server) {
+        Report r;
+        
+        int hits = damage;
+        if (variableDamage) {
+            hits = Compute.d6(damage);
+        }
+        ToHitData toHit = new ToHitData();
+        if (entity instanceof Protomech) {
+            toHit.setHitTable(ToHitData.HIT_SPECIAL_PROTO);
+        }
+        int cluster = 5;
+
+        // Check: is entity inside building?
+        if ((bldg != null) && (bldgAbsorbs > 0)
+            && (entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+            cluster -= bldgAbsorbs;
+            // some buildings scale remaining damage that is not absorbed
+            // TODO : this isn't quite right for castles brian
+            cluster = (int) Math.floor(bldg.getDamageToScale() * cluster);
+            if (entity instanceof Infantry) {
+                return; // took its damage already from building damage
+            } else if (cluster <= 0) {
+                // entity takes no damage
+                r = new Report(6426);
+                r.subject = subjectId;
+                r.addDesc(entity);
+                vPhaseReport.add(r);
+                return;
+            } else {
+                r = new Report(6425);
+                r.subject = subjectId;
+                r.add(bldgAbsorbs);
+                vPhaseReport.add(r);
+            }
+        }
+
+        // flak against ASF should only hit Aeros, because their elevation
+        // is actually altitude, so shouldn't hit VTOLs
+        if (asfFlak && !entity.isAero()) {
+            return;
+        }
+
+        if (flak) {
+            // Check: is entity not a VTOL in flight or an ASF
+            if (!((entity instanceof VTOL)
+                    || (entity.getMovementMode() == EntityMovementMode.VTOL)
+                    || entity.isAero())) {
+                return;
+            }
+            // Check: is entity at correct elevation?
+            if (entity.getElevation() != altitude) {
+                return;
+            }
+        } else {
+            // Check: is entity a VTOL or Aero in flight?
+            if ((entity instanceof VTOL)
+                || (entity.getMovementMode() == EntityMovementMode.VTOL)
+                || entity.isAero()) {
+                // VTOLs take no damage from normal artillery unless landed
+                if ((entity.getElevation() != 0)
+                    && (entity.getElevation() != hex.terrainLevel(Terrains.BLDG_ELEV))
+                    && (entity.getElevation() != hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
+                    return;
+                }
+            }
+        }
+
+        // Work out hit table to use
+        if (attackSource != null) {
+            toHit.setSideTable(entity.sideTable(attackSource));
+            if ((ammo != null)
+                && (ammo.getMunitionType() == AmmoType.M_CLUSTER)
+                && attackSource.equals(coords)) {
+                if (entity instanceof Mech) {
+                    toHit.setHitTable(ToHitData.HIT_ABOVE);
+                } else if (entity instanceof Tank) {
+                    toHit.setSideTable(ToHitData.SIDE_FRONT);
+                    toHit.addModifier(2, "cluster artillery hitting a Tank");
+                }
+            }
+        }
+
+        // convention infantry take x2 damage from AE weapons
+        if (entity.isConventionalInfantry()) {
+            hits *= 2;
+            
+            // if it's fuel-air, we take even more damage!
+            if(isFuelAirBomb) {
+                hits *= 2;
+            }
+        }
+        boolean specialCaseFlechette = false;
+
+        // Entity/ammo specific damage modifiers
+        if (ammo != null) {
+            if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
+                if (hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
+                    hits *= 2;
+                }
+            }
+            // fuel-air bombs do an additional 2x damage to infantry
+            else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
+
+                // wheeled and hover tanks take movement critical
+                if ((entity instanceof Tank)
+                        && ((entity.getMovementMode() == EntityMovementMode.WHEELED)
+                        || (entity.getMovementMode() == EntityMovementMode.HOVER))) {
+                    r = new Report(6480);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(toHit.getTableDesc());
+                    r.add(0);
+                    vPhaseReport.add(r);
+                    vPhaseReport.addAll(server.vehicleMotiveDamage((Tank)entity, 0));
+                    return;
+                }
+                
+                // only infantry and support vees with bar < 5 are affected
+                if ((entity instanceof BattleArmor) || ((entity instanceof SupportTank)
+                        && !entity.hasPatchworkArmor() && (entity.getBARRating(1) > 4))) {
+                    return;
+                }
+                if (entity instanceof Infantry) {
+                    hits = Compute.d6(damage);
+                    hits *= 2;
+                } else {
+                    if ((entity.getBARRating(1) < 5) && !entity.hasPatchworkArmor()) {
+                        switch (ammo.getAmmoType()) {
+                            case AmmoType.T_LONG_TOM:
+                                // hack: check if damage is still at 4, so
+                                // we're in
+                                // the
+                                // center hex. otherwise, do no damage
+                                if (damage == 4) {
+                                    damage = (5 - entity.getBARRating(1)) * 5;
+                                } else {
+                                    return;
+                                }
+                                break;
+                            case AmmoType.T_SNIPER:
+                                // hack: check if damage is still at 2, so
+                                // we're in
+                                // the
+                                // center hex. otherwise, do no damage
+                                if (damage == 2) {
+                                    damage = (5 - entity.getBARRating(1)) * 3;
+                                } else {
+                                    return;
+                                }
+                                break;
+                            case AmmoType.T_THUMPER:
+                                // no need to check for damage, because
+                                // falloff =
+                                // damage for the thumper
+                                damage = 5 - entity.getBARRating(1);
+                                break;
+                        }
+                    } else {
+                        // ugh, patchwork armor
+                        // rules as written don't deal with this reset the damage to standard arty damage
+                        // when we have each cluster's hit location,  we'll multiply by the
+                        // BAR-difference to BAR 5, per a rules question email
+                        specialCaseFlechette = true;
+                        switch (ammo.getAmmoType()) {
+                            case AmmoType.T_LONG_TOM:
+                                // hack: check if damage is still at 4, so
+                                // we're in the center hex. otherwise, do no damage
+                                if (damage == 4) {
+                                    damage = 25;
+                                } else {
+                                    return;
+                                }
+                                break;
+                            case AmmoType.T_SNIPER:
+                                // hack: check if damage is still at 2, so we're in
+                                // the center hex. otherwise, do no damage
+                                if (damage == 2) {
+                                    damage = 15;
+                                } else {
+                                    return;
+                                }
+                                break;
+                            case AmmoType.T_THUMPER:
+                                // no need to check for damage, because
+                                // falloff = damage for the thumper
+                                damage = 10;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Do the damage
+        r = new Report(6480);
+        r.subject = entity.getId();
+        r.addDesc(entity);
+        r.add(toHit.getTableDesc());
+        r.add(hits);
+        vPhaseReport.add(r);
+        if (entity instanceof BattleArmor) {
+            // BA take full damage to each trooper, ouch!
+            for (int loc = 0; loc < entity.locations(); loc++) {
+                if (entity.getInternal(loc) > 0) {
+                    HitData hit = new HitData(loc);
+                    vPhaseReport.addAll(server.damageEntity(entity, hit, hits,
+                            false, DamageType.NONE, false, true, false));
+                }
+            }
+        } else {
+            while (hits > 0) {
+                int damageToDeal = Math.min(cluster, hits);
+                HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                // per a rules question, for patchwork armor being attacked by flechette ammo, we multiply the damage done
+                // by 5 - the BAR rating of the hit location
+                if (specialCaseFlechette && !(entity instanceof Infantry)) {
+                    damageToDeal *= (5 - entity.getBARRating(hit.getLocation()));
+                // fuel-air bombs do 1.5x damage to locations hit that have a BAR rating of less than 10.
+                } else if(isFuelAirBomb && !(entity instanceof Infantry) && (entity.getBARRating(hit.getLocation()) < 10)) {
+                    damageToDeal = (int) Math.ceil(damageToDeal * 1.5);
+                    
+                    r = new Report(9991);
+                    r.indent(1);
+                    r.subject = killer.getId();
+                    r.newlines = 1;
+                    vPhaseReport.addElement(r);
+                }
+                vPhaseReport.addAll(server.damageEntity(entity, hit, damageToDeal,
+                        false, DamageType.NONE, false, true, false));
+                hits -= Math.min(cluster, hits);
+            }
+        }
+        if (killer != null) {
+            server.creditKill(entity, killer);
+        }
+    }
+    
+    /**
+     * Calculate the damage and falloff for a particular ammo type, taking into account
+     * whether the attack is being carried out by a battle armor squad or a mine clearance attack.
+     * Also sets a "cluster munitions" flag as appropriate.
+     * @param ammo AmmoType being used for the attack
+     * @param attackingBA  How many BA suits are in the squad if this is a BA Tube arty
+     *                     attack, -1 otherwise
+     * @param mineClear Whether or not we're clearing a minefield
+     * @return
+     */
+    public static DamageFalloff calculateDamageFallOff(AmmoType ammo, int attackingBA, boolean mineClear) {
+        int damage = ammo.getRackSize();
+        int falloff = 10;
+        boolean clusterMunitionsFlag = false;
+        
+        // Capital and Sub-capital missiles
+        if (ammo.getAmmoType() == AmmoType.T_KRAKEN_T
+                || ammo.getAmmoType() == AmmoType.T_KRAKENM
+                || ammo.getAmmoType() == AmmoType.T_MANTA_RAY) {
+            damage = 50;
+            falloff = 25;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_KILLER_WHALE
+                || ammo.getAmmoType() == AmmoType.T_KILLER_WHALE_T
+                || ammo.getAmmoType() == AmmoType.T_SWORDFISH
+                || ammo.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+            damage = 40;
+            falloff = 20;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_STINGRAY) {
+            damage = 35;
+            falloff = 17;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_WHITE_SHARK
+                || ammo.getAmmoType() == AmmoType.T_WHITE_SHARK_T
+                || ammo.getAmmoType() == AmmoType.T_PIRANHA
+                || ammo.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+            damage = 30;
+            falloff = 15;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_BARRACUDA
+                || ammo.getAmmoType() == AmmoType.T_BARRACUDA_T
+                || ammo.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+            damage = 20;
+            falloff = 10;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
+            falloff = 25;
+        }
+        if (ammo.getAmmoType() == AmmoType.T_BA_TUBE) {
+            falloff = 2 * attackingBA;
+        }
+        if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
+            // non-arrow-iv cluster does 5 less than standard
+            if (ammo.getAmmoType() != AmmoType.T_ARROW_IV) {
+                damage -= 5;
+            }
+            // thumper gets falloff 9 for 1 damage at 1 hex range
+            if (ammo.getAmmoType() == AmmoType.T_THUMPER) {
+                falloff = 9;
+            }
+            
+            clusterMunitionsFlag = true;
+        } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
+            switch (ammo.getAmmoType()) {
+                // for flechette, damage and falloff is number of d6, not absolute
+                // damage
+                case AmmoType.T_LONG_TOM:
+                    damage = 4;
+                    falloff = 2;
+                    break;
+                case AmmoType.T_SNIPER:
+                    damage = 2;
+                    falloff = 1;
+                    break;
+                case AmmoType.T_THUMPER:
+                    damage = 1;
+                    falloff = 1;
+            }
+        // if this was a mine clearance, then it only affects the hex hit
+        } else if (mineClear) {
+            falloff = damage;
+        }
+        
+        DamageFalloff retVal = new DamageFalloff();
+        retVal.damage = damage;
+        retVal.falloff = falloff;
+        retVal.clusterMunitionsFlag = clusterMunitionsFlag;
+        
+        return retVal;
+    }
+    
+    /**
+     * Dumb data structure intended to hold results from the calculateDamageFalloff method.
+     */
+    public static class DamageFalloff {
+        public int damage;
+        public int falloff;
+        public boolean clusterMunitionsFlag;
     }
 }

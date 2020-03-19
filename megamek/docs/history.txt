@@ -31,6 +31,7 @@ VERSION HISTORY:
 + PR #1766: Adding tool tips for board editor elevation
 + Issue #1769: Added 'cancel' button to random map dialog; now a user can access that dialog in map editor without a map reset
 + Issue #349: Random map dialog now looks in mapgen folder instead of boards folder by default for presets
++ Issue #377: Ask user if they want to quit MegaMek when attempting to close the window.
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

@@ -65,6 +65,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -460,12 +461,29 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
         layoutFrame();
         menuBar.addActionListener(this);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                frame.setVisible(false);
-                saveSettings();
-                die();
+                ignoreHotKeys = true;
+                int savePrompt = JOptionPane.showConfirmDialog(null,
+                        "Do you want to save the game before quitting MekHQ?",
+                        "Save?",
+                        JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                ignoreHotKeys = false;
+                if (savePrompt == JOptionPane.YES_OPTION) {
+                    if (!saveGame()) {
+                        // When the user did not actually save the game, don't close MM 
+                        return;
+                    }
+                }
+                if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
+                {
+                    frame.setVisible(false);
+                    saveSettings();
+                    die();
+                }
             }
         });
         cb2 = new ChatterBox2(this, bv, controller);
@@ -717,25 +735,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void actionPerformed(ActionEvent event) {
         switch (event.getActionCommand()) {
             case FILE_GAME_SAVE:
-                ignoreHotKeys = true;
-                JFileChooser fc = new JFileChooser("./savegames");
-                fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-                fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
-
-                int returnVal = fc.showSaveDialog(frame);
-                if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-                    // I want a file, y'know!
-                    return;
-                }
-                if (fc.getSelectedFile() != null) {
-                    String file = fc.getSelectedFile().getName();
-                    // stupid hack to allow for savegames in folders with spaces in
-                    // the name
-                    String path = fc.getSelectedFile().getParentFile().getPath();
-                    path = path.replace(" ", "|");
-                    client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
-                }
-                ignoreHotKeys = false;
+                saveGame();
                 break;
             case FILE_GAME_SAVE_SERVER:
                 ignoreHotKeys = true;
@@ -1640,6 +1640,30 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             ids.add(e.getId());
         }
         c.sendDeleteEntities(ids);
+    }
+    
+    private boolean saveGame() {
+        ignoreHotKeys = true;
+        JFileChooser fc = new JFileChooser("./savegames");
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
+
+        int returnVal = fc.showSaveDialog(frame);
+        ignoreHotKeys = false;
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+            // I want a file, y'know!
+            return false;
+        }
+        if (fc.getSelectedFile() != null) {
+            String file = fc.getSelectedFile().getName();
+            // stupid hack to allow for savegames in folders with spaces in
+            // the name
+            String path = fc.getSelectedFile().getParentFile().getPath();
+            path = path.replace(" ", "|");
+            client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
+            return true;
+        }
+        return false;
     }
 
     /**

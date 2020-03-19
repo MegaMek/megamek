@@ -5755,7 +5755,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (clientgui == null) {
                     txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                     txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] { //$NON-NLS-1$
-                            mhex.terrainLevel(Terrains.BRIDGE),
+                            mhex.terrainLevel(Terrains.BRIDGE_ELEV),
                             Terrains.getEditorName(Terrains.BRIDGE),
                             mhex.terrainLevel(Terrains.BRIDGE_CF),
                     }));

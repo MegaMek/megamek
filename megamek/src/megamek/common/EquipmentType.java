@@ -347,7 +347,8 @@ public class EquipmentType implements ITechnology {
      * @return              The weight of the equipment in tons
      */
     public double getTonnage(Entity entity, int location, RoundWeight defaultMethod) {
-        return defaultMethod.round(getTonnage(entity, location), entity);
+        // Default implementation does not deal with variable-weight equipment.
+        return getTonnage(entity, location);
     }
 
     void setTonnage(double tonnage) {

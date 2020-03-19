@@ -10119,7 +10119,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.cost = COST_VARIABLE;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "122,TM";

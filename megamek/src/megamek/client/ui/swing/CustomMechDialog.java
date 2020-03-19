@@ -291,7 +291,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isAero &= (e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship));
             isMech &= (e instanceof Mech);
             isShip &= (e instanceof SmallCraft) || (e instanceof Jumpship);
-            isVTOL &= (e instanceof VTOL);
+            isVTOL &= (e.getMovementMode() == EntityMovementMode.VTOL);
             isWiGE &= (e instanceof Tank) && (e.getMovementMode() == EntityMovementMode.WIGE);
             isQuadVee &= (e instanceof QuadVee);
             isLAM &= (e instanceof LandAirMech);
@@ -1016,7 +1016,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isQuadVee = true;
         boolean isLAM = true;
         boolean isAirMech = true;
-        boolean isGlider = true;
+        boolean isGlider = true;         
         for (Entity e : entities) {
             isAero &= ((e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship)))
                     || ((e instanceof LandAirMech)
@@ -1024,7 +1024,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                             || ((LandAirMech)e).getLAMType() == LandAirMech.LAM_BIMODAL
                                 && choStartingMode.getSelectedIndex() == 1));
             isShip &= (e instanceof SmallCraft) || (e instanceof Jumpship);
-            isVTOL &= (e instanceof VTOL);
+            isVTOL &= (e.getMovementMode() == EntityMovementMode.VTOL);
             isWiGE &= (e instanceof Tank) && (e.getMovementMode() == EntityMovementMode.WIGE);
             isQuadVee &= (e instanceof QuadVee);
             isLAM &= (e instanceof LandAirMech);
@@ -1098,7 +1098,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
         }
 
-        if (isVTOL && (height > 50)
+        if ((isVTOL && height > 50)
                 || (isAirMech && height > 25)
                 || (isGlider && height > 12)) {
             msg = Messages.getString("CustomMechDialog.EnterCorrectHeight"); //$NON-NLS-1$

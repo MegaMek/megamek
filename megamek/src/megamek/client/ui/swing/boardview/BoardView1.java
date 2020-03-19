@@ -5120,7 +5120,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public synchronized void boardChangedAllHexes(BoardEvent b) {
         clearHexImageCache();
-//        tileManager.loadAllHexes(); Creates long load times and seems unnecessary 
         clearShadowMap();
         repaint();
     }

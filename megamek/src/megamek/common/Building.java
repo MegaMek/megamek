@@ -32,9 +32,13 @@ import java.util.Vector;
  * @version $Revision$
  */
 public class Building implements Serializable {
-
     private static final long serialVersionUID = -8236017592012683793L;
 
+    /**
+     * Generic flag for uninitialized values.
+     */
+    protected static final int UNKNOWN = -1;
+    
     // The Building Types
     public static final int LIGHT = 1;
     public static final int MEDIUM = 2;
@@ -42,11 +46,23 @@ public class Building implements Serializable {
     public static final int HARDENED = 4;
     public static final int WALL = 5;
     
-    // The Building Class
+    /**
+     * The Building Type of the building; equal to the terrain elevation of the BUILDING terrain of a hex.
+     */
+    private int type = Building.UNKNOWN;
+    
+    // The Building Classes
     public static final int STANDARD = 0;
     public static final int HANGAR = 1;
     public static final int FORTRESS = 2;
     public static final int GUN_EMPLACEMENT = 3;
+    // TODO: leaving out Castles Brian until issues with damage scaling are resolved
+    // public static final int CASTLE_BRIAN = 3;
+    
+    /**
+     * The Building Class of the building; equal to the terrain elevation of the BUILDING CLASS terrain of a hex.
+     */
+    private int bldgClass = Building.STANDARD;
     
     /**
      * The ID of this building.
@@ -59,21 +75,9 @@ public class Building implements Serializable {
     private Vector<Coords> coordinates = new Vector<Coords>();
 
     /**
-     * The Construction Type of the building; equal to the terrain elevation of the BUILDING terrain of a hex.
-     * Types: LIGHT, MEDIUM, HEAVY, HARDENED, WALL
-     */
-    private int type = Building.UNKNOWN;
-
-    /**
      * The Basement type of the building.
      */
     private Map<Coords,BasementType> basement = new HashMap<Coords,BasementType>();
-    
-    /**
-     * The Building Class of the building; equal to the terrain elevation of the BUILDING CLASS terrain of a hex.
-     * Types: STANDARD, HANGAR, FORTRESS, GUN_EMPLACEMENT 
-     */
-    private int bldgClass = Building.STANDARD;
 
     private int collapsedHexes = 0;
 
@@ -229,10 +233,6 @@ public class Building implements Serializable {
 
     } // End void protected include( Coords, Board )
 
-    /**
-     * Generic flag for uninitialized values.
-     */
-    protected static final int UNKNOWN = -1;
 
     /**
      * Basement handlers
@@ -278,11 +278,6 @@ public class Building implements Serializable {
             return UNKNOWN;
         }
     }
-
-
-    // TODO: leaving out Castles Brian until issues with damage scaling are
-    // resolved
-    // public static final int CASTLE_BRIAN = 3;
 
     /**
      * Construct a building for the given coordinates from the board's

@@ -977,20 +977,19 @@ public class Board implements Serializable, IBoard {
                 if (hex.containsTerrain(Terrains.BUILDING) && hex.getTerrain(Terrains.BUILDING).hasExitsSpecified()) {
                     for (int dir = 0; dir < 6; dir++) {
                         IHex adjHex = getHexInDir(x, y, dir);
-                        if (adjHex != null 
+                        if ((adjHex != null) 
                                 && adjHex.containsTerrain(Terrains.BUILDING) 
-                                && hex.containsTerrainExit(Terrains.BUILDING, dir)) 
-                        {
+                                && hex.containsTerrainExit(Terrains.BUILDING, dir)) {
                             if (adjHex.getTerrain(Terrains.BUILDING).getLevel() != hex.getTerrain(Terrains.BUILDING).getLevel()) {
                                 valid = false;
                                 currBuff.append("Building has an exit to a building of another Building Type (Light, Medium...).\n");
                             }
                             if (hex.containsTerrain(Terrains.BLDG_CLASS) 
                                     && ((adjHex.containsTerrain(Terrains.BLDG_CLASS) 
-                                            && adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() != hex.getTerrain(Terrains.BLDG_CLASS).getLevel())
-                                            || (!adjHex.containsTerrain(Terrains.BLDG_CLASS) )  )) {
+                                            && (adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() != hex.getTerrain(Terrains.BLDG_CLASS).getLevel()))
+                                            || (!adjHex.containsTerrain(Terrains.BLDG_CLASS)))) {
                                 valid = false;
-                                currBuff.append("Building has an exit in direction "+dir+" to a building of another Building Class.\n");
+                                currBuff.append("Building has an exit in direction " + dir + " to a building of another Building Class.\n");
                             }
                         }
                     }
@@ -1002,9 +1001,8 @@ public class Board implements Serializable, IBoard {
                 } else if (!valid) { // Otherwise, log the error for later output
                     if (errBuff.length()>0)
                         errBuff.append("----\n");
-                    Coords c = new Coords(x,y);
-                    errBuff.append("Hex " + c.getBoardNum() + " is invalid:\n");
-                    errBuff.append(currBuff.toString());
+                    Coords c = new Coords(x, y);
+                    errBuff.append("Hex " + c.getBoardNum() + " is invalid:\n" + currBuff.toString());
                 }
             }
         }

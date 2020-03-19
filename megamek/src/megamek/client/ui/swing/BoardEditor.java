@@ -78,6 +78,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
@@ -501,11 +502,10 @@ public class BoardEditor extends JComponent
             frame.setSize(800, 600);
         }
 
-        // when frame is closing, just hide it
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                frame.setVisible(false);
                 minimapW.setVisible(false);
                 if (controller != null) {
                     controller.removeAllActions();

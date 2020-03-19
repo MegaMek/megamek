@@ -989,7 +989,7 @@ public class Board implements Serializable, IBoard {
                                             && (adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() != hex.getTerrain(Terrains.BLDG_CLASS).getLevel()))
                                             || (!adjHex.containsTerrain(Terrains.BLDG_CLASS)))) {
                                 valid = false;
-                                currBuff.append("Building has an exit in direction " + dir + " to a building of another Building Class.\n");
+                                currBuff.append("Building has an exit in direction ").append(dir).append(" to a building of another Building Class.\n");
                             }
                         }
                     }

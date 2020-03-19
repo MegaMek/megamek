@@ -570,11 +570,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
         double retVal = getType().getTonnage(getEntity(), getLocation(), defaultRounding);
         if (isDWPMounted()) {
-            retVal *= 0.75;
+            return defaultRounding.round(retVal * 0.75, getEntity());
         } else if (isSquadSupportWeapon()) {
             retVal *= getEntity().isClan() ? 1.4 : 1.5;
+            return defaultRounding.round(retVal, getEntity());
         }
-        return defaultRounding.round(retVal, getEntity());
+        return retVal;
     }
 
     public boolean isReady() {

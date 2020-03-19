@@ -1098,8 +1098,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 }
             }
         }
-        weapSortOrder.setSelectedIndex(entity.getWeaponSortOrder()
-                .ordinal());
+        weapSortOrder.setSelectedIndex(entity.getWeaponSortOrder().ordinal());
         setWeaponComparator(weapSortOrder.getSelectedIndex());
 
         if (en.hasDamagedRHS() && hasFiredWeapons) {
@@ -1112,7 +1111,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         if (en instanceof Mech) {
             heatCap = ((Mech) en).getHeatCapacity(true, false);
         } else if (en instanceof Aero) {
-            heatCap = ((Aero) en).getHeatCapacity(false);
+            heatCap = en.getHeatCapacity(false);
         } else {
             heatCap = en.getHeatCapacity();
         }
@@ -1137,16 +1136,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
         // end duplicate block
 
-        String heatText = Integer.toString(currentHeatBuildup);
-        if (currentHeatBuildup > en.getHeatCapacityWithWater()) {
-            heatText += "*"; // overheat indication //$NON-NLS-1$
-        }
         // check for negative values due to extreme temp
         if (currentHeatBuildup < 0) {
             currentHeatBuildup = 0;
         }
-        currentHeatBuildupR
-                .setText(heatText + " (" + heatCapacityStr + ')'); //$NON-NLS-1$
+
+        String heatText = Integer.toString(currentHeatBuildup);
+        if (currentHeatBuildup > en.getHeatCapacityWithWater()) {
+            heatText += "*"; // overheat indication //$NON-NLS-1$
+        }
+
+        currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ')'); //$NON-NLS-1$
 
         // change what is visible based on type
         if (entity.usesWeaponBays()) {

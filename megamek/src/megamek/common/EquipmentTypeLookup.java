@@ -135,7 +135,7 @@ public class EquipmentTypeLookup {
     @EquipmentName
     public static final String DUNE_BUGGY_CHASSIS_MOD = "DuneBuggyChassisMod";
     @EquipmentName
-    public static final String ENVIRONMENTAL_SEALING_CHASSIS_MOD = "EnvironmentalSealingChassisMod";
+    public static final String SV_ENVIRONMENTAL_SEALING_CHASSIS_MOD = "Environmental Sealing";
     @EquipmentName
     public static final String EXTERNAL_POWER_PICKUP_CHASSIS_MOD = "ExternalPowerPickupChassisMod";
     @EquipmentName

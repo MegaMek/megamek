@@ -1000,8 +1000,9 @@ public class Board implements Serializable, IBoard {
                 if (!valid && (errBuff == null)) {
                     return false;
                 } else if (!valid) { // Otherwise, log the error for later output
-                    if (errBuff.length()>0)
+                    if (errBuff.length() > 0) {
                         errBuff.append("----\n");
+                    }
                     Coords c = new Coords(x,y);
                     errBuff.append("Hex " + c.getBoardNum() + " is invalid:\n");
                     errBuff.append(currBuff.toString());

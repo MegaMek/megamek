@@ -467,10 +467,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             public void windowClosing(WindowEvent e) {
                 ignoreHotKeys = true;
                 int savePrompt = JOptionPane.showConfirmDialog(null,
-                        "Do you want to save the game before quitting MekHQ?",
-                        "Save?",
+                        "Do you want to save the game before quitting MegaMek?",
+                        "Save First?",
                         JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
+                        JOptionPane.WARNING_MESSAGE);
                 ignoreHotKeys = false;
                 if (savePrompt == JOptionPane.YES_OPTION) {
                     if (!saveGame()) {

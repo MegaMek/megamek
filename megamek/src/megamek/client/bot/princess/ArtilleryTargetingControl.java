@@ -196,7 +196,7 @@ public class ArtilleryTargetingControl {
             
             // skip airborne entities
             if(!e.isAirborne() && !e.isAirborneVTOLorWIGE()) {
-                targetSet.add(new HexTarget(e.getPosition(), game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
+                targetSet.add(new HexTarget(e.getPosition(), Targetable.TYPE_HEX_ARTILLERY));
                 
                 // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
                 // of the entity. 
@@ -204,8 +204,14 @@ public class ArtilleryTargetingControl {
             }
         }
         
+        for(Entity enemy : game.getAllOffboardEnemyEntities(shooter.getOwner())) {
+            if(enemy.isOffBoardObserved(shooter.getOwner().getTeam())) {
+                targetSet.add(enemy);
+            }
+        }
+        
         for(Coords coords : owner.getStrategicBuildingTargets()) {
-            targetSet.add(new HexTarget(coords, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
+            targetSet.add(new HexTarget(coords, Targetable.TYPE_HEX_ARTILLERY));
             
             // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
             // of the strategic targets.

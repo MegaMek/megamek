@@ -114,18 +114,6 @@ public class OffBoardTargetOverlay implements IDisplayable {
             return false;
         }
         
-        // if we are "facing in the right direction". This means:
-        // grounded dropship firing nose-mounted artillery
-        // selected weapon facing 0 for north
-        // 1-2 for east
-        // 3 for south
-        // 4-5 for west
-        boolean entityIsGroundedSpheroid = 
-                (targetingPhaseDisplay.ce() instanceof Aero) &&
-                ((Aero) targetingPhaseDisplay.ce()).isSpheroid() &&
-                (((Aero) targetingPhaseDisplay.ce()).getAltitude() == 0);
-                
-        
         // this is horribly inefficient, so we should cache the results of this computation, either here or in Game
         for(Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
             if(entity.isOffBoardObserved(getCurrentPlayer().getTeam()) && 

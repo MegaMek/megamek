@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -38,7 +36,6 @@ import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
-import megamek.common.Team;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -317,7 +314,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         
         // if attacker is an off-board artillery piece, check to see if we need to set observation flags
         if (aaa.getEntity(game).isOffBoard()) {
-            handleCounterBatteryObservation(aaa, targetPos);
+            handleCounterBatteryObservation(aaa, targetPos, vPhaseReport);
         }
 
         if (atype.getMunitionType() == AmmoType.M_FAE) {
@@ -409,7 +406,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     asfFlak, shootingBA);
         }
 
-        // artillery may unintentially clear minefields, but only if it wasn't
+        // artillery may unintentionally clear minefields, but only if it wasn't
         // trying to
         if (!mineClear) {
             AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, server);
@@ -525,7 +522,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * Worker function that contains logic for "has my shot been observed so that I can be targeted by counter-battery fire"
      * 
      */
-    private void handleCounterBatteryObservation(WeaponAttackAction aaa, Coords targetPos) {
+    private void handleCounterBatteryObservation(WeaponAttackAction aaa, Coords targetPos, Vector<Report> vPhaseReport) {
         // if the round landed on the board, and the attacker is an off-board artillery piece
         // then check to see if the hex where it landed can be seen by anyone on an opposing team
         // if so, mark the attacker so that it can be targeted by counter-battery fire
@@ -542,6 +539,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     
                     if(hasLoS) {
                         aaa.getEntity(game).addOffBoardObserver(entity.getOwner().getTeam());
+                        Report r = new Report(9997);
+                        r.add(entity.getDisplayName());
+                        r.subject = subjectId;
+                        vPhaseReport.add(r);
                     }
                 }
             }

@@ -105,6 +105,62 @@ public class AreaEffectHelper {
     
     /**
      * Helper function that processes damage for fuel-air explosives.
+     * Single-entity version.
+     */
+    public static void processFuelAirDamage(Entity target, Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Report> vPhaseReport, Server server) {
+        IGame game = attacker.getGame();
+        // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early 
+        boolean notEnoughAtmo = game.getBoard().inSpace() ||
+                game.getPlanetaryConditions().getAtmosphere() <= PlanetaryConditions.ATMO_TRACE;
+        
+        if(notEnoughAtmo) {
+            Report r = new Report(9986);
+            r.indent(1);
+            r.subject = attacker.getId();
+            r.newlines = 1;
+            vPhaseReport.addElement(r);
+            return;
+        }
+        
+        boolean thinAtmo = game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_THIN;
+        int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
+        
+        if(thinAtmo) {
+            Report r = new Report(9990);
+            r.indent(1);
+            r.subject = attacker.getId();
+            r.newlines = 1;
+            vPhaseReport.addElement(r);
+        }
+        
+        Vector<Integer> entitiesToExclude = new Vector<>();
+        
+        // determine distance to entity
+        // look up damage on radius chart
+        //      (divided by half, round up for thin atmo)
+        //      not here, but in artilleryDamageEntity, make sure to 2x damage for infantry outside of building
+        //      not here, but in artilleryDamageEntity, make sure to 1.5x damage for light building or unit with armor BAR < 10
+        //      not here, but in artilleryDamageEntity, make sure to .5x damage for "castle brian" or "armored" building
+        // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies on 9-, BA dies on 7-
+        int distFromCenter = center.distance(target.getPosition());
+        int damageBracket = blastRadius - distFromCenter;
+        if(damageBracket < 0) {
+            return;
+        }
+        
+        int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
+        if(thinAtmo) {
+            damage = (int) Math.ceil(damage / 2.0);
+        }
+                
+        checkInfantryDestruction(target, distFromCenter, attacker, entitiesToExclude, vPhaseReport, game, server);
+                
+        artilleryDamageEntity(target, damage, null, 0, false, false, false, 0, center, (AmmoType) ordnanceType, target.getPosition(), true,
+                attacker, null, attacker.getId(), vPhaseReport, server);
+    }
+    
+    /**
+     * Helper function that processes damage for fuel-air explosives.
      */
     public static void processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Report> vPhaseReport, Server server) {
         IGame game = attacker.getGame();

@@ -29,11 +29,17 @@ import javax.swing.JOptionPane;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.common.Aero;
+import megamek.common.AmmoType;
+import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.HexTarget;
 import megamek.common.IGame;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.IPlayer;
+import megamek.common.Mounted;
 import megamek.common.OffBoardDirection;
 import megamek.common.Targetable;
 
@@ -90,8 +96,21 @@ public class OffBoardTargetOverlay implements IDisplayable {
             return false;
         }
         
+        Mounted selectedArtilleryWeapon = clientgui.getBoardView().getSelectedArtilleryWeapon();
+        
         // only relevant if we've got an artillery weapon selected for one of our own units
-        if(clientgui.getBoardView().getSelectedArtilleryWeapon() == null) {
+        //TODO: proper icon for counter-battery picture, and draw it too
+        //TODO: display dimmed version of off-board icon during movement phase OR targeting phase when weapon is ineligible to fire 
+        //TODO: see if we need to adjust "facing in direction" logic for turreted or mech arty mounts
+        if(selectedArtilleryWeapon == null ) {
+            return false;
+        }
+        
+        // the artillery weapon needs to be using non-homing ammo
+        Mounted ammo = selectedArtilleryWeapon.getLinked();
+        AmmoType ammoType = (AmmoType) ammo.getType();
+        if((ammoType.getMunitionType() == AmmoType.M_HOMING) 
+                && ammo.curMode().equals("Homing")) {
             return false;
         }
         
@@ -101,15 +120,57 @@ public class OffBoardTargetOverlay implements IDisplayable {
         // 1-2 for east
         // 3 for south
         // 4-5 for west
+        boolean entityIsGroundedSpheroid = 
+                (targetingPhaseDisplay.ce() instanceof Aero) &&
+                ((Aero) targetingPhaseDisplay.ce()).isSpheroid() &&
+                (((Aero) targetingPhaseDisplay.ce()).getAltitude() == 0);
+                
         
         // this is horribly inefficient, so we should cache the results of this computation, either here or in Game
         for(Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
-            if(entity.isOffBoardObserved(getCurrentPlayer().getTeam()) && (entity.getOffBoardDirection() == direction)) {
+            if(entity.isOffBoardObserved(getCurrentPlayer().getTeam()) && 
+                    (entity.getOffBoardDirection() == direction) &&
+                        (targetingPhaseDisplay.ce().isOffBoard() ||
+                        weaponFacingInDirection(selectedArtilleryWeapon, direction))) {
                 return true;
             }
         }
         
         return false;
+    }
+    
+    /**
+     * Worker function that determines if the given weapon is facing in the correct off-board direction.
+     */
+    private boolean weaponFacingInDirection(Mounted artilleryWeapon, OffBoardDirection direction) {
+        Coords checkCoords = artilleryWeapon.getEntity().getPosition();
+        int translationDistance;
+        
+        // little hack: we project a point 10 hexes off board to the north/south/east/west and declare a hex target with it
+        // then use Compute.isInArc, as that takes into account all the logic including torso/turret twists.
+        switch(direction) {
+        case NORTH:
+            checkCoords = checkCoords.translated(0, checkCoords.getY() + 10);
+            break;
+        case SOUTH:
+            checkCoords = checkCoords.translated(3, getCurrentGame().getBoard().getHeight() - checkCoords.getY() + 10);
+            break;
+        case EAST:
+            translationDistance = ((getCurrentGame().getBoard().getWidth() - checkCoords.getX()) / 2) + 5;
+            checkCoords = checkCoords.translated(1, translationDistance).translated(2, translationDistance);
+            break;
+        case WEST:
+            translationDistance = checkCoords.getX() + 5;
+            checkCoords = checkCoords.translated(4, translationDistance).translated(5, translationDistance);
+            break;
+        default:
+            return false;
+        }
+        
+        Targetable checkTarget = new HexTarget(checkCoords, Targetable.TYPE_HEX_ARTILLERY);
+        
+        return Compute.isInArc(getCurrentGame(), artilleryWeapon.getEntity().getId(), 
+                artilleryWeapon.getEntity().getEquipmentNum(artilleryWeapon), checkTarget);
     }
     
     @Override

@@ -2531,8 +2531,7 @@ public class ChatLounge extends AbstractPhaseDisplay
      * Pop up the dialog to load a mech
      */
     private void loadMech() {
-        clientgui.getMechSelectorDialog().setGameTechLevel(TechConstants.getSimpleLevel(
-                clientgui.getClient().getGame().getOptions().stringOption("techlevel")));
+        clientgui.getMechSelectorDialog().updateOptionValues();
         clientgui.getMechSelectorDialog().setVisible(true);
     }
 

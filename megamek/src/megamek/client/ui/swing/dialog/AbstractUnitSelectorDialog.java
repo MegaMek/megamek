@@ -156,6 +156,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         this.unitLoadingDialog = unitLoadingDialog;
     }
 
+    /**
+     * This is used to update any values that are set based on individual options
+     */
+    public abstract void updateOptionValues();
+
     protected void initialize() {
         unitModel = new MechTableModel();
         initComponents();
@@ -617,13 +622,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         int selected = tableUnits.convertRowIndexToModel(view);
         // else
         return mechs[selected];
-    }
-
-    /**
-     * @param gameTechLevel the tech to use in generation
-     */
-    public void setGameTechLevel(int gameTechLevel) {
-        this.gameTechLevel = gameTechLevel;
     }
 
     public void run() {

@@ -43,20 +43,19 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         super(clientGUI.getFrame(), unitLoadingDialog);
         this.clientGUI = clientGUI;
         client = clientGUI.getClient();
+
+        updateOptionValues();
+
+        initialize();
+    }
+
+    @Override
+    public void updateOptionValues() {
         enableYearLimits = client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
         allowedYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         canonOnly = client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
         gameTechLevel = TechConstants.getSimpleLevel(client.getGame().getOptions()
                 .stringOption("techlevel"));
-
-        StringBuilder message = new StringBuilder();
-        message.append("enableYearLimits : ").append(enableYearLimits).append("\n")
-                .append("allowedYear : ").append(allowedYear).append("\n")
-                .append("canonOnly : ").append(canonOnly).append("\n")
-                .append("gameTechLevel : ").append(gameTechLevel).append("\n");
-        DefaultMmLogger.getInstance().error(AbstractUnitSelectorDialog.class, "MegaMekUnitSelectorDialog", message);
-        
-        initialize();
     }
 
     //region Button Methods

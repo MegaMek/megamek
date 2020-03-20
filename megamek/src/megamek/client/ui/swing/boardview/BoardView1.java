@@ -4805,13 +4805,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void mouseExited(MouseEvent me) {
         // Reset the tooltip dismissal delay to the preference
         // value so that elements outside the boardview can
-    	// use tooltips
-    	if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
-    		ToolTipManager.sharedInstance().setDismissDelay(
-    				GUIPreferences.getInstance().getTooltipDismissDelay());
-    	} else {
-    		ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
-    	}
+        // use tooltips
+        if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
+            ToolTipManager.sharedInstance().setDismissDelay(
+                    GUIPreferences.getInstance().getTooltipDismissDelay());
+        } else {
+            ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+        }
     }
 
     public void mouseClicked(MouseEvent me) {
@@ -5120,7 +5120,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public synchronized void boardChangedAllHexes(BoardEvent b) {
         clearHexImageCache();
-        tileManager.loadAllHexes();
         clearShadowMap();
         repaint();
     }
@@ -6034,10 +6033,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // (re)set the tooltip dismissal delay time to the preference
         // value so that the tooltip actually appears
         if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
-        	ToolTipManager.sharedInstance().setDismissDelay(
-        			GUIPreferences.getInstance().getTooltipDismissDelay());
+            ToolTipManager.sharedInstance().setDismissDelay(
+                    GUIPreferences.getInstance().getTooltipDismissDelay());
         } else {
-        	ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+            ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
         }
 
         return txt.toString();

@@ -118,6 +118,11 @@ public interface IBoard {
      * Initialize a hex and the hexes around it
      */
     public abstract void initializeAround(int x, int y);
+    
+    /**
+     * Initialize a hex 
+     */
+    public abstract void initializeHex(int x, int y);
 
     /**
      * Determines whether this Board "contains" the specified Coords.

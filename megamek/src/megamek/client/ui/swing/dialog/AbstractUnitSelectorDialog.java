@@ -931,13 +931,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             try {
                 l0 = format.parse(s0).doubleValue();
             } catch (java.text.ParseException e) {
-                e.printStackTrace();
+                logger.error(getClass(), "compare", e);
             }
             double l1 = 0;
             try {
                 l1 = format.parse(s1).doubleValue();
             } catch (java.text.ParseException e) {
-                e.printStackTrace();
+                logger.error(getClass(), "compare", e);
             }
             return ((Comparable<Double>)l0).compareTo(l1);
         }

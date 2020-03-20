@@ -619,6 +619,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         return mechs[selected];
     }
 
+    /**
+     * @param gameTechLevel the tech to use in generation
+     */
+    public void setGameTechLevel(int gameTechLevel) {
+        this.gameTechLevel = gameTechLevel;
+    }
+
     public void run() {
         // Loading mechs can take a while, so it will have its own thread.
         // This prevents the UI from freezing, and allows the

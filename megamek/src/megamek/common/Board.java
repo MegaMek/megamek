@@ -480,7 +480,7 @@ public class Board implements Serializable, IBoard {
      * parameter appropriately to the surrounding hexes. If a surrounding hex is
      * off the board, it checks the hex opposite the missing hex.
      */
-    private void initializeHex(int x, int y) {
+    public void initializeHex(int x, int y) {
         initializeHex(x, y, true);
     }
 
@@ -971,12 +971,39 @@ public class Board implements Serializable, IBoard {
                 }
                 StringBuffer currBuff = new StringBuffer();
                 boolean valid = hex.isValid(currBuff);
+                
+                // Multi-hex problems 
+                // A building hex must only have exits to other building hexes of the same Building Type and Class
+                if (hex.containsTerrain(Terrains.BUILDING) && hex.getTerrain(Terrains.BUILDING).hasExitsSpecified()) {
+                    for (int dir = 0; dir < 6; dir++) {
+                        IHex adjHex = getHexInDir(x, y, dir);
+                        if ((adjHex != null) 
+                                && adjHex.containsTerrain(Terrains.BUILDING) 
+                                && hex.containsTerrainExit(Terrains.BUILDING, dir)) {
+                            if (adjHex.getTerrain(Terrains.BUILDING).getLevel() != hex.getTerrain(Terrains.BUILDING).getLevel()) {
+                                valid = false;
+                                currBuff.append("Building has an exit to a building of another Building Type (Light, Medium...).\n");
+                            }
+                            if (hex.containsTerrain(Terrains.BLDG_CLASS) 
+                                    && ((adjHex.containsTerrain(Terrains.BLDG_CLASS) 
+                                            && (adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() != hex.getTerrain(Terrains.BLDG_CLASS).getLevel()))
+                                            || (!adjHex.containsTerrain(Terrains.BLDG_CLASS)))) {
+                                valid = false;
+                                currBuff.append("Building has an exit in direction ").append(dir).append(" to a building of another Building Class.\n");
+                            }
+                        }
+                    }
+                }
+                
                 // Return early if we aren't logging errors
                 if (!valid && (errBuff == null)) {
                     return false;
                 } else if (!valid) { // Otherwise, log the error for later output
-                    errBuff.append("Hex " + String.format("%1$02d%02$2d", x + 1, y + 1) + " is invalid!\n");
-                    errBuff.append(currBuff.toString().replaceAll("^", "\t"));
+                    if (errBuff.length() > 0) {
+                        errBuff.append("----\n");
+                    }
+                    Coords c = new Coords(x, y);
+                    errBuff.append("Hex " + c.getBoardNum() + " is invalid:\n" + currBuff.toString());
                 }
             }
         }

@@ -547,7 +547,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     *
      * @return the selected entity (required for MekHQ/MegaMek overrides)
      */
     protected Entity refreshUnitView() {
@@ -583,7 +582,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     *
      * @return the selected entity
      */
     public Entity getSelectedEntity() {
@@ -608,7 +606,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     *
      * @return the MechSummary for the chosen mech
      */
     public MechSummary getChosenMechSummary() {
@@ -622,9 +619,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         return mechs[selected];
     }
 
-    /**
-     *
-     */
     public void run() {
         // Loading mechs can take a while, so it will have its own thread.
         // This prevents the UI from freezing, and allows the

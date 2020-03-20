@@ -134,13 +134,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     private MechTableModel unitModel;
     protected MechSearchFilter searchFilter;
 
-    protected Client client;
-    protected UnitLoadingDialog unitLoadingDialog;
+    private UnitLoadingDialog unitLoadingDialog;
     private AdvancedSearchDialog asd;
     protected JFrame frame;
 
     protected TableRowSorter<MechTableModel> sorter;
 
+    protected GameOptions gameOptions = null;
     protected boolean enableYearLimits = false;
     protected int allowedYear = ALLOWED_YEAR_ANY;
     protected boolean canonOnly = false;
@@ -875,18 +875,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             if (data.length <= row) {
                 return "?";
             }
-            GameOptions opts = null;
-            if (client != null) {
-                opts = client.getGame().getOptions();
-            }
             MechSummary ms = data[row];
             if (col == COL_MODEL) {
                 return ms.getModel();
             } else if (col == COL_CHASSIS) {
                 return ms.getChassis();
             } else if (col == COL_WEIGHT) {
-                if ((opts != null) && ms.getUnitType().equals("BattleArmor")) {
-                    if (opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT)) {
+                if ((gameOptions != null) && ms.getUnitType().equals("BattleArmor")) {
+                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT)) {
                         return ms.getTOweight();
                     } else {
                         return ms.getTWweight();
@@ -894,31 +890,30 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 }
                 return ms.getTons();
             } else if (col == COL_BV) {
-                if ((opts != null)
-                        && opts.booleanOption(OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV)) {
-                    if (opts.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
+                if ((gameOptions != null)
+                        && gameOptions.booleanOption(OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV)) {
+                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
                         return ms.getRHGMBV();
                     } else {
                         return ms.getGMBV();
                     }
+                } else if ((gameOptions != null)
+                        && gameOptions.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
+                    return ms.getRHBV();
                 } else {
-                    if ((opts != null)
-                            && opts.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
-                        return ms.getRHBV();
-                    } else {
-                        return ms.getBV();
-                    }
+                    return ms.getBV();
                 }
             } else if (col == COL_YEAR) {
                 return ms.getYear();
             } else if (col == COL_COST) {
                 return ms.getCost();
             } else if (col == COL_LEVEL) {
-                if ((client != null) && (client.getGame() != null)
-                        && client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED)) {
-                    return ms.getLevel(client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
+                if ((gameOptions != null)
+                        && gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED)) {
+                    return ms.getLevel(gameOptions.intOption(OptionsConstants.ALLOWED_YEAR));
+                } else {
+                    return ms.getLevel();
                 }
-                return ms.getLevel();
             } else {
                 return "?";
             }

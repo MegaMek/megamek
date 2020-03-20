@@ -42,7 +42,6 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     public MegaMekUnitSelectorDialog(ClientGUI clientGUI, UnitLoadingDialog unitLoadingDialog) {
         super(clientGUI.getFrame(), unitLoadingDialog);
         this.clientGUI = clientGUI;
-        client = clientGUI.getClient();
 
         updateOptionValues();
 
@@ -51,11 +50,11 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     public void updateOptionValues() {
-        enableYearLimits = client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
-        allowedYear = client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
-        canonOnly = client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
-        gameTechLevel = TechConstants.getSimpleLevel(client.getGame().getOptions()
-                .stringOption("techlevel"));
+        gameOptions = clientGUI.getClient().getGame().getOptions();
+        enableYearLimits = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
+        allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
+        canonOnly = gameOptions.booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
+        gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption("techlevel"));
     }
 
     //region Button Methods
@@ -100,7 +99,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
                 client = clientGUI.getBots().get(name);
             }
             if (client == null) {
-                client = this.client;
+                client = clientGUI.getClient();
             }
             autoSetSkillsAndName(e);
             e.setOwner(client.getLocalPlayer());
@@ -115,7 +114,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
             if (cs.useAverageSkills()) {
-                int[] skills = client.getRandomSkillsGenerator().getRandomSkills(e, true);
+                int[] skills = clientGUI.getClient().getRandomSkillsGenerator().getRandomSkills(e, true);
 
                 int gunnery = skills[0];
                 int piloting = skills[1];
@@ -129,15 +128,15 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
                 }
 
                 if (e.getCrew() instanceof LAMPilot) {
-                    skills = client.getRandomSkillsGenerator().getRandomSkills(e, true);
+                    skills = clientGUI.getClient().getRandomSkillsGenerator().getRandomSkills(e, true);
                     ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
                     ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
                 }
             }
             if (cs.generateNames()) {
-                boolean isFemale = client.getRandomNameGenerator().isFemale();
+                boolean isFemale = clientGUI.getClient().getRandomNameGenerator().isFemale();
                 e.getCrew().setGender(isFemale, i);
-                e.getCrew().setName(client.getRandomNameGenerator().generate(isFemale), i);
+                e.getCrew().setName(clientGUI.getClient().getRandomNameGenerator().generate(isFemale), i);
             }
         }
         e.getCrew().sortRandomSkills();
@@ -166,7 +165,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     protected Entity refreshUnitView() {
         Entity selectedEntity = super.refreshUnitView(); //we first want it to run through the same code as its parent
         if (selectedEntity != null) {
-            clientGUI.loadPreviewImage(labelImage, selectedEntity, client.getLocalPlayer());
+            clientGUI.loadPreviewImage(labelImage, selectedEntity, clientGUI.getClient().getLocalPlayer());
         }
         return selectedEntity;
     }

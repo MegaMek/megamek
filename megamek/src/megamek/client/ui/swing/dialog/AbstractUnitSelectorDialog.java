@@ -545,7 +545,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 }
             };
         } catch (PatternSyntaxException ignored) {
-            logger.error(getClass(), "filterUnits", "I've been ignored, HELP");
             return;
         }
         sorter.setRowFilter(unitTypeFilter);
@@ -632,7 +631,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         // break out if there are no units to filter
         if (mechs == null) {
-            logger.error(getClass(), "run", "No units to filter!");
+            return;
         } else {
             unitModel.setData(mechs);
         }

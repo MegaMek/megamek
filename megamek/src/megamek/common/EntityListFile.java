@@ -1062,6 +1062,70 @@ public class EntityListFile {
                 output.write(indentStr(indentLvl+1) + "</NC3set>");
                 output.write(CommonConstants.NL);
             }
+            
+            //Write the escape craft data, if needed
+            if (entity instanceof Aero) {
+                Aero aero = (Aero) entity;
+                if (!aero.getEscapeCraft().isEmpty()) {
+                    output.write(indentStr(indentLvl+1) + "<EscapeCraft>");
+                    output.write(CommonConstants.NL);
+                    for (String id : aero.getEscapeCraft()) {
+                        output.write(indentStr(indentLvl+1) + id);
+                        output.write(CommonConstants.NL);
+                    }
+                    output.write(indentStr(indentLvl+1) + "</EscapeCraft>");
+                    output.write(CommonConstants.NL);
+                }
+            }
+            if (entity instanceof SmallCraft) {
+                SmallCraft craft = (SmallCraft) entity;
+                if (!craft.getNOtherCrew().isEmpty()) {
+                    output.write(indentStr(indentLvl+1) + "<EscapedCrew>");
+                    output.write(CommonConstants.NL);
+                    for (String id : craft.getNOtherCrew().keySet()) {
+                        output.write(indentStr(indentLvl+1) + "<" + id + "=\"" + craft.getNOtherCrew().get(id));
+                        output.write("\"/>");
+                        output.write(CommonConstants.NL);
+                    }
+                    output.write(indentStr(indentLvl+1) + "</EscapedCrew>");
+                    output.write(CommonConstants.NL);
+                }
+                if (!craft.getNOtherCrew().isEmpty()) {
+                    output.write(indentStr(indentLvl+1) + "<EscapedPassengers>");
+                    output.write(CommonConstants.NL);
+                    for (String id : craft.getPassengers().keySet()) {
+                        output.write(indentStr(indentLvl+1) + "<" + id + "=\"" + craft.getPassengers().get(id));
+                        output.write("\"/>");
+                        output.write(CommonConstants.NL);
+                    }
+                    output.write(indentStr(indentLvl+1) + "</EscapedPassengers>");
+                    output.write(CommonConstants.NL);
+                }
+            } else if (entity instanceof EjectedCrew) {
+                EjectedCrew eCrew = (EjectedCrew) entity;
+                if (!eCrew.getNOtherCrew().isEmpty()) {
+                    output.write(indentStr(indentLvl+1) + "<EscapedCrew>");
+                    output.write(CommonConstants.NL);
+                    for (String id : eCrew.getNOtherCrew().keySet()) {
+                        output.write(indentStr(indentLvl+1) + "<" + id + "=\"" + eCrew.getNOtherCrew().get(id));
+                        output.write("\"/>");
+                        output.write(CommonConstants.NL);
+                    }
+                    output.write(indentStr(indentLvl+1) + "</EscapedCrew>");
+                    output.write(CommonConstants.NL);
+                }
+                if (!eCrew.getNOtherCrew().isEmpty()) {
+                    output.write(indentStr(indentLvl+1) + "<EscapedPassengers>");
+                    output.write(CommonConstants.NL);
+                    for (String id : eCrew.getPassengers().keySet()) {
+                        output.write(indentStr(indentLvl+1) + "<" + id + "=\"" + eCrew.getPassengers().get(id));
+                        output.write("\"/>");
+                        output.write(CommonConstants.NL);
+                    }
+                    output.write(indentStr(indentLvl+1) + "</EscapedPassengers>");
+                    output.write(CommonConstants.NL);
+                }
+            }
 
             // Finish writing this entity to the file.
             output.write(indentStr(indentLvl) + "</entity>");

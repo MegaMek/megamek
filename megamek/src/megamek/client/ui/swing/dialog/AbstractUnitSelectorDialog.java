@@ -922,9 +922,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     /**
      * A comparator for numbers that have been formatted with DecimalFormat
      * @author Jay Lawson
-     *
      */
-    @Deprecated //this is a temporary inclusion until the FormattedNumberSorter in MekHQ can be migrated over
     private static class FormattedNumberSorter implements Comparator<String> {
         @Override
         public int compare(String s0, String s1) {

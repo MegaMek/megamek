@@ -633,6 +633,8 @@ public class Terrain implements ITerrain, Serializable {
             rv = false;
         } else if (type == Terrains.TUNDRA && level != 1) {
             rv = false;
+        } else if (type == Terrains.BRIDGE && level < 1) {
+            rv = false;
         }
 
         if (!rv && (errBuff != null)) {

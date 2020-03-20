@@ -23,6 +23,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -90,6 +92,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     private final JButton okayButton = new JButton(Messages.getString("Okay"));
     private final JButton loadButton = new JButton(Messages.getString("RandomMapDialog.Load"));
     private final JButton saveButton = new JButton(Messages.getString("RandomMapDialog.Save"));
+    private final JButton cancelButton = new JButton(Messages.getString("Cancel"));
+    
+    // Return value
+    private boolean userCancel;
 
     /**
      * Constructor for this dialog.
@@ -128,6 +134,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         initGUI();
         setResizable(true);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+        	public void windowClosing(WindowEvent e) { closeWithoutNewMap(); }
+		});
 
         pack();
         validate();
@@ -273,6 +283,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         okayButton.addActionListener(this);
         okayButton.setMnemonic(okayButton.getText().charAt(0));
         panel.add(okayButton);
+        
+        cancelButton.addActionListener(this);
+        cancelButton.setMnemonic(cancelButton.getText().charAt(0));
+        panel.add(cancelButton);
 
         return panel;
     }
@@ -334,7 +348,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Get the user-selected file.
         File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", false);
+                                        "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
 
         // If we don't have a file, there's nothing to load.
         if (selectedFile == null) {
@@ -367,7 +381,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Have the user choose a file to save the new settings to.
         File selectedFile = fileBrowser(
                 Messages.getString("RandomMapDialog.FileSaveDialog"), "data"
-                        + File.separator + "boards", null, ".xml", "(*.xml)",
+                        + File.separator + "mapgen", null, ".xml", "(*.xml)",
                 true);
 
         // If no file was selected, we're done.
@@ -414,6 +428,17 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         MAP_SETTINGS_OBSERVER.updateMapSettings(newMapSettings);
         return true;
     }
+    
+    public boolean activateDialog() {
+    	userCancel = false;
+    	setVisible(true);
+    	return userCancel;
+    }
+    
+    private void closeWithoutNewMap() {
+    	userCancel = true;
+    	setVisible(false);
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -422,15 +447,17 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         } else if (advancedButton.equals(e.getSource())) {
             switchView(VIEW_ADVANCED, false);
         } else if (loadButton.equals(e.getSource())) {
-            doLoad();
+        	doLoad();
         } else if (saveButton.equals(e.getSource())) {
-            if (doSave()) {
-                setVisible(false);
-            }
+        	if (doSave()) {
+        		setVisible(false);
+        	}
         } else if (okayButton.equals(e.getSource())) {
-            if (doApply()) {
-                setVisible(false);
-            }
+        	if (doApply()) {
+        		setVisible(false);
+        	}
+        } else if (cancelButton.equals(e.getSource())) {
+        	closeWithoutNewMap();
         }
     }
 }

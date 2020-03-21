@@ -468,11 +468,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             if (ae.hasAbility("oblique_artillery")) {
                 // getMoS returns a negative MoF
                 // simple math is better so lets make it positive
-                if ((-moF -2) < 1) {
-                    moF = 0;
-                } else {
-                    moF = moF +2;
-                }
+                moF = Math.max(moF + 2, 0);
             }
             targetPos = Compute.scatterDirectArty(targetPos, moF);
             if (game.getBoard().contains(targetPos)) {

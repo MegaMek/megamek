@@ -89,6 +89,9 @@ public class MULParser {
     private static final String RFMG = "rfmg";
     private static final String ESCCRAFT = "EscapeCraft";
     private static final String ID = "id";
+    private static final String ESCCREW = "EscapedCrew";
+    private static final String ESCPASS = "EscapedPassengers";
+    private static final String NUMBER = "number";
 
     /**
      * The names of attributes generally associated with Entity tags
@@ -513,6 +516,8 @@ public class MULParser {
                     parseBAAPM(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ESCCRAFT)) {
                     parseEscapeCraft(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ESCPASS)) {
+                    parseEscapedPassengers(currEle, entity);
                 }
             }
         }
@@ -531,12 +536,15 @@ public class MULParser {
     private Entity getEntity(String chassis, String model){
         Entity newEntity = null;
 
-        //first check for ejected mechwarriors and vee crews
-        if (chassis.equals(EjectedCrew.VEE_EJECT_NAME)) {
+        //first check for ejected mechwarriors, vee crews, escape pods and spacecraft crews
+        if (chassis.equals(EjectedCrew.VEE_EJECT_NAME) 
+                || chassis.equals(EjectedCrew.SPACE_EJECT_NAME)) {
             return new EjectedCrew();
         } else if (chassis.equals(EjectedCrew.PILOT_EJECT_NAME)
                     || chassis.equals(EjectedCrew.MW_EJECT_NAME)) {
             return new MechWarrior();
+        } else if (chassis.equals(EscapePods.POD_EJECT_NAME)) {
+            return new EscapePods();
         }
 
         // Did we find required attributes?
@@ -2162,6 +2170,41 @@ public class MULParser {
             ((Aero) entity).addEscapeCraft(id);
         } catch (Exception e) {
             warning.append("Invalid external entity id in EscapeCraft tag.\n");
+        }
+    }
+    
+    /**
+     * Parse an EscapedPassengers tag for the given <code>Entity</code>.
+     *
+     * @param escPassTag
+     * @param entity
+     */
+    private void parseEscapedPassengers(Element escPassTag, Entity entity){
+        if (!(entity instanceof EjectedCrew || entity instanceof SmallCraft)) {
+            warning.append("Found an EscapedPassengers tag but Entity is not a " +
+                    "Spacecraft Crew or Small Craft!\n");
+            return;
+        }
+        // Deal with any child nodes
+        NodeList nl = escPassTag.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node currNode = nl.item(i);
+
+            if (currNode.getParentNode() != escPassTag) {
+                continue;
+            }
+            int nodeType = currNode.getNodeType();
+            if (nodeType == Node.ELEMENT_NODE) {
+                Element currEle = (Element)currNode;
+                String id = currEle.getAttribute(ID);
+                String number = currEle.getAttribute(NUMBER);
+                int value = Integer.parseInt(number);
+                if (entity instanceof EjectedCrew) {
+                    ((EjectedCrew) entity).addPassengers(id, value);
+                } else if (entity instanceof SmallCraft) {
+                    ((SmallCraft) entity).addPassengers(id, value);
+                }
+            }
         }
     }
 

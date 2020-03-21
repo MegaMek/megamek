@@ -1067,14 +1067,11 @@ public class EntityListFile {
             if (entity instanceof Aero) {
                 Aero aero = (Aero) entity;
                 if (!aero.getEscapeCraft().isEmpty()) {
-                    output.write(indentStr(indentLvl+1) + "<EscapeCraft>");
-                    output.write(CommonConstants.NL);
                     for (String id : aero.getEscapeCraft()) {
-                        output.write(indentStr(indentLvl+2) + id);
+                        output.write(indentStr(indentLvl+1) + "<EscapeCraft id=\"" + id);
+                        output.write("\"/>");
                         output.write(CommonConstants.NL);
                     }
-                    output.write(indentStr(indentLvl+1) + "</EscapeCraft>");
-                    output.write(CommonConstants.NL);
                 }
             }
             if (entity instanceof SmallCraft) {

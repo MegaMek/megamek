@@ -87,6 +87,8 @@ public class MULParser {
     private static final String NC3LINK = "NC3_link";
     private static final String LINK = "link";
     private static final String RFMG = "rfmg";
+    private static final String ESCCRAFT = "EscapeCraft";
+    private static final String ID = "id";
 
     /**
      * The names of attributes generally associated with Entity tags
@@ -509,6 +511,8 @@ public class MULParser {
                     parseBAMEA(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(BA_APM)) {
                     parseBAAPM(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ESCCRAFT)) {
+                    parseEscapeCraft(currEle, entity);
                 }
             }
         }
@@ -2138,6 +2142,26 @@ public class MULParser {
             } else {
                 continue;
             }
+        }
+    }
+    
+    /**
+     * Parse an EscapeCraft tag for the given <code>Entity</code>.
+     *
+     * @param escCraftTag
+     * @param entity
+     */
+    private void parseEscapeCraft(Element escCraftTag, Entity entity){
+        if (!(entity instanceof SmallCraft || entity instanceof Jumpship)) {
+            warning.append("Found an EscapeCraft tag but Entity is not a " +
+                    "Crewed Spacecraft!\n");
+            return;
+        }
+        try {
+            String id = escCraftTag.getAttribute(ID);
+            ((Aero) entity).addEscapeCraft(id);
+        } catch (Exception e) {
+            warning.append("Invalid external entity id in EscapeCraft tag.\n");
         }
     }
 

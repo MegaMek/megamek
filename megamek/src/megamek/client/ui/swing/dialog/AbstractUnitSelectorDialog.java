@@ -131,7 +131,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected static MechSummaryCache mscInstance = MechSummaryCache.getInstance();
     private MechSummary[] mechs;
 
-    private MechTableModel unitModel;
+    private MechTableModel unitModel = new MechTableModel();
     protected MechSearchFilter searchFilter;
 
     private UnitLoadingDialog unitLoadingDialog;
@@ -154,6 +154,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         setName("UnitSelectorDialog");
         this.frame = frame;
         this.unitLoadingDialog = unitLoadingDialog;
+        super.setVisible(false);
     }
 
     /**
@@ -161,12 +162,33 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      */
     public abstract void updateOptionValues();
 
-    protected void initialize() {
-        unitModel = new MechTableModel();
-        initComponents();
-
+    /**
+     * This is overwritten in MekHQ for user preferences, and has been set up to permit preference
+     * implementation in anything that extends this
+     */
+    protected void setUserPreferences() {
         GUIPreferences guiPreferences = GUIPreferences.getInstance();
         setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
+
+        comboUnitType.setSelectedIndex(guiPreferences.getMechSelectorUnitType());
+
+        comboWeight.setSelectedIndex(guiPreferences.getMechSelectorWeightClass());
+
+        updateTypeCombo(guiPreferences.getMechSelectorRulesLevels().replaceAll("\\[", ""));
+
+        //initialize with the units sorted alphabetically by chassis
+        List<SortKey> sortList = new ArrayList<>();
+        sortList.add(new SortKey(MechTableModel.COL_CHASSIS, SortOrder.ASCENDING));
+        tableUnits.getRowSorter().setSortKeys(sortList);
+        ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
+
+        tableUnits.invalidate(); // force re-layout of window
+        pack();
+    }
+
+    protected void initialize() {
+        initComponents();
+
         setLocationRelativeTo(frame);
         asd = new AdvancedSearchDialog(frame, allowedYear);
     }
@@ -257,7 +279,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         JScrollPane techLevelScroll = new JScrollPane(listTechLevel);
         techLevelScroll.setMinimumSize(new Dimension(300, 100));
         techLevelScroll.setPreferredSize(new Dimension(300, 100));
-        updateTypeCombo();
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(techLevelScroll, gridBagConstraintsWest);
@@ -273,10 +294,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             weightModel.addElement(EntityWeightClass.getClassName(i));
         }
         weightModel.addElement(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
-        weightModel.setSelectedItem(EntityWeightClass.getClassName(0));
         comboWeight.setModel(weightModel);
         comboWeight.setName("comboWeight");
-        comboWeight.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
         comboWeight.setMinimumSize(new Dimension(300, 27));
         comboWeight.setPreferredSize(new Dimension(300, 27));
         comboWeight.addActionListener(this);
@@ -295,7 +314,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
-        unitTypeModel.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
         for (int i = 0; i < UnitType.SIZE; i++) {
             unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
         }
@@ -432,9 +450,20 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         rootPane.getActionMap().put(SELECT_ACTION, selectAction);
     }
 
-    private void updateTypeCombo() {
+    private void updateTypeCombo(String option) {
         listTechLevel.removeListSelectionListener(this);
         int[] selectedIndices = listTechLevel.getSelectedIndices();
+
+        if (selectedIndices.length == 0) {
+            option = option.replaceAll("]", "");
+            if (option.length() > 0) {
+                String[] strSelections = option.split("[,]");
+                selectedIndices = new int[strSelections.length];
+                for (int i = 0; i < strSelections.length; i++) {
+                    selectedIndices[i] = Integer.parseInt(strSelections[i].trim());
+                }
+            }
+        }
 
         int maxTech;
         switch (gameTechLevel) {
@@ -466,7 +495,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 selectionIdx++;
             }
         }
-        techModel.setSelectedItem(TechConstants.getLevelDisplayableName(0));
         listTechLevel.setModel(techModel);
 
         listTechLevel.setSelectedIndices(selectedIndices);
@@ -610,6 +638,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
+     * TODO : Move me to MML
      * @return the MechSummary for the chosen mech
      */
     public MechSummary getChosenMechSummary() {
@@ -624,32 +653,18 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     public void run() {
-        // Loading mechs can take a while, so it will have its own thread.
+        // Loading mechs can take a while, so it will have its own thread for MegaMek
         // This prevents the UI from freezing, and allows the
         // "Please wait..." dialog to behave properly on various Java VMs.
         mechs = mscInstance.getAllMechs();
+        unitLoadingDialog.setVisible(false);
 
         // break out if there are no units to filter
         if (mechs == null) {
-            return;
+            logger.error(getClass(), "run", "No mechs were loaded");
         } else {
             unitModel.setData(mechs);
         }
-        filterUnits();
-
-        //initialize with the units sorted alphabetically by chassis
-        List<SortKey> sortList = new ArrayList<>();
-        sortList.add(new SortKey(MechTableModel.COL_CHASSIS, SortOrder.ASCENDING));
-        tableUnits.getRowSorter().setSortKeys(sortList);
-        ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
-
-        tableUnits.invalidate(); // force re-layout of window
-        pack();
-
-        unitLoadingDialog.setVisible(false);
-
-        GUIPreferences guiPreferences = GUIPreferences.getInstance();
-        setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
     }
 
     /**
@@ -658,22 +673,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      */
     @Override
     public void setVisible(boolean visible) {
-        updateTypeCombo();
-
         if (visible) {
-            GUIPreferences guiPreferences = GUIPreferences.getInstance();
-            comboUnitType.setSelectedIndex(guiPreferences.getMechSelectorUnitType());
-            comboWeight.setSelectedIndex(guiPreferences.getMechSelectorWeightClass());
-            String option = guiPreferences.getMechSelectorRulesLevels().replaceAll("\\[", "");
-            option = option.replaceAll("]", "");
-            if (option.length() > 0) {
-                String[] strSelections = option.split("[,]");
-                int[] intSelections = new int[strSelections.length];
-                for (int i = 0; i < strSelections.length; i++) {
-                    intSelections[i] = Integer.parseInt(strSelections[i].trim());
-                }
-                listTechLevel.setSelectedIndices(intSelections);
-            }
+            setUserPreferences();
         }
         asd.clearValues();
         searchFilter = null;

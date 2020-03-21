@@ -1080,7 +1080,7 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl+1) + "<EscapedCrew>");
                     output.write(CommonConstants.NL);
                     for (String id : craft.getNOtherCrew().keySet()) {
-                        output.write(indentStr(indentLvl+2) + "<Ship id=\"" + id + "\"" + " number=\"" + craft.getNOtherCrew().get(id));
+                        output.write(indentStr(indentLvl+2) + "<ship id=\"" + id + "\"" + " number=\"" + craft.getNOtherCrew().get(id));
                         output.write("\"/>");
                         output.write(CommonConstants.NL);
                     }
@@ -1091,7 +1091,7 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl+1) + "<EscapedPassengers>");
                     output.write(CommonConstants.NL);
                     for (String id : craft.getPassengers().keySet()) {
-                        output.write(indentStr(indentLvl+2) + "<Ship id=\"" + id + "\"" + " number=\"" + craft.getPassengers().get(id));
+                        output.write(indentStr(indentLvl+2) + "<ship id=\"" + id + "\"" + " number=\"" + craft.getPassengers().get(id));
                         output.write("\"/>");
                         output.write(CommonConstants.NL);
                     }
@@ -1104,7 +1104,7 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl+1) + "<EscapedCrew>");
                     output.write(CommonConstants.NL);
                     for (String id : eCrew.getNOtherCrew().keySet()) {
-                        output.write(indentStr(indentLvl+2) + "<Ship id=\"" + id + "\"" + " number=\"" + eCrew.getNOtherCrew().get(id));
+                        output.write(indentStr(indentLvl+2) + "<ship id=\"" + id + "\"" + " number=\"" + eCrew.getNOtherCrew().get(id));
                         output.write("\"/>");
                         output.write(CommonConstants.NL);
                     }
@@ -1115,7 +1115,7 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl+1) + "<EscapedPassengers>");
                     output.write(CommonConstants.NL);
                     for (String id : eCrew.getPassengers().keySet()) {
-                        output.write(indentStr(indentLvl+2) + "<Ship id=\"" + id + "\"" + " number=\"" + eCrew.getPassengers().get(id));
+                        output.write(indentStr(indentLvl+2) + "<ship id=\"" + id + "\"" + " number=\"" + eCrew.getPassengers().get(id));
                         output.write("\"/>");
                         output.write(CommonConstants.NL);
                     }

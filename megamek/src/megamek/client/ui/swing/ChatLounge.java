@@ -193,8 +193,6 @@ public class ChatLounge extends AbstractPhaseDisplay
     /* Map Settings Panel */
     private MapSettings mapSettings;
     private JButton butConditions;
-    // private RandomMapDialog randomMapDialog;
-    private RandomMapDialog randomMapDialog;
     private JPanel panGroundMap;
     private JPanel panSpaceMap;
     private JComboBox<String> comboMapType;
@@ -697,11 +695,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         panMap = new JPanel();
 
         mapSettings = MapSettings.getInstance(clientgui.getClient().getMapSettings());
-
-        randomMapDialog = new RandomMapDialog(clientgui.frame, this, clientgui.getClient(), mapSettings); // new
-                                                                                                          // RandomMapDialog(clientgui.frame,
-                                                                                                          // this,
-        // clientgui.getClient(), mapSettings);
 
         butConditions = new JButton(Messages.getString("ChatLounge.butConditions")); //$NON-NLS-1$
         butConditions.addActionListener(this);
@@ -2650,13 +2643,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshEntities();
         refreshPlayerInfo();
         setupMapSizes();
-        // randomMapDialog.getMapSettings().setBoardSize(
-        // (mapSettings.getBoardWidth()), mapSettings.getBoardHeight());
-        // randomMapDialog.getMapSettings().setMapSize(mapSettings.getMapWidth(),
-        // mapSettings.getMapHeight());
-        // randomMapDialog.getMapSettings().setBoardsAvailableVector(mapSettings.getBoardsAvailableVector());
-        // randomMapDialog.getMapSettings().setBoardsSelectedVector(mapSettings.getBoardsSelectedVector());
-        // randomMapDialog.loadValues();
     }
 
     @Override
@@ -2795,7 +2781,8 @@ public class ChatLounge extends AbstractPhaseDisplay
             clientgui.getPlanetaryConditionsDialog().update(clientgui.getClient().getGame().getPlanetaryConditions());
             clientgui.getPlanetaryConditionsDialog().setVisible(true);
         } else if (ev.getSource() == butRandomMap) {
-            randomMapDialog.setVisible(true);
+            RandomMapDialog rmd = new RandomMapDialog(clientgui.frame, this, clientgui.getClient(), mapSettings);
+            rmd.activateDialog(clientgui.getBoardView1().getTilesetManager().getThemes());
         } else if (ev.getSource().equals(butChange)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
                 changeMap(lisBoardsAvailable.getSelectedValue());

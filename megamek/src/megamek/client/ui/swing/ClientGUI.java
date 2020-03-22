@@ -323,6 +323,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public IBoardView getBoardView() {
         return bv;
     }
+    
+    public BoardView1 getBoardView1() {
+        return bv;
+    }
 
     /**
      * Try to load the "bing" sound clip.

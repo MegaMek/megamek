@@ -1347,7 +1347,7 @@ public class BoardEditor extends JComponent
 
     public void boardNew() {
     	RandomMapDialog rmd = new RandomMapDialog(frame, this, null, mapSettings);
-    	boolean userCancel = rmd.activateDialog();
+    	boolean userCancel = rmd.activateDialog(bv.getTilesetManager().getThemes());
     	if (!userCancel) {
     		board = BoardUtilities.generateRandom(mapSettings);
     		game.setBoard(board);

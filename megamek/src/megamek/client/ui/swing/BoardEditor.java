@@ -1346,6 +1346,7 @@ public class BoardEditor extends JComponent
     		menuBar.setBoard(true);
     		bvc.doLayout();
     		resetUndo();
+    		choTheme.setSelectedItem(mapSettings.getTheme());
     	}
     }
 

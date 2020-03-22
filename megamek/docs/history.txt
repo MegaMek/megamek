@@ -33,6 +33,7 @@ VERSION HISTORY:
 + Issue #349: Random map dialog now looks in mapgen folder instead of boards folder by default for presets
 + Issue #377: Ask user if they want to quit MegaMek when attempting to close the window.
 + PR #1765: Fix several board validation issues with map editor concerning buildings and bridges; performance improvement for map editor.
++ Issue #1767: When randomly generating a map, picking a theme is reflected in the map editor.
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

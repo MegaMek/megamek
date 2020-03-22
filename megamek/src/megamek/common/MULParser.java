@@ -518,6 +518,8 @@ public class MULParser {
                     parseEscapeCraft(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ESCPASS)) {
                     parseEscapedPassengers(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ESCCREW)) {
+                    parseEscapedCrew(currEle, entity);
                 }
             }
         }
@@ -2189,10 +2191,6 @@ public class MULParser {
         NodeList nl = escPassTag.getChildNodes();
         for (int i = 0; i < nl.getLength(); i++) {
             Node currNode = nl.item(i);
-
-            if (currNode.getParentNode() != escPassTag) {
-                continue;
-            }
             int nodeType = currNode.getNodeType();
             if (nodeType == Node.ELEMENT_NODE) {
                 Element currEle = (Element)currNode;
@@ -2203,6 +2201,37 @@ public class MULParser {
                     ((EjectedCrew) entity).addPassengers(id, value);
                 } else if (entity instanceof SmallCraft) {
                     ((SmallCraft) entity).addPassengers(id, value);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Parse an EscapedCrew tag for the given <code>Entity</code>.
+     *
+     * @param escCrewTag
+     * @param entity
+     */
+    private void parseEscapedCrew(Element escCrewTag, Entity entity){
+        if (!(entity instanceof EjectedCrew || entity instanceof SmallCraft)) {
+            warning.append("Found an EscapedCrew tag but Entity is not a " +
+                    "Spacecraft Crew or Small Craft!\n");
+            return;
+        }
+        // Deal with any child nodes
+        NodeList nl = escCrewTag.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node currNode = nl.item(i);
+            int nodeType = currNode.getNodeType();
+            if (nodeType == Node.ELEMENT_NODE) {
+                Element currEle = (Element)currNode;
+                String id = currEle.getAttribute(ID);
+                String number = currEle.getAttribute(NUMBER);
+                int value = Integer.parseInt(number);
+                if (entity instanceof EjectedCrew) {
+                    ((EjectedCrew) entity).addNOtherCrew(id, value);
+                } else if (entity instanceof SmallCraft) {
+                    ((SmallCraft) entity).addNOtherCrew(id, value);
                 }
             }
         }

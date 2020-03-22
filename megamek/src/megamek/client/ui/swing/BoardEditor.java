@@ -315,6 +315,7 @@ public class BoardEditor extends JComponent
     private HashSet<IHex> currentUndoSet;
     private HashSet<Coords> currentUndoCoords;
     private static final int [] defaultBuildingCFs = {0,15,40,90,150};
+    private String loadPath = "data" + File.separator + "boards";
     
     /**
      * Special purpose indicator, keeps terrain list 
@@ -1402,7 +1403,7 @@ public class BoardEditor extends JComponent
     }
 
     public void boardLoad() {
-        JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
+        JFileChooser fc = new JFileChooser(loadPath);
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
         fc.setFileFilter(new FileFilter() {
@@ -1422,6 +1423,7 @@ public class BoardEditor extends JComponent
             return;
         }
         curfile = fc.getSelectedFile();
+        loadPath = curfile.getPath();
         // load!
         try (InputStream is = new FileInputStream(fc.getSelectedFile())) {            
             // tell the board to load!

@@ -1637,7 +1637,10 @@ public class Server implements Runnable {
                 }
             }
 
-            if (entity.isDestroyed()) {
+            if (entity.isDestroyed() 
+                    && entity.getTransportId() != Entity.NONE 
+                    && !game.getEntity(entity.getTransportId()).isLargeCraft()) {
+                //Leaving destroyed entities in dropship bays alone here
                 toRemove.addElement(entity);
             }
         }
@@ -26355,10 +26358,18 @@ public class Server implements Runnable {
             reports.add(r);
             if (!hitBay.isCargo()) {
                 List<Entity> units = new ArrayList<>(hitBay.getLoadedUnits());
+                List<Entity> toRemove = new ArrayList<>();
+                //We're letting destroyed units stay in the bay now, but take them off the targets list
+                for (Entity en : units) {
+                    if (en.isDestroyed() || en.isDoomed()) {
+                        toRemove.add(en);
+                    }
+                }
+                units.removeAll(toRemove);
                 while ((destroyed > 0) && !units.isEmpty()) {
                     Entity target = units.remove(Compute.randomInt(units.size()));
                     reports.addAll(destroyEntity(target, "cargo damage",
-                            false, false));
+                            false, true));
                     destroyed--;
                 }
             }
@@ -28219,7 +28230,9 @@ public class Server implements Runnable {
                 final Entity transport = game.getEntity(entity.getTransportId());
                 Coords curPos = transport.getPosition();
                 int curFacing = transport.getFacing();
-                unloadUnit(transport, entity, curPos, curFacing, transport.getElevation());
+                if (!transport.isLargeCraft()) {
+                    unloadUnit(transport, entity, curPos, curFacing, transport.getElevation());
+                }
                 entityUpdate(transport.getId());
 
                 // if this is the last fighter in a fighter squadron then remove

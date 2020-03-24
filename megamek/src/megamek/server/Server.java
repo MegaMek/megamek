@@ -131,6 +131,7 @@ import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.AreaEffectHelper;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
+import megamek.common.weapons.AreaEffectHelper.NukeStats;
 import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
@@ -24569,25 +24570,14 @@ public class Server implements Runnable {
      * @param vDesc    a vector that contains the output report
      */
     public void doNuclearExplosion(Coords position, int nukeType, Vector<Report> vDesc) {
-        // Throws a nuke for one of the pre-defined types.
-        switch (nukeType) {
-            case 0:
-            case 1:
-                doNuclearExplosion(position, 100, 5, 40, 0, vDesc);
-                break;
-            case 2:
-                doNuclearExplosion(position, 1000, 23, 86, 1, vDesc);
-                break;
-            case 3:
-                doNuclearExplosion(position, 10000, 109, 184, 3, vDesc);
-                break;
-            case 4:
-                doNuclearExplosion(position, 100000, 505, 396, 5, vDesc);
-                break;
-            default:
-                // This isn't a valid nuke type by HS:3070 rules. And since that's our only current source...
-                getLogger().error(getClass(), "doNuclearExplosion", "Illegal nuke not listed in HS:3070");
+        NukeStats nukeStats = AreaEffectHelper.getNukeStats(nukeType);
+        
+        if(nukeStats == null) {
+            getLogger().error(getClass(), "doNuclearExplosion", "Illegal nuke not listed in HS:3070");
         }
+        
+        doNuclearExplosion(position, nukeStats.baseDamage, nukeStats.degradation, nukeStats.secondaryRadius,
+                nukeStats.craterDepth, vDesc);        
     }
 
     /**

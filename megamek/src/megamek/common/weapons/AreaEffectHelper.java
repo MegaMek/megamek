@@ -56,8 +56,10 @@ import megamek.server.Server.DamageType;
  */
 public class AreaEffectHelper {
     // maps equipment name to blast radius index for fuel-air ordnance
-    public static Map<String, Integer> fuelAirBlastRadiusIndex;
-    public static final int[] fuelAirDamage = { 5, 10, 20, 30 };
+    private static Map<String, Integer> fuelAirBlastRadiusIndex;
+    private static final int[] fuelAirDamage = { 5, 10, 20, 30 };
+    
+    private static Map<Integer, NukeStats> nukeStats;
     
     /**
      * Worker function that initializes blast radius data for fuel-air explosives of various types.
@@ -77,6 +79,46 @@ public class AreaEffectHelper {
         addFuelAirBlastRadiusIndex(AmmoType.T_SNIPER_CANNON, 2);
         addFuelAirBlastRadiusIndex(AmmoType.T_LONG_TOM_CANNON, 3);
         addFuelAirBlastRadiusIndex(AmmoType.T_LONG_TOM, 3);
+    }
+    
+    /**
+     * Worker function that initializes data for NUCLEAR WEAPONS
+     */
+    private static void initializeNukeStats() {
+        nukeStats = new HashMap<>();
+        
+        NukeStats nukeEntry = new NukeStats();
+        nukeEntry.baseDamage = 100;
+        nukeEntry.degradation = 5;
+        nukeEntry.secondaryRadius = 40;
+        nukeEntry.craterDepth = 0;
+        
+        nukeStats.put(0, nukeEntry);
+        nukeStats.put(1, nukeEntry);
+        
+        nukeEntry = new NukeStats();
+        nukeEntry.baseDamage = 1000;
+        nukeEntry.degradation = 23;
+        nukeEntry.secondaryRadius = 86;
+        nukeEntry.craterDepth = 1;
+        
+        nukeStats.put(2, nukeEntry);
+        
+        nukeEntry = new NukeStats();
+        nukeEntry.baseDamage = 10000;
+        nukeEntry.degradation = 109;
+        nukeEntry.secondaryRadius = 184;
+        nukeEntry.craterDepth = 3;
+        
+        nukeStats.put(3, nukeEntry);
+        
+        nukeEntry = new NukeStats();
+        nukeEntry.baseDamage = 100000;
+        nukeEntry.degradation = 505;
+        nukeEntry.secondaryRadius = 396;
+        nukeEntry.craterDepth = 5;
+        
+        nukeStats.put(4, nukeEntry);
     }
     
     /**
@@ -640,11 +682,72 @@ public class AreaEffectHelper {
     }
     
     /**
+     * Abbreviated nuclear explosion logic when the weapon is targeted at a single off-board entity.
+     */
+    public static void doNuclearExplosion(Entity entity, Coords coords, int nukeType, Vector<Report> vPhaseReport, Server server) {
+        NukeStats nukeStats = getNukeStats(nukeType);
+                
+        if(nukeStats == null) {
+            Report r = new Report(9998);
+            r.add(nukeType);
+            vPhaseReport.add(r);
+            return;
+        }
+        
+        // crater radius is crater depth x2 as per Server.doNuclearExplosion
+        int craterRadius = nukeStats.craterDepth * 2;
+        int blastDistance = entity.getPosition().distance(coords);
+        
+        // if the entity is in the crater radius, bye
+        if(blastDistance < craterRadius) {
+            vPhaseReport.addAll(server.destroyEntity(entity, "nuclear explosion proximity", false, false));
+            // Kill the crew
+            entity.getCrew().setDoomed(true);
+        }
+        
+        // refactor server.doExplosion to take care of individual entity instead of many entities.
+        // add a 'calculate damage at range' method that separates out logic from doExplosion 24214
+        // probably add method explosionDamageEntity() that encapsulates logic from doExplosion 24408-24429
+        
+        // Apply secondary effects against the entity if it's within the secondary blast radius
+        // Since the effects are unit-dependant, we'll just define it in the
+        // entity.
+        if(blastDistance <= nukeStats.secondaryRadius) {
+            server.applySecondaryNuclearEffects(entity, coords, vPhaseReport);
+        }
+        
+    }
+    
+    public static NukeStats getNukeStats(int nukeType) {
+        if(nukeStats == null) {
+            initializeNukeStats();
+        }
+        
+        if(nukeStats.containsKey(nukeType)) {
+            return nukeStats.get(nukeType);
+        }
+        
+        return null;
+    }
+    
+    /**
      * Dumb data structure intended to hold results from the calculateDamageFalloff method.
      */
     public static class DamageFalloff {
         public int damage;
         public int falloff;
         public boolean clusterMunitionsFlag;
+    }
+    
+    /**
+     * Dumb data structure intended to hold characteristics associated with various types of 
+     * NUCLEAR WEAPONS (thanks Ghandi).
+     *
+     */
+    public static class NukeStats {
+        public int baseDamage;
+        public int degradation;
+        public int secondaryRadius;
+        public int craterDepth;
     }
 }

@@ -8229,6 +8229,29 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // Return the list.
         return result;
     }
+    
+    /**
+     * Generate a list of the Ids of entities stored in bays. 
+     * Used by MHQ in cases where we can't get the entities via Game
+     *
+     * @return
+     */
+    public List<Integer> getBayLoadedUnitIds() {
+        List<Integer> result = new ArrayList<Integer>();
+
+        // Walk through this entity's transport components;
+        // add all of their lists to ours.
+        for (Transporter next : transports) {
+            if (next instanceof Bay) {
+                for (int i : next.getLoadedUnitIds()) {
+                    result.add(i);
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
 
     /**
      * return the bay that the given entity is loaded into

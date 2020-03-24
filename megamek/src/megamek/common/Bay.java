@@ -247,7 +247,7 @@ public class Bay implements Transporter, ITechnology {
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      *         list will never be <code>null</code>, but it may be empty. The
-     *         returned <code>List</code> is independant from the under- lying
+     *         returned <code>List</code> is independent from the under- lying
      *         data structure; modifying one does not affect the other.
      */
     @Override
@@ -256,6 +256,22 @@ public class Bay implements Transporter, ITechnology {
         Vector<Entity> loaded = new Vector<Entity>();
         for (int unit : troops) {
             loaded.add(game.getEntity(unit));
+        }
+        return loaded;
+    }
+    
+    /**
+     * Generate a raw list of the Ids stored in troops. 
+     * Used by MHQ in cases where we can't get the entities via Game
+     *
+     * @return
+     */
+    @Override
+    public List<Integer> getLoadedUnitIds() {
+        // Return a copy of our list of troops.
+        List<Integer> loaded = new ArrayList<>();
+        for (int id : troops) {
+            loaded.add(id);
         }
         return loaded;
     }

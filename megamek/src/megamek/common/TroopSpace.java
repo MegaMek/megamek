@@ -148,6 +148,23 @@ public final class TroopSpace implements Transporter {
 
         return loaded;
     }
+    
+    /**
+     * Generate a raw list of the Ids stored in troops. 
+     * Used by MHQ in cases where we can't get the entities via Game
+     *
+     * @return
+     */
+    @Override
+    public List<Integer> getLoadedUnitIds() {
+        // Return a copy of our list of troops.
+        List<Integer> loaded = new ArrayList<>();
+        for (Map.Entry<Integer, Double> entry : troops.entrySet()) {
+            int key = entry.getKey();
+            loaded.add(key);
+        }
+        return loaded;
+    }
 
     /**
      * Unload the given unit.

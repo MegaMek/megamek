@@ -14,6 +14,7 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -183,6 +184,22 @@ import megamek.common.annotations.Nullable;
             units.addElement(game.getEntity(troopers));
         }
         return units;
+    }
+    
+    /**
+     * Generate a raw list of the Ids stored in troopers. 
+     * Used by MHQ in cases where we can't get the entities via Game
+     *
+     * @return
+     */
+    @Override
+    public List<Integer> getLoadedUnitIds() {
+        // Return a copy of our list of troops.
+        List<Integer> loaded = new ArrayList<>();
+        if (troopers != Entity.NONE) {
+            loaded.add(troopers);
+        }
+        return loaded;
     }
 
     /**

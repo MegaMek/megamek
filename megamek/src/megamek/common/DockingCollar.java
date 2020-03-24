@@ -179,6 +179,22 @@ public class DockingCollar implements Transporter {
         }
         return loaded;
     }
+    
+    /**
+     * Generate a raw list of the Ids stored in troops. 
+     * Used by MHQ in cases where we can't get the entities via Game
+     *
+     * @return
+     */
+    @Override
+    public List<Integer> getLoadedUnitIds() {
+        // Return a copy of our list of troops.
+        List<Integer> loaded = new ArrayList<>();
+        for (int id : troops) {
+            loaded.add(id);
+        }
+        return loaded;
+    }
 
     /**
      * get a vector of launchable units. This is different from loaded in that

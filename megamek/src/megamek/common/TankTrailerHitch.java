@@ -158,6 +158,19 @@ public class TankTrailerHitch implements Transporter {
         }
         return units;
     }
+    
+    /**
+     * Not currently used, but inherited from Transporter
+     */
+    @Override
+    public List<Integer> getLoadedUnitIds() {
+        // Return a copy of our list of troops.
+        List<Integer> loaded = new ArrayList<>();
+        if (towed != Entity.NONE) {
+            loaded.add(towed);
+        }
+        return loaded;
+    }
 
     /**
      * Unload the given unit.

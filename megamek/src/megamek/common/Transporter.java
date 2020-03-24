@@ -63,14 +63,6 @@ public interface Transporter extends Serializable {
      *         other.
      */
     public List<Entity> getLoadedUnits();
-    
-    /**
-     * Generate a raw list of the Ids stored in troops. 
-     * Used by MHQ in cases where we can't get the entities via Game
-     *
-     * @return
-     */
-    public List<Integer> getLoadedUnitIds();
 
     /**
      * Unload the given unit.

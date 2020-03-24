@@ -266,7 +266,6 @@ public class Bay implements Transporter, ITechnology {
      *
      * @return
      */
-    @Override
     public List<Integer> getLoadedUnitIds() {
         // Return a copy of our list of troops.
         List<Integer> loaded = new ArrayList<>();

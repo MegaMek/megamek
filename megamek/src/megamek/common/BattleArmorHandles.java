@@ -185,22 +185,6 @@ import megamek.common.annotations.Nullable;
         }
         return units;
     }
-    
-    /**
-     * Generate a raw list of the Ids stored in troopers. 
-     * Used by MHQ in cases where we can't get the entities via Game
-     *
-     * @return
-     */
-    @Override
-    public List<Integer> getLoadedUnitIds() {
-        // Return a copy of our list of troops.
-        List<Integer> loaded = new ArrayList<>();
-        if (troopers != Entity.NONE) {
-            loaded.add(troopers);
-        }
-        return loaded;
-    }
 
     /**
      * Unload the given unit.

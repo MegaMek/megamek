@@ -8243,7 +8243,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // add all of their lists to ours.
         for (Transporter next : transports) {
             if (next instanceof Bay) {
-                for (int i : next.getLoadedUnitIds()) {
+                for (int i : ((Bay)next).getLoadedUnitIds()) {
                     result.add(i);
                 }
             }

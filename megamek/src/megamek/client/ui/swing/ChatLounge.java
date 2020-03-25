@@ -2782,7 +2782,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             clientgui.getPlanetaryConditionsDialog().setVisible(true);
         } else if (ev.getSource() == butRandomMap) {
             RandomMapDialog rmd = new RandomMapDialog(clientgui.frame, this, clientgui.getClient(), mapSettings);
-            rmd.activateDialog(clientgui.getBoardView1().getTilesetManager().getThemes());
+            rmd.activateDialog(clientgui.getBoardView().getTilesetManager().getThemes());
         } else if (ev.getSource().equals(butChange)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
                 changeMap(lisBoardsAvailable.getSelectedValue());

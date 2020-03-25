@@ -180,6 +180,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_LOS_SETTING = "viewLOSSetting"; //$NON-NLS-1$
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
+    public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
     //endregion view menu
 
     //region fire menu
@@ -734,6 +735,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public void actionPerformed(ActionEvent event) {
         switch (event.getActionCommand()) {
+            case VIEW_RESET_WINDOW_POSITIONS:
+                minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
+                mechW.setBounds(0, 0, mechD.getWidth(), mechD.getHeight());
+                break;
             case FILE_GAME_SAVE:
                 saveGame();
                 break;

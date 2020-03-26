@@ -340,7 +340,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
         if (atype.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
             // The appropriate term here is "Bwahahahahaha..."
-            server.doNuclearExplosion(targetPos, 1, vPhaseReport);
+            if(target.isOffBoard()) {
+                AreaEffectHelper.doNuclearExplosion((Entity) aaa.getTarget(game), targetPos, 1, vPhaseReport, server);
+            } else {
+                server.doNuclearExplosion(targetPos, 1, vPhaseReport);
+            }
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_FASCAM) {

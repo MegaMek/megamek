@@ -694,6 +694,12 @@ public class AreaEffectHelper {
             return;
         }
         
+        Report r = new Report(1215, Report.PUBLIC);
+
+        r.indent();
+        r.add("offboard");
+        vPhaseReport.add(r);
+        
         // crater radius is crater depth x2 as per Server.doNuclearExplosion
         int craterRadius = nukeStats.craterDepth * 2;
         int blastDistance = entity.getPosition().distance(coords);
@@ -703,21 +709,60 @@ public class AreaEffectHelper {
             vPhaseReport.addAll(server.destroyEntity(entity, "nuclear explosion proximity", false, false));
             // Kill the crew
             entity.getCrew().setDoomed(true);
+            // no need to do any more damage, it's already destroyed.
+            return;
         }
         
-        // refactor server.doExplosion to take care of individual entity instead of many entities.
-        // add a 'calculate damage at range' method that separates out logic from doExplosion 24214
-        // probably add method explosionDamageEntity() that encapsulates logic from doExplosion 24408-24429
+        // calculate the damage to the entity based on the range to the nuke
+        int damageToEntity = nukeStats.baseDamage - (blastDistance * nukeStats.degradation);
+        if(damageToEntity < 0) {
+            return;
+        } else {
+            applyExplosionClusterDamageToEntity(entity, damageToEntity, 5, coords, vPhaseReport, server);
+        }
         
+        // if the entity hasn't been blown up yet, 
         // Apply secondary effects against the entity if it's within the secondary blast radius
-        // Since the effects are unit-dependant, we'll just define it in the
-        // entity.
-        if(blastDistance <= nukeStats.secondaryRadius) {
+        // Since the effects are unit-dependent, we'll just define it in the
+        // entity. 
+        if(!entity.isDestroyed() && (blastDistance <= nukeStats.secondaryRadius)) {
             server.applySecondaryNuclearEffects(entity, coords, vPhaseReport);
         }
         
     }
     
+    /**
+     * Apply a series of cluster hits to the given entity, as from an explosion at a particular position.
+     * Generate reports for each cluster.
+     */
+    public static void applyExplosionClusterDamageToEntity(Entity entity, int damage, int clusterAmt, Coords position, Vector<Report> vDesc, Server server) {
+        Report r = new Report(6175);
+        r.subject = entity.getId();
+        r.indent(2);
+        r.addDesc(entity);
+        r.add(damage);
+        vDesc.addElement(r);
+
+        while (damage > 0) {
+            int cluster = Math.min(clusterAmt, damage);
+            if (entity instanceof Infantry) {
+                cluster = damage;
+            }
+            int table = ToHitData.HIT_NORMAL;
+            if (entity instanceof Protomech) {
+                table = ToHitData.HIT_SPECIAL_PROTO;
+            }
+            HitData hit = entity.rollHitLocation(table, Compute.targetSideTable(position, entity));
+            vDesc.addAll(server.damageEntity(entity, hit, cluster, false,
+                    DamageType.IGNORE_PASSENGER, false, true));
+            damage -= cluster;
+        }
+    }
+    
+    /**
+     * Helper function that retrieves the stat block for a particular type of nuke, or null
+     * if such a type is not defined.
+     */
     public static NukeStats getNukeStats(int nukeType) {
         if(nukeStats == null) {
             initializeNukeStats();

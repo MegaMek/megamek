@@ -22068,7 +22068,7 @@ public class Server implements Runnable {
      * @param areaSatArty   Is the damage from an area saturating artillery attack?
      * @return a <code>Vector</code> of <code>Report</code>s
      */
-    private Vector<Report> damageEntity(Entity te, HitData hit, int damage,
+    public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
                                         boolean ammoExplosion, DamageType bFrag, boolean damageIS,
                                         boolean areaSatArty) {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS,
@@ -24405,27 +24405,8 @@ public class Server implements Runnable {
             // Since it's taking damage, add it to the list of units hit.
             vUnits.add(entity.getId());
 
-            r = new Report(6175);
-            r.subject = entity.getId();
-            r.indent(2);
-            r.addDesc(entity);
-            r.add(damage);
-            vDesc.addElement(r);
-
-            while (damage > 0) {
-                int cluster = Math.min(clusterAmt, damage);
-                if (entity instanceof Infantry) {
-                    cluster = damage;
-                }
-                int table = ToHitData.HIT_NORMAL;
-                if (entity instanceof Protomech) {
-                    table = ToHitData.HIT_SPECIAL_PROTO;
-                }
-                HitData hit = entity.rollHitLocation(table, Compute.targetSideTable(position, entity));
-                vDesc.addAll(damageEntity(entity, hit, cluster, false,
-                        DamageType.IGNORE_PASSENGER, false, true));
-                damage -= cluster;
-            }
+            AreaEffectHelper.applyExplosionClusterDamageToEntity(entity, damage, clusterAmt, position, vDesc, this);
+            
             Report.addNewline(vDesc);
         }
 

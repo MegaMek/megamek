@@ -17,6 +17,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -245,6 +246,7 @@ public class BoardEditor extends JComponent
     //region action commands
     private static final String FILE_BOARD_EDITOR_EXPAND = "fileBoardExpand";
     private static final String FILE_BOARD_EDITOR_VALIDATE = "fileBoardValidate";
+    private static final String FILE_SOURCEFILE = "fileSource";
     //endregion action commands
 
     JFrame frame = new JFrame();
@@ -305,6 +307,7 @@ public class BoardEditor extends JComponent
     private JButton butBoardSaveAsImage;
     private JButton butMiniMap;
     private JButton butBoardValidate;
+    private JButton butSourceFile;
     private MapSettings mapSettings = MapSettings.getInstance();
     private JButton butExpandMap;
     private Coords lastClicked;
@@ -315,6 +318,7 @@ public class BoardEditor extends JComponent
     private HashSet<IHex> currentUndoSet;
     private HashSet<Coords> currentUndoCoords;
     private static final int [] defaultBuildingCFs = {0,15,40,90,150};
+    private String loadPath = "data" + File.separator + "boards";
     
     /**
      * Special purpose indicator, keeps terrain list 
@@ -933,17 +937,23 @@ public class BoardEditor extends JComponent
 
         butBoardValidate = new JButton(Messages.getString("BoardEditor.butBoardValidate")); //$NON-NLS-1$
         butBoardValidate.setActionCommand(FILE_BOARD_EDITOR_VALIDATE);
+        
+        butSourceFile = new JButton(Messages.getString("BoardEditor.butSourceFile")); //$NON-NLS-1$
+        butSourceFile.setActionCommand(FILE_SOURCEFILE);
 
         addManyActionListeners(butBoardValidate, butBoardSaveAsImage, butBoardSaveAs, butBoardSave);
         addManyActionListeners(butBoardOpen, butExpandMap, butBoardNew, butMiniMap);
-        addManyActionListeners(butDelTerrain, butAddTerrain);
+        addManyActionListeners(butDelTerrain, butAddTerrain, butSourceFile);
+        
 
         JPanel panButtons = new JPanel(new GridLayout(4, 2, 2, 2));
         addManyButtons(panButtons, butBoardNew, butBoardSave, butBoardOpen,
                 butExpandMap, butBoardSaveAs, butBoardSaveAsImage);
-        panButtons.add(Box.createHorizontalStrut(5));
         panButtons.add(butBoardValidate);
         panButtons.add(butMiniMap);
+        if (Desktop.isDesktopSupported()) {
+            panButtons.add(butSourceFile);
+        }
 
         // ------------------
         // Arrange everything
@@ -1337,11 +1347,12 @@ public class BoardEditor extends JComponent
 
     public void boardNew() {
     	RandomMapDialog rmd = new RandomMapDialog(frame, this, null, mapSettings);
-    	boolean userCancel = rmd.activateDialog();
+    	boolean userCancel = rmd.activateDialog(bv.getTilesetManager().getThemes());
     	if (!userCancel) {
     		board = BoardUtilities.generateRandom(mapSettings);
     		game.setBoard(board);
     		curfile = null;
+    		butSourceFile.setEnabled(false);
     		frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
     		menuBar.setBoard(true);
     		bvc.doLayout();
@@ -1364,6 +1375,7 @@ public class BoardEditor extends JComponent
 
         game.setBoard(board);
         curfile = null;
+        butSourceFile.setEnabled(false);
         frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
         menuBar.setBoard(true);
         bvc.doLayout();
@@ -1402,7 +1414,7 @@ public class BoardEditor extends JComponent
     }
 
     public void boardLoad() {
-        JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
+        JFileChooser fc = new JFileChooser(loadPath);
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
         fc.setFileFilter(new FileFilter() {
@@ -1422,6 +1434,8 @@ public class BoardEditor extends JComponent
             return;
         }
         curfile = fc.getSelectedFile();
+        butSourceFile.setEnabled(true);
+        loadPath = curfile.getPath();
         // load!
         try (InputStream is = new FileInputStream(fc.getSelectedFile())) {            
             // tell the board to load!
@@ -1545,6 +1559,7 @@ public class BoardEditor extends JComponent
             return; // I want a file, y'know!
         }
         curfile = fc.getSelectedFile();
+        butSourceFile.setEnabled(true);
 
         // make sure the file ends in board
         if (!curfile.getName().toLowerCase().endsWith(".board")) { //$NON-NLS-1$
@@ -1736,6 +1751,15 @@ public class BoardEditor extends JComponent
             ignoreHotKeys = true;
             boardSaveAsImage(false);
             ignoreHotKeys = false;
+        } else if (ae.getActionCommand().equals(FILE_SOURCEFILE)) {
+            if (curfile != null) {
+                try {
+                    Desktop.getDesktop().open(curfile);
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Could not open the file "+curfile+". "+e.getMessage());
+                    e.printStackTrace();
+                }
+            }
         } else if (ae.getActionCommand().equals(FILE_BOARD_EDITOR_VALIDATE)) {
             correctExits();
             StringBuffer errBuff = new StringBuffer();

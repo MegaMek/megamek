@@ -32,9 +32,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Set;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -86,7 +88,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     private final JLabel mapThemeLabel = new JLabel(Messages.getString("RandomMapDialog.labTheme"));
     private final VerifiableTextField mapWidthField = new VerifiableTextField(4);
     private final VerifiableTextField mapHeightField = new VerifiableTextField(4);
-    private final VerifiableTextField mapThemeField = new VerifiableTextField(10);
+    private final JComboBox<String> choTheme = new JComboBox<>();
 
     // Control buttons
     private final JButton okayButton = new JButton(Messages.getString("Okay"));
@@ -261,10 +263,9 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Row 3, Column 2.
         constraints.gridx++;
         constraints.gridwidth = 3;
-        mapThemeField.setSelectAllTextOnGotFocus(true);
-        mapThemeField.setText(mapSettings.getTheme());
-        mapThemeField.setToolTipText(Messages.getString("RandomMapDialog.mapThemeField.toolTip"));
-        panel.add(mapThemeField, constraints);
+        choTheme.addActionListener(this);
+        choTheme.setToolTipText(Messages.getString("RandomMapDialog.mapThemeField.toolTip"));
+        panel.add(choTheme, constraints);
 
         return panel;
     }
@@ -417,7 +418,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Get the general settings from this panel.
         newMapSettings.setBoardSize(mapWidthField.getAsInt(), mapHeightField.getAsInt());
-        newMapSettings.setTheme(mapThemeField.getText());
+        newMapSettings.setTheme((String)choTheme.getSelectedItem());
         this.mapSettings = newMapSettings;
 
         // Sent the map settings to either the server or the observer as needed.
@@ -429,7 +430,9 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         return true;
     }
     
-    public boolean activateDialog() {
+    public boolean activateDialog(Set<String> themeList) {
+        for (String s: themeList) choTheme.addItem(s);
+        choTheme.setSelectedItem(mapSettings.getTheme());
     	userCancel = false;
     	setVisible(true);
     	return userCancel;

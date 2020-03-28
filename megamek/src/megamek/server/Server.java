@@ -23337,9 +23337,9 @@ public class Server implements Runnable {
                                     || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
                                             && a.isCondEjectSIDest()))) {
                             vDesc.addAll(ejectEntity(te, true, false));
+                        } else {
+                            vDesc.addAll(destroyEntity(te,"Structural Integrity Collapse"));
                         }
-                        vDesc.addAll(destroyEntity(te,
-                                "Structural Integrity Collapse"));
                         a.setSI(0);
                         if (hit.getAttackerId() != Entity.NONE) {
                             creditKill(a, game.getEntity(hit.getAttackerId()));

@@ -658,12 +658,12 @@ public class MtfFile implements IMechLoader {
                 critName = critName.substring(0, critName.length() - OMNIPOD.length()).trim();
                 isOmniPod = true;
             }
-            if (critName.toUpperCase().endsWith("(R)")) {
-                rearMounted = true;
-                critName = critName.substring(0, critName.length() - 3).trim();
-            }
             if (critName.toUpperCase().endsWith("(T)")) {
                 isTurreted = true;
+                critName = critName.substring(0, critName.length() - 3).trim();
+            }
+            if (critName.toUpperCase().endsWith("(R)")) {
+                rearMounted = true;
                 critName = critName.substring(0, critName.length() - 3).trim();
             }
             if (critName.toLowerCase().endsWith("(split)")) {

@@ -414,7 +414,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // target type checked later because its different for
         // direct/indirect (BMRr p77 on board arrow IV)
-        boolean isHoming = (munition == AmmoType.M_HOMING && ammo != null && ammo.curMode().equals("Homing"));
+        boolean isHoming = ammo != null && ammo.isHomingAmmoInHomingMode();
 
         boolean bHeatSeeking = (atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_SRM)

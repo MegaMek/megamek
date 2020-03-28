@@ -527,7 +527,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // then check to see if the hex where it landed can be seen by anyone on an opposing team
         // if so, mark the attacker so that it can be targeted by counter-battery fire
         if (game.getBoard().contains(targetPos)) {
-            HexTarget hexTarget = new HexTarget(targetPos, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY);
+            HexTarget hexTarget = new HexTarget(targetPos, Targetable.TYPE_HEX_ARTILLERY);
             
             for(Entity entity : game.getEntitiesVector()) {
                 
@@ -548,7 +548,17 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
         // an off-board target can observe counter-battery fire attacking it for counter-battery fire (probably)
         } else if (target.isOffBoard()) {
-            aaa.getEntity(game).addOffBoardObserver(((Entity) target).getOwner().getTeam());
+            Entity attacker = aaa.getEntity(game);
+            int targetTeam = ((Entity) target).getOwner().getTeam();
+            
+            if(!attacker.isOffBoardObserved(targetTeam)) {
+                attacker.addOffBoardObserver(targetTeam);
+                
+                Report r = new Report(9997);
+                r.add(target.getDisplayName());
+                r.subject = subjectId;
+                vPhaseReport.add(r);
+            }
         }
     }
     

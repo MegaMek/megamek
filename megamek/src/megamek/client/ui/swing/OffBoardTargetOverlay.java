@@ -110,9 +110,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         
         // the artillery weapon needs to be using non-homing ammo
         Mounted ammo = selectedArtilleryWeapon.getLinked();
-        AmmoType ammoType = (AmmoType) ammo.getType();
-        if((ammoType.getMunitionType() == AmmoType.M_HOMING) 
-                && ammo.curMode().equals("Homing")) {
+        if(ammo.isHomingAmmoInHomingMode()) {
             return false;
         }
         

@@ -104,7 +104,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         Mounted selectedArtilleryWeapon = clientgui.getBoardView().getSelectedArtilleryWeapon();
         
         // only relevant if we've got an artillery weapon selected for one of our own units
-        if(selectedArtilleryWeapon == null ) {
+        if(selectedArtilleryWeapon == null) {
             return false;
         }
         
@@ -118,7 +118,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         
         // only show these if there are any actual enemy units eligible for off board targeting
         for(OffBoardDirection direction : OffBoardDirection.values()) {
-            if(direction != OffBoardDirection.NONE && showDirectionalElement(direction, selectedArtilleryWeapon)) {
+            if(showDirectionalElement(direction, selectedArtilleryWeapon)) {
                 return true; 
             }
         }
@@ -296,7 +296,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
             xPosition = boundingRectangle.x + (int) (boundingRectangle.width / 2) - (int) (WIDE_EDGE_SIZE / 2);
             yPosition = boundingRectangle.y + boundingRectangle.height - EDGE_OFFSET - NARROW_EDGE_SIZE;
             return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE);
-        /// east rectangle is narrower than wider, and at the right of the board view, but to the left of the unit overview panel
+        // east rectangle is narrower than wider, and at the right of the board view, but to the left of the unit overview panel
         case EAST:
             int extraXOffset = GUIPreferences.getInstance().getShowUnitOverview() ? UnitOverview.getUIWidth() : 0;
             xPosition = boundingRectangle.x + boundingRectangle.width - WIDE_EDGE_SIZE - EDGE_OFFSET - extraXOffset;
@@ -324,7 +324,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
     
     /**
      * Worker function that handles a click on a 'counterbattery fire' overlay button.
-     * Possible shows a target selection popup
+     * Possibly shows a target selection popup
      * Generates an artillery attack action that is fed back to the targeting display.
      */
     private void handleButtonClick(OffBoardDirection direction) {

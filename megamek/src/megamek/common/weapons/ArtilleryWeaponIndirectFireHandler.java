@@ -551,7 +551,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             Entity attacker = aaa.getEntity(game);
             int targetTeam = ((Entity) target).getOwner().getTeam();
             
-            if(!attacker.isOffBoardObserved(targetTeam)) {
+            if(attacker.isOffBoard() && !attacker.isOffBoardObserved(targetTeam)) {
                 attacker.addOffBoardObserver(targetTeam);
                 
                 Report r = new Report(9997);

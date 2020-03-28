@@ -267,7 +267,8 @@ public class MegaMek {
                             + File.separator + logFileName, true) {
                         @Override
                         public void flush() throws IOException {
-                            super.flush();getFD().sync();
+                            super.flush();
+                            getFD().sync();
                         }
                     }, 64));
             System.setOut(ps);

@@ -189,7 +189,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private JCheckBox chkIncludeGround;
     private JCheckBox chkIncludeSpace;
     private JButton butSpaceSize;
-    private Set<BoardDimensions> mapSizes = new TreeSet<BoardDimensions>();
+    private Set<BoardDimensions> mapSizes = new TreeSet<>();
 
     boolean resetAvailBoardSelection = false;
     boolean resetSelectedBoards = true;
@@ -4036,7 +4036,8 @@ public class ChatLounge extends AbstractPhaseDisplay
                 prevEntity = en;
             }
             if (e.isPopupTrigger()) {
-                // This menu uses the following
+                // This menu uses the following Mnemonics:
+                // B, C, I, N, S, V
                 JMenuItem menuItem;
                 if (oneSelected) {
                     menuItem = new JMenuItem("View...");

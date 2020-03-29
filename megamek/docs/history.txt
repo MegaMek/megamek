@@ -34,11 +34,12 @@ VERSION HISTORY:
 + Issue #377: Ask user if they want to quit MegaMek when attempting to close the window.
 + PR #1765: Fix several board validation issues with map editor concerning buildings and bridges; performance improvement for map editor.
 + Issue #1767: When randomly generating a map, picking a theme is reflected in the map editor.
-+ PR #1790 - various improvements and fixes around random map dialog;	
++ PR #1790: various improvements and fixes around random map dialog;	
 	ability to directly open map definition file from map editor
-+ Issue #1787 - user can now manually reset mini-map and mech info card positions
-+ PR #1795 - corrections to invalid data in some unofficial boards
-+ PR #1779 - counter-battery fire
++ Issue #1787: user can now manually reset mini-map and mech info card positions
++ PR #1795: corrections to invalid data in some unofficial boards
++ PR #1779: counter-battery fire
++ PR #1805: Adding BV Calculation to ChatLounge Entity Right Click 
 
 
 v0.47.4 (2020-2-09 2200 UTC)

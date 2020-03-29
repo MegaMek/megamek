@@ -798,6 +798,8 @@ public interface IGame {
      */
     abstract List<Entity> getEntitiesVector(Coords c, boolean ignore);
 
+    abstract List<Entity> getAllOffboardEnemyEntities(IPlayer player);
+    
     /**
      * Returns a Vector of the gun emplacements at the given coordinates.
      */

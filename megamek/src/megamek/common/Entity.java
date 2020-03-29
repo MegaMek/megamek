@@ -841,6 +841,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private boolean weapOrderChanged = false;
 
     /**
+     * Set of team IDs that have observed this entity making attacks from off-board
+     */
+    private Set<Integer> offBoardShotObservers;
+    
+    /**
      * Generates a new, blank, entity.
      */
     public Entity() {
@@ -875,6 +880,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
         externalId = UUID.randomUUID().toString();
         initTechAdvancement();
+        offBoardShotObservers = new HashSet<>();
     }
 
     /**
@@ -15777,5 +15783,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void clearFiringSolutions() {
         firingSolutions.clear();
+    }
+    
+    /**
+     * Indicate that an off-board artillery attack by this entity has been observed by a particular team
+     */
+    public void addOffBoardObserver(int teamID) {
+        offBoardShotObservers.add(teamID);
+    }
+    
+    /**
+     * Has the given team observed an off-board artillery attack by this entity?
+     */
+    public boolean isOffBoardObserved(int teamID) {
+        return offBoardShotObservers.contains(teamID);
     }
 }

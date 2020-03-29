@@ -222,6 +222,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private Ruler ruler;
     protected JComponent curPanel;
     public ChatLounge chatlounge;
+    private OffBoardTargetOverlay offBoardOverlay;
 
     // some dialogs...
     GameOptionsDialog gameOptionsDialog;
@@ -491,11 +492,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         bv.addDisplayable(cb2);
         bv.addKeyListener(cb2);
         uo = new UnitOverview(this);
+        offBoardOverlay = new OffBoardTargetOverlay(this);
         aw = new AccessibilityWindow(cb, this);
         aw.setLocation(0, 0);
         aw.addWindowListener(this);
         aw.setSize(300, 300);
         bv.addDisplayable(uo);
+        bv.addDisplayable(offBoardOverlay);
         int x;
         int y;
         int h;
@@ -1245,6 +1248,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
+                offBoardOverlay.setTargetingPhaseDisplay((TargetingPhaseDisplay) component);
                 break;
             case PHASE_MOVEMENT:
                 component = new MovementDisplay(this);

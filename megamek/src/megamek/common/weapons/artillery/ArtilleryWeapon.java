@@ -60,9 +60,8 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         Mounted ammo = game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked();
-        AmmoType atype = (AmmoType) ammo.getType();
-        if ((atype.getMunitionType() == AmmoType.M_HOMING) 
-                && ammo.curMode().equals("Homing")) {
+
+        if (ammo.isHomingAmmoInHomingMode()) {
             if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
                 return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game,
                         server);

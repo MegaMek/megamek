@@ -81,6 +81,11 @@ public class UnitOverview implements IDisplayable {
     private Image scrollDown;
     private Image pageUp;
     private Image pageDown;
+    
+    public static int getUIWidth() {
+        return ICON_WIDTH + DIST_SIDE;
+    }
+    
     private Image scrollUpG;
     private Image scrollDownG;
     private Image pageUpG;

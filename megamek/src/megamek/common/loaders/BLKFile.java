@@ -81,18 +81,21 @@ public class BLKFile {
         if (saEquip[0] != null) {
             for (String s : saEquip) {
                 String equipName = s.trim();
+                boolean isOmniMounted = false;
                 boolean isTurreted = false;
                 boolean isPintleTurreted = false;
-                if (equipName.toUpperCase().endsWith("(ST)")) {
-                    isTurreted = true;
-                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                if (equipName.toUpperCase().endsWith(":OMNI")) {
+                    isOmniMounted = true;
+                    equipName = equipName.substring(0, equipName.length() - 5).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(PT)")) {
                     isPintleTurreted = true;
                     equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
-                boolean isOmniMounted = equipName.toUpperCase().endsWith(":OMNI");
-                equipName = equipName.replace(":OMNI", "");
+                if (equipName.toUpperCase().endsWith("(ST)")) {
+                    isTurreted = true;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
 
                 int facing = -1;
                 if (equipName.toUpperCase().endsWith("(FL)")) {

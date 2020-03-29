@@ -48,7 +48,7 @@ public class EscapePods extends SmallCraft {
         displayName = newName.toString();
         
         //Pods and boats have an SI of 1 each
-        setSI(nPods);
+        initializeSI(nPods);
         
         //Escape pods have fuel and thrusters to maneuver with
         if (isEscapePod) {
@@ -59,7 +59,7 @@ public class EscapePods extends SmallCraft {
         
         //and an armor value of 4 per craft -- 1 point per location
         for (int i = 0; i < 4; i++) {
-            setArmor(nPods, i);
+            initializeArmor(nPods, i);
         }
         
         //Placeholder for adding individuals
@@ -79,6 +79,9 @@ public class EscapePods extends SmallCraft {
         //assign some arbitrarily large number here for the internal so that locations will get 
         //the actual current number of pods correct.
         initializeSI(Integer.MAX_VALUE);
+        for (int i = 0; i < locations(); i++) {
+            initializeArmor(Integer.MAX_VALUE, i);
+        }
     }
 
     /**

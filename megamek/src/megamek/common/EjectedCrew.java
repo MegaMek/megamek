@@ -94,7 +94,7 @@ public class EjectedCrew extends Infantry {
         newName.append(" of ").append(originalRide.getDisplayName());
         displayName = newName.toString();
         
-        setInternal(escapedThisRound, Infantry.LOC_INFANTRY);
+        initializeInternal(escapedThisRound, Infantry.LOC_INFANTRY);
         
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalIdAsString());

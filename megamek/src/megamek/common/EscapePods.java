@@ -53,7 +53,7 @@ public class EscapePods extends SmallCraft {
         //Escape pods have fuel and thrusters to maneuver with
         if (isEscapePod) {
             setFuel(10);
-           setOriginalWalkMP(4);
+            setOriginalWalkMP(4);
         }
         setMovementMode(EntityMovementMode.AERODYNE);
         

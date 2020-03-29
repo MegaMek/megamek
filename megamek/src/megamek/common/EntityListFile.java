@@ -1098,6 +1098,13 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl+1) + "</EscapedPassengers>");
                     output.write(CommonConstants.NL);
                 }
+                if (craft instanceof EscapePods) {                   
+                    //Original number of pods, used to set the strength of a group of pods
+                    output.write(indentStr(indentLvl+1) + "<ONumberOfPods number=\"" + craft.get0SI());
+                    output.write("\"/>");
+                    output.write(CommonConstants.NL);
+                }
+                
             } else if (entity instanceof EjectedCrew) {
                 EjectedCrew eCrew = (EjectedCrew) entity;
                 if (!eCrew.getNOtherCrew().isEmpty()) {
@@ -1122,6 +1129,10 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl+1) + "</EscapedPassengers>");
                     output.write(CommonConstants.NL);
                 }
+                //Original number of men
+                output.write(indentStr(indentLvl+1) + "<ONumberOfMen number=\"" + eCrew.getOInternal(Infantry.LOC_INFANTRY));
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
             }
 
             // Finish writing this entity to the file.

@@ -92,6 +92,8 @@ public class MULParser {
     private static final String ESCCREW = "EscapedCrew";
     private static final String ESCPASS = "EscapedPassengers";
     private static final String NUMBER = "number";
+    private static final String ORIG_PODS = "ONumberOfPods";
+    private static final String ORIG_MEN = "ONumberOfMen";
 
     /**
      * The names of attributes generally associated with Entity tags
@@ -520,6 +522,10 @@ public class MULParser {
                     parseEscapedPassengers(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ESCCREW)) {
                     parseEscapedCrew(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ORIG_PODS)) {
+                    parseOSI(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ORIG_MEN)) {
+                    parseOMen(currEle, entity);
                 }
             }
         }
@@ -2234,6 +2240,38 @@ public class MULParser {
                     ((SmallCraft) entity).addNOtherCrew(id, value);
                 }
             }
+        }
+    }
+    
+    /**
+     * Parse an original pods tag for the given <code>Entity</code>. Used by Escape Pods
+     *
+     * @param siTag
+     * @param entity
+     */
+    private void parseOSI(Element siTag, Entity entity){
+        String value = siTag.getAttribute(NUMBER);
+        try {
+            int newSI = Integer.parseInt(value);
+            ((Aero) entity).set0SI(newSI);
+        } catch (Exception e) {
+            warning.append("Invalid SI value in original structural integrity tag.\n");
+        }
+    }
+    
+    /**
+     * Parse an original men tag for the given <code>Entity</code>. Used by Escaped spacecraft crew
+     *
+     * @param siTag
+     * @param entity
+     */
+    private void parseOMen(Element siTag, Entity entity){
+        String value = siTag.getAttribute(NUMBER);
+        try {
+            int newMen = Integer.parseInt(value);
+            ((Infantry) entity).initializeInternal(newMen, Infantry.LOC_INFANTRY);
+        } catch (Exception e) {
+            warning.append("Invalid internal value in original number of men tag.\n");
         }
     }
 

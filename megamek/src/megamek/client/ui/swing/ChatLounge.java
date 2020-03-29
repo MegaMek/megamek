@@ -2501,33 +2501,46 @@ public class ChatLounge extends AbstractPhaseDisplay
      * @param entity the entity to display the BV Calculation for
      */
     private void mechBVDisplay(Entity entity) {
-        final JDialog dialog = new JDialog(clientgui.frame, "BV", false);
+        final JDialog dialog = new JDialog(clientgui.frame, "BV Calculation Display", false);
         dialog.getContentPane().setLayout(new GridBagLayout());
+
+        final int width = 500;
+        final int height = 400;
+        Dimension size = new Dimension(width, height);
 
         JEditorPane tEditorPane = new JEditorPane();
         tEditorPane.setContentType("text/html");
         tEditorPane.setEditable(false);
+        tEditorPane.setBorder(null);
         entity.calculateBattleValue();
         tEditorPane.setText(entity.getBVText());
+        tEditorPane.setCaretPosition(0);
+
         JScrollPane tScroll = new JScrollPane(tEditorPane,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        Dimension size = new Dimension(550, 300);
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        tScroll.setBorder(null);
         tScroll.setPreferredSize(size);
+        tScroll.setMinimumSize(size);
 
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 1.0;
         dialog.getContentPane().add(tScroll, gridBagConstraints);
 
         JButton button = new JButton(Messages.getString("Okay"));
         button.addActionListener(e -> dialog.setVisible(false));
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
         gridBagConstraints.anchor = GridBagConstraints.CENTER;
-        gridBagConstraints.weightx = 0;
-        gridBagConstraints.weighty = 0;
+        gridBagConstraints.weighty = 0.0;
         dialog.getContentPane().add(button, gridBagConstraints);
 
-        dialog.setSize(size);
+        dialog.setSize(new Dimension(width + 25, height + 75));
         dialog.validate();
         dialog.setVisible(true);
     }

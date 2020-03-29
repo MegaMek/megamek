@@ -38,6 +38,7 @@ VERSION HISTORY:
 	ability to directly open map definition file from map editor
 + Issue #1787 - user can now manually reset mini-map and mech info card positions
 + PR #1795 - corrections to invalid data in some unofficial boards
++ PR #1779 - counter-battery fire
 
 
 v0.47.4 (2020-2-09 2200 UTC)

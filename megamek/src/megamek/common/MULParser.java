@@ -94,6 +94,8 @@ public class MULParser {
     private static final String NUMBER = "number";
     private static final String ORIG_PODS = "ONumberOfPods";
     private static final String ORIG_MEN = "ONumberOfMen";
+    private static final String CONVEYANCE = "Conveyance";
+    private static final String GAME = "Game";
 
     /**
      * The names of attributes generally associated with Entity tags
@@ -526,6 +528,10 @@ public class MULParser {
                     parseOSI(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ORIG_MEN)) {
                     parseOMen(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(CONVEYANCE)) {
+                    parseConveyance(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(GAME)) {
+                    parseId(currEle, entity);
                 }
             }
         }
@@ -2244,13 +2250,13 @@ public class MULParser {
     }
     
     /**
-     * Parse an original pods tag for the given <code>Entity</code>. Used by Escape Pods
+     * Parse an original si tag for the given <code>Entity</code>. Used by Escape Pods
      *
-     * @param siTag
+     * @param OsiTag
      * @param entity
      */
-    private void parseOSI(Element siTag, Entity entity){
-        String value = siTag.getAttribute(NUMBER);
+    private void parseOSI(Element OsiTag, Entity entity){
+        String value = OsiTag.getAttribute(NUMBER);
         try {
             int newSI = Integer.parseInt(value);
             ((Aero) entity).set0SI(newSI);
@@ -2262,16 +2268,52 @@ public class MULParser {
     /**
      * Parse an original men tag for the given <code>Entity</code>. Used by Escaped spacecraft crew
      *
-     * @param siTag
+     * @param OMenTag
      * @param entity
      */
-    private void parseOMen(Element siTag, Entity entity){
-        String value = siTag.getAttribute(NUMBER);
+    private void parseOMen(Element OMenTag, Entity entity){
+        String value = OMenTag.getAttribute(NUMBER);
         try {
             int newMen = Integer.parseInt(value);
             ((Infantry) entity).initializeInternal(newMen, Infantry.LOC_INFANTRY);
         } catch (Exception e) {
             warning.append("Invalid internal value in original number of men tag.\n");
+        }
+    }
+    
+    /**
+     * Parse a conveyance tag for the given <code>Entity</code>. Used to resolve crew damage to transported entities
+     *
+     * @param conveyanceTag
+     * @param entity
+     */
+    private void parseConveyance(Element conveyanceTag, Entity entity){
+        String value = conveyanceTag.getAttribute(ID);
+        try {
+            int id = Integer.parseInt(value);
+            entity.setTransportId(id);
+        } catch (Exception e) {
+            warning.append("Invalid transport id in conveyance tag.\n");
+        }
+    }
+    
+    /**
+     * Parse an id tag for the given <code>Entity</code>. Used to resolve crew damage to transported entities
+     *
+     * @param idTag
+     * @param entity
+     */
+    private void parseId(Element idTag, Entity entity){
+        String value = idTag.getAttribute(ID);
+        //Safety. We don't want to mess with autoassigned game Ids
+        if (entity.getGame() != null) {
+            return;
+        }
+        try {
+            int id = Integer.parseInt(value);
+            entity.setId(id);
+        } catch (Exception e) {
+            warning.append("Invalid id in conveyance tag.\n");
         }
     }
 

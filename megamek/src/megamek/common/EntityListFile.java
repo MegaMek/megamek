@@ -1063,6 +1063,19 @@ public class EntityListFile {
                 output.write(CommonConstants.NL);
             }
             
+            //Record if this entity is transported by another
+            if (entity.getTransportId() != Entity.NONE) {
+                output.write(indentStr(indentLvl+1) + "<Conveyance id=\"" + entity.getTransportId());
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
+            }
+            //Record this unit's id number
+            if (entity.getId() != Entity.NONE) {
+                output.write(indentStr(indentLvl+1) + "<Game id=\"" + entity.getId());
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
+            }
+            
             //Write the escape craft data, if needed
             if (entity instanceof Aero) {
                 Aero aero = (Aero) entity;

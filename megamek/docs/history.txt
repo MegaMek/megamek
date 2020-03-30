@@ -37,9 +37,10 @@ VERSION HISTORY:
 + PR #1790: various improvements and fixes around random map dialog;	
 	ability to directly open map definition file from map editor
 + Issue #1787: user can now manually reset mini-map and mech info card positions
-+ PR #1795: corrections to invalid data in some unofficial boards
-+ PR #1779: counter-battery fire
++ PR #1795: Corrections to invalid data in some unofficial boards
++ PR #1779: Counter-battery fire
 + PR #1805: Adding BV Calculation to ChatLounge Entity Right Click 
++ Data: New Sprites adding Icewind Metals Shadow Cats and Pendragon.
 
 
 v0.47.4 (2020-2-09 2200 UTC)

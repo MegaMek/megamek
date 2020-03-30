@@ -1637,11 +1637,13 @@ public class Server implements Runnable {
                 }
             }
 
-            if (entity.isDestroyed() 
-                    && entity.getTransportId() != Entity.NONE 
-                    && !game.getEntity(entity.getTransportId()).isLargeCraft()) {
-                //Leaving destroyed entities in dropship bays alone here
-                toRemove.addElement(entity);
+            if (entity.isDestroyed()) {
+                if (game.getEntity(entity.getTransportId()) != null
+                        && game.getEntity(entity.getTransportId()).isLargeCraft()) {
+                    //Leaving destroyed entities in dropship bays alone here
+                } else {
+                    toRemove.addElement(entity);
+                }
             }
         }
 

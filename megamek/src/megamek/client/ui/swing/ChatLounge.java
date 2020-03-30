@@ -67,44 +67,7 @@ import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmorHandlesTank;
-import megamek.common.Bay;
-import megamek.common.Board;
-import megamek.common.BoardDimensions;
-import megamek.common.ClampMountMech;
-import megamek.common.ClampMountTank;
-import megamek.common.Configuration;
-import megamek.common.Crew;
-import megamek.common.DockingCollar;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.FighterSquadron;
-import megamek.common.GunEmplacement;
-import megamek.common.IBoard;
-import megamek.common.IBomber;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.IStartingPositions;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LAMPilot;
-import megamek.common.LandAirMech;
-import megamek.common.MapSettings;
-import megamek.common.MechSummaryCache;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Protomech;
-import megamek.common.ProtomechClampMount;
-import megamek.common.QuirksHandler;
-import megamek.common.RangeType;
-import megamek.common.Tank;
-import megamek.common.TankTrailerHitch;
-import megamek.common.TechConstants;
-import megamek.common.Transporter;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
@@ -121,11 +84,8 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
 import megamek.common.util.MegaMekFile;
 
-public class ChatLounge extends AbstractPhaseDisplay
-        implements ActionListener, ItemListener, ListSelectionListener, MouseListener, IMapSettingsObserver {
-    /**
-     *
-     */
+public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, ItemListener,
+        ListSelectionListener, MouseListener, IMapSettingsObserver {
     private static final long serialVersionUID = 1454736776730903786L;
 
     private JButton butOptions;
@@ -4037,7 +3997,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             }
             if (e.isPopupTrigger()) {
                 // This menu uses the following Mnemonics:
-                // B, C, I, N, S, V
+                // B, C, D, E, I, N, O, S, V
                 JMenuItem menuItem;
                 if (oneSelected) {
                     menuItem = new JMenuItem("View...");
@@ -4045,12 +4005,6 @@ public class ChatLounge extends AbstractPhaseDisplay
                     menuItem.addActionListener(this);
                     menuItem.setEnabled(isOwner || !blindDrop);
                     menuItem.setMnemonic(KeyEvent.VK_V);
-                    popup.add(menuItem);
-
-                    menuItem = new JMenuItem("View BV Calculation...");
-                    menuItem.setActionCommand("BV");
-                    menuItem.addActionListener(this);
-                    menuItem.setMnemonic(KeyEvent.VK_B);
                     popup.add(menuItem);
                 }
 
@@ -4073,6 +4027,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     menuItem.setActionCommand("DAMAGE");
                     menuItem.addActionListener(this);
                     menuItem.setEnabled(isOwner || isBot);
+                    menuItem.setMnemonic(KeyEvent.VK_E);
                     popup.add(menuItem);
                 }
 
@@ -4084,11 +4039,21 @@ public class ChatLounge extends AbstractPhaseDisplay
                 menuItem.setMnemonic(KeyEvent.VK_I);
                 popup.add(menuItem);
 
+                if (oneSelected) {
+                    menuItem = new JMenuItem("View BV Calculation...");
+                    menuItem.setActionCommand("BV");
+                    menuItem.addActionListener(this);
+                    menuItem.setMnemonic(KeyEvent.VK_B);
+                    popup.add(menuItem);
+                }
+
                 menuItem = new JMenuItem("Delete...");
                 menuItem.setActionCommand("DELETE");
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
+                menuItem.setMnemonic(KeyEvent.VK_D);
                 popup.add(menuItem);
+
                 JMenu menu = new JMenu("Randomize");
                 menuItem = new JMenuItem("Name");
                 menuItem.setActionCommand("NAME");
@@ -4096,6 +4061,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 menuItem.setEnabled(isOwner || isBot);
                 menuItem.setMnemonic(KeyEvent.VK_N);
                 menu.add(menuItem);
+
                 menuItem = new JMenuItem("Skills");
                 menuItem.setActionCommand("SKILLS");
                 menuItem.addActionListener(this);
@@ -4103,9 +4069,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                 menuItem.setMnemonic(KeyEvent.VK_S);
                 menu.add(menuItem);
                 popup.add(menu);
+
                 // Change Owner Menu Item
                 menu = new JMenu(Messages.getString("ChatLounge.ChangeOwner"));
                 menu.setEnabled(isOwner || isBot);
+                menu.setMnemonic(KeyEvent.VK_O);
                 Enumeration<IPlayer> players = clientgui.getClient().getPlayers();
                 while (players.hasMoreElements() && (isOwner || isBot)) {
                     IPlayer p = players.nextElement();

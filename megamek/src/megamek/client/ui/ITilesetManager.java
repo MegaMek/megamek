@@ -19,6 +19,7 @@ package megamek.client.ui;
 
 import java.awt.Component;
 import java.awt.Image;
+import java.util.Set;
 
 import megamek.common.Entity;
 import megamek.common.IPlayer;
@@ -36,6 +37,8 @@ public interface ITilesetManager {
     public Image iconFor(Entity e);
 
     public Image loadPreviewImage(Entity entity, Image camo, int tint, Component bp);
+    
+    public Set<String> getThemes();
 
     public void reset();
 

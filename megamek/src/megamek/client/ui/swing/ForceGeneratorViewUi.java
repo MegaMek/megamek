@@ -505,22 +505,19 @@ public class ForceGeneratorViewUi {
 		public Component getTreeCellRendererComponent(JTree tree, Object value,
                 boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
-            super.getTreeCellRendererComponent(
-                    tree, value, sel,
-                    expanded, leaf, row,
-                    hasFocus);
+            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             setBackground(UIManager.getColor("Tree.textBackground"));
             setForeground(UIManager.getColor("Tree.textForeground"));
-            if(sel) {
+            if (sel) {
                 setBackground(UIManager.getColor("Tree.selectionBackground"));
                 setForeground(UIManager.getColor("Tree.selectionForeground"));
             }
 
             ForceDescriptor fd = (ForceDescriptor)value;
-            if(fd.isElement()) {
+            if (fd.isElement()) {
                 StringBuilder name = new StringBuilder();
                 String uname = "";
-                if(fd.getCo() == null) {
+                if (fd.getCo() == null) {
                     name.append("<font color='red'>")
                         .append(Messages.getString("ForceGeneratorDialog.noCrew"))
                         .append("</font>");

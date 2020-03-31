@@ -472,6 +472,9 @@ Hoshiryokou (Tug Boat)|
 Aqueduct Liquid Carrier (Standard)|
 Princess Luxury Liner (Cargo)|
 Princess Luxury Liner (Standard)|
+Lee (2756 Cargo)|
+Lee (2756 Carrier)|
+Lee (2756 Armor/Infantry Transport)|
 Lee (2756)|
 M3 Drone CASPAR|
 Model 96C 'Howdah'|
@@ -5006,6 +5009,7 @@ Javelin JVN-11D (Farrell)|
 Mad Cat (Timber Wolf) (Bounty Hunter 2)|
 Phoenix Hawk PXH-4L (Sante)|
 Shadow Hawk SHD-5D (Sandy)|
+Ti Ts'ang Jason|
 Karhu (Syngman)|
 Osprey OSP-26 (Lawrence)|
 Prefect PRF-1R (Veronica)|

@@ -3576,8 +3576,9 @@ public class Tank extends Entity {
                 }
             }
             if ((mount.getType() instanceof MiscType)
-                    && mount.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                // Only one slot for all jump jets, added later.
+                    && (mount.getType().hasFlag(MiscType.F_JUMP_JET)
+                        || mount.getType().hasFlag(MiscType.F_FUEL))) {
+                // Only one slot each for all jump jets or fuel tanks, added later.
                 continue;
             }
             if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
@@ -3588,6 +3589,10 @@ public class Tank extends Entity {
         }
         // JJs take just 1 slot
         if (this.getJumpMP(false) > 0) {
+            usedSlots++;
+        }
+        // So do fuel tanks
+        if (hasWorkingMisc(MiscType.F_FUEL)) {
             usedSlots++;
         }
         // different engines take different amounts of slots
@@ -4201,7 +4206,14 @@ public class Tank extends Entity {
         }
         double fuelUnit = fuelTonnagePer100km();
         if (fuelUnit > 0) {
-            return (int) (getFuelTonnage() / fuelUnit * 100);
+            int range = (int) (getFuelTonnage() / fuelUnit * 100);
+            int fuelTanks = countWorkingMisc(MiscType.F_FUEL);
+            if (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) {
+                range += fuelTanks * 600;
+            } else if (getEngine().getEngineType() == Engine.FUEL_CELL) {
+                range += fuelTanks * 450;
+            }
+            return range;
         }
         return Integer.MAX_VALUE;
     }

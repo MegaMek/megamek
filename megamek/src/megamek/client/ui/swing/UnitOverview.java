@@ -61,8 +61,8 @@ public class UnitOverview implements IDisplayable {
     private static final int DIST_SIDE = 5;
     private static final int ICON_WIDTH = 56;
     private static final int ICON_HEIGHT = 48;
-    private static final int BUTTON_HEIGHT = 11;
-    private static final int BUTTON_PADDING = 2;
+    private static final int BUTTON_HEIGHT = 15;
+    private static final int BUTTON_PADDING = 4;
     private static final int PADDING = 5;
 
     private int[] unitIds;
@@ -81,19 +81,36 @@ public class UnitOverview implements IDisplayable {
     private Image scrollDown;
     private Image pageUp;
     private Image pageDown;
+    
+    public static int getUIWidth() {
+        return ICON_WIDTH + DIST_SIDE;
+    }
+    
+    private Image scrollUpG;
+    private Image scrollDownG;
+    private Image pageUpG;
+    private Image pageDownG;
 
     public UnitOverview(ClientGUI clientgui) {
         this.clientgui = clientgui;
         fm = clientgui.getFontMetrics(FONT);
 
         Toolkit toolkit = clientgui.getToolkit();
-        scrollUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp.gif").toString()); //$NON-NLS-1$
+        scrollUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown.gif").toString()); //$NON-NLS-1$
+        scrollDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollDown, clientgui);
-        pageUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp.gif").toString()); //$NON-NLS-1$
+        pageUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageUp, clientgui);
-        pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown.gif").toString()); //$NON-NLS-1$
+        pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2.png").toString()); //$NON-NLS-1$
+        PMUtil.setImage(pageDown, clientgui);
+        scrollUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2_G.png").toString()); //$NON-NLS-1$
+        PMUtil.setImage(scrollUp, clientgui);
+        scrollDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2_G.png").toString()); //$NON-NLS-1$
+        PMUtil.setImage(scrollDown, clientgui);
+        pageUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2_G.png").toString()); //$NON-NLS-1$
+        PMUtil.setImage(pageUp, clientgui);
+        pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2_G.png").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
         
         visible = GUIPreferences.getInstance().getShowUnitOverview();
@@ -113,7 +130,7 @@ public class UnitOverview implements IDisplayable {
 
         scroll = v.size() > unitsPerPage;
 
-        actUnitsPerPage = scroll ? unitsPerPage - 1 : unitsPerPage;
+        actUnitsPerPage = scroll ? unitsPerPage - 2 : unitsPerPage;
 
         if (scrollOffset + actUnitsPerPage > unitIds.length) {
             scrollOffset = unitIds.length - actUnitsPerPage;
@@ -126,11 +143,17 @@ public class UnitOverview implements IDisplayable {
         int y = clipBounds.y + DIST_TOP;
 
         if (scroll) {
-            graph.drawImage(pageUp, x, y, null);
-            graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                    null);
-            y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
-                    + BUTTON_PADDING;
+        	if (scrollOffset > 0) {
+        		graph.drawImage(pageUp, x, y, null);
+        		graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+        				null);
+        	} else {
+        		graph.drawImage(pageUpG, x, y, null);    // Top of list = greyed out buttons
+        		graph.drawImage(scrollUpG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+        				null);
+        	}
+        	y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
+        			+ BUTTON_PADDING;
         }
 
         for (int i = scrollOffset; (i < v.size())
@@ -179,11 +202,18 @@ public class UnitOverview implements IDisplayable {
         }
 
         if (scroll) {
-            y -= PADDING;
-            y += BUTTON_PADDING;
-            graph.drawImage(scrollDown, x, y, null);
-            graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                    null);
+        	y -= PADDING;
+        	y += BUTTON_PADDING;
+        	if (scrollOffset == unitIds.length - actUnitsPerPage) {
+        		graph.drawImage(scrollDownG, x, y, null);   // Bottom of list = greyed out buttons
+        		graph.drawImage(pageDownG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+        				null);
+        	} else {
+        		graph.drawImage(scrollDown, x, y, null);
+        		graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+        				null);
+            }
+           
         }
 
     }
@@ -196,7 +226,7 @@ public class UnitOverview implements IDisplayable {
             return false;
         }
 
-        int actUnits = scroll ? unitsPerPage - 1 : unitsPerPage;
+        int actUnits = scroll ? unitsPerPage - 2 : unitsPerPage;
 
         int x = p.x;
         int y = p.y;

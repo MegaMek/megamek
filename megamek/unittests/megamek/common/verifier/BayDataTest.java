@@ -26,34 +26,34 @@ public class BayDataTest {
 
     @Test
     public void testLiquidCargoBayMultiplier() {
-        final double size = 2.0;
-        Bay cargoBay = BayData.LIQUID_CARGO.newBay(size, 0);
+        final double weight = 2.0;
+        Bay cargoBay = BayData.LIQUID_CARGO.newBay(weight, 0);
         
-        assertEquals(cargoBay.getWeight(), BayData.LIQUID_CARGO.getWeight() * size, 0.01);
+        assertEquals(cargoBay.getWeight(), weight, 0.01);
     }
 
     @Test
     public void testRefrigeratedCargoBayMultiplier() {
-        final double size = 2.0;
-        Bay cargoBay = BayData.REFRIGERATED_CARGO.newBay(size, 0);
+        final double weight = 2.0;
+        Bay cargoBay = BayData.REFRIGERATED_CARGO.newBay(weight, 0);
         
-        assertEquals(cargoBay.getWeight(), BayData.REFRIGERATED_CARGO.getWeight() * size, 0.01);
+        assertEquals(cargoBay.getWeight(), weight, 0.01);
     }
 
     @Test
     public void testInsulatedCargoBayMultiplier() {
-        final double size = 2.0;
-        Bay cargoBay = BayData.INSULATED_CARGO.newBay(size, 0);
+        final double weight = 2.0;
+        Bay cargoBay = BayData.INSULATED_CARGO.newBay(weight, 0);
         
-        assertEquals(cargoBay.getWeight(), BayData.INSULATED_CARGO.getWeight() * size, 0.01);
+        assertEquals(cargoBay.getWeight(), weight, 0.01);
     }
 
     @Test
     public void testLivestockCargoBayMultiplier() {
-        final double size = 2.0;
-        Bay cargoBay = BayData.LIVESTOCK_CARGO.newBay(size, 0);
+        final double weight = 2.0;
+        Bay cargoBay = BayData.LIVESTOCK_CARGO.newBay(weight, 0);
         
-        assertEquals(cargoBay.getWeight(), BayData.LIVESTOCK_CARGO.getWeight() * size, 0.01);
+        assertEquals(cargoBay.getWeight(), weight, 0.01);
     }
 
     @Test

@@ -75,7 +75,7 @@ public class MegaMek {
             + "(-eqedb) (-oul)] [<args>]";
     private static final String UNKNOWN_GUI_MESSAGE = "Unknown GUI:";
     private static final String GUI_CLASS_NOT_FOUND_MESSAGE = "Couldn't find the GUI Class:";
-    private static final String DEFAULT_LOG_FILE_NAME = "megameklog.txt";
+    public static final String DEFAULT_LOG_FILE_NAME = "megameklog.txt";
 
     public static void main(String[] args) {
         String logFileName = DEFAULT_LOG_FILE_NAME;

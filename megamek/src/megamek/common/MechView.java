@@ -939,7 +939,9 @@ public class MechView {
         int nEquip = 0;
         for (Mounted mounted : entity.getMisc()) {
             String name = mounted.getName();
-            if ((mounted.getLocation() == Entity.LOC_NONE)
+            if ((((mounted.getLocation() == Entity.LOC_NONE)
+                        // Mechs can have zero-slot equipment in LOC_NONE that needs to be shown.
+                        && (!isMech || mounted.getType().getCriticals(entity) > 0)))
                     || name.contains("Jump Jet")
                     || (name.contains("CASE")
                         && !name.contains("II")
@@ -955,7 +957,8 @@ public class MechView {
                     || name.contains("BA Standard")
                     || name.contains("BA Advanced")
                     || name.contains("Reflective")
-                    || name.contains("Ferro-Lamellor")) {
+                    || name.contains("Ferro-Lamellor")
+                    || name.contains("Standard")) {
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }

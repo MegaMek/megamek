@@ -196,7 +196,7 @@ public class ArtilleryTargetingControl {
             
             // skip airborne entities
             if(!e.isAirborne() && !e.isAirborneVTOLorWIGE()) {
-                targetSet.add(new HexTarget(e.getPosition(), game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
+                targetSet.add(new HexTarget(e.getPosition(), Targetable.TYPE_HEX_ARTILLERY));
                 
                 // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
                 // of the entity. 
@@ -204,8 +204,14 @@ public class ArtilleryTargetingControl {
             }
         }
         
+        for(Entity enemy : game.getAllOffboardEnemyEntities(shooter.getOwner())) {
+            if(enemy.isOffBoardObserved(shooter.getOwner().getTeam())) {
+                targetSet.add(enemy);
+            }
+        }
+        
         for(Coords coords : owner.getStrategicBuildingTargets()) {
-            targetSet.add(new HexTarget(coords, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
+            targetSet.add(new HexTarget(coords, Targetable.TYPE_HEX_ARTILLERY));
             
             // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
             // of the strategic targets.
@@ -298,8 +304,14 @@ public class ArtilleryTargetingControl {
                 
                 // for each enemy unit, evaluate damage value of firing at its hex.
                 // keep track of top target hexes with the same value and fire at them
-                for(Targetable hexTarget : targetSet) {                    
-                    double damageValue = calculateDamageValue(damage, hexTarget.getPosition(), shooter, game, owner);
+                for(Targetable hexTarget : targetSet) {
+                    double damageValue = 0.0;
+                    if(hexTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+                        damageValue = damage;
+                    } else {
+                        damageValue = calculateDamageValue(damage, hexTarget.getPosition(), shooter, game, owner);
+                    }
+                    
                     WeaponFireInfo wfi = new WeaponFireInfo(shooter, hexTarget,
                             currentWeapon, game, false, owner);
                     

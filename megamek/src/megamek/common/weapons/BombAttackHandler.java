@@ -23,6 +23,7 @@ import java.util.Vector;
 import megamek.common.BombType;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
@@ -258,6 +259,8 @@ public class BombAttackHandler extends WeaponHandler {
                         server.deliverThunderMinefield(c,
                                 ae.getOwner().getId(), 20, ae.getId());
                     }
+                } else if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
+                    AreaEffectHelper.processFuelAirDamage(drop, EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, server);
                 } else {
                     server.deliverBombDamage(drop, type, subjectId, ae,
                             vPhaseReport);

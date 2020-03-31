@@ -147,16 +147,14 @@ public class TROView {
     public String processTemplate() {
         if (null != template) {
             model.put("includeFluff", includeFluff);
-
-            final ByteArrayOutputStream os = new ByteArrayOutputStream();
-            final Writer out = new OutputStreamWriter(os);
-            try {
+            try (final ByteArrayOutputStream os = new ByteArrayOutputStream();
+                 final Writer out = new OutputStreamWriter(os)) {
                 template.process(model, out);
+                return os.toString();
             } catch (TemplateException | IOException e) {
                 DefaultMmLogger.getInstance().error(getClass(), "processTemplate()", e);
                 e.printStackTrace();
             }
-            return os.toString();
         }
         return null;
     }
@@ -408,12 +406,18 @@ public class TROView {
         return addEquipment(entity, true);
     }
 
+    protected boolean skipMount(Mounted mount, boolean includeAmmo) {
+        return mount.getLocation() < 0
+                || mount.isWeaponGroup()
+                || (!includeAmmo && (mount.getType() instanceof AmmoType));
+    }
+
     protected int addEquipment(Entity entity, boolean includeAmmo) {
         final int structure = entity.getStructureType();
         final Map<String, Map<EquipmentType, Integer>> equipment = new HashMap<>();
         int nameWidth = 20;
         for (final Mounted m : entity.getEquipment()) {
-            if ((m.getLocation() < 0) || m.isWeaponGroup() || (!includeAmmo && (m.getType() instanceof AmmoType))) {
+            if (skipMount(m, includeAmmo)) {
                 continue;
             }
             if (!m.getType().isHittable()) {

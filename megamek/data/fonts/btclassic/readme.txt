@@ -15,6 +15,6 @@ CHR  ASCII  IMAGE
 
 This file is free for non-profit and recreational use, and is not to be used on commercial products without the permission of Fantasy Productions. Any future fonts will be archived at http://www.classicbattletech.com/truetype
 
-Original contents of ClassicBattletech.com © 2001 Fantasy Productions, LLC.
+Original contents of ClassicBattletech.com Â©2001 Fantasy Productions, LLC.
 
-Battletech, Mechwarrior and Battlemech are registered trademarks of WizKids, LLC. All Rights Reserved.© 2001 WizKids, LLC.
+Battletech, Mechwarrior and Battlemech are registered trademarks of WizKids, LLC. All Rights Reserved. Â©2001 WizKids, LLC.

@@ -35,6 +35,7 @@ public class CrewDescriptor {
 
     private String name;
     private String bloodname;
+    private int gender;
     private int rank;
     private ForceDescriptor assignment;
     private int gunnery;
@@ -43,23 +44,25 @@ public class CrewDescriptor {
 
     public CrewDescriptor(ForceDescriptor assignment) {
         this.assignment = assignment;
-        name = generateName();
+        boolean gender = RandomNameGenerator.getInstance().isFemale();
+        name = generateName(gender);
+        this.gender = Crew.getGenderAsInt(gender);
         rank = assignment.getCoRank() == null?0:assignment.getCoRank();
         title = null;
         setSkills();
     }
 
-    private String generateName() {
+    private String generateName(boolean gender) {
         if (assignment.getFactionRec().isClan()) {
             RandomNameGenerator.getInstance().setChosenFaction("Clan");
-            return RandomNameGenerator.getInstance().generate();
+            return RandomNameGenerator.getInstance().generate(gender);
         } else if (!assignment.getFaction().contains(".")) {
             // Try to match our faction to one of the rng settings.
             for (Iterator<String> iter = RandomNameGenerator.getInstance().getFactions(); iter.hasNext();) {
                 final String f = iter.next();
                 if (assignment.getFaction().equalsIgnoreCase(f)) {
                     RandomNameGenerator.getInstance().setChosenFaction(f);
-                    return RandomNameGenerator.getInstance().generate();
+                    return RandomNameGenerator.getInstance().generate(gender);
                 }
             }
         }
@@ -69,13 +72,13 @@ public class CrewDescriptor {
                 final String f = iter.next();
                 if (parent.equalsIgnoreCase(f)) {
                     RandomNameGenerator.getInstance().setChosenFaction(f);
-                    return RandomNameGenerator.getInstance().generate();
+                    return RandomNameGenerator.getInstance().generate(gender);
                 }
             }
         }
         //Give up and use general
         RandomNameGenerator.getInstance().setChosenFaction("General");
-        return RandomNameGenerator.getInstance().generate();
+        return RandomNameGenerator.getInstance().generate(gender);
     }
 
     /**
@@ -279,6 +282,14 @@ public class CrewDescriptor {
         this.bloodname = bloodname;
     }
 
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
+
     public int getRank() {
         return rank;
     }
@@ -322,6 +333,6 @@ public class CrewDescriptor {
     }
 
     public Crew createCrew(CrewType crewType) {
-        return new Crew(crewType, name, 1, gunnery, piloting);
+        return new Crew(crewType, name, 1, gunnery, piloting, gender, null);
     }
 }

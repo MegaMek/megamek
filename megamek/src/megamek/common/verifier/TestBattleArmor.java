@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -1167,13 +1168,30 @@ public class TestBattleArmor extends TestEntity {
         return correct;
     }
 
+    /**
+     * @param eq        The equipment
+     * @param buffer    If non-null and the location is invalid, will be appended with an explanation
+     * @return          Whether the equipment can be mounted in the BattleArmor suit
+     */
+    public static boolean isValidBALocation(EquipmentType eq, @Nullable StringBuffer buffer) {
+        // Infantry weapons can only be mounted in armored gloves/APMs
+        if ((eq instanceof WeaponType) && eq.hasFlag(WeaponType.F_INFANTRY)) {
+            if (buffer != null) {
+                buffer.append(eq.getName())
+                        .append(" can only be mounted in an anti-personnel mount or an armored glove.\n");
+            }
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();
         buff.append("BattleArmor: ").append(ba.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
-        buff.append("Intro year: ").append(ba.getYear());
+        buff.append("Intro year: ").append(ba.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {

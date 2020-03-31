@@ -65,6 +65,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -179,6 +180,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_LOS_SETTING = "viewLOSSetting"; //$NON-NLS-1$
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
+    public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
     //endregion view menu
 
     //region fire menu
@@ -220,6 +222,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private Ruler ruler;
     protected JComponent curPanel;
     public ChatLounge chatlounge;
+    private OffBoardTargetOverlay offBoardOverlay;
 
     // some dialogs...
     GameOptionsDialog gameOptionsDialog;
@@ -322,7 +325,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public IBoardView getBoardView() {
         return bv;
     }
-
+    
     /**
      * Try to load the "bing" sound clip.
      */
@@ -460,23 +463,42 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
         layoutFrame();
         menuBar.addActionListener(this);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                frame.setVisible(false);
-                saveSettings();
-                die();
+                ignoreHotKeys = true;
+                int savePrompt = JOptionPane.showConfirmDialog(null,
+                        "Do you want to save the game before quitting MegaMek?",
+                        "Save First?",
+                        JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+                ignoreHotKeys = false;
+                if (savePrompt == JOptionPane.YES_OPTION) {
+                    if (!saveGame()) {
+                        // When the user did not actually save the game, don't close MM 
+                        return;
+                    }
+                }
+                if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
+                {
+                    frame.setVisible(false);
+                    saveSettings();
+                    die();
+                }
             }
         });
         cb2 = new ChatterBox2(this, bv, controller);
         bv.addDisplayable(cb2);
         bv.addKeyListener(cb2);
         uo = new UnitOverview(this);
+        offBoardOverlay = new OffBoardTargetOverlay(this);
         aw = new AccessibilityWindow(cb, this);
         aw.setLocation(0, 0);
         aw.addWindowListener(this);
         aw.setSize(300, 300);
         bv.addDisplayable(uo);
+        bv.addDisplayable(offBoardOverlay);
         int x;
         int y;
         int h;
@@ -716,26 +738,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public void actionPerformed(ActionEvent event) {
         switch (event.getActionCommand()) {
+            case VIEW_RESET_WINDOW_POSITIONS:
+                minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
+                mechW.setBounds(0, 0, mechD.getWidth(), mechD.getHeight());
+                break;
             case FILE_GAME_SAVE:
-                ignoreHotKeys = true;
-                JFileChooser fc = new JFileChooser("./savegames");
-                fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-                fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
-
-                int returnVal = fc.showSaveDialog(frame);
-                if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
-                    // I want a file, y'know!
-                    return;
-                }
-                if (fc.getSelectedFile() != null) {
-                    String file = fc.getSelectedFile().getName();
-                    // stupid hack to allow for savegames in folders with spaces in
-                    // the name
-                    String path = fc.getSelectedFile().getParentFile().getPath();
-                    path = path.replace(" ", "|");
-                    client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
-                }
-                ignoreHotKeys = false;
+                saveGame();
                 break;
             case FILE_GAME_SAVE_SERVER:
                 ignoreHotKeys = true;
@@ -1240,6 +1248,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
+                offBoardOverlay.setTargetingPhaseDisplay((TargetingPhaseDisplay) component);
                 break;
             case PHASE_MOVEMENT:
                 component = new MovementDisplay(this);
@@ -1640,6 +1649,30 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             ids.add(e.getId());
         }
         c.sendDeleteEntities(ids);
+    }
+    
+    private boolean saveGame() {
+        ignoreHotKeys = true;
+        JFileChooser fc = new JFileChooser("./savegames");
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
+
+        int returnVal = fc.showSaveDialog(frame);
+        ignoreHotKeys = false;
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+            // I want a file, y'know!
+            return false;
+        }
+        if (fc.getSelectedFile() != null) {
+            String file = fc.getSelectedFile().getName();
+            // stupid hack to allow for savegames in folders with spaces in
+            // the name
+            String path = fc.getSelectedFile().getParentFile().getPath();
+            path = path.replace(" ", "|");
+            client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
+            return true;
+        }
+        return false;
     }
 
     /**

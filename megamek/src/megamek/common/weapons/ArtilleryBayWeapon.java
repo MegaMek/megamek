@@ -75,8 +75,7 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
             Mounted bayWAmmo = bayW.getLinked();
             atype = (AmmoType) bayWAmmo.getType();
             waa.setAmmoId(ae.getEquipmentNum(bayWAmmo));
-            if ((atype.getMunitionType() == AmmoType.M_HOMING) 
-                    && bayWAmmo.curMode().equals("Homing")) {
+            if (bayWAmmo.isHomingAmmoInHomingMode()) {
                 useHoming = true;
             }
             //We only need to get this information for the first weapon in the bay to return the right handler

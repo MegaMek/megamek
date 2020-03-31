@@ -64,6 +64,7 @@ import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
+import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IGame.Phase;
@@ -574,7 +575,7 @@ WindowListener, TreeSelectionListener {
             if (m_pMain.getSelectedIndex() == TAB_FORCE_GENERATOR) {
                 m_pForceGen.addChosenUnits((String) m_chPlayer.getSelectedItem());
             } else {
-                ArrayList<Entity> entities = new ArrayList<Entity>(
+                ArrayList<Entity> entities = new ArrayList<>(
                         armyModel.getAllUnits().size());
                 Client c = null;
                 if (m_chPlayer.getSelectedIndex() > 0) {
@@ -780,8 +781,7 @@ WindowListener, TreeSelectionListener {
                 }
             }
         } else if (ev.getSource().equals(rug)) {
-            m_ratStatus.setText(Messages
-                    .getString("RandomArmyDialog.ratStatusDoneLoading"));
+            m_ratStatus.setText(Messages.getString("RandomArmyDialog.ratStatusDoneLoading"));
             updateRATs();
         } else if (ev.getSource().equals(m_bRandomSkills)) {
             m_clientgui.getRandomSkillDialog().showDialog();
@@ -822,12 +822,10 @@ WindowListener, TreeSelectionListener {
         m_chPlayer.removeAllItems();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
-        for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i
-        .hasNext();) {
-            Client client = i.next();
+        for (Client client : m_clientgui.getBots().values()) {
             IPlayer player = m_client.getGame().getPlayer(client.getLocalPlayerNumber());
 
-            if(!player.isObserver()) {
+            if (!player.isObserver()) {
                 m_chPlayer.addItem(client.getName());
             }
         }
@@ -843,7 +841,7 @@ WindowListener, TreeSelectionListener {
     private void updateTechChoice() {
         int gameTL = TechConstants.getSimpleLevel(m_client.getGame()
                 .getOptions().stringOption("techlevel"));
-        int maxTech = 0;
+        int maxTech;
         switch (gameTL) {
             case TechConstants.T_SIMPLE_INTRO:
                 maxTech = TechConstants.T_INTRO_BOXSET;
@@ -974,7 +972,7 @@ WindowListener, TreeSelectionListener {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
             if(cs.useAverageSkills()) {
-                int skills[] = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
+                int[] skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
     
                 int gunnery = skills[0];
                 int piloting = skills[1];
@@ -989,8 +987,10 @@ WindowListener, TreeSelectionListener {
                 }
             }
             e.getCrew().sortRandomSkills();
-            if(cs.generateNames()) {
-                e.getCrew().setName(m_client.getRandomNameGenerator().generate(), i);
+            if (cs.generateNames()) {
+                boolean isFemale = m_client.getRandomNameGenerator().isFemale();
+                e.getCrew().setGender(isFemale, i);
+                e.getCrew().setName(m_client.getRandomNameGenerator().generate(isFemale), i);
             }
         }
     }

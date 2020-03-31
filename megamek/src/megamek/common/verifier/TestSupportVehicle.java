@@ -213,7 +213,7 @@ public class TestSupportVehicle extends TestEntity {
                 EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED)),
         DUNE_BUGGY (1.5,EquipmentTypeLookup.DUNE_BUGGY_CHASSIS_MOD,
                 EnumSet.of(SVType.WHEELED)),
-        ENVIRONMENTAL_SEALING (2.0,EquipmentTypeLookup.ENVIRONMENTAL_SEALING_CHASSIS_MOD,
+        ENVIRONMENTAL_SEALING (2.0,EquipmentTypeLookup.SV_ENVIRONMENTAL_SEALING_CHASSIS_MOD,
                 EnumSet.allOf(SVType.class)),
         EXTERNAL_POWER_PICKUP (1.1,EquipmentTypeLookup.EXTERNAL_POWER_PICKUP_CHASSIS_MOD,
                 EnumSet.of(SVType.RAIL)),
@@ -1063,6 +1063,33 @@ public class TestSupportVehicle extends TestEntity {
         return correct;
     }
 
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buffer) {
+        boolean illegal = super.hasIllegalEquipmentCombinations(buffer);
+        for (Mounted mounted : supportVee.getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_ARMORED_CHASSIS)
+                    || mounted.getType().hasFlag(MiscType.F_AMPHIBIOUS)
+                    || mounted.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
+                    || mounted.getType().hasFlag(MiscType.F_SUBMERSIBLE)) {
+                for (int loc = supportVee.firstArmorIndex(); loc < supportVee.locations(); loc++) {
+                    // Tanks have the body location first. Aero SVs have it last, but also have the
+                    // squadron wings location.
+                    if (supportVee.isAero() && (loc >= FixedWingSupport.LOC_WINGS)) {
+                        break;
+                    }
+                    if (supportVee.getOArmor(loc) == 0) {
+                        buffer.append(mounted.getType().getName())
+                                .append(" requires at least one point of armor in every location.\n");
+                        illegal = true;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        return illegal;
+    }
+
     boolean hasIllegalChassisMods(StringBuffer buff) {
         boolean illegal = false;
         final Set<ChassisModification> chassisMods = supportVee.getMisc().stream()
@@ -1204,7 +1231,7 @@ public class TestSupportVehicle extends TestEntity {
         buff.append(getName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
-        buff.append("Intro year: ").append(supportVee.getYear());
+        buff.append("Intro year: ").append(supportVee.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {

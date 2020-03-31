@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -37,12 +39,12 @@ public class LAMPilot extends Crew {
     private int pilotingAero;
 
     public LAMPilot(LandAirMech lam) {
-        this(lam, "Unnamed", 4, 5, 4, 5);
+        this(lam, Crew.UNNAMED_FULL_NAME, 4, 5, 4, 5, G_RANDOMIZE, null);
     }
 
     public LAMPilot(LandAirMech lam, String name, int gunneryMech, int pilotingMech, int gunneryAero,
-            int pilotingAero) {
-        super(CrewType.SINGLE, name, 1, gunneryMech, pilotingMech);
+            int pilotingAero, int gender, Map<Integer, Map<String, String>> extraData) {
+        super(CrewType.SINGLE, name, 1, gunneryMech, pilotingMech, gender, extraData);
         this.lam = lam;
         this.gunneryAero = gunneryAero;
         this.pilotingAero = pilotingAero;
@@ -63,8 +65,10 @@ public class LAMPilot extends Crew {
      *         the crew argument.
      */
     public static LAMPilot convertToLAMPilot(LandAirMech lam, Crew crew) {
+        Map<Integer, Map<String, String>> extraData = new HashMap<>();
+        extraData.put(0, crew.getExtraDataForCrewMember(0));
         LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(), crew.getGunnery(),
-                crew.getPiloting());
+                crew.getPiloting(), crew.getGender(), extraData);
         pilot.setNickname(crew.getNickname(), 0);
         pilot.setGunneryL(crew.getGunneryL(), 0);
         pilot.setGunneryB(crew.getGunneryB(), 0);

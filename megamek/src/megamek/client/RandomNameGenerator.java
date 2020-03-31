@@ -15,8 +15,6 @@
  */
 package megamek.client;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import megamek.MegaMek;
 import megamek.common.Compute;
 import megamek.common.Configuration;
+import megamek.common.Crew;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.util.MegaMekFile;
@@ -77,8 +76,6 @@ import megamek.common.util.WeightedMap;
  */
 public class RandomNameGenerator implements Serializable {
     //region Variable Declarations
-    private static final String PROP_INITIALIZED = "initialized";
-
     /** Default directory containing the faction-specific name files. */
     private static final String DIR_NAME_FACTIONS = "factions";
 
@@ -134,7 +131,6 @@ public class RandomNameGenerator implements Serializable {
     private String chosenFaction;
 
     private static final MMLogger logger = DefaultMmLogger.getInstance();
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private static volatile boolean initialized = false; // volatile to ensure readers get the current version
     //endregion Variable Declarations
 
@@ -154,8 +150,6 @@ public class RandomNameGenerator implements Serializable {
         return generate(isFemale());
     }
 
-    @Deprecated //24-Feb-2020, this is included to keep current functionality working while other
-                //improvements are being finished
     public String generate(boolean isFemale) {
         // this is a total hack, but for now lets assume that
         // if the chosenFaction name contains the word "clan"
@@ -164,7 +158,7 @@ public class RandomNameGenerator implements Serializable {
     }
 
     /**
-     * Generate a single random name
+     * Generate a single random name for MegaMek only
      *
      * @param isFemale true if the name should be female, otherwise false
      * @param isClan true if the name should be for a clanner, otherwise false
@@ -185,7 +179,7 @@ public class RandomNameGenerator implements Serializable {
      * @return - a string containing the randomly generated name
      */
     public String generate(boolean isFemale, boolean isClan, String faction) {
-        String name = "Unnamed";
+        String name = Crew.UNNAMED_FULL_NAME;
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
             // go to check if the person is a clanner. If they are, then they default to the default
@@ -222,7 +216,7 @@ public class RandomNameGenerator implements Serializable {
      *              and the surname at String[1]
      */
     public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan, String faction) {
-        String[] name = { "Unnamed", "Person" };
+        String[] name = { Crew.UNNAMED, Crew.UNNAMED_SURNAME };
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
             // go to check if the person is a clanner. If they are, then they default to the default
@@ -278,8 +272,20 @@ public class RandomNameGenerator implements Serializable {
      *
      * @return true if female
      */
+    @Deprecated // March 7th, 2020 by the addition of gender tracking to MegaMek
     public boolean isFemale() {
         return Compute.randomInt(100) < percentFemale;
+    }
+
+    /**
+     * @return the Crew.G_* type containing the randomly generated gender
+     */
+    public int generateGender() {
+        if (Compute.randomInt(100) < percentFemale) {
+            return Crew.G_FEMALE;
+        } else {
+            return Crew.G_MALE;
+        }
     }
 
     /**
@@ -302,21 +308,9 @@ public class RandomNameGenerator implements Serializable {
     private void runThreadLoader() {
         Thread loader = new Thread(() -> {
             rng.populateNames();
-            rng.removeInitializationListener();
         }, "Random Name Generator name initializer");
         loader.setPriority(Thread.NORM_PRIORITY - 1);
         loader.start();
-    }
-
-    public void addInitializationListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
-    }
-
-    private void removeInitializationListener() {
-        pcs.firePropertyChange(PROP_INITIALIZED, initialized, initialized = true);
-        for (PropertyChangeListener listener : pcs.getPropertyChangeListeners()) {
-            pcs.removePropertyChangeListener(listener);
-        }
     }
 
     private void populateNames() {
@@ -422,6 +416,7 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         }
+        initialized = true;
         //endregion Faction Files
     }
 

@@ -178,6 +178,7 @@ public class MULParser {
     private static final String KFBOOM = "kfboom";
     private static final String BAYDOORS = "doors";
     private static final String BAY = "transportBay";
+    private static final String LOADED = "loaded";
     private static final String BAYDAMAGE = "damage";
     private static final String WEAPONS_BAY_INDEX = "weaponsBayIndex";
     private static final String MDAMAGE = "damage";
@@ -2015,7 +2016,9 @@ public class MULParser {
     				currentbay.setBayDamage(Double.parseDouble(currNode.getTextContent()));
     			} else if (nodeName.equalsIgnoreCase(BAYDOORS)) {
                     currentbay.setCurrentDoors(Integer.parseInt(currNode.getTextContent()));
-    		    }
+    		    } else if (nodeName.equalsIgnoreCase(LOADED)) {
+                    currentbay.troops.add(Integer.parseInt(currNode.getTextContent()));
+                }
     	    }
         }
     } // End parseTransportBay

@@ -947,6 +947,10 @@ public class EntityListFile {
                         output.write(CommonConstants.NL);
                         output.write(indentStr(indentLvl + 2) + "<doors>" + nextbay.getCurrentDoors() + "</doors>");
                         output.write(CommonConstants.NL);
+                        for (Entity e : nextbay.getLoadedUnits()) {
+                            output.write(indentStr(indentLvl + 2) + "<loaded>" + e.getId() + "</loaded>");
+                            output.write(CommonConstants.NL);
+                        }
                 		output.write(indentStr(indentLvl+1) + "</transportBay>");
                         output.write(CommonConstants.NL);
                 	}

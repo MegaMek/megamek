@@ -129,6 +129,9 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
+import megamek.common.weapons.AreaEffectHelper;
+import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
+import megamek.common.weapons.AreaEffectHelper.NukeStats;
 import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
@@ -3140,71 +3143,84 @@ public class Server implements Runnable {
         if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             return;
         }
+        
+        // if the player isn't on a team, there is no next team by definition. Skip the rest.
+        Team currentPlayerTeam = game.getTeamForPlayer(current);
+        if (currentPlayerTeam == null) {
+            return;
+        }
+        
         // get the next player from the team this player is on.
-        IPlayer next = game.getTeamForPlayer(current).getNextValidPlayer(current, game);
-        // if the chosen player is a valid player, we change the turn order and
-        // inform the clients.
-        if ((next != null) && (game.getEntitiesOwnedBy(next) != 0)
-                && (game.getTurnForPlayer(next.getId()) != null)) {
-
-            int currentTurnIndex = game.getTurnIndex();
-            // now look for the next occurrence of player next in the turn order
-            List<GameTurn> turns = game.getTurnVector();
-            GameTurn turn = game.getTurn();
-            // not entirely necessary. As we will also check this for the
-            // activity of the button but to be sure do it on the server too.
-            boolean isGeneralMoveTurn = !(turn instanceof GameTurn.SpecificEntityTurn)
-                    && !(turn instanceof GameTurn.UnitNumberTurn)
-                    && !(turn instanceof GameTurn.UnloadStrandedTurn);
-            if (!isGeneralMoveTurn) {
-                // if this is not a general turn the player cannot forward his turn.
-                return;
-            }
-
-            // if it is an EntityClassTurn we have to check make sure, that the
-            // turn it is exchanged with is the same kind of turn!
-            // in fact this requires an access function to the mask of an
-            // EntityClassTurn.
-            boolean isEntityClassTurn = (turn instanceof GameTurn.EntityClassTurn);
-            int classMask = 0;
-            if (isEntityClassTurn) {
-                classMask = ((GameTurn.EntityClassTurn) turn).getTurnCode();
-            }
-
-            boolean switched = false;
-            int nextTurnId = 0;
-            for (int i = currentTurnIndex; i < turns.size(); i++) {
-                // if we find a turn for the specific player, swap the current
-                // player with the player noted there
-                // and stop
-                if (turns.get(i).isValid(next.getId(), game)) {
-                    nextTurnId = i;
-                    if (isEntityClassTurn) {
-                        // if we had an EntityClassTurn
-                        if ((turns.get(i) instanceof GameTurn.EntityClassTurn)) {
-                            // and found another EntityClassTurn
-                            if (!(((GameTurn.EntityClassTurn) turns.get(i)).getTurnCode() == classMask)) {
-                                // both have to refer to the SAME class(es) or
-                                // they need to be rejected.
+        IPlayer next = currentPlayerTeam.getNextValidPlayer(current, game);
+        
+        while (!next.equals(current)) {
+            // if the chosen player is a valid player, we change the turn order and
+            // inform the clients.
+            if ((next != null) && (game.getEntitiesOwnedBy(next) != 0)
+                    && (game.getTurnForPlayer(next.getId()) != null)) {
+    
+                int currentTurnIndex = game.getTurnIndex();
+                // now look for the next occurrence of player next in the turn order
+                List<GameTurn> turns = game.getTurnVector();
+                GameTurn turn = game.getTurn();
+                // not entirely necessary. As we will also check this for the
+                // activity of the button but to be sure do it on the server too.
+                boolean isGeneralMoveTurn = !(turn instanceof GameTurn.SpecificEntityTurn)
+                        && !(turn instanceof GameTurn.UnitNumberTurn)
+                        && !(turn instanceof GameTurn.UnloadStrandedTurn);
+                if (!isGeneralMoveTurn) {
+                    // if this is not a general turn the player cannot forward his turn.
+                    return;
+                }
+    
+                // if it is an EntityClassTurn we have to check make sure, that the
+                // turn it is exchanged with is the same kind of turn!
+                // in fact this requires an access function to the mask of an
+                // EntityClassTurn.
+                boolean isEntityClassTurn = (turn instanceof GameTurn.EntityClassTurn);
+                int classMask = 0;
+                if (isEntityClassTurn) {
+                    classMask = ((GameTurn.EntityClassTurn) turn).getTurnCode();
+                }
+    
+                boolean switched = false;
+                int nextTurnId = 0;
+                for (int i = currentTurnIndex; i < turns.size(); i++) {
+                    // if we find a turn for the specific player, swap the current
+                    // player with the player noted there
+                    // and stop
+                    if (turns.get(i).isValid(next.getId(), game)) {
+                        nextTurnId = i;
+                        if (isEntityClassTurn) {
+                            // if we had an EntityClassTurn
+                            if ((turns.get(i) instanceof GameTurn.EntityClassTurn)) {
+                                // and found another EntityClassTurn
+                                if (!(((GameTurn.EntityClassTurn) turns.get(i)).getTurnCode() == classMask)) {
+                                    // both have to refer to the SAME class(es) or
+                                    // they need to be rejected.
+                                    continue;
+                                }
+                            } else {
                                 continue;
                             }
-                        } else {
-                            continue;
                         }
+                        switched = true;
+                        break;
                     }
-                    switched = true;
-                    break;
                 }
+    
+                // update turn order
+                if (switched) {
+                    game.swapTurnOrder(currentTurnIndex, nextTurnId);
+                    // update the turn packages for all players.
+                    send(createTurnVectorPacket());
+                    send(createTurnIndexPacket(connectionId));
+                    return;
+                }
+                // if nothing changed return without doing anything
             }
-
-            // update turn order
-            if (switched) {
-                game.swapTurnOrder(currentTurnIndex, nextTurnId);
-                // update the turn packages for all players.
-                send(createTurnVectorPacket());
-                send(createTurnIndexPacket(connectionId));
-            }
-            // if nothing changed return without doing anything
+            
+            next = currentPlayerTeam.getNextValidPlayer(next, game);
         }
     }
 
@@ -19470,7 +19486,6 @@ public class Server implements Runnable {
                         }
                     }
                 }
-
                 // heat effects: shutdown!
                 else if ((entity.heat >= 14) && !entity.isShutDown()) {
                     if (entity.heat >= autoShutDownHeat) {
@@ -19593,6 +19608,7 @@ public class Server implements Runnable {
 
             // heat doesn't matter for non-mechs
             if (!(entity instanceof Mech)) {
+                entity.heat = 0;
                 entity.heatBuildup = 0;
                 entity.heatFromExternal = 0;
                 entity.coolFromExternal = 0;
@@ -22133,7 +22149,7 @@ public class Server implements Runnable {
      * @param areaSatArty   Is the damage from an area saturating artillery attack?
      * @return a <code>Vector</code> of <code>Report</code>s
      */
-    private Vector<Report> damageEntity(Entity te, HitData hit, int damage,
+    public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
                                         boolean ammoExplosion, DamageType bFrag, boolean damageIS,
                                         boolean areaSatArty) {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS,
@@ -24470,27 +24486,8 @@ public class Server implements Runnable {
             // Since it's taking damage, add it to the list of units hit.
             vUnits.add(entity.getId());
 
-            r = new Report(6175);
-            r.subject = entity.getId();
-            r.indent(2);
-            r.addDesc(entity);
-            r.add(damage);
-            vDesc.addElement(r);
-
-            while (damage > 0) {
-                int cluster = Math.min(clusterAmt, damage);
-                if (entity instanceof Infantry) {
-                    cluster = damage;
-                }
-                int table = ToHitData.HIT_NORMAL;
-                if (entity instanceof Protomech) {
-                    table = ToHitData.HIT_SPECIAL_PROTO;
-                }
-                HitData hit = entity.rollHitLocation(table, Compute.targetSideTable(position, entity));
-                vDesc.addAll(damageEntity(entity, hit, cluster, false,
-                        DamageType.IGNORE_PASSENGER, false, true));
-                damage -= cluster;
-            }
+            AreaEffectHelper.applyExplosionClusterDamageToEntity(entity, damage, clusterAmt, position, vDesc, this);
+            
             Report.addNewline(vDesc);
         }
 
@@ -24635,25 +24632,14 @@ public class Server implements Runnable {
      * @param vDesc    a vector that contains the output report
      */
     public void doNuclearExplosion(Coords position, int nukeType, Vector<Report> vDesc) {
-        // Throws a nuke for one of the pre-defined types.
-        switch (nukeType) {
-            case 0:
-            case 1:
-                doNuclearExplosion(position, 100, 5, 40, 0, vDesc);
-                break;
-            case 2:
-                doNuclearExplosion(position, 1000, 23, 86, 1, vDesc);
-                break;
-            case 3:
-                doNuclearExplosion(position, 10000, 109, 184, 3, vDesc);
-                break;
-            case 4:
-                doNuclearExplosion(position, 100000, 505, 396, 5, vDesc);
-                break;
-            default:
-                // This isn't a valid nuke type by HS:3070 rules. And since that's our only current source...
-                getLogger().error(getClass(), "doNuclearExplosion", "Illegal nuke not listed in HS:3070");
+        NukeStats nukeStats = AreaEffectHelper.getNukeStats(nukeType);
+        
+        if(nukeStats == null) {
+            getLogger().error(getClass(), "doNuclearExplosion", "Illegal nuke not listed in HS:3070");
         }
+        
+        doNuclearExplosion(position, nukeStats.baseDamage, nukeStats.degradation, nukeStats.secondaryRadius,
+                nukeStats.craterDepth, vDesc);        
     }
 
     /**
@@ -34991,7 +34977,7 @@ public class Server implements Runnable {
         return vPhaseReport;
     }
 
-    private Vector<Report> vehicleMotiveDamage(Tank te, int modifier) {
+    public Vector<Report> vehicleMotiveDamage(Tank te, int modifier) {
         return vehicleMotiveDamage(te, modifier, false, -1, false);
     }
 
@@ -35513,255 +35499,18 @@ public class Server implements Runnable {
         }
 
         // get units in hex
-        for (Entity entity : game.getEntitiesVector(coords)) {           
-            int hits = damage;
-            if (variableDamage) {
-                hits = Compute.d6(damage);
-            }
-            ToHitData toHit = new ToHitData();
-            if (entity instanceof Protomech) {
-                toHit.setHitTable(ToHitData.HIT_SPECIAL_PROTO);
-            }
-            int cluster = 5;
-
+        for (Entity entity : game.getEntitiesVector(coords)) {  
             // Check: is entity excluded?
             if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                 continue;
-            }
-
-            // Check: is entity inside building?
-            if ((bldg != null) && (bldgAbsorbs > 0)
-                && (entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV))) {
-                cluster -= bldgAbsorbs;
-                // some buildings scale remaining damage that is not absorbed
-                // TODO : this isn't quite right for castles brian
-                cluster = (int) Math.floor(bldg.getDamageToScale() * cluster);
-                if (entity instanceof Infantry) {
-                    continue; // took its damage already from building damage
-                } else if (cluster <= 0) {
-                    // entity takes no damage
-                    r = new Report(6426);
-                    r.subject = subjectId;
-                    r.addDesc(entity);
-                    vPhaseReport.add(r);
-                    continue;
-                } else {
-                    r = new Report(6425);
-                    r.subject = subjectId;
-                    r.add(bldgAbsorbs);
-                    vPhaseReport.add(r);
-                }
-            }
-
-            // flak against ASF should only hit Aeros, because their elevation
-            // is actually altitude, so shouldn't hit VTOLs
-            if (asfFlak && !entity.isAero()) {
-                continue;
-            }
-
-            if (flak) {
-                // Check: is entity not a VTOL in flight or an ASF
-                if (!((entity instanceof VTOL)
-                        || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                        || entity.isAero())) {
-                    continue;
-                }
-                // Check: is entity at correct elevation?
-                if (entity.getElevation() != altitude) {
-                    continue;
-                }
             } else {
-                // Check: is entity a VTOL or Aero in flight?
-                if ((entity instanceof VTOL)
-                    || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                    || entity.isAero()) {
-                    // VTOLs take no damage from normal artillery unless landed
-                    if ((entity.getElevation() != 0)
-                        && (entity.getElevation() != hex.terrainLevel(Terrains.BLDG_ELEV))
-                        && (entity.getElevation() != hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
-                        continue;
-                    }
-                }
+                alreadyHit.add(entity.getId());
             }
-
-            // Work out hit table to use
-            if (attackSource != null) {
-                toHit.setSideTable(entity.sideTable(attackSource));
-                if ((ammo != null)
-                    && (ammo.getMunitionType() == AmmoType.M_CLUSTER)
-                    && attackSource.equals(coords)) {
-                    if (entity instanceof Mech) {
-                        toHit.setHitTable(ToHitData.HIT_ABOVE);
-                    } else if (entity instanceof Tank) {
-                        toHit.setSideTable(ToHitData.SIDE_FRONT);
-                        toHit.addModifier(2, "cluster artillery hitting a Tank");
-                    }
-                }
-            }
-
-            // convention infantry take x2 damage from AE weapons
-            if (entity.isConventionalInfantry()) {
-                hits *= 2;
-                
-                // if it's fuel-air, we take even more damage!
-                if(isFuelAirBomb) {
-                    hits *= 2;
-                }
-            }
-            boolean specialCaseFlechette = false;
-
-            // Entity/ammo specific damage modifiers
-            if (ammo != null) {
-                if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
-                    if (hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
-                        hits *= 2;
-                    }
-                }
-                // fuel-air bombs do an additional 2x damage to infantry
-                else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
-
-                    // wheeled and hover tanks take movement critical
-                    if ((entity instanceof Tank)
-                            && ((entity.getMovementMode() == EntityMovementMode.WHEELED)
-                            || (entity.getMovementMode() == EntityMovementMode.HOVER))) {
-                        r = new Report(6480);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(toHit.getTableDesc());
-                        r.add(0);
-                        vPhaseReport.add(r);
-                        vPhaseReport.addAll(vehicleMotiveDamage((Tank)entity, 0));
-                        continue;
-                    }
-                    
-                    // only infantry and support vees with bar < 5 are affected
-                    if ((entity instanceof BattleArmor) || ((entity instanceof SupportTank)
-                            && !entity.hasPatchworkArmor() && (entity.getBARRating(1) > 4))) {
-                        continue;
-                    }
-                    if (entity instanceof Infantry) {
-                        hits = Compute.d6(damage);
-                        hits *= 2;
-                    } else {
-                        if ((entity.getBARRating(1) < 5) && !entity.hasPatchworkArmor()) {
-                            switch (ammo.getAmmoType()) {
-                                case AmmoType.T_LONG_TOM:
-                                    // hack: check if damage is still at 4, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 4) {
-                                        damage = (5 - entity.getBARRating(1)) * 5;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_SNIPER:
-                                    // hack: check if damage is still at 2, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 2) {
-                                        damage = (5 - entity.getBARRating(1)) * 3;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_THUMPER:
-                                    // no need to check for damage, because
-                                    // falloff =
-                                    // damage for the thumper
-                                    damage = 5 - entity.getBARRating(1);
-                                    break;
-                            }
-                        } else {
-                            // ugh, patchwork armor
-                            // rules as written don't deal with this
-                            // reset the damage to standard arty damage
-                            // when we have each cluster's hit location,
-                            // we'll multiply by the
-                            // BAR-difference to BAR 5, per a rules question
-                            // email
-                            specialCaseFlechette = true;
-                            switch (ammo.getAmmoType()) {
-                                case AmmoType.T_LONG_TOM:
-                                    // hack: check if damage is still at 4, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 4) {
-                                        damage = 25;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_SNIPER:
-                                    // hack: check if damage is still at 2, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 2) {
-                                        damage = 15;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_THUMPER:
-                                    // no need to check for damage, because
-                                    // falloff =
-                                    // damage for the thumper
-                                    damage = 10;
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            alreadyHit.add(entity.getId());
-
-            // Do the damage
-            r = new Report(6480);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            r.add(toHit.getTableDesc());
-            r.add(hits);
-            vPhaseReport.add(r);
-            if (entity instanceof BattleArmor) {
-                // BA take full damage to each trooper, ouch!
-                for (int loc = 0; loc < entity.locations(); loc++) {
-                    if (entity.getInternal(loc) > 0) {
-                        HitData hit = new HitData(loc);
-                        vPhaseReport.addAll(damageEntity(entity, hit, hits,
-                                false, DamageType.NONE, false, true, false));
-                    }
-                }
-            } else {
-                while (hits > 0) {
-                    int damageToDeal = Math.min(cluster, hits);
-                    HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                    // per a rules question, for patchwork armor being attacked by flechette ammo, we multiply the damage done
-                    // by 5 - the BAR rating of the hit location
-                    if (specialCaseFlechette && !(entity instanceof Infantry)) {
-                        damageToDeal *= (5 - entity.getBARRating(hit.getLocation()));
-                    // fuel-air bombs do 1.5x damage to locations hit that have a BAR rating of less than 10.
-                    } else if(isFuelAirBomb && !(entity instanceof Infantry) && (entity.getBARRating(hit.getLocation()) < 10)) {
-                        damageToDeal = (int) Math.ceil(damageToDeal * 1.5);
-                        
-                        r = new Report(9991);
-                        r.indent(1);
-                        r.subject = killer.getId();
-                        r.newlines = 1;
-                        vPhaseReport.addElement(r);
-                    }
-                    vPhaseReport.addAll(damageEntity(entity, hit, damageToDeal,
-                            false, DamageType.NONE, false, true, false));
-                    hits -= Math.min(cluster, hits);
-                }
-            }
-            if (killer != null) {
-                creditKill(entity, killer);
-            }
+            
+            AreaEffectHelper.artilleryDamageEntity(entity, damage, bldg, bldgAbsorbs, 
+                    variableDamage, asfFlak, flak, altitude,
+                    attackSource, ammo, coords, isFuelAirBomb,
+                    killer, hex, subjectId, vPhaseReport, this);
         }
 
         return alreadyHit;
@@ -35787,76 +35536,14 @@ public class Server implements Runnable {
             AmmoType ammo, int subjectId, Entity killer, boolean flak,
             int altitude, boolean mineClear, Vector<Report> vPhaseReport,
             boolean asfFlak, int attackingBA) {
-        int damage = ammo.getRackSize();
-        int falloff = 10;
-        // Capital and Sub-capital missiles
-        if (ammo.getAmmoType() == AmmoType.T_KRAKEN_T
-                || ammo.getAmmoType() == AmmoType.T_KRAKENM
-                || ammo.getAmmoType() == AmmoType.T_MANTA_RAY) {
-            damage = 50;
-            falloff = 25;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_KILLER_WHALE
-                || ammo.getAmmoType() == AmmoType.T_KILLER_WHALE_T
-                || ammo.getAmmoType() == AmmoType.T_SWORDFISH
-                || ammo.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-            damage = 40;
-            falloff = 20;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_STINGRAY) {
-            damage = 35;
-            falloff = 17;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_WHITE_SHARK
-                || ammo.getAmmoType() == AmmoType.T_WHITE_SHARK_T
-                || ammo.getAmmoType() == AmmoType.T_PIRANHA
-                || ammo.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-            damage = 30;
-            falloff = 15;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_BARRACUDA
-                || ammo.getAmmoType() == AmmoType.T_BARRACUDA_T
-                || ammo.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-            damage = 20;
-            falloff = 10;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
-            falloff = 25;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_BA_TUBE) {
-            falloff = 2 * attackingBA;
-        }
-        if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
-            // non-arrow-iv cluster does 5 less than standard
-            if (ammo.getAmmoType() != AmmoType.T_ARROW_IV) {
-                damage -= 5;
-            }
-            // thumper gets falloff 9 for 1 damage at 1 hex range
-            if (ammo.getAmmoType() == AmmoType.T_THUMPER) {
-                falloff = 9;
-            }
+        DamageFalloff damageFalloff = AreaEffectHelper.calculateDamageFallOff(ammo, attackingBA, mineClear);
+        
+        int damage = damageFalloff.damage;
+        int falloff = damageFalloff.falloff;
+        if(damageFalloff.clusterMunitionsFlag) {
             attackSource = centre;
-        } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
-            switch (ammo.getAmmoType()) {
-                // for flechette, damage and falloff is number of d6, not absolute
-                // damage
-                case AmmoType.T_LONG_TOM:
-                    damage = 4;
-                    falloff = 2;
-                    break;
-                case AmmoType.T_SNIPER:
-                    damage = 2;
-                    falloff = 1;
-                    break;
-                case AmmoType.T_THUMPER:
-                    damage = 1;
-                    falloff = 1;
-            }
-        } else
-            // if this was a mine clearance, then it only affects the hex hit
-            if (mineClear) {
-                falloff = damage;
-            }
+        }
+        
         artilleryDamageArea(centre, attackSource, ammo, subjectId, killer,
                 damage, falloff, flak, altitude, vPhaseReport, asfFlak);
     }

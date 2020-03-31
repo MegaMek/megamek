@@ -32,14 +32,38 @@ import java.util.Vector;
  * @version $Revision$
  */
 public class Building implements Serializable {
-
-    // Private attributes and helper functions.
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -8236017592012683793L;
 
+    /**
+     * Generic flag for uninitialized values.
+     */
+    protected static final int UNKNOWN = -1;
+    
+    // The Building Types
+    public static final int LIGHT = 1;
+    public static final int MEDIUM = 2;
+    public static final int HEAVY = 3;
+    public static final int HARDENED = 4;
+    public static final int WALL = 5;
+    
+    /**
+     * The Building Type of the building; equal to the terrain elevation of the BUILDING terrain of a hex.
+     */
+    private int type = Building.UNKNOWN;
+    
+    // The Building Classes
+    public static final int STANDARD = 0;
+    public static final int HANGAR = 1;
+    public static final int FORTRESS = 2;
+    public static final int GUN_EMPLACEMENT = 3;
+    // TODO: leaving out Castles Brian until issues with damage scaling are resolved
+    // public static final int CASTLE_BRIAN = 3;
+    
+    /**
+     * The Building Class of the building; equal to the terrain elevation of the BUILDING CLASS terrain of a hex.
+     */
+    private int bldgClass = Building.STANDARD;
+    
     /**
      * The ID of this building.
      */
@@ -51,18 +75,9 @@ public class Building implements Serializable {
     private Vector<Coords> coordinates = new Vector<Coords>();
 
     /**
-     * The construction type of the building.
-     */
-    private int type = Building.UNKNOWN;
-
-    /**
      * The Basement type of the building.
      */
     private Map<Coords,BasementType> basement = new HashMap<Coords,BasementType>();
-    /**
-     * the class of the building
-     */
-    private int bldgClass = Building.STANDARD;
 
     private int collapsedHexes = 0;
 
@@ -73,12 +88,14 @@ public class Building implements Serializable {
      * immediately updates this value.
      */
     private Map<Coords, Integer> currentCF = new HashMap<Coords, Integer>();
+    
     /**
      * The construction factor of the building hexes at the start of this attack
      * phase. Damage that is received during the phase is applied at the end of
      * the phase.
      */
     private Map<Coords, Integer> phaseCF = new HashMap<Coords, Integer>();
+    
     /**
      * The current armor of the building hexes.
      */
@@ -134,11 +151,9 @@ public class Building implements Serializable {
             }
             return false;
         }
-     }
+    }
 
     private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
-
-    // Public and Protected constants, constructors, and methods.
 
     /**
      * Update this building to include the new hex (and all hexes off the new
@@ -167,7 +182,7 @@ public class Building implements Serializable {
         }
 
         if (structureType == Terrains.BUILDING) {
-            // Error off if the building type, or CF is off.
+            // Error if the Building Type (Light, Medium...) or Building Class (Standard, Hangar...) is off.
             if (type != nextHex.terrainLevel(Terrains.BUILDING)) {
                 throw new IllegalArgumentException("The coordinates, "
                         + coords.getBoardNum()
@@ -218,10 +233,6 @@ public class Building implements Serializable {
 
     } // End void protected include( Coords, Board )
 
-    /**
-     * Generic flag for uninitialized values.
-     */
-    protected static final int UNKNOWN = -1;
 
     /**
      * Basement handlers
@@ -267,27 +278,6 @@ public class Building implements Serializable {
             return UNKNOWN;
         }
     }
-
-    /**
-     * Various construction types.
-     */
-    public static final int LIGHT = 1;
-    public static final int MEDIUM = 2;
-    public static final int HEAVY = 3;
-    public static final int HARDENED = 4;
-    public static final int WALL = 5;
-
-    /**
-     * Various building types
-     */
-    public static final int STANDARD = 0;
-    public static final int HANGAR = 1;
-    public static final int FORTRESS = 2;
-    public static final int GUN_EMPLACEMENT = 3;
-
-    // TODO: leaving out Castles Brian until issues with damage scaling are
-    // resolved
-    // public static final int CASTLE_BRIAN = 3;
 
     /**
      * Construct a building for the given coordinates from the board's

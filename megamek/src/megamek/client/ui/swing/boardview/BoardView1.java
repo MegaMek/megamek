@@ -2051,7 +2051,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * returns the weapon selected in the mech display, or null if none selected
      * or it is not artillery or null if the selected entity is not owned
      */
-    private Mounted getSelectedArtilleryWeapon() {
+    public Mounted getSelectedArtilleryWeapon() {
         // We don't want to display artillery auto-hit/adjusted fire hexes
         // during
         // the artyautohithexes phase. These could be displayed if the player
@@ -4805,13 +4805,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void mouseExited(MouseEvent me) {
         // Reset the tooltip dismissal delay to the preference
         // value so that elements outside the boardview can
-    	// use tooltips
-    	if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
-    		ToolTipManager.sharedInstance().setDismissDelay(
-    				GUIPreferences.getInstance().getTooltipDismissDelay());
-    	} else {
-    		ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
-    	}
+        // use tooltips
+        if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
+            ToolTipManager.sharedInstance().setDismissDelay(
+                    GUIPreferences.getInstance().getTooltipDismissDelay());
+        } else {
+            ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+        }
     }
 
     public void mouseClicked(MouseEvent me) {
@@ -5120,7 +5120,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public synchronized void boardChangedAllHexes(BoardEvent b) {
         clearHexImageCache();
-        tileManager.loadAllHexes();
         clearShadowMap();
         repaint();
     }
@@ -5752,7 +5751,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (clientgui == null) {
                     txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                     txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] { //$NON-NLS-1$
-                            mhex.terrainLevel(Terrains.BRIDGE),
+                            mhex.terrainLevel(Terrains.BRIDGE_ELEV),
                             Terrains.getEditorName(Terrains.BRIDGE),
                             mhex.terrainLevel(Terrains.BRIDGE_CF),
                     }));
@@ -6034,10 +6033,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // (re)set the tooltip dismissal delay time to the preference
         // value so that the tooltip actually appears
         if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
-        	ToolTipManager.sharedInstance().setDismissDelay(
-        			GUIPreferences.getInstance().getTooltipDismissDelay());
+            ToolTipManager.sharedInstance().setDismissDelay(
+                    GUIPreferences.getInstance().getTooltipDismissDelay());
         } else {
-        	ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+            ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
         }
 
         return txt.toString();
@@ -6760,5 +6759,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public boolean getDisplayInvalidHexInfo() {
         return displayInvalidHexInfo;
+    }
+    
+    public Rectangle getDisplayablesRect() {
+        return displayablesRect;
     }
 }

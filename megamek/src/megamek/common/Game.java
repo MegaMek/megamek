@@ -1614,6 +1614,22 @@ public class Game implements Serializable, IGame {
         }
         return Collections.unmodifiableList(vector);
     }
+    
+    /**
+     * Convenience function that gets a list of all off-board enemy entities.
+     * @param player
+     * @return
+     */
+    public synchronized List<Entity> getAllOffboardEnemyEntities(IPlayer player) {
+        List<Entity> vector = new ArrayList<Entity>();
+        for(Entity e : entities) {
+            if(e.getOwner().isEnemyOf(player) && e.isOffBoard() && !e.isDestroyed() && e.isDeployed()) {
+                vector.add(e);
+            }
+        }
+        
+        return Collections.unmodifiableList(vector);
+    }
 
     /**
      * Return a Vector of gun emplacements at Coords <code>c</code>

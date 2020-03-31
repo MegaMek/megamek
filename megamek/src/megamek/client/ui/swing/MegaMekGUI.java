@@ -1047,11 +1047,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // listen to new frame
         launched.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
-                unlaunch();
-            }
-
-            @Override
             public void windowClosed(WindowEvent e) {
                 unlaunch();
             }

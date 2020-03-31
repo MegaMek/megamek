@@ -776,38 +776,6 @@ public class TestTank extends TestEntity {
                     illegal = true;
                 }
             }
-
-            if (misc.hasFlag(MiscType.F_BULLDOZER)) {
-                for (Mounted m2 : getEntity().getMisc()) {
-                    if (m2.getLocation() == m.getLocation()) {
-                        if (m2.getType().hasFlag(MiscType.F_CLUB)) {
-                            if (m2.getType().hasSubType(MiscType.S_BACKHOE)
-                                    || m2.getType().hasSubType(
-                                            MiscType.S_CHAINSAW)
-                                    || m2.getType().hasSubType(
-                                            MiscType.S_COMBINE)
-                                    || m2.getType().hasSubType(
-                                            MiscType.S_DUAL_SAW)
-                                    || m2.getType().hasSubType(
-                                            MiscType.S_PILE_DRIVER)
-                                    || m2.getType().hasSubType(
-                                            MiscType.S_MINING_DRILL)
-                                    || m2.getType().hasSubType(
-                                            MiscType.S_ROCK_CUTTER)
-                                    || m2.getType().hasSubType(
-                                            MiscType.S_WRECKING_BALL)) {
-                                illegal = true;
-                                buff.append("bulldozer in same location as prohibited physical weapon\n");
-                            }
-                        }
-                    }
-                }
-                if ((getEntity().getMovementMode() != EntityMovementMode.TRACKED)
-                        && (getEntity().getMovementMode() != EntityMovementMode.WHEELED)) {
-                    illegal = true;
-                    buff.append("bulldozer must be mounted in unit with tracked or wheeled movement mode\n");
-                }
-            }
         }
 
         if ((tank.getMovementMode() == EntityMovementMode.VTOL)
@@ -956,6 +924,15 @@ public class TestTank extends TestEntity {
             if (eq.hasFlag(MiscType.F_MAST_MOUNT) && (location != VTOL.LOC_ROTOR)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted on the rotor.\n");
+                }
+                return false;
+            }
+            // The minesweeper is also permitted in the front-side/rear-side location for "particularly
+            // large vehicles" (TacOps, 326) but it is not clear how large this needs to be. Superheavy?
+            // multi-hex large naval support?
+            if (eq.hasFlag(MiscType.F_MINESWEEPER) && (location != Tank.LOC_FRONT) && !isRearLocation) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
                 }
                 return false;
             }

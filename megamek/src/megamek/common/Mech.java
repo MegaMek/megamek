@@ -6862,34 +6862,28 @@ public abstract class Mech extends Entity {
         }
         int type = cs.getType();
         int index = cs.getIndex();
-        String armoredText = "";
 
-        if (cs.isArmored()) {
-            armoredText = " " + MtfFile.ARMORED;
-        }
+        StringBuilder toReturn = new StringBuilder();
         if (type == CriticalSlot.TYPE_SYSTEM) {
             if ((getRawSystemName(index).contains("Upper"))
                     || (getRawSystemName(index).contains("Lower"))
                     || (getRawSystemName(index).contains("Hand"))
                     || (getRawSystemName(index).contains("Foot"))) {
-                return getRawSystemName(index) + " Actuator" + armoredText;
+                toReturn.append(getRawSystemName(index)).append(" Actuator");
             } else if (getRawSystemName(index).contains("Engine")) {
-                return "Fusion " + getRawSystemName(index) + armoredText;
+                toReturn.append("Fusion ").append(getRawSystemName(index));
             } else {
-                return getRawSystemName(index) + armoredText;
+                toReturn.append(getRawSystemName(index));
             }
         } else if (type == CriticalSlot.TYPE_EQUIPMENT) {
-            Mounted m = cs.getMount();
-            StringBuilder toReturn = new StringBuilder();
-            if (m.isRearMounted()) {
-                toReturn.append(m.getType().getInternalName()).append(" (R)")
-                        .append(armoredText);
-            } else if (m.isMechTurretMounted()) {
-                toReturn.append(m.getType().getInternalName()).append(" (T)")
-                        .append(armoredText);
-            } else if ((m.getType() instanceof WeaponType)
+            final Mounted m = cs.getMount();
+            toReturn.append(m.getType().getInternalName());
+            // Superheavy mechs can have a second ammo bin or heat sink in the same slot
+            if (cs.getMount2() != null) {
+                toReturn.append("|").append(cs.getMount2().getType().getInternalName());
+            }
+            if ((m.getType() instanceof WeaponType)
                     && m.getType().hasFlag(WeaponType.F_VGL)) {
-                toReturn.append(m.getType().getInternalName());
                 switch (m.getFacing()) {
                     case 1:
                         toReturn.append(" (FR)");
@@ -6898,7 +6892,7 @@ public abstract class Mech extends Entity {
                         toReturn.append(" (RR)");
                         break;
                     // case 3:
-                        // already handled by isRearMounted() above
+                    // already handled by isRearMounted() above
                     case 4:
                         toReturn.append(" (RL)");
                         break;
@@ -6909,25 +6903,23 @@ public abstract class Mech extends Entity {
                         // forward facing
                         break;
                 }
-                toReturn.append(armoredText);
-            } else {
-                toReturn.append(m.getType().getInternalName()).append(
-                        armoredText);
             }
-            // superheavy mechs can have two heatsinks or ammo bin in one slot
-            // they can't be armored or rear or turret mounted or VGLs, so we
-            // just need the internalname
-            if (cs.getMount2() != null) {
-                toReturn.append("|").append(
-                        cs.getMount2().getType().getInternalName());
+            if (m.isRearMounted()) {
+                toReturn.append(" (R)");
+            }
+            if (m.isMechTurretMounted()) {
+                toReturn.append(" (T)");
             }
             if (m.isOmniPodMounted()) {
                 toReturn.append(" ").append(MtfFile.OMNIPOD);
             }
-            return toReturn.toString();
         } else {
             return "?" + index;
         }
+        if (cs.isArmored()) {
+            toReturn.append(" ").append(MtfFile.ARMORED);
+        }
+        return toReturn.toString();
     }
 
     /**

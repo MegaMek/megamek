@@ -41,6 +41,7 @@ VERSION HISTORY:
 + PR #1779: Counter-battery fire
 + PR #1805: Adding BV Calculation to ChatLounge Entity Right Click 
 + Data: New Sprites adding Icewind Metals Shadow Cats and Pendragon.
++ Data: Grasslands Map Pack (Thanks SimonLandmine for converting)
 
 
 v0.47.4 (2020-2-09 2200 UTC)

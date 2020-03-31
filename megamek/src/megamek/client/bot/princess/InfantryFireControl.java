@@ -115,8 +115,10 @@ public class InfantryFireControl extends FireControl {
 
             // case 1
             if (weaponType.hasFlag(WeaponType.F_INFANTRY)) {
+                int infantryCount = shooter.isConventionalInfantry() ?
+                        ((Infantry) shooter).getInternal(Infantry.LOC_INFANTRY) : 1;
                 maxInfantryWeaponDamage += ((InfantryWeapon) weaponType).getInfantryDamage()
-                        * ((Infantry) shooter).getInternal(Infantry.LOC_INFANTRY);
+                        * infantryCount;
                 // field guns can't fire if the infantry unit has done anything
                 // other than turning
             } else if (targetIsActualInfantry && fieldGunsDoDamage) {

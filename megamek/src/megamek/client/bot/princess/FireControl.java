@@ -1850,7 +1850,7 @@ public class FireControl {
             WeaponFireInfo shoot = buildWeaponFireInfo(shooter, target, weapon, game, false);
             
             // if we're below the threshold, try switching missile modes
-            if ((shoot.getProbabilityToHit() <= toHitThreshold)) {
+            if (shoot.getProbabilityToHit() <= toHitThreshold) {
                 
                 int updatedMissileMode = switchMissileMode(weapon);
                 

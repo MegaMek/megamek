@@ -1854,7 +1854,7 @@ public class FireControl {
                 
                 int updatedMissileMode = switchMissileMode(weapon);
                 
-                if(updatedMissileMode > -1) {
+                if (updatedMissileMode > -1) {
                     shoot = buildWeaponFireInfo(shooter, target, weapon, game, false);
                     shoot.setUpdatedFiringMode(updatedMissileMode);
                 }

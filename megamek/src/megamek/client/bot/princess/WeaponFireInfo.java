@@ -520,7 +520,6 @@ public class WeaponFireInfo {
             } else {
                 setToHit(calcToHit());
             }
-            
             // If we can't hit, set everything zero and return..
             if (12 < getToHit().getValue()) {
                 owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")

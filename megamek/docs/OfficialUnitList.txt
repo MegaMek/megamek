@@ -2245,6 +2245,7 @@ Explorer JumpShip (Standard)|
 Aquilla Transport Jumpship (Standard)|
 Liberty Jumpship (Standard)|
 Leviathan Jumpship (Standard)|
+Ljubljana Chariot BUAC-2020|
 Archer ARC-2K|
 Archer ARC-2R|
 Archer ARC-2S|
@@ -5025,7 +5026,7 @@ Crab CRB-27sl|
 Dervish DV-6Md|
 Hammerhands HMH-3D (Kessem)|
 Lancelot LNC25-01sl|
-Mackie MSK-9HKR 'Kill-Roy’s Little Buddy'|
+Mackie MSK-9HKR 'Kill-Roy's Little Buddy'|
 Phoenix Hawk PXH-1Kk|
 Stalker STK-3Fk|
 Thunderbolt TDR-5Sd|
@@ -5059,6 +5060,10 @@ Alfar AL-A1|
 Alfar AL-D1 'Dokkalfar'|
 Talos TLS-1B|
 Bakeneko BKN-1K|
+Pendragon PDG-3R|
+Shadow Cat III A|
+Shadow Cat III B|
+Shadow Cat III Prime|
 Mad Cat (Timber Wolf) (Bounty Hunter)|
 Rampage RMP-2G|
 Rampage RMP-4G|
@@ -5574,6 +5579,24 @@ Pathfinder PFF-2|
 Pathfinder PFF-2T|
 Patron MilitiaMech PTN-2|
 Rook NH-1X 'Rook-X'|
+Agrotera AGT-UA 'Ariel'|
+Buccaneer BCN-6PX 'Pan'|
+Calliope CAL-1MAFSW 'Snow White'|
+Celerity CLR-03OMM 'Rajah'|
+Clint IIC 2L 'Leia'|
+Ghost GST-10A 'Aurora'|
+Gunsmith CH11-NGC 'Cinderella'|
+Hitotsume Kozo HKZ-1FM 'Mulan'|
+Hunchback HBK-LGN-Pin 'Anastasia'|
+Hunchback HBK-LGN-Pin 'Drizella'|
+Phoenix Hawk PXH-7KJ 'Jasmine'|
+Tessen TSN-X4R 'Rapunzel'|
+Trebuchet TBT-7MM 'Merida'|
+Undine Battle Armor 'Sebastian'|
+Vulcan VT-5ML 'Aladdin'|
+Vulpes VLP-1DX 'Beast'|
+Watchman WTC-4MB 'Belle'|
+Wraith TR2-P 'Pocahontas'|
 Axman AXM-6X|
 Banshee BNC-11X|
 Barghest BGS-4X|

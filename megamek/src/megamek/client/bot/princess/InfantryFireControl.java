@@ -120,7 +120,7 @@ public class InfantryFireControl extends FireControl {
                 
                 if (shooter.isConventionalInfantry()) {
                     infantryCount = shooter.getInternal(Infantry.LOC_INFANTRY);
-                } else if(shooter instanceof BattleArmor){
+                } else if (shooter instanceof BattleArmor) {
                     infantryCount = ((BattleArmor) shooter).getNumberActiverTroopers();
                 }
                 

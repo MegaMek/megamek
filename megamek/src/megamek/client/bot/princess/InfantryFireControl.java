@@ -17,6 +17,7 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -115,8 +116,16 @@ public class InfantryFireControl extends FireControl {
 
             // case 1
             if (weaponType.hasFlag(WeaponType.F_INFANTRY)) {
+                int infantryCount = 1;
+                
+                if (shooter.isConventionalInfantry()) {
+                    infantryCount = shooter.getInternal(Infantry.LOC_INFANTRY);
+                } else if (shooter instanceof BattleArmor) {
+                    infantryCount = ((BattleArmor) shooter).getNumberActiverTroopers();
+                }
+                
                 maxInfantryWeaponDamage += ((InfantryWeapon) weaponType).getInfantryDamage()
-                        * ((Infantry) shooter).getInternal(Infantry.LOC_INFANTRY);
+                        * infantryCount;
                 // field guns can't fire if the infantry unit has done anything
                 // other than turning
             } else if (targetIsActualInfantry && fieldGunsDoDamage) {

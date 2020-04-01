@@ -92,7 +92,7 @@ public class InfantryFireControl extends FireControl {
                 && target.hasETypeFlag(Entity.ETYPE_INFANTRY) && ((Infantry) target).isMechanized();
 
         // cycle through my weapons
-        for (final Mounted weapon : shooter.getWeaponList()) {            
+        for (final Mounted weapon : shooter.getWeaponList()) {
             final WeaponType weaponType = (WeaponType) weapon.getType();
 
             final int bracket = RangeType.rangeBracket(range, weaponType.getRanges(weapon), useExtremeRange,

@@ -3298,7 +3298,7 @@ public class FireControl {
                 weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
             
             // if we are able to switch the weapon to indirect fire mode, do so and try again
-            if(!weapon.curMode().equals(Weapon.MODE_MISSILE_INDIRECT)) {
+            if (!weapon.curMode().equals(Weapon.MODE_MISSILE_INDIRECT)) {
                 return weapon.setMode(Weapon.MODE_MISSILE_INDIRECT);
             } else {
                 return weapon.setMode("");

@@ -17,6 +17,7 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -91,7 +92,7 @@ public class InfantryFireControl extends FireControl {
                 && target.hasETypeFlag(Entity.ETYPE_INFANTRY) && ((Infantry) target).isMechanized();
 
         // cycle through my weapons
-        for (final Mounted weapon : shooter.getWeaponList()) {
+        for (final Mounted weapon : shooter.getWeaponList()) {            
             final WeaponType weaponType = (WeaponType) weapon.getType();
 
             final int bracket = RangeType.rangeBracket(range, weaponType.getRanges(weapon), useExtremeRange,
@@ -115,8 +116,14 @@ public class InfantryFireControl extends FireControl {
 
             // case 1
             if (weaponType.hasFlag(WeaponType.F_INFANTRY)) {
-                int infantryCount = shooter.isConventionalInfantry() ?
-                        ((Infantry) shooter).getInternal(Infantry.LOC_INFANTRY) : 1;
+                int infantryCount = 1;
+                
+                if(shooter.isConventionalInfantry()) {
+                    infantryCount = shooter.getInternal(Infantry.LOC_INFANTRY);
+                } else if(shooter instanceof BattleArmor){
+                    infantryCount = ((BattleArmor) shooter).getNumberActiverTroopers();
+                }
+                
                 maxInfantryWeaponDamage += ((InfantryWeapon) weaponType).getInfantryDamage()
                         * infantryCount;
                 // field guns can't fire if the infantry unit has done anything

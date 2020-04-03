@@ -90,9 +90,8 @@ public class EjectedCrew extends Infantry {
         setModel(originalRide.getDisplayName());
 
         // Generate the display name, then add the original ride's name.
-        StringBuffer newName = new StringBuffer(getDisplayName());
-        newName.append(" of ").append(originalRide.getDisplayName());
-        displayName = newName.toString();
+        String newName = new String(getDisplayName() + " of " + originalRide.getDisplayName());
+        displayName = newName;
         
         initializeInternal(escapedThisRound, Infantry.LOC_INFANTRY);
         

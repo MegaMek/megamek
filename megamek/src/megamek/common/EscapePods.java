@@ -43,9 +43,8 @@ public class EscapePods extends SmallCraft {
         setModel(originalRide.getDisplayName());
 
         // Generate the display name, then add the original ride's name.
-        StringBuffer newName = new StringBuffer(POD_EJECT_NAME);
-        newName.append(originalRide.getDisplayName());
-        displayName = newName.toString();
+        String newName = new String(POD_EJECT_NAME + originalRide.getDisplayName());
+        displayName = newName;
         
         //Pods and boats have an SI of 1 each
         initializeSI(nPods);

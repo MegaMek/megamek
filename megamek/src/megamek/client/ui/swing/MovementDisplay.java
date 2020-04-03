@@ -3437,7 +3437,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         String selected = (String) JOptionPane.showInputDialog(clientgui,
                                                                Messages.getString(
-                                                                       "MovementDisplay.ChooseEjectHex" + ".message", new Object[]{//$NON-NLS-1$
+                                                                       "MovementDisplay.ChooseEjectHex.message", new Object[]{//$NON-NLS-1$
                                                                                abandoned.getShortName(), abandoned.getUnusedString()}), Messages
                                                                        .getString("MovementDisplay.ChooseHex.title"),
                                                                //$NON-NLS-1$

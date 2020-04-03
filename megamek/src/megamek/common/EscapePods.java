@@ -28,6 +28,8 @@ public class EscapePods extends SmallCraft {
     protected String originalRideExternalId;
     
     public static final String POD_EJECT_NAME = "Pods/Lifeboats from ";
+    private static final int ESCAPE_POD_FUEL = 10;
+    private static final int ESCAPE_POD_SAFE_THRUST = 4;
     
     /**
      * Used to set up a group of launched pods/boats for large spacecraft per rules in SO p27
@@ -51,8 +53,8 @@ public class EscapePods extends SmallCraft {
         
         //Escape pods have fuel and thrusters to maneuver with
         if (isEscapePod) {
-            setFuel(10);
-            setOriginalWalkMP(4);
+            setFuel(ESCAPE_POD_FUEL);
+            setOriginalWalkMP(ESCAPE_POD_SAFE_THRUST);
         }
         setMovementMode(EntityMovementMode.AERODYNE);
         

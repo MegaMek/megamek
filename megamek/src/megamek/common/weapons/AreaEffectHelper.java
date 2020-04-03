@@ -289,7 +289,7 @@ public class AreaEffectHelper {
         
         int roll = Compute.d6(2);
         int result = roll + distFromCenter;
-        boolean destroyed = result < rollTarget;
+        boolean destroyed = result <= rollTarget;
         
         Report r = new Report(9987);
         r.indent(1);

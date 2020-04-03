@@ -711,7 +711,7 @@ public class SharedUtility {
             return md;
         }
         // Ejected crew/pilots and lifeboats can't move, so just add the inherited move steps and be done with it
-        if (entity instanceof EjectedCrew || (entity instanceof EscapePods && entity.getOriginalWalkMP() <= 0)) {
+        if (entity instanceof EjectedCrew || (entity instanceof EscapePods && (entity.getOriginalWalkMP() <= 0))) {
             md = addSteps(md, client);
             return md;
         }

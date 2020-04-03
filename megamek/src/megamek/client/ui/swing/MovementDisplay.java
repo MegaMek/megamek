@@ -3703,34 +3703,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     //Prompt the player to load passengers aboard small craft
                     Entity en = clientgui.getClient().getGame().getEntity(currentFighters.elementAt(element).getId());
                     if (en instanceof SmallCraft) {
-                        SmallCraft craft = (SmallCraft) en;
-                        int space = 0;
-                        for (Bay b : craft.getTransportBays()) {
-                            if (b instanceof CargoBay || b instanceof InfantryBay || b instanceof BattleArmorBay) {
-                                // Assume a passenger takes up 0.1 tons per single infantryman weight calculations
-                                space += (b.getUnused() / 0.1);
-                            }
-                        }
-                        //Passengers don't actually 'load' into bays to consume space, so update what's available for anyone
-                        //already aboard
-                        space -= ((craft.getTotalOtherCrew() + craft.getTotalPassengers()) * 0.1);
-                        //Make sure the text displays either the carrying capacity or the number of passengers left aboard
-                        space = Math.min(space, ce().getNPassenger());
-                        ConfirmDialog takePassenger = new ConfirmDialog(clientgui.frame,
-                                Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.Title"), //$NON-NLS-1$
-                                Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.message",
-                                        new Object[]{craft.getShortName(), space, ce().getShortName() + "'", ce().getNPassenger()}), false);
-                        takePassenger.setVisible(true);
-                        if (takePassenger.getAnswer()) {
-                            //Move the passengers
-                            ce().setNPassenger(ce().getNPassenger() - space);
-                            if (ce() instanceof Aero) {
-                                ((Aero)ce()).addEscapeCraft(craft.getExternalIdAsString());
-                            }
-                            clientgui.getClient().sendUpdateEntity(ce());
-                            craft.addPassengers(ce().getExternalIdAsString(), space);
-                            clientgui.getClient().sendUpdateEntity(craft);
-                        }
+                        loadPassengerAtLaunch(en);
                     }
                 }
                 choices.put(i, bayChoices);
@@ -3824,34 +3797,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             //Prompt the player to load passengers aboard the launching ship(s)
                             Entity en = clientgui.getClient().getGame().getEntity(currentDropships.elementAt(element).getId());
                             if (en instanceof SmallCraft) {
-                                SmallCraft craft = (SmallCraft) en;
-                                int space = 0;
-                                for (Bay b : craft.getTransportBays()) {
-                                    if (b instanceof CargoBay || b instanceof InfantryBay || b instanceof BattleArmorBay) {
-                                        // Assume a passenger takes up 0.1 tons per single infantryman weight calculations
-                                        space += (b.getUnused() / 0.1);
-                                    }
-                                }
-                                //Passengers don't actually 'load' into bays to consume space, so update what's available for anyone
-                                //already aboard
-                                space -= ((craft.getTotalOtherCrew() + craft.getTotalPassengers()) * 0.1);
-                                //Make sure the text displays either the carrying capacity or the number of passengers left aboard
-                                space = Math.min(space, ce().getNPassenger());
-                                ConfirmDialog takePassenger = new ConfirmDialog(clientgui.frame,
-                                        Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.Title"), //$NON-NLS-1$
-                                        Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.message",
-                                                new Object[]{craft.getShortName(), space, ce().getShortName() + "'", ce().getNPassenger()}), false);
-                                takePassenger.setVisible(true);
-                                if (takePassenger.getAnswer()) {
-                                    //Move the passengers
-                                    ce().setNPassenger(ce().getNPassenger() - space);
-                                    if (ce() instanceof Aero) {
-                                        ((Aero)ce()).addEscapeCraft(craft.getExternalIdAsString());
-                                    }
-                                    clientgui.getClient().sendUpdateEntity(ce());
-                                    craft.addPassengers(ce().getExternalIdAsString(), space);
-                                    clientgui.getClient().sendUpdateEntity(craft);
-                                }
+                                loadPassengerAtLaunch(en);
                             }
                         }
                         choices.put(i, collarChoices);
@@ -3868,6 +3814,42 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Return the chosen unit.
         return choices;
     }
+    
+    /**
+     * Worker function that consolidates code for loading dropships/small craft with passengers
+     * 
+     * @param En - The launching entity, which has already been tested to see if it's a small craft
+     */
+     private void loadPassengerAtLaunch(Entity en) {
+         SmallCraft craft = (SmallCraft) en;
+         int space = 0;
+         for (Bay b : craft.getTransportBays()) {
+             if (b instanceof CargoBay || b instanceof InfantryBay || b instanceof BattleArmorBay) {
+                 // Assume a passenger takes up 0.1 tons per single infantryman weight calculations
+                 space += (b.getUnused() / 0.1);
+             }
+         }
+         //Passengers don't actually 'load' into bays to consume space, so update what's available for anyone
+         //already aboard
+         space -= ((craft.getTotalOtherCrew() + craft.getTotalPassengers()) * 0.1);
+         //Make sure the text displays either the carrying capacity or the number of passengers left aboard
+         space = Math.min(space, ce().getNPassenger());
+         ConfirmDialog takePassenger = new ConfirmDialog(clientgui.frame,
+                 Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.Title"), //$NON-NLS-1$
+                 Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.message",
+                         new Object[]{craft.getShortName(), space, ce().getShortName() + "'", ce().getNPassenger()}), false);
+         takePassenger.setVisible(true);
+         if (takePassenger.getAnswer()) {
+             //Move the passengers
+             ce().setNPassenger(ce().getNPassenger() - space);
+             if (ce() instanceof Aero) {
+                 ((Aero)ce()).addEscapeCraft(craft.getExternalIdAsString());
+             }
+             clientgui.getClient().sendUpdateEntity(ce());
+             craft.addPassengers(ce().getExternalIdAsString(), space);
+             clientgui.getClient().sendUpdateEntity(craft);
+         }
+     }
 
     /**
      * Get the unit that the player wants to drop. This method will remove the

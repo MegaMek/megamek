@@ -7442,6 +7442,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Manipulator [Non-Mech/Non-Battle Armor]";
         misc.addLookupName("Manipulator");
         misc.setInternalName(misc.name);
+        misc.shortName = "Manipulator";
         misc.flags = misc.flags.or(F_MANIPULATOR).or(F_SUPPORT_TANK_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_VTOL_EQUIPMENT);
         misc.industrial = true;
@@ -11012,6 +11013,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BAArmoredGlove"); // This value MUST match the
                                                 // name in
                                                 // BattleArmor.MANIPULATOR_TYPE_STRINGS
+        misc.shortName = "Armored Glove";
         misc.tonnage = 0.0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -11035,6 +11037,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BABasicManipulator"); // This value MUST match the
                                                     // name in
                                                     // BattleArmor.MANIPULATOR_TYPE_STRINGS
+        misc.shortName = "Basic Manipulator";
         misc.tonnage = 0.0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -11058,6 +11061,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BABattleClaw"); // This value MUST match the name
                                               // in
                                               // BattleArmor.MANIPULATOR_TYPE_STRINGS
+        misc.shortName = "Battle Claw";
         misc.tonnage = 0.015;
         misc.criticals = 0;
         misc.hittable = false;
@@ -11082,6 +11086,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BAHeavyBattleClaw"); // This value MUST match the
                                                    // name in
                                                    // BattleArmor.MANIPULATOR_TYPE_STRINGS
+        misc.shortName = "Heavy Battle Claw";
         misc.tonnage = 0.020;
         misc.criticals = 0;
         misc.hittable = false;
@@ -11106,6 +11111,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BACargoLifter"); // This value MUST match the name
                                                // in
                                                // BattleArmor.MANIPULATOR_TYPE_STRINGS
+        misc.shortName = "Cargo Lifter";
         misc.tonnage = 0.03;
         misc.criticals = 0;
         misc.cost = 250;
@@ -11128,6 +11134,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "BA Manipulators [Industrial Drill]";
         misc.setInternalName("BAIndustrialDrill");
+        misc.shortName = "Industrial Drill";
         misc.tonnage = 0.030;
         misc.criticals = 0;
         misc.hittable = false;
@@ -11149,6 +11156,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "BA Manipulators [Salvage Arm]";
         misc.setInternalName("BASalvageArm");
+        misc.shortName = "Salvage Arm";
         misc.tonnage = 0.030;
         misc.criticals = 0;
         misc.hittable = false;
@@ -11174,6 +11182,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BABattleClawMagnets"); // This value MUST match
                                                      // the name in
                                                      // BattleArmor.MANIPULATOR_TYPE_STRINGS
+        misc.shortName = "Magnetic Battle Claw";
         misc.tonnage = 0.035;
         misc.criticals = 0;
         misc.hittable = false;
@@ -11198,6 +11207,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BAHeavyBattleClawMagnets"); // This value MUST
                                                           // match the name in
                                                           // BattleArmor.MANIPULATOR_TYPE_STRINGS
+        misc.shortName = "Heavy Magnetic Battle Claw";
         misc.addLookupName("Heavy Battle Claw (w/ Magnets)");
         misc.tonnage = 0.040;
         misc.criticals = 0;
@@ -11224,6 +11234,7 @@ public class MiscType extends EquipmentType {
                                                                  // MUST match
                                                                  // the name in
                                                                  // BattleArmor.MANIPULATOR_TYPE_STRINGS
+        misc.shortName = "Mine Clearance Equipment";
         misc.tonnage = 0.015;
         misc.criticals = 0;
         misc.hittable = false;
@@ -11249,6 +11260,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BABattleClawVibro"); // This value MUST match the
                                                    // name in
                                                    // BattleArmor.MANIPULATOR_TYPE_STRINGS
+        misc.shortName = "Vibro-Claw";
         misc.tonnage = 0.050;
         misc.criticals = 0;
         misc.hittable = false;
@@ -11274,6 +11286,7 @@ public class MiscType extends EquipmentType {
                                                         // the name in
                                                         // BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.addLookupName("Heavy Battle Claw (w/ Vibro-Claws)");
+        misc.shortName = "Heavy Vibro-Claw";
         misc.tonnage = 0.060;
         misc.criticals = 0;
         misc.hittable = false;
@@ -11296,6 +11309,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "BA Manipulator Adaptation [Modular Equipment Adaptor]";
         misc.setInternalName("BAMEA");
+        misc.shortName = "Modular Equipment Adaptor";
         misc.tonnage = 0.01;
         misc.criticals = 2;
         misc.hittable = false;

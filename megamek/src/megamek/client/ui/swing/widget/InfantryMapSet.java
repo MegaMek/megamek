@@ -27,6 +27,7 @@ import javax.swing.JComponent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Configuration;
+import megamek.common.EjectedCrew;
 import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.util.MegaMekFile;
@@ -41,9 +42,9 @@ public class InfantryMapSet implements DisplayMapSet {
     private Image infImage;
     // Reference to Component class required to handle images and fonts
     private JComponent comp;
-    // Assuming that it will be no more that Infantry.INF_PLT_MAX_MEN men in
-    // platoon
-    private PMPicArea[] areas = new PMPicArea[Infantry.INF_PLT_MAX_MEN];
+    // Assuming that it will be no more than 50 men in
+    // platoon - ejected crews can be larger than platoons
+    private PMPicArea[] areas = new PMPicArea[EjectedCrew.EJ_CREW_MAX_MEN];
     // Main areas group that will be passing to PicMap
     private PMAreasGroup content = new PMAreasGroup();
     // JLabel
@@ -72,12 +73,23 @@ public class InfantryMapSet implements DisplayMapSet {
 
     public void setEntity(Entity e) {
         Infantry inf = (Infantry) e;
-        int men = Math.min(inf.getInternal(0),Infantry.INF_PLT_MAX_MEN);
-        for (int i = 0; i < men; i++) {
-            areas[i].setVisible(true);
-        }
-        for (int i = men; i < Infantry.INF_PLT_MAX_MEN; i++) {
-            areas[i].setVisible(false);
+        int men;
+        if (inf instanceof EjectedCrew) {
+            men = Math.min(inf.getInternal(0),EjectedCrew.EJ_CREW_MAX_MEN);
+            for (int i = 0; i < men; i++) {
+                areas[i].setVisible(true);
+            }
+            for (int i = men; i < EjectedCrew.EJ_CREW_MAX_MEN; i++) {
+                areas[i].setVisible(false);
+            }
+        } else {
+            men = Math.min(inf.getInternal(0),Infantry.INF_PLT_MAX_MEN);
+            for (int i = 0; i < men; i++) {
+                areas[i].setVisible(true);
+            }
+            for (int i = men; i < EjectedCrew.EJ_CREW_MAX_MEN; i++) {
+                areas[i].setVisible(false);
+            }
         }
 
         label
@@ -92,7 +104,7 @@ public class InfantryMapSet implements DisplayMapSet {
         int stepY = 42;
         infImage = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), "inf.gif").toString()); //$NON-NLS-1$
         PMUtil.setImage(infImage, comp);
-        for (int i = 0; i < Infantry.INF_PLT_MAX_MEN; i++) {
+        for (int i = 0; i < EjectedCrew.EJ_CREW_MAX_MEN; i++) {
             int shiftX = (i % 5) * stepX;
             int shiftY = (i / 5) * stepY;
             areas[i] = new PMPicArea(infImage);

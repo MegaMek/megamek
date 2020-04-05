@@ -5669,6 +5669,7 @@ chassis "Intrepid Assault Craft" "dropships/Intrepid Assault Craft.png"
 exact "Intrepid Assault Craft (2478)" "dropships/Intrepid Assault Craft (2478).png"
 chassis "Life Boat" "dropships/Life Boat.png"
 exact "S7-P Bus 'Scarab'" "dropships/Bus.png"
+chassis "Pods/Lifeboats from " "dropships/EscapePods.png"
 
 #Space Station
 exact "Bastion System Defense Station" "Space Stations/Bastion System Defense Station.png"

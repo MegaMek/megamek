@@ -78,16 +78,16 @@ public class Jumpship extends Aero {
     boolean hasLF = false;
 
     // crew and passengers
-    private int nCrew = 0;
-    private int nPassenger = 0;
-    private int nMarines = 0;
     private int nBattleArmor = 0;
     private int nOtherCrew = 0;
     private int nOfficers = 0;
     private int nGunners = 0;
+    
     // lifeboats and escape pods
     private int lifeBoats = 0;
     private int escapePods = 0;
+    private int escapePodsLaunched = 0;
+    private int lifeBoatsLaunched = 0;
 
     // Battlestation
     private boolean isBattleStation = false;
@@ -509,6 +509,23 @@ public class Jumpship extends Aero {
     public int getEscapePods() {
         return escapePods;
     }
+    
+    /**
+     * Returns the total number of escape pods launched so far
+     */
+    @Override
+    public int getLaunchedEscapePods() {
+        return escapePodsLaunched;
+    }
+    
+    /**
+     * Updates the total number of escape pods launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedEscapePods(int n) {
+        escapePodsLaunched = n;
+    }
 
     public void setLifeBoats(int n) {
         lifeBoats = n;
@@ -518,7 +535,25 @@ public class Jumpship extends Aero {
     public int getLifeBoats() {
         return lifeBoats;
     }
+    
+    /**
+     * Returns the total number of life boats launched so far
+     */
+    @Override
+    public int getLaunchedLifeBoats() {
+        return lifeBoatsLaunched;
+    }
+    
+    /**
+     * Updates the total number of life boats launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedLifeBoats(int n) {
+        lifeBoatsLaunched = n;
+    }
 
+    @Override
     public void setNCrew(int crew) {
         nCrew = crew;
     }
@@ -528,6 +563,7 @@ public class Jumpship extends Aero {
         return nCrew;
     }
 
+    @Override
     public void setNPassenger(int pass) {
         nPassenger = pass;
     }
@@ -555,10 +591,16 @@ public class Jumpship extends Aero {
         return nPassenger;
     }
 
+    @Override
     public void setNMarines(int m) {
         nMarines = m;
     }
 
+    /**
+     * Returns the number of marines assigned to a unit
+     * Used for abandoning a unit
+     * @return
+     */
     public int getNMarines() {
         return nMarines;
     }

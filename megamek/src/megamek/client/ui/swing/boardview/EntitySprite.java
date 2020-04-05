@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.common.Aero;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -437,6 +438,13 @@ class EntitySprite extends Sprite {
                     stStr.add(new Status(Color.GREEN, "U", SMALL));
                 } else if (!entity.isVisibleToEnemy()) {
                     stStr.add(new Status(Color.GREEN, "H", SMALL));
+                }
+            }
+            
+            // Large Craft Ejecting
+            if (entity instanceof Aero) {
+                if (((Aero)entity).isEjecting()) {
+                    stStr.add(new Status(Color.YELLOW, "EJECTING"));
                 }
             }
 

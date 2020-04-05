@@ -1641,7 +1641,12 @@ public class Server implements Runnable {
             }
 
             if (entity.isDestroyed()) {
-                toRemove.addElement(entity);
+                if (game.getEntity(entity.getTransportId()) != null
+                        && game.getEntity(entity.getTransportId()).isLargeCraft()) {
+                    //Leaving destroyed entities in dropship bays alone here
+                } else {
+                    toRemove.addElement(entity);
+                }
             }
         }
 
@@ -4214,6 +4219,14 @@ public class Server implements Runnable {
 
         // set deployment round of the loadee to equal that of the loader
         unit.setDeployRound(loader.getDeployRound());
+        
+        //Update the loading unit's passenger count, if it's a large craft
+        if (loader instanceof SmallCraft || loader instanceof Jumpship) {
+            //Don't add dropship crew to a jumpship or station's passenger list
+            if (!unit.isLargeCraft()) {
+                loader.setNPassenger(loader.getNPassenger() + unit.getCrew().getSize());
+            }
+        }
 
         // Update the loaded unit.
         entityUpdate(unit.getId());
@@ -4483,6 +4496,14 @@ public class Server implements Runnable {
         if (duringDeployment) {
             unit.setUnloaded(false);
             unit.setDone(false);
+        }
+        
+        //Update the transport unit's passenger count, if it's a large craft
+        if (unloader instanceof SmallCraft || unloader instanceof Jumpship) {
+            //Don't add dropship crew to a jumpship or station's passenger list
+            if (!unit.isLargeCraft()) {
+                unloader.setNPassenger(Math.max(0, unloader.getNPassenger() - unit.getCrew().getSize()));
+            }
         }
 
         // Update the unloaded unit.
@@ -6590,21 +6611,44 @@ public class Server implements Runnable {
         }
 
         if (md.contains(MoveStepType.EJECT)) {
-            if ((entity instanceof Mech) || (entity instanceof Aero)) {
+            if (entity.isLargeCraft() && !entity.isCarcass()) {
+                r = new Report(2026);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                addReport(r);
+                Aero ship = (Aero) entity;
+                ship.setEjecting(true);
+                entityUpdate(ship.getId());
+                Coords legalPos = entity.getPosition();
+                //Get the step so we can pass it in and get the abandon coords from it
+                for (final Enumeration<MoveStep> i = md.getSteps(); i
+                        .hasMoreElements();) {
+                    final MoveStep step = i.nextElement();
+                    if (step.getType() == MoveStepType.EJECT) {
+                        legalPos = step.getTargetPosition();
+                    }
+                }
+                addReport(ejectSpacecraft(ship, ship.isSpaceborne(), (ship.isAirborne() && !ship.isSpaceborne()),legalPos));
+                //If we're grounded or destroyed by crew loss, end movement
+                if (entity.isDoomed() || (!entity.isSpaceborne() && !entity.isAirborne())) {
+                    return;
+                }
+            } else if ((entity instanceof Mech) || (entity instanceof Aero)) {
                 r = new Report(2020);
                 r.subject = entity.getId();
                 r.add(entity.getCrew().getName());
                 r.addDesc(entity);
                 addReport(r);
+                addReport(ejectEntity(entity, false));
+                return;
             } else if ((entity instanceof Tank) && !entity.isCarcass()) {
                 r = new Report(2025);
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 addReport(r);
+                addReport(ejectEntity(entity, false));
+                return;
             }
-            addReport(ejectEntity(entity, false));
-
-            return;
         }
 
         if (md.contains(MoveStepType.CAREFUL_STAND)) {
@@ -6778,7 +6822,7 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
             return;
         }
-
+        
         // iterate through steps
         firstStep = true;
         turnOver = false;
@@ -8912,6 +8956,15 @@ public class Server implements Runnable {
                     if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
                         addReport(processCrash(entity, 0, entity.getPosition()));
                     }
+                } else if (entity instanceof EscapePods && entity.isAirborne() && md.getFinalVelocity() < 2) {
+                    //Atmospheric Escape Pods that drop below velocity 2 lose altitude as dropping units
+                    entity.setAltitude(entity.getAltitude()
+                            - game.getPlanetaryConditions().getDropRate());
+                    r = new Report(6676);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(game.getPlanetaryConditions().getDropRate());
+                    addReport(r);
                 }
             }
         }
@@ -21673,30 +21726,58 @@ public class Server implements Runnable {
                 boolean wasPilot = crew.getCurrentPilotIndex() == pos;
                 boolean wasGunner = crew.getCurrentGunnerIndex() == pos;
                 crew.setHits(crew.getHits(pos) + damage, pos);
-                if (Crew.DEATH > crew.getHits(pos)) {
-                    r = new Report(6025);
-                } else {
-                    r = new Report(6026);
-                }
-                r.subject = en.getId();
-                r.indent(2);
-                r.add(crew.getCrewType().getRoleName(pos));
-                r.addDesc(en);
-                r.add(crew.getName(pos));
-                r.add(damage);
-                r.add(crew.getHits(pos));
-                vDesc.addElement(r);
-                if (crew.isDead(pos)) {
-                    r = createCrewTakeoverReport(en, pos, wasPilot, wasGunner);
-                    if (null != r) {
-                        vDesc.addElement(r);
+                if (en.isLargeCraft()) {
+                    r = new Report (6028);
+                    r.subject = en.getId();
+                    r.indent(2);
+                    r.addDesc(en);
+                    r.add(damage);
+                    if (((Aero)en).isEjecting()) {
+                        r.add("as crew depart the ship");
+                    } else {
+                        //Blank data
+                        r.add("");
                     }
-                }
-                if (Crew.DEATH > crew.getHits()) {
-                    vDesc.addAll(resolveCrewDamage(en, damage, pos));
-                } else if (!crew.isDoomed()) {
-                    crew.setDoomed(true);
-                    vDesc.addAll(destroyEntity(en, "pilot death", true));
+                    r.add(crew.getHits(pos));
+                    vDesc.addElement(r);
+                    if (Crew.DEATH > crew.getHits()) {
+                        vDesc.addAll(resolveCrewDamage(en, damage, pos));
+                    } else if (!crew.isDoomed()) {
+                        crew.setDoomed(true);
+                        //Safety. We might use this logic for large naval vessels later on
+                        if (en instanceof Aero && ((Aero)en).isEjecting()) {
+                            vDesc.addAll(destroyEntity(en, "ejection", true));
+                            ((Aero)en).setEjecting(false);
+                        } else {
+                            vDesc.addAll(destroyEntity(en, "crew casualties", true));
+                        }
+                    }
+                } else {
+                    if (Crew.DEATH > crew.getHits(pos)) {
+                        r = new Report(6025);
+                    } else {
+                        r = new Report(6026);
+                    }
+                    r.subject = en.getId();
+                    r.indent(2);
+                    r.add(crew.getCrewType().getRoleName(pos));
+                    r.addDesc(en);
+                    r.add(crew.getName(pos));
+                    r.add(damage);
+                    r.add(crew.getHits(pos));
+                    vDesc.addElement(r);
+                    if (crew.isDead(pos)) {
+                        r = createCrewTakeoverReport(en, pos, wasPilot, wasGunner);
+                        if (null != r) {
+                            vDesc.addElement(r);
+                        }
+                    }
+                    if (Crew.DEATH > crew.getHits()) {
+                        vDesc.addAll(resolveCrewDamage(en, damage, pos));
+                    } else if (!crew.isDoomed()) {
+                        crew.setDoomed(true);
+                        vDesc.addAll(destroyEntity(en, "pilot death", true));
+                    }
                 }
             }
         } else {
@@ -23274,9 +23355,9 @@ public class Server implements Runnable {
                                     || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
                                             && a.isCondEjectSIDest()))) {
                             vDesc.addAll(ejectEntity(te, true, false));
+                        } else {
+                            vDesc.addAll(destroyEntity(te,"Structural Integrity Collapse"));
                         }
-                        vDesc.addAll(destroyEntity(te,
-                                "Structural Integrity Collapse"));
                         a.setSI(0);
                         if (hit.getAttackerId() != Entity.NONE) {
                             creditKill(a, game.getEntity(hit.getAttackerId()));
@@ -26265,10 +26346,18 @@ public class Server implements Runnable {
             reports.add(r);
             if (!hitBay.isCargo()) {
                 List<Entity> units = new ArrayList<>(hitBay.getLoadedUnits());
+                List<Entity> toRemove = new ArrayList<>();
+                //We're letting destroyed units stay in the bay now, but take them off the targets list
+                for (Entity en : units) {
+                    if (en.isDestroyed() || en.isDoomed()) {
+                        toRemove.add(en);
+                    }
+                }
+                units.removeAll(toRemove);
                 while ((destroyed > 0) && !units.isEmpty()) {
                     Entity target = units.remove(Compute.randomInt(units.size()));
                     reports.addAll(destroyEntity(target, "cargo damage",
-                            false, false));
+                            false, true));
                     destroyed--;
                 }
             }
@@ -27978,6 +28067,12 @@ public class Server implements Runnable {
                                          boolean canSalvage) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
+        
+        //We'll need this later...
+        Aero ship = null;
+        if (entity.isLargeCraft()) {
+            ship = (Aero) entity;
+        }
 
         // regardless of what was passed in, units loaded onto aeros not on the
         // ground are destroyed
@@ -28047,6 +28142,10 @@ public class Server implements Runnable {
                 Coords curPos = entity.getPosition();
                 int curFacing = entity.getFacing();
                 for (Entity other : entity.getLoadedUnits()) {
+                    //If the unit has been destroyed (as from a cargo hit), skip it
+                    if (other.isDestroyed()) {
+                        continue;
+                    }
                     // Can the other unit survive?
                     boolean survived = false;
                     if (entity instanceof Tank) {
@@ -28072,7 +28171,9 @@ public class Server implements Runnable {
                             survived = Compute.d6() < 3;
                         }
                     }
-                    if (!survivable || (externalUnits.contains(other) && !survived)) {
+                    if (!survivable || (externalUnits.contains(other) && !survived)
+                            //Don't unload from ejecting spacecraft. The crews aren't in their units...
+                            || (ship != null && ship.isEjecting())) {
                         // Nope.
                         other.setDestroyed(true);
                         // We need to unload the unit, since it's ID goes away
@@ -28117,7 +28218,9 @@ public class Server implements Runnable {
                 final Entity transport = game.getEntity(entity.getTransportId());
                 Coords curPos = transport.getPosition();
                 int curFacing = transport.getFacing();
-                unloadUnit(transport, entity, curPos, curFacing, transport.getElevation());
+                if (!transport.isLargeCraft()) {
+                    unloadUnit(transport, entity, curPos, curFacing, transport.getElevation());
+                }
                 entityUpdate(transport.getId());
 
                 // if this is the last fighter in a fighter squadron then remove
@@ -33935,7 +34038,7 @@ public class Server implements Runnable {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
-        }
+        } //End ground vehicles
 
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected(true);
@@ -33951,6 +34054,248 @@ public class Server implements Runnable {
             send(createRemoveEntityPacket(entity.getId(),
                     IEntityRemovalConditions.REMOVE_EJECTED));
         }
+        return vDesc;
+    }
+    
+    /**
+     * Abandon a spacecraft (large or small).
+     *
+     * @param entity  The <code>Aero</code> to eject.
+     * @param inSpace Is this ship spaceborne?
+     * @param airborne Is this ship in atmospheric flight?
+     * @param pos The coords of this ejection. Needed when abandoning a grounded ship
+     * @return a <code>Vector</code> of report objects for the gamelog.
+     */
+    public Vector<Report> ejectSpacecraft(Aero entity, boolean inSpace, boolean airborne, Coords pos) {
+        final String METHOD_NAME = "ejectSpacecraft(Aero,boolean,boolean)";
+        Vector<Report> vDesc = new Vector<Report>();
+        Report r;
+
+        // An entity can only eject it's crew once.
+        if (entity.getCrew().isEjected()) {
+            return vDesc;
+        }
+
+        // If the crew are already dead, don't bother
+        if (entity.isCarcass()) {
+            return vDesc;
+        }
+
+        // Try to launch some escape pods and lifeboats, if any are left
+        if ((inSpace && (entity.getPodsLeft() > 0 || entity.getLifeBoatsLeft() > 0))
+                || (airborne && entity.getPodsLeft() > 0)) {
+            // Report the ejection
+            PilotingRollData rollTarget = getEjectModifiers(game, entity,
+                    entity.getCrew().getCurrentPilotIndex(), false);
+            r = new Report(2180);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(rollTarget.getLastPlainDesc(), true);
+            r.indent();
+            vDesc.addElement(r);
+            int roll = Compute.d6(2);
+            int MOS = (roll - Math.max(2, rollTarget.getValue()));
+            //Report the roll
+            r = new Report(2190);
+            r.subject = entity.getId();
+            r.add(rollTarget.getValueAsString());
+            r.add(rollTarget.getDesc());
+            r.add(roll);
+            r.indent();
+            r.choose(roll >= rollTarget.getValue());
+            vDesc.addElement(r);
+            //Per SO p27, you get a certain number of escape pods away per turn per 100k tons of ship
+            int escapeMultiplier = (int) (entity.getWeight() / 100000);
+            //Set up the maximum number that CAN launch
+            int toLaunch = 0;
+            if (roll < rollTarget.getValue()) {
+                toLaunch = 1;
+            } else {
+                toLaunch = (1 + MOS) * Math.max(1, escapeMultiplier);
+            }
+            //And now modify it based on what the unit actually has TO launch
+            int launchCounter = toLaunch;
+            int totalLaunched = 0;
+            boolean isPod = false;
+            while (launchCounter > 0) {
+                int launched = 0;
+                if (entity.getPodsLeft() > 0 && (airborne || entity.getPodsLeft() >= entity.getLifeBoatsLeft())) {
+                    //Entity has more escape pods than lifeboats (or equal numbers)
+                    launched = Math.min(launchCounter, entity.getPodsLeft());
+                    entity.setLaunchedEscapePods(entity.getLaunchedEscapePods() + launched);
+                    totalLaunched += launched;
+                    launchCounter -= launched;
+                    isPod = true;
+                } else if (inSpace && entity.getLifeBoatsLeft() > 0 && (entity.getLifeBoatsLeft() > entity.getPodsLeft())) {
+                    //Entity has more lifeboats left
+                    launched = Math.min(launchCounter, entity.getLifeBoatsLeft());
+                    entity.setLaunchedLifeBoats(entity.getLaunchedLifeBoats() + launched);
+                    totalLaunched += launched;
+                    launchCounter -= launched;
+                } else {
+                    //We've run out of both. End the loop
+                    break;
+                }
+            }
+            int nEscaped = Math.min((entity.getCrew().getCurrentSize() + entity.getNPassenger()), (totalLaunched * 6));
+            //Report how many pods launched and how many escaped
+            if (totalLaunched > 0) {
+                r = new Report(6401);
+                r.subject = entity.getId();
+                r.indent();
+                r.add(totalLaunched);
+                r.add(nEscaped);
+                vDesc.addElement(r);
+            }
+            EscapePods pods = new EscapePods(entity,totalLaunched,isPod);
+            entity.addEscapeCraft(pods.getExternalIdAsString());
+            //Update the personnel numbers
+            
+            //If there are passengers aboard, get them out first
+            if (entity.getNPassenger() > 0) {
+                int change = Math.min(entity.getNPassenger(), nEscaped);
+                entity.setNPassenger(Math.max(entity.getNPassenger() - nEscaped, 0));
+                pods.addPassengers(entity.getExternalIdAsString(), change);
+                nEscaped -= change;
+            }
+            //Now get the crew out with such space as is left
+            if (nEscaped > 0) {
+                entity.setNCrew(entity.getNCrew() - nEscaped);
+                entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
+                pods.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
+                //*Damage* the host ship's crew to account for the people that left
+                vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
+                if (entity.getCrew().getHits() >= Crew.DEATH) {
+                    //Then we've finished ejecting
+                    entity.getCrew().setEjected(true);
+                }
+            }
+            // Need to set game manually; since game.addEntity not called yet
+            // Don't want to do this yet, as Entity may not be added
+            pods.setPosition(entity.getPosition());
+            pods.setGame(game);
+            pods.setDeployed(true);
+            pods.setId(getFreeEntityId());
+            //Escape craft retain the heading and velocity of the unit they eject from
+            pods.setVectors(entity.getVectors());
+            pods.setFacing(entity.getFacing());
+            pods.setCurrentVelocity(entity.getCurrentVelocity());
+            //If the crew ejects, they should no longer be accelerating
+            pods.setNextVelocity(entity.getVelocity());
+            if (entity.isAirborne()) {
+                pods.setAltitude(entity.getAltitude());
+            }
+            // Add Entity to game
+            game.addEntity(pods);
+            // No movement this turn
+            pods.setDone(true);
+            // Tell clients about new entity
+            send(createAddEntityPacket(pods.getId()));
+            // Sent entity info to clients
+            entityUpdate(pods.getId());
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+                game.removeEntity(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                send(createRemoveEntityPacket(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+            }
+        } // End Escape Pod/Lifeboat Ejection
+        else {
+            if (airborne) {
+                // Can't abandon in atmosphere with no escape pods
+                r = new Report(6402);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.indent();
+                vDesc.addElement(r);
+                return vDesc;
+            }
+            
+            // Eject up to 50 spacesuited crewmen out the nearest airlock!
+            // This only works in space or on the ground
+            int nEscaped = Math.min(entity.getNPassenger() + entity.getCrew().getCurrentSize(), 50);
+            EjectedCrew crew = new EjectedCrew(entity, nEscaped);
+            entity.addEscapeCraft(crew.getExternalIdAsString());
+            
+            //Report the escape
+            r = new Report(6403);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(nEscaped);
+            r.indent();
+            vDesc.addElement(r);
+
+            //If there are passengers aboard, get them out first
+            if (entity.getNPassenger() > 0) {
+                int change = Math.min(entity.getNPassenger(), nEscaped);
+                entity.setNPassenger(Math.max(entity.getNPassenger() - nEscaped, 0));
+                crew.addPassengers(entity.getExternalIdAsString(), change);
+                nEscaped -= change;
+            }
+            //Now get the crew out with such airlock space as is left
+            if (nEscaped > 0) {
+                entity.setNCrew(entity.getNCrew() - nEscaped);
+                entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
+                crew.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
+                //*Damage* the host ship's crew to account for the people that left
+                vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
+                if (entity.getCrew().getHits() >= Crew.DEATH) {
+                    //Then we've finished ejecting
+                    entity.getCrew().setEjected(true);
+                }
+            }
+            
+            // Need to set game manually; since game.addEntity not called yet
+            // Don't want to do this yet, as Entity may not be added
+            crew.setGame(game);
+            crew.setDeployed(true);
+            crew.setId(getFreeEntityId());
+            if (inSpace) {
+                //In space, ejected pilots retain the heading and velocity of the unit they eject from
+                crew.setVectors(entity.getVectors());
+                crew.setFacing(entity.getFacing());
+                crew.setCurrentVelocity(entity.getVelocity());
+                //If the crew ejects, they should no longer be accelerating
+                crew.setNextVelocity(entity.getVelocity());
+                // We're going to be nice and assume a ship has enough spacesuits for everyone aboard...
+                crew.setSpaceSuit(true);
+                crew.setPosition(entity.getPosition());
+            } else {
+                // On the ground, crew must abandon into a legal hex
+                Coords legalPosition = null;
+                //Small Craft can just abandon into the hex they occupy
+                if (!entity.isLargeCraft() && !crew.isLocationProhibited(entity.getPosition())) {
+                    legalPosition = entity.getPosition();
+                } else {
+                    //Use the passed in coords. We already calculated whether they're legal or not
+                    legalPosition = pos;
+                }
+                // Cannot abandon if there is no legal hex.  This shoudln't have
+                // been allowed
+                if (legalPosition == null) {
+                    getLogger().error(getClass(), METHOD_NAME, "spacecraft crews cannot abandon if there is no legal hex!");
+                    return vDesc;
+                }
+                crew.setPosition(legalPosition);
+            }
+            // Add Entity to game
+            game.addEntity(crew);
+            // No movement this turn
+            crew.setDone(true);
+            // Tell clients about new entity
+            send(createAddEntityPacket(crew.getId()));
+            // Sent entity info to clients
+            entityUpdate(crew.getId());
+            // Check if the crew lands in a minefield
+            vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
+                    entity.getPosition(), entity.getPosition(),
+                    entity.getElevation()));
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+                game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+            }
+        }
+        // If we get here, end movement and return the report
+        entity.setDone(true);
+        entityUpdate(entity.getId());
         return vDesc;
     }
 
@@ -33986,9 +34331,14 @@ public class Server implements Runnable {
         if (autoEject) {
             rollTarget.addModifier(1, "automatic ejection");
         }
-        if ((entity.isFighter() && ((IAero)entity).isOutControl())
+        // Per SO p27, Large Craft roll too, to see how many escape pods launch successfully
+        if ((entity.isAero() && ((IAero)entity).isOutControl())
                 || (entity.isPartOfFighterSquadron() && ((IAero)game.getEntity(entity.getTransportId())).isOutControl())) {
             rollTarget.addModifier(5, "Out of Control");
+        }
+        // A decreased large craft crew makes it harder to eject large numbers of pods
+        if (entity.isLargeCraft() && entity.getCrew().getHits() > 0) {
+            rollTarget.addModifier(entity.getCrew().getHits(), "Crew hits");
         }
         if ((entity instanceof Mech)
                 && (entity.getInternal(Mech.LOC_HEAD) < entity

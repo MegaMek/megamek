@@ -354,7 +354,12 @@ public class FireControlTest {
         shooterWeapons = new ArrayList<>(3);
         Mockito.when(mockShooter.getWeaponList()).thenReturn(shooterWeapons);
 
+        // Weapon that will skip check for indirect fire mode
+        WeaponType mockWeaponType = Mockito.mock(WeaponType.class);
+        Mockito.when(mockWeaponType.hasFlag(Mockito.any())).thenReturn(false);
+        Mockito.when(mockWeaponType.hasModeType(Mockito.anyString())).thenReturn(false);
         mockPPC = Mockito.mock(Mounted.class);
+        Mockito.when(mockPPC.getType()).thenReturn(mockWeaponType);
         shooterWeapons.add(mockPPC);
         mockPPCFireInfo = Mockito.mock(WeaponFireInfo.class);
         Mockito.when(mockPPCFireInfo.getProbabilityToHit()).thenReturn(0.5);
@@ -381,6 +386,7 @@ public class FireControlTest {
 
         mockML = Mockito.mock(Mounted.class);
         shooterWeapons.add(mockML);
+        Mockito.when(mockML.getType()).thenReturn(mockWeaponType);
         mockMLFireInfo = Mockito.mock(WeaponFireInfo.class);
         Mockito.when(mockMLFireInfo.getProbabilityToHit()).thenReturn(0.0);
         Mockito.doReturn(mockMLFireInfo).when(testFireControl).buildWeaponFireInfo(Mockito.any(Entity.class),
@@ -405,6 +411,7 @@ public class FireControlTest {
                                                                                    Mockito.anyBoolean());
 
         mockLRM5 = Mockito.mock(Mounted.class);
+        Mockito.when(mockLRM5.getType()).thenReturn(mockWeaponType);
         shooterWeapons.add(mockLRM5);
         mockLRMFireInfo = Mockito.mock(WeaponFireInfo.class);
         Mockito.when(mockLRMFireInfo.getProbabilityToHit()).thenReturn(0.6);

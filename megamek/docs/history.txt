@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 0.47.6-SNAPSHOT
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed
++ PR #1808: Abandon ship! Large spacecraft can now launch escape pods, giving the opposing player more opportunity to commit war crimes.
 
 0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO

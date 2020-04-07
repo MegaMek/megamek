@@ -714,7 +714,7 @@ public class PlanetaryConditions implements Serializable {
                 return 15;
             }
             return 5;
-        } else if (((lightConditions > L_DAY) && !Spotlight && !targetIlluminated)
+        } else if ((lightConditions == L_DUSK)
                 || (weatherConditions == WE_HEAVY_RAIN)
                 || (weatherConditions == WE_SNOW_FLURRIES)
                 || (weatherConditions == WE_MOD_SNOW) && (windStrength >= WI_MOD_GALE)) {

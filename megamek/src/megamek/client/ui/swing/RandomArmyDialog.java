@@ -388,8 +388,8 @@ WindowListener, TreeSelectionListener {
         c.weighty = 0.5;
         m_pRATGen.add(new JScrollPane(pRATGenTop), c);
         
-        m_pRATGenOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.RAT_GENERATOR, m_clientgui);
-        m_pFormationOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.FORMATION_BUILDER, null);
+        m_pRATGenOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.RAT_GENERATOR);
+        m_pFormationOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.FORMATION_BUILDER);
         
         c = new GridBagConstraints();
         c.gridx = 0;

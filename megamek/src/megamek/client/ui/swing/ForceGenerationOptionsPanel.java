@@ -384,7 +384,11 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             // Subfaction is "general"
             fRec = (FactionRecord) cbFaction.getSelectedItem();
         }
+        if (fRec == null) {
+            fRec = RATGenerator.getInstance().getFaction("IS");
+        }
         List<String> ratingLevels = fRec.getRatingLevels();
+
         if (ratingLevels.isEmpty()) {
             // Get rating levels from parent faction(s)
             ratingLevels = fRec.getRatingLevelSystem();

@@ -362,7 +362,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 }
             }
             recs.sort(factionSorter);
-            cbSubfaction.addItem(null); //No specific sub-command.
+            cbSubfaction.addItem(null); //No specific subcommand.
             for (FactionRecord fRec : recs) {
                 cbSubfaction.addItem(fRec);
             }
@@ -373,7 +373,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     }
 
     /**
-     * When faction or sub-faction is changed, refresh ratings combo box with appropriate
+     * When faction or subfaction is changed, refresh ratings combo box with appropriate
      * values for selected faction.
      */
     public void updateRatingChoice() {

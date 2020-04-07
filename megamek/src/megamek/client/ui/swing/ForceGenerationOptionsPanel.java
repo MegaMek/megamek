@@ -286,9 +286,9 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
     public FactionRecord getFaction() {
         if (cbSubfaction.getSelectedItem() == null) {
-            return (FactionRecord)cbFaction.getSelectedItem();
+            return (FactionRecord) cbFaction.getSelectedItem();
         } else {
-            return (FactionRecord)cbSubfaction.getSelectedItem();
+            return (FactionRecord) cbSubfaction.getSelectedItem();
         }
     }
 
@@ -329,7 +329,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         FactionRecord old = (FactionRecord)cbFaction.getSelectedItem();
         cbFaction.removeActionListener(this);
         cbFaction.removeAllItems();
-        ArrayList<FactionRecord> recs = new ArrayList<>();
+        List<FactionRecord> recs = new ArrayList<>();
         for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
             if ((!fRec.isMinor() || chkShowMinor.isSelected())
                     && !fRec.getKey().contains(".") && fRec.isActiveInYear(ratGenYear)) {
@@ -354,7 +354,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         cbSubfaction.removeAllItems();
         FactionRecord selectedFaction = (FactionRecord)cbFaction.getSelectedItem();
         if (selectedFaction != null) {
-            ArrayList<FactionRecord> recs = new ArrayList<>();
+            List<FactionRecord> recs = new ArrayList<>();
             for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
                 if (fRec.getKey().startsWith(selectedFaction.getKey() + ".")
                         && fRec.isActiveInYear(ratGenYear)) {
@@ -558,11 +558,11 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         private static final long serialVersionUID = -3961143911841133921L;
 
         private JComboBox<String> cbWeightClass = new JComboBox<>();
-        private ArrayList<JCheckBox> weightChecks = new ArrayList<>();
+        private List<JCheckBox> weightChecks = new ArrayList<>();
         private JComboBox<String> cbRoleStrictness = new JComboBox<>();
-        private ArrayList<JCheckBox> roleChecks = new ArrayList<>();
+        private List<JCheckBox> roleChecks = new ArrayList<>();
         private ButtonGroup networkButtons = new ButtonGroup();
-        private ArrayList<JCheckBox> subtypeChecks = new ArrayList<>();
+        private List<JCheckBox> subtypeChecks = new ArrayList<>();
         
         public RATGenUnitTypeCard(int unitType) {
             setLayout(new BorderLayout());
@@ -833,7 +833,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
         public List<Integer> getSelectedWeights() {
             if (cbWeightClass.getSelectedIndex() > 0) {
-                ArrayList<Integer> retVal = new ArrayList<>();
+                List<Integer> retVal = new ArrayList<>();
                 retVal.add(Integer.parseInt(weightChecks
                         .get(cbWeightClass.getSelectedIndex() - 1).getName()));
                 return retVal;

@@ -2641,6 +2641,10 @@ public class MoveStep implements Serializable {
                 // or into stacking violation.
                 Targetable target = getTarget(game);
                 if (target instanceof Entity) {
+                    //Change the destination hex if an unload dialog box set it elsewhere
+                    if (getTargetPosition() != null) {
+                        curPos = getTargetPosition();
+                    }
                     Entity other = (Entity) target;
                     if ((null != Compute.stackingViolation(game, other, curPos,
                             entity)) || other.isLocationProhibited(curPos, getElevation())) {

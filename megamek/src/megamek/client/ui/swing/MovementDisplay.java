@@ -4960,7 +4960,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
             if (other != null) {
-                if (ce() instanceof SmallCraft || !ce().getAllTowedUnits().isEmpty()) {
+                if (ce() instanceof SmallCraft 
+                        || !ce().getAllTowedUnits().isEmpty()
+                        || ce().getTowedBy() != Entity.NONE) {
                     Coords pos = getUnloadPosition(other);
                     if (null != pos) {
                         // set other's position and end this turn - the

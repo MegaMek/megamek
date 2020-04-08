@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -3362,6 +3363,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
         if (ce instanceof Dropship) {
             ring = Compute.coordsAtRange(pos, 2);
+        } else if (!ce.getAllTowedUnits().isEmpty()) {
+            //For trains, the "ring" is any adjacent hex to a vehicle in the train
+            //Use this to trim out the duplicates
+            Set<Coords> temp = new HashSet<>(ring);
+            for (int i : ce.getAllTowedUnits()) {
+                Entity tr = ce.getGame().getEntity(i);
+                if (tr != null && tr.getPosition() != null) {
+                    temp.addAll(Compute.coordsAtRange(tr.getPosition(), 1));
+                }
+            }
+            //Reload ring with the deduped set
+            ring.clear();
+            for (Coords c : temp) {
+                ring.add(c);
+            }
         }
         // ok now we need to go through the ring and identify available
         // Positions
@@ -4944,7 +4960,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
             if (other != null) {
-                if (ce() instanceof SmallCraft) {
+                if (ce() instanceof SmallCraft || !ce().getAllTowedUnits().isEmpty()) {
                     Coords pos = getUnloadPosition(other);
                     if (null != pos) {
                         // set other's position and end this turn - the

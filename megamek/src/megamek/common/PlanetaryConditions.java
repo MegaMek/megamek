@@ -697,7 +697,6 @@ public class PlanetaryConditions implements Serializable {
                 || (lightConditions == L_FULL_MOON)
                 || (weatherConditions == WE_GUSTING_RAIN)
                 || (weatherConditions == WE_BLIZZARD)
-                || ((weatherConditions == WE_HEAVY_SNOW) && (windStrength >= WI_STRONG_GALE))
                 || (weatherConditions == WE_ICE_STORM)
                 || (weatherConditions == WE_DOWNPOUR)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {

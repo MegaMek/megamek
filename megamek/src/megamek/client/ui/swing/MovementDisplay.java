@@ -2816,7 +2816,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        // can this unit mount a dropship/small craft?
+        // can this unit mount a dropship/small craft/train?
         setMountEnabled(false);
         Coords pos = ce.getPosition();
         int elev = ce.getElevation();

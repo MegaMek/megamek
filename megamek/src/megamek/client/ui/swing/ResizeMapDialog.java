@@ -499,15 +499,15 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     }
     
     private boolean isExpandValid() {
-        return (mapNorthField.verifyText() == null) &&
-                (mapEastField.verifyText() == null) &&
-                (mapSouthField.verifyText() == null) &&
-                (mapWestField.verifyText() == null);
+        return mapNorthField.verifyText() &&
+                mapEastField.verifyText() &&
+                mapSouthField.verifyText() &&
+                mapWestField.verifyText();
     }
-    
+
     private boolean isExpandWestProblem() {
-        return (mapSouthField.verifyText() == null) &&
-                (mapWestField.verifyText() == null) &&
+        return mapSouthField.verifyText() &&
+                mapWestField.verifyText() &&
                 ((getExpandWest() & 1) == 1) && 
                 (getExpandSouth() < 1);
     }

@@ -21,21 +21,30 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
@@ -52,7 +61,7 @@ import megamek.common.util.StringUtil;
  * @version %Id%
  * @since 3/13/14 2:41 PM
  */
-public class ResizeMapDialog extends JDialog implements ActionListener {
+public class ResizeMapDialog extends JDialog implements ActionListener, KeyListener {
 
     private static final long serialVersionUID = 7758433698878123806L;
     // Views.
@@ -85,12 +94,17 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
     private final VerifiableTextField mapEastField = new VerifiableTextField(4);
     private final VerifiableTextField mapSouthField = new VerifiableTextField(4);
     private final VerifiableTextField mapWestField = new VerifiableTextField(4);
-    private final VerifiableTextField mapThemeField = new VerifiableTextField(10);
+    private final JComboBox<String> choTheme = new JComboBox<>();
+    private final JPopupMenu westNotice = new JPopupMenu();
 
     // Control buttons
     private final JButton okayButton = new JButton(Messages.getString("Okay"));
     private final JButton loadButton = new JButton(Messages.getString("RandomMapDialog.Load"));
     private final JButton saveButton = new JButton(Messages.getString("RandomMapDialog.Save"));
+    private final JButton cancelButton = new JButton(Messages.getString("Cancel"));
+    
+    // Misc values
+    boolean userCancel; 
 
     /**
      * Constructor for this dialog.
@@ -114,6 +128,10 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
 
         initGUI();
         setResizable(true);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) { doCancel(); }
+        });
 
         pack();
         validate();
@@ -214,6 +232,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
         mapNorthField.setText("0");
         mapNorthField.addVerifier(new VerifyInRange(Integer.MIN_VALUE, Integer.MAX_VALUE, true));
         mapNorthField.setToolTipText(Messages.getString("ExpandMapDialog.mapNorthField.toolTip"));
+        mapNorthField.addKeyListener(this);
         panel.add(mapNorthField, constraints);
 
         // Row 2, Column 3.
@@ -229,6 +248,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
         mapEastField.setText("0");
         mapEastField.addVerifier(new VerifyInRange(Integer.MIN_VALUE, Integer.MAX_VALUE, true));
         mapEastField.setToolTipText(Messages.getString("ExpandMapDialog.mapEastField.toolTip"));
+        mapEastField.addKeyListener(this);
         panel.add(mapEastField, constraints);
 
         // Row 2, Column 5.
@@ -244,6 +264,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
         mapSouthField.setText("0");
         mapSouthField.addVerifier(new VerifyInRange(Integer.MIN_VALUE, Integer.MAX_VALUE, true));
         mapSouthField.setToolTipText(Messages.getString("ExpandMapDialog.mapSouthField.toolTip"));
+        mapSouthField.addKeyListener(this);
         panel.add(mapSouthField, constraints);
 
         // Row 2, Column 7.
@@ -259,6 +280,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
         mapWestField.setText("0");
         mapWestField.addVerifier(new VerifyInRange(Integer.MIN_VALUE, Integer.MAX_VALUE, true));
         mapWestField.setToolTipText(Messages.getString("ExpandMapDialog.mapWestField.toolTip"));
+        mapWestField.addKeyListener(this);
         panel.add(mapWestField, constraints);
 
         // Row 3, Column 1.
@@ -269,12 +291,15 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
         // Row 3, Column 2.
         constraints.gridx++;
         constraints.gridwidth = 3;
-        mapThemeField.setSelectAllTextOnGotFocus(true);
-        mapThemeField.setText(mapSettings.getTheme());
-        mapThemeField.setToolTipText(Messages.getString("RandomMapDialog.mapThemeField.toolTip"));
-        panel.add(mapThemeField, constraints);
+        choTheme.setToolTipText(Messages.getString("RandomMapDialog.mapThemeField.toolTip"));
+        panel.add(choTheme, constraints);
+
+        // A warning notice when the west edge expansion is an odd number and the south expansion < 1
+        westNotice.add(new JLabel(Messages.getString("ExpandMapDialog.mapWestField.note")));
+        westNotice.setBorder(new EmptyBorder(10,10,10,10));
 
         return panel;
+
     }
 
     private JPanel setupControlsPanel() {
@@ -291,6 +316,10 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
         okayButton.addActionListener(this);
         okayButton.setMnemonic(okayButton.getText().charAt(0));
         panel.add(okayButton);
+        
+        cancelButton.addActionListener(this);
+        cancelButton.setMnemonic(cancelButton.getText().charAt(0));
+        panel.add(cancelButton);
 
         return panel;
     }
@@ -348,8 +377,8 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
 
         // Get the user-selected file.
         File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", false);
-
+                                        "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
+        
         // If we don't have a file, there's nothing to load.
         if (selectedFile == null) {
             return;
@@ -377,7 +406,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
 
         // Have the user choose a file to save the new settings to.
         File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", false);
+                                        "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
 
         // If no file was selected, we're done.
         if (selectedFile == null) {
@@ -394,7 +423,6 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
     }
 
     private boolean doApply() {
-
         // Get the new settings from the basic or advanced view.
         MapSettings newMapSettings;
         if (basicButton.isSelected()) {
@@ -413,7 +441,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
         // Get the general settings from this panel.
         newMapSettings.setBoardSize(mapWestField.getAsInt()+mapEastField.getAsInt()+mapSettings.getBoardWidth(),
                 mapNorthField.getAsInt()+mapSouthField.getAsInt()+mapSettings.getBoardHeight());
-        newMapSettings.setTheme(mapThemeField.getText());
+        newMapSettings.setTheme((String)choTheme.getSelectedItem());
         this.mapSettings = newMapSettings;
 
         // Sent the map settings to either the server or the observer as needed.
@@ -423,6 +451,12 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
         }
         MAP_SETTINGS_OBSERVER.updateMapSettings(newMapSettings);
         return true;
+    }
+    
+    private void doCancel() {
+        userCancel = true;
+        westNotice.setVisible(false);
+        setVisible(false);
     }
 
     @Override
@@ -435,12 +469,16 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
             doLoad();
         } else if (saveButton.equals(e.getSource())) {
             if (doSave()) {
+                westNotice.setVisible(false);
                 setVisible(false);
             }
         } else if (okayButton.equals(e.getSource())) {
             if (doApply()) {
+                westNotice.setVisible(false);
                 setVisible(false);
             }
+        } else if (cancelButton.equals(e.getSource())) {
+            doCancel();
         }
     }
 
@@ -458,5 +496,56 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
 
     public int getExpandWest() {
         return mapWestField.getAsInt();
+    }
+    
+    private boolean isExpandValid() {
+        return (mapNorthField.verifyText() == null) &&
+                (mapEastField.verifyText() == null) &&
+                (mapSouthField.verifyText() == null) &&
+                (mapWestField.verifyText() == null);
+    }
+    
+    private boolean isExpandWestProblem() {
+        return (mapSouthField.verifyText() == null) &&
+                (mapWestField.verifyText() == null) &&
+                ((getExpandWest() & 1) == 1) && 
+                (getExpandSouth() < 1);
+    }
+
+    @Override
+    public void keyPressed(KeyEvent arg0) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent arg0) {
+        // Disable the Okay button when the input is invalid
+        if (!isExpandValid()) {
+            okayButton.setEnabled(false);
+        } else {
+            okayButton.setEnabled(true);
+        }
+        
+        // Give notice when having an odd west expansion and no south expansion
+        if (isExpandWestProblem()) {
+            Point loc = mapSouthField.getLocationOnScreen();
+            loc.translate(mapSouthField.getWidth()+15, 0);
+            westNotice.setLocation(loc);
+            westNotice.setVisible(true);
+        } else {
+            westNotice.setVisible(false);
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent arg0) {
+    }
+    
+    /** Updates the theme list and sets the dialog to visible. Returns true if the user pressed Cancel. */
+    public boolean activateDialog(Set<String> themeList) {
+        for (String s: themeList) choTheme.addItem(s);
+        choTheme.setSelectedItem(mapSettings.getTheme());
+        userCancel = false;
+        setVisible(true);
+        return userCancel;
     }
 }

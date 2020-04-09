@@ -130,7 +130,21 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         setResizable(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) { doCancel(); }
+            public void windowClosing(WindowEvent e) { 
+                doCancel(); 
+            }
+            
+            // Hide the west edge warning when some other program is brought to foreground
+            public void windowDeactivated(WindowEvent e) {
+                westNotice.setVisible(false);
+                super.windowDeactivated(e);
+            }
+
+            public void windowIconified(WindowEvent e) {
+                westNotice.setVisible(false);
+                super.windowIconified(e);
+            }
+
         });
 
         pack();
@@ -524,7 +538,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         } else {
             okayButton.setEnabled(true);
         }
-        
+
         // Give notice when having an odd west expansion and no south expansion
         if (isExpandWestProblem()) {
             Point loc = mapSouthField.getLocationOnScreen();
@@ -548,4 +562,5 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         setVisible(true);
         return userCancel;
     }
+
 }

@@ -3363,26 +3363,35 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
         if (ce instanceof Dropship) {
             ring = Compute.coordsAtRange(pos, 2);
-        } else if (!ce.getAllTowedUnits().isEmpty()) {
-            //For trains, the "ring" is any adjacent hex to a vehicle in the train
-            //Use this to trim out the duplicates
-            Set<Coords> temp = new HashSet<>(ring);
-            for (int i : ce.getAllTowedUnits()) {
-                Entity tr = ce.getGame().getEntity(i);
-                if (tr != null && tr.getPosition() != null) {
-                    temp.addAll(Compute.coordsAtRange(tr.getPosition(), 1));
-                }
-            }
-            //Reload ring with the deduped set
-            ring.clear();
-            for (Coords c : temp) {
-                ring.add(c);
-            }
         }
         // ok now we need to go through the ring and identify available
         // Positions
         ring = Compute.getAcceptableUnloadPositions(ring, unloaded, clientgui
                 .getClient().getGame(), elev);
+        //If we're a train, eliminate positions held by any unit in the train. 
+        //You get stacking violation weirdness if this isn't done.
+        Set<Coords> toRemove = new HashSet<>();
+        if (ce.getTowing() != Entity.NONE) {
+            for (int i : ce.getAllTowedUnits()) {
+                Entity e = ce.getGame().getEntity(i);
+                if (e != null && e.getPosition() != null) {
+                    toRemove.add(e.getPosition());
+                }
+            }
+        } else if (ce.getTractor() != Entity.NONE) {
+            Entity tractor = ce.getGame().getEntity(ce.getTractor());
+            if (tractor != null && tractor.getPosition() != null) {
+                toRemove.add(tractor.getPosition());
+                for (int i : tractor.getAllTowedUnits()) {
+                    Entity e = ce.getGame().getEntity(i);
+                    if (e != null && e.getPosition() != null) {
+                        toRemove.add(e.getPosition());
+                    }
+                }
+            }
+        }
+        ring.removeAll(toRemove);
+        
         if (ring.size() < 1) {
             String title = Messages
                     .getString("MovementDisplay.NoPlaceToUnload.title"); //$NON-NLS-1$

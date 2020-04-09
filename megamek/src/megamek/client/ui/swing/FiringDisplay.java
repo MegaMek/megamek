@@ -15,29 +15,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
-
-import javax.swing.JOptionPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -46,59 +23,25 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.BombType;
-import megamek.common.Building;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityVisibilityUtils;
-import megamek.common.GameTurn;
-import megamek.common.HexTarget;
-import megamek.common.IAero;
-import megamek.common.IAimingModes;
-import megamek.common.IBoard;
-import megamek.common.IBomber;
-import megamek.common.IGame;
+import megamek.common.*;
 import megamek.common.IGame.Phase;
-import megamek.common.IHex;
-import megamek.common.INarcPod;
-import megamek.common.IPlayer;
-import megamek.common.IdealHex;
-import megamek.common.Infantry;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.VTOL;
-import megamek.common.WeaponType;
-import megamek.common.actions.AbstractEntityAction;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FindClubAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.RepairWeaponMalfunctionAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.SpotAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.TriggerAPPodAction;
-import megamek.common.actions.TriggerBPodAction;
-import megamek.common.actions.UnjamTurretAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
+import megamek.common.util.TurnTimer;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.*;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
         ItemListener, ListSelectionListener {
@@ -106,6 +49,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      *
      */
     private static final long serialVersionUID = -5586388490027013723L;
+
+    /**
+     * timer that ends turn if time limit set in options is over
+     */
+    private TurnTimer tt;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
@@ -919,12 +867,21 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
         }
+
+        //check if there should be a turn timer running
+        tt= TurnTimer.init(this, clientgui.getClient());
     }
 
     /**
      * Does end turn stuff.
      */
     protected void endMyTurn() {
+
+        //get rid of still running timer, if turn is concluded before time is up
+        if (tt!=null) {
+            tt.stopTimer();
+            tt=null;
+        }
         // end my turn, then.
         IGame game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
@@ -946,6 +903,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         disableButtons();
 
         clearVisibleTargets();
+
+
     }
 
     /**

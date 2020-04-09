@@ -274,6 +274,7 @@ public class OptionsConstants {
     
     //GAME OPTIONS TO BE MOVED.
     public static final String BASE_FRIENDLY_FIRE= "friendly_fire";  //$NON-NLS$
+    public static final String BASE_TURN_TIMER = "turn_timer"; //$NON-NLS$
     public static final String BASE_SKIP_INELIGABLE_MOVEMENT= "skip_ineligable_movement";  //$NON-NLS$
     public static final String BASE_SKIP_INELIGABLE_FIRING= "skip_ineligable_firing";  //$NON-NLS$
     public static final String BASE_SKIP_INELIGABLE_PHYSICAL= "skip_ineligable_physical";  //$NON-NLS$
@@ -526,5 +527,6 @@ public class OptionsConstants {
     public static final String RPG_CONDITIONAL_EJECTION= "conditional_ejection";  //$NON-NLS$
     public static final String RPG_MANUAL_SHUTDOWN= "manual_shutdown";  //$NON-NLS$
     public static final String RPG_BEGIN_SHUTDOWN= "begin_shutdown";  //$NON-NLS$
-  
+
+
 }

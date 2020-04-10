@@ -111,8 +111,7 @@ public class TurnTimer {
             Enum phase = client.getGame().getPhase();
 
             // turn timer should only kick in on firing, targeting, movement and physical attack phase
-            if (phase == IGame.Phase.PHASE_MOVEMENT || phase == IGame.Phase.PHASE_FIRING || phase == IGame.Phase.PHASE_PHYSICAL || phase == IGame.Phase.PHASE_TARGETING)
-              return true;
+            return phase == IGame.Phase.PHASE_MOVEMENT || phase == IGame.Phase.PHASE_FIRING || phase == IGame.Phase.PHASE_PHYSICAL || phase == IGame.Phase.PHASE_TARGETING;
         }
         return false;
     }

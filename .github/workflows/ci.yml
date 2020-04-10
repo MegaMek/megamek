@@ -19,6 +19,12 @@ on:
   pull_request:
     branches: [ master ]
 
+#
+# Setup the Build Scan "VCS" link for all gradle invocations
+#
+env:
+  GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
+
 jobs:
 
   #
@@ -55,7 +61,7 @@ jobs:
     #
     - name: Build with Gradle
       id: gradle_build
-      run: ./gradlew -I .github/build-scan-init.gradle build --stacktrace --scan "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
+      run: ./gradlew -I .github/build-scan-init.gradle build --stacktrace --scan
 
     #
     # If the build step fails, try to upload any
@@ -136,7 +142,7 @@ jobs:
     # Include --stacktrace to make some build failures easier
     # to figure out.
     - name: Build with Gradle
-      run: ./gradlew test --stacktrace
+      run: ./gradlew -I .github/build-scan-init.gradle build --stacktrace --scan
 
     - name: Upload Test Logs on Failure
       uses: actions/upload-artifact@v2-preview

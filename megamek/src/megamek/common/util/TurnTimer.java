@@ -62,7 +62,7 @@ public class TurnTimer {
                 display.setLayout(new BorderLayout());
                 display.getContentPane().add(remaining, BorderLayout.NORTH);
                 display.getContentPane().add(progressBar, BorderLayout.CENTER);
-                display.setSize(50,100);
+                display.pack();
                 display.setAlwaysOnTop(true);
                 display.setModal(false);
                 //display.setUndecorated(true);

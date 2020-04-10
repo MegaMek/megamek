@@ -3279,7 +3279,7 @@ public class FireControl {
         }
         
         if(bestTarget != null) {
-            SearchlightAttackAction slaa = new SearchlightAttackAction(shooter.getId(), bestTarget.getTargetId());
+            SearchlightAttackAction slaa = new SearchlightAttackAction(shooter.getId(), bestTarget.getTargetType(), bestTarget.getTargetId());
             return slaa;
         }
         

@@ -101,8 +101,8 @@ public class TurnTimer {
     /**
      * Checks if a turn time limit is set in options
      * limit is only imposed on movement, firing
-     *  @todo: add timer to physical and targeting phase currently it is only in movement and fire
      */
+    //TODO: add timer to physical and targeting phase currently it is only in movement and fire
     private static boolean timerShouldStart(Client client) {
         // check if there is a timer set
         Option timer = (Option) client.getGame().getOptions().getOption("turn_timer");

@@ -32,7 +32,7 @@ public class TurnTimer {
         display = new JDialog();
         progressBar = new JProgressBar(JProgressBar.VERTICAL, 0, limit);
         progressBar.setValue(limit);
-        progressBar.setString(String.valueOf(timeLimit)+"s");
+        progressBar.setString(timeLimit + "s");
 
         listener = new ActionListener() {
             int counter = limit;

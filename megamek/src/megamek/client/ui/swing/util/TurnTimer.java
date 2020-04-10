@@ -17,6 +17,7 @@ package megamek.client.ui.swing.util;
 
 import megamek.client.Client;
 import megamek.client.ui.swing.AbstractPhaseDisplay;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.IGame;
 import megamek.common.options.Option;
 
@@ -43,6 +44,7 @@ public class TurnTimer {
 
     public TurnTimer(int limit, AbstractPhaseDisplay phaseDisplay) {
 
+
         // make it minutes here.
         timeLimit = limit*60;
 
@@ -60,6 +62,8 @@ public class TurnTimer {
                 remaining.setText(minutes+":"+seconds);
                 progressBar.setValue(counter);
                 if (counter<1) {
+                    // prevent the popup dialog from breaking time limit
+                    GUIPreferences.getInstance().setNagForNoAction(false);
                     phaseDisplay.ready();
                     timer.stop();
                     display.setVisible(false);

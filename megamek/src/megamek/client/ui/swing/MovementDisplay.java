@@ -38,7 +38,7 @@ import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.TurnTimer;
+import megamek.client.ui.swing.util.TurnTimer;
 
 import javax.swing.*;
 import java.awt.*;

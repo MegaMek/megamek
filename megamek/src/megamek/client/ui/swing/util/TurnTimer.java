@@ -1,4 +1,19 @@
-package megamek.common.util;
+/*
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
+ * (bmazur@sev.org)
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
+package megamek.client.ui.swing.util;
+
 
 import megamek.client.Client;
 import megamek.client.ui.swing.AbstractPhaseDisplay;
@@ -28,19 +43,22 @@ public class TurnTimer {
 
     public TurnTimer(int limit, AbstractPhaseDisplay phaseDisplay) {
 
-        timeLimit = limit;
+        // make it minutes here.
+        timeLimit = limit*60;
+
         display = new JDialog();
-        progressBar = new JProgressBar(JProgressBar.VERTICAL, 0, limit);
-        progressBar.setValue(limit);
-        progressBar.setString(timeLimit + "s");
+        progressBar = new JProgressBar(JProgressBar.VERTICAL, 0, timeLimit);
+        progressBar.setValue(timeLimit);
+
 
         listener = new ActionListener() {
-            int counter = limit;
+            int counter = timeLimit;
             public void actionPerformed(ActionEvent ae) {
                 counter--;
-                remaining.setText(counter+" sec");
+                int seconds =counter % 60;
+                int minutes = counter/60;
+                remaining.setText(minutes+":"+seconds);
                 progressBar.setValue(counter);
-                progressBar.setString(counter + "s");
                 if (counter<1) {
                     phaseDisplay.ready();
                     timer.stop();
@@ -76,22 +94,13 @@ public class TurnTimer {
         display.dispose();
         timer.stop();
     }
-    public boolean isRunning(){
-        return timer.isRunning();
-    }
-    public void resetTimer(){
-        progressBar.setValue(timeLimit);
-        display.setVisible(true);
-
-    }
-
 
     public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, Client client){
 
         //check if there should be a turn timer running
         if (timerShouldStart(client)) {
             Option timer = (Option) client.getGame().getOptions().getOption("turn_timer");
-           TurnTimer tt = new TurnTimer(timer.intValue(), phaseDisplay);
+            TurnTimer tt = new TurnTimer(timer.intValue(), phaseDisplay);
             tt.startTimer();
             return tt;
         }

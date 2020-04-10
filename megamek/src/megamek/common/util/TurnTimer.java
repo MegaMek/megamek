@@ -40,7 +40,7 @@ public class TurnTimer {
                 counter--;
                 remaining.setText(counter+" sec");
                 progressBar.setValue(counter);
-                progressBar.setString(String.valueOf(counter)+"s");
+                progressBar.setString(counter + "s");
                 if (counter<1) {
                     phaseDisplay.ready();
                     timer.stop();

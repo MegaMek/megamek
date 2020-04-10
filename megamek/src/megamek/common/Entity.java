@@ -15560,6 +15560,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 hitch.load(towed);
             }
         }
+        //If the new trailer carries ammo, link that to the train's supply
+        for (Mounted m : towed.getAmmo()) {
+            try {
+                addEquipment(m, Tank.LOC_BODY, false);
+            } catch (LocationFullException e) {
+                e.printStackTrace();
+            }
+            for (int tr : getAllTowedUnits()) {
+                Entity trailer = game.getEntity(tr);
+                if (trailer.equals(towed)) {
+                    continue;
+                }
+                try {
+                    trailer.addEquipment(m, Tank.LOC_BODY, false);
+                } catch (LocationFullException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
@@ -15572,6 +15591,29 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void disconnectUnit(int id) {
         Entity towed = game.getEntity(id);
         Entity tractor = game.getEntity(towed.getTractor());
+        //If the dropped trailer carries ammo, remove that from the train's supply
+        tractor.getAmmo().removeAll(towed.getAmmo());
+        tractor.getEquipment().removeAll(towed.getAmmo());
+        for (int i = 0; i < tractor.getNumberOfCriticals(Tank.LOC_BODY); i++) {
+            final CriticalSlot cs = tractor.getCritical(Tank.LOC_BODY, i);
+            if (cs != null && cs.getMount().getEntity().equals(towed)) {
+                cs.setMissing(true);
+            }
+        }
+        for (int i : tractor.getAllTowedUnits()) {
+            Entity trailer = game.getEntity(i);
+            if (trailer.equals(towed)) {
+                continue;
+            }
+            trailer.getAmmo().removeAll(towed.getAmmo());
+            trailer.getEquipment().removeAll(towed.getAmmo());
+            for (int eqNum = 0; eqNum < trailer.getNumberOfCriticals(Tank.LOC_BODY); eqNum++) {
+                final CriticalSlot cs = trailer.getCritical(Tank.LOC_BODY, eqNum);
+                if (cs != null && cs.getMount().getEntity().equals(towed)) {
+                    cs.setMissing(true);
+                }
+            }
+        }
         //Remove the designated trailer from the tractor's carried units
         removeTowedUnit(id);
         //Now, find and empty the transporter on the actual towing entity (trailer or tractor)

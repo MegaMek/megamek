@@ -4347,9 +4347,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Target Terrain
         
+        // BMM p. 31, semi-guided indirect missile attacks vs tagged targets ignore terrain modifiers
+        boolean semiGuidedIndirectVsTaggedTarget = isIndirect && 
+                (atype != null) && atype.getMunitionType() == AmmoType.M_SEMIGUIDED && 
+                        Compute.isTargetTagged(target, game);
+        
         // Base terrain calculations, not applicable when delivering minefields or bombs
         // also not applicable in pointblank shots from hidden units
-        if ((ttype != Targetable.TYPE_MINEFIELD_DELIVER) && !isPointBlankShot) {
+        if ((ttype != Targetable.TYPE_MINEFIELD_DELIVER) && !isPointBlankShot && !semiGuidedIndirectVsTaggedTarget) {
             toHit.append(Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater));
             toSubtract += Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater)
                     .getValue();

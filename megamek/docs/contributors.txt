@@ -236,6 +236,7 @@
      Dave Nawton <hammer-gs@users.sourceforge.net>
 	 Greekfire.
 	 Bloodwolf
+	 SLDF_gunslinger
 
   Translations
      Jörg Harder <joergharder@t-online.de>

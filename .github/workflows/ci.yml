@@ -5,9 +5,6 @@
 #
 #    - ci_cd: Build MegaMek for CI/CD on Ubuntu with Java 1.8
 #
-#    - other_os_ci: Build MegaMek on Windows and MacOS.
-#        - This job runs after `ci_cd` completes successfully.
-#
 
 name: MegaMek CI with Gradle
 
@@ -102,51 +99,3 @@ jobs:
       with:
         name: releases
         path: megamek/build/distributions/
-
-  #
-  # Confirm on Windows and MacOS that we can still
-  # build and test MekHQ. This doesn't use MegaMek or
-  # MegaMekLab's source and exercises the Maven Repo.
-  #
-  other_os_ci:
-    # Don't run this if we fail the previous job.
-    needs: ci_cd
-
-    # Run this job once for each combination in the
-    # matrix below.
-    strategy:
-      matrix:
-        os: [windows-latest, macOS-latest]
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-
-    - uses: actions/checkout@v2
-
-    #
-    # TODO: consider making the Java Version part of the 
-    #       maxtrix build options. IF we do that we should
-    #       probably add ubuntu-latest to the OS matrix.
-    #
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
-
-    # Don't run this for Windows.
-    - name: Grant execute permission for gradlew (*nix or MacOS)
-      run: chmod +x gradlew
-      if: runner.os != 'Windows'
-      
-    # Include --stacktrace to make some build failures easier
-    # to figure out.
-    - name: Build with Gradle
-      run: ./gradlew -I .github/build-scan-init.gradle build --stacktrace --scan
-
-    - name: Upload Test Logs on Failure
-      uses: actions/upload-artifact@v2-preview
-      if: failure()
-      with:
-        name: ci-failure-logs
-        path: megamek/build/reports/

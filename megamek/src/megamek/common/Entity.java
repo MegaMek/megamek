@@ -15585,36 +15585,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 hitch.load(towed);
             }
         }
-        /*
-        //Any directly connected vehicles can share ammo. Take care of that linking here
-        for (Mounted m : towed.getAmmo()) {
-            try {
-                addEquipment(m, Tank.LOC_BODY, false);
-            } catch (LocationFullException e) {
-                e.printStackTrace();
-            }
-            for (int tr : getAllTowedUnits()) {
-                Entity trailer = game.getEntity(tr);
-                if (trailer.equals(towed)) {
-                    continue;
-                }
-                try {
-                    trailer.addEquipment(m, Tank.LOC_BODY, false);
-                } catch (LocationFullException e) {
-                    e.printStackTrace();
-                }
-            }
-        } */
-    }
-    
-    /**
-     * Worker function that links/unlinks ammo shared by adjacent vehicles as trailers
-     * are added and dropped
-     * @param towing  The vehicle directly ahead of this one in the train
-     * @param towed   The vehicle directly behind this one in the train
-     * @param ammo    The complete list of ammo carried by this vehicle
-     */
-    private void relinkTrainAmmo(Entity towing, Entity towed, ArrayList<Mounted> ammo) {
     }
 
     /**
@@ -15627,35 +15597,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void disconnectUnit(int id) {
         Entity towed = game.getEntity(id);
         Entity tractor = game.getEntity(towed.getTractor());
-        //If the dropped trailer carries ammo, remove that from the train's supply
-       /* tractor.getAmmo().removeAll(towed.getAmmo());
-        tractor.getEquipment().removeAll(towed.getAmmo());
-        for (int i = 0; i < tractor.getNumberOfCriticals(Tank.LOC_BODY); i++) {
-            final CriticalSlot cs = tractor.getCritical(Tank.LOC_BODY, i);
-            if (cs != null && cs.getMount().getEntity().equals(towed)) {
-                cs.setMissing(true);
-            }
-        }
-        for (int i : tractor.getAllTowedUnits()) {
-            Entity trailer = game.getEntity(i);
-            if (trailer.equals(towed)) {
-                continue;
-            }
-            trailer.getAmmo().removeAll(towed.getAmmo());
-            trailer.getEquipment().removeAll(towed.getAmmo());
-            for (int eqNum = 0; eqNum < trailer.getNumberOfCriticals(Tank.LOC_BODY); eqNum++) {
-                final CriticalSlot cs = trailer.getCritical(Tank.LOC_BODY, eqNum);
-                if (cs != null && cs.getMount().getEntity().equals(towed)) {
-                    cs.setMissing(true);
-                }
-            }
-        } */
         //Remove the designated trailer from the tractor's carried units
         removeTowedUnit(id);
         //Now, find and empty the transporter on the actual towing entity (trailer or tractor)
-        Entity towingEnt = game.getEntity(towed.towedBy);
+        Entity towingEnt = game.getEntity(towed.getTowedBy());
         towingEnt.connectedUnits.clear();
         if (towingEnt != null) {
+            //If the dropped trailer carries ammo linked to other vehicles, unload it
+            for (Mounted m : towed.getAmmo()) {
+                if (m.getLinkedBy() != null && m.getLinkedBy().getEntity().equals(towingEnt)) {
+                    towingEnt.loadWeaponWithSameAmmo(m.getLinkedBy());
+                }
+            }
             Transporter hitch = towingEnt.getHitchCarrying(id);
             if (hitch != null) {
                 hitch.unload(towed);
@@ -15667,7 +15620,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Entity trailer = game.getEntity(i);
             trailer.setTractor(Entity.NONE);
             tractor.removeTowedUnit(i);
-            towingEnt = game.getEntity(trailer.towedBy);
+            towingEnt = game.getEntity(trailer.getTowedBy());
             if (towingEnt != null) {
                 Transporter hitch = towingEnt.getHitchCarrying(i);
                 if (hitch != null) {

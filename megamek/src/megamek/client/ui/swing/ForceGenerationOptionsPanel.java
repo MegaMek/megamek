@@ -204,11 +204,11 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.weighty = 0.0;
         add(new JLabel(Messages.getString("RandomArmyDialog.UnitType")), c);
 
-        if (use.equals(Use.FORMATION_BUILDER)) {
-            for (int unitType : UNIT_TYPES) {
-                if (unitType < UnitType.JUMPSHIP) {
-                    cbUnitType.addItem(UnitType.getTypeName(unitType));
-                }
+        boolean restrictUnitType = use == Use.FORMATION_BUILDER;
+        
+        for (int unitType : UNIT_TYPES) {
+            if ((unitType < UnitType.JUMPSHIP) || !restrictUnitType) {
+                cbUnitType.addItem(UnitType.getTypeName(unitType));
             }
         }
         cbUnitType.setSelectedItem(0);
@@ -615,9 +615,12 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                             EntityWeightClass.WEIGHT_COLOSSAL, false);
                     break;
                 case UnitType.TANK:
-                case UnitType.NAVAL:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
                             EntityWeightClass.WEIGHT_ASSAULT, false);
+                    break;
+                case UnitType.NAVAL:
+                    addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,
+                            EntityWeightClass.WEIGHT_ASSAULT, false);                    
                     break;
                 case UnitType.PROTOMEK:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,

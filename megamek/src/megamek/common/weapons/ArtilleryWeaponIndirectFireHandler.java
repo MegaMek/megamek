@@ -152,7 +152,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             System.err.println("Artillery Entity is null!");
             return true;
         }
-        Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
+        //Trailers can share ammo, which means the entity carrying the ammo might
+        Entity ammoCarrier = game.getEntity(aaa.getAmmoCarrier());
+        Mounted ammoUsed = ammoCarrier.getEquipment(aaa.getAmmoId());
         final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
                 .getType();
         // Are there any valid spotters?

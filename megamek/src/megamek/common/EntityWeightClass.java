@@ -179,78 +179,80 @@ public class EntityWeightClass {
     public static int getSupportWeightClass(double tonnage, String type) {
         int i = 0;
 
-        if (type.equals("Wheeled")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (wheeledSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= wheeledSupportVehicleWeightLimits[i]) {
-                    break;
+        switch (type) {
+            case "Wheeled":
+                for (i = WEIGHT_SMALL_SUPPORT; i < (wheeledSupportVehicleWeightLimits.length - 1); i++) {
+                    if (tonnage <= wheeledSupportVehicleWeightLimits[i]) {
+                        break;
+                    }
                 }
-            }
-        } else if (type.equals("Tracked")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (trackedSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= trackedSupportVehicleWeightLimits[i]) {
-                    break;
+                break;
+            case "Tracked":
+                for (i = WEIGHT_SMALL_SUPPORT; i < (trackedSupportVehicleWeightLimits.length - 1); i++) {
+                    if (tonnage <= trackedSupportVehicleWeightLimits[i]) {
+                        break;
+                    }
                 }
-            }
-        } else if (type.equals("Hover")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (hoverSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= hoverSupportVehicleWeightLimits[i]) {
-                    break;
+                break;
+            case "Hover":
+                for (i = WEIGHT_SMALL_SUPPORT; i < (hoverSupportVehicleWeightLimits.length - 1); i++) {
+                    if (tonnage <= hoverSupportVehicleWeightLimits[i]) {
+                        break;
+                    }
                 }
-            }
-        } else if (type.equals(UnitType.getTypeName(UnitType.VTOL))) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (vtolSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= vtolSupportVehicleWeightLimits[i]) {
-                    break;
+                break;
+            case "VTOL":
+                for (i = WEIGHT_SMALL_SUPPORT; i < (vtolSupportVehicleWeightLimits.length - 1); i++) {
+                    if (tonnage <= vtolSupportVehicleWeightLimits[i]) {
+                        break;
+                    }
                 }
-            }
-        } else if (type.equals("WiGE")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (wigeSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= wigeSupportVehicleWeightLimits[i]) {
-                    break;
+                break;
+            case "WiGE":
+                for (i = WEIGHT_SMALL_SUPPORT; i < (wigeSupportVehicleWeightLimits.length - 1); i++) {
+                    if (tonnage <= wigeSupportVehicleWeightLimits[i]) {
+                        break;
+                    }
                 }
-            }
-        } else if (type.equals(UnitType.getTypeName(UnitType.NAVAL))) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= navalSupportVehicleWeightLimits[i]) {
-                    break;
+                break;
+            case "Naval":
+            case "Hydrofoil":
+            case "Submarine":
+                for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
+                    if (tonnage <= navalSupportVehicleWeightLimits[i]) {
+                        break;
+                    }
                 }
-            }
-        } else if (type.equals("Submarine")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= navalSupportVehicleWeightLimits[i]) {
-                    break;
+                break;
+            case "Rail":
+            case "MagLev":
+                for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
+                    if (tonnage <= railSupportVehicleWeightLimits[i]) {
+                        break;
+                    }
                 }
-            }
-        } else if (type.equals("Rail")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= railSupportVehicleWeightLimits[i]) {
-                    break;
+                break;
+            case "Aerodyne":
+                for (i = WEIGHT_SMALL_SUPPORT; i < (fixedwingSupportVehicleWeightLimits.length - 1); i++) {
+                    if (tonnage <= fixedwingSupportVehicleWeightLimits[i]) {
+                        break;
+                    }
                 }
-            }
-        } else if (type.equals("MagLev")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= railSupportVehicleWeightLimits[i]) {
-                    break;
+                break;
+            case "Airship":
+                for (i = WEIGHT_SMALL_SUPPORT; i < (airshipSupportVehicleWeightLimits.length - 1); i++) {
+                    if (tonnage <= airshipSupportVehicleWeightLimits[i]) {
+                        break;
+                    }
                 }
-            }
-        } else if (type.equals("Aerodyne")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (fixedwingSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= fixedwingSupportVehicleWeightLimits[i]) {
-                    break;
+                break;
+            case "Satellite":
+                for (i = WEIGHT_SMALL_SUPPORT; i < (satelliteSupportVehicleWeightLimits.length - 1); i++) {
+                    if (tonnage <= satelliteSupportVehicleWeightLimits[i]) {
+                        break;
+                    }
                 }
-            }
-        } else if (type.equals("Airship")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (airshipSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= airshipSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals("Satellite")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (satelliteSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= satelliteSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
+                break;
         }
 
         return i;

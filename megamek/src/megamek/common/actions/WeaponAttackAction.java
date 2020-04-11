@@ -107,6 +107,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     
     private int weaponId;
     private int ammoId = -1;
+    private int ammoCarrier = -1;
     private int aimedLocation = Entity.LOC_NONE;
     private int aimMode = IAimingModes.AIM_MODE_NONE;
     private int otherAttackInfo = -1; //
@@ -189,6 +190,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     public int getAmmoId() {
         return ammoId;
     }
+    
+    /**
+     * Returns the entity id of the unit carrying the ammo used by this attack
+     * @return
+     */
+    public int getAmmoCarrier() {
+        return ammoCarrier;
+    }
 
     public int getAimedLocation() {
         return aimedLocation;
@@ -208,6 +217,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
     public void setAmmoId(int ammoId) {
         this.ammoId = ammoId;
+    }
+    
+    /**
+     * Sets the entity id of the ammo carrier for this shot, if different than the firing entity
+     * @param entityId
+     */
+    public void setAmmoCarrier(int entityId) {
+        this.ammoCarrier = entityId;
     }
 
     public void setAimedLocation(int aimedLocation) {

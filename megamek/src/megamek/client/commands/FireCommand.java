@@ -233,6 +233,7 @@ public class FireCommand extends ClientCommand {
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
+            waa.setAmmoCarrier(ammoMount.getEntity().getId());
             if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
                     && (ammoType.getAmmoType() == AmmoType.T_LRM 
                     || ammoType.getAmmoType() == AmmoType.T_MML

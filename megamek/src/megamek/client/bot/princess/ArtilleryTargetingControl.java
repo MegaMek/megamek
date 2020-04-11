@@ -340,6 +340,7 @@ public class ArtilleryTargetingControl {
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
                     int ammoID = findAmmo(shooter, currentWeapon, game);
                     aaa.setAmmoId(ammoID);
+                    aaa.setAmmoCarrier(shooter.getId());
                     actualFireInfo.setAction(aaa);
                     retval.add(actualFireInfo);
                     retval.setUtility(retval.getUtility() + maxDamage);

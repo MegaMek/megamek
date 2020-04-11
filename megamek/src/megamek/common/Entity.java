@@ -3895,11 +3895,36 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * 
      * If this is a weapon bay, try to load the weapon with ammo in the same bay,
      * and if it fails, load with compatible ammo in the same location.
+     * 
+     * If this unit is part of a train, also check the vehicles directly connected
+     * to it for compatible ammo
      */
     public void loadWeaponWithSameAmmo(Mounted mounted) {
         for (Mounted mountedAmmo : getAmmo()) {
             if (loadWeaponWithSameAmmo(mounted, mountedAmmo)) {
                 return;
+            }
+        }
+        //Check the unit towing this one for ammo
+        if (getTowedBy() != Entity.NONE) {
+            Entity ahead = game.getEntity(getTowedBy());
+            if (ahead != null) {
+                for (Mounted towedByAmmo : ahead.getAmmo()) {
+                    if (loadWeaponWithSameAmmo(mounted, towedByAmmo)) {
+                        return;
+                    }
+                }
+            }
+        }
+        // Then check the unit towed by this one for ammo
+        if (getTowing() != Entity.NONE) {
+            Entity behind = game.getEntity(getTowing());
+            if (behind != null) {
+                for (Mounted towingAmmo : behind.getAmmo()) {
+                    if (loadWeaponWithSameAmmo(mounted, towingAmmo)) {
+                        return;
+                    }
+                }
             }
         }
         // fall back to use any ammo
@@ -15560,7 +15585,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 hitch.load(towed);
             }
         }
-        //If the new trailer carries ammo, link that to the train's supply
+        /*
+        //Any directly connected vehicles can share ammo. Take care of that linking here
         for (Mounted m : towed.getAmmo()) {
             try {
                 addEquipment(m, Tank.LOC_BODY, false);
@@ -15578,7 +15604,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     e.printStackTrace();
                 }
             }
-        }
+        } */
+    }
+    
+    /**
+     * Worker function that links/unlinks ammo shared by adjacent vehicles as trailers
+     * are added and dropped
+     * @param towing  The vehicle directly ahead of this one in the train
+     * @param towed   The vehicle directly behind this one in the train
+     * @param ammo    The complete list of ammo carried by this vehicle
+     */
+    private void relinkTrainAmmo(Entity towing, Entity towed, ArrayList<Mounted> ammo) {
     }
 
     /**
@@ -15592,7 +15628,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         Entity towed = game.getEntity(id);
         Entity tractor = game.getEntity(towed.getTractor());
         //If the dropped trailer carries ammo, remove that from the train's supply
-        tractor.getAmmo().removeAll(towed.getAmmo());
+       /* tractor.getAmmo().removeAll(towed.getAmmo());
         tractor.getEquipment().removeAll(towed.getAmmo());
         for (int i = 0; i < tractor.getNumberOfCriticals(Tank.LOC_BODY); i++) {
             final CriticalSlot cs = tractor.getCritical(Tank.LOC_BODY, i);
@@ -15613,7 +15649,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     cs.setMissing(true);
                 }
             }
-        }
+        } */
         //Remove the designated trailer from the tractor's carried units
         removeTowedUnit(id);
         //Now, find and empty the transporter on the actual towing entity (trailer or tractor)

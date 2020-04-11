@@ -177,85 +177,51 @@ public class EntityWeightClass {
      * @return        The weight class
      */
     public static int getSupportWeightClass(double tonnage, String type) {
-        int i = 0;
-
-        switch (type) {
-            case "Wheeled":
-                for (i = WEIGHT_SMALL_SUPPORT; i < (wheeledSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= wheeledSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
+        double[] weightLimits;
+        switch (EntityMovementMode.getMode(type)) {
+            case WHEELED:
+                weightLimits = wheeledSupportVehicleWeightLimits;
                 break;
-            case "Tracked":
-                for (i = WEIGHT_SMALL_SUPPORT; i < (trackedSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= trackedSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
+            case TRACKED:
+                weightLimits = trackedSupportVehicleWeightLimits;
                 break;
-            case "Hover":
-                for (i = WEIGHT_SMALL_SUPPORT; i < (hoverSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= hoverSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
+            case HOVER:
+                weightLimits = hoverSupportVehicleWeightLimits;
                 break;
-            case "VTOL":
-                for (i = WEIGHT_SMALL_SUPPORT; i < (vtolSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= vtolSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
+            case VTOL:
+                weightLimits = vtolSupportVehicleWeightLimits;
                 break;
-            case "WiGE":
-                for (i = WEIGHT_SMALL_SUPPORT; i < (wigeSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= wigeSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
+            case WIGE:
+                weightLimits = wigeSupportVehicleWeightLimits;
                 break;
-            case "Naval":
-            case "Hydrofoil":
-            case "Submarine":
-                for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= navalSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
+            case NAVAL:
+            case HYDROFOIL:
+            case SUBMARINE:
+                weightLimits = navalSupportVehicleWeightLimits;
                 break;
-            case "Rail":
-            case "MagLev":
-                for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= railSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
+            case RAIL:
+            case MAGLEV:
+                weightLimits = railSupportVehicleWeightLimits;
                 break;
-            case "Aerodyne":
-                for (i = WEIGHT_SMALL_SUPPORT; i < (fixedwingSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= fixedwingSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
+            case AERODYNE:
+                weightLimits = fixedwingSupportVehicleWeightLimits;
                 break;
-            case "Airship":
-                for (i = WEIGHT_SMALL_SUPPORT; i < (airshipSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= airshipSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
+            case AIRSHIP:
+                weightLimits = airshipSupportVehicleWeightLimits;
                 break;
-            case "Satellite":
-                for (i = WEIGHT_SMALL_SUPPORT; i < (satelliteSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= satelliteSupportVehicleWeightLimits[i]) {
-                        break;
-                    }
-                }
+            case STATION_KEEPING:
+                weightLimits = satelliteSupportVehicleWeightLimits;
                 break;
+            default:
+                return WEIGHT_MEDIUM_SUPPORT;
+        }
+        for (int i = WEIGHT_SMALL_SUPPORT; i < weightLimits.length; i++) {
+            if (tonnage <= weightLimits[i]) {
+                return i;
+            }
         }
 
-        return i;
+        return WEIGHT_MEDIUM_SUPPORT;
     }
 
     public static int getWeightClass(double tonnage, Entity en) {

@@ -15603,12 +15603,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         Entity towingEnt = game.getEntity(towed.getTowedBy());
         towingEnt.connectedUnits.clear();
         if (towingEnt != null) {
-            //If the dropped trailer carries ammo linked to other vehicles, unload it
-            for (Mounted m : towed.getAmmo()) {
-                if (m.getLinkedBy() != null && m.getLinkedBy().getEntity().equals(towingEnt)) {
-                    towingEnt.loadWeaponWithSameAmmo(m.getLinkedBy());
-                }
-            }
             Transporter hitch = towingEnt.getHitchCarrying(id);
             if (hitch != null) {
                 hitch.unload(towed);
@@ -15633,6 +15627,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //Update these last, or we get concurrency issues
         towed.setTractor(Entity.NONE);
         towed.setTowedBy(Entity.NONE);
+        towed.setTowing(Entity.NONE);
         towed.connectedUnits.clear();
     }
 
@@ -15665,6 +15660,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void removeTowedUnit(int id) {
         isTractorFor.remove(isTractorFor.indexOf(id));
+        if (getTowing() == id) {
+            setTowing(Entity.NONE);
+        }
     }
 
     /**

@@ -9,7 +9,8 @@ VERSION HISTORY:
 + PR #1837: The bot will now be able to use a searchlight on buildings without crashing the server.
 + Documentation: Trailer How-To added (thanks mkerensky)
 + Data: First SW RATs - Thanks SLDF_gunslinger
-+ PR #1843: Saxarba roads 
++ PR #1843: Saxarba roads
++ Data: Adding Royal Fantasy units as Unofficial.
 
 0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO

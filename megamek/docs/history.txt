@@ -3,6 +3,12 @@ VERSION HISTORY:
 0.47.6-SNAPSHOT
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed
 + PR #1808: Abandon ship! Large spacecraft can now launch escape pods, giving the opposing player more opportunity to commit war crimes.
++ Issue #1824: Implementing Tactical Operations Low Visibility Errata
++ Issue #1768: Resizing the map no longer messes up building/road layout. Note that resizing westward needs to be done by an even number of hexes.
++ Issue #1812: Semi-guided warheads indirectly fired at TAGged targets are no longer subject to terrain modifiers for the purposes of "to-hit" numbers.
++ PR #1837: The bot will now be able to use a searchlight on buildings without crashing the server.
++ Documentation: Trailer How-To added (thanks mkerensky)
++ Data" First SW RATs - Thanks SLDF_gunslinger
 
 0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO

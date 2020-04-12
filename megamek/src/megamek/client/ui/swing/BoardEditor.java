@@ -1363,22 +1363,24 @@ public class BoardEditor extends JComponent
 
     public void boardResize() {
     	ResizeMapDialog emd = new ResizeMapDialog(frame, this, null, mapSettings);
-        emd.setVisible(true);
-        board = BoardUtilities.generateRandom(mapSettings);
+    	boolean userCancel = emd.activateDialog(bv.getTilesetManager().getThemes());
+    	if (!userCancel) {
+    	    board = BoardUtilities.generateRandom(mapSettings);
 
-        // Implant the old board
-        int west = emd.getExpandWest();
-        int north = emd.getExpandNorth();
-        int east = emd.getExpandEast();
-        int south = emd.getExpandSouth();
-        board = implantOldBoard(game, west, north, east, south);
+    	    // Implant the old board
+    	    int west = emd.getExpandWest();
+    	    int north = emd.getExpandNorth();
+    	    int east = emd.getExpandEast();
+    	    int south = emd.getExpandSouth();
+    	    board = implantOldBoard(game, west, north, east, south);
 
-        game.setBoard(board);
-        curfile = null;
-        butSourceFile.setEnabled(false);
-        frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
-        menuBar.setBoard(true);
-        bvc.doLayout();
+    	    game.setBoard(board);
+    	    curfile = null;
+    	    butSourceFile.setEnabled(false);
+    	    frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
+    	    menuBar.setBoard(true);
+    	    bvc.doLayout();
+    	}
     }
 
     // When we resize a board, implant the old board's hexes where they should be in the new board
@@ -1387,7 +1389,8 @@ public class BoardEditor extends JComponent
         for (int x = 0; x < oldBoard.getWidth(); x++) {
             for (int y = 0; y < oldBoard.getHeight(); y++) {
                 int newX = x+west;
-                int newY = y+north;
+                int odd = x & 1 & west;
+                int newY = y+north + odd;
                 if (oldBoard.contains(x, y) && board.contains(newX, newY)) {
                     IHex oldHex = oldBoard.getHex(x, y);
                     IHex hex = board.getHex(newX, newY);

@@ -1,0 +1,12 @@
+Capellan Confederation Assault Mechs F
+Striker STC-2C,1
+Banshee BNC-3E,2
+Goliath GOL-1H,3
+Awesome AWS-8Q,4
+Longbow LGB-0W,5
+Victor VTR-9B,6
+Stalker STK-3F,5
+Highlander HGN-732,4
+Thug THG-11E,3
+BattleMaster BLR-1G,2
+Longbow LGB-7Q,1

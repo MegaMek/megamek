@@ -172,7 +172,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         }
 
 //        Color goodBackground = isRequired() ? BK_REQUIRED : BK_DEFAULT;
-        String verifyResult = verifyText();
+        String verifyResult = verifyTextS();
 
         // If verifyResult is null, no problems were found.
         if (verifyResult == null) {
@@ -215,7 +215,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
      *
      * @return NULL if the text in the field is valid. A description of the failure otherwise.
      */
-    public String verifyText() {
+    public String verifyTextS() {
         if (verifiers.isEmpty()) {
             return null;
         }
@@ -229,12 +229,21 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         }
         return result;
     }
+    
+    /**
+     * Compares the text field's value to the list of {@link DataVerifier} objects to ensure the validity of the data.
+     *
+     * @return true if the text in the field is valid.
+     */
+    public boolean verifyText() {
+        return verifyTextS() == null;
+    }
 
     public Integer getAsInt() {
         if (!isTextNumeric()) {
             return null;
         }
-        return Integer.parseInt(getText());
+        return Integer.parseInt(getText().trim());
     }
 
     public String getOldToolTip() {

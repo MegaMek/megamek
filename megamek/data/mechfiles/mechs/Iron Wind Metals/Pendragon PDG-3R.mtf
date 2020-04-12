@@ -1,0 +1,154 @@
+Version:1.0
+Pendragon
+PDG-3R
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3130
+Rules Level:2
+Source:Iron Wind Metals
+
+Mass:95
+Engine:380 XL Engine(IS)
+Structure:IS Composite
+Myomer:Standard
+
+Heat Sinks:17 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:32
+RA Armor:32
+LT Armor:30
+RT Armor:30
+CT Armor:48
+HD Armor:9
+LL Armor:40
+RL Armor:40
+RTL Armor:10
+RTR Armor:10
+RTC Armor:12
+
+Weapons:7
+ER PPC, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+Rotary AC/2, Right Arm
+Rotary AC/2, Left Arm
+C3 Master with TAG, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+ISCASEII
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+ISCASEII
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+PPC Capacitor
+ISERPPC
+ISERPPC
+ISERPPC
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Coolant Pod
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

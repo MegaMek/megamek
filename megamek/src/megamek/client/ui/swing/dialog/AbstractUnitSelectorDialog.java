@@ -80,6 +80,7 @@ import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.templates.TROView;
+import megamek.common.util.sorter.NaturalOrderComparator;
 
 /**
  * This is a heavily reworked version of the original MechSelectorDialog which
@@ -223,8 +224,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         tableUnits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         sorter = new TableRowSorter<>(unitModel);
         sorter.setComparator(MechTableModel.COL_COST, new FormattedNumberSorter());
-        //sorter.setComparator(MechTableModel.COL_CHASSIS, new NaturalOrderComparator());
-        //sorter.setComparator(MechTableModel.COL_MODEL, new NaturalOrderComparator());
+        sorter.setComparator(MechTableModel.COL_CHASSIS, new NaturalOrderComparator());
+        sorter.setComparator(MechTableModel.COL_MODEL, new NaturalOrderComparator());
         tableUnits.setRowSorter(sorter);
         tableUnits.getSelectionModel().addListSelectionListener(
                 evt -> {

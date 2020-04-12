@@ -902,7 +902,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if ((null != mounted.getLinked())
                 && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)) {
             Mounted ammoMount = mounted.getLinked();
-            waa.setAmmoId(ce().getEquipmentNum(ammoMount));
+            waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
             waa.setAmmoCarrier(ammoMount.getEntity().getId());
             if (((AmmoType) ammoMount.getType()).getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(

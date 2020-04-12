@@ -614,13 +614,10 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,
                             EntityWeightClass.WEIGHT_COLOSSAL, false);
                     break;
+                case UnitType.NAVAL:
                 case UnitType.TANK:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
                             EntityWeightClass.WEIGHT_ASSAULT, false);
-                    break;
-                case UnitType.NAVAL:
-                    addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,
-                            EntityWeightClass.WEIGHT_ASSAULT, false);                    
                     break;
                 case UnitType.PROTOMEK:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,

@@ -97,6 +97,10 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     public static final int ALLOWED_YEAR_ANY = 999999;
 
+    protected static final int TECH_LEVEL_DISPLAY_IS = 0;
+    protected static final int TECH_LEVEL_DISPLAY_CLAN = 1;
+    protected static final int TECH_LEVEL_DISPLAY_IS_CLAN = 2;
+
     protected JButton buttonSelectClose;
     protected JButton buttonSelect;
     protected JButton buttonClose;
@@ -140,6 +144,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected int allowedYear = ALLOWED_YEAR_ANY;
     protected boolean canonOnly = false;
     protected int gameTechLevel = TechConstants.T_SIMPLE_INTRO;
+    protected int techLevelDisplayType = TECH_LEVEL_DISPLAY_IS_CLAN;
 
     protected static MMLogger logger = DefaultMmLogger.getInstance();
     //endregion Variable Declarations
@@ -491,9 +496,29 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         int selectionIdx = 0;
         for (int tl = 0; tl <= maxTech; tl++) {
             if ((tl != TechConstants.T_IS_TW_ALL) && (tl != TechConstants.T_TW_ALL)) {
-                techLevelListToIndex.put(selectionIdx, tl);
-                techModel.addElement(TechConstants.getLevelDisplayableName(tl));
-                selectionIdx++;
+                switch (techLevelDisplayType) {
+                    case TECH_LEVEL_DISPLAY_IS:
+                        if (TechConstants.getTechName(tl).equals("Inner Sphere")
+                                || TechConstants.getTechName(tl).contains("IS")) {
+                            techLevelListToIndex.put(selectionIdx, tl);
+                            techModel.addElement(TechConstants.getLevelDisplayableName(tl));
+                            selectionIdx++;
+                        }
+                        break;
+                    case TECH_LEVEL_DISPLAY_CLAN:
+                        if (TechConstants.getTechName(tl).contains("Clan")) {
+                            techLevelListToIndex.put(selectionIdx, tl);
+                            techModel.addElement(TechConstants.getLevelDisplayableName(tl));
+                            selectionIdx++;
+                        }
+                        break;
+                    case TECH_LEVEL_DISPLAY_IS_CLAN:
+                    default:
+                        techLevelListToIndex.put(selectionIdx, tl);
+                        techModel.addElement(TechConstants.getLevelDisplayableName(tl));
+                        selectionIdx++;
+                        break;
+                }
             }
         }
         listTechLevel.setModel(techModel);

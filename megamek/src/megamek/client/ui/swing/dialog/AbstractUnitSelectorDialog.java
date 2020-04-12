@@ -24,7 +24,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.PatternSyntaxException;
 
@@ -159,8 +158,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     public abstract void updateOptionValues();
 
     /**
-     * This is overwritten in MekHQ for user preferences, and has been set up to permit preference
-     * implementation in anything that extends this
+     * This has been set up to permit preference implementation in anything that extends this
      */
     private void setUserPreferences() {
         GUIPreferences guiPreferences = GUIPreferences.getInstance();
@@ -172,9 +170,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         updateTypeCombo(guiPreferences.getMechSelectorRulesLevels().replaceAll("\\[", ""));
 
-        //initialize with the units sorted alphabetically by chassis
         List<SortKey> sortList = new ArrayList<>();
-        sortList.add(new SortKey(MechTableModel.COL_CHASSIS, SortOrder.ASCENDING));
+        try {
+            sortList.add(new SortKey(guiPreferences.getMechSelectorSortColumn(),
+                    SortOrder.valueOf(guiPreferences.getMechSelectorSortOrder())));
+        } catch (Exception e) {
+            logger.error(getClass(), "setUserPreferences",
+                    "Failed to set based on user preferences, attempting to use default", e);
+
+            sortList.add(new SortKey(guiPreferences.getMechSelectorDefaultSortColumn(),
+                    SortOrder.valueOf(guiPreferences.getMechSelectorDefaultSortOrder())));
+        }
         tableUnits.getRowSorter().setSortKeys(sortList);
         ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
 
@@ -223,7 +229,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "");
         tableUnits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         sorter = new TableRowSorter<>(unitModel);
-        sorter.setComparator(MechTableModel.COL_COST, new FormattedNumberSorter());
         sorter.setComparator(MechTableModel.COL_CHASSIS, new NaturalOrderComparator());
         sorter.setComparator(MechTableModel.COL_MODEL, new NaturalOrderComparator());
         tableUnits.setRowSorter(sorter);
@@ -672,11 +677,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     @Override
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
-        if (e.getID() == WindowEvent.WINDOW_DEACTIVATED) {
+        if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
             GUIPreferences guiPreferences = GUIPreferences.getInstance();
             guiPreferences.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
             guiPreferences.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
             guiPreferences.setMechSelectorRulesLevels(Arrays.toString(listTechLevel.getSelectedIndices()));
+            guiPreferences.setMechSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().get(0).getColumn());
+            guiPreferences.setMechSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().get(0).getSortOrder().name());
             guiPreferences.setMechSelectorSizeHeight(getSize().height);
             guiPreferences.setMechSelectorSizeWidth(getSize().width);
         }
@@ -898,30 +905,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             } else {
                 return "?";
             }
-        }
-    }
-
-    /**
-     * A comparator for numbers that have been formatted with DecimalFormat
-     * @author Jay Lawson
-     */
-    private static class FormattedNumberSorter implements Comparator<String> {
-        @Override
-        public int compare(String s0, String s1) {
-            DecimalFormat format = new DecimalFormat();
-            double l0 = 0;
-            try {
-                l0 = format.parse(s0).doubleValue();
-            } catch (java.text.ParseException e) {
-                logger.error(getClass(), "compare", e);
-            }
-            double l1 = 0;
-            try {
-                l1 = format.parse(s1).doubleValue();
-            } catch (java.text.ParseException e) {
-                logger.error(getClass(), "compare", e);
-            }
-            return ((Comparable<Double>)l0).compareTo(l1);
         }
     }
 }

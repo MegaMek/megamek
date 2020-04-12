@@ -142,6 +142,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MECH_SELECTOR_UNIT_TYPE= "MechSelectorUnitType";
     public static final String MECH_SELECTOR_WEIGHT_CLASS= "MechSelectorWeightClass";
     public static final String MECH_SELECTOR_RULES_LEVELS= "MechSelectorRuleType";
+    public static final String MECH_SELECTOR_SORT_COLUMN = "MechSelectorSortColumn";
+    public static final String MECH_SELECTOR_SORT_ORDER = "MechSelectorSortOrder";
     public static final String MECH_SELECTOR_SIZE_HEIGHT = "MechSelectorSizeHeight";
     public static final String MECH_SELECTOR_SIZE_WIDTH = "MechSelectorSizeWidth";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
@@ -319,6 +321,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_UNIT_TYPE,0);
         store.setDefault(MECH_SELECTOR_WEIGHT_CLASS,15);
         store.setDefault(MECH_SELECTOR_RULES_LEVELS,"[0]");
+        store.setDefault(MECH_SELECTOR_SORT_COLUMN, 0);
+        store.setDefault(MECH_SELECTOR_SORT_ORDER, "ASCENDING");
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
         store.setDefault(MECH_SELECTOR_SIZE_HEIGHT,600);
         store.setDefault(MECH_SELECTOR_SIZE_WIDTH,800);
@@ -566,6 +570,21 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getString(MECH_SELECTOR_RULES_LEVELS);
     }
 
+    public int getMechSelectorSortColumn() {
+        return store.getInt(MECH_SELECTOR_SORT_COLUMN);
+    }
+
+    public int getMechSelectorDefaultSortColumn() {
+        return store.getDefaultInt(MECH_SELECTOR_SORT_COLUMN);
+    }
+
+    public String getMechSelectorSortOrder() {
+        return store.getString(MECH_SELECTOR_SORT_ORDER);
+    }
+
+    public String getMechSelectorDefaultSortOrder() {
+        return store.getDefaultString(MECH_SELECTOR_SORT_ORDER);
+    }
 
     public int getMechSelectorSizeHeight() {
         return store.getInt(MECH_SELECTOR_SIZE_HEIGHT);
@@ -972,6 +991,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MECH_SELECTOR_RULES_LEVELS,rulesLevels);
     }
 
+    public void setMechSelectorSortColumn(int columnId) {
+        store.setValue(MECH_SELECTOR_SORT_COLUMN, columnId);
+    }
+
+    public void setMechSelectorSortOrder(String order) {
+        store.setValue(MECH_SELECTOR_SORT_ORDER, order);
+    }
 
     public void setMechSelectorSizeHeight(int i) {
         store.setValue(MECH_SELECTOR_SIZE_HEIGHT, i);

@@ -13,6 +13,8 @@ VERSION HISTORY:
 + Data: Adding Royal Fantasy units as Unofficial.
 + Data: New Sprites
 + Issue #1802 - Kajis Maps and Scenarios Update
++ Data: Missing Archive Sprites
++ Issue #1830 - Sarath 'Mech - Lacking Quirk
 
 0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO

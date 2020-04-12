@@ -124,7 +124,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     private static final int KEY_TIMEOUT = 1000;
 
     protected static MechSummaryCache mscInstance = MechSummaryCache.getInstance();
-    private MechSummary[] mechs;
+    protected MechSummary[] mechs;
 
     private MechTableModel unitModel = new MechTableModel();
     protected MechSearchFilter searchFilter;
@@ -630,21 +630,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                             + ": " + e.getMessage(), e);
             return null;
         }
-    }
-
-    /**
-     * TODO : Move me to MML
-     * @return the MechSummary for the chosen mech
-     */
-    public MechSummary getChosenMechSummary() {
-        int view = tableUnits.getSelectedRow();
-        if (view < 0) {
-            // selection got filtered away
-            return null;
-        }
-        int selected = tableUnits.convertRowIndexToModel(view);
-        // else
-        return mechs[selected];
     }
 
     public void run() {

@@ -1966,5 +1966,18 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             return false;
         }
     }
+    
+    /**
+     * Returns true if this Mounted is ammunition in homing mode.
+     */
+    public boolean isHomingAmmoInHomingMode() {
+        if(!(getType() instanceof AmmoType)) {
+            return false;
+        }
+        
+        AmmoType ammoType = (AmmoType) getType();
+        return ammoType.getMunitionType() == AmmoType.M_HOMING &&
+                curMode().equals("Homing");
+    }
 
 }

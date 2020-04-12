@@ -129,6 +129,9 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
+import megamek.common.weapons.AreaEffectHelper;
+import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
+import megamek.common.weapons.AreaEffectHelper.NukeStats;
 import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
@@ -1638,7 +1641,12 @@ public class Server implements Runnable {
             }
 
             if (entity.isDestroyed()) {
-                toRemove.addElement(entity);
+                if (game.getEntity(entity.getTransportId()) != null
+                        && game.getEntity(entity.getTransportId()).isLargeCraft()) {
+                    //Leaving destroyed entities in dropship bays alone here
+                } else {
+                    toRemove.addElement(entity);
+                }
             }
         }
 
@@ -4211,6 +4219,14 @@ public class Server implements Runnable {
 
         // set deployment round of the loadee to equal that of the loader
         unit.setDeployRound(loader.getDeployRound());
+        
+        //Update the loading unit's passenger count, if it's a large craft
+        if (loader instanceof SmallCraft || loader instanceof Jumpship) {
+            //Don't add dropship crew to a jumpship or station's passenger list
+            if (!unit.isLargeCraft()) {
+                loader.setNPassenger(loader.getNPassenger() + unit.getCrew().getSize());
+            }
+        }
 
         // Update the loaded unit.
         entityUpdate(unit.getId());
@@ -4480,6 +4496,14 @@ public class Server implements Runnable {
         if (duringDeployment) {
             unit.setUnloaded(false);
             unit.setDone(false);
+        }
+        
+        //Update the transport unit's passenger count, if it's a large craft
+        if (unloader instanceof SmallCraft || unloader instanceof Jumpship) {
+            //Don't add dropship crew to a jumpship or station's passenger list
+            if (!unit.isLargeCraft()) {
+                unloader.setNPassenger(Math.max(0, unloader.getNPassenger() - unit.getCrew().getSize()));
+            }
         }
 
         // Update the unloaded unit.
@@ -6587,21 +6611,44 @@ public class Server implements Runnable {
         }
 
         if (md.contains(MoveStepType.EJECT)) {
-            if ((entity instanceof Mech) || (entity instanceof Aero)) {
+            if (entity.isLargeCraft() && !entity.isCarcass()) {
+                r = new Report(2026);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                addReport(r);
+                Aero ship = (Aero) entity;
+                ship.setEjecting(true);
+                entityUpdate(ship.getId());
+                Coords legalPos = entity.getPosition();
+                //Get the step so we can pass it in and get the abandon coords from it
+                for (final Enumeration<MoveStep> i = md.getSteps(); i
+                        .hasMoreElements();) {
+                    final MoveStep step = i.nextElement();
+                    if (step.getType() == MoveStepType.EJECT) {
+                        legalPos = step.getTargetPosition();
+                    }
+                }
+                addReport(ejectSpacecraft(ship, ship.isSpaceborne(), (ship.isAirborne() && !ship.isSpaceborne()),legalPos));
+                //If we're grounded or destroyed by crew loss, end movement
+                if (entity.isDoomed() || (!entity.isSpaceborne() && !entity.isAirborne())) {
+                    return;
+                }
+            } else if ((entity instanceof Mech) || (entity instanceof Aero)) {
                 r = new Report(2020);
                 r.subject = entity.getId();
                 r.add(entity.getCrew().getName());
                 r.addDesc(entity);
                 addReport(r);
+                addReport(ejectEntity(entity, false));
+                return;
             } else if ((entity instanceof Tank) && !entity.isCarcass()) {
                 r = new Report(2025);
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 addReport(r);
+                addReport(ejectEntity(entity, false));
+                return;
             }
-            addReport(ejectEntity(entity, false));
-
-            return;
         }
 
         if (md.contains(MoveStepType.CAREFUL_STAND)) {
@@ -6775,7 +6822,7 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
             return;
         }
-
+        
         // iterate through steps
         firstStep = true;
         turnOver = false;
@@ -8909,6 +8956,15 @@ public class Server implements Runnable {
                     if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
                         addReport(processCrash(entity, 0, entity.getPosition()));
                     }
+                } else if (entity instanceof EscapePods && entity.isAirborne() && md.getFinalVelocity() < 2) {
+                    //Atmospheric Escape Pods that drop below velocity 2 lose altitude as dropping units
+                    entity.setAltitude(entity.getAltitude()
+                            - game.getPlanetaryConditions().getDropRate());
+                    r = new Report(6676);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(game.getPlanetaryConditions().getDropRate());
+                    addReport(r);
                 }
             }
         }
@@ -21670,30 +21726,58 @@ public class Server implements Runnable {
                 boolean wasPilot = crew.getCurrentPilotIndex() == pos;
                 boolean wasGunner = crew.getCurrentGunnerIndex() == pos;
                 crew.setHits(crew.getHits(pos) + damage, pos);
-                if (Crew.DEATH > crew.getHits(pos)) {
-                    r = new Report(6025);
-                } else {
-                    r = new Report(6026);
-                }
-                r.subject = en.getId();
-                r.indent(2);
-                r.add(crew.getCrewType().getRoleName(pos));
-                r.addDesc(en);
-                r.add(crew.getName(pos));
-                r.add(damage);
-                r.add(crew.getHits(pos));
-                vDesc.addElement(r);
-                if (crew.isDead(pos)) {
-                    r = createCrewTakeoverReport(en, pos, wasPilot, wasGunner);
-                    if (null != r) {
-                        vDesc.addElement(r);
+                if (en.isLargeCraft()) {
+                    r = new Report (6028);
+                    r.subject = en.getId();
+                    r.indent(2);
+                    r.addDesc(en);
+                    r.add(damage);
+                    if (((Aero)en).isEjecting()) {
+                        r.add("as crew depart the ship");
+                    } else {
+                        //Blank data
+                        r.add("");
                     }
-                }
-                if (Crew.DEATH > crew.getHits()) {
-                    vDesc.addAll(resolveCrewDamage(en, damage, pos));
-                } else if (!crew.isDoomed()) {
-                    crew.setDoomed(true);
-                    vDesc.addAll(destroyEntity(en, "pilot death", true));
+                    r.add(crew.getHits(pos));
+                    vDesc.addElement(r);
+                    if (Crew.DEATH > crew.getHits()) {
+                        vDesc.addAll(resolveCrewDamage(en, damage, pos));
+                    } else if (!crew.isDoomed()) {
+                        crew.setDoomed(true);
+                        //Safety. We might use this logic for large naval vessels later on
+                        if (en instanceof Aero && ((Aero)en).isEjecting()) {
+                            vDesc.addAll(destroyEntity(en, "ejection", true));
+                            ((Aero)en).setEjecting(false);
+                        } else {
+                            vDesc.addAll(destroyEntity(en, "crew casualties", true));
+                        }
+                    }
+                } else {
+                    if (Crew.DEATH > crew.getHits(pos)) {
+                        r = new Report(6025);
+                    } else {
+                        r = new Report(6026);
+                    }
+                    r.subject = en.getId();
+                    r.indent(2);
+                    r.add(crew.getCrewType().getRoleName(pos));
+                    r.addDesc(en);
+                    r.add(crew.getName(pos));
+                    r.add(damage);
+                    r.add(crew.getHits(pos));
+                    vDesc.addElement(r);
+                    if (crew.isDead(pos)) {
+                        r = createCrewTakeoverReport(en, pos, wasPilot, wasGunner);
+                        if (null != r) {
+                            vDesc.addElement(r);
+                        }
+                    }
+                    if (Crew.DEATH > crew.getHits()) {
+                        vDesc.addAll(resolveCrewDamage(en, damage, pos));
+                    } else if (!crew.isDoomed()) {
+                        crew.setDoomed(true);
+                        vDesc.addAll(destroyEntity(en, "pilot death", true));
+                    }
                 }
             }
         } else {
@@ -22065,7 +22149,7 @@ public class Server implements Runnable {
      * @param areaSatArty   Is the damage from an area saturating artillery attack?
      * @return a <code>Vector</code> of <code>Report</code>s
      */
-    private Vector<Report> damageEntity(Entity te, HitData hit, int damage,
+    public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
                                         boolean ammoExplosion, DamageType bFrag, boolean damageIS,
                                         boolean areaSatArty) {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS,
@@ -23271,9 +23355,9 @@ public class Server implements Runnable {
                                     || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) 
                                             && a.isCondEjectSIDest()))) {
                             vDesc.addAll(ejectEntity(te, true, false));
+                        } else {
+                            vDesc.addAll(destroyEntity(te,"Structural Integrity Collapse"));
                         }
-                        vDesc.addAll(destroyEntity(te,
-                                "Structural Integrity Collapse"));
                         a.setSI(0);
                         if (hit.getAttackerId() != Entity.NONE) {
                             creditKill(a, game.getEntity(hit.getAttackerId()));
@@ -24402,27 +24486,8 @@ public class Server implements Runnable {
             // Since it's taking damage, add it to the list of units hit.
             vUnits.add(entity.getId());
 
-            r = new Report(6175);
-            r.subject = entity.getId();
-            r.indent(2);
-            r.addDesc(entity);
-            r.add(damage);
-            vDesc.addElement(r);
-
-            while (damage > 0) {
-                int cluster = Math.min(clusterAmt, damage);
-                if (entity instanceof Infantry) {
-                    cluster = damage;
-                }
-                int table = ToHitData.HIT_NORMAL;
-                if (entity instanceof Protomech) {
-                    table = ToHitData.HIT_SPECIAL_PROTO;
-                }
-                HitData hit = entity.rollHitLocation(table, Compute.targetSideTable(position, entity));
-                vDesc.addAll(damageEntity(entity, hit, cluster, false,
-                        DamageType.IGNORE_PASSENGER, false, true));
-                damage -= cluster;
-            }
+            AreaEffectHelper.applyExplosionClusterDamageToEntity(entity, damage, clusterAmt, position, vDesc, this);
+            
             Report.addNewline(vDesc);
         }
 
@@ -24567,25 +24632,14 @@ public class Server implements Runnable {
      * @param vDesc    a vector that contains the output report
      */
     public void doNuclearExplosion(Coords position, int nukeType, Vector<Report> vDesc) {
-        // Throws a nuke for one of the pre-defined types.
-        switch (nukeType) {
-            case 0:
-            case 1:
-                doNuclearExplosion(position, 100, 5, 40, 0, vDesc);
-                break;
-            case 2:
-                doNuclearExplosion(position, 1000, 23, 86, 1, vDesc);
-                break;
-            case 3:
-                doNuclearExplosion(position, 10000, 109, 184, 3, vDesc);
-                break;
-            case 4:
-                doNuclearExplosion(position, 100000, 505, 396, 5, vDesc);
-                break;
-            default:
-                // This isn't a valid nuke type by HS:3070 rules. And since that's our only current source...
-                getLogger().error(getClass(), "doNuclearExplosion", "Illegal nuke not listed in HS:3070");
+        NukeStats nukeStats = AreaEffectHelper.getNukeStats(nukeType);
+        
+        if(nukeStats == null) {
+            getLogger().error(getClass(), "doNuclearExplosion", "Illegal nuke not listed in HS:3070");
         }
+        
+        doNuclearExplosion(position, nukeStats.baseDamage, nukeStats.degradation, nukeStats.secondaryRadius,
+                nukeStats.craterDepth, vDesc);        
     }
 
     /**
@@ -26292,10 +26346,18 @@ public class Server implements Runnable {
             reports.add(r);
             if (!hitBay.isCargo()) {
                 List<Entity> units = new ArrayList<>(hitBay.getLoadedUnits());
+                List<Entity> toRemove = new ArrayList<>();
+                //We're letting destroyed units stay in the bay now, but take them off the targets list
+                for (Entity en : units) {
+                    if (en.isDestroyed() || en.isDoomed()) {
+                        toRemove.add(en);
+                    }
+                }
+                units.removeAll(toRemove);
                 while ((destroyed > 0) && !units.isEmpty()) {
                     Entity target = units.remove(Compute.randomInt(units.size()));
                     reports.addAll(destroyEntity(target, "cargo damage",
-                            false, false));
+                            false, true));
                     destroyed--;
                 }
             }
@@ -28005,6 +28067,12 @@ public class Server implements Runnable {
                                          boolean canSalvage) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
+        
+        //We'll need this later...
+        Aero ship = null;
+        if (entity.isLargeCraft()) {
+            ship = (Aero) entity;
+        }
 
         // regardless of what was passed in, units loaded onto aeros not on the
         // ground are destroyed
@@ -28074,6 +28142,10 @@ public class Server implements Runnable {
                 Coords curPos = entity.getPosition();
                 int curFacing = entity.getFacing();
                 for (Entity other : entity.getLoadedUnits()) {
+                    //If the unit has been destroyed (as from a cargo hit), skip it
+                    if (other.isDestroyed()) {
+                        continue;
+                    }
                     // Can the other unit survive?
                     boolean survived = false;
                     if (entity instanceof Tank) {
@@ -28099,7 +28171,9 @@ public class Server implements Runnable {
                             survived = Compute.d6() < 3;
                         }
                     }
-                    if (!survivable || (externalUnits.contains(other) && !survived)) {
+                    if (!survivable || (externalUnits.contains(other) && !survived)
+                            //Don't unload from ejecting spacecraft. The crews aren't in their units...
+                            || (ship != null && ship.isEjecting())) {
                         // Nope.
                         other.setDestroyed(true);
                         // We need to unload the unit, since it's ID goes away
@@ -28144,7 +28218,9 @@ public class Server implements Runnable {
                 final Entity transport = game.getEntity(entity.getTransportId());
                 Coords curPos = transport.getPosition();
                 int curFacing = transport.getFacing();
-                unloadUnit(transport, entity, curPos, curFacing, transport.getElevation());
+                if (!transport.isLargeCraft()) {
+                    unloadUnit(transport, entity, curPos, curFacing, transport.getElevation());
+                }
                 entityUpdate(transport.getId());
 
                 // if this is the last fighter in a fighter squadron then remove
@@ -33962,7 +34038,7 @@ public class Server implements Runnable {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
-        }
+        } //End ground vehicles
 
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected(true);
@@ -33978,6 +34054,248 @@ public class Server implements Runnable {
             send(createRemoveEntityPacket(entity.getId(),
                     IEntityRemovalConditions.REMOVE_EJECTED));
         }
+        return vDesc;
+    }
+    
+    /**
+     * Abandon a spacecraft (large or small).
+     *
+     * @param entity  The <code>Aero</code> to eject.
+     * @param inSpace Is this ship spaceborne?
+     * @param airborne Is this ship in atmospheric flight?
+     * @param pos The coords of this ejection. Needed when abandoning a grounded ship
+     * @return a <code>Vector</code> of report objects for the gamelog.
+     */
+    public Vector<Report> ejectSpacecraft(Aero entity, boolean inSpace, boolean airborne, Coords pos) {
+        final String METHOD_NAME = "ejectSpacecraft(Aero,boolean,boolean)";
+        Vector<Report> vDesc = new Vector<Report>();
+        Report r;
+
+        // An entity can only eject it's crew once.
+        if (entity.getCrew().isEjected()) {
+            return vDesc;
+        }
+
+        // If the crew are already dead, don't bother
+        if (entity.isCarcass()) {
+            return vDesc;
+        }
+
+        // Try to launch some escape pods and lifeboats, if any are left
+        if ((inSpace && (entity.getPodsLeft() > 0 || entity.getLifeBoatsLeft() > 0))
+                || (airborne && entity.getPodsLeft() > 0)) {
+            // Report the ejection
+            PilotingRollData rollTarget = getEjectModifiers(game, entity,
+                    entity.getCrew().getCurrentPilotIndex(), false);
+            r = new Report(2180);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(rollTarget.getLastPlainDesc(), true);
+            r.indent();
+            vDesc.addElement(r);
+            int roll = Compute.d6(2);
+            int MOS = (roll - Math.max(2, rollTarget.getValue()));
+            //Report the roll
+            r = new Report(2190);
+            r.subject = entity.getId();
+            r.add(rollTarget.getValueAsString());
+            r.add(rollTarget.getDesc());
+            r.add(roll);
+            r.indent();
+            r.choose(roll >= rollTarget.getValue());
+            vDesc.addElement(r);
+            //Per SO p27, you get a certain number of escape pods away per turn per 100k tons of ship
+            int escapeMultiplier = (int) (entity.getWeight() / 100000);
+            //Set up the maximum number that CAN launch
+            int toLaunch = 0;
+            if (roll < rollTarget.getValue()) {
+                toLaunch = 1;
+            } else {
+                toLaunch = (1 + MOS) * Math.max(1, escapeMultiplier);
+            }
+            //And now modify it based on what the unit actually has TO launch
+            int launchCounter = toLaunch;
+            int totalLaunched = 0;
+            boolean isPod = false;
+            while (launchCounter > 0) {
+                int launched = 0;
+                if (entity.getPodsLeft() > 0 && (airborne || entity.getPodsLeft() >= entity.getLifeBoatsLeft())) {
+                    //Entity has more escape pods than lifeboats (or equal numbers)
+                    launched = Math.min(launchCounter, entity.getPodsLeft());
+                    entity.setLaunchedEscapePods(entity.getLaunchedEscapePods() + launched);
+                    totalLaunched += launched;
+                    launchCounter -= launched;
+                    isPod = true;
+                } else if (inSpace && entity.getLifeBoatsLeft() > 0 && (entity.getLifeBoatsLeft() > entity.getPodsLeft())) {
+                    //Entity has more lifeboats left
+                    launched = Math.min(launchCounter, entity.getLifeBoatsLeft());
+                    entity.setLaunchedLifeBoats(entity.getLaunchedLifeBoats() + launched);
+                    totalLaunched += launched;
+                    launchCounter -= launched;
+                } else {
+                    //We've run out of both. End the loop
+                    break;
+                }
+            }
+            int nEscaped = Math.min((entity.getCrew().getCurrentSize() + entity.getNPassenger()), (totalLaunched * 6));
+            //Report how many pods launched and how many escaped
+            if (totalLaunched > 0) {
+                r = new Report(6401);
+                r.subject = entity.getId();
+                r.indent();
+                r.add(totalLaunched);
+                r.add(nEscaped);
+                vDesc.addElement(r);
+            }
+            EscapePods pods = new EscapePods(entity,totalLaunched,isPod);
+            entity.addEscapeCraft(pods.getExternalIdAsString());
+            //Update the personnel numbers
+            
+            //If there are passengers aboard, get them out first
+            if (entity.getNPassenger() > 0) {
+                int change = Math.min(entity.getNPassenger(), nEscaped);
+                entity.setNPassenger(Math.max(entity.getNPassenger() - nEscaped, 0));
+                pods.addPassengers(entity.getExternalIdAsString(), change);
+                nEscaped -= change;
+            }
+            //Now get the crew out with such space as is left
+            if (nEscaped > 0) {
+                entity.setNCrew(entity.getNCrew() - nEscaped);
+                entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
+                pods.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
+                //*Damage* the host ship's crew to account for the people that left
+                vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
+                if (entity.getCrew().getHits() >= Crew.DEATH) {
+                    //Then we've finished ejecting
+                    entity.getCrew().setEjected(true);
+                }
+            }
+            // Need to set game manually; since game.addEntity not called yet
+            // Don't want to do this yet, as Entity may not be added
+            pods.setPosition(entity.getPosition());
+            pods.setGame(game);
+            pods.setDeployed(true);
+            pods.setId(getFreeEntityId());
+            //Escape craft retain the heading and velocity of the unit they eject from
+            pods.setVectors(entity.getVectors());
+            pods.setFacing(entity.getFacing());
+            pods.setCurrentVelocity(entity.getCurrentVelocity());
+            //If the crew ejects, they should no longer be accelerating
+            pods.setNextVelocity(entity.getVelocity());
+            if (entity.isAirborne()) {
+                pods.setAltitude(entity.getAltitude());
+            }
+            // Add Entity to game
+            game.addEntity(pods);
+            // No movement this turn
+            pods.setDone(true);
+            // Tell clients about new entity
+            send(createAddEntityPacket(pods.getId()));
+            // Sent entity info to clients
+            entityUpdate(pods.getId());
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+                game.removeEntity(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                send(createRemoveEntityPacket(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+            }
+        } // End Escape Pod/Lifeboat Ejection
+        else {
+            if (airborne) {
+                // Can't abandon in atmosphere with no escape pods
+                r = new Report(6402);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.indent();
+                vDesc.addElement(r);
+                return vDesc;
+            }
+            
+            // Eject up to 50 spacesuited crewmen out the nearest airlock!
+            // This only works in space or on the ground
+            int nEscaped = Math.min(entity.getNPassenger() + entity.getCrew().getCurrentSize(), 50);
+            EjectedCrew crew = new EjectedCrew(entity, nEscaped);
+            entity.addEscapeCraft(crew.getExternalIdAsString());
+            
+            //Report the escape
+            r = new Report(6403);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(nEscaped);
+            r.indent();
+            vDesc.addElement(r);
+
+            //If there are passengers aboard, get them out first
+            if (entity.getNPassenger() > 0) {
+                int change = Math.min(entity.getNPassenger(), nEscaped);
+                entity.setNPassenger(Math.max(entity.getNPassenger() - nEscaped, 0));
+                crew.addPassengers(entity.getExternalIdAsString(), change);
+                nEscaped -= change;
+            }
+            //Now get the crew out with such airlock space as is left
+            if (nEscaped > 0) {
+                entity.setNCrew(entity.getNCrew() - nEscaped);
+                entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
+                crew.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
+                //*Damage* the host ship's crew to account for the people that left
+                vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
+                if (entity.getCrew().getHits() >= Crew.DEATH) {
+                    //Then we've finished ejecting
+                    entity.getCrew().setEjected(true);
+                }
+            }
+            
+            // Need to set game manually; since game.addEntity not called yet
+            // Don't want to do this yet, as Entity may not be added
+            crew.setGame(game);
+            crew.setDeployed(true);
+            crew.setId(getFreeEntityId());
+            if (inSpace) {
+                //In space, ejected pilots retain the heading and velocity of the unit they eject from
+                crew.setVectors(entity.getVectors());
+                crew.setFacing(entity.getFacing());
+                crew.setCurrentVelocity(entity.getVelocity());
+                //If the crew ejects, they should no longer be accelerating
+                crew.setNextVelocity(entity.getVelocity());
+                // We're going to be nice and assume a ship has enough spacesuits for everyone aboard...
+                crew.setSpaceSuit(true);
+                crew.setPosition(entity.getPosition());
+            } else {
+                // On the ground, crew must abandon into a legal hex
+                Coords legalPosition = null;
+                //Small Craft can just abandon into the hex they occupy
+                if (!entity.isLargeCraft() && !crew.isLocationProhibited(entity.getPosition())) {
+                    legalPosition = entity.getPosition();
+                } else {
+                    //Use the passed in coords. We already calculated whether they're legal or not
+                    legalPosition = pos;
+                }
+                // Cannot abandon if there is no legal hex.  This shoudln't have
+                // been allowed
+                if (legalPosition == null) {
+                    getLogger().error(getClass(), METHOD_NAME, "spacecraft crews cannot abandon if there is no legal hex!");
+                    return vDesc;
+                }
+                crew.setPosition(legalPosition);
+            }
+            // Add Entity to game
+            game.addEntity(crew);
+            // No movement this turn
+            crew.setDone(true);
+            // Tell clients about new entity
+            send(createAddEntityPacket(crew.getId()));
+            // Sent entity info to clients
+            entityUpdate(crew.getId());
+            // Check if the crew lands in a minefield
+            vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
+                    entity.getPosition(), entity.getPosition(),
+                    entity.getElevation()));
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+                game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+            }
+        }
+        // If we get here, end movement and return the report
+        entity.setDone(true);
+        entityUpdate(entity.getId());
         return vDesc;
     }
 
@@ -34013,9 +34331,14 @@ public class Server implements Runnable {
         if (autoEject) {
             rollTarget.addModifier(1, "automatic ejection");
         }
-        if ((entity.isFighter() && ((IAero)entity).isOutControl())
+        // Per SO p27, Large Craft roll too, to see how many escape pods launch successfully
+        if ((entity.isAero() && ((IAero)entity).isOutControl())
                 || (entity.isPartOfFighterSquadron() && ((IAero)game.getEntity(entity.getTransportId())).isOutControl())) {
             rollTarget.addModifier(5, "Out of Control");
+        }
+        // A decreased large craft crew makes it harder to eject large numbers of pods
+        if (entity.isLargeCraft() && entity.getCrew().getHits() > 0) {
+            rollTarget.addModifier(entity.getCrew().getHits(), "Crew hits");
         }
         if ((entity instanceof Mech)
                 && (entity.getInternal(Mech.LOC_HEAD) < entity
@@ -34654,7 +34977,7 @@ public class Server implements Runnable {
         return vPhaseReport;
     }
 
-    private Vector<Report> vehicleMotiveDamage(Tank te, int modifier) {
+    public Vector<Report> vehicleMotiveDamage(Tank te, int modifier) {
         return vehicleMotiveDamage(te, modifier, false, -1, false);
     }
 
@@ -35176,255 +35499,18 @@ public class Server implements Runnable {
         }
 
         // get units in hex
-        for (Entity entity : game.getEntitiesVector(coords)) {           
-            int hits = damage;
-            if (variableDamage) {
-                hits = Compute.d6(damage);
-            }
-            ToHitData toHit = new ToHitData();
-            if (entity instanceof Protomech) {
-                toHit.setHitTable(ToHitData.HIT_SPECIAL_PROTO);
-            }
-            int cluster = 5;
-
+        for (Entity entity : game.getEntitiesVector(coords)) {  
             // Check: is entity excluded?
             if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                 continue;
-            }
-
-            // Check: is entity inside building?
-            if ((bldg != null) && (bldgAbsorbs > 0)
-                && (entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV))) {
-                cluster -= bldgAbsorbs;
-                // some buildings scale remaining damage that is not absorbed
-                // TODO : this isn't quite right for castles brian
-                cluster = (int) Math.floor(bldg.getDamageToScale() * cluster);
-                if (entity instanceof Infantry) {
-                    continue; // took its damage already from building damage
-                } else if (cluster <= 0) {
-                    // entity takes no damage
-                    r = new Report(6426);
-                    r.subject = subjectId;
-                    r.addDesc(entity);
-                    vPhaseReport.add(r);
-                    continue;
-                } else {
-                    r = new Report(6425);
-                    r.subject = subjectId;
-                    r.add(bldgAbsorbs);
-                    vPhaseReport.add(r);
-                }
-            }
-
-            // flak against ASF should only hit Aeros, because their elevation
-            // is actually altitude, so shouldn't hit VTOLs
-            if (asfFlak && !entity.isAero()) {
-                continue;
-            }
-
-            if (flak) {
-                // Check: is entity not a VTOL in flight or an ASF
-                if (!((entity instanceof VTOL)
-                        || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                        || entity.isAero())) {
-                    continue;
-                }
-                // Check: is entity at correct elevation?
-                if (entity.getElevation() != altitude) {
-                    continue;
-                }
             } else {
-                // Check: is entity a VTOL or Aero in flight?
-                if ((entity instanceof VTOL)
-                    || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                    || entity.isAero()) {
-                    // VTOLs take no damage from normal artillery unless landed
-                    if ((entity.getElevation() != 0)
-                        && (entity.getElevation() != hex.terrainLevel(Terrains.BLDG_ELEV))
-                        && (entity.getElevation() != hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
-                        continue;
-                    }
-                }
+                alreadyHit.add(entity.getId());
             }
-
-            // Work out hit table to use
-            if (attackSource != null) {
-                toHit.setSideTable(entity.sideTable(attackSource));
-                if ((ammo != null)
-                    && (ammo.getMunitionType() == AmmoType.M_CLUSTER)
-                    && attackSource.equals(coords)) {
-                    if (entity instanceof Mech) {
-                        toHit.setHitTable(ToHitData.HIT_ABOVE);
-                    } else if (entity instanceof Tank) {
-                        toHit.setSideTable(ToHitData.SIDE_FRONT);
-                        toHit.addModifier(2, "cluster artillery hitting a Tank");
-                    }
-                }
-            }
-
-            // convention infantry take x2 damage from AE weapons
-            if (entity.isConventionalInfantry()) {
-                hits *= 2;
-                
-                // if it's fuel-air, we take even more damage!
-                if(isFuelAirBomb) {
-                    hits *= 2;
-                }
-            }
-            boolean specialCaseFlechette = false;
-
-            // Entity/ammo specific damage modifiers
-            if (ammo != null) {
-                if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
-                    if (hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
-                        hits *= 2;
-                    }
-                }
-                // fuel-air bombs do an additional 2x damage to infantry
-                else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
-
-                    // wheeled and hover tanks take movement critical
-                    if ((entity instanceof Tank)
-                            && ((entity.getMovementMode() == EntityMovementMode.WHEELED)
-                            || (entity.getMovementMode() == EntityMovementMode.HOVER))) {
-                        r = new Report(6480);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(toHit.getTableDesc());
-                        r.add(0);
-                        vPhaseReport.add(r);
-                        vPhaseReport.addAll(vehicleMotiveDamage((Tank)entity, 0));
-                        continue;
-                    }
-                    
-                    // only infantry and support vees with bar < 5 are affected
-                    if ((entity instanceof BattleArmor) || ((entity instanceof SupportTank)
-                            && !entity.hasPatchworkArmor() && (entity.getBARRating(1) > 4))) {
-                        continue;
-                    }
-                    if (entity instanceof Infantry) {
-                        hits = Compute.d6(damage);
-                        hits *= 2;
-                    } else {
-                        if ((entity.getBARRating(1) < 5) && !entity.hasPatchworkArmor()) {
-                            switch (ammo.getAmmoType()) {
-                                case AmmoType.T_LONG_TOM:
-                                    // hack: check if damage is still at 4, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 4) {
-                                        damage = (5 - entity.getBARRating(1)) * 5;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_SNIPER:
-                                    // hack: check if damage is still at 2, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 2) {
-                                        damage = (5 - entity.getBARRating(1)) * 3;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_THUMPER:
-                                    // no need to check for damage, because
-                                    // falloff =
-                                    // damage for the thumper
-                                    damage = 5 - entity.getBARRating(1);
-                                    break;
-                            }
-                        } else {
-                            // ugh, patchwork armor
-                            // rules as written don't deal with this
-                            // reset the damage to standard arty damage
-                            // when we have each cluster's hit location,
-                            // we'll multiply by the
-                            // BAR-difference to BAR 5, per a rules question
-                            // email
-                            specialCaseFlechette = true;
-                            switch (ammo.getAmmoType()) {
-                                case AmmoType.T_LONG_TOM:
-                                    // hack: check if damage is still at 4, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 4) {
-                                        damage = 25;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_SNIPER:
-                                    // hack: check if damage is still at 2, so
-                                    // we're in
-                                    // the
-                                    // center hex. otherwise, do no damage
-                                    if (damage == 2) {
-                                        damage = 15;
-                                    } else {
-                                        continue;
-                                    }
-                                    break;
-                                case AmmoType.T_THUMPER:
-                                    // no need to check for damage, because
-                                    // falloff =
-                                    // damage for the thumper
-                                    damage = 10;
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            alreadyHit.add(entity.getId());
-
-            // Do the damage
-            r = new Report(6480);
-            r.subject = entity.getId();
-            r.addDesc(entity);
-            r.add(toHit.getTableDesc());
-            r.add(hits);
-            vPhaseReport.add(r);
-            if (entity instanceof BattleArmor) {
-                // BA take full damage to each trooper, ouch!
-                for (int loc = 0; loc < entity.locations(); loc++) {
-                    if (entity.getInternal(loc) > 0) {
-                        HitData hit = new HitData(loc);
-                        vPhaseReport.addAll(damageEntity(entity, hit, hits,
-                                false, DamageType.NONE, false, true, false));
-                    }
-                }
-            } else {
-                while (hits > 0) {
-                    int damageToDeal = Math.min(cluster, hits);
-                    HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                    // per a rules question, for patchwork armor being attacked by flechette ammo, we multiply the damage done
-                    // by 5 - the BAR rating of the hit location
-                    if (specialCaseFlechette && !(entity instanceof Infantry)) {
-                        damageToDeal *= (5 - entity.getBARRating(hit.getLocation()));
-                    // fuel-air bombs do 1.5x damage to locations hit that have a BAR rating of less than 10.
-                    } else if(isFuelAirBomb && !(entity instanceof Infantry) && (entity.getBARRating(hit.getLocation()) < 10)) {
-                        damageToDeal = (int) Math.ceil(damageToDeal * 1.5);
-                        
-                        r = new Report(9991);
-                        r.indent(1);
-                        r.subject = killer.getId();
-                        r.newlines = 1;
-                        vPhaseReport.addElement(r);
-                    }
-                    vPhaseReport.addAll(damageEntity(entity, hit, damageToDeal,
-                            false, DamageType.NONE, false, true, false));
-                    hits -= Math.min(cluster, hits);
-                }
-            }
-            if (killer != null) {
-                creditKill(entity, killer);
-            }
+            
+            AreaEffectHelper.artilleryDamageEntity(entity, damage, bldg, bldgAbsorbs, 
+                    variableDamage, asfFlak, flak, altitude,
+                    attackSource, ammo, coords, isFuelAirBomb,
+                    killer, hex, subjectId, vPhaseReport, this);
         }
 
         return alreadyHit;
@@ -35450,76 +35536,14 @@ public class Server implements Runnable {
             AmmoType ammo, int subjectId, Entity killer, boolean flak,
             int altitude, boolean mineClear, Vector<Report> vPhaseReport,
             boolean asfFlak, int attackingBA) {
-        int damage = ammo.getRackSize();
-        int falloff = 10;
-        // Capital and Sub-capital missiles
-        if (ammo.getAmmoType() == AmmoType.T_KRAKEN_T
-                || ammo.getAmmoType() == AmmoType.T_KRAKENM
-                || ammo.getAmmoType() == AmmoType.T_MANTA_RAY) {
-            damage = 50;
-            falloff = 25;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_KILLER_WHALE
-                || ammo.getAmmoType() == AmmoType.T_KILLER_WHALE_T
-                || ammo.getAmmoType() == AmmoType.T_SWORDFISH
-                || ammo.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-            damage = 40;
-            falloff = 20;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_STINGRAY) {
-            damage = 35;
-            falloff = 17;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_WHITE_SHARK
-                || ammo.getAmmoType() == AmmoType.T_WHITE_SHARK_T
-                || ammo.getAmmoType() == AmmoType.T_PIRANHA
-                || ammo.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-            damage = 30;
-            falloff = 15;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_BARRACUDA
-                || ammo.getAmmoType() == AmmoType.T_BARRACUDA_T
-                || ammo.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-            damage = 20;
-            falloff = 10;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
-            falloff = 25;
-        }
-        if (ammo.getAmmoType() == AmmoType.T_BA_TUBE) {
-            falloff = 2 * attackingBA;
-        }
-        if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
-            // non-arrow-iv cluster does 5 less than standard
-            if (ammo.getAmmoType() != AmmoType.T_ARROW_IV) {
-                damage -= 5;
-            }
-            // thumper gets falloff 9 for 1 damage at 1 hex range
-            if (ammo.getAmmoType() == AmmoType.T_THUMPER) {
-                falloff = 9;
-            }
+        DamageFalloff damageFalloff = AreaEffectHelper.calculateDamageFallOff(ammo, attackingBA, mineClear);
+        
+        int damage = damageFalloff.damage;
+        int falloff = damageFalloff.falloff;
+        if(damageFalloff.clusterMunitionsFlag) {
             attackSource = centre;
-        } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
-            switch (ammo.getAmmoType()) {
-                // for flechette, damage and falloff is number of d6, not absolute
-                // damage
-                case AmmoType.T_LONG_TOM:
-                    damage = 4;
-                    falloff = 2;
-                    break;
-                case AmmoType.T_SNIPER:
-                    damage = 2;
-                    falloff = 1;
-                    break;
-                case AmmoType.T_THUMPER:
-                    damage = 1;
-                    falloff = 1;
-            }
-        } else
-            // if this was a mine clearance, then it only affects the hex hit
-            if (mineClear) {
-                falloff = damage;
-            }
+        }
+        
         artilleryDamageArea(centre, attackSource, ammo, subjectId, killer,
                 damage, falloff, flak, altitude, vPhaseReport, asfFlak);
     }

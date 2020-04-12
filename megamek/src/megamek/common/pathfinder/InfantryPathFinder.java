@@ -71,9 +71,13 @@ public class InfantryPathFinder {
             
             // now that we've got all our possible destinations, make sure to try every possible rotation,
             // since facing matters for field guns and if using the "dig in" and "vehicle cover" tacops rules.
+            List<MovePath> rotatedPaths = new ArrayList<>();
+            
             for(MovePath path : infantryPaths) {
-                infantryPaths.addAll(AeroPathUtil.generateValidRotations(path));
+                rotatedPaths.addAll(AeroPathUtil.generateValidRotations(path));
             }
+            
+            infantryPaths.addAll(rotatedPaths);
             
             // add "flee" option if we haven't done anything else
             if(startingEdge.getFinalCoords().isOnBoardEdge(game.getBoard()) &&

@@ -1,6 +1,16 @@
 VERSION HISTORY:
 ----------------
-0.47.5-SNAPSHOT
+0.47.6-SNAPSHOT
++ Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed
++ PR #1808: Abandon ship! Large spacecraft can now launch escape pods, giving the opposing player more opportunity to commit war crimes.
++ Issue #1824: Implementing Tactical Operations Low Visibility Errata
++ Issue #1768: Resizing the map no longer messes up building/road layout. Note that resizing westward needs to be done by an even number of hexes.
++ Issue #1812: Semi-guided warheads indirectly fired at TAGged targets are no longer subject to terrain modifiers for the purposes of "to-hit" numbers.
++ PR #1837: The bot will now be able to use a searchlight on buildings without crashing the server.
++ Documentation: Trailer How-To added (thanks mkerensky)
++ Data" First SW RATs - Thanks SLDF_gunslinger
+
+0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO
 + Issue #1661: Grounded Aero Penalty for AirMech or Mech Mode LAMs
 + Issues #1636 #1637: Main menu and minimap now work when loading a new map
@@ -33,6 +43,17 @@ VERSION HISTORY:
 + Issue #349: Random map dialog now looks in mapgen folder instead of boards folder by default for presets
 + Issue #377: Ask user if they want to quit MegaMek when attempting to close the window.
 + PR #1765: Fix several board validation issues with map editor concerning buildings and bridges; performance improvement for map editor.
++ Issue #1767: When randomly generating a map, picking a theme is reflected in the map editor.
++ PR #1790: various improvements and fixes around random map dialog;	
+	ability to directly open map definition file from map editor
++ Issue #1787: user can now manually reset mini-map and mech info card positions
++ PR #1795: Corrections to invalid data in some unofficial boards
++ PR #1779: Counter-battery fire
++ PR #1805: Adding BV Calculation to ChatLounge Entity Right Click 
++ Data: New Sprites adding Icewind Metals Shadow Cats and Pendragon.
++ Data: Grasslands Map Pack (Thanks SimonLandmine for converting)
++ Issue #1797: Fix bot freeze when evaluating infantry moves against support vehicles and BA equipped with infantry weapons
++ PR #1810: Bot units with LRMs will no longer be stuck in indirect fire mode
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen

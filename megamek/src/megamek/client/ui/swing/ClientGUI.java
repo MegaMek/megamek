@@ -182,6 +182,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_LOS_SETTING = "viewLOSSetting"; //$NON-NLS-1$
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
+    public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
     //endregion view menu
 
     //region fire menu
@@ -223,6 +224,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private Ruler ruler;
     protected JComponent curPanel;
     public ChatLounge chatlounge;
+    private OffBoardTargetOverlay offBoardOverlay;
 
     // some dialogs...
     GameOptionsDialog gameOptionsDialog;
@@ -325,7 +327,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public IBoardView getBoardView() {
         return bv;
     }
-
+    
     /**
      * Try to load the "bing" sound clip.
      */
@@ -492,11 +494,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         bv.addDisplayable(cb2);
         bv.addKeyListener(cb2);
         uo = new UnitOverview(this);
+        offBoardOverlay = new OffBoardTargetOverlay(this);
         aw = new AccessibilityWindow(cb, this);
         aw.setLocation(0, 0);
         aw.addWindowListener(this);
         aw.setSize(300, 300);
         bv.addDisplayable(uo);
+        bv.addDisplayable(offBoardOverlay);
         int x;
         int y;
         int h;
@@ -736,6 +740,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public void actionPerformed(ActionEvent event) {
         switch (event.getActionCommand()) {
+            case VIEW_RESET_WINDOW_POSITIONS:
+                minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
+                mechW.setBounds(0, 0, mechD.getWidth(), mechD.getHeight());
+                break;
             case FILE_GAME_SAVE:
                 saveGame();
                 break;
@@ -1242,6 +1250,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
+                offBoardOverlay.setTargetingPhaseDisplay((TargetingPhaseDisplay) component);
                 break;
             case PHASE_MOVEMENT:
                 component = new MovementDisplay(this);

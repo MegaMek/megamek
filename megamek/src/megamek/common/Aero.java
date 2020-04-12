@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
@@ -134,6 +135,8 @@ public class Aero extends Entity implements IAero, IBomber {
     private boolean condEjectAmmo = true;
     private boolean condEjectFuel = true;
     private boolean condEjectSIDest = true;
+    
+    private boolean ejecting = false;
 
     // track straight movement from last turn
     private int straightMoves = 0;
@@ -215,6 +218,12 @@ public class Aero extends Entity implements IAero, IBomber {
     private int whoFirst = 0;
 
     private int eccmRoll = 0;
+    
+    //List of escape craft used by this ship
+    private Set<String> escapeCraftList = new HashSet<>();
+    
+    //Maps unique id of each assigned marine to marine point value
+    private Map<UUID,Integer> marines;
 
     public Aero() {
         super();
@@ -3940,6 +3949,10 @@ public class Aero extends Entity implements IAero, IBomber {
     public boolean isCrippled() {
         double internalPercent = getInternalRemainingPercent();
         String msg = getDisplayName() + " CRIPPLED: ";
+        
+        if (isEjecting()) {
+            return true;
+        }
         if (internalPercent < 0.5) {
             System.out.println(msg + "only " + NumberFormat.getPercentInstance().format(internalPercent)
                     + " internals remaining.");
@@ -4169,10 +4182,14 @@ public class Aero extends Entity implements IAero, IBomber {
      * @return The total number of crew available to supplement marines on boarding actions.
      *         Includes officers, enlisted, and bay personnel, but not marines/ba or passengers.
      */
+    @Override
     public int getNCrew() {
         return 1;
     }
-
+    
+    @Override
+    public void setNCrew(int crew) {
+    }
 
     /**
      * @return The total number of officers for vessels.
@@ -4189,10 +4206,42 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-     * @return The total passenger capacity.
+     * Returns the number of passengers on this unit
+     * Intended for spacecraft, where we want to get the crews of transported units
+     * plus actual passengers assigned to quarters
+     * @return
      */
+    @Override
     public int getNPassenger() {
         return 0;
+    }
+    
+    @Override
+    public void setNPassenger(int pass) {
+    }
+    
+    /**
+     * Returns the list of Entity IDs used by this ship as escape craft
+     * @return
+     */
+    public Set<String> getEscapeCraft() {
+        return escapeCraftList;
+    }
+    
+    /**
+     * Adds an Escape Craft. Used by MHQ to track where escaped crew and passengers end up.
+     * @param id The Entity ID of the ship to add.
+     */
+    public void addEscapeCraft(String id) {
+        escapeCraftList.add(id);
+    }
+    
+    /**
+     * Removes an Escape Craft. Used by MHQ to track where escaped crew and passengers end up.
+     * @param id The Entity ID of the ship to remove.
+     */
+    public void removeEscapeCraft(String id) {
+        escapeCraftList.remove(id);
     }
 
     /**
@@ -4208,6 +4257,58 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getNMarines() {
         return 0;
     }
+    
+    /**
+     * Updates the number of marines aboard
+     * @param marines The number of marines to add/subtract
+     */
+    @Override
+    public void setNMarines(int marines) {
+    }
+    
+    /**
+     * Returns our list of unique individuals being transported as marines
+     * @return
+     */
+    public Map<UUID,Integer> getMarines() {
+        return marines;
+    }
+    
+    /**
+     * Adds a marine. Used by MHQ to track where a given person ends up. 
+     * Also used by MM to move marines around between ships
+     * @param personId The unique ID of the person to add.
+     * @param pointValue The marine point value of the person being added
+     */
+    public void addMarine(UUID personId, int pointValue) {
+        marines.put(personId, pointValue);
+    }
+    
+    /**
+     * Removes a marine. Used by MHQ to track where a given person ends up.
+     * Also used by MM to move marines around between ships
+     * @param personId The unique ID of the person to remove.
+     */
+    public void removeMarine(UUID personId) {
+        marines.remove(personId);
+    }
+    
+    /**
+     * Returns the number of marines assigned to a unit
+     * Used for abandoning a unit
+     * @return
+     */
+    public int getMarineCount() {
+        return 0;
+    }
+    
+    /**
+     * Convenience method that compiles the total number of people aboard a ship - Crew, Marines, Passengers...
+     * @return An integer representing everyone aboard
+     */
+    public int getTotalAboard() {
+        return (getNCrew() + getNPassenger() + getMarineCount());
+    }
 
     /**
      * @return The number of escape pods carried by the unit
@@ -4215,12 +4316,95 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getEscapePods() {
         return 0;
     }
+    
+    /**
+     * Convenience method to return the number of escape pods remaining
+     * @return
+     */
+    public int getPodsLeft() {
+        return getEscapePods() - getLaunchedEscapePods();
+    }
 
     /**
      * @return The number of lifeboats carried by the unit
      */
     public int getLifeBoats() {
         return 0;
+    }
+    
+    /**
+     * Returns the total number of escape pods launched so far
+     */
+    public int getLaunchedEscapePods() {
+        return 0;
+    }
+    
+    /**
+     * Updates the total number of escape pods launched so far
+     * @param n The number to change
+     */
+    public void setLaunchedEscapePods(int n) {
+    }
+    
+    /**
+     * Returns the total number of life boats launched so far
+     */
+    public int getLaunchedLifeBoats() {
+        return 0;
+    }
+    
+    /**
+     * Convenience method to return the number of life boats remaining
+     * @return
+     */
+    public int getLifeBoatsLeft() {
+        return getLifeBoats() - getLaunchedLifeBoats();
+    }
+    
+    /**
+     * Updates the total number of life boats launched so far
+     * @param n The number to change
+     */
+    public void setLaunchedLifeBoats(int n) {
+    }
+    
+    /**
+     * Calculates whether this ship has any available escape systems remaining
+     * return
+     */
+    public boolean hasEscapeSystemsLeft() {
+        return ((getLaunchedLifeBoats() < getLifeBoats()) 
+                || (getLaunchedEscapePods() < getEscapePods())
+                || !getLaunchableSmallCraft().isEmpty());
+    }
+    
+    /**
+     * Calculates the total number of people that can be carried in this unit's escape systems
+     * 6 people per lifeboat/escape pod + troop capacity of any small craft
+     * Most small craft use cargo space instead of infantry bays, so we'll assume 0.1 tons/person
+     * (Taken from Infantry.getWeight() - foot trooper + .015t for the spacesuit everyone aboard is wearing ;) )
+     * @return The total escape count for the unit
+     */
+    public int getEscapeCapacity() {
+        int people = 0;
+        // We can cram 6 people in an escape pod
+        people += getEscapePods() * 6;
+        // Lifeboats hold 6 comfortably
+        people += getLifeBoats() * 6;
+        
+        // Any small craft aboard and able to launch?
+        for (Entity sc : getLaunchableSmallCraft()) {
+            // There could be an ASF in the bay...
+            if (sc instanceof SmallCraft) {
+                for (Bay b : sc.getTransportBays()) {
+                    if (b instanceof InfantryBay || b instanceof BattleArmorBay || b instanceof CargoBay) {
+                        // Use the available tonnage
+                        people += (b.getCapacity() / 0.1);
+                    }
+                }
+            }
+        }
+        return people;
     }
 
     @Override
@@ -4455,5 +4639,21 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public void setCondEjectSIDest(boolean condEjectSIDest) {
         this.condEjectSIDest = condEjectSIDest;
+    }
+    
+    /**
+     * Intended for large craft. Indicates that the ship is being abandoned.
+     * @return
+     */
+    public boolean isEjecting() {
+        return ejecting;
+    }
+
+    /**
+     * Changes the ejecting flag when the order to abandon ship is given
+     * @param ejecting Change to the ejecting status of this ship
+     */
+    public void setEjecting(boolean ejecting) {
+        this.ejecting = ejecting;
     }
 }

@@ -910,7 +910,9 @@ public class TestSupportVehicle extends TestEntity {
             buff.append("Support vehicles with ").append(engine.getEngineName())
                     .append(" engine must allocate some weight for fuel.\n");
             correct = false;
-        } else if ((supportVee instanceof Aero) && (((Aero) supportVee).getOriginalFuel() <= 0.0)) {
+        } else if ((supportVee instanceof FixedWingSupport)
+                && (((FixedWingSupport) supportVee).getOriginalFuel() <= 0.0)
+                && ((FixedWingSupport) supportVee).kgPerFuelPoint() > 0) {
             buff.append("Aerospace units must allocate some weight for fuel.\n");
             correct = false;
         }

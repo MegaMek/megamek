@@ -6,6 +6,9 @@
 
 package megamek.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -21,11 +24,17 @@ public class EjectedCrew extends Infantry {
     protected int currentVelocity = 0;
     protected int nextVelocity = currentVelocity;
     
+    // Maps "transported" crew,passengers to a host ship so we can match them up again post-game
+    private Map<String,Integer> nOtherCrew = new HashMap<>();
+    private Map<String,Integer> passengers = new HashMap<>();
+    
     private static final long serialVersionUID = 8136710237585797372L;
     
     public static final String VEE_EJECT_NAME = "Vehicle Crew";
     public static final String PILOT_EJECT_NAME = "Pilot";
     public static final String MW_EJECT_NAME = "MechWarrior";
+    public static final String SPACE_EJECT_NAME = "Spacecraft Crew from ";
+    public static final int EJ_CREW_MAX_MEN = 50; //See SO p27
 
     public EjectedCrew(Entity originalRide) {
         super();
@@ -66,6 +75,28 @@ public class EjectedCrew extends Infantry {
                 ex.printStackTrace();
             }
         }
+    }
+    
+    /**
+     * Used to set up an ejected crew for large spacecraft per rules in SO p27
+     * Multiple entities will be set up, each with a different strength
+     * @param originalRide - the launching spacecraft
+     * @param escapedThisRound - The number of people that got out this round
+     */
+    public EjectedCrew(Aero originalRide, int escapedThisRound) {
+        super();
+        setCrew(new Crew(CrewType.CREW));
+        setChassis(SPACE_EJECT_NAME);
+        setModel(originalRide.getDisplayName());
+
+        // Generate the display name, then add the original ride's name.
+        String newName = new String(getDisplayName() + " of " + originalRide.getDisplayName());
+        displayName = newName;
+        
+        initializeInternal(escapedThisRound, Infantry.LOC_INFANTRY);
+        
+        setOriginalRideId(originalRide.getId());
+        setOriginalRideExternalId(originalRide.getExternalIdAsString());
     }
     
     /**
@@ -152,6 +183,72 @@ public class EjectedCrew extends Infantry {
 
     public void setOriginalRideExternalId(int originalRideExternalId) {
         this.originalRideExternalId = Integer.toString(originalRideExternalId);
+    }
+    
+    /**
+     * Returns a mapping of how many crewmembers from other units this unit is carrying
+     * and what ship they're from by external ID 
+     */
+    public Map<String,Integer> getNOtherCrew() {
+        return nOtherCrew;
+    }
+    
+    /**
+     * Convenience method to return all crew from other craft aboard from the above Map
+     * @return
+     */
+    public int getTotalOtherCrew() {
+        int toReturn = 0;
+        for (String name : getNOtherCrew().keySet()) {
+            toReturn += getNOtherCrew().get(name);
+        }
+        return toReturn;
+    }
+    
+    /**
+     * Adds a number of crewmembers from another ship keyed by that ship's external ID
+     * @param id The external ID of the ship these crew came from
+     * @param n The number to add
+     */
+    public void addNOtherCrew(String id, int n) {
+       if (nOtherCrew.containsKey(id)) {
+           nOtherCrew.replace(id, nOtherCrew.get(id) + n);
+       } else {
+           nOtherCrew.put(id, n);
+       }
+    }
+    
+    /**
+     * Returns a mapping of how many passengers from other units this unit is carrying
+     * and what ship they're from by external ID 
+     */
+    public Map<String,Integer> getPassengers() {
+        return passengers;
+    }
+    
+    /**
+     * Convenience method to return all passengers aboard from the above Map
+     * @return
+     */
+    public int getTotalPassengers() {
+        int toReturn = 0;
+        for (String name : getPassengers().keySet()) {
+            toReturn += getPassengers().get(name);
+        }
+        return toReturn;
+    }
+    
+    /**
+     * Adds a number of passengers from another ship keyed by that ship's external ID
+     * @param id The external ID of the ship these passengers came from
+     * @param n The number to add
+     */
+    public void addPassengers(String id, int n) {
+       if (passengers.containsKey(id)) {
+           passengers.replace(id, passengers.get(id) + n);
+       } else {
+           passengers.put(id, n);
+       }
     }
 
     /*@Override

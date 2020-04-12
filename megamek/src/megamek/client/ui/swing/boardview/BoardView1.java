@@ -2051,7 +2051,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * returns the weapon selected in the mech display, or null if none selected
      * or it is not artillery or null if the selected entity is not owned
      */
-    private Mounted getSelectedArtilleryWeapon() {
+    public Mounted getSelectedArtilleryWeapon() {
         // We don't want to display artillery auto-hit/adjusted fire hexes
         // during
         // the artyautohithexes phase. These could be displayed if the player
@@ -6759,5 +6759,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public boolean getDisplayInvalidHexInfo() {
         return displayInvalidHexInfo;
+    }
+    
+    public Rectangle getDisplayablesRect() {
+        return displayablesRect;
     }
 }

@@ -650,12 +650,24 @@ public class PlanetaryConditions implements Serializable {
             isAero = (en.isAero()) && !isLargeCraft;
         }
         //anything else is infantry
-
-        if ((lightConditions == L_PITCH_BLACK) && !Spotlight
-                && !targetIlluminated) {
-            if (isAero && (en.getAltitude() > 9)) {
-                return 0;
+        
+        //Beyond altitude 9, Aeros can't see. No need to repeat this test.
+        if (isAero && (en.getAltitude() > 9)) {
+            return 0;
+        }
+        
+        //New rulings per v3.02 errata. Spotlights are easier, yay!
+        //Illuminated?  Flat 45 hex distance
+        if (targetIlluminated && (lightConditions > L_DAY)) {
+            return 45;
+        } else if (Spotlight && (lightConditions > L_DAY)) {
+            //Using a searchlight?  Flat 30 hex range
+            if (isMechVee || isAero || isLargeCraft) {
+                return 30;
             }
+            //Except infantry/handheld, 10 hexes
+            return 10;
+        } else if (lightConditions == L_PITCH_BLACK) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 3;
             }
@@ -666,15 +678,10 @@ public class PlanetaryConditions implements Serializable {
                 return 4;
             }
             return 1;
-        } else if (((lightConditions == L_MOONLESS) && !Spotlight && !targetIlluminated)
-                || ((lightConditions == L_FULL_MOON) && !Spotlight && !targetIlluminated)
-                || (weatherConditions == WE_BLIZZARD)
-                || ((weatherConditions == WE_HEAVY_SNOW) && (windStrength >= WI_STRONG_GALE))) {
+        } else if ((lightConditions == L_MOONLESS)
+                || (fog == FOG_HEAVY)) {
             if(isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 5;
-            }
-            if (isAero && (en.getAltitude() > 9)) {
-                return 0;
             }
             if (isAero) {
                 return 10;
@@ -683,19 +690,17 @@ public class PlanetaryConditions implements Serializable {
                 return 8;
             }
             return 2;
-        } else if ((weatherConditions == WE_HEAVY_SNOW)
-                || (weatherConditions == WE_HEAVY_RAIN)
-                || (weatherConditions == WE_DOWNPOUR)
+        } else if ((weatherConditions == WE_HEAVY_HAIL)
                 || (weatherConditions == WE_SLEET)
+                || (weatherConditions == WE_HEAVY_SNOW)
+                || (blowingSand && (windStrength >= WI_MOD_GALE))
+                || (lightConditions == L_FULL_MOON)
+                || (weatherConditions == WE_GUSTING_RAIN)
+                || (weatherConditions == WE_BLIZZARD)
                 || (weatherConditions == WE_ICE_STORM)
-                || (weatherConditions == WE_HEAVY_HAIL)
-                || (fog == FOG_HEAVY)
-                || (blowingSand && (windStrength >= WI_MOD_GALE))) {
+                || (weatherConditions == WE_DOWNPOUR)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 10;
-            }
-            if (isAero && (en.getAltitude() > 9)) {
-                return 0;
             }
             if (isAero) {
                 return 20;
@@ -704,29 +709,12 @@ public class PlanetaryConditions implements Serializable {
                 return 15;
             }
             return 5;
-        } else if ((lightConditions == L_PITCH_BLACK) && !targetIlluminated) {
-            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
-                return 13;
-            }
-            if (isAero && (en.getAltitude() > 9)) {
-                return 0;
-            }
-            if (isAero) {
-                return 15;
-            }
-            if (isLargeCraft) {
-                return 14;
-            }
-            return 6;
-        } else if (((lightConditions > L_DAY) && !Spotlight && !targetIlluminated)
-                || (weatherConditions == WE_GUSTING_RAIN)
+        } else if ((lightConditions == L_DUSK)
+                || (weatherConditions == WE_HEAVY_RAIN)
                 || (weatherConditions == WE_SNOW_FLURRIES)
                 || (weatherConditions == WE_MOD_SNOW) && (windStrength >= WI_MOD_GALE)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 15;
-            }
-            if (isAero && (en.getAltitude() > 9)) {
-                return 0;
             }
             if (isAero) {
                 return 30;
@@ -735,27 +723,10 @@ public class PlanetaryConditions implements Serializable {
                 return 20;
             }
             return 8;
-        } else if((lightConditions > L_DAY) && !targetIlluminated) {
-            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
-                return 25;
-            }
-            if (isAero && (en.getAltitude() > 9)) {
-                return 0;
-            }
-            if (isAero) {
-                return 40;
-            }
-            if (isLargeCraft) {
-                return 30;
-            }
-            return 13;
         } else if ((weatherConditions == WE_MOD_SNOW)
                 || (weatherConditions == WE_MOD_RAIN)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 20;
-            }
-            if (isAero && (en.getAltitude() > 9)) {
-                return 0;
             }
             if (isAero) {
                 return 50;
@@ -767,12 +738,10 @@ public class PlanetaryConditions implements Serializable {
         } else if ((lightConditions > L_DAY)
                 || (weatherConditions == WE_LIGHT_SNOW)
                 || (weatherConditions == WE_LIGHT_RAIN)
-                || (weatherConditions == WE_LIGHT_HAIL) || (fog == FOG_LIGHT)) {
+                || (weatherConditions == WE_LIGHT_HAIL) 
+                || (fog == FOG_LIGHT)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 30;
-            }
-            if (isAero && (en.getAltitude() > 9)) {
-                return 0;
             }
             if (isAero) {
                 return 60;
@@ -785,9 +754,6 @@ public class PlanetaryConditions implements Serializable {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 60;
             }
-            if (isAero && (en.getAltitude() > 9)) {
-                return 0;
-            }
             if (isAero) {
                 return 120;
             }
@@ -796,7 +762,6 @@ public class PlanetaryConditions implements Serializable {
             }
             return 30;
         }
-
     }
 
     public int getDropRate() {

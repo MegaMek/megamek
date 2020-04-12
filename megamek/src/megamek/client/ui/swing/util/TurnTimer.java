@@ -63,7 +63,7 @@ public class TurnTimer {
                 progressBar.setValue(counter);
                 if (counter<1) {
                     // get the NagForNoAction setting here
-                  boolean nagSet =   GUIPreferences.getInstance().getNagForNoAction();
+                    boolean nagSet =   GUIPreferences.getInstance().getNagForNoAction();
                     // prevent the popup dialog from breaking time limit
                     GUIPreferences.getInstance().setNagForNoAction(false);
                     phaseDisplay.ready();

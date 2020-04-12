@@ -24,7 +24,6 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.UnitFailureDialog;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.common.*;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;

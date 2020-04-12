@@ -63,13 +63,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
-import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.*;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
-import megamek.common.Infantry;
-import megamek.common.LAMPilot;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
@@ -82,8 +79,6 @@ import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.IClientPreferences;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
 
 /**
@@ -92,8 +87,8 @@ import megamek.common.templates.TROView;
  * The original list has been changed to a sortable table and a text filter
  * is used for advanced searching.
  */
-public abstract class AbstractUnitSelectorDialog extends JDialog implements Runnable, KeyListener, ActionListener,
-        ListSelectionListener {
+public abstract class AbstractUnitSelectorDialog extends JDialog implements Runnable, KeyListener,
+        ActionListener, ListSelectionListener {
     //region Variable Declarations
     private static final long serialVersionUID = 8144354264100884817L;
 

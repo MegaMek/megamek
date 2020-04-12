@@ -649,7 +649,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return null;
         }
         int selected = tableUnits.convertRowIndexToModel(view);
-        // else
         MechSummary ms = mechs[selected];
         try {
             // For some unknown reason the base path gets screwed up after you

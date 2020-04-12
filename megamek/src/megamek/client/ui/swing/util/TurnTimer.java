@@ -38,18 +38,19 @@ public class TurnTimer {
     private JProgressBar progressBar;
     private ActionListener listener;
     private JLabel remaining;
-    private JDialog display;
-    private int timeLimit ;
+    private JPanel display;
+    private int timeLimit;
+    private AbstractPhaseDisplay phaseDisplay;
 
 
-    public TurnTimer(int limit, AbstractPhaseDisplay phaseDisplay) {
+    public TurnTimer(int limit, AbstractPhaseDisplay pD) {
 
-
+        phaseDisplay = pD;
         // make it minutes here.
         timeLimit = limit*60;
 
-        display = new JDialog();
-        progressBar = new JProgressBar(JProgressBar.VERTICAL, 0, timeLimit);
+        display = new JPanel();
+        progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, timeLimit);
         progressBar.setValue(timeLimit);
 
 
@@ -61,6 +62,7 @@ public class TurnTimer {
                 int minutes = counter/60;
                 remaining.setText(minutes+":"+seconds);
                 progressBar.setValue(counter);
+
                 if (counter<1) {
                     // get the NagForNoAction setting here
                     boolean nagSet =   GUIPreferences.getInstance().getNagForNoAction();
@@ -72,7 +74,8 @@ public class TurnTimer {
                     GUIPreferences.getInstance().setNagForNoAction(nagSet);
                     timer.stop();
                     display.setVisible(false);
-                    display.dispose();
+                    phaseDisplay.getClientgui().getMenuBar().remove(display);
+                   // display.dispose();
                 }
             }
         };
@@ -85,14 +88,11 @@ public class TurnTimer {
             public void run() {
                 remaining = new JLabel(timeLimit+" sec");
                 timer = new Timer(1000, listener);
+                phaseDisplay.getClientgui().getMenuBar().add(display);
                 timer.start();
-                display.setLayout(new BorderLayout());
-                display.getContentPane().add(remaining, BorderLayout.NORTH);
-                display.getContentPane().add(progressBar, BorderLayout.CENTER);
-                display.pack();
-                display.setAlwaysOnTop(true);
-                display.setModal(false);
-                //display.setUndecorated(true);
+                display.setLayout(new FlowLayout());
+                display.add(remaining);
+                display.add(progressBar);
                 display.setVisible(true);
 
             }
@@ -100,7 +100,7 @@ public class TurnTimer {
     }
     public void stopTimer() {
         display.setVisible(false);
-        display.dispose();
+        phaseDisplay.getClientgui().getMenuBar().remove(display);
         timer.stop();
     }
 

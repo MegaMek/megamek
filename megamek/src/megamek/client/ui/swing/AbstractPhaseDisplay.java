@@ -323,4 +323,8 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
 
     public void ready() {
     }
+    // needed for turn timer to add timer display to GUI
+    public ClientGUI getClientgui() {
+        return clientgui;
+    }
 }

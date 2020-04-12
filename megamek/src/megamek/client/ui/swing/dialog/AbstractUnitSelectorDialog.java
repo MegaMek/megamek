@@ -161,7 +161,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This is overwritten in MekHQ for user preferences, and has been set up to permit preference
      * implementation in anything that extends this
      */
-    protected void setUserPreferences() {
+    private void setUserPreferences() {
         GUIPreferences guiPreferences = GUIPreferences.getInstance();
         setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
 

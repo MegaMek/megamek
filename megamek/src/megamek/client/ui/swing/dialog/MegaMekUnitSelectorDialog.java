@@ -128,8 +128,8 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
                 if (e.getCrew() instanceof LAMPilot) {
                     skills = clientGUI.getClient().getRandomSkillsGenerator().getRandomSkills(e, true);
-                    ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
-                    ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
+                    ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
+                    ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
                 }
             }
             if (cs.generateNames()) {

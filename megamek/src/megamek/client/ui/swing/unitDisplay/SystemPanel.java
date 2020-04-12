@@ -418,12 +418,6 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         break;
                     case CriticalSlot.TYPE_EQUIPMENT:
                         sb.append(getMountedDisplay(cs.getMount(), loc, cs));
-                        if (!cs.getMount().getEntity().equals(en)) {
-                            sb.append(" (trailer)");
-                            if (cs.isMissing()) {
-                                continue;
-                            }
-                        }
                         break;
                     default:
                 }

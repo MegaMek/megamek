@@ -15,6 +15,7 @@ VERSION HISTORY:
 + Issue #1802 - Kajis Maps and Scenarios Update
 + Data: Missing Archive Sprites
 + Issue #1830 - Sarath 'Mech - Lacking Quirk
++ Issue #1827 - Not every head hit on a quad mech should be a through-armor critical
 
 0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO

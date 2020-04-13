@@ -152,7 +152,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             System.err.println("Artillery Entity is null!");
             return true;
         }
-        //Trailers can share ammo, which means the entity carrying the ammo might
+        //Trailers can share ammo, which means the entity carrying the ammo might not be
+        //the firing entity
         Entity ammoCarrier = game.getEntity(aaa.getAmmoCarrier());
         Mounted ammoUsed = ammoCarrier.getEquipment(aaa.getAmmoId());
         final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed

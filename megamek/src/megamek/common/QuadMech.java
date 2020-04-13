@@ -522,10 +522,10 @@ public class QuadMech extends Mech {
                                 && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT))) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
                             return result;
                         } // if
-                        return new HitData(Mech.LOC_HEAD);
+                        return new HitData(Mech.LOC_HEAD, true);
                     }
                 } else if (side == ToHitData.SIDE_LEFT) {
                     switch (roll) {

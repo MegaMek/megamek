@@ -227,7 +227,7 @@ base -4 "rough:1;snow:1" "" "snow/snow_rough_-3.gif"
 base -5 "rough:1;snow:1" "" "snow/snow_rough_-5.gif"
 base -6 "rough:1;snow:1" "" "snow/snow_rough_-5.gif"
 
-base * "woods:1;fluff:12" "" "boring/orchard.png"
+super * "woods:1;fluff:12" "" "boring/orchard.png"
 base * "woods:1" "" "boring/light_forest_0.gif;boring/light_forest_1.gif;boring/light_forest_2.gif"
 #hf2.gif has been taken out because it looks too much like ultra heavy
 base * "woods:2" "" "boring/heavy_forest_0.gif;boring/heavy_forest_1.gif"

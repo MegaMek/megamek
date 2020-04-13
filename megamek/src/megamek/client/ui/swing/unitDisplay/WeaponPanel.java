@@ -2140,7 +2140,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 Messages.getString("MechDisplay.0")); //$NON-NLS-1$
         int loc = m.getLocation();
         if (!m.getEntity().equals(entity)) {
-            sb.append('['+ "TR] "); //$NON-NLS-1$
+            sb.append("[TR] "); //$NON-NLS-1$
         } else if (loc != Entity.LOC_NONE) {
             sb.append('[').append(entity.getLocationAbbr(loc)).append("] "); //$NON-NLS-1$
         }

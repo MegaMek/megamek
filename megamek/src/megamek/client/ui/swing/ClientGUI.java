@@ -467,6 +467,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                // let's not nag the players about this in the lounge
+                if(client.getGame().getPhase() == Phase.PHASE_LOUNGE) {
+                    frame.setVisible(false);
+                    saveSettings();
+                    die();
+                    return;
+                }
+                
                 ignoreHotKeys = true;
                 int savePrompt = JOptionPane.showConfirmDialog(null,
                         "Do you want to save the game before quitting MegaMek?",

@@ -110,7 +110,6 @@ import megamek.common.util.MegaMekFile;
 
 // TODO: center map
 // TODO: background on the whole screen
-// TODO: vertical size of editor pane?
 // TODO: restrict terrains to those with images?
 // TODO: Allow drawing of invalid terrain as an override?
 // TODO: Allow adding/changing board background images
@@ -1450,7 +1449,7 @@ public class BoardEditor extends JComponent
             if (errBuff.length() > 0) {
                 String msg = Messages.getString("BoardEditor.invalidBoard.message");
                 String title =  Messages.getString("BoardEditor.invalidBoard.title");
-                JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.ERROR_MESSAGE);
             }
             // Board generation in a game always calls BoardUtilities.combine
             // This serves no purpose here, but is necessary to create 
@@ -1728,7 +1727,7 @@ public class BoardEditor extends JComponent
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight() / 2));
-        JOptionPane.showMessageDialog(this, scrollPane, title, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
     }
 
     //
@@ -1766,7 +1765,7 @@ public class BoardEditor extends JComponent
                 try {
                     Desktop.getDesktop().open(curfile);
                 } catch (IOException e) {
-                    JOptionPane.showMessageDialog(this, "Could not open the file "+curfile+". "+e.getMessage());
+                    JOptionPane.showMessageDialog(frame, "Could not open the file "+curfile+". "+e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -1779,7 +1778,7 @@ public class BoardEditor extends JComponent
             } else {
                 String title =  Messages.getString("BoardEditor.validBoard.title");
                 String msg = Messages.getString("BoardEditor.validBoard.report");
-                JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.INFORMATION_MESSAGE);
             }
         } else if (ae.getSource().equals(butDelTerrain)
                    && (!lisTerrain.isSelectionEmpty())) {

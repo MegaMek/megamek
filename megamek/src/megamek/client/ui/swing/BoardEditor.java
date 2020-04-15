@@ -242,6 +242,8 @@ public class BoardEditor extends JComponent
     }
  
     private static final long serialVersionUID = 4689863639249616192L;
+    
+    GUIPreferences guip = GUIPreferences.getInstance();
 
     //region action commands
     private static final String FILE_BOARD_EDITOR_EXPAND = "fileBoardExpand";
@@ -1418,7 +1420,7 @@ public class BoardEditor extends JComponent
 
     public void boardLoad() {
         JFileChooser fc = new JFileChooser(loadPath);
-        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        setDialogSize(fc);
         fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
         fc.setFileFilter(new FileFilter() {
             @Override
@@ -1432,6 +1434,7 @@ public class BoardEditor extends JComponent
             }
         });
         int returnVal = fc.showOpenDialog(frame);
+        saveDialogSize(fc);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
@@ -1544,6 +1547,7 @@ public class BoardEditor extends JComponent
         // First, correct connection issues
         correctExits();
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
+        setDialogSize(fc);
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
         fc.setFileFilter(new FileFilter() {
@@ -1558,6 +1562,7 @@ public class BoardEditor extends JComponent
             }
         });
         int returnVal = fc.showSaveDialog(frame);
+        saveDialogSize(fc);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             return; // I want a file, y'know!
         }
@@ -1583,6 +1588,7 @@ public class BoardEditor extends JComponent
      */
     private void boardSaveAsImage(boolean ignoreUnits) {
         JFileChooser fc = new JFileChooser(".");
+        setDialogSize(fc);
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
         fc.setFileFilter(new FileFilter() {
@@ -1597,6 +1603,7 @@ public class BoardEditor extends JComponent
             }
         });
         int returnVal = fc.showSaveDialog(frame);
+        saveDialogSize(fc);
         if ((returnVal != JFileChooser.APPROVE_OPTION)
             || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
@@ -2069,6 +2076,16 @@ public class BoardEditor extends JComponent
                 || texTerrainLevel.hasFocus() || texTerrExits.hasFocus();
     }
     
+    private void setDialogSize(JFileChooser dialog) {
+        int width = guip.getBoardEditLoadWidth();
+        int height = guip.getBoardEditLoadHeight();
+        dialog.setPreferredSize(new Dimension(width, height));   
+    }
+    
+    private void saveDialogSize(JComponent dialog) {
+        guip.setBoardEditLoadHeight(dialog.getHeight());
+        guip.setBoardEditLoadWidth(dialog.getWidth());
+    }
     /**
      * Specialized field for the BoardEditor that supports 
      * MouseWheel changes.

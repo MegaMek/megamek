@@ -202,6 +202,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SKIN_FILE = "SkinFile";
     public static final String DEFAULT_WEAP_SORT_ORDER = "DefaultWeaponSortOrder";
     public static final String UI_THEME = "UITheme";
+    public static final String BOARDEDIT_LOAD_SIZE_HEIGHT = "BoardEditLoadSizeHeight";
+    public static final String BOARDEDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -384,6 +386,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_YEAR_MAX, "3150");
         store.setDefault(RAT_PAD_BV, false);
         store.setDefault(RAT_SELECTED_RAT, "");
+        
+        store.setDefault(BOARDEDIT_LOAD_SIZE_WIDTH, 400);
+        store.setDefault(BOARDEDIT_LOAD_SIZE_HEIGHT, 300);
         
         store.setDefault(DEFAULT_WEAP_SORT_ORDER,
                 Entity.WeaponSortOrder.DEFAULT.ordinal());
@@ -605,6 +610,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getMinimumSizeWidth() {
         return store.getInt(MINIMUM_SIZE_WIDTH);
+    }
+    
+    public int getBoardEditLoadHeight() {
+        return store.getInt(BOARDEDIT_LOAD_SIZE_HEIGHT);
+    }
+
+    public int getBoardEditLoadWidth() {
+        return store.getInt(BOARDEDIT_LOAD_SIZE_WIDTH);
     }
 
     public int getMiniReportPosX() {
@@ -1003,6 +1016,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMiniReportPosY(int i) {
         store.setValue(MINIMAP_POS_Y, i);
+    }
+    
+    public void setBoardEditLoadHeight(int i) {
+        store.setValue(BOARDEDIT_LOAD_SIZE_HEIGHT, i);
+    }
+
+    public void setBoardEditLoadWidth(int i) {
+        store.setValue(BOARDEDIT_LOAD_SIZE_WIDTH, i);
     }
 
     public void setMiniReportSizeHeight(int i) {

@@ -728,6 +728,13 @@ public class MiniMap extends JPanel {
                         paintCoord(gg, j, k, true);
                     }
                     addRoadElements(h, j, k);
+                    // Color invalid hexes red when in the Map Editor
+                    if ((m_game != null) && 
+                            (m_game.getPhase() == IGame.Phase.PHASE_UNKNOWN)
+                            && !h.isValid(null)) {
+                        gg.setColor(Color.RED);
+                        paintCoord(gg, j, k, true);
+                    }
                 }
             }
             // draw backbuffer

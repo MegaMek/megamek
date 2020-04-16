@@ -3,33 +3,34 @@ Phoenix Hawk
 PXH-6D
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO Project Pheonix - Civil War
+rules level:2
 
-Mass:45
-Engine:270 XL Engine
-Structure:Endo Steel
-Myomer:Standard
-Ejection:Full Head Ejection System
+mass:45
+engine:270 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:12 Double
-Walk MP:6
-Jump MP:6
+heat sinks:12 Double
+nocrit:Standard:None
+walk mp:6
+jump mp:6
 
-Armor:Standard(Inner Sphere)
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:21
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Standard(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:16
+RT armor:16
+CT armor:21
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:5
 ER Medium Laser, Left Arm
@@ -48,9 +49,9 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISERMediumLaser
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
@@ -63,8 +64,8 @@ ISDoubleHeatSink
 ISERPPC
 ISERPPC
 ISERPPC
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -73,9 +74,9 @@ Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -90,8 +91,8 @@ Jump Jet
 ISTargeting Computer
 ISTargeting Computer
 ISTargeting Computer
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Center Torso:
@@ -127,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

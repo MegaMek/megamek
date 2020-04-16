@@ -3,33 +3,34 @@ Stinger
 STG-5R
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO Project Phoenix - Civil War
+rules level:2
 
-Mass:20
-Engine:120 Fusion Engine
-Structure:Standard
-Myomer:Standard
-Ejection:Full Head Ejection System
+mass:20
+engine:120 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Single
-Walk MP:6
-Jump MP:6
+heat sinks:10 Single
+nocrit:Standard:None
+walk mp:6
+jump mp:6
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:5
-RA Armor:5
-LT Armor:6
-RT Armor:6
-CT Armor:6
-HD Armor:7
-LL Armor:6
-RL Armor:6
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:5
+RA armor:5
+LT armor:6
+RT armor:6
+CT armor:6
+HD armor:7
+LL armor:6
+RL armor:6
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
 Weapons:3
 ER Medium Laser, Right Arm
@@ -41,8 +42,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -56,8 +57,8 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 ISERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -73,8 +74,8 @@ Jump Jet
 Jump Jet
 RL15
 RL15
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -87,8 +88,8 @@ Jump Jet
 Jump Jet
 RL15
 RL15
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -103,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
@@ -125,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

@@ -3,40 +3,41 @@ Ursus II
 (Standard)
 
 Config:Biped
-TechBase:Clan
-Era:3078
-Source:Jihad
-Rules Level:2
+techbase:Clan
+era:3078
+source:Jihad
+rules level:2
 
-Mass:50
-Engine:200 XL (Clan) Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
+mass:50
+engine:200 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:13 Double
-Walk MP:4
-Jump MP:6
+heat sinks:13 Double
+nocrit:Standard:None
+walk mp:4
+jump mp:6
 
-Armor:Standard(Clan)
-LA Armor:16
-RA Armor:16
-LT Armor:20
-RT Armor:20
-CT Armor:24
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:4
-RTR Armor:4
-RTC Armor:7
+armor:Standard(Clan)
+LA armor:16
+RA armor:16
+LT armor:20
+RT armor:20
+CT armor:24
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:4
+RTR armor:4
+RTC armor:7
 
 Weapons:7
+LRM 10, Left Arm
 ER Large Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
 ER Small Laser, Left Torso
 ER Small Laser, Right Torso
-Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Right Arm
-LRM 10, Left Arm
 Streak SRM 6, Center Torso
 
 Left Arm:
@@ -50,7 +51,7 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLLRM10
 CLArtemisIV
-Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Arm:
@@ -64,7 +65,7 @@ CLDoubleHeatSink
 CLERLargeLaser
 CLMediumPulseLaser
 CLMediumPulseLaser
-Endo Steel
+Clan Endo Steel
 -Empty-
 
 Left Torso:
@@ -72,28 +73,28 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 CLERSmallLaser
 Clan Ammo LRM-10 (Clan) Artemis-capable
 Clan Streak SRM 6 Ammo
-Endo Steel
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 CLERSmallLaser
 CLECMSuite
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -113,9 +114,9 @@ Head:
 Life Support
 Sensors
 Cockpit
+-Empty-
 Sensors
 Life Support
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -128,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-

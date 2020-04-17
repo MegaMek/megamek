@@ -498,6 +498,7 @@ public class BoardEditor extends JComponent
     private void setupFrame() {
         scrollPane = new JScrollPane(this, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(12);
 
         frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
         frame.getContentPane().setLayout(new BorderLayout());

@@ -2050,21 +2050,27 @@ public class BoardEditor extends JComponent
         HexCanvas() {
             setPreferredSize(new Dimension(90, 90));
         }
+        
+        /** Returns list or an empty list when list is null. */
+        private List<Image> safeList(List<Image> list) {
+            return list == null ? Collections.emptyList() : list;
+        }
 
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
             if (curHex != null) {
+                // draw the terrain images
                 TilesetManager tm = bv.getTilesetManager();
                 g.drawImage(tm.baseFor(curHex), 0, 0, BoardView1.HEX_W, BoardView1.HEX_H, this);
-                g.setColor(getForeground());
-                if (tm.supersFor(curHex) != null) {
-                    for (final Object newVar : tm.supersFor(curHex)) {
-                        g.drawImage((Image) newVar, 0, 0, this);
-                        g.drawString(
-                                Messages.getString("BoardEditor.SUPER"), 0, 10); //$NON-NLS-1$
-                    }
+                for (final Image newVar : safeList(tm.supersFor(curHex))) {
+                    g.drawImage(newVar, 0, 0, this);
                 }
+                for (final Image newVar : safeList(tm.orthoFor(curHex))) {
+                    g.drawImage(newVar, 0, 0, this);
+                }
+                // add level and INVALID if necessary
+                g.setColor(getForeground());
                 g.setFont(new Font("SansSerif", Font.PLAIN, 9)); //$NON-NLS-1$
                 g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70); //$NON-NLS-1$
                 StringBuffer errBuf = new StringBuffer();

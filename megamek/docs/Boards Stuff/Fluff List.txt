@@ -1,0 +1,27 @@
+# List of Fluffs
+fluff:2 - helipad, beacon
+fluff:4 - squares and pillars
+fluff:5 - roads with cars
+fluff:6 - skylights, building adornments
+fluff:7 - construction
+fluff:8 - garden
+fluff:9 - Maglev trains
+fluff:10 - Maglev tracks
+fluff:13 - animals
+fluff:14 - runway markings
+road:1;fluff:20 - rounded road corners (saxarba)
+road:1;fluff:21 - horizontal roads (saxarba)
+
+building:1;fluff:0...6, lunar/mars
+building:1;bldg_elev:1;fluff:11
+building:1;bldg_elev:2;fluff:11
+building:1;bldg_elev:3;fluff:11
+building:2;bldg_elev:3;fluff:11
+building:3;bldg_elev:3;fluff:11
+building:3;bldg_elev:4;fluff:11
+building:1;bldg_elev:2;fluff:11
+building:1;bldg_elev:1;fluff:11
+building:4;fluff:1
+building:1;fluff:3
+building:1;fluff:1
+woods:1;fluff:12

@@ -11736,6 +11736,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Mech</unitType>
 		<quirk>distracting</quirk>
 		<quirk>compact_mech</quirk>
+		<quirk>low_profile</quirk>
 		<quirk>bad_rep_is</quirk>
 	</unit>
 	

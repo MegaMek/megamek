@@ -8,7 +8,16 @@ VERSION HISTORY:
 + Issue #1812: Semi-guided warheads indirectly fired at TAGged targets are no longer subject to terrain modifiers for the purposes of "to-hit" numbers.
 + PR #1837: The bot will now be able to use a searchlight on buildings without crashing the server.
 + Documentation: Trailer How-To added (thanks mkerensky)
-+ Data" First SW RATs - Thanks SLDF_gunslinger
++ Data: First SW RATs - Thanks SLDF_gunslinger
++ PR #1843: Saxarba roads
++ Data: Adding Royal Fantasy units as Unofficial.
++ Data: New Sprites
++ Issue #1802 - Kajis Maps and Scenarios Update
++ Data: Missing Archive Sprites
++ Issue #1830 - Sarath 'Mech - Lacking Quirk
++ Issue #1827 - Not every head hit on a quad mech should be a through-armor critical
++ PR #1847 - Restore the bot's ability to use physical attacks against buildings containing gun emplacements
++ Data: Various unit errata Fixes.
 
 0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO

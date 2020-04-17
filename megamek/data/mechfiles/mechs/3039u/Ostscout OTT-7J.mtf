@@ -3,32 +3,34 @@ Ostscout
 OTT-7J
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2600
-Source:TRO 3039 - Star League
-Rules Level:1
+techbase:Inner Sphere
+era:2600
+source:TRO 3039 - Star League
+rules level:1
 
-Mass:35
-Engine:280 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
+mass:35
+engine:280 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:8
-Jump MP:8
+heat sinks:10 Single
+nocrit:Standard:None
+nocrit:Standard:None
+walk mp:8
+jump mp:8
 
-Armor:Standard(Inner Sphere)
-LA Armor:6
-RA Armor:6
-LT Armor:9
-RT Armor:9
-CT Armor:12
-HD Armor:6
-LL Armor:8
-RL Armor:8
-RTL Armor:2
-RTR Armor:2
-RTC Armor:4
+armor:Standard(Inner Sphere)
+LA armor:6
+RA armor:6
+LT armor:9
+RT armor:9
+CT armor:12
+HD armor:6
+LL armor:8
+RL armor:8
+RTL armor:2
+RTR armor:2
+RTC armor:4
 
 Weapons:1
 Medium Laser, Center Torso

@@ -3,33 +3,33 @@ Stinger
 STG-6L
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO Project Pheonix - Civil War
+rules level:2
 
-Mass:20
-Engine:160 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
-Ejection:Full Head Ejection System
+mass:20
+engine:160 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:8
-Jump MP:0
+heat sinks:10 Double
+walk mp:8
+jump mp:0
 
-Armor:Stealth(Inner Sphere)
-LA Armor:6
-RA Armor:6
-LT Armor:8
-RT Armor:8
-CT Armor:9
-HD Armor:9
-LL Armor:8
-RL Armor:8
-RTL Armor:2
-RTR Armor:2
-RTC Armor:3
+armor:Stealth(Inner Sphere)
+LA armor:6
+RA armor:6
+LT armor:8
+RT armor:8
+CT armor:9
+HD armor:9
+LL armor:8
+RL armor:8
+RTL armor:2
+RTR armor:2
+RTC armor:3
 
 Weapons:2
 Medium Laser, Left Arm
@@ -44,8 +44,8 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 Medium Laser
-Stealth
-Stealth
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 
@@ -58,8 +58,8 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 Medium Laser
-Stealth
-Stealth
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 
@@ -67,29 +67,29 @@ Left Torso:
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 
 Right Torso:
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 
 Center Torso:
 Fusion Engine
@@ -124,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth
-Stealth
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth
-Stealth
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-

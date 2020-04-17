@@ -3,33 +3,34 @@ Wasp
 WSP-3S
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO Project Pheonix - Civil War
+rules level:2
 
-Mass:20
-Engine:120 Light Engine
-Structure:Endo Steel
-Myomer:Standard
-Ejection:Full Head Ejection System
+mass:20
+engine:120 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:6
-Jump MP:6
+heat sinks:10 Double
+nocrit:Standard:None
+walk mp:6
+jump mp:6
 
-Armor:Standard(Inner Sphere)
-LA Armor:5
-RA Armor:5
-LT Armor:6
-RT Armor:6
-CT Armor:8
-HD Armor:6
-LL Armor:7
-RL Armor:7
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+armor:Standard(Inner Sphere)
+LA armor:5
+RA armor:5
+LT armor:6
+RT armor:6
+CT armor:8
+HD armor:6
+LL armor:7
+RL armor:7
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
 Weapons:3
 ER Medium Laser, Right Arm
@@ -44,10 +45,10 @@ Hand Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Arm:
@@ -59,10 +60,10 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISERMediumLaser
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -76,7 +77,7 @@ ISDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -90,7 +91,7 @@ ISDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -125,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

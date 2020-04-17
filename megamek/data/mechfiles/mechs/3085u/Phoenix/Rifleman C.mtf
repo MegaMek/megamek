@@ -3,32 +3,34 @@ Rifleman
 C
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3050
-Source:Clan Invasion
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3050
+source:TRO 3085 - Clan Invasion
+rules level:4
 
-Mass:60
-Engine:240 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
+mass:60
+engine:240 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:0
+heat sinks:10 Single
+nocrit:Standard:None
+nocrit:Standard:None
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:15
-RA Armor:15
-LT Armor:15
-RT Armor:15
-CT Armor:22
-HD Armor:6
-LL Armor:12
-RL Armor:12
-RTL Armor:2
-RTR Armor:2
-RTC Armor:4
+armor:Standard(Inner Sphere)
+LA armor:15
+RA armor:15
+LT armor:15
+RT armor:15
+CT armor:22
+HD armor:6
+LL armor:12
+RL armor:12
+RTL armor:2
+RTR armor:2
+RTC armor:4
 
 Weapons:4
 Large Pulse Laser, Left Arm
@@ -149,3 +151,4 @@ Foot Actuator
 -Empty-
 
 imagefile:.\data\images\fluff\Mech\rifleman Silhouette.jpg
+

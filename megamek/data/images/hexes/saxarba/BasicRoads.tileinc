@@ -262,6 +262,48 @@ super * "road:2:61" "mars" "lunar/tunnel61.gif"
 super * "road:2:62" "mars" "lunar/tunnel62.gif"
 super * "road:2:63" "mars" "lunar/tunnel63.gif"
 
+
+# Softer turns: road:1;fluff:20 
+
+super * "road:1:05;fluff:20" "" "saxarba/roads/roadF05.png"
+super * "road:1:10;fluff:20" "" "saxarba/roads/roadF10.png"
+super * "road:1:17;fluff:20" "" "saxarba/roads/roadF17.png"
+super * "road:1:20;fluff:20" "" "saxarba/roads/roadF20.png"
+super * "road:1:34;fluff:20" "" "saxarba/roads/roadF34.png"
+super * "road:1:40;fluff:20" "" "saxarba/roads/roadF40.png"
+
+# Horizontal roads: road;1;fluff:21
+
+super * "road:1:02;fluff:21" "" "saxarba/roads/roadH02.png"
+super * "road:1:03;fluff:21" "" "saxarba/roads/roadH03.png"
+super * "road:1:04;fluff:21" "" "saxarba/roads/roadH04.png"
+super * "road:1:05;fluff:21" "" "saxarba/roads/roadH05.png"
+super * "road:1:10;fluff:21" "" "saxarba/roads/roadH10.png"
+super * "road:1:11;fluff:21" "" "saxarba/roads/roadH11.png"
+super * "road:1:12;fluff:21" "" "saxarba/roads/roadH12.png"
+super * "road:1:13;fluff:21" "" "saxarba/roads/roadH13.png"
+super * "road:1:16;fluff:21" "" "saxarba/roads/roadH16.png"
+super * "road:1:17;fluff:21" "" "saxarba/roads/roadH17.png"
+super * "road:1:20;fluff:21" "" "saxarba/roads/roadH20.png"
+super * "road:1:21;fluff:21" "" "saxarba/roads/roadH21.png"
+super * "road:1:22;fluff:21" "" "saxarba/roads/roadH22.png"
+super * "road:1:24;fluff:21" "" "saxarba/roads/roadH24.png"
+super * "road:1:25;fluff:21" "" "saxarba/roads/roadH25.png"
+super * "road:1:28;fluff:21" "" "saxarba/roads/roadH28.png"
+super * "road:1:29;fluff:21" "" "saxarba/roads/roadH29.png"
+super * "road:1:32;fluff:21" "" "saxarba/roads/roadH32.png"
+super * "road:1:33;fluff:21" "" "saxarba/roads/roadH33.png"
+super * "road:1:34;fluff:21" "" "saxarba/roads/roadH34.png"
+super * "road:1:35;fluff:21" "" "saxarba/roads/roadH35.png"
+super * "road:1:38;fluff:21" "" "saxarba/roads/roadH38.png"
+super * "road:1:40;fluff:21" "" "saxarba/roads/roadH40.png"
+super * "road:1:41;fluff:21" "" "saxarba/roads/roadH41.png"
+super * "road:1:42;fluff:21" "" "saxarba/roads/roadH42.png"
+super * "road:1:43;fluff:21" "" "saxarba/roads/roadH43.png"
+super * "road:1:50;fluff:21" "" "saxarba/roads/roadH50.png"
+super * "road:1:52;fluff:21" "" "saxarba/roads/roadH52.png"
+
+
 # The basic roads
 
 super * "road:1:00" "" "saxarba/roads/road00.png"
@@ -328,6 +370,8 @@ super * "road:1:60" "" "saxarba/roads/road60.png"
 super * "road:1:61" "" "saxarba/roads/road61.png"
 super * "road:1:62" "" "saxarba/roads/road62.png"
 super * "road:1:63" "" "saxarba/roads/road63.png"
+
+
 
 super * "road:2:00" "" "saxarba/roads/road_trees00.png"
 super * "road:2:01" "" "saxarba/roads/road_trees01.png"

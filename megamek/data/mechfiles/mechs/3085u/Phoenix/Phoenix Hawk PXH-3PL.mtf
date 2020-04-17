@@ -3,33 +3,34 @@ Phoenix Hawk
 PXH-3PL
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO Project Pheonix - Civil War
+rules level:2
 
-Mass:45
-Engine:270 XL Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
-Ejection:Full Head Ejection System
+mass:45
+engine:270 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:12 Double
-Walk MP:6
-Jump MP:6
+heat sinks:12 Double
+nocrit:Standard:None
+walk mp:6
+jump mp:6
 
-Armor:Standard(Inner Sphere)
-LA Armor:13
-RA Armor:13
-LT Armor:16
-RT Armor:16
-CT Armor:19
-HD Armor:9
-LL Armor:21
-RL Armor:21
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Standard(Inner Sphere)
+LA armor:13
+RA armor:13
+LT armor:16
+RT armor:16
+CT armor:19
+HD armor:9
+LL armor:21
+RL armor:21
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:5
 Medium Pulse Laser, Left Arm
@@ -48,9 +49,9 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISMediumPulseLaser
 ISMediumPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
@@ -62,9 +63,9 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISLargePulseLaser
 ISLargePulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -76,7 +77,7 @@ Jump Jet
 ISTargeting Computer
 ISTargeting Computer
 ISTargeting Computer
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -89,7 +90,7 @@ Jump Jet
 Jump Jet
 ISERSmallLaser
 ISERSmallLaser
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -105,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
+IS Endo Steel
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -127,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

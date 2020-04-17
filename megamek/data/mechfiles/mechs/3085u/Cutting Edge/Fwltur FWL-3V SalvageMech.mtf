@@ -3,34 +3,36 @@ Fwltur
 FWL-3V SalvageMech
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3085
-Source:Dark Age
-Rules Level:4
+techbase:Inner Sphere
+era:3085
+source:Dark Age
+rules level:4
 
-Mass:35
-Engine:105 Fusion Engine(IS)
-Structure:Industrial
-Myomer:Standard
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
+mass:35
+engine:105 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Single
-Walk MP:3
-Jump MP:2
+heat sinks:10 Single
+nocrit:Industrial:None
+nocrit:Clan Commercial:None
+walk mp:3
+jump mp:2
 
-Armor:Commercial(Inner Sphere)
-LA Armor:7
-RA Armor:7
-LT Armor:10
-RT Armor:10
-CT Armor:16
-HD Armor:8
-LL Armor:10
-RL Armor:10
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+armor:Industrial (Inner Sphere)
+LA armor:7
+RA armor:7
+LT armor:10
+RT armor:10
+CT armor:16
+HD armor:8
+LL armor:10
+RL armor:10
+RTL armor:6
+RTR armor:6
+RTC armor:6
 
 Weapons:0
 
@@ -65,9 +67,9 @@ Salvage Arm
 Left Torso:
 Heat Sink
 Heat Sink
-Lift Hoist (R)
-Lift Hoist (R)
-Lift Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
 -Empty-
 -Empty-
 -Empty-
@@ -79,9 +81,9 @@ Lift Hoist (R)
 Right Torso:
 Heat Sink
 Heat Sink
-Lift Hoist (R)
-Lift Hoist (R)
-Lift Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
 -Empty-
 -Empty-
 -Empty-
@@ -108,9 +110,9 @@ Head:
 Life Support
 Sensors
 Cockpit
+-Empty-
 Sensors
 Life Support
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -123,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Booster
-Jump Booster
+MechanicalJumpBooster
+MechanicalJumpBooster
 -Empty-
 -Empty-
 -Empty-
@@ -137,8 +139,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Booster
-Jump Booster
+MechanicalJumpBooster
+MechanicalJumpBooster
 -Empty-
 -Empty-
 -Empty-
@@ -147,3 +149,4 @@ Jump Booster
 -Empty-
 
 imagefile:.\data\images\fluff\Mech\3085Fwltur.jpg
+

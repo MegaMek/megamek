@@ -1375,16 +1375,19 @@ public class BoardEditor extends JComponent
             addSetTerrain();
     }
 
-    public void boardNew() {
-    	RandomMapDialog rmd = new RandomMapDialog(frame, this, null, mapSettings);
-    	boolean userCancel = rmd.activateDialog(bv.getTilesetManager().getThemes());
-    	if (!userCancel) {
-    		board = BoardUtilities.generateRandom(mapSettings);
-    		game.setBoard(board);
-    		curfile = null;
-    		butSourceFile.setEnabled(false);
-    		frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
-    		menuBar.setBoard(true);
+    public void boardNew(boolean showDialog) {
+        boolean userCancel = false;
+        if (showDialog) {
+            RandomMapDialog rmd = new RandomMapDialog(frame, this, null, mapSettings);
+            userCancel = rmd.activateDialog(bv.getTilesetManager().getThemes());
+        }
+        if (!userCancel) {
+            board = BoardUtilities.generateRandom(mapSettings);
+            game.setBoard(board);
+            curfile = null;
+            butSourceFile.setEnabled(false);
+            frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
+            menuBar.setBoard(true);
     		bvc.doLayout();
     		resetUndo();
     		choTheme.setSelectedItem(mapSettings.getTheme());
@@ -1774,7 +1777,7 @@ public class BoardEditor extends JComponent
     public void actionPerformed(ActionEvent ae) {
         if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_NEW)) {
             ignoreHotKeys = true;
-            boardNew();
+            boardNew(true);
             ignoreHotKeys = false;
         } else if (ae.getActionCommand().equals(FILE_BOARD_EDITOR_EXPAND)) {
             ignoreHotKeys = true;

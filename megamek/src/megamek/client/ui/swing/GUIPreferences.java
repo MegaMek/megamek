@@ -204,6 +204,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UI_THEME = "UITheme";
     public static final String BOARDEDIT_LOAD_SIZE_HEIGHT = "BoardEditLoadSizeHeight";
     public static final String BOARDEDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
+    public static final String BOARDEDIT_RNDDIALOG_START = "BoardEditRandomDialogStart";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -239,6 +240,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_MECH_DISPLAY_LARGE_FONT_SIZE, 12);
         store.setDefault(ADVANCED_MECH_DISPLAY_MEDIUM_FONT_SIZE, 10);
         store.setDefault(ADVANCED_MECH_DISPLAY_WRAP_LENGTH, 24);
+        store.setDefault(BOARDEDIT_RNDDIALOG_START, false);
         setDefault(ADVANCED_MOVE_DEFAULT_CLIMB_MODE, true);
         setDefault(ADVANCED_MOVE_DEFAULT_COLOR, "cyan");
         setDefault(ADVANCED_MOVE_ILLEGAL_COLOR, "darkGray");
@@ -816,6 +818,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public int getDefaultWeaponSortOrder() {
         return store.getInt(DEFAULT_WEAP_SORT_ORDER);
     }
+    
+    public boolean getBoardEdRndStart() {
+        return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
+    }
 
     public void setAntiAliasing(boolean state) {
         store.setValue(ANTIALIASING, state);
@@ -1304,6 +1310,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setRATSelectedRAT(String v) {
         store.setValue(RAT_SELECTED_RAT, v);
+    }
+    
+    public void setBoardEdRndStart(boolean b) {
+        store.setValue(BOARDEDIT_RNDDIALOG_START, b);
     }
 
     protected ColorParser p = new ColorParser();

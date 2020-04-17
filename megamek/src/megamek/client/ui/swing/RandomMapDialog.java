@@ -36,6 +36,7 @@ import java.util.Set;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -70,6 +71,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     private final JFrame PARENT;
     private final IMapSettingsObserver MAP_SETTINGS_OBSERVER;
     private final Client CLIENT;
+    private final GUIPreferences guip = GUIPreferences.getInstance();
 
     // How the map will be set up.
     private MapSettings mapSettings;
@@ -95,6 +97,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     private final JButton loadButton = new JButton(Messages.getString("RandomMapDialog.Load"));
     private final JButton saveButton = new JButton(Messages.getString("RandomMapDialog.Save"));
     private final JButton cancelButton = new JButton(Messages.getString("Cancel"));
+    private final JCheckBox showAtStartButton = new JCheckBox(Messages.getString("RandomMapDialog.ShowAtStart"));
     
     // Return value
     private boolean userCancel;
@@ -271,8 +274,22 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     }
 
     private JPanel setupControlsPanel() {
+        JPanel outerpanel = new JPanel(new BorderLayout());
+        
+        // The left-side panel contains only the Show on startup option
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
+       
+        // Add the option only when in the Map Editor
+        if (CLIENT == null) {
+            showAtStartButton.addActionListener(this);
+            showAtStartButton.setMnemonic(showAtStartButton.getText().charAt(0));
+            showAtStartButton.setSelected(guip.getBoardEdRndStart());
+            leftPanel.add(showAtStartButton);
+        }
+        
+        // The main panel with the Okay, Cancel etc. buttons
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
-
+        
         loadButton.addActionListener(this);
         loadButton.setMnemonic(loadButton.getText().charAt(0));
         panel.add(loadButton);
@@ -289,7 +306,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         cancelButton.setMnemonic(cancelButton.getText().charAt(0));
         panel.add(cancelButton);
 
-        return panel;
+        outerpanel.add(leftPanel, BorderLayout.LINE_START);
+        outerpanel.add(panel, BorderLayout.CENTER);
+
+        return outerpanel;
     }
 
     private File fileBrowser(String title, String targetDir, String fileName, final String extension,
@@ -461,6 +481,8 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         	}
         } else if (cancelButton.equals(e.getSource())) {
         	closeWithoutNewMap();
+        } else if (showAtStartButton.equals(e.getSource())) {
+            guip.setBoardEdRndStart(showAtStartButton.isSelected());
         }
     }
 }

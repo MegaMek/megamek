@@ -1,0 +1,72 @@
+#
+# This workflow updates the MM Maven Repo on push to master 
+#
+name: Update Maven Repo
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  update_maven_repo:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    # Put the MM repo in a subfolder to make
+    # updating the Maven repo easier
+    - uses: actions/checkout@v2
+      with:
+        path: megamek
+
+    # Do the standard JDK + Gradle work
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Grant execute permission for gradlew
+      working-directory: megamek
+      run: chmod +x gradlew
+
+    # Create the actual maven repo bits with Gradle
+    - name: Publish Maven Repo with Gradle
+      working-directory: megamek
+      run: ./gradlew publishPublishMMLibraryPublicationToMavenRepository
+    
+    # Get the current Maven repo contents
+    - name: Checkout Maven Repo
+      uses: actions/checkout@v2
+      with:
+        repository: MegaMek/mavenrepo
+        path: mavenrepo
+        
+    # Create an update
+    - name: Copy Maven Outputs to Repo
+      working-directory: megamek/megamek/build/mavenrepo/
+      run: |
+        cp -r . ../../../../mavenrepo/
+        
+    # In case we run into an issue, use git status to help
+    # us understand what happened.
+    - name: Inspect git status output
+      working-directory: mavenrepo
+      run: |
+        git status
+        
+    # Add the changes under the username and email of the
+    # user who pushed the code
+    - name: Commit changes to the Maven Repo
+      working-directory: mavenrepo
+      run: |
+        git add .
+        git config user.email ${{ github.event.pusher.email }}
+        git config user.name ${{ github.event.pusher.name }}
+        git commit -m "MegaMek ${{ github.event.after }}" -m "${{ github.event.compare }}"
+        
+    # Use an SSH deploy key (with write privs) to update the maven repo
+    - name: Setup SSH and Push changes to the Maven Repo
+      working-directory: mavenrepo
+      run: |
+        eval "$(ssh-agent -s)"
+        ssh-add - <<< "${{ secrets.MAVEN_REPO_DEPLOY_KEY }}"
+        git push "git@github.com:MegaMek/mavenrepo.git" HEAD:master

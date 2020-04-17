@@ -35,6 +35,7 @@ jobs:
     
     # Get the current Maven repo contents
     - name: Checkout Maven Repo
+      if: github.repository == 'MegaMek/megamek'
       uses: actions/checkout@v2
       with:
         repository: MegaMek/mavenrepo
@@ -42,6 +43,7 @@ jobs:
         
     # Create an update
     - name: Copy Maven Outputs to Repo
+      if: github.repository == 'MegaMek/megamek'
       working-directory: megamek/megamek/build/mavenrepo/
       run: |
         cp -r . ../../../../mavenrepo/
@@ -49,6 +51,7 @@ jobs:
     # In case we run into an issue, use git status to help
     # us understand what happened.
     - name: Inspect git status output
+      if: github.repository == 'MegaMek/megamek'
       working-directory: mavenrepo
       run: |
         git status
@@ -56,6 +59,7 @@ jobs:
     # Add the changes under the username and email of the
     # user who pushed the code
     - name: Commit changes to the Maven Repo
+      if: github.repository == 'MegaMek/megamek'
       working-directory: mavenrepo
       run: |
         git add .
@@ -65,6 +69,7 @@ jobs:
         
     # Use an SSH deploy key (with write privs) to update the maven repo
     - name: Setup SSH and Push changes to the Maven Repo
+      if: github.repository == 'MegaMek/megamek'
       working-directory: mavenrepo
       run: |
         eval "$(ssh-agent -s)"

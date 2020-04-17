@@ -496,7 +496,7 @@ public class BoardEditor extends JComponent
      * Sets up the frame that will display the editor.
      */
     private void setupFrame() {
-        scrollPane = new JScrollPane(this, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+        scrollPane = new JScrollPane(this, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
@@ -2093,12 +2093,12 @@ public class BoardEditor extends JComponent
         // Make the hex stubborn when resizing the frame
         @Override
         public Dimension getPreferredSize() {
-            return new Dimension(80,80);
+            return new Dimension(90, 90);
         }
         
         @Override
         public Dimension getMinimumSize() {
-            return new Dimension(80,80);
+            return new Dimension(90, 90);
         }
     }
 

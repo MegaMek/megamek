@@ -340,6 +340,7 @@ public class ArtilleryTargetingControl {
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
                     int ammoID = findAmmo(shooter, currentWeapon, game);
                     if (ammoID > NO_AMMO) {
+                        //This can happen if princess is towing ammo trailers, which she really shouldn't be doing...
                         aaa.setAmmoId(ammoID);
                         aaa.setAmmoCarrier(shooter.getId());
                         actualFireInfo.setAction(aaa);

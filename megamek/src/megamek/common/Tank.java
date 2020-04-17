@@ -291,8 +291,8 @@ public class Tank extends Entity {
         
         //If the unit is towing trailers, adjust its walkMP, TW p205
         if (!getAllTowedUnits().isEmpty()) {
-            double tractorWeight = getWeight();
-            double trailerWeight = 0;
+            double trainWeight = getWeight();
+            int lowestSuspensionFactor = getSuspensionFactor();
             //Add up the trailers
             for (int id : getAllTowedUnits()) {
                 Entity tr = game.getEntity(id);
@@ -300,13 +300,15 @@ public class Tank extends Entity {
                     //this isn't supposed to happen, but it can in rare cases when tr is destroyed
                     continue;
                 }
-                trailerWeight += tr.getWeight();
+                if (tr instanceof Tank) {
+                    Tank trailer = (Tank) tr;
+                    if (trailer.getSuspensionFactor() < lowestSuspensionFactor) {
+                        lowestSuspensionFactor = trailer.getSuspensionFactor();
+                    }
+                }
+                trainWeight += tr.getWeight();
             }
-            if (trailerWeight <= (tractorWeight / 4)) {
-                j = Math.max((j - 3), (j / 2));
-            } else {
-                j = (j / 2);
-            }
+            j = (int) ((getEngine().getRating() + lowestSuspensionFactor) / trainWeight);
         }
 
         return j;

@@ -339,11 +339,15 @@ public class ArtilleryTargetingControl {
                     WeaponFireInfo actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValuedFireInfos.size()));
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
                     int ammoID = findAmmo(shooter, currentWeapon, game);
-                    aaa.setAmmoId(ammoID);
-                    actualFireInfo.setAction(aaa);
-                    retval.add(actualFireInfo);
-                    retval.setUtility(retval.getUtility() + maxDamage);
-                    owner.sendAmmoChange(shooter.getId(), shooter.getEquipmentNum(currentWeapon), ammoID);
+                    if (ammoID > NO_AMMO) {
+                        //This can happen if princess is towing ammo trailers, which she really shouldn't be doing...
+                        aaa.setAmmoId(ammoID);
+                        aaa.setAmmoCarrier(shooter.getId());
+                        actualFireInfo.setAction(aaa);
+                        retval.add(actualFireInfo);
+                        retval.setUtility(retval.getUtility() + maxDamage);
+                        owner.sendAmmoChange(shooter.getId(), shooter.getEquipmentNum(currentWeapon), ammoID);
+                    }
                 }
             } else if(currentWeapon.getType().hasFlag(WeaponType.F_TAG)) {
                 WeaponFireInfo tagInfo = getTAGInfo(currentWeapon, shooter, game, owner);
@@ -394,7 +398,7 @@ public class ArtilleryTargetingControl {
         int ammoEquipmentNum = NO_AMMO;
         
         // simply grab the first valid ammo and let 'er rip.
-        for(Mounted ammo : shooter.getAmmo()) {            
+        for(Mounted ammo : shooter.getAmmo()) {
             if(!ammo.isAmmoUsable() || !AmmoType.isAmmoValid(ammo, (WeaponType) currentWeapon.getType())) {
                 continue;
             }

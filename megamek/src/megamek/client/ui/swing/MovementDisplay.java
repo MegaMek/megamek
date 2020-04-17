@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -2815,7 +2816,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        // can this unit mount a dropship/small craft?
+        // can this unit mount a dropship/small craft/train?
         setMountEnabled(false);
         Coords pos = ce.getPosition();
         int elev = ce.getElevation();
@@ -3367,6 +3368,30 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Positions
         ring = Compute.getAcceptableUnloadPositions(ring, unloaded, clientgui
                 .getClient().getGame(), elev);
+        //If we're a train, eliminate positions held by any unit in the train. 
+        //You get stacking violation weirdness if this isn't done.
+        Set<Coords> toRemove = new HashSet<>();
+        if (ce.getTowing() != Entity.NONE) {
+            for (int i : ce.getAllTowedUnits()) {
+                Entity e = ce.getGame().getEntity(i);
+                if (e != null && e.getPosition() != null) {
+                    toRemove.add(e.getPosition());
+                }
+            }
+        } else if (ce.getTractor() != Entity.NONE) {
+            Entity tractor = ce.getGame().getEntity(ce.getTractor());
+            if (tractor != null && tractor.getPosition() != null) {
+                toRemove.add(tractor.getPosition());
+                for (int i : tractor.getAllTowedUnits()) {
+                    Entity e = ce.getGame().getEntity(i);
+                    if (e != null && e.getPosition() != null) {
+                        toRemove.add(e.getPosition());
+                    }
+                }
+            }
+        }
+        ring.removeAll(toRemove);
+        
         if (ring.size() < 1) {
             String title = Messages
                     .getString("MovementDisplay.NoPlaceToUnload.title"); //$NON-NLS-1$
@@ -4944,7 +4969,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
             if (other != null) {
-                if (ce() instanceof SmallCraft) {
+                if (ce() instanceof SmallCraft 
+                        || !ce().getAllTowedUnits().isEmpty()
+                        || ce().getTowedBy() != Entity.NONE) {
                     Coords pos = getUnloadPosition(other);
                     if (null != pos) {
                         // set other's position and end this turn - the

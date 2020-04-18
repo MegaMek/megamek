@@ -21,6 +21,7 @@ VERSION HISTORY:
 + Issues #1496, #1467: Ammo Sharing between adjacent trailers/tractors, Allow infantry loading/unloading to trains, 
    Errata: Calculate MP of trains using engine rating + lowest suspension factor
 + Data: More Errata fixes, and fixes for units that should work.
++ Issue #1862 - Fix BA SSW weight multiplier. 
 
 Addresses 
 

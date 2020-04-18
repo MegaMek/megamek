@@ -39,10 +39,10 @@ Aerodyne
 <transporters>
 smallcraftbay:2.0:2:1
 cargobay:54.0:1:2
-1stclassquarters:40.0:0
-crewquarters:140.0:0
 dockingcollar
 dockingcollar
+crewquarters:28.0:0
+steeragequarters:100.0:0
 </transporters>
 
 <SafeThrust>

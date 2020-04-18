@@ -21,7 +21,7 @@ nocrit:IS Heavy Industrial:None
 walk mp:3
 jump mp:0
 
-armor:Industrial (Inner Sphere)
+armor:Heavy Industrial(Inner Sphere)
 LA armor:16
 RA armor:16
 LT armor:14
@@ -112,9 +112,9 @@ Head:
 Life Support
 Sensors
 Cockpit
--Empty-
 Sensors
 Life Support
+-Empty-
 -Empty-
 -Empty-
 -Empty-

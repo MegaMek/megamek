@@ -887,9 +887,9 @@ public class TestTank extends TestEntity {
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_BULLDOZER) && (location != Tank.LOC_FRONT)) {
+            if (eq.hasFlag(MiscType.F_BULLDOZER) && ((location != Tank.LOC_FRONT) && (location != Tank.LOC_REAR))) {
                 if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted on the front.\n");
+                    buffer.append(eq.getName()).append(" must be mounted on the front or rear.\n");
                 }
                 return false;
             }

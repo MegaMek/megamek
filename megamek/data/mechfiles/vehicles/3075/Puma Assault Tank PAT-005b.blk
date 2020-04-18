@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Puma Assault Tank
@@ -24,29 +24,28 @@ PAT-005b
 2751
 </year>
 
-<source>
-Star League
-</source>
+<originalBuildYear>
+2751
+</originalBuildYear>
 
 <type>
 IS Level 2
 </type>
 
-<tonnage>
-95.0
-</tonnage>
-
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-2
-</engine_type>
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
 </cruiseMP>
+
+<engine_type>
+2
+</engine_type>
 
 <internal_type>
 -1
@@ -61,6 +60,7 @@ Tracked
 </armor>
 
 <Body Equipment>
+ISCASE
 IS Streak SRM 2 Ammo
 IS Vehicle Flamer Ammo
 IS Ammo LRM-20 Artemis-capable
@@ -87,15 +87,19 @@ ISArtemisIV
 </Left Equipment>
 
 <Rear Equipment>
-ISCASE
 ISSmallPulseLaser
-Vehicle Flamer
+Flamer (Vehicle)
 </Rear Equipment>
 
 <Turret Equipment>
 ISERPPC
 </Turret Equipment>
 
-<armor_type>
-0
-</armor_type>
+<source>
+TRO 3075 - Star League
+</source>
+
+<tonnage>
+95.0
+</tonnage>
+

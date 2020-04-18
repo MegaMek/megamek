@@ -24,6 +24,10 @@ Glaive Medium Tank
 3068
 </year>
 
+<originalBuildYear>
+3068
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -63,6 +70,10 @@ ISLimitedAmphibiousChassis
 
 <Rear Equipment>
 </Rear Equipment>
+
+<source>
+TRO 3067 - Jihad
+</source>
 
 <tonnage>
 45.0

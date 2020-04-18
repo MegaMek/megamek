@@ -18,7 +18,9 @@ VERSION HISTORY:
 + Issue #1827 - Not every head hit on a quad mech should be a through-armor critical
 + PR #1847 - Restore the bot's ability to use physical attacks against buildings containing gun emplacements
 + Data: Various unit errata Fixes.
-+ Issues #1496, #1467: Ammo Sharing between adjacent trailers/tractors, Allow infantry loading/unloading to trains, Errata: Calculate MP of trains using engine rating + lowest suspension factor
++ Issues #1496, #1467: Ammo Sharing between adjacent trailers/tractors, Allow infantry loading/unloading to trains, 
+   Errata: Calculate MP of trains using engine rating + lowest suspension factor
++ Data: More Errata fixes, and fixes for units that should work.
 
 Addresses 
 

@@ -141,8 +141,8 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         setResizable(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
-        	public void windowClosing(WindowEvent e) { closeWithoutNewMap(); }
-		});
+            public void windowClosing(WindowEvent e) { closeWithoutNewMap(); }
+        });
 
         pack();
         validate();
@@ -453,14 +453,14 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     public boolean activateDialog(Set<String> themeList) {
         for (String s: themeList) choTheme.addItem(s);
         choTheme.setSelectedItem(mapSettings.getTheme());
-    	userCancel = false;
-    	setVisible(true);
-    	return userCancel;
+        userCancel = false;
+        setVisible(true);
+        return userCancel;
     }
     
     private void closeWithoutNewMap() {
-    	userCancel = true;
-    	setVisible(false);
+        userCancel = true;
+        setVisible(false);
     }
 
     @Override
@@ -470,17 +470,17 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         } else if (advancedButton.equals(e.getSource())) {
             switchView(VIEW_ADVANCED, false);
         } else if (loadButton.equals(e.getSource())) {
-        	doLoad();
+            doLoad();
         } else if (saveButton.equals(e.getSource())) {
-        	if (doSave()) {
-        		setVisible(false);
-        	}
+            if (doSave()) {
+                setVisible(false);
+            }
         } else if (okayButton.equals(e.getSource())) {
-        	if (doApply()) {
-        		setVisible(false);
-        	}
+            if (doApply()) {
+                setVisible(false);
+            }
         } else if (cancelButton.equals(e.getSource())) {
-        	closeWithoutNewMap();
+            closeWithoutNewMap();
         } else if (showAtStartButton.equals(e.getSource())) {
             guip.setBoardEdRndStart(showAtStartButton.isSelected());
         }

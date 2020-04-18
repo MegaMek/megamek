@@ -326,7 +326,7 @@ public class BoardEditor extends JComponent
     private HashSet<Coords> currentUndoCoords;
     
     // Misc
-    private static final int [] defaultBuildingCFs = {0,15,40,90,150};
+    private static final int [] defaultBuildingCFs = {0,15,40,90,150};  //TODO: Building also defines such a list
     private String loadPath = "data" + File.separator + "boards";
     
     /**
@@ -500,7 +500,7 @@ public class BoardEditor extends JComponent
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(12);
 
-        frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
+        setFrameTitle();
         frame.getContentPane().setLayout(new BorderLayout());
 
         frame.getContentPane().add(bvc, BorderLayout.CENTER);
@@ -1387,34 +1387,34 @@ public class BoardEditor extends JComponent
             game.setBoard(board);
             curfile = null;
             butSourceFile.setEnabled(false);
-            frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
+            setFrameTitle();
             menuBar.setBoard(true);
-    		bvc.doLayout();
-    		resetUndo();
-    		choTheme.setSelectedItem(mapSettings.getTheme());
-    	}
+            bvc.doLayout();
+            resetUndo();
+            choTheme.setSelectedItem(mapSettings.getTheme());
+        }
     }
 
     public void boardResize() {
-    	ResizeMapDialog emd = new ResizeMapDialog(frame, this, null, mapSettings);
-    	boolean userCancel = emd.activateDialog(bv.getTilesetManager().getThemes());
-    	if (!userCancel) {
-    	    board = BoardUtilities.generateRandom(mapSettings);
+        ResizeMapDialog emd = new ResizeMapDialog(frame, this, null, mapSettings);
+        boolean userCancel = emd.activateDialog(bv.getTilesetManager().getThemes());
+        if (!userCancel) {
+            board = BoardUtilities.generateRandom(mapSettings);
 
-    	    // Implant the old board
-    	    int west = emd.getExpandWest();
-    	    int north = emd.getExpandNorth();
-    	    int east = emd.getExpandEast();
-    	    int south = emd.getExpandSouth();
-    	    board = implantOldBoard(game, west, north, east, south);
+            // Implant the old board
+            int west = emd.getExpandWest();
+            int north = emd.getExpandNorth();
+            int east = emd.getExpandEast();
+            int south = emd.getExpandSouth();
+            board = implantOldBoard(game, west, north, east, south);
 
-    	    game.setBoard(board);
-    	    curfile = null;
-    	    butSourceFile.setEnabled(false);
-    	    frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
-    	    menuBar.setBoard(true);
-    	    bvc.doLayout();
-    	}
+            game.setBoard(board);
+            curfile = null;
+            butSourceFile.setEnabled(false);
+            setFrameTitle();
+            menuBar.setBoard(true);
+            bvc.doLayout();
+        }
     }
 
     // When we resize a board, implant the old board's hexes where they should be in the new board
@@ -1497,7 +1497,7 @@ public class BoardEditor extends JComponent
             System.err.println("error opening file to save!"); //$NON-NLS-1$
             System.err.println(ex);
         }
-        frame.setTitle(Messages.getString("BoardEditor.title0") + curfile); //$NON-NLS-1$
+        setFrameTitle();
         cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
         mapSettings.setBoardSize(board.getWidth(), board.getHeight());
         refreshTerrainList();
@@ -1611,7 +1611,7 @@ public class BoardEditor extends JComponent
                 return false;
             }
         }
-        frame.setTitle(Messages.getString("BoardEditor.title0") + curfile); //$NON-NLS-1$
+        setFrameTitle();
         return boardSave();
     }
 
@@ -1653,7 +1653,7 @@ public class BoardEditor extends JComponent
                 return;
             }
         }
-        frame.setTitle(Messages.getString("BoardEditor.title0") + curfileImage); //$NON-NLS-1$
+        setFrameTitle();
         boardSaveImage(ignoreUnits);
     }
 
@@ -1808,7 +1808,10 @@ public class BoardEditor extends JComponent
                     Desktop.getDesktop().open(curfile);
                 } catch (IOException e) {
                     ignoreHotKeys = true;
-                    JOptionPane.showMessageDialog(frame, "Could not open the file "+curfile+". "+e.getMessage());
+                    JOptionPane.showMessageDialog(
+                            frame,
+                            Messages.getString("BoardEditor.OpenFileError", curfile.toString())
+                             + e.getMessage());
                     e.printStackTrace();
                     ignoreHotKeys = false;
                 }
@@ -2142,10 +2145,9 @@ public class BoardEditor extends JComponent
     private void setFrameTitle() {
         String title = Messages.getString("BoardEditor.title"); //$NON-NLS-1$
         if (curfile != null) {
-            title = Messages.getString("BoardEditor.title") + curfile; //$NON-NLS-1$
+            title = Messages.getString("BoardEditor.title0") + curfile;  //$NON-NLS-1$ 
         }
-        boolean isChanged = !undoStack.isEmpty();
-        frame.setTitle(title + (isChanged ? "*" : "")); //$NON-NLS-1$ //$NON-NLS-2$
+        frame.setTitle(title + (undoStack.isEmpty() ? "" : "*")); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     

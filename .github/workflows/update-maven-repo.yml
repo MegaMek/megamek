@@ -6,6 +6,8 @@ name: Update Maven Repo
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+    - 'megamek/docs/**'
 
 jobs:
   update_maven_repo:

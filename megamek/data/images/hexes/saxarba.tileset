@@ -37,6 +37,10 @@ include "Cliff/Cliffs.tileinc"
 
 include "saxarba/Includes/Pavement.tileinc"
 
+#Transitions
+super 0 "fluff:40:01" "" "saxarba/Transitions/grass2plain1.png"
+super 0 "fluff:40:02" "" "saxarba/Transitions/grass2plain2.png"
+super 0 "fluff:40:03" "" "saxarba/Transitions/grass2plain3.png"
 
 #GRAY SAND
 super -3 "sand:*" "lunar" "saxarba/base/base_sand_gray_-3.png"

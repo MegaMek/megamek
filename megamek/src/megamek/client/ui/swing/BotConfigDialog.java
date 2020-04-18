@@ -95,7 +95,17 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private final JPanel botSpecificCardsPanel;
 
     public BotConfigDialog(JFrame parent) {
-        this(parent, null);
+        this(parent, new HashSet<IPlayer>());
+    }
+    
+    public BotConfigDialog(JFrame parent, BotClient existingBot) {
+        this(parent, new HashSet<IPlayer>());
+        
+        if(existingBot instanceof Princess) {
+            this.princessBehavior = ((Princess) existingBot).getBehaviorSettings();
+            nameField.setText(existingBot.getName());
+            setPrincessFields();
+        }
     }
 
     public BotConfigDialog(JFrame parent, Set<IPlayer> ghostPlayers) {
@@ -186,6 +196,10 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
             return false;
         }
         return true;
+    }
+    
+    public BehaviorSettings getBehaviorSettings() {
+        return princessBehavior;
     }
 
     protected void setPrincessFields() {

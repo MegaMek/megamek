@@ -41,9 +41,9 @@ dockingcollar
 dockingcollar
 1stclassquarters:250.0:0
 crewquarters:854.0:0
-smallcraftbay:2.0:2:3
-smallcraftbay:2.0:2:4
-cargobay:68904.5:1:5
+smallcraftbay:2.0:2:5
+smallcraftbay:2.0:2:6
+cargobay:68902.5:1:7
 </transporters>
 
 <SafeThrust>
@@ -65,6 +65,10 @@ cargobay:68904.5:1:5
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 41
@@ -242,6 +246,10 @@ CLAMS Ammo:1488
 <structural_integrity>
 15
 </structural_integrity>
+
+<notes>
+Cargo 2 tons overweight. Removed it to make it legal.
+</notes>
 
 <source>
 TRO3067 - Late Succession War - LosTech

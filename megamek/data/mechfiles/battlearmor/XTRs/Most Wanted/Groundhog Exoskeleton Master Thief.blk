@@ -24,6 +24,10 @@ Groundhog Exoskeleton
 3072
 </year>
 
+<originalBuildYear>
+3072
+</originalBuildYear>
+
 <type>
 Mixed (IS Chassis) Experimental
 </type>
@@ -31,6 +35,9 @@ Mixed (IS Chassis) Experimental
 <motion_type>
 Leg
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 1
@@ -51,10 +58,10 @@ SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-Mission Equipment Storage:Body
 CLBAMyomerBooster:Body
 CLBAMyomerBooster:LA
 CLBAMyomerBooster:RA
+Mission Equipment Storage (20 kg):Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>

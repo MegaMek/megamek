@@ -24,13 +24,22 @@ JI-002 HoverBike
 3050
 </year>
 
+<originalBuildYear>
+3050
+</originalBuildYear>
+
 <type>
-IS Level 4
+IS Level 5
 </type>
 
 <motion_type>
 Hover
 </motion_type>
+
+<transporters>
+cargobay:0.02:1:1
+pillionseats:2.0:0
+</transporters>
 
 <cruiseMP>
 11
@@ -46,14 +55,6 @@ Hover
 1
 1
 </armor>
-
-<barrating>
-8
-</barrating>
-
-<structural_tech_rating>
-5
-</structural_tech_rating>
 
 <Body Equipment>
 Armored Chassis
@@ -72,24 +73,35 @@ BicycleChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-cargobay:.020:1
-pillionseats:.025:1
-standardseats:.025:1
-</transporters>
+<barrating>
+8
+</barrating>
+
+<structural_tech_rating>
+5
+</structural_tech_rating>
+
+<engine_tech_rating>
+5
+</engine_tech_rating>
+
+<armor_tech_rating>
+5
+</armor_tech_rating>
+
+<history>
+These units have no weights in AToW.  The weights are estimates.  The units are considered unofficial until weights are given.
+</history>
 
 <source>
 AToW Companion
 </source>
 
 <tonnage>
-.5
+0.5
 </tonnage>
 
-<range>
-1000
-</range>
+<fuel>
+0.03
+</fuel>
 
-<history>
-These units have no weights in AToW.  The weights are estimates.  The units are considered unofficial until weights are given.
-</history>

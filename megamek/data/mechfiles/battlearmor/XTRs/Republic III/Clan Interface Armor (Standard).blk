@@ -24,6 +24,10 @@ Clan Interface Armor
 3083
 </year>
 
+<originalBuildYear>
+3083
+</originalBuildYear>
+
 <type>
 Mixed (Clan Chassis) Experimental
 </type>
@@ -31,6 +35,9 @@ Mixed (Clan Chassis) Experimental
 <motion_type>
 Leg
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -49,13 +56,13 @@ BAArmoredGlove:LA
 BAArmoredGlove:RA
 BAAPMount:RA
 BAAPMount:LA
-Mission Equipment Storage:LA
-Mission Equipment Storage:RA
 BABattleMechNIU:Body
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
+Mission Equipment Storage (20 kg):Body
+Mission Equipment Storage (20 kg):Body
 </Point Equipment>
 
 <Trooper 1 Equipment>

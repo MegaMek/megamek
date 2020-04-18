@@ -115,6 +115,7 @@ import megamek.common.util.MegaMekFile;
 // TODO: Allow adding/changing board background images
 // TODO: board load time???
 // TODO: sluggish hex drawing?
+// TODO: the board validation after a board load seems to be influenced by the former board... 
 
 public class BoardEditor extends JComponent
         implements ItemListener, ListSelectionListener, ActionListener, DocumentListener, IMapSettingsObserver {
@@ -325,6 +326,16 @@ public class BoardEditor extends JComponent
     private HashSet<IHex> currentUndoSet;
     private HashSet<Coords> currentUndoCoords;
     
+    // Tracker for board changes; unfortunately this is not equal to 
+    // undoStack == empty because saving the board doesn't empty the 
+    // undo stack but makes the board unchanged.
+    /** Tracks if the board has changes over the last saved version. */
+    private boolean hasChanges = false;
+    /** Tracks if the board can return to the last saved version. */
+    private boolean canReturnToSaved = true;
+    /** The undo stack size at the last save. Used to track saved status of the board. */
+    private int savedUndoStackSize = 0;
+    
     // Misc
     private static final int [] defaultBuildingCFs = {0,15,40,90,150};  //TODO: Building also defines such a list
     private String loadPath = "data" + File.separator + "boards";
@@ -395,6 +406,14 @@ public class BoardEditor extends JComponent
                         // Drawing something disables any redo actions
                         redoStack.clear();
                         buttonRedo.setEnabled(false);
+                        // When Undo (without Redo) has been used after saving
+                        // and the user draws on the board, then it can
+                        // no longer know if it's been returned to the saved state
+                        // and it will always be treated as changed.
+                        if (savedUndoStackSize > undoStack.size()) {
+                            canReturnToSaved = false;
+                        }
+                        hasChanges = !canReturnToSaved | (undoStack.size() != savedUndoStackSize);
                     }
                     // Mark the title when the board has changes
                     setFrameTitle();
@@ -523,7 +542,7 @@ public class BoardEditor extends JComponent
             @Override
             public void windowClosing(WindowEvent e) {
                 // When the board has changes, ask the user 
-                if (!undoStack.isEmpty()) {
+                if (hasChanges) {
                     ignoreHotKeys = true;
                     int savePrompt = JOptionPane.showConfirmDialog(null,
                             Messages.getString("BoardEditor.exitprompt"), //$NON-NLS-1$
@@ -1386,12 +1405,8 @@ public class BoardEditor extends JComponent
             board = BoardUtilities.generateRandom(mapSettings);
             game.setBoard(board);
             curfile = null;
-            butSourceFile.setEnabled(false);
-            setFrameTitle();
-            menuBar.setBoard(true);
-            bvc.doLayout();
-            resetUndo();
             choTheme.setSelectedItem(mapSettings.getTheme());
+            freshBoardSettings();
         }
     }
 
@@ -1410,10 +1425,7 @@ public class BoardEditor extends JComponent
 
             game.setBoard(board);
             curfile = null;
-            butSourceFile.setEnabled(false);
-            setFrameTitle();
-            menuBar.setBoard(true);
-            bvc.doLayout();
+            freshBoardSettings();
         }
     }
 
@@ -1474,7 +1486,6 @@ public class BoardEditor extends JComponent
             return;
         }
         curfile = fc.getSelectedFile();
-        butSourceFile.setEnabled(true);
         loadPath = curfile.getPath();
         // load!
         try (InputStream is = new FileInputStream(fc.getSelectedFile())) {            
@@ -1491,16 +1502,14 @@ public class BoardEditor extends JComponent
             board = BoardUtilities.combine(board.getWidth(), board.getHeight(), 1, 1, 
                     new IBoard[]{board}, Collections.singletonList(false), MapSettings.MEDIUM_GROUND);
             game.setBoard(board);
-            menuBar.setBoard(true);
-            bvc.doLayout();
+            cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
+            mapSettings.setBoardSize(board.getWidth(), board.getHeight());
+            refreshTerrainList();
+            freshBoardSettings();
         } catch (IOException ex) {
-            System.err.println("error opening file to save!"); //$NON-NLS-1$
+            System.err.println("error opening file to load!"); //$NON-NLS-1$
             System.err.println(ex);
         }
-        setFrameTitle();
-        cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
-        mapSettings.setBoardSize(board.getWidth(), board.getHeight());
-        refreshTerrainList();
     }
     
     /**
@@ -1536,6 +1545,9 @@ public class BoardEditor extends JComponent
             OutputStream os = new FileOutputStream(curfile);
             board.save(os);// tell the board to save!
             os.close(); // okay, done!
+            savedUndoStackSize = undoStack.size();
+            hasChanges = false;
+            setFrameTitle();
             return true;
         } catch (IOException ex) {
             System.err.println("error opening file to save!"); //$NON-NLS-1$
@@ -1611,7 +1623,6 @@ public class BoardEditor extends JComponent
                 return false;
             }
         }
-        setFrameTitle();
         return boardSave();
     }
 
@@ -1653,7 +1664,6 @@ public class BoardEditor extends JComponent
                 return;
             }
         }
-        setFrameTitle();
         boardSaveImage(ignoreUnits);
     }
 
@@ -1751,6 +1761,17 @@ public class BoardEditor extends JComponent
         // Show the settings dialog.
         setdlg.setVisible(true);
     }
+    
+    private void freshBoardSettings() {
+        savedUndoStackSize = 0;
+        canReturnToSaved = true;
+        hasChanges = false;
+        butSourceFile.setEnabled(curfile != null);
+        menuBar.setBoard(true);
+        bvc.doLayout();
+        resetUndo();
+        setFrameTitle();
+    }
 
     private void showBoardValidationReport(StringBuffer errBuff) {
         ignoreHotKeys = true;
@@ -1784,12 +1805,10 @@ public class BoardEditor extends JComponent
             ignoreHotKeys = true;
             boardResize();
             ignoreHotKeys = false;
-            resetUndo();
         } else if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_OPEN)) {
             ignoreHotKeys = true;
             boardLoad();
             ignoreHotKeys = false;
-            resetUndo();
         } else if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_SAVE)) {
             ignoreHotKeys = true;
             boardSave();
@@ -1893,17 +1912,26 @@ public class BoardEditor extends JComponent
             curHex.setTheme((String)choTheme.getSelectedItem());
             repaintWorkingHex();
         } else if (ae.getSource().equals(buttonLW)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();  
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }  
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.WOODS, 1);
+            
         } else if (ae.getSource().equals(buttonMg)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.MAGMA, 1);
+            
         } else if (ae.getSource().equals(buttonLJ)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.JUNGLE, 1);
+            
         } else if (ae.getSource().equals(buttonWa)) {
             buttonUpDn.setSelected(false);
             if ((ae.getModifiers() & InputEvent.CTRL_MASK) != 0) {
@@ -1915,37 +1943,60 @@ public class BoardEditor extends JComponent
                         curHex.getTerrain(Terrains.WATER).getLevel() == 0)
                     addSetTerrainEasy(Terrains.WATER, 1);
             } else {
-                if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+                if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                    curHex.removeAllTerrains();
+                }
                 addSetTerrainEasy(Terrains.WATER, 1);
             }
+            
         } else if (ae.getSource().equals(buttonSw)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.SWAMP, 1);
+            
         } else if (ae.getSource().equals(buttonRo)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.ROUGH, 1);
+            
         } else if (ae.getSource().equals(buttonPv)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.PAVEMENT, 1);
+            
         } else if (ae.getSource().equals(buttonMd)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.MUD, 1);
         } else if (ae.getSource().equals(buttonTu)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.TUNDRA, 1);
+            
         } else if (ae.getSource().equals(buttonIc)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.ICE, 1);
+            
         } else if (ae.getSource().equals(buttonSn)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.SNOW, 1);
+            
         } else if (ae.getSource().equals(buttonCl)) {
             curHex.removeAllTerrains();
             refreshTerrainList();
@@ -1970,26 +2021,35 @@ public class BoardEditor extends JComponent
                 setBasicBuilding(false);
             }
         } else if (ae.getSource().equals(buttonBr)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             setBasicBridge();
+            
         } else if (ae.getSource().equals(buttonFT)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             setBasicFuelTank();
+            
         } else if (ae.getSource().equals(buttonRd)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.ROAD, 1);
+            
         } else if (ae.getSource().equals(buttonUpDn)) {
             // Not so useful to only do on clear terrain
             buttonOOC.setSelected(false);
+            
         } else if (ae.getSource().equals(buttonUndo)) {
             // The button should not be active when the stack is empty, but
             // let's check nevertheless
             if (undoStack.isEmpty()) { 
                 buttonUndo.setEnabled(false);
-                setFrameTitle();
             } else {
                 HashSet<IHex> recentHexes = undoStack.pop();
                 HashSet<IHex> redoHexes = new HashSet<>(); 
@@ -2004,11 +2064,13 @@ public class BoardEditor extends JComponent
                 redoStack.push(redoHexes);
                 if (undoStack.isEmpty()) {
                     buttonUndo.setEnabled(false);
-                    setFrameTitle();
                 }
+                hasChanges = !canReturnToSaved | (undoStack.size() != savedUndoStackSize);
                 buttonRedo.setEnabled(true);
                 currentUndoSet = null; // should be anyway
             }
+            setFrameTitle();
+            
         } else if (ae.getSource().equals(buttonRedo)) {
             // The button should not be active when the stack is empty, but
             // let's check nevertheless
@@ -2026,9 +2088,10 @@ public class BoardEditor extends JComponent
                 undoStack.push(undoHexes);
                 if (redoStack.isEmpty()) buttonRedo.setEnabled(false);
                 buttonUndo.setEnabled(true);
-                setFrameTitle();
+                hasChanges = !canReturnToSaved | (undoStack.size() != savedUndoStackSize);
                 currentUndoSet = null; // should be anyway
             }
+            setFrameTitle();
         }
     }
 
@@ -2140,14 +2203,14 @@ public class BoardEditor extends JComponent
     
     /** 
      *  Sets the Board Editor frame title, adding the current file name if any
-     *  and a "*" if the board has been changed.
+     *  and a "*" if the board has unsaved changes.
      */
     private void setFrameTitle() {
         String title = Messages.getString("BoardEditor.title"); //$NON-NLS-1$
         if (curfile != null) {
-            title = Messages.getString("BoardEditor.title0") + curfile;  //$NON-NLS-1$ 
+            title = Messages.getString("BoardEditor.title0", curfile);  //$NON-NLS-1$ 
         }
-        frame.setTitle(title + (undoStack.isEmpty() ? "" : "*")); //$NON-NLS-1$ //$NON-NLS-2$
+        frame.setTitle(title + (hasChanges ? "*" : "")); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     

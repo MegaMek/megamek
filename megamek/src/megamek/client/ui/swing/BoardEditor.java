@@ -1406,7 +1406,7 @@ public class BoardEditor extends JComponent
             game.setBoard(board);
             curfile = null;
             choTheme.setSelectedItem(mapSettings.getTheme());
-            freshBoardSettings();
+            setupUiFreshBoard();
         }
     }
 
@@ -1425,7 +1425,7 @@ public class BoardEditor extends JComponent
 
             game.setBoard(board);
             curfile = null;
-            freshBoardSettings();
+            setupUiFreshBoard();
         }
     }
 
@@ -1505,7 +1505,7 @@ public class BoardEditor extends JComponent
             cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
             mapSettings.setBoardSize(board.getWidth(), board.getHeight());
             refreshTerrainList();
-            freshBoardSettings();
+            setupUiFreshBoard();
         } catch (IOException ex) {
             System.err.println("error opening file to load!"); //$NON-NLS-1$
             System.err.println(ex);
@@ -1722,9 +1722,7 @@ public class BoardEditor extends JComponent
         changedUpdate(event);
     }
 
-    /**
-     * Called when the user selects the "Help->About" menu item.
-     */
+    /** Called when the user selects the "Help->About" menu item. */
     private void showAbout() {
         // Do we need to create the "about" dialog?
         if (about == null) {
@@ -1735,9 +1733,7 @@ public class BoardEditor extends JComponent
         about.setVisible(true);
     }
 
-    /**
-     * Called when the user selects the "Help->Contents" menu item.
-     */
+    /** Called when the user selects the "Help->Contents" menu item. */
     private void showHelp() {
         // Do we need to create the "help" dialog?
         if (help == null) {
@@ -1749,9 +1745,7 @@ public class BoardEditor extends JComponent
         help.setVisible(true);
     }
 
-    /**
-     * Called when the user selects the "View->Client Settings" menu item.
-     */
+    /** Called when the user selects the "View->Client Settings" menu item. */
     private void showSettings() {
         // Do we need to create the "settings" dialog?
         if (setdlg == null) {
@@ -1762,20 +1756,31 @@ public class BoardEditor extends JComponent
         setdlg.setVisible(true);
     }
     
-    private void freshBoardSettings() {
+    /** 
+     * Adjusts some UI and internal settings for a freshly 
+     * loaded or freshly generated board.
+     */
+    private void setupUiFreshBoard() {
+        // Reset the Undo stack and the board has no changes
         savedUndoStackSize = 0;
         canReturnToSaved = true;
+        resetUndo();
         hasChanges = false;
+        // When a board was loaded, we have a file, otherwise not
         butSourceFile.setEnabled(curfile != null);
+        // Adjust the UI
         menuBar.setBoard(true);
         bvc.doLayout();
-        resetUndo();
         setFrameTitle();
     }
 
+    /**
+     * Shows a board validation report dialog, reporting either
+     * the contents of errBuff or that the board has no errors.
+     */
     private void showBoardValidationReport(StringBuffer errBuff) {
         ignoreHotKeys = true;
-        if (errBuff.length() > 0) {
+        if ((errBuff != null) && errBuff.length() > 0) {
             String title = Messages.getString("BoardEditor.invalidBoard.title");
             String msg = Messages.getString("BoardEditor.invalidBoard.report");
             msg += errBuff;

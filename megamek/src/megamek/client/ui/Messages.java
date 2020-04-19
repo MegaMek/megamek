@@ -1,16 +1,17 @@
-/*  
-* MegaMek - Copyright (C) 2020 - The MegaMek Team  
-*  
-* This program is free software; you can redistribute it and/or modify it under  
-* the terms of the GNU General Public License as published by the Free Software  
-* Foundation; either version 2 of the License, or (at your option) any later  
-* version.  
-*  
-* This program is distributed in the hope that it will be useful, but WITHOUT  
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
-* details.  
-*/  
+/*
+ * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team  
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 
 package megamek.client.ui;
 
@@ -22,7 +23,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
 public class Messages {
-    private static final String BUNDLE_NAME = "megamek.client.messages";//$NON-NLS-1$
+    private static final String BUNDLE_NAME = "megamek.client.messages"; //$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME,
             PreferenceManager.getClientPreferences().getLocale(), new EncodeControl());

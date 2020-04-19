@@ -24,6 +24,7 @@ VERSION HISTORY:
 + Issue #1862 - Fix BA SSW weight multiplier. 
 + PR # 1838: Add Silverfin and Silverback to naval RAT generator tables
 + Issue #1860: Quality of Life improvement - edit bot parameters in lobby by right clicking on bot name
++ PR #1835: Game option to set turn time limit in movement and firing phases.
 
 Addresses 
 

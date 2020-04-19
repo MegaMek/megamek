@@ -24,6 +24,10 @@ Weapon Carrier (Tracked)
 2775
 </year>
 
+<originalBuildYear>
+2775
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -56,7 +63,7 @@ Tracked
 </armor>
 
 <Body Equipment>
-LRM 5
+IS Ammo LRM-5
 IS Ultra AC/5 Ammo
 IS Ultra AC/5 Ammo
 IS Ultra AC/5 Ammo
@@ -67,7 +74,7 @@ IS Ultra AC/5 Ammo
 ISUltraAC5
 ISUltraAC5
 ISUltraAC5
-IS Ammo LRM-5
+LRM 5
 </Front Equipment>
 
 <Right Equipment>

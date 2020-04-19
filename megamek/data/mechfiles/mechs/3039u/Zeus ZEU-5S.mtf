@@ -3,32 +3,34 @@ Zeus
 ZEU-5S
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2788
-Source:TRO 3039 - Succession Wars
-Rules Level:2
+techbase:Inner Sphere
+era:2788
+source:TRO 3039 - Succession Wars
+rules level:2
 
-Mass:80
-Engine:320 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
+mass:80
+engine:320 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:14 Double
-Walk MP:4
-Jump MP:0
+heat sinks:14 Double
+nocrit:Standard:None
+nocrit:Standard:None
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:22
-RA Armor:22
-LT Armor:18
-RT Armor:18
-CT Armor:26
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:6
-RTR Armor:6
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:18
+RT armor:18
+CT armor:26
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:6
+RTR armor:6
+RTC armor:9
 
 Weapons:5
 Ultra AC/5, Left Arm
@@ -111,9 +113,9 @@ Head:
 Life Support
 Sensors
 Cockpit
+-Empty-
 Sensors
 Life Support
--Empty-
 -Empty-
 -Empty-
 -Empty-

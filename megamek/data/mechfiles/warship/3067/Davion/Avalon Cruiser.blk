@@ -48,7 +48,7 @@ dockingcollar
 2ndclassquarters:448.0:0
 1stclassquarters:590.0:0
 crewquarters:1484.0:0
-cargobay:13859.5:4:6
+cargobay:13855.5:4:12
 </transporters>
 
 <SafeThrust>
@@ -312,6 +312,10 @@ ISArtemisIV
 <structural_integrity>
 120
 </structural_integrity>
+
+<notes>
+Unit as constructed in TRO is 4 tons overweight. Removed 4 tons of Cargo to make unit legal.
+</notes>
 
 <source>
 TRO3067 - Clan Invasion

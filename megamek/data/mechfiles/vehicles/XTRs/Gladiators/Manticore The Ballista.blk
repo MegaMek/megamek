@@ -24,6 +24,10 @@ Manticore
 3076
 </year>
 
+<originalBuildYear>
+3076
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -57,6 +64,8 @@ Tracked
 </armor>
 
 <Body Equipment>
+IS Ammo HVAC/5
+IS Ammo Extended LRM-10
 ISC3SlaveUnit
 IS Ammo HVAC/5
 IS Ammo Extended LRM-10
@@ -65,8 +74,6 @@ Supercharger
 </Body Equipment>
 
 <Front Equipment>
-IS Ammo HVAC/5
-IS Ammo Extended LRM-10
 </Front Equipment>
 
 <Right Equipment>

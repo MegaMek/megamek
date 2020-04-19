@@ -48,6 +48,10 @@ cargobay:5.5:1:1
 0
 </engine_type>
 
+<clan_engine>
+false
+</clan_engine>
+
 <armor_type>
 22
 </armor_type>
@@ -66,6 +70,8 @@ cargobay:5.5:1:1
 
 <Body Equipment>
 IS Vehicular Stealth
+Clan Ammo LRM-15
+IS Vehicular Stealth
 ISGuardianECMSuite
 IS Vehicular Stealth
 </Body Equipment>
@@ -73,7 +79,6 @@ IS Vehicular Stealth
 <Front Equipment>
 CLLRM15
 CLLRM15
-Clan Ammo LRM-15
 </Front Equipment>
 
 <Right Equipment>

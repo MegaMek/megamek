@@ -57,6 +57,7 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
+IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
@@ -76,7 +77,6 @@ Machine Gun
 Machine Gun
 Medium Laser
 Medium Laser
-IS Machine Gun Ammo - Half
 </Turret Equipment>
 
 <source>

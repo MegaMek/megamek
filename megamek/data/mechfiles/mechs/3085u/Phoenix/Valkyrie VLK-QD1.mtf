@@ -3,33 +3,34 @@ Valkyrie
 VLK-QD1
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO Project Pheonix - Civil War
+rules level:2
 
-Mass:30
-Engine:150 XL Engine
-Structure:Endo Steel
-Myomer:Standard
-Ejection:Full Head Ejection System
+mass:30
+engine:150 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:5
+heat sinks:10 Double
+nocrit:Standard:None
+walk mp:5
+jump mp:5
 
-Armor:Standard(Inner Sphere)
-LA Armor:9
-RA Armor:9
-LT Armor:10
-RT Armor:10
-CT Armor:13
-HD Armor:9
-LL Armor:13
-RL Armor:13
-RTL Armor:3
-RTR Armor:3
-RTC Armor:4
+armor:Standard(Inner Sphere)
+LA armor:9
+RA armor:9
+LT armor:10
+RT armor:10
+CT armor:13
+HD armor:9
+LL armor:13
+RL armor:13
+RTL armor:3
+RTR armor:3
+RTC armor:4
 
 Weapons:2
 ER Medium Laser, Right Arm
@@ -40,13 +41,13 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Arm:
@@ -54,13 +55,13 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Left Torso:

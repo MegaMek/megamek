@@ -2245,7 +2245,6 @@ Explorer JumpShip (Standard)|
 Aquilla Transport Jumpship (Standard)|
 Liberty Jumpship (Standard)|
 Leviathan Jumpship (Standard)|
-Ljubljana Chariot BUAC-2020|
 Archer ARC-2K|
 Archer ARC-2R|
 Archer ARC-2S|
@@ -6776,9 +6775,9 @@ Hipparch Cavalry Tank (Standard)|
 Tiger Medium Tank T-12|
 Wayland Mobile Base (Standard)|
 Sleipnir APC SRM|
-Sleipnir APC|
+Sleipnir APC (Standard)|
 Vargr APC LRM|
-Vargr APC|
+Vargr APC (Standard)|
 Brunel Dump Truck (AC)|
 Brunel Dump Truck (LRM)|
 Burke Defense Tank (Royal)|

@@ -17,6 +17,7 @@ package megamek.client.bot;
 import java.util.Iterator;
 
 import megamek.common.BattleArmor;
+import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -29,6 +30,7 @@ import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
+import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.actions.BrushOffAttackAction;
@@ -306,7 +308,14 @@ public final class PhysicalCalculator {
     }
 
     static PhysicalOption getBestPhysicalAttack(Entity from, Entity to,
-                                                IGame game) {
+                                                IGame game) {        
+        Targetable target = to;
+        
+        // if the object of our affections is in a building, we have to target the building instead
+        if(Compute.isInBuilding(game, to)) {
+            target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
+        }
+        
         double bestDmg = 0.0;
         double dmg;
         int damage;
@@ -347,7 +356,7 @@ public final class PhysicalCalculator {
             location_table = ToHitData.HIT_NORMAL;
         }
 
-        ToHitData odds = PunchAttackAction.toHit(game, from.getId(), to,
+        ToHitData odds = PunchAttackAction.toHit(game, from.getId(), target,
                                                  PunchAttackAction.LEFT, false);
         if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from,
@@ -359,7 +368,7 @@ public final class PhysicalCalculator {
                                        bestDmg);
         }
 
-        odds = PunchAttackAction.toHit(game, from.getId(), to,
+        odds = PunchAttackAction.toHit(game, from.getId(), target,
                                        PunchAttackAction.RIGHT, false);
         if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from,
@@ -374,7 +383,7 @@ public final class PhysicalCalculator {
         }
 
         // Check for a double punch
-        odds = PunchAttackAction.toHit(game, from.getId(), to,
+        odds = PunchAttackAction.toHit(game, from.getId(), target,
                                        PunchAttackAction.LEFT, false);
         ToHitData odds_a = PunchAttackAction.toHit(game, from.getId(), to,
                                                    PunchAttackAction.RIGHT, false);
@@ -441,7 +450,7 @@ public final class PhysicalCalculator {
             } else {
                 location_table = ToHitData.HIT_NORMAL;
             }
-            odds = ClubAttackAction.toHit(game, from.getId(), to, club,
+            odds = ClubAttackAction.toHit(game, from.getId(), target, club,
                                           ToHitData.HIT_NORMAL, false);
             if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
                 damage = ClubAttackAction.getDamageFor(from, club, targetConvInfantry, false);
@@ -459,7 +468,7 @@ public final class PhysicalCalculator {
             }
         }
         // Check for a push attack
-        odds = PushAttackAction.toHit(game, from.getId(), to);
+        odds = PushAttackAction.toHit(game, from.getId(), target);
         if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
             int elev_diff;
             double breach;
@@ -558,7 +567,7 @@ public final class PhysicalCalculator {
         }
 
         if (bestDmg > 0) {
-            return new PhysicalOption(from, to, bestDmg, bestType, bestClub);
+            return new PhysicalOption(from, target, bestDmg, bestType, bestClub);
         }
         return null;
     }
@@ -586,7 +595,15 @@ public final class PhysicalCalculator {
         double coll_damage = 0.0;
         int damage;
         boolean targetConvInfantry = false;
-        ToHitData odds = KickAttackAction.toHit(game, from.getId(), to, action);
+        
+        Targetable target = to;
+        
+        // if the object of our affections is in a building, we have to target the building instead
+        if(Compute.isInBuilding(game, to)) {
+            target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
+        }
+        
+        ToHitData odds = KickAttackAction.toHit(game, from.getId(), target, action);
         if (odds.getValue() > 12) {
             return 0.0;
         }

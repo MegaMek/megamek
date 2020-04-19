@@ -55,7 +55,7 @@ public class PhysicalOption {
     public static final int THRASH_INF = 13;
 
     Entity attacker;
-    Entity target;
+    Targetable target;
     INarcPod i_target;
     double expectedDmg;
     int type;
@@ -69,9 +69,8 @@ public class PhysicalOption {
     public PhysicalOption(Entity attacker, Targetable target, double dmg,
             int type, Mounted club) {
         this.attacker = attacker;
-        if (target instanceof Entity) {
-            this.target = (Entity) target;
-        }
+        this.target = target;
+        
         if (target instanceof INarcPod) {
             this.i_target = (INarcPod) target;
         }
@@ -83,28 +82,28 @@ public class PhysicalOption {
     public AbstractAttackAction toAction() {
         switch (type) {
             case PUNCH_LEFT:
-                return new PunchAttackAction(attacker.getId(), target.getId(),
+                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
                         PunchAttackAction.LEFT);
             case PUNCH_RIGHT:
-                return new PunchAttackAction(attacker.getId(), target.getId(),
+                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
                         PunchAttackAction.RIGHT);
             case PUNCH_BOTH:
-                return new PunchAttackAction(attacker.getId(), target.getId(),
+                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
                         PunchAttackAction.BOTH);
             case KICK_LEFT:
-                return new KickAttackAction(attacker.getId(), target.getId(),
+                return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
                         KickAttackAction.LEFT);
             case KICK_RIGHT:
-                return new KickAttackAction(attacker.getId(), target.getId(),
+                return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
                         KickAttackAction.RIGHT);
             case USE_CLUB:
                 if (club != null) {
-                    return new ClubAttackAction(attacker.getId(), target
-                            .getId(), club, ToHitData.HIT_NORMAL);
+                    return new ClubAttackAction(attacker.getId(), target.getTargetType(), target
+                            .getTargetId(), club, ToHitData.HIT_NORMAL, false);
                 }
                 return null;
             case PUSH_ATTACK:
-                return new PushAttackAction(attacker.getId(), target.getId(),
+                return new PushAttackAction(attacker.getId(), target.getTargetId(),
                         target.getPosition());
             case TRIP_ATTACK:
                 return null; // Trip attack not implemented yet
@@ -115,7 +114,7 @@ public class PhysicalOption {
                             BrushOffAttackAction.LEFT);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getId(),
+                        .getTargetType(), target.getTargetId(),
                         BrushOffAttackAction.LEFT);
             case BRUSH_RIGHT:
                 if (target == null) {
@@ -124,7 +123,7 @@ public class PhysicalOption {
                             BrushOffAttackAction.RIGHT);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getId(),
+                        .getTargetType(), target.getTargetId(),
                         BrushOffAttackAction.RIGHT);
             case BRUSH_BOTH:
                 if (target == null) {
@@ -133,7 +132,7 @@ public class PhysicalOption {
                             BrushOffAttackAction.BOTH);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getId(),
+                        .getTargetType(), target.getTargetId(),
                         BrushOffAttackAction.BOTH);
                 /*
                  * case THRASH_INF : return new

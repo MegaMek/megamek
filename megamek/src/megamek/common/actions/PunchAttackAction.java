@@ -50,6 +50,14 @@ public class PunchAttackAction extends PhysicalAttackAction {
         super(entityId, targetId);
         this.arm = arm;
     }
+    
+    /**
+     * Punch attack vs an entity or other type of target (e.g. building)
+     */
+    public PunchAttackAction(int entityId, int targetType, int targetId, int arm) {
+        super(entityId, targetType, targetId);
+        this.arm = arm;
+    }
 
     public PunchAttackAction(int entityId, int targetType, int targetId, int arm, boolean leftBlade,
                              boolean rightBlade, boolean zweihandering) {

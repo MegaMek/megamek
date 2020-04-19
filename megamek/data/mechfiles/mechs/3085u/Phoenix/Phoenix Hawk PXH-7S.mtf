@@ -3,33 +3,33 @@ Phoenix Hawk
 PXH-7S
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO Project Pheonix - Civil War
+rules level:2
 
-Mass:45
-Engine:270 Light Engine
-Structure:Endo Steel
-Myomer:Standard
-Ejection:Full Head Ejection System
+mass:45
+engine:270 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:6
-Jump MP:6
+heat sinks:10 Double
+walk mp:6
+jump mp:6
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:21
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:16
+RT armor:16
+CT armor:21
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:6
 Medium Laser, Left Arm
@@ -46,12 +46,12 @@ Lower Arm Actuator
 Hand Actuator
 Medium Laser
 Medium Laser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -60,40 +60,40 @@ Lower Arm Actuator
 Hand Actuator
 ISLargePulseLaser
 ISLargePulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
 Medium Laser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
 Medium Laser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine

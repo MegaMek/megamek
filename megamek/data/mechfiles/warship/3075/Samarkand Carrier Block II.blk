@@ -47,7 +47,7 @@ dockingcollar
 1stclassquarters:350.0:0
 crewquarters:1015.0:0
 steeragequarters:500.0:0
-cargobay:36374.0:4:7
+cargobay:36370.0:4:11
 </transporters>
 
 <SafeThrust>
@@ -227,6 +227,10 @@ IS Ammo MG - Full:100
 <structural_integrity>
 73
 </structural_integrity>
+
+<notes>
+Unit as constructed in TRO is 4 tons overweight. Removed 4 tons of Cargo to make unit legal.
+</notes>
 
 <source>
 TRO3075 - Star League

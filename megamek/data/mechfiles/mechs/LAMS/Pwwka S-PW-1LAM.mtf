@@ -3,38 +3,41 @@ Pwwka
 S-PW-1LAM
 
 Config:LAM
-TechBase:Mixed (IS Chassis)
-Era:3078
-Source:J:FR
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3078
+source:J:FR
+rules level:4
 
-Mass:30
-Engine:180 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:Standard Gyro
+mass:30
+engine:180 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+lam:Standard
+cockpit:Small Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Double
-Walk MP:6
-Jump MP:6
+heat sinks:10 Double
+nocrit:Standard:None
+nocrit:Standard:None
+walk mp:6
+jump mp:6
 
-Armor:Standard(IS/Clan)
-LA Armor:9
-RA Armor:9
-LT Armor:9
-RT Armor:9
-CT Armor:12
-HD Armor:9
-LL Armor:11
-RL Armor:11
-RTL Armor:5
-RTR Armor:5
-RTC Armor:7
+armor:Standard(Clan)
+LA armor:9
+RA armor:9
+LT armor:9
+RT armor:9
+CT armor:12
+HD armor:9
+LL armor:11
+RL armor:11
+RTL armor:5
+RTR armor:5
+RTC armor:7
 
 Weapons:3
-ER Medium Laser, Right Arm
 ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
 ER Medium Laser, Head
 
 Left Arm:

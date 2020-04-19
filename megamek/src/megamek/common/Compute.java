@@ -6663,8 +6663,7 @@ public class Compute {
                                                       int elev, IGame game) {
 
         ArrayList<Entity> mountable = new ArrayList<Entity>();
-        // for the moment only allow small craft/dropship mounting, but
-        // this could be expanded to include other unit types
+        // Expanded to include trains
 
         // the rules don't say that the unit must be facing loader
         // so lets take the ring
@@ -6678,7 +6677,7 @@ public class Compute {
                 if ((en.getOwner().equals(other.getOwner()) || (en.getOwner()
                                                                   .getTeam() == other.getOwner().getTeam()))
                     && !en.equals(other)
-                    && (other instanceof SmallCraft)
+                    && ((other instanceof SmallCraft) || other.getTowing() != Entity.NONE || other.getTowedBy() != Entity.NONE)
                     && other.canLoad(en)
                     && !other.isAirborne()
                     && (Math.abs((hex.surface() + other.getElevation())

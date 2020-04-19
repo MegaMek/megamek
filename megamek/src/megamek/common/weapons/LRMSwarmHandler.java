@@ -283,6 +283,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 newWaa.setOriginalTargetId(waa.getOriginalTargetId());
                 newWaa.setOriginalTargetType(waa.getOriginalTargetType());
                 newWaa.setAmmoId(waa.getAmmoId());
+                newWaa.setAmmoCarrier(waa.getAmmoCarrier());
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
                 // increase ammo by one, we'll use one that we shouldn't use
@@ -386,6 +387,7 @@ public class LRMSwarmHandler extends LRMHandler {
             newWaa.setOriginalTargetId(waa.getOriginalTargetId());
             newWaa.setOriginalTargetType(waa.getOriginalTargetType());
             newWaa.setAmmoId(waa.getAmmoId());
+            newWaa.setAmmoCarrier(waa.getAmmoCarrier());
             Mounted m = ae.getEquipment(waa.getWeaponId());
             Weapon w = (Weapon) m.getType();
             // increase ammo by one, we'll use one that we shouldn't use

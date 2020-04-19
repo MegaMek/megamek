@@ -55,7 +55,6 @@ public class GameOptions extends AbstractOptions {
     public synchronized void initialize() {
         IBasicOptionGroup base = addGroup("basic"); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_FRIENDLY_FIRE, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_TURN_TIMER, 0); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_FIRING, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_PHYSICAL, true); //$NON-NLS-1$
@@ -81,7 +80,8 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_BREEZE, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_AUTO_AMS, true); //$NON-NLS-1$
-        
+        addOption(base, OptionsConstants.BASE_TURN_TIMER, 0); //$NON-NLS-1$
+
         IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
         addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false); //$NON-NLS-1$
         addOption(victory, OptionsConstants.VICTORY_CHECK_VICTORY, true); //$NON-NLS-1$

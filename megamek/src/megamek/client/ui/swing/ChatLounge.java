@@ -61,6 +61,7 @@ import javax.swing.table.TableColumn;
 import megamek.client.Client;
 import megamek.client.RandomNameGenerator;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
@@ -3227,12 +3228,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             boolean isBot = clientgui.getBots().get(player.getName()) != null;
             if (e.isPopupTrigger()) {
                 JMenuItem menuItem = null;
-                // JMenu menu = null;
                 menuItem = new JMenuItem("Configure ...");
                 menuItem.setActionCommand("CONFIGURE|" + row);
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
                 popup.add(menuItem);
+                
+                if (isBot) {
+                    JMenuItem botConfig = new JMenuItem("Bot Settings ...");
+                    botConfig.setActionCommand("BOTCONFIG|" + row);
+                    botConfig.addActionListener(this);
+                    popup.add(botConfig);
+                }
+                
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }
         }
@@ -3243,6 +3251,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             String command = st.nextToken();
             if (command.equalsIgnoreCase("CONFIGURE")) {
                 customizePlayer();
+            } else if (command.equalsIgnoreCase("BOTCONFIG")) {
+                int row = Integer.parseInt(st.nextToken());
+                IPlayer player = playerModel.getPlayerAt(row);
+                BotClient bot = (BotClient) clientgui.getBots().get(player.getName());
+                BotConfigDialog bcd = new BotConfigDialog(clientgui.frame, bot);
+                bcd.setVisible(true);
+
+                if (bcd.dialogAborted) {
+                    return; // user didn't click 'ok', add no bot
+                } else if (bot instanceof Princess) {
+                    ((Princess) bot).setBehaviorSettings(bcd.getBehaviorSettings());
+                    
+                    // bookkeeping:
+                    clientgui.getBots().remove(player.getName());
+                    bot.setName(bcd.getBotName());
+                    clientgui.getBots().put(bot.getName(), bot);
+                    player.setName(bcd.getBotName());
+                    clientgui.chatlounge.refreshPlayerInfo();
+                }
             }
         }
 

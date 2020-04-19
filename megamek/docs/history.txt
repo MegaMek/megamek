@@ -22,6 +22,8 @@ VERSION HISTORY:
    Errata: Calculate MP of trains using engine rating + lowest suspension factor
 + Data: More Errata fixes, and fixes for units that should work.
 + Issue #1862 - Fix BA SSW weight multiplier. 
++ PR # 1838: Add Silverfin and Silverback to naval RAT generator tables
++ Issue #1860: Quality of Life improvement - edit bot parameters in lobby by right clicking on bot name
 
 Addresses 
 

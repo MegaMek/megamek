@@ -173,7 +173,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         comboWeight.setSelectedIndex(guiPreferences.getMechSelectorWeightClass());
 
-        updateTypeCombo(guiPreferences.getMechSelectorRulesLevels().replaceAll("\\[", ""));
+        updateTypeCombo(guiPreferences);
 
         List<SortKey> sortList = new ArrayList<>();
         try {
@@ -456,12 +456,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         rootPane.getActionMap().put(SELECT_ACTION, selectAction);
     }
 
-    private void updateTypeCombo(String option) {
+    private void updateTypeCombo(GUIPreferences preferences) {
         listTechLevel.removeListSelectionListener(this);
         int[] selectedIndices = listTechLevel.getSelectedIndices();
 
         if (selectedIndices.length == 0) {
-            option = option.replaceAll("]", "");
+            String option = preferences.getMechSelectorRulesLevels().replaceAll("[\\[\\]]", "");
             if (option.length() > 0) {
                 String[] strSelections = option.split("[,]");
                 selectedIndices = new int[strSelections.length];

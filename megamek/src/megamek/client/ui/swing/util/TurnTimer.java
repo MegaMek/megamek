@@ -52,6 +52,14 @@ public class TurnTimer {
         display = new JPanel();
         progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, timeLimit);
         progressBar.setValue(timeLimit);
+        progressBar.setForeground(Color.RED);
+
+
+        remaining = new JLabel(timeLimit+" sec");
+        phaseDisplay.getClientgui().getMenuBar().add(display);
+        display.setLayout(new FlowLayout());
+        display.add(remaining);
+        display.add(progressBar);
 
 
         listener = new ActionListener() {
@@ -75,7 +83,6 @@ public class TurnTimer {
                     timer.stop();
                     display.setVisible(false);
                     phaseDisplay.getClientgui().getMenuBar().remove(display);
-                   // display.dispose();
                 }
             }
         };
@@ -86,13 +93,9 @@ public class TurnTimer {
 
         SwingUtilities.invokeLater( new Runnable() {
             public void run() {
-                remaining = new JLabel(timeLimit+" sec");
                 timer = new Timer(1000, listener);
                 phaseDisplay.getClientgui().getMenuBar().add(display);
                 timer.start();
-                display.setLayout(new FlowLayout());
-                display.add(remaining);
-                display.add(progressBar);
                 display.setVisible(true);
 
             }

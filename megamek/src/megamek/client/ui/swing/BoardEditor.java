@@ -2144,7 +2144,7 @@ public class BoardEditor extends JComponent
                 }
                 // add level and INVALID if necessary
                 if (guip.getAntiAliasing()) {
-                    ((Graphics2D)g).setRenderingHint(
+                    ((Graphics2D) g).setRenderingHint(
                             RenderingHints.KEY_ANTIALIASING,
                             RenderingHints.VALUE_ANTIALIAS_ON);
                 }

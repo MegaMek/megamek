@@ -205,6 +205,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARDEDIT_LOAD_SIZE_HEIGHT = "BoardEditLoadSizeHeight";
     public static final String BOARDEDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
     public static final String BOARDEDIT_RNDDIALOG_START = "BoardEditRandomDialogStart";
+    public static final String WARNING_COLOR = "WarningColor";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -261,6 +262,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG, new Color(221, 96, 0));  // HTML hex #DD6000
         setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(255, 204, 204));  // HTML hex #FFCCCC
         setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
+        setDefault(WARNING_COLOR, Color.RED);
 
 
         setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");
@@ -821,6 +823,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public boolean getBoardEdRndStart() {
         return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
+    }
+    
+    public Color getWarningColor() {
+        return getColor(WARNING_COLOR);
+    }
+    
+    public void setWarningColor(Color color) {
+        store.setValue(WARNING_COLOR, getColorString(color));
     }
 
     public void setAntiAliasing(boolean state) {

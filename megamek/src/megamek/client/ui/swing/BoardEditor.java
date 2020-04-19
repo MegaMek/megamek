@@ -29,6 +29,7 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -2142,6 +2143,11 @@ public class BoardEditor extends JComponent
                     g.drawImage(newVar, 0, 0, this);
                 }
                 // add level and INVALID if necessary
+                if (guip.getAntiAliasing()) {
+                    ((Graphics2D)g).setRenderingHint(
+                            RenderingHints.KEY_ANTIALIASING,
+                            RenderingHints.VALUE_ANTIALIAS_ON);
+                }
                 g.setColor(getForeground());
                 g.setFont(new Font("SansSerif", Font.PLAIN, 9)); //$NON-NLS-1$
                 g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70); //$NON-NLS-1$
@@ -2149,10 +2155,13 @@ public class BoardEditor extends JComponent
                 if (!curHex.isValid(errBuf)) {
                     g.setFont(new Font("SansSerif", Font.BOLD, 14)); //$NON-NLS-1$
                     Point hexCenter = new Point(BoardView1.HEX_W / 2, BoardView1.HEX_H / 2);
-                    bv.drawCenteredText((Graphics2D) g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED,
+                    bv.drawCenteredText((Graphics2D) g, 
+                            Messages.getString("BoardEditor.INVALID"), //$NON-NLS-1$
+                            hexCenter, 
+                            guip.getWarningColor(),
                             false);
-                    String tooltip = Messages.getString("BoardEditor.invalidHex") + errBuf;
-                    tooltip = tooltip.replace("\n", "<br>");
+                    String tooltip = Messages.getString("BoardEditor.invalidHex") + errBuf; //$NON-NLS-1$
+                    tooltip = tooltip.replace("\n", "<br>"); //$NON-NLS-1$ //$NON-NLS-2$
                     setToolTipText(tooltip);
                 } else {
                     setToolTipText(null);

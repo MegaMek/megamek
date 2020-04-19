@@ -732,7 +732,7 @@ public class MiniMap extends JPanel {
                     if ((m_game != null) && 
                             (m_game.getPhase() == IGame.Phase.PHASE_UNKNOWN)
                             && !h.isValid(null)) {
-                        gg.setColor(Color.RED);
+                        gg.setColor(GUIPreferences.getInstance().getWarningColor());
                         paintCoord(gg, j, k, true);
                     }
                 }

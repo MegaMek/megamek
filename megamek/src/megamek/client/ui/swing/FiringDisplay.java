@@ -867,20 +867,18 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
         }
-
         //check if there should be a turn timer running
-        tt= TurnTimer.init(this, clientgui.getClient());
+        tt = TurnTimer.init(this, clientgui.getClient());
     }
 
     /**
      * Does end turn stuff.
      */
     protected void endMyTurn() {
-
         //get rid of still running timer, if turn is concluded before time is up
-        if (tt!=null) {
+        if (tt != null) {
             tt.stopTimer();
-            tt=null;
+            tt = null;
         }
         // end my turn, then.
         IGame game = clientgui.getClient().getGame();
@@ -903,8 +901,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         disableButtons();
 
         clearVisibleTargets();
-
-
     }
 
     /**

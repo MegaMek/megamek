@@ -187,9 +187,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Traitor
         MOVE_TRAITOR("Traitor", CMD_NONE), MOVE_MORE("MoveMore", CMD_NONE); //$NON-NLS-1$
 
-
-
-
         /**
          * The command text.
          */
@@ -205,8 +202,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
          */
         public int priority;
 
-
-        private MoveCommand(String c, int f) {
+        MoveCommand(String c, int f) {
             cmd = c;
             flag = f;
             priority = ordinal();
@@ -1027,7 +1023,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         selectEntity(clientgui.getClient().getFirstEntityNum());
         //check if there should be a turn timer running
-        tt= TurnTimer.init(this, clientgui.getClient());
+        tt = TurnTimer.init(this, clientgui.getClient());
     }
 
     /**
@@ -1037,9 +1033,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final Entity ce = ce();
 
         //get rid of still running timer, if turn is concluded before time is up
-        if (tt!=null) {
+        if (tt != null) {
             tt.stopTimer();
-            tt=null;
+            tt = null;
         }
 
         // end my turn, then.
@@ -1278,7 +1274,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     @Override
     public synchronized void ready() {
-
         if (ce() == null) {
             return;
         }
@@ -1575,7 +1570,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
-
         endMyTurn();
     }
 

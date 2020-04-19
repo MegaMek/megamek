@@ -3234,7 +3234,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setEnabled(isOwner || isBot);
                 popup.add(menuItem);
                 
-                if(isBot) {
+                if (isBot) {
                     JMenuItem botConfig = new JMenuItem("Bot Settings ...");
                     botConfig.setActionCommand("BOTCONFIG|" + row);
                     botConfig.addActionListener(this);
@@ -3251,7 +3251,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             String command = st.nextToken();
             if (command.equalsIgnoreCase("CONFIGURE")) {
                 customizePlayer();
-            } else if(command.equalsIgnoreCase("BOTCONFIG")) {
+            } else if (command.equalsIgnoreCase("BOTCONFIG")) {
                 int row = Integer.parseInt(st.nextToken());
                 IPlayer player = playerModel.getPlayerAt(row);
                 BotClient bot = (BotClient) clientgui.getBots().get(player.getName());
@@ -3260,7 +3260,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
                 if (bcd.dialogAborted) {
                     return; // user didn't click 'ok', add no bot
-                } else if(bot instanceof Princess) {
+                } else if (bot instanceof Princess) {
                     ((Princess) bot).setBehaviorSettings(bcd.getBehaviorSettings());
                     
                     // bookkeeping:

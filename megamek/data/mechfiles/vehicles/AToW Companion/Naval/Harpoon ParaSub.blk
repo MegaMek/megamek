@@ -39,6 +39,7 @@ Submarine
 <transporters>
 cargobay:0.2:1:1
 standardseats:1.0:0
+pillionseats:4.0:0
 </transporters>
 
 <cruiseMP>

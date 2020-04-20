@@ -859,7 +859,8 @@ public class TestTank extends TestEntity {
         }
         final boolean isRearLocation;
         final boolean isTurretLocation;
-        if (tank instanceof SuperHeavyTank) {
+        // SuperHeavyTank and LargeSupportTank have the same location indices.
+        if ((tank instanceof SuperHeavyTank) || (tank instanceof LargeSupportTank)) {
             isRearLocation = location == SuperHeavyTank.LOC_REAR;
             isTurretLocation = (location == SuperHeavyTank.LOC_TURRET) || (location == SuperHeavyTank.LOC_TURRET_2);
         } else {

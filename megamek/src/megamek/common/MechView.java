@@ -948,17 +948,8 @@ public class MechView {
                         && entity.isClan())
                     || (name.contains("Heat Sink") 
                         && !name.contains("Radical"))
-                    || name.contains("Endo Steel")
-                    || name.contains("Ferro-Fibrous")
-                    || name.contains("Reactive")
-                    || name.contains("BA Stealth")
-                    || name.contains("BA Fire Resistant")
-                    || name.contains("BA Mimetic")
-                    || name.contains("BA Standard")
-                    || name.contains("BA Advanced")
-                    || name.contains("Reflective")
-                    || name.contains("Ferro-Lamellor")
-                    || name.contains("Standard")) {
+                    || EquipmentType.isArmorType(mounted.getType())
+                    || EquipmentType.isStructureType(mounted.getType())) {
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }

@@ -6723,7 +6723,9 @@ public abstract class Mech extends Entity {
         }
         for (Mounted mounted : getMisc()) {
             if ((mounted.getType().getCriticals(this) == 0)
-                    && !mounted.getType().hasFlag(MiscType.F_CASE)) {
+                    && !mounted.getType().hasFlag(MiscType.F_CASE)
+                    && (EquipmentType.getStructureType(mounted.getType()) == EquipmentType.T_STRUCTURE_UNKNOWN)
+                    && (EquipmentType.getArmorType(mounted.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
                 sb.append(MtfFile.NO_CRIT).append(mounted.getType().getInternalName())
                         .append(":").append(getLocationAbbr(mounted.getLocation()))
                         .append(newLine);

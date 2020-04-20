@@ -252,8 +252,8 @@ public class MechTROView extends TROView {
             // like robotic control systems.
             return (mount.getType().getCriticals(mech) > 0)
                     || mount.getType().hasFlag(MiscType.F_CASE)
-                    || (EquipmentType.getArmorType(mount.getType()) != EquipmentType.T_ARMOR_UNKNOWN)
-                    || (EquipmentType.getStructureType(mount.getType()) != EquipmentType.T_STRUCTURE_UNKNOWN);
+                    || EquipmentType.isArmorType(mount.getType())
+                    || EquipmentType.isStructureType(mount.getType());
         }
         return super.skipMount(mount, includeAmmo);
     }

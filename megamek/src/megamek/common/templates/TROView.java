@@ -406,6 +406,13 @@ public class TROView {
         return addEquipment(entity, true);
     }
 
+    /**
+     * Test for whether the mount should be included in the equipment inventory section.
+     *
+     * @param mount        The equipment mount
+     * @param includeAmmo  Whether to include ammo in the list
+     * @return             Whether to list the equipment in the inventory section
+     */
     protected boolean skipMount(Mounted mount, boolean includeAmmo) {
         return mount.getLocation() < 0
                 || mount.isWeaponGroup()

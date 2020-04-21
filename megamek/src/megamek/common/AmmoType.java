@@ -15832,8 +15832,8 @@ public class AmmoType extends EquipmentType {
                     && (munition.getMunitionType() == AmmoType.M_COOLANT)) {
                 cost = 3000;
             }
-            munition.bv = bv;
-            munition.cost = cost;
+            munition.bv = Math.round(bv * 1000.0) / 1000.0;
+            munition.cost = Math.round(cost * 1000.0) / 1000.0;
 
             // Copy over all other values.
             munition.damagePerShot = base.damagePerShot;

@@ -15832,6 +15832,7 @@ public class AmmoType extends EquipmentType {
                     && (munition.getMunitionType() == AmmoType.M_COOLANT)) {
                 cost = 3000;
             }
+            // Account for floating point imprecision
             munition.bv = Math.round(bv * 1000.0) / 1000.0;
             munition.cost = Math.round(cost * 1000.0) / 1000.0;
 

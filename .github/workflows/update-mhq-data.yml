@@ -1,0 +1,65 @@
+#
+# This workflow updates the MekHQ Repo with the latest MM Data
+#
+name: Update MekHQ's copy of MM Data
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+    - 'megamek/data/**'
+
+jobs:
+  update_mekhq_data:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    # Put the MM repo in a subfolder to make
+    # updating the MekHQ repo easier
+    - uses: actions/checkout@v2
+      with:
+        path: megamek
+
+    # Get the current MekHQ repo contents
+    - name: Checkout MekHQ
+      if: github.repository == 'MegaMek/megamek'
+      uses: actions/checkout@v2
+      with:
+        repository: MegaMek/mekhq
+        path: mekhq
+        
+    # Create an update
+    - name: Copy Data to MekHQ Repo
+      if: github.repository == 'MegaMek/megamek'
+      working-directory: megamek/megamek/data/
+      run: |
+        cp -r . ../../../mekhq/MekHQ/data/
+        
+    # In case we run into an issue, use git status to help
+    # us understand what happened.
+    - name: Inspect git status output
+      if: github.repository == 'MegaMek/megamek'
+      working-directory: mekhq
+      run: |
+        git status
+        
+    # Add the changes under the username and email of the
+    # user who pushed the code
+    - name: Commit changes to the Maven Repo
+      if: github.repository == 'MegaMek/megamek'
+      working-directory: mekhq
+      run: |
+        git add .
+        git config user.email ${{ github.event.pusher.email }}
+        git config user.name ${{ github.event.pusher.name }}
+        git commit -m "MegaMek Data ${{ github.event.after }}" -m "${{ github.event.compare }}"
+        
+    # Use an SSH deploy key (with write privs) to update the MekHQ repo
+    - name: Setup SSH and Push changes to the MekHQ Repo
+      if: github.repository == 'MegaMek/megamek'
+      working-directory: mekhq
+      run: |
+        eval "$(ssh-agent -s)"
+        ssh-add - <<< "${{ secrets.MEKHQ_REPO_DEPLOY_KEY }}"
+        git push "git@github.com:MegaMek/mekhq.git" HEAD:master

@@ -1,17 +1,18 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (C) 2020 - The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client;
 
@@ -20,9 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import megamek.MegaMek;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Crew;
@@ -72,31 +71,27 @@ import megamek.common.util.WeightedMap;
  *                 given the surname listed in fld1.
  * </ul>
  * </p>
- * @author Jay Lawson
+ * @author Jay Lawson - Created the above doc
  */
 public class RandomNameGenerator implements Serializable {
     //region Variable Declarations
-    /** Default directory containing the faction-specific name files. */
-    private static final String DIR_NAME_FACTIONS = "factions";
-
-    /** Default filename for the list of male first names. */
-    private static final String FILENAME_FIRSTNAMES_MALE = "firstnames_male.txt";
-
-    /** Default filename for the list of female first names. */
-    private static final String FILENAME_FIRSTNAMES_FEMALE = "firstnames_female.txt";
-
-    /** Default filename for the list of surnames names. */
-    private static final String FILENAME_SURNAMES = "surnames.txt";
-
-    private static final String FILENAME_MASTER_ANCESTRY = "masterancestry.txt";
-
     private static final long serialVersionUID = 5765118329881301375L;
 
-    private static RandomNameGenerator rng;
+    //region Local File Names
+    // TODO : Move these so they can be changed on demand
+    private static final String DIR_NAME_FACTIONS = "factions"; // Faction Subdirectory
+    private static final String GIVEN_NAME_MALE_FILE = "male_given_names.csv"; // Male Given Name Filename
+    private static final String GIVEN_NAME_FEMALE_FILE = "female_given_names.csv"; // Female Given Name Filename
+    private static final String SURNAME_FILE = "surnames.csv"; // Surname List Filename
+    private static final String HISTORICAL_ETHNICITY_FILE = "historical_ethnicity.csv"; // Historical Ethnicity Filename
+    //endregion Local File Names
 
+    private static RandomNameGenerator rng; // This is using a singleton, because only a single usage of this class is required
+
+    //region Data Maps
     /**
      * femaleGivenNames, maleGivenNames, and surnames contain values in the following format:
-     * Map<Integer Ethnic Code, WeightedMap<String Name>>
+     * Map<Integer Ethnic_Code, WeightedMap<String Name>>
      * The ethnic code is an Integer value that is used to determine the ethnicity of the name, while
      * the name is a String value. The name is stored in a WeightedMap for each ethnic code to ensure
      * that there is a range from common to rare names. This is determined based on the input weights
@@ -107,7 +102,7 @@ public class RandomNameGenerator implements Serializable {
 
     /**
      * factionGivenNames contains values in the following format:
-     * Map<String Faction Name, Map<Integer Surname Ethnic Code, WeightedMap<Integer Given Name Ethnic Code>>>
+     * Map<String Faction_Name, Map<Integer Surname_Ethnic_Code, WeightedMap<Integer Given_Name_Ethnic_Code>>>
      * The faction name is the key to determining which list of names should be used, with the default being "General"
      * The Surname Ethnic Code is the code that the surname will be generated from
      * The Given Name Ethnic Code is the code to generate the given name from, from the femaleGivenNames or maleGivenNames
@@ -117,15 +112,18 @@ public class RandomNameGenerator implements Serializable {
 
     /**
      * factionEthnicCodes contains values in the following format:
-     * Map<String Faction Name, WeightedMap<Integer Surname Ethnic Code>>
+     * Map<String Faction_Name, WeightedMap<Integer Surname_Ethnic_Code>>
      * The faction name is the key to determining which list of names should be used, with the default being "General"
      * The Surname Ethnic Code is the code that the surname will be generated from, and
      * this is weighted to ensure that more common pairings for the faction are more common
      */
     private static Map<String, WeightedMap<Integer>> factionEthnicCodes;
+    //endregion Data Maps
 
+    //region Faction Keys
     private static final String KEY_DEFAULT_FACTION = "General";
     private static final String KEY_DEFAULT_CLAN = "Clan";
+    //endregion Faction Keys
 
     private int percentFemale;
     private String chosenFaction;
@@ -245,7 +243,7 @@ public class RandomNameGenerator implements Serializable {
 
     //region Getters and Setters
     public Iterator<String> getFactions() {
-        if (null == factionEthnicCodes) {
+        if (factionEthnicCodes == null) {
             return null;
         }
         return factionEthnicCodes.keySet().iterator();
@@ -326,7 +324,7 @@ public class RandomNameGenerator implements Serializable {
         factionEthnicCodes = new HashMap<>();
 
         // Determine the number of ethnic codes
-        File masterAncestryFile = new MegaMekFile(Configuration.namesDir(), FILENAME_MASTER_ANCESTRY).getFile();
+        File masterAncestryFile = new MegaMekFile(Configuration.namesDir(), HISTORICAL_ETHNICITY_FILE).getFile();
         try (InputStream is = new FileInputStream(masterAncestryFile);
              Scanner input = new Scanner(is, "UTF-8")) {
 
@@ -348,9 +346,9 @@ public class RandomNameGenerator implements Serializable {
         //endregion Map Instantiation
 
         //region Read Names
-        readNamesFileToMap(maleGivenNames, FILENAME_FIRSTNAMES_MALE);
-        readNamesFileToMap(femaleGivenNames, FILENAME_FIRSTNAMES_FEMALE);
-        readNamesFileToMap(surnames, FILENAME_SURNAMES);
+        readNamesFileToMap(maleGivenNames, GIVEN_NAME_MALE_FILE);
+        readNamesFileToMap(femaleGivenNames, GIVEN_NAME_FEMALE_FILE);
+        readNamesFileToMap(surnames, SURNAME_FILE);
         //endregion Read Names
 
         //region Faction Files

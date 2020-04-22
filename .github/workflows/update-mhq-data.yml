@@ -34,7 +34,7 @@ jobs:
       if: github.repository == 'MegaMek/megamek'
       working-directory: megamek/megamek/data/
       run: |
-        cp -r . ../../../mekhq/mekhq/data/
+        cp -r . ../../../mekhq/MekHQ/data/
         
     # In case we run into an issue, use git status to help
     # us understand what happened.

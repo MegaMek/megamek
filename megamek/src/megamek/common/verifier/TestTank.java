@@ -344,10 +344,6 @@ public class TestTank extends TestEntity {
             buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
-        if (tank.hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM) && !((tank.getMovementMode() == EntityMovementMode.WHEELED) || (tank.getMovementMode() == EntityMovementMode.TRACKED) || (tank.getMovementMode() == EntityMovementMode.HOVER) || (tank.getMovementMode() == EntityMovementMode.HYDROFOIL) || (tank.getMovementMode() == EntityMovementMode.NAVAL) || (tank.getMovementMode() == EntityMovementMode.SUBMARINE) || (tank.getMovementMode() == EntityMovementMode.WIGE))) {
-            buff.append("Armored Motive system and incompatible movemement mode!\n\n");
-            correct = false;
-        }
         if (tank.getFreeSlots() < 0) {
             buff.append("Not enough item slots available! Using ");
             buff.append(Math.abs(tank.getFreeSlots()));
@@ -491,6 +487,11 @@ public class TestTank extends TestEntity {
             }
             if (eq.hasFlag(MiscType.F_AP_POD)) {
                 return !isNaval;
+            }
+            if (eq.hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
+                return !mode.equals(EntityMovementMode.VTOL)
+                        && !mode.equals(EntityMovementMode.RAIL)
+                        && !mode.equals(EntityMovementMode.MAGLEV);
             }
         } else if (eq instanceof WeaponType) {
             if (((WeaponType) eq).getAmmoType() == AmmoType.T_BPOD) {

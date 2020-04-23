@@ -26,6 +26,7 @@ import java.util.Vector;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.generator.RandomNameGenerator;
+import megamek.common.enums.Gender;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import org.w3c.dom.Document;
@@ -1176,7 +1177,7 @@ public class MULParser {
             }
 
             if ((attributes.containsKey(GENDER)) && (attributes.get(GENDER).length() > 0)){
-                crew.setGender(Integer.parseInt(attributes.get(GENDER)), slot);
+                crew.setGender(Gender.parseFromString(attributes.get(GENDER)), slot);
             }
 
             if ((attributes.containsKey(CAT_PORTRAIT)) && (attributes.get(CAT_PORTRAIT).length() > 0)) {

@@ -15,17 +15,18 @@ package megamek.client.ratgenerator;
 
 import java.util.Iterator;
 
+import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.Compute;
 import megamek.common.Crew;
 import megamek.common.CrewType;
 import megamek.common.UnitType;
+import megamek.common.enums.Gender;
 
 /**
  * Description of crew.
  * 
  * @author Neoancient
- *
  */
 public class CrewDescriptor {
     public static final int SKILL_GREEN = 0;
@@ -35,7 +36,7 @@ public class CrewDescriptor {
 
     private String name;
     private String bloodname;
-    private int gender;
+    private Gender gender;
     private int rank;
     private ForceDescriptor assignment;
     private int gunnery;
@@ -44,15 +45,14 @@ public class CrewDescriptor {
 
     public CrewDescriptor(ForceDescriptor assignment) {
         this.assignment = assignment;
-        boolean gender = RandomNameGenerator.getInstance().isFemale();
+        gender = RandomGenderGenerator.generate();
         name = generateName(gender);
-        this.gender = Crew.getGenderAsInt(gender);
         rank = assignment.getCoRank() == null?0:assignment.getCoRank();
         title = null;
         setSkills();
     }
 
-    private String generateName(boolean gender) {
+    private String generateName(Gender gender) {
         if (assignment.getFactionRec().isClan()) {
             RandomNameGenerator.getInstance().setChosenFaction("Clan");
             return RandomNameGenerator.getInstance().generate(gender);
@@ -282,11 +282,11 @@ public class CrewDescriptor {
         this.bloodname = bloodname;
     }
 
-    public int getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(int gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 

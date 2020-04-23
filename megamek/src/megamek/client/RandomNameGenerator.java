@@ -39,33 +39,38 @@ import megamek.common.util.WeightedMap;
  *
  * The historicalEthnicity.csv file shows the correspondence between the different ethnic names
  * and their numeric code in the database. This file is used to initialize the name mapping, and
- * must be kept current for all additions. The same numeric code must be used across all of the
+ * must be kept current for all additions. The same numeric code MUST be used across all of the
  * files listed below.
- * The numeric codes MUST be listed in exact sequential order (i.e. no skipping numbers)
- * for the program to work correctly.
+ * The numeric codes MUST be listed in exact sequential order (NO skipped numbers) for the load
+ * to work correctly.
  *
  * The name database is located in three files: maleGivenNames.csv, femaleGivenNames.csv,
  * and surnames.csv.
  *
- * The database is divided into three fields, a String name, an Integer weight, and an Integer Ethnic Code
- * fld1 - The name itself, either a male/female first name or a surname.
- * fld2 - a frequency weight to account for some names being more common than others.
- * fld3 - the numeric code identifying the "ethnic" group this name belongs to.
+ * The database is divided into three fields; an Integer Ethnic Code, a String name, and an Integer weight.
+ * The Ethnic Code is an Integer identifying the ethnic group from the historicalEthnicity.csv file the name is from
+ * The Name is a String containing either a male/female first name or a surname, dependant on the origin file.
+ * The Weight is an Integer that is used to set the generation chance of the name. The higher the number,
+ * the more common the name is.
  *
- * Faction files are located in {@link Configuration#namesDir()}/factions.
- * The name that is given before ".csv" is the faction key.
+ * Faction files are located in factions subdirectory of {@link Configuration#namesDir()}
+ * The faction key is the filename without the extension.
  * The faction files will have varying number of fields depending on how many
  * ethnic groups exist. The faction file does two things. First, it identifies
  * the relative frequency of different ethnic surnames for a faction.
  * Second, it identifies the correspondence between first names and surnames.
- * This allows, for example, for more Japanese first names regardless of surname
- * in the Draconis Combine. There should be a line in the Faction file for each
- * ethnic group.
- * <ul>
- * <li>fld1 - the id for the ethnic group
- * <li>fld2 - the ethnic group name. Not currently read in, just for easy reference.
- * <li>fld3 - The relative frequency of this ethnic surname in the faction.
- * <li>fld4-fldn - These fields identify the relative frequency of first names from an ethnic group
+ * This allows, for example, for more Japanese first names regardless of surname in the Draconis
+ * Combine. There MUST be a line in the Faction file for each ethnic group, although a weight of 0
+ * can be used to prevent the generation of a grouping of names
+ *
+ * This is divided into 3 + n fields, where n is the number of ethnic groups listed in historicalEthnicity.csv,
+ * divided into the following groupings:
+ * The Integer Ethnic Group Id is the first field
+ * The String Ethnic Group Name is the second field. This is included for ease of reference, and
+ * is NOT used by the generator.
+ * The Integer Weight for generating a surname of the specified ethnicity. The higher the number,
+ * the more common the surname is for a faction.
+ * This is followed by n fields each containing the Integer Weight for generating a given name These fields identify the relative frequency of first names from an ethnic group
  *                 given the surname listed in fld1.
  * </ul>
  * </p>

@@ -34,28 +34,26 @@ import megamek.common.util.WeightedMap;
  * This class sets up a random name generator that can then
  * be used to generate random pilot names. it will have a couple different
  * settings and flexible input files
- * <p>
- * Files are located in {@link Configuration#namesDir()}. All files are comma-delimited text files
- * that MUST end in .txt.
- * </p>
- * <p>
- * The masterancestry.txt file shows the correspondence between the different ethnic names and their numeric
- * code in the database. This file is used to initialize the name mapping, and must be kept current
- * for all additions. The same numeric code must be used across all of the files listed below.
+ *
+ * Files are located in {@link Configuration#namesDir()}. All files are comma spaced csv files
+ *
+ * The historicalEthnicity.csv file shows the correspondence between the different ethnic names
+ * and their numeric code in the database. This file is used to initialize the name mapping, and
+ * must be kept current for all additions. The same numeric code must be used across all of the
+ * files listed below.
  * The numeric codes MUST be listed in exact sequential order (i.e. no skipping numbers)
- * for the program to work correctly.</p>
- * <p>
- * The name database is located in three files: firstname_males.txt, firstname_females.txt, and surnames.txt.
- * There ar three comma-delimited fields in each of these data files: fld1,fld2,fld3
- * <ul>
- * <li>fld1 - The name itself, either a male/female first name or a surname.</li>
- * <li>fld2 - a frequency weight to account for some names being more common than others.</li>
- * <li>fld3 - the numeric code identifying the "ethnic" group this name belongs to.</li>
- * </ul>
- * </p>
- * <p>
- * Faction files are located in {@link Configuration#namesDir()}{@code /factions}.
- * The name that is given before ".txt" is used as the key for the faction.
+ * for the program to work correctly.
+ *
+ * The name database is located in three files: maleGivenNames.csv, femaleGivenNames.csv,
+ * and surnames.csv.
+ *
+ * The database is divided into three fields, a String name, an Integer weight, and an Integer Ethnic Code
+ * fld1 - The name itself, either a male/female first name or a surname.
+ * fld2 - a frequency weight to account for some names being more common than others.
+ * fld3 - the numeric code identifying the "ethnic" group this name belongs to.
+ *
+ * Faction files are located in {@link Configuration#namesDir()}/factions.
+ * The name that is given before ".csv" is the faction key.
  * The faction files will have varying number of fields depending on how many
  * ethnic groups exist. The faction file does two things. First, it identifies
  * the relative frequency of different ethnic surnames for a faction.
@@ -80,10 +78,10 @@ public class RandomNameGenerator implements Serializable {
     //region Local File Names
     // TODO : Move these so they can be changed on demand
     private static final String DIR_NAME_FACTIONS = "factions"; // Faction Subdirectory
-    private static final String GIVEN_NAME_MALE_FILE = "male_given_names.csv"; // Male Given Name Filename
-    private static final String GIVEN_NAME_FEMALE_FILE = "female_given_names.csv"; // Female Given Name Filename
+    private static final String GIVEN_NAME_MALE_FILE = "maleGivenNames.csv"; // Male Given Name Filename
+    private static final String GIVEN_NAME_FEMALE_FILE = "femaleGivenNames.csv"; // Female Given Name Filename
     private static final String SURNAME_FILE = "surnames.csv"; // Surname List Filename
-    private static final String HISTORICAL_ETHNICITY_FILE = "historical_ethnicity.csv"; // Historical Ethnicity Filename
+    private static final String HISTORICAL_ETHNICITY_FILE = "historicalEthnicity.csv"; // Historical Ethnicity Filename
     //endregion Local File Names
 
     private static RandomNameGenerator rng; // This is using a singleton, because only a single usage of this class is required
@@ -377,7 +375,7 @@ public class RandomNameGenerator implements Serializable {
         } else {
             for (String filename : fileNames) {
                 // Determine the key based on the file name
-                String key = filename.split("\\.txt")[0];
+                String key = filename.split("\\.csv")[0];
 
                 // Just check with the ethnic codes, as if it has the key then the two names
                 // maps do
@@ -430,7 +428,7 @@ public class RandomNameGenerator implements Serializable {
                 String[] values = input.nextLine().split(",");
                 if (values.length < 3) {
                     logger.error(RandomNameGenerator.class, "readNamesFileToMap",
-                            "Not enough fields in '" + file.toString() + "' on " + lineNumber);
+                            "Not enough fields in " + file.toString() + " on " + lineNumber);
                     continue;
                 }
 

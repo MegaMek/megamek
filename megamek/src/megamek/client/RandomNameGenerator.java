@@ -129,6 +129,13 @@ public class RandomNameGenerator implements Serializable {
     private static final String KEY_DEFAULT_CLAN = "Clan";
     //endregion Faction Keys
 
+    //region Default Names
+    public static final String UNNAMED = "Unnamed";
+    public static final String UNNAMED_SURNAME = "Person";
+    public static final String UNNAMED_FULL_NAME = "Unnamed Person";
+    //endregion Default Names
+
+    @Deprecated // April 23rd, 2020 as part of adding a RandomGenderGenerator to MegaMek
     private int percentFemale;
     private String chosenFaction;
 
@@ -181,7 +188,7 @@ public class RandomNameGenerator implements Serializable {
      * @return - a string containing the randomly generated name
      */
     public String generate(boolean isFemale, boolean isClan, String faction) {
-        String name = Crew.UNNAMED_FULL_NAME;
+        String name = UNNAMED_FULL_NAME;
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
             // go to check if the person is a clanner. If they are, then they default to the default
@@ -191,8 +198,8 @@ public class RandomNameGenerator implements Serializable {
             faction = factionEthnicCodes.containsKey(faction) ? faction
                     : ((isClan && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
                         ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);
-            int ethnicCode = factionEthnicCodes.get(faction).randomItem();
-            int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
+            final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
+            final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
             name = isFemale
                     ? femaleGivenNames.get(givenNameEthnicCode).randomItem()
@@ -218,7 +225,7 @@ public class RandomNameGenerator implements Serializable {
      *              and the surname at String[1]
      */
     public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan, String faction) {
-        String[] name = { Crew.UNNAMED, Crew.UNNAMED_SURNAME };
+        String[] name = { UNNAMED, UNNAMED_SURNAME };
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
             // go to check if the person is a clanner. If they are, then they default to the default
@@ -228,18 +235,14 @@ public class RandomNameGenerator implements Serializable {
             faction = factionEthnicCodes.containsKey(faction) ? faction
                     : ((isClan && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
                         ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);
-            int ethnicCode = factionEthnicCodes.get(faction).randomItem();
-            int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
+            final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
+            final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
             name[0] = isFemale
                     ? femaleGivenNames.get(givenNameEthnicCode).randomItem()
                     : maleGivenNames.get(givenNameEthnicCode).randomItem();
 
-            if (isClan) {
-                name[1] = "";
-            } else {
-                name[1] = surnames.get(ethnicCode).randomItem();
-            }
+            name[1] = isClan ? "" : surnames.get(ethnicCode).randomItem();
         }
         return name;
     }
@@ -247,24 +250,23 @@ public class RandomNameGenerator implements Serializable {
 
     //region Getters and Setters
     public Iterator<String> getFactions() {
-        if (factionEthnicCodes == null) {
-            return null;
-        }
-        return factionEthnicCodes.keySet().iterator();
+        return (factionEthnicCodes == null) ? null : factionEthnicCodes.keySet().iterator();
     }
 
     public String getChosenFaction() {
         return chosenFaction;
     }
 
-    public void setChosenFaction(String s) {
-        chosenFaction = s;
+    public void setChosenFaction(String chosenFaction) {
+        this.chosenFaction = chosenFaction;
     }
 
+    @Deprecated // April 23rd, 2020 as part of adding a RandomGenderGenerator to MegaMek
     public int getPercentFemale() {
         return percentFemale;
     }
 
+    @Deprecated // April 23rd, 2020 as part of adding a RandomGenderGenerator to MegaMek
     public void setPercentFemale(int i) {
         percentFemale = i;
     }
@@ -426,6 +428,8 @@ public class RandomNameGenerator implements Serializable {
 
         try (InputStream is = new FileInputStream(file);
              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
+
+            input.nextLine(); // this is used to skip over the header line
 
             while (input.hasNextLine()) {
                 lineNumber++;

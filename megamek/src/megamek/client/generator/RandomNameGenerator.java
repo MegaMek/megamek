@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 - The MegaMek Team
+ * Copyright (C) 2020 - The MegaMek Team. All Rights Reserved
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,8 +125,8 @@ public class RandomNameGenerator implements Serializable {
     //endregion Data Maps
 
     //region Faction Keys
-    private static final String KEY_DEFAULT_FACTION = "General";
-    private static final String KEY_DEFAULT_CLAN = "Clan";
+    public static final String KEY_DEFAULT_FACTION = "General";
+    public static final String KEY_DEFAULT_CLAN = "Clan";
     //endregion Faction Keys
 
     //region Default Names

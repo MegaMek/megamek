@@ -23,9 +23,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 
-import megamek.common.Compute;
 import megamek.common.Configuration;
-import megamek.common.Crew;
+import megamek.common.enums.Gender;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.util.MegaMekFile;
@@ -135,8 +134,6 @@ public class RandomNameGenerator implements Serializable {
     public static final String UNNAMED_FULL_NAME = "Unnamed Person";
     //endregion Default Names
 
-    @Deprecated // April 23rd, 2020 as part of adding a RandomGenderGenerator to MegaMek
-    private int percentFemale;
     private String chosenFaction;
 
     private static final MMLogger logger = DefaultMmLogger.getInstance();
@@ -144,50 +141,45 @@ public class RandomNameGenerator implements Serializable {
     //endregion Variable Declarations
 
     public RandomNameGenerator() {
-        percentFemale = 50;
         chosenFaction = KEY_DEFAULT_FACTION;
     }
 
     //region Name Generators
     /**
-     * Generate a single random name
-     *
-     * @return - a string giving the name
+     * This is a hack used for MegaMek, where we assume any chosen faction with a name containing the
+     * String "clan" is a clan faction.
+     * @param gender the gender to generate the name for
+     * @return a string containing the randomly generated name
      */
-    @Deprecated //17-Feb-2020 as part of the addition of gender tracking to MegaMek
-    public String generate() {
-        return generate(isFemale());
-    }
-
-    public String generate(boolean isFemale) {
+    public String generate(Gender gender) {
         // this is a total hack, but for now lets assume that
         // if the chosenFaction name contains the word "clan"
         // we should only spit out first names
-        return generate(isFemale, chosenFaction.toLowerCase().contains("clan"));
+        return generate(gender, chosenFaction.toLowerCase().contains("clan"));
     }
 
     /**
      * Generate a single random name for MegaMek only
      *
-     * @param isFemale true if the name should be female, otherwise false
+     * @param gender the gender to generate the name for
      * @param isClan true if the name should be for a clanner, otherwise false
-     * @return - a string containing the randomly generated name
+     * @return a string containing the randomly generated name
      */
-    public String generate(boolean isFemale, boolean isClan) {
-        return generate(isFemale, isClan, chosenFaction);
+    public String generate(Gender gender, boolean isClan) {
+        return generate(gender, isClan, chosenFaction);
     }
 
     /**
-     * Generate a single random name
+     * Generate a single random name for MegaMek only
      *
-     * @param isFemale true if the name should be female, otherwise false
+     * @param gender the gender to generate the name for
      * @param isClan true if the name should be for a clanner, otherwise false
      * @param faction a string containing the faction key with which to generate the name from.
      *                If the faction is not a key for the <code>factionSurnames</code> Map,
      *                it will instead generate based on the General list
-     * @return - a string containing the randomly generated name
+     * @return a string containing the randomly generated name
      */
-    public String generate(boolean isFemale, boolean isClan, String faction) {
+    public String generate(Gender gender, boolean isClan, String faction) {
         String name = UNNAMED_FULL_NAME;
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
@@ -201,7 +193,7 @@ public class RandomNameGenerator implements Serializable {
             final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
-            name = isFemale
+            name = gender.isFemale()
                     ? femaleGivenNames.get(givenNameEthnicCode).randomItem()
                     : maleGivenNames.get(givenNameEthnicCode).randomItem();
 
@@ -215,7 +207,7 @@ public class RandomNameGenerator implements Serializable {
     /**
      * Generate a single random name split between a given name and surname
      *
-     * @param isFemale true if the name should be female, otherwise false
+     * @param gender the gender to generate the name for
      * @param isClan true if the name should be for a clanner, otherwise false
      * @param faction a string containing the faction key with which to generate the name from.
      *                If the faction is not a key for the <code>factionSurnames</code> Map,
@@ -224,7 +216,7 @@ public class RandomNameGenerator implements Serializable {
      *              with the given name at String[0]
      *              and the surname at String[1]
      */
-    public String[] generateGivenNameSurnameSplit(boolean isFemale, boolean isClan, String faction) {
+    public String[] generateGivenNameSurnameSplit(Gender gender, boolean isClan, String faction) {
         String[] name = { UNNAMED, UNNAMED_SURNAME };
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
@@ -238,7 +230,7 @@ public class RandomNameGenerator implements Serializable {
             final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
-            name[0] = isFemale
+            name[0] = gender.isFemale()
                     ? femaleGivenNames.get(givenNameEthnicCode).randomItem()
                     : maleGivenNames.get(givenNameEthnicCode).randomItem();
 
@@ -253,44 +245,18 @@ public class RandomNameGenerator implements Serializable {
         return (factionEthnicCodes == null) ? null : factionEthnicCodes.keySet().iterator();
     }
 
+    /**
+     * @return the chosen faction to generate the name from
+     */
     public String getChosenFaction() {
         return chosenFaction;
     }
 
+    /**
+     * @param chosenFaction the faction to use to generate the name
+     */
     public void setChosenFaction(String chosenFaction) {
         this.chosenFaction = chosenFaction;
-    }
-
-    @Deprecated // April 23rd, 2020 as part of adding a RandomGenderGenerator to MegaMek
-    public int getPercentFemale() {
-        return percentFemale;
-    }
-
-    @Deprecated // April 23rd, 2020 as part of adding a RandomGenderGenerator to MegaMek
-    public void setPercentFemale(int i) {
-        percentFemale = i;
-    }
-
-    /**
-     * randomly select gender
-     *
-     * @return true if female
-     */
-    @Deprecated // March 7th, 2020 by the addition of gender tracking to MegaMek
-    public boolean isFemale() {
-        return Compute.randomInt(100) < percentFemale;
-    }
-
-    /**
-     * @return the Crew.G_* type containing the randomly generated gender
-     */
-    @Deprecated // April 23rd, 2020 as part of adding a RandomGenderGenerator to MegaMek
-    public int generateGender() {
-        if (Compute.randomInt(100) < percentFemale) {
-            return Crew.G_FEMALE;
-        } else {
-            return Crew.G_MALE;
-        }
     }
 
     /**

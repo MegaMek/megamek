@@ -95,9 +95,11 @@ public class BoardsValidator {
             
             validator.scanForBoards(boardDir);
             System.out.println("Found " + validator.numBoardErrors + " boards with errors!");
+            System.exit(validator.numBoardErrors > 0 ? 1 : 0);
         }catch (IOException e){
             System.out.println("IOException!");
             e.printStackTrace();
+            System.exit(2);
         }
     }
 }

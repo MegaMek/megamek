@@ -94,6 +94,20 @@ public enum Gender {
     }
 
     /**
+     * @return the external form of the internal gender
+     */
+    public Gender getExternalVariant() {
+        return (this == OTHER_MALE) ? MALE : FEMALE;
+    }
+
+    /**
+     * @return the internal form of the external gender
+     */
+    public Gender getInternalVariant() {
+        return (this == MALE) ? OTHER_MALE : OTHER_FEMALE;
+    }
+
+    /**
      * @param input the string to parse
      * @return the gender defined by the input, or a randomly generated string if the string isn't a
      * proper value

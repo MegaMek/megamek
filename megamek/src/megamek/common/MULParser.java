@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.client.generator.RandomNameGenerator;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import org.w3c.dom.Document;
@@ -1167,7 +1168,7 @@ public class MULParser {
             if ((attributes.containsKey(NAME)) && (attributes.get(NAME).length() > 0)) {
                 crew.setName(attributes.get(NAME), slot);
             } else {
-                crew.setName(Crew.UNNAMED_FULL_NAME, slot);
+                crew.setName(RandomNameGenerator.UNNAMED_FULL_NAME, slot);
             }
 
             if ((attributes.containsKey(NICK)) && (attributes.get(NICK).length() > 0)) {

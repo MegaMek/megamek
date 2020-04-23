@@ -19,6 +19,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import megamek.common.Board;
 import megamek.common.Configuration;
@@ -31,10 +35,18 @@ import megamek.common.Configuration;
  */
 public class BoardsValidator {
     
-    int numBoardErrors = 0;
+    private int numBoardErrors = 0;
+    private boolean isVerbose;
     
-    public BoardsValidator() {
-        
+    /**
+     * Sets a value indicating whether a full listing of errors
+     * should be printed when validating a board.
+     * @param b {@code true} if the specific errors for each board
+     *          should be printed, otherwise {@code false} for just
+     *          the file name.
+     */
+    public void setIsVerbose(boolean b) {
+        isVerbose = b;
     }
 
     /**
@@ -67,20 +79,32 @@ public class BoardsValidator {
      * @param boardFile
      * @throws FileNotFoundException
      */
-    private void validateBoard(File boardFile) throws FileNotFoundException {
+    private void validateBoard(File boardFile) throws FileNotFoundException, IOException {
         // If this isn't a board, ignore it
         if (!boardFile.toString().endsWith(".board")) {
             return;
         }
         
-        java.io.InputStream is = new FileInputStream(boardFile);
-        StringBuffer errBuff = new StringBuffer();
-        Board b = new Board();
-        b.load(is, errBuff, false);
-        if (errBuff.length() > 0) {
-            System.out.println("Found Invalid Board! Board: " + boardFile);
-            System.out.println(errBuff);
-            numBoardErrors++;
+        try (java.io.InputStream is = new FileInputStream(boardFile)) {
+            StringBuffer errBuff = new StringBuffer();
+            Board b = new Board();
+
+            try {
+                b.load(is, errBuff, false);
+            } catch (Exception e) {
+                errBuff.append(e.toString());
+                StringWriter writer = new StringWriter();
+                e.printStackTrace(new PrintWriter(writer));
+                errBuff.append(writer.toString());
+            }
+
+            if (errBuff.length() > 0) {
+                numBoardErrors++;
+                System.out.println("Found Invalid Board! Board: " + boardFile);
+                if (isVerbose) {
+                    System.out.println(errBuff);
+                }
+            }
         }
     }
 
@@ -89,17 +113,71 @@ public class BoardsValidator {
      * @param args
      */
     public static void main(String[] args) {
+        Args a = Args.parse(args);
+        if (a.showHelp) {
+            System.out.println("Usage: java -cp MegaMek.jar megamek.utils.BoardsValidator [OPTIONS] [paths]");
+            System.out.println();
+            System.out.println("    -q, --quiet       Only print invalid file names.");
+            System.out.println("    -?, -h, --help    Show this message and quit.");
+            System.out.println();
+            System.out.println("Examples:");
+            System.out.println();
+            System.out.println("Validate every board in the ./data subdirectory of the");
+            System.out.println("current working directory:");
+            System.out.println();
+            System.out.println("    > java -cp MegaMek.jar megamek.utils.BoardsValidator");
+            System.out.println();
+            System.out.println("Validate a given board:");
+            System.out.println();
+            System.out.println("    > java -cp MegaMek.jar megamek.utils.BoardsValidator SomeFile.board");
+            System.out.println();
+            System.out.println("Validate a directory of boards:");
+            System.out.println();
+            System.out.println("    > java -cp MegaMek.jar megamek.utils.BoardsValidator SomeFiles");
+            System.out.println();
+            System.exit(2);
+            return;
+        }
+
+        BoardsValidator validator = new BoardsValidator();
+        validator.setIsVerbose(!a.isQuiet);
+
         try {
-            File boardDir = Configuration.boardsDir();
-            BoardsValidator validator = new BoardsValidator();
-            
-            validator.scanForBoards(boardDir);
+            if (a.paths.size() == 0) {
+                File boardDir = Configuration.boardsDir();
+                validator.scanForBoards(boardDir);
+            } else {
+                for (String path : a.paths) {
+                    validator.scanForBoards(new File(path));
+                }
+            }
+
             System.out.println("Found " + validator.numBoardErrors + " boards with errors!");
             System.exit(validator.numBoardErrors > 0 ? 1 : 0);
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("IOException!");
             e.printStackTrace();
-            System.exit(2);
+            System.exit(64);
+        }
+    }
+
+    private static class Args {
+        public boolean showHelp;
+        public boolean isQuiet;
+        public List<String> paths = new ArrayList<>();
+
+        private static Args parse(String[] args) {
+            Args a = new Args();
+            for (String arg : args) {
+                if ("-?".equals(arg) || "-h".equals(arg) || "--help".equals(arg)) {
+                    a.showHelp = true;
+                } else if ("-q".equals(arg) || "--quiet".equals(arg)) {
+                    a.isQuiet = true;
+                } else {
+                    a.paths.add(arg);
+                }
+            }
+            return a;
         }
     }
 }

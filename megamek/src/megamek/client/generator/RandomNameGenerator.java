@@ -241,6 +241,9 @@ public class RandomNameGenerator implements Serializable {
     //endregion Name Generators
 
     //region Getters and Setters
+    /**
+     * @return the list of potential keys to generate the name from
+     */
     public Iterator<String> getFactions() {
         return (factionEthnicCodes == null) ? null : factionEthnicCodes.keySet().iterator();
     }

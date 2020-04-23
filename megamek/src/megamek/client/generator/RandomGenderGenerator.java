@@ -35,11 +35,11 @@ public class RandomGenderGenerator {
     //endregion Constructors
 
     //region Getters/Setters
-    public int getPercentFemale() {
+    public static int getPercentFemale() {
         return percentFemale;
     }
 
-    public void setPercentFemale(int i) {
+    public static void setPercentFemale(int i) {
         percentFemale = i;
     }
     //endregion Getters/Setters
@@ -49,7 +49,7 @@ public class RandomGenderGenerator {
      * Generates a random gender based on the default percent female
      * @return the gender generated, of either Gender.MALE or Gender.FEMALE
      */
-    public Gender generate() {
+    public static Gender generate() {
         return generate(getPercentFemale());
     }
 
@@ -57,7 +57,7 @@ public class RandomGenderGenerator {
      * @param percentFemale the specified percent female to generate with
      * @return the gender generated, of either Gender.MALE or Gender.FEMALE
      */
-    public Gender generate(int percentFemale) {
+    public static Gender generate(int percentFemale) {
         return (Compute.randomInt(100) < percentFemale) ? Gender.FEMALE : Gender.MALE;
     }
 
@@ -65,7 +65,7 @@ public class RandomGenderGenerator {
      * Generates a random biological gender based on the default percent female for MekHQ Gender Identity Flagged Personnel
      * @return the gender generated, of either Gender.OTHER_MALE or Gender.OTHER_FEMALE
      */
-    public Gender generateOther() {
+    public static Gender generateOther() {
         return generateOther(getPercentFemale());
     }
 
@@ -74,7 +74,7 @@ public class RandomGenderGenerator {
      * @param percentFemale the specified percent female to generate with
      * @return the gender generated, of either Gender.MALE or Gender.FEMALE
      */
-    public Gender generateOther(int percentFemale) {
+    public static Gender generateOther(int percentFemale) {
         return (Compute.randomInt(100) < percentFemale) ? Gender.OTHER_FEMALE : Gender.OTHER_MALE;
     }
     //endregion Generators

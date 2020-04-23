@@ -59,6 +59,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import megamek.client.Client;
+import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.Princess;
@@ -69,6 +70,7 @@ import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
+import megamek.common.enums.Gender;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
@@ -3628,8 +3630,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         e.getCrew().setPiloting(skills[1], i);
                         if (e.getCrew() instanceof LAMPilot) {
                             skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
-                            ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
-                            ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
+                            ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
+                            ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
                         }
                     }
                     e.getCrew().sortRandomSkills();
@@ -3642,9 +3644,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 }
                 for (Entity e : entities) {
                     for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-                        boolean isFemale = c.getRandomNameGenerator().isFemale();
-                        e.getCrew().setGender(isFemale, i);
-                        e.getCrew().setName(c.getRandomNameGenerator().generate(isFemale), i);
+                        Gender gender = RandomGenderGenerator.generate();
+                        e.getCrew().setGender(gender, i);
+                        e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender), i);
                     }
                     c.sendUpdateEntity(e);
                 }
@@ -3659,7 +3661,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 }
 
                 double capacity;
-                boolean hasEnoughCargoCapacity = false;
+                boolean hasEnoughCargoCapacity;
                 String errorMessage = "";
                 if (bayNumber != -1) {
                     Transporter bay = loadingEntity.getBayById(bayNumber);

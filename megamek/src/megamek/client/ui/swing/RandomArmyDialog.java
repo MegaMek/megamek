@@ -57,6 +57,8 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.Client;
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.generator.RandomNameGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.FormationType;
@@ -68,6 +70,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IGame.Phase;
 import megamek.common.IPlayer;
+import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameSettingsChangeEvent;
@@ -83,12 +86,7 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
 
-public class RandomArmyDialog extends JDialog implements ActionListener,
-WindowListener, TreeSelectionListener {
-
-    /**
-     *
-     */
+public class RandomArmyDialog extends JDialog implements ActionListener, WindowListener, TreeSelectionListener {
     private static final long serialVersionUID = 4072453002423681675L;
     
     @SuppressWarnings("unused")
@@ -987,9 +985,9 @@ WindowListener, TreeSelectionListener {
             }
             e.getCrew().sortRandomSkills();
             if (cs.generateNames()) {
-                boolean isFemale = m_client.getRandomNameGenerator().isFemale();
-                e.getCrew().setGender(isFemale, i);
-                e.getCrew().setName(m_client.getRandomNameGenerator().generate(isFemale), i);
+                Gender gender = RandomGenderGenerator.generate();
+                e.getCrew().setGender(gender, i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender), i);
             }
         }
     }

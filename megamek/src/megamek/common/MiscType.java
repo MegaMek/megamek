@@ -5413,7 +5413,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.cost = 1500;
-        misc.flags = misc.flags.or(F_AP_POD).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_AP_POD).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 1;
         misc.rulesRefs = "204,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -6489,7 +6490,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 550000;
         misc.criticals = 1;
         misc.svslots = 2;
-        misc.flags = misc.flags.or(F_HIRES_IMAGER).or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
+        misc.flags = misc.flags.or(F_HIRES_IMAGER).or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "338,TO";
@@ -6509,7 +6510,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2.5;
         misc.cost = 150000;
         misc.criticals = 1;
-        misc.flags = misc.flags.or(F_HIRES_IMAGER).or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
+        misc.flags = misc.flags.or(F_HIRES_IMAGER).or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "339,TO";
@@ -7503,7 +7504,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Refueling Drogue/Fluid Suction System (Aero)";
         misc.setInternalName("RefuelingDrogue");
         misc.flags = misc.flags.or(F_REFUELING_DROGUE).or(F_FIGHTER_EQUIPMENT).or(F_VTOL_EQUIPMENT)
-                .or(F_SC_EQUIPMENT);
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_SC_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "247,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -7828,7 +7829,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_VEHICLE_MINE_DISPENSER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
-                .andNot(F_FIGHTER_EQUIPMENT);
+                .or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
         misc.rulesRefs = "325,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -9038,7 +9039,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLMobileFieldBase");
         misc.tonnage = 20;
         misc.cost = 150000;
-        misc.omniFixedOnly = true;
         misc.flags = misc.flags.or(F_MOBILE_FIELD_BASE).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
                 .or(F_SS_EQUIPMENT);
         misc.bv = 0;
@@ -9423,7 +9423,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 12;
         misc.criticals = 12;
         misc.cost = 4000000000.0;
-        misc.omniFixedOnly = true;
         misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT)
                 .andNot(F_FIGHTER_EQUIPMENT)

@@ -500,7 +500,7 @@ public class TestTank extends TestEntity {
                         && !mode.equals(EntityMovementMode.WIGE);
             }
             if (eq.hasFlag(MiscType.F_AP_POD)) {
-                return !isNaval;
+                return !isNaval && !isAerial;
             }
             if (eq.hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
                 return !isAerial
@@ -518,6 +518,17 @@ public class TestTank extends TestEntity {
             if (eq.hasFlag(MiscType.F_PINTLE_TURRET)) {
                 return !isNaval && !mode.equals(EntityMovementMode.AERODYNE)
                         && !mode.equals(EntityMovementMode.STATION_KEEPING);
+            }
+            if (eq.hasFlag(MiscType.F_LOOKDOWN_RADAR)
+                    || eq.hasFlag(MiscType.F_INFRARED_IMAGER)
+                    || eq.hasFlag(MiscType.F_HIRES_IMAGER)) {
+                return isAerial
+                        || mode.equals(EntityMovementMode.VTOL);
+            }
+            if (eq.hasFlag(MiscType.F_REFUELING_DROGUE)) {
+                return mode.equals(EntityMovementMode.VTOL)
+                        || mode.equals(EntityMovementMode.AERODYNE)
+                        || mode.equals(EntityMovementMode.AIRSHIP);
             }
             if (eq.hasFlag(MiscType.F_SASRCS)
                     || eq.hasFlag(MiscType.F_LIGHT_SAIL)

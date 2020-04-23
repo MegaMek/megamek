@@ -1024,7 +1024,14 @@ public class TestSupportVehicle extends TestEntity {
             if ((m.getType() instanceof MiscType) && !m.getType().hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)) {
                 buff.append(m.getType().getName()).append(" cannot be used by support vehicles.\n");
                 correct = false;
-            } else if ((m.getType() instanceof WeaponType) && !m.getType().hasFlag(WeaponType.F_TANK_WEAPON)) {
+            } else if ((m.getType() instanceof WeaponType)
+                    && (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT)
+                    && !m.getType().hasFlag(WeaponType.F_INFANTRY)) {
+                buff.append("Small support vehicles cannot mount heavy weapons.\n");
+                correct = false;
+            } else if ((m.getType() instanceof WeaponType)
+                    && (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT)
+                    && !m.getType().hasFlag(WeaponType.F_TANK_WEAPON)) {
                 buff.append(m.getType().getName()).append(" cannot be used by support vehicles.\n");
                 correct = false;
             } else if (!TestTank.legalForMotiveType(m.getType(), supportVee.getMovementMode(), true)) {

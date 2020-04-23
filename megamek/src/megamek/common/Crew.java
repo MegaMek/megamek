@@ -1,7 +1,7 @@
 /*
 * MegaMek -
 * Copyright (C) 2000, 2001, 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
+* Copyright (C) 2018 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -13,16 +13,13 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -39,9 +36,7 @@ import megamek.common.options.PilotOptions;
  *  some multi-crew cockpits (Tripod, QuadVee, dual, command console) require tracking the health
  *  and skills of each crew member independently. These are referred to as "slots" and the slot
  *  number corresponds to an array index for the appropriate field.
- *
  */
-
 public class Crew implements Serializable {
     private static final long serialVersionUID = -141169182388269619L;
 
@@ -52,13 +47,21 @@ public class Crew implements Serializable {
     private int currentSize;
 
     private final String[] name;
-    public static final String UNNAMED = "Unnamed";
-    public static final String UNNAMED_SURNAME = "Person";
-    public static final String UNNAMED_FULL_NAME = "Unnamed Person";
     private final int[] gender;
+
+    @Deprecated
+    public static final String UNNAMED = "Unnamed";
+    @Deprecated
+    public static final String UNNAMED_SURNAME = "Person";
+    @Deprecated
+    public static final String UNNAMED_FULL_NAME = "Unnamed Person";
+    @Deprecated
     public static final int G_RANDOMIZE = -1; //this is used in generation methods to randomize the gender
+    @Deprecated
     public static final int G_MALE = 0;
+    @Deprecated
     public static final int G_FEMALE = 1;
+    @Deprecated
     public static final String GENDER_ERROR = "genderError";
 
     private final int[] gunnery;

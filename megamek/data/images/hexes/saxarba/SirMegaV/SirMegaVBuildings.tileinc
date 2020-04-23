@@ -1,0 +1,16 @@
+## SIRMEGAV Special Buildings
+
+#SINGLEHEX
+super * "building:1:00;bldg_elev:*;bldg_cf:*;bldg_fluff:1" "" "saxarba/SirMegaV/BuildingSystem-02-Intermediate-02-Medium-1-16.png"
+super * "building:1:00;bldg_elev:*;bldg_cf:*;bldg_fluff:2" "" "saxarba/SirMegaV/BuildingSystem-02-Intermediate-02-Medium-1-17.png"
+super * "building:1:00;bldg_elev:*;bldg_cf:*;bldg_fluff:3" "" "saxarba/SirMegaV/BuildingSystem-02-Intermediate-03-ReinforcedLow-E-100.png"
+
+
+
+BuildingSystem-02-Intermediate-02-Medium-1-16
+#MULTIHEX
+super * "building:1:12;bldg_elev:*;bldg_cf:*;bldg_fluff:100" "" "saxarba/SirMegaV/BuildingSystem-03-Advance-04-ReinforcedLow-L-110-01.png"
+super * "building:1:07;bldg_elev:*;bldg_cf:*;bldg_fluff:100" "" "saxarba/SirMegaV/BuildingSystem-03-Advance-04-ReinforcedLow-L-110-02.png"
+super * "building:1:56;bldg_elev:*;bldg_cf:*;bldg_fluff:100" "" "saxarba/SirMegaV/BuildingSystem-03-Advance-04-ReinforcedLow-L-110-03.png"
+super * "building:1:33;bldg_elev:*;bldg_cf:*;bldg_fluff:100" "" "saxarba/SirMegaV/BuildingSystem-03-Advance-04-ReinforcedLow-L-110-04.png"
+

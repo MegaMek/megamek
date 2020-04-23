@@ -104,6 +104,13 @@ public class Terrains implements ITerrainFactory {
     public static final int METAL_CONTENT = 42; // Is there metal content that
                                                 // will block magscan sensors?
     public static final int BLDG_BASE_COLLAPSED = 43; // 1 means collapsed
+    // Additional fluff types so that stacking of special images is possible
+    public static final int BLDG_FLUFF = 44; // Ideally used to denote special bldg images
+    public static final int ROAD_FLUFF = 45; // Ideally used to denote special road images
+    public static final int GROUND_FLUFF = 46; // Ideally used to denote special ground images
+                                            // these should be supers, not bases, as base image
+                                            // matching is not exact while super is 
+    public static final int WATER_FLUFF = 47; // Ideally used to denote special water images
 
     /**
      * Keeps track of the different type of terrains that can have exits.
@@ -115,7 +122,7 @@ public class Terrains implements ITerrainFactory {
             "snow", "fire", "smoke", "geyser", "building", "bldg_cf", "bldg_elev", "bldg_basement_type", "bldg_class",
             "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev",
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
-            "bldg_base_collapsed" };
+            "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff" };
 
     public static final int SIZE = names.length;
 

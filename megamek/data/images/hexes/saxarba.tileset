@@ -378,6 +378,9 @@ super * "rapids:*" "" "saxarba/water/torrent.png"
 super * "ice:1" "" "saxarba/misc/ice.png"
 super * "ice:*" "" "saxarba/misc/ice.png"
 
+#SPECIAL SIRMEGAV BUILDINGS
+include "saxarba/SirMegaV/SirMegaVBuildings.tileinc"
+
 #BUILDINGS
 #Standard buildings for mars and lunar and volcano themes
 include "saxarba/BuildingsSealedLunar.tileinc"

@@ -48,6 +48,21 @@ public enum Gender {
     }
     //endregion Constructors
 
+    //region Boolean Checks
+    /**
+     * @return true is the person's biological gender is male, otherwise false
+     */
+    public boolean isMale() {
+        return (this == MALE) || (this == OTHER_MALE);
+    }
+
+    /**
+     * @return true is the person's biological gender is female, otherwise false
+     */
+    public boolean isFemale() {
+        return (this == FEMALE) || (this == OTHER_FEMALE);
+    }
+
     /**
      * @return true if the enum value can be shown externally
      */
@@ -61,6 +76,7 @@ public enum Gender {
     public boolean isInternal() {
         return internal;
     }
+    //endregion Boolean Checks
 
     /**
      * @return a list of all external-facing gender options

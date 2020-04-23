@@ -29,22 +29,28 @@ import java.util.List;
  */
 public enum Gender {
     //region Enum Declarations
-    MALE(false),
-    FEMALE(false),
-    OTHER_MALE(true),
-    OTHER_FEMALE(true),
+    MALE(false, "Male"),
+    FEMALE(false, "Female"),
+    OTHER_MALE(true, "Male"),
+    OTHER_FEMALE(true, "Female"),
     RANDOMIZE(true);
     //endregion Enum Declarations
 
     //region Variable Declarations
     private final boolean internal;
+    private final String displayName;
 
     private static final MMLogger logger = DefaultMmLogger.getInstance();
     //endregion Variable Declarations
 
     //region Constructors
     Gender(boolean internal) {
+        this(internal, "");
+    }
+
+    Gender(boolean internal, String displayName) {
         this.internal = internal;
+        this.displayName = displayName;
     }
     //endregion Constructors
 
@@ -137,5 +143,10 @@ public enum Gender {
                 "Failed to parse the gender value from input String " + input
                         + ". Returning a newly generated gender.");
         return RandomGenderGenerator.generate();
+    }
+
+    @Override
+    public String toString() {
+        return displayName;
     }
 }

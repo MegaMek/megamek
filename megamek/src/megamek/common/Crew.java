@@ -23,7 +23,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
-import megamek.client.generator.RandomNameGenerator;
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.common.enums.Gender;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
@@ -47,22 +48,7 @@ public class Crew implements Serializable {
     private int currentSize;
 
     private final String[] name;
-    private final int[] gender;
-
-    @Deprecated
-    public static final String UNNAMED = "Unnamed";
-    @Deprecated
-    public static final String UNNAMED_SURNAME = "Person";
-    @Deprecated
-    public static final String UNNAMED_FULL_NAME = "Unnamed Person";
-    @Deprecated
-    public static final int G_RANDOMIZE = -1; //this is used in generation methods to randomize the gender
-    @Deprecated
-    public static final int G_MALE = 0;
-    @Deprecated
-    public static final int G_FEMALE = 1;
-    @Deprecated
-    public static final String GENDER_ERROR = "genderError";
+    private final Gender[] gender;
 
     private final int[] gunnery;
     private final int[] piloting;
@@ -201,7 +187,7 @@ public class Crew implements Serializable {
      * @param crewType the crew type to use.
      */
     public Crew(CrewType crewType) {
-        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, 5, G_RANDOMIZE, null);
+        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, 5, Gender.FEMALE, null);
     }
 
     /**
@@ -209,7 +195,7 @@ public class Crew implements Serializable {
      * @param size     the crew size.
      * @param gunnery  the crew's Gunnery skill.
      * @param piloting the crew's Piloting or Driving skill.
-     * @deprecated by multi-crew cockpit support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, Map)}.
+     * @deprecated by multi-crew cockpit support. Replaced by {@link #Crew(CrewType, String, int, int, int, Gender, Map)}.
      *
      * Creates a basic crew for a self-piloted unit. Using this constructor for a naval vessel will
      * result in a secondary target modifier for additional targets past the first.
@@ -225,7 +211,7 @@ public class Crew implements Serializable {
      * @param size     the crew size.
      * @param gunnery  the crew's Gunnery skill.
      * @param piloting the crew's Piloting or Driving skill.
-     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, Map)}.
+     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, Gender, Map)}.
      */
     @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
     public Crew(CrewType crewType, String name, int size, int gunnery, int piloting) {
@@ -240,7 +226,7 @@ public class Crew implements Serializable {
      * @param gunneryM the crew's "missile" Gunnery skill.
      * @param gunneryB the crew's "ballistic" Gunnery skill.
      * @param piloting the crew's Piloting or Driving skill.
-     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, int, int, Map)}.
+     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, int, Gender, Map)}.
      */
     @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
     public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
@@ -257,13 +243,12 @@ public class Crew implements Serializable {
      * @param gunneryB  the crew's "ballistic" Gunnery skill.
      * @param piloting  the crew's Piloting or Driving skill.
      * @param extraData any extra data passed to be stored with this Crew.
-     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, int, int, Map)}.
+     * @deprecated by gender support. Replaced by {@link #Crew(CrewType, String, int, int, int, int, int, Gender, Map)}.
      */
     @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
     public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
                 int piloting, Map<Integer, Map<String, String>> extraData) {
-        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting,
-                getGenderAsInt(RandomNameGenerator.getInstance().isFemale()), extraData);
+        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting, new RandomGenderGenerator().generate(), extraData);
     }
 
     /**
@@ -275,7 +260,7 @@ public class Crew implements Serializable {
      * @param gender    the gender of the crew or commander
      * @param extraData any extra data passed to be stored with this Crew.
      */
-    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, int gender,
+    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, Gender gender,
                 Map<Integer, Map<String, String>> extraData) {
         this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, extraData);
     }
@@ -292,7 +277,7 @@ public class Crew implements Serializable {
      * @param extraData any extra data passed to be stored with this Crew.
      */
     public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
-                int piloting, int gender, Map<Integer, Map<String, String>> extraData) {
+                int piloting, Gender gender, Map<Integer, Map<String, String>> extraData) {
         this.crewType = crewType;
         this.size = Math.max(size, crewType.getCrewSlots());
         this.currentSize = size;
@@ -304,8 +289,8 @@ public class Crew implements Serializable {
         Arrays.fill(this.name, name);
         this.nickname = new String[slots];
         Arrays.fill(this.nickname, "");
-        this.gender = new int[slots];
-        Arrays.fill(this.gender, G_RANDOMIZE);
+        this.gender = new Gender[slots];
+        Arrays.fill(this.gender, Gender.RANDOMIZE);
         this.gender[0] = gender;
 
         int avGunnery = (int) Math.round((gunneryL + gunneryM + gunneryB) / 3.0);
@@ -374,27 +359,18 @@ public class Crew implements Serializable {
         return nickname[pos];
     }
 
-    public int getGender() {
+    public Gender getGender() {
         return gender[0];
     }
 
-    public int getGender(int pos) {
+    public Gender getGender(int pos) {
         // The randomize return value is used in MekHQ to create new personnel following a battle,
         // and should not be changed without ensuring it doesn't break on that side
         if (pos < gender.length) {
             return gender[pos];
         } else {
-            return G_RANDOMIZE;
+            return Gender.RANDOMIZE;
         }
-    }
-
-    /**
-     * @param isFemale whether a person is female or male
-     * @return the int value of the gender
-     */
-    @Deprecated // March 7th, 2020, this is a temporary method to ensure an easy transition
-    public static int getGenderAsInt(boolean isFemale) {
-        return isFemale ? G_FEMALE : G_MALE;
     }
 
     /**
@@ -593,12 +569,8 @@ public class Crew implements Serializable {
         this.nickname[pos] = nickname;
     }
 
-    public void setGender(int gender, int pos) {
+    public void setGender(Gender gender, int pos) {
         this.gender[pos] = gender;
-    }
-
-    public void setGender(boolean isFemale, int pos) {
-        this.gender[pos] = getGenderAsInt(isFemale);
     }
 
     /**

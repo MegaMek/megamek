@@ -17,6 +17,7 @@
 package megamek.client;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -55,9 +56,9 @@ import megamek.common.util.WeightedMap;
  *
  * Faction files are located in factions subdirectory of {@link Configuration#namesDir()}
  * The faction key is the filename without the extension.
- * The faction files will have varying number of fields depending on how many
- * ethnic groups exist. The faction file does two things. First, it identifies
- * the relative frequency of different ethnic surnames for a faction.
+ * The faction files will have varying number of fields depending on how many ethnic groups exist.
+ * The faction file does two things:
+ * First, it identifies the relative frequency of different ethnic surnames for a faction.
  * Second, it identifies the correspondence between first names and surnames.
  * This allows, for example, for more Japanese first names regardless of surname in the Draconis
  * Combine. There MUST be a line in the Faction file for each ethnic group, although a weight of 0
@@ -65,16 +66,16 @@ import megamek.common.util.WeightedMap;
  *
  * This is divided into 3 + n fields, where n is the number of ethnic groups listed in historicalEthnicity.csv,
  * divided into the following groupings:
- * The Integer Ethnic Group Id is the first field
- * The String Ethnic Group Name is the second field. This is included for ease of reference, and
+ * The Integer Ethnic Code is the first field
+ * The String Ethnic Name is the second field. This is included for ease of reference, and
  * is NOT used by the generator.
  * The Integer Weight for generating a surname of the specified ethnicity. The higher the number,
  * the more common the surname is for a faction.
- * This is followed by n fields each containing the Integer Weight for generating a given name These fields identify the relative frequency of first names from an ethnic group
- *                 given the surname listed in fld1.
- * </ul>
- * </p>
- * @author Jay Lawson - Created the above doc
+ * This is followed by n fields each containing the Integer Weight for generating a given name for
+ * the ethnicity with Ethnic Code n. The higher the number for the weight, the more common that
+ * given name ethnicity is in generation for the specific ethnicity of the generated surname.
+ *
+ * @author Jay Lawson (original), Justin Bowen (current version)
  */
 public class RandomNameGenerator implements Serializable {
     //region Variable Declarations
@@ -281,6 +282,7 @@ public class RandomNameGenerator implements Serializable {
     /**
      * @return the Crew.G_* type containing the randomly generated gender
      */
+    @Deprecated // April 23rd, 2020 as part of adding a RandomGenderGenerator to MegaMek
     public int generateGender() {
         if (Compute.randomInt(100) < percentFemale) {
             return Crew.G_FEMALE;
@@ -290,7 +292,6 @@ public class RandomNameGenerator implements Serializable {
     }
 
     /**
-     *
      * @return the instance of the RandomNameGenerator to use
      */
     public static synchronized RandomNameGenerator getInstance() {
@@ -307,9 +308,7 @@ public class RandomNameGenerator implements Serializable {
 
     //region Initialization
     private void runThreadLoader() {
-        Thread loader = new Thread(() -> {
-            rng.populateNames();
-        }, "Random Name Generator name initializer");
+        Thread loader = new Thread(() -> rng.populateNames(), "Random Name Generator name initializer");
         loader.setPriority(Thread.NORM_PRIORITY - 1);
         loader.start();
     }
@@ -329,7 +328,7 @@ public class RandomNameGenerator implements Serializable {
         // Determine the number of ethnic codes
         File masterAncestryFile = new MegaMekFile(Configuration.namesDir(), HISTORICAL_ETHNICITY_FILE).getFile();
         try (InputStream is = new FileInputStream(masterAncestryFile);
-             Scanner input = new Scanner(is, "UTF-8")) {
+             Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
 
             while (input.hasNextLine()) {
                 input.nextLine();
@@ -394,7 +393,7 @@ public class RandomNameGenerator implements Serializable {
 
                 File factionFile = new MegaMekFile(factionsDir, filename).getFile();
                 try (InputStream is = new FileInputStream(factionFile);
-                     Scanner input = new Scanner(is, "UTF-8")) {
+                     Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
 
                     while (input.hasNextLine()) {
                         String[] values = input.nextLine().split(",");
@@ -426,7 +425,7 @@ public class RandomNameGenerator implements Serializable {
         File file = new MegaMekFile(Configuration.namesDir(), fileName).getFile();
 
         try (InputStream is = new FileInputStream(file);
-             Scanner input = new Scanner(is, "UTF-8")) {
+             Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
 
             while (input.hasNextLine()) {
                 lineNumber++;
@@ -437,7 +436,7 @@ public class RandomNameGenerator implements Serializable {
                     continue;
                 }
 
-                map.get(Integer.parseInt(values[2])).add(Integer.parseInt(values[1]), values[0]);
+                map.get(Integer.parseInt(values[0])).add(Integer.parseInt(values[2]), values[1]);
             }
         } catch (IOException e) {
             logger.error(RandomNameGenerator.class, "populateNames",

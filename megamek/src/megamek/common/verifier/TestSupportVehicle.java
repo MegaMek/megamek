@@ -1020,13 +1020,17 @@ public class TestSupportVehicle extends TestEntity {
             buff.append("Omni configuration exceeds weapon capacity of base chassis fire control system.\n");
             correct = false;
         }
-        if (supportVee instanceof Tank) {
-            for (Mounted m : supportVee.getEquipment()) {
-                if (!TestTank.legalForMotiveType(m.getType(), supportVee.getMovementMode(), true)) {
-                    buff.append(m.getType().getName()).append(" is incompatible with ")
-                            .append(supportVee.getMovementModeAsString());
-                    correct = false;
-                }
+        for (Mounted m : supportVee.getEquipment()) {
+            if ((m.getType() instanceof MiscType) && !m.getType().hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)) {
+                buff.append(m.getType().getName()).append(" cannot be used by support vehicles.\n");
+                correct = false;
+            } else if ((m.getType() instanceof WeaponType) && !m.getType().hasFlag(WeaponType.F_TANK_WEAPON)) {
+                buff.append(m.getType().getName()).append(" cannot be used by support vehicles.\n");
+                correct = false;
+            } else if (!TestTank.legalForMotiveType(m.getType(), supportVee.getMovementMode(), true)) {
+                buff.append(m.getType().getName()).append(" is incompatible with ")
+                        .append(supportVee.getMovementModeAsString());
+                correct = false;
             }
         }
         for (int loc = 0; loc < supportVee.locations(); loc++) {

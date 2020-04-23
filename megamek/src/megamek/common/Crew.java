@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
-import megamek.client.RandomNameGenerator;
+import megamek.client.generator.RandomNameGenerator;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;

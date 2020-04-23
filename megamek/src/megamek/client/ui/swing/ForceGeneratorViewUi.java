@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -52,7 +51,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import megamek.client.Client;
-import megamek.client.RandomSkillsGenerator;
+import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;

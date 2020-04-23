@@ -35,7 +35,7 @@ import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import megamek.client.RandomNameGenerator;
+import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;

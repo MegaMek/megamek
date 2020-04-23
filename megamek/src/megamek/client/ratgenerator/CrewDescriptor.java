@@ -15,7 +15,7 @@ package megamek.client.ratgenerator;
 
 import java.util.Iterator;
 
-import megamek.client.RandomNameGenerator;
+import megamek.client.generator.RandomNameGenerator;
 import megamek.common.Compute;
 import megamek.common.Crew;
 import megamek.common.CrewType;

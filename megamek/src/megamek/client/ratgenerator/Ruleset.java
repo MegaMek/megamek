@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import megamek.client.RandomNameGenerator;
+import megamek.client.generator.RandomNameGenerator;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.utils.MegaMekXmlUtil;
 

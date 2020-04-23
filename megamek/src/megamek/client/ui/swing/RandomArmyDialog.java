@@ -57,14 +57,13 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.Client;
-import megamek.client.RandomUnitGenerator;
+import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
-import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IGame.Phase;

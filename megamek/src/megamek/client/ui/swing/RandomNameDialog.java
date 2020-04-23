@@ -34,7 +34,7 @@ import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 
 import megamek.client.Client;
-import megamek.client.RandomNameGenerator;
+import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 

@@ -26,6 +26,7 @@ VERSION HISTORY:
 + Issue #1860: Quality of Life improvement - edit bot parameters in lobby by right clicking on bot name
 + PR #1835: Game option to set turn time limit in movement and firing phases.
 + Issue #1853: ArrayIndexOutOfBoundsException while loading certain mechs and viewing in Selector
++ PR #1875: Fixing Clanner Name Generation
 
 0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO

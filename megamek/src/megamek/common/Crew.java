@@ -248,7 +248,7 @@ public class Crew implements Serializable {
     @Deprecated //18-Feb-2020 as part of the addition of gender to MegaMek
     public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
                 int piloting, Map<Integer, Map<String, String>> extraData) {
-        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting, new RandomGenderGenerator().generate(), extraData);
+        this(crewType, name, size, gunneryL, gunneryM, gunneryB, piloting, RandomGenderGenerator.generate(), extraData);
     }
 
     /**

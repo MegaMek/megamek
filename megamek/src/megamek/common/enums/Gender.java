@@ -127,7 +127,7 @@ public enum Gender {
                     return FEMALE;
                 case -1:
                 default:
-                    return new RandomGenderGenerator().generate();
+                    return RandomGenderGenerator.generate();
             }
         } catch (Exception ignored) {
 
@@ -136,6 +136,6 @@ public enum Gender {
         logger.error(Gender.class, "parseFromString",
                 "Failed to parse the gender value from input String " + input
                         + ". Returning a newly generated gender.");
-        return new RandomGenderGenerator().generate();
+        return RandomGenderGenerator.generate();
     }
 }

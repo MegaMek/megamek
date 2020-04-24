@@ -59,7 +59,7 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
         
         List<MovePath> fullMovePathsWithTurns = new ArrayList<>();
         
-        for(MovePath movePath : fullMovePaths) {
+        for (MovePath movePath : fullMovePaths) {
             fullMovePathsWithTurns.add(movePath);
             
             MoveStep lastStep = movePath.getLastStep();

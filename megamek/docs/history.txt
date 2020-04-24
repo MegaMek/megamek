@@ -28,6 +28,7 @@ VERSION HISTORY:
 + Issue #1853: ArrayIndexOutOfBoundsException while loading certain mechs and viewing in Selector
 + PR #1875: Fixing Clanner Name Generation
 + Issue #1879: DFL folder to SimonLandmine
++ PR #1883: Improved Princess effectiveness with aerospace units on low altitude maps (can now turn at end of movement)
 
 0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO

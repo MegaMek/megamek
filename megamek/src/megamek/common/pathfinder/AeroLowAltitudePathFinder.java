@@ -64,7 +64,7 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
             
             MoveStep lastStep = movePath.getLastStep();
             
-            if(lastStep != null && lastStep.canAeroTurn(game)) {
+            if ((lastStep != null) && lastStep.canAeroTurn(game)) {
                 MovePath left = movePath.clone();
                 left.addStep(MoveStepType.TURN_LEFT);
                 fullMovePathsWithTurns.add(left);

@@ -56,7 +56,7 @@ public class AeroGroundPathFinder {
         return 3;
     }
 
-    private IGame game;
+    protected IGame game;
     private List<MovePath> aeroGroundPaths;
     protected int maxThrust;
     private MMLogger logger;

@@ -49,6 +49,21 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
     }
 
     @Override
+    public int defaultVGLFacing(int location, boolean rearFacing) {
+        switch (location) {
+            case Aero.LOC_LWING:
+                return rearFacing ? 4 : 5;
+            case Aero.LOC_RWING:
+                return rearFacing ? 2 : 1;
+            case Aero.LOC_AFT:
+                return 4;
+            case Aero.LOC_NOSE:
+            default:
+                return 0;
+        }
+    }
+
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Aero a = new Aero();

@@ -47,6 +47,21 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
+    public int defaultVGLFacing(int location, boolean rearFacing) {
+        switch (location) {
+            case Aero.LOC_LWING:
+                return rearFacing ? 4 : 5;
+            case Aero.LOC_RWING:
+                return rearFacing ? 2 : 1;
+            case Aero.LOC_AFT:
+                return 4;
+            case Aero.LOC_NOSE:
+            default:
+                return 0;
+        }
+    }
+
     public Entity getEntity() throws EntityLoadingException {
 
         ConvFighter a = new ConvFighter();

@@ -25,16 +25,7 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.IArmorState;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.SmallCraft;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestEntity;
 
@@ -42,6 +33,21 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
 
     public BLKSmallCraftFile(BuildingBlock bb) {
         dataFile = bb;
+    }
+
+    @Override
+    public int defaultVGLFacing(int location, boolean rearFacing) {
+        switch (location) {
+            case Aero.LOC_LWING:
+                return rearFacing ? 4 : 5;
+            case Aero.LOC_RWING:
+                return rearFacing ? 2 : 1;
+            case Aero.LOC_AFT:
+                return 4;
+            case Aero.LOC_NOSE:
+            default:
+                return 0;
+        }
     }
 
     @Override

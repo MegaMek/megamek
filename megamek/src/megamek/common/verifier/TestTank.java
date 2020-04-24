@@ -438,10 +438,11 @@ public class TestTank extends TestEntity {
      * @return              Whether the equipment and motive type are compatible
      */
     public static boolean legalForMotiveType(EquipmentType eq, EntityMovementMode mode, boolean supporVehicle) {
+        // A couple broad categories for convenience
         final boolean isNaval = mode.equals(EntityMovementMode.NAVAL)
                 || mode.equals(EntityMovementMode.HYDROFOIL)
                 || mode.equals(EntityMovementMode.SUBMARINE);
-        final boolean isAerial = mode.equals(EntityMovementMode.AERODYNE)
+        final boolean isAero = mode.equals(EntityMovementMode.AERODYNE)
                 || mode.equals(EntityMovementMode.AIRSHIP)
                 || mode.equals(EntityMovementMode.STATION_KEEPING);
         if (eq instanceof MiscType) {
@@ -469,7 +470,8 @@ public class TestTank extends TestEntity {
                 return mode.equals(EntityMovementMode.WHEELED) || mode.equals(EntityMovementMode.TRACKED)
                         || mode.equals(EntityMovementMode.HOVER) || mode.equals(EntityMovementMode.WIGE);
             }
-            if (eq.hasFlag(MiscType.F_MINESWEEPER)) {
+            if (eq.hasFlag(MiscType.F_MINESWEEPER) || eq.hasFlag(MiscType.F_CLUB)
+                    && eq.hasSubType(MiscType.S_PILE_DRIVER)) {
                 return mode.equals(EntityMovementMode.WHEELED) || mode.equals(EntityMovementMode.TRACKED)
                         || isNaval;
             }
@@ -482,7 +484,7 @@ public class TestTank extends TestEntity {
                     // Allowed for all naval units and support vehicles with an amphibious chassis mod
                     return supporVehicle ? !mode.equals(EntityMovementMode.HOVER) : !isNaval;
                 } else {
-                    return isAerial;
+                    return isAero;
                 }
             }
             if (eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
@@ -492,18 +494,13 @@ public class TestTank extends TestEntity {
                     || (eq.hasFlag(MiscType.F_CLUB)
                     && eq.hasSubType(MiscType.S_BACKHOE | MiscType.S_ROCK_CUTTER
                     | MiscType.S_SPOT_WELDER | MiscType.S_WRECKING_BALL))) {
-                return !mode.equals(EntityMovementMode.VTOL) && !isAerial;
-            }
-            if (eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_PILE_DRIVER)) {
-                return !mode.equals(EntityMovementMode.VTOL)
-                        && !mode.equals(EntityMovementMode.HOVER)
-                        && !mode.equals(EntityMovementMode.WIGE);
+                return !mode.equals(EntityMovementMode.VTOL) && !isAero;
             }
             if (eq.hasFlag(MiscType.F_AP_POD)) {
-                return !isNaval && !isAerial;
+                return !isNaval && !isAero;
             }
             if (eq.hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
-                return !isAerial
+                return !isAero
                         && !mode.equals(EntityMovementMode.VTOL)
                         && !mode.equals(EntityMovementMode.RAIL)
                         && !mode.equals(EntityMovementMode.MAGLEV);
@@ -513,7 +510,7 @@ public class TestTank extends TestEntity {
             }
             if (eq.hasFlag(MiscType.F_SPONSON_TURRET)
                     || eq.hasFlag(MiscType.F_LADDER)) {
-                return !isAerial;
+                return !isAero;
             }
             if (eq.hasFlag(MiscType.F_PINTLE_TURRET)) {
                 return !isNaval && !mode.equals(EntityMovementMode.AERODYNE)
@@ -522,8 +519,7 @@ public class TestTank extends TestEntity {
             if (eq.hasFlag(MiscType.F_LOOKDOWN_RADAR)
                     || eq.hasFlag(MiscType.F_INFRARED_IMAGER)
                     || eq.hasFlag(MiscType.F_HIRES_IMAGER)) {
-                return isAerial
-                        || mode.equals(EntityMovementMode.VTOL);
+                return isAero || mode.equals(EntityMovementMode.VTOL);
             }
             if (eq.hasFlag(MiscType.F_REFUELING_DROGUE)) {
                 return mode.equals(EntityMovementMode.VTOL)

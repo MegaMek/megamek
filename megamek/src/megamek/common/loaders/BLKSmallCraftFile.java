@@ -36,21 +36,6 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
     }
 
     @Override
-    public int defaultVGLFacing(int location, boolean rearFacing) {
-        switch (location) {
-            case Aero.LOC_LWING:
-                return rearFacing ? 4 : 5;
-            case Aero.LOC_RWING:
-                return rearFacing ? 2 : 1;
-            case Aero.LOC_AFT:
-                return 4;
-            case Aero.LOC_NOSE:
-            default:
-                return 0;
-        }
-    }
-
-    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         SmallCraft a = new SmallCraft();
@@ -273,7 +258,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
-                                mount.setFacing(defaultVGLFacing(useLoc, rearMount));
+                                mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));
                             } else {
                                 mount.setFacing(facing);
                             }

@@ -63,6 +63,20 @@ public class BLKFile {
         return rear ? 3 : 0;
     }
 
+    public int defaultAeroVGLFacing(int location, boolean rearFacing) {
+        switch (location) {
+            case Aero.LOC_LWING:
+                return rearFacing ? 4 : 5;
+            case Aero.LOC_RWING:
+                return rearFacing ? 2 : 1;
+            case Aero.LOC_AFT:
+                return 4;
+            case Aero.LOC_NOSE:
+            default:
+                return 0;
+        }
+    }
+
     protected void loadEquipment(Entity t, String sName, int nLoc)
             throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");

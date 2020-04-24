@@ -47,21 +47,6 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
-    @Override
-    public int defaultVGLFacing(int location, boolean rearFacing) {
-        switch (location) {
-            case Aero.LOC_LWING:
-                return rearFacing ? 4 : 5;
-            case Aero.LOC_RWING:
-                return rearFacing ? 2 : 1;
-            case Aero.LOC_AFT:
-                return 4;
-            case Aero.LOC_NOSE:
-            default:
-                return 0;
-        }
-    }
-
     public Entity getEntity() throws EntityLoadingException {
 
         ConvFighter a = new ConvFighter();
@@ -252,7 +237,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             // If no facing specified, assume front
                             if (facing == -1) {
-                                mount.setFacing(defaultVGLFacing(useLoc, rearMount));
+                                mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));
                             } else {
                                 mount.setFacing(facing);
                             }

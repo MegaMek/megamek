@@ -46,21 +46,6 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
-    @Override
-    public int defaultVGLFacing(int location, boolean rearFacing) {
-        switch (location) {
-            case Aero.LOC_LWING:
-                return rearFacing ? 4 : 5;
-            case Aero.LOC_RWING:
-                return rearFacing ? 2 : 1;
-            case Aero.LOC_AFT:
-                return 4;
-            case Aero.LOC_NOSE:
-            default:
-                return 0;
-        }
-    }
-
     public Entity getEntity() throws EntityLoadingException {
 
         FixedWingSupport a = new FixedWingSupport();
@@ -277,7 +262,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
-                                mount.setFacing(defaultVGLFacing(nLoc, rearMount));
+                                mount.setFacing(defaultAeroVGLFacing(nLoc, rearMount));
                             } else {
                                 mount.setFacing(facing);
                             }

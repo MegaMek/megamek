@@ -19,6 +19,7 @@
 
 package megamek.common.verifier;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -254,7 +255,12 @@ public abstract class TestEntity implements TestEntityOption {
         if (kg) {
             weight *= 1000;
         }
-        return String.format("%3.1f%s", weight, (kg ? " kg" : ""));
+        if (weight < 0.5) {
+            // For small equipment show as many decimal places as needed.
+            return DecimalFormat.getInstance().format(weight);
+        } else {
+            return String.format("%3.1f%s", weight, (kg ? " kg" : ""));
+        }
     }
 
     /**

@@ -5905,22 +5905,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     txt.append(eSprite.getTooltip());
 
                     // ECM and ECCM source
-                    if ((ecmCenters != null)
-                            && ecmCenters.containsKey(eSprite.getPosition())) {
+                    if (eSprite.entity.hasActiveECM()) {
                         txt.append("<br><FONT SIZE=-2><img src=file:" //$NON-NLS-1$
                                 + Configuration.widgetsDir()
                                 + "/Tooltip/ECM_BW.png>&nbsp;"); //$NON-NLS-1$
                         txt.append(Messages.getString("BoardView1.ecmSource")); //$NON-NLS-1$
                         txt.append("</FONT>"); //$NON-NLS-1$
                     }
-                    if ((eccmCenters != null)
-                            && eccmCenters.containsKey(eSprite.getPosition())) {
+                    if (eSprite.entity.hasActiveECCM()) {
                         txt.append("<br><FONT SIZE=-2><img src=file:" //$NON-NLS-1$
                                 + Configuration.widgetsDir()
                                 + "/Tooltip/ECM_BW.png>&nbsp;"); //$NON-NLS-1$
                         txt.append(Messages.getString("BoardView1.eccmSource")); //$NON-NLS-1$
                         txt.append("</FONT>");
                     }
+
                     txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
                 }
             }

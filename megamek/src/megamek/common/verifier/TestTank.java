@@ -528,7 +528,8 @@ public class TestTank extends TestEntity {
             }
             if (eq.hasFlag(MiscType.F_SASRCS)
                     || eq.hasFlag(MiscType.F_LIGHT_SAIL)
-                    || eq.hasFlag(MiscType.F_SPACE_MINE_DISPENSER)) {
+                    || eq.hasFlag(MiscType.F_SPACE_MINE_DISPENSER)
+                    || eq.hasFlag(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
                 return mode.equals(EntityMovementMode.STATION_KEEPING);
             }
             if (eq.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {

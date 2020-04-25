@@ -349,6 +349,12 @@ public abstract class TestEntity implements TestEntityOption {
                 // Mobile HPG has crew requirement of 10; ground-mobile has requirement of 1.
                 return eq.hasFlag(MiscType.F_TANK_EQUIPMENT)? 1 : 10;
             }
+            if (eq.hasFlag(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
+                return 6;
+            }
+            if (eq.hasFlag(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
+                return 12;
+            }
         }
         return 0;
     }

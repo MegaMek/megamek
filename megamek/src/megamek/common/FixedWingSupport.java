@@ -338,7 +338,7 @@ public class FixedWingSupport extends ConvFighter {
         costs[i++] = engineCost;
 
         // armor
-        if (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
+         if (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
             int totalArmorPoints = 0;
             for (int loc = 0; loc < locations(); loc++) {
                 totalArmorPoints += getOArmor(loc);
@@ -360,7 +360,6 @@ public class FixedWingSupport extends ConvFighter {
 
         // Compute final structural cost
         int structCostIdx = i++;
-        costs[i++] = 0;
         for (int c = 0; c < structCostIdx; c++) {
             costs[structCostIdx] += costs[c];
         }
@@ -449,9 +448,9 @@ public class FixedWingSupport extends ConvFighter {
         // find the maximum length of the columns.
         for (int l = 0; l < left.size(); l++) {
 
-            if (l == 8) {
+            if (l == 6) {
                 getWeaponsAndEquipmentCost(true);
-            }else {
+            } else {
                 if (left.get(l).equals("Final Structural Cost")) {
                     bvText.append(startRow);
                     bvText.append(startColumn);

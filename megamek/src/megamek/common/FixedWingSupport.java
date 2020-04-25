@@ -338,7 +338,7 @@ public class FixedWingSupport extends ConvFighter {
         costs[i++] = engineCost;
 
         // armor
-         if (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
+        if (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD) {
             int totalArmorPoints = 0;
             for (int loc = 0; loc < locations(); loc++) {
                 totalArmorPoints += getOArmor(loc);

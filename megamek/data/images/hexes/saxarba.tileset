@@ -382,6 +382,9 @@ super * "rapids:*" "" "saxarba/water/torrent.png"
 super * "ice:1" "" "saxarba/misc/ice.png"
 super * "ice:*" "" "saxarba/misc/ice.png"
 
+#Fluff
+include "saxarba/LandingPads/LandingPads.tileinc"
+
 #SPECIAL SIRMEGAV BUILDINGS
 include "saxarba/SirMegaV/SirMegaVBuildings.tileinc"
 

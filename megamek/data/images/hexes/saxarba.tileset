@@ -114,6 +114,10 @@ super * "elevator:-9" "" "saxarba/misc/elevator_-9.png"
 super * "elevator:-10" "" "saxarba/misc/elevator_-10.png"
 super * "elevator:*" "" "saxarba/misc/elevator_0.png"
 
+#Basement states have no graphical representation
+super * "bldg_basement_type:*" "" "saxarba/misc/blank.png"
+super * "bldg_base_collapsed:*" "" "saxarba/misc/blank.png"
+
 #LIGHT SNOW
 super -1 "snow:1" "" "saxarba/base/base_snow_light_-1.png;saxarba/base/base_snow_light_-1b.png"
 super -2 "snow:1" "" "saxarba/base/base_snow_light_-2.png;saxarba/base/base_snow_light_-2b.png"

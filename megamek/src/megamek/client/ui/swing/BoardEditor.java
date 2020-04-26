@@ -116,6 +116,8 @@ import megamek.common.util.MegaMekFile;
 // TODO: Allow adding/changing board background images
 // TODO: board load time???
 // TODO: sluggish hex drawing?
+// TODO: copy/paste hexes
+// TODO: have a button to fix all road/bldg exits
 
 public class BoardEditor extends JComponent
         implements ItemListener, ListSelectionListener, ActionListener, DocumentListener, IMapSettingsObserver {

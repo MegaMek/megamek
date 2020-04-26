@@ -197,6 +197,18 @@ public class Terrains implements ITerrainFactory {
             } else {
                 return "Building (unknown)";
             }
+        case (BLDG_CLASS):
+            if (level == 0) {
+                return "Standard Class";
+            } else if (level == 1) {
+                return "Hangar";
+            } else if (level == 2) {
+                return "Fortress";
+            } else if (level == 3) {
+                return "Gun Emplacement";
+            } else {
+                return "Building Class (unknown)";
+            }
         case (WOODS):
             if (level == 1) {
                 return "Light woods";

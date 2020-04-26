@@ -80,7 +80,8 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_BREEZE, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_AUTO_AMS, true); //$NON-NLS-1$
-        
+        addOption(base, OptionsConstants.BASE_TURN_TIMER, 0); //$NON-NLS-1$
+
         IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
         addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false); //$NON-NLS-1$
         addOption(victory, OptionsConstants.VICTORY_CHECK_VICTORY, true); //$NON-NLS-1$

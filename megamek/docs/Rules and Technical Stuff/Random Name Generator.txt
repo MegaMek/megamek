@@ -1,4 +1,3 @@
- 
 This class sets up a random name generator that can then
 be used to generate random pilot names. it will have a couple different
 settings and flexible input files
@@ -13,9 +12,9 @@ sequential order (i.e. no skipping numbers) for the program to work correctly.
 The name database is located in three files: firstname_males.txt, firstname_females.txt, and surnames.txt.
 There ar three comma-delimited fields in each of these data files: fld1,fld2,fld3
 
-fld1 - The name itself, either a male/female first name or a surname.
-fld2 - a frequency weight to account for some names being more common than others. Currently this is not being used.
-fld3 - the numeric code identifying the "ethnic" group this name belongs to.
+fld1 - The name itself, either a male/female first name or a surname
+fld2 - a frequency weight to account for some names being more common than others
+fld3 - the numeric code identifying the "ethnic" group this name belongs to
 
 Faction files are located in Data/Names/factions.
 

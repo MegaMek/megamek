@@ -13,7 +13,7 @@ SupportTank
 </UnitType>
 
 <Name>
-Harpoon ParaSub
+Small Steamer
 </Name>
 
 <Model>
@@ -21,33 +21,38 @@ Harpoon ParaSub
 </Model>
 
 <year>
-2545
+2100
 </year>
 
 <originalBuildYear>
-2545
+2100
 </originalBuildYear>
 
 <type>
-IS Level 5
+IS Level 2
 </type>
 
 <motion_type>
-Submarine
+Naval
 </motion_type>
 
 <transporters>
-cargobay:0.2:1:1
+cargobay:0.7:1:1
 standardseats:1.0:0
+pillionseats:21.0:0
 </transporters>
 
 <cruiseMP>
-3
+2
 </cruiseMP>
 
 <engine_type>
-6
+10
 </engine_type>
+
+<internal_type>
+-1
+</internal_type>
 
 <armor>
 1
@@ -57,15 +62,9 @@ standardseats:1.0:0
 </armor>
 
 <Body Equipment>
-SubmersibleChassisMod
-Advanced Fire Control
 </Body Equipment>
 
 <Front Equipment>
-BASearchlight
-BASearchlight
-SRM Launcher (Std, Two-Shot)
-Support Laser (Heavy)
 </Front Equipment>
 
 <Right Equipment>
@@ -82,30 +81,26 @@ Support Laser (Heavy)
 </barrating>
 
 <structural_tech_rating>
-3
+1
 </structural_tech_rating>
 
 <engine_tech_rating>
-3
+1
 </engine_tech_rating>
 
 <armor_tech_rating>
-3
+1
 </armor_tech_rating>
 
-<history>
-These units have no weights in AToW.  The weights are estimates.  The units are considered unofficial until weights are given.
-</history>
-
 <source>
-AToW Companion
+ATOW Companion
 </source>
 
 <tonnage>
-4.0
+2.5
 </tonnage>
 
 <fuel>
-0.5
+0.21
 </fuel>
 

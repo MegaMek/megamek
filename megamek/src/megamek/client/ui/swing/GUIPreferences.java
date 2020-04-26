@@ -202,6 +202,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SKIN_FILE = "SkinFile";
     public static final String DEFAULT_WEAP_SORT_ORDER = "DefaultWeaponSortOrder";
     public static final String UI_THEME = "UITheme";
+    public static final String BOARDEDIT_LOAD_SIZE_HEIGHT = "BoardEditLoadSizeHeight";
+    public static final String BOARDEDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
+    public static final String BOARDEDIT_RNDDIALOG_START = "BoardEditRandomDialogStart";
+    public static final String WARNING_COLOR = "WarningColor";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -237,6 +241,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_MECH_DISPLAY_LARGE_FONT_SIZE, 12);
         store.setDefault(ADVANCED_MECH_DISPLAY_MEDIUM_FONT_SIZE, 10);
         store.setDefault(ADVANCED_MECH_DISPLAY_WRAP_LENGTH, 24);
+        store.setDefault(BOARDEDIT_RNDDIALOG_START, false);
         setDefault(ADVANCED_MOVE_DEFAULT_CLIMB_MODE, true);
         setDefault(ADVANCED_MOVE_DEFAULT_COLOR, "cyan");
         setDefault(ADVANCED_MOVE_ILLEGAL_COLOR, "darkGray");
@@ -257,6 +262,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG, new Color(221, 96, 0));  // HTML hex #DD6000
         setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(255, 204, 204));  // HTML hex #FFCCCC
         setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
+        setDefault(WARNING_COLOR, Color.RED);
 
 
         setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");
@@ -384,6 +390,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_YEAR_MAX, "3150");
         store.setDefault(RAT_PAD_BV, false);
         store.setDefault(RAT_SELECTED_RAT, "");
+        
+        store.setDefault(BOARDEDIT_LOAD_SIZE_WIDTH, 400);
+        store.setDefault(BOARDEDIT_LOAD_SIZE_HEIGHT, 300);
         
         store.setDefault(DEFAULT_WEAP_SORT_ORDER,
                 Entity.WeaponSortOrder.DEFAULT.ordinal());
@@ -606,6 +615,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public int getMinimumSizeWidth() {
         return store.getInt(MINIMUM_SIZE_WIDTH);
     }
+    
+    public int getBoardEditLoadHeight() {
+        return store.getInt(BOARDEDIT_LOAD_SIZE_HEIGHT);
+    }
+
+    public int getBoardEditLoadWidth() {
+        return store.getInt(BOARDEDIT_LOAD_SIZE_WIDTH);
+    }
 
     public int getMiniReportPosX() {
         return store.getInt(MINI_REPORT_POS_X);
@@ -802,6 +819,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getDefaultWeaponSortOrder() {
         return store.getInt(DEFAULT_WEAP_SORT_ORDER);
+    }
+    
+    public boolean getBoardEdRndStart() {
+        return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
+    }
+    
+    public Color getWarningColor() {
+        return getColor(WARNING_COLOR);
+    }
+    
+    public void setWarningColor(Color color) {
+        store.setValue(WARNING_COLOR, getColorString(color));
     }
 
     public void setAntiAliasing(boolean state) {
@@ -1003,6 +1032,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMiniReportPosY(int i) {
         store.setValue(MINIMAP_POS_Y, i);
+    }
+    
+    public void setBoardEditLoadHeight(int i) {
+        store.setValue(BOARDEDIT_LOAD_SIZE_HEIGHT, i);
+    }
+
+    public void setBoardEditLoadWidth(int i) {
+        store.setValue(BOARDEDIT_LOAD_SIZE_WIDTH, i);
     }
 
     public void setMiniReportSizeHeight(int i) {
@@ -1283,6 +1320,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setRATSelectedRAT(String v) {
         store.setValue(RAT_SELECTED_RAT, v);
+    }
+    
+    public void setBoardEdRndStart(boolean b) {
+        store.setValue(BOARDEDIT_RNDDIALOG_START, b);
     }
 
     protected ColorParser p = new ColorParser();

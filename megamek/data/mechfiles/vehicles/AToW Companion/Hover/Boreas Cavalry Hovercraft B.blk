@@ -17,7 +17,7 @@ Boreas Cavalry Hovercraft
 </Name>
 
 <Model>
-(B)
+B
 </Model>
 
 <year>
@@ -37,12 +37,12 @@ Hover
 </motion_type>
 
 <transporters>
-standardseats:1.0:0
 BattleArmorHandles - troopers:-1
+standardseats:1.0:0
 </transporters>
 
 <cruiseMP>
-15
+14
 </cruiseMP>
 
 <engine_type>
@@ -116,6 +116,6 @@ AToW Companion
 </baseChassisFireConWeight>
 
 <fuel>
-0.05
+0.029
 </fuel>
 

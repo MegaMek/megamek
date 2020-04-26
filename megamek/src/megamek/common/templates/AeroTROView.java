@@ -210,7 +210,7 @@ public class AeroTROView extends TROView {
             weapons.add(sb.toString());
         }
         shotsByAmmoType.forEach((at, count) -> weapons.add(
-                String.format("%s (%d %s)", at.getName(), at.getShots() * count, Messages.getString("TROView.shots"))));
+                String.format("%s (%d %s)", at.getName(), count, Messages.getString("TROView.shots"))));
         retVal.put("weapons", weapons);
         retVal.put("heat", heat);
         retVal.put("srv", Math.round(srv / 10.0) + "(" + srv + ")");

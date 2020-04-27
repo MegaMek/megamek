@@ -387,6 +387,10 @@ public class MiscType extends EquipmentType {
     public static final long S_MARITIME_ESCAPE_POD = 1L << 1;
     public static final long S_ATMOSPHERIC_LIFEBOAT = 1L << 2;
 
+    // Secondary flags for various robotic/drone control systems to distinguish between the base unit and extra capacity
+    public static final long S_DRONE_BASE_UNIT = 1L;
+    public static final long S_DRONE_EXTRA = 1L << 1;
+
     // New stuff for shields
     protected int baseDamageAbsorptionRate = 0;
     protected int baseDamageCapacity = 0;
@@ -807,12 +811,12 @@ public class MiscType extends EquipmentType {
                 return defaultRounding.round(entity.getWeight() * pct, entity);
             }
         } else if (hasFlag(MiscType.F_ATAC)) {
-            //TODO Neo - pg IO 146 Each drone that it can control adds 150 ton to weight.
+            // includes capacity for one drone
             double tWeight = defaultRounding.round(entity.getWeight() * 0.02, entity);
-            return Math.min(tWeight, 50000);
+            return Math.min(tWeight, 50000) + 150.0;
         } else if (hasFlag(MiscType.F_DTAC)) {
-            //TODO Neo - pg IO 146 Each drone that it can control adds 150 ton to weight.
-            return defaultRounding.round(entity.getWeight() * 0.03, entity);
+            // includes capacity for one drone
+            return defaultRounding.round(entity.getWeight() * 0.03, entity) + 150.0;
         } else if (hasFlag(MiscType.F_SDS_DESTRUCT)) {
             return Math.min(RoundWeight.nextTon(entity.getWeight() * 0.1), 10000);
         }  else if (hasFlag(MiscType.F_MAGNETIC_CLAMP) && hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
@@ -1801,8 +1805,10 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCasparIIDroneControlSystem());
         EquipmentType.addType(MiscType.createImprovedCasparIIDroneControlSystem());
         EquipmentType.addType(MiscType.createAutoTacticalAnalysisComputer());
+        EquipmentType.addType(MiscType.createATACExtraDrone());
         EquipmentType.addType(MiscType.createAdvRoboticTransportSystem());
         EquipmentType.addType(MiscType.createDirectTacticalAnalysisSystem());
+        EquipmentType.addType(MiscType.createDTACExtraDrone());
         EquipmentType.addType(MiscType.createSDSSelfDestructSystem());
         EquipmentType.addType(MiscType.createSDSJammerSystem());
 
@@ -5783,11 +5789,13 @@ public class MiscType extends EquipmentType {
         // TODO Game Rules.
         MiscType misc = new MiscType();
         misc.name = "Autonomous Tactical Analysis Computer (ATAC)";
+        misc.shortName = "ATAC";
         misc.setInternalName("AutoTacticalAnalysisComputer");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_ATAC).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.subType = S_DRONE_BASE_UNIT;
         misc.rulesRefs = "145,IO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_E).setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
@@ -5795,6 +5803,27 @@ public class MiscType extends EquipmentType {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2705, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_TH);
+
+        return misc;
+    }
+
+    public static MiscType createATACExtraDrone() {
+        // TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "ATAC Additional Drone";
+        misc.shortName = "ATAC Drone";
+        misc.setInternalName("ATACExtraDrone");
+        misc.tonnage = 150.0;
+        misc.criticals = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_ATAC).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.subType = S_DRONE_EXTRA;
+        misc.rulesRefs = "145,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+                .setTechRating(RATING_E).setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
+                .setISAdvancement(2705, DATE_NONE, DATE_NONE, 2780, DATE_NONE)
+                .setClanAdvancement(2705, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setPrototypeFactions(F_TH);
 
         return misc;
     }
@@ -5823,13 +5852,36 @@ public class MiscType extends EquipmentType {
         // TODO Game Rules.
         MiscType misc = new MiscType();
         misc.name = "Direct Tactical Analysis Control (DTAC) System";
+        misc.shortName = "DTAC";
         misc.setInternalName("DirectTacticalAnalysisSystem");
-        misc.tonnage = TONNAGE_VARIABLE;;
+        misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
-        misc.cost = COST_VARIABLE;;
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_DTAC).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.subType = S_DRONE_BASE_UNIT;
         misc.rulesRefs = "146,IO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setISAdvancement(3072, DATE_NONE, DATE_NONE, 3078, 3082)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_WB)
+                .setReintroductionFactions(F_RS);
+
+        return misc;
+    }
+
+    public static MiscType createDTACExtraDrone() {
+        // TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "DTAC Extra Drone";
+        misc.shortName = "Extra Drone";
+        misc.setInternalName("DTACExtraDrone");
+        misc.tonnage = 150.0;
+        misc.criticals = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_DTAC).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.subType = S_DRONE_EXTRA;
+        misc.rulesRefs = "146,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
                 .setISAdvancement(3072, DATE_NONE, DATE_NONE, 3078, 3082)
                 .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_WB)

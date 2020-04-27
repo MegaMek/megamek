@@ -10002,7 +10002,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("Environmental Sealed Chassis");
         misc.addLookupName("EnvironmentalSealingChassisMod");
         misc.addLookupName("Vacuum Protection");
-        misc.tonnage = 0;
+        misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = COST_VARIABLE; // Cost accounted as part of unit cost
         misc.tankslots = 0;

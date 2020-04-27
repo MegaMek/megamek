@@ -15,12 +15,7 @@
 package megamek.common.verifier;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import megamek.common.*;
 import megamek.common.util.StringUtil;
@@ -37,7 +32,7 @@ public class TestAdvancedAerospace extends TestAero {
     
     private final Jumpship vessel;
 
-    public static enum CapitalArmor{
+    public enum CapitalArmor{
         PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false),   
         STANDARD(EquipmentType.T_ARMOR_AEROSPACE, false),   
         CLAN_STANDARD(EquipmentType.T_ARMOR_AEROSPACE, true),
@@ -131,10 +126,13 @@ public class TestAdvancedAerospace extends TestAero {
     /**
      * Filters all capital armor according to given tech constraints
      * 
-     * @param techManager
+     * @param techManager Constraints used to filter the possible armor types
      * @return A list of all armors that meet the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
+    public static List<EquipmentType> legalArmorsFor(ITechManager techManager, boolean primitive) {
+        if (primitive) {
+            return Collections.singletonList(CapitalArmor.PRIMITIVE.getArmorEqType());
+        }
         List<EquipmentType> retVal = new ArrayList<>();
         for (CapitalArmor armor : CapitalArmor.values()) {
             final EquipmentType eq = armor.getArmorEqType();

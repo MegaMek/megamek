@@ -285,18 +285,19 @@ public abstract class TestEntity implements TestEntityOption {
      * @param etype         The entity type bit mask
      * @param industrial    For mechs; industrial mechs can only use certain armor types
      *                      unless allowing experimental rules
+     * @param primitive     Whether the unit is primitive/retrotech
      * @param movementMode  For vehicles; hardened armor is illegal for some movement modes 
      * @param techManager   The constraints used to filter the armor types
      * @return A list of all armors that meet the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial,
+    public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial, boolean primitive,
             EntityMovementMode movementMode, ITechManager techManager) {
         if ((etype & Entity.ETYPE_BATTLEARMOR) != 0) {
             return TestBattleArmor.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_SMALL_CRAFT) != 0) {
             return TestSmallCraft.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_JUMPSHIP) != 0) {
-            return TestAdvancedAerospace.legalArmorsFor(techManager);
+            return TestAdvancedAerospace.legalArmorsFor(techManager, primitive);
         } else if ((etype & (Entity.ETYPE_FIXED_WING_SUPPORT | Entity.ETYPE_SUPPORT_TANK | Entity.ETYPE_SUPPORT_VTOL)) != 0) {
             return TestSupportVehicle.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_AERO) != 0) {

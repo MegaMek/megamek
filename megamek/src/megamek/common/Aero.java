@@ -3852,11 +3852,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
     }
 
-    /**
-     * Is this a primitive ASF?
-     *
-     * @return
-     */
+    @Override
     public boolean isPrimitive() {
         return (getCockpitType() == Aero.COCKPIT_PRIMITIVE);
     }

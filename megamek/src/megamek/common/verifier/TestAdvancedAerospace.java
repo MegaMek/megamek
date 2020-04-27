@@ -366,10 +366,17 @@ public class TestAdvancedAerospace extends TestAero {
         } else {
             crew = 6 + (int) Math.ceil(vessel.getWeight() / 20000);
         }
+        int atac = 0;
         for (Mounted m : vessel.getMisc()) {
             crew += equipmentCrewRequirements(m.getType());
+            // DTAC requires 1 crew / drone, ATAC 1 crew / 3 drones
+            if (m.getType().hasFlag(MiscType.F_ATAC)) {
+                atac++;
+            } else if (m.getType().hasFlag(MiscType.F_DTAC)) {
+                crew++;
+            }
         }
-        return crew;
+        return crew + (int) Math.ceil(atac / 3.0);
     }
         
     /**

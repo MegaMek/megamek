@@ -5523,12 +5523,9 @@ public class MiscType extends EquipmentType {
                 .or(F_FIGHTER_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_SS_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.rulesRefs = "305,TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
-                .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false)
+                .setAdvancement(DATE_ES, DATE_ES)
         		.setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -5585,7 +5582,7 @@ public class MiscType extends EquipmentType {
         // TODO: add game rules for this (these are actually the Drones
         // themselves)
         MiscType misc = new MiscType();
-        misc.name = "Drones (as Extra Equipment)";
+        misc.name = "DCCS Extra Drone";
         misc.setInternalName("ISDroneExtra");
         misc.addLookupName("CLDroneExtra");
         misc.tonnage = 0;
@@ -5594,10 +5591,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DRONE_EXTRA).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_FIGHTER_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_SS_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);      ;
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, 2000, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_E, RATING_F, RATING_F, RATING_X });
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+                .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
+                .setAdvancement(DATE_ES, DATE_ES)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 

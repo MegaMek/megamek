@@ -3,18 +3,10 @@
  */
 package megamek.common.templates;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import megamek.common.Aero;
-import megamek.common.Entity;
-import megamek.common.Jumpship;
-import megamek.common.Messages;
-import megamek.common.Mounted;
-import megamek.common.Warship;
+import megamek.common.*;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAdvancedAerospace;
 
@@ -84,10 +76,51 @@ public class CapitalShipTROView extends AeroTROView {
         if (aero.hasLF()) {
             misc.add(Messages.getString("TROView.lfbattery"));
         }
-        final Map<String, Integer> miscCount = aero.getMisc().stream()
-                .filter(m -> (m.getLinked() == null) && (m.getLinkedBy() == null))
-                .collect(Collectors.groupingBy(m -> m.getType().getName(), Collectors.summingInt(m -> 1)));
-        miscCount.forEach((k, v) -> misc.add(String.format("%d %s", v, k)));
+        int mashTheaters = 0;
+        int drones = 0;
+        int atac = 0;
+        int dtac = 0;
+        final Map<String, Integer> eqCount = new HashMap<>();
+        for (Mounted mount : aero.getMisc()) {
+            // MASH and DCC use an additional MiscType to expand their capacity.
+            // Present them as a single piece of equipment and show size.
+            if (mount.getType().hasFlag(MiscType.F_MASH) || mount.getType().hasFlag(MiscType.F_MASH_EXTRA)) {
+                mashTheaters++;
+            } else if (mount.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)
+                    || mount.getType().hasFlag(MiscType.F_DRONE_EXTRA)) {
+                drones++;
+            } else if (mount.getType().hasFlag(MiscType.F_ATAC)) {
+                atac++;
+            } else if (mount.getType().hasFlag(MiscType.F_DTAC)) {
+                dtac++;
+            } else {
+                eqCount.merge(mount.getType().getShortName(), 1, Integer::sum);
+            }
+        }
+        for (String eq : eqCount.keySet()) {
+            if (eqCount.get(eq) > 1) {
+                misc.add(eqCount.get(eq) + "x" + eq);
+            } else {
+                misc.add(eq);
+            }
+        }
+        if (mashTheaters > 1) {
+            misc.add("MASH (" + mashTheaters + " theaters)");
+        } else if (mashTheaters == 1) {
+            misc.add("MASH");
+        }
+        if (drones > 0) {
+            misc.add("Drone Carrier Control System (" + drones
+                    + ((drones > 1) ? " drones)" : " drone)"));
+        }
+        if (atac > 0) {
+            misc.add("ATAC (" + atac
+                    + ((atac > 1) ? " drones)" : " drone)"));
+        }
+        if (dtac > 0) {
+            misc.add("DTAC (" + dtac
+                    + ((dtac > 1) ? " drones)" : " drone)"));
+        }
         setModelData("miscEquipment", misc);
         setModelData("lfBattery", aero.hasLF());
 

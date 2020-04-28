@@ -568,7 +568,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     "Found dumper not linked to a cargo bay. Using zero for the weight.");
             return 0.0;
         }
-        double retVal = getType().getTonnage(getEntity(), getLocation(), defaultRounding);
+        double retVal = getType().getTonnage(getEntity(), getLocation(), getSize(), defaultRounding);
         if (isDWPMounted()) {
             return defaultRounding.round(retVal * 0.75, getEntity());
         } else if (isSquadSupportWeapon()) {
@@ -576,6 +576,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             return defaultRounding.round(retVal, getEntity());
         }
         return retVal;
+    }
+
+    /**
+     * @return The cost of the mounted equipment
+     */
+    public double getCost() {
+        return getType().getCost(getEntity(), isArmored(), getLocation(), getSize());
     }
 
     public boolean isReady() {

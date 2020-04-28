@@ -240,6 +240,10 @@ public class EquipmentType implements ITechnology {
         return name;
     }
 
+    public String getName(double size) {
+        return getName();
+    }
+
     public String getDesc() {
         String result = EquipmentMessages.getString("EquipmentType." + name);
         if (result != null) {
@@ -318,7 +322,19 @@ public class EquipmentType implements ITechnology {
      * @return       The weight of the equipment in tons
      */
     public double getTonnage(@Nullable Entity entity) {
-        return getTonnage(entity, Entity.LOC_NONE);
+        return getTonnage(entity, Entity.LOC_NONE, 1.0);
+    }
+
+    /**
+     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
+     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity The unit the equipment is mounted on
+     * @param size   The size of variable-sized equipment
+     * @return       The weight of the equipment in tons
+     */
+    public double getTonnage(@Nullable Entity entity, double size) {
+        return getTonnage(entity, Entity.LOC_NONE, size);
     }
 
     /**
@@ -327,9 +343,10 @@ public class EquipmentType implements ITechnology {
      *
      * @param entity   The unit the equipment is mounted on
      * @param location The mount location
+     * @param size     The size (for variable-sized equipment)
      * @return         The weight of the equipment in tons
      */
-    public double getTonnage(Entity entity, int location) {
+    public double getTonnage(Entity entity, int location, double size) {
         return tonnage;
     }
 
@@ -341,14 +358,15 @@ public class EquipmentType implements ITechnology {
      *
      * @param entity        The unit the equipment is mounted on
      * @param location      The mount location
+     * @param size          The size (for variable-sized equipment)
      * @param defaultMethod The rounding method to use for any variable weight equipment. Any equipment
      *                      that is normally rounded to either the half ton or kg based on unit type
      *                      will have this method applied instead.
      * @return              The weight of the equipment in tons
      */
-    public double getTonnage(Entity entity, int location, RoundWeight defaultMethod) {
+    public double getTonnage(Entity entity, int location, double size, RoundWeight defaultMethod) {
         // Default implementation does not deal with variable-weight equipment.
-        return getTonnage(entity, location);
+        return getTonnage(entity, location, size);
     }
 
     void setTonnage(double tonnage) {
@@ -1046,9 +1064,18 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
+     * For variable-sized equipment this assumes a size of 1.0.
+     *
      * @return The C-Bill cost of the piece of equipment.
      */
     public double getCost(Entity entity, boolean armored, int loc) {
+        return getCost(entity, armored, loc, 1.0);
+    }
+
+    /**
+     * @return The C-Bill cost of the piece of equipment.
+     */
+    public double getCost(Entity entity, boolean armored, int loc, double size) {
         return cost;
     }
 
@@ -1346,7 +1373,7 @@ public class EquipmentType implements ITechnology {
                 if (type.cost == EquipmentType.COST_VARIABLE) {
                     w.write("Variable");
                 } else {
-                    w.write(Double.toString(type.getCost(null, false, -1)));
+                    w.write(Double.toString(type.getCost(null, false, -1, 1.0)));
                 }
                 w.write(",");
                 if (type.bv == EquipmentType.BV_VARIABLE) {
@@ -1384,11 +1411,14 @@ public class EquipmentType implements ITechnology {
     }
 
     public String getShortName() {
-        if (shortName.trim().length() < 1) {
+        if (shortName.trim().isEmpty()) {
             return getName();
         }
-
         return shortName;
+    }
+
+    public String getShortName(double size) {
+        return getShortName();
     }
 
     @Override

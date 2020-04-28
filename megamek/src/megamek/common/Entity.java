@@ -10657,8 +10657,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (mounted.isWeaponGroup()) {
                 continue;
             }
-            long itemCost = (long) mounted.getType().getCost(this,
-                                                             mounted.isArmored(), mounted.getLocation());
+            long itemCost = (long) mounted.getCost();
 
             cost += itemCost;
             if ((bvText != null) && (itemCost > 0)) {

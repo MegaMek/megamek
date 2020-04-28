@@ -282,7 +282,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_LF_STORAGE_BATTERY = BigInteger.valueOf(1).shiftLeft(199);
     public static final BigInteger F_PROTOMECH_MELEE = BigInteger.valueOf(1).shiftLeft(200);
     public static final BigInteger F_EXTERNAL_POWER_PICKUP = BigInteger.valueOf(1).shiftLeft(201);
-    
+    public static final BigInteger F_VARIABLE_SIZE = BigInteger.valueOf(1).shiftLeft(202);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -435,13 +435,41 @@ public class MiscType extends EquipmentType {
         return damageDivisor;
     }
 
-    @Override
-    public double getTonnage(Entity entity, int location) {
-        return getTonnage(entity, location, RoundWeight.STANDARD);
+    private String sizeSuffix(double size) {
+        if (hasFlag(F_VARIABLE_SIZE)) {
+            if (hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)
+                    || hasFlag(MiscType.F_ATAC) || hasFlag(MiscType.F_DTAC)) {
+                return String.format(" (%d %s)", (int) size, size > 1 ?
+                        Messages.getString("MiscType.drones") :
+                        Messages.getString("MiscType.drone"));
+            } else if (hasFlag(MiscType.F_MASH)) {
+                return String.format(" (%d %s)", (int) size, size > 1 ?
+                        Messages.getString("MiscType.theaters") :
+                        Messages.getString("MiscType.theater"));
+            } else if (hasFlag(MiscType.F_LADDER)) {
+                return String.format(" (%d m");
+            }
+        }
+        return "";
     }
 
     @Override
-    public double getTonnage(Entity entity, int location, RoundWeight defaultRounding) {
+    public String getName(double size) {
+        return getName() + sizeSuffix(size);
+    }
+
+    @Override
+    public String getShortName(double size) {
+        return getShortName() + sizeSuffix(size);
+    }
+
+    @Override
+    public double getTonnage(Entity entity, int location, double size) {
+        return getTonnage(entity, location, size, RoundWeight.STANDARD);
+    }
+
+    @Override
+    public double getTonnage(Entity entity, int location, double size, RoundWeight defaultRounding) {
         if ((tonnage != TONNAGE_VARIABLE) || (null == entity)) {
             return tonnage;
         }
@@ -714,13 +742,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_BOOBY_TRAP)) {
             return defaultRounding.round(entity.getWeight() / 10.0, entity);
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
-            double weight = 2;
-            for (Mounted mount : entity.getMisc()) {
-                if (mount.getType().hasFlag(MiscType.F_DRONE_EXTRA)) {
-                    weight += 0.5;
-                }
-            }
-            return weight;
+            return 2 + size * 0.5;
         } else if (hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             // 10% of the weight, plus 0.5 tons for the extra sensors
             return (entity.getWeight() / 10f) + 0.5f;
@@ -807,12 +829,10 @@ public class MiscType extends EquipmentType {
                 return defaultRounding.round(entity.getWeight() * pct, entity);
             }
         } else if (hasFlag(MiscType.F_ATAC)) {
-            //TODO Neo - pg IO 146 Each drone that it can control adds 150 ton to weight.
             double tWeight = defaultRounding.round(entity.getWeight() * 0.02, entity);
-            return Math.min(tWeight, 50000);
+            return Math.min(tWeight, 50000) + size * 150.0;
         } else if (hasFlag(MiscType.F_DTAC)) {
-            //TODO Neo - pg IO 146 Each drone that it can control adds 150 ton to weight.
-            return defaultRounding.round(entity.getWeight() * 0.03, entity);
+            return defaultRounding.round(entity.getWeight() * 0.03, entity) + size * 105.0;
         } else if (hasFlag(MiscType.F_SDS_DESTRUCT)) {
             return Math.min(RoundWeight.nextTon(entity.getWeight() * 0.1), 10000);
         }  else if (hasFlag(MiscType.F_MAGNETIC_CLAMP) && hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
@@ -835,11 +855,11 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
-    public double getCost(Entity entity, boolean isArmored, int loc) {
+    public double getCost(Entity entity, boolean isArmored, int loc, double size) {
         double costValue = cost;
         if (costValue == EquipmentType.COST_VARIABLE) {
             if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
-                costValue = getTonnage(entity, loc) * 10000;
+                costValue = getTonnage(entity, loc, size) * 10000;
             } else if (hasFlag(F_ENVIRONMENTAL_SEALING) && (entity instanceof Mech)) {
                 costValue = 225 * entity.getWeight();
             } else if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_OFF_ROAD)) {
@@ -963,10 +983,10 @@ public class MiscType extends EquipmentType {
             } else if (hasFlag(MiscType.F_CASPARII)) {
                 costValue = (getTonnage(entity, loc) * 20000) + 50000;
             } else if (hasFlag(MiscType.F_ATAC)) {
-                costValue = (getTonnage(entity, loc) * 100000);
+                costValue = (getTonnage(entity, loc, size) * 100000);
             //TODO NEO - ARTS see IO pg 188    
             } else if (hasFlag(MiscType.F_DTAC)) {
-                costValue = (getTonnage(entity, loc) * 50000);
+                costValue = (getTonnage(entity, loc, size) * 50000);
                              
             } else if (hasFlag(MiscType.F_CLUB) && (hasSubType(MiscType.S_LANCE))) {
                 costValue = (int) Math.ceil(entity.getWeight() * 150);
@@ -988,14 +1008,14 @@ public class MiscType extends EquipmentType {
                 // 5% of weapon cost
                 double weaponCost = 0;
                 for (Mounted mount : entity.getWeaponList()) {
-                    weaponCost += mount.getType().getCost(entity, mount.isArmored(), mount.getLocation());
+                    weaponCost += mount.getCost();
                 }
                 return weaponCost * 0.05;
             } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
                 // 10% of weapon cost
                 double weaponCost = 0;
                 for (Mounted mount : entity.getWeaponList()) {
-                    weaponCost += mount.getType().getCost(entity, mount.isArmored(), mount.getLocation());
+                    weaponCost += mount.getCost();
                 }
                 return weaponCost * 0.1;
             }
@@ -5513,7 +5533,8 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.criticals = 1;
         misc.tankslots = 1;
-        misc.flags = misc.flags.or(F_DRONE_CARRIER_CONTROL).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
+        misc.flags = misc.flags.or(F_DRONE_CARRIER_CONTROL).or(F_VARIABLE_SIZE)
+                .or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_FIGHTER_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_SS_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.rulesRefs = "305,TO";
@@ -5787,7 +5808,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_ATAC).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.flags = misc.flags.or(F_ATAC).or(F_VARIABLE_SIZE).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.rulesRefs = "145,IO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_E).setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
@@ -5827,7 +5848,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;;
         misc.criticals = 0;
         misc.cost = COST_VARIABLE;;
-        misc.flags = misc.flags.or(F_DTAC).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.flags = misc.flags.or(F_DTAC).or(F_VARIABLE_SIZE).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.rulesRefs = "146,IO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)

@@ -2254,7 +2254,7 @@ public class WeaponType extends EquipmentType {
     }
 
     @Override
-    public double getCost(Entity entity, boolean isArmored, int loc) {
+    public double getCost(Entity entity, boolean isArmored, int loc, double size) {
         if (isArmored) {
             double armoredCost = cost;
             armoredCost += 150000 * getCriticals(entity);
@@ -2262,7 +2262,7 @@ public class WeaponType extends EquipmentType {
             return armoredCost;
         }
 
-        return super.getCost(entity, isArmored, loc);
+        return super.getCost(entity, isArmored, loc, size);
     }
 
     public boolean isSplitable() {

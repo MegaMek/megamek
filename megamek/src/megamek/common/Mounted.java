@@ -421,7 +421,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * Shortcut to type.getName()
      */
     public String getName() {
-        return type.getName();
+        return type.getName(size);
+    }
+
+    public String getShortName() {
+        return type.getShortName(size);
     }
 
     public String getDesc() {

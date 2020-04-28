@@ -163,8 +163,8 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_CHASSIS_MODIFICATION = BigInteger.valueOf(1).shiftLeft(113);
     public static final BigInteger F_CHAFF_POD = BigInteger.valueOf(1).shiftLeft(114);
     public static final BigInteger F_DRONE_CARRIER_CONTROL = BigInteger.valueOf(1).shiftLeft(115);
-    public static final BigInteger F_DRONE_EXTRA = BigInteger.valueOf(1).shiftLeft(116);
-    public static final BigInteger F_MASH_EXTRA = BigInteger.valueOf(1).shiftLeft(117);
+    public static final BigInteger F_VARIABLE_SIZE = BigInteger.valueOf(1).shiftLeft(116);
+    public static final BigInteger F_BA_MISSION_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(117);
     public static final BigInteger F_JET_BOOSTER = BigInteger.valueOf(1).shiftLeft(118);
     public static final BigInteger F_SENSOR_DISPENSER = BigInteger.valueOf(1).shiftLeft(119);
     public static final BigInteger F_DRONE_OPERATING_SYSTEM = BigInteger.valueOf(1).shiftLeft(120);
@@ -282,7 +282,6 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_LF_STORAGE_BATTERY = BigInteger.valueOf(1).shiftLeft(199);
     public static final BigInteger F_PROTOMECH_MELEE = BigInteger.valueOf(1).shiftLeft(200);
     public static final BigInteger F_EXTERNAL_POWER_PICKUP = BigInteger.valueOf(1).shiftLeft(201);
-    public static final BigInteger F_VARIABLE_SIZE = BigInteger.valueOf(1).shiftLeft(202);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1603,7 +1602,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createLeftDumper());
         EquipmentType.addType(MiscType.createRightDumper());
         EquipmentType.addType(MiscType.createMASH());
-        EquipmentType.addType(MiscType.createMASHExtraTheater());
         EquipmentType.addType(MiscType.createParamedicEquipment());
         EquipmentType.addType(MiscType.createISMastMount());
         EquipmentType.addType(MiscType.createExtendedFuelTank());
@@ -1811,7 +1809,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createSmartRoboticControlSystem());
         EquipmentType.addType(MiscType.createImprovedSmartRoboticControlSystem());
         EquipmentType.addType(MiscType.createISDroneCarrierControlSystem());
-        EquipmentType.addType(MiscType.createISDroneExtra());
         EquipmentType.addType(MiscType.createISDroneOperatingSystem());
         EquipmentType.addType(MiscType.createShieldedAeroSRCS());
         EquipmentType.addType(MiscType.createImprovedShieldedAeroSRCS());
@@ -5596,26 +5593,6 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createISDroneExtra() {
-        // TODO: add game rules for this (these are actually the Drones
-        // themselves)
-        MiscType misc = new MiscType();
-        misc.name = "Drones (as Extra Equipment)";
-        misc.setInternalName("ISDroneExtra");
-        misc.addLookupName("CLDroneExtra");
-        misc.tonnage = 0;
-        misc.cost = 0;
-        misc.tankslots = 0;
-        misc.flags = misc.flags.or(F_DRONE_EXTRA).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
-                .or(F_FIGHTER_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_SS_EQUIPMENT)
-                .or(F_SUPPORT_TANK_EQUIPMENT);      ;
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, 2000, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_E, RATING_F, RATING_F, RATING_X });
-        return misc;
-    }
-
     public static MiscType createSmartRoboticControlSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
@@ -9092,25 +9069,6 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createMASHExtraTheater() {
-        MiscType misc = new MiscType();
-
-        misc.name = "MASH Operation Theater";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 1;
-        misc.criticals = 0;
-        misc.tankslots = 0;
-        misc.cost = 10000;
-        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
-                .or(F_SS_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT).or(F_MASH_EXTRA);
-        misc.industrial = true;
-        misc.rulesRefs = "228,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-                .setTechRating(RATING_B).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
-                .setISAdvancement(DATE_PS, DATE_PS).setStaticTechLevel(SimpleTechLevel.STANDARD);
-        return misc;
-    }
-
     public static MiscType createNullSignatureSystem() {
         MiscType misc = new MiscType();
 
@@ -11709,8 +11667,8 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 0.02;
         misc.criticals = 1;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
-                .andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BA_MISSION_EQUIPMENT)
+                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 750;
 
@@ -11728,8 +11686,8 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 0.005;
         misc.criticals = 1;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
-                .andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BA_MISSION_EQUIPMENT)
+                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 750;
 

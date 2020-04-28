@@ -15,11 +15,7 @@
 
 package megamek.common.loaders;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
@@ -76,6 +72,32 @@ public class BLKFile {
                 return 0;
         }
     }
+
+    /** Legacy support for Drone Carrier Control System capacity using additional equipment */
+    int legacyDCCSCapacity = 0;
+    /** Legacy support for MASH capacity using additional equipment */
+    int mashOperatingTheaters = 0;
+
+    /**
+     * Legacy support for variable sized equipment that expands capacity by using an
+     * additional MiscType.
+     *
+     * @param lookup The lookup name
+     */
+    boolean checkLegacyExtraEquipment(String lookup) {
+        switch (lookup) {
+            case "MASH Operation Theater":
+                mashOperatingTheaters++;
+                return true;
+            case "ISDroneExtra":
+            case "CLDroneExtra":
+                legacyDCCSCapacity++;
+                return true;
+            default:
+                return false;
+        }
+    }
+
 
     protected void loadEquipment(Entity t, String sName, int nLoc)
             throws EntityLoadingException {
@@ -138,6 +160,9 @@ public class BLKFile {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
+                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
+                    continue;
+                }
 
                 if (etype != null) {
                     try {
@@ -158,6 +183,24 @@ public class BLKFile {
                     }
                 } else if (!equipName.equals("")) {
                     t.addFailedEquipment(equipName);
+                }
+            }
+        }
+        if (mashOperatingTheaters > 0) {
+            for (Mounted m : t.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_MASH)) {
+                    // includes one as part of the core component
+                    m.setSize(m.getSize() + mashOperatingTheaters);
+                    break;
+                }
+            }
+        }
+        if (legacyDCCSCapacity > 0) {
+            for (Mounted m : t.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
+                    // core system does not include drone capacity
+                    m.setSize(legacyDCCSCapacity);
+                    break;
                 }
             }
         }

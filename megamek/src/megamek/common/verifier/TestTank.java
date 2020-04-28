@@ -505,7 +505,7 @@ public class TestTank extends TestEntity {
                         && !mode.equals(EntityMovementMode.RAIL)
                         && !mode.equals(EntityMovementMode.MAGLEV);
             }
-            if (eq.hasFlag(MiscType.F_MASH) || eq.hasFlag(MiscType.F_MASH_EXTRA)) {
+            if (eq.hasFlag(MiscType.F_MASH)) {
                 return !mode.equals(EntityMovementMode.VTOL);
             }
             if (eq.hasFlag(MiscType.F_SPONSON_TURRET)

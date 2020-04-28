@@ -333,27 +333,28 @@ public abstract class TestEntity implements TestEntityOption {
      * Additional crew requirements for vehicles and aerospace vessels for certain types of
      * equipment.
      */
-    public static int equipmentCrewRequirements(EquipmentType eq) {
-        if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_MASH)
-                    || eq.hasFlag(MiscType.F_MASH_EXTRA)
-                    || eq.hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+    public static int equipmentCrewRequirements(Mounted mounted) {
+        if (mounted.getType() instanceof MiscType) {
+            if (mounted.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
                 return 5;
             }
-            if (eq.hasFlag(MiscType.F_FIELD_KITCHEN)) {
+            if (mounted.getType().hasFlag(MiscType.F_MASH)) {
+                return 5 * (int) mounted.getSize();
+            }
+            if (mounted.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 return 3;
             }
-            if (eq.hasFlag(MiscType.F_COMMUNICATIONS)) {
-                return (int) eq.getTonnage(null);
+            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                return (int) mounted.getTonnage();
             }
-            if (eq.hasFlag(MiscType.F_MOBILE_HPG)) {
+            if (mounted.getType().hasFlag(MiscType.F_MOBILE_HPG)) {
                 // Mobile HPG has crew requirement of 10; ground-mobile has requirement of 1.
-                return eq.hasFlag(MiscType.F_TANK_EQUIPMENT)? 1 : 10;
+                return mounted.getType().hasFlag(MiscType.F_TANK_EQUIPMENT)? 1 : 10;
             }
-            if (eq.hasFlag(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
+            if (mounted.getType().hasFlag(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
                 return 6;
             }
-            if (eq.hasFlag(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
+            if (mounted.getType().hasFlag(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
                 return 12;
             }
         }

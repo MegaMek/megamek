@@ -6943,10 +6943,10 @@ public class Compute {
                 crew += (int) m.getTonnage();
             } else if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 crew += 3;
-            } else if (m.getType().hasFlag(MiscType.F_MASH)
-                    || m.getType().hasFlag(MiscType.F_MASH_EXTRA)
-                    || m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+            } else if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
                 crew += 5;
+            } else if (m.getType().hasFlag(MiscType.F_MASH)) {
+                crew += 5 * m.getSize();
             }
         }
         return crew;

@@ -252,6 +252,10 @@ public class EquipmentType implements ITechnology {
         return name;
     }
 
+    public String getDesc(double size) {
+        return getDesc();
+    }
+
     public String getInternalName() {
         return internalName;
     }

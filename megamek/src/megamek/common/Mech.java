@@ -3612,7 +3612,7 @@ public abstract class Mech extends Entity {
                 bvText.append(startRow);
                 bvText.append(startColumn);
 
-                bvText.append(etype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(endColumn);
@@ -4932,7 +4932,7 @@ public abstract class Mech extends Entity {
                 bvText.append(startRow);
                 bvText.append(startColumn);
 
-                bvText.append(mtype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(endColumn);

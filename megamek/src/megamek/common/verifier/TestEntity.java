@@ -581,7 +581,7 @@ public abstract class TestEntity implements TestEntityOption {
                 continue;
             }
 
-            buff.append(StringUtil.makeLength(mt.getName(), 20));
+            buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(

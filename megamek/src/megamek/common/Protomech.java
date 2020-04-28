@@ -1355,7 +1355,7 @@ public class Protomech extends Entity {
             WeaponType wtype = (WeaponType) mounted.getType();
             double dBV = wtype.getBV(this);
             
-            String name = wtype.getName();
+            String name = mounted.getName();
 
             // don't count destroyed equipment
             if (mounted.isDestroyed()) {
@@ -1561,7 +1561,7 @@ public class Protomech extends Entity {
             
             bvText.append(startRow);
             bvText.append(startColumn);
-            bvText.append(mtype.getName());
+            bvText.append(mounted.getName());
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append(mtype.getBV(this));

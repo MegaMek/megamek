@@ -1405,7 +1405,7 @@ public class Tank extends Entity {
                 MiscType mtype = (MiscType) etype;
                 double bv = mtype.getBV(this, mounted.getLocation());
                 bvText.append(startColumn);
-                bvText.append(etype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(bv);
@@ -1913,7 +1913,7 @@ public class Tank extends Entity {
                 bv = 7;
             }
             oEquipmentBV += bv;
-            bvText.append(mtype.getName());
+            bvText.append(mounted.getName());
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append(bv);

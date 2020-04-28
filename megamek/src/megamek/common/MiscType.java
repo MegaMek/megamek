@@ -463,6 +463,11 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
+    public String getDesc(double size) {
+        return getDesc() + sizeSuffix(size);
+    }
+
+    @Override
     public double getTonnage(Entity entity, int location, double size) {
         return getTonnage(entity, location, size, RoundWeight.STANDARD);
     }

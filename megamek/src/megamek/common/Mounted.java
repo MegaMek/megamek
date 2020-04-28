@@ -89,6 +89,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     private transient EquipmentType type;
     private String typeName;
+    private double size = 1.0;
 
     // ammo-specific stuff. Probably should be a subclass
     private int shotsLeft;
@@ -97,7 +98,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private int originalShots;
     private boolean m_bPendingDump;
     private boolean m_bDumping;
-    private double ammoCapacity;
 
     // A list of ids (equipment numbers) for the weapons and ammo linked to
     // this bay (if the mounted is of the BayWeapon type)
@@ -196,7 +196,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
         if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType) type).getShots();
-            ammoCapacity = type.getTonnage(entity);
+            size = type.getTonnage(entity);
         }
         if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {
             mineType = MINE_CONVENTIONAL;
@@ -830,24 +830,53 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setDumping(boolean b) {
         m_bDumping = b;
     }
+
+    /**
+     * Used for equipment that can vary in size. This is not used for equipment for which
+     * size is computed by outside factors such as unit weight or targeting computer-linked
+     * weapons, but for equipment that comes in various weights, lengths, or capacities.
+     * The meaning of the size varies according to the equipment. For robotic control systems,
+     * this is the number of drones that can be controlled. For ladders this is the length in meters.
+     * For most other variable equipment this is the weight in tons. Non-variable
+     * equipment should return 1.0.
+     *
+     * @return The size of the mounted equipment
+     */
+    public double getSize() {
+        return size;
+    }
+
+    /**
+     * Sets the size of variable-sized equipment.
+     *
+     * @param size
+     * @see #getSize()
+     */
+    public void setSize(double size) {
+        this.size = size;
+    }
     
     /**
      * The capacity of an ammo bin may be different than the weight of the original shots
      * in the case of AR10s due to variable missile weight.
      * 
      * @return The capacity of a mounted ammo bin in tons.
+     * @deprecated Use {@link #getSize()}
      */
+    @Deprecated
     public double getAmmoCapacity() {
-        return ammoCapacity;
+        return size;
     }
 
     /**
      * Sets the maximum tonnage of ammo for a mounted ammo bin.
      * 
      * @param capacity The capacity of the bin in tons.
+     * @deprecated Use {@link #setSize(double)}
      */
+    @Deprecated
     public void setAmmoCapacity(double capacity) {
-        ammoCapacity = capacity;
+        size = capacity;
     }
 
     public boolean isRapidfire() {

@@ -7940,11 +7940,7 @@ public abstract class Mech extends Entity {
         }
     }
 
-    /**
-     * Is this a primitive Mech?
-     *
-     * @return
-     */
+    @Override
     public boolean isPrimitive() {
         return (getCockpitType() == Mech.COCKPIT_PRIMITIVE)
                 || (getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL);

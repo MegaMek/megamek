@@ -15145,6 +15145,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    /**
+     * @return Whether the unit uses primitive or retrotech construction rules
+     */
+    public boolean isPrimitive() {
+        return false;
+    }
+
     public int getStructuralTechRating() {
         return structuralTechRating;
     }

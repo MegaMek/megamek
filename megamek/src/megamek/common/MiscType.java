@@ -839,6 +839,10 @@ public class MiscType extends EquipmentType {
             return defaultRounding.round(entity.getWeight() * 0.03, entity) + size * 105.0;
         } else if (hasFlag(MiscType.F_SDS_DESTRUCT)) {
             return Math.min(RoundWeight.nextTon(entity.getWeight() * 0.1), 10000);
+        } else if (hasFlag(MiscType.F_MASH)) {
+            // Each additional theater weighs 1.0 ton. The core component weighs 3.5, including
+            // a theater.
+            return 2.5 + size;
         }  else if (hasFlag(MiscType.F_MAGNETIC_CLAMP) && hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
             if (entity.getWeight() < 6) {
                 return 0.25;
@@ -862,7 +866,7 @@ public class MiscType extends EquipmentType {
     public double getCost(Entity entity, boolean isArmored, int loc, double size) {
         double costValue = cost;
         if (costValue == EquipmentType.COST_VARIABLE) {
-            if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
+            if (hasFlag(F_DRONE_CARRIER_CONTROL) || hasFlag(F_MASH)) {
                 costValue = getTonnage(entity, loc, size) * 10000;
             } else if (hasFlag(F_ENVIRONMENTAL_SEALING) && (entity instanceof Mech)) {
                 costValue = 225 * entity.getWeight();
@@ -9059,12 +9063,13 @@ public class MiscType extends EquipmentType {
     public static MiscType createMASH() {
         MiscType misc = new MiscType();
 
-        misc.name = "MASH Core Component";
+        misc.name = "MASH Equipment";
         misc.setInternalName(misc.name);
-        misc.tonnage = 3.5;
+        misc.addLookupName("MASH Core Component");
+        misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.cost = 35000;
-        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_VARIABLE_SIZE).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
                 .or(F_SS_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT).or(F_MASH);
         misc.industrial = true;
         misc.rulesRefs = "228,TM";

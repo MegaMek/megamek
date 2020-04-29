@@ -5790,6 +5790,7 @@ public class MiscType extends EquipmentType {
         // TODO Game Rules.
         MiscType misc = new MiscType();
         misc.name = "Autonomous Tactical Analysis Computer (ATAC)";
+        misc.shortName = "ATAC";
         misc.setInternalName("AutoTacticalAnalysisComputer");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
@@ -5830,6 +5831,7 @@ public class MiscType extends EquipmentType {
         // TODO Game Rules.
         MiscType misc = new MiscType();
         misc.name = "Direct Tactical Analysis Control (DTAC) System";
+        misc.shortName = "DTAC";
         misc.setInternalName("DirectTacticalAnalysisSystem");
         misc.tonnage = TONNAGE_VARIABLE;;
         misc.criticals = 0;

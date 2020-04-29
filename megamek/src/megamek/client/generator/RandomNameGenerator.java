@@ -31,9 +31,8 @@ import megamek.common.util.MegaMekFile;
 import megamek.common.util.WeightedMap;
 
 /**
- * This class sets up a random name generator that can then
- * be used to generate random pilot names. it will have a couple different
- * settings and flexible input files
+ * This class sets up a random name generator that can then be used to generate random pilot names.
+ * It has a couple different settings and flexible input file directory locations
  *
  * Files are located in {@link Configuration#namesDir()}. All files are comma spaced csv files
  *
@@ -74,7 +73,8 @@ import megamek.common.util.WeightedMap;
  * the ethnicity with Ethnic Code n. The higher the number for the weight, the more common that
  * given name ethnicity is in generation for the specific ethnicity of the generated surname.
  *
- * @author Jay Lawson (original), Justin Bowen (current version)
+ * @author Justin "Windchild" Bowen (current version - April 29th, 2020)
+ * @author Jay Lawson (original version)
  */
 public class RandomNameGenerator implements Serializable {
     //region Variable Declarations

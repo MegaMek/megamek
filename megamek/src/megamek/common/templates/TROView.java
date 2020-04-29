@@ -699,14 +699,16 @@ public class TROView {
     }
 
     /**
-     * Removes parenthetical and bracketed notes from a String
+     * Removes parenthetical and bracketed notes from a String, with the exception
+     * of parenthetical notes that begin with a digit. These are assumed to be
+     * a marker of equipment size and left intact.
      *
-     * @param str
-     *            The String to process
-     * @return The same String with notes removed
+     * @param str The String to process
+     * @return     The same String with notes removed
      */
     protected String stripNotes(String str) {
-        return str.replaceAll("\\s+\\[.*?]", "").replaceAll("\\s+\\(.*?\\)", "");
+        return str.replaceAll("\\s+\\[.*?]", "")
+                .replaceAll("\\s+\\([^\\d].*?\\)", "");
     }
 
     protected static class FormatTableRowMethod implements TemplateMethodModelEx {

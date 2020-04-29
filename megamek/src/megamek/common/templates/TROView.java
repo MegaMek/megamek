@@ -119,10 +119,6 @@ public class TROView {
         model.put(key, data);
     }
 
-    protected void removeModelData(String key) {
-        model.remove(key);
-    }
-
     protected Object getModelData(String key) {
         return model.get(key);
     }
@@ -440,7 +436,7 @@ public class TROView {
         for (final String loc : equipment.keySet()) {
             for (final Map.Entry<EquipmentKey, Integer> entry : equipment.get(loc).entrySet()) {
                 final EquipmentType eq = entry.getKey().getType();
-                final int count = equipment.get(loc).get(eq);
+                final int count = equipment.get(loc).get(entry.getKey());
                 String name = stripNotes(entry.getKey().name());
                 if (eq instanceof AmmoType) {
                     name = String.format("%s (%d)", name, ((AmmoType) eq).getShots() * count);

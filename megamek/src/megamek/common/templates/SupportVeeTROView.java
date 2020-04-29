@@ -128,14 +128,14 @@ public class SupportVeeTROView extends TROView {
     private void addArmorAndStructure() {
         if (tank.hasETypeFlag(Entity.ETYPE_LARGE_SUPPORT_TANK)) {
             setModelData("structureValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOInternal(loc), LARGE_SUPPORT_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOInternal, LARGE_SUPPORT_ARMOR_LOCS));
             setModelData("armorValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOArmor(loc), LARGE_SUPPORT_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOArmor, LARGE_SUPPORT_ARMOR_LOCS));
         } else {
             setModelData("structureValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOInternal(loc), TANK_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOInternal, TANK_ARMOR_LOCS));
             setModelData("armorValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOArmor(loc), TANK_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOArmor, TANK_ARMOR_LOCS));
         }
     }
 

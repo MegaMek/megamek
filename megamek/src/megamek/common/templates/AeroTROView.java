@@ -17,7 +17,6 @@ package megamek.common.templates;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,6 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EntityFluff;
-import megamek.common.EquipmentType;
 import megamek.common.Messages;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -117,7 +115,7 @@ public class AeroTROView extends TROView {
             { Aero.LOC_AFT } };
 
     private void addArmorAndStructure() {
-        setModelData("armorValues", addArmorStructureEntries(aero, (en, loc) -> en.getOArmor(loc), AERO_ARMOR_LOCS));
+        setModelData("armorValues", addArmorStructureEntries(aero, Entity::getOArmor, AERO_ARMOR_LOCS));
         if (aero.hasPatchworkArmor()) {
             setModelData("patchworkByLoc", addPatchworkATs(aero, AERO_ARMOR_LOCS));
         }
@@ -138,7 +136,7 @@ public class AeroTROView extends TROView {
     protected int addWeaponBays(String[][] arcSets) {
         int nameWidth = 1;
         final Map<String, List<Mounted>> baysByLoc = aero.getWeaponBayList().stream()
-                .collect(Collectors.groupingBy(m -> getArcAbbr(m)));
+                .collect(Collectors.groupingBy(this::getArcAbbr));
         final List<String> bayArcs = new ArrayList<>();
         final Map<String, Integer> heatByLoc = new HashMap<>();
         final Map<String, List<Map<String, Object>>> bayDetails = new HashMap<>();
@@ -155,8 +153,8 @@ public class AeroTROView extends TROView {
                             ((List<?>) row.get("weapons")).stream().mapToInt(w -> ((String) w).length()).max().orElse(0)
                                     + 1);
                 }
-                final String arcName = Arrays.stream(arcSet).collect(Collectors.joining("/"))
-                        .replaceAll("\\s+(Fwd|Aft)\\/", "/");
+                final String arcName = String.join("/", arcSet)
+                        .replaceAll("\\s+(Fwd|Aft)/", "/");
                 bayArcs.add(arcName);
                 heatByLoc.put(arcName, heat);
                 bayDetails.put(arcName, rows);
@@ -177,7 +175,7 @@ public class AeroTROView extends TROView {
         int erv = 0;
         final int multiplier = ((WeaponType) bay.getType()).isCapital() ? 10 : 1;
         Mounted linker = null;
-        final Map<AmmoType, Integer> shotsByAmmoType = bay.getBayAmmo().stream().map(num -> aero.getEquipment(num))
+        final Map<AmmoType, Integer> shotsByAmmoType = bay.getBayAmmo().stream().map(aero::getEquipment)
                 .collect(Collectors.groupingBy(m -> (AmmoType) m.getType(),
                         Collectors.summingInt(Mounted::getBaseShotsLeft)));
         for (final Integer eqNum : bay.getBayWeapons()) {
@@ -243,7 +241,7 @@ public class AeroTROView extends TROView {
             final Map<String, Object> ammoEntry = new HashMap<>();
             ammoEntry.put("name", aList.get(0).getName().replaceAll("\\s+Ammo", ""));
             ammoEntry.put("shots", aList.stream().mapToInt(Mounted::getUsableShotsLeft).sum());
-            ammoEntry.put("tonnage", aList.stream().mapToDouble(m -> m.getSize()).sum());
+            ammoEntry.put("tonnage", aList.stream().mapToDouble(Mounted::getSize).sum());
             ammo.add(ammoEntry);
         }
         setModelData("ammo", ammo);
@@ -274,7 +272,7 @@ public class AeroTROView extends TROView {
         if (count > 1) {
             ((List<String>) getModelData("crew"))
                     .add(String.format(Messages.getString("TROView." + stringKey + "s"), count));
-        } else if (count > 2) {
+        } else {
             ((List<String>) getModelData("crew")).add(String.format(Messages.getString("TROView." + stringKey), count));
         }
     }

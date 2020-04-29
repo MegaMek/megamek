@@ -117,8 +117,8 @@ public class ProtomechTROView extends TROView {
 
     private void addArmorAndStructure() {
         setModelData("structureValues",
-                addArmorStructureEntries(proto, (en, loc) -> en.getOInternal(loc), PROTO_ARMOR_LOCS));
-        setModelData("armorValues", addArmorStructureEntries(proto, (en, loc) -> en.getOArmor(loc), PROTO_ARMOR_LOCS));
+                addArmorStructureEntries(proto, Entity::getOInternal, PROTO_ARMOR_LOCS));
+        setModelData("armorValues", addArmorStructureEntries(proto, Entity::getOArmor, PROTO_ARMOR_LOCS));
     }
 
     @Override

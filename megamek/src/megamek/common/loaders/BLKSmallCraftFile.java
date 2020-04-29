@@ -249,6 +249,9 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
+                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
+                    continue;
+                }
 
                 if (etype != null) {
                     try {
@@ -271,6 +274,23 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                 }
             }
         }
+        if (mashOperatingTheaters > 0) {
+            for (Mounted m : t.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_MASH)) {
+                    // includes one as part of the core component
+                    m.setSize(m.getSize() + mashOperatingTheaters);
+                    break;
+                }
+            }
+        }
+        if (legacyDCCSCapacity > 0) {
+            for (Mounted m : t.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
+                    // core system does not include drone capacity
+                    m.setSize(legacyDCCSCapacity);
+                    break;
+                }
+            }
+        }
     }
-
 }

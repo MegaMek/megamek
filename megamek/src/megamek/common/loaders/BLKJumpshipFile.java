@@ -25,19 +25,7 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.DockingCollar;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.IArmorState;
-import megamek.common.Jumpship;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 
 public class BLKJumpshipFile extends BLKFile implements IMechLoader {
@@ -316,6 +304,9 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
+                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
+                    continue;
+                }
 
                 if (etype != null) {
                     // first load the equipment
@@ -375,6 +366,23 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                 }
             }
         }
+        if (mashOperatingTheaters > 0) {
+            for (Mounted m : a.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_MASH)) {
+                    // includes one as part of the core component
+                    m.setSize(m.getSize() + mashOperatingTheaters);
+                    break;
+                }
+            }
+        }
+        if (legacyDCCSCapacity > 0) {
+            for (Mounted m : a.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
+                    // core system does not include drone capacity
+                    m.setSize(legacyDCCSCapacity);
+                    break;
+                }
+            }
+        }
     }
-
 }

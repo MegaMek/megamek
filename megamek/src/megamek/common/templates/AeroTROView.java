@@ -169,14 +169,14 @@ public class AeroTROView extends TROView {
     }
 
     private Map<String, Object> createBayRow(Mounted bay) {
-        final Map<WeaponType, Integer> weaponCount = new HashMap<>();
+        final Map<EquipmentKey, Integer> weaponCount = new HashMap<>();
         int heat = 0;
         int srv = 0;
         int mrv = 0;
         int lrv = 0;
         int erv = 0;
         final int multiplier = ((WeaponType) bay.getType()).isCapital() ? 10 : 1;
-        EquipmentType linker = null;
+        Mounted linker = null;
         final Map<AmmoType, Integer> shotsByAmmoType = bay.getBayAmmo().stream().map(num -> aero.getEquipment(num))
                 .collect(Collectors.groupingBy(m -> (AmmoType) m.getType(),
                         Collectors.summingInt(Mounted::getBaseShotsLeft)));
@@ -189,9 +189,9 @@ public class AeroTROView extends TROView {
             }
             final WeaponType wtype = (WeaponType) wMount.getType();
             if ((wMount.getLinkedBy() != null) && (wMount.getLinkedBy().getType() instanceof MiscType)) {
-                linker = wMount.getLinkedBy().getType();
+                linker = wMount.getLinkedBy();
             }
-            weaponCount.merge(wtype, 1, Integer::sum);
+            weaponCount.merge(new EquipmentKey(wtype, wMount.getSize()), 1, Integer::sum);
             heat += wtype.getHeat();
             srv += wtype.getShortAV() * multiplier;
             mrv += wtype.getMedAV() * multiplier;
@@ -200,10 +200,9 @@ public class AeroTROView extends TROView {
         }
         final Map<String, Object> retVal = new HashMap<>();
         final List<String> weapons = new ArrayList<>();
-        for (final Map.Entry<WeaponType, Integer> entry : weaponCount.entrySet()) {
-            final WeaponType wtype = entry.getKey();
+        for (final Map.Entry<EquipmentKey, Integer> entry : weaponCount.entrySet()) {
             final StringBuilder sb = new StringBuilder();
-            sb.append(entry.getValue()).append(" ").append(wtype.getName());
+            sb.append(entry.getValue()).append(" ").append(entry.getKey().name());
             if (null != linker) {
                 sb.append("+").append(linker.getName().replace(" FCS", ""));
             }
@@ -217,7 +216,7 @@ public class AeroTROView extends TROView {
         retVal.put("mrv", Math.round(mrv / 10.0) + "(" + mrv + ")");
         retVal.put("lrv", Math.round(lrv / 10.0) + "(" + lrv + ")");
         retVal.put("erv", Math.round(erv / 10.0) + "(" + erv + ")");
-        retVal.put("class", bay.getType().getName().replaceAll("\\s+Bay", ""));
+        retVal.put("class", bay.getName().replaceAll("\\s+Bay", ""));
         return retVal;
     }
 
@@ -238,13 +237,13 @@ public class AeroTROView extends TROView {
      */
     protected void addAmmo() {
         final Map<String, List<Mounted>> ammoByType = aero.getAmmo().stream()
-                .collect(Collectors.groupingBy(m -> m.getType().getName()));
+                .collect(Collectors.groupingBy(Mounted::getName));
         final List<Map<String, Object>> ammo = new ArrayList<>();
         for (final List<Mounted> aList : ammoByType.values()) {
             final Map<String, Object> ammoEntry = new HashMap<>();
-            ammoEntry.put("name", aList.get(0).getType().getName().replaceAll("\\s+Ammo", ""));
+            ammoEntry.put("name", aList.get(0).getName().replaceAll("\\s+Ammo", ""));
             ammoEntry.put("shots", aList.stream().mapToInt(Mounted::getUsableShotsLeft).sum());
-            ammoEntry.put("tonnage", aList.stream().mapToDouble(m -> m.getAmmoCapacity()).sum());
+            ammoEntry.put("tonnage", aList.stream().mapToDouble(m -> m.getSize()).sum());
             ammo.add(ammoEntry);
         }
         setModelData("ammo", ammo);

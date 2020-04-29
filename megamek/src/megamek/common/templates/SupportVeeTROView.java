@@ -1,6 +1,18 @@
-/**
+/*
+ * MegaMek -
+ * Copyright (C) 2020 The MegaMek Team
  *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
+
 package megamek.common.templates;
 
 import java.text.NumberFormat;
@@ -139,9 +151,9 @@ public class SupportVeeTROView extends TROView {
 
     @Override
     protected int addEquipment(Entity entity) {
-        final Map<String, Map<EquipmentType, Integer>> weapons = new HashMap<>();
+        final Map<String, Map<EquipmentKey, Integer>> weapons = new HashMap<>();
         final List<String> chassisMods = new ArrayList<>();
-        final Map<EquipmentType, Integer> miscCount = new HashMap<>();
+        final Map<EquipmentKey, Integer> miscCount = new HashMap<>();
         int nameWidth = 20;
         for (final Mounted m : entity.getEquipment()) {
             if ((m.getLocation() < 0) || m.isWeaponGroup()) {
@@ -149,35 +161,35 @@ public class SupportVeeTROView extends TROView {
             }
             if ((m.getType() instanceof MiscType) && (m.getLinked() == null) && (m.getLinkedBy() == null)) {
                 if (m.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION)) {
-                    chassisMods.add(m.getType().getName().replaceAll(".*\\[", "").replace("]", ""));
+                    chassisMods.add(m.getName().replaceAll(".*\\[", "").replace("]", ""));
                 } else {
-                    miscCount.merge(m.getType(), 1, Integer::sum);
+                    miscCount.merge(new EquipmentKey(m.getType(), m.getSize()), 1, Integer::sum);
                 }
                 continue;
             }
             if (m.isOmniPodMounted() || !entity.isOmni()) {
                 final String loc = formatLocationTableEntry(entity, m);
                 weapons.putIfAbsent(loc, new HashMap<>());
-                weapons.get(loc).merge(m.getType(), 1, Integer::sum);
+                weapons.get(loc).merge(new EquipmentKey(m.getType(), m.getSize()), 1, Integer::sum);
             }
         }
         final List<Map<String, Object>> weaponList = new ArrayList<>();
         for (final String loc : weapons.keySet()) {
-            for (final Map.Entry<EquipmentType, Integer> entry : weapons.get(loc).entrySet()) {
-                final EquipmentType eq = entry.getKey();
-                final int count = weapons.get(loc).get(eq);
-                String name = stripNotes(eq.getName());
+            for (final Map.Entry<EquipmentKey, Integer> entry : weapons.get(loc).entrySet()) {
+                final EquipmentType eq = entry.getKey().getType();
+                final int count = weapons.get(loc).get(entry.getKey());
+                String name = stripNotes(entry.getKey().name());
                 if (eq instanceof AmmoType) {
                     name = String.format("%s (%d)", name, ((AmmoType) eq).getShots() * count);
                 } else if (count > 1) {
-                    name = String.format("%d %ss", count, eq.getName());
+                    name = String.format("%d %ss", count, entry.getKey().name());
                 }
                 final Map<String, Object> fields = new HashMap<>();
                 fields.put("name", name);
                 if (name.length() >= nameWidth) {
                     nameWidth = name.length() + 1;
                 }
-                fields.put("tonnage", adjustWeight(eq.getTonnage(entity) * count));
+                fields.put("tonnage", adjustWeight(eq.getTonnage(entity, entry.getKey().getSize()) * count));
                 fields.put("location", loc);
                 fields.put("slots", eq.getCriticals(entity) * count);
                 weaponList.add(fields);
@@ -186,11 +198,11 @@ public class SupportVeeTROView extends TROView {
         setModelData("weaponList", weaponList);
         setModelData("chassisMods", chassisMods);
         final List<String> miscEquipment = new ArrayList<>();
-        for (final Map.Entry<EquipmentType, Integer> entry : miscCount.entrySet()) {
-            final EquipmentType eq = entry.getKey();
+        for (final Map.Entry<EquipmentKey, Integer> entry : miscCount.entrySet()) {
+            final EquipmentType eq = entry.getKey().getType();
             final int count = entry.getValue();
-            final double tonnage = eq.getTonnage(tank);
-            final StringBuilder sb = new StringBuilder(stripNotes(eq.getName()));
+            final double tonnage = eq.getTonnage(tank, entry.getKey().getSize());
+            final StringBuilder sb = new StringBuilder(stripNotes(entry.getKey().name()));
             if (tonnage > 0) {
                 sb.append("(");
                 if (entry.getValue() > 1) {

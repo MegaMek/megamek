@@ -20,13 +20,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -254,7 +248,7 @@ public class TROView {
             if (m.isOmniPodMounted()) {
                 podSpace += m.getTonnage();
             } else if (m.getType() instanceof WeaponType) {
-                weaponCount.merge(m.getType().getName(), 1, Integer::sum);
+                weaponCount.merge(m.getName(), 1, Integer::sum);
             }
         }
         final List<String> armaments = new ArrayList<>();
@@ -421,7 +415,7 @@ public class TROView {
 
     protected int addEquipment(Entity entity, boolean includeAmmo) {
         final int structure = entity.getStructureType();
-        final Map<String, Map<EquipmentType, Integer>> equipment = new HashMap<>();
+        final Map<String, Map<EquipmentKey, Integer>> equipment = new HashMap<>();
         int nameWidth = 20;
         for (final Mounted m : entity.getEquipment()) {
             if (skipMount(m, includeAmmo)) {
@@ -439,26 +433,26 @@ public class TROView {
             if (m.isOmniPodMounted() || !entity.isOmni()) {
                 final String loc = formatLocationTableEntry(entity, m);
                 equipment.putIfAbsent(loc, new HashMap<>());
-                equipment.get(loc).merge(m.getType(), 1, Integer::sum);
+                equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize()),1, Integer::sum);
             }
         }
         final List<Map<String, Object>> eqList = new ArrayList<>();
         for (final String loc : equipment.keySet()) {
-            for (final Map.Entry<EquipmentType, Integer> entry : equipment.get(loc).entrySet()) {
-                final EquipmentType eq = entry.getKey();
+            for (final Map.Entry<EquipmentKey, Integer> entry : equipment.get(loc).entrySet()) {
+                final EquipmentType eq = entry.getKey().getType();
                 final int count = equipment.get(loc).get(eq);
-                String name = stripNotes(eq.getName());
+                String name = stripNotes(entry.getKey().name());
                 if (eq instanceof AmmoType) {
                     name = String.format("%s (%d)", name, ((AmmoType) eq).getShots() * count);
                 } else if (count > 1) {
-                    name = String.format("%d %ss", count, eq.getName());
+                    name = String.format("%d %ss", count, entry.getKey().name());
                 }
                 final Map<String, Object> fields = new HashMap<>();
                 fields.put("name", name);
                 if (name.length() >= nameWidth) {
                     nameWidth = name.length() + 1;
                 }
-                fields.put("tonnage", eq.getTonnage(entity) * count);
+                fields.put("tonnage", eq.getTonnage(entity, entry.getKey().getSize()) * count);
                 if (eq instanceof WeaponType) {
                     fields.put("heat", eq.getHeat());
                     fields.put("srv", (int) ((WeaponType) eq).getShortAV());
@@ -527,7 +521,7 @@ public class TROView {
                     if (crit.getMount().isOmniPodMounted()) {
                         remaining++;
                     } else if (!crit.getMount().isWeaponGroup()) {
-                        final String key = stripNotes(crit.getMount().getType().getName());
+                        final String key = stripNotes(crit.getMount().getName());
                         fixedCount.merge(key, 1, Integer::sum);
                         fixedWeight.merge(key, crit.getMount().getTonnage(), Double::sum);
                     }
@@ -767,5 +761,42 @@ public class TROView {
      */
     public boolean getIncludeFluff() {
         return includeFluff;
+    }
+
+    /**
+     * Tuple composed of EquipmentType and size, used for map keys
+     */
+    static final class EquipmentKey {
+        private final EquipmentType etype;
+        private final double size;
+
+        EquipmentKey(EquipmentType etype, double size) {
+            this.etype = etype;
+            this.size = size;
+        }
+
+        String name() {
+            return etype.getName(size);
+        }
+
+        EquipmentType getType() {
+            return etype;
+        }
+
+        double getSize() {
+            return size;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return (o instanceof EquipmentKey)
+                    && (etype.equals(((EquipmentKey) o).etype))
+                    && (size == ((EquipmentKey) o).size);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(etype, size);
+        }
     }
 }

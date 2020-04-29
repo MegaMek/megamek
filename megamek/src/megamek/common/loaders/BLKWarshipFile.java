@@ -317,12 +317,12 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
                 newBay = false;
                 String equipName = element.trim();
 
-                // I will need to deal with rear-mounted bays on Dropships
-                if (equipName.startsWith("(R) ")) {
-                    rearMount = true;
-                    equipName = equipName.substring(4);
+                double size = 0.0;
+                int sizeIndex = equipName.toUpperCase().indexOf(":SIZE:");
+                if (sizeIndex > 0) {
+                    size = Double.parseDouble(equipName.substring(sizeIndex + 6));
+                    equipName = equipName.substring(0, sizeIndex);
                 }
-
                 if (equipName.startsWith("(B) ")) {
                     newBay = true;
                     equipName = equipName.substring(4);
@@ -408,6 +408,12 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
                             a.getAmmo().remove(newmount);
                             a.addFailedEquipment(equipName);
                         }
+                    }
+                    if (etype.isVariableSize()) {
+                        if (size == 0.0) {
+                            size = getLegacyVariableSize(equipName);
+                        }
+                        newmount.setSize(size);
                     }
                 } else if (!equipName.equals("")) {
                     a.addFailedEquipment(equipName);

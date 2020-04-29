@@ -212,6 +212,12 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                 boolean omniMounted = equipName.contains(":OMNI");
                 equipName = equipName.replace(":OMNI", "");
 
+                double size = 0.0;
+                int sizeIndex = equipName.toUpperCase().indexOf(":SIZE:");
+                if (sizeIndex > 0) {
+                    size = Double.parseDouble(equipName.substring(sizeIndex + 6));
+                    equipName = equipName.substring(0, sizeIndex);
+                }
                 if (equipName.startsWith("(R) ")) {
                     rearMount = true;
                     equipName = equipName.substring(4);
@@ -260,6 +266,12 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                             } else {
                                 mount.setFacing(facing);
                             }
+                        }
+                        if (etype.isVariableSize()) {
+                            if (size == 0.0) {
+                                size = getLegacyVariableSize(equipName);
+                            }
+                            mount.setSize(size);
                         }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());

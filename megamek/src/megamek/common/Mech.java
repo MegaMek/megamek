@@ -6915,6 +6915,9 @@ public abstract class Mech extends Entity {
             if (m.isOmniPodMounted()) {
                 toReturn.append(" ").append(MtfFile.OMNIPOD);
             }
+            if (m.getType().isVariableSize()) {
+                toReturn.append(MtfFile.SIZE).append(m.getSize());
+            }
         } else {
             return "?" + index;
         }

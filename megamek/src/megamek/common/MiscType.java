@@ -453,6 +453,11 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
+    public boolean isVariableSize() {
+        return hasFlag(F_VARIABLE_SIZE);
+    }
+
+    @Override
     public String getName(double size) {
         return getName() + sizeSuffix(size);
     }

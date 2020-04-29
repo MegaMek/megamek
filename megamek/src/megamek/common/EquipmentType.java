@@ -1112,6 +1112,13 @@ public class EquipmentType implements ITechnology {
         return criticals == CRITICALS_VARIABLE;
     }
 
+    /**
+     * @return Whether the item's size is variable independent of external factors
+     */
+    public boolean isVariableSize() {
+        return false;
+    }
+
     public TechAdvancement getTechAdvancement() {
         return techAdvancement;
     }

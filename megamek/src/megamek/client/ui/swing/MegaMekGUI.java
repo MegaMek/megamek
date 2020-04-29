@@ -442,7 +442,11 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         BoardEditor editor = new BoardEditor(controller);
         controller.boardEditor = editor;
         launch(editor.getFrame());
-        editor.boardNew();
+        if (GUIPreferences.getInstance().getBoardEdRndStart()) {
+            editor.boardNew(true);
+        } else {
+            editor.boardNew(false);
+        }
     }
     
     void showSkinEditor() {

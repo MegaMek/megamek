@@ -1149,6 +1149,10 @@ public class TestAero extends TestEntity {
                     || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         }
 
+        if (weapon.hasFlag(WeaponType.F_VGL)) {
+            return !en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
+        }
+
         if (weapon.isCapital()) {
             return en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         }

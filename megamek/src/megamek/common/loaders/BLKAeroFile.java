@@ -286,7 +286,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
-                                mount.setFacing(defaultVGLFacing(useLoc, rearMount));
+                                mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));
                             } else {
                                 mount.setFacing(facing);
                             }

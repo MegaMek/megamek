@@ -2519,11 +2519,14 @@ public class FireControl {
             }
 
             final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), weaponType);
-            // Log failures.
+            // if we found preferred ammo but can't apply it to the weapon, log it and continue.
             if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
                 owner.log(getClass(), "loadAmmo(Entity, Targetable)", LogLevel.WARNING,
                           shooter.getDisplayName() + " tried to load " + currentWeapon.getName() + " with ammo " +
                           mountedAmmo.getDesc() + " but failed somehow.");
+                continue;
+            // if we didn't find preferred ammo after all, continue
+            } else if (mountedAmmo == null) {
                 continue;
             }
             final WeaponAttackAction action = info.getAction();

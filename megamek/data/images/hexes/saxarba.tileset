@@ -33,6 +33,7 @@
 
 include "saxarba/Pavement.tileinc"
 
+
 #GRAY SAND
 super -3 "sand:*" "lunar" "saxarba/base/base_sand_gray_-3.png"
 super -2 "sand:*" "lunar" "saxarba/base/base_sand_gray_-2.png"
@@ -384,11 +385,9 @@ super * "rapids:*" "" "saxarba/water/torrent.png"
 super * "ice:1" "" "saxarba/misc/ice.png"
 super * "ice:*" "" "saxarba/misc/ice.png"
 
-#Fluff
-include "saxarba/LandingPads/LandingPads.tileinc"
 
 #SPECIAL SIRMEGAV BUILDINGS
-include "saxarba/SirMegaV/SirMegaVBuildings.tileinc"
+include "saxarba/SMV_Buildings/SirMegaVBuildings.tileinc"
 
 #BUILDINGS
 #Standard buildings for mars and lunar and volcano themes
@@ -411,9 +410,11 @@ include "saxarba/BuildingsSClassNoArmor_noClassSpecified.tileinc"
 
 #BRIDGES
 include "saxarba/BasicBridges.tileinc"
-
 #REMAINS
 #FLUFF
+include "saxarba/SMV_Piping/SMV_Piping.tileinc"
+include "saxarba/SMV_LandingPads/LandingPads.tileinc"
+
 include "saxarba/StandardFluff.tileinc"
 
 #ARMS & LEGS
@@ -630,3 +631,11 @@ base 8 "" "lunar" "saxarba/theme_lunar/base_lunar_8.png;saxarba/theme_lunar/base
 base 9 "" "lunar" "saxarba/theme_lunar/base_lunar_9.png;saxarba/theme_lunar/base_lunar_9b.png;saxarba/theme_lunar/base_lunar_9c.png;saxarba/theme_lunar/base_lunar_9d.png;saxarba/theme_lunar/base_lunar_9e.png;saxarba/theme_lunar/base_lunar_9f.png"
 base 10 "" "lunar" "saxarba/theme_lunar/base_lunar_10.png;saxarba/theme_lunar/base_lunar_10b.png;saxarba/theme_lunar/base_lunar_10c.png;saxarba/theme_lunar/base_lunar_10d.png;saxarba/theme_lunar/base_lunar_10e.png;saxarba/theme_lunar/base_lunar_10f.png"
 
+
+
+# To avoid errors
+super * "fluff:*" "" "saxarba/misc/blank.png"
+super * "road_fluff:*" "" "saxarba/misc/blank.png"
+super * "ground_fluff:*" "" "saxarba/misc/blank.png"
+super * "water_fluff:*" "" "saxarba/misc/blank.png"
+super * "bldg_fluff:*" "" "saxarba/misc/blank.png"

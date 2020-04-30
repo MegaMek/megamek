@@ -119,8 +119,4 @@ super * "fluff:14:27" "" "runway/runway_start_1.png"
 super * "fluff:14:28" "" "runway/runway_start_2.png"
 super * "fluff:14:29" "" "runway/runway_start_3.png"
 
-super * "fluff:*" "" "saxarba/misc/blank.png"
-super * "road_fluff:*" "" "saxarba/misc/blank.png"
-super * "ground_fluff:*" "" "saxarba/misc/blank.png"
-super * "water_fluff:*" "" "saxarba/misc/blank.png"
-super * "bldg_fluff:*" "" "saxarba/misc/blank.png"
+

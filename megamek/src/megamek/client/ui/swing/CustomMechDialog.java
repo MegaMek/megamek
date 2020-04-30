@@ -591,6 +591,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
     }
 
+    public ClientGUI getClientGUI() {
+        return clientgui;
+    }
+
     private void setupButtons() {
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);

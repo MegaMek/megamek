@@ -103,14 +103,14 @@ public class CustomPilotView extends JPanel {
             }
         });
         
-        portraitDialog = new PortraitChoiceDialog(parent.clientgui.getFrame(), button);
+        portraitDialog = new PortraitChoiceDialog(parent.getClientGUI().getFrame(), button);
         portraitDialog.setPilot(entity.getCrew(), slot);
         add(button, GBC.std().gridheight(2));
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomName")); //$NON-NLS-1$
         button.addActionListener(e -> {
             gender = RandomGenderGenerator.generate();
-            fldName.setText(RandomNameGenerator.getInstance().generate(gender));
+            fldName.setText(RandomNameGenerator.getInstance().generate(gender, parent.getClientGUI().getName()));
         });
         add(button, GBC.eop());
 

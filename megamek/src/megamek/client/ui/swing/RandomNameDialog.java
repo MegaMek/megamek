@@ -161,7 +161,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
                     for (int i = 0; i < ent.getCrew().getSlotCount(); i++) {
                         Gender gender = RandomGenderGenerator.generate();
                         ent.getCrew().setGender(gender, i);
-                        ent.getCrew().setName(RandomNameGenerator.getInstance().generate(gender), i);
+                        ent.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, c.getName()), i);
                     }
                     c.sendUpdateEntity(ent);
                 }

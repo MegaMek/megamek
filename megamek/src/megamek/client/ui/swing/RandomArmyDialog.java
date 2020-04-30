@@ -763,9 +763,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
                     p.maxYear = Integer.parseInt(m_tMaxYear.getText());
                     unitsModel.setData(RandomArmyCreator.generateArmy(p));
                 }
-            } catch (NumberFormatException ex) {
-                //ignored
-            }finally{
+            } catch (NumberFormatException ignored) {
+            } finally{
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         } else if (ev.getSource().equals(m_bGenerate)) {
@@ -870,7 +869,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
 
     private void updateRATs() {
         Iterator<String> rats = rug.getRatList();
-        if(null == rats) {
+        if (null == rats) {
             return;
         }  
         
@@ -946,10 +945,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
     	if (fRec != null) {
 			generatedRAT = UnitTable.findTable(fRec, m_pRATGenOptions.getUnitType(),
 			        m_pRATGenOptions.getYear(), m_pRATGenOptions.getRating(),
-			        (List<Integer>)m_pRATGenOptions.getListOption("weightClasses"),
+			        (List<Integer>) m_pRATGenOptions.getListOption("weightClasses"),
 					m_pRATGenOptions.getIntegerOption("networkMask"),
-					(List<EntityMovementMode>)m_pRATGenOptions.getListOption("motiveTypes"),
-					(List<MissionRole>)m_pRATGenOptions.getListOption("roles"),
+					(List<EntityMovementMode>) m_pRATGenOptions.getListOption("motiveTypes"),
+					(List<MissionRole>) m_pRATGenOptions.getListOption("roles"),
 					m_pRATGenOptions.getIntegerOption("roleStrictness"));
 			ratModel.refreshData();
     	}
@@ -968,7 +967,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-            if(cs.useAverageSkills()) {
+            if (cs.useAverageSkills()) {
                 int[] skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
     
                 int gunnery = skills[0];
@@ -979,15 +978,15 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
 
                 if (e.getCrew() instanceof LAMPilot) {
                     skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
-                    ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
-                    ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
+                    ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
+                    ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
                 }
             }
             e.getCrew().sortRandomSkills();
             if (cs.generateNames()) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
-                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender), i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, m_clientgui.getName()), i);
             }
         }
     }

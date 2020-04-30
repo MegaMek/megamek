@@ -3563,7 +3563,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     public class MekTableMouseAdapter extends MouseInputAdapter implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent action) {
             StringTokenizer st = new StringTokenizer(action.getActionCommand(), "|");
@@ -3571,9 +3570,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             int[] rows = tableEntities.getSelectedRows();
             int row = tableEntities.getSelectedRow();
             Entity entity = mekModel.getEntityAt(row);
-            Vector<Entity> entities = new Vector<Entity>();
-            for (int i = 0; i < rows.length; i++) {
-                entities.add(mekModel.getEntityAt(rows[i]));
+            Vector<Entity> entities = new Vector<>();
+            for (int value : rows) {
+                entities.add(mekModel.getEntityAt(value));
             }
             if (null == entity) {
                 return;
@@ -3646,7 +3645,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
                         Gender gender = RandomGenderGenerator.generate();
                         e.getCrew().setGender(gender, i);
-                        e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender), i);
+                        e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, c.getName()), i);
                     }
                     c.sendUpdateEntity(e);
                 }
@@ -3664,14 +3663,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 boolean hasEnoughCargoCapacity;
                 String errorMessage = "";
                 if (bayNumber != -1) {
-                    Transporter bay = loadingEntity.getBayById(bayNumber);
+                    Bay bay = loadingEntity.getBayById(bayNumber);
                     if (null != bay) {
-                        double loadSize = entities.stream().mapToDouble(e -> ((Bay) bay).spaceForUnit(e)).sum();
+                        double loadSize = entities.stream().mapToDouble(bay::spaceForUnit).sum();
                         capacity = bay.getUnused();
                         hasEnoughCargoCapacity = loadSize <= capacity;
                         errorMessage = Messages.getString("LoadingBay.baytoomany") + // $NON-NLS-2$
-                                " " + (int) ((Bay) bay).getUnusedSlots()
-                                + ((Bay) bay).getDefaultSlotDescription() + ".";
+                                " " + (int) bay.getUnusedSlots()
+                                + bay.getDefaultSlotDescription() + ".";
                         // We're also using bay number to distinguish between front and rear locations
                         // for protomech mag clamp systems
                     } else if (loadingEntity.hasETypeFlag(Entity.ETYPE_MECH)
@@ -3681,18 +3680,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         errorMessage = Messages.getString("LoadingBay.protostoomany");
                     } else {
                         hasEnoughCargoCapacity = false;
-                        errorMessage = Messages.getString("LoadingBay.bayNumberNotFound", new Object[] {bayNumber});
+                        errorMessage = Messages.getString("LoadingBay.bayNumberNotFound", bayNumber);
                     }
                 } else {
                     HashMap<Long, Double> capacities, counts;
-                    capacities = new HashMap<Long, Double>();
-                    counts = new HashMap<Long, Double>();
-                    HashMap<Transporter, Double> potentialLoad = new HashMap<Transporter, Double>();
+                    capacities = new HashMap<>();
+                    counts = new HashMap<>();
+                    HashMap<Transporter, Double> potentialLoad = new HashMap<>();
                     // Get the counts and capacities for all present types
                     for (Entity e : entities) {
                         long entityType = e.getEntityType();
                         long loaderType = loadingEntity.getEntityType();
-                        double unitSize = 0;
+                        double unitSize;
                         if ((entityType & Entity.ETYPE_MECH) != 0) {
                             entityType = Entity.ETYPE_MECH;
                             unitSize = 1;
@@ -3785,8 +3784,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                             } else {
                                 messageName = "LoadingBay.nonbaytoomany";
                             }
-                            errorMessage = Messages.getString(messageName,
-                                    new Object[] { currCount, Entity.getEntityTypeName(typeId), currCapacity });
+                            errorMessage = Messages.getString(messageName, currCount,
+                                    Entity.getEntityTypeName(typeId), currCapacity);
                         }
                     }
                 }

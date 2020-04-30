@@ -402,7 +402,7 @@ public class RandomNameGenerator implements Serializable {
                         // Add information to maps
                         // The weights for ethnic given names for each surname ethnicity will be
                         // stored in the file at i + 2, so that is where we will parse them from
-                        for (int i = 1; i <= numEthnicCodes; i++) {
+                        for (int i = 0; i <= numEthnicCodes; i++) {
                             factionGivenNames.get(key).put(ethnicCode, new WeightedMap<>());
                             factionGivenNames.get(key).get(ethnicCode).add(
                                     Integer.parseInt(values[i + 2]), i);

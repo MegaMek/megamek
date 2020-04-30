@@ -1119,6 +1119,21 @@ public class EquipmentType implements ITechnology {
         return false;
     }
 
+    /**
+     * @return The increment between sizes of variable-sized equipment
+     */
+    public Double variableStepSize() {
+        return 1.0;
+    }
+
+    /**
+     * @return The maximum size of variable-sized equipment. Items with no maximum
+     *         return {@code null}.
+     */
+    public @Nullable Double variableMaxSize() {
+        return null;
+    }
+
     public TechAdvancement getTechAdvancement() {
         return techAdvancement;
     }

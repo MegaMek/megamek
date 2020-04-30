@@ -841,7 +841,7 @@ public class MiscType extends EquipmentType {
             double tWeight = defaultRounding.round(entity.getWeight() * 0.02, entity);
             return Math.min(tWeight, 50000) + size * 150.0;
         } else if (hasFlag(MiscType.F_DTAC)) {
-            return defaultRounding.round(entity.getWeight() * 0.03, entity) + size * 105.0;
+            return defaultRounding.round(entity.getWeight() * 0.03, entity) + size * 150.0;
         } else if (hasFlag(MiscType.F_SDS_DESTRUCT)) {
             return Math.min(RoundWeight.nextTon(entity.getWeight() * 0.1), 10000);
         } else if (hasFlag(MiscType.F_MASH)) {

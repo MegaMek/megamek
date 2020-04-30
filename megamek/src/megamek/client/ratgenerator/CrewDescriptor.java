@@ -47,38 +47,33 @@ public class CrewDescriptor {
         this.assignment = assignment;
         gender = RandomGenderGenerator.generate();
         name = generateName(gender);
-        rank = assignment.getCoRank() == null?0:assignment.getCoRank();
+        rank = assignment.getCoRank() == null ? 0 : assignment.getCoRank();
         title = null;
         setSkills();
     }
 
     private String generateName(Gender gender) {
         if (assignment.getFactionRec().isClan()) {
-            RandomNameGenerator.getInstance().setChosenFaction("Clan");
-            return RandomNameGenerator.getInstance().generate(gender);
+            return RandomNameGenerator.getInstance().generate(gender, true, RandomNameGenerator.KEY_DEFAULT_CLAN);
         } else if (!assignment.getFaction().contains(".")) {
             // Try to match our faction to one of the rng settings.
-            for (Iterator<String> iter = RandomNameGenerator.getInstance().getFactions(); iter.hasNext();) {
-                final String f = iter.next();
-                if (assignment.getFaction().equalsIgnoreCase(f)) {
-                    RandomNameGenerator.getInstance().setChosenFaction(f);
-                    return RandomNameGenerator.getInstance().generate(gender);
+            for (String faction : RandomNameGenerator.getInstance().getFactions()) {
+                if (assignment.getFaction().equalsIgnoreCase(faction)) {
+                    return RandomNameGenerator.getInstance().generate(gender, false, faction);
                 }
             }
         }
         // Go up one parent level and try again
         for (String parent : assignment.getFactionRec().getParentFactions()) {
-            for (Iterator<String> iter = RandomNameGenerator.getInstance().getFactions(); iter.hasNext();) {
-                final String f = iter.next();
-                if (parent.equalsIgnoreCase(f)) {
-                    RandomNameGenerator.getInstance().setChosenFaction(f);
-                    return RandomNameGenerator.getInstance().generate(gender);
+            for (String faction : RandomNameGenerator.getInstance().getFactions()) {
+                if (parent.equalsIgnoreCase(faction)) {
+                    return RandomNameGenerator.getInstance().generate(gender, false, faction);
                 }
             }
         }
-        //Give up and use general
-        RandomNameGenerator.getInstance().setChosenFaction("General");
-        return RandomNameGenerator.getInstance().generate(gender);
+
+        //Give up and use the default
+        return RandomNameGenerator.getInstance().generate(gender, false, RandomNameGenerator.KEY_DEFAULT_FACTION);
     }
 
     /**

@@ -18,10 +18,7 @@ package megamek.client.generator;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import megamek.common.Configuration;
 import megamek.common.enums.Gender;
@@ -242,10 +239,11 @@ public class RandomNameGenerator implements Serializable {
 
     //region Getters and Setters
     /**
-     * @return the list of potential keys to generate the name from
+     * @return the list of potential keys to generate the name from - this MUST NOT be modified
+     * once it has been gotten
      */
-    public Iterator<String> getFactions() {
-        return (factionEthnicCodes == null) ? null : factionEthnicCodes.keySet().iterator();
+    public Set<String> getFactions() {
+        return (factionEthnicCodes == null) ? null : factionEthnicCodes.keySet();
     }
 
     /**

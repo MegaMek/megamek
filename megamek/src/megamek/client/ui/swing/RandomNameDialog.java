@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -83,13 +84,12 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
     private void updateFactions() {
         //Fill the combobox with choices
-        Iterator<String> factions = RandomNameGenerator.getInstance().getFactions();
+        Set<String> factions = RandomNameGenerator.getInstance().getFactions();
         if (null == factions) {
             return;
         }
         comboFaction.removeAllItems();
-        while (factions.hasNext()) {
-            String faction = factions.next();
+        for (String faction : factions) {
             comboFaction.addItem(faction);
         }
         comboFaction.setSelectedItem(RandomNameGenerator.getInstance().getChosenFaction());

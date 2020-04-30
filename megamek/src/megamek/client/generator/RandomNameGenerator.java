@@ -142,13 +142,17 @@ public class RandomNameGenerator implements Serializable {
     }
 
     //region Name Generators
-    @Deprecated // April 29th as part of fixing an error in MegaMek for Clanner Name Generation
+    /**
+     * This is used to generate a name for MegaMek only that uses the chosen faction
+     * @param gender the gender to generate the name for
+     * @return a string containing the randomly generated name
+     */
     public String generate(Gender gender) {
-        return generate(gender, chosenFaction);
+        return generate(gender, getChosenFaction());
     }
 
     /**
-     * Generate a Name for MegaMek only, using the clan name hack
+     * Generate a name for MegaMek only, using the clan name hack
      *
      * This is a hack used for MegaMek, where we assume any chosen faction with a name containing the
      * String "clan" is a clan faction.
@@ -157,10 +161,8 @@ public class RandomNameGenerator implements Serializable {
      * @return a string containing the randomly generated name
      */
     public String generate(Gender gender, String faction) {
-        // this is a total hack, but for now lets assume that
-        // if the chosenFaction name contains the word "clan"
-        // we should only spit out first names
-        logger.warning(getClass(), "generate", "hit for faction " + faction);
+        // this is a total hack, but for now lets assume that if the faction name contains
+        // the word "clan" we should only spit out first names
         return generate(gender, faction.toLowerCase().contains("clan"), faction);
     }
 

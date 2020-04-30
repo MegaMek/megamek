@@ -3645,7 +3645,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
                         Gender gender = RandomGenderGenerator.generate();
                         e.getCrew().setGender(gender, i);
-                        e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, c.getName()), i);
+                        e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getOwner().getName()), i);
                     }
                     c.sendUpdateEntity(e);
                 }

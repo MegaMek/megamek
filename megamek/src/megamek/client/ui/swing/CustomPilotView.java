@@ -110,7 +110,7 @@ public class CustomPilotView extends JPanel {
         button = new JButton(Messages.getString("CustomMechDialog.RandomName")); //$NON-NLS-1$
         button.addActionListener(e -> {
             gender = RandomGenderGenerator.generate();
-            fldName.setText(RandomNameGenerator.getInstance().generate(gender, parent.getClientGUI().getName()));
+            fldName.setText(RandomNameGenerator.getInstance().generate(gender, entity.getOwner().getName()));
         });
         add(button, GBC.eop());
 

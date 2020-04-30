@@ -774,7 +774,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             if (cs.generateNames()) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
-                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender), i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, (String) comboPlayer.getSelectedItem()), i);
             }
         }
         e.getCrew().sortRandomSkills();

@@ -986,7 +986,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
             if (cs.generateNames()) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
-                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, m_clientgui.getName()), i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, (String) m_chPlayer.getSelectedItem()), i);
             }
         }
     }

@@ -62,12 +62,8 @@ public class DefaultMmLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T log(final String className,
-                                       final String methodName,
-                                       final LogLevel logLevel,
-                                       final String message,
-                                       final T throwable) {
-
+    public <T extends Throwable> T log(final String className, final String methodName,
+                                       final LogLevel logLevel, String message, final T throwable) {
         // Make sure logging has been initialized.
         if (!initialized.get()) {
             if (!Logger.getRootLogger().getAllAppenders().hasMoreElements()) {
@@ -84,8 +80,9 @@ public class DefaultMmLogger implements MMLogger {
         }
 
         // Track the methods logged.
-        LoggingProperties.getInstance().putProperty("method",
-                                                    methodName);
+        LoggingProperties.getInstance().putProperty("method", methodName);
+
+        message = methodName + " : " + message;
 
         // Write the log entry.
         logger.log(logLevel.getLevel(), message, throwable);

@@ -341,7 +341,7 @@ public class RandomNameGenerator implements Serializable {
             factionEthnicCodes.put(KEY_DEFAULT_FACTION, new WeightedMap<>());
 
             // Add information to maps
-            for (int i = 0; i <= numEthnicCodes; i++) {
+            for (int i = 1; i <= numEthnicCodes; i++) {
                 factionGivenNames.get(KEY_DEFAULT_FACTION).put(i, new WeightedMap<>());
                 factionGivenNames.get(KEY_DEFAULT_FACTION).get(i).add(1, i);
                 factionEthnicCodes.get(KEY_DEFAULT_FACTION).add(1, i);
@@ -370,16 +370,20 @@ public class RandomNameGenerator implements Serializable {
                         String[] values = input.nextLine().split(",");
                         int ethnicCode = Integer.parseInt(values[0]);
 
+                        factionGivenNames.get(key).put(ethnicCode, new WeightedMap<>());
+
                         // Add information to maps
                         // The weights for ethnic given names for each surname ethnicity will be
                         // stored in the file at i + 2, so that is where we will parse them from
-                        for (int i = 0; i <= numEthnicCodes; i++) {
-                            factionGivenNames.get(key).put(ethnicCode, new WeightedMap<>());
-                            factionGivenNames.get(key).get(ethnicCode).add(
-                                    Integer.parseInt(values[i + 2]), i);
+                        for (int i = 1; i <= numEthnicCodes; i++) {
+                            factionGivenNames.get(key).get(ethnicCode).add(Integer.parseInt(values[i + 2].trim()), i);
                         }
 
-                        factionEthnicCodes.get(key).add(Integer.parseInt(values[2]), ethnicCode);
+                        if (!factionGivenNames.get(key).get(ethnicCode).isEmpty()) {
+                            factionEthnicCodes.get(key).add(Integer.parseInt(values[2]), ethnicCode);
+                        } else {
+                            logger.error(getClass(), "populateNames", "There are no possible options for " + ethnicCode + " for key " + key);
+                        }
                     }
                 } catch (IOException fne) {
                     logger.error(RandomNameGenerator.class, "populateNames",

@@ -32,6 +32,7 @@ VERSION HISTORY:
 + Issue #1786: Corrected Stacked Units Tooltip ECM Reporting
 + Issue #1856: Map Editor - Bridges now appear on preview hex and various QoL changes
 + Issue #1891: Battlefist now applies only once and for the proper arm
++ PR #1901: Re-enable Princess to fire rocket launchers and other one-shot weapons
 
 0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO

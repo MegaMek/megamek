@@ -414,6 +414,7 @@ include "saxarba/BasicBridges.tileinc"
 #FLUFF
 include "saxarba/SMV_Piping/SMV_Piping.tileinc"
 include "saxarba/SMV_LandingPads/LandingPads.tileinc"
+include "saxarba/SMV_FactionSymbols/FactionSymbols.tileinc"
 
 include "saxarba/StandardFluff.tileinc"
 

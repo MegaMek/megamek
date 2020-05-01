@@ -403,9 +403,6 @@ include "saxarba/Includes/BuildingsSealedLunar_noClassSpecified.tileinc"
 include "saxarba/Includes/BuildingsSealedMars_noClassSpecified.tileinc"
 include "saxarba/Includes/BuildingsSealedVolcano_noClassSpecified.tileinc"
 
-include "saxarba/Includes/BuildingsSClassArmor.tileinc"
-include "saxarba/Includes/BuildingsSClassNoArmor.tileinc"
-
 include "saxarba/Includes/BuildingsSClassArmor_noClassSpecified.tileinc"
 include "saxarba/Includes/BuildingsSClassNoArmor_noClassSpecified.tileinc"
 

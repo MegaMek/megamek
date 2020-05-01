@@ -764,13 +764,13 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
                     unitsModel.setData(RandomArmyCreator.generateArmy(p));
                 }
             } catch (NumberFormatException ignored) {
-            } finally{
+            } finally {
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         } else if (ev.getSource().equals(m_bGenerate)) {
         	generateRAT();
         } else if (ev.getSource().equals(m_bAddToForce)) {
-            for(int sel : m_lRAT.getSelectedRows()) {
+            for (int sel : m_lRAT.getSelectedRows()) {
                 MechSummary ms = generatedRAT.getMechSummary(sel);
                 if (ms != null) {
                 	armyModel.addUnit(ms);

@@ -31,7 +31,7 @@
 
 #####SUPER TERRAINS#####
 
-include "saxarba/Pavement.tileinc"
+include "saxarba/Includes/Pavement.tileinc"
 
 
 #GRAY SAND
@@ -252,7 +252,7 @@ super * "water:1" "volcano" "saxarba/theme_volcano/water_volcano_1.png"
 super * "water:1" "" "saxarba/water/water_1.png"
 
 #ROADS
-include "saxarba/BasicRoads.tileinc"
+include "saxarba/Includes/BasicRoads.tileinc"
 #For maps with roads!=1
 super * "road:*" "" "saxarba/misc/legacy_road0.png"
 
@@ -260,7 +260,7 @@ super * "road:*" "" "saxarba/misc/legacy_road0.png"
 include "StandardIncludes/StandardRailMaglev.tileinc"
 
 #FUEL TANKS
-include "saxarba/FuelTanks.tileinc"
+include "saxarba/Includes/FuelTanks.tileinc"
 
 #TROPICAL THEME TREES
 super * "woods:1;fluff:12" "tropical" "saxarba/theme_tropical/orchard_tropical.png"
@@ -388,35 +388,36 @@ super * "ice:*" "" "saxarba/misc/ice.png"
 
 #SPECIAL SIRMEGAV BUILDINGS
 include "saxarba/SMV_Buildings/SirMegaVBuildings.tileinc"
+include "saxarba/Includes/BuildingsAddtlSaxarba.tileinc"
 
 #BUILDINGS
 #Standard buildings for mars and lunar and volcano themes
-include "saxarba/BuildingsSealedLunar.tileinc"
-include "saxarba/BuildingsSealedMars.tileinc"
-include "saxarba/BuildingsSealedVolcano.tileinc"
+include "saxarba/Includes/BuildingsSealedLunar.tileinc"
+include "saxarba/Includes/BuildingsSealedMars.tileinc"
+include "saxarba/Includes/BuildingsSealedVolcano.tileinc"
 
-include "saxarba/BuildingsNonSClassArmor.tileinc"
-include "saxarba/BuildingsNonSClassNoArmor.tileinc"
+include "saxarba/Includes/BuildingsNonSClassArmor.tileinc"
+include "saxarba/Includes/BuildingsNonSClassNoArmor.tileinc"
 
-include "saxarba/BuildingsSealedLunar_noClassSpecified.tileinc"
-include "saxarba/BuildingsSealedMars_noClassSpecified.tileinc"
-include "saxarba/BuildingsSealedVolcano_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSealedLunar_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSealedMars_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSealedVolcano_noClassSpecified.tileinc"
 
-include "saxarba/BuildingsSClassArmor.tileinc"
-include "saxarba/BuildingsSClassNoArmor.tileinc"
+include "saxarba/Includes/BuildingsSClassArmor.tileinc"
+include "saxarba/Includes/BuildingsSClassNoArmor.tileinc"
 
-include "saxarba/BuildingsSClassArmor_noClassSpecified.tileinc"
-include "saxarba/BuildingsSClassNoArmor_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSClassArmor_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSClassNoArmor_noClassSpecified.tileinc"
 
 #BRIDGES
-include "saxarba/BasicBridges.tileinc"
+include "saxarba/Includes/BasicBridges.tileinc"
 #REMAINS
 #FLUFF
 include "saxarba/SMV_Piping/SMV_Piping.tileinc"
 include "saxarba/SMV_LandingPads/LandingPads.tileinc"
 include "saxarba/SMV_FactionSymbols/FactionSymbols.tileinc"
 
-include "saxarba/StandardFluff.tileinc"
+include "saxarba/Includes/StandardFluff.tileinc"
 
 #ARMS & LEGS
 super * "arms:1" "" "saxarba/misc/arm1.png"
@@ -640,3 +641,5 @@ super * "road_fluff:*" "" "saxarba/misc/blank.png"
 super * "ground_fluff:*" "" "saxarba/misc/blank.png"
 super * "water_fluff:*" "" "saxarba/misc/blank.png"
 super * "bldg_fluff:*" "" "saxarba/misc/blank.png"
+
+super * "bldg_class:0" "" "saxarba/misc/blank.png"

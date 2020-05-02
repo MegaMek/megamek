@@ -504,7 +504,6 @@ public class Princess extends BotClient {
             final Entity deployEntity = game.getEntity(entityNum);
             final IHex deployHex = game.getBoard().getHex(deployCoords);
 
-            // Entity.elevatoinOccupied performs a null check on IHex
             int deployElevation = getDeployElevation(deployEntity, deployHex);
 
             // Compensate for hex elevation where != 0...
@@ -520,6 +519,7 @@ public class Princess extends BotClient {
      * Gun Emplacements should deploy on the rooftop of the building for maximum visibility.
      */
     private int getDeployElevation(Entity deployEntity, IHex deployHex) {
+        // Entity.elevationOccupied performs a null check on IHex
         if (deployEntity instanceof GunEmplacement) {
            return deployEntity.elevationOccupied(deployHex) + deployHex.terrainLevel(Terrains.BLDG_ELEV);
         } else {

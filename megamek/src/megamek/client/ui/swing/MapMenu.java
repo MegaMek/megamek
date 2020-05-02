@@ -1352,7 +1352,8 @@ public class MapMenu extends JPopupMenu {
                 || hasAmmoType(AmmoType.T_ALAMO)
                 || hasAmmoType(AmmoType.T_KILLER_WHALE)
                 || hasAmmoType(AmmoType.T_LONG_TOM)
-                || hasAmmoType(AmmoType.T_THUMPER))) {
+                || hasAmmoType(AmmoType.T_THUMPER)
+                || hasAmmoType(AmmoType.T_BA_TUBE))) {
             menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
         }
         // Check for adding TAG targeting buildings and hexes

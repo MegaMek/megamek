@@ -639,6 +639,7 @@ public class AreaEffectHelper {
             falloff = 25;
         }
         if (ammo.getAmmoType() == AmmoType.T_BA_TUBE) {
+            damage *= attackingBA;
             falloff = 2 * attackingBA;
         }
         if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {

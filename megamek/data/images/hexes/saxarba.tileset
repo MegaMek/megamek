@@ -91,6 +91,8 @@ super * "water:0" "lunar" "saxarba/theme_lunar/water_lunar_0.png"
 super * "water:0" "volcano" "saxarba/theme_volcano/water_volcano_0.png"
 
 #WATER
+# Garden Lakes use water:0 so they must be included now
+include "saxarba/SMV_Fluff/GardenLakes.tileinc"
 super * "water:0" "" "saxarba/water/water_0.png"
 
 #ELEVATOR
@@ -413,8 +415,9 @@ include "saxarba/Includes/BasicBridges.tileinc"
 #REMAINS
 #FLUFF
 include "saxarba/SMV_LandingPads/LandingPads.tileinc"
-include "saxarba/SMV_FactionSymbols/FactionSymbols.tileinc"
+include "saxarba/SMV_GroundSymbols/GroundSymbols.tileinc"
 include "saxarba/SMV_Letters/Letters.tileinc"
+include "saxarba/SMV_Fluff/Fluff.tileinc"
 
 include "saxarba/Includes/StandardFluff.tileinc"
 

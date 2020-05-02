@@ -520,7 +520,7 @@ public class Princess extends BotClient {
      * Gun Emplacements should deploy on the rooftop of the building for maximum visibility.
      */
     private int getDeployElevation(Entity deployEntity, IHex deployHex) {
-        if(deployEntity instanceof GunEmplacement) {
+        if (deployEntity instanceof GunEmplacement) {
            return deployEntity.elevationOccupied(deployHex) + deployHex.terrainLevel(Terrains.BLDG_ELEV);
         } else {
             return deployEntity.elevationOccupied(deployHex);

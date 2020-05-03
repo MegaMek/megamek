@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.47.7-SNAPSHOT
++ PR #1912: Fixing spelling issues in Campaign Options
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

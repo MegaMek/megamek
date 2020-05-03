@@ -20,23 +20,18 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 
 import megamek.client.ui.Messages;
@@ -45,63 +40,53 @@ import megamek.client.ui.Messages;
  * Every about dialog in MegaMek should have an identical look-and-feel.
  */
 public class CommonHelpDialog extends JDialog {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = 5189627839475444823L;
     private static final String CLOSEACTION = "CloseAction"; //$NON-NLS-1$
-    private JTextArea lblHelp;
 
     /**
-     * Create a help dialog for the given parent <code>Frame</code> by reading
+     * Create a help dialog for the given <code>parentFrame</code> by reading
      * from the indicated <code>File</code>.
-     *
-     * @param frame - the parent <code>Frame</code> for this dialog. This
-     *            value should <b>not</b> be <code>null</code>.
-     * @param helpfile - the <code>File</code> containing the help text. This
-     *            value should <b>not</b> be <code>null</code>.
      */
-    public CommonHelpDialog(JFrame frame, File helpfile) {
+    public CommonHelpDialog(JFrame parentFrame, File helpfile) {
         // Construct the superclass.
-        super(frame);
+        super(parentFrame);
 
-        // Make sure we close at the appropriate times.
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                quit();
-            }
-        });
-
-        // Create the help dialog.
+        // Load the help file
         setLayout(new BorderLayout());
-        lblHelp = new JTextArea(Messages
-                .getString("CommonHelpDialog.noHelp.Message")); //$NON-NLS-1$
-        lblHelp.setEditable(false);
-        lblHelp.setOpaque(false);
-        JScrollPane scroll = new JScrollPane(lblHelp,
-                javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        getContentPane().add(scroll, BorderLayout.CENTER);
+        JTextPane helpPane = new JTextPane();
+        helpPane.setEditable(false);
+
+        try {
+            URL url = helpfile.toURI().toURL();
+            helpPane.setPage(url);
+            setTitle(Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName()); //$NON-NLS-1$
+        } catch (Exception e1) {
+            helpPane.setText(Messages.getString("CommonHelpDialog.errorReading") //$NON-NLS-1$
+                    + e1.getMessage());
+            setTitle(Messages.getString("CommonHelpDialog.noHelp.title")); //$NON-NLS-1$
+            e1.printStackTrace();
+        }
 
         // Add a "Close" button.
         Action closeAction = new AbstractAction() {
             private static final long serialVersionUID = 1680850851585381148L;
 
             public void actionPerformed(ActionEvent e) {
-                quit();
+                setVisible(false);
             }
         };
         JButton butClose = new JButton(closeAction);
-        butClose.setText(Messages
-                .getString("CommonHelpDialog.Close")); //$NON-NLS-1$
+        butClose.setText(Messages.getString("Close")); //$NON-NLS-1$
 
-        KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0);
         InputMap imap = butClose.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap amap = butClose.getActionMap();
-        imap.put(ks, CLOSEACTION);
-        amap.put(CLOSEACTION, closeAction);
+        imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), CLOSEACTION);
+        imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CLOSEACTION);
+        butClose.getActionMap().put(CLOSEACTION, closeAction);
 
+        // Add to the frame
+        JScrollPane scroll = new JScrollPane(helpPane);
+        getContentPane().add(scroll, BorderLayout.CENTER);
         getContentPane().add(butClose, BorderLayout.SOUTH);
 
         // Make the window half the screensize by default.
@@ -112,63 +97,7 @@ public class CommonHelpDialog extends JDialog {
         setSize(windowSize);
 
         // Place this dialog on middle of screen.
-        setLocationRelativeTo(frame);
-
-        setFile(helpfile);
-    }
-
-    public void setFile(File helpfile) {
-        // Create a buffer to contain our help text.
-        StringBuffer buff = new StringBuffer();
-
-        // Were we passed a null helpfile?
-        if (helpfile == null) {
-            // Big error.
-            setTitle(Messages.getString("CommonHelpDialog.noHelp.title")); //$NON-NLS-1$
-            buff.append(Messages.getString("CommonHelpDialog.noHelp.Message")); //$NON-NLS-1$
-        } else {
-            // Set our title.
-            setTitle(Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName()); //$NON-NLS-1$
-
-            // Try to read in the help file.
-            boolean firstLine = true;
-            try {
-                BufferedReader input = new BufferedReader(new FileReader(
-                        helpfile));
-                String line = input.readLine();
-                // while ( line != null && line.length() > 0 ) {
-                while (line != null) {
-                    if (firstLine) {
-                        firstLine = false;
-                    } else {
-                        buff.append(" \n"); // the space is to force a line-feed
-                                            // on empty lines //$NON-NLS-1$
-                    }
-                    buff.append(line);
-                    line = input.readLine();
-                }
-                input.close();
-            } catch (IOException exp) {
-                if (!firstLine) {
-                    buff.append("\n \n"); //$NON-NLS-1$
-                }
-                buff
-                        .append(
-                                Messages
-                                        .getString("CommonHelpDialog.errorReading"))//$NON-NLS-1$
-                        .append(exp.getMessage());
-                exp.printStackTrace();
-            }
-        } // End non-null-helpfile
-        lblHelp.setText(buff.toString());
-    }
-
-    /**
-     * Close this dialog.
-     */
-    /* package */
-    void quit() {
-        setVisible(false);
+        setLocationRelativeTo(null);
     }
 
 }

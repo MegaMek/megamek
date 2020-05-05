@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
 0.47.7-SNAPSHOT
++ PR #1912: Fixing spelling issues in Campaign Options
++ Issue #1850: Plasma Rifle Dealing too much damage to conventional fighters
++ Issue #1916: Primitive and Primitive Prototype Weapons should have fixed intro dates.
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed
@@ -12480,3 +12483,4 @@ v 0.21.2 (02-11-02, 3pm)
 + punching supported
 + just about everything that has to do with hitting re-written or modified
 + butt
+

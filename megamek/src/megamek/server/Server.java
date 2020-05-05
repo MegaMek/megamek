@@ -28956,9 +28956,9 @@ public class Server implements Runnable {
             entity.setSecondaryFacing(entity.getFacing());
         }
 
-        // if falling into a bog-down hex, the entity automatically gets stuck
+        // if falling into a bog-down hex, the entity automatically gets stuck (except when on a bridge or building)
         // but avoid reporting this twice in the case of DFAs
-        if (!entity.isStuck()) {
+        if (!entity.isStuck() && (entity.getElevation() == 0)) {
             if (fallHex.getBogDownModifier(entity.getMovementMode(),
                     entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
                 entity.setStuck(true);

@@ -402,30 +402,43 @@ public class AmmoType extends EquipmentType {
         }
         // there a couple of flags that need to be checked
         if (getAmmoType() == T_MML) {
-            if (hasFlag(F_MML_LRM) != ((AmmoType) other).hasFlag(F_MML_LRM)) {
+            if (!matchingMMLFlags((AmmoType) other)) {
                 return false;
             }
         }
         if (getAmmoType() == T_AR10) {
-            if (hasFlag(F_AR10_BARRACUDA) != ((AmmoType) other)
-                    .hasFlag(F_AR10_BARRACUDA)) {
-                return false;
-            }
-            if (hasFlag(F_AR10_WHITE_SHARK) != ((AmmoType) other)
-                    .hasFlag(F_AR10_WHITE_SHARK)) {
-                return false;
-            }
-            if (hasFlag(F_AR10_KILLER_WHALE) != ((AmmoType) other)
-                    .hasFlag(F_AR10_KILLER_WHALE)) {
-                return false;
-            }
-            if (hasFlag(F_NUCLEAR) != ((AmmoType) other)
-                    .hasFlag(F_NUCLEAR)) {
+            if (!matchingAR10Flags((AmmoType) other)) {
                 return false;
             }
         }
         return ((getAmmoType() == ((AmmoType) other).getAmmoType()) && (getRackSize() == ((AmmoType) other)
                 .getRackSize()));
+    }
+
+    /**
+     * When comparing <code>AmmoType</code>s, look at the ammoType only.
+     *
+     * @param other the <code>Object</code> to compare to this one.
+     * @return <code>true</code> if the other is an <code>AmmoType</code> object
+     *         of the same <code>ammoType</code> as this object. N.B. different
+     *         munition types are still equal.
+     */
+    public boolean equalsAmmoTypeOnly(Object other) {
+        if (!(other instanceof AmmoType)) {
+            return false;
+        }
+        // there a couple of flags that need to be checked
+        if (getAmmoType() == T_MML) {
+            if (!matchingMMLFlags((AmmoType) other)) {
+                return false;
+            }
+        }
+        if (getAmmoType() == T_AR10) {
+            if (!matchingAR10Flags((AmmoType) other)) {
+                return false;
+            }
+        }
+        return getAmmoType() == ((AmmoType) other).getAmmoType();
     }
 
     @Override
@@ -15935,5 +15948,27 @@ public class AmmoType extends EquipmentType {
             return false;
         }
         return true;
+    }
+
+    // Helper method for AmmoType::equals operation
+    private boolean matchingMMLFlags(AmmoType other) {
+        return hasFlag(F_MML_LRM) == other.hasFlag(F_MML_LRM);
+    }
+
+    // Helper method for AmmoType::equals operation
+    private boolean matchingAR10Flags(AmmoType other) {
+        if (hasFlag(F_AR10_BARRACUDA) == other.hasFlag(F_AR10_BARRACUDA)) {
+            return true;
+        }
+        if (hasFlag(F_AR10_WHITE_SHARK) == other.hasFlag(F_AR10_WHITE_SHARK)) {
+            return true;
+        }
+        if (hasFlag(F_AR10_KILLER_WHALE) == other.hasFlag(F_AR10_KILLER_WHALE)) {
+            return true;
+        }
+        if (hasFlag(F_NUCLEAR) == other.hasFlag(F_NUCLEAR)) {
+            return true;
+        }
+        return false;
     }
 }

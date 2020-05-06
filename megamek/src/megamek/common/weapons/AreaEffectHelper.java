@@ -558,7 +558,7 @@ public class AreaEffectHelper {
                 if (entity.getInternal(loc) > 0) {
                     HitData hit = new HitData(loc);
                     vPhaseReport.addAll(server.damageEntity(entity, hit, hits,
-                            false, DamageType.NONE, false, true, false));
+                            false, DamageType.NONE, false, false, false));
                 }
             }
         } else {

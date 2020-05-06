@@ -554,10 +554,12 @@ public class AreaEffectHelper {
         vPhaseReport.add(r);
         if (entity instanceof BattleArmor) {
             // BA take full damage to each trooper, ouch!
-            for (int loc = 1; loc < entity.locations(); loc++) {
-                HitData hit = new HitData(loc);
-                vPhaseReport.addAll(server.damageEntity(entity, hit, hits,
-                        false, DamageType.NONE, false, false, false));
+            for (int loc = 0; loc < entity.locations(); loc++) {
+                if (entity.getInternal(loc) > 0) {
+                    HitData hit = new HitData(loc);
+                    vPhaseReport.addAll(server.damageEntity(entity, hit, hits,
+                            false, DamageType.NONE, false, false, false));
+                }
             }
         } else {
             while (hits > 0) {

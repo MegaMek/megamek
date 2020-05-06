@@ -4,6 +4,7 @@ VERSION HISTORY:
 + PR #1912: Fixing spelling issues in Campaign Options
 + Issue #1850: Plasma Rifle Dealing too much damage to conventional fighters
 + Issue #1916: Primitive and Primitive Prototype Weapons should have fixed intro dates.
++ Issue #1915: Battle Armor taking Damage multiples from artillery attacks
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

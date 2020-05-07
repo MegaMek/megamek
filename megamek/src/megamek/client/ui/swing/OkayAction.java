@@ -39,7 +39,8 @@ public class OkayAction extends AbstractAction {
     
     /** 
      * Constructs a new <code>AbstractAction</code> that forwards an
-     * Okay/Done to myOwner. Assigns the Messages.Okay text to the button.
+     * Okay to myOwner. Assigns the Messages.Okay text to the button.
+     * The forwarded event has the actionCommand: <code>OkayAction.OKAY</code>.
      */
     public OkayAction(ActionListener myOwner) {
         owner = myOwner;

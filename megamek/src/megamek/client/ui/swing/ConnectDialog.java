@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,7 +34,7 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
 /** The Connect to game (as Bot or Player) dialog */
-public class ConnectDialog extends JDialog implements ActionListener {
+public class ConnectDialog extends ClientDialog implements ActionListener {
     
     private static final long serialVersionUID = 5895056240077042429L;
     
@@ -70,23 +69,10 @@ public class ConnectDialog extends JDialog implements ActionListener {
         c.weighty = 0.0;
         c.insets = new Insets(5, 5, 5, 5);
         c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        middlePanel.add(yourNameL, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        middlePanel.add(yourNameF, c);
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        middlePanel.add(serverAddrL, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        middlePanel.add(serverAddrF, c);
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        middlePanel.add(portL, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        middlePanel.add(portF, c);
+        
+        addOptionRow(middlePanel, c, yourNameL, yourNameF);
+        addOptionRow(middlePanel, c, serverAddrL, serverAddrF);
+        addOptionRow(middlePanel, c, portL, portF);
         
         add(middlePanel, BorderLayout.CENTER);
         
@@ -101,9 +87,7 @@ public class ConnectDialog extends JDialog implements ActionListener {
         
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2
-                - getSize().width / 2, frame.getLocation().y
-                + frame.getSize().height / 2 - getSize().height / 2);
+        center();
     }
 
     public void actionPerformed(ActionEvent e) {

@@ -26,7 +26,6 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,7 +39,7 @@ import megamek.common.preference.PreferenceManager;
 /**
  * The host game dialog shown when hosting a new game and when loading a game
  */
-public class HostDialog extends JDialog implements ActionListener {
+public class HostDialog extends ClientDialog implements ActionListener {
     
     private static final long serialVersionUID = -103094006944170081L;
     
@@ -105,33 +104,16 @@ public class HostDialog extends JDialog implements ActionListener {
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         
-        middlePanel.add(yourNameL, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        middlePanel.add(yourNameF, c);
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        middlePanel.add(serverPassL, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        middlePanel.add(serverPassF, c);
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        middlePanel.add(portL, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        middlePanel.add(portF, c);
-
+        addOptionRow(middlePanel, c, yourNameL, yourNameF);
+        addOptionRow(middlePanel, c, serverPassL, serverPassF);
+        addOptionRow(middlePanel, c, portL, portF);
+        
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         middlePanel.add(registerC, c);
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        middlePanel.add(metaserverL, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        middlePanel.add(metaserverF, c);
-
+        
+        addOptionRow(middlePanel, c, metaserverL, metaserverF);
+        
         add(middlePanel, BorderLayout.CENTER);  
         
         // The buttons
@@ -145,9 +127,7 @@ public class HostDialog extends JDialog implements ActionListener {
         
         pack();
         setResizable(false);
-        setLocation((frame.getLocation().x + (frame.getSize().width / 2))
-                - (getSize().width / 2), (frame.getLocation().y
-                + (frame.getSize().height / 2)) - (getSize().height / 2));
+        center();
     }
 
     public void actionPerformed(ActionEvent e) {

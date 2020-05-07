@@ -17,19 +17,21 @@ package megamek.client.ui.swing;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
 
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * A MegaMek Dialog box.
  */
 public class ClientDialog extends JDialog {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 6154951760485853883L;
+    
     private static final double TASKBAR_SIZE = .05;
     private static final int CONTAINER_BUFFER = 10;
 
@@ -98,5 +100,26 @@ public class ClientDialog extends JDialog {
         setSize(width, height);
         setLocationRelativeTo(owner);
     }
-
+    
+    /** Center the dialog within the owner frame.  */
+    protected void center() {
+        if (owner == null) {
+            return;
+        }
+        
+        setLocation(owner.getLocation().x + (owner.getSize().width / 2) 
+              - (getSize().width / 2),
+              owner.getLocation().y + (owner.getSize().height / 2) 
+              - (getSize().height / 2));
     }
+    
+    protected void addOptionRow(JPanel panel, GridBagConstraints c, JLabel label, JComponent comp) {
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        panel.add(label, c);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        panel.add(comp, c);
+    }
+
+}

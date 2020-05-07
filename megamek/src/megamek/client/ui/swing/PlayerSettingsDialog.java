@@ -81,7 +81,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
 
         this.client = client;
         this.clientgui = clientgui;
-
+        
         fillInValues();
 
         // The main options 
@@ -102,45 +102,17 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.weightx = 0.0;
         c.weighty = 0.0;
         
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        panMain.add(labInit, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        panMain.add(texInit, c);
-
+        addOptionRow(panMain, c, labInit, texInit);
+        
         c.gridwidth = 2;
         c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = GridBagConstraints.REMAINDER;
         panMain.add(labMines, c);
-
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        panMain.add(labConventional, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        panMain.add(fldConventional, c);
-
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        panMain.add(labVibrabomb, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        panMain.add(fldVibrabomb, c);
-
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        panMain.add(labActive, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        panMain.add(fldActive, c);
-
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        panMain.add(labInferno, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        panMain.add(fldInferno, c);
+        
+        addOptionRow(panMain, c, labConventional, fldConventional);
+        addOptionRow(panMain, c, labVibrabomb, fldVibrabomb);
+        addOptionRow(panMain, c, labActive, fldActive);
+        addOptionRow(panMain, c, labInferno, fldInferno);
         
         // Disable changing minefields mid-game
         if (client.getGame().getPhase() != Phase.PHASE_LOUNGE) {
@@ -159,10 +131,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
 
         setMinimumSize(new Dimension(300,260));
         setResizable(false);
-        setLocation(clientgui.frame.getLocation().x + (clientgui.frame.getSize().width / 2) 
-                - (getSize().width / 2),
-                clientgui.frame.getLocation().y + (clientgui.frame.getSize().height / 2) 
-                - (getSize().height / 2));
+        center();
         validate();
         pack();
     }

@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team 
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -12,14 +13,10 @@
  *  for more details.
  */
 
-/*
- * CustomMechDialog.java
- *
- * Created on March 18, 2002, 2:56 PM
- */
-
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -27,6 +24,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -47,232 +45,102 @@ import megamek.common.IGame.Phase;
  */
 public class PlayerSettingsDialog extends ClientDialog implements ActionListener {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -4597870528499580517L;
 
     private Client client;
     private ClientGUI clientgui;
 
-    private JPanel panMain = new JPanel();
-    private JPanel panButtons = new JPanel();
-
-    private JLabel labPlayer = new JLabel();
-    private JLabel labInit = new JLabel(Messages.getString("PlayerSettingsDialog.ConstantBonus"));
+    private JLabel labInit = new JLabel(
+            Messages.getString("PlayerSettingsDialog.ConstantBonus")); //$NON-NLS-1$
     private JTextField texInit = new JTextField(3);
-    private JLabel labMines = new JLabel(Messages.getString("PlayerSettingsDialog.Minefields"));
-    private JLabel labConventional = new JLabel(Messages.getString("PlayerSettingsDialog.labConventional"), SwingConstants.RIGHT); //$NON-NLS-1$
-    //private JLabel labCommandDetonated = new JLabel(Messages.getString("PlayerSettingsDialog.labCommandDetonated"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JLabel labVibrabomb = new JLabel(Messages.getString("PlayerSettingsDialog.labVibrabomb"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JLabel labActive = new JLabel(Messages.getString("PlayerSettingsDialog.labActive"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JLabel labInferno = new JLabel(Messages.getString("PlayerSettingsDialog.labInferno"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JLabel labMines = new JLabel(
+            Messages.getString("PlayerSettingsDialog.Minefields"), //$NON-NLS-1$
+            SwingConstants.CENTER);
+    private JLabel labConventional = new JLabel(
+            Messages.getString("PlayerSettingsDialog.labConventional"), //$NON-NLS-1$ 
+            SwingConstants.RIGHT); 
+    private JLabel labVibrabomb = new JLabel(
+            Messages.getString("PlayerSettingsDialog.labVibrabomb"), //$NON-NLS-1$
+            SwingConstants.RIGHT); 
+    private JLabel labActive = new JLabel(
+            Messages.getString("PlayerSettingsDialog.labActive"), //$NON-NLS-1$
+            SwingConstants.RIGHT); 
+    private JLabel labInferno = new JLabel(
+            Messages.getString("PlayerSettingsDialog.labInferno"), //$NON-NLS-1$
+            SwingConstants.RIGHT); 
 
     private JTextField fldConventional = new JTextField(3);
-    // private JTextField fldCommandDetonated = new JTextField(1);
     private JTextField fldVibrabomb = new JTextField(3);
     private JTextField fldActive = new JTextField(3);
     private JTextField fldInferno = new JTextField(3);
 
-    private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-
     public PlayerSettingsDialog(ClientGUI clientgui, Client client) {
 
-        super(clientgui.frame, Messages.getString("PlayerSettingsDialog.title"), true); //$NON-NLS-1$
+        super(clientgui.frame, 
+                Messages.getString("PlayerSettingsDialog.title"), true); //$NON-NLS-1$
 
         this.client = client;
         this.clientgui = clientgui;
 
-        setUpMain();
+        fillInValues();
 
-        panButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        panButtons.add(butOkay);
-        butOkay.addActionListener(this);
-        panButtons.add(butCancel);
-        butCancel.addActionListener(this);
-
-        GridBagLayout gridbag = new GridBagLayout();
+        // The main options 
+        JPanel panMain = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        getContentPane().setLayout(gridbag);
-
+        
+        JLabel labPlayer = new JLabel(
+                Messages.getString(
+                        "PlayerSettingsDialog.Player",
+                        client.getLocalPlayer().getName()), 
+                SwingConstants.CENTER);
+        labPlayer.setBorder(BorderFactory.createEmptyBorder(15, 5, 5, 5));
+        add(labPlayer, BorderLayout.PAGE_START);
+        
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(5, 5, 5, 5);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
         c.gridheight = 1;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.anchor = GridBagConstraints.CENTER;
-        gridbag.setConstraints(panMain, c);
-        getContentPane().add(panMain);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 1.0;
+        c.weightx = 0.0;
         c.weighty = 0.0;
-        c.anchor = GridBagConstraints.CENTER;
-        gridbag.setConstraints(panButtons, c);
-        getContentPane().add(panButtons);
-
-        setResizable(true);
-        validate();
-        pack();
-
-    }
-
-    private void setUpMain() {
-
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panMain.setLayout(gridbag);
-
-        refreshValues();
         
-        labPlayer.setText(client.getLocalPlayer().getName());
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 0;
-        c.gridy = 0;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        panMain.add(labInit, c);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        panMain.add(texInit, c);
+
         c.gridwidth = 2;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
         c.anchor = GridBagConstraints.CENTER;
-        gridbag.setConstraints(labPlayer, c);
-        panMain.add(labPlayer);
-        
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 0;
-        c.gridy++;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        panMain.add(labMines, c);
+
         c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
+        c.anchor = GridBagConstraints.EAST;
+        panMain.add(labConventional, c);
+        c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(labInit, c);
-        panMain.add(labInit);
+        panMain.add(fldConventional, c);
 
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 1;
         c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        gridbag.setConstraints(texInit, c);
-        panMain.add(texInit);
-
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 2;
-        c.gridheight = 1;
-        c.weightx = 1.0;
-        c.weighty = 0.0;
+        c.anchor = GridBagConstraints.EAST;
+        panMain.add(labVibrabomb, c);
+        c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(labMines, c);
-        panMain.add(labMines);
+        panMain.add(fldVibrabomb, c);
 
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 0;
-        c.gridy++;
         c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
         c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labConventional, c);
-        panMain.add(labConventional);
+        panMain.add(labActive, c);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        panMain.add(fldActive, c);
 
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 1;
         c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        gridbag.setConstraints(fldConventional, c);
-        panMain.add(fldConventional);
-
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
         c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labVibrabomb, c);
-        panMain.add(labVibrabomb);
-
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        gridbag.setConstraints(fldVibrabomb, c);
-        panMain.add(fldVibrabomb);
-
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labActive, c);
-        panMain.add(labActive);
-
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        gridbag.setConstraints(fldActive, c);
-        panMain.add(fldActive);
-
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 0;
-        c.gridy++;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labInferno, c);
-        panMain.add(labInferno);
-
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        gridbag.setConstraints(fldInferno, c);
-        panMain.add(fldInferno);
+        panMain.add(labInferno, c);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        panMain.add(fldInferno, c);
         
         // Disable changing minefields mid-game
         if (client.getGame().getPhase() != Phase.PHASE_LOUNGE) {
@@ -281,10 +149,25 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
             fldActive.setEnabled(false);
             fldInferno.setEnabled(false);
         }
+        add(panMain, BorderLayout.CENTER);
 
+        // Buttons
+        JPanel panButtons = new JPanel(new FlowLayout());
+        panButtons.add(new JButton(new OkayAction(this)));
+        panButtons.add(new ButtonEsc(new CancelAction(this)));
+        add(panButtons, BorderLayout.PAGE_END);
+
+        setMinimumSize(new Dimension(300,260));
+        setResizable(false);
+        setLocation(clientgui.frame.getLocation().x + (clientgui.frame.getSize().width / 2) 
+                - (getSize().width / 2),
+                clientgui.frame.getLocation().y + (clientgui.frame.getSize().height / 2) 
+                - (getSize().height / 2));
+        validate();
+        pack();
     }
 
-    private void refreshValues() {
+    private void fillInValues() {
         IPlayer player = client.getLocalPlayer();
         texInit.setText(Integer.toString(player.getConstantInitBonus()));
         fldConventional.setText(Integer.toString(player.getNbrMFConventional()));
@@ -294,8 +177,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(butOkay)) {
-
+        if (e.getActionCommand().equals(OkayAction.OKAY)) {
             String init = texInit.getText();
             int initB = 0;
             try {
@@ -356,9 +238,6 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
 
             client.sendPlayerInfo();
             setVisible(false);
-        } else if (e.getSource().equals(butCancel)) {
-            setVisible(false);
-        }
-
+        } 
     }
 }

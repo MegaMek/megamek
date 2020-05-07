@@ -558,7 +558,7 @@ public class AreaEffectHelper {
                 if (entity.getInternal(loc) > 0) {
                     HitData hit = new HitData(loc);
                     vPhaseReport.addAll(server.damageEntity(entity, hit, hits,
-                            false, DamageType.NONE, false, true, false));
+                            false, DamageType.NONE, false, false, false));
                 }
             }
         } else {
@@ -639,6 +639,7 @@ public class AreaEffectHelper {
             falloff = 25;
         }
         if (ammo.getAmmoType() == AmmoType.T_BA_TUBE) {
+            damage *= attackingBA;
             falloff = 2 * attackingBA;
         }
         if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {

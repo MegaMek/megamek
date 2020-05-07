@@ -1,6 +1,12 @@
 VERSION HISTORY:
 ----------------
-0.47.6-SNAPSHOT
+0.47.7-SNAPSHOT
++ PR #1912: Fixing spelling issues in Campaign Options
++ Issue #1850: Plasma Rifle Dealing too much damage to conventional fighters
++ Issue #1916: Primitive and Primitive Prototype Weapons should have fixed intro dates.
++ Issue #1915: Battle Armor taking Damage multiples from artillery attacks
+
+0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed
 + PR #1808: Abandon ship! Large spacecraft can now launch escape pods, giving the opposing player more opportunity to commit war crimes.
 + Issue #1824: Implementing Tactical Operations Low Visibility Errata
@@ -32,6 +38,9 @@ VERSION HISTORY:
 + Issue #1786: Corrected Stacked Units Tooltip ECM Reporting
 + Issue #1856: Map Editor - Bridges now appear on preview hex and various QoL changes
 + Issue #1891: Battlefist now applies only once and for the proper arm
++ PR #1901: Re-enable Princess to fire rocket launchers and other one-shot weapons
++ PR #1908: Switching default tileset to Saxarba
++ PR #1909: BA Tube artillery fixes #1848,#1849
 
 0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO
@@ -12475,3 +12484,4 @@ v 0.21.2 (02-11-02, 3pm)
 + punching supported
 + just about everything that has to do with hitting re-written or modified
 + butt
+

@@ -2,7 +2,7 @@
 Pike Support Vehicle (Standard),1
 SRM Carrier (Standard),2
 LRM Carrier (Standard),3
-Vargr APC,4
+Vargr APC (Standard),4
 SRM Carrier (Standard),5
 Bulldog Medium Tank (Standard),6
 Manticore Heavy Tank (Standard),5

@@ -397,7 +397,6 @@ public class AmmoType extends EquipmentType {
      */
     @Override
     public boolean equals(Object other) {
-
         return equalsAmmoTypeOnly(other) && (getRackSize() == ((AmmoType) other)
                 .getRackSize());
     }

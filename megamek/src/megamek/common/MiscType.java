@@ -446,7 +446,7 @@ public class MiscType extends EquipmentType {
                         Messages.getString("MiscType.theaters") :
                         Messages.getString("MiscType.theater"));
             } else if (hasFlag(MiscType.F_LADDER)) {
-                return String.format(" (%d m");
+                return String.format(" (%d m)", (int) size);
             }
         }
         return "";

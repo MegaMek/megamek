@@ -6946,7 +6946,7 @@ public class Compute {
             } else if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
                 crew += 5;
             } else if (m.getType().hasFlag(MiscType.F_MASH)) {
-                crew += 5 * m.getSize();
+                crew += 5 * (int) m.getSize();
             }
         }
         return crew;

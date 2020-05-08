@@ -31,7 +31,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setDefault(LAST_CONNECT_ADDR, "localhost");
         store.setDefault(LAST_CONNECT_PORT, 2346);
         store.setDefault(LAST_SERVER_PORT, 2346);
-        store.setDefault(MAP_TILESET, "atmospheric.tileset");
+        store.setDefault(MAP_TILESET, "saxarba.tileset");
         store.setDefault(MAX_PATHFINDER_TIME,
                 MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
         store.setDefault(DATA_DIRECTORY, "data");

@@ -69,7 +69,7 @@ public class ISAC10Primitive extends ACWeapon {
             .setTechRating(RATING_C)
             .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
             .setISAdvancement(2450, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
+            .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_TA)
             .setProductionFactions(F_TA);
     }

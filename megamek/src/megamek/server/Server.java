@@ -9154,63 +9154,65 @@ public class Server implements Runnable {
                         vPhaseReport);
             }
 
-            // check for breaking magma crust
-            if (curHex.terrainLevel(Terrains.MAGMA) == 1) {
-                int roll = Compute.d6(1);
-                r = new Report(2395);
-                r.addDesc(entity);
-                r.add(roll);
-                r.subject = entity.getId();
-                addReport(r);
-                if (roll == 6) {
-                    curHex.removeTerrain(Terrains.MAGMA);
-                    curHex.addTerrain(Terrains.getTerrainFactory()
-                            .createTerrain(Terrains.MAGMA, 2));
-                    sendChangedHex(curPos);
-                    for (Entity en : game.getEntitiesVector(curPos)) {
-                        if (en != entity) {
-                            doMagmaDamage(en, false);
+            // Don't interact with terrain when jumping onto a building or a bridge
+            if (entity.getElevation() == 0) {
+                // check for breaking magma crust
+                if (curHex.terrainLevel(Terrains.MAGMA) == 1) {
+                    int roll = Compute.d6(1);
+                    r = new Report(2395);
+                    r.addDesc(entity);
+                    r.add(roll);
+                    r.subject = entity.getId();
+                    addReport(r);
+                    if (roll == 6) {
+                        curHex.removeTerrain(Terrains.MAGMA);
+                        curHex.addTerrain(Terrains.getTerrainFactory()
+                                .createTerrain(Terrains.MAGMA, 2));
+                        sendChangedHex(curPos);
+                        for (Entity en : game.getEntitiesVector(curPos)) {
+                            if (en != entity) {
+                                doMagmaDamage(en, false);
+                            }
                         }
                     }
                 }
-            }
 
-            // check for entering liquid magma
-            if (curHex.terrainLevel(Terrains.MAGMA) == 2) {
-                doMagmaDamage(entity, false);
-            }
+                // check for entering liquid magma
+                if (curHex.terrainLevel(Terrains.MAGMA) == 2) {
+                    doMagmaDamage(entity, false);
+                }
 
-            // jumped into swamp? maybe stuck!
-            if (curHex.getBogDownModifier(entity.getMovementMode(),
-                    entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
-                if (entity instanceof Mech) {
-                    entity.setStuck(true);
-                    r = new Report(2121);
-                    r.add(entity.getDisplayName(), true);
-                    r.subject = entity.getId();
-                    addReport(r);
-                    // check for quicksand
-                    addReport(checkQuickSand(curPos));
-                } else if (!entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-                    rollTarget = new PilotingRollData(entity.getId(),
-                            5, "entering boggy terrain");
-                    rollTarget.append(new PilotingRollData(entity.getId(),
-                            curHex.getBogDownModifier(entity.getMovementMode(),
-                                    entity instanceof LargeSupportTank),
-                            "avoid bogging down"));
-                    if (0 < doSkillCheckWhileMoving(entity, entity.getElevation(), curPos, curPos,
-                            rollTarget, false)) {
+                // jumped into swamp? maybe stuck!
+                if (curHex.getBogDownModifier(entity.getMovementMode(),
+                        entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
+                    if (entity instanceof Mech) {
                         entity.setStuck(true);
-                        r = new Report(2081);
-                        r.add(entity.getDisplayName());
+                        r = new Report(2121);
+                        r.add(entity.getDisplayName(), true);
                         r.subject = entity.getId();
                         addReport(r);
                         // check for quicksand
                         addReport(checkQuickSand(curPos));
+                    } else if (!entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+                        rollTarget = new PilotingRollData(entity.getId(),
+                                5, "entering boggy terrain");
+                        rollTarget.append(new PilotingRollData(entity.getId(),
+                                curHex.getBogDownModifier(entity.getMovementMode(),
+                                        entity instanceof LargeSupportTank),
+                                "avoid bogging down"));
+                        if (0 < doSkillCheckWhileMoving(entity, entity.getElevation(), curPos, curPos,
+                                rollTarget, false)) {
+                            entity.setStuck(true);
+                            r = new Report(2081);
+                            r.add(entity.getDisplayName());
+                            r.subject = entity.getId();
+                            addReport(r);
+                            // check for quicksand
+                            addReport(checkQuickSand(curPos));
+                        }
                     }
                 }
             }
-
             // If the entity is being swarmed, jumping may dislodge the fleas.
             if (Entity.NONE != swarmerId) {
                 final Entity swarmer = game.getEntity(swarmerId);
@@ -28954,9 +28956,9 @@ public class Server implements Runnable {
             entity.setSecondaryFacing(entity.getFacing());
         }
 
-        // if falling into a bog-down hex, the entity automatically gets stuck
+        // if falling into a bog-down hex, the entity automatically gets stuck (except when on a bridge or building)
         // but avoid reporting this twice in the case of DFAs
-        if (!entity.isStuck()) {
+        if (!entity.isStuck() && (entity.getElevation() == 0)) {
             if (fallHex.getBogDownModifier(entity.getMovementMode(),
                     entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
                 entity.setStuck(true);

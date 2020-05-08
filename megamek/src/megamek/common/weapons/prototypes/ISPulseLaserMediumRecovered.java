@@ -66,7 +66,7 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
             .setISAdvancement(3031, DATE_NONE, DATE_NONE, 3037, DATE_NONE)
-            .setISApproximate(true, false, false, true, false)
+            .setISApproximate(false, false, false, true, false)
             .setPrototypeFactions(F_FS,F_DC);
     }
 

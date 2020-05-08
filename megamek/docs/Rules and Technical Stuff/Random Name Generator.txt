@@ -1,6 +1,6 @@
 Random Name Generator:
 Author (updated version - April 29th, 2020): Justin "Windchild" Bowen
-Author (original version):
+Author (original version): Jay Lawson
 
 This class sets up a random name generator that can then be used to generate random pilot names.
 It has a couple different settings and flexible input file directory locations

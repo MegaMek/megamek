@@ -118,12 +118,12 @@ public class CommonAboutDialog extends JDialog {
         // Assemble all
         JPanel middlePanel = new JPanel();
         middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-        getContentPane().add(panTitle, BorderLayout.PAGE_START);
+        add(panTitle, BorderLayout.PAGE_START);
         middlePanel.add(lblVersion);
         middlePanel.add(lblCopyright);
         middlePanel.add(lblAbout);
-        getContentPane().add(middlePanel, BorderLayout.CENTER);
-        getContentPane().add(butClose, BorderLayout.PAGE_END);
+        add(middlePanel, BorderLayout.CENTER);
+        add(butClose, BorderLayout.PAGE_END);
 
         // Place in the middle of the screen
         pack();

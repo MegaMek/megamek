@@ -14,12 +14,13 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 
-import javax.swing.JComponent;
+import javax.swing.Box;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -113,13 +114,39 @@ public class ClientDialog extends JDialog {
               - (getSize().height / 2));
     }
     
-    protected void addOptionRow(JPanel panel, GridBagConstraints c, JLabel label, JComponent comp) {
+    /** 
+     * Adds a row (line) with the two JComponents <code>label, secondC</code>
+     * to the given <code>panel</code>, using constraints c. The label will be
+     * right-aligned, the secondC left-aligned to bring them close together. 
+     * Only useful for simple panels with GridBagLayout.
+     */
+    protected void addOptionRow(JPanel targetP, GridBagConstraints c, JLabel label, Component secondC) {
+        int oldGridW = c.gridwidth;
+        int oldAnchor = c.anchor;
+        
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
-        panel.add(label, c);
+        targetP.add(label, c);
+        
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
-        panel.add(comp, c);
+        targetP.add(secondC, c);
+        
+        c.gridwidth = oldGridW;
+        c.anchor = oldAnchor;
+    }
+    
+    /** 
+     * Adds a spacer row (line) to the given <code>panel</code>, 
+     * using constraints c. Only useful for simple panels with GridBagLayout.
+     */
+    protected void addSpacerRow(JPanel targetP, GridBagConstraints c, int vGap) {
+        int oldGridW = c.gridwidth;
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        targetP.add(Box.createVerticalStrut(vGap), c);
+        
+        c.gridwidth = oldGridW;
     }
 
 }

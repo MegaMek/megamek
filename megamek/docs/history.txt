@@ -5,6 +5,8 @@ VERSION HISTORY:
 + Issue #1850: Plasma Rifle Dealing too much damage to conventional fighters
 + Issue #1916: Primitive and Primitive Prototype Weapons should have fixed intro dates.
 + Issue #1915: Battle Armor taking Damage multiples from artillery attacks
++ Issue #1928: Quirk spelling error
++ Issue #1931: Quirk Updates (errata fixes)
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

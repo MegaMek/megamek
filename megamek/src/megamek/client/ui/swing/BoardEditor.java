@@ -451,8 +451,8 @@ public class BoardEditor extends JComponent
                     if ((b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) && isLMB) {
                         if (!isDragging) {
                             hexLeveltoDraw = board.getHex(c).getLevel();
-                            if (isSHIFT) hexLeveltoDraw++;
-                            else if (isALT) hexLeveltoDraw--;
+                            if (isALT) hexLeveltoDraw--;
+                            else if (isSHIFT) hexLeveltoDraw++;
                             isDragging = true;
                         }
                     }

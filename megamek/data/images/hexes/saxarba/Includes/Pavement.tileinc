@@ -8,9 +8,9 @@
 ## Pavement should be included very early as it should be underneath everything (draw first)
 
 # pavement:1 is saxarba's pavement
-## pavement:1;ground_fluff:1 is SirMegaV's pavement
-## pavement:1;ground_fluff:2 is saxarba's pavement urban garden variation
-# pavement:2 is saxarba's pavement urban garden variation (should not use terrain level)
+## pavement:1;ground_fluff:1 is SirMegaV's pavement (not implemented currently)
+## pavement:1;ground_fluff:2 is saxarba's pavement urban garden variation (not implemented currently)
+# pavement:2 is saxarba's pavement urban garden variation (should be changed to not use terrain level)
 
 
 # SirMegaV's pavement

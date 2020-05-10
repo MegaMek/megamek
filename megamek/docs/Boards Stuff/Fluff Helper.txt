@@ -17,25 +17,25 @@ fluff:93:1-14 - Gardens
 
 Roads ---------------
 
-road:1;road_fluff:1 - rounded road corners
-road:1;road_fluff:2 - horizontal roads
+road:1;road_fluff:1 - Rounded road corners
+road:1;road_fluff:2 - Horizontal roads
 
 Buildings ---------------
 
-building:1:00;bldg_fluff:1-4 - single hex light buildings
-building:1:*;bldg_fluff:100 - multi hex (variable) light buildings
+building:1:00;bldg_fluff:1-4 - Single hex light buildings
+building:1:*;bldg_fluff:100 - Multi hex (variable) light buildings
 
-building:2:00;bldg_fluff:1-34 - single hex medium buildings
-building:2:*;bldg_fluff:1-12 - multi hex (fixed) medium buildings
-building:2:*;bldg_fluff:100 - multi hex (variable) medium buildings
+building:2:00;bldg_fluff:1-34 - Single hex medium buildings
+building:2:*;bldg_fluff:1-12 - Multi hex (fixed) medium buildings
+building:2:*;bldg_fluff:100 - Multi hex (variable) medium buildings
 
-building:3:00;bldg_fluff:1-20 - single hex heavy buildings
-building:3:*;bldg_fluff:1-38 - multi hex (fixed) heavy buildings
-building:3:*;bldg_fluff:100 - multi hex (variable) heavy buildings
+building:3:00;bldg_fluff:1-20 - Single hex heavy buildings
+building:3:*;bldg_fluff:1-38 - Multi hex (fixed) heavy buildings
+building:3:*;bldg_fluff:100 - Multi hex (variable) heavy buildings
 
-building:4:00;bldg_fluff:1-15 - single hex hardened buildings
-building:4:*;bldg_fluff:1-54 - multi hex (fixed) hardened buildings
-building:4:*;bldg_fluff:100 - multi hex (variable) hardened buildings
+building:4:00;bldg_fluff:1-15 - Single hex hardened buildings
+building:4:*;bldg_fluff:1-54 - Multi hex (fixed) hardened buildings
+building:4:*;bldg_fluff:100 - Multi hex (variable) hardened buildings
 
 Ground Symbols, Factions -----------
 
@@ -51,14 +51,14 @@ fluff:58:1-13 - Rimworlds Republic Faction Symbol
 fluff:59:1-13 - Taurian Concordat Faction Symbol
 fluff:60:1-13 - Star League/Star League Faction Symbol
 fluff:61:1-13 - Star League/ComStar Faction Symbol
-fluff:62:1-13 - a Red Cross Symbol
+fluff:62:1-13 - Red Cross Symbol
 
 Landing Pads ---------------
 
 fluff:40:1-6 - VTOL landing pads 
-fluff:41:1-6 - medical landing pads
+fluff:41:1-6 - Medical landing pads
 fluff:42:1-12 - Aero landing pads
-fluff:43:1-6 - multihex dropship landing pads
+fluff:43:1-6 - Multihex dropship landing pads
 
 Letters and Numbers ----------------
 

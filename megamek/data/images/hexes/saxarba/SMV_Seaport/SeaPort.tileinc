@@ -1,6 +1,6 @@
 # ----------------------------------------------------
-# --------------- SirMegaV   -------------------
-# --------------- Sea Port System ---------------
+# --------------- SirMegaV   -------------------------
+# --------------- Sea Port System --------------------
 # ----------------------------------------------------
 
 # Sea Port with containers
@@ -9,9 +9,9 @@
 # the crane tips are fluff terrain without woods
 # Must be included before standard woods
 
-# wood:1;fluff:80:1-29 is Containers
-# wood:1;fluff:81:1-48 is Cranes
-# fluff:82:1-6 is Crane tips
+# wood:1;fluff:80:1-29 are Containers
+# wood:1;fluff:81:1-48 are Cranes
+# fluff:82:1-6 are Crane tips
 
 super * "woods:1;fluff:80:01" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-1-01.png"
 super * "woods:1;fluff:80:02" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-1-02.png"

@@ -5,10 +5,10 @@
 
 # Landing Pads
 
-# fluff:40:1-6 is VTOL landing pads 
-# fluff:41:1-6 is medical landing pads
-# fluff:42:1-12 is Aero landing pads
-# fluff:43:1-6 is multihex dropship landing pads
+# fluff:40:1-6 are VTOL landing pads 
+# fluff:41:1-6 are medical landing pads
+# fluff:42:1-12 are Aero landing pads
+# fluff:43:1-6 are multihex dropship landing pads
 
 # Spaceport System Set
 # SMV_Landing Pad - VTOL 

@@ -1,15 +1,15 @@
 # ----------------------------------------------------
 # --------------- SirMegaV Custom  -------------------
-# --------------- Letters ---------------
+# --------------- Letters and Numbers ----------------
 # ----------------------------------------------------
 
-# Letters on the ground
-# Should be included late so they draw on top of buildings
+# Letters and numbers on the ground
+# Should be included late so they can be drawn on top of buildings
 
-# fluff:70:1-78 is White Letters
-# fluff:71:1-78 is Black Letters
-# fluff:72:1-30 is White Numbers
-# fluff:73:1-30 is Black Numbers
+# fluff:70:1-78 are White Letters
+# fluff:71:1-78 are Black Letters
+# fluff:72:1-30 are White Numbers
+# fluff:73:1-30 are Black Numbers
 
 super * "fluff:70:1" "" "saxarba/SMV_Letters/FluffSystem-04-Alphanumeric-01-Character-1-01.png"
 super * "fluff:70:2" "" "saxarba/SMV_Letters/FluffSystem-04-Alphanumeric-01-Character-1-02.png"

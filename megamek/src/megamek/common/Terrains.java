@@ -199,7 +199,7 @@ public class Terrains implements ITerrainFactory {
             }
         case (BLDG_CLASS):
             if (level == 0) {
-                return "Standard Class";
+                return "Standard";
             } else if (level == 1) {
                 return "Hangar";
             } else if (level == 2) {

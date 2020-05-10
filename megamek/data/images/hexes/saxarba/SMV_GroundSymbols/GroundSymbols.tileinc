@@ -1,24 +1,24 @@
 # ----------------------------------------------------
 # --------------- SirMegaV Custom  -------------------
-# --------------- Faction Symbols an Red Cross ---------------
+# --------------- Faction Symbols and Red Cross ------
 # ----------------------------------------------------
 
-# Faction Symbols and the Res Cross
+# Faction Symbols and the Red Cross
 # Should be included late so they draw on top of buildings
 
-# fluff:50:1-13 is Cappellan Confederation Faction Symbol
-# fluff:51:1-13 is Draconis Combine Faction Symbol
-# fluff:52:1-13 is Federated Suns Faction Symbol
-# fluff:53:1-13 is Free Worlds League Faction Symbol
-# fluff:54:1-13 is Lyran Commonwealth Faction Symbol
-# fluff:55:1-13 is Terran Hegemony Faction Symbol
-# fluff:56:1-13 is Magistracy of Canopus Faction Symbol
-# fluff:57:1-13 is Outworlds Alliance Faction Symbol
-# fluff:58:1-13 is Rimworlds Republic Faction Symbol
-# fluff:59:1-13 is Taurian Concordat Faction Symbol
-# fluff:60:1-13 is Star League/Star League Faction Symbol
-# fluff:61:1-13 is Star League/ComStar Faction Symbol
-# fluff:62:1-13 is a Red Cross Symbol
+# fluff:50:1-13 are Cappellan Confederation Faction Symbols
+# fluff:51:1-13 are Draconis Combine Faction Symbols
+# fluff:52:1-13 are Federated Suns Faction Symbols
+# fluff:53:1-13 are Free Worlds League Faction Symbols
+# fluff:54:1-13 are Lyran Commonwealth Faction Symbols
+# fluff:55:1-13 are Terran Hegemony Faction Symbols
+# fluff:56:1-13 are Magistracy of Canopus Faction Symbols
+# fluff:57:1-13 are Outworlds Alliance Faction Symbols
+# fluff:58:1-13 are Rimworlds Republic Faction Symbols
+# fluff:59:1-13 are Taurian Concordat Faction Symbols
+# fluff:60:1-13 are Star League/Star League Faction Symbols
+# fluff:61:1-13 are Star League/ComStar Faction Symbols
+# fluff:62:1-13 are a Red Cross Symbols
 
 super * "fluff:50:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-01.png"
 super * "fluff:50:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-02.png"

@@ -2280,9 +2280,10 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
         misc.rulesRefs = "345,TO";
+        //Errata May 8/2020 - CGL requested change to TP.
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
                 .setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
-                .setISAdvancement(DATE_ES, 3078, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISAdvancement(DATE_ES, 3078, 3090, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, true, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 

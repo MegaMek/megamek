@@ -6,7 +6,7 @@ Vargr APC (Standard),4
 SRM Carrier (Standard),5
 Bulldog Medium Tank (Standard),6
 Manticore Heavy Tank (Standard),5
-Vargr APC LRM,4
+Vargr APC (LRM),4
 Bulldog Medium Tank (AC2),3
 Manticore Heavy Tank (Standard),2
 Laser Carrier (Standard),1

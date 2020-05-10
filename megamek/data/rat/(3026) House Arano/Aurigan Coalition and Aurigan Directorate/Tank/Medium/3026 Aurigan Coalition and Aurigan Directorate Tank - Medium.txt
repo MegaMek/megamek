@@ -1,6 +1,6 @@
 3026 Aurigan Coalition and Aurigan Directorate Tank - Medium
 Condor Heavy Hover Tank (Standard),1
-Sleipnir APC SRM,2
+Sleipnir APC (SRM),2
 Goblin Medium Tank (Standard),3
 Maxim Heavy Hover Transport (Standard),4
 Sleipnir APC (Standard),5

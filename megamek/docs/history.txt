@@ -8,7 +8,7 @@ VERSION HISTORY:
 + Issue #1928: Quirk spelling error
 + Issue #1931: Quirk Updates (errata fixes)
 + Issue #1880: Adding the Terrain Camo Pack (Thanks Teerayne) under Standard Camos
-	
++ Issue #1930: Fix Sandblaster SPA to not require Weapon Specialist
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

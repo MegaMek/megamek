@@ -1681,7 +1681,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Battle Hawk</chassis>
 		<unitType>Mech</unitType>
 		<quirk>rugged_1</quirk>
-		<quirk>bad_rep_is</quirk>
 	</unit>
 	
 	<unit>
@@ -10594,12 +10593,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>ISERLargeLaser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>
 	</unit>
 
 	<unit>
@@ -10609,12 +10603,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>Large Laser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>
 	</unit>
 
 	<unit>
@@ -10624,12 +10613,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>ISERLargeLaser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>
 	</unit>
 
 	<unit>
@@ -10639,6 +10623,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>command_mech</quirk>
 	</unit>
 
 	<unit>
@@ -10648,6 +10633,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10657,6 +10643,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10666,12 +10653,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>7</slot>
-			<weaponName>ISLargePulseLaser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10681,12 +10663,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>Large Laser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10696,12 +10673,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>ISERLargeLaser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10711,12 +10683,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>ISERLargeLaser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10726,6 +10693,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10735,6 +10703,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10744,12 +10713,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>ISERLargeLaser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10759,12 +10723,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>CLERLargeLaser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10774,12 +10733,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>Large Laser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10789,6 +10743,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10798,12 +10753,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>ISLargePulseLaser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10813,12 +10763,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>ISERLargeLaser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10828,6 +10773,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10837,12 +10783,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>ISERLargeLaser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10852,12 +10793,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>Large Laser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 
 	<unit>
@@ -10867,12 +10803,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_com</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>jettison_capable</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>ISLargePulseLaser</weaponName>
-		</weaponQuirk>
+		<quirk>command_mech</quirk>		
 	</unit>
 	
 	<unit>
@@ -10880,12 +10811,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>PXH-11K</model>
 		<unitType>Mech</unitType>
 		<quirk>poor_sealing</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>accurate</weaponQuirkName>
-			<location>RA</location>
-			<slot>4</slot>
-			<weaponName>TSEMP Cannon</weaponName>
-		</weaponQuirk>
 	</unit>
 	
 	<unit>
@@ -11736,6 +11661,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Mech</unitType>
 		<quirk>distracting</quirk>
 		<quirk>compact_mech</quirk>
+		<quirk>low_profile</quirk>
 		<quirk>bad_rep_is</quirk>
 	</unit>
 	
@@ -11965,6 +11891,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -11976,6 +11903,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -11987,6 +11915,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>LT</location>
@@ -12004,6 +11933,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -12015,6 +11945,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -12026,6 +11957,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -12037,6 +11969,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -12046,6 +11979,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>battle_fists_la</quirk>
 		<quirk>battle_fists_ra</quirk>
 		<quirk>imp_life_support</quirk>
+		<quirk>rugged_1</quirk>		
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>LT</location>
@@ -12063,6 +11997,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -12074,6 +12009,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -12085,6 +12021,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -12096,6 +12033,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -12107,6 +12045,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>LT</location>
@@ -12124,6 +12063,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -12135,6 +12075,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 
 	<unit>
@@ -12146,6 +12087,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_life_support</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<quirk>rugged_1</quirk>		
 	</unit>
 	
 	<unit>

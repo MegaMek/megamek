@@ -6723,7 +6723,9 @@ public abstract class Mech extends Entity {
         }
         for (Mounted mounted : getMisc()) {
             if ((mounted.getType().getCriticals(this) == 0)
-                    && !mounted.getType().hasFlag(MiscType.F_CASE)) {
+                    && !mounted.getType().hasFlag(MiscType.F_CASE)
+                    && !EquipmentType.isArmorType(mounted.getType())
+                    && !EquipmentType.isStructureType(mounted.getType())) {
                 sb.append(MtfFile.NO_CRIT).append(mounted.getType().getInternalName())
                         .append(":").append(getLocationAbbr(mounted.getLocation()))
                         .append(newLine);
@@ -7938,11 +7940,7 @@ public abstract class Mech extends Entity {
         }
     }
 
-    /**
-     * Is this a primitive Mech?
-     *
-     * @return
-     */
+    @Override
     public boolean isPrimitive() {
         return (getCockpitType() == Mech.COCKPIT_PRIMITIVE)
                 || (getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL);

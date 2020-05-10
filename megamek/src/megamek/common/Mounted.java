@@ -572,7 +572,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (isDWPMounted()) {
             return defaultRounding.round(retVal * 0.75, getEntity());
         } else if (isSquadSupportWeapon()) {
-            retVal *= getEntity().isClan() ? 1.4 : 1.5;
+            retVal *= getEntity().isClan() ? 0.4 : 0.5;
             return defaultRounding.round(retVal, getEntity());
         }
         return retVal;

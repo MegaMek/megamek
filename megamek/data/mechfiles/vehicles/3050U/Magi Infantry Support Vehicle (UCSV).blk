@@ -24,6 +24,10 @@ Magi Infantry Support Vehicle
 3068
 </year>
 
+<originalBuildYear>
+3068
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -49,7 +53,7 @@ troopspace:6.0
 </armor_type>
 
 <armor_tech>
--1
+1
 </armor_tech>
 
 <armor>
@@ -60,6 +64,7 @@ troopspace:6.0
 </armor>
 
 <Body Equipment>
+ISCASE
 IS Machine Gun Ammo - Half
 IS Machine Gun Ammo - Half
 IS Machine Gun Ammo - Half
@@ -84,7 +89,6 @@ Medium Laser
 </Left Equipment>
 
 <Rear Equipment>
-ISCASE
 </Rear Equipment>
 
 <source>

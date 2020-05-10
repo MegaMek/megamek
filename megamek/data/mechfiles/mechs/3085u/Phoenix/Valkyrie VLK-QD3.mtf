@@ -3,33 +3,33 @@ Valkyrie
 VLK-QD3
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO Project Pheonix - Civil War
+rules level:2
 
-Mass:30
-Engine:210 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
-Ejection:Full Head Ejection System
+mass:30
+engine:210 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:7
-Jump MP:6
+heat sinks:10 Double
+walk mp:7
+jump mp:6
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:8
-RA Armor:8
-LT Armor:10
-RT Armor:10
-CT Armor:12
-HD Armor:8
-LL Armor:12
-RL Armor:12
-RTL Armor:3
-RTR Armor:3
-RTC Armor:3
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:8
+RA armor:8
+LT armor:10
+RT armor:10
+CT armor:12
+HD armor:8
+LL armor:12
+RL armor:12
+RTL armor:3
+RTR armor:3
+RTC armor:3
 
 Weapons:3
 ER Medium Laser, Left Arm
@@ -42,10 +42,10 @@ Upper Arm Actuator
 Lower Arm Actuator
 ISERMediumLaser
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -58,39 +58,39 @@ Hand Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 LRM 5
 IS Ammo LRM-5
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -110,7 +110,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

@@ -1,3 +1,9 @@
+//
+// Setup Gradle Build Scans for this Project
+// with a special hook to place the Build Scan URI
+// onto a GitHub Actions job step output variable
+// called `buildScanUri`.
+//
 import com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin
 import com.gradle.scan.plugin.BuildScanPlugin
 import com.gradle.scan.plugin.PublishedBuildScan
@@ -40,6 +46,16 @@ void configureExtension(extension) {
     extension.buildScan.with {
         termsOfServiceUrl = "https://gradle.com/terms-of-service"
         termsOfServiceAgree = "yes"
+        
+        //
+        // After the build scan is published, put on STDOUT the special
+        // GitHub Actions syntax to set an Output Variable for the job
+        // step:
+        //
+        //     ::set-output name={variable}::{value}
+        //
+        // ref: https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-output-parameter
+        //
         buildScanPublished { PublishedBuildScan scan ->
             println "::set-output name=buildScanUri::${scan.buildScanUri}\n"
         }

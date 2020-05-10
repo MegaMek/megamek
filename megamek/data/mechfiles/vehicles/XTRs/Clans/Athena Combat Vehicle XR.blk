@@ -24,6 +24,10 @@ XR
 3068
 </year>
 
+<originalBuildYear>
+3068
+</originalBuildYear>
+
 <type>
 Clan Level 4
 </type>
@@ -32,6 +36,9 @@ Clan Level 4
 Tracked
 </motion_type>
 
+<transporters>
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
@@ -39,6 +46,10 @@ Tracked
 <engine_type>
 6
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 1
@@ -58,6 +69,7 @@ Tracked
 </armor>
 
 <Body Equipment>
+CLMediumChemLaserAmmo
 CLTargeting Computer
 CLLargeChemLaserAmmo
 CLLargeChemLaserAmmo
@@ -70,7 +82,6 @@ Clan Machine Gun Ammo - Full
 </Body Equipment>
 
 <Front Equipment>
-CLMediumChemLaserAmmo
 </Front Equipment>
 
 <Right Equipment>

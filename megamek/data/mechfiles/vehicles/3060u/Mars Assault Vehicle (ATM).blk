@@ -24,6 +24,10 @@ Mars Assault Vehicle
 3065
 </year>
 
+<originalBuildYear>
+3065
+</originalBuildYear>
+
 <type>
 Clan Level 3
 </type>
@@ -32,6 +36,9 @@ Clan Level 3
 Tracked
 </motion_type>
 
+<transporters>
+</transporters>
+
 <cruiseMP>
 2
 </cruiseMP>
@@ -39,6 +46,10 @@ Tracked
 <engine_type>
 0
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 1
@@ -57,6 +68,7 @@ Tracked
 </armor>
 
 <Body Equipment>
+Clan Machine Gun Ammo - Full
 Clan Gauss Ammo
 Clan Gauss Ammo
 Clan Streak SRM 4 Ammo
@@ -96,11 +108,10 @@ CLHeavyLargeLaser
 CLGaussRifle
 CLMG
 CLMG
-Clan Machine Gun Ammo - Full
 </Turret Equipment>
 
 <source>
-Civil War
+TRO 3060 - Civil War
 </source>
 
 <tonnage>

@@ -2519,14 +2519,19 @@ public class FireControl {
             }
 
             final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), weaponType);
-            // Log failures.
+            // if we found preferred ammo but can't apply it to the weapon, log it and continue.
             if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
                 owner.log(getClass(), "loadAmmo(Entity, Targetable)", LogLevel.WARNING,
                           shooter.getDisplayName() + " tried to load " + currentWeapon.getName() + " with ammo " +
                           mountedAmmo.getDesc() + " but failed somehow.");
+                continue;
+            // if we didn't find preferred ammo after all, continue
+            } else if (mountedAmmo == null) {
+                continue;
             }
             final WeaponAttackAction action = info.getAction();
             action.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
+            action.setAmmoCarrier(mountedAmmo.getEntity().getId());
             info.setAction(action);
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
                                  shooter.getEquipmentNum(mountedAmmo));
@@ -3279,7 +3284,7 @@ public class FireControl {
         }
         
         if(bestTarget != null) {
-            SearchlightAttackAction slaa = new SearchlightAttackAction(shooter.getId(), bestTarget.getTargetId());
+            SearchlightAttackAction slaa = new SearchlightAttackAction(shooter.getId(), bestTarget.getTargetType(), bestTarget.getTargetId());
             return slaa;
         }
         

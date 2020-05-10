@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ *  MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -32,10 +32,8 @@ import megamek.common.logging.DefaultMmLogger;
  * key (e.g. DC.SL for Draconis Combine/Sword of Light).
  *
  * @author Neoancient
- * 
  */
 public class FactionRecord {
-	
 	/**
 	 * Proportions of omni/Clan/upgraded tech are given for each faction
 	 * by the field manual series.  
@@ -77,13 +75,12 @@ public class FactionRecord {
 	private ArrayList<DateRange> yearsActive;
 	private ArrayList<String> ratingLevels;
 	private HashMap<Integer, Integer> pctSalvage;
-	// pctTech.get(category).get(era).get(ratingLevel)
 	private HashMap<TechCategory, HashMap<Integer, ArrayList<Integer>>> pctTech;
 	private HashMap<Integer, HashMap<String, Integer>> salvage;
 	/*
 	 * FM:Updates gives percentage values for omni, Clan, and SL tech. Later manuals are
 	 * less precise, giving omni percentages for Clans and (in FM:3085) upgrade percentage
-	 * for IS and Periphary factions. In order to use the values that are available without
+	 * for IS and Periphery factions. In order to use the values that are available without
 	 * either forcing conformity to guesses for later eras or suddenly removing constraints,
 	 * we extrapolate some values but provide a margin of conformity that grows as we
 	 * get farther from known values. upgradeMargin applies the percentage of units that
@@ -93,7 +90,6 @@ public class FactionRecord {
 	private HashMap<Integer, Integer> techMargin;
 	private HashMap<Integer, Integer> upgradeMargin;
 	
-	//weightDistribution.get(era).get(unitType)
 	private HashMap<Integer, HashMap<Integer,ArrayList<Integer>>> weightDistribution;
 	private ArrayList<String> parentFactions;
 	

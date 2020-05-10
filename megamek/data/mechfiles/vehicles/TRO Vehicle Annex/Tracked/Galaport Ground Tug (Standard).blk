@@ -59,7 +59,6 @@ Tracked
 <Body Equipment>
 SV Chassis Mod [Tractor]
 Environmental Sealing
-Environmental Sealed Chassis
 </Body Equipment>
 
 <Front Equipment>
@@ -88,6 +87,14 @@ Searchlight
 <structural_tech_rating>
 2
 </structural_tech_rating>
+
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
 
 <source>
 TRO VAr - Age of War

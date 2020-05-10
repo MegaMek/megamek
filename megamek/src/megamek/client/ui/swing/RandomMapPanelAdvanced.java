@@ -1853,7 +1853,7 @@ public class RandomMapPanelAdvanced extends JPanel {
 
     // Has the given field validate itself.
     private boolean isFieldVerified(VerifiableTextField field) {
-        String result = field.verifyText();
+        String result = field.verifyTextS();
         if (result != null) {
             result = field.getName() + ": " + result;
             new RuntimeException(result).printStackTrace();

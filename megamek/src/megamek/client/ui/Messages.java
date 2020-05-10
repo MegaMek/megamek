@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team  
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -22,31 +23,20 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
 public class Messages {
-    private static final String BUNDLE_NAME = "megamek.client.messages";//$NON-NLS-1$
+    private static final String BUNDLE_NAME = "megamek.client.messages"; //$NON-NLS-1$
 
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences()
-                    .getLocale(), new EncodeControl());
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME,
+            PreferenceManager.getClientPreferences().getLocale(), new EncodeControl());
 
-    private Messages() {
-        // All static class, should never be instantiated
-    }
+    // All static class, should never be instantiated
+    private Messages() { }
 
-    /**
-     * Check to see if a given key has valid internationalized text.
-     * @param key
-     * @return
-     */
+    /** Check to see if a given key has valid internationalized text. */
     public static boolean keyExists(String key) {
         return RESOURCE_BUNDLE.containsKey(key);
     }
 
-    /**
-     * Retrieve the internationalized text for a given key.
-     *
-     * @param key
-     * @return
-     */
+    /** Returns the internationalized text for the given key in the resource bundle. */
     public static String getString(String key) {
         try {
             return RESOURCE_BUNDLE.getString(key);
@@ -57,16 +47,10 @@ public class Messages {
     }
 
     /**
-     * Returns the formatted message for the given key in the resource bundle.
-     *
-     * @param key
-     *            the resource name
-     * @param args
-     *            the message arguments
-     * @return the string
+     * Returns the formatted internationalized text for the given key in the resource bundle,
+     * replacing occurrences of {x} in the message with the contents of args.
      */
-    public static String getString(String key, Object[] args) {
+    public static String getString(String key, Object... args) {
         return MessageFormat.format(getString(key), args);
     }
-
 }

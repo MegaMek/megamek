@@ -70,13 +70,19 @@ Wheeled
 </armor>
 
 <Body Equipment>
+Basic Fire Control
 ISOffRoadChassis
+IS Ammo MG - Full
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
 </Body Equipment>
 
 <Front Equipment>
 ISMachine Gun
 ISMachine Gun
-IS Ammo MG - Full
 </Front Equipment>
 
 <Front Right Equipment>
@@ -92,16 +98,11 @@ IS Ammo MG - Full
 </Rear Left Equipment>
 
 <Rear Equipment>
-Basic Fire Control
+
 ISLRM20
 ISLRM20
 ISLRM20
 ISLRM20
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
 </Rear Equipment>
 
 <tonnage>

@@ -231,10 +231,9 @@ public class TestMech extends TestEntity {
 
     @Override
     public double getWeightPowerAmp() {
-        if (mech.isIndustrial()
-                && (!mech.hasEngine()
+        if (!mech.hasEngine()
                     || (mech.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                    || (mech.getEngine().getEngineType() == Engine.FUEL_CELL))) {
+                    || (mech.getEngine().getEngineType() == Engine.FUEL_CELL)) {
             double powerAmpWeight = 0;
             for (Mounted m : mech.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();

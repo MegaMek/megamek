@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.AbstractListModel;
@@ -1905,7 +1906,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             vAmmo = new ArrayList<Mounted>();
             int nCur = -1;
             int i = 0;
-            for (Mounted mountedAmmo : entity.getAmmo()) {
+            //Ammo sharing between adjacent trailers
+            List<Mounted> fullAmmoList = new ArrayList<Mounted>(entity.getAmmo());
+            if (entity.getTowedBy() != Entity.NONE) {
+                Entity ahead = entity.getGame().getEntity(entity.getTowedBy());
+                fullAmmoList.addAll(ahead.getAmmo());
+            }
+            if (entity.getTowing() != Entity.NONE) {
+                Entity behind = entity.getGame().getEntity(entity.getTowing());
+                fullAmmoList.addAll(behind.getAmmo());
+            }
+            for (Mounted mountedAmmo : fullAmmoList) {
                 AmmoType atype = (AmmoType) mountedAmmo.getType();
                 // for all aero units other than fighters,
                 // ammo must be located in the same place to be usable
@@ -2128,7 +2139,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         int ammoIndex = m.getDesc().indexOf(
                 Messages.getString("MechDisplay.0")); //$NON-NLS-1$
         int loc = m.getLocation();
-        if (loc != Entity.LOC_NONE) {
+        if (!m.getEntity().equals(entity)) {
+            sb.append("[TR] "); //$NON-NLS-1$
+        } else if (loc != Entity.LOC_NONE) {
             sb.append('[').append(entity.getLocationAbbr(loc)).append("] "); //$NON-NLS-1$
         }
         if (ammoIndex == -1) {

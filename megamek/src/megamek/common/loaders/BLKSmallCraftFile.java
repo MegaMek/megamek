@@ -25,16 +25,7 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.IArmorState;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.SmallCraft;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestEntity;
 
@@ -267,7 +258,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
-                                mount.setFacing(defaultVGLFacing(useLoc, rearMount));
+                                mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));
                             } else {
                                 mount.setFacing(facing);
                             }

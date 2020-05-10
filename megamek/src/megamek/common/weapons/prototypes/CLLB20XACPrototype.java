@@ -56,7 +56,7 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
         .setTechRating(RATING_F)
         .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
         .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2826, DATE_NONE)
-        .setClanApproximate(true, false, false,true, false)
+        .setClanApproximate(false, false, false,true, false)
         .setPrototypeFactions(F_CHH);
     }
 }

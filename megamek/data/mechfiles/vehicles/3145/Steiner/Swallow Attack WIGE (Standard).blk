@@ -24,6 +24,10 @@ Swallow Attack WIGE
 3095
 </year>
 
+<originalBuildYear>
+3095
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 WiGE
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 7
@@ -56,7 +63,6 @@ WiGE
 </armor>
 
 <Body Equipment>
-ISFlotationHull
 IS LB 20-X Cluster Ammo
 IS LB 20-X AC Ammo
 IS LB 20-X AC Ammo

@@ -121,38 +121,39 @@ public class AbstractUnitRecord {
 
 	public static int parseUnitType(String typeName) {
 		switch (typeName) {
-		case "Mek":
-			return UnitType.MEK;
-		case "Tank":
-			return UnitType.TANK;
-		case "BattleArmor":
-			return UnitType.BATTLE_ARMOR;
-		case "Infantry":
-			return UnitType.INFANTRY;
-		case "ProtoMek":
-			return UnitType.PROTOMEK;
-		case "VTOL":
-			return UnitType.VTOL;
-		case "Naval":
-			return UnitType.NAVAL;
-		case "Gun Emplacement":
-			return UnitType.GUN_EMPLACEMENT;
-		case "Conventional Fighter":
-			return UnitType.CONV_FIGHTER;
-		case "Aero":
-			return UnitType.AERO;
-		case "Small Craft":
-			return UnitType.SMALL_CRAFT;
-		case "Dropship":
-			return UnitType.DROPSHIP;
-		case "Jumpship":
-			return UnitType.JUMPSHIP;
-		case "Warship":
-			return UnitType.WARSHIP;
-		case "Space Station":
-			return UnitType.SPACE_STATION;
+			case "Mek":
+				return UnitType.MEK;
+			case "Tank":
+				return UnitType.TANK;
+			case "BattleArmor":
+				return UnitType.BATTLE_ARMOR;
+			case "Infantry":
+				return UnitType.INFANTRY;
+			case "ProtoMek":
+				return UnitType.PROTOMEK;
+			case "VTOL":
+				return UnitType.VTOL;
+			case "Naval":
+				return UnitType.NAVAL;
+			case "Gun Emplacement":
+				return UnitType.GUN_EMPLACEMENT;
+			case "Conventional Fighter":
+				return UnitType.CONV_FIGHTER;
+			case "Aero":
+				return UnitType.AERO;
+			case "Small Craft":
+				return UnitType.SMALL_CRAFT;
+			case "Dropship":
+				return UnitType.DROPSHIP;
+			case "Jumpship":
+				return UnitType.JUMPSHIP;
+			case "Warship":
+				return UnitType.WARSHIP;
+			case "Space Station":
+				return UnitType.SPACE_STATION;
+			default:
+				return -1;
 		}
-		return -1;
-	}	
+	}
 }
 

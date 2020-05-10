@@ -759,6 +759,18 @@ public class EquipmentType implements ITechnology {
         return clan ? "Clan " + armorNames[armorType] : "IS "
                 + armorNames[armorType];
     }
+
+    /**
+     * Convenience method to test whether an EquipmentType instance is armor. This works
+     * by comparing the results of {@link #getName()} to the armor names array and returning
+     * {@code true} if there is a match.
+     *
+     * @param et The equipment instance to test
+     * @return   Whether the equipment is an armor type
+     */
+    public static boolean isArmorType(EquipmentType et) {
+        return getArmorType(et) != T_ARMOR_UNKNOWN;
+    }
     
     public static int getStructureType(EquipmentType et) {
         if (et == null) {
@@ -785,6 +797,18 @@ public class EquipmentType implements ITechnology {
         }
         return clan ? "Clan " + structureNames[structureType] : "IS "
                 + structureNames[structureType];
+    }
+
+    /**
+     * Convenience method to test whether an EquipmentType instance is mech structure. This works
+     * by comparing the results of {@link #getName()} to the structure names array and returning
+     * {@code true} if there is a match.
+     *
+     * @param et The equipment instance to test
+     * @return   Whether the equipment is a structure type
+     */
+    public static boolean isStructureType(EquipmentType et) {
+        return getStructureType(et) != T_STRUCTURE_UNKNOWN;
     }
 
     public static String getBaArmorTypeName(int armorType) {

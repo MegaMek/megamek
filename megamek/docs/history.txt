@@ -1,8 +1,48 @@
 VERSION HISTORY:
 ----------------
-0.47.6-SNAPSHOT
+0.47.7-SNAPSHOT
++ PR #1912: Fixing spelling issues in Campaign Options
++ Issue #1850: Plasma Rifle Dealing too much damage to conventional fighters
++ Issue #1916: Primitive and Primitive Prototype Weapons should have fixed intro dates.
++ Issue #1915: Battle Armor taking Damage multiples from artillery attacks
++ Issue #1928: Quirk spelling error
++ Issue #1931: Quirk Updates (errata fixes)
+
+0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed
 + PR #1808: Abandon ship! Large spacecraft can now launch escape pods, giving the opposing player more opportunity to commit war crimes.
++ Issue #1824: Implementing Tactical Operations Low Visibility Errata
++ Issue #1768: Resizing the map no longer messes up building/road layout. Note that resizing westward needs to be done by an even number of hexes.
++ Issue #1812: Semi-guided warheads indirectly fired at TAGged targets are no longer subject to terrain modifiers for the purposes of "to-hit" numbers.
++ PR #1837: The bot will now be able to use a searchlight on buildings without crashing the server.
++ Documentation: Trailer How-To added (thanks mkerensky)
++ Data: First SW RATs - Thanks SLDF_gunslinger
++ PR #1843: Saxarba roads
++ Data: Adding Royal Fantasy units as Unofficial.
++ Data: New Sprites
++ Issue #1802 - Kajis Maps and Scenarios Update
++ Data: Missing Archive Sprites
++ Issue #1830 - Sarath 'Mech - Lacking Quirk
++ Issue #1827 - Not every head hit on a quad mech should be a through-armor critical
++ PR #1847 - Restore the bot's ability to use physical attacks against buildings containing gun emplacements
++ Data: Various unit errata Fixes.
++ Issues #1496, #1467: Ammo Sharing between adjacent trailers/tractors, Allow infantry loading/unloading to trains, 
+   Errata: Calculate MP of trains using engine rating + lowest suspension factor
++ Data: More Errata fixes, and fixes for units that should work.
++ Issue #1862 - Fix BA SSW weight multiplier. 
++ PR # 1838: Add Silverfin and Silverback to naval RAT generator tables
++ Issue #1860: Quality of Life improvement - edit bot parameters in lobby by right clicking on bot name
++ PR #1835: Game option to set turn time limit in movement and firing phases.
++ Issue #1853: ArrayIndexOutOfBoundsException while loading certain mechs and viewing in Selector
++ PR #1875: Fixing Clanner Name Generation
++ Issue #1879: DFL folder to SimonLandmine
++ PR #1883: Improved Princess effectiveness with aerospace units on low altitude maps (can now turn at end of movement)
++ Issue #1786: Corrected Stacked Units Tooltip ECM Reporting
++ Issue #1856: Map Editor - Bridges now appear on preview hex and various QoL changes
++ Issue #1891: Battlefist now applies only once and for the proper arm
++ PR #1901: Re-enable Princess to fire rocket launchers and other one-shot weapons
++ PR #1908: Switching default tileset to Saxarba
++ PR #1909: BA Tube artillery fixes #1848,#1849
 
 0.47.5 (2020-4-01 2000 UTC)
 + Data: Removing broken Unit from Fan Council TRO
@@ -12446,3 +12486,4 @@ v 0.21.2 (02-11-02, 3pm)
 + punching supported
 + just about everything that has to do with hitting re-written or modified
 + butt
+

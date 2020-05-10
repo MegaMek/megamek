@@ -611,6 +611,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
@@ -643,6 +644,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
@@ -720,7 +722,8 @@ public class PointblankShotDisplay extends FiringDisplay implements
                 && (mounted.getLinked().getType() instanceof AmmoType)) {
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
-            waa.setAmmoId(ce().getEquipmentNum(ammoMount));
+            waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
+            waa.setAmmoCarrier(ammoMount.getEntity().getId());
             if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) 
                     && ((ammoType.getAmmoType() == AmmoType.T_LRM)
                             || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)

@@ -3895,11 +3895,36 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * 
      * If this is a weapon bay, try to load the weapon with ammo in the same bay,
      * and if it fails, load with compatible ammo in the same location.
+     * 
+     * If this unit is part of a train, also check the vehicles directly connected
+     * to it for compatible ammo
      */
     public void loadWeaponWithSameAmmo(Mounted mounted) {
         for (Mounted mountedAmmo : getAmmo()) {
             if (loadWeaponWithSameAmmo(mounted, mountedAmmo)) {
                 return;
+            }
+        }
+        //Check the unit towing this one for ammo
+        if (getTowedBy() != Entity.NONE) {
+            Entity ahead = game.getEntity(getTowedBy());
+            if (ahead != null) {
+                for (Mounted towedByAmmo : ahead.getAmmo()) {
+                    if (loadWeaponWithSameAmmo(mounted, towedByAmmo)) {
+                        return;
+                    }
+                }
+            }
+        }
+        // Then check the unit towed by this one for ammo
+        if (getTowing() != Entity.NONE) {
+            Entity behind = game.getEntity(getTowing());
+            if (behind != null) {
+                for (Mounted towingAmmo : behind.getAmmo()) {
+                    if (loadWeaponWithSameAmmo(mounted, towingAmmo)) {
+                        return;
+                    }
+                }
             }
         }
         // fall back to use any ammo
@@ -6775,6 +6800,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return "Rail";
             case MAGLEV:
                 return "MagLev";
+            case STATION_KEEPING:
+                return "Station-Keeping";
             default:
                 return "ERROR";
         }
@@ -15118,6 +15145,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    /**
+     * @return Whether the unit uses primitive or retrotech construction rules
+     */
+    public boolean isPrimitive() {
+        return false;
+    }
+
     public int getStructuralTechRating() {
         return structuralTechRating;
     }
@@ -15575,7 +15609,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //Remove the designated trailer from the tractor's carried units
         removeTowedUnit(id);
         //Now, find and empty the transporter on the actual towing entity (trailer or tractor)
-        Entity towingEnt = game.getEntity(towed.towedBy);
+        Entity towingEnt = game.getEntity(towed.getTowedBy());
         towingEnt.connectedUnits.clear();
         if (towingEnt != null) {
             Transporter hitch = towingEnt.getHitchCarrying(id);
@@ -15589,7 +15623,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Entity trailer = game.getEntity(i);
             trailer.setTractor(Entity.NONE);
             tractor.removeTowedUnit(i);
-            towingEnt = game.getEntity(trailer.towedBy);
+            towingEnt = game.getEntity(trailer.getTowedBy());
             if (towingEnt != null) {
                 Transporter hitch = towingEnt.getHitchCarrying(i);
                 if (hitch != null) {
@@ -15602,6 +15636,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //Update these last, or we get concurrency issues
         towed.setTractor(Entity.NONE);
         towed.setTowedBy(Entity.NONE);
+        towed.setTowing(Entity.NONE);
         towed.connectedUnits.clear();
     }
 
@@ -15634,6 +15669,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void removeTowedUnit(int id) {
         isTractorFor.remove(isTractorFor.indexOf(id));
+        if (getTowing() == id) {
+            setTowing(Entity.NONE);
+        }
     }
 
     /**

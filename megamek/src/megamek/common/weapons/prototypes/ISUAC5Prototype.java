@@ -69,7 +69,7 @@ public class ISUAC5Prototype extends UACWeapon {
         .setTechRating(RATING_E)
         .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
         .setISAdvancement(3029, DATE_NONE, DATE_NONE, 3035, DATE_NONE)
-        .setISApproximate(true, false, false, true, false)
+        .setISApproximate(false, false, false, true, false)
         .setPrototypeFactions(F_FS);
     }
 

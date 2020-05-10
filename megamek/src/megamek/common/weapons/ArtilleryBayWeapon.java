@@ -67,14 +67,13 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         Entity ae = game.getEntity(waa.getEntityId());
-        AmmoType atype = new AmmoType();
         boolean useHoming = false;
         for (int wId : ae.getEquipment(waa.getWeaponId()).getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
             // check the currently loaded ammo
             Mounted bayWAmmo = bayW.getLinked();
-            atype = (AmmoType) bayWAmmo.getType();
             waa.setAmmoId(ae.getEquipmentNum(bayWAmmo));
+            waa.setAmmoCarrier(ae.getId());
             if (bayWAmmo.isHomingAmmoInHomingMode()) {
                 useHoming = true;
             }

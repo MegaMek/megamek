@@ -910,7 +910,9 @@ public class TestSupportVehicle extends TestEntity {
             buff.append("Support vehicles with ").append(engine.getEngineName())
                     .append(" engine must allocate some weight for fuel.\n");
             correct = false;
-        } else if ((supportVee instanceof Aero) && (((Aero) supportVee).getOriginalFuel() <= 0.0)) {
+        } else if ((supportVee instanceof FixedWingSupport)
+                && (((FixedWingSupport) supportVee).getOriginalFuel() <= 0.0)
+                && ((FixedWingSupport) supportVee).kgPerFuelPoint() > 0) {
             buff.append("Aerospace units must allocate some weight for fuel.\n");
             correct = false;
         }
@@ -974,6 +976,12 @@ public class TestSupportVehicle extends TestEntity {
                     && (getEntity() instanceof Aero || getEntity() instanceof VTOL)) {
                 buff.append("Armored Motive system and incompatible movemement mode!\n\n");
                 correct = false;
+            } else if (m.getType().hasFlag(MiscType.F_LIFEBOAT)
+                    && m.getType().hasSubType(MiscType.S_MARITIME_ESCAPE_POD | MiscType.S_MARITIME_LIFEBOAT)
+                    && !SVType.NAVAL.equals(SVType.getVehicleType(supportVee))
+                    && !supportVee.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
+                buff.append(m.getName()).append(" requires naval support vehicle or amphibious chassis modification.\n");
+                correct = false;
             } else if (m.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
                 hardpoints++;
             } else if (m.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
@@ -1012,13 +1020,24 @@ public class TestSupportVehicle extends TestEntity {
             buff.append("Omni configuration exceeds weapon capacity of base chassis fire control system.\n");
             correct = false;
         }
-        if (supportVee instanceof Tank) {
-            for (Mounted m : supportVee.getEquipment()) {
-                if (!TestTank.legalForMotiveType(m.getType(), supportVee.getMovementMode())) {
-                    buff.append(m.getType().getName()).append(" is incompatible with ")
-                            .append(supportVee.getMovementModeAsString());
-                    correct = false;
-                }
+        for (Mounted m : supportVee.getEquipment()) {
+            if ((m.getType() instanceof MiscType) && !m.getType().hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)) {
+                buff.append(m.getType().getName()).append(" cannot be used by support vehicles.\n");
+                correct = false;
+            } else if ((m.getType() instanceof WeaponType)
+                    && (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT)
+                    && !m.getType().hasFlag(WeaponType.F_INFANTRY)) {
+                buff.append("Small support vehicles cannot mount heavy weapons.\n");
+                correct = false;
+            } else if ((m.getType() instanceof WeaponType)
+                    && (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT)
+                    && !m.getType().hasFlag(WeaponType.F_TANK_WEAPON)) {
+                buff.append(m.getType().getName()).append(" cannot be used by support vehicles.\n");
+                correct = false;
+            } else if (!TestTank.legalForMotiveType(m.getType(), supportVee.getMovementMode(), true)) {
+                buff.append(m.getType().getName()).append(" is incompatible with ")
+                        .append(supportVee.getMovementModeAsString());
+                correct = false;
             }
         }
         for (int loc = 0; loc < supportVee.locations(); loc++) {

@@ -99,6 +99,7 @@
 	 Juliez <juliez@users.sourceforge.net>
 	 Derrick Turk <derrickturk@users.sourceforge.net>
 	 Justin "Windchild" Bowen
+	 Graysho
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
@@ -236,6 +237,7 @@
      Dave Nawton <hammer-gs@users.sourceforge.net>
 	 Greekfire.
 	 Bloodwolf
+	 SLDF_gunslinger
 
   Translations
      Jörg Harder <joergharder@t-online.de>

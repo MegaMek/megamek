@@ -291,8 +291,8 @@ public class Tank extends Entity {
         
         //If the unit is towing trailers, adjust its walkMP, TW p205
         if (!getAllTowedUnits().isEmpty()) {
-            double tractorWeight = getWeight();
-            double trailerWeight = 0;
+            double trainWeight = getWeight();
+            int lowestSuspensionFactor = getSuspensionFactor();
             //Add up the trailers
             for (int id : getAllTowedUnits()) {
                 Entity tr = game.getEntity(id);
@@ -300,13 +300,15 @@ public class Tank extends Entity {
                     //this isn't supposed to happen, but it can in rare cases when tr is destroyed
                     continue;
                 }
-                trailerWeight += tr.getWeight();
+                if (tr instanceof Tank) {
+                    Tank trailer = (Tank) tr;
+                    if (trailer.getSuspensionFactor() < lowestSuspensionFactor) {
+                        lowestSuspensionFactor = trailer.getSuspensionFactor();
+                    }
+                }
+                trainWeight += tr.getWeight();
             }
-            if (trailerWeight <= (tractorWeight / 4)) {
-                j = Math.max((j - 3), (j / 2));
-            } else {
-                j = (j / 2);
-            }
+            j = (int) ((getEngine().getRating() + lowestSuspensionFactor) / trainWeight);
         }
 
         return j;
@@ -1473,19 +1475,22 @@ public class Tank extends Entity {
                 typeModifier = 0.6;
         }
 
-        if (!isSupportVehicle()
-                && (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS)
-                        || hasWorkingMisc(MiscType.F_DUNE_BUGGY)
-                        || hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                        || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)
-                        || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM))) {
-            typeModifier += .1;
-        } else if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)
-                && !isSupportVehicle()) {
-            typeModifier += .2;
+        if (!isSupportVehicle()) {
+            for (Mounted m : getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_FULLY_AMPHIBIOUS)) {
+                    typeModifier += 0.2;
+                } else if (m.getType().hasFlag(MiscType.F_LIMITED_AMPHIBIOUS)
+                        || m.getType().hasFlag(MiscType.F_DUNE_BUGGY)
+                        || m.getType().hasFlag(MiscType.F_FLOTATION_HULL)
+                        || m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
+                        || m.getType().hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
+                    typeModifier += 0.1;
+                }
+            }
         }
+        typeModifier = Math.round(typeModifier * 10.0) / 10.0;
         bvText.append(startColumn);
-        bvText.append("x Body Type Modier");
+        bvText.append("x Body Type Modifier");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append("x ");
@@ -1519,6 +1524,8 @@ public class Tank extends Entity {
         }
         double tmmFactor = 1 + (Math.max(tmmRan, tmmJumped) / 10);
         dbv *= tmmFactor;
+        // Deal with floating point errors
+        dbv = Math.round(dbv * 100000.0) / 100000.0;
 
         bvText.append(startColumn);
         bvText.append("x ");

@@ -15,11 +15,7 @@
 package megamek.common;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.common.preference.PreferenceManager;
 
@@ -41,24 +37,8 @@ public class Protomech extends Entity {
             "L", "MG" };
 
     // weapon bools
-    private boolean bHasMainGun;
-    private boolean bHas2ndMainGun;
-    private boolean bHasRArmGun;
-    private boolean bHasLArmGun;
-    private boolean bHasTorsoAGun;
-    private boolean bHasTorsoBGun;
-    private boolean bHasTorsoCGun;
-    private boolean bHasTorsoDGun;
-    private boolean bHasTorsoEGun;
-    private boolean bHasTorsoFGun;
-
-    // weapon indices
-    private int torsoAGunNum;
-    private int torsoBGunNum;
-    private int torsoCGunNum;
-    private int torsoDGunNum;
-    private int torsoEGunNum;
-    private int torsoFGunNum;
+    private final int[] weaponsPerLocation = new int[locations()];
+    private final int[] torsoWeaponIds = new int[6];
 
     // locations
 
@@ -158,16 +138,8 @@ public class Protomech extends Entity {
                 SYSTEM_LEGCRIT));
         setCritical(LOC_LEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LEGCRIT));
-        bHasMainGun = false;
-        bHas2ndMainGun = false;
-        bHasRArmGun = false;
-        bHasLArmGun = false;
-        bHasTorsoAGun = false;
-        bHasTorsoBGun = false;
-        bHasTorsoCGun = false;
-        bHasTorsoDGun = false;
-        bHasTorsoEGun = false;
-        bHasTorsoFGun = false;
+        Arrays.fill(weaponsPerLocation, 0);
+        Arrays.fill(torsoWeaponIds, -1);
         m_bHasNoMainGun = true;
     }
 
@@ -200,21 +172,10 @@ public class Protomech extends Entity {
      *         location.
      */
     public Mounted getTorsoWeapon(int torsoNum) {
-        switch (torsoNum) {
-            case SYSTEM_TORSO_WEAPON_A:
-                return getEquipment(torsoAGunNum);
-            case SYSTEM_TORSO_WEAPON_B:
-                return getEquipment(torsoBGunNum);
-            case SYSTEM_TORSO_WEAPON_C:
-                return getEquipment(torsoCGunNum);
-            case SYSTEM_TORSO_WEAPON_D:
-                return getEquipment(torsoDGunNum);
-            case SYSTEM_TORSO_WEAPON_E:
-                return getEquipment(torsoEGunNum);
-            case SYSTEM_TORSO_WEAPON_F:
-                return getEquipment(torsoFGunNum);
-            default:
-                return null;
+        if ((torsoNum >= SYSTEM_TORSO_WEAPON_A) && (torsoNum <= SYSTEM_TORSO_WEAPON_F)) {
+            return getEquipment(torsoWeaponIds[torsoNum - SYSTEM_TORSO_WEAPON_A]);
+        } else {
+            return null;
         }
     }
 
@@ -982,131 +943,48 @@ public class Protomech extends Entity {
         }
 
         if (mounted.getType().isHittable()) {
-            switch (loc) {
-                case LOC_HEAD:
-                case LOC_LEG:
-                case LOC_NMISS:
-                    throw new LocationFullException("Weapon "
-                            + mounted.getName() + " can't be mounted in "
-                            + getLocationAbbr(loc));
-                case LOC_MAINGUN:
-                    if (bHasMainGun) {
-                        if (!isQuad() || bHas2ndMainGun) {
-                            throw new LocationFullException(
-                                    "Already has Main Gun");
-                        } else {
-                            bHas2ndMainGun = true;
-                            break;
-                        }
-                    }
-                    bHasMainGun = true;
-                    mounted.setLocation(loc, rearMounted);
-                    break;
-                case LOC_LARM:
-                    if (bHasLArmGun) {
-                        throw new LocationFullException("Already has LArm Gun");
-                    }
-                    bHasLArmGun = true;
-                    break;
-                case LOC_RARM:
-                    if (bHasRArmGun) {
-                        throw new LocationFullException("Already has RArm Gun");
-                    }
-                    bHasRArmGun = true;
-                    break;
-                case LOC_TORSO:
-                    if ((getWeight() < 10) && !isQuad()) {
-                        if (bHasTorsoAGun) {
-                            if (bHasTorsoBGun) {
-                                throw new LocationFullException(
-                                        "Already has both torso guns");
-                            }
-                            bHasTorsoBGun = true;
-                            torsoBGunNum = getEquipmentNum(mounted);
-                        } else {
-                            bHasTorsoAGun = true;
-                            torsoAGunNum = getEquipmentNum(mounted);
-                        }
-                        break;
-                    } else if (isQuad()) {
-                        if (getWeight() < 10) {
-                            // A,B,C and D
-                            if (bHasTorsoAGun) {
-                                if (bHasTorsoBGun) {
-                                    if (bHasTorsoCGun) {
-                                        if (bHasTorsoDGun) {
-                                            throw new LocationFullException(
-                                                    "Already has all four torso guns");
-                                        }
-                                        bHasTorsoDGun = true;
-                                        torsoDGunNum = getEquipmentNum(mounted);
-                                    } else {
-                                        bHasTorsoCGun = true;
-                                        torsoCGunNum = getEquipmentNum(mounted);
-                                    }
-                                } else {
-                                    bHasTorsoBGun = true;
-                                    torsoBGunNum = getEquipmentNum(mounted);
-                                }
-                            } else {
-                                bHasTorsoAGun = true;
-                                torsoAGunNum = getEquipmentNum(mounted);
-                            }
-                        } else {
-                            // A,B,C,D,E and F
-                            if (bHasTorsoAGun) {
-                                if (bHasTorsoBGun) {
-                                    if (bHasTorsoCGun) {
-                                        if (bHasTorsoDGun) {
-                                            if (bHasTorsoEGun) {
-                                                if (bHasTorsoFGun) {
-                                                    throw new LocationFullException(
-                                                            "Already has all six torso guns");
-                                                }
-                                                bHasTorsoFGun = true;
-                                                torsoFGunNum = getEquipmentNum(mounted);
-                                            } else {
-                                                bHasTorsoEGun = true;
-                                                torsoEGunNum = getEquipmentNum(mounted);
-                                            }
-                                        } else {
-                                            bHasTorsoDGun = true;
-                                            torsoDGunNum = getEquipmentNum(mounted);
-                                        }
-                                    } else {
-                                        bHasTorsoCGun = true;
-                                        torsoCGunNum = getEquipmentNum(mounted);
-                                    }
-                                } else {
-                                    bHasTorsoBGun = true;
-                                    torsoBGunNum = getEquipmentNum(mounted);
-                                }
-                            } else {
-                                bHasTorsoAGun = true;
-                                torsoAGunNum = getEquipmentNum(mounted);
-                            }
-                        }
-                    } else {
-                        // A, B and C
-                        if (bHasTorsoAGun) {
-                            if (bHasTorsoBGun) {
-                                if (bHasTorsoCGun) {
-                                    throw new LocationFullException(
-                                            "Already has all three torso guns");
-                                }
-                                bHasTorsoCGun = true;
-                                torsoCGunNum = getEquipmentNum(mounted);
-                            }
-                            bHasTorsoBGun = true;
-                            torsoBGunNum = getEquipmentNum(mounted);
-                        } else {
-                            bHasTorsoAGun = true;
-                            torsoAGunNum = getEquipmentNum(mounted);
-                        }
-                    }
+            int max = maxWeapons(loc);
+            if (max == 0) {
+                throw new LocationFullException("Weapon "
+                        + mounted.getName() + " can't be mounted in "
+                        + getLocationAbbr(loc));
+            } else if (weaponsPerLocation[loc] >= max) {
+                throw new LocationFullException("Weapon "
+                        + mounted.getName() + " exceeds maximum for "
+                        + getLocationAbbr(loc));
             }
+            super.addEquipment(mounted, loc, rearMounted);
+            if (loc == LOC_TORSO) {
+                torsoWeaponIds[weaponsPerLocation[loc]] = getEquipmentNum(mounted);
+            }
+            weaponsPerLocation[loc]++;
+        } else {
+            super.addEquipment(mounted, loc, rearMounted);
         }
-        super.addEquipment(mounted, loc, rearMounted);
+    }
+
+    public int maxWeapons(int location) {
+        switch (location) {
+            case LOC_LARM:
+            case LOC_RARM:
+                return 1;
+            case LOC_MAINGUN:
+                if (m_bHasNoMainGun) {
+                    return 0;
+                } else if (isQuad()) {
+                    return 2;
+                } else {
+                    return 1;
+                }
+            case LOC_TORSO:
+                if (getWeight() < 10.0) {
+                    return isQuad() ? 4 : 2;
+                } else {
+                    return isQuad() ? 6 : 3;
+                }
+            default:
+                return 0;
+        }
     }
 
     /*

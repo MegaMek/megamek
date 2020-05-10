@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import megamek.common.preference.PreferenceManager;
 
@@ -35,12 +36,6 @@ public class Protomech extends Entity {
 
     private static final String[] LOCATION_ABBRS = { "BD", "HD", "T", "RA", "LA",
             "L", "MG" };
-
-    // weapon bools
-    private final int[] weaponsPerLocation = new int[locations()];
-    private final int[] torsoWeaponIds = new int[6];
-
-    // locations
 
     // Crew damage caused so far by crits to this location.
     // Needed for location destruction pilot damage.
@@ -138,8 +133,6 @@ public class Protomech extends Entity {
                 SYSTEM_LEGCRIT));
         setCritical(LOC_LEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LEGCRIT));
-        Arrays.fill(weaponsPerLocation, 0);
-        Arrays.fill(torsoWeaponIds, -1);
         m_bHasNoMainGun = true;
     }
 
@@ -172,8 +165,12 @@ public class Protomech extends Entity {
      *         location.
      */
     public Mounted getTorsoWeapon(int torsoNum) {
-        if ((torsoNum >= SYSTEM_TORSO_WEAPON_A) && (torsoNum <= SYSTEM_TORSO_WEAPON_F)) {
-            return getEquipment(torsoWeaponIds[torsoNum - SYSTEM_TORSO_WEAPON_A]);
+        int index = torsoNum - SYSTEM_TORSO_WEAPON_A;
+        // There are some non-weapons that take up weapon critical slots
+        List<Mounted> torsoEquipment = getEquipment().stream().filter(m -> (m.getLocation() == LOC_TORSO)
+                && m.getType().isHittable()).collect(Collectors.toList());
+        if (index < torsoEquipment.size()) {
+            return torsoEquipment.get(index);
         } else {
             return null;
         }
@@ -948,19 +945,16 @@ public class Protomech extends Entity {
                 throw new LocationFullException("Weapon "
                         + mounted.getName() + " can't be mounted in "
                         + getLocationAbbr(loc));
-            } else if (weaponsPerLocation[loc] >= max) {
+            }
+            long current = getEquipment().stream().filter(m -> (m.getLocation() == loc)
+                    && m.getType().isHittable()).count();
+            if (current >= max) {
                 throw new LocationFullException("Weapon "
                         + mounted.getName() + " exceeds maximum for "
                         + getLocationAbbr(loc));
             }
-            super.addEquipment(mounted, loc, rearMounted);
-            if (loc == LOC_TORSO) {
-                torsoWeaponIds[weaponsPerLocation[loc]] = getEquipmentNum(mounted);
-            }
-            weaponsPerLocation[loc]++;
-        } else {
-            super.addEquipment(mounted, loc, rearMounted);
         }
+        super.addEquipment(mounted, loc, rearMounted);
     }
 
     public int maxWeapons(int location) {

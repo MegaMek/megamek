@@ -18,7 +18,8 @@
 # fluff:59:1-13 are Taurian Concordat Faction Symbols
 # fluff:60:1-13 are Star League/Star League Faction Symbols
 # fluff:61:1-13 are Star League/ComStar Faction Symbols
-# fluff:62:1-13 are a Red Cross Symbols
+# fluff:62:1-13 are Red Cross Symbols
+
 
 super * "fluff:50:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-01.png"
 super * "fluff:50:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-02.png"

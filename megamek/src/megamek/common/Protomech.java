@@ -939,7 +939,7 @@ public class Protomech extends Entity {
             }
         }
 
-        if (mounted.getType().isHittable()) {
+        if (mounted.getType().isHittable() && (loc != LOC_BODY)) {
             int max = maxWeapons(loc);
             if (max == 0) {
                 throw new LocationFullException("Weapon "

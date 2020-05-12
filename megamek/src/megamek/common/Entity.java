@@ -4935,19 +4935,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * This method checks to see if a unit has Underwater Maneuvering Units Only
-     * Battle Mechs may have UMU's
+     * This method checks to see if a unit has Underwater Maneuvering Units
      *
      * @return <code>boolean</code> if the entity has usable UMU crits.
      */
     public boolean hasUMU() {
-        if (!(this instanceof Mech) && !(this instanceof Infantry)) {
-            return false;
-        }
-
-        int umuCount = getActiveUMUCount();
-
-        return umuCount > 0;
+        return getActiveUMUCount() > 0;
     }
 
     /**
@@ -4956,20 +4949,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return number <code>int</code>of useable UMU's
      */
     public int getActiveUMUCount() {
-        int count = 0;
-
-        if (this instanceof Infantry) {
-            if ((getMovementMode() == EntityMovementMode.INF_UMU)
-            		|| (getMovementMode() == EntityMovementMode.SUBMARINE)) {
-	            // UMU MP for Infantry is stored in jumpMP
-	            return jumpMP;
-            }
-        }
-
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
-
+        int count = 0;
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_UMU)
@@ -4977,7 +4960,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 count++;
             }
         }
-
         return count;
     }
 
@@ -4987,29 +4969,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return <code>int</code>Total number of UMUs a mech has.
      */
     public int getAllUMUCount() {
-        int count = 0;
-
-        if ((this instanceof Infantry)
-            && (getMovementMode() == EntityMovementMode.INF_UMU)) {
-            // UMU MP for Infantry is stored in jumpMP
-            return jumpMP;
-        }
-
-        if (!(this instanceof Mech)) {
-            return 0;
-        }
-
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
-
+        int count = 0;
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_UMU)) {
                 count++;
             }
         }
-
         return count;
     }
 

@@ -4935,16 +4935,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * This method checks to see if a unit has Underwater Maneuvering Units Only
-     * Battle Mechs may have UMU's
+     * This method checks to see if a unit has Underwater Maneuvering Units
      *
      * @return <code>boolean</code> if the entity has usable UMU crits.
      */
     public boolean hasUMU() {
-        if (!(this instanceof Mech) && !(this instanceof Infantry)) {
-            return false;
-        }
-
         int umuCount = getActiveUMUCount();
 
         return umuCount > 0;
@@ -4993,10 +4988,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && (getMovementMode() == EntityMovementMode.INF_UMU)) {
             // UMU MP for Infantry is stored in jumpMP
             return jumpMP;
-        }
-
-        if (!(this instanceof Mech)) {
-            return 0;
         }
 
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {

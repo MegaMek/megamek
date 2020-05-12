@@ -274,6 +274,14 @@ public class Protomech extends Entity {
         return wmp;
     }
 
+    @Override
+    public String getRunMPasString() {
+        if (hasMyomerBooster()) {
+            return getRunMPwithoutMyomerBooster(true, false, false) + "(" + getRunMP() + ")";
+        }
+        return Integer.toString(getRunMP());
+    }
+
     /**
      * Counts the # of crits taken by proto in the location. Needed in several
      * places, due to proto set criticals.

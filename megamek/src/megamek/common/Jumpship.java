@@ -2082,9 +2082,9 @@ public class Jumpship extends Aero {
         int driveIdx = 0;
         double driveCosts = 0;
         // Drive Coil
-        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks());
+        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks(true));
         // Initiator
-        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks());
+        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks(true));
         // Controller
         driveCost[driveIdx++] += 50000000.0;
         // Tankage
@@ -2092,7 +2092,7 @@ public class Jumpship extends Aero {
         // Sail
         driveCost[driveIdx++] += 50000.0 * (30 + (weight / 7500.0));
         // Charging System
-        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks()); 
+        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks(true));
         
         for (int i = 0; i < driveIdx; i++) {
             driveCosts += driveCost[i];

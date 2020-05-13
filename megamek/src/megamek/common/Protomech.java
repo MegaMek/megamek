@@ -954,6 +954,10 @@ public class Protomech extends Entity {
                         + mounted.getName() + " can't be mounted in "
                         + getLocationAbbr(loc));
             }
+            // EDP armor reduces the number of torso slots by one.
+            if ((loc == LOC_TORSO) && (getArmorType(loc) == EquipmentType.T_ARMOR_EDP)) {
+                max--;
+            }
             long current = getEquipment().stream().filter(m -> (m.getLocation() == loc)
                     && m.getType().isHittable()).count();
             if (current >= max) {

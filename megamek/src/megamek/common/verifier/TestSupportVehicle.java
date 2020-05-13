@@ -1283,7 +1283,7 @@ public class TestSupportVehicle extends TestEntity {
             if ((mount.getType() instanceof MiscType)
                     && mount.getType().hasFlag(MiscType.F_CARGO)) {
                 if (!addedCargo) {
-                    buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
+                    buff.append(StringUtil.makeLength(mount.getName(), 30));
                     buff.append(mount.getType().getSupportVeeSlots(supportVee)).append("\n");
                     addedCargo = true;
                     continue;
@@ -1295,7 +1295,7 @@ public class TestSupportVehicle extends TestEntity {
             if (!(mount.getType() instanceof AmmoType)
                     && (EquipmentType.getArmorType(mount.getType()) == EquipmentType.T_ARMOR_UNKNOWN)
                     && !mount.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
+                buff.append(StringUtil.makeLength(mount.getName(), 30));
                 buff.append(mount.getType().getSupportVeeSlots(supportVee)).append("\n");
             }
         }

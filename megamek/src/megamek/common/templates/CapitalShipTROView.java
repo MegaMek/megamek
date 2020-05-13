@@ -86,7 +86,7 @@ public class CapitalShipTROView extends AeroTROView {
         }
         final Map<String, Integer> miscCount = aero.getMisc().stream()
                 .filter(m -> (m.getLinked() == null) && (m.getLinkedBy() == null))
-                .collect(Collectors.groupingBy(m -> m.getType().getName(), Collectors.summingInt(m -> 1)));
+                .collect(Collectors.groupingBy(m -> m.getName(), Collectors.summingInt(m -> 1)));
         miscCount.forEach((k, v) -> misc.add(String.format("%d %s", v, k)));
         setModelData("miscEquipment", misc);
         setModelData("lfBattery", aero.hasLF());

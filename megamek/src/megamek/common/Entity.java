@@ -10626,8 +10626,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (mounted.isWeaponGroup()) {
                 continue;
             }
-            long itemCost = (long) mounted.getType().getCost(this,
-                                                             mounted.isArmored(), mounted.getLocation());
+            long itemCost = (long) mounted.getCost();
 
             cost += itemCost;
             if ((bvText != null) && (itemCost > 0)) {
@@ -13444,8 +13443,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     			specialAbilities.put(BattleForceSPA.CASEII, null);
     		} else if (m.getType().hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
     			specialAbilities.put(BattleForceSPA.DRO, null);
-    		} else if (m.getType().hasFlag(MiscType.F_DRONE_EXTRA)) {
-    			specialAbilities.merge(BattleForceSPA.DCC, 1, Integer::sum);
+    		} else if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
+    			specialAbilities.merge(BattleForceSPA.DCC, (int) m.getSize(), Integer::sum);
     		} else if (m.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
     			specialAbilities.put(BattleForceSPA.ES, null);
     		} else if (m.getType().hasFlag(MiscType.F_ECM)) {

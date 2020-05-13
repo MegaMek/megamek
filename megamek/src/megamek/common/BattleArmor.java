@@ -1440,8 +1440,7 @@ public class BattleArmor extends Infantry {
         for (Mounted mounted : getEquipment()) {
             if ((mounted.getType() instanceof MiscType)
                     && ((MiscType) mounted.getType()).hasFlag(MiscType.F_BA_MANIPULATOR)) {
-                long itemCost = (long) mounted.getType().getCost(this,
-                        mounted.isArmored(), mounted.getLocation());
+                long itemCost = (long) mounted.getCost();
                 manipulatorCost += itemCost;
             }
 

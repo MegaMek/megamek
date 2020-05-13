@@ -334,7 +334,7 @@ public class TestSmallCraft extends TestAero {
             }
         }
         for (Mounted m : sc.getMisc()) {
-            crew += equipmentCrewRequirements(m.getType());
+            crew += equipmentCrewRequirements(m);
         }
         return crew;
     }

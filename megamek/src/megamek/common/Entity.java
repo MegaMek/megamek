@@ -8197,17 +8197,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return the number of docking collars
      */
     public int getDocks() {
-        int n = 0;
+        return getDocks(false);
+    }
 
+    /**
+     * @param forCost Whether this value is being used for cost calculations, in which case
+     *                dropshuttle bays count as two collars.
+     * @return The number of docking collars
+     */
+    public int getDocks(boolean forCost) {
+        int n = 0;
         for (Transporter next : transports) {
-            if (next instanceof DockingCollar) {
-                n++;
+            if ((next instanceof DockingCollar)
+                    || (forCost && (next instanceof DropshuttleBay))) {
+                n += next.hardpointCost();
             }
         }
-
-        // Return the number
         return n;
-
     }
 
     /**

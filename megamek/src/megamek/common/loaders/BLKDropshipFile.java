@@ -25,18 +25,7 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Dropship;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.IArmorState;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 
 public class BLKDropshipFile extends BLKFile implements IMechLoader {
@@ -273,6 +262,12 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                 newBay = false;
                 String equipName = element.trim();
 
+                double size = 0.0;
+                int sizeIndex = equipName.toUpperCase().indexOf(":SIZE:");
+                if (sizeIndex > 0) {
+                    size = Double.parseDouble(equipName.substring(sizeIndex + 6));
+                    equipName = equipName.substring(0, sizeIndex);
+                }
                 // I will need to deal with rear-mounted bays on Dropships
                 if (equipName.startsWith("(R) ")) {
                     rearMount = true;
@@ -301,6 +296,9 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                 if (etype == null) {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
+                }
+                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
+                    continue;
                 }
 
                 if (etype != null) {
@@ -362,16 +360,38 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                             // reset bay damage
                             bayDamage = damage;
                         }
-                    }
-                    // ammo should also get loaded into the bay
-                    if (newmount.getType() instanceof AmmoType) {
+                    } else if (newmount.getType() instanceof AmmoType) {
+                        // ammo should also get loaded into the bay
                         bayMount.addAmmoToBay(a.getEquipmentNum(newmount));
+                    }
+                    if (etype.isVariableSize()) {
+                        if (size == 0.0) {
+                            size = getLegacyVariableSize(equipName);
+                        }
+                        newmount.setSize(size);
                     }
                 } else if (!equipName.equals("")) {
                     a.addFailedEquipment(equipName);
                 }
             }
         }
+        if (mashOperatingTheaters > 0) {
+            for (Mounted m : a.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_MASH)) {
+                    // includes one as part of the core component
+                    m.setSize(m.getSize() + mashOperatingTheaters);
+                    break;
+                }
+            }
+        }
+        if (legacyDCCSCapacity > 0) {
+            for (Mounted m : a.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
+                    // core system does not include drone capacity
+                    m.setSize(legacyDCCSCapacity);
+                    break;
+                }
+            }
+        }
     }
-
 }

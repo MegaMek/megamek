@@ -2104,8 +2104,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         if (null != ae.getCrew()) {
-            if (ae.hasAbility(OptionsConstants.GUNNERY_SANDBLASTER) && 
-                    ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
+            if (ae.hasAbility(OptionsConstants.GUNNERY_SANDBLASTER, wtype.getName())) {
                 if (nRange > ranges[RangeType.RANGE_MEDIUM]) {
                     nMissilesModifier += 2;
                 } else if (nRange > ranges[RangeType.RANGE_SHORT]) {

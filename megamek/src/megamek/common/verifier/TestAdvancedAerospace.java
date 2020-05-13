@@ -365,7 +365,7 @@ public class TestAdvancedAerospace extends TestAero {
             crew = 6 + (int) Math.ceil(vessel.getWeight() / 20000);
         }
         for (Mounted m : vessel.getMisc()) {
-            crew += equipmentCrewRequirements(m.getType());
+            crew += equipmentCrewRequirements(m);
         }
         return crew;
     }

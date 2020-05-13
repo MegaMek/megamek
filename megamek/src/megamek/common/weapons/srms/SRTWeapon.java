@@ -43,11 +43,11 @@ public abstract class SRTWeapon extends MissileWeapon {
     }
     
     @Override
-    public double getTonnage(Entity entity, int location) {
+    public double getTonnage(Entity entity, int location, double size) {
         if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
             return getRackSize() * 0.25;
         } else {
-            return super.getTonnage(entity, location);
+            return super.getTonnage(entity, location, size);
         }
     }
     /*

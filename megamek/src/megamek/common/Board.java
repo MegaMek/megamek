@@ -496,6 +496,20 @@ public class Board implements Serializable, IBoard {
             IHex other = getHexInDir(x, y, i);
             hex.setExits(other, i, roadsAutoExit);
         }
+        
+        int sum = 0;
+        int ex = 1;
+        for (int i = 0; i < 6; i++) {
+            IHex other = getHexInDir(x, y, i);
+            if (other != null && (other.getLevel() < hex.getLevel())) {
+                sum += ex;
+            }
+            ex *= 2;
+        }
+        if (sum > 0) {
+            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.INCLINE, 1, true, sum));
+        }
+        
         if (event) {
             processBoardEvent(new BoardEvent(this, new Coords(x, y), BoardEvent.BOARD_CHANGED_HEX));
         }

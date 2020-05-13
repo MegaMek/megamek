@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
 
 import megamek.server.SmokeCloud;
@@ -104,6 +106,16 @@ public class Terrains implements ITerrainFactory {
     public static final int METAL_CONTENT = 42; // Is there metal content that
                                                 // will block magscan sensors?
     public static final int BLDG_BASE_COLLAPSED = 43; // 1 means collapsed
+    
+    public static final int CLIFFSIDE = 44; // Cliffs, use with exits to denote cliffsides
+                                            // only valid when there's actually a level drop
+                                            // in the specified direction
+    
+    public static final int INCLINE = 45; // with exits, denotes an downward edge of a hex
+                                          // only valid when there's actually a level drop
+                                          // useful to add highlighting/images to hex sides
+                                          // added to hexes automatically by MegaMek, not for
+                                          // manual use in the Editor
 
     /**
      * Keeps track of the different type of terrains that can have exits.
@@ -115,7 +127,11 @@ public class Terrains implements ITerrainFactory {
             "snow", "fire", "smoke", "geyser", "building", "bldg_cf", "bldg_elev", "bldg_basement_type", "bldg_class",
             "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev",
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
-            "bldg_base_collapsed" };
+            "bldg_base_collapsed", "cliff", "incline" };
+    
+    /** These terrains are hidden in the Editor as they are handled internally. */
+//    public static final HashSet<Integer> hideInEditor = 
+//            new HashSet<Integer>(Arrays.asList(INCLINE));
 
     public static final int SIZE = names.length;
 

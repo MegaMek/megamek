@@ -395,7 +395,7 @@ public class BoardEdgePathFinder {
      * @param destinationRegion Where we're going
      * @return True or false
      */
-    private MovePath getCachedPathForCoordinates(Coords coords, int destinationRegion) {
+    protected MovePath getCachedPathForCoordinates(Coords coords, int destinationRegion) {
         return edgePathCache.containsKey(destinationRegion) ? edgePathCache.get(destinationRegion).get(coords) : null;
     }
 
@@ -415,7 +415,7 @@ public class BoardEdgePathFinder {
      * @param path The path to cache
      * @param destinationRegion The region of the board to which the path moves
      */
-    private void cacheGoodPath(MovePath path, int destinationRegion) {
+    protected void cacheGoodPath(MovePath path, int destinationRegion) {
         // don't bother with all this stuff if we're not moving
         if(path.length() == 0) {
             return;
@@ -462,7 +462,7 @@ public class BoardEdgePathFinder {
      * @param visitedCoords Set of visited coordinates so we don't loop around
      * @return List of valid children. Between 0 and 3 inclusive.
      */
-    private List<MovePath> generateChildNodes(MovePath parentPath, Set<Coords> visitedCoords) {
+    protected List<MovePath> generateChildNodes(MovePath parentPath, Set<Coords> visitedCoords) {
         List<MovePath> children = new ArrayList<>();
 
         // the children of a move path are:
@@ -496,7 +496,7 @@ public class BoardEdgePathFinder {
             children.add(child);
         }
     }
-
+    
     /**
      * A "light-weight" version of the logic found in "isMovementPossible" in MoveStep.java
      *
@@ -507,6 +507,23 @@ public class BoardEdgePathFinder {
         Coords dest = movePath.getFinalCoords();
         IBoard board = movePath.getGame().getBoard();
         IHex destHex = board.getHex(dest);
+        Building destinationBuilding = board.getBuildingAt(dest);
+        
+        return isLegalMove(movePath, destHex, destinationBuilding);
+    }
+
+    /**
+     * A "light-weight" version of the logic found in "isMovementPossible" in MoveStep.java
+     * 
+     *
+     * @param movePath The move path to process
+     * @param destHex the hex at the end of the path
+     * @param destinationBuilding the building at the end of the path, can be null
+     * @return Whether or not the given move path is "legal" in the context of this pathfinder.
+     */
+    private boolean isLegalMove(MovePath movePath, IHex destHex, Building destinationBuilding) {
+        Coords dest = movePath.getFinalCoords();
+        IBoard board = movePath.getGame().getBoard();
         Coords src = movePath.getSecondLastStep().getPosition();
         IHex srcHex = board.getHex(src);
         Entity entity = movePath.getEntity();
@@ -518,8 +535,6 @@ public class BoardEdgePathFinder {
 
         // we only need to be able to legally move into the hex from the previous hex.
         // we don't care about stacking limits, remaining unit mp or other transient data
-
-        Building destinationBuilding = board.getBuildingAt(dest);
 
         // quadvees are not considered "tracked" for the purposes of this exercise because they can transform
         boolean isTracked = entity.getMovementMode() == EntityMovementMode.TRACKED && !entity.hasETypeFlag(Entity.ETYPE_QUADVEE);

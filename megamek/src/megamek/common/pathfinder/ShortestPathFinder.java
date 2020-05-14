@@ -274,30 +274,6 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         spf.addFilter(new MovePathLegalityFilter(game));
         return spf;
     }
-    
-    public static ShortestPathFinder newInstanceOfOneToAllAerodyne(
-            final MoveStepType stepType, final IGame game) {
-        final ShortestPathFinder spf =
-                new ShortestPathFinder(
-                        new ShortestPathFinder.AeroMovePathRelaxer(),
-                        new ShortestPathFinder.MovePathVelocityCostComparator(),
-                        stepType, game);
-        spf.addFilter(new MovePathVelocityFilter());
-        spf.addFilter(new MovePathLegalityFilter(game));
-        return spf;
-    }
-    
-    public static ShortestPathFinder newInstanceOfOneToAllSpheroid(
-            final MoveStepType stepType, final IGame game) {
-        final ShortestPathFinder spf =
-                new ShortestPathFinder(
-                        new ShortestPathFinder.AeroMovePathRelaxer(),
-                        new ShortestPathFinder.MovePathLengthComparator(),
-                        stepType, game);
-        spf.addFilter(new MovePathVelocityFilter());
-        spf.addFilter(new MovePathLegalityFilter(game));
-        return spf;
-    }
 
     /**
      * Constructs a greedy algorithms. It considers only the moves end closer to

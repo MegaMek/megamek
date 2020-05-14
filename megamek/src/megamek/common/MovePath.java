@@ -33,6 +33,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
+import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
 
@@ -1203,8 +1204,10 @@ public class MovePath implements Cloneable, Serializable {
         AbstractPathFinder.StopConditionTimeout<MovePath> timeoutCondition = new AbstractPathFinder.StopConditionTimeout<>(timeLimit);
         pf.addStopCondition(timeoutCondition);
 
-        pf.run(this.clone());
-        MovePath finPath = pf.getComputedPath(dest);
+        //pf.run(this.clone());
+        DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
+        MovePath finPath = dpf.findPathToCoords(entity, dest);
+        //MovePath finPath = pf.getComputedPath(dest);
 
         if (timeoutCondition.timeoutEngaged || finPath == null) {
             /*

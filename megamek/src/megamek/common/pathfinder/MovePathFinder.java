@@ -26,14 +26,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.Facing;
 import megamek.common.IGame;
 import megamek.common.MovePath;
-import megamek.common.UnitType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.Tank;
@@ -219,24 +217,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
     }
 
     /**
-     * This filter removes paths that have spent all of of the Aeros current
-     * velocity.
-     *
-     * @author arlith
-     *
-     */
-    public static class MovePathVelocityFilter extends Filter<MovePath> {
-
-        public MovePathVelocityFilter() {
-        }
-
-        @Override
-        public boolean shouldStay(MovePath mp) {
-            return mp.getFinalVelocity() >= 0;
-        }
-    }
-
-    /**
      * A MovePath comparator that compares movement points spent.
      *
      * Order paths with fewer used MP first.
@@ -265,51 +245,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             final int firstSteps = first.getStepVector().size();
             final int secondSteps = second.getStepVector().size();
             return firstSteps - secondSteps;
-        }
-    }
-
-    /**
-     * A MovePath comparator that compares remaining velocity points.  Aerodynes
-     * need to spend all of their remaining velocity, so should explore
-     * paths that expend the velocity first.
-     *
-     * However, a path that flies over an enemy is superior to one that does not. Treat those as having nominally greater value.
-     *
-     * Order paths with lower remaining velocities higher.
-     */
-    public static class MovePathVelocityCostComparator implements
-            Comparator<MovePath> {
-        @Override
-        public int compare(final MovePath first, final MovePath second) {
-        	// Check whether we will stall or not, we want to keep paths that will not stall
-            if(AeroPathUtil.willStall(first) || AeroPathUtil.willStall(second)) {
-                int firstPathWillStall = AeroPathUtil.willStall(first) ? 1 : 0;
-                int secondPathWillStall = AeroPathUtil.willStall(second) ? 1 : 0;
-
-                // if they both stall, then the rest of the comparisons still don't matter, just throw one out and move on
-                return firstPathWillStall - secondPathWillStall;
-            }
-
-        	boolean firstFlyoff = first.fliesOffBoard();
-            int velFirst = first.getFinalVelocityLeft();
-            // If we are flying off, treat this as 0 remaining velocity
-            if (firstFlyoff) {
-                velFirst = 0;
-            }
-            boolean secondFlyoff = second.fliesOffBoard();
-            int velSecond = second.getFinalVelocityLeft();
-            // If we are flying off, treat this as 0 remaining velocity
-            if (secondFlyoff) {
-                velSecond = 0;
-            }
-
-            // If both paths are flying off, compare on number of steps
-            // Shorter paths are better
-            if (firstFlyoff && secondFlyoff) {
-                return first.length() - second.length();
-            } else {
-                return velFirst - velSecond;
-            }
         }
     }
 

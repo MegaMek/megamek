@@ -721,7 +721,7 @@ public class MoveStep implements Serializable {
             for (Coords pos : secondaryPositions) {
                 Building bld = game.getBoard().getBuildingAt(pos);
                 if (bld != null) {
-                    crushedBuildingLocs.add(pos);
+                    getCrushedBuildingLocs().add(pos);
                     // This is dangerous!
                     danger = true;
                 }

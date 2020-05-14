@@ -143,7 +143,7 @@ public class MoveStep implements Serializable {
     // for optional vector movement
     private int[] mv;
     private int recoveryUnit = -1;
-    TreeMap<Integer, Vector<Integer>> launched = new TreeMap<Integer, Vector<Integer>>();
+    TreeMap<Integer, Vector<Integer>> launched;
     private boolean isEvading = false;
     private boolean isShuttingDown = false;
     private boolean isStartingUp = false;
@@ -171,7 +171,7 @@ public class MoveStep implements Serializable {
      * A collection of buildings that are crushed during this move step. This is
      * used for landed Aerodyne Dropships and Mobile Structures.
      */
-    private ArrayList<Coords> crushedBuildingLocs = new ArrayList<Coords>();
+    private ArrayList<Coords> crushedBuildingLocs;
 
     /**
      * Global logging instance.
@@ -436,8 +436,7 @@ public class MoveStep implements Serializable {
      */
     public void setVTOLBombing(boolean bombing) {
         if (bombing) {
-            setTarget(new HexTarget(getPosition(), getGame().getBoard(),
-                    Targetable.TYPE_HEX_AERO_BOMB));
+            setTarget(new HexTarget(getPosition(), Targetable.TYPE_HEX_AERO_BOMB));
         } else {
             setTarget(null);
         }
@@ -448,8 +447,7 @@ public class MoveStep implements Serializable {
      */
     public void setStrafing(boolean strafing) {
         if (strafing) {
-            setTarget(new HexTarget(getPosition(), getGame().getBoard(),
-                    Targetable.TYPE_HEX_CLEAR));
+            setTarget(new HexTarget(getPosition(), Targetable.TYPE_HEX_CLEAR));
         } else {
             setTarget(null);
         }
@@ -475,6 +473,10 @@ public class MoveStep implements Serializable {
     }
 
     public TreeMap<Integer, Vector<Integer>> getLaunched() {
+        if(launched == null) {
+            launched = new TreeMap<>();
+        }
+        
         return launched;
     }
 
@@ -3962,6 +3964,10 @@ public class MoveStep implements Serializable {
      * @return An {@link ArrayList} of {@link Coords} containing buildings within a dropship's landing zone.
      */
     public ArrayList<Coords> getCrushedBuildingLocs() {
+        if(crushedBuildingLocs == null) {
+            crushedBuildingLocs = new ArrayList<>();
+        }
+        
         return crushedBuildingLocs;
     }
 

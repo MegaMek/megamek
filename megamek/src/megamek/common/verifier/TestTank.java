@@ -505,7 +505,7 @@ public class TestTank extends TestEntity {
                         && !mode.equals(EntityMovementMode.RAIL)
                         && !mode.equals(EntityMovementMode.MAGLEV);
             }
-            if (eq.hasFlag(MiscType.F_MASH) || eq.hasFlag(MiscType.F_MASH_EXTRA)) {
+            if (eq.hasFlag(MiscType.F_MASH)) {
                 return !mode.equals(EntityMovementMode.VTOL);
             }
             if (eq.hasFlag(MiscType.F_SPONSON_TURRET)
@@ -650,7 +650,7 @@ public class TestTank extends TestEntity {
             if ((mount.getType() instanceof MiscType)
                     && mount.getType().hasFlag(MiscType.F_CARGO)) {
                 if (!addedCargo) {
-                    buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
+                    buff.append(StringUtil.makeLength(mount.getName(), 30));
                     buff.append(mount.getType().getTankSlots(tank)).append("\n");
                     addedCargo = true;
                     continue;
@@ -661,7 +661,7 @@ public class TestTank extends TestEntity {
             if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
                     EquipmentType.armorNames).contains(
                     mount.getType().getName()))) {
-                buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
+                buff.append(StringUtil.makeLength(mount.getName(), 30));
                 buff.append(mount.getType().getTankSlots(tank)).append("\n");
             }
         }

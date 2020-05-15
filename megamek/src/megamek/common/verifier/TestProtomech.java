@@ -344,7 +344,7 @@ public class TestProtomech extends TestEntity {
         for (Mounted m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
 
-            buff.append(StringUtil.makeLength(mt.getName(), 20));
+            buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
@@ -359,7 +359,7 @@ public class TestProtomech extends TestEntity {
         for (Mounted m : getEntity().getWeaponList()) {
             WeaponType mt = (WeaponType) m.getType();
 
-            buff.append(StringUtil.makeLength(mt.getName(), 20));
+            buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))

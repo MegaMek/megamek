@@ -4,6 +4,15 @@ VERSION HISTORY:
 + PR #1912: Fixing spelling issues in Campaign Options
 + Issue #1850: Plasma Rifle Dealing too much damage to conventional fighters
 + Issue #1916: Primitive and Primitive Prototype Weapons should have fixed intro dates.
++ Issue #1915: Battle Armor taking Damage multiples from artillery attacks
++ Issue #1928: Quirk spelling error
++ Issue #1931: Quirk Updates (errata fixes)
++ Issue #1880: Adding the Terrain Camo Pack (Thanks Teerayne) under Standard Camos
++ Issue #1930: Fix Sandblaster SPA to not require Weapon Specialist
++ Issue #1936: Map Editor - Can't lower terrain with up/down button on Linux Distributions
++ Issue #1934: ProtoMech Torso Critical Hit Issues
++ PR #1878: SirMegaV Buildings
++ Issue #1942: Princess no longer locks up processing ejected pilots on space maps when using basic spaceflight rules
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

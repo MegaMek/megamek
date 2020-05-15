@@ -1405,7 +1405,7 @@ public class Tank extends Entity {
                 MiscType mtype = (MiscType) etype;
                 double bv = mtype.getBV(this, mounted.getLocation());
                 bvText.append(startColumn);
-                bvText.append(etype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(bv);
@@ -1918,7 +1918,7 @@ public class Tank extends Entity {
                 bv = 7;
             }
             oEquipmentBV += bv;
-            bvText.append(mtype.getName());
+            bvText.append(mounted.getName());
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append(bv);
@@ -3960,9 +3960,8 @@ public class Tank extends Entity {
                 specialAbilities.merge(BattleForceSPA.MDS, 1, Integer::sum);
             } else if (m.getType().hasFlag(MiscType.F_MINESWEEPER)) {
                 specialAbilities.put(BattleForceSPA.MSW, null);
-            } else if (m.getType().hasFlag(MiscType.F_MASH)
-                    || m.getType().hasFlag(MiscType.F_MASH_EXTRA)) { 
-                specialAbilities.merge(BattleForceSPA.MASH, 1, Integer::sum);
+            } else if (m.getType().hasFlag(MiscType.F_MASH)) {
+                specialAbilities.merge(BattleForceSPA.MASH, (int) m.getSize(), Integer::sum);
             } else if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
                 specialAbilities.put(BattleForceSPA.MFB, null);
             } else if (m.getType().hasFlag(MiscType.F_COMMAND_CONSOLE)) {

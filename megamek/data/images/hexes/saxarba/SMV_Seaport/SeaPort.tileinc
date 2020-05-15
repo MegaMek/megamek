@@ -1,0 +1,107 @@
+# ----------------------------------------------------
+# --------------- SirMegaV   -------------------------
+# --------------- Sea Port System --------------------
+# ----------------------------------------------------
+
+# Sea Port with containers
+# Uses fluffed woods as terrain. Containers provide cover, make moving
+# more difficult and can be destroyed which all fits woods.
+# the crane tips are fluff terrain without woods
+# Must be included before standard woods
+
+# wood:1;fluff:80:1-29 are Containers
+# wood:1;fluff:81:1-48 are Cranes
+# fluff:82:1-6 are Crane tips
+
+super * "woods:1;fluff:80:01" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-1-01.png"
+super * "woods:1;fluff:80:02" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-1-02.png"
+super * "woods:1;fluff:80:03" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-1-03.png"
+super * "woods:1;fluff:80:04" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-1-04.png"
+super * "woods:1;fluff:80:05" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-1-05.png"
+super * "woods:1;fluff:80:06" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-1-06.png"
+super * "woods:1;fluff:80:07" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-1-07.png"
+                       
+super * "woods:1;fluff:80:08" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-2-01.png"
+super * "woods:1;fluff:80:09" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-2-02.png"
+super * "woods:1;fluff:80:11" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-2-03.png"
+super * "woods:1;fluff:80:12" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-2-04.png"
+super * "woods:1;fluff:80:13" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-2-05.png"
+super * "woods:1;fluff:80:14" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-2-06.png"
+super * "woods:1;fluff:80:15" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-2-07.png"
+                       
+super * "woods:1;fluff:80:16" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-3-01.png"
+super * "woods:1;fluff:80:17" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-3-02.png"
+super * "woods:1;fluff:80:18" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-3-03.png"
+super * "woods:1;fluff:80:19" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-3-04.png"
+super * "woods:1;fluff:80:20" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-3-05.png"
+super * "woods:1;fluff:80:21" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-3-06.png"
+super * "woods:1;fluff:80:22" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-3-07.png"
+                       
+super * "woods:1;fluff:80:23" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-4-01.png"
+super * "woods:1;fluff:80:24" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-4-02.png"
+super * "woods:1;fluff:80:25" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-4-03.png"
+super * "woods:1;fluff:80:26" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-4-04.png"
+super * "woods:1;fluff:80:27" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-4-05.png"
+super * "woods:1;fluff:80:28" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-4-06.png"
+super * "woods:1;fluff:80:29" "" "saxarba/SMV_SeaPort/SeaportSystem-01-Container-01-20Footer-4-07.png"
+
+super * "woods:1;fluff:81:01" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-01.png"
+super * "woods:1;fluff:81:02" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-02.png"
+super * "woods:1;fluff:81:03" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-03.png"
+super * "woods:1;fluff:81:04" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-04.png"
+super * "woods:1;fluff:81:05" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-05.png"
+super * "woods:1;fluff:81:06" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-06.png"
+super * "woods:1;fluff:81:07" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-07.png"
+super * "woods:1;fluff:81:08" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-08.png"
+super * "woods:1;fluff:81:09" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-09.png"
+super * "woods:1;fluff:81:10" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-10.png"
+super * "woods:1;fluff:81:11" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-11.png"
+super * "woods:1;fluff:81:12" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-1-12.png"
+                       
+super * "woods:1;fluff:81:13" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-01.png"
+super * "woods:1;fluff:81:14" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-02.png"
+super * "woods:1;fluff:81:15" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-03.png"
+super * "woods:1;fluff:81:16" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-04.png"
+super * "woods:1;fluff:81:17" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-05.png"
+super * "woods:1;fluff:81:18" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-06.png"
+super * "woods:1;fluff:81:19" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-07.png"
+super * "woods:1;fluff:81:20" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-08.png"
+super * "woods:1;fluff:81:21" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-09.png"
+super * "woods:1;fluff:81:22" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-10.png"
+super * "woods:1;fluff:81:23" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-11.png"
+super * "woods:1;fluff:81:24" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-2-12.png"
+                       
+super * "woods:1;fluff:81:25" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-01.png"
+super * "woods:1;fluff:81:26" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-02.png"
+super * "woods:1;fluff:81:27" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-03.png"
+super * "woods:1;fluff:81:28" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-04.png"
+super * "woods:1;fluff:81:29" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-05.png"
+super * "woods:1;fluff:81:30" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-06.png"
+super * "woods:1;fluff:81:31" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-07.png"
+super * "woods:1;fluff:81:32" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-08.png"
+super * "woods:1;fluff:81:33" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-09.png"
+super * "woods:1;fluff:81:34" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-10.png"
+super * "woods:1;fluff:81:35" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-11.png"
+super * "woods:1;fluff:81:36" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-3-12.png"
+                       
+super * "woods:1;fluff:81:37" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-01.png"
+super * "woods:1;fluff:81:38" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-02.png"
+super * "woods:1;fluff:81:39" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-03.png"
+super * "woods:1;fluff:81:40" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-04.png"
+super * "woods:1;fluff:81:41" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-05.png"
+super * "woods:1;fluff:81:42" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-06.png"
+super * "woods:1;fluff:81:43" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-07.png"
+super * "woods:1;fluff:81:44" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-08.png"
+super * "woods:1;fluff:81:45" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-09.png"
+super * "woods:1;fluff:81:46" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-10.png"
+super * "woods:1;fluff:81:47" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-11.png"
+super * "woods:1;fluff:81:48" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-01-20Footer-4-12.png"
+
+# Crane tips
+
+super * "fluff:82:1" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-03-CraneTip-1-01.png"
+super * "fluff:82:2" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-03-CraneTip-1-02.png"
+super * "fluff:82:3" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-03-CraneTip-1-03.png"
+super * "fluff:82:4" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-03-CraneTip-1-04.png"
+super * "fluff:82:5" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-03-CraneTip-1-05.png"
+super * "fluff:82:6" "" "saxarba/SMV_SeaPort/SeaportSystem-02-ShipToShoreGantryCrane-03-CraneTip-1-06.png"

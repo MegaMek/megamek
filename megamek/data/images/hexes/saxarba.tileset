@@ -31,6 +31,9 @@
 
 #####SUPER TERRAINS#####
 
+include "saxarba/Includes/Pavement.tileinc"
+
+
 #GRAY SAND
 super -3 "sand:*" "lunar" "saxarba/base/base_sand_gray_-3.png"
 super -2 "sand:*" "lunar" "saxarba/base/base_sand_gray_-2.png"
@@ -88,6 +91,8 @@ super * "water:0" "lunar" "saxarba/theme_lunar/water_lunar_0.png"
 super * "water:0" "volcano" "saxarba/theme_volcano/water_volcano_0.png"
 
 #WATER
+# Garden Lakes use water:0 so they must be included now
+include "saxarba/SMV_Fluff/GardenLakes.tileinc"
 super * "water:0" "" "saxarba/water/water_0.png"
 
 #ELEVATOR
@@ -113,6 +118,10 @@ super * "elevator:-8" "" "saxarba/misc/elevator_-8.png"
 super * "elevator:-9" "" "saxarba/misc/elevator_-9.png"
 super * "elevator:-10" "" "saxarba/misc/elevator_-10.png"
 super * "elevator:*" "" "saxarba/misc/elevator_0.png"
+
+#Basement states have no graphical representation
+super * "bldg_basement_type:*" "" "saxarba/misc/blank.png"
+super * "bldg_base_collapsed:*" "" "saxarba/misc/blank.png"
 
 #LIGHT SNOW
 super -1 "snow:1" "" "saxarba/base/base_snow_light_-1.png;saxarba/base/base_snow_light_-1b.png"
@@ -245,7 +254,7 @@ super * "water:1" "volcano" "saxarba/theme_volcano/water_volcano_1.png"
 super * "water:1" "" "saxarba/water/water_1.png"
 
 #ROADS
-include "saxarba/BasicRoads.tileinc"
+include "saxarba/Includes/BasicRoads.tileinc"
 #For maps with roads!=1
 super * "road:*" "" "saxarba/misc/legacy_road0.png"
 
@@ -253,7 +262,9 @@ super * "road:*" "" "saxarba/misc/legacy_road0.png"
 include "StandardIncludes/StandardRailMaglev.tileinc"
 
 #FUEL TANKS
-include "saxarba/FuelTanks.tileinc"
+include "saxarba/Includes/FuelTanks.tileinc"
+
+include "saxarba/SMV_SeaPort/SeaPort.tileinc"
 
 #TROPICAL THEME TREES
 super * "woods:1;fluff:12" "tropical" "saxarba/theme_tropical/orchard_tropical.png"
@@ -378,31 +389,37 @@ super * "rapids:*" "" "saxarba/water/torrent.png"
 super * "ice:1" "" "saxarba/misc/ice.png"
 super * "ice:*" "" "saxarba/misc/ice.png"
 
+
+#SPECIAL SIRMEGAV BUILDINGS
+include "saxarba/SMV_Buildings/SirMegaVBuildings.tileinc"
+include "saxarba/Includes/BuildingsAddtlSaxarba.tileinc"
+
 #BUILDINGS
 #Standard buildings for mars and lunar and volcano themes
-include "saxarba/BuildingsSealedLunar.tileinc"
-include "saxarba/BuildingsSealedMars.tileinc"
-include "saxarba/BuildingsSealedVolcano.tileinc"
+include "saxarba/Includes/BuildingsSealedLunar.tileinc"
+include "saxarba/Includes/BuildingsSealedMars.tileinc"
+include "saxarba/Includes/BuildingsSealedVolcano.tileinc"
 
-include "saxarba/BuildingsNonSClassArmor.tileinc"
-include "saxarba/BuildingsNonSClassNoArmor.tileinc"
+include "saxarba/Includes/BuildingsNonSClassArmor.tileinc"
+include "saxarba/Includes/BuildingsNonSClassNoArmor.tileinc"
 
-include "saxarba/BuildingsSealedLunar_noClassSpecified.tileinc"
-include "saxarba/BuildingsSealedMars_noClassSpecified.tileinc"
-include "saxarba/BuildingsSealedVolcano_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSealedLunar_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSealedMars_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSealedVolcano_noClassSpecified.tileinc"
 
-include "saxarba/BuildingsSClassArmor.tileinc"
-include "saxarba/BuildingsSClassNoArmor.tileinc"
-
-include "saxarba/BuildingsSClassArmor_noClassSpecified.tileinc"
-include "saxarba/BuildingsSClassNoArmor_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSClassArmor_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSClassNoArmor_noClassSpecified.tileinc"
 
 #BRIDGES
-include "saxarba/BasicBridges.tileinc"
-
+include "saxarba/Includes/BasicBridges.tileinc"
 #REMAINS
 #FLUFF
-include "saxarba/StandardFluff.tileinc"
+include "saxarba/SMV_LandingPads/LandingPads.tileinc"
+include "saxarba/SMV_GroundSymbols/GroundSymbols.tileinc"
+include "saxarba/SMV_Letters/Letters.tileinc"
+include "saxarba/SMV_Fluff/Fluff.tileinc"
+
+include "saxarba/Includes/StandardFluff.tileinc"
 
 #ARMS & LEGS
 super * "arms:1" "" "saxarba/misc/arm1.png"
@@ -452,37 +469,6 @@ base 10 "" "" "saxarba/base/base_default_10.png"
 base -1 "" "" "saxarba/base/base_default_-1.png"
 base -2 "" "" "saxarba/base/base_default_-2.png"
 base -3 "" "" "saxarba/base/base_default_-3.png"
-
-#PAVEMENT
-base -1 "pavement:1" "" "saxarba/base/base_pavement_-1.png"
-base -2 "pavement:1" "" "saxarba/base/base_pavement_-2.png"
-base -3 "pavement:1" "" "saxarba/base/base_pavement_-3.png"
-base 0 "pavement:1" "" "saxarba/base/base_pavement_0.png"
-base 1 "pavement:1" "" "saxarba/base/base_pavement_1.png"
-base 2 "pavement:1" "" "saxarba/base/base_pavement_2.png"
-base 3 "pavement:1" "" "saxarba/base/base_pavement_3.png"
-base 4 "pavement:1" "" "saxarba/base/base_pavement_4.png"
-base 5 "pavement:1" "" "saxarba/base/base_pavement_5.png"
-base 6 "pavement:1" "" "saxarba/base/base_pavement_6.png"
-base 7 "pavement:1" "" "saxarba/base/base_pavement_7.png"
-base 8 "pavement:1" "" "saxarba/base/base_pavement_8.png"
-base 9 "pavement:1" "" "saxarba/base/base_pavement_9.png"
-base 10 "pavement:1" "" "saxarba/base/base_pavement_10.png"
-#Urban garden variation
-base -1 "pavement:2" "" "saxarba/base/base_pavement_urban_-1.png"
-base -2 "pavement:2" "" "saxarba/base/base_pavement_urban_-2.png"
-base -3 "pavement:2" "" "saxarba/base/base_pavement_urban_-3.png"
-base 0 "pavement:2" "" "saxarba/base/base_pavement_urban_0.png"
-base 1 "pavement:2" "" "saxarba/base/base_pavement_urban_1.png"
-base 2 "pavement:2" "" "saxarba/base/base_pavement_urban_2.png"
-base 3 "pavement:2" "" "saxarba/base/base_pavement_urban_3.png"
-base 4 "pavement:2" "" "saxarba/base/base_pavement_urban_4.png"
-base 5 "pavement:2" "" "saxarba/base/base_pavement_urban_5.png"
-base 6 "pavement:2" "" "saxarba/base/base_pavement_urban_6.png"
-base 7 "pavement:2" "" "saxarba/base/base_pavement_urban_7.png"
-base 8 "pavement:2" "" "saxarba/base/base_pavement_urban_8.png"
-base 9 "pavement:2" "" "saxarba/base/base_pavement_urban_9.png"
-base 10 "pavement:2" "" "saxarba/base/base_pavement_urban_10.png"
 
 #CRUST
 base -3 "magma:1" "" "saxarba/base/base_crust_-3.png"
@@ -649,3 +635,13 @@ base 8 "" "lunar" "saxarba/theme_lunar/base_lunar_8.png;saxarba/theme_lunar/base
 base 9 "" "lunar" "saxarba/theme_lunar/base_lunar_9.png;saxarba/theme_lunar/base_lunar_9b.png;saxarba/theme_lunar/base_lunar_9c.png;saxarba/theme_lunar/base_lunar_9d.png;saxarba/theme_lunar/base_lunar_9e.png;saxarba/theme_lunar/base_lunar_9f.png"
 base 10 "" "lunar" "saxarba/theme_lunar/base_lunar_10.png;saxarba/theme_lunar/base_lunar_10b.png;saxarba/theme_lunar/base_lunar_10c.png;saxarba/theme_lunar/base_lunar_10d.png;saxarba/theme_lunar/base_lunar_10e.png;saxarba/theme_lunar/base_lunar_10f.png"
 
+
+
+# To avoid errors
+super * "fluff:*" "" "saxarba/misc/blank.png"
+super * "road_fluff:*" "" "saxarba/misc/blank.png"
+super * "ground_fluff:*" "" "saxarba/misc/blank.png"
+super * "water_fluff:*" "" "saxarba/misc/blank.png"
+super * "bldg_fluff:*" "" "saxarba/misc/blank.png"
+
+super * "bldg_class:0" "" "saxarba/misc/blank.png"

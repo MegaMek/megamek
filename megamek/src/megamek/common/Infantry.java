@@ -512,6 +512,26 @@ public class Infantry extends Entity {
         return mp;
     }
 
+    @Override
+    public boolean hasUMU() {
+        return getMovementMode().equals(EntityMovementMode.INF_UMU)
+                || getMovementMode().equals(EntityMovementMode.SUBMARINE);
+    }
+
+    @Override
+    public int getActiveUMUCount() {
+        return getAllUMUCount();
+    }
+
+    @Override
+    public int getAllUMUCount() {
+        if (hasUMU()) {
+            return jumpMP;
+        } else {
+            return 0;
+        }
+    }
+
     /**
      * Infantry can not enter water unless they have UMU mp or hover.
      */

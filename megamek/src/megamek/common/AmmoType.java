@@ -397,6 +397,19 @@ public class AmmoType extends EquipmentType {
      */
     @Override
     public boolean equals(Object other) {
+        return equalsAmmoTypeOnly(other) && (getRackSize() == ((AmmoType) other)
+                .getRackSize());
+    }
+
+    /**
+     * When comparing <code>AmmoType</code>s, look at the ammoType only.
+     *
+     * @param other the <code>Object</code> to compare to this one.
+     * @return <code>true</code> if the other is an <code>AmmoType</code> object
+     *         of the same <code>ammoType</code> as this object. N.B. different
+     *         munition types are still equal.
+     */
+    public boolean equalsAmmoTypeOnly(Object other) {
         if (!(other instanceof AmmoType)) {
             return false;
         }
@@ -424,8 +437,7 @@ public class AmmoType extends EquipmentType {
                 return false;
             }
         }
-        return ((getAmmoType() == ((AmmoType) other).getAmmoType()) && (getRackSize() == ((AmmoType) other)
-                .getRackSize()));
+        return getAmmoType() == ((AmmoType) other).getAmmoType();
     }
 
     @Override

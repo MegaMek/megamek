@@ -13,6 +13,7 @@ VERSION HISTORY:
 + Issue #1934: ProtoMech Torso Critical Hit Issues
 + PR #1878: SirMegaV Buildings
 + Issue #1942: Princess no longer locks up processing ejected pilots on space maps when using basic spaceflight rules
++ PR #1952: Princess no longer locks up deploying units to "center" or "any" on larger rectangular boards
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

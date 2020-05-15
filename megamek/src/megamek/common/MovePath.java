@@ -1529,11 +1529,15 @@ public class MovePath implements Cloneable, Serializable {
     @Override
     public MovePath clone() {
         final MovePath copy = new MovePath(getGame(), getEntity());
+        copyFields(copy);
+        return copy;
+    }
+    
+    protected void copyFields(MovePath copy) {
         copy.steps = new Vector<MoveStep>(steps);
         copy.careful = careful;
         copy.containedStepTypes = new HashSet<>(containedStepTypes);
         copy.fliesOverEnemy = fliesOverEnemy;
-        return copy;
     }
 
     /**

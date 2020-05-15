@@ -490,7 +490,7 @@ public class BoardEdgePathFinder {
      * Helper function that handles logic related to potentially adding a generated child path
      * to the list of child paths.
      */
-    private void processChild(MovePath child, List<MovePath> children, Set<Coords> visitedCoords) {
+    protected void processChild(MovePath child, List<MovePath> children, Set<Coords> visitedCoords) {
         if(!visitedCoords.contains(child.getFinalCoords()) && isLegalMove(child)) {
             visitedCoords.add(child.getFinalCoords());
             children.add(child);
@@ -503,7 +503,7 @@ public class BoardEdgePathFinder {
      * @param movePath The move path to process
      * @return Whether or not the given move path is "legal" in the context of this pathfinder.
      */
-    private boolean isLegalMove(MovePath movePath) {
+    protected boolean isLegalMove(MovePath movePath) {
         Coords dest = movePath.getFinalCoords();
         IBoard board = movePath.getGame().getBoard();
         IHex destHex = board.getHex(dest);

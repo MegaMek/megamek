@@ -2456,7 +2456,7 @@ public class FireControl {
      * @return The most damage done at that range.
      */
     // todo cluster and other variable damage.
-    double getMaxDamageAtRange(final Entity shooter,
+    public static double getMaxDamageAtRange(final Entity shooter,
                                final int range,
                                final boolean useExtremeRange,
                                final boolean useLOSRange) {

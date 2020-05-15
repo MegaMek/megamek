@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.common.Board;
+import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBoard;
@@ -22,7 +23,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
     /**
      */
     public MovePath findPathToCoords(Entity entity, Coords destinationCoords) {
-        MovePath startPath = new MovePath(entity.getGame(), entity);
+        BulldozerMovePath startPath = new BulldozerMovePath(entity.getGame(), entity);
         if(entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
             startPath.addStep(MoveStepType.CLIMB_MODE_OFF);
         } else {
@@ -31,37 +32,21 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         
         additionalCosts = new HashMap<>();
 
-        Comparator<MovePath> movePathComparator = new ShortestPathFinder.MovePathAStarComparator(
-                destinationCoords, MoveStepType.FORWARDS, entity.getGame().getBoard());//new AStarComparator(destinationCoords);
+        Comparator<BulldozerMovePath> movePathComparator = /*new ShortestPathFinder.MovePathAStarComparator(
+                destinationCoords, MoveStepType.FORWARDS, entity.getGame().getBoard());*/
+                new AStarComparator(destinationCoords);
 
-        List<MovePath> candidates = new ArrayList<>();
+        List<BulldozerMovePath> candidates = new ArrayList<>();
         candidates.add(startPath);
 
         // a collection of coordinates we've already visited, so we don't loop back.
         Set<Coords> visitedCoords = new HashSet<>();
         visitedCoords.add(startPath.getFinalCoords());
-        //longestNonEdgePathCache.put(entity.getPosition(), startPath);
-        MovePath bestPath = new MovePath(entity.getGame(), entity);
+        BulldozerMovePath bestPath = new BulldozerMovePath(entity.getGame(), entity);
 
         while(!candidates.isEmpty()) {
-            /*MovePath cachedPath = this.getCachedPathForCoordinates(candidates.get(0).getFinalCoords(), destinationRegion);
-
-            if(cachedPath != null || isOnBoardEdge(candidates.get(0), destinationRegion)) {
-                // if we've found a cached path and the length of the current candidate is 1
-                // (it's always at least 1 due to adding the climb mode switch explicitly),
-                // then we should return the cached path instead
-                MovePath returnPath = ((candidates.get(0).length() == 1) && (cachedPath != null)) ? cachedPath : candidates.get(0);
-
-                cacheGoodPath(returnPath, destinationRegion);
-                return returnPath;
-            }*/
 
             candidates.addAll(generateChildNodes(candidates.get(0), visitedCoords));
-
-            // if this path moved around more than the current 'longest path', store it, just in case
-            //if(candidates.get(0).getHexesMoved() > longestNonEdgePathCache.get(entity.getPosition()).getHexesMoved()) {
-            //    longestNonEdgePathCache.put(entity.getPosition(), candidates.get(0));
-            //}
             
             if(candidates.get(0).getFinalCoords().equals(destinationCoords) &&
                     movePathComparator.compare(bestPath, candidates.get(0)) < 0) {
@@ -76,12 +61,67 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
     }
     
     /**
+     * Function that generates all possible "legal" moves resulting from the given path
+     * and updates the set of visited coordinates so we don't visit them again.
+     * @param parentPath The path for which to generate child nodes
+     * @param visitedCoords Set of visited coordinates so we don't loop around
+     * @return List of valid children. Between 0 and 3 inclusive.
+     */
+    protected List<BulldozerMovePath> generateChildNodes(BulldozerMovePath parentPath, Set<Coords> visitedCoords) {
+        List<BulldozerMovePath> children = new ArrayList<>();
+
+        // the children of a move path are:
+        //      turn left and step forward one
+        //      step forward one
+        //      turn right and step forward one
+        BulldozerMovePath leftChild = (BulldozerMovePath) parentPath.clone();
+        leftChild.addStep(MoveStepType.TURN_LEFT);
+        leftChild.addStep(MoveStepType.FORWARDS);
+        processChild(leftChild, children, visitedCoords);
+        
+        BulldozerMovePath leftleftChild = (BulldozerMovePath) parentPath.clone();
+        leftleftChild.addStep(MoveStepType.TURN_LEFT);
+        leftleftChild.addStep(MoveStepType.TURN_LEFT);
+        leftleftChild.addStep(MoveStepType.FORWARDS);
+        processChild(leftleftChild, children, visitedCoords);
+
+        BulldozerMovePath centerChild = (BulldozerMovePath) parentPath.clone();
+        centerChild.addStep(MoveStepType.FORWARDS);
+        processChild(centerChild, children, visitedCoords);
+
+        BulldozerMovePath rightChild = (BulldozerMovePath) parentPath.clone();
+        rightChild.addStep(MoveStepType.TURN_RIGHT);
+        rightChild.addStep(MoveStepType.FORWARDS);
+        processChild(rightChild, children, visitedCoords);
+        
+        BulldozerMovePath rightrightChild = (BulldozerMovePath) parentPath.clone();
+        rightrightChild.addStep(MoveStepType.TURN_RIGHT);
+        rightrightChild.addStep(MoveStepType.TURN_RIGHT);
+        rightrightChild.addStep(MoveStepType.FORWARDS);
+        processChild(rightrightChild, children, visitedCoords);
+
+        return children;
+    }
+    
+    /**
+     * Helper function that handles logic related to potentially adding a generated child path
+     * to the list of child paths.
+     */
+    protected void processChild(BulldozerMovePath child, List<BulldozerMovePath> children, Set<Coords> visitedCoords) {
+        if(!visitedCoords.contains(child.getFinalCoords()) &&
+                (isLegalMove((MovePath) child) || child.needsLeveling())) {
+            visitedCoords.add(child.getFinalCoords());
+            children.add(child);
+        }
+    }
+    
+    /**
      * Comparator implementation useful in comparing how much closer a given path is to the internal
      * "destination edge" than the other.
      * @author NickAragua
      *
      */
-    private class AStarComparator implements Comparator<MovePath> {
+    private class AStarComparator implements Comparator<BulldozerMovePath> {
         private Coords destination;
 
         /**
@@ -92,11 +132,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             this.destination = destination;
         }
 
-        private int gFunction(MovePath path) {
+        private int gFunction(BulldozerMovePath path) {
             return path.getMpUsed();
         }
         
-        private int hFunction(MovePath path) {
+        private int hFunction(BulldozerMovePath path) {
             return path.getFinalCoords().distance(destination);
         }
         
@@ -105,7 +145,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
          * Favors paths that move closer to the destination edge first.
          * in case of tie, favors paths that cost less MP
          */
-        public int compare(MovePath first, MovePath second) {
+        public int compare(BulldozerMovePath first, BulldozerMovePath second) {
             IBoard board = first.getGame().getBoard();
             boolean backwards = false;//first.getStep(0).getS == MoveStepType.BACKWARDS;
             int h1 = first.getFinalCoords().distance(destination)

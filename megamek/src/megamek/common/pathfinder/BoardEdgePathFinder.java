@@ -85,27 +85,30 @@ public class BoardEdgePathFinder {
         // if they're even, pick one arbitrarily
 
         int edge = Board.START_NONE;
+        
+        double normalizedXPosition = (double) entity.getPosition().getX() / board.getWidth();
+        double normalizedYPosition = (double) entity.getPosition().getY() / board.getHeight();
 
         // if x is closer to the west edge and less than the y coordinate, use east edge as opposite
-        if(entity.getPosition().getX() < (board.getWidth() / 2) &&
-                entity.getPosition().getX() < entity.getPosition().getY()) {
+        if((entity.getPosition().getX() < (board.getWidth() / 2)) &&
+                (normalizedXPosition < normalizedYPosition)) {
             edge = Board.START_W;
         }
 
         // if x is closer to the east edge and greater than the y coordinate, use west edge as opposite
-        else if(entity.getPosition().getX() >= (board.getWidth() / 2) &&
-                entity.getPosition().getX() > entity.getPosition().getY()) {
+        else if((entity.getPosition().getX() >= (board.getWidth() / 2)) &&
+                (normalizedXPosition > normalizedYPosition)) {
             edge = Board.START_E;
         }
 
         // if y is closer to the north edge and greater than the x coordinate, use south edge as opposite
-        else if(entity.getPosition().getY() < (board.getHeight() / 2) &&
-                entity.getPosition().getY() < entity.getPosition().getX()) {
+        else if((entity.getPosition().getY() < (board.getHeight() / 2)) &&
+                (normalizedYPosition < normalizedXPosition)) {
             edge = Board.START_N;
         }
         // if y is closer to the south edge and greater than the x coordinate, use the north edge as opposite
-        else if(entity.getPosition().getY() >= (board.getHeight() / 2) &&
-                entity.getPosition().getY() > entity.getPosition().getX()) {
+        else if((entity.getPosition().getY() >= (board.getHeight() / 2)) &&
+                (normalizedYPosition > normalizedXPosition)) {
             edge = Board.START_S;
         }
 

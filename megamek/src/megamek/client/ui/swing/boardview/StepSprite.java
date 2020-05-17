@@ -79,20 +79,25 @@ class StepSprite extends Sprite {
         final Point stepPos = bv.getHexLocation(step.getPosition());
         stepPos.translate(-bounds.x, -bounds.y);
         
-        Shape FacingArrow = bv.facingPolys[step.getFacing()];
         Shape moveArrow = bv.movementPolys[step.getFacing()];
+        Shape facingArrow;
+        if (isLastStep && step.getMovementType(isLastStep) != EntityMovementType.MOVE_ILLEGAL) {
+            facingArrow = bv.finalFacingPolys[step.getFacing()];
+        } else {
+            facingArrow = bv.facingPolys[step.getFacing()];
+        }
+
+        AffineTransform stepOffset = new AffineTransform();
+        stepOffset.translate(stepPos.x + 1, stepPos.y + 1);   //when is stepPos ever <> 0?
         
-        AffineTransform StepOffset = new AffineTransform();
-        StepOffset.translate(stepPos.x + 1, stepPos.y + 1);   //when is stepPos ever <> 0?
+        AffineTransform shadowOffset = new AffineTransform();
+        shadowOffset.translate(-1,-1);
         
-        AffineTransform ShadowOffset = new AffineTransform();
-        ShadowOffset.translate(-1,-1);
-        
-        AffineTransform UpDownOffset = new AffineTransform();
-        UpDownOffset.translate(-30,0);
+        AffineTransform upDownOffset = new AffineTransform();
+        upDownOffset.translate(-30,0);
         
         Color col;
-        Shape CurrentArrow;
+        Shape currentArrow;
         // set color
         switch (step.getMovementType(isLastStep)) {
             case MOVE_RUN:
@@ -157,13 +162,25 @@ class StepSprite extends Sprite {
             case LOOP:
                 // draw arrows showing them entering the next
                 graph.setColor(Color.darkGray);
-                CurrentArrow = StepOffset.createTransformedShape(moveArrow);
-                ((Graphics2D) graph).fill(CurrentArrow);
+                currentArrow = stepOffset.createTransformedShape(moveArrow);
+                ((Graphics2D) graph).fill(currentArrow);
                 
                 graph.setColor(col);
-                CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
-                ((Graphics2D) graph).fill(CurrentArrow);
-                
+                currentArrow = shadowOffset.createTransformedShape(currentArrow);
+                ((Graphics2D) graph).fill(currentArrow);
+
+                // draw arrows showing the facing for final step only
+                if (isLastStep) {
+                    // draw arrows showing the facing
+                    graph.setColor(Color.darkGray);
+                    currentArrow = stepOffset.createTransformedShape(facingArrow);
+                    ((Graphics2D) graph).fill(currentArrow);
+
+                    graph.setColor(col);
+                    currentArrow = shadowOffset.createTransformedShape(currentArrow);
+                    ((Graphics2D) graph).fill(currentArrow);
+                }
+
                 // draw movement cost
                 drawMovementCost(step, isLastStep, stepPos, graph, col, true);
                 drawRemainingVelocity(step, stepPos, graph, true);
@@ -177,13 +194,13 @@ class StepSprite extends Sprite {
                 // draw arrow indicating dropping prone
                 // also doubles as the descent indication
                 graph.setColor(Color.darkGray);
-                CurrentArrow = UpDownOffset.createTransformedShape(bv.downArrow);
-                CurrentArrow = StepOffset.createTransformedShape(CurrentArrow);
-                ((Graphics2D) graph).fill(CurrentArrow);
+                currentArrow = upDownOffset.createTransformedShape(bv.downArrow);
+                currentArrow = stepOffset.createTransformedShape(currentArrow);
+                ((Graphics2D) graph).fill(currentArrow);
                 
                 graph.setColor(col);
-                CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
-                ((Graphics2D) graph).fill(CurrentArrow);
+                currentArrow = shadowOffset.createTransformedShape(currentArrow);
+                ((Graphics2D) graph).fill(currentArrow);
                 
                 offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
                 drawMovementCost(step, isLastStep, offsetCostPos, graph, col, false);
@@ -195,13 +212,13 @@ class StepSprite extends Sprite {
                 // draw arrow indicating standing up
                 // also doubles as the climb indication
                 graph.setColor(Color.darkGray);
-                CurrentArrow = UpDownOffset.createTransformedShape(bv.upArrow);
-                CurrentArrow = StepOffset.createTransformedShape(CurrentArrow);
-                ((Graphics2D) graph).fill(CurrentArrow);
+                currentArrow = upDownOffset.createTransformedShape(bv.upArrow);
+                currentArrow = stepOffset.createTransformedShape(currentArrow);
+                ((Graphics2D) graph).fill(currentArrow);
                 
                 graph.setColor(col);
-                CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
-                ((Graphics2D) graph).fill(CurrentArrow);
+                currentArrow = shadowOffset.createTransformedShape(currentArrow);
+                ((Graphics2D) graph).fill(currentArrow);
                 
                 offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
                 drawMovementCost(step, isLastStep, offsetCostPos, graph, col, false);
@@ -257,12 +274,12 @@ class StepSprite extends Sprite {
             case ROLL:
                 // draw arrows showing the facing
                 graph.setColor(Color.darkGray);
-                CurrentArrow = StepOffset.createTransformedShape(FacingArrow);
-                ((Graphics2D) graph).fill(CurrentArrow);
+                currentArrow = stepOffset.createTransformedShape(facingArrow);
+                ((Graphics2D) graph).fill(currentArrow);
                 
                 graph.setColor(col);
-                CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
-                ((Graphics2D) graph).fill(CurrentArrow);
+                currentArrow = shadowOffset.createTransformedShape(currentArrow);
+                ((Graphics2D) graph).fill(currentArrow);
                 
                 if (bv.game.useVectorMove()) {
                     drawMovementCost(step, isLastStep, stepPos, graph, col, false);
@@ -271,12 +288,12 @@ class StepSprite extends Sprite {
             case BOOTLEGGER:
                 // draw arrows showing them entering the next
                 graph.setColor(Color.darkGray);
-                CurrentArrow = StepOffset.createTransformedShape(moveArrow);
-                ((Graphics2D) graph).fill(CurrentArrow);
+                currentArrow = stepOffset.createTransformedShape(moveArrow);
+                ((Graphics2D) graph).fill(currentArrow);
                 
                 graph.setColor(col);
-                CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
-                ((Graphics2D) graph).fill(CurrentArrow);
+                currentArrow = shadowOffset.createTransformedShape(currentArrow);
+                ((Graphics2D) graph).fill(currentArrow);
 
                 drawMovementCost(step, isLastStep, stepPos, graph, col, true);
                 break;

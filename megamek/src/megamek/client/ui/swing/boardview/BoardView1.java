@@ -352,6 +352,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     Shape[] movementPolys;
     Shape[] facingPolys;
+    Shape[] finalFacingPolys;
     Shape upArrow;
     Shape downArrow;
 
@@ -4605,7 +4606,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public void initPolys() {
 
-        AffineTransform FacingRotate = new AffineTransform();
+        AffineTransform facingRotate = new AffineTransform();
 
         // facing polygons
         Polygon facingPoly_tmp = new Polygon();
@@ -4620,8 +4621,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         facingPolys = new Shape[8];
         for (int dir: allDirections)
         {
-            facingPolys[dir] = FacingRotate.createTransformedShape(facingPoly_tmp);
-            FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
+            facingPolys[dir] = facingRotate.createTransformedShape(facingPoly_tmp);
+            facingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
+        }
+
+        // final facing polygons
+        Polygon finalFacingPoly_tmp = new Polygon();
+        finalFacingPoly_tmp.addPoint(41, 3);
+        finalFacingPoly_tmp.addPoint(21, 18);
+        finalFacingPoly_tmp.addPoint(41, 14);
+        finalFacingPoly_tmp.addPoint(42, 14);
+        finalFacingPoly_tmp.addPoint(61, 18);
+        finalFacingPoly_tmp.addPoint(42, 3);
+
+        // create the rotated shapes
+        facingRotate.setToIdentity();
+        finalFacingPolys = new Shape[8];
+        for (int dir: allDirections)
+        {
+            finalFacingPolys[dir] = facingRotate.createTransformedShape(finalFacingPoly_tmp);
+            facingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
         }
 
         // movement polygons
@@ -4647,23 +4666,23 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         movementPoly_tmp.addPoint(45, 68);
 
         // create the rotated shapes
-        FacingRotate.setToIdentity();
+        facingRotate.setToIdentity();
         movementPolys = new Shape[8];
         for (int dir: allDirections)
         {
-            movementPolys[dir] = FacingRotate.createTransformedShape(movementPoly_tmp);
-            FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
+            movementPolys[dir] = facingRotate.createTransformedShape(movementPoly_tmp);
+            facingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
         }
 
         // Up and Down Arrows
-        FacingRotate.setToIdentity();
-        FacingRotate.translate(0, -31);
-        upArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
+        facingRotate.setToIdentity();
+        facingRotate.translate(0, -31);
+        upArrow = facingRotate.createTransformedShape(movementPoly_tmp);
 
-        FacingRotate.setToIdentity();
-        FacingRotate.rotate(Math.toRadians(180),HEX_W/2,HEX_H/2);
-        FacingRotate.translate(0, -31);
-        downArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
+        facingRotate.setToIdentity();
+        facingRotate.rotate(Math.toRadians(180),HEX_W/2,HEX_H/2);
+        facingRotate.translate(0, -31);
+        downArrow = facingRotate.createTransformedShape(movementPoly_tmp);
     }
 
     synchronized boolean doMoveUnits(long idleTime) {

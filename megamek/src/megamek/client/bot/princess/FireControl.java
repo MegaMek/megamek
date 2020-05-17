@@ -2455,7 +2455,7 @@ public class FireControl {
      * @param useExtremeRange Is the extreme range optional rule in effect?
      * @return The most damage done at that range.
      */
-    // todo cluster and other variable damage.
+    // todo: cluster and other variable damage.
     public static double getMaxDamageAtRange(final Entity shooter,
                                final int range,
                                final boolean useExtremeRange,
@@ -2469,8 +2469,18 @@ public class FireControl {
                                                        weaponType.getRanges(weapon),
                                                        useExtremeRange,
                                                        useLOSRange);
-            if ((RangeType.RANGE_OUT != bracket) && (0 < weaponType.getDamage())) {
-                maxDamage += weaponType.getDamage();
+            int weaponDamage = weaponType.getDamage();
+            
+            // just a ball park estimate of missile and/or other cluster damage
+            // only a little over half of a cluster will generally hit
+            // but some cluster munitions do more than 1 point of damage per individual hit
+            // still better than just discounting them completely.
+            if(weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                weaponDamage = weaponType.getRackSize();
+            }
+            
+            if ((RangeType.RANGE_OUT != bracket) && (0 < weaponDamage)) {
+                maxDamage += weaponDamage;
             }
         }
 

@@ -19,9 +19,8 @@ public class BulldozerMovePath extends MovePath {
         super(game, entity);
     }
 
-    @Override
-    public int getMpUsed() {
-        int totalCost = super.getMpUsed();
+    public int getLevelingCost() {
+        int totalCost = 0;
 
         for (int levelingCost : coordLevelingCosts.values()) {
             totalCost += levelingCost;
@@ -32,7 +31,11 @@ public class BulldozerMovePath extends MovePath {
 
     @Override
     public MovePath addStep(final MoveStepType type) {
-        MovePath mp = super.addStep(type);
+        BulldozerMovePath mp = (BulldozerMovePath) super.addStep(type);
+        
+        if(getKey().hashCode() == 1805319466) {
+            int alpha = 1;
+        }
 
         if (!mp.isMoveLegal()) {
             // here, we will check if the step is illegal because the unit in question
@@ -57,7 +60,7 @@ public class BulldozerMovePath extends MovePath {
     public BulldozerMovePath clone() {
         final BulldozerMovePath copy = new BulldozerMovePath(getGame(), getEntity());
         copyFields(copy);        
-        coordLevelingCosts = new HashMap<>(coordLevelingCosts);
+        copy.coordLevelingCosts = new HashMap<>(coordLevelingCosts);
         return copy;
     }
 
@@ -148,14 +151,20 @@ public class BulldozerMovePath extends MovePath {
      * Helper function that lazy-calculates an entity's max damage at point blank range.
      */
     private double getMaxPointBlankDamage() {
-        if(maxPointBlankDamage < 0) {
+        int alpha = 1;
+        //if(maxPointBlankDamage < 0) {
             maxPointBlankDamage = FireControl.getMaxDamageAtRange(getEntity(), 1, false, false);
-        }
+        //}
         
         return maxPointBlankDamage;
     }
     
     public boolean needsLeveling() {
         return coordLevelingCosts.size() > 0;
+    }
+    
+    @Override
+    public String toString() {
+        return super.toString() + " Leveling Cost: " + getLevelingCost();
     }
 }

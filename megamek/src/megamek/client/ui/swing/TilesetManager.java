@@ -74,7 +74,9 @@ import megamek.common.util.MegaMekFile;
  *
  * @author Ben
  */
-public class TilesetManager implements IPreferenceChangeListener, ITilesetManager {
+public class TilesetManager implements IPreferenceChangeListener, 
+ITilesetManager {
+    
     public static final String DIR_NAME_WRECKS = "wrecks"; //$NON-NLS-1$
 
     public static final String FILENAME_DEFAULT_HEX_SET = "defaulthexset.txt"; //$NON-NLS-1$
@@ -108,7 +110,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private HashMap<ArrayList<Integer>, EntityImage> mechImages = new HashMap<ArrayList<Integer>, EntityImage>();
 
     // hex images
-    private HexTileset hexTileset = new HexTileset();
+    private HexTileset hexTileset;
 
     private Image minefieldSign;
     private Image nightFog;
@@ -126,12 +128,18 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      * in the same hex).
      */
     private HashMap<Color, Image> ecmStaticImages = new HashMap<Color, Image>();
+    
+    // The TileManager is associated with a game passed down from the Boardview
+    // and must pass this on to the hextileset for it to register listeners
+    private IGame game;
 
     /**
      * Creates new TilesetManager
      */
-    public TilesetManager(BoardView1 bv) throws IOException {
+    public TilesetManager(BoardView1 bv, IGame g) throws IOException {
         boardview = bv;
+        game = g;
+        hexTileset = new HexTileset(game);
         tracker = new MediaTracker(boardview);
         try {
             camos = new DirectoryItems(
@@ -162,7 +170,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
-            HexTileset hts = new HexTileset();
+            HexTileset hts = new HexTileset(game);
             try {
                 hexTileset.incDepth = 0;
                 hts.loadFromFile((String) e.getNewValue());
@@ -643,7 +651,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         tracker = new MediaTracker(boardview);
         mechImageList.clear();
         mechImages.clear();
-        hexTileset.reset();
+        hexTileset.clearAllHexes();
     }
 
     /**

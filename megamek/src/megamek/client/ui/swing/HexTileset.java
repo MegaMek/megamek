@@ -92,10 +92,18 @@ public class HexTileset implements BoardListener {
         game.getBoard().addBoardListener(this);
     }
 
+    /** Clears the image cache for the given hex. */
     public synchronized void clearHex(IHex hex) {
         basesCache.remove(hex);
         supersCache.remove(hex);
         orthosCache.remove(hex);
+    }
+
+    /** Clears the image cache for all hexes. */
+    public synchronized void clearAllHexes() {
+        basesCache = new ImageCache<IHex, Image>();
+        supersCache = new ImageCache<IHex, List<Image>>();
+        orthosCache = new ImageCache<IHex, List<Image>>();
     }
     
     /**
@@ -311,9 +319,10 @@ public class HexTileset implements BoardListener {
         r.close();
         themes.add(TRANSPARENT_THEME);
         long endTime = System.currentTimeMillis();
-         System.out.println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-2$ //$NON-NLS-2$
-         System.out.println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-2$ //$NON-NLS-2$
-         System.out.println("hexTileset: loaded " + orthos.size() + " ortho images"); //$NON-NLS-2$ //$NON-NLS-2$
+        
+        System.out.println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-2$ //$NON-NLS-2$
+        System.out.println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-2$ //$NON-NLS-2$
+        System.out.println("hexTileset: loaded " + orthos.size() + " ortho images"); //$NON-NLS-2$ //$NON-NLS-2$
         if (incDepth == 0) {
             System.out.println("hexTileset loaded in " + (endTime - startTime) + "ms.");
         }
@@ -370,12 +379,6 @@ public class HexTileset implements BoardListener {
                 tracker.addImage(img, 1);
             }
         }
-    }
-
-    public synchronized void clearAllHexes() {
-        basesCache = new ImageCache<IHex, Image>();
-        supersCache = new ImageCache<IHex, List<Image>>();
-        orthosCache = new ImageCache<IHex, List<Image>>();
     }
 
     /**

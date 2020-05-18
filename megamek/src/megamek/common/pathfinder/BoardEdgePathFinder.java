@@ -640,7 +640,7 @@ public class BoardEdgePathFinder {
      * @param destinationRegion The edge to check for.
      * @return True or false.
      */
-    private boolean isOnBoardEdge(MovePath movePath, int destinationRegion) {
+    protected boolean isOnBoardEdge(MovePath movePath, int destinationRegion) {
         Coords coords = movePath.getFinalCoords();
 
         switch(destinationRegion) {

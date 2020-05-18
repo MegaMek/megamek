@@ -1,15 +1,37 @@
+/*
+* MegaMek -
+* Copyright (C) 2020 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.common;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
 
 import megamek.client.bot.princess.FireControl;
-import megamek.common.MovePath.MoveStepType;
 
+/**
+ * An extension of the MovePath class that stores information about terrain that needs
+ * to be destroyed in order to move along the specified route.
+ * @author NickAragua
+ *
+ */
 public class BulldozerMovePath extends MovePath {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1346716014573707012L;
+
     private static final int CANNOT_LEVEL = -1;
 
     Map<Coords, Integer> coordLevelingCosts = new HashMap<>();
@@ -32,10 +54,6 @@ public class BulldozerMovePath extends MovePath {
     @Override
     public MovePath addStep(final MoveStepType type) {
         BulldozerMovePath mp = (BulldozerMovePath) super.addStep(type);
-        
-        if(getKey().hashCode() == 1805319466) {
-            int alpha = 1;
-        }
 
         if (!mp.isMoveLegal()) {
             // here, we will check if the step is illegal because the unit in question
@@ -61,6 +79,7 @@ public class BulldozerMovePath extends MovePath {
         final BulldozerMovePath copy = new BulldozerMovePath(getGame(), getEntity());
         copyFields(copy);        
         copy.coordLevelingCosts = new HashMap<>(coordLevelingCosts);
+        copy.maxPointBlankDamage = maxPointBlankDamage;
         return copy;
     }
 
@@ -140,7 +159,7 @@ public class BulldozerMovePath extends MovePath {
         if(damageNeeded > 0) {
             // basically, the MP cost of leveling this terrain is equal to how many turns we're going to waste
             // shooting at it instead of moving.
-            levelingCost = (int) Math.floor(damageNeeded / getMaxPointBlankDamage()) * getEntity().getRunMP();
+            levelingCost = (int) Math.round(damageNeeded / getMaxPointBlankDamage()) * getEntity().getRunMP();
         }
         
         
@@ -151,10 +170,9 @@ public class BulldozerMovePath extends MovePath {
      * Helper function that lazy-calculates an entity's max damage at point blank range.
      */
     private double getMaxPointBlankDamage() {
-        int alpha = 1;
-        //if(maxPointBlankDamage < 0) {
+        if(maxPointBlankDamage < 0) {
             maxPointBlankDamage = FireControl.getMaxDamageAtRange(getEntity(), 1, false, false);
-        //}
+        }
         
         return maxPointBlankDamage;
     }

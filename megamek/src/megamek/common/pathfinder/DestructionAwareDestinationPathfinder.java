@@ -1,3 +1,18 @@
+/*
+* MegaMek -
+* Copyright (C) 2020 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.common.pathfinder;
 
 import java.util.ArrayList;
@@ -20,7 +35,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
     
     /**
      */
-    public MovePath findPathToCoords(Entity entity, Coords destinationCoords) {
+    public BulldozerMovePath findPathToCoords(Entity entity, Coords destinationCoords) {
         BulldozerMovePath startPath = new BulldozerMovePath(entity.getGame(), entity);
         if(entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
             startPath.addStep(MoveStepType.CLIMB_MODE_OFF);
@@ -153,7 +168,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
          */
         public int compare(BulldozerMovePath first, BulldozerMovePath second) {
             IBoard board = first.getGame().getBoard();
-            boolean backwards = false;//first.getStep(0).getS == MoveStepType.BACKWARDS;
+            boolean backwards = false;
             int h1 = first.getFinalCoords().distance(destination)
                     + ShortestPathFinder.getFacingDiff(first, destination, backwards)
                     + ShortestPathFinder.getLevelDiff(first, destination, board)

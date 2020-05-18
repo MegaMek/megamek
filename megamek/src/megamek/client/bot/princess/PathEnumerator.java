@@ -26,14 +26,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.Aero;
+import megamek.common.BulldozerMovePath;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.Targetable;
 import megamek.common.logging.LogLevel;
 import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
@@ -41,6 +44,7 @@ import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.AeroLowAltitudePathFinder;
 import megamek.common.pathfinder.AeroSpacePathFinder;
+import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.MovePathFinder;
@@ -53,6 +57,7 @@ public class PathEnumerator {
     private final Princess owner;
     private final IGame game;
     private final Map<Integer, List<MovePath>> unitPaths = new ConcurrentHashMap<>();
+    private final Map<Integer, List<BulldozerMovePath>> longRangePaths = new ConcurrentHashMap<>();
     private final Map<Integer, ConvexBoardArea> unitMovableAreas = new ConcurrentHashMap<>();
     private final Map<Integer, Set<CoordFacingCombo>> unitPotentialLocations = new ConcurrentHashMap<>();
     private final Map<Integer, CoordFacingCombo> lastKnownLocations = new ConcurrentHashMap<>();
@@ -67,33 +72,9 @@ public class PathEnumerator {
         this.game = game;
     }
 
-    /**
-     * an entity and the paths it might take
-     */
-    /*
-     * public class PathEnumeratorEntityPaths { public
-     * PathEnumeratorEntityPaths(Entity e,ArrayList<MovePath> p) { entity=e;
-     * paths=p; } Entity entity; ArrayList<MovePath> paths; };
-     */
     private Princess getOwner() {
         return owner;
     }
-
-    /*
-     * //moved to BotGeometry //This is a list of all possible places on the map
-     * an entity could end up //the structure is <EntityId, HasSet< places they
-     * can move > > public class CoordFacingCombo { CoordFacingCombo() {};
-     * CoordFacingCombo(MovePath p) { coords=p.getFinalCoords();
-     * facing=p.getFinalFacing(); } CoordFacingCombo(Coords c,int f) { coords=c;
-     * facing=f; } CoordFacingCombo(Entity e) { coords=e.getPosition();
-     * facing=e.getFacing(); } Coords coords; int facing;
-     *
-     * @Override public boolean equals(Object o) { CoordFacingCombo
-     * c=(CoordFacingCombo)o; if(!coords.equals(c.coords)) return false;
-     * if(!(facing==c.facing)) return false; return true; }
-     *
-     * @Override public int hashCode() { return coords.hashCode()*6+facing; } }
-     */
 
     void clear() {
         final String METHOD_NAME = "clear()";
@@ -102,6 +83,7 @@ public class PathEnumerator {
             getUnitPaths().clear();
             getUnitPotentialLocations().clear();
             getLastKnownLocations().clear();
+            getLongRangePaths().clear();
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
@@ -193,6 +175,7 @@ public class PathEnumerator {
 
             // Clear out any already calculated paths.
             getUnitPaths().remove(mover.getId());
+            getLongRangePaths().remove(mover.getId());
 
             // Start constructing the new list of paths.
             List<MovePath> paths = new ArrayList<>();
@@ -309,6 +292,8 @@ public class PathEnumerator {
                     }
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));
+                
+                updateLongRangePaths(mover);
             }
 
             // Update our locations and add the computed paths.
@@ -323,6 +308,79 @@ public class PathEnumerator {
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
+    }
+    
+    private void updateLongRangePaths(final Entity mover) {
+        // don't bother doing this if the entity can't move anyway
+        if(mover.getWalkMP() == 0) {
+            return;
+        }
+        
+        DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
+        
+        // where are we going?
+        List<Coords> destinations = new ArrayList<Coords>();
+        switch(UnitBehavior.calculateUnitBehavior(mover, getOwner().getBehaviorSettings())) {
+            case ForcedWithdrawal:
+            case MoveToDestination:
+                destinations = generateEdgeZone(getOwner().getHomeEdge(mover), getGame().getBoard());
+                break;
+            case MoveToContact:
+                for(Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {
+                    destinations.add(target.getPosition());
+                }
+                break;
+        }
+        
+        if(!getLongRangePaths().containsKey(mover.getId())) {
+            getLongRangePaths().put(mover.getId(), new ArrayList<>());
+        }
+        
+        // put up a long-range path there
+        for(Coords destination : destinations) {
+            BulldozerMovePath bmp = dpf.findPathToCoords(mover, destination);
+            getLongRangePaths().get(mover.getId()).add(bmp);
+        }        
+    }
+    
+    /**
+     * Utility function that generates a list of coordinates, based on the supplied cardinal edge.
+     * Cardinal edge must be one of north/south/east/west, otherwise empty set is returned.
+     */
+    private List<Coords> generateEdgeZone(CardinalEdge edge, IBoard board) {
+        List<Coords> edgeZone = new ArrayList<>();
+        int minX = 0, maxX = 0, minY = 0, maxY = 0;
+        
+        switch(edge) {
+        case NORTH:
+            minX = 0;
+            maxX = board.getWidth() - 1;
+            minY = maxY = 0;
+            break;
+        case SOUTH:
+            minX = 0;
+            maxX = board.getWidth() - 1;
+            minY = maxY = board.getHeight() - 1;
+            break;
+        case EAST:
+            minX = maxX = board.getWidth() - 1;
+            minY = 0;
+            maxY = board.getHeight() - 1;
+            break;
+        case WEST:
+            minX = maxX = 0;
+            minY = 0;
+            maxY = board.getHeight() - 1;
+            break;           
+        }
+        
+        for(int x = minX; x <= maxX; x++) {
+            for(int y = minY; y <= maxY; y++) {
+                edgeZone.add(new Coords(x, y));
+            }
+        }
+        
+        return edgeZone;
     }
 
     private void adjustPathsForBridges(List<MovePath> paths) {
@@ -427,6 +485,10 @@ public class PathEnumerator {
     			path.toString() + ":" + whyNot);
     }
 
+    protected Map<Integer, List<BulldozerMovePath>> getLongRangePaths() {
+        return longRangePaths;
+    }
+    
     protected Map<Integer, List<MovePath>> getUnitPaths() {
         return unitPaths;
     }

@@ -44,6 +44,7 @@ import megamek.common.EjectedCrew;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
+import megamek.common.HexTarget;
 import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -1557,9 +1558,11 @@ public class Princess extends BotClient {
             fireControlState.setAdditionalTargets(new ArrayList<>());
             for (final Coords strategicTarget : getStrategicBuildingTargets()) {
                 if (null == game.getBoard().getBuildingAt(strategicTarget)) {
+                    fireControlState.getAdditionalTargets().add(
+                            new HexTarget(strategicTarget, Targetable.TYPE_HEX_CLEAR));
                     sendChat("No building to target in Hex " +
                              strategicTarget.toFriendlyString() +
-                             ", ignoring.", LogLevel.INFO);
+                             ", targeting for clearing.", LogLevel.INFO);
                 } else {
                     fireControlState.getAdditionalTargets().add(
                             new BuildingTarget(strategicTarget,

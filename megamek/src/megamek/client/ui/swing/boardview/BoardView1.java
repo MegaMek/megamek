@@ -2647,7 +2647,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // AO Hex Shadow in this hex when a higher one is adjacent
         if (guip.getBoolean(GUIPreferences.AOHEXSHADOWS)
-                || guip.getBoolean(GUIPreferences.SHADOWMAP)) {
+               ) {
             for (int dir : allDirections) {
                 Shape ShadowShape = getElevationShadowArea(c, dir);
                 GradientPaint gpl = getElevationShadowGP(c, dir);

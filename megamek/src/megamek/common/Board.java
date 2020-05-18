@@ -501,14 +501,25 @@ public class Board implements Serializable, IBoard {
         int ex = 1;
         for (int i = 0; i < 6; i++) {
             IHex other = getHexInDir(x, y, i);
-            if (other != null && (other.getLevel() < hex.getLevel())) {
+            if ((other != null) 
+                    && (other.getLevel() < hex.getLevel())
+                    && (!hex.containsTerrain(Terrains.CLIFFSIDE))) {
                 sum += ex;
             }
             ex *= 2;
         }
         if (sum > 0) {
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.INCLINE, 1, true, sum));
+        } else {
+            hex.removeTerrain(Terrains.INCLINE);
         }
+        
+        //TODO: only remove incline when cliff at the same exit
+        // add lower 
+        // check: predict graphics when lower and hihger present?
+        // cliff rules
+        // shadow/cliff interaction: bldgs/trees must become orthos! draw shadows over supers, orthos over shadows
+        // add decal level for rooftop stuff
         
         if (event) {
             processBoardEvent(new BoardEvent(this, new Coords(x, y), BoardEvent.BOARD_CHANGED_HEX));

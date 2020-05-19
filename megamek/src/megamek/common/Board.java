@@ -497,29 +497,64 @@ public class Board implements Serializable, IBoard {
             hex.setExits(other, i, roadsAutoExit);
         }
         
-        int sum = 0;
-        int ex = 1;
-        for (int i = 0; i < 6; i++) {
-            IHex other = getHexInDir(x, y, i);
-            if ((other != null) 
-                    && (other.getLevel() < hex.getLevel())
-                    && (!hex.containsTerrain(Terrains.CLIFFSIDE))) {
-                sum += ex;
-            }
-            ex *= 2;
-        }
-        if (sum > 0) {
-            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.INCLINE, 1, true, sum));
-        } else {
-            hex.removeTerrain(Terrains.INCLINE);
+        // Automatic handling of INCLINE_TOP terrain
+        int exSum = 0;
+        boolean noCliff = !hex.containsTerrain(Terrains.CLIFF_TOP);
+        int cExits = 0;
+        ITerrain cTerr;
+        boolean noExits = false;
+        if (!noCliff) {
+            cTerr = hex.getTerrain(Terrains.CLIFF_TOP);
+            cExits = cTerr.getExits();
+            noExits = !cTerr.hasExitsSpecified();
         }
         
-        //TODO: only remove incline when cliff at the same exit
-        // add lower 
-        // check: predict graphics when lower and hihger present?
-        // cliff rules
-        // shadow/cliff interaction: bldgs/trees must become orthos! draw shadows over supers, orthos over shadows
-        // add decal level for rooftop stuff
+        // Find the exits with a level drop and no cliff top
+        for (int i = 0; i < 6; i++) {
+            IHex other = getHexInDir(x, y, i);
+            boolean noExitsInThisDir = ((cExits & (1 << i)) == 0);
+            if ((other != null) 
+                    && (other.getLevel() < hex.getLevel())
+                    && ( noCliff || noExits || noExitsInThisDir ) 
+                    ) {
+                exSum += (1 << i);
+            }
+        }
+        
+        // Add INCLINE_TOP when necessary on any hex side, remove it otherwise
+        if (exSum > 0) {
+            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.INCLINE_TOP, 1, true, exSum));
+        } else {
+            hex.removeTerrain(Terrains.INCLINE_TOP);
+        }
+        
+        // Automatic handling of INCLINE_BOTTOM terrain
+        exSum = 0;
+        noCliff = !hex.containsTerrain(Terrains.CLIFF_BOTTOM);
+        if (!noCliff) {
+            cTerr = hex.getTerrain(Terrains.CLIFF_BOTTOM);
+            cExits = cTerr.getExits();
+            noExits = !cTerr.hasExitsSpecified();
+        }
+        
+        // Find the exits with a level rise and no cliff bottom
+        for (int i = 0; i < 6; i++) {
+            IHex other = getHexInDir(x, y, i);
+            boolean noExitsInThisDir = ((cExits & (1 << i)) == 0);
+            if ((other != null) 
+                    && (other.getLevel() > hex.getLevel())
+                    && ( noCliff || noExits || noExitsInThisDir ) 
+                    ) {
+                exSum += (1 << i);
+            }
+        }
+        
+        // Add INCLINE_BOTTOM when necessary on any hex side, remove it otherwise
+        if (exSum > 0) {
+            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.INCLINE_BOTTOM, 1, true, exSum));
+        } else {
+            hex.removeTerrain(Terrains.INCLINE_BOTTOM);
+        }
         
         if (event) {
             processBoardEvent(new BoardEvent(this, new Coords(x, y), BoardEvent.BOARD_CHANGED_HEX));

@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
 
 import megamek.server.SmokeCloud;
@@ -113,15 +115,31 @@ public class Terrains implements ITerrainFactory {
                                             // matching is not exact while super is 
     public static final int WATER_FLUFF = 47; // Ideally used to denote special water images
 
-    public static final int CLIFFSIDE = 48; // Cliffs, use with exits to denote cliffsides
-    // only valid when there's actually a level drop
-    // in the specified direction
+    // Cliffs, use with exits to denote cliffsides; only valid when there's
+    // actually a level drop/rise in the specified direction
+    public static final int CLIFF_TOP = 48;
+    public static final int CLIFF_BOTTOM = 49; 
     
-    public static final int INCLINE = 49; // with exits, denotes an downward edge of a hex
-    // only valid when there's actually a level drop
-    // useful to add highlighting/images to hex sides
-    // added to hexes automatically by MegaMek, not for
+    // Terrain for the incline at a hex edge towards a higher or lower 
+    // neighboring hex. Used to add highlighting/images to hex sides
+    // This is added to hexes automatically by MegaMek, not for
     // manual use in the Editor
+    public static final int INCLINE_TOP = 50; 
+    public static final int INCLINE_BOTTOM = 51;
+    
+    //TODO: implement hidden in editor
+    //TODO: correct auto placement
+    //TODO: auto place cliff-Bottom?
+    //TODO: shadows...
+    //TODO: Add gfx option
+    //TODO: cliff rules
+  //TODO: only remove incline when cliff at the same exit
+    // add lower 
+    // check: predict graphics when lower and hihger present?
+    // cliff rules
+    // shadow/cliff interaction: bldgs/trees must become orthos! draw shadows over supers, orthos over shadows
+    // add decal level for rooftop stuff
+
     /**
      * Keeps track of the different type of terrains that can have exits.
      */
@@ -132,11 +150,12 @@ public class Terrains implements ITerrainFactory {
             "snow", "fire", "smoke", "geyser", "building", "bldg_cf", "bldg_elev", "bldg_basement_type", "bldg_class",
             "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev",
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
-            "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff", "incline" };
+            "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom", 
+            "incline_top", "incline_bottom" };
     
     /** These terrains are hidden in the Editor as they are handled internally. */
-//    public static final HashSet<Integer> hideInEditor = 
-//            new HashSet<Integer>(Arrays.asList(INCLINE));
+    public static final HashSet<Integer> hideInEditor = 
+            new HashSet<Integer>(Arrays.asList(INCLINE_TOP, INCLINE_BOTTOM));
 
     public static final int SIZE = names.length;
 

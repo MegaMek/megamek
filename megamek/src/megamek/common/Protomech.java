@@ -1404,7 +1404,7 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(startColumn);
-        bvText.append(ammoBV);
+        bvText.append(String.format("%.1f", ammoBV));
         bvText.append(endColumn);
         bvText.append(endRow);
 

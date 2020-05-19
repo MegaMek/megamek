@@ -883,15 +883,15 @@ public class Protomech extends Entity {
                 break;
             case 13:
                 setInternal(3, 13, isQuad() ? IArmorState.ARMOR_NA : 3,
-                        isQuad() ? 13 : 6, mainGunIS);
+                        isQuad() ? 13 : 7, mainGunIS);
                 break;
             case 14:
                 setInternal(4, 14, isQuad() ? IArmorState.ARMOR_NA : 4,
-                        isQuad() ? 16 : 8, mainGunIS);
+                        isQuad() ? 14 : 8, mainGunIS);
                 break;
             case 15:
                 setInternal(4, 15, isQuad() ? IArmorState.ARMOR_NA : 4,
-                        isQuad() ? 16 : 8, mainGunIS);
+                        isQuad() ? 14 : 8, mainGunIS);
                 break;
         }
     }

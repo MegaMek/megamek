@@ -838,13 +838,26 @@ public class TestProtomech extends TestEntity {
                 || (location == Protomech.LOC_RARM)) {
             if (proto.isQuad()) {
                 return 0;
+            } else if (proto.getWeight() < 3) {
+                return 2;
+            } else if (proto.getWeight() < 10) {
+                return 4;
+            } else {
+                return 6;
             }
-            return Math.min(proto.getOInternal(location) * 2, 6);
         } else if (location == Protomech.LOC_BODY) {
             return 0;
-        } else {
-            return proto.getOInternal(location) * 2;
+        } else if (proto.isQuad()) {
+            switch ((int) proto.getWeight()) {
+                case 3:
+                    return 12;
+                case 4:
+                case 5:
+                    return 14;
+                // else drop through
+            }
         }
+        return proto.getOInternal(location) * 2;
     }
     
 }

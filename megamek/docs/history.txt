@@ -14,6 +14,7 @@ VERSION HISTORY:
 + PR #1878: SirMegaV Buildings
 + Issue #1942: Princess no longer locks up processing ejected pilots on space maps when using basic spaceflight rules
 + PR #1952: Princess no longer locks up deploying units to "center" or "any" on larger rectangular boards
++ Issue #1959: Main Gun Bug - ProtoMechs
 + Issue #1960: BV Calculation Errors - ProtoMechs
 
 0.47.6 (2020-5-03 1715 UTC)

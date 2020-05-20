@@ -274,6 +274,14 @@ public class Protomech extends Entity {
         return wmp;
     }
 
+    @Override
+    public String getRunMPasString() {
+        if (hasMyomerBooster()) {
+            return getRunMPwithoutMyomerBooster(true, false, false) + "(" + getRunMP() + ")";
+        }
+        return Integer.toString(getRunMP());
+    }
+
     /**
      * Counts the # of crits taken by proto in the location. Needed in several
      * places, due to proto set criticals.
@@ -945,6 +953,10 @@ public class Protomech extends Entity {
                 throw new LocationFullException("Weapon "
                         + mounted.getName() + " can't be mounted in "
                         + getLocationAbbr(loc));
+            }
+            // EDP armor reduces the number of torso slots by one.
+            if ((loc == LOC_TORSO) && (getArmorType(loc) == EquipmentType.T_ARMOR_EDP)) {
+                max--;
             }
             long current = getEquipment().stream().filter(m -> (m.getLocation() == loc)
                     && m.getType().isHittable()).count();

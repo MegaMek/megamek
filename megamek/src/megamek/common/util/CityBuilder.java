@@ -287,14 +287,15 @@ public class CityBuilder {
     private void buildMetroCity(int maxX, int maxY) {
         int midX = maxX / 2;
         int midY = maxY / 2;
+        Coords mid = new Coords(midX, midY);
 
-        cityPlan.add(new Coords(midX, midY));
+        cityPlan.add(mid);
 
         // have the city hub be the mid point with all the hexes around it
         // cleared out
-        for (int hex = 0; hex < 6; hex++)
-            cityPlan.add(new Coords(Coords.xInDir(midX, midY, hex), Coords
-                    .yInDir(midX, midY, hex)));
+        for (int dir = 0; dir < 6; dir++) {
+            cityPlan.add(mid.translated(dir));
+        }
 
         // first east west road
         Coords coords = new Coords(-1, midY / 2);

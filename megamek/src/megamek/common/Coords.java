@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team  
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -31,63 +32,27 @@ import megamek.common.util.HashCodeUtil;
  *       0
  *     _____
  *  5 /     \ 1
-  -x /       \ +x 
+ *-x /       \ +x 
  *   \       / 
  *  4 \_____/ 2 
  *       3
  *      +y
  */
-public class Coords implements Serializable {
-    /**
-     * 
-     */
+public final class Coords implements Serializable {
+
     private static final long serialVersionUID = -4451256806040563030L;
 
     public static final double HEXSIDE = Math.PI / 3.0;
-
-    /**
-     * Allow at most 30 boards (510 hexes) in the 'y' direction.
-     */
-    private static final int SHIFT = 9;
-    private static final int MASK = (1 << Coords.SHIFT) - 1;
-
-    /**
-     * The maximum height of a board in number of hexes.
-     */
-    public static final int MAX_BOARD_HEIGHT = Integer.MAX_VALUE & Coords.MASK;
-
-    /**
-     * The maximum width of a board in number of hexes. Also need to make room
-     * for the sign bits.
-     */
-    public static final int MAX_BOARD_WIDTH = (Integer.MAX_VALUE - Coords.MAX_BOARD_HEIGHT) >> (Coords.SHIFT + 2);
+    public static final int [] ALL_DIRECTIONS = {0, 1, 2, 3, 4, 5};
 
     private final int x;
     private final int y;
-    private final int hash;
+    private int hash;
 
-    /**
-     * Constructs a new coordinate pair at (x, y).
-     */
+    /** Constructs a new coordinate pair at (x, y). Note: Coords are immutable. */
     public Coords(int x, int y) {
         this.x = x;
         this.y = y;
-        // Make sure the hash is positive
-        this.hash = (HashCodeUtil.hash1(x + 1337) ^ HashCodeUtil.hash1(y + 97331)) & 0x7FFFFFFF;
-    }
-
-    /**
-     * Constructs a new coordinate pair at (0, 0).
-     */
-    public Coords() {
-        this(0, 0);
-    }
-
-    /**
-     * Constructs a new coordinate pair that is a duplicate of the parameter.
-     */
-    public Coords(Coords c) {
-        this(c.getX(), c.getY());
     }
 
     /**
@@ -132,22 +97,12 @@ public class Coords implements Serializable {
         return translated(intDir);
     }
 
-    /**
-     * Returns the x parameter of the coordinates in the direction
-     */
+    /** Returns the x parameter of the coordinates in the direction. */
     public static int xInDir(int x, int y, int dir) {
-        switch (dir) {
-            case 1:
-            case 2:
-                return x + 1;
-            case 4:
-            case 5:
-                return x - 1;
-            default:
-                return x;
-        }
+        return xInDir(x, y, dir, 1);
     }
 
+    /** Returns the x parameter of the coordinates in the direction. */
     public static int xInDir(int x, int y, int dir, int distance) {
         switch (dir) {
             case 1:
@@ -161,24 +116,9 @@ public class Coords implements Serializable {
         }
     }
 
-    /**
-     * Returns the y parameter of the coordinates in the direction
-     */
+    /** Returns the y parameter of the coordinates in the direction. */
     public static int yInDir(int x, int y, int dir) {
-        switch (dir) {
-            case 0:
-                return y - 1;
-            case 1:
-            case 5:
-                return y - ((x + 1) & 1);
-            case 2:
-            case 4:
-                return y + (x & 1);
-            case 3:
-                return y + 1;
-            default:
-                return y;
-        }
+        return yInDir(x, y, dir, 1);
     }
 
     public static int yInDir(int x, int y, int dir, int distance) {
@@ -187,18 +127,12 @@ public class Coords implements Serializable {
                 return y - distance;
             case 1:
             case 5:
-                if ((x & 1) == 1)
-                    return y - (distance / 2);
-                return y - ((distance + 1) / 2);
+                return y - ((distance + 1 - (x & 1)) / 2);
             case 2:
             case 4:
-                if ((x & 1) == 0)
-                    return y + (distance / 2);
-                return y + ((distance + 1) / 2);
-            case 3:
-                return y + distance;
+                return y + ((distance + (x & 1)) / 2);
             default:
-                return y;
+                return y + distance;
         }
     }
 
@@ -208,7 +142,7 @@ public class Coords implements Serializable {
      * other coordinates.
      */
     public final boolean isXOdd() {
-        return (getX() & 1) == 1;
+        return (x & 1) == 1;
     }
 
     /**
@@ -301,9 +235,7 @@ public class Coords implements Serializable {
         return (int) Math.round((180 / Math.PI) * radian(d));
     }
 
-    /**
-     * Returns the distance to another coordinate.
-     */
+    /** Returns the distance to another coordinate. */
     public final int distance(Coords c) {
         // based off of
         // http://www.rossmack.com/ab/RPG/traveller/AstroHexDistance.asp
@@ -350,7 +282,7 @@ public class Coords implements Serializable {
             return false;
         }
         Coords other = (Coords) object;
-        return other.getX() == this.getX() && other.getY() == this.getY();
+        return (other.getX() == x) && (other.getY() == y);
     }
 
     /* 
@@ -370,6 +302,9 @@ public class Coords implements Serializable {
      */
     @Override
     public int hashCode() {
+        if (hash == 0) {
+            hash = (HashCodeUtil.hash1(x + 1337) ^ HashCodeUtil.hash1(y + 97331)) & 0x7FFFFFFF;
+        }
         return hash;
     }
 
@@ -512,7 +447,7 @@ public class Coords implements Serializable {
     public final List<Coords> allAdjacent() {
         List<Coords> retVal = new ArrayList<>();
         
-        for(int dir = 0; dir < 6; dir++) {
+        for(int dir: ALL_DIRECTIONS) {
             retVal.add(translated(dir));
         }
         

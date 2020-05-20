@@ -754,7 +754,7 @@ public class Board implements Serializable, IBoard {
             if (currHex.hasExitableTerrain()) {
                 for (int dir = 0; dir < 6; dir++) {
                     if (currHex.containsExit(dir)) {
-                        needsUpdate.add(new Coords(Coords.xInDir(x, y, dir), Coords.yInDir(x, y, dir)));
+                        needsUpdate.add(currCoord.translated(dir));
                     }
                 }
             }

@@ -664,7 +664,7 @@ public abstract class BotClient extends Client {
                 Coords c = new Coords(x, y);
                 if (board.isLegalDeployment(c, deployed_ent.getStartingPos())
                     && !deployed_ent.isLocationProhibited(c)) {
-                    validCoords.add(new RankedCoords(new Coords(c), 0));
+                    validCoords.add(new RankedCoords(c, 0));
                 }
             }
         }

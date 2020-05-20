@@ -8772,7 +8772,7 @@ public class Server implements Runnable {
             if (!curPos.equals(lastPos)) {
                 prevFacing = curFacing;
             }
-            lastPos = new Coords(curPos);
+            lastPos = curPos;
             lastElevation = curElevation;
             prevStep = step;
             prevHex = curHex;
@@ -10064,7 +10064,7 @@ public class Server implements Runnable {
             // May need to reset here for each new hex.
             int hexDamage = damage;
             if (dir == 6) {// The targeted hex.
-                mfCoord = new Coords(coords);
+                mfCoord = coords;
             } else {// The hex in the dir direction from the targeted hex.
                 mfCoord = coords.translated(dir);
             }

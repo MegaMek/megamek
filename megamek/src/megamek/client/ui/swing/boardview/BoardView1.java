@@ -1447,7 +1447,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     *  @return a list of {@ink Coords} of all hexes on the board.
+     *  @return a list of {@link Coords} of all hexes on the board.
      *          Returns ONLY hexes where board.getHex != null.
      */
     private List<Coords> allBoardHexes() {

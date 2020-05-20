@@ -58,21 +58,7 @@ import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TimerTask;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.*;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -1463,9 +1449,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      *  Returns a list of Coords of all hexes on the board.
      *  Returns ONLY hexes where board.getHex != null.
      */
-    private ArrayList<Coords> allBoardHexes() {
+    private List<Coords> allBoardHexes() {
         IBoard board = game.getBoard();
-        if (board == null) return null;
+        if (board == null) return Collections.emptyList();
 
         ArrayList<Coords> CoordList = new ArrayList<Coords>();
         for (int i = 0; i < board.getWidth(); i++) {
@@ -6664,19 +6650,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (selectedTheme == null) {
             return;
         }
-        final List<Coords> allCoords = allBoardHexes();
-        if (allCoords == null) {
-            return;
-        }
         if (selectedTheme.equals("(Original Theme)")) {
-            for (Coords c: allCoords) {
+            for (Coords c: allBoardHexes()) {
                 IHex hex = board.getHex(c);
                 hex.resetTheme();
                 board.setHex(c, hex);
             }
 
         } else {
-            for (Coords c: allCoords) {
+            for (Coords c: allBoardHexes()) {
                 IHex hex = board.getHex(c);
                 hex.setTheme(selectedTheme.equals("(No Theme)")?
                         "":selectedTheme);

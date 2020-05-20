@@ -16,6 +16,7 @@ VERSION HISTORY:
 + PR #1952: Princess no longer locks up deploying units to "center" or "any" on larger rectangular boards
 + Issue #1959: Main Gun Bug - ProtoMechs
 + Issue #1960: BV Calculation Errors - ProtoMechs
++ PR #1964: Prevent mechs that have fallen into water while walking backward from teleporting back under the shore
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

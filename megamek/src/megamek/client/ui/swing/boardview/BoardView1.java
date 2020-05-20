@@ -1445,25 +1445,27 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             drawHexBorder(g, p, Color.PINK, 0, 6);
         }
     }
+
     /**
-     *  Returns a list of Coords of all hexes on the board.
-     *  Returns ONLY hexes where board.getHex != null.
+     *  @return a list of {@ink Coords} of all hexes on the board.
+     *          Returns ONLY hexes where board.getHex != null.
      */
     private List<Coords> allBoardHexes() {
         IBoard board = game.getBoard();
-        if (board == null) return Collections.emptyList();
+        if (board == null) {
+            return Collections.emptyList();
+        }
 
-        ArrayList<Coords> CoordList = new ArrayList<Coords>();
+        List<Coords> coordList = new ArrayList<>();
         for (int i = 0; i < board.getWidth(); i++) {
             for (int j = 0; j < board.getHeight(); j++) {
-                IHex hex = board.getHex(i, j);
-                if (hex != null) {
-                    CoordList.add(new Coords(i, j));
+                if (board.getHex(i, j) != null) {
+                    coordList.add(new Coords(i, j));
                 }
             }
         }
 
-        return CoordList;
+        return coordList;
     }
 
     private Image createBlurredShadow(Image orig) {

@@ -5096,16 +5096,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             tileManager.clearHex(hex);
             // Don't wait in the board editor because many hex changes 
             // makes this very slow 
-            if (clientgui != null) tileManager.waitForHex(hex);
+            if (clientgui != null) {
+                tileManager.waitForHex(hex);
+            }
             clearShadowMap();
             // Maybe have to set the hexes' theme.  Null clientgui implies board editor - don't mess with theme
             if ((selectedTheme != null) && !selectedTheme.equals("(Original Theme)") && (clientgui != null)) {
                 if (selectedTheme.equals("(No Theme)") && (hex.getTheme() != null) && !hex.getTheme().equals("")) {
                     hex.setTheme("");
-                    game.getBoard().setHex(b.getCoords(), hex);
+                    game.getBoard().setHex(c, hex);
                 } else if (!selectedTheme.equals(hex.getTheme())) {
                     hex.setTheme(selectedTheme);
-                    game.getBoard().setHex(b.getCoords(), hex);
+                    game.getBoard().setHex(c, hex);
                 }
             }
         }
@@ -6661,16 +6663,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (selectedTheme == null) {
             return;
-
-        } else if (selectedTheme.equals("(Original Theme)")) {
-            for (Coords c: allBoardHexes()) {
+        }
+        final List<Coords> allCoords = allBoardHexes();
+        if (allCoords == null) {
+            return;
+        }
+        if (selectedTheme.equals("(Original Theme)")) {
+            for (Coords c: allCoords) {
                 IHex hex = board.getHex(c);
                 hex.resetTheme();
                 board.setHex(c, hex);
             }
 
         } else {
-            for (Coords c: allBoardHexes()) {
+            for (Coords c: allCoords) {
                 IHex hex = board.getHex(c);
                 hex.setTheme(selectedTheme.equals("(No Theme)")?
                         "":selectedTheme);

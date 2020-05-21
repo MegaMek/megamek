@@ -12,6 +12,14 @@ VERSION HISTORY:
 + Issue #1936: Map Editor - Can't lower terrain with up/down button on Linux Distributions
 + Issue #1934: ProtoMech Torso Critical Hit Issues
 + PR #1878: SirMegaV Buildings
++ Issue #1942: Princess no longer locks up processing ejected pilots on space maps when using basic spaceflight rules
++ PR #1952: Princess no longer locks up deploying units to "center" or "any" on larger rectangular boards
++ Issue #1959: Main Gun Bug - ProtoMechs
++ Issue #1960: BV Calculation Errors - ProtoMechs
++ PR #1964: Prevent mechs that have fallen into water while walking backward from teleporting back under the shore
++ Issue #1645: Terrain displayed on map is shifted to adjacent hexes 
++ PR #1929: Some commonly-used dialogs now recognize ESC butotn as cancel, minor visual improvements to said dialogs
++ PR #1877: Add options to BoardsValidator for automation usage
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

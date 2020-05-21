@@ -58,21 +58,7 @@ import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TimerTask;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.*;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -1459,25 +1445,27 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             drawHexBorder(g, p, Color.PINK, 0, 6);
         }
     }
-    /**
-     *  Returns a list of Coords of all hexes on the board.
-     *  Returns ONLY hexes where board.getHex != null.
-     */
-    private ArrayList<Coords> allBoardHexes() {
-        IBoard board = game.getBoard();
-        if (board == null) return null;
 
-        ArrayList<Coords> CoordList = new ArrayList<Coords>();
+    /**
+     *  @return a list of {@link Coords} of all hexes on the board.
+     *          Returns ONLY hexes where board.getHex != null.
+     */
+    private List<Coords> allBoardHexes() {
+        IBoard board = game.getBoard();
+        if (board == null) {
+            return Collections.emptyList();
+        }
+
+        List<Coords> coordList = new ArrayList<>();
         for (int i = 0; i < board.getWidth(); i++) {
             for (int j = 0; j < board.getHeight(); j++) {
-                IHex hex = board.getHex(i, j);
-                if (hex != null) {
-                    CoordList.add(new Coords(i, j));
+                if (board.getHex(i, j) != null) {
+                    coordList.add(new Coords(i, j));
                 }
             }
         }
 
-        return CoordList;
+        return coordList;
     }
 
     private Image createBlurredShadow(Image orig) {

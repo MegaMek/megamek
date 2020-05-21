@@ -19,6 +19,7 @@ VERSION HISTORY:
 + PR #1964: Prevent mechs that have fallen into water while walking backward from teleporting back under the shore
 + Issue #1645: Terrain displayed on map is shifted to adjacent hexes 
 + PR #1929: Some commonly-used dialogs now recognize ESC butotn as cancel, minor visual improvements to said dialogs
++ PR #1877: Add options to BoardsValidator for automation usage
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

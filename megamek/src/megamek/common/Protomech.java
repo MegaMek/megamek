@@ -274,6 +274,14 @@ public class Protomech extends Entity {
         return wmp;
     }
 
+    @Override
+    public String getRunMPasString() {
+        if (hasMyomerBooster()) {
+            return getRunMPwithoutMyomerBooster(true, false, false) + "(" + getRunMP() + ")";
+        }
+        return Integer.toString(getRunMP());
+    }
+
     /**
      * Counts the # of crits taken by proto in the location. Needed in several
      * places, due to proto set criticals.
@@ -883,15 +891,15 @@ public class Protomech extends Entity {
                 break;
             case 13:
                 setInternal(3, 13, isQuad() ? IArmorState.ARMOR_NA : 3,
-                        isQuad() ? 13 : 6, mainGunIS);
+                        isQuad() ? 13 : 7, mainGunIS);
                 break;
             case 14:
                 setInternal(4, 14, isQuad() ? IArmorState.ARMOR_NA : 4,
-                        isQuad() ? 16 : 8, mainGunIS);
+                        isQuad() ? 14 : 8, mainGunIS);
                 break;
             case 15:
                 setInternal(4, 15, isQuad() ? IArmorState.ARMOR_NA : 4,
-                        isQuad() ? 16 : 8, mainGunIS);
+                        isQuad() ? 14 : 8, mainGunIS);
                 break;
         }
     }
@@ -945,6 +953,10 @@ public class Protomech extends Entity {
                 throw new LocationFullException("Weapon "
                         + mounted.getName() + " can't be mounted in "
                         + getLocationAbbr(loc));
+            }
+            // EDP armor reduces the number of torso slots by one.
+            if ((loc == LOC_TORSO) && (getArmorType(loc) == EquipmentType.T_ARMOR_EDP)) {
+                max--;
             }
             long current = getEquipment().stream().filter(m -> (m.getLocation() == loc)
                     && m.getType().isHittable()).count();
@@ -1404,7 +1416,7 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(startColumn);
-        bvText.append(ammoBV);
+        bvText.append(String.format("%.1f", ammoBV));
         bvText.append(endColumn);
         bvText.append(endRow);
 

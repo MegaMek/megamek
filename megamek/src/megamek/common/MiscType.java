@@ -2108,7 +2108,7 @@ public class MiscType extends EquipmentType {
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CBS, F_CIH)
                 .setProductionFactions(F_CBS, F_CIH).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        		.setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        		.setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 
@@ -3279,6 +3279,8 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getArmorTypeName(T_ARMOR_EDP);
         misc.setInternalName("CLEDPArmor");
         misc.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_EDP, true));
+        misc.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_EDP));
+        misc.shortName = "EDP";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_PROTOMECH_EQUIPMENT).or(F_ELECTRIC_DISCHARGE_ARMOR);
@@ -9348,6 +9350,7 @@ public class MiscType extends EquipmentType {
         // TODO Game Rules
         misc.name = "ProtoMech Melee Weapon";
         misc.setInternalName("ProtoMeleeWeapon");
+        misc.shortName = "Melee Weapon";
         misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.cost = 50000;
@@ -9367,6 +9370,7 @@ public class MiscType extends EquipmentType {
         // TODO Game Rules
         misc.name = "ProtoMech Quad Melee System";
         misc.setInternalName("ProtoQuadMeleeSystem");
+        misc.shortName = "Quad Melee System";
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 70000;

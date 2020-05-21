@@ -8601,14 +8601,17 @@ public class Server implements Runnable {
                                                                             Terrains.BRIDGE_ELEV)
                                                             : 0))))) {
 
+                // per TacOps, if the mech is walking backwards over an elevation change and falls
+                // it falls into the lower hex. The caveat is if it already fell from some other PSR in this 
+                // invocation of processMovement, then it can't fall again. 
                 if ((entity instanceof Mech) && (curHex.getLevel() < game
-                        .getBoard().getHex(lastPos).getLevel())) {
+                        .getBoard().getHex(lastPos).getLevel()) && !entity.hasFallen()) {
                     rollTarget = entity.getBasePilotingRoll(overallMoveType);
                     rollTarget.addModifier(0,
                             "moving backwards over an elevation change");
                     doSkillCheckWhileMoving(entity, entity.getElevation(),
                             curPos, curPos, rollTarget, true);
-                } else if (entity instanceof Mech) {
+                } else if ((entity instanceof Mech) && !entity.hasFallen()) {
                     rollTarget = entity.getBasePilotingRoll(overallMoveType);
                     rollTarget.addModifier(0,
                             "moving backwards over an elevation change");

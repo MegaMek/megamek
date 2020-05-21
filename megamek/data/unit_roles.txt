@@ -2176,6 +2176,8 @@ Hitman HM-1r:STRIKER
 Hitman HM-2:STRIKER
 Hitotsume Kozo HKZ-1F:BRAWLER
 Hitotsume Kozo HKZ-1P:BRAWLER
+Hobgoblin Ultraheavy ProtoMech (Standard):AMBUSHER
+Hobgoblin Ultraheavy ProtoMech 2:AMBUSHER
 Hollander BZK-F3:SNIPER
 Hollander BZK-G1:STRIKER
 Hollander II BZK-F5:SNIPER

@@ -525,6 +525,14 @@ public class BoardEdgePathFinder {
      * @return Whether or not the given move path is "legal" in the context of this pathfinder.
      */
     private boolean isLegalMove(MovePath movePath, IHex destHex, Building destinationBuilding) {
+        // adjust this to return a data structure that indicates whether the "illegal" movement category is
+        // due to terrain that can be destroyed exclusively or something that cannot be surmounted
+        // insurmountable: going up/down too high/low, wheeled tank restriction, ground tank into water, ship out of water
+        
+        // also: why is the pegasus not using missiles on terrain sometimes
+        
+        // finally: bulletproof princess path picker just in case long range paths comes back empty
+        
         Coords dest = movePath.getFinalCoords();
         IBoard board = movePath.getGame().getBoard();
         Coords src = movePath.getSecondLastStep().getPosition();

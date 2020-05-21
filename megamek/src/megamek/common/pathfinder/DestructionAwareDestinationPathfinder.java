@@ -44,6 +44,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         }
 
         movePathComparator = new AStarComparator(destinationCoords);
+        maximumCost = Integer.MAX_VALUE;
         
         List<BulldozerMovePath> candidates = new ArrayList<>();
         candidates.add(startPath);

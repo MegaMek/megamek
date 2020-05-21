@@ -1388,7 +1388,6 @@ public class FireControl {
         final int targetHP = Compute.getTargetTotalHP(owner.getGame(), target);
         final double damageFraction = (existingDamage + expectedDamage) / ((double) targetHP);
         final double previousDamageFraction = existingDamage / ((double) targetHP);
-        //double currentDamageFraction = expectedDamage / ((double)targetHP);
 
         //Do not shoot at units we already expect to deal more than their total HP of damage to!
         if (1.0 <= previousDamageFraction) {

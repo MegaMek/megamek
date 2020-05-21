@@ -1033,7 +1033,7 @@ public class BasicPathRankerTest {
         Mockito.doReturn(enemyList).when(mockPrincess).getEnemyEntities();
 
         Entity expected = enemyMech;
-        Entity actual = testRanker.findClosestEnemy(me, position, mockGame);
+        Targetable actual = testRanker.findClosestEnemy(me, position, mockGame, false);
         Assert.assertEquals(expected, actual);
 
         // Add in an unmoved mech.

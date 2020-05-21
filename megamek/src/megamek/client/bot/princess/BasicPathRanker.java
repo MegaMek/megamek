@@ -453,8 +453,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                       final MovePath path,
                                       StringBuilder formula) {
 
-        Entity closest = findClosestEnemy(movingUnit, movingUnit.getPosition(),
-                                          game);
+        Targetable closest = findClosestEnemy(movingUnit, movingUnit.getPosition(),
+                                          game, false);
         Coords toFace = closest == null ?
                         game.getBoard().getCenter() :
                         closest.getPosition();
@@ -600,7 +600,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 
                 expectedDamageTaken += friendlyArtilleryDamage;
             }
-            
+
             calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
 
             // If I cannot kick because I am a clan unit and "No physical 
@@ -638,7 +638,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             // airborne aeros on ground maps, as they move incredibly fast
             if (!path.getEntity().isAirborneAeroOnGroundMap()) {
                 // The further I am from a target, the lower this path ranks 
-                // (weighted by Hyper Aggression.
+                // (weighted by Aggression slider).
                 utility -= calculateAggressionMod(movingUnit, pathCopy, game,
                                                   formula);
 
@@ -772,9 +772,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
 
         try {
-            Entity closest = findClosestEnemy(me, position, game);
+            Targetable closest = findClosestEnemy(me, position, game);
             if (closest == null) {
-                return 0;
+                return -1;
             }
             return closest.getPosition().distance(position);
         } finally {

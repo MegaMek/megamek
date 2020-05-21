@@ -15,10 +15,14 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import megamek.client.bot.princess.FireControl;
+import megamek.common.pathfinder.ShortestPathFinder;
 
 /**
  * An extension of the MovePath class that stores information about terrain that needs
@@ -35,6 +39,7 @@ public class BulldozerMovePath extends MovePath {
     private static final int CANNOT_LEVEL = -1;
 
     Map<Coords, Integer> coordLevelingCosts = new HashMap<>();
+    List<Coords> coordsToLevel = new ArrayList<>();
     double maxPointBlankDamage = -1;
 
     public BulldozerMovePath(IGame game, Entity entity) {
@@ -62,6 +67,7 @@ public class BulldozerMovePath extends MovePath {
             int levelingCost = calculateLevelingCost(mp.getFinalCoords());
             if(levelingCost > CANNOT_LEVEL) {
                 coordLevelingCosts.put(mp.getFinalCoords(), levelingCost);
+                coordsToLevel.add(mp.getFinalCoords());
             }
         }
         
@@ -79,6 +85,7 @@ public class BulldozerMovePath extends MovePath {
         final BulldozerMovePath copy = new BulldozerMovePath(getGame(), getEntity());
         copyFields(copy);        
         copy.coordLevelingCosts = new HashMap<>(coordLevelingCosts);
+        copy.coordsToLevel = new ArrayList<>(coordsToLevel);
         copy.maxPointBlankDamage = maxPointBlankDamage;
         return copy;
     }
@@ -181,8 +188,35 @@ public class BulldozerMovePath extends MovePath {
         return coordLevelingCosts.size() > 0;
     }
     
+    public List<Coords> getCoordsToLevel() {
+        return coordsToLevel;
+    }
+    
     @Override
     public String toString() {
         return super.toString() + " Leveling Cost: " + getLevelingCost();
+    }
+    
+    /**
+     * Comparator implementation useful in comparing two bulldozer move paths by
+     * how many MP it'll take to accomplish that path, including time wasted leveling any obstacles
+     * @author NickAragua
+     *
+     */
+    public static class MPCostComparator implements Comparator<BulldozerMovePath> {
+        /**
+         * compare the first move path to the second
+         * Favors paths that spend less mp total
+         * in case of tie, favors paths that use more hexes
+         */
+        public int compare(BulldozerMovePath first, BulldozerMovePath second) {
+            int dd = (first.getMpUsed() + first.getLevelingCost()) - (second.getMpUsed() + second.getLevelingCost());
+    
+            if (dd != 0) {
+                return dd;
+            } else {
+                return first.getHexesMoved() - second.getHexesMoved();
+            }           
+        }
     }
 }

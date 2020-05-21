@@ -7,6 +7,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
+import megamek.common.Targetable;
 
 public interface IPathRanker {
 
@@ -44,5 +45,10 @@ public interface IPathRanker {
     /**
      * Find the closest enemy to a unit with a path
      */
-    Entity findClosestEnemy(Entity me, Coords position, IGame game);
+    Targetable findClosestEnemy(Entity me, Coords position, IGame game);
+    
+    /**
+     * Find the closest enemy to a unit with a path
+     */
+    Targetable findClosestEnemy(Entity me, Coords position, IGame game, boolean includeStrategicTargets);
 }

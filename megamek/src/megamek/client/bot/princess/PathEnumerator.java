@@ -293,7 +293,10 @@ public class PathEnumerator {
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));
                 
-                updateLongRangePaths(mover);
+                // update the long-range paths for my units only
+                if(mover.getOwnerId() == getOwner().getLocalPlayer().getId()) {
+                    updateLongRangePaths(mover);
+                }
             }
 
             // Update our locations and add the computed paths.
@@ -310,6 +313,9 @@ public class PathEnumerator {
         }
     }
     
+    /**
+     * Worker function that updates the long-range path collection for a particular entity
+     */
     private void updateLongRangePaths(final Entity mover) {
         // don't bother doing this if the entity can't move anyway
         if(mover.getWalkMP() == 0) {

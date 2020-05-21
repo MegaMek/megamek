@@ -173,11 +173,11 @@ public abstract class PathRanker implements IPathRanker {
                 Coords finalCoords = path.getFinalCoords();
 
                 // If fleeing, skip any paths that don't get me closer to home.
-                if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) >= startingHomeDistance)) {
+                /*if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) >= startingHomeDistance)) {
                     logLevel = LogLevel.INFO;
                     msg.append("\n\tINVALID: Running away in wrong direction.");
                     continue;
-                }
+                }*/
 
                 // Make sure I'm trying to get/stay in range of a target.
                 // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
@@ -257,16 +257,20 @@ public abstract class PathRanker implements IPathRanker {
     public void initUnitTurn(Entity unit, IGame game) {
     }
 
+    public Targetable findClosestEnemy(Entity me, Coords position, IGame game) {
+        return findClosestEnemy(me, position, game, true);
+    }
+    
     /**
      * Find the closest enemy to a unit with a path
      */
-    public Entity findClosestEnemy(Entity me, Coords position, IGame game) {
+    public Targetable findClosestEnemy(Entity me, Coords position, IGame game, boolean includeStrategicTargets) {
         final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
         getOwner().methodBegin(PathRanker.class, METHOD_NAME);
 
         try {
             int range = 9999;
-            Entity closest = null;
+            Targetable closest = null;
             List<Entity> enemies = getOwner().getEnemyEntities();
             for (Entity e : enemies) {
                 // Skip airborne aero units as they're further away than they seem and hard to catch.
@@ -282,11 +286,24 @@ public abstract class PathRanker implements IPathRanker {
                     unmovedDistMod = e.getWalkMP(true, false, false);
                 }
 
-                if ((position.distance(e.getPosition()) + unmovedDistMod) < range) {
-                    range = position.distance(e.getPosition());
+                int distance = position.distance(e.getPosition());
+                if ((distance + unmovedDistMod) < range) {
+                    range = distance;
                     closest = e;
                 }
             }
+            
+            // if specified, we also consider strategic targets
+            if(includeStrategicTargets) {
+                for(Targetable t : getOwner().getFireControlState().getAdditionalTargets()) {
+                    int distance = position.distance(t.getPosition());
+                    if(distance < range) {
+                        range = distance;
+                        closest = t;
+                    }
+                }
+            }
+            
             return closest;
         } finally {
             getOwner().methodEnd(PathRanker.class, METHOD_NAME);

@@ -30,6 +30,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
 import megamek.common.IHex;
+import megamek.common.MiscType;
 import megamek.common.MovePath;
 import megamek.common.Terrains;
 import megamek.common.MovePath.MoveStepType;
@@ -71,7 +72,7 @@ public class BoardEdgePathFinder {
      * @param entity Entity to evaluate
      * @return the Board.START_ constant representing the "opposite" edge
      */
-    private int determineOppositeEdge(Entity entity) {
+    public static int determineOppositeEdge(Entity entity) {
         IBoard board = entity.getGame().getBoard();
 
         // the easiest part is if the entity is supposed to start on a particular edge. Just return the opposite edge.
@@ -539,6 +540,9 @@ public class BoardEdgePathFinder {
             return mli;
         }
 
+        if(dest.getX() == 6 && dest.getY() == 16) {
+            int alpha = 1;
+        }
         // we only need to be able to legally move into the hex from the previous hex.
         // we don't care about stacking limits, remaining unit mp or other transient data
 
@@ -546,6 +550,9 @@ public class BoardEdgePathFinder {
         boolean isTracked = entity.getMovementMode() == EntityMovementMode.TRACKED && !entity.hasETypeFlag(Entity.ETYPE_QUADVEE);
         boolean isHovercraft = entity.getMovementMode() == EntityMovementMode.HOVER;
         boolean isWheeled = entity.getMovementMode() == EntityMovementMode.WHEELED;
+        boolean isAmphibious = entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
+                            entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
+                            entity.hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
         boolean destHexHasRoad = destHex.containsTerrain(Terrains.ROAD);
         // jumpers can clear higher objects than walkers and crawlers
         int maxUpwardElevationChange = Math.max(entity.getJumpMP(), entity.getMaxElevationChange());
@@ -585,9 +592,10 @@ public class BoardEdgePathFinder {
                 (destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE)
                 || destHex.containsTerrain(Terrains.BLDG_CF) || (destHex.containsTerrain(Terrains.SNOW) && destHex.terrainLevel(Terrains.SNOW) > 1));
 
-        // tracked and wheeled tanks cannot go into water without a bridge
-        mli.groundTankIntoWater = (isTracked || isWheeled) &&
-                destHex.containsTerrain(Terrains.WATER) && (destHex.depth() > 0) && !destHex.containsTerrain(Terrains.BRIDGE);
+        // tracked and wheeled tanks cannot go into water without a bridge, unless amphibious
+        mli.groundTankIntoWater = (isTracked || isWheeled) && 
+                destHex.containsTerrain(Terrains.WATER) && (destHex.depth() > 0) && 
+                !isAmphibious && !destHex.containsTerrain(Terrains.BRIDGE);
 
         // naval units cannot go out of water
         mli.shipOutofWater = entity.isNaval() &&

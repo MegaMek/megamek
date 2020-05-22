@@ -35,6 +35,7 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.MovePath;
+import megamek.common.OffBoardDirection;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.Targetable;
 import megamek.common.logging.LogLevel;
@@ -44,6 +45,7 @@ import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.AeroLowAltitudePathFinder;
 import megamek.common.pathfinder.AeroSpacePathFinder;
+import megamek.common.pathfinder.BoardEdgePathFinder;
 import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
@@ -326,12 +328,21 @@ public class PathEnumerator {
         
         // where are we going?
         List<Coords> destinations = new ArrayList<Coords>();
-        switch(UnitBehavior.calculateUnitBehavior(mover, getOwner().getBehaviorSettings())) {
+        // if we're going to an edge or can't see anyone, generate long-range paths to the opposite edge
+        // 
+        switch(getOwner().getUnitBehaviorTracker().getBehaviorType(mover, getOwner())) {
             case ForcedWithdrawal:
             case MoveToDestination:
                 destinations = generateEdgeZone(getOwner().getHomeEdge(mover), getGame().getBoard());
                 break;
             case MoveToContact:
+                // basically, we're translating the value produced by finding
+                // the Board.START_X direction into a cardinal edge
+                CardinalEdge oppositeEdge = 
+                    CardinalEdge.getCardinalEdge(OffBoardDirection.translateBoardStart(BoardEdgePathFinder.determineOppositeEdge(mover)).getValue());
+                destinations = generateEdgeZone(oppositeEdge, getGame().getBoard());
+                break;
+            default:
                 for(Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {
                     destinations.add(target.getPosition());
                 }

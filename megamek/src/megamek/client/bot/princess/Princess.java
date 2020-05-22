@@ -95,6 +95,7 @@ public class Princess extends BotClient {
     // path rankers and fire controls, organized by their explicitly given types to avoid confusion
     private HashMap<PathRankerType, IPathRanker> pathRankers;
     private HashMap<FireControlType, FireControl> fireControls;
+    private UnitBehavior unitBehaviorTracker;
     
     private FireControlState fireControlState;
     private PathRankerState pathRankerState;
@@ -379,6 +380,10 @@ public class Princess extends BotClient {
     
     FireControl getFireControl(FireControlType fireControlType) {
         return fireControls.get(fireControlType);        
+    }
+    
+    public UnitBehavior getUnitBehaviorTracker() {
+        return unitBehaviorTracker;
     }
 
     double getDamageAlreadyAssigned(final Targetable target) {
@@ -1474,8 +1479,12 @@ public class Princess extends BotClient {
         }
     }
     
-    private List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover) {
-        BehaviorType behavior = UnitBehavior.calculateUnitBehavior(mover, getBehaviorSettings());
+    /**
+     * Function with side effects. Retrieves the move path collection we want
+     * the entity to consider. Sometimes it's the standard "circle", sometimes it's pruned long-range movement paths
+     */
+    public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover) {
+        BehaviorType behavior = unitBehaviorTracker.getBehaviorType(mover, this);
         
         // basic idea: 
         // if we're "in battle", just use the standard set of move paths
@@ -1634,6 +1643,7 @@ public class Princess extends BotClient {
         try {
             initialize();
             checkMoral();
+            unitBehaviorTracker.clear();
 
             // reset strategic targets
             fireControlState.setAdditionalTargets(new ArrayList<>());
@@ -1716,6 +1726,7 @@ public class Princess extends BotClient {
             initializePathRankers();
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
+            unitBehaviorTracker = new UnitBehavior();
 
             // Pick up any turrets and add their buildings to the strategic 
             // targets list.

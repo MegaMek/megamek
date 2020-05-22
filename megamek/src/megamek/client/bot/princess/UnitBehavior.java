@@ -1,5 +1,8 @@
 package megamek.client.bot.princess;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import megamek.common.Entity;
 
 public class UnitBehavior {
@@ -17,13 +20,42 @@ public class UnitBehavior {
         Engaged
     }
     
-    public static BehaviorType calculateUnitBehavior(Entity entity, BehaviorSettings botSettings) {
-        if(botSettings.isForcedWithdrawal() && entity.isCrippled()) {
+    private Map<Integer, BehaviorType> entityBehaviors = new HashMap<>();
+    
+    /**
+     * Worker function that calculates a unit's desired behavior
+     */
+    private BehaviorType calculateUnitBehavior(Entity entity, BehaviorSettings botSettings) {
+        if (botSettings.isForcedWithdrawal() && entity.isCrippled()) {
             return BehaviorType.ForcedWithdrawal;
-        } else if(botSettings.getDestinationEdge() != CardinalEdge.NEAREST_OR_NONE) {
+        } else if (botSettings.getDestinationEdge() != CardinalEdge.NEAREST_OR_NONE) {
             return BehaviorType.MoveToDestination;
         } else {
+            // if we can't see anyone, move to contact
+            if(!entity.getGame().getAllEnemyEntities(entity).hasNext()) {
+                return BehaviorType.MoveToContact;
+            }
+            
             return BehaviorType.Engaged;
         }
     }
+    
+    /**
+     * Gets (and calculates, if necessary), the behavior type for the given entity.
+     */
+    public BehaviorType getBehaviorType(Entity entity, Princess owner) {
+        if (!entityBehaviors.containsKey(entity.getId())) {
+            entityBehaviors.put(entity.getId(), calculateUnitBehavior(entity, owner.getBehaviorSettings()));
+        }
+        
+        return entityBehaviors.get(entity.getId());
+    }
+    
+    /**
+     * Clears the entity behavior cache, should be done at the start of each movement phase
+     */
+    public void clear() {
+        entityBehaviors.clear();
+    }
+    
 }

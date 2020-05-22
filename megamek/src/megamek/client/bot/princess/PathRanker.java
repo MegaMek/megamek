@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
 import megamek.common.BombType;
 import megamek.common.Building;
@@ -143,8 +144,6 @@ public abstract class PathRanker implements IPathRanker {
 
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
         boolean inRange = (maxRange >= startingTargetDistance);
-        CardinalEdge homeEdge = getOwner().getHomeEdge(mover);
-        boolean fleeing = getOwner().isFallingBack(mover);
         
         boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
         boolean needToUnjamRAC = mover.canUnjamRAC();
@@ -171,13 +170,6 @@ public abstract class PathRanker implements IPathRanker {
             	}
             	
                 Coords finalCoords = path.getFinalCoords();
-
-                // If fleeing, skip any paths that don't get me closer to home.
-                /*if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) >= startingHomeDistance)) {
-                    logLevel = LogLevel.INFO;
-                    msg.append("\n\tINVALID: Running away in wrong direction.");
-                    continue;
-                }*/
 
                 // Make sure I'm trying to get/stay in range of a target.
                 // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant

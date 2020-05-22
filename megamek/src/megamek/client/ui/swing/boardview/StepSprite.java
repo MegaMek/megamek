@@ -79,11 +79,10 @@ class StepSprite extends Sprite {
         stepPos.translate(-bounds.x, -bounds.y);
 
         Shape moveArrow = bv.movementPolys[step.getFacing()];
-        Shape facingArrow;
+        Shape facingArrow = bv.facingPolys[step.getFacing()];
+        Shape finalFacingArrow = bv.finalFacingPolys[step.getFacing()];
         if (isLastStep &&
                 (step.getMovementType(true) != EntityMovementType.MOVE_ILLEGAL)) {
-            facingArrow = bv.finalFacingPolys[step.getFacing()];
-        } else {
             facingArrow = bv.facingPolys[step.getFacing()];
         }
 
@@ -168,18 +167,6 @@ class StepSprite extends Sprite {
                 graph.setColor(col);
                 currentArrow = shadowOffset.createTransformedShape(currentArrow);
                 ((Graphics2D) graph).fill(currentArrow);
-
-                // draw arrows showing the facing for final step only
-                if (isLastStep) {
-                    // draw arrows showing the facing
-                    graph.setColor(Color.darkGray);
-                    currentArrow = stepOffset.createTransformedShape(facingArrow);
-                    ((Graphics2D) graph).fill(currentArrow);
-
-                    graph.setColor(col);
-                    currentArrow = shadowOffset.createTransformedShape(currentArrow);
-                    ((Graphics2D) graph).fill(currentArrow);
-                }
 
                 // draw movement cost
                 drawMovementCost(step, isLastStep, stepPos, graph, col, true);
@@ -271,14 +258,16 @@ class StepSprite extends Sprite {
             case YAW:
             case EVADE:
             case ROLL:
-                // draw arrows showing the facing
-                graph.setColor(Color.darkGray);
-                currentArrow = stepOffset.createTransformedShape(facingArrow);
-                ((Graphics2D) graph).fill(currentArrow);
+                if (!isLastStep) {
+                    // draw arrows showing the facing
+                    graph.setColor(Color.darkGray);
+                    currentArrow = stepOffset.createTransformedShape(facingArrow);
+                    ((Graphics2D) graph).fill(currentArrow);
 
-                graph.setColor(col);
-                currentArrow = shadowOffset.createTransformedShape(currentArrow);
-                ((Graphics2D) graph).fill(currentArrow);
+                    graph.setColor(col);
+                    currentArrow = shadowOffset.createTransformedShape(currentArrow);
+                    ((Graphics2D) graph).fill(currentArrow);
+                }
 
                 if (bv.game.useVectorMove()) {
                     drawMovementCost(step, isLastStep, stepPos, graph, col, false);
@@ -478,6 +467,18 @@ class StepSprite extends Sprite {
                 break;
             default:
                 break;
+        }
+
+        // draw arrows showing the facing for final step only
+        if (isLastStep &&
+                (step.getMovementType(true) != EntityMovementType.MOVE_ILLEGAL)) {
+            graph.setColor(Color.darkGray);
+            currentArrow = stepOffset.createTransformedShape(finalFacingArrow);
+            ((Graphics2D) graph).fill(currentArrow);
+
+            graph.setColor(col);
+            currentArrow = shadowOffset.createTransformedShape(currentArrow);
+            ((Graphics2D) graph).fill(currentArrow);
         }
 
         if (step.isVTOLBombingStep() || step.isStrafingStep()) {

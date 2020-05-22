@@ -64,6 +64,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -159,6 +160,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     MiniMap miniMap = null;
     JDialog gameBoardPreviewW;
     MiniMap gameBoardMap = null;
+    private Game game = new Game();
 
     // keep track of portrait images
     private DirectoryItems portraits;
@@ -917,28 +919,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         mapPreviewPanel.add(miniMap);
 
         // setup the board preview window.
-        gameBoardPreviewW = new JDialog(clientgui.frame, Messages.getString("BoardSelectionDialog.ViewGameBoard"), //$NON-NLS-1$
+        gameBoardPreviewW = new JDialog(clientgui.frame, 
+                Messages.getString("BoardSelectionDialog.ViewGameBoard"), //$NON-NLS-1$
                 false);
-
         gameBoardPreviewW.setLocationRelativeTo(clientgui.frame);
-
         gameBoardPreviewW.setVisible(false);
-        try {
-            gameBoardMap = new MiniMap(gameBoardPreviewW, null);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e,
-                    Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            // $NON-NLS-2$
-            // this.dispose();
-        }
-        gameBoardPreviewW.add(gameBoardMap);
 
-        gameBoardPreviewW.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                gameBoardPreviewW.setVisible(false);
-            }
-        });
+        try {
+            BoardView1 bv = new BoardView1(game, null, null);
+            bv.setDisplayInvalidHexInfo(false);
+            bv.setUseLOSTool(false);
+            gameBoardPreviewW.add(bv.getComponent(true));
+            gameBoardPreviewW.setSize(clientgui.frame.getWidth()/2, clientgui.frame.getHeight()/2);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,
+                            Messages.getString("BoardEditor.CouldntInitialize") + e,
+                            Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            //$NON-NLS-2$
+        }
+
     }
 
     private void setupSpaceMap() {
@@ -1143,9 +1142,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         IBoard newBoard = BoardUtilities.combine(temp.getBoardWidth(), temp.getBoardHeight(), temp.getMapWidth(),
                 temp.getMapHeight(), sheetBoards, rotateBoard, temp.getMedium());
-        gameBoardMap.setBoard(newBoard);
+        
+        game.setBoard(newBoard);
         gameBoardPreviewW.setVisible(true);
-
     }
 
     /**
@@ -2555,6 +2554,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
         lisBoardsSelected.setSelectedIndices(selected);
         clientgui.getClient().sendMapSettings(mapSettings);
+        if (gameBoardPreviewW.isVisible()) {
+            previewGameBoard();
+        }
     }
 
     //

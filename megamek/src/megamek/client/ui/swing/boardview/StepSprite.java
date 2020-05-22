@@ -80,11 +80,9 @@ class StepSprite extends Sprite {
 
         Shape moveArrow = bv.movementPolys[step.getFacing()];
         Shape facingArrow = bv.facingPolys[step.getFacing()];
-        Shape finalFacingArrow = bv.finalFacingPolys[step.getFacing()];
-        if (isLastStep &&
-                (step.getMovementType(true) != EntityMovementType.MOVE_ILLEGAL)) {
-            facingArrow = bv.facingPolys[step.getFacing()];
-        }
+
+        boolean isLastLegalStep = isLastStep &&
+                (step.getMovementType(true) != EntityMovementType.MOVE_ILLEGAL);
 
         AffineTransform stepOffset = new AffineTransform();
         stepOffset.translate(stepPos.x + 1, stepPos.y + 1);   //when is stepPos ever <> 0?
@@ -258,7 +256,8 @@ class StepSprite extends Sprite {
             case YAW:
             case EVADE:
             case ROLL:
-                if (!isLastStep) {
+                // if this is the last legal step then the facing arrow is drawn later
+                if (!isLastLegalStep) {
                     // draw arrows showing the facing
                     graph.setColor(Color.darkGray);
                     currentArrow = stepOffset.createTransformedShape(facingArrow);
@@ -470,8 +469,9 @@ class StepSprite extends Sprite {
         }
 
         // draw arrows showing the facing for final step only
-        if (isLastStep &&
-                (step.getMovementType(true) != EntityMovementType.MOVE_ILLEGAL)) {
+        if (isLastLegalStep) {
+            Shape finalFacingArrow = bv.finalFacingPolys[step.getFacing()];
+
             graph.setColor(Color.darkGray);
             currentArrow = stepOffset.createTransformedShape(finalFacingArrow);
             ((Graphics2D) graph).fill(currentArrow);

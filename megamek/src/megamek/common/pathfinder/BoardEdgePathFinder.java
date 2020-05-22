@@ -494,7 +494,7 @@ public class BoardEdgePathFinder {
      * to the list of child paths.
      */
     protected void processChild(MovePath child, List<MovePath> children, Set<Coords> visitedCoords) {
-        if(!visitedCoords.contains(child.getFinalCoords()) && isLegalMove(child)) {
+        if(!visitedCoords.contains(child.getFinalCoords()) && isLegalMove(child).isLegal()) {
             visitedCoords.add(child.getFinalCoords());
             children.add(child);
         }
@@ -506,7 +506,7 @@ public class BoardEdgePathFinder {
      * @param movePath The move path to process
      * @return Whether or not the given move path is "legal" in the context of this pathfinder.
      */
-    protected boolean isLegalMove(MovePath movePath) {
+    protected MoveLegalityIndicator isLegalMove(MovePath movePath) {
         Coords dest = movePath.getFinalCoords();
         IBoard board = movePath.getGame().getBoard();
         IHex destHex = board.getHex(dest);
@@ -524,24 +524,19 @@ public class BoardEdgePathFinder {
      * @param destinationBuilding the building at the end of the path, can be null
      * @return Whether or not the given move path is "legal" in the context of this pathfinder.
      */
-    private boolean isLegalMove(MovePath movePath, IHex destHex, Building destinationBuilding) {
-        // adjust this to return a data structure that indicates whether the "illegal" movement category is
-        // due to terrain that can be destroyed exclusively or something that cannot be surmounted
-        // insurmountable: going up/down too high/low, wheeled tank restriction, ground tank into water, ship out of water
-        
-        // also: why is the pegasus not using missiles on terrain sometimes
-        
-        // finally: bulletproof princess path picker just in case long range paths comes back empty
-        
+    private MoveLegalityIndicator isLegalMove(MovePath movePath, IHex destHex, Building destinationBuilding) {        
         Coords dest = movePath.getFinalCoords();
         IBoard board = movePath.getGame().getBoard();
         Coords src = movePath.getSecondLastStep().getPosition();
         IHex srcHex = board.getHex(src);
         Entity entity = movePath.getEntity();
 
+        MoveLegalityIndicator mli = new MoveLegalityIndicator();
+        
         boolean destinationInBounds = board.contains(dest);
         if(!destinationInBounds) {
-            return false;
+            mli.outOfBounds = true;
+            return mli;
         }
 
         // we only need to be able to legally move into the hex from the previous hex.
@@ -557,63 +552,53 @@ public class BoardEdgePathFinder {
         // jumpers can just hop down wherever they want
         int maxDownwardElevationChange = entity.getJumpMP() > 0 ? 999 : entity.getMaxElevationDown();
         int destHexElevation = calculateUnitElevationInHex(destHex, entity);
-        int srcHexElevation = calculateUnitElevationInHex(srcHex, entity);
-
-        boolean destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
+        int srcHexElevation = calculateUnitElevationInHex(srcHex, entity);        
+        
+        mli.destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
         boolean destinationHasBuildingOrBridge = destinationBuilding != null;
         boolean destinationHasBridge = destinationHasBuildingOrBridge && destHex.containsTerrain(Terrains.BRIDGE_CF);
         boolean destinationHasBuilding = destinationHasBuildingOrBridge && destHex.containsTerrain(Terrains.BLDG_CF);
 
         // if we're going to step onto a bridge that will collapse, let's not consider going there
-        boolean destinationHasWeakBridge =  destinationHasBridge && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
+        mli.destinationHasWeakBridge =  destinationHasBridge && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
 
         // if we're going to step onto a building that will collapse, let's not consider going there
-        boolean destinationHasWeakBuilding = destinationHasBuilding && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
+        mli.destinationHasWeakBuilding = destinationHasBuilding && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
 
         // this condition indicates that that we are unable to go to the destination because it's too high compared to the source
-        boolean goingUpTooHigh = destHexElevation - srcHexElevation > maxUpwardElevationChange;
+        mli.goingUpTooHigh = destHexElevation - srcHexElevation > maxUpwardElevationChange;
 
         // this condition indicates that we are unable to go to the destination because it's too low compared to the source
-        boolean goingDownTooLow = srcHexElevation - destHexElevation > maxDownwardElevationChange;
+        mli.goingDownTooLow = srcHexElevation - destHexElevation > maxDownwardElevationChange;
 
         // tanks cannot go into jungles or heavy woods unless there is a road
-        boolean tankIntoHeavyWoods = isTracked &&
+        mli.tankIntoHeavyWoods = isTracked &&
                 (destHex.terrainLevel(Terrains.JUNGLE) > 0 || destHex.terrainLevel(Terrains.WOODS) > 1) && !destHexHasRoad;
 
         // hovercraft and wheeled units cannot go into jungles or woods unless there is a road
-        boolean weakTankIntoWoods = (isHovercraft || isWheeled) &&
+        mli.weakTankIntoWoods = (isHovercraft || isWheeled) &&
                 (destHex.terrainLevel(Terrains.JUNGLE) > 0 || destHex.terrainLevel(Terrains.WOODS) > 0) && !destHexHasRoad;
 
         // wheeled tanks cannot go into rough terrain or rubble of any kind, or buildings for that matter
         // even if you level them they still turn to rubble. Additionally, they cannot go into deep snow.
-        boolean wheeledTankRestriction = isWheeled &&
+        mli.wheeledTankRestriction = isWheeled &&
                 (destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE)
                 || destHex.containsTerrain(Terrains.BLDG_CF) || (destHex.containsTerrain(Terrains.SNOW) && destHex.terrainLevel(Terrains.SNOW) > 1));
 
         // tracked and wheeled tanks cannot go into water without a bridge
-        boolean groundTankIntoWater = (isTracked || isWheeled) &&
+        mli.groundTankIntoWater = (isTracked || isWheeled) &&
                 destHex.containsTerrain(Terrains.WATER) && (destHex.depth() > 0) && !destHex.containsTerrain(Terrains.BRIDGE);
 
         // naval units cannot go out of water
-        boolean shipOutofWater = entity.isNaval() &&
+        mli.shipOutofWater = entity.isNaval() &&
                 (!destHex.containsTerrain(Terrains.WATER) || destHex.depth() < 1);
 
         // for future expansion of this functionality, we may consider the possibility that a building or bridge
         // will be destroyed intentionally by the bot to make way for a unit to cross
         // for now, vehicles simply will not consider going through buildings as an option
-        boolean tankGoingThroughBuilding = (isWheeled || isTracked || isHovercraft) && destinationHasBuilding;
+        mli.tankGoingThroughBuilding = (isWheeled || isTracked || isHovercraft) && destinationHasBuilding;
 
-        return !destinationImpassable &&
-                !destinationHasWeakBridge &&
-                !destinationHasWeakBuilding &&
-                !goingUpTooHigh &&
-                !goingDownTooLow &&
-                !tankIntoHeavyWoods &&
-                !weakTankIntoWoods &&
-                !wheeledTankRestriction &&
-                !groundTankIntoWater &&
-                !shipOutofWater &&
-                !tankGoingThroughBuilding;
+        return mli;
     }
 
     /**
@@ -715,6 +700,37 @@ public class BoardEdgePathFinder {
             }
 
             return distanceDifference != 0 ? distanceDifference : costDifference;
+        }
+    }
+    
+    public static class MoveLegalityIndicator {
+        public boolean destinationImpassable;
+        public boolean destinationHasWeakBridge;
+        public boolean destinationHasWeakBuilding;
+        public boolean goingUpTooHigh;
+        public boolean goingDownTooLow;
+        public boolean tankIntoHeavyWoods;
+        public boolean weakTankIntoWoods;
+        public boolean wheeledTankRestriction;
+        public boolean groundTankIntoWater;
+        public boolean shipOutofWater;
+        public boolean tankGoingThroughBuilding;
+        public boolean outOfBounds;
+        
+        public boolean isLegal() {
+            return
+                    !outOfBounds &&
+                    !destinationImpassable &&
+                    !destinationHasWeakBridge &&
+                    !destinationHasWeakBuilding &&
+                    !goingUpTooHigh &&
+                    !goingDownTooLow &&
+                    !tankIntoHeavyWoods &&
+                    !weakTankIntoWoods &&
+                    !wheeledTankRestriction &&
+                    !groundTankIntoWater &&
+                    !shipOutofWater &&
+                    !tankGoingThroughBuilding;
         }
     }
 }

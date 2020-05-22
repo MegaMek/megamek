@@ -1401,6 +1401,7 @@ public class FireControl {
             // damage to them normally).
         } else if (0.5 > damageFraction
                    || Targetable.TYPE_BUILDING == target.getTargetType()
+                   || Targetable.TYPE_HEX_CLEAR == target.getTargetType()
                    || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry
                    || owner.getGame().getEntity(target.getTargetId()) instanceof BattleArmor) {
             return 0;

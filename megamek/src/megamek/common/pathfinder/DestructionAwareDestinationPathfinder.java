@@ -132,12 +132,25 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         // or it needs some "terrain adjustment" to become a legal move)
         // and we haven't already found a path to the destination that's cheaper than what we're considering
         // and we're not going off board 
+        MoveLegalityIndicator mli = isLegalMove((MovePath) child);
+        
+        // if this path goes through terrain that can be leveled
+        // but has other problems with it (e.g. elevation change, or the "reduced" terrain still won't let you through)
+        // it still can't be leveled
+        boolean canLevel = child.needsLeveling() &&
+                !mli.outOfBounds &&
+                !mli.destinationImpassable &&
+                !mli.goingDownTooLow &&
+                !mli.goingUpTooHigh &&
+                !mli.wheeledTankRestriction &&
+                !mli.destinationHasWeakBridge &&
+                !mli.groundTankIntoWater;
         
         if((!shortestPathsToCoords.containsKey(child.getFinalCoords()) ||
                 // shorter path to these coordinates
                 (movePathComparator.compare(shortestPathsToCoords.get(child.getFinalCoords()), child) > 0)) &&
                 // legal or needs leveling and not off-board
-                (isLegalMove((MovePath) child) || (child.needsLeveling() && child.getGame().getBoard().contains(child.getFinalCoords()))) &&
+                (mli.isLegal() || canLevel) &&
                 // better than existing path to ultimate destination
                 (child.getMpUsed() + child.getLevelingCost() < maximumCost)) {
             shortestPathsToCoords.put(child.getFinalCoords(), child);

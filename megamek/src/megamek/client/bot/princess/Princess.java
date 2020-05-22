@@ -1499,12 +1499,20 @@ public class Princess extends BotClient {
             List<BulldozerMovePath> bulldozerPaths = getPrecognition().getPathEnumerator().
                 getLongRangePaths().get(mover.getId());
             
+            // for whatever reason (most likely it's wheeled), there are no long-range paths for this unit, 
+            // so just have it mill around in place as usual.
+            if (bulldozerPaths == null || bulldozerPaths.size() == 0) {
+                return getPrecognition().getPathEnumerator()
+                        .getUnitPaths()
+                        .get(mover.getId());
+            }
+            
             Collections.sort(bulldozerPaths, new BulldozerMovePath.MPCostComparator());
             
             // if the quickest route needs some terrain adjustments, let's get working on that
             Targetable levelingTarget = null;
             
-            if(bulldozerPaths.get(0).needsLeveling()) {
+            if (bulldozerPaths.get(0).needsLeveling()) {
                 levelingTarget = getAppropriateTarget(bulldozerPaths.get(0).getCoordsToLevel().get(0));
                 getFireControlState().getAdditionalTargets().add(levelingTarget);
                 sendChat("Hex " + levelingTarget.getPosition().toFriendlyString() + " impedes route to destination, targeting for clearing.", 
@@ -1514,7 +1522,7 @@ public class Princess extends BotClient {
             // if any of the long range paths, pruned, are within LOS of leveling coordinates, then we're actually
             // just going to go back to the standard unit paths
             List<MovePath> prunedPaths = new ArrayList<>();
-            for(BulldozerMovePath movePath : bulldozerPaths) {
+            for (BulldozerMovePath movePath : bulldozerPaths) {
                 BulldozerMovePath prunedPath = movePath.clone();
                 prunedPath.clipToPossible();
                 

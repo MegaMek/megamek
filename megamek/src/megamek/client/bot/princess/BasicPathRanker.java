@@ -482,12 +482,17 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return facingMod;
     }
 
-    // If I need to flee the board, I want to get closer to my home edge.
+    /**
+     * If I need to flee the board, I want to get closer to my home edge.
+     * This method is now obsolete due to long-range pathfinding, which automatically takes the unit in the direction
+     * it's supposed to go.
+     * Retained for the time being in case it needs to be referenced later.
+     */
     protected double calculateSelfPreservationMod(Entity movingUnit,
                                                 MovePath path,
                                                 IGame game,
                                                 StringBuilder formula) {
-        if (getOwner().getFallBack() || movingUnit.isCrippled()) {
+        /*if (getOwner().getFallBack() || movingUnit.isCrippled()) {
             int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(),
                                                        getOwner().getHomeEdge(movingUnit),
                                                        game);
@@ -500,7 +505,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                    .append(" * ")
                    .append(LOG_DECIMAL.format(selfPreservation)).append("]");
             return selfPreservationMod;
-        }
+        }*/
         return 0.0;
     }
     
@@ -721,6 +726,11 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
     protected void calcDamageToStrategicTargets(MovePath path, IGame game, 
             FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
+        
+        if(path.getFinalCoords().getX() == 16 && path.getFinalCoords().getY() == 9) {
+            int alpha = 1;
+        }
+        
         for (int i = 0; i < fireControlState.getAdditionalTargets().size(); i++) {
             Targetable target = fireControlState.getAdditionalTargets().get(i);
             

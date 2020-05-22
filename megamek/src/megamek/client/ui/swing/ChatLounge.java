@@ -158,7 +158,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     JPanel mapPreviewPanel;
     MiniMap miniMap = null;
-    JDialog gameBoardPreviewW;
+    ClientDialog gameBoardPreviewW;
     MiniMap gameBoardMap = null;
     private Game game = new Game();
 
@@ -919,7 +919,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         mapPreviewPanel.add(miniMap);
 
         // setup the board preview window.
-        gameBoardPreviewW = new JDialog(clientgui.frame, 
+        gameBoardPreviewW = new ClientDialog(clientgui.frame, 
                 Messages.getString("BoardSelectionDialog.ViewGameBoard"), //$NON-NLS-1$
                 false);
         gameBoardPreviewW.setLocationRelativeTo(clientgui.frame);
@@ -931,6 +931,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             bv.setUseLOSTool(false);
             gameBoardPreviewW.add(bv.getComponent(true));
             gameBoardPreviewW.setSize(clientgui.frame.getWidth()/2, clientgui.frame.getHeight()/2);
+            bv.zoomOut();
+            bv.zoomOut();
+            bv.zoomOut();
+            bv.zoomOut();
+            gameBoardPreviewW.center();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
                             Messages.getString("BoardEditor.CouldntInitialize") + e,

@@ -158,9 +158,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     JPanel mapPreviewPanel;
     MiniMap miniMap = null;
-    ClientDialog gameBoardPreviewW;
-    MiniMap gameBoardMap = null;
-    private Game game = new Game();
+    ClientDialog boardPreviewW;
+    private Game boardPreviewGame = new Game();
 
     // keep track of portrait images
     private DirectoryItems portraits;
@@ -919,23 +918,23 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         mapPreviewPanel.add(miniMap);
 
         // setup the board preview window.
-        gameBoardPreviewW = new ClientDialog(clientgui.frame, 
+        boardPreviewW = new ClientDialog(clientgui.frame, 
                 Messages.getString("BoardSelectionDialog.ViewGameBoard"), //$NON-NLS-1$
                 false);
-        gameBoardPreviewW.setLocationRelativeTo(clientgui.frame);
-        gameBoardPreviewW.setVisible(false);
+        boardPreviewW.setLocationRelativeTo(clientgui.frame);
+        boardPreviewW.setVisible(false);
 
         try {
-            BoardView1 bv = new BoardView1(game, null, null);
+            BoardView1 bv = new BoardView1(boardPreviewGame, null, null);
             bv.setDisplayInvalidHexInfo(false);
             bv.setUseLOSTool(false);
-            gameBoardPreviewW.add(bv.getComponent(true));
-            gameBoardPreviewW.setSize(clientgui.frame.getWidth()/2, clientgui.frame.getHeight()/2);
+            boardPreviewW.add(bv.getComponent(true));
+            boardPreviewW.setSize(clientgui.frame.getWidth()/2, clientgui.frame.getHeight()/2);
             bv.zoomOut();
             bv.zoomOut();
             bv.zoomOut();
             bv.zoomOut();
-            gameBoardPreviewW.center();
+            boardPreviewW.center();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
                             Messages.getString("BoardEditor.CouldntInitialize") + e,
@@ -1148,8 +1147,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         IBoard newBoard = BoardUtilities.combine(temp.getBoardWidth(), temp.getBoardHeight(), temp.getMapWidth(),
                 temp.getMapHeight(), sheetBoards, rotateBoard, temp.getMedium());
         
-        game.setBoard(newBoard);
-        gameBoardPreviewW.setVisible(true);
+        boardPreviewGame.setBoard(newBoard);
+        boardPreviewW.setVisible(true);
     }
 
     /**
@@ -2559,7 +2558,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
         lisBoardsSelected.setSelectedIndices(selected);
         clientgui.getClient().sendMapSettings(mapSettings);
-        if (gameBoardPreviewW.isVisible()) {
+        if (boardPreviewW.isVisible()) {
             previewGameBoard();
         }
     }

@@ -30,11 +30,11 @@ import megamek.common.MoveStep;
 class StepSprite extends Sprite {
 
     private MoveStep step;
-    boolean isLastStep = false;
+    private boolean isLastStep;
     private Image baseScaleImage;
-    
-    public StepSprite(BoardView1 boardView1, final MoveStep step,
-            boolean isLastStep) {
+
+    StepSprite(BoardView1 boardView1, final MoveStep step,
+               boolean isLastStep) {
         super(boardView1);
         this.step = step;
         this.isLastStep = isLastStep;
@@ -50,7 +50,6 @@ class StepSprite extends Sprite {
      * level.
      */
     public void refreshZoomLevel() {
-
         if (baseScaleImage == null) {
             return;
         }
@@ -64,7 +63,7 @@ class StepSprite extends Sprite {
         Image tempImage = new BufferedImage(BoardView1.HEX_W, BoardView1.HEX_H,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics graph = tempImage.getGraphics();
-        
+
         if (GUIPreferences.getInstance().getAntiAliasing()) {
             ((Graphics2D) graph).setRenderingHint(
                     RenderingHints.KEY_ANTIALIASING,
@@ -72,16 +71,17 @@ class StepSprite extends Sprite {
         }
 
         // fill with key color
-        graph.setColor(new Color(0,0,0,0));
+        graph.setColor(new Color(0, 0, 0, 0));
         graph.fillRect(0, 0, BoardView1.HEX_W, BoardView1.HEX_H);
 
         // setup some variables
         final Point stepPos = bv.getHexLocation(step.getPosition());
         stepPos.translate(-bounds.x, -bounds.y);
-        
+
         Shape moveArrow = bv.movementPolys[step.getFacing()];
         Shape facingArrow;
-        if (isLastStep && step.getMovementType(isLastStep) != EntityMovementType.MOVE_ILLEGAL) {
+        if (isLastStep &&
+                (step.getMovementType(true) != EntityMovementType.MOVE_ILLEGAL)) {
             facingArrow = bv.finalFacingPolys[step.getFacing()];
         } else {
             facingArrow = bv.facingPolys[step.getFacing()];
@@ -89,15 +89,14 @@ class StepSprite extends Sprite {
 
         AffineTransform stepOffset = new AffineTransform();
         stepOffset.translate(stepPos.x + 1, stepPos.y + 1);   //when is stepPos ever <> 0?
-        
+
         AffineTransform shadowOffset = new AffineTransform();
-        shadowOffset.translate(-1,-1);
-        
+        shadowOffset.translate(-1, -1);
+
         AffineTransform upDownOffset = new AffineTransform();
-        upDownOffset.translate(-30,0);
-        
+        upDownOffset.translate(-30, 0);
+
         Color col;
-        Shape currentArrow;
         // set color
         switch (step.getMovementType(isLastStep)) {
             case MOVE_RUN:
@@ -143,6 +142,7 @@ class StepSprite extends Sprite {
 
         drawConditions(step, stepPos, graph, col);
 
+        Shape currentArrow;
         Point offsetCostPos;
         // draw arrows and cost for the step
         switch (step.getType()) {
@@ -164,7 +164,7 @@ class StepSprite extends Sprite {
                 graph.setColor(Color.darkGray);
                 currentArrow = stepOffset.createTransformedShape(moveArrow);
                 ((Graphics2D) graph).fill(currentArrow);
-                
+
                 graph.setColor(col);
                 currentArrow = shadowOffset.createTransformedShape(currentArrow);
                 ((Graphics2D) graph).fill(currentArrow);
@@ -197,11 +197,11 @@ class StepSprite extends Sprite {
                 currentArrow = upDownOffset.createTransformedShape(bv.downArrow);
                 currentArrow = stepOffset.createTransformedShape(currentArrow);
                 ((Graphics2D) graph).fill(currentArrow);
-                
+
                 graph.setColor(col);
                 currentArrow = shadowOffset.createTransformedShape(currentArrow);
                 ((Graphics2D) graph).fill(currentArrow);
-                
+
                 offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
                 drawMovementCost(step, isLastStep, offsetCostPos, graph, col, false);
                 drawRemainingVelocity(step, stepPos, graph, true);
@@ -215,11 +215,11 @@ class StepSprite extends Sprite {
                 currentArrow = upDownOffset.createTransformedShape(bv.upArrow);
                 currentArrow = stepOffset.createTransformedShape(currentArrow);
                 ((Graphics2D) graph).fill(currentArrow);
-                
+
                 graph.setColor(col);
                 currentArrow = shadowOffset.createTransformedShape(currentArrow);
                 ((Graphics2D) graph).fill(currentArrow);
-                
+
                 offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
                 drawMovementCost(step, isLastStep, offsetCostPos, graph, col, false);
                 drawRemainingVelocity(step, stepPos, graph, true);
@@ -238,7 +238,7 @@ class StepSprite extends Sprite {
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int climbX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(climb) / 2);
+                        .stringWidth(climb) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(climb, climbX, stepPos.y + 39);
                 graph.setColor(col);
@@ -246,24 +246,23 @@ class StepSprite extends Sprite {
                 break;
             case CLIMB_MODE_OFF:
                 // cancel climb mode indicator
-                String climboff;
+                String climbOff;
                 if (step.getEntity().getMovementMode() == EntityMovementMode.WIGE) {
-                    climboff = Messages
+                    climbOff = Messages
                             .getString("BoardView1.WIGEClimbOff"); //$NON-NLS-1$
                 } else {
-                    climboff = Messages.getString("BoardView1.ClimbOff"); //$NON-NLS-1$
+                    climbOff = Messages.getString("BoardView1.ClimbOff"); //$NON-NLS-1$
                 }
                 if (step.isPastDanger()) {
-                    climboff = "(" + climboff + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    climbOff = "(" + climbOff + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int climboffX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(climboff) / 2);
+                int climbOffX = (stepPos.x + 42)
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(climbOff) / 2);
                 graph.setColor(Color.darkGray);
-                graph.drawString(climboff, climboffX, stepPos.y + 39);
+                graph.drawString(climbOff, climbOffX, stepPos.y + 39);
                 graph.setColor(col);
-                graph.drawString(climboff, climboffX - 1, stepPos.y + 38);
+                graph.drawString(climbOff, climbOffX - 1, stepPos.y + 38);
 
                 break;
             case TURN_LEFT:
@@ -276,11 +275,11 @@ class StepSprite extends Sprite {
                 graph.setColor(Color.darkGray);
                 currentArrow = stepOffset.createTransformedShape(facingArrow);
                 ((Graphics2D) graph).fill(currentArrow);
-                
+
                 graph.setColor(col);
                 currentArrow = shadowOffset.createTransformedShape(currentArrow);
                 ((Graphics2D) graph).fill(currentArrow);
-                
+
                 if (bv.game.useVectorMove()) {
                     drawMovementCost(step, isLastStep, stepPos, graph, col, false);
                 }
@@ -290,7 +289,7 @@ class StepSprite extends Sprite {
                 graph.setColor(Color.darkGray);
                 currentArrow = stepOffset.createTransformedShape(moveArrow);
                 ((Graphics2D) graph).fill(currentArrow);
-                
+
                 graph.setColor(col);
                 currentArrow = shadowOffset.createTransformedShape(currentArrow);
                 ((Graphics2D) graph).fill(currentArrow);
@@ -305,8 +304,7 @@ class StepSprite extends Sprite {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int loadX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(load) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(load) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(load, loadX, stepPos.y + 39);
                 graph.setColor(col);
@@ -320,29 +318,27 @@ class StepSprite extends Sprite {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int towX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(tow) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(tow) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(tow, towX, stepPos.y + 39);
                 graph.setColor(col);
                 graph.drawString(tow, towX - 1, stepPos.y + 38);
                 break;
             case DISCONNECT:
-                // Announce unload.
+                // Announce disconnect.
                 String disconnect = Messages.getString("BoardView1.Disconnect"); //$NON-NLS-1$
                 if (step.isPastDanger()) {
                     disconnect = "(" + disconnect + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int disconnectX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(disconnect) / 2);
-                int DisconnectY = stepPos.y + 38
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(disconnect) / 2);
+                int disconnectY = stepPos.y + 38
                         + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
-                graph.drawString(disconnect, disconnectX, DisconnectY + 1);
+                graph.drawString(disconnect, disconnectX, disconnectY + 1);
                 graph.setColor(col);
-                graph.drawString(disconnect, disconnectX - 1, DisconnectY);
+                graph.drawString(disconnect, disconnectX - 1, disconnectY);
                 break;
             case LAUNCH:
             case UNDOCK:
@@ -353,8 +349,7 @@ class StepSprite extends Sprite {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int launchX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(launch) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(launch) / 2);
                 int launchY = stepPos.y + 38
                         + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -370,8 +365,7 @@ class StepSprite extends Sprite {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int dropX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(drop) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(drop) / 2);
                 int dropY = stepPos.y + 38
                         + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -380,18 +374,17 @@ class StepSprite extends Sprite {
                 graph.drawString(drop, dropX - 1, dropY);
                 break;
             case RECOVER:
-                // announce launch
+                // announce recover
                 String recover = Messages.getString("BoardView1.Recover"); //$NON-NLS-1$
                 if (step.isDocking()) {
                     recover = Messages.getString("BoardView1.Dock"); //$NON-NLS-1$
                 }
                 if (step.isPastDanger()) {
-                    launch = "(" + recover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    recover = "(" + recover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int recoverX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(recover) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(recover) / 2);
                 int recoverY = stepPos.y + 38
                         + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -400,15 +393,14 @@ class StepSprite extends Sprite {
                 graph.drawString(recover, recoverX - 1, recoverY);
                 break;
             case JOIN:
-                // announce launch
+                // announce join
                 String join = Messages.getString("BoardView1.Join"); //$NON-NLS-1$
                 if (step.isPastDanger()) {
-                    launch = "(" + join + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    join = "(" + join + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int joinX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(join) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(join) / 2);
                 int joinY = stepPos.y + 38
                         + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -424,8 +416,7 @@ class StepSprite extends Sprite {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int unloadX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(unload) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(unload) / 2);
                 int unloadY = stepPos.y + 38
                         + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -434,15 +425,14 @@ class StepSprite extends Sprite {
                 graph.drawString(unload, unloadX - 1, unloadY);
                 break;
             case HOVER:
-                // announce launch
+                // announce hover
                 String hover = Messages.getString("BoardView1.Hover"); //$NON-NLS-1$
                 if (step.isPastDanger()) {
                     hover = "(" + hover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int hoverX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(hover) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(hover) / 2);
                 int hoverY = stepPos.y + 38
                         + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -459,8 +449,7 @@ class StepSprite extends Sprite {
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int landX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(land) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(land) / 2);
                 int landY = stepPos.y + 38
                         + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -480,8 +469,7 @@ class StepSprite extends Sprite {
                         + step.getMovementMode());
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int modeX = (stepPos.x + 42)
-                        - (graph.getFontMetrics(graph.getFont())
-                                .stringWidth(mode) / 2);
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(mode) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(mode, modeX, modePos - 1);
                 graph.setColor(col);
@@ -491,18 +479,19 @@ class StepSprite extends Sprite {
             default:
                 break;
         }
-        
+
         if (step.isVTOLBombingStep() || step.isStrafingStep()) {
             graph.setColor(col);
-            ((Graphics2D)graph).fill(
-                    AffineTransform.getTranslateInstance(stepPos.x, stepPos.y).createTransformedShape(
-                    HexDrawUtilities.getHexFullBorderArea(3, 0)));
+            ((Graphics2D) graph).fill(
+                    AffineTransform.getTranslateInstance(stepPos.x, stepPos.y)
+                            .createTransformedShape(
+                                    HexDrawUtilities.getHexFullBorderArea(3, 0)));
         }
 
         baseScaleImage = bv.createImage(tempImage.getSource());
         // create final image
         image = bv.getScaledImage(bv.createImage(tempImage.getSource()), false);
-        
+
         graph.dispose();
         tempImage.flush();
     }
@@ -514,14 +503,12 @@ class StepSprite extends Sprite {
      * unloading as well
      */
     private void drawConditions(MoveStep step, Point stepPos,
-            Graphics graph, Color col) {
-
+                                Graphics graph, Color col) {
         if (step.isEvading()) {
             String evade = Messages.getString("BoardView1.Evade"); //$NON-NLS-1$
             graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
             int evadeX = (stepPos.x + 42)
-                    - (graph.getFontMetrics(graph.getFont()).stringWidth(
-                            evade) / 2);
+                    - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
             graph.setColor(Color.darkGray);
             graph.drawString(evade, evadeX, stepPos.y + 64);
             graph.setColor(col);
@@ -533,18 +520,16 @@ class StepSprite extends Sprite {
             String roll = Messages.getString("BoardView1.Roll"); //$NON-NLS-1$
             graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
             int rollX = (stepPos.x + 42)
-                    - (graph.getFontMetrics(graph.getFont()).stringWidth(
-                            roll) / 2);
+                    - (graph.getFontMetrics(graph.getFont()).stringWidth(roll) / 2);
             graph.setColor(Color.darkGray);
             graph.drawString(roll, rollX, stepPos.y + 18);
             graph.setColor(col);
             graph.drawString(roll, rollX - 1, stepPos.y + 17);
         }
-
     }
 
     private void drawActiveVectors(MoveStep step, Point stepPos,
-            Graphics graph) {
+                                   Graphics graph) {
 
         /*
          * TODO: it might be better to move this to the MovementSprite so
@@ -552,12 +537,11 @@ class StepSprite extends Sprite {
          * entities
          */
 
-        int[] activeXpos = { 39, 59, 59, 40, 19, 19 };
-        int[] activeYpos = { 20, 28, 52, 59, 52, 28 };
+        int[] activeXpos = {39, 59, 59, 40, 19, 19};
+        int[] activeYpos = {20, 28, 52, 59, 52, 28};
 
         int[] v = step.getVectors();
         for (int i = 0; i < 6; i++) {
-
             String active = Integer.toString(v[i]);
             graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
             graph.setColor(Color.darkGray);
@@ -566,7 +550,6 @@ class StepSprite extends Sprite {
             graph.setColor(Color.red);
             graph.drawString(active, (activeXpos[i] + stepPos.x) - 1,
                     (activeYpos[i] + stepPos.y) - 1);
-
         }
 
     }
@@ -581,8 +564,7 @@ class StepSprite extends Sprite {
         return step;
     }
 
-    public Font getMovementFont() {
-
+    private Font getMovementFont() {
         String fontName = GUIPreferences.getInstance().getString(
                 GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
         int fontStyle = GUIPreferences.getInstance().getInt(
@@ -594,9 +576,8 @@ class StepSprite extends Sprite {
     }
 
     private void drawRemainingVelocity(MoveStep step, Point stepPos,
-            Graphics graph, boolean shiftFlag) {
-        String velString = null;
-        StringBuffer velStringBuf = new StringBuffer();
+                                       Graphics graph, boolean shiftFlag) {
+        StringBuilder velStringBuf = new StringBuilder();
 
         if (bv.game.useVectorMove()) {
             return;
@@ -620,18 +601,14 @@ class StepSprite extends Sprite {
         velStringBuf.append("(").append(distTraveled).append("/")
                 .append(velocity).append(")");
 
-        Color col = Color.GREEN;
-        if (step.getVelocityLeft() > 0) {
-            col = Color.RED;
-        }
+        Color col = (step.getVelocityLeft() > 0) ? Color.RED : Color.GREEN;
 
         // Convert the buffer to a String and draw it.
-        velString = velStringBuf.toString();
+        String velString = velStringBuf.toString();
         graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
         int costX = stepPos.x + 42;
         if (shiftFlag) {
-            costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(
-                    velString) / 2);
+            costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(velString) / 2);
         }
         graph.setColor(Color.darkGray);
         graph.drawString(velString, costX, stepPos.y + 28);
@@ -640,19 +617,15 @@ class StepSprite extends Sprite {
 
         // if we are in atmosphere, then report the free turn status as well
         if (!bv.game.getBoard().inSpace()) {
-            String turnString = null;
-            StringBuffer turnStringBuf = new StringBuffer();
-            turnStringBuf.append("<").append(step.getNStraight())
-                    .append(">");
-
-            col = Color.RED;
             if (step.dueFreeTurn()) {
                 col = Color.GREEN;
             } else if (step.canAeroTurn(bv.game)) {
                 col = Color.YELLOW;
+            } else {
+                col = Color.RED;
             }
-            // Convert the buffer to a String and draw it.
-            turnString = turnStringBuf.toString();
+
+            String turnString = "<" + step.getNStraight() + ">";
             graph.setFont(new Font("SansSerif", Font.PLAIN, 10)); //$NON-NLS-1$
             costX = stepPos.x + 50;
             graph.setColor(Color.darkGray);
@@ -663,19 +636,18 @@ class StepSprite extends Sprite {
     }
 
     private void drawMovementCost(MoveStep step, boolean isLastStep,
-            Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
-        String costString = null;
-        StringBuffer costStringBuf = new StringBuffer();
+                                  Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
+        StringBuilder costStringBuf = new StringBuilder();
         costStringBuf.append(step.getMpUsed());
 
         Entity e = step.getEntity();
-        
+
         // If the step is using a road bonus, mark it.
         if (step.isOnlyPavement()
                 && e.isEligibleForPavementBonus()) {
             costStringBuf.append("+"); //$NON-NLS-1$
         }
-        
+
         // Show WiGE descent bonus
         for (int i = 0; i < step.getWiGEBonus(); i++) {
             costStringBuf.append("+");
@@ -694,7 +666,7 @@ class StepSprite extends Sprite {
 
         if (step.isUsingMASC()
                 && !step.getEntity()
-                        .hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+                .hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
             costStringBuf.append("["); //$NON-NLS-1$
             costStringBuf.append(step.getTargetNumberMASC());
             costStringBuf.append("+]"); //$NON-NLS-1$
@@ -716,18 +688,15 @@ class StepSprite extends Sprite {
         }
 
         // Convert the buffer to a String and draw it.
-        costString = costStringBuf.toString();
+        String costString = costStringBuf.toString();
         graph.setFont(getMovementFont()); //$NON-NLS-1$
         int costX = stepPos.x + 42;
         if (shiftFlag) {
-            costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(
-                    costString) / 2);
+            costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
         }
         graph.setColor(Color.darkGray);
         graph.drawString(costString, costX, stepPos.y + 39);
         graph.setColor(col);
         graph.drawString(costString, costX - 1, stepPos.y + 38);
-        
     }
-
 }

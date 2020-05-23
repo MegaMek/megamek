@@ -282,6 +282,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_LF_STORAGE_BATTERY = BigInteger.valueOf(1).shiftLeft(199);
     public static final BigInteger F_PROTOMECH_MELEE = BigInteger.valueOf(1).shiftLeft(200);
     public static final BigInteger F_EXTERNAL_POWER_PICKUP = BigInteger.valueOf(1).shiftLeft(201);
+    public static final BigInteger F_RAM_PLATE = BigInteger.valueOf(1).shiftLeft(202);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -862,6 +863,8 @@ public class MiscType extends EquipmentType {
             } else {
                 return 0.0;
             }
+        } else if (hasFlag(MiscType.F_RAM_PLATE)) {
+            return RoundWeight.nextTon(entity.getWeight() / 10.0);
         }
        // okay, I'm out of ideas
         return 1.0f;
@@ -1476,6 +1479,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISPPCCapacitor());
         EquipmentType.addType(MiscType.createRetractableBlade());
         EquipmentType.addType(MiscType.createChainWhip());
+        EquipmentType.addType(MiscType.createRamPlate());
         EquipmentType.addType(MiscType.createISApolloFCS());
         EquipmentType.addType(MiscType.createIMEjectionSeat());
         EquipmentType.addType(MiscType.createSVEjectionSeat());
@@ -11874,6 +11878,23 @@ public class MiscType extends EquipmentType {
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
             .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        return misc;
+    }
+
+    private static MiscType createRamPlate() {
+        MiscType misc = new MiscType();
+        misc.name = "Ram Plate";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 3;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_RAM_PLATE).or(F_MECH_EQUIPMENT);
+        misc.rulesRefs = "?";
+
+        // Not yet published
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(3130)
+                .setTechRating(RATING_B).setAvailability(RATING_X, RATING_X, RATING_X, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

@@ -1013,6 +1013,21 @@ public class TestMech extends TestEntity {
                 }
             }
 
+            if (misc.hasFlag(MiscType.F_RAM_PLATE)) {
+                if (!mech.hasReinforcedStructure()) {
+                    buff.append(misc.getName()).append(" requires reinforced structure.\n");
+                    illegal = true;
+                }
+                for (int loc = 0; loc < mech.locations(); loc++) {
+                    if (mech.locationIsTorso(loc)
+                            && countCriticalSlotsFromEquipInLocation(mech, m, loc) != 1) {
+                        illegal = true;
+                        buff.append("Ram plate requires one critical slot in each torso location.\n");
+                        break;
+                    }
+                }
+            }
+
             if (mech.isSuperHeavy()
                     && (misc.hasFlag(MiscType.F_TSM)
                             || misc.hasFlag(MiscType.F_INDUSTRIAL_TSM)
@@ -1051,6 +1066,7 @@ public class TestMech extends TestEntity {
                         || misc.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
                         || misc.hasFlag(MiscType.F_FUEL)) {
                     buff.append("Non-industrial mech can't mount ").append(misc.getName()).append("\n");
+                    illegal = true;
                 }
             }
             

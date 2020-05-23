@@ -127,18 +127,25 @@ public class Terrains implements ITerrainFactory {
     public static final int INCLINE_TOP = 50; 
     public static final int INCLINE_BOTTOM = 51;
     
-    //TODO: implement hidden in editor
+    // Hex level differences of at least 3 levels, used with exits to 
+    // denote the hex side. Used to add highlighting/images to hex sides
+    // This is added to hexes automatically by MegaMek, not for
+    // manual use in the Editor
+    public static final int INCLINE_HIGH_TOP = 52;
+    public static final int INCLINE_HIGH_BOTTOM = 53; 
+    
+    //TODO: + implement hidden in editor 
     //TODO: correct auto placement
     //TODO: auto place cliff-Bottom?
     //TODO: shadows...
     //TODO: Add gfx option
     //TODO: cliff rules
-  //TODO: only remove incline when cliff at the same exit
-    // add lower 
-    // check: predict graphics when lower and hihger present?
-    // cliff rules
-    // shadow/cliff interaction: bldgs/trees must become orthos! draw shadows over supers, orthos over shadows
-    // add decal level for rooftop stuff
+    //TODO: only remove incline when cliff at the same exit
+    //TODO: add lower 
+    //TODO: check: predict graphics when lower and hihger present?
+    //TODO: cliff rules
+    //TODO: shadow/cliff interaction: bldgs/trees must become orthos! draw shadows over supers, orthos over shadows
+    //TODO: add decal level for rooftop stuff
 
     /**
      * Keeps track of the different type of terrains that can have exits.
@@ -151,11 +158,12 @@ public class Terrains implements ITerrainFactory {
             "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev",
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
             "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom", 
-            "incline_top", "incline_bottom" };
+            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom" };
     
     /** These terrains are hidden in the Editor as they are handled internally. */
-    public static final HashSet<Integer> hideInEditor = 
-            new HashSet<Integer>(Arrays.asList(INCLINE_TOP, INCLINE_BOTTOM));
+    public static final HashSet<Integer> AUTOMATIC = 
+            new HashSet<Integer>(Arrays.asList(
+                    INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM));
 
     public static final int SIZE = names.length;
 
@@ -384,6 +392,8 @@ public class Terrains implements ITerrainFactory {
             } else {
                 return "Extremely high metal content";
             }
+        case (CLIFF_TOP):
+            return "Cliff-Top";
         default:
             return null;
         }

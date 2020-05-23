@@ -64,6 +64,8 @@ super * "cliff_top:1:61" "" "Cliff/Cliff_Top/Cliff_top_61.png"
 super * "cliff_top:1:62" "" "Cliff/Cliff_Top/Cliff_top_62.png"
 super * "cliff_top:1:63" "" "Cliff/Cliff_Top/Cliff_top_63.png"
 
+super * "cliff_top:1" "" "saxarba/misc/blank.png"
+
 super * "cliff_bottom:1:01" "" "Cliff/Cliff_bottom/Cliff_bottom_01.png"
 super * "cliff_bottom:1:02" "" "Cliff/Cliff_bottom/Cliff_bottom_02.png"
 super * "cliff_bottom:1:03" "" "Cliff/Cliff_bottom/Cliff_bottom_03.png"

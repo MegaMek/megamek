@@ -33,7 +33,7 @@ class StepSprite extends Sprite {
     private boolean isLastStep;
     private Image baseScaleImage;
 
-    StepSprite(BoardView1 boardView1, final MoveStep step,
+    public StepSprite(BoardView1 boardView1, final MoveStep step,
                boolean isLastStep) {
         super(boardView1);
         this.step = step;

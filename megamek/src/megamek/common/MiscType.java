@@ -1026,14 +1026,16 @@ public class MiscType extends EquipmentType {
                 for (Mounted mount : entity.getWeaponList()) {
                     weaponCost += mount.getCost();
                 }
-                return weaponCost * 0.05;
+                costValue = weaponCost * 0.05;
             } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
                 // 10% of weapon cost
                 double weaponCost = 0;
                 for (Mounted mount : entity.getWeaponList()) {
                     weaponCost += mount.getCost();
                 }
-                return weaponCost * 0.1;
+                costValue = weaponCost * 0.1;
+            } else if (hasFlag(F_RAM_PLATE)) {
+                costValue = getTonnage(entity, loc) * 10000;
             }
             
             if (isArmored) {
@@ -11887,13 +11889,15 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 3;
+        misc.cost = COST_VARIABLE;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_RAM_PLATE).or(F_MECH_EQUIPMENT);
         misc.rulesRefs = "?";
 
         // Not yet published
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(3130)
-                .setTechRating(RATING_B).setAvailability(RATING_X, RATING_X, RATING_X, RATING_D)
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+                .setAdvancement(2600, DATE_NONE, DATE_NONE, 2781, 3130)
+                .setTechRating(RATING_E).setAvailability(RATING_F, RATING_X, RATING_X, RATING_F)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }

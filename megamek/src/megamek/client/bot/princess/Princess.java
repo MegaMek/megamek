@@ -1549,6 +1549,9 @@ public class Princess extends BotClient {
                 
                 // add the pruned path to the list of paths we'll be returning
                 prunedPaths.add(prunedPath);
+                
+                // if the pruned path ends with a turn or has spare MP for whatever other reason, 
+                // add some more paths that use the spare MP to turn, up to the unit's run MP.
             }
             
             return prunedPaths;

@@ -540,9 +540,6 @@ public class BoardEdgePathFinder {
             return mli;
         }
 
-        if(dest.getX() == 6 && dest.getY() == 16) {
-            int alpha = 1;
-        }
         // we only need to be able to legally move into the hex from the previous hex.
         // we don't care about stacking limits, remaining unit mp or other transient data
 
@@ -615,7 +612,7 @@ public class BoardEdgePathFinder {
      * @param entity The entity to check
      * @return The effective elevation
      */
-    private int calculateUnitElevationInHex(IHex hex, Entity entity) {
+    public static int calculateUnitElevationInHex(IHex hex, Entity entity) {
         // we calculate the height of a hex as "on the ground" by default
         // Special exceptions:
         // We are a mech, which can hopping on top of some buildings

@@ -25,15 +25,23 @@ import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBoard;
+import megamek.common.MiscType;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 
+/**
+ * Handles the generation of ground-based move paths that contain information relating to the destruction 
+ * of terrain necessary to accomplish that path.
+ */
 public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
 
     Comparator<BulldozerMovePath> movePathComparator;
     int maximumCost = Integer.MAX_VALUE;
     
     /**
+     * Uses an A* search to find the "optimal" path to the destination coordinates.
+     * Ignores move cost and makes note of hexes that need to be cleared for the path to
+     * be viable.
      */
     public BulldozerMovePath findPathToCoords(Entity entity, Coords destinationCoords) {
         BulldozerMovePath startPath = new BulldozerMovePath(entity.getGame(), entity);
@@ -52,13 +60,13 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         // a collection of coordinates we've already visited, so we don't loop back.
         Map<Coords, BulldozerMovePath> shortestPathsToCoords = new HashMap<>();
         shortestPathsToCoords.put(startPath.getFinalCoords(), startPath);
-        BulldozerMovePath bestPath = new BulldozerMovePath(entity.getGame(), entity);
+        BulldozerMovePath bestPath = null;
 
         while(!candidates.isEmpty()) {            
             candidates.addAll(generateChildNodes(candidates.get(0), shortestPathsToCoords));
             
             if(candidates.get(0).getFinalCoords().equals(destinationCoords) &&
-                    movePathComparator.compare(bestPath, candidates.get(0)) < 0) {
+                    (bestPath == null || movePathComparator.compare(bestPath, candidates.get(0)) < 0)) {
                 bestPath = candidates.get(0);
                 maximumCost = bestPath.getMpUsed() + bestPath.getLevelingCost();
             }

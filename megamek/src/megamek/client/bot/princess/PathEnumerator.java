@@ -356,7 +356,10 @@ public class PathEnumerator {
         // put up a long-range path there
         for(Coords destination : destinations) {
             BulldozerMovePath bmp = dpf.findPathToCoords(mover, destination);
-            getLongRangePaths().get(mover.getId()).add(bmp);
+            
+            if(bmp != null) {
+                getLongRangePaths().get(mover.getId()).add(bmp);
+            }
         }        
     }
     

@@ -36,7 +36,7 @@ public class BulldozerMovePath extends MovePath {
      */
     private static final long serialVersionUID = 1346716014573707012L;
 
-    private static final int CANNOT_LEVEL = -1;
+    public static final int CANNOT_LEVEL = -1;
 
     Map<Coords, Integer> coordLevelingCosts = new HashMap<>();
     List<Coords> coordsToLevel = new ArrayList<>();
@@ -64,7 +64,7 @@ public class BulldozerMovePath extends MovePath {
             // here, we will check if the step is illegal because the unit in question
             // is attempting to move through illegal terrain for its movement type, but
             // would be able to get through if the terrain was "reduced"
-            int levelingCost = calculateLevelingCost(mp.getFinalCoords());
+            int levelingCost = calculateLevelingCost(mp.getFinalCoords(), getEntity());
             if(levelingCost > CANNOT_LEVEL) {
                 coordLevelingCosts.put(mp.getFinalCoords(), levelingCost);
                 coordsToLevel.add(mp.getFinalCoords());
@@ -95,16 +95,17 @@ public class BulldozerMovePath extends MovePath {
      * if we were to stand still for the number of turns required to reduce the terrain there
      * to a form through which the current unit can move
      */
-    private int calculateLevelingCost(Coords finalCoords) {
-        IHex destHex = this.getGame().getBoard().getHex(finalCoords);
+    public static int calculateLevelingCost(Coords finalCoords, Entity entity) {
+        IBoard board = entity.getGame().getBoard();
+        IHex destHex = board.getHex(finalCoords);
         int levelingCost = CANNOT_LEVEL;
         
         if(destHex == null) {
             return levelingCost;
         }
         
-        EntityMovementMode movementMode = getEntity().getMovementMode();
-        boolean isTracked = movementMode == EntityMovementMode.TRACKED && !getEntity().hasETypeFlag(Entity.ETYPE_QUADVEE);
+        EntityMovementMode movementMode = entity.getMovementMode();
+        boolean isTracked = movementMode == EntityMovementMode.TRACKED && !entity.hasETypeFlag(Entity.ETYPE_QUADVEE);
         boolean isHovercraft = movementMode == EntityMovementMode.HOVER;
         boolean isMech = movementMode == EntityMovementMode.BIPED || movementMode == EntityMovementMode.TRIPOD ||
                 movementMode == EntityMovementMode.QUAD;
@@ -125,7 +126,7 @@ public class BulldozerMovePath extends MovePath {
             }
             
             if (destHex.containsTerrain(Terrains.BLDG_CF)) {
-                damageNeeded += getGame().getBoard().getBuildingAt(finalCoords).getCurrentCF(finalCoords);
+                damageNeeded += board.getBuildingAt(finalCoords).getCurrentCF(finalCoords);
             }
         }
         
@@ -143,7 +144,7 @@ public class BulldozerMovePath extends MovePath {
             }
             
             if (destHex.containsTerrain(Terrains.BLDG_CF)) {
-                damageNeeded += getGame().getBoard().getBuildingAt(finalCoords).getCurrentCF(finalCoords);
+                damageNeeded += board.getBuildingAt(finalCoords).getCurrentCF(finalCoords);
             }
         }
         
@@ -159,14 +160,14 @@ public class BulldozerMovePath extends MovePath {
             }
             
             if (destHex.containsTerrain(Terrains.BLDG_CF)) {
-                damageNeeded += getGame().getBoard().getBuildingAt(finalCoords).getCurrentCF(finalCoords);
+                damageNeeded += board.getBuildingAt(finalCoords).getCurrentCF(finalCoords);
             }
         }
         
         if(damageNeeded > 0) {
             // basically, the MP cost of leveling this terrain is equal to how many turns we're going to waste
             // shooting at it instead of moving.
-            levelingCost = (int) Math.round(damageNeeded / getMaxPointBlankDamage()) * getEntity().getRunMP();
+            levelingCost = (int) Math.round(damageNeeded / getMaxPointBlankDamage(entity)) * entity.getRunMP();
         }
         
         
@@ -176,12 +177,8 @@ public class BulldozerMovePath extends MovePath {
     /**
      * Helper function that lazy-calculates an entity's max damage at point blank range.
      */
-    private double getMaxPointBlankDamage() {
-        if(maxPointBlankDamage < 0) {
-            maxPointBlankDamage = FireControl.getMaxDamageAtRange(getEntity(), 1, false, false);
-        }
-        
-        return maxPointBlankDamage;
+    private static double getMaxPointBlankDamage(Entity entity) {
+        return FireControl.getMaxDamageAtRange(entity, 1, false, false);
     }
     
     public boolean needsLeveling() {

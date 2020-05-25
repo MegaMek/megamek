@@ -21,6 +21,7 @@ VERSION HISTORY:
 + PR #1929: Some commonly-used dialogs now recognize ESC butotn as cancel, minor visual improvements to said dialogs
 + PR #1877: Add options to BoardsValidator for automation usage
 + Issue #1905: LAM and Leaping Optional Rule
++ Isse #1974: Start of Game Stuck at Transmitting Game Data Packet Pump Null Pointer Exception (Generated Map Settings) 
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

@@ -2447,7 +2447,26 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
             }
-            
+
+            // Protomechs cannot fire arm weapons and main gun in the same turn
+            if ((ae instanceof Protomech)
+                    && ((weapon.getLocation() == Protomech.LOC_MAINGUN)
+                    || (weapon.getLocation() == Protomech.LOC_RARM)
+                    || (weapon.getLocation() == Protomech.LOC_LARM))) {
+                final boolean firingMainGun = weapon.getLocation() == Protomech.LOC_MAINGUN;
+                for (EntityAction ea : game.getActionsVector()) {
+                    if ((ea.getEntityId() == attackerId) && (ea instanceof WeaponAttackAction)) {
+                        WeaponAttackAction otherWAA = (WeaponAttackAction) ea;
+                        final Mounted otherWeapon = ae.getEquipment(otherWAA.getWeaponId());
+                        if ((firingMainGun && ((otherWeapon.getLocation() == Protomech.LOC_RARM)
+                                || (otherWeapon.getLocation() == Protomech.LOC_LARM)))
+                                || !firingMainGun && (otherWeapon.getLocation() == Protomech.LOC_MAINGUN)) {
+                            return Messages.getString("WeaponAttackAction.CantFireArmsAndMainGun");
+                        }
+                    }
+                }
+            }
+
             // TAG
             
             // The TAG system cannot target Airborne Aeros.

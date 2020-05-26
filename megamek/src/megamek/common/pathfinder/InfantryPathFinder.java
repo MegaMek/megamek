@@ -59,6 +59,11 @@ public class InfantryPathFinder {
             // add an option to stand still
             infantryPaths.add(startingEdge);
             
+            // if, for some reason, the entity has already moved this turn or otherwise can't move, don't bother calculating paths for it
+            if(!startingEdge.getEntity().isSelectableThisTurn()) {
+                return;
+            }
+            
             // for an infantry unit with n MP, the total number of paths should be 6 * n*(n+1)/2 + 1 (triangular rule, plus "stand still")
             infantryPaths.addAll(generateChildren(startingEdge));
             

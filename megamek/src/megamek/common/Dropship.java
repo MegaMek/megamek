@@ -722,7 +722,7 @@ public class Dropship extends SmallCraft {
                 defEqBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append(etype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append("+");
@@ -1325,7 +1325,7 @@ public class Dropship extends SmallCraft {
                 bvText.append(startRow);
                 bvText.append(startColumn);
 
-                bvText.append(mtype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(endColumn);

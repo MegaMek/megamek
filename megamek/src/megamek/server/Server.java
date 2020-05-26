@@ -12475,7 +12475,7 @@ public class Server implements Runnable {
             src = origSrc;
             dest = origDest;
         }
-        final int srcHeightAboveFloor = entitySrcElevation + srcHex.depth(true);
+        final int srcHeightAboveFloor = entitySrcElevation + srcHex.depth(false);
         int fallElevation = Math.abs((srcHex.floor() + srcHeightAboveFloor)
                 - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface() : destHex.floor()))
                 - fallReduction;
@@ -12701,8 +12701,8 @@ public class Server implements Runnable {
         }
         int bldgElev = destHex.containsTerrain(Terrains.BLDG_ELEV)
             ? destHex.terrainLevel(Terrains.BLDG_ELEV) : 0;
-        int fallElevation = entity.elevationOccupied(srcHex)
-                - (entity.elevationOccupied(destHex) + bldgElev);
+        int fallElevation = srcHex.surface() + entity.getElevation()
+                - (destHex.surface() + bldgElev);
         if (fallElevation > 1) {
             if (roll == null) {
                 roll = entity.getBasePilotingRoll();

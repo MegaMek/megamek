@@ -1403,11 +1403,21 @@ public class MiscType extends EquipmentType {
                 returnBV *= 2;
             }
         } else if (hasFlag(MiscType.F_RAM_PLATE)) {
-            // half the maximum charge damage * 1.1
-            returnBV = entity.getWeight() * entity.getRunMP() * 0.55;
+            // half the maximum charge damage (rounded down) * 1.1
+            int damage = ((int) (entity.getWeight() * entity.getRunMP() * 0.1)) / 2;
+            if (entity instanceof Mech) {
+                // Spikes located in a torso location increase the charge damage by 2 points
+                for (int loc = 0; loc < entity.locations(); loc++) {
+                    if (((Mech) entity).locationIsTorso(loc)
+                            && entity.hasWorkingMisc(F_SPIKES, -1, loc)) {
+                        damage++;
+                    }
+                }
+                returnBV = damage * 1.1;
+            }
         }
-
-        return returnBV;
+        // Deal with floating point precision errors
+        return Math.round(returnBV * 1000.0) / 1000.0;
     }
     
     @Override

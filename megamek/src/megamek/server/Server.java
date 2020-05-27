@@ -7830,8 +7830,8 @@ public class Server implements Runnable {
 
             // check for leap
             if (!lastPos.equals(curPos)
-                    && (stepMoveType != EntityMovementType.MOVE_JUMP)
-                    && (entity instanceof Mech) && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE()
+                    && (stepMoveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mech)
+                    && !entity.isAirborne() && (step.getClearance() <= 0)  // Don't check airborne LAMs
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
                 int leapDistance = (lastElevation
                         + game.getBoard().getHex(lastPos).getLevel())
@@ -31793,7 +31793,7 @@ public class Server implements Runnable {
                     mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                     mapSettings.removeUnavailable();
                     // if still only nulls left, use BOARD_GENERATED
-                    if (!mapSettings.getBoardsSelected().hasNext()) {
+                    if (mapSettings.getBoardsSelected().next() == null) {
                         mapSettings.setNullBoards((MapSettings.BOARD_GENERATED));
                     }
                     resetPlayersDone();

@@ -1402,6 +1402,9 @@ public class MiscType extends EquipmentType {
             if (entity.hasWorkingMisc(MiscType.F_TSM)) {
                 returnBV *= 2;
             }
+        } else if (hasFlag(MiscType.F_RAM_PLATE)) {
+            // half the maximum charge damage * 1.1
+            returnBV = entity.getWeight() * entity.getRunMP() * 0.55;
         }
 
         return returnBV;
@@ -11890,6 +11893,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 3;
         misc.cost = COST_VARIABLE;
+        misc.bv = BV_VARIABLE;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_RAM_PLATE).or(F_MECH_EQUIPMENT);
         misc.rulesRefs = "?";

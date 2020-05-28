@@ -566,7 +566,6 @@ public class Board implements Serializable, IBoard {
                 } else {
                     inclineBotExits += (1 << i);
                 }
-
             }
 
             // Should there be a high level cliff bottom?
@@ -1137,6 +1136,10 @@ public class Board implements Serializable, IBoard {
                 int terrainTypes[] = hex.getTerrainTypes();
                 for (int j = 0; j < terrainTypes.length; j++) {
                     int terrType = terrainTypes[j];
+                    // do not save internally handled terrains
+                    if (Terrains.AUTOMATIC.contains(terrType)) {
+                        continue;
+                    }
                     ITerrain terrain = hex.getTerrain(terrType);
                     if (terrain != null) {
                         if (!firstTerrain) {

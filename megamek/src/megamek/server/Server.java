@@ -6760,6 +6760,7 @@ public class Server implements Runnable {
         boolean continueTurnFromPBS = false;
         boolean continueTurnFromFishtail = false;
         boolean continueTurnFromLevelDrop = false;
+        boolean continueTurnFromCliffAscent = false;
 
         // get a list of coordinates that the unit passed through this turn
         // so that I can later recover potential bombing targets
@@ -7871,6 +7872,96 @@ public class Server implements Runnable {
                         addReport(doEntityFallsInto(entity, lastElevation,
                                 lastPos, curPos,
                                 entity.getBasePilotingRoll(overallMoveType), false));
+                    }
+                }
+            }
+            
+            // Vehicles (exc. WIGE/VTOL) moving down a cliff
+            // QuadVees in vehicle mode ignore PSRs to avoid falls and so are not checked here
+            if ((entity instanceof Tank) 
+                    && !entity.isAirborneVTOLorWIGE() 
+                    && !lastPos.equals(curPos)
+                    && prevHex.containsTerrain(Terrains.CLIFF_TOP)
+                    && prevHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+                    && ((prevHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << lastPos.direction(curPos))) != 0)
+                    ) {
+                int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
+                        - (curElevation + curHex.getLevel());
+                // Cliffs should only exist towards 1/2 level drops, check just to make sure
+                // This also excludes other floating movement not caught above, like over subsea cliffs
+                if (leapDistance == 1 || leapDistance == 2) {
+                    rollTarget = entity.getBasePilotingRoll(stepMoveType);
+                    rollTarget.append(new PilotingRollData(entity.getId(), 0, "moving down a sheer cliff"));
+                    if (doSkillCheckWhileMoving(entity, lastElevation,
+                            lastPos, curPos, rollTarget, false) > 0) {
+                        addReport(vehicleMotiveDamage((Tank)entity, 0));
+                        addNewLines();
+                        turnOver = true;
+                        break;
+                    }
+                }
+            }
+            
+            // Mechs moving down a cliff
+            // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133
+            //TODO: Is the QuadVee check correct? does it set the movementmode for each step?
+            //TODO: Is the LAM check correct? Is it automatically airborne when it moves?
+            boolean quadveeVehMode = (entity instanceof QuadVee) 
+            		&& (step.getMovementMode() == EntityMovementMode.WHEELED
+            		|| step.getMovementMode() == EntityMovementMode.TRACKED);
+            if ((entity instanceof Mech) 
+                    && !lastPos.equals(curPos)
+                    && (moveType != EntityMovementType.MOVE_JUMP)
+                    && !entity.isAero() // LAM
+                    && !quadveeVehMode
+                    && prevHex.containsTerrain(Terrains.CLIFF_TOP)
+                    && prevHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+                    && ((prevHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << lastPos.direction(curPos))) != 0)
+                    ) {
+                int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
+                        - (curElevation + curHex.getLevel());
+                // Cliffs should only exist towards 1/2 level drops, check just to make sure
+                // This also excludes other floating movement not caught above, like over subsea cliffs
+                if (leapDistance == 1 || leapDistance == 2) {
+                    rollTarget = entity.getBasePilotingRoll(moveType);
+                    rollTarget.append(new PilotingRollData(entity.getId(), leapDistance - 1, "moving down a sheer cliff"));
+                    if (doSkillCheckWhileMoving(entity, lastElevation,
+                            lastPos, curPos, rollTarget, true) > 0) {
+                        addNewLines();
+                        turnOver = true;
+                        break;
+                    }
+                }
+            }
+            
+            // Mechs moving up a cliff
+            if ((entity instanceof Mech) 
+                    && !lastPos.equals(curPos)
+                    && (moveType != EntityMovementType.MOVE_JUMP)
+                    && !entity.isAero()
+                    && !quadveeVehMode
+                    && curHex.containsTerrain(Terrains.CLIFF_TOP)
+                    && curHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+                    && ((curHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << curPos.direction(lastPos))) != 0)
+                    ) {
+                int stepHeight = - (lastElevation + game.getBoard().getHex(lastPos).getLevel())
+                        + (curElevation + curHex.getLevel());
+                // Cliffs should only exist towards 1/2 level drops, check just to make sure
+                // This also excludes other floating movement not caught above, like over subsea cliffs
+                if (stepHeight == 1 || stepHeight == 2) {
+                    rollTarget = entity.getBasePilotingRoll(moveType);
+                    rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
+                    if (doSkillCheckWhileMoving(entity, lastElevation,
+                            lastPos, lastPos, rollTarget, false) > 0) {
+                    	r = new Report(2209);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        addReport(r);
+                        addNewLines();
+                        curPos = entity.getPosition();
+                        mpUsed = step.getMpUsed();
+                        continueTurnFromCliffAscent = true;
+                        break;
                     }
                 }
             }
@@ -9377,7 +9468,7 @@ public class Server implements Runnable {
                 && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
                 && !turnOver && (entity.mpUsed < entity.getRunMP())
                 && (overallMoveType != EntityMovementType.MOVE_JUMP);
-        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail || continueTurnFromLevelDrop)
+        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail || continueTurnFromLevelDrop || continueTurnFromCliffAscent)
                 && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);

@@ -37,6 +37,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
+import megamek.common.QuadVee;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -281,6 +282,70 @@ public class SharedUtility {
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
                     rollTarget.append(new PilotingRollData(entity.getId(), leapDistance, "leaping (fall)"));
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
+                }
+            }
+            
+            // Vehicles (exc. WIGE/VTOL) moving down a cliff
+            boolean vehicleMovement = (entity instanceof Tank) && !entity.isAirborneVTOLorWIGE(); 
+            boolean quadveeMovement = (entity instanceof QuadVee) 
+                    && (step.getMovementMode() == EntityMovementMode.WHEELED
+                    || step.getMovementMode() == EntityMovementMode.TRACKED);
+            if ((vehicleMovement || quadveeMovement)
+                    && !lastPos.equals(curPos) 
+                    && prevHex.containsTerrain(Terrains.CLIFF_TOP)
+                    && prevHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+                    && ((prevHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << lastPos.direction(curPos))) != 0)
+                    ) {
+                int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
+                        - (curElevation + curHex.getLevel());
+                // Cliffs should only exist towards 1/2 level drops, check just to make sure
+                if (leapDistance == 1 || leapDistance == 2) {
+                    rollTarget = entity.getBasePilotingRoll(moveType);
+                    rollTarget.append(new PilotingRollData(entity.getId(), 0, "moving down a sheer cliff"));
+                    checkNag(rollTarget, nagReport, psrList);
+                }
+            }
+            
+            // Mechs moving down a cliff
+            // Quadvees in vee mode act as vehicles
+            //TODO: Is the QuadVee check correct? does it set the movementmode for each step?
+            //TODO: Is the LAM check correct? Is it automatically airborne when it moves?
+            if ((entity instanceof Mech) 
+                    && !lastPos.equals(curPos)
+                    && (moveType != EntityMovementType.MOVE_JUMP)
+                    && !entity.isAero() // LAM
+                    && !quadveeMovement
+                    && prevHex.containsTerrain(Terrains.CLIFF_TOP)
+                    && prevHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+                    && ((prevHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << lastPos.direction(curPos))) != 0)
+                    ) {
+                int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
+                        - (curElevation + curHex.getLevel());
+                // Cliffs should only exist towards 1/2 level drops, check just to make sure
+                if (leapDistance == 1 || leapDistance == 2) {
+                    rollTarget = entity.getBasePilotingRoll(moveType);
+                    rollTarget.append(new PilotingRollData(entity.getId(), leapDistance - 1, "moving down a sheer cliff"));
+                    checkNag(rollTarget, nagReport, psrList);
+                }
+            }
+            
+            // Mechs moving up a cliff
+            if ((entity instanceof Mech) 
+                    && !lastPos.equals(curPos)
+                    && (moveType != EntityMovementType.MOVE_JUMP)
+                    && !entity.isAero()
+                    && !quadveeMovement
+                    && curHex.containsTerrain(Terrains.CLIFF_TOP)
+                    && curHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+                    && ((curHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << curPos.direction(lastPos))) != 0)
+                    ) {
+                int stepHeight = - (lastElevation + game.getBoard().getHex(lastPos).getLevel())
+                        + (curElevation + curHex.getLevel());
+                // Cliffs should only exist towards 1/2 level drops, check just to make sure
+                if (stepHeight == 1 || stepHeight == 2) {
+                    rollTarget = entity.getBasePilotingRoll(moveType);
+                    rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
+                    checkNag(rollTarget, nagReport, psrList);
                 }
             }
 

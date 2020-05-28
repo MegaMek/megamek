@@ -135,17 +135,27 @@ public class Terrains implements ITerrainFactory {
     public static final int INCLINE_HIGH_BOTTOM = 53; 
     
     //TODO: + implement hidden in editor 
-    //TODO: correct auto placement
-    //TODO: auto place cliff-Bottom?
+    //TODO: + correct auto placement
+    //TODO: + auto place cliff-Bottom?
     //TODO: shadows...
     //TODO: Add gfx option
+    //TODO: + no saving of auto terrain
     //TODO: cliff rules
-    //TODO: only remove incline when cliff at the same exit
-    //TODO: add lower 
+    //TODO: + only remove incline when cliff at the same exit
+    //TODO: + add lower 
     //TODO: check: predict graphics when lower and hihger present?
-    //TODO: cliff rules
     //TODO: shadow/cliff interaction: bldgs/trees must become orthos! draw shadows over supers, orthos over shadows
     //TODO: add decal level for rooftop stuff
+    //TODO: no backwards movement across sheer cliffs at all
+    //TODO: Mechs up cliff: PSR, +1 for lvl1 cliff +2 for lvl2 cliff, if lost, nothing happens, MP lost
+    //TODO: Mechs down cliff: PSR, +0 for lvl1 cliff +1 for lvl2 cliff, if lost, fall, movement over
+    //TODO: + Veh (exc VTOL/WIGE) up cliff: not possible; 
+    //TODO: up cliff WIGE: 1MP extra 
+    //TODO: Veh (exc VTOL/WIGE) down cliff: DSR, fail: Motive roll, move over; 
+    //TODO: down cliff VTOL/WIGE: no effect at all
+    //TODO: Inf: crazy
+    //TODO: check quadvee movement over cliffs
+    //TODO: hover skidding down cliff
 
     /**
      * Keeps track of the different type of terrains that can have exits.

@@ -297,9 +297,9 @@ public class HexTileset {
         themes.add(TRANSPARENT_THEME);
         long endTime = System.currentTimeMillis();
 
-        System.out.println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-2$ //$NON-NLS-2$
-        System.out.println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-2$ //$NON-NLS-2$
-        System.out.println("hexTileset: loaded " + orthos.size() + " ortho images"); //$NON-NLS-2$ //$NON-NLS-2$
+//        System.out.println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-2$ //$NON-NLS-2$
+//        System.out.println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-2$ //$NON-NLS-2$
+//        System.out.println("hexTileset: loaded " + orthos.size() + " ortho images"); //$NON-NLS-2$ //$NON-NLS-2$
         if (incDepth == 0) {
             System.out.println("hexTileset loaded in " + (endTime - startTime) + "ms.");
         }

@@ -3353,7 +3353,25 @@ public class MoveStep implements Serializable {
                 return false;
             }
         }
-
+        
+        // Upward Sheer Cliffs is forbidden for vehicles exc. VTOL, WIGE
+        //TODO: Excluding naval: subs and ships will move over cliffs if the next hex is water
+        boolean vehicleMovement = (entity instanceof Tank) 
+        		&& !entity.isAirborneVTOLorWIGE() 
+        		&& !entity.isNaval(); 
+        boolean quadveeMovement = (entity instanceof QuadVee) 
+                && (getMovementMode() == EntityMovementMode.WHEELED
+                || getMovementMode() == EntityMovementMode.TRACKED);
+        if ((vehicleMovement || quadveeMovement) 
+                && (destAlt - srcAlt > 0)
+                && destHex.containsTerrain(Terrains.CLIFF_TOP)
+                && destHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+                && ((destHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << dest.direction(src))) != 0) 
+                && (!src.equals(dest))
+                && !isPavementStep()) {
+            return false;
+        }
+        
         if ((entity instanceof Mech) && ((srcAlt - destAlt) > 2)) {
             setLeapDistance(srcAlt - destAlt);
         }

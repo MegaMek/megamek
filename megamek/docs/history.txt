@@ -23,6 +23,8 @@ VERSION HISTORY:
 + Issue #1905: LAM and Leaping Optional Rule
 + Isse #1974: Start of Game Stuck at Transmitting Game Data Packet Pump Null Pointer Exception (Generated Map Settings) 
 + Data: Updated Grounded Dropship image now works with Camos.
++ PR #1969: Draw larger arrow for final facing of move
++ Issue #1141: DFA victim takes no fall damage if pushed off building onto lower building
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

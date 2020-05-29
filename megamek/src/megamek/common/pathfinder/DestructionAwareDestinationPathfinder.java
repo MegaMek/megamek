@@ -195,6 +195,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      */
     protected void processChild(BulldozerMovePath child, List<BulldozerMovePath> children, 
             Map<Coords, BulldozerMovePath> shortestPathsToCoords) {
+        
         // (if we haven't visited these coordinates before
         // or we have, and this is a shorter path)
         // and (it is a legal move
@@ -249,7 +250,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
          * Favors paths that move closer to the destination edge first.
          * in case of tie, favors paths that cost less MP
          */
-        public int compare(BulldozerMovePath first, BulldozerMovePath second) {
+        public int compare(BulldozerMovePath first, BulldozerMovePath second) {            
             IBoard board = first.getGame().getBoard();
             boolean backwards = false;
             int h1 = first.getFinalCoords().distance(destination)
@@ -264,7 +265,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             
             // getFacingDiff returns a number between 0 and 3 inclusive. 
             // if the value diff is larger than 3, then it won't make a difference and we skip calculating it
-            if(dd < 4) 
+            if(Math.abs(dd) < 4) 
             {
                 dd += ShortestPathFinder.getFacingDiff(first, destination, backwards);
                 dd -= ShortestPathFinder.getFacingDiff(second, destination, backwards);

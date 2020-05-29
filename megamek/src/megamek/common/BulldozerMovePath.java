@@ -48,6 +48,10 @@ public class BulldozerMovePath extends MovePath {
         super(game, entity);
     }
 
+    /**
+     * Any additional costs of this move paths, such as stepping into water or
+     * other factors that would increase the number of turns to complete it without increasing the actual MP used.
+     */
     public int getAdditionalCost() {
         int totalCost = 0;
 
@@ -58,6 +62,9 @@ public class BulldozerMovePath extends MovePath {
         return totalCost;
     }
     
+    /**
+     * An estimation of how many MP we would "waste" blowing down obstacles.
+     */
     public int getLevelingCost() {
         int totalCost = 0;
 
@@ -68,6 +75,10 @@ public class BulldozerMovePath extends MovePath {
         return totalCost;
     }
 
+    /**
+     * Override of the MovePath.addStep method, calculates leveling and other extra costs 
+     * associated with this bulldozer move path
+     */
     @Override
     public MovePath addStep(final MoveStepType type) {
         BulldozerMovePath mp = (BulldozerMovePath) super.addStep(type);
@@ -90,7 +101,7 @@ public class BulldozerMovePath extends MovePath {
             if((hex != null) && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)) {
                 MovementType mType = MovementType.getMovementType(mp.getEntity());
                 if(mType == MovementType.Walker || mType == MovementType.WheeledAmphi || mType == MovementType.TrackedAmphi) {
-                    additionalCosts.put(mp.getFinalCoords(), mp.getCachedEntityState().getRunMP() - mp.getCachedEntityState().getWalkMP());
+                    additionalCosts.put(mp.getFinalCoords(), 1);
                 }
             }
         }
@@ -127,6 +138,7 @@ public class BulldozerMovePath extends MovePath {
         final BulldozerMovePath copy = new BulldozerMovePath(getGame(), getEntity());
         copyFields(copy);        
         copy.coordLevelingCosts = new HashMap<>(coordLevelingCosts);
+        copy.additionalCosts = new HashMap<>(additionalCosts);
         copy.coordsToLevel = new ArrayList<>(coordsToLevel);
         copy.maxPointBlankDamage = maxPointBlankDamage;
         return copy;
@@ -223,17 +235,23 @@ public class BulldozerMovePath extends MovePath {
         return FireControl.getMaxDamageAtRange(entity, 1, false, false);
     }
     
+    /**
+     * Whether this path will require terrain reduction to fully accomplish
+     */
     public boolean needsLeveling() {
         return coordLevelingCosts.size() > 0;
     }
     
+    /**
+     * The coordinates which need to be leveled for this path to be performed by its unit
+     */
     public List<Coords> getCoordsToLevel() {
         return coordsToLevel;
     }
     
     @Override
     public String toString() {
-        return super.toString() + " Leveling Cost: " + getLevelingCost();
+        return super.toString() + " Leveling Cost: " + getLevelingCost() + " Additional Cost: " + getAdditionalCost();
     }
     
     /**
@@ -249,7 +267,8 @@ public class BulldozerMovePath extends MovePath {
          * in case of tie, favors paths that use more hexes
          */
         public int compare(BulldozerMovePath first, BulldozerMovePath second) {
-            int dd = (first.getMpUsed() + first.getLevelingCost()) - (second.getMpUsed() + second.getLevelingCost());
+            int dd = (first.getMpUsed() + first.getLevelingCost() + first.getAdditionalCost()) - 
+                    (second.getMpUsed() + second.getLevelingCost() + second.getAdditionalCost());
     
             if (dd != 0) {
                 return dd;

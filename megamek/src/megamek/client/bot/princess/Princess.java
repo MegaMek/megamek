@@ -1493,7 +1493,7 @@ public class Princess extends BotClient {
     public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover, boolean forceMoveToContact) {
         // if the mover can't move, then there's nothing for us to do here, let's cut out.
         if(mover.isImmobile()) {
-            return new ArrayList<MovePath>();
+            return Collections.emptyList();
         }
         
         BehaviorType behavior = forceMoveToContact ? BehaviorType.MoveToContact : unitBehaviorTracker.getBehaviorType(mover, this);
@@ -1507,8 +1507,7 @@ public class Princess extends BotClient {
         //  - set the first terrain/building as 'strategic target' if the shortest path requires terrain leveling
         //  - if the first strategic target is in LOS at the pruned end of the shortest path,  
         //      then we actually return the paths for "engaged" behavior
-        // TODO: special case is 'move to contact' mode, which should evaluate the long range paths if none of the
-        // basic paths produce potential damage 
+        //  - if we're unable to get where we're going, use standard set of move paths
         
         switch(behavior) {
         case Engaged:

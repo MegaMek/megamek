@@ -14,6 +14,7 @@
 package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.FireControl.FireControlType;
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
@@ -102,6 +103,10 @@ public class BasicPathRankerTest {
         mockPathRankerState = Mockito.mock(PathRankerState.class);
         Mockito.when(mockPathRankerState.getPathSuccessProbabilities()).thenReturn(testSuccessProbabilities);
         
+        final UnitBehavior mockBehaviorTracker = Mockito.mock(UnitBehavior.class);
+        Mockito.when(mockBehaviorTracker.getBehaviorType(Mockito.any(Entity.class), Mockito.any(Princess.class)))
+            .thenReturn(BehaviorType.Engaged);
+        
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
         Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
@@ -112,6 +117,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockPrincess.getFireControlState()).thenReturn(mockFireControlState);
         Mockito.when(mockPrincess.getPathRankerState()).thenReturn(mockPathRankerState);
         Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class), Mockito.anyBoolean())).thenReturn(21);
+        Mockito.when(mockPrincess.getUnitBehaviorTracker()).thenReturn(mockBehaviorTracker);
     }
 
     private void assertRankedPathEquals(final RankedPath expected,
@@ -812,7 +818,7 @@ public class BasicPathRankerTest {
         friendsCoords = new Coords(10, 10);
 
         // Set myself up to run away.
-        final double baseFleeingRank = -351.25;
+        final double baseFleeingRank = -51.25;
         Mockito.when(mockMover.isCrippled()).thenReturn(true);
         expected = new RankedPath(baseFleeingRank, mockPath, "Calculation: " +
                                                              "{fall mod [" + LOG_DECIMAL.format(0) + " = " +
@@ -830,16 +836,13 @@ public class BasicPathRankerTest {
                                                              "facingMod [" + LOG_DECIMAL.format(0) + " = max(" +
                                                              LOG_INT.format(0) + ", " +
                                                              "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + "" +
-                                                             " - " + LOG_INT.format(1) + "})] - " +
-                                                             "selfPreservationMod [" + LOG_DECIMAL.format(300) + " = " +
-                                                             "" + LOG_DECIMAL.format(20) + " * " +
-                                                             LOG_DECIMAL.format(15) + "]");
+                                                             " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         Mockito.doReturn(10)
                .when(testRanker)
                .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
-        expected = new RankedPath(-201.25, mockPath, "Calculation: " +
+        expected = new RankedPath(-51.25, mockPath, "Calculation: " +
                                                      "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
                 (100) + "] + " +
@@ -856,10 +859,7 @@ public class BasicPathRankerTest {
                                                      "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
                 .format(0) + ", " +
                                                      "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                     LOG_INT.format(1) + "})] - " +
-                                                     "selfPreservationMod [" + LOG_DECIMAL.format(150) + " = " +
-                                                     LOG_DECIMAL.format(10) + " * " +
-                                                     LOG_DECIMAL.format(15) + "]");
+                                                     LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseFleeingRank > actual.getRank()) {
@@ -868,7 +868,7 @@ public class BasicPathRankerTest {
         Mockito.doReturn(30)
                .when(testRanker)
                .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
-        expected = new RankedPath(-501.25, mockPath, "Calculation: " +
+        expected = new RankedPath(-51.25, mockPath, "Calculation: " +
                                                      "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
                 (100) + "] + " +
@@ -885,10 +885,7 @@ public class BasicPathRankerTest {
                                                      "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
                 .format(0) + ", " +
                                                      "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                     LOG_INT.format(1) + "})] - " +
-                                                     "selfPreservationMod [" + LOG_DECIMAL.format(450) + " = " +
-                                                     LOG_DECIMAL.format(30) + " * " +
-                                                     LOG_DECIMAL.format(15) + "]");
+                                                     LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseFleeingRank < actual.getRank()) {

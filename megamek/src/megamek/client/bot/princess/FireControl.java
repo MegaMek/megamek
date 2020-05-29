@@ -2469,6 +2469,11 @@ public class FireControl {
                                                        weaponType.getRanges(weapon),
                                                        useExtremeRange,
                                                        useLOSRange);
+            // if the weapon has been disabled or is out of ammo, don't count it
+            if(weapon.isCrippled()) {
+                continue;
+            }
+            
             int weaponDamage = weaponType.getDamage();
             
             // just a ball park estimate of missile and/or other cluster damage

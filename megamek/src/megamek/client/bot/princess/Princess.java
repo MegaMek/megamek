@@ -77,6 +77,8 @@ import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.BoardClusterTracker;
+import megamek.common.pathfinder.PathDecorator;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
@@ -96,6 +98,7 @@ public class Princess extends BotClient {
     private HashMap<PathRankerType, IPathRanker> pathRankers;
     private HashMap<FireControlType, FireControl> fireControls;
     private UnitBehavior unitBehaviorTracker;
+    private BoardClusterTracker boardClusterTracker;
     
     private FireControlState fireControlState;
     private PathRankerState pathRankerState;
@@ -291,6 +294,10 @@ public class Princess extends BotClient {
     
     Precognition getPrecognition() {
         return precognition;
+    }
+    
+    public BoardClusterTracker getClusterTracker() {
+        return boardClusterTracker;
     }
     
     public int getMaxWeaponRange(Entity entity) {
@@ -1338,7 +1345,7 @@ public class Princess extends BotClient {
                 }
             }
 
-            final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity);
+            final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
 
             if (null == paths) {
                 log(getClass(), METHOD_NAME, LogLevel.WARNING,
@@ -1483,8 +1490,15 @@ public class Princess extends BotClient {
      * Function with side effects. Retrieves the move path collection we want
      * the entity to consider. Sometimes it's the standard "circle", sometimes it's pruned long-range movement paths
      */
-    public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover) {
-        BehaviorType behavior = unitBehaviorTracker.getBehaviorType(mover, this);
+    public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover, boolean forceMoveToContact) {
+        // if the mover can't move, then there's nothing for us to do here, let's cut out.
+        if(mover.isImmobile()) {
+            return new ArrayList<MovePath>();
+        }
+        
+        BehaviorType behavior = forceMoveToContact ? BehaviorType.MoveToContact : unitBehaviorTracker.getBehaviorType(mover, this);
+        boardClusterTracker.clearMovableAreas();
+        boardClusterTracker.updateMovableAreas(mover);
         
         // basic idea: 
         // if we're "in battle", just use the standard set of move paths
@@ -1509,8 +1523,10 @@ public class Princess extends BotClient {
                 getLongRangePaths().get(mover.getId());
             
             // for whatever reason (most likely it's wheeled), there are no long-range paths for this unit, 
-            // so just have it mill around in place as usual.
-            if (bulldozerPaths == null || bulldozerPaths.size() == 0) {
+            // so just have it mill around in place as usual. Also set the behavior to "engaged"
+            // so it doesn't hump the walls due to "self preservation mods"
+            if ((bulldozerPaths == null) || (bulldozerPaths.size() == 0)) {
+                getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.NoPathToDestination);
                 return getPrecognition().getPathEnumerator()
                         .getUnitPaths()
                         .get(mover.getId());
@@ -1540,7 +1556,11 @@ public class Princess extends BotClient {
                             prunedPath.getFinalCoords(), levelingTarget.getPosition(), false);
                     
                     // break out of this loop, we can get to the thing we're trying to level this turn, so let's
+                    // use normal movement routines to move into optimal position to blow it up
+                    // Also set the behavior to "engaged"
+                    // so it doesn't hump walls due to "self preservation mods"
                     if(los.canSee()) {
+                        getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
                         return getPrecognition().getPathEnumerator()
                                 .getUnitPaths()
                                 .get(mover.getId());
@@ -1550,8 +1570,11 @@ public class Princess extends BotClient {
                 // add the pruned path to the list of paths we'll be returning
                 prunedPaths.add(prunedPath);
                 
-                // if the pruned path ends with a turn or has spare MP for whatever other reason, 
-                // add some more paths that use the spare MP to turn, up to the unit's run MP.
+                // also return some paths that go a little slower than max speed
+                // in case the faster path would force an unwanted PSR or MASC check 
+                for(MovePath childBMP : PathDecorator.decoratePath(prunedPath)) {
+                    prunedPaths.add(childBMP);
+                }
             }
             
             return prunedPaths;
@@ -1730,6 +1753,7 @@ public class Princess extends BotClient {
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
             unitBehaviorTracker = new UnitBehavior();
+            boardClusterTracker = new BoardClusterTracker();
 
             // Pick up any turrets and add their buildings to the strategic 
             // targets list.

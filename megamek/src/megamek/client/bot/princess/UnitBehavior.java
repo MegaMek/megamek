@@ -2,8 +2,11 @@ package megamek.client.bot.princess;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
 
 public class UnitBehavior {
     public enum BehaviorType {
@@ -17,7 +20,10 @@ public class UnitBehavior {
         MoveToContact,
         
         // this unit is engaged in battle
-        Engaged
+        Engaged,
+        
+        // this unit has no path to its destination
+        NoPathToDestination
     }
     
     private Map<Integer, BehaviorType> entityBehaviors = new HashMap<>();
@@ -25,10 +31,20 @@ public class UnitBehavior {
     /**
      * Worker function that calculates a unit's desired behavior
      */
-    private BehaviorType calculateUnitBehavior(Entity entity, BehaviorSettings botSettings) {
+    private BehaviorType calculateUnitBehavior(Entity entity, Princess owner) {
+        BehaviorSettings botSettings = owner.getBehaviorSettings();
+        
         if (botSettings.isForcedWithdrawal() && entity.isCrippled()) {
+            if(owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
+                return BehaviorType.NoPathToDestination;
+            }
+            
             return BehaviorType.ForcedWithdrawal;
         } else if (botSettings.getDestinationEdge() != CardinalEdge.NEAREST_OR_NONE) {
+            if(owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
+                return BehaviorType.NoPathToDestination;
+            }
+            
             return BehaviorType.MoveToDestination;
         } else {
             // if we can't see anyone, move to contact
@@ -45,10 +61,14 @@ public class UnitBehavior {
      */
     public BehaviorType getBehaviorType(Entity entity, Princess owner) {
         if (!entityBehaviors.containsKey(entity.getId())) {
-            entityBehaviors.put(entity.getId(), calculateUnitBehavior(entity, owner.getBehaviorSettings()));
+            entityBehaviors.put(entity.getId(), calculateUnitBehavior(entity, owner));
         }
         
         return entityBehaviors.get(entity.getId());
+    }
+    
+    public void overrideBehaviorType(Entity entity, BehaviorType behaviorType) {
+        entityBehaviors.put(entity.getId(), behaviorType);
     }
     
     /**

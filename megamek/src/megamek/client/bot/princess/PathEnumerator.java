@@ -51,6 +51,7 @@ import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.MovePathFinder;
 import megamek.common.pathfinder.NewtonianAerospacePathFinder;
+import megamek.common.pathfinder.PathDecorator;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.pathfinder.SpheroidPathFinder;
 
@@ -295,10 +296,8 @@ public class PathEnumerator {
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));
                 
-                // update the long-range paths for my units only
-                if(mover.getOwnerId() == getOwner().getLocalPlayer().getId()) {
-                    updateLongRangePaths(mover);
-                }
+                // generate long-range paths appropriate to the bot's current state
+                updateLongRangePaths(mover);
             }
 
             // Update our locations and add the computed paths.
@@ -320,31 +319,37 @@ public class PathEnumerator {
      */
     private void updateLongRangePaths(final Entity mover) {
         // don't bother doing this if the entity can't move anyway
-        if(mover.getWalkMP() == 0) {
+        // or if it's not one of mine
+        // or if I've already moved it
+        if((mover.getWalkMP() == 0) ||
+                ((getOwner().getLocalPlayer() != null) && (mover.getOwnerId() != getOwner().getLocalPlayer().getId())) || 
+                !mover.isSelectableThisTurn()) {
             return;
         }
         
         DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
         
         // where are we going?
-        List<Coords> destinations = new ArrayList<Coords>();
+        Set<Coords> destinations = new HashSet<Coords>();
         // if we're going to an edge or can't see anyone, generate long-range paths to the opposite edge
         // 
         switch(getOwner().getUnitBehaviorTracker().getBehaviorType(mover, getOwner())) {
             case ForcedWithdrawal:
             case MoveToDestination:
-                destinations = generateEdgeZone(getOwner().getHomeEdge(mover), getGame().getBoard());
+                destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover), true);
                 break;
             case MoveToContact:
                 // basically, we're translating the value produced by finding
                 // the Board.START_X direction into a cardinal edge
                 CardinalEdge oppositeEdge = 
                     CardinalEdge.getCardinalEdge(OffBoardDirection.translateBoardStart(BoardEdgePathFinder.determineOppositeEdge(mover)).getValue());
-                destinations = generateEdgeZone(oppositeEdge, getGame().getBoard());
+                destinations = getOwner().getClusterTracker().getDestinationCoords(mover, oppositeEdge, true);
                 break;
             default:
                 for(Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {
                     destinations.add(target.getPosition());
+                    // we can easily shoot at an entity from 
+                    destinations.addAll(target.getPosition().allAdjacent());
                 }
                 break;
         }
@@ -353,56 +358,20 @@ public class PathEnumerator {
             getLongRangePaths().put(mover.getId(), new ArrayList<>());
         }
         
-        // put up a long-range path there
-        for(Coords destination : destinations) {
-            BulldozerMovePath bmp = dpf.findPathToCoords(mover, destination);
-            
-            if(bmp != null) {
-                getLongRangePaths().get(mover.getId()).add(bmp);
-            }
-        }        
+        // calculate a ground-bound long range path
+        BulldozerMovePath bmp = dpf.findPathToCoords(mover, destinations);
+        
+        if(bmp != null) {
+            getLongRangePaths().get(mover.getId()).add(bmp);
+        }
+        
+        // calculate a jumping long range path
+        BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, true); 
+        if(jmp != null) {
+            getLongRangePaths().get(mover.getId()).add(jmp);
+        }
     }
     
-    /**
-     * Utility function that generates a list of coordinates, based on the supplied cardinal edge.
-     * Cardinal edge must be one of north/south/east/west, otherwise empty set is returned.
-     */
-    private List<Coords> generateEdgeZone(CardinalEdge edge, IBoard board) {
-        List<Coords> edgeZone = new ArrayList<>();
-        int minX = 0, maxX = 0, minY = 0, maxY = 0;
-        
-        switch(edge) {
-        case NORTH:
-            minX = 0;
-            maxX = board.getWidth() - 1;
-            minY = maxY = 0;
-            break;
-        case SOUTH:
-            minX = 0;
-            maxX = board.getWidth() - 1;
-            minY = maxY = board.getHeight() - 1;
-            break;
-        case EAST:
-            minX = maxX = board.getWidth() - 1;
-            minY = 0;
-            maxY = board.getHeight() - 1;
-            break;
-        case WEST:
-            minX = maxX = 0;
-            minY = 0;
-            maxY = board.getHeight() - 1;
-            break;           
-        }
-        
-        for(int x = minX; x <= maxX; x++) {
-            for(int y = minY; y <= maxY; y++) {
-                edgeZone.add(new Coords(x, y));
-            }
-        }
-        
-        return edgeZone;
-    }
-
     private void adjustPathsForBridges(List<MovePath> paths) {
         if (!worryAboutBridges()) {
             return;

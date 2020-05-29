@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.BuildingTarget;
@@ -483,16 +484,16 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
     /**
-     * If I need to flee the board, I want to get closer to my home edge.
-     * This method is now obsolete due to long-range pathfinding, which automatically takes the unit in the direction
-     * it's supposed to go.
-     * Retained for the time being in case it needs to be referenced later.
+     * If intentionally attempting to reach some board edge, favor paths that take me closer to it.
      */
     protected double calculateSelfPreservationMod(Entity movingUnit,
                                                 MovePath path,
                                                 IGame game,
                                                 StringBuilder formula) {
-        /*if (getOwner().getFallBack() || movingUnit.isCrippled()) {
+        BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner()); 
+        
+        if (behaviorType == BehaviorType.ForcedWithdrawal ||
+                behaviorType == BehaviorType.MoveToDestination) {
             int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(),
                                                        getOwner().getHomeEdge(movingUnit),
                                                        game);
@@ -505,7 +506,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                    .append(" * ")
                    .append(LOG_DECIMAL.format(selfPreservation)).append("]");
             return selfPreservationMod;
-        }*/
+        }
         return 0.0;
     }
     
@@ -726,11 +727,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
     protected void calcDamageToStrategicTargets(MovePath path, IGame game, 
             FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
-        
-        if(path.getFinalCoords().getX() == 16 && path.getFinalCoords().getY() == 9) {
-            int alpha = 1;
-        }
-        
+                
         for (int i = 0; i < fireControlState.getAdditionalTargets().size(); i++) {
             Targetable target = fireControlState.getAdditionalTargets().get(i);
             

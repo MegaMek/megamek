@@ -554,7 +554,7 @@ public class BoardEdgePathFinder {
         // jumpers can clear higher objects than walkers and crawlers
         int maxUpwardElevationChange = Math.max(entity.getJumpMP(), entity.getMaxElevationChange());
         // jumpers can just hop down wherever they want
-        int maxDownwardElevationChange = entity.getJumpMP() > 0 ? 999 : entity.getMaxElevationDown();
+        int maxDownwardElevationChange = movePath.getCachedEntityState().getJumpMP() > 0 ? 999 : entity.getMaxElevationDown();
         int destHexElevation = calculateUnitElevationInHex(destHex, entity);
         int srcHexElevation = calculateUnitElevationInHex(srcHex, entity);        
         

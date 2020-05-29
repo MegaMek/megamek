@@ -1388,11 +1388,32 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // debugging method that renders the bounding box of a unit's movement envelope.
-        renderClusters((Graphics2D) g);
+        //renderClusters((Graphics2D) g);
         //renderMovementBoundingBox((Graphics2D) g);
         //renderDonut(g, new Coords(10, 10), 2);
+        //renderApproxHexDirection((Graphics2D) g);
     }
 
+    /**
+     * Debugging method that renders a hex in the approximate direction 
+     * from the selected entity to the selected hex, of both exist.
+     * @param g Graphics object on which to draw.
+     */
+    @SuppressWarnings("unused")
+    private void renderApproxHexDirection(Graphics2D g) {
+        if(selectedEntity == null || selected == null) {
+            return;
+        }
+        
+        int direction = selectedEntity.getPosition().approximateDirection(selected, 0, 0);
+        
+        Coords donutCoords = selectedEntity.getPosition().translated(direction);
+        
+        Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
+        p.translate(HEX_W  / 2, HEX_H  / 2);
+        drawHexBorder(g, p, Color.BLUE, 0, 6);
+    }
+    
     /**
      * Debugging method that renders the bounding hex of a unit's movement envelope.
      * Warning: very slow when rendering the bounding hex for really fast units.
@@ -1458,7 +1479,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     @SuppressWarnings("unused")
     private void renderClusters(Graphics2D g) {
         BoardClusterTracker bct = new BoardClusterTracker();
-        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, true);
+        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false);
         
         for(BoardCluster cluster : clusterMap.values().stream().distinct().collect(Collectors.toList())) {
             for(Coords coords : cluster.contents) {

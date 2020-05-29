@@ -1,3 +1,18 @@
+/*
+* MegaMek -
+* Copyright (C) 2020 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.common.pathfinder;
 
 import java.util.ArrayList;
@@ -7,14 +22,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBoard;
+import megamek.common.IGame;
 import megamek.common.MiscType;
+import megamek.common.util.BoardUtilities;
 
+/**
+ * This class handles the tracking of "clusters" of movable areas for various movement types, 
+ * either with or without destruction awareness.
+ */
 public class BoardClusterTracker {
-    private static enum MovementType {
+    /**
+     * Movement types that are relevant for "destruction-aware pathfinding"
+     * Have a close relationship but are not exactly one to one with entity movement modes.
+     */
+    public static enum MovementType {
         Walker,
         Wheeled,
         WheeledAmphi,
@@ -30,7 +56,7 @@ public class BoardClusterTracker {
          * Figures out the relevant entity movement mode (for path caching) based on properties 
          * of the entity. Mostly just movement mode, but some complications exist for tracked/wheeled vehicles.
          */
-        public MovementType getMovementType(Entity entity) {
+        public static MovementType getMovementType(Entity entity) {
             switch(entity.getMovementMode()) {
                 case BIPED:
                 case TRIPOD:
@@ -59,12 +85,59 @@ public class BoardClusterTracker {
         }
     }
     
-    //private Map<MovementType, List<BoardCluster>> movableAreas;
-    //private Map<MovementType, List<BoardCluster>> movableAreasWithTerrainReduction;
+    private Map<MovementType, Map<Coords, BoardCluster>> movableAreas = new HashMap<>();
+    private Map<MovementType, Map<Coords, BoardCluster>> movableAreasWithTerrainReduction = new HashMap<>();
+
+    /**
+     * Returns a set of coordinates on a given board edge that intersects with the cluster
+     * in which the given entity resides. May return an empty set.
+     */
+    public Set<Coords> getDestinationCoords(Entity entity, CardinalEdge edge, boolean terrainReduction) {
+        CardinalEdge actualEdge = edge;
+        if(edge == CardinalEdge.NEAREST_OR_NONE) {
+            actualEdge = BoardUtilities.getClosestEdge(entity);
+        }
+        
+        updateMovableAreas(entity);
+        
+        MovementType movementType = MovementType.getMovementType(entity);
+        BoardCluster entityCluster = null;
+        
+        if(terrainReduction) {
+            entityCluster = movableAreasWithTerrainReduction.get(movementType).get(entity.getPosition());
+        } else {
+            entityCluster = movableAreas.get(movementType).get(entity.getPosition());
+        }
+        
+        if(entityCluster != null) {
+            return entityCluster.getIntersectingHexes(actualEdge, entity.getGame().getBoard());
+        }
+        
+        return null;
+    }
     
-    private Map<Coords, BoardCluster> clustersByCoordinates;
-    private Map<Coords, BoardCluster> clustersByCoordinatesWithBulldozer;
+    /**
+     * Resets board clusters
+     */
+    public void clearMovableAreas() {
+        movableAreas.clear();
+        movableAreasWithTerrainReduction.clear();
+    }
     
+    /**
+     * Updates and stores accessible clusters for the given entity,
+     * both for destruction and non-destruction-aware path finding.
+     */
+    public void updateMovableAreas(Entity entity) {
+        MovementType movementType = MovementType.getMovementType(entity);
+        
+        movableAreas.putIfAbsent(movementType, generateClusters(entity, false));
+        movableAreasWithTerrainReduction.putIfAbsent(movementType, generateClusters(entity, true));
+    }
+
+    /**
+     * Returns accessible clusters for the given entity.
+     */
     public Map<Coords, BoardCluster> generateClusters(Entity entity, boolean destructionAware) { 
         Map<Coords, BoardCluster> clusters = new HashMap<>();
         
@@ -76,6 +149,10 @@ public class BoardClusterTracker {
         //      if yes, flag for joining neighbor's cluster
         //      note that if any other neighbor is in a different cluster, and we can move back and forth, we merge the two clusters
         // if no neighbors or cannot move back and forth between hex and neighbors, start new cluster
+        
+        if (entity == null || entity.getGame() == null) {
+            return clusters;
+        }
         
         IBoard board = entity.getGame().getBoard();
         int clusterID = 0;
@@ -92,6 +169,7 @@ public class BoardClusterTracker {
                 }
                 
                 List<Coords> neighborsToJoin = new ArrayList<>();
+                BoardCluster biggestNeighbor = null; 
                 
                 // hex is accessible one way or another
                 for(int direction = 0; direction < 6; direction++) {
@@ -109,6 +187,11 @@ public class BoardClusterTracker {
                         
                         // we can "freely" go back and forth between ourselves and the neighbor, so let's join that cluster 
                         neighborsToJoin.add(neighbor);
+                        
+                        if((biggestNeighbor == null) || 
+                                (clusters.get(neighbor).contents.size() > biggestNeighbor.contents.size())) {
+                            biggestNeighbor = clusters.get(neighbor);
+                        }
                     }
                 }
                 
@@ -117,19 +200,22 @@ public class BoardClusterTracker {
                     BoardCluster newCluster = new BoardCluster(clusterID++);
                     newCluster.contents.add(c);
                     clusters.put(c, newCluster);
-                // otherwise, join an existing cluster, bringing any other mutually accessible neighbors and their clusters with me 
+                // otherwise, join an existing cluster, bringing any other mutually accessible neighbors and their clusters with me
+                // join the biggest neighbor to reduce shuffling.
                 } else {
-                    BoardCluster newCluster = clusters.get(neighborsToJoin.get(0));
-                    newCluster.contents.add(c);
-                    clusters.put(c, newCluster);
+                    biggestNeighbor.contents.add(c);
+                    clusters.put(c, biggestNeighbor);
                     
                     // merge any other clusters belonging to joined neighbors to this cluster
-                    for(int neighborIndex = 1; neighborIndex < neighborsToJoin.size(); neighborIndex++) {
+                    for(int neighborIndex = 0; neighborIndex < neighborsToJoin.size(); neighborIndex++) {
                         BoardCluster oldCluster = clusters.get(neighborsToJoin.get(neighborIndex));
+                        if(oldCluster == biggestNeighbor) {
+                            continue;
+                        }
                         
                         for(Coords member : oldCluster.contents) {
-                            newCluster.contents.add(member);
-                            clusters.put(member, newCluster);
+                            biggestNeighbor.contents.add(member);
+                            clusters.put(member, biggestNeighbor);
                         }
                     }
                     
@@ -140,21 +226,17 @@ public class BoardClusterTracker {
         return clusters;
     }
     
+    /**
+     * Indicates whether an entity would be able to pass through a given set of coordinates
+     * if it were to degrade the terrain there sufficiently.
+     */
     private boolean canLevel(Entity entity, Coords c) {
         return BulldozerMovePath.calculateLevelingCost(c, entity) > BulldozerMovePath.CANNOT_LEVEL;
     }
     
-    // algorithm notes:
-    // for current entity
-    //      find the cluster to which the entity belongs
-    //      if the cluster also contains the destination region / point
-    //          find destruction aware path to destination region / point
-    //      else
-    //          fuck it, return to milling around
-    // consider jumping units
-    // "spruce up" long range paths with rotations
-    
-    
+    /**
+     * A data structure representing a set of coordinates to which an entity can move.
+     */
     public static class BoardCluster {
         public Set<Coords> contents = new HashSet<>();
         public int id;
@@ -163,6 +245,47 @@ public class BoardClusterTracker {
             this.id = id;
         }
         
+        /**
+         * Returns a set of coords in the current cluster that intersect the given board edge.
+         */
+        public Set<Coords> getIntersectingHexes(CardinalEdge edge, IBoard board) {
+            int xStart, xEnd, yStart, yEnd;
+            switch(edge) {
+            case NORTH:
+                xStart = 0;
+                xEnd = board.getWidth();
+                yStart = 0;
+                yEnd = 1;
+                break;
+            case SOUTH:
+                xStart = 0;
+                xEnd = board.getWidth();
+                yStart = board.getHeight() - 1;
+                yEnd = board.getHeight();
+                break;
+            case EAST:
+                xStart = board.getWidth() - 1;
+                xEnd = board.getWidth();
+                yStart = 0;
+                yEnd = board.getHeight();
+                break;
+            case WEST:
+                xStart = 0;
+                xEnd = 1;
+                yStart = 0;
+                yEnd = board.getHeight();
+                break;
+            default:
+                return null;
+            }
+            
+            return getIntersectingHexes(xStart, xEnd, yStart, yEnd);
+        }
+        
+        /**
+         * Returns a set of coordinates in the current cluster that intersect
+         * an arbitrary rectangle.
+         */
         public Set<Coords> getIntersectingHexes(int xStart, int xEnd, int yStart, int yEnd) {
             Set<Coords> retVal = new HashSet<>();
             

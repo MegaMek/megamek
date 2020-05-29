@@ -16,6 +16,7 @@ package megamek.client.bot.princess;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -106,11 +107,19 @@ public abstract class PathRanker implements IPathRanker {
             final BigDecimal numberPaths = new BigDecimal(validPaths.size());
             BigDecimal count = BigDecimal.ZERO;
             BigDecimal interval = new BigDecimal(5);
+            
+            boolean pathsHaveExpectedDamage = false;
+            
             for (MovePath path : validPaths) {
                 count = count.add(BigDecimal.ONE);
                 
-                returnPaths.add(rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
-                                         allyCenter));
+                RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
+                        allyCenter);
+                returnPaths.add(rankedPath);
+                
+                // we want to keep track of if any of the paths we've considered have some kind of damage potential
+                pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
+                
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                                           .round(new MathContext(0, RoundingMode.DOWN));
                 if (percent.compareTo(interval) >= 0) {
@@ -118,6 +127,20 @@ public abstract class PathRanker implements IPathRanker {
                     interval = percent.add(new BigDecimal(5));
                 }
             }
+            
+            Entity mover = movePaths.get(0).getEntity();
+            UnitBehavior behaviorTracker = getOwner().getUnitBehaviorTracker();
+            boolean noDamageButCanDoDamage = !pathsHaveExpectedDamage && (FireControl.getMaxDamageAtRange(mover, 1, false, false) > 0);
+            
+            // if we're trying to fight, but aren't going to be doing any damage no matter how we move
+            // then let's try to get closer
+            if(noDamageButCanDoDamage && behaviorTracker.getBehaviorType(mover, getOwner()) == BehaviorType.Engaged) {
+                
+                behaviorTracker.overrideBehaviorType(mover, BehaviorType.MoveToContact);
+                return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true), game, maxRange, fallTolerance, 
+                        startingHomeDistance, enemies, friends);
+            }
+            
             return returnPaths;
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
@@ -212,9 +235,9 @@ public abstract class PathRanker implements IPathRanker {
             }
         }
 
-        // If we've eliminated all valid paths, we'll just have to pick from the best of the invalid paths.
+        // If we've eliminated all valid paths, let's try to pick out a long range path instead
         if (returnPaths.isEmpty()) {
-            return startingPathList;
+            return getOwner().getMovePathsAndSetNecessaryTargets(mover, true);
         }
 
         return returnPaths;

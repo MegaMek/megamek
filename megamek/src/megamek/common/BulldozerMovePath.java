@@ -23,6 +23,7 @@ import java.util.Map;
 
 import megamek.client.bot.princess.FireControl;
 import megamek.common.pathfinder.ShortestPathFinder;
+import megamek.common.pathfinder.BoardClusterTracker.MovementType;
 
 /**
  * An extension of the MovePath class that stores information about terrain that needs
@@ -39,6 +40,7 @@ public class BulldozerMovePath extends MovePath {
     public static final int CANNOT_LEVEL = -1;
 
     Map<Coords, Integer> coordLevelingCosts = new HashMap<>();
+    Map<Coords, Integer> additionalCosts = new HashMap<>();
     List<Coords> coordsToLevel = new ArrayList<>();
     double maxPointBlankDamage = -1;
 
@@ -46,6 +48,16 @@ public class BulldozerMovePath extends MovePath {
         super(game, entity);
     }
 
+    public int getAdditionalCost() {
+        int totalCost = 0;
+
+        for (int additionalCost : additionalCosts.values()) {
+            totalCost += additionalCost;
+        }
+
+        return totalCost;
+    }
+    
     public int getLevelingCost() {
         int totalCost = 0;
 
@@ -60,18 +72,48 @@ public class BulldozerMovePath extends MovePath {
     public MovePath addStep(final MoveStepType type) {
         BulldozerMovePath mp = (BulldozerMovePath) super.addStep(type);
 
-        if (!mp.isMoveLegal()) {
+        if (!mp.isMoveLegal() && !mp.isJumping()) {
             // here, we will check if the step is illegal because the unit in question
             // is attempting to move through illegal terrain for its movement type, but
             // would be able to get through if the terrain was "reduced"
+            // don't bother to do this for jumping paths
             int levelingCost = calculateLevelingCost(mp.getFinalCoords(), getEntity());
             if(levelingCost > CANNOT_LEVEL) {
                 coordLevelingCosts.put(mp.getFinalCoords(), levelingCost);
                 coordsToLevel.add(mp.getFinalCoords());
             }
+            
+            // we want to make note of when we're going into water (if we are capable of it)
+            // it may look cheaper, but it slows you down to max walking speed or worse, 
+            // and we should flag it as costing extra, that extra being the difference between walking and running speed
+            IHex hex = mp.getGame().getBoard().getHex(mp.getFinalCoords());
+            if((hex != null) && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)) {
+                MovementType mType = MovementType.getMovementType(mp.getEntity());
+                if(mType == MovementType.Walker || mType == MovementType.WheeledAmphi || mType == MovementType.TrackedAmphi) {
+                    additionalCosts.put(mp.getFinalCoords(), mp.getCachedEntityState().getRunMP() - mp.getCachedEntityState().getWalkMP());
+                }
+            }
         }
-        
+
         return mp;
+    }
+    
+    /**
+     * Removes the last step from the path and updates its internal data structures accordingly
+     */
+    @Override
+    public void removeLastStep() {
+        Coords prevFinalCoords = getFinalCoords();
+        
+        super.removeLastStep();
+        
+        // if removing the last step changes the destination coordinates
+        // we need to clear out some of the data we have for this path.
+        if(!getFinalCoords().equals(prevFinalCoords)) {
+            coordLevelingCosts.remove(prevFinalCoords);
+            additionalCosts.remove(prevFinalCoords);
+            coordsToLevel.remove(prevFinalCoords);
+        }
     }
     
     /**

@@ -26,6 +26,7 @@ import megamek.client.bot.princess.CardinalEdge;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.MiscType;
@@ -157,6 +158,11 @@ public class BoardClusterTracker {
         IBoard board = entity.getGame().getBoard();
         int clusterID = 0;
         
+        boolean isHovercraft = entity.getMovementMode() == EntityMovementMode.HOVER;
+        boolean isAmphibious = entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
+                                entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
+                                entity.hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
+        
         for(int x = 0; x < board.getWidth(); x++) {
             for(int y = 0; y < board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
@@ -176,8 +182,8 @@ public class BoardClusterTracker {
                     Coords neighbor = c.translated(direction);
                     
                     if(clusters.containsKey(neighbor)) {
-                        int neighborElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(neighbor), entity);
-                        int myElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(c), entity);
+                        int neighborElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(neighbor), entity, isHovercraft, isAmphibious);
+                        int myElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(c), entity, isHovercraft, isAmphibious);
                         
                         // if we can't reach from here to the neighbor due to elevation differences, move on
                         int elevationDiff = Math.abs(neighborElevation - myElevation);

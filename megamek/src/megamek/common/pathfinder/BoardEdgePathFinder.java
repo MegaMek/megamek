@@ -542,21 +542,20 @@ public class BoardEdgePathFinder {
 
         // we only need to be able to legally move into the hex from the previous hex.
         // we don't care about stacking limits, remaining unit mp or other transient data
-
         // quadvees are not considered "tracked" for the purposes of this exercise because they can transform
         boolean isTracked = entity.getMovementMode() == EntityMovementMode.TRACKED && !entity.hasETypeFlag(Entity.ETYPE_QUADVEE);
         boolean isHovercraft = entity.getMovementMode() == EntityMovementMode.HOVER;
         boolean isWheeled = entity.getMovementMode() == EntityMovementMode.WHEELED;
-        boolean isAmphibious = entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
-                            entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
-                            entity.hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
+        boolean isAmphibious = movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
+                            movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
+                            movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
         boolean destHexHasRoad = destHex.containsTerrain(Terrains.ROAD);
         // jumpers can clear higher objects than walkers and crawlers
         int maxUpwardElevationChange = Math.max(entity.getJumpMP(), entity.getMaxElevationChange());
         // jumpers can just hop down wherever they want
         int maxDownwardElevationChange = movePath.getCachedEntityState().getJumpMP() > 0 ? 999 : entity.getMaxElevationDown();
-        int destHexElevation = calculateUnitElevationInHex(destHex, entity);
-        int srcHexElevation = calculateUnitElevationInHex(srcHex, entity);        
+        int destHexElevation = calculateUnitElevationInHex(destHex, entity, isHovercraft, isAmphibious);
+        int srcHexElevation = calculateUnitElevationInHex(srcHex, entity, isHovercraft, isAmphibious);        
         
         mli.destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
         boolean destinationHasBuildingOrBridge = destinationBuilding != null;
@@ -612,7 +611,7 @@ public class BoardEdgePathFinder {
      * @param entity The entity to check
      * @return The effective elevation
      */
-    public static int calculateUnitElevationInHex(IHex hex, Entity entity) {
+    public static int calculateUnitElevationInHex(IHex hex, Entity entity, boolean isHovercraft, boolean isAmphibious) {
         // we calculate the height of a hex as "on the ground" by default
         // Special exceptions:
         // We are a mech, which can hopping on top of some buildings
@@ -625,7 +624,8 @@ public class BoardEdgePathFinder {
             hexElevation = hex.ceiling();
         } else if(entity.isNaval() && hex.containsTerrain(Terrains.BRIDGE)) {
             hexElevation = hex.getLevel();
-        } else if(!entity.isSurfaceNaval() && hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.BRIDGE)) {
+        } else if(!entity.isSurfaceNaval() && !isHovercraft && !isAmphibious &&
+                hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.BRIDGE)) {
             hexElevation = hex.floor();
         }
 

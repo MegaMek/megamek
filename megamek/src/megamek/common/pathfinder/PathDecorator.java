@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 
 import megamek.common.BulldozerMovePath;
+import megamek.common.Coords;
+import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 
@@ -77,6 +79,10 @@ public class PathDecorator {
         return clippedPaths;
     }
     
+    /**
+     * Uses the LongestPathFinder to generate all paths possible from a starting path,
+     * up to the desired MP
+     */
     public static List<MovePath> generatePossiblePaths(MovePath source, int desiredMP) {
         List<MovePath> turnPaths = new ArrayList<>();
         
@@ -87,5 +93,40 @@ public class PathDecorator {
         turnPaths.addAll(lpf.getLongestComputedPaths());
         
         return turnPaths;
+    }
+    
+    /**
+     * Given a path, adds "UP" steps to it so that a forward movement can pass over intervening terrain
+     */
+    public static void AdjustElevationForForwardMovement(MovePath source) {
+        // get the hex that is in the direction we're facing
+        Coords destinationCoords = source.getFinalCoords().translated(source.getFinalFacing());
+        IHex destHex = source.getGame().getBoard().getHex(destinationCoords);
+        
+        if(destHex == null) {
+            return;
+        }
+        
+        // determine if the destination hex allows the unit in question to go up
+        // if not, we're done here
+        int entityElevation = source.getFinalElevation();
+        boolean canGoUp = source.getEntity().canGoUp(entityElevation, source.getFinalCoords());
+        if(!canGoUp) {
+            return;
+        }
+        
+        // add as many UP steps as MP will allow, until we are above whatever terrain feature is in the way. 
+        int desiredElevation = destHex.maxTerrainFeatureElevation(false);
+        
+        while(entityElevation <= desiredElevation) {
+            source.addStep(MoveStepType.UP);
+            
+            if(!source.isMoveLegal()) {
+                source.removeLastStep();
+                return;
+            }
+            
+            entityElevation++;
+        }
     }
 }

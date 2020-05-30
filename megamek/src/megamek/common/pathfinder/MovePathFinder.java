@@ -316,38 +316,16 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
             if (backwardsStep &&
                     mp.getGame().getBoard().contains(mp.getFinalCoords().translated((mp.getFinalFacing() + 3) % 6))) {
-                result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
+                MovePath newPath = mp.clone();
+                PathDecorator.AdjustElevationForForwardMovement(newPath);
+                result.add(newPath.addStep(MoveStepType.BACKWARDS));
             } else if(mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
-                result.add(mp.clone().addStep(MoveStepType.FORWARDS));
+                MovePath newPath = mp.clone();
+                PathDecorator.AdjustElevationForForwardMovement(newPath);
+                result.add(newPath.addStep(MoveStepType.FORWARDS));
             }
-
-            addUpAndDown(result, last, entity, mp);
 
             return result;
-        }
-
-        /**
-         * Worker method that adds "UP" and "DOWN" steps to the given move path collection if
-         * the entity is eligible to do so
-         *
-         * @param result The collection of move paths to improve
-         * @param last The last step along the parent move path
-         * @param entity The entity taking the move path
-         * @param mp The parent movePath
-         * @see AbstractPathFinder.AdjacencyMap
-         */
-        void addUpAndDown(Collection<MovePath> result, final MoveStep last, final Entity entity, final MovePath mp) {
-            Coords pos;
-            int elevation;
-            pos = last != null ? last.getPosition() : entity.getPosition();
-            elevation = last != null ? last.getElevation() : entity.getElevation();
-
-            if (entity.canGoUp(elevation, pos)) {
-                result.add(mp.clone().addStep(MoveStepType.UP));
-            }
-            if (entity.canGoDown(elevation, pos)) {
-                result.add(mp.clone().addStep(MoveStepType.DOWN));
-            }
         }
     }
 

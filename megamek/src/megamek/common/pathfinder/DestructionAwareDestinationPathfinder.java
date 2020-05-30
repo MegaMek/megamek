@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -149,42 +150,22 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
     protected List<BulldozerMovePath> generateChildNodes(BulldozerMovePath parentPath, Map<Coords, BulldozerMovePath> shortestPathsToCoords) {
         List<BulldozerMovePath> children = new ArrayList<>();
 
-        // the children of a move path are:
-        //      turn left and step forward one
-        //      step forward one
-        //      turn right and step forward one
-        BulldozerMovePath leftChild = (BulldozerMovePath) parentPath.clone();
-        leftChild.addStep(MoveStepType.TURN_LEFT);
-        leftChild.addStep(MoveStepType.FORWARDS);
-        processChild(leftChild, children, shortestPathsToCoords);
-        
-        BulldozerMovePath leftleftChild = (BulldozerMovePath) parentPath.clone();
-        leftleftChild.addStep(MoveStepType.TURN_LEFT);
-        leftleftChild.addStep(MoveStepType.TURN_LEFT);
-        leftleftChild.addStep(MoveStepType.FORWARDS);
-        processChild(leftleftChild, children, shortestPathsToCoords);
-        
-        BulldozerMovePath centerChild = (BulldozerMovePath) parentPath.clone();
-        centerChild.addStep(MoveStepType.FORWARDS);
-        processChild(centerChild, children, shortestPathsToCoords);
-
-        BulldozerMovePath rightChild = (BulldozerMovePath) parentPath.clone();
-        rightChild.addStep(MoveStepType.TURN_RIGHT);
-        rightChild.addStep(MoveStepType.FORWARDS);
-        processChild(rightChild, children, shortestPathsToCoords);
-        
-        BulldozerMovePath rightrightChild = (BulldozerMovePath) parentPath.clone();
-        rightrightChild.addStep(MoveStepType.TURN_RIGHT);
-        rightrightChild.addStep(MoveStepType.TURN_RIGHT);
-        rightrightChild.addStep(MoveStepType.FORWARDS);
-        processChild(rightrightChild, children, shortestPathsToCoords);
-        
-        BulldozerMovePath rightrightrightChild = (BulldozerMovePath) parentPath.clone();
-        rightrightrightChild.addStep(MoveStepType.TURN_RIGHT);
-        rightrightrightChild.addStep(MoveStepType.TURN_RIGHT);
-        rightrightrightChild.addStep(MoveStepType.TURN_RIGHT);
-        rightrightrightChild.addStep(MoveStepType.FORWARDS);
-        processChild(rightrightrightChild, children, shortestPathsToCoords);
+        // there are six possible children of a move path, defined in AeroPathUtil.TURNS
+        for(List<MoveStepType> turns : AeroPathUtil.TURNS) {
+            BulldozerMovePath childPath = (BulldozerMovePath) parentPath.clone();
+            
+            // apply the list of turn steps
+            for(MoveStepType stepType : turns) {
+                childPath.addStep(stepType);
+            }
+            
+            // potentially apply UP so we can hop over unwanted terrain
+            PathDecorator.AdjustElevationForForwardMovement(childPath);
+            
+            // move forward and process the generated child path
+            childPath.addStep(MoveStepType.FORWARDS);
+            processChild(childPath, children, shortestPathsToCoords);
+        }
 
         return children;
     }

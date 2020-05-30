@@ -771,6 +771,19 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
             optionComp.setSelected(option.stringValue());
         }
+        
+        if ((OptionsConstants.GUNNERY_SANDBLASTER).equals(option.getName())) { // $NON-NLS-1$
+            optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
+            TreeSet<String> uniqueWeapons = new TreeSet<String>();
+            for (int i = 0; i < entity.getWeaponList().size(); i++) {
+                Mounted m = entity.getWeaponList().get(i);
+                uniqueWeapons.add(m.getName());
+            }
+            for (String name : uniqueWeapons) {
+                optionComp.addValue(name);
+            }
+            optionComp.setSelected(option.stringValue());
+        }
 
         if (OptionsConstants.GUNNERY_SPECIALIST               
                 .equals(option.getName())) { //$NON-NLS-1$

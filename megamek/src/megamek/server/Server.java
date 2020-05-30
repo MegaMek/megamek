@@ -7830,8 +7830,8 @@ public class Server implements Runnable {
 
             // check for leap
             if (!lastPos.equals(curPos)
-                    && (stepMoveType != EntityMovementType.MOVE_JUMP)
-                    && (entity instanceof Mech) && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE()
+                    && (stepMoveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mech)
+                    && !entity.isAirborne() && (step.getClearance() <= 0)  // Don't check airborne LAMs
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
                 int leapDistance = (lastElevation
                         + game.getBoard().getHex(lastPos).getLevel())
@@ -8601,14 +8601,17 @@ public class Server implements Runnable {
                                                                             Terrains.BRIDGE_ELEV)
                                                             : 0))))) {
 
+                // per TacOps, if the mech is walking backwards over an elevation change and falls
+                // it falls into the lower hex. The caveat is if it already fell from some other PSR in this 
+                // invocation of processMovement, then it can't fall again. 
                 if ((entity instanceof Mech) && (curHex.getLevel() < game
-                        .getBoard().getHex(lastPos).getLevel())) {
+                        .getBoard().getHex(lastPos).getLevel()) && !entity.hasFallen()) {
                     rollTarget = entity.getBasePilotingRoll(overallMoveType);
                     rollTarget.addModifier(0,
                             "moving backwards over an elevation change");
                     doSkillCheckWhileMoving(entity, entity.getElevation(),
                             curPos, curPos, rollTarget, true);
-                } else if (entity instanceof Mech) {
+                } else if ((entity instanceof Mech) && !entity.hasFallen()) {
                     rollTarget = entity.getBasePilotingRoll(overallMoveType);
                     rollTarget.addModifier(0,
                             "moving backwards over an elevation change");
@@ -12475,7 +12478,7 @@ public class Server implements Runnable {
             src = origSrc;
             dest = origDest;
         }
-        final int srcHeightAboveFloor = entitySrcElevation + srcHex.depth(true);
+        final int srcHeightAboveFloor = entitySrcElevation + srcHex.depth(false);
         int fallElevation = Math.abs((srcHex.floor() + srcHeightAboveFloor)
                 - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface() : destHex.floor()))
                 - fallReduction;
@@ -12701,8 +12704,8 @@ public class Server implements Runnable {
         }
         int bldgElev = destHex.containsTerrain(Terrains.BLDG_ELEV)
             ? destHex.terrainLevel(Terrains.BLDG_ELEV) : 0;
-        int fallElevation = entity.elevationOccupied(srcHex)
-                - (entity.elevationOccupied(destHex) + bldgElev);
+        int fallElevation = srcHex.surface() + entity.getElevation()
+                - (destHex.surface() + bldgElev);
         if (fallElevation > 1) {
             if (roll == null) {
                 roll = entity.getBasePilotingRoll();
@@ -31786,7 +31789,7 @@ public class Server implements Runnable {
                     mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                     mapSettings.removeUnavailable();
                     // if still only nulls left, use BOARD_GENERATED
-                    if (!mapSettings.getBoardsSelected().hasNext()) {
+                    if (mapSettings.getBoardsSelected().next() == null) {
                         mapSettings.setNullBoards((MapSettings.BOARD_GENERATED));
                     }
                     resetPlayersDone();

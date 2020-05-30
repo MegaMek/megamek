@@ -131,6 +131,7 @@ public class MtfFile implements IMechLoader {
     public static final String ARMORED = "(armored)";
     public static final String OMNIPOD = "(omnipod)";
     public static final String NO_CRIT = "nocrit:";
+    public static final String SIZE = ":size:";
 
     /**
      * Creates new MtfFile
@@ -617,13 +618,14 @@ public class MtfFile implements IMechLoader {
             boolean isArmored = false;
             boolean isTurreted = false;
             boolean isOmniPod = false;
+            double size = 0.0;
 
             // Check for Armored Actuators
             if (critName.toLowerCase().trim().endsWith(ARMORED)) {
                 critName = critName.substring(0, critName.length() - ARMORED.length()).trim();
                 isArmored = true;
             }
-            
+
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
                 mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, isArmored));
                 continue;
@@ -654,6 +656,11 @@ public class MtfFile implements IMechLoader {
                 continue;
             }
 
+            int sizeIndex = critName.toLowerCase().indexOf(SIZE);
+            if (sizeIndex > 0) {
+                size = Double.parseDouble(critName.substring(sizeIndex + SIZE.length()));
+                critName = critName.substring(0, sizeIndex);
+            }
             if (critName.toLowerCase().trim().endsWith(OMNIPOD)) {
                 critName = critName.substring(0, critName.length() - OMNIPOD.length()).trim();
                 isOmniPod = true;
@@ -715,6 +722,12 @@ public class MtfFile implements IMechLoader {
                                               BattleArmor.MOUNT_LOC_NONE, isArmored,
                                               isTurreted);
                         m.setOmniPodMounted(isOmniPod);
+                        if (etype.isVariableSize()) {
+                            if (size == 0.0) {
+                                size = BLKFile.getLegacyVariableSize(critName);
+                            }
+                            m.setSize(size);
+                        }
                         hSharedEquip.put(etype, m);
                     } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable()) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer

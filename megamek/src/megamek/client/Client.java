@@ -53,6 +53,9 @@ import megamek.client.commands.RulerCommand;
 import megamek.client.commands.ShowEntityCommand;
 import megamek.client.commands.ShowTileCommand;
 import megamek.client.commands.SitrepCommand;
+import megamek.client.generator.RandomNameGenerator;
+import megamek.client.generator.RandomSkillsGenerator;
+import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
@@ -470,8 +473,7 @@ public class Client implements IClientCommandHandler {
         case PHASE_DEPLOYMENT:
             // free some memory thats only needed in lounge
             MechFileParser.dispose();
-            // We must do this last, as the name and unit generators can
-            // create
+            // We must do this last, as the name and unit generators can create
             // a new instance if they are running
             MechSummaryCache.dispose();
             memDump("entering deployment phase"); //$NON-NLS-1$
@@ -499,7 +501,6 @@ public class Client implements IClientCommandHandler {
                 e.printStackTrace();
             }
             UnitRoleHandler.initialize();
-            RandomNameGenerator.getInstance();
             MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
             if (MechSummaryCache.getInstance().isInitialized()) {
                 RandomUnitGenerator.getInstance();
@@ -1699,10 +1700,6 @@ public class Client implements IClientCommandHandler {
 
     public RandomSkillsGenerator getRandomSkillsGenerator() {
         return rsg;
-    }
-
-    public RandomNameGenerator getRandomNameGenerator() {
-        return RandomNameGenerator.getInstance();
     }
 
     public Set<BoardDimensions> getAvailableMapSizes() {

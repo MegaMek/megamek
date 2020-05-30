@@ -25,6 +25,7 @@ VERSION HISTORY:
 + Data: Updated Grounded Dropship image now works with Camos.
 + PR #1969: Draw larger arrow for final facing of move
 + Issue #1141: DFA victim takes no fall damage if pushed off building onto lower building
++ Issue #1887: View Game Board now shows actual board instead of minimap for more detail
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

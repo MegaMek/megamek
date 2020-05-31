@@ -58,10 +58,6 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
     public BulldozerMovePath findPathToCoords(Entity entity, Set<Coords> destinationCoords, boolean jump) {
         BulldozerMovePath startPath = new BulldozerMovePath(entity.getGame(), entity);
         
-        if(entity.getDisplayName().contains("Zibler")) {
-            int alpha = 1;
-        }
-        
         // if we're calculating a jump path and the entity has jump mp and can jump, start off with a jump
         // if we're trying to calc a jump path and the entity does not have jump mp, we're done
         if(jump && (startPath.getCachedEntityState().getJumpMPWithTerrain() > 0) &&
@@ -104,11 +100,6 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
 
         while(!candidates.isEmpty()) {
             BulldozerMovePath currentPath = candidates.pollFirst();
-            
-            if(currentPath.getFinalCoords().getX() == 9 &&
-                    currentPath.getFinalCoords().getY() == 59) {
-                int alpha = 1;
-            }
             
             candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords));
             
@@ -186,7 +177,6 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      */
     protected void processChild(BulldozerMovePath child, List<BulldozerMovePath> children, 
             Map<Coords, BulldozerMovePath> shortestPathsToCoords) {
-        int alpha = 1;
         // (if we haven't visited these coordinates before
         // or we have, and this is a shorter path)
         // and (it is a legal move

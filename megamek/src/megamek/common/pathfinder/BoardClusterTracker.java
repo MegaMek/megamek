@@ -28,7 +28,6 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
-import megamek.common.IGame;
 import megamek.common.MiscType;
 import megamek.common.util.BoardUtilities;
 
@@ -202,7 +201,7 @@ public class BoardClusterTracker {
                 }
                 
                 // start up a new cluster if we have no mutually accessible neighbors
-                if(neighborsToJoin.isEmpty()) {
+                if(neighborsToJoin.isEmpty() || biggestNeighbor == null) {
                     BoardCluster newCluster = new BoardCluster(clusterID++);
                     newCluster.contents.add(c);
                     clusters.put(c, newCluster);

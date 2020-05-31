@@ -238,7 +238,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Font font_elev = FONT_9;
     private Font font_minefield = FONT_12;
 
-    IGame game;
+    public final IGame game;
     ClientGUI clientgui;
 
     private Dimension boardSize;
@@ -511,7 +511,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         hexImageCache = new ImageCache<Coords, HexImageCacheEntry>();
 
-        tileManager = new TilesetManager(this, game);
+        tileManager = new TilesetManager(this);
         ToolTipManager.sharedInstance().registerComponent(this);
 
         game.addGameListener(gameListener);

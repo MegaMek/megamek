@@ -74,8 +74,7 @@ import megamek.common.util.MegaMekFile;
  *
  * @author Ben
  */
-public class TilesetManager implements IPreferenceChangeListener, 
-ITilesetManager {
+public class TilesetManager implements IPreferenceChangeListener, ITilesetManager {
     
     public static final String DIR_NAME_WRECKS = "wrecks"; //$NON-NLS-1$
 
@@ -129,17 +128,12 @@ ITilesetManager {
      */
     private HashMap<Color, Image> ecmStaticImages = new HashMap<Color, Image>();
     
-    // The TileManager is associated with a game passed down from the Boardview
-    // and must pass this on to the hextileset for it to register listeners
-    private IGame game;
-
     /**
      * Creates new TilesetManager
      */
-    public TilesetManager(BoardView1 bv, IGame g) throws IOException {
+    public TilesetManager(BoardView1 bv) throws IOException {
         boardview = bv;
-        game = g;
-        hexTileset = new HexTileset(game);
+        hexTileset = new HexTileset(boardview.game);
         tracker = new MediaTracker(boardview);
         try {
             camos = new DirectoryItems(
@@ -170,7 +164,7 @@ ITilesetManager {
 
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
-            HexTileset hts = new HexTileset(game);
+            HexTileset hts = new HexTileset(boardview.game);
             try {
                 hexTileset.incDepth = 0;
                 hts.loadFromFile((String) e.getNewValue());

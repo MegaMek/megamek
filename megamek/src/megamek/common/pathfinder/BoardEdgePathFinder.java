@@ -40,6 +40,8 @@ import megamek.common.MoveStep;
 /**
  * This class is intended to be used to find a (potentially long) legal path
  * given a movement type from a particular hex to the specified board edge
+ * 
+ * Note: This class is largely obsolete now, only used for its static methods
  * @author NickAragua
  *
  */
@@ -72,7 +74,7 @@ public class BoardEdgePathFinder {
      * @param entity Entity to evaluate
      * @return the Board.START_ constant representing the "opposite" edge
      */
-    public static int determineOppositeEdge(Entity entity) {
+    private int determineOppositeEdge(Entity entity) {
         IBoard board = entity.getGame().getBoard();
 
         // the easiest part is if the entity is supposed to start on a particular edge. Just return the opposite edge.

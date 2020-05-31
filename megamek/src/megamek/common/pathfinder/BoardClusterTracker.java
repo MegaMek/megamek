@@ -89,6 +89,29 @@ public class BoardClusterTracker {
     private Map<MovementType, Map<Coords, BoardCluster>> movableAreasWithTerrainReduction = new HashMap<>();
 
     /**
+     * Returns the terrain-reduced or non-terrain-reduced 
+     * board cluster in which the given entity currently resides
+     */
+    public BoardCluster getCurrentBoardCluster(Entity entity, boolean terrainReduction) {
+        return getCurrentBoardCluster(entity, terrainReduction);
+    }
+    
+    /**
+     * Returns the terrain-reduced or non-terrain-reduced 
+     * board cluster in which the given coordinates currently reside
+     * Uses entity to determine movement type
+     */
+    public BoardCluster getCurrentBoardCluster(Entity entity, Coords actualCoords, boolean terrainReduction) {
+        MovementType movementType = MovementType.getMovementType(entity);
+
+        updateMovableAreas(entity);
+        
+        return terrainReduction ?
+                movableAreasWithTerrainReduction.get(movementType).get(actualCoords) :
+                movableAreas.get(movementType).get(actualCoords);
+    }
+    
+    /**
      * Returns a set of coordinates on a given board edge that intersects with the cluster
      * in which the given entity resides. May return an empty set.
      */
@@ -131,8 +154,13 @@ public class BoardClusterTracker {
     public void updateMovableAreas(Entity entity) {
         MovementType movementType = MovementType.getMovementType(entity);
         
-        movableAreas.putIfAbsent(movementType, generateClusters(entity, false));
-        movableAreasWithTerrainReduction.putIfAbsent(movementType, generateClusters(entity, true));
+        if(!movableAreas.containsKey(movementType)) {
+            movableAreas.put(movementType, generateClusters(entity, false));
+        }
+        
+        if(!movableAreasWithTerrainReduction.containsKey(movementType)) {
+            movableAreasWithTerrainReduction.putIfAbsent(movementType, generateClusters(entity, true));
+        }
     }
 
     /**

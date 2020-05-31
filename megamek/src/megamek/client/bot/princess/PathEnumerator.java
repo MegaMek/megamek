@@ -43,6 +43,7 @@ import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
+import megamek.common.util.BoardUtilities;
 import megamek.common.pathfinder.AeroLowAltitudePathFinder;
 import megamek.common.pathfinder.AeroSpacePathFinder;
 import megamek.common.pathfinder.BoardEdgePathFinder;
@@ -332,23 +333,19 @@ public class PathEnumerator {
         // where are we going?
         Set<Coords> destinations = new HashSet<Coords>();
         // if we're going to an edge or can't see anyone, generate long-range paths to the opposite edge
-        // 
         switch(getOwner().getUnitBehaviorTracker().getBehaviorType(mover, getOwner())) {
             case ForcedWithdrawal:
             case MoveToDestination:
                 destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover), true);
                 break;
             case MoveToContact:
-                // basically, we're translating the value produced by finding
-                // the Board.START_X direction into a cardinal edge
-                CardinalEdge oppositeEdge = 
-                    CardinalEdge.getCardinalEdge(OffBoardDirection.translateBoardStart(BoardEdgePathFinder.determineOppositeEdge(mover)).getValue());
+                CardinalEdge oppositeEdge = CardinalEdge.getOppositeEdge(BoardUtilities.determineOppositeEdge(mover));
                 destinations = getOwner().getClusterTracker().getDestinationCoords(mover, oppositeEdge, true);
                 break;
             default:
                 for(Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {
                     destinations.add(target.getPosition());
-                    // we can easily shoot at an entity from 
+                    // we can easily shoot at an entity from right next to it as well
                     destinations.addAll(target.getPosition().allAdjacent());
                 }
                 break;

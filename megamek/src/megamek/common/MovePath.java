@@ -1197,16 +1197,6 @@ public class MovePath implements Cloneable, Serializable {
 
         pf.run(this.clone());
         MovePath finPath = pf.getComputedPath(dest);
-        // code that's useful to test the destruction-aware pathfinder
-        // remove when code review and testing complete
-        /*DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
-        Set<Coords> destinationSet = new HashSet<Coords>();
-        destinationSet.add(dest);
-        
-        long marker1 = System.currentTimeMillis();
-        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, true);
-        long marker2 = System.currentTimeMillis();
-        long marker3 = marker2 - marker1;*/
 
         if (timeoutCondition.timeoutEngaged || finPath == null) {
             /*
@@ -1839,5 +1829,23 @@ public class MovePath implements Cloneable, Serializable {
      */
     public boolean nextForwardStepOffBoard() {
         return !game.getBoard().contains(getFinalCoords().translated(getFinalFacing()));
+    }
+    
+    /**
+     * Debugging method that calculates a destruction-aware move path to the destination coordinates
+     */
+    public MovePath calculateDestructionAwarePath(Coords dest) {
+        // code that's useful to test the destruction-aware pathfinder
+        // remove when code review and testing complete
+        DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
+        Set<Coords> destinationSet = new HashSet<Coords>();
+        destinationSet.add(dest);
+        
+        long marker1 = System.currentTimeMillis();
+        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, false);
+        long marker2 = System.currentTimeMillis();
+        long marker3 = marker2 - marker1;
+        
+        return finPath;
     }
 }

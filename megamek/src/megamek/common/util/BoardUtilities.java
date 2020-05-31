@@ -35,8 +35,10 @@ import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.ITerrainFactory;
 import megamek.common.MapSettings;
+import megamek.common.OffBoardDirection;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Terrains;
+import megamek.common.pathfinder.BoardEdgePathFinder;
 import megamek.common.util.generator.ElevationGenerator;
 import megamek.common.util.generator.SimplexGenerator;
 
@@ -1564,7 +1566,7 @@ public class BoardUtilities {
     }
 
     /**
-     * Figures out the "opposite" edge for the given entity on the entity's game board
+     * Figures out the "closest" edge for the given entity on the entity's game board
      * @param entity Entity to evaluate
      * @return the Board.START_ constant representing the "opposite" edge
      */
@@ -1585,6 +1587,26 @@ public class BoardUtilities {
         } else {
             return closerNorthThanSouth ? CardinalEdge.NORTH : CardinalEdge.SOUTH;
         }
+    }
+    
+    /**
+     * Figures out the "opposite" edge for the given entity.
+     * @param entity Entity to evaluate
+     * @return the Board.START_ constant representing the "opposite" edge
+     */
+    public static CardinalEdge determineOppositeEdge(Entity entity) {
+        IBoard board = entity.getGame().getBoard();
+
+        // the easiest part is if the entity is supposed to start on a particular edge. Just return the opposite edge.
+        int oppositeEdge = board.getOppositeEdge(entity.getStartingPos());
+        if(oppositeEdge != Board.START_NONE) {
+            return CardinalEdge.getCardinalEdge(OffBoardDirection.translateBoardStart(oppositeEdge).getValue());
+        }
+
+        // otherwise, we determine which edge of the board is closest to current position and return the opposite edge
+        // in case of tie, vertical distance wins over horizontal distance
+        CardinalEdge closestEdge = getClosestEdge(entity);
+        return CardinalEdge.getOppositeEdge(closestEdge);
     }
 
     protected static class Point {

@@ -489,8 +489,8 @@ public class MechSummaryCache {
             Set<String> sKnownFiles, long lLastCheck, File fDir,
             boolean ignoreUnofficial) {
         boolean bNeedsUpdate = false;
-        loadReport.append("  Looking in ").append(fDir.getPath())
-                .append("...\n");
+//        loadReport.append("  Looking in ").append(fDir.getPath())
+//                .append("...\n");
         int thisDirectoriesFileCount = 0;
         String[] sa = fDir.list();
 
@@ -599,8 +599,8 @@ public class MechSummaryCache {
             }
         }
 
-        loadReport.append("  ...loaded ").append(thisDirectoriesFileCount)
-                .append(" files.\n");
+//        loadReport.append("  ...loaded ").append(thisDirectoriesFileCount)
+//                .append(" files.\n");
 
         return bNeedsUpdate;
     }

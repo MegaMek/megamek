@@ -590,20 +590,23 @@ public class Hex implements IHex, Serializable {
             terrain.getUnstuckModifier(elev, rollTarget);
         }
     }
+    
+    public boolean hasCliffTopTowards(IHex otherHex) {
+    	return containsTerrain(Terrains.CLIFF_TOP) 
+		&& getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+		&& ((getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << coords.direction(otherHex.getCoords()))) != 0);
+    }
 
-    /**
-     * The notional position of this {@code Hex}, as set upon creation.
-     *
-     * @return the {@code Coords} object representing the coordinates this
-     *         {@code
-     *      Hex} was created with. NOTE: this is only used so that a certain hex
-     *         will always use the same image to represent terrain. DO NOT USE
-     *         FOR OTHER PURPOSES
-     */
+    /** Returns the position of this hex on the board. */
     public Coords getCoords() {
         return coords;
     }
 
+    /** 
+     * Sets the coords of this hex. DO NOT USE outside board.java!
+     * WILL NOT MOVE THE HEX. Only the position of the hex in the 
+     * board's data[] determines the actual location of the hex. 
+     */
     public void setCoords(Coords c) {
         coords = c;
     }

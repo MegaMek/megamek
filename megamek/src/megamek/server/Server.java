@@ -7881,9 +7881,7 @@ public class Server implements Runnable {
             if ((entity instanceof Tank) 
                     && !entity.isAirborneVTOLorWIGE() 
                     && !lastPos.equals(curPos)
-                    && prevHex.containsTerrain(Terrains.CLIFF_TOP)
-                    && prevHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
-                    && ((prevHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << lastPos.direction(curPos))) != 0)
+                    && prevHex.hasCliffTopTowards(curHex)
                     ) {
                 int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
                         - (curElevation + curHex.getLevel());
@@ -7914,9 +7912,7 @@ public class Server implements Runnable {
                     && (moveType != EntityMovementType.MOVE_JUMP)
                     && !entity.isAero() // LAM
                     && !quadveeVehMode
-                    && prevHex.containsTerrain(Terrains.CLIFF_TOP)
-                    && prevHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
-                    && ((prevHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << lastPos.direction(curPos))) != 0)
+                    && prevHex.hasCliffTopTowards(curHex)
                     ) {
                 int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
                         - (curElevation + curHex.getLevel());
@@ -7940,9 +7936,7 @@ public class Server implements Runnable {
                     && (moveType != EntityMovementType.MOVE_JUMP)
                     && !entity.isAero()
                     && !quadveeVehMode
-                    && curHex.containsTerrain(Terrains.CLIFF_TOP)
-                    && curHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
-                    && ((curHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << curPos.direction(lastPos))) != 0)
+                    && curHex.hasCliffTopTowards(prevHex)
                     ) {
                 int stepHeight = - (lastElevation + game.getBoard().getHex(lastPos).getLevel())
                         + (curElevation + curHex.getLevel());
@@ -12451,7 +12445,11 @@ public class Server implements Runnable {
         addReport(r);
 
         // roll
-        final int diceRoll = entity.getCrew().rollPilotingSkill();
+//        final int diceRoll = entity.getCrew().rollPilotingSkill();
+        //////// REMOVE
+        
+        int diceRoll = 3;
+        ////////
         r = new Report(2185);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());

@@ -320,6 +320,8 @@ public interface IHex extends Cloneable {
     public abstract Coords getCoords();
 
     public abstract void setCoords(Coords c);
+    
+    public abstract boolean hasCliffTopTowards(IHex otherHex); 
 
     /**
      * Determines if the Hex is valid or not. <code>errBuff</code> can be used to return a report of why the hex is

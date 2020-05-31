@@ -3066,6 +3066,14 @@ public class MoveStep implements Serializable {
                         && destHex.ceiling() > srcHex.ceiling()))) {
             mp += 2;
         }
+        
+        // WIGEs spend one extra MP to ascend a cliff
+        if (entity.getMovementMode() == EntityMovementMode.WIGE 
+        		&& distance > 0 
+                && destHex.hasCliffTopTowards(srcHex)
+                && nDestEl > nSrcEl) {
+            mp += 1;
+        }
 
         // If we entering a building, all non-infantry pay additional MP.
         if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV)) {
@@ -3364,9 +3372,10 @@ public class MoveStep implements Serializable {
                 || getMovementMode() == EntityMovementMode.TRACKED);
         if ((vehicleMovement || quadveeMovement) 
                 && (destAlt - srcAlt > 0)
-                && destHex.containsTerrain(Terrains.CLIFF_TOP)
-                && destHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
-                && ((destHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << dest.direction(src))) != 0) 
+                && destHex.hasCliffTopTowards(srcHex)
+//                && destHex.containsTerrain(Terrains.CLIFF_TOP)
+//                && destHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+//                && ((destHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << dest.direction(src))) != 0) 
                 && (!src.equals(dest))
                 && !isPavementStep()) {
             return false;
@@ -3377,20 +3386,34 @@ public class MoveStep implements Serializable {
         }
 
         // Units moving backwards may not change elevation levels.
-        // (Ben thinks this rule is dumb)
         if (((type == MoveStepType.BACKWARDS)
                 || (type == MoveStepType.LATERAL_LEFT_BACKWARDS) || (type == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                 && (destAlt != srcAlt)
                 && !(entity instanceof VTOL)
                 && !(isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))) {
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)
-                    && (Math.abs(destAlt - srcAlt) > 1)) {
-                return false;
-            }
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)
-                    && (destAlt != srcAlt)) {
-                return false;
-            }
+        	// Generally forbidden without TacOps Expanded Backward Movement p.22
+        	if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)) {
+        		return false;
+        	}
+        	// Even with Expanded Backward Movement, ...
+        	// May not move across a cliff (up) moving backwards at all
+        	if (destHex.containsTerrain(Terrains.CLIFF_TOP)
+        			&& destHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+        			&& ((destHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << dest.direction(src))) != 0) 
+        			&& (!src.equals(dest))) {
+        		return false;
+        	}
+        	// May not move across a cliff (down) moving backwards at all
+        	if (srcHex.containsTerrain(Terrains.CLIFF_TOP)
+        			&& srcHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+        			&& ((srcHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << src.direction(dest))) != 0)
+        			&& (!src.equals(dest))) {
+        		return false;
+        	}
+        	// May not move across more than 1 level 
+        	if (Math.abs(destAlt - srcAlt) > 1) {
+        		return false;
+        	}
         }
 
         // WiGEs can't move backwards

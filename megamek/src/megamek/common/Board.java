@@ -491,6 +491,9 @@ public class Board implements Serializable, IBoard {
             return;
         }
 
+        // Always make the coords of the hex match the actual position on the board
+        hex.setCoords(new Coords(x, y));
+        
         hex.clearExits();
         for (int i = 0; i < 6; i++) {
             IHex other = getHexInDir(x, y, i);

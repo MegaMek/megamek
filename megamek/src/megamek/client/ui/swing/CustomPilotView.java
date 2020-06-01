@@ -30,15 +30,17 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Infantry;
 import megamek.common.LAMPilot;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.enums.Gender;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 
@@ -51,14 +53,10 @@ import megamek.common.preference.PreferenceManager;
  *
  */
 public class CustomPilotView extends JPanel {
-    
-    /**
-     * 
-     */
     private static final long serialVersionUID = 345126674612500365L;
 
     private final Entity entity;
-    private int gender;
+    private Gender gender;
 
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMechDialog.chkMissing"));
     private final JTextField fldName = new JTextField(20);
@@ -105,15 +103,14 @@ public class CustomPilotView extends JPanel {
             }
         });
         
-        portraitDialog = new PortraitChoiceDialog(parent.clientgui.getFrame(), button);
+        portraitDialog = new PortraitChoiceDialog(parent.getClientGUI().getFrame(), button);
         portraitDialog.setPilot(entity.getCrew(), slot);
         add(button, GBC.std().gridheight(2));
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomName")); //$NON-NLS-1$
         button.addActionListener(e -> {
-            boolean isFemale = parent.clientgui.getClient().getRandomNameGenerator().isFemale();
-            this.gender = Crew.getGenderAsInt(isFemale);
-            fldName.setText(parent.clientgui.getClient().getRandomNameGenerator().generate(isFemale));
+            gender = RandomGenderGenerator.generate();
+            fldName.setText(RandomNameGenerator.getInstance().generate(gender, entity.getOwner().getName()));
         });
         add(button, GBC.eop());
 
@@ -359,7 +356,7 @@ public class CustomPilotView extends JPanel {
         return fldNick.getText();
     }
 
-    public int getGender() {
+    public Gender getGender() {
         return gender;
     }
     

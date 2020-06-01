@@ -1731,6 +1731,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBAPowerPack());
         EquipmentType.addType(MiscType.createBAShotgunMicrophone());
         EquipmentType.addType(MiscType.createISBAMineDispenser());
+        EquipmentType.addType(MiscType.createBAMissionEquipStorage200());
         EquipmentType.addType(MiscType.createBAMissionEquipStorage20());
         EquipmentType.addType(MiscType.createBAMissionEquipStorage5());
         EquipmentType.addType(MiscType.createISBADropChuteCamo());
@@ -2108,7 +2109,7 @@ public class MiscType extends EquipmentType {
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CBS, F_CIH)
                 .setProductionFactions(F_CBS, F_CIH).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        		.setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        		.setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 
@@ -2622,7 +2623,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "205,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C).setISAdvancement(2557, 2571, 3055, 2810, 3040)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
+                .setISApproximate(false, false, false, true, false).setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH).setReintroductionFactions(F_DC);
         return misc;
     }
@@ -3279,6 +3280,8 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getArmorTypeName(T_ARMOR_EDP);
         misc.setInternalName("CLEDPArmor");
         misc.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_EDP, true));
+        misc.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_EDP));
+        misc.shortName = "EDP";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_PROTOMECH_EQUIPMENT).or(F_ELECTRIC_DISCHARGE_ARMOR);
@@ -3310,8 +3313,8 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "252,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2680, DATE_NONE, 3054, 2800, 3050)
-                .setISApproximate(true, false, false, false, false)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2680, DATE_NONE, 3054, DATE_NONE, 3050)
+                .setISApproximate(true, false, true, false, false)
                 .setPrototypeFactions(F_TH)
                 .setReintroductionFactions(F_FS, F_LC, F_DC).setTechRating(RATING_E)
                 .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D)
@@ -3334,7 +3337,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.rulesRefs = "252,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
-                .setClanAdvancement(DATE_NONE, 2868, 3054).setClanApproximate(true, false, false)
+                .setClanAdvancement(DATE_NONE, 2868, 3054).setClanApproximate(true, true, false)
                 .setProductionFactions(F_CWF).setTechRating(RATING_E)
                 .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -9348,6 +9351,7 @@ public class MiscType extends EquipmentType {
         // TODO Game Rules
         misc.name = "ProtoMech Melee Weapon";
         misc.setInternalName("ProtoMeleeWeapon");
+        misc.shortName = "Melee Weapon";
         misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.cost = 50000;
@@ -9367,6 +9371,7 @@ public class MiscType extends EquipmentType {
         // TODO Game Rules
         misc.name = "ProtoMech Quad Melee System";
         misc.setInternalName("ProtoQuadMeleeSystem");
+        misc.shortName = "Quad Melee System";
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 70000;
@@ -10501,8 +10506,8 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "347,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(3055, 3082, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, true, false, false, false).setPrototypeFactions(F_FS, F_LC)
+                .setAdvancement(3055, 3082, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setApproximate(false, true, false, false, false).setPrototypeFactions(F_FS, F_LC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -10523,8 +10528,8 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "347,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_C)
                 .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
-                .setISAdvancement(2320, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, true, false, false, false).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setAdvancement(2320, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setApproximate(false, true, false, false, false).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 
@@ -11399,7 +11404,7 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setTechRating(RATING_F).setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
                 .setClanAdvancement(2840, 3059, 3065).setClanApproximate(true, false, false)
-                .setPrototypeFactions(F_CGS).setProductionFactions(F_CGS);
+                .setPrototypeFactions(F_CGS).setProductionFactions(F_CGS).setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 
@@ -11703,6 +11708,26 @@ public class MiscType extends EquipmentType {
         misc.name = "Mission Equipment Storage (5kg)";
         misc.setInternalName(misc.name);
         misc.tonnage = 0.005;
+        misc.criticals = 1;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BA_MISSION_EQUIPMENT)
+                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
+        misc.bv = 0;
+        misc.cost = 750;
+
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false);
+        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2720);
+        misc.techAdvancement.setTechRating(RATING_C);
+        misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
+        return misc;
+    }
+    
+    public static MiscType createBAMissionEquipStorage200() {
+        MiscType misc = new MiscType();
+        // Not Covered in IO so using the old stats from TO.
+        misc.name = "Mission Equipment Storage (200 kg)";
+        misc.addLookupName("Mission Equipment Storage");
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.2;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BA_MISSION_EQUIPMENT)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);

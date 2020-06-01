@@ -54,7 +54,8 @@ public class ISEHERPPC extends PPCWeapon {
         medAV = 12;
         longAV = 12;
         maxRange = RANGE_LONG;
-        //This is the Clan Wolverine PPC mentioned in Blake Documents
+        //This is the Clan Wolverine PPC mentioned in Blake Documents and in IO.
+        //This is the weapon the is equipped on the Pulverizer.
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2828, DATE_NONE, DATE_NONE, 2828);
         techAdvancement.setTechRating(RATING_F);

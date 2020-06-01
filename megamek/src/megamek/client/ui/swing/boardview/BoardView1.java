@@ -58,21 +58,7 @@ import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TimerTask;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.*;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -352,6 +338,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     Shape[] movementPolys;
     Shape[] facingPolys;
+    Shape[] finalFacingPolys;
     Shape upArrow;
     Shape downArrow;
 
@@ -1459,25 +1446,27 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             drawHexBorder(g, p, Color.PINK, 0, 6);
         }
     }
-    /**
-     *  Returns a list of Coords of all hexes on the board.
-     *  Returns ONLY hexes where board.getHex != null.
-     */
-    private ArrayList<Coords> allBoardHexes() {
-        IBoard board = game.getBoard();
-        if (board == null) return null;
 
-        ArrayList<Coords> CoordList = new ArrayList<Coords>();
+    /**
+     *  @return a list of {@link Coords} of all hexes on the board.
+     *          Returns ONLY hexes where board.getHex != null.
+     */
+    private List<Coords> allBoardHexes() {
+        IBoard board = game.getBoard();
+        if (board == null) {
+            return Collections.emptyList();
+        }
+
+        List<Coords> coordList = new ArrayList<>();
         for (int i = 0; i < board.getWidth(); i++) {
             for (int j = 0; j < board.getHeight(); j++) {
-                IHex hex = board.getHex(i, j);
-                if (hex != null) {
-                    CoordList.add(new Coords(i, j));
+                if (board.getHex(i, j) != null) {
+                    coordList.add(new Coords(i, j));
                 }
             }
         }
 
-        return CoordList;
+        return coordList;
     }
 
     private Image createBlurredShadow(Image orig) {
@@ -4605,65 +4594,80 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public void initPolys() {
 
-        AffineTransform FacingRotate = new AffineTransform();
+        AffineTransform facingRotate = new AffineTransform();
 
         // facing polygons
-        Polygon facingPoly_tmp = new Polygon();
-        facingPoly_tmp.addPoint(41, 3);
-        facingPoly_tmp.addPoint(35, 9);
-        facingPoly_tmp.addPoint(41, 7);
-        facingPoly_tmp.addPoint(42, 7);
-        facingPoly_tmp.addPoint(48, 9);
-        facingPoly_tmp.addPoint(42, 3);
+        Polygon facingPolyTmp = new Polygon();
+        facingPolyTmp.addPoint(41, 3);
+        facingPolyTmp.addPoint(35, 9);
+        facingPolyTmp.addPoint(41, 7);
+        facingPolyTmp.addPoint(42, 7);
+        facingPolyTmp.addPoint(48, 9);
+        facingPolyTmp.addPoint(42, 3);
 
         // create the rotated shapes
         facingPolys = new Shape[8];
-        for (int dir: allDirections)
-        {
-            facingPolys[dir] = FacingRotate.createTransformedShape(facingPoly_tmp);
-            FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
+        for (int dir : allDirections) {
+            facingPolys[dir] = facingRotate.createTransformedShape(facingPolyTmp);
+            facingRotate.rotate(Math.toRadians(60), HEX_W / 2, HEX_H / 2);
+        }
+
+        // final facing polygons
+        Polygon finalFacingPolyTmp = new Polygon();
+        finalFacingPolyTmp.addPoint(41, 3);
+        finalFacingPolyTmp.addPoint(21, 18);
+        finalFacingPolyTmp.addPoint(41, 14);
+        finalFacingPolyTmp.addPoint(42, 14);
+        finalFacingPolyTmp.addPoint(61, 18);
+        finalFacingPolyTmp.addPoint(42, 3);
+
+        // create the rotated shapes
+        facingRotate.setToIdentity();
+        finalFacingPolys = new Shape[8];
+        for (int dir : allDirections) {
+            finalFacingPolys[dir] = facingRotate.createTransformedShape(finalFacingPolyTmp);
+            facingRotate.rotate(Math.toRadians(60), HEX_W / 2, HEX_H / 2);
         }
 
         // movement polygons
-        Polygon movementPoly_tmp = new Polygon();
-        movementPoly_tmp.addPoint(47, 67);
-        movementPoly_tmp.addPoint(48, 66);
-        movementPoly_tmp.addPoint(42, 62);
-        movementPoly_tmp.addPoint(41, 62);
-        movementPoly_tmp.addPoint(35, 66);
-        movementPoly_tmp.addPoint(36, 67);
+        Polygon movementPolyTmp = new Polygon();
+        movementPolyTmp.addPoint(47, 67);
+        movementPolyTmp.addPoint(48, 66);
+        movementPolyTmp.addPoint(42, 62);
+        movementPolyTmp.addPoint(41, 62);
+        movementPolyTmp.addPoint(35, 66);
+        movementPolyTmp.addPoint(36, 67);
 
-        movementPoly_tmp.addPoint(47, 67);
-        movementPoly_tmp.addPoint(45, 68);
-        movementPoly_tmp.addPoint(38, 68);
-        movementPoly_tmp.addPoint(38, 69);
-        movementPoly_tmp.addPoint(45, 69);
-        movementPoly_tmp.addPoint(45, 68);
+        movementPolyTmp.addPoint(47, 67);
+        movementPolyTmp.addPoint(45, 68);
+        movementPolyTmp.addPoint(38, 68);
+        movementPolyTmp.addPoint(38, 69);
+        movementPolyTmp.addPoint(45, 69);
+        movementPolyTmp.addPoint(45, 68);
 
-        movementPoly_tmp.addPoint(45, 70);
-        movementPoly_tmp.addPoint(38, 70);
-        movementPoly_tmp.addPoint(38, 71);
-        movementPoly_tmp.addPoint(45, 71);
-        movementPoly_tmp.addPoint(45, 68);
+        movementPolyTmp.addPoint(45, 70);
+        movementPolyTmp.addPoint(38, 70);
+        movementPolyTmp.addPoint(38, 71);
+        movementPolyTmp.addPoint(45, 71);
+        movementPolyTmp.addPoint(45, 68);
 
         // create the rotated shapes
-        FacingRotate.setToIdentity();
+        facingRotate.setToIdentity();
         movementPolys = new Shape[8];
-        for (int dir: allDirections)
-        {
-            movementPolys[dir] = FacingRotate.createTransformedShape(movementPoly_tmp);
-            FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
+        for (int dir : allDirections) {
+            movementPolys[dir] = facingRotate.createTransformedShape(movementPolyTmp);
+            facingRotate.rotate(Math.toRadians(60), HEX_W / 2, HEX_H / 2);
         }
 
         // Up and Down Arrows
-        FacingRotate.setToIdentity();
-        FacingRotate.translate(0, -31);
-        upArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
+        facingRotate.setToIdentity();
+        facingRotate.translate(0, -31);
+        upArrow = facingRotate.createTransformedShape(movementPolyTmp);
 
-        FacingRotate.setToIdentity();
-        FacingRotate.rotate(Math.toRadians(180),HEX_W/2,HEX_H/2);
-        FacingRotate.translate(0, -31);
-        downArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
+        facingRotate.setToIdentity();
+        facingRotate.rotate(Math.toRadians(180), HEX_W / 2, HEX_H / 2);
+        facingRotate.translate(0, -31);
+        downArrow = facingRotate.createTransformedShape(movementPolyTmp);
     }
 
     synchronized boolean doMoveUnits(long idleTime) {
@@ -5096,16 +5100,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             tileManager.clearHex(hex);
             // Don't wait in the board editor because many hex changes 
             // makes this very slow 
-            if (clientgui != null) tileManager.waitForHex(hex);
+            if (clientgui != null) {
+                tileManager.waitForHex(hex);
+            }
             clearShadowMap();
             // Maybe have to set the hexes' theme.  Null clientgui implies board editor - don't mess with theme
             if ((selectedTheme != null) && !selectedTheme.equals("(Original Theme)") && (clientgui != null)) {
                 if (selectedTheme.equals("(No Theme)") && (hex.getTheme() != null) && !hex.getTheme().equals("")) {
                     hex.setTheme("");
-                    game.getBoard().setHex(b.getCoords(), hex);
+                    game.getBoard().setHex(c, hex);
                 } else if (!selectedTheme.equals(hex.getTheme())) {
                     hex.setTheme(selectedTheme);
-                    game.getBoard().setHex(b.getCoords(), hex);
+                    game.getBoard().setHex(c, hex);
                 }
             }
         }
@@ -6661,8 +6667,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (selectedTheme == null) {
             return;
-
-        } else if (selectedTheme.equals("(Original Theme)")) {
+        }
+        if (selectedTheme.equals("(Original Theme)")) {
             for (Coords c: allBoardHexes()) {
                 IHex hex = board.getHex(c);
                 hex.resetTheme();

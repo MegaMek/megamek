@@ -370,7 +370,7 @@ public class BattleArmor extends Infantry {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD), //light
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3052, 3052)
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2864, 3052, 3052)
                 .setClanAdvancement(2840, 2868, 2875)
                 .setClanApproximate(true, false, false).setPrototypeFactions(F_CGS)
                 .setProductionFactions(F_CWF, F_FS, F_LC, F_CS).setTechRating(RATING_E)

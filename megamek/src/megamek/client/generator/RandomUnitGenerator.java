@@ -13,7 +13,7 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.generator;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

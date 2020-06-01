@@ -79,6 +79,7 @@ import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
+import megamek.common.enums.Gender;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
@@ -588,6 +589,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 tabAll.setSelectedIndex(i);
             }
         }
+    }
+
+    public ClientGUI getClientGUI() {
+        return clientgui;
     }
 
     private void setupButtons() {
@@ -1127,7 +1132,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (int i = 0; i < entities.get(0).getCrew().getSlotCount(); i++) {
                 String name = panCrewMember[i].getPilotName();
                 String nick = panCrewMember[i].getNickname();
-                int gender = panCrewMember[i].getGender();
+                Gender gender = panCrewMember[i].getGender();
                 boolean missing = panCrewMember[i].getMissing();
                 int gunnery;
                 int gunneryL;

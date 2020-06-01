@@ -18,8 +18,16 @@ VERSION HISTORY:
 + Issue #1960: BV Calculation Errors - ProtoMechs
 + PR #1964: Prevent mechs that have fallen into water while walking backward from teleporting back under the shore
 + Issue #1645: Terrain displayed on map is shifted to adjacent hexes 
-+ PR #1929: Some commonly-used dialogs now recognize ESC butotn as cancel, minor visual improvements to said dialogs
++ PR #1929: Some commonly-used dialogs now recognize ESC button as cancel, minor visual improvements to said dialogs
 + PR #1877: Add options to BoardsValidator for automation usage
++ Issue #1905: LAM and Leaping Optional Rule
++ Isse #1974: Start of Game Stuck at Transmitting Game Data Packet Pump Null Pointer Exception (Generated Map Settings) 
++ Data: Updated Grounded Dropship image now works with Camos.
++ PR #1969: Draw larger arrow for final facing of move
++ Issue #1141: DFA victim takes no fall damage if pushed off building onto lower building
++ Issue #1887: View Game Board now shows actual board instead of minimap for more detail
++ PR #1906: Random Names and Gender Rework
++ Data: Some fixes to Tech Progression.
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

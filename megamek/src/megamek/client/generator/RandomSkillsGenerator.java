@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client;
+package megamek.client.generator;
 
 import java.io.Serializable;
 

@@ -494,10 +494,10 @@ public class MovePath implements Cloneable, Serializable {
         }
         
         if(step.useAeroAtmosphere(game, entity) 
-        		&& game.getBoard().onGround()											//we're an aerospace unit on a ground map
-        		&& step.getPosition() != null  											//null
-        		&& game.getFirstEnemyEntity(step.getPosition(), entity) != null) {
-        	fliesOverEnemy = true;
+                && game.getBoard().onGround()                                            //we're an aerospace unit on a ground map
+                && step.getPosition() != null                                              //null
+                && game.getFirstEnemyEntity(step.getPosition(), entity) != null) {
+            fliesOverEnemy = true;
         }
 
         return this;
@@ -685,9 +685,9 @@ public class MovePath implements Cloneable, Serializable {
      * @return Whether or not this path will result in the unit moving off board
      */
     public boolean fliesOffBoard() {
-    	return contains(MoveStepType.OFF) || 
-    	        contains(MoveStepType.RETURN) || 
-    	        contains(MoveStepType.FLEE);
+        return contains(MoveStepType.OFF) || 
+                contains(MoveStepType.RETURN) || 
+                contains(MoveStepType.FLEE);
     }
     
     /**
@@ -698,7 +698,7 @@ public class MovePath implements Cloneable, Serializable {
      * @return Whether or not this flight path takes us over an enemy unit
      */
     public boolean getFliesOverEnemy() {
-    	return fliesOverEnemy;
+        return fliesOverEnemy;
     }
     
     /**
@@ -728,12 +728,12 @@ public class MovePath implements Cloneable, Serializable {
      * @return Whether or not there are any other step types 
      */
     public boolean containsAnyOther(final MoveStepType type) {
-    	for(Iterator<MoveStepType> iter = containedStepTypes.iterator(); iter.hasNext();) {
-    		if(iter.next() != type)
-				return true;
-    	}
-    	
-    	return false;
+        for(Iterator<MoveStepType> iter = containedStepTypes.iterator(); iter.hasNext();) {
+            if(iter.next() != type)
+                return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -1752,7 +1752,7 @@ public class MovePath implements Cloneable, Serializable {
      * Convenience method to determine whether this path is happening on a ground map with an atmosphere
      */
     public boolean isOnAtmosphericGroundMap() {
-    	return getEntity().isOnAtmosphericGroundMap(); 
+        return getEntity().isOnAtmosphericGroundMap(); 
     }
     
     /**

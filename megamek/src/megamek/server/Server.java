@@ -6536,7 +6536,7 @@ public class Server implements Runnable {
             Entity mw = game.getEntity(mechWarriorId);
             
             if(mw == null) {
-            	continue;
+                continue;
             }
 
             // Is the MechWarrior an enemy?
@@ -7905,8 +7905,8 @@ public class Server implements Runnable {
             //TODO: Is the QuadVee check correct? does it set the movementmode for each step?
             //TODO: Is the LAM check correct? Is it automatically airborne when it moves?
             boolean quadveeVehMode = (entity instanceof QuadVee) 
-            		&& (step.getMovementMode() == EntityMovementMode.WHEELED
-            		|| step.getMovementMode() == EntityMovementMode.TRACKED);
+                    && (step.getMovementMode() == EntityMovementMode.WHEELED
+                    || step.getMovementMode() == EntityMovementMode.TRACKED);
             if ((entity instanceof Mech) 
                     && !lastPos.equals(curPos)
                     && (moveType != EntityMovementType.MOVE_JUMP)
@@ -7947,7 +7947,7 @@ public class Server implements Runnable {
                     rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
                     if (doSkillCheckWhileMoving(entity, lastElevation,
                             lastPos, lastPos, rollTarget, false) > 0) {
-                    	r = new Report(2209);
+                        r = new Report(2209);
                         r.addDesc(entity);
                         r.subject = entity.getId();
                         addReport(r);
@@ -8543,7 +8543,7 @@ public class Server implements Runnable {
                     rollTarget.addModifier(5, "carrier used thrust");
                 }
                 if (entity.getPartialRepairs().booleanOption("aero_collar_crit")) {
-                	rollTarget.addModifier(2, "misrepaired docking collar");
+                    rollTarget.addModifier(2, "misrepaired docking collar");
                 }
                 if (isDS && (((Dropship)entity).getCollarType() == Dropship.COLLAR_PROTOTYPE)) {
                     rollTarget.addModifier(2, "prototype kf-boom");
@@ -12448,11 +12448,7 @@ public class Server implements Runnable {
         addReport(r);
 
         // roll
-//        final int diceRoll = entity.getCrew().rollPilotingSkill();
-        //////// REMOVE
-        
-        int diceRoll = 3;
-        ////////
+        final int diceRoll = entity.getCrew().rollPilotingSkill();
         r = new Report(2185);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());

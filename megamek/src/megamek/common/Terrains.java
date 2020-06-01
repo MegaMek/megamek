@@ -163,6 +163,9 @@ public class Terrains implements ITerrainFactory {
     //TODO: AO shadows only on cliffs and lvl3 incs
     //TODO: show PSRs as danger (5*) in move paths 
     //TODO: WIGE can skid up a cliff
+    //TODO: test LAMs
+    //TODO: check the first step for danger!?
+    //TODO: REMOVE THE AUTOMATIC FAILS FROM SERVER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     /**
      * Keeps track of the different type of terrains that can have exits.

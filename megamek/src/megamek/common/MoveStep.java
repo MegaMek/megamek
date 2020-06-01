@@ -2351,7 +2351,7 @@ public class MoveStep implements Serializable {
         if ((getEntity().getMovementMode() == EntityMovementMode.BIPED_SWIM)
                 || (getEntity().getMovementMode() == EntityMovementMode.QUAD_SWIM)
                 || ((getEntity() instanceof Infantry
-                		&& getEntity().getMovementMode() == EntityMovementMode.SUBMARINE))) {
+                        && getEntity().getMovementMode() == EntityMovementMode.SUBMARINE))) {
             tmpWalkMP = entity.getActiveUMUCount();
         }
 
@@ -3071,7 +3071,7 @@ public class MoveStep implements Serializable {
         
         // WIGEs spend one extra MP to ascend a cliff
         if (entity.getMovementMode() == EntityMovementMode.WIGE 
-        		&& distance > 0 
+                && distance > 0 
                 && destHex.hasCliffTopTowards(srcHex)
                 && nDestEl > nSrcEl) {
             mp += 1;
@@ -3367,8 +3367,8 @@ public class MoveStep implements Serializable {
         // Upward Sheer Cliffs is forbidden for vehicles exc. VTOL, WIGE
         //TODO: Excluding naval: subs and ships will move over cliffs if the next hex is water
         boolean vehicleMovement = (entity instanceof Tank) 
-        		&& !entity.isAirborneVTOLorWIGE() 
-        		&& !entity.isNaval(); 
+                && !entity.isAirborneVTOLorWIGE() 
+                && !entity.isNaval(); 
         boolean quadveeMovement = (entity instanceof QuadVee) 
                 && (getMovementMode() == EntityMovementMode.WHEELED
                 || getMovementMode() == EntityMovementMode.TRACKED);
@@ -3393,29 +3393,29 @@ public class MoveStep implements Serializable {
                 && (destAlt != srcAlt)
                 && !(entity instanceof VTOL)
                 && !(isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))) {
-        	// Generally forbidden without TacOps Expanded Backward Movement p.22
-        	if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)) {
-        		return false;
-        	}
-        	// Even with Expanded Backward Movement, ...
-        	// May not move across a cliff (up) moving backwards at all
-        	if (destHex.containsTerrain(Terrains.CLIFF_TOP)
-        			&& destHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
-        			&& ((destHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << dest.direction(src))) != 0) 
-        			&& (!src.equals(dest))) {
-        		return false;
-        	}
-        	// May not move across a cliff (down) moving backwards at all
-        	if (srcHex.containsTerrain(Terrains.CLIFF_TOP)
-        			&& srcHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
-        			&& ((srcHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << src.direction(dest))) != 0)
-        			&& (!src.equals(dest))) {
-        		return false;
-        	}
-        	// May not move across more than 1 level 
-        	if (Math.abs(destAlt - srcAlt) > 1) {
-        		return false;
-        	}
+            // Generally forbidden without TacOps Expanded Backward Movement p.22
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)) {
+                return false;
+            }
+            // Even with Expanded Backward Movement, ...
+            // May not move across a cliff (up) moving backwards at all
+            if (destHex.containsTerrain(Terrains.CLIFF_TOP)
+                    && destHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+                    && ((destHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << dest.direction(src))) != 0) 
+                    && (!src.equals(dest))) {
+                return false;
+            }
+            // May not move across a cliff (down) moving backwards at all
+            if (srcHex.containsTerrain(Terrains.CLIFF_TOP)
+                    && srcHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+                    && ((srcHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << src.direction(dest))) != 0)
+                    && (!src.equals(dest))) {
+                return false;
+            }
+            // May not move across more than 1 level 
+            if (Math.abs(destAlt - srcAlt) > 1) {
+                return false;
+            }
         }
 
         // WiGEs can't move backwards
@@ -3978,7 +3978,7 @@ public class MoveStep implements Serializable {
      * Should we treat this movement as if it is occuring for an aerodyne unit
      * flying in atmosphere?
      */
-	boolean useAeroAtmosphere(IGame game, Entity en) {
+    boolean useAeroAtmosphere(IGame game, Entity en) {
         if (!en.isAero()) {
             return false;
         }

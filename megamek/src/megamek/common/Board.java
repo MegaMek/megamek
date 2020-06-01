@@ -1846,4 +1846,23 @@ public class Board implements Serializable, IBoard {
             annotations.put(c, a);
         }
     }
+    
+    /** 
+     * Sets a tileset theme for all hexes of the board. 
+     * Passing null as newTheme resets the theme to the 
+     * theme specified in the board file. 
+     */ 
+    public void setTheme(String newTheme) {
+        boolean reset = newTheme == null;
+
+        for (int c = 0; c < width * height; c++) {
+            if (reset) {
+                data[c].resetTheme();
+            } else {
+                data[c].setTheme(newTheme);
+            }
+        }
+        processBoardEvent(new BoardEvent(this, null, BoardEvent.BOARD_CHANGED_ALL_HEXES));
+    }
+    
 }

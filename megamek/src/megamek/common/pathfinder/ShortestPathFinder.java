@@ -335,7 +335,6 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
 
         // Direction dest hex is from current location, in hex facings
-        //int destDir = mp.getFinalCoords().approximateDirection(dest, 0, 0);
         int destDir = mp.getFinalCoords().direction(dest);
         // Direction dest hex is from current location, in degrees
         int destAngle = mp.getFinalCoords().degree(dest);

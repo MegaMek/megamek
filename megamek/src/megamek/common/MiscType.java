@@ -4011,7 +4011,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "317,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_E)
                 .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
-                .setISAdvancement(2690, 2790, 2820, DATE_NONE, DATE_NONE)
+                .setISAdvancement(2690, 2790, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2690, 2790, 2820, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
@@ -4033,7 +4033,7 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_E)
                 .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D).setISAdvancement(2680, 2800, 3065, 2850, 3050)
                 .setISApproximate(true, false, false, true, false)
-                .setClanAdvancement(2680, 2800, 3065, DATE_NONE, DATE_NONE)
+                .setClanAdvancement(2480, 2800, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
                 .setProductionFactions(F_CS);
         return misc;
@@ -5602,7 +5602,7 @@ public class MiscType extends EquipmentType {
                 .or(F_FIGHTER_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_SS_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.rulesRefs = "90,IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
                 .setISAdvancement(3125, 3140, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
@@ -6685,7 +6685,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "330,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3065, 3071, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISAdvancement(3065, 3071, 3097, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
                 .setProductionFactions(F_DC);
         return misc;

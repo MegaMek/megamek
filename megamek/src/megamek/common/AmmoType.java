@@ -1620,9 +1620,9 @@ public class AmmoType extends EquipmentType {
                 .setUnofficial(false)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-                .setISAdvancement(2757, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISAdvancement(2757, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_FS)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_FS).setReintroductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"372,TO"));
         
         //TODO Tear Gas See IO pg 372

@@ -246,8 +246,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             
             // getFacingDiff returns a number between 0 and 3 inclusive. 
             // if the value diff is larger than 3, then it won't make a difference and we skip calculating it
-            if(Math.abs(dd) < 4) 
-            {
+            if (Math.abs(dd) < 4) {
                 dd += ShortestPathFinder.getFacingDiff(first, destination, backwards);
                 dd -= ShortestPathFinder.getFacingDiff(second, destination, backwards);
             }

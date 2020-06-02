@@ -1694,6 +1694,7 @@ public class Princess extends BotClient {
                     for (final Entity entity : game.getEntitiesVector(coords,
                                                                       true)) {
                         final Targetable bt = getAppropriateTarget(coords);
+                        
                         if (isEnemyGunEmplacement(entity, coords)) {
                             fireControlState.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex " +
@@ -1839,17 +1840,20 @@ public class Princess extends BotClient {
     
     private boolean isEnemyGunEmplacement(final Entity entity,
                                           final Coords coords) {
+        // crippled gun turrets aren't worth shooting at, even if we're fighting to the death
         return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
                && entity.getOwner().isEnemyOf(getLocalPlayer())
                && !getStrategicBuildingTargets().contains(coords)
-               && (null != entity.getCrew()) && !entity.getCrew().isDead();
+               && !entity.isCrippled();
     }
 
     private boolean isEnemyInfantry(final Entity entity,
                                     final Coords coords) {
+        // crippled infantry aren't worth shooting at, even if we're fighting to the death
         return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) && !entity.hasETypeFlag(Entity.ETYPE_MECHWARRIOR)
                && entity.getOwner().isEnemyOf(getLocalPlayer())
-               && !getStrategicBuildingTargets().contains(coords);
+               && !getStrategicBuildingTargets().contains(coords)
+               && !entity.isCrippled();
     }
 
     @Override

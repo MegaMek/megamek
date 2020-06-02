@@ -100,14 +100,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
 
         while(!candidates.isEmpty()) {
             BulldozerMovePath currentPath = candidates.pollFirst();
-            
-            if(currentPath.getFinalCoords().getX() == 36 && currentPath.getFinalCoords().getY() == 21) {
-                int alpha = 2;
-            }
-            
-            candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords));
-            
-            
+            candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords));            
             
             if(destinationCoords.contains(currentPath.getFinalCoords()) &&
                     (bestPath == null || movePathComparator.compare(bestPath, currentPath) > 0)) {
@@ -203,11 +196,17 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
                 !mli.destinationHasWeakBridge &&
                 !mli.groundTankIntoWater;
         
+        // legal jump moves are simpler:
+        // can't go out of bounds, can't jump too high (unless we can destroy the obstacle)
+        boolean legalJumpMove = child.isJumping() &&
+                !mli.outOfBounds &&
+                (!mli.goingUpTooHigh || child.needsLeveling());
+        
         if((!shortestPathsToCoords.containsKey(child.getFinalCoords()) ||
                 // shorter path to these coordinates
                 (movePathComparator.compare(shortestPathsToCoords.get(child.getFinalCoords()), child) > 0)) &&
-                // legal or needs leveling and not off-board
-                (mli.isLegal() || canLevel) &&
+                // legal or needs leveling or jumping and not off-board
+                (mli.isLegal() || canLevel || legalJumpMove) &&
                 // better than existing path to ultimate destination
                 (child.getMpUsed() + child.getLevelingCost() < maximumCost)) {
             shortestPathsToCoords.put(child.getFinalCoords(), child);
@@ -236,11 +235,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
          * Favors paths that move closer to the destination edge first.
          * in case of tie, favors paths that cost less MP
          */
-        public int compare(BulldozerMovePath first, BulldozerMovePath second) {
-            if(first.getFinalCoords().getX() == 19 && first.getFinalCoords().getY() == 20) {
-                int alpha = 1;
-            }
-            
+        public int compare(BulldozerMovePath first, BulldozerMovePath second) {            
             IBoard board = first.getGame().getBoard();
             boolean backwards = false;
             int h1 = first.getFinalCoords().distance(destination)

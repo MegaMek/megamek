@@ -31,7 +31,6 @@ import java.util.Vector;
 
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.Princess;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
@@ -1188,7 +1187,7 @@ public class MovePath implements Cloneable, Serializable {
      * Extend the current path to the destination <code>Coords</code>.
      *
      * @param dest the destination <code>Coords</code> of the move.
-     * @param type the type of movment step required.
+     * @param type the type of movement step required.
      */
     public void findPathTo(final Coords dest, final MoveStepType type) {
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
@@ -1850,7 +1849,7 @@ public class MovePath implements Cloneable, Serializable {
         Set<Coords> destinationSet = princess.getClusterTracker().getDestinationCoords(entity, CardinalEdge.WEST, true);
         
         long marker1 = System.currentTimeMillis();
-        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, false);
+        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, true);
         long marker2 = System.currentTimeMillis();
         long marker3 = marker2 - marker1;
         

@@ -150,6 +150,8 @@ public class QuirksHandler {
 
     private static final String MODEL_ALL = "all";
     
+    private static final String NO_QUIRKS = "none";
+    
     private static Map<String, List<QuirkEntry>> canonQuirkMap;
     private static Map<String, List<QuirkEntry>> customQuirkMap;
     private static AtomicBoolean customQuirksDirty = new AtomicBoolean(false);
@@ -446,6 +448,11 @@ public class QuirksHandler {
 
                 // Write out quirks
                 List<QuirkEntry> quirks = customQuirkMap.get(unitId);
+                if (quirks.isEmpty()) {
+                    output.write("\t\t" + getOpenTag(QUIRK));
+                    output.write(NO_QUIRKS);
+                    output.write(getCloseTag(QUIRK) + "\n");
+                }
                 for (QuirkEntry quirk : quirks) {
                     // Write Weapon Quirk
                     if (quirk.isWeaponQuirk()) {
@@ -506,7 +513,6 @@ public class QuirksHandler {
     @Nullable
     static List<QuirkEntry> getQuirks(Entity entity) {
         final String METHOD_NAME = "getQuirks(Entity)";
-        final String NO_QUIRKS = "none";
 
         if (!initialized.get() || (null == canonQuirkMap)) {
             return null;
@@ -604,7 +610,7 @@ public class QuirksHandler {
             Quirks entQuirks = entity.getQuirks();
             Enumeration<IOptionGroup> quirksGroup = entQuirks.getGroups();
             Enumeration<IOption> quirkOptions;
-           while (quirksGroup.hasMoreElements()) {
+            while (quirksGroup.hasMoreElements()) {
                 IOptionGroup group = quirksGroup.nextElement();
                 quirkOptions = group.getSortedOptions();
                 while (quirkOptions.hasMoreElements()) {

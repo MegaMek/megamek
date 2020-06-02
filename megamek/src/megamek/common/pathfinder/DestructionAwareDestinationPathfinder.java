@@ -213,7 +213,6 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * Comparator implementation useful in comparing how much closer a given path is to the internal
      * "destination edge" than the other.
      * @author NickAragua
-     *
      */
     private class AStarComparator implements Comparator<BulldozerMovePath> {
         private Coords destination;

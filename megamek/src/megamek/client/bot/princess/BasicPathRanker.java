@@ -768,7 +768,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
     
     /**
-     * Gives the distance to the closest enemy unit, or zero if none exist
+     * Gives the distance to the closest enemy unit, or -1 if none exist.
+     * The reason being that the closest enemy unit may be 0 away.
      *
      * @param me       Entity who has enemies
      * @param position Coords from which the closest enemy is found

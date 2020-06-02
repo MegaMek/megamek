@@ -58,10 +58,6 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
     public BulldozerMovePath findPathToCoords(Entity entity, Set<Coords> destinationCoords, boolean jump) {
         BulldozerMovePath startPath = new BulldozerMovePath(entity.getGame(), entity);
         
-        if(entity.getDisplayName().contains("Locust")) {
-            int alpha = 1;
-        }
-        
         // if we're calculating a jump path and the entity has jump mp and can jump, start off with a jump
         // if we're trying to calc a jump path and the entity does not have jump mp, we're done
         if(jump && (startPath.getCachedEntityState().getJumpMPWithTerrain() > 0) &&
@@ -105,10 +101,16 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         while(!candidates.isEmpty()) {
             BulldozerMovePath currentPath = candidates.pollFirst();
             
+            if(currentPath.getFinalCoords().getX() == 36 && currentPath.getFinalCoords().getY() == 21) {
+                int alpha = 2;
+            }
+            
             candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords));
             
+            
+            
             if(destinationCoords.contains(currentPath.getFinalCoords()) &&
-                    (bestPath == null || movePathComparator.compare(bestPath, currentPath) < 0)) {
+                    (bestPath == null || movePathComparator.compare(bestPath, currentPath) > 0)) {
                 bestPath = currentPath;
                 maximumCost = bestPath.getMpUsed() + bestPath.getLevelingCost();
             }
@@ -234,7 +236,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
          * Favors paths that move closer to the destination edge first.
          * in case of tie, favors paths that cost less MP
          */
-        public int compare(BulldozerMovePath first, BulldozerMovePath second) {            
+        public int compare(BulldozerMovePath first, BulldozerMovePath second) {
+            if(first.getFinalCoords().getX() == 19 && first.getFinalCoords().getY() == 20) {
+                int alpha = 1;
+            }
+            
             IBoard board = first.getGame().getBoard();
             boolean backwards = false;
             int h1 = first.getFinalCoords().distance(destination)
@@ -250,15 +256,22 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             // getFacingDiff returns a number between 0 and 3 inclusive. 
             // if the value diff is larger than 3, then it won't make a difference and we skip calculating it
             if (Math.abs(dd) < 4) {
+                dd *= 10; // facing diff doesn't matter as much as the other stuff, only use it as a tie-breaker
                 dd += ShortestPathFinder.getFacingDiff(first, destination, backwards);
                 dd -= ShortestPathFinder.getFacingDiff(second, destination, backwards);
             }
     
+            // dd != 0 implies that the two paths are not identical
             if (dd != 0) {
                 return dd;
             } else {
-                return first.getHexesMoved() - second.getHexesMoved();
-            }           
+                int tieBreakerDiff = first.getHexesMoved() - second.getHexesMoved();
+                if(tieBreakerDiff == 0) {
+                    tieBreakerDiff = first.getMpUsed() - second.getMpUsed();
+                }
+                
+                return tieBreakerDiff;
+            }
         }
     }
 }

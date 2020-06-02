@@ -587,7 +587,7 @@ public class BoardEdgePathFinder {
 
         // wheeled tanks cannot go into rough terrain or rubble of any kind, or buildings for that matter
         // even if you level them they still turn to rubble. Additionally, they cannot go into deep snow.
-        mli.wheeledTankRestriction = isWheeled &&
+        mli.wheeledTankRestriction = isWheeled && !destHexHasRoad &&
                 (destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE)
                 || destinationHasBuilding
                 || (destHex.containsTerrain(Terrains.SNOW) && destHex.terrainLevel(Terrains.SNOW) > 1));

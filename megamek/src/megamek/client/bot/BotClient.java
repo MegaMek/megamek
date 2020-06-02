@@ -111,6 +111,9 @@ public abstract class BotClient extends Client {
 
     public BotClient(String playerName, String host, int port) {
         super(playerName, host, port);
+        
+        boardClusterTracker = new BoardClusterTracker();
+        
         game.addGameListener(new GameListenerAdapter() {
 
             @Override

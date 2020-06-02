@@ -29,8 +29,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.Princess;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
+import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.CachedEntityState;
@@ -1197,6 +1200,7 @@ public class MovePath implements Cloneable, Serializable {
 
         pf.run(this.clone());
         MovePath finPath = pf.getComputedPath(dest);
+        //MovePath finPath = calculateDestructionAwarePath(dest);
 
         if (timeoutCondition.timeoutEngaged || finPath == null) {
             /*
@@ -1838,8 +1842,12 @@ public class MovePath implements Cloneable, Serializable {
         // code that's useful to test the destruction-aware pathfinder
         // remove when code review and testing complete
         DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
-        Set<Coords> destinationSet = new HashSet<Coords>();
-        destinationSet.add(dest);
+        //Set<Coords> destinationSet = new HashSet<Coords>();
+        //destinationSet.add(dest);
+        
+        // debugging code that can be used to find a path to a specific edge
+        Princess princess = new Princess("test", "test", 2020, LogLevel.OFF);
+        Set<Coords> destinationSet = princess.getClusterTracker().getDestinationCoords(entity, CardinalEdge.WEST, true);
         
         long marker1 = System.currentTimeMillis();
         MovePath finPath = dpf.findPathToCoords(entity, destinationSet, false);

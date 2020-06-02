@@ -29,7 +29,6 @@ import megamek.common.pathfinder.BoardClusterTracker.MovementType;
  * An extension of the MovePath class that stores information about terrain that needs
  * to be destroyed in order to move along the specified route.
  * @author NickAragua
- *
  */
 public class BulldozerMovePath extends MovePath {
     /**

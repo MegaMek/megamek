@@ -275,8 +275,7 @@ public class Princess extends BotClient {
         return getBehaviorSettings().isForcedWithdrawal();
     }
 
-    private void setFleeBoard(final boolean fleeBoard,
-                              final String reason) {
+    private void setFleeBoard(final boolean fleeBoard, final String reason) {
         log(getClass(), "setFleeBoard(boolean, String)",
             LogLevel.DEBUG,
             "Setting Flee Board " + fleeBoard + " because: " + reason);

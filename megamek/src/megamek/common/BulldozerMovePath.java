@@ -31,9 +31,6 @@ import megamek.common.pathfinder.BoardClusterTracker.MovementType;
  * @author NickAragua
  */
 public class BulldozerMovePath extends MovePath {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1346716014573707012L;
 
     public static final int CANNOT_LEVEL = -1;

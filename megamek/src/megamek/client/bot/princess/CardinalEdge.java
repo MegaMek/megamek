@@ -13,6 +13,8 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.common.OffBoardDirection;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -45,6 +47,21 @@ public enum CardinalEdge {
             }
         }
         return null;
+    }
+    
+    public static CardinalEdge getCardinalEdge(OffBoardDirection direction) {
+        switch(direction) {
+        case NORTH:
+            return NORTH;
+        case SOUTH:
+            return SOUTH;
+        case EAST:
+            return EAST;
+        case WEST:
+            return WEST;
+        default:
+            return NEAREST_OR_NONE;
+        }
     }
     
     public static CardinalEdge getOppositeEdge(CardinalEdge edge) {

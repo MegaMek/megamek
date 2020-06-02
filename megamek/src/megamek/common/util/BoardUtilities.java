@@ -1600,7 +1600,7 @@ public class BoardUtilities {
         // the easiest part is if the entity is supposed to start on a particular edge. Just return the opposite edge.
         int oppositeEdge = board.getOppositeEdge(entity.getStartingPos());
         if(oppositeEdge != Board.START_NONE) {
-            return CardinalEdge.getCardinalEdge(OffBoardDirection.translateBoardStart(oppositeEdge).getValue());
+            return CardinalEdge.getCardinalEdge(OffBoardDirection.translateBoardStart(oppositeEdge));
         }
 
         // otherwise, we determine which edge of the board is closest to current position and return the opposite edge

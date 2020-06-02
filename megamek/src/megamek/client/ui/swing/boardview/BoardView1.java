@@ -1388,7 +1388,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // debugging method that renders the bounding box of a unit's movement envelope.
-        //renderClusters((Graphics2D) g);
+        renderClusters((Graphics2D) g);
         //renderMovementBoundingBox((Graphics2D) g);
         //renderDonut(g, new Coords(10, 10), 2);
         //renderApproxHexDirection((Graphics2D) g);

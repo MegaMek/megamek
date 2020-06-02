@@ -16,6 +16,7 @@
 package megamek.common.pathfinder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +29,10 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
+import megamek.common.IHex;
+import megamek.common.ITerrain;
 import megamek.common.MiscType;
+import megamek.common.Terrains;
 import megamek.common.util.BoardUtilities;
 
 /**
@@ -47,6 +51,7 @@ public class BoardClusterTracker {
         Tracked,
         TrackedAmphi,
         Hover,
+        Foot,
         Jump,
         Flyer,
         Water,
@@ -61,11 +66,13 @@ public class BoardClusterTracker {
                 case BIPED:
                 case TRIPOD:
                 case QUAD:
-                case INF_LEG:
                     return Walker;
+                case INF_LEG:
+                    return Foot;
                 case TRACKED:
                     return entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ? TrackedAmphi : Tracked;
                     //technically  MiscType.F_AMPHIBIOUS and MiscType.F_LIMITED_AMPHIBIOUS apply here too, but are not implemented in general
+                case INF_MOTORIZED:
                 case WHEELED:
                     return entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ? WheeledAmphi : Wheeled;
                 case HOVER:
@@ -136,7 +143,7 @@ public class BoardClusterTracker {
             return entityCluster.getIntersectingHexes(actualEdge, entity.getGame().getBoard());
         }
         
-        return null;
+        return Collections.emptySet();
     }
     
     /**
@@ -185,18 +192,18 @@ public class BoardClusterTracker {
         IBoard board = entity.getGame().getBoard();
         int clusterID = 0;
         
-        boolean isHovercraft = entity.getMovementMode() == EntityMovementMode.HOVER;
-        boolean isAmphibious = entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
-                                entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
-                                entity.hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
+        MovementType movementType = MovementType.getMovementType(entity);
+        boolean isHovercraft = movementType == MovementType.Hover;
+        boolean isAmphibious = movementType == MovementType.WheeledAmphi ||
+                                movementType == MovementType.TrackedAmphi;
         
         for(int x = 0; x < board.getWidth(); x++) {
-            for(int y = 0; y < board.getHeight(); y++) {
+            for(int y = 0; y < board.getHeight(); y++) {                
                 Coords c = new Coords(x, y);
                 
                 // hex is either inaccessible
                 // or it is inaccessible AND we can't level it, then we move on
-                if (entity.isLocationProhibited(c) && 
+                if ((entity.isLocationProhibited(c) || buildingPlowThroughRequired(entity, movementType, c)) &&
                         (!destructionAware || (destructionAware && !canLevel(entity, c)))) {
                     continue;
                 }
@@ -213,8 +220,11 @@ public class BoardClusterTracker {
                         int myElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(c), entity, isHovercraft, isAmphibious);
                         
                         // if we can't reach from here to the neighbor due to elevation differences, move on
+                        // buildings require special handling - while a tank technically CAN plow through a building
+                        // it is highly inadvisable and we will avoid it for now.
                         int elevationDiff = Math.abs(neighborElevation - myElevation);
-                        if(elevationDiff > entity.getMaxElevationChange()) {
+                        if((elevationDiff > entity.getMaxElevationChange())
+                                || buildingPlowThroughRequired(entity, movementType, neighbor)) {
                             continue;
                         }
                         
@@ -257,6 +267,34 @@ public class BoardClusterTracker {
         }
         
         return clusters;
+    }
+    
+    /**
+     * Whether or not we are required to plow through a building if we enter this hex.
+     */
+    private boolean buildingPlowThroughRequired(Entity entity, MovementType relevantMovementType, Coords coords) {
+        // basic premise:
+        // ground tanks cannot climb over buildings and must plow through
+        // mechs can climb over buildings that won't collapse under them
+        // the relative height comparison is handled elsewhere
+        
+        IBoard board = entity.getGame().getBoard();
+        IHex hex = board.getHex(coords);
+        
+        if (!hex.containsTerrain(Terrains.BLDG_CF) && !hex.containsExit(Terrains.FUEL_TANK_CF)) {
+            return false;
+        } else if (relevantMovementType == MovementType.Walker) {
+            int buildingCF = board.getBuildingAt(coords).getCurrentCF(coords);
+            
+            return entity.getWeight() > buildingCF;            
+        } else if (relevantMovementType != MovementType.Flyer &&
+                relevantMovementType != MovementType.Jump &&
+                relevantMovementType != MovementType.None &&
+                relevantMovementType != MovementType.Water) {
+            return true;
+        } else {
+            return false;
+        }
     }
     
     /**

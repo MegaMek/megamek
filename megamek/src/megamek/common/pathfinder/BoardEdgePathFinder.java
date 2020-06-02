@@ -562,7 +562,8 @@ public class BoardEdgePathFinder {
         mli.destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
         boolean destinationHasBuildingOrBridge = destinationBuilding != null;
         boolean destinationHasBridge = destinationHasBuildingOrBridge && destHex.containsTerrain(Terrains.BRIDGE_CF);
-        boolean destinationHasBuilding = destinationHasBuildingOrBridge && destHex.containsTerrain(Terrains.BLDG_CF);
+        boolean destinationHasBuilding = destinationHasBuildingOrBridge && 
+                (destHex.containsTerrain(Terrains.BLDG_CF) || destHex.containsTerrain(Terrains.FUEL_TANK_CF));
 
         // if we're going to step onto a bridge that will collapse, let's not consider going there
         mli.destinationHasWeakBridge =  destinationHasBridge && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
@@ -588,7 +589,8 @@ public class BoardEdgePathFinder {
         // even if you level them they still turn to rubble. Additionally, they cannot go into deep snow.
         mli.wheeledTankRestriction = isWheeled &&
                 (destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE)
-                || destHex.containsTerrain(Terrains.BLDG_CF) || (destHex.containsTerrain(Terrains.SNOW) && destHex.terrainLevel(Terrains.SNOW) > 1));
+                || destinationHasBuilding
+                || (destHex.containsTerrain(Terrains.SNOW) && destHex.terrainLevel(Terrains.SNOW) > 1));
 
         // tracked and wheeled tanks cannot go into water without a bridge, unless amphibious
         mli.groundTankIntoWater = (isTracked || isWheeled) && 
@@ -622,7 +624,8 @@ public class BoardEdgePathFinder {
 
         int hexElevation = hex.getLevel();
 
-        if(entity.hasETypeFlag(Entity.ETYPE_MECH) && hex.containsTerrain(Terrains.BLDG_CF)) {
+        if(entity.hasETypeFlag(Entity.ETYPE_MECH) && 
+                (hex.containsTerrain(Terrains.BLDG_CF) || hex.containsTerrain(Terrains.FUEL_TANK_CF))) {
             hexElevation = hex.ceiling();
         } else if(entity.isNaval() && hex.containsTerrain(Terrains.BRIDGE)) {
             hexElevation = hex.getLevel();

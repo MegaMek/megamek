@@ -58,6 +58,10 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
     public BulldozerMovePath findPathToCoords(Entity entity, Set<Coords> destinationCoords, boolean jump) {
         BulldozerMovePath startPath = new BulldozerMovePath(entity.getGame(), entity);
         
+        if(entity.getDisplayName().contains("Locust")) {
+            int alpha = 1;
+        }
+        
         // if we're calculating a jump path and the entity has jump mp and can jump, start off with a jump
         // if we're trying to calc a jump path and the entity does not have jump mp, we're done
         if(jump && (startPath.getCachedEntityState().getJumpMPWithTerrain() > 0) &&

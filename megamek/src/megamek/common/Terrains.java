@@ -153,19 +153,22 @@ public class Terrains implements ITerrainFactory {
     //TODO: + up cliff WIGE: 1MP extra 
     //TODO: + Veh (exc VTOL/WIGE) down cliff: DSR, fail: Motive roll, move over; 
     //TODO: + down cliff VTOL/WIGE: no effect at all
-    //TODO: Inf: crazy
+    //TODO: + Inf: Forbidden (MoveStep)
+    //TODO: Inf: MovePath MP cost
+    //TODO: Inf: Server, forbidden
     //TODO: check quadvee movement over cliffs
     //TODO: hover skidding down cliff
     //TODO: + ordering of PSRs when turning on pavement then walking up a cliff!?
     //TODO: check if QuadVee can cross lvl2 at all -> apply to cliff
     //TODO: how to treat roads across cliffs?
-    //TODO: no climbing action of mechs!
+    //TODO: + no climbing action of mechs! seems ok
     //TODO: AO shadows only on cliffs and lvl3 incs
     //TODO: show PSRs as danger (5*) in move paths 
     //TODO: WIGE can skid up a cliff
     //TODO: test LAMs
-    //TODO: check the first step for danger!?
+    //TODO: check the first step for danger!? --> another time
     //TODO: REMOVE THE AUTOMATIC FAILS FROM SERVER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //TODO: underwater cliffs, naval
 
     /**
      * Keeps track of the different type of terrains that can have exits.

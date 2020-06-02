@@ -3365,22 +3365,50 @@ public class MoveStep implements Serializable {
         }
         
         // Upward Sheer Cliffs is forbidden for vehicles exc. VTOL, WIGE
-        //TODO: Excluding naval: subs and ships will move over cliffs if the next hex is water
-        boolean vehicleMovement = (entity instanceof Tank) 
-                && !entity.isAirborneVTOLorWIGE() 
-                && !entity.isNaval(); 
-        boolean quadveeMovement = (entity instanceof QuadVee) 
-                && (getMovementMode() == EntityMovementMode.WHEELED
-                || getMovementMode() == EntityMovementMode.TRACKED);
-        if ((vehicleMovement || quadveeMovement) 
-                && (destAlt - srcAlt > 0)
+//        boolean vehicleMovement = (entity instanceof Tank) 
+//                && !entity.isAirborneVTOLorWIGE() 
+//                && !entity.isNaval(); 
+//        boolean quadveeMovement = (entity instanceof QuadVee) 
+//                && (getMovementMode() == EntityMovementMode.WHEELED
+//                || getMovementMode() == EntityMovementMode.TRACKED);
+//        if ((vehicleMovement || quadveeMovement) 
+//                && (destAlt - srcAlt > 0)
+//                && destHex.hasCliffTopTowards(srcHex)
+////                && destHex.containsTerrain(Terrains.CLIFF_TOP)
+////                && destHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+////                && ((destHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << dest.direction(src))) != 0) 
+//                && (!src.equals(dest))
+//                && !isPavementStep()) {
+//            return false;
+//        }
+        
+        // Sheer Cliffs, TO p.39
+        boolean vehicleAffectedByCliff = entity instanceof Tank 
+                && !entity.isAirborneVTOLorWIGE();
+        int stepHeight = destAlt - srcAlt;
+        // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
+        boolean isUpCliff = !src.equals(dest)
                 && destHex.hasCliffTopTowards(srcHex)
-//                && destHex.containsTerrain(Terrains.CLIFF_TOP)
-//                && destHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
-//                && ((destHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << dest.direction(src))) != 0) 
-                && (!src.equals(dest))
-                && !isPavementStep()) {
+                && (stepHeight == 1 || stepHeight == 2);
+        boolean isDownCliff = !src.equals(dest) 
+                && srcHex.hasCliffTopTowards(destHex)
+                && (stepHeight == 1 || stepHeight == 2);
+        
+        // For vehicles exc. VTOL, WIGE, upward Sheer Cliffs is forbidden
+        if (vehicleAffectedByCliff && isUpCliff) {
             return false;
+        }
+
+        // For Infantry, up or down sheer cliffs requires a climbing action 
+        // except for Mountain Troops across a level 1 cliff
+        if (entity instanceof Infantry && 
+                (isUpCliff || isDownCliff)) {
+
+            boolean isMountainTroop = ((Infantry)entity).hasSpecialization(Infantry.MOUNTAIN_TROOPS);
+            if (type != MoveStepType.CLIMB_MODE_ON
+                    && (!isMountainTroop || stepHeight == 2) ) {
+                return false;
+            }
         }
         
         if ((entity instanceof Mech) && ((srcAlt - destAlt) > 2)) {

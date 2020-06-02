@@ -549,27 +549,11 @@ public class Compute {
             return true;
         }
         
-        // Vehicles (exc. WIGE/VTOL) moving down a cliff
-        // QuadVees in vehicle mode don't make DSRs and ignore PSRs to avoid falls and so are not checked here
-//        boolean vehicleMovement = (entity instanceof Tank) && !entity.isAirborneVTOLorWIGE(); 
-//        if ((entity instanceof Tank) 
-//                && !entity.isAirborneVTOLorWIGE()
-//                && srcHex.hasCliffTopTowards(destHex)
-//                ) {
-//            int leapDistance = (srcElevation + srcHex.getLevel())
-//                    - (destElevation + destHex.getLevel());
-//            // Cliffs should only exist towards 1/2 level drops, check just to make sure
-//            if (leapDistance == 1 || leapDistance == 2) {
-//                return true;            
-//            }
-//        }
-
         // Sheer Cliffs, TO p.39
         boolean quadveeVehMode = entity instanceof QuadVee 
                 && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
         boolean vehicleAffectedByCliff = entity instanceof Tank 
-                && !entity.isAirborneVTOLorWIGE()
-                && srcHex.hasCliffTopTowards(destHex);
+                && !entity.isAirborneVTOLorWIGE();
         boolean mechAffectedByCliff = entity instanceof Mech 
                 && movementType != EntityMovementType.MOVE_JUMP
                 && !entity.isAero() // LAM
@@ -579,7 +563,7 @@ public class Compute {
         
         // Mechs and Vehicles moving down a cliff
         // QuadVees in vehicle mode ignore PSRs to avoid falls and so are not checked here
-        if (mechAffectedByCliff || vehicleAffectedByCliff         
+        if ((mechAffectedByCliff || vehicleAffectedByCliff)         
                 && !src.equals(dest)
                 && srcHex.hasCliffTopTowards(destHex)
                 ) {

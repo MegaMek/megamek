@@ -888,7 +888,7 @@ public abstract class BotClient extends Client {
             }
 
             // Make sure I'm not stuck in a dead-end.
-            coord.fitness += hasPathToEdge(deployed_ent, board);
+            coord.fitness += calculateEdgeAccessFitness(deployed_ent, board);
             
             if(coord.fitness > highestFitness) {
                 highestFitness = coord.fitness;
@@ -921,12 +921,12 @@ public abstract class BotClient extends Client {
     }
 
     /**
-     * Determines if the given entity has a reasonable path to the "opposite" edge of the board from its
+     * Determines if the given entity has reasonable access to the "opposite" edge of the board from its
      * current position. Returns 0 if this can be accomplished without destroying any terrain, 
      * -50 if this can be accomplished but terrain must be destroyed,
      * -100 if this cannot be accomplished at all
      */
-    private int hasPathToEdge(Entity entity, IBoard board) {
+    private int calculateEdgeAccessFitness(Entity entity, IBoard board) {
         // Flying units can always get anywhere
         if (entity.isAirborne() || entity instanceof VTOL) {
             return 0;

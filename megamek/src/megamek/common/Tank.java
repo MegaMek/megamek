@@ -582,58 +582,59 @@ public class Tank extends Entity {
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
         boolean hexHasRoad =  hex.containsTerrain(Terrains.ROAD);
 
+        // roads allow movement through hexes that you normally couldn't go through
         switch (movementMode) {
             case TRACKED:
                 if (!isSuperHeavy()) {
-                    return (hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad
+                    return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
                                     && !hasFlotationHull && !isAmphibious)
-                            || hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1)
                             || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                            || (hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad;
+                            || ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
                 } else {
-                    return (hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad
+                    return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
                                     && !hasFlotationHull && !isAmphibious)
-                            || hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
             case WHEELED:
                 if (!isSuperHeavy()) {
-                    return hex.containsTerrain(Terrains.WOODS) && !hexHasRoad
-                            || hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad
+                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad)
+                            || (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
                                     && !hasFlotationHull && !isAmphibious)
-                            || hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad
+                            || (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad)
                             || hex.containsTerrain(Terrains.MAGMA)
-                            || hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad
-                            || (hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
+                            || ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.GEYSER) == 2);
                 } else {
-                    return hex.containsTerrain(Terrains.WOODS) && !hexHasRoad
-                            || hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad
+                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad)
+                            || (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
                                     && !hasFlotationHull && !isAmphibious)
-                            || hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad
+                            || (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad)
                             || hex.containsTerrain(Terrains.MAGMA)
-                            || hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.GEYSER) == 2);
                 }
             case HOVER:
                 if (!isSuperHeavy()) {
-                    return hex.containsTerrain(Terrains.WOODS) && !hexHasRoad
-                            || hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad
+                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad)
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                            || (hex.terrainLevel(Terrains.ROUGH) > 1) && !hexHasRoad
-                            || (hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad;
+                            || ((hex.terrainLevel(Terrains.ROUGH) > 1) && !hexHasRoad)
+                            || ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
                 } else {
-                    return hex.containsTerrain(Terrains.WOODS) && !hexHasRoad
-                            || hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad
+                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad)
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
 

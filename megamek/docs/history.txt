@@ -31,6 +31,7 @@ VERSION HISTORY:
 + PR #1946: Fixes and performance improvements for changing tilesets
 + Data: IO Tech Progression Errata.
 + Issue #1983: Implement SirMegaV Buildings and Saxarba Roads for hq_saxarba
++ Issue #1115: Allow saving quirks override for units reduced to no quirks
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.BuildingTarget;
@@ -453,8 +454,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                       final MovePath path,
                                       StringBuilder formula) {
 
-        Entity closest = findClosestEnemy(movingUnit, movingUnit.getPosition(),
-                                          game);
+        Targetable closest = findClosestEnemy(movingUnit, movingUnit.getPosition(),
+                                          game, false);
         Coords toFace = closest == null ?
                         game.getBoard().getCenter() :
                         closest.getPosition();
@@ -482,12 +483,17 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return facingMod;
     }
 
-    // If I need to flee the board, I want to get closer to my home edge.
+    /**
+     * If intentionally attempting to reach some board edge, favor paths that take me closer to it.
+     */
     protected double calculateSelfPreservationMod(Entity movingUnit,
                                                 MovePath path,
                                                 IGame game,
                                                 StringBuilder formula) {
-        if (getOwner().getFallBack() || movingUnit.isCrippled()) {
+        BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner()); 
+        
+        if (behaviorType == BehaviorType.ForcedWithdrawal ||
+                behaviorType == BehaviorType.MoveToDestination) {
             int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(),
                                                        getOwner().getHomeEdge(movingUnit),
                                                        game);
@@ -600,7 +606,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 
                 expectedDamageTaken += friendlyArtilleryDamage;
             }
-            
+
             calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
 
             // If I cannot kick because I am a clan unit and "No physical 
@@ -638,7 +644,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             // airborne aeros on ground maps, as they move incredibly fast
             if (!path.getEntity().isAirborneAeroOnGroundMap()) {
                 // The further I am from a target, the lower this path ranks 
-                // (weighted by Hyper Aggression.
+                // (weighted by Aggression slider).
                 utility -= calculateAggressionMod(movingUnit, pathCopy, game,
                                                   formula);
 
@@ -721,6 +727,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
     protected void calcDamageToStrategicTargets(MovePath path, IGame game, 
             FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
+                
         for (int i = 0; i < fireControlState.getAdditionalTargets().size(); i++) {
             Targetable target = fireControlState.getAdditionalTargets().get(i);
             
@@ -761,7 +768,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
     
     /**
-     * Gives the distance to the closest enemy unit, or zero if none exist
+     * Gives the distance to the closest enemy unit, or -1 if none exist.
+     * The reason being that the closest enemy unit may be 0 away.
      *
      * @param me       Entity who has enemies
      * @param position Coords from which the closest enemy is found
@@ -772,9 +780,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
 
         try {
-            Entity closest = findClosestEnemy(me, position, game);
+            Targetable closest = findClosestEnemy(me, position, game);
             if (closest == null) {
-                return 0;
+                return -1;
             }
             return closest.getPosition().distance(position);
         } finally {

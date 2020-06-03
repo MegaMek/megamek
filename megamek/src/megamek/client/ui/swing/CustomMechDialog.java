@@ -1133,6 +1133,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 String name = panCrewMember[i].getPilotName();
                 String nick = panCrewMember[i].getNickname();
                 Gender gender = panCrewMember[i].getGender();
+                if (gender == Gender.RANDOMIZE) {
+                    gender = entities.get(0).getCrew().getGender(i);
+                }
                 boolean missing = panCrewMember[i].getMissing();
                 int gunnery;
                 int gunneryL;

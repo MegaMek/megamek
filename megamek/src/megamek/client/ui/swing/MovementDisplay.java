@@ -1777,8 +1777,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             Coords moveto = b.getCoords();
             clientgui.bv.drawMovementData(ce(), cmd);
-//            if (!shiftheld) {
-//            }
             if (shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
                 butDone.setText("<html><b>"
                         + Messages.getString("MovementDisplay.Move")

@@ -95,18 +95,18 @@ public class EntityVerifier implements MechSummaryCache.Listener {
      * @return an EntityVerifier with the configuration loaded from XML
      */
     public static EntityVerifier getInstance(final File config) {
-        EntityVerifier ev = null;
+        EntityVerifier ev;
         
         try {
             JAXBContext jc = JAXBContext.newInstance(EntityVerifier.class);
-            
+
             Unmarshaller um = jc.createUnmarshaller();
             InputStream is = new FileInputStream(config);
             ev = (EntityVerifier) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
-        } catch (IOException | JAXBException | SAXException | ParserConfigurationException ex) {
-            System.err.println("Error loading XML for entity verifier: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
-            
+        } catch (Exception e) {
+            System.err.println("Error loading XML for entity verifier: " + e.getMessage()); //$NON-NLS-1$
+            e.printStackTrace();
+
             ev = new EntityVerifier();
         }
         

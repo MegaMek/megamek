@@ -343,9 +343,9 @@ public class GameOptions extends AbstractOptions {
             for (IBasicOption bo : opts.getOptions()) {
                 changedOptions.add(parseOptionNode(bo, print));
             }
-        } catch (IOException | JAXBException | SAXException | ParserConfigurationException ex) {
-            System.err.println("Error loading XML for game options: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Error loading XML for game options: " + e.getMessage()); //$NON-NLS-1$
+            e.printStackTrace();
         }
 
         return changedOptions;

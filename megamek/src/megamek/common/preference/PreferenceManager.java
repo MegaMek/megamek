@@ -121,9 +121,9 @@ public class PreferenceManager {
                     }
                 }
             }
-        } catch (JAXBException | SAXException | ParserConfigurationException ex) {
-            System.err.println("Error loading XML for client settings: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Error loading XML for client settings: " + e.getMessage()); //$NON-NLS-1$
+            e.printStackTrace();
         }
     }
 

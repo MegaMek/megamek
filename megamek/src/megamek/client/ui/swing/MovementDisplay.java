@@ -1777,9 +1777,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             Coords moveto = b.getCoords();
             clientgui.bv.drawMovementData(ce(), cmd);
-            if (!shiftheld) {
-                clientgui.getBoardView().select(b.getCoords());
-            }
+//            if (!shiftheld) {
+//            }
             if (shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
                 butDone.setText("<html><b>"
                         + Messages.getString("MovementDisplay.Move")
@@ -1796,6 +1795,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     //$NON-NLS-1$
                 }
                 return;
+            } else {
+                clientgui.getBoardView().select(b.getCoords());
             }
             if (gear == MovementDisplay.GEAR_RAM) {
                 // check if target is valid

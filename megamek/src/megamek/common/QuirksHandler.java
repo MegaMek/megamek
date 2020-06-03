@@ -452,35 +452,36 @@ public class QuirksHandler {
                     output.write("\t\t" + getOpenTag(QUIRK));
                     output.write(NO_QUIRKS);
                     output.write(getCloseTag(QUIRK) + "\n");
-                }
-                for (QuirkEntry quirk : quirks) {
-                    // Write Weapon Quirk
-                    if (quirk.isWeaponQuirk()) {
-                        output.write("\t\t" + getOpenTag(WEAPON_QUIRK) + "\n");
-                        // Quirk Name
-                        output.write("\t\t\t" + getOpenTag(WEAPON_QUIRK_NAME));
-                        output.write(quirk.getQuirk());
-                        output.write(getCloseTag(WEAPON_QUIRK_NAME) + "\n");
-                        // Location
-                        output.write("\t\t\t" + getOpenTag(LOCATION));
-                        output.write(quirk.getLocation());
-                        output.write(getCloseTag(LOCATION) + "\n");
-                        // Slot
-                        output.write("\t\t\t" + getOpenTag(SLOT));
-                        output.write(quirk.getSlot() + "");
-                        output.write(getCloseTag(SLOT) + "\n");
-                        // Weapon Name
-                        output.write("\t\t\t" + getOpenTag(WEAPON_NAME));
-                        output.write(quirk.getWeaponName());
-                        output.write(getCloseTag(WEAPON_NAME) + "\n");
-                        // Close Tag
-                        output.write("\t\t" + getCloseTag(WEAPON_QUIRK) + "\n");
-                    } else { // Write normal quirk
-                        output.write("\t\t" + getOpenTag(QUIRK));
-                        output.write(quirk.getQuirk());
-                        output.write(getCloseTag(QUIRK) + "\n");
-                    }
-                }               
+                } else {
+                    for (QuirkEntry quirk : quirks) {
+                        // Write Weapon Quirk
+                        if (quirk.isWeaponQuirk()) {
+                            output.write("\t\t" + getOpenTag(WEAPON_QUIRK) + "\n");
+                            // Quirk Name
+                            output.write("\t\t\t" + getOpenTag(WEAPON_QUIRK_NAME));
+                            output.write(quirk.getQuirk());
+                            output.write(getCloseTag(WEAPON_QUIRK_NAME) + "\n");
+                            // Location
+                            output.write("\t\t\t" + getOpenTag(LOCATION));
+                            output.write(quirk.getLocation());
+                            output.write(getCloseTag(LOCATION) + "\n");
+                            // Slot
+                            output.write("\t\t\t" + getOpenTag(SLOT));
+                            output.write(quirk.getSlot() + "");
+                            output.write(getCloseTag(SLOT) + "\n");
+                            // Weapon Name
+                            output.write("\t\t\t" + getOpenTag(WEAPON_NAME));
+                            output.write(quirk.getWeaponName());
+                            output.write(getCloseTag(WEAPON_NAME) + "\n");
+                            // Close Tag
+                            output.write("\t\t" + getCloseTag(WEAPON_QUIRK) + "\n");
+                        } else { // Write normal quirk
+                            output.write("\t\t" + getOpenTag(QUIRK));
+                            output.write(quirk.getQuirk());
+                            output.write(getCloseTag(QUIRK) + "\n");
+                        }
+                    }   
+                }            
                 output.write("\t" + getCloseTag(UNIT) + "\n\n");
             }
             

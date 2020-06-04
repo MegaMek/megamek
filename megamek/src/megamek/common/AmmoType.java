@@ -1360,7 +1360,7 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1373,7 +1373,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_FS,F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         //Armor Piercing is the base ammo type see further down.
         
@@ -1388,7 +1388,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_FS,F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1431,7 +1431,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -1443,7 +1443,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         //Armor Piercing is the base ammo type see further down.
         
@@ -1457,7 +1457,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TO"));
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED,
                 new TechAdvancement(TECH_BASE_CLAN)

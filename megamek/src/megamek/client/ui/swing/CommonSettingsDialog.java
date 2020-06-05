@@ -228,6 +228,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox useSoftCenter;
     private JCheckBox levelhighlight;
     private JCheckBox shadowMap;
+    private JCheckBox hexInclines;
     private JCheckBox mouseWheelZoom;
     private JCheckBox mouseWheelZoomFlip;
 
@@ -791,6 +792,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         mmSymbol.setSelected(gs.getMmSymbol());
         levelhighlight.setSelected(gs.getLevelHighlight());
         shadowMap.setSelected(gs.getShadowMap());
+        shadowMap.setSelected(gs.getUseInclines());
         useSoftCenter.setSelected(gs.getBoolean("SOFTCENTER"));
         entityOwnerColor.setSelected(gs.getEntityOwnerLabelColor());
 
@@ -1202,6 +1204,12 @@ public class CommonSettingsDialog extends ClientDialog implements
                 clientgui.bv.clearHexImageCache();
                 clientgui.bv.repaint();
             }
+        } else if (source.equals(hexInclines)) {
+            guip.setUseInclines(hexInclines.isSelected());
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
         } else if (source.equals(levelhighlight)) {
             guip.setLevelHighlight(levelhighlight.isSelected());
             if ((clientgui != null) && (clientgui.bv != null)) {
@@ -1301,6 +1309,13 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         shadowMap.addItemListener(this);
         row.add(shadowMap);
+        comps.add(row);
+        
+        // Use Incline graphics (hex border highlights/shadows)
+        hexInclines = new JCheckBox(Messages.getString("CommonSettingsDialog.useInclines")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        hexInclines.addItemListener(this);
+        row.add(hexInclines);
         comps.add(row);
         
         // Level Highlight = borders around level changes

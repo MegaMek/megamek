@@ -140,7 +140,7 @@ public class Terrains implements ITerrainFactory {
     //TODO: OPT shadows...
     //TODO: Add gfx option
     //TODO: + no saving of auto terrain
-    //TODO: cliff rules
+    //TODO: + cliff rules
     //TODO: + only remove incline when cliff at the same exit
     //TODO: + add lower 
     //TODO: OPT check: predict graphics when lower and hihger present?
@@ -154,8 +154,8 @@ public class Terrains implements ITerrainFactory {
     //TODO: + Veh (exc VTOL/WIGE) down cliff: DSR, fail: Motive roll, move over; 
     //TODO: + down cliff VTOL/WIGE: no effect at all
     //TODO: + Inf: Forbidden (MoveStep)
-    //TODO: Inf: MovePath MP cost
-    //TODO: Inf: Server, forbidden
+    //TODO: + Inf: MovePath MP cost
+    //TODO: + Inf: Server, forbidden
     //TODO: check quadvee movement over cliffs
     //TODO: hover skidding down cliff
     //TODO: + ordering of PSRs when turning on pavement then walking up a cliff!?
@@ -163,7 +163,7 @@ public class Terrains implements ITerrainFactory {
     //TODO: how to treat roads across cliffs?
     //TODO: + no climbing action of mechs! seems ok
     //TODO: AO shadows only on cliffs and lvl3 incs
-    //TODO: show PSRs as danger (5*) in move paths 
+    //TODO: + show PSRs as danger (5*) in move paths 
     //TODO: WIGE can skid up a cliff
     //TODO: test LAMs
     //TODO: check the first step for danger!? --> another time
@@ -171,6 +171,10 @@ public class Terrains implements ITerrainFactory {
     //TODO: underwater cliffs, naval
     //TODO: Test QuadVees
     //TODO: Test LAMs
+    //TODO: Finding: Climbing action not in the game. Mountain Troops can go up 3 levels but not a 2 lvl cliff. OK.
+    //TODO: Finding: Hover skidding into cliffside works as with other hills. Strange: skids into next hex instead of hitting cliff and remaining in place.
+    //TODO: Finding: Mechs work. Up and down.
+    //TODO: Finding: VTOL works    
 
     /**
      * Keeps track of the different type of terrains that can have exits.

@@ -43,13 +43,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.MegaMekFile;
 
-public class Board implements Serializable, IBoard {
+public class Board implements Serializable, IBoard, IPreferenceChangeListener {
     private static final long serialVersionUID = -5744058872091016636L;
 
     public static final String BOARD_REQUEST_ROTATION = "rotate:";
@@ -578,10 +582,17 @@ public class Board implements Serializable, IBoard {
         }
         addOrRemoveAutoTerrain(hex, Terrains.CLIFF_TOP, correctedCliffTopExits);
         addOrRemoveAutoTerrain(hex, Terrains.CLIFF_BOTTOM, cliffBotExits);
-        addOrRemoveAutoTerrain(hex, Terrains.INCLINE_TOP, inclineTopExits);
-        addOrRemoveAutoTerrain(hex, Terrains.INCLINE_BOTTOM, inclineBotExits);
-        addOrRemoveAutoTerrain(hex, Terrains.INCLINE_HIGH_TOP, highInclineTopExits);
-        addOrRemoveAutoTerrain(hex, Terrains.INCLINE_HIGH_BOTTOM, highInclineBotExits);
+        if (GUIPreferences.getInstance().getUseInclines()) {
+            addOrRemoveAutoTerrain(hex, Terrains.INCLINE_TOP, inclineTopExits);
+            addOrRemoveAutoTerrain(hex, Terrains.INCLINE_BOTTOM, inclineBotExits);
+            addOrRemoveAutoTerrain(hex, Terrains.INCLINE_HIGH_TOP, highInclineTopExits);
+            addOrRemoveAutoTerrain(hex, Terrains.INCLINE_HIGH_BOTTOM, highInclineBotExits);
+        } else {
+            hex.removeTerrain( Terrains.INCLINE_TOP);
+            hex.removeTerrain(Terrains.INCLINE_BOTTOM);
+            hex.removeTerrain(Terrains.INCLINE_HIGH_TOP);
+            hex.removeTerrain(Terrains.INCLINE_HIGH_BOTTOM);
+        }
     }
     
     /** 
@@ -1944,6 +1955,17 @@ public class Board implements Serializable, IBoard {
             annotations.remove(c);
         } else {
             annotations.put(c, a);
+        }
+    }
+
+    /** 
+     * When incline graphics are toggled, the board needs to rebuild or
+     * remove the automatically handled incline terrains 
+     */
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(GUIPreferences.INCLINES)) {
+            initializeAll(new StringBuffer());
         }
     }
 }

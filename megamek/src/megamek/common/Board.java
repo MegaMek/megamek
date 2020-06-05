@@ -48,7 +48,6 @@ import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
-import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.MegaMekFile;
@@ -1959,6 +1958,24 @@ public class Board implements Serializable, IBoard, IPreferenceChangeListener {
     }
 
     /** 
+     * Sets a tileset theme for all hexes of the board. 
+     * Passing null as newTheme resets the theme to the 
+     * theme specified in the board file. 
+     */ 
+    public void setTheme(String newTheme) {
+        boolean reset = newTheme == null;
+        
+        for (int c = 0; c < width * height; c++) {
+            if (reset) {
+                data[c].resetTheme();
+            } else {
+                data[c].setTheme(newTheme);
+            }
+        }
+        processBoardEvent(new BoardEvent(this, null, BoardEvent.BOARD_CHANGED_ALL_HEXES));
+    }
+
+    /** 
      * When incline graphics are toggled, the board needs to rebuild or
      * remove the automatically handled incline terrains 
      */
@@ -1968,4 +1985,5 @@ public class Board implements Serializable, IBoard, IPreferenceChangeListener {
             initializeAll(new StringBuffer());
         }
     }
+    
 }

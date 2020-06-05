@@ -4415,11 +4415,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     }
                 }
 
-                boolean hasQuirks = true;
-                for (Entity ent : entities) {
-                    hasQuirks &= (ent.countQuirks() > 0) || (ent.countWeaponQuirks() > 0);
-                }
-                if (isQuirksEnabled && hasQuirks) {
+                if (isQuirksEnabled) {
                     menuItem = new JMenuItem("Save Quirks for Chassis");
                     menuItem.setActionCommand("SAVE_QUIRKS_ALL");
                     menuItem.addActionListener(this);

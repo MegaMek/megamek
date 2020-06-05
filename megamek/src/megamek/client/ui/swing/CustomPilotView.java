@@ -56,7 +56,7 @@ public class CustomPilotView extends JPanel {
     private static final long serialVersionUID = 345126674612500365L;
 
     private final Entity entity;
-    private Gender gender;
+    private Gender gender = Gender.RANDOMIZE;
 
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMechDialog.chkMissing"));
     private final JTextField fldName = new JTextField(20);

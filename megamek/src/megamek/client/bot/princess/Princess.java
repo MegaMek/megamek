@@ -34,20 +34,24 @@ import megamek.client.bot.PhysicalCalculator;
 import megamek.client.bot.PhysicalOption;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
+import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.EjectedCrew;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
+import megamek.common.HexTarget;
 import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
+import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.Minefield;
@@ -73,6 +77,8 @@ import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.BoardClusterTracker;
+import megamek.common.pathfinder.PathDecorator;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
@@ -91,6 +97,8 @@ public class Princess extends BotClient {
     // path rankers and fire controls, organized by their explicitly given types to avoid confusion
     private HashMap<PathRankerType, IPathRanker> pathRankers;
     private HashMap<FireControlType, FireControl> fireControls;
+    private UnitBehavior unitBehaviorTracker;
+    private BoardClusterTracker boardClusterTracker;
     
     private FireControlState fireControlState;
     private PathRankerState pathRankerState;
@@ -267,8 +275,7 @@ public class Princess extends BotClient {
         return getBehaviorSettings().isForcedWithdrawal();
     }
 
-    private void setFleeBoard(final boolean fleeBoard,
-                              @SuppressWarnings("SameParameterValue") final String reason) {
+    private void setFleeBoard(final boolean fleeBoard, final String reason) {
         log(getClass(), "setFleeBoard(boolean, String)",
             LogLevel.DEBUG,
             "Setting Flee Board " + fleeBoard + " because: " + reason);
@@ -286,6 +293,10 @@ public class Princess extends BotClient {
     
     Precognition getPrecognition() {
         return precognition;
+    }
+    
+    public BoardClusterTracker getClusterTracker() {
+        return boardClusterTracker;
     }
     
     public int getMaxWeaponRange(Entity entity) {
@@ -376,6 +387,10 @@ public class Princess extends BotClient {
     FireControl getFireControl(FireControlType fireControlType) {
         return fireControls.get(fireControlType);        
     }
+    
+    public UnitBehavior getUnitBehaviorTracker() {
+        return unitBehaviorTracker;
+    }
 
     double getDamageAlreadyAssigned(final Targetable target) {
         final Integer targetId = target.getTargetId();
@@ -409,6 +424,14 @@ public class Princess extends BotClient {
 
     public Set<Integer> getPriorityUnitTargets() {
         return getBehaviorSettings().getPriorityUnitTargets();
+    }
+    
+    public Targetable getAppropriateTarget(Coords strategicTarget) {
+        if (null == game.getBoard().getBuildingAt(strategicTarget)) {
+            return new HexTarget(strategicTarget, Targetable.TYPE_HEX_CLEAR);
+        } else {
+            return new BuildingTarget(strategicTarget, game.getBoard(), false);
+        }
     }
 
     @Override
@@ -1321,10 +1344,7 @@ public class Princess extends BotClient {
                 }
             }
 
-            final List<MovePath> paths =
-                    getPrecognition().getPathEnumerator()
-                                     .getUnitPaths()
-                                     .get(entity.getId());
+            final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
 
             if (null == paths) {
                 log(getClass(), METHOD_NAME, LogLevel.WARNING,
@@ -1464,6 +1484,101 @@ public class Princess extends BotClient {
             methodEnd(getClass(), METHOD_NAME);
         }
     }
+    
+    /**
+     * Function with side effects. Retrieves the move path collection we want
+     * the entity to consider. Sometimes it's the standard "circle", sometimes it's pruned long-range movement paths
+     */
+    public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover, boolean forceMoveToContact) {
+        // if the mover can't move, then there's nothing for us to do here, let's cut out.
+        if(mover.isImmobile()) {
+            return Collections.emptyList();
+        }
+        
+        BehaviorType behavior = forceMoveToContact ? BehaviorType.MoveToContact : unitBehaviorTracker.getBehaviorType(mover, this);
+        boardClusterTracker.clearMovableAreas();
+        boardClusterTracker.updateMovableAreas(mover);
+        
+        // basic idea: 
+        // if we're "in battle", just use the standard set of move paths
+        // if we're trying to get somewhere
+        //  - sort all long range paths by "mp cost" (actual MP + how long it'll take to do terrain leveling)
+        //  - set the first terrain/building as 'strategic target' if the shortest path requires terrain leveling
+        //  - if the first strategic target is in LOS at the pruned end of the shortest path,  
+        //      then we actually return the paths for "engaged" behavior
+        //  - if we're unable to get where we're going, use standard set of move paths
+        
+        switch(behavior) {
+        case Engaged:
+            return getPrecognition().getPathEnumerator()
+                    .getUnitPaths()
+                    .get(mover.getId());
+        case MoveToDestination:
+        case MoveToContact:
+        case ForcedWithdrawal:
+        default:
+            List<BulldozerMovePath> bulldozerPaths = getPrecognition().getPathEnumerator().
+                getLongRangePaths().get(mover.getId());
+            
+            // for whatever reason (most likely it's wheeled), there are no long-range paths for this unit, 
+            // so just have it mill around in place as usual. Also set the behavior to "engaged"
+            // so it doesn't hump the walls due to "self preservation mods"
+            if ((bulldozerPaths == null) || (bulldozerPaths.size() == 0)) {
+                getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.NoPathToDestination);
+                return getPrecognition().getPathEnumerator()
+                        .getUnitPaths()
+                        .get(mover.getId());
+            }
+            
+            Collections.sort(bulldozerPaths, new BulldozerMovePath.MPCostComparator());
+            
+            // if the quickest route needs some terrain adjustments, let's get working on that
+            Targetable levelingTarget = null;
+            
+            if (bulldozerPaths.get(0).needsLeveling()) {
+                levelingTarget = getAppropriateTarget(bulldozerPaths.get(0).getCoordsToLevel().get(0));
+                getFireControlState().getAdditionalTargets().add(levelingTarget);
+                sendChat("Hex " + levelingTarget.getPosition().toFriendlyString() + " impedes route to destination, targeting for clearing.", 
+                        LogLevel.INFO);
+            }
+            
+            // if any of the long range paths, pruned, are within LOS of leveling coordinates, then we're actually
+            // just going to go back to the standard unit paths
+            List<MovePath> prunedPaths = new ArrayList<>();
+            for (BulldozerMovePath movePath : bulldozerPaths) {
+                BulldozerMovePath prunedPath = movePath.clone();
+                prunedPath.clipToPossible();
+                
+                if(levelingTarget != null) {
+                    LosEffects los = LosEffects.calculateLos(game, mover.getId(), levelingTarget, 
+                            prunedPath.getFinalCoords(), levelingTarget.getPosition(), false);
+                    
+                    // break out of this loop, we can get to the thing we're trying to level this turn, so let's
+                    // use normal movement routines to move into optimal position to blow it up
+                    // Also set the behavior to "engaged"
+                    // so it doesn't hump walls due to "self preservation mods"
+                    if(los.canSee()) {
+                        getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
+                        return getPrecognition().getPathEnumerator()
+                                .getUnitPaths()
+                                .get(mover.getId());
+                    }
+                }
+                
+                // add the pruned path to the list of paths we'll be returning
+                prunedPaths.add(prunedPath);
+                
+                // also return some paths that go a little slower than max speed
+                // in case the faster path would force an unwanted PSR or MASC check 
+                for(MovePath childBMP : PathDecorator.decoratePath(prunedPath)) {
+                    prunedPaths.add(childBMP);
+                }
+            }
+            
+            return prunedPaths;
+        }
+        
+    }
 
     private void checkForDishonoredEnemies() {
         final String METHOD_NAME = "checkForDishonoredEnemies()";
@@ -1552,19 +1667,20 @@ public class Princess extends BotClient {
         try {
             initialize();
             checkMoral();
+            unitBehaviorTracker.clear();
 
             // reset strategic targets
             fireControlState.setAdditionalTargets(new ArrayList<>());
             for (final Coords strategicTarget : getStrategicBuildingTargets()) {
                 if (null == game.getBoard().getBuildingAt(strategicTarget)) {
+                    fireControlState.getAdditionalTargets().add(
+                            getAppropriateTarget(strategicTarget));
                     sendChat("No building to target in Hex " +
                              strategicTarget.toFriendlyString() +
-                             ", ignoring.", LogLevel.INFO);
+                             ", targeting for clearing.", LogLevel.INFO);
                 } else {
                     fireControlState.getAdditionalTargets().add(
-                            new BuildingTarget(strategicTarget,
-                                               game.getBoard(),
-                                               false));
+                            getAppropriateTarget(strategicTarget));
                     sendChat("Building in Hex " +
                              strategicTarget.toFriendlyString() +
                              " designated strategic target.", LogLevel.INFO);
@@ -1580,9 +1696,7 @@ public class Princess extends BotClient {
                     final Coords coords = bldgCoords.nextElement();
                     for (final Entity entity : game.getEntitiesVector(coords,
                                                                       true)) {
-                        final BuildingTarget bt = new BuildingTarget(coords,
-                                                                     game.getBoard(),
-                                                                     false);
+                        final Targetable bt = getAppropriateTarget(coords);
                         if (isEnemyGunEmplacement(entity, coords)) {
                             fireControlState.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex " +
@@ -1636,6 +1750,8 @@ public class Princess extends BotClient {
             initializePathRankers();
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
+            unitBehaviorTracker = new UnitBehavior();
+            boardClusterTracker = new BoardClusterTracker();
 
             // Pick up any turrets and add their buildings to the strategic 
             // targets list.
@@ -2018,10 +2134,11 @@ public class Princess extends BotClient {
         
         Entity movingEntity = path.getEntity();
         Coords pathEndpoint = path.getFinalCoords();
-        Entity closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame());
+        Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame(), false);
 
         // if there are no enemies on the board, then we're not unloading anything.
-        if(null == closestEnemy) {
+        // infantry can't clear hexes, so let's not use th
+        if((null == closestEnemy) || (closestEnemy.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             return;
         }
         

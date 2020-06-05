@@ -1388,7 +1388,6 @@ public class FireControl {
         final int targetHP = Compute.getTargetTotalHP(owner.getGame(), target);
         final double damageFraction = (existingDamage + expectedDamage) / ((double) targetHP);
         final double previousDamageFraction = existingDamage / ((double) targetHP);
-        //double currentDamageFraction = expectedDamage / ((double)targetHP);
 
         //Do not shoot at units we already expect to deal more than their total HP of damage to!
         if (1.0 <= previousDamageFraction) {
@@ -1402,6 +1401,7 @@ public class FireControl {
             // damage to them normally).
         } else if (0.5 > damageFraction
                    || Targetable.TYPE_BUILDING == target.getTargetType()
+                   || Targetable.TYPE_HEX_CLEAR == target.getTargetType()
                    || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry
                    || owner.getGame().getEntity(target.getTargetId()) instanceof BattleArmor) {
             return 0;
@@ -2455,8 +2455,8 @@ public class FireControl {
      * @param useExtremeRange Is the extreme range optional rule in effect?
      * @return The most damage done at that range.
      */
-    // todo cluster and other variable damage.
-    double getMaxDamageAtRange(final Entity shooter,
+    // todo: cluster and other variable damage.
+    public static double getMaxDamageAtRange(final Entity shooter,
                                final int range,
                                final boolean useExtremeRange,
                                final boolean useLOSRange) {
@@ -2469,8 +2469,23 @@ public class FireControl {
                                                        weaponType.getRanges(weapon),
                                                        useExtremeRange,
                                                        useLOSRange);
-            if ((RangeType.RANGE_OUT != bracket) && (0 < weaponType.getDamage())) {
-                maxDamage += weaponType.getDamage();
+            // if the weapon has been disabled or is out of ammo, don't count it
+            if(weapon.isCrippled()) {
+                continue;
+            }
+            
+            int weaponDamage = weaponType.getDamage();
+            
+            // just a ball park estimate of missile and/or other cluster damage
+            // only a little over half of a cluster will generally hit
+            // but some cluster munitions do more than 1 point of damage per individual hit
+            // still better than just discounting them completely.
+            if(weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                weaponDamage = weaponType.getRackSize();
+            }
+            
+            if ((RangeType.RANGE_OUT != bracket) && (0 < weaponDamage)) {
+                maxDamage += weaponDamage;
             }
         }
 

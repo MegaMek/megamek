@@ -18,6 +18,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.bot.princess.Princess;
+import megamek.client.bot.princess.BotGeometry.HexLine;
+import megamek.common.logging.LogLevel;
 import megamek.common.util.HashCodeUtil;
 
 /**
@@ -216,6 +219,50 @@ public class Coords implements Serializable {
      */
     public int direction(Coords d) {
         return (int) Math.round(radian(d) / HEXSIDE) % 6;
+    }
+    
+    /**
+     * Returns an approximate direction in which another coordinate lies; 
+     * 0 if the coordinates are equal
+     */
+    public int approximateDirection(Coords second, int initialDirection, int previousDirection) {
+        if(this.equals(second)) {
+            return 0;
+        }
+        
+        int direction = initialDirection;
+        
+        HexLine startLine = new HexLine(this, direction, null);
+        int directionIncrement = 0;
+        int pointJudgement = startLine.judgePoint(second);
+        if(pointJudgement == 0) {
+            // we are either directly above or below
+            switch(direction) {
+            case 0:
+                direction = (getY() > second.getY()) ? 0 : 3;
+                break;
+            case 3:
+                direction = (getY() < second.getY()) ? 0 : 3;
+                break;
+            }
+            return direction;
+        } else if(pointJudgement < 0) {
+            directionIncrement = 5;
+        } else if(pointJudgement > 0) {
+            directionIncrement = 1;
+        }
+        
+        int newDirection = (initialDirection + directionIncrement) % 6;
+        if(newDirection == previousDirection) {
+            return newDirection;
+        } else {
+            return approximateDirection(second, newDirection, initialDirection);
+        }
+        
+        // draw hexline in "direction".
+        // if dest is on hexline (judgePoint == 0), destDir = "direction"
+        // if judgepoint < 0, repeat with hexline in (direction - 1) % 6
+        // if judgepoint > 0, repeat with hexline in (direction + 1) % 6
     }
 
     /**

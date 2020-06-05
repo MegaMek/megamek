@@ -59,6 +59,7 @@ import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -163,6 +164,8 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.BoardClusterTracker;
+import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -238,7 +241,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Font font_elev = FONT_9;
     private Font font_minefield = FONT_12;
 
-    IGame game;
+    public final IGame game;
     ClientGUI clientgui;
 
     private Dimension boardSize;
@@ -1386,10 +1389,32 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // debugging method that renders the bounding box of a unit's movement envelope.
+        //renderClusters((Graphics2D) g);
         //renderMovementBoundingBox((Graphics2D) g);
         //renderDonut(g, new Coords(10, 10), 2);
+        //renderApproxHexDirection((Graphics2D) g);
     }
 
+    /**
+     * Debugging method that renders a hex in the approximate direction 
+     * from the selected entity to the selected hex, of both exist.
+     * @param g Graphics object on which to draw.
+     */
+    @SuppressWarnings("unused")
+    private void renderApproxHexDirection(Graphics2D g) {
+        if(selectedEntity == null || selected == null) {
+            return;
+        }
+        
+        int direction = selectedEntity.getPosition().approximateDirection(selected, 0, 0);
+        
+        Coords donutCoords = selectedEntity.getPosition().translated(direction);
+        
+        Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
+        p.translate(HEX_W  / 2, HEX_H  / 2);
+        drawHexBorder(g, p, Color.BLUE, 0, 6);
+    }
+    
     /**
      * Debugging method that renders the bounding hex of a unit's movement envelope.
      * Warning: very slow when rendering the bounding hex for really fast units.
@@ -1437,6 +1462,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Debugging method that renders a hex donut around the given coordinates, with the given radius.
      * @param g Graphics object on which to draw.
      */
+    @SuppressWarnings("unused")
     private void renderDonut(Graphics2D g, Coords coords, int radius) {
         Set<Coords> donut = BotGeometry.getHexDonut(coords, radius);
 
@@ -1444,6 +1470,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
             p.translate(HEX_W  / 2, HEX_H  / 2);
             drawHexBorder(g, p, Color.PINK, 0, 6);
+        }
+    }
+    
+    /**
+     * Debugging method that renders a obnoxious pink lines around hexes in "Board Clusters"
+     * @param g Graphics object on which to draw.
+     */
+    @SuppressWarnings("unused")
+    private void renderClusters(Graphics2D g) {
+        BoardClusterTracker bct = new BoardClusterTracker();
+        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false);
+        
+        for(BoardCluster cluster : clusterMap.values().stream().distinct().collect(Collectors.toList())) {
+            for(Coords coords : cluster.contents) {
+                Point p = getCentreHexLocation(coords.getX(), coords.getY(), true);
+                p.translate(HEX_W  / 2, HEX_H  / 2);
+                drawHexBorder(g, p, Color.PINK, 0, 6);
+            }
         }
     }
 
@@ -5077,6 +5121,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void boardNewBoard(BoardEvent b) {
         updateBoard();
         clearHexImageCache();
+        clearShadowMap();
+        repaint();
     }
 
     /*
@@ -5085,36 +5131,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * @see
      * megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
-    public synchronized void boardChangedHex(BoardEvent b) {
-        ArrayList<Coords> cArray = new ArrayList<>();
-        if (game.getBoard().contains(b.getCoords()))
-            cArray.add(b.getCoords());
+    public void boardChangedHex(BoardEvent b) {
+        hexImageCache.remove(b.getCoords());
         // Also repaint the surrounding hexes because of shadows, border etc.
-        for (int dir: allDirections) 
-            if (game.getBoard().contains(b.getCoords().translated(dir)))
-                cArray.add(b.getCoords().translated(dir));
-
-        for (Coords c: cArray) {
-            hexImageCache.remove(c);
-            IHex hex = game.getBoard().getHex(c);
-            tileManager.clearHex(hex);
-            // Don't wait in the board editor because many hex changes 
-            // makes this very slow 
-            if (clientgui != null) {
-                tileManager.waitForHex(hex);
-            }
-            clearShadowMap();
-            // Maybe have to set the hexes' theme.  Null clientgui implies board editor - don't mess with theme
-            if ((selectedTheme != null) && !selectedTheme.equals("(Original Theme)") && (clientgui != null)) {
-                if (selectedTheme.equals("(No Theme)") && (hex.getTheme() != null) && !hex.getTheme().equals("")) {
-                    hex.setTheme("");
-                    game.getBoard().setHex(c, hex);
-                } else if (!selectedTheme.equals(hex.getTheme())) {
-                    hex.setTheme(selectedTheme);
-                    game.getBoard().setHex(c, hex);
-                }
-            }
+        for (int dir: allDirections) { 
+            hexImageCache.remove(b.getCoords().translated(dir));
         }
+        clearShadowMap();
         repaint();
     }
 
@@ -6667,22 +6690,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (selectedTheme == null) {
             return;
+        } else if (selectedTheme.equals("(Original Theme)")) {
+            selectedTheme = null;
+        } else if (selectedTheme.equals("(No Theme)")) {
+            selectedTheme = "";
         }
-        if (selectedTheme.equals("(Original Theme)")) {
-            for (Coords c: allBoardHexes()) {
-                IHex hex = board.getHex(c);
-                hex.resetTheme();
-                board.setHex(c, hex);
-            }
-
-        } else {
-            for (Coords c: allBoardHexes()) {
-                IHex hex = board.getHex(c);
-                hex.setTheme(selectedTheme.equals("(No Theme)")?
-                        "":selectedTheme);
-                board.setHex(c, hex);
-            }
-        }
+        
+        board.setTheme(selectedTheme);
     }
 
     private Image getBoardBackgroundHexImage(Coords c, IHex hex) {

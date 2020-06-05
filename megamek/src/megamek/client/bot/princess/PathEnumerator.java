@@ -26,14 +26,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.Aero;
+import megamek.common.BulldozerMovePath;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.MovePath;
+import megamek.common.OffBoardDirection;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.Targetable;
 import megamek.common.logging.LogLevel;
 import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
@@ -41,10 +45,13 @@ import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.AeroLowAltitudePathFinder;
 import megamek.common.pathfinder.AeroSpacePathFinder;
+import megamek.common.pathfinder.BoardEdgePathFinder;
+import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.MovePathFinder;
 import megamek.common.pathfinder.NewtonianAerospacePathFinder;
+import megamek.common.pathfinder.PathDecorator;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.pathfinder.SpheroidPathFinder;
 
@@ -53,6 +60,7 @@ public class PathEnumerator {
     private final Princess owner;
     private final IGame game;
     private final Map<Integer, List<MovePath>> unitPaths = new ConcurrentHashMap<>();
+    private final Map<Integer, List<BulldozerMovePath>> longRangePaths = new ConcurrentHashMap<>();
     private final Map<Integer, ConvexBoardArea> unitMovableAreas = new ConcurrentHashMap<>();
     private final Map<Integer, Set<CoordFacingCombo>> unitPotentialLocations = new ConcurrentHashMap<>();
     private final Map<Integer, CoordFacingCombo> lastKnownLocations = new ConcurrentHashMap<>();
@@ -67,33 +75,9 @@ public class PathEnumerator {
         this.game = game;
     }
 
-    /**
-     * an entity and the paths it might take
-     */
-    /*
-     * public class PathEnumeratorEntityPaths { public
-     * PathEnumeratorEntityPaths(Entity e,ArrayList<MovePath> p) { entity=e;
-     * paths=p; } Entity entity; ArrayList<MovePath> paths; };
-     */
     private Princess getOwner() {
         return owner;
     }
-
-    /*
-     * //moved to BotGeometry //This is a list of all possible places on the map
-     * an entity could end up //the structure is <EntityId, HasSet< places they
-     * can move > > public class CoordFacingCombo { CoordFacingCombo() {};
-     * CoordFacingCombo(MovePath p) { coords=p.getFinalCoords();
-     * facing=p.getFinalFacing(); } CoordFacingCombo(Coords c,int f) { coords=c;
-     * facing=f; } CoordFacingCombo(Entity e) { coords=e.getPosition();
-     * facing=e.getFacing(); } Coords coords; int facing;
-     *
-     * @Override public boolean equals(Object o) { CoordFacingCombo
-     * c=(CoordFacingCombo)o; if(!coords.equals(c.coords)) return false;
-     * if(!(facing==c.facing)) return false; return true; }
-     *
-     * @Override public int hashCode() { return coords.hashCode()*6+facing; } }
-     */
 
     void clear() {
         final String METHOD_NAME = "clear()";
@@ -102,6 +86,7 @@ public class PathEnumerator {
             getUnitPaths().clear();
             getUnitPotentialLocations().clear();
             getLastKnownLocations().clear();
+            getLongRangePaths().clear();
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
@@ -193,6 +178,7 @@ public class PathEnumerator {
 
             // Clear out any already calculated paths.
             getUnitPaths().remove(mover.getId());
+            getLongRangePaths().remove(mover.getId());
 
             // Start constructing the new list of paths.
             List<MovePath> paths = new ArrayList<>();
@@ -309,6 +295,9 @@ public class PathEnumerator {
                     }
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));
+                
+                // generate long-range paths appropriate to the bot's current state
+                updateLongRangePaths(mover);
             }
 
             // Update our locations and add the computed paths.
@@ -324,7 +313,65 @@ public class PathEnumerator {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
-
+    
+    /**
+     * Worker function that updates the long-range path collection for a particular entity
+     */
+    private void updateLongRangePaths(final Entity mover) {
+        // don't bother doing this if the entity can't move anyway
+        // or if it's not one of mine
+        // or if I've already moved it
+        if((mover.getWalkMP() == 0) ||
+                ((getOwner().getLocalPlayer() != null) && (mover.getOwnerId() != getOwner().getLocalPlayer().getId())) || 
+                !mover.isSelectableThisTurn()) {
+            return;
+        }
+        
+        DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
+        
+        // where are we going?
+        Set<Coords> destinations = new HashSet<Coords>();
+        // if we're going to an edge or can't see anyone, generate long-range paths to the opposite edge
+        // 
+        switch(getOwner().getUnitBehaviorTracker().getBehaviorType(mover, getOwner())) {
+            case ForcedWithdrawal:
+            case MoveToDestination:
+                destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover), true);
+                break;
+            case MoveToContact:
+                // basically, we're translating the value produced by finding
+                // the Board.START_X direction into a cardinal edge
+                CardinalEdge oppositeEdge = 
+                    CardinalEdge.getCardinalEdge(OffBoardDirection.translateBoardStart(BoardEdgePathFinder.determineOppositeEdge(mover)).getValue());
+                destinations = getOwner().getClusterTracker().getDestinationCoords(mover, oppositeEdge, true);
+                break;
+            default:
+                for(Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {
+                    destinations.add(target.getPosition());
+                    // we can easily shoot at an entity from 
+                    destinations.addAll(target.getPosition().allAdjacent());
+                }
+                break;
+        }
+        
+        if(!getLongRangePaths().containsKey(mover.getId())) {
+            getLongRangePaths().put(mover.getId(), new ArrayList<>());
+        }
+        
+        // calculate a ground-bound long range path
+        BulldozerMovePath bmp = dpf.findPathToCoords(mover, destinations);
+        
+        if(bmp != null) {
+            getLongRangePaths().get(mover.getId()).add(bmp);
+        }
+        
+        // calculate a jumping long range path
+        BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, true); 
+        if(jmp != null) {
+            getLongRangePaths().get(mover.getId()).add(jmp);
+        }
+    }
+    
     private void adjustPathsForBridges(List<MovePath> paths) {
         if (!worryAboutBridges()) {
             return;
@@ -427,6 +474,10 @@ public class PathEnumerator {
     			path.toString() + ":" + whyNot);
     }
 
+    protected Map<Integer, List<BulldozerMovePath>> getLongRangePaths() {
+        return longRangePaths;
+    }
+    
     protected Map<Integer, List<MovePath>> getUnitPaths() {
         return unitPaths;
     }

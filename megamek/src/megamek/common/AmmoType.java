@@ -1388,7 +1388,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_FS,F_LC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"374,TO"));
         
         munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1457,7 +1457,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"374,TO"));
         
         munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED,
                 new TechAdvancement(TECH_BASE_CLAN)

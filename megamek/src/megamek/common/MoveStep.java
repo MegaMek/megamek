@@ -3069,7 +3069,7 @@ public class MoveStep implements Serializable {
             mp += 2;
         }
         
-        // WIGEs spend one extra MP to ascend a cliff
+        // WIGEs spend one extra MP to ascend a sheer cliff, TO p.39
         if (entity.getMovementMode() == EntityMovementMode.WIGE 
                 && distance > 0 
                 && destHex.hasCliffTopTowards(srcHex)
@@ -3364,49 +3364,37 @@ public class MoveStep implements Serializable {
             }
         }
         
-        // Upward Sheer Cliffs is forbidden for vehicles exc. VTOL, WIGE
-//        boolean vehicleMovement = (entity instanceof Tank) 
-//                && !entity.isAirborneVTOLorWIGE() 
-//                && !entity.isNaval(); 
-//        boolean quadveeMovement = (entity instanceof QuadVee) 
-//                && (getMovementMode() == EntityMovementMode.WHEELED
-//                || getMovementMode() == EntityMovementMode.TRACKED);
-//        if ((vehicleMovement || quadveeMovement) 
-//                && (destAlt - srcAlt > 0)
-//                && destHex.hasCliffTopTowards(srcHex)
-////                && destHex.containsTerrain(Terrains.CLIFF_TOP)
-////                && destHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
-////                && ((destHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << dest.direction(src))) != 0) 
-//                && (!src.equals(dest))
-//                && !isPavementStep()) {
-//            return false;
-//        }
-        
         // Sheer Cliffs, TO p.39
         boolean vehicleAffectedByCliff = entity instanceof Tank 
                 && !entity.isAirborneVTOLorWIGE();
+        boolean quadveeVehMode = entity instanceof QuadVee 
+                && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
         int stepHeight = destAlt - srcAlt;
         // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
+        // Everything that does not have a 1 or 2 level drop shouldn't be handled as a cliff
         boolean isUpCliff = !src.equals(dest)
                 && destHex.hasCliffTopTowards(srcHex)
                 && (stepHeight == 1 || stepHeight == 2);
         boolean isDownCliff = !src.equals(dest) 
                 && srcHex.hasCliffTopTowards(destHex)
-                && (stepHeight == 1 || stepHeight == 2);
+                && (stepHeight == -1 || stepHeight == -2);
         
         // For vehicles exc. VTOL, WIGE, upward Sheer Cliffs is forbidden
-        if (vehicleAffectedByCliff && isUpCliff) {
+        // QuadVees in vehicle mode drive as vehicles, IO p.133
+        if ((vehicleAffectedByCliff || quadveeVehMode) 
+                && isUpCliff) {
             return false;
         }
 
         // For Infantry, up or down sheer cliffs requires a climbing action 
-        // except for Mountain Troops across a level 1 cliff
-        if (entity instanceof Infantry && 
-                (isUpCliff || isDownCliff)) {
+        // except for Mountain Troops across a level 1 cliff.
+        // Climbing actions do not seem to be implemented, so Infantry cannot
+        // cross sheer cliffs at all except for Mountain Troops across a level 1 cliff.
+        if (entity instanceof Infantry 
+                && (isUpCliff || isDownCliff)) {
 
             boolean isMountainTroop = ((Infantry)entity).hasSpecialization(Infantry.MOUNTAIN_TROOPS);
-            if (type != MoveStepType.CLIMB_MODE_ON
-                    && (!isMountainTroop || stepHeight == 2) ) {
+            if (!isMountainTroop || stepHeight == 2) {
                 return false;
             }
         }

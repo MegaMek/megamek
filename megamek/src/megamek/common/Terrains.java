@@ -169,6 +169,8 @@ public class Terrains implements ITerrainFactory {
     //TODO: check the first step for danger!? --> another time
     //TODO: REMOVE THE AUTOMATIC FAILS FROM SERVER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //TODO: underwater cliffs, naval
+    //TODO: Test QuadVees
+    //TODO: Test LAMs
 
     /**
      * Keeps track of the different type of terrains that can have exits.

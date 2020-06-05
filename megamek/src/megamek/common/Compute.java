@@ -556,32 +556,28 @@ public class Compute {
                 && !entity.isAirborneVTOLorWIGE();
         boolean mechAffectedByCliff = entity instanceof Mech 
                 && movementType != EntityMovementType.MOVE_JUMP
-                && !entity.isAero() // LAM
-                && !quadveeVehMode;
-        int stepHeight = (srcElevation + srcHex.getLevel())
-                - (destElevation + destHex.getLevel());
-        
-        // Mechs and Vehicles moving down a cliff
-        // QuadVees in vehicle mode ignore PSRs to avoid falls and so are not checked here
-        if ((mechAffectedByCliff || vehicleAffectedByCliff)         
-                && !src.equals(dest)
-                && srcHex.hasCliffTopTowards(destHex)
-                ) {
-            // Cliffs should only exist towards 1/2 level drops, check just to make sure
-            if (stepHeight == 1 || stepHeight == 2) {
-                return true;
-            }
-        }
-        
-        // Mechs moving up a cliff
-        if (mechAffectedByCliff          
-                && !src.equals(dest)
+                && !entity.isAero(); // LAM
+        int stepHeight = destElevation + destHex.getLevel() - (srcElevation + srcHex.getLevel());
+        // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
+        // Everything that does not have a 1 or 2 level drop shouldn't be handled as a cliff
+        boolean isUpCliff = !src.equals(dest)
                 && destHex.hasCliffTopTowards(srcHex)
-                ) {
-            // Cliffs should only exist towards 1/2 level drops, check just to make sure
-            if (stepHeight == -1 || stepHeight == -2) {
-                return true;
-            }
+                && (stepHeight == 1 || stepHeight == 2);
+        boolean isDownCliff = !src.equals(dest) 
+                && srcHex.hasCliffTopTowards(destHex)
+                && (stepHeight == -1 || stepHeight == -2);
+
+        // Mechs and Vehicles moving down a cliff
+        // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133 
+        if ((mechAffectedByCliff || vehicleAffectedByCliff) 
+                && !quadveeVehMode
+                && isDownCliff) {
+            return true;
+        }
+
+        // Mechs moving up a cliff
+        if (mechAffectedByCliff && !quadveeVehMode && isUpCliff) {
+            return true;
         }
 
         // Check for skid. Please note, the skid will be rolled on the

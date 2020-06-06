@@ -1199,6 +1199,7 @@ public class MovePath implements Cloneable, Serializable {
 
         pf.run(this.clone());
         MovePath finPath = pf.getComputedPath(dest);
+	// this can be used for debugging the "destruction aware pathfinder"
         //MovePath finPath = calculateDestructionAwarePath(dest);
 
         if (timeoutCondition.timeoutEngaged || finPath == null) {
@@ -1839,8 +1840,8 @@ public class MovePath implements Cloneable, Serializable {
      */
     public MovePath calculateDestructionAwarePath(Coords dest) {
         // code that's useful to test the destruction-aware pathfinder
-        // remove when code review and testing complete
         DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
+	// the destruction aware pathfinder takes either a CardinalEdge or an explicit set of coordinates
         //Set<Coords> destinationSet = new HashSet<Coords>();
         //destinationSet.add(dest);
         

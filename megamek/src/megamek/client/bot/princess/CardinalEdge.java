@@ -50,7 +50,8 @@ public enum CardinalEdge {
     }
     
     public static CardinalEdge getCardinalEdge(OffBoardDirection direction) {
-        switch(direction) {
+        switch (direction) {
+
         case NORTH:
             return NORTH;
         case SOUTH:

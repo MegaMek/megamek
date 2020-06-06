@@ -48,8 +48,6 @@ import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.MegaMekFile;
 
 public class Board implements Serializable, IBoard {
@@ -538,7 +536,11 @@ public class Board implements Serializable, IBoard {
                 continue;
             }
 
-            int levelDiff = hex.getLevel() - other.getLevel();
+//            int levelDiff = hex.getLevel() - other.getLevel();
+            int levelDiff = hex.floor() - other.floor();
+            int levelDiffToWaterSurface = hex.floor() - other.getLevel();
+            boolean inWater = hex.containsTerrain(Terrains.WATER);
+            boolean towardsWater = other.containsTerrain(Terrains.WATER);
             boolean manualCliffTopExitInThisDir = ((origCliffTopExits & (1 << i)) != 0);
             boolean cliffTopExitInThisDir = false;
 
@@ -550,32 +552,39 @@ public class Board implements Serializable, IBoard {
 
             // Should there be an incline top?
             if ( ((levelDiff == 1) || (levelDiff == 2))  
-                    && !cliffTopExitInThisDir ) {
+                    && !cliffTopExitInThisDir 
+                    && !inWater
+                    && !towardsWater) {
+                inclineTopExits += (1 << i);
+            }
+            
+            if (towardsWater
+                    && !inWater
+                    && !cliffTopExitInThisDir 
+                    && ((levelDiffToWaterSurface == 1) || levelDiffToWaterSurface == 2)) {
                 inclineTopExits += (1 << i);
             }
 
             // Should there be a high level cliff top?
-            if (levelDiff > 2) {
+            if (levelDiff > 2 
+                    && !inWater
+                    && (!towardsWater || levelDiffToWaterSurface > 2)) {
                 highInclineTopExits += (1 << i);
             }
-
+            
             // Should there be an incline bottom or a cliff bottom?
             // This needs to check for a cliff-top in the other hex and
             // in the opposite direction
             if ((levelDiff == -1) || (levelDiff == -2)) {
-                if (other.containsTerrain(Terrains.CLIFF_TOP) 
-                        && other.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
-                        && ((other.getTerrain(Terrains.CLIFF_TOP).getExits() & 
-                                (1 << ((i + 3) % 6))) != 0)) {
-
+                if (other.hasCliffTopTowards(hex)) {
                     cliffBotExits += (1 << i);
-                } else {
+                } else if (!inWater) {
                     inclineBotExits += (1 << i);
                 }
             }
 
             // Should there be a high level cliff bottom?
-            if (levelDiff < -2) {
+            if (levelDiff < -2 && !inWater) {
                 highInclineBotExits += (1 << i);
             }
         }
@@ -587,13 +596,13 @@ public class Board implements Serializable, IBoard {
             addOrRemoveAutoTerrain(hex, Terrains.INCLINE_HIGH_TOP, highInclineTopExits);
             addOrRemoveAutoTerrain(hex, Terrains.INCLINE_HIGH_BOTTOM, highInclineBotExits);
         } else {
-            hex.removeTerrain( Terrains.INCLINE_TOP);
+            hex.removeTerrain(Terrains.INCLINE_TOP);
             hex.removeTerrain(Terrains.INCLINE_BOTTOM);
             hex.removeTerrain(Terrains.INCLINE_HIGH_TOP);
             hex.removeTerrain(Terrains.INCLINE_HIGH_BOTTOM);
         }
     }
-    
+
     /** 
      * Adds automatically handled terrain such as inclines when the given
      * exits value is not 0, otherwise removes it.

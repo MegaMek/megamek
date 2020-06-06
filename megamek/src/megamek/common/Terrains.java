@@ -138,7 +138,7 @@ public class Terrains implements ITerrainFactory {
     //TODO: + correct auto placement
     //TODO: + auto place cliff-Bottom?
     //TODO: OPT shadows...
-    //TODO: Add gfx option
+    //TODO: + Add gfx option
     //TODO: + no saving of auto terrain
     //TODO: + cliff rules
     //TODO: + only remove incline when cliff at the same exit

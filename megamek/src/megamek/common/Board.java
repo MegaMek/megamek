@@ -52,7 +52,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.MegaMekFile;
 
-public class Board implements Serializable, IBoard, IPreferenceChangeListener {
+public class Board implements Serializable, IBoard {
     private static final long serialVersionUID = -5744058872091016636L;
 
     public static final String BOARD_REQUEST_ROTATION = "rotate:";
@@ -581,7 +581,7 @@ public class Board implements Serializable, IBoard, IPreferenceChangeListener {
         }
         addOrRemoveAutoTerrain(hex, Terrains.CLIFF_TOP, correctedCliffTopExits);
         addOrRemoveAutoTerrain(hex, Terrains.CLIFF_BOTTOM, cliffBotExits);
-        if (GUIPreferences.getInstance().getUseInclines()) {
+        if (GUIPreferences.getInstance().getHexInclines()) {
             addOrRemoveAutoTerrain(hex, Terrains.INCLINE_TOP, inclineTopExits);
             addOrRemoveAutoTerrain(hex, Terrains.INCLINE_BOTTOM, inclineBotExits);
             addOrRemoveAutoTerrain(hex, Terrains.INCLINE_HIGH_TOP, highInclineTopExits);
@@ -605,6 +605,16 @@ public class Board implements Serializable, IBoard, IPreferenceChangeListener {
         } else {
             hex.removeTerrain(terrainType);
         }
+    }
+    
+    /** Rebuilds automatic terrains for the whole board. */
+    public void initializeAllAutomaticTerrain() {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                initializeAutomaticTerrain(x, y);
+            }
+        }
+        processBoardEvent(new BoardEvent(this, null, BoardEvent.BOARD_CHANGED_ALL_HEXES));
     }
 
     /**
@@ -1974,16 +1984,4 @@ public class Board implements Serializable, IBoard, IPreferenceChangeListener {
         }
         processBoardEvent(new BoardEvent(this, null, BoardEvent.BOARD_CHANGED_ALL_HEXES));
     }
-
-    /** 
-     * When incline graphics are toggled, the board needs to rebuild or
-     * remove the automatically handled incline terrains 
-     */
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.INCLINES)) {
-            initializeAll(new StringBuffer());
-        }
-    }
-    
 }

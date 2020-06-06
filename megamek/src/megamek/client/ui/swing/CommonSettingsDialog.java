@@ -792,7 +792,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         mmSymbol.setSelected(gs.getMmSymbol());
         levelhighlight.setSelected(gs.getLevelHighlight());
         shadowMap.setSelected(gs.getShadowMap());
-        shadowMap.setSelected(gs.getUseInclines());
+        hexInclines.setSelected(gs.getHexInclines());
         useSoftCenter.setSelected(gs.getBoolean("SOFTCENTER"));
         entityOwnerColor.setSelected(gs.getEntityOwnerLabelColor());
 
@@ -951,6 +951,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setMmSymbol(mmSymbol.isSelected());
         gs.setLevelHighlight(levelhighlight.isSelected());
         gs.setShadowMap(shadowMap.isSelected());
+        gs.setHexInclines(hexInclines.isSelected());
         gs.setValue("SOFTCENTER", useSoftCenter.isSelected());
 
         if ((gs.getAntiAliasing() != chkAntiAliasing.isSelected()) &&
@@ -1205,11 +1206,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 clientgui.bv.repaint();
             }
         } else if (source.equals(hexInclines)) {
-            guip.setUseInclines(hexInclines.isSelected());
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
+            guip.setHexInclines(hexInclines.isSelected());
         } else if (source.equals(levelhighlight)) {
             guip.setLevelHighlight(levelhighlight.isSelected());
             if ((clientgui != null) && (clientgui.bv != null)) {

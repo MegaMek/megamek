@@ -591,25 +591,24 @@ public class HexTileset implements BoardListener {
         @Override
         public void gameBoardNew(GameBoardNewEvent e) {
             clearAllHexes();
-            replacedBoard(e);
+            if (e.getOldBoard() != null) {
+                e.getOldBoard().removeBoardListener(HexTileset.this);
+            }
+            if (e.getNewBoard() != null) {
+                e.getNewBoard().addBoardListener(HexTileset.this);
+            }
         }
 
         @Override
         public void gameBoardChanged(GameBoardChangeEvent e) {
             clearAllHexes();
         }
-
     };
-    
-    private void replacedBoard(GameBoardNewEvent e) {
-        e.getOldBoard().removeBoardListener(this);
-        e.getNewBoard().addBoardListener(this);
-    }
-    
+
     @Override
     public void boardNewBoard(BoardEvent b) {
         clearAllHexes();
-   }
+    }
 
     @Override
     public void boardChangedHex(BoardEvent b) {

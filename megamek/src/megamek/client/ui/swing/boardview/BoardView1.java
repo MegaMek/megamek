@@ -724,6 +724,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(
                 this);
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
 
         SpecialHexDisplay.Type.ARTILLERY_HIT.init();
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
@@ -1086,6 +1087,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             for (Sprite s: isometricWreckSprites) {
                 s.prepare();
             }
+        }
+        if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
+                || e.getName().equals(GUIPreferences.FLOATINGISO)
+                || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)) {
+            clearHexImageCache();
+            repaint();
+        }
+        if (e.getName().equals(GUIPreferences.INCLINES)) {
+            game.getBoard().initializeAllAutomaticTerrain();
+            clearHexImageCache();
+            repaint();
         }
     }
 

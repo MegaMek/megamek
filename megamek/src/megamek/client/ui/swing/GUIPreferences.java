@@ -429,7 +429,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHADOWMAP);
     }
     
-    public boolean getUseInclines() {
+    public boolean getHexInclines() {
         return store.getBoolean(INCLINES);
     }
 
@@ -847,7 +847,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHADOWMAP, state);
     }
     
-    public void setUseInclines(boolean state) {
+    public void setHexInclines(boolean state) {
         store.setValue(INCLINES, state);
     }
 

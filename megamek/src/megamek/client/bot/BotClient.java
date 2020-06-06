@@ -937,9 +937,9 @@ public abstract class BotClient extends Client {
         int noReductionZoneSize = getClusterTracker().getDestinationCoords(entity, destinationEdge, false).size();
         int reductionZoneSize = getClusterTracker().getDestinationCoords(entity, destinationEdge, true).size();
         
-        if(noReductionZoneSize > 0) {
+        if (noReductionZoneSize > 0) {
             return 0;
-        } else if(reductionZoneSize > 0) {
+        } else if (reductionZoneSize > 0) {
             return -50;
         } else {
             return -100;

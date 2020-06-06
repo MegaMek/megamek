@@ -65,7 +65,8 @@ public enum CardinalEdge {
     }
     
     public static CardinalEdge getOppositeEdge(CardinalEdge edge) {
-        switch(edge) {
+        switch (edge) {
+
         case NORTH:
             return SOUTH;
         case SOUTH:

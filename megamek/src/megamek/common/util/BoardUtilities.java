@@ -1599,7 +1599,7 @@ public class BoardUtilities {
 
         // the easiest part is if the entity is supposed to start on a particular edge. Just return the opposite edge.
         int oppositeEdge = board.getOppositeEdge(entity.getStartingPos());
-        if(oppositeEdge != Board.START_NONE) {
+        if (oppositeEdge != Board.START_NONE) {
             return CardinalEdge.getCardinalEdge(OffBoardDirection.translateBoardStart(oppositeEdge));
         }
 

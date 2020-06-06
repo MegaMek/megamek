@@ -479,7 +479,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public boolean isCrippled(boolean checkCrew) {
-        if(checkCrew && (null != getCrew()) && getCrew().isDead()) {
+        if (checkCrew && (null != getCrew()) && getCrew().isDead()) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: crew dead.");

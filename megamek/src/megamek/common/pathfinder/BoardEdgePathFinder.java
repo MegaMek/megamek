@@ -590,7 +590,7 @@ public class BoardEdgePathFinder {
         mli.wheeledTankRestriction = isWheeled && !destHexHasRoad &&
                 (destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE)
                 || destinationHasBuilding
-                || (destHex.containsTerrain(Terrains.SNOW) && destHex.terrainLevel(Terrains.SNOW) > 1));
+                || (destHex.containsTerrain(Terrains.SNOW) && (destHex.terrainLevel(Terrains.SNOW) > 1)));
 
         // tracked and wheeled tanks cannot go into water without a bridge, unless amphibious
         mli.groundTankIntoWater = (isTracked || isWheeled) && 
@@ -624,7 +624,7 @@ public class BoardEdgePathFinder {
 
         int hexElevation = hex.getLevel();
 
-        if(entity.hasETypeFlag(Entity.ETYPE_MECH) && 
+        if (entity.hasETypeFlag(Entity.ETYPE_MECH) && 
                 (hex.containsTerrain(Terrains.BLDG_CF) || hex.containsTerrain(Terrains.FUEL_TANK_CF))) {
             hexElevation = hex.ceiling();
         } else if(entity.isNaval() && hex.containsTerrain(Terrains.BRIDGE)) {

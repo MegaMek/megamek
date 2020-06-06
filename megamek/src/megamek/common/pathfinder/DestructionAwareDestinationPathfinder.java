@@ -103,7 +103,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords));            
             
             if(destinationCoords.contains(currentPath.getFinalCoords()) &&
-                    (bestPath == null || movePathComparator.compare(bestPath, currentPath) > 0)) {
+                    ((bestPath == null) || (movePathComparator.compare(bestPath, currentPath) > 0))) {
                 bestPath = currentPath;
                 maximumCost = bestPath.getMpUsed() + bestPath.getLevelingCost();
             }
@@ -261,7 +261,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
                 return dd;
             } else {
                 int tieBreakerDiff = first.getHexesMoved() - second.getHexesMoved();
-                if(tieBreakerDiff == 0) {
+                if (tieBreakerDiff == 0) {
                     tieBreakerDiff = first.getMpUsed() - second.getMpUsed();
                 }
                 

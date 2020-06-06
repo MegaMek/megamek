@@ -161,11 +161,11 @@ public class BoardClusterTracker {
     public void updateMovableAreas(Entity entity) {
         MovementType movementType = MovementType.getMovementType(entity);
         
-        if(!movableAreas.containsKey(movementType)) {
+        if (!movableAreas.containsKey(movementType)) {
             movableAreas.put(movementType, generateClusters(entity, false));
         }
         
-        if(!movableAreasWithTerrainReduction.containsKey(movementType)) {
+        if (!movableAreasWithTerrainReduction.containsKey(movementType)) {
             movableAreasWithTerrainReduction.putIfAbsent(movementType, generateClusters(entity, true));
         }
     }
@@ -223,7 +223,7 @@ public class BoardClusterTracker {
                         // buildings require special handling - while a tank technically CAN plow through a building
                         // it is highly inadvisable and we will avoid it for now.
                         int elevationDiff = Math.abs(neighborElevation - myElevation);
-                        if((elevationDiff > entity.getMaxElevationChange())
+                        if ((elevationDiff > entity.getMaxElevationChange())
                                 || buildingPlowThroughRequired(entity, movementType, neighbor)) {
                             continue;
                         }
@@ -287,10 +287,10 @@ public class BoardClusterTracker {
             int buildingCF = board.getBuildingAt(coords).getCurrentCF(coords);
             
             return entity.getWeight() > buildingCF;            
-        } else if (relevantMovementType != MovementType.Flyer &&
-                relevantMovementType != MovementType.Jump &&
-                relevantMovementType != MovementType.None &&
-                relevantMovementType != MovementType.Water) {
+        } else if ((relevantMovementType != MovementType.Flyer) &&
+                (relevantMovementType != MovementType.Jump) &&
+                (relevantMovementType != MovementType.None) &&
+                (relevantMovementType != MovementType.Water)) {
             return true;
         } else {
             return false;

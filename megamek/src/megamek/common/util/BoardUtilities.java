@@ -1568,7 +1568,7 @@ public class BoardUtilities {
     /**
      * Figures out the "closest" edge for the given entity on the entity's game board
      * @param entity Entity to evaluate
-     * @return the Board.START_ constant representing the "opposite" edge
+     * @return the Board.START_ constant representing the "closest" edge
      */
     public static CardinalEdge getClosestEdge(Entity entity) {
         int distanceToWest = entity.getPosition().getX();

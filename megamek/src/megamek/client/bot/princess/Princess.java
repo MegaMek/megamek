@@ -98,8 +98,6 @@ public class Princess extends BotClient {
     private HashMap<PathRankerType, IPathRanker> pathRankers;
     private HashMap<FireControlType, FireControl> fireControls;
     private UnitBehavior unitBehaviorTracker;
-    private BoardClusterTracker boardClusterTracker;
-    
     private FireControlState fireControlState;
     private PathRankerState pathRankerState;
     private ArtilleryTargetingControl atc;
@@ -295,10 +293,6 @@ public class Princess extends BotClient {
         return precognition;
     }
     
-    public BoardClusterTracker getClusterTracker() {
-        return boardClusterTracker;
-    }
-    
     public int getMaxWeaponRange(Entity entity) {
         return getMaxWeaponRange(entity, false);
     }
@@ -481,7 +475,7 @@ public class Princess extends BotClient {
                 return;
             }
             
-            // on the list to be deployed get a set of all the
+            // get a list of all coordinates to which we can deploy
             final List<Coords> startingCoords = getStartingCoordsArray(game.getEntity(entityNum));
             if (0 == startingCoords.size()) {
                 log(getClass(), METHOD_NAME, LogLevel.ERROR,
@@ -1496,8 +1490,11 @@ public class Princess extends BotClient {
         }
         
         BehaviorType behavior = forceMoveToContact ? BehaviorType.MoveToContact : unitBehaviorTracker.getBehaviorType(mover, this);
-        boardClusterTracker.clearMovableAreas();
-        boardClusterTracker.updateMovableAreas(mover);
+        // during the movement phase, it is technically necessary to clear this data between each unit
+        // as the state of the board may have changed due to crashes etc. 
+        // generating movable clusters is a relatively cheap operation, so it's not a big deal
+        getClusterTracker().clearMovableAreas();
+        getClusterTracker().updateMovableAreas(mover);
         
         // basic idea: 
         // if we're "in battle", just use the standard set of move paths
@@ -1697,6 +1694,7 @@ public class Princess extends BotClient {
                     for (final Entity entity : game.getEntitiesVector(coords,
                                                                       true)) {
                         final Targetable bt = getAppropriateTarget(coords);
+                        
                         if (isEnemyGunEmplacement(entity, coords)) {
                             fireControlState.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex " +
@@ -1842,17 +1840,20 @@ public class Princess extends BotClient {
     
     private boolean isEnemyGunEmplacement(final Entity entity,
                                           final Coords coords) {
+        // crippled gun turrets aren't worth shooting at, even if we're fighting to the death
         return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
                && entity.getOwner().isEnemyOf(getLocalPlayer())
                && !getStrategicBuildingTargets().contains(coords)
-               && (null != entity.getCrew()) && !entity.getCrew().isDead();
+               && !entity.isCrippled();
     }
 
     private boolean isEnemyInfantry(final Entity entity,
                                     final Coords coords) {
+        // crippled infantry aren't worth shooting at, even if we're fighting to the death
         return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) && !entity.hasETypeFlag(Entity.ETYPE_MECHWARRIOR)
                && entity.getOwner().isEnemyOf(getLocalPlayer())
-               && !getStrategicBuildingTargets().contains(coords);
+               && !getStrategicBuildingTargets().contains(coords)
+               && !entity.isCrippled();
     }
 
     @Override

@@ -479,11 +479,14 @@ public class GunEmplacement extends Tank {
 
     @Override
     public boolean isCrippled(boolean checkCrew) {
-        return isCrippled();
-    }
-
-    @Override
-    public boolean isCrippled() {
+        if (checkCrew && (null != getCrew()) && getCrew().isDead()) {
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: crew dead.");
+            }
+            return true;
+        }
+        
         if (isMilitary() && !hasViableWeapons()) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
@@ -492,6 +495,11 @@ public class GunEmplacement extends Tank {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean isCrippled() {
+        return isCrippled(true);
     }
 
     @Override

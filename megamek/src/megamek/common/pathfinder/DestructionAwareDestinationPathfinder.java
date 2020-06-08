@@ -100,11 +100,10 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
 
         while(!candidates.isEmpty()) {
             BulldozerMovePath currentPath = candidates.pollFirst();
-            
-            candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords));
+            candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords));            
             
             if(destinationCoords.contains(currentPath.getFinalCoords()) &&
-                    (bestPath == null || movePathComparator.compare(bestPath, currentPath) < 0)) {
+                    ((bestPath == null) || (movePathComparator.compare(bestPath, currentPath) > 0))) {
                 bestPath = currentPath;
                 maximumCost = bestPath.getMpUsed() + bestPath.getLevelingCost();
             }
@@ -197,11 +196,17 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
                 !mli.destinationHasWeakBridge &&
                 !mli.groundTankIntoWater;
         
+        // legal jump moves are simpler:
+        // can't go out of bounds, can't jump too high (unless we can destroy the obstacle)
+        boolean legalJumpMove = child.isJumping() &&
+                !mli.outOfBounds &&
+                (!mli.goingUpTooHigh || child.needsLeveling());
+        
         if((!shortestPathsToCoords.containsKey(child.getFinalCoords()) ||
                 // shorter path to these coordinates
                 (movePathComparator.compare(shortestPathsToCoords.get(child.getFinalCoords()), child) > 0)) &&
-                // legal or needs leveling and not off-board
-                (mli.isLegal() || canLevel) &&
+                // legal or needs leveling or jumping and not off-board
+                (mli.isLegal() || canLevel || legalJumpMove) &&
                 // better than existing path to ultimate destination
                 (child.getMpUsed() + child.getLevelingCost() < maximumCost)) {
             shortestPathsToCoords.put(child.getFinalCoords(), child);
@@ -246,15 +251,22 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             // getFacingDiff returns a number between 0 and 3 inclusive. 
             // if the value diff is larger than 3, then it won't make a difference and we skip calculating it
             if (Math.abs(dd) < 4) {
+                dd *= 10; // facing diff doesn't matter as much as the other stuff, only use it as a tie-breaker
                 dd += ShortestPathFinder.getFacingDiff(first, destination, backwards);
                 dd -= ShortestPathFinder.getFacingDiff(second, destination, backwards);
             }
     
+            // dd != 0 implies that the two paths are not identical
             if (dd != 0) {
                 return dd;
             } else {
-                return first.getHexesMoved() - second.getHexesMoved();
-            }           
+                int tieBreakerDiff = first.getHexesMoved() - second.getHexesMoved();
+                if (tieBreakerDiff == 0) {
+                    tieBreakerDiff = first.getMpUsed() - second.getMpUsed();
+                }
+                
+                return tieBreakerDiff;
+            }
         }
     }
 }

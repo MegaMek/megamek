@@ -3014,7 +3014,7 @@ public abstract class Mech extends Entity {
         // spreadable or split equipment only gets added to 1 crit at a time,
         // since we don't know how many are in this location
         int reqSlots = mounted.getType().getCriticals(this);
-        if (mounted.getType().isSpreadable() || mounted.isSplitable()) {
+        if (mounted.getType().isSpreadable() || mounted.isSplitable() || mounted.getType().isVariableSize()) {
             reqSlots = 1;
         }
         if (isSuperHeavy()) {

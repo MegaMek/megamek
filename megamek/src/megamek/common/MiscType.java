@@ -1,4 +1,4 @@
-/**
+/*
  * * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
  * (bmazur@sev.org)
  *
@@ -13,7 +13,7 @@
  * details.
  */
 
-/**
+/*
  * MiscType.java
  *
  * Created on April 2, 2002, 12:15 PM
@@ -434,7 +434,7 @@ public class MiscType extends EquipmentType {
         return damageDivisor;
     }
 
-    private String sizeSuffix(double size) {
+    private String sizeSuffix(double size, boolean shortName) {
         if (hasFlag(F_VARIABLE_SIZE)) {
             if (hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)
                     || hasFlag(MiscType.F_ATAC) || hasFlag(MiscType.F_DTAC)) {
@@ -447,6 +447,12 @@ public class MiscType extends EquipmentType {
                         Messages.getString("MiscType.theater"));
             } else if (hasFlag(MiscType.F_LADDER)) {
                 return String.format(" (%d m)", (int) size);
+            } else if (shortName) {
+                return String.format(":%.1ft", size);
+            } else {
+                    return String.format(" (%d %s)", (int) size, size > 1 ?
+                            Messages.getString("MiscType.tons") :
+                            Messages.getString("MiscType.ton"));
             }
         }
         return "";
@@ -458,18 +464,26 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
+    public Double variableStepSize() {
+        if (hasFlag(F_CARGO) || hasFlag(F_LIQUID_CARGO)) {
+            return 0.5;
+        }
+        return super.variableStepSize();
+    }
+
+    @Override
     public String getName(double size) {
-        return getName() + sizeSuffix(size);
+        return getName() + sizeSuffix(size, false);
     }
 
     @Override
     public String getShortName(double size) {
-        return getShortName() + sizeSuffix(size);
+        return getShortName() + sizeSuffix(size, true);
     }
 
     @Override
     public String getDesc(double size) {
-        return getDesc() + sizeSuffix(size);
+        return getDesc() + sizeSuffix(size, false);
     }
 
     @Override
@@ -862,6 +876,8 @@ public class MiscType extends EquipmentType {
             } else {
                 return 0.0;
             }
+        } else if (hasFlag(F_CARGO) || hasFlag(F_LIQUID_CARGO) || hasFlag(F_COMMUNICATIONS)) {
+            return defaultRounding.round(size, entity);
         }
        // okay, I'm out of ideas
         return 1.0f;
@@ -1023,14 +1039,14 @@ public class MiscType extends EquipmentType {
                 for (Mounted mount : entity.getWeaponList()) {
                     weaponCost += mount.getCost();
                 }
-                return weaponCost * 0.05;
+                costValue = weaponCost * 0.05;
             } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
                 // 10% of weapon cost
                 double weaponCost = 0;
                 for (Mounted mount : entity.getWeaponList()) {
                     weaponCost += mount.getCost();
                 }
-                return weaponCost * 0.1;
+                costValue = weaponCost * 0.1;
             }
             
             if (isArmored) {
@@ -1045,7 +1061,7 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
-    public int getCriticals(Entity entity) {
+    public int getCriticals(Entity entity, double size) {
         if ((criticals != CRITICALS_VARIABLE) || (null == entity)) {
             return criticals;
         }
@@ -1290,6 +1306,8 @@ public class MiscType extends EquipmentType {
             // Clan Endo Composite doesn't have variable crits
         } else if (hasFlag(F_FUEL)) {
             return (int) Math.ceil(getTonnage(entity));
+        } else if (hasFlag(F_CARGO) || hasFlag(F_LIQUID_CARGO) || hasFlag(F_COMMUNICATIONS)) {
+            return (int) Math.ceil(size);
         }
         // right, well I'll just guess then
         return 1;
@@ -1565,49 +1583,13 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLCASEII());
         EquipmentType.addType(MiscType.createISAES());
         EquipmentType.addType(MiscType.createISModularArmor());
-        EquipmentType.addType(MiscType.createCommsGear1());
-        EquipmentType.addType(MiscType.createCommsGear2());
-        EquipmentType.addType(MiscType.createCommsGear3());
-        EquipmentType.addType(MiscType.createCommsGear4());
-        EquipmentType.addType(MiscType.createCommsGear5());
-        EquipmentType.addType(MiscType.createCommsGear6());
-        EquipmentType.addType(MiscType.createCommsGear7());
-        EquipmentType.addType(MiscType.createCommsGear8());
-        EquipmentType.addType(MiscType.createCommsGear9());
-        EquipmentType.addType(MiscType.createCommsGear10());
-        EquipmentType.addType(MiscType.createCommsGear11());
-        EquipmentType.addType(MiscType.createCommsGear12());
-        EquipmentType.addType(MiscType.createCommsGear13());
-        EquipmentType.addType(MiscType.createCommsGear14());
-        EquipmentType.addType(MiscType.createCommsGear15());
+        EquipmentType.addType(MiscType.createCommsGear());
         EquipmentType.addType(MiscType.createISGroundMobileHPG());
         EquipmentType.addType(MiscType.createISMobileHPG());
         EquipmentType.addType(MiscType.createISPartialWing());
         EquipmentType.addType(MiscType.createCLPartialWing());
-        EquipmentType.addType(MiscType.createCargo1());
-        EquipmentType.addType(MiscType.createHalfCargo());
-        EquipmentType.addType(MiscType.createCargo15());
-        EquipmentType.addType(MiscType.createCargo2());
-        EquipmentType.addType(MiscType.createCargo25());
-        EquipmentType.addType(MiscType.createCargo3());
-        EquipmentType.addType(MiscType.createCargo35());
-        EquipmentType.addType(MiscType.createCargo4());
-        EquipmentType.addType(MiscType.createCargo45());
-        EquipmentType.addType(MiscType.createCargo5());
-        EquipmentType.addType(MiscType.createCargo55());
-        EquipmentType.addType(MiscType.createCargo6());
-        EquipmentType.addType(MiscType.createCargo65());
-        EquipmentType.addType(MiscType.createCargo7());
-        EquipmentType.addType(MiscType.createCargo75());
-        EquipmentType.addType(MiscType.createCargo8());
-        EquipmentType.addType(MiscType.createCargo85());
-        EquipmentType.addType(MiscType.createCargo9());
-        EquipmentType.addType(MiscType.createCargo95());
-        EquipmentType.addType(MiscType.createCargo10());
-        EquipmentType.addType(MiscType.createCargo105());
-        EquipmentType.addType(MiscType.createCargo11());
-        EquipmentType.addType(MiscType.createLiquidCargo1());
-        EquipmentType.addType(MiscType.createHalfLiquidCargo());
+        EquipmentType.addType(MiscType.createCargo());
+        EquipmentType.addType(MiscType.createLiquidCargo());
         EquipmentType.addType(MiscType.createCargoContainer());
         EquipmentType.addType(MiscType.createMechSprayer());
         EquipmentType.addType(MiscType.createTankSprayer());
@@ -7947,459 +7929,63 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createCargo1() {
+    public static MiscType createCargo() {
         MiscType misc = new MiscType();
 
-        misc.name = "Cargo (1 ton)";
+        misc.name = "Cargo";
         misc.setInternalName(misc.name);
-        misc.tonnage = 1;
-        misc.criticals = 1;
+        misc.addLookupName("Cargo (1 ton)");
+        misc.addLookupName("Cargo (0.5 tons)");
+        misc.addLookupName("Cargo (1.5 tons)");
+        misc.addLookupName("Cargo (2 tons)");
+        misc.addLookupName("Cargo (2.5 tons)");
+        misc.addLookupName("Cargo (3 tons)");
+        misc.addLookupName("Cargo (3.5 tons)");
+        misc.addLookupName("Cargo (4 tons)");
+        misc.addLookupName("Cargo (4.5 tons)");
+        misc.addLookupName("Cargo (5 tons)");
+        misc.addLookupName("Cargo (5.5 tons)");
+        misc.addLookupName("Cargo (6 tons)");
+        misc.addLookupName("Cargo (6.5 tons)");
+        misc.addLookupName("Cargo (7 tons)");
+        misc.addLookupName("Cargo (7.5 tons)");
+        misc.addLookupName("Cargo (8 ton)");
+        misc.addLookupName("Cargo (8.5 tons)");
+        misc.addLookupName("Cargo (9 tons)");
+        misc.addLookupName("Cargo (9.5 tons)");
+        misc.addLookupName("Cargo (10 tons)");
+        misc.addLookupName("Cargo (10.5 tons)");
+        misc.addLookupName("Cargo (11 tons)");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_CARGO).or(F_VARIABLE_SIZE).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         misc.industrial = true;
         misc.tankslots = 1;
         misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
         return misc;
     }
 
-    public static MiscType createHalfCargo() {
+    public static MiscType createLiquidCargo() {
         MiscType misc = new MiscType();
 
-        misc.name = "Cargo (0.5 tons)";
+        misc.name = "Liquid Storage";
         misc.setInternalName(misc.name);
-        misc.tonnage = 0.5;
-        misc.criticals = 1;
+        misc.addLookupName("Liquid Storage (1 ton)");
+        misc.addLookupName("Liquid Storage (0.5 ton)");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_LIQUID_CARGO).or(F_VARIABLE_SIZE).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         misc.industrial = true;
         misc.tankslots = 1;
         misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo15() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (1.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 1.5;
-        misc.criticals = 2;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo2() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (2 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 2;
-        misc.criticals = 2;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo25() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (2.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 2.5;
-        misc.criticals = 3;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo3() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (3 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 3;
-        misc.criticals = 3;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo35() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (3.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 3.5;
-        misc.criticals = 4;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo4() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (4 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 4;
-        misc.criticals = 4;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo45() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (4.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 4.5;
-        misc.criticals = 5;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo5() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 5;
-        misc.criticals = 5;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo55() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (5.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 5.5;
-        misc.criticals = 6;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo6() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (6 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 6;
-        misc.criticals = 6;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo65() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (6.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 6.5;
-        misc.criticals = 7;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo7() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (7 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 7;
-        misc.criticals = 7;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo75() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (7.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 7.5;
-        misc.criticals = 8;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo8() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (8 ton)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 8;
-        misc.criticals = 8;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo85() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (8.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 8.5;
-        misc.criticals = 9;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo9() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (9 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 9;
-        misc.criticals = 9;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo95() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (9.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 9.5;
-        misc.criticals = 10;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo10() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (10 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 10;
-        misc.criticals = 10;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo105() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (10.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 10.5;
-        misc.criticals = 11;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createCargo11() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Cargo (11 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 11;
-        misc.criticals = 11;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createLiquidCargo1() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Liquid Storage (1 ton)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 1;
-        misc.criticals = 1;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_LIQUID_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-        return misc;
-    }
-
-    public static MiscType createHalfLiquidCargo() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Liquid Storage (0.5 tons)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 0.5;
-        misc.criticals = 1;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_LIQUID_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
-        misc.rulesRefs = "239,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
         return misc;
     }
 
@@ -8471,20 +8057,51 @@ public class MiscType extends EquipmentType {
     }
 
     // CommsGear
-    public static MiscType createCommsGear1() {
+    public static MiscType createCommsGear() {
         MiscType misc = new MiscType();
 
-        misc.name = "Communications Equipment (1 ton)";
+        misc.name = "Communications Equipment";
         misc.setInternalName(misc.name);
+        misc.addLookupName("CommsGear");
+        misc.addLookupName("Communications Equipment (1 ton)");
+        misc.addLookupName("Communications Equipment (2 ton)");
+        misc.addLookupName("Communications Equipment (3 ton)");
+        misc.addLookupName("Communications Equipment (4 ton)");
+        misc.addLookupName("Communications Equipment (5 ton)");
+        misc.addLookupName("Communications Equipment (6 ton)");
+        misc.addLookupName("Communications Equipment (7 ton)");
+        misc.addLookupName("Communications Equipment (8 ton)");
+        misc.addLookupName("Communications Equipment (9 ton)");
+        misc.addLookupName("Communications Equipment (10 ton)");
+        misc.addLookupName("Communications Equipment (11 ton)");
+        misc.addLookupName("Communications Equipment (12 ton)");
+        misc.addLookupName("Communications Equipment (13 ton)");
+        misc.addLookupName("Communications Equipment (14 ton)");
+        misc.addLookupName("Communications Equipment (15 ton)");
         misc.addLookupName("CommsGear:1");
-        misc.shortName = "CommsGear:1t";
-        misc.tonnage = 1;
-        misc.criticals = 1;
+        misc.addLookupName("CommsGear:2");
+        misc.addLookupName("CommsGear:3");
+        misc.addLookupName("CommsGear:4");
+        misc.addLookupName("CommsGear:5");
+        misc.addLookupName("CommsGear:6");
+        misc.addLookupName("CommsGear:7");
+        misc.addLookupName("CommsGear:8");
+        misc.addLookupName("CommsGear:9");
+        misc.addLookupName("CommsGear:10");
+        misc.addLookupName("CommsGear:11");
+        misc.addLookupName("CommsGear:12");
+        misc.addLookupName("CommsGear:13");
+        misc.addLookupName("CommsGear:14");
+        misc.addLookupName("CommsGear:15");
+        misc.shortName = "CommsGear";
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.svslots = 1;
         misc.tankslots = 1;
         misc.cost = 10000;
         misc.bv = 0;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_VARIABLE_SIZE).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
@@ -8498,398 +8115,6 @@ public class MiscType extends EquipmentType {
                 .setClanApproximate(false, false, false, false, false);
         return misc;
     }
-
-    public static MiscType createCommsGear2() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (2 ton)";
-        misc.setInternalName(misc.name);
-        misc.shortName = "CommsGear:2t";
-        misc.tonnage = 2;
-        misc.criticals = 2;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 20000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear3() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (3 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:3");
-        misc.shortName = "CommsGear:3t";
-        misc.tonnage = 3;
-        misc.criticals = 3;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 30000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear4() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (4 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:4");
-        misc.shortName = "CommsGear:4t";
-        misc.tonnage = 4;
-        misc.criticals = 4;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 40000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear5() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (5 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:5");
-        misc.shortName = "CommsGear:5t";
-        misc.tonnage = 5;
-        misc.criticals = 5;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;        
-        misc.cost = 50000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear6() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (6 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:6");
-        misc.shortName = "CommsGear:6t";
-        misc.tonnage = 6;
-        misc.criticals = 6;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 60000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear7() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (7 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:7");
-        misc.shortName = "CommsGear:7t";
-        misc.tonnage = 7;
-        misc.criticals = 7;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 70000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear8() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (8 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:8");
-        misc.shortName = "CommsGear:8t";
-        misc.tonnage = 8;
-        misc.criticals = 8;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 80000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear9() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (9 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:9");
-        misc.shortName = "CommsGear:9t";
-        misc.tonnage = 9;
-        misc.criticals = 9;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 90000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear10() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (10 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:10");
-        misc.shortName = "CommsGear:10t";
-        misc.tonnage = 10;
-        misc.criticals = 10;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 100000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear11() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (11 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:11");
-        misc.shortName = "CommsGear:11t";
-        misc.tonnage = 11;
-        misc.criticals = 11;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 110000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear12() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (12 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:12");
-        misc.shortName = "CommsGear:12t";
-        misc.tonnage = 12;
-        misc.criticals = 12;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 120000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear13() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (13 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:13");
-        misc.shortName = "CommsGear:13t";
-        misc.tonnage = 13;
-        misc.criticals = 13;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 120000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear14() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (14 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:14");
-        misc.shortName = "CommsGear:14t";
-        misc.tonnage = 14;
-        misc.criticals = 14;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 140000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType createCommsGear15() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Communications Equipment (15 ton)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:15");
-        misc.shortName = "CommsGear:15t";
-        misc.tonnage = 15;
-        misc.criticals = 15;
-        misc.svslots = 1;
-        misc.tankslots = 1;
-        misc.bv = 0;
-        misc.cost = 150000;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
-        misc.setModes(modes);
-        misc.setInstantModeSwitch(false);
-        misc.industrial = true;
-        misc.rulesRefs = "212,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
     public static MiscType createISCollapsibleCommandModule() {
         MiscType misc = new MiscType();
         misc.name = "Collapsible Command Module";

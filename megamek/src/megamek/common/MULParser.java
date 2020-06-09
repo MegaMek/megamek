@@ -1091,9 +1091,9 @@ public class MULParser {
             }
 
             // get RPG skills
-            int gunneryLVal = gunVal;
-            int gunneryMVal = gunVal;
-            int gunneryBVal = gunVal;
+            int gunneryLVal = -1;
+            int gunneryMVal = -1;
+            int gunneryBVal = -1;
             if (hasRpgGun) {
                 if ((attributes.containsKey(GUNNERYL)) && (attributes.get(GUNNERYL).length() > 0)) {
                     try {
@@ -1138,6 +1138,10 @@ public class MULParser {
 
             if (!hasGun) {
                 gunVal = (gunneryLVal + gunneryMVal + gunneryBVal) / 3;
+            } else if (!hasRpgGun) {
+                gunneryLVal = gunVal;
+                gunneryMVal = gunVal;
+                gunneryBVal = gunVal;
             }
 
             // Try to get a good piloting value.

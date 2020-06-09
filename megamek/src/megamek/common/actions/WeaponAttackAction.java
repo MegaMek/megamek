@@ -687,7 +687,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
         if (game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                toHit = new ToHitData(ae.getCrew().getGunneryL(), Messages.getString("WeaponAttackAction.GunESkill"));
+                toHit = new ToHitData(ae.getCrew().getGunneryL(), Messages.getString("WeaponAttackAction.GunLSkill"));
             }
             if (wtype.hasFlag(WeaponType.F_MISSILE)) {
                 toHit = new ToHitData(ae.getCrew().getGunneryM(), Messages.getString("WeaponAttackAction.GunMSkill"));
@@ -3921,7 +3921,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Unofficial weapon class specialist - Does not have an unspecialized penalty 
         if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER)
                 && wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunESkill"));
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunLSkill"));
         }
 
         if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)

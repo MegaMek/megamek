@@ -1062,23 +1062,82 @@ public class MULParser {
      * @param attributes A map of attribute values keyed to the attribute names.
      */
     private void setPilotAttributes(Crew crew, int slot, Map<String, String> attributes) {
+        boolean hasGun = attributes.containsKey(GUNNERY) && (attributes.get(GUNNERY).length() > 0);
+        boolean hasRpgGun = attributes.containsKey(GUNNERYL) && (attributes.get(GUNNERYL).length() > 0) &&
+                attributes.containsKey(GUNNERYM) && (attributes.get(GUNNERYM).length() > 0) &&
+                attributes.containsKey(GUNNERYB) && (attributes.get(GUNNERYB).length() > 0);
+
         // Did we find required attributes?
-        if (!attributes.containsKey(GUNNERY) || (attributes.get(GUNNERY).length() == 0)) {
+        if (!hasGun && !hasRpgGun) {
             warning.append("Could not find gunnery for pilot.\n");
         } else if (!attributes.containsKey(PILOTING) || (attributes.get(PILOTING).length() == 0)) {
             warning.append("Could not find piloting for pilot.\n");
         } else {
             // Try to get a good gunnery value.
             int gunVal = -1;
-            try {
-                gunVal = Integer.parseInt(attributes.get(GUNNERY));
-            } catch (NumberFormatException ignored) {
-                // Handled by the next if test.
+            if (hasGun) {
+                try {
+                    gunVal = Integer.parseInt(attributes.get(GUNNERY));
+                } catch (NumberFormatException ignored) {
+                    // Handled by the next if test.
+                }
+
+                if ((gunVal < 0)
+                        || (gunVal > Crew.MAX_SKILL)) {
+                    warning.append("Found invalid gunnery value: ")
+                            .append(attributes.get(GUNNERY)).append(".\n");
+                    return;
+                }
             }
-            if ((gunVal < 0) || (gunVal > Crew.MAX_SKILL)) {
-                warning.append("Found invalid gunnery value: ")
-                        .append(attributes.get(GUNNERY)).append(".\n");
-                return;
+
+            // get RPG skills
+            int gunneryLVal = gunVal;
+            int gunneryMVal = gunVal;
+            int gunneryBVal = gunVal;
+            if (hasRpgGun) {
+                if ((attributes.containsKey(GUNNERYL)) && (attributes.get(GUNNERYL).length() > 0)) {
+                    try {
+                        gunneryLVal = Integer.parseInt(attributes.get(GUNNERYL));
+                    } catch (NumberFormatException ignored) {
+                        // Handled by the next if test.
+                    }
+                    if ((gunneryLVal < 0)
+                            || (gunneryLVal > Crew.MAX_SKILL)) {
+                        warning.append("Found invalid piloting value: ")
+                                .append(attributes.get(GUNNERYL)).append(".\n");
+                        return;
+                    }
+                }
+                if ((attributes.containsKey(GUNNERYM)) && (attributes.get(GUNNERYM).length() > 0)) {
+                    try {
+                        gunneryMVal = Integer.parseInt(attributes.get(GUNNERYM));
+                    } catch (NumberFormatException ignored) {
+                        // Handled by the next if test.
+                    }
+                    if ((gunneryMVal < 0)
+                            || (gunneryMVal > Crew.MAX_SKILL)) {
+                        warning.append("Found invalid piloting value: ")
+                                .append(attributes.get(GUNNERYM)).append(".\n");
+                        return;
+                    }
+                }
+                if ((attributes.containsKey(GUNNERYB)) && (attributes.get(GUNNERYB).length() > 0)) {
+                    try {
+                        gunneryBVal = Integer.parseInt(attributes.get(GUNNERYB));
+                    } catch (NumberFormatException ignored) {
+                        // Handled by the next if test.
+                    }
+                    if ((gunneryBVal < 0)
+                            || (gunneryBVal > Crew.MAX_SKILL)) {
+                        warning.append("Found invalid piloting value: ")
+                                .append(attributes.get(GUNNERYB)).append(".\n");
+                        return;
+                    }
+                }
+            }
+
+            if (!hasGun) {
+                gunVal = (gunneryLVal + gunneryMVal + gunneryBVal) / 3;
             }
 
             // Try to get a good piloting value.
@@ -1101,46 +1160,6 @@ public class MULParser {
                     toughVal = Integer.parseInt(attributes.get(TOUGH));
                 } catch (NumberFormatException ignored) {
                     // Handled by the next if test.
-                }
-            }
-            // get RPG skills
-            int gunneryLVal = gunVal;
-            int gunneryMVal = gunVal;
-            int gunneryBVal = gunVal;
-            if ((attributes.containsKey(GUNNERYL)) && (attributes.get(GUNNERYL).length() > 0)) {
-                try {
-                    gunneryLVal = Integer.parseInt(attributes.get(GUNNERYL));
-                } catch (NumberFormatException ignored) {
-                    // Handled by the next if test.
-                }
-                if ((gunneryLVal < 0) || (gunneryLVal > Crew.MAX_SKILL)) {
-                    warning.append("Found invalid piloting value: ")
-                            .append(attributes.get(GUNNERYL)).append(".\n");
-                    return;
-                }
-            }
-            if ((attributes.containsKey(GUNNERYM)) && (attributes.get(GUNNERYM).length() > 0)) {
-                try {
-                    gunneryMVal = Integer.parseInt(attributes.get(GUNNERYM));
-                } catch (NumberFormatException ignored) {
-                    // Handled by the next if test.
-                }
-                if ((gunneryMVal < 0) || (gunneryMVal > Crew.MAX_SKILL)) {
-                    warning.append("Found invalid piloting value: ")
-                            .append(attributes.get(GUNNERYM)).append(".\n");
-                    return;
-                }
-            }
-            if ((attributes.containsKey(GUNNERYB)) && (attributes.get(GUNNERYB).length() > 0)) {
-                try {
-                    gunneryBVal = Integer.parseInt(attributes.get(GUNNERYB));
-                } catch (NumberFormatException ignored) {
-                    // Handled by the next if test.
-                }
-                if ((gunneryBVal < 0) || (gunneryBVal > Crew.MAX_SKILL)) {
-                    warning.append("Found invalid piloting value: ")
-                            .append(attributes.get(GUNNERYB)).append(".\n");
-                    return;
                 }
             }
 

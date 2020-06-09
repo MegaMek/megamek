@@ -29,6 +29,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.util.CrewSkillSummaryUtil;
 
 /**
  *  Health status, skills, and miscellanea for an Entity crew.
@@ -472,8 +473,8 @@ public class Crew implements Serializable {
     /**
      * @return a String showing the overall skills in the format gunnery/piloting
      */
-    public String getSkillsAsString() {
-        return getSkillsAsString(true);
+    public String getSkillsAsString(boolean rpgSkills) {
+        return getSkillsAsString(true, rpgSkills);
     }
 
     /**
@@ -481,20 +482,30 @@ public class Crew implements Serializable {
      *                     for other unit types)
      * @return a String showing the overall skills in the format gunnery/piloting
      */
-    public String getSkillsAsString(boolean showPiloting) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getGunnery());
+    public String getSkillsAsString(boolean showPiloting, boolean rpgSkills) {
         if (showPiloting) {
-            sb.append("/").append(getPiloting());
+            return CrewSkillSummaryUtil.getPilotSkillSummary(
+                    getGunnery(),
+                    getGunneryL(),
+                    getGunneryM(),
+                    getGunneryB(),
+                    getPiloting(),
+                    rpgSkills);
+        } else {
+            return CrewSkillSummaryUtil.getGunnnerySkillSummary(
+                    getGunnery(),
+                    getGunneryL(),
+                    getGunneryM(),
+                    getGunneryB(),
+                    rpgSkills);
         }
-        return sb.toString();
     }
 
     /**
      * @return a String showing the skills for a particular slot in the format gunnery/piloting
      */
-    public String getSkillsAsString(int pos) {
-        return getSkillsAsString(pos, true);
+    public String getSkillsAsString(int pos, boolean rpgSkills) {
+        return getSkillsAsString(pos, true, rpgSkills);
     }
 
     /**
@@ -502,13 +513,23 @@ public class Crew implements Serializable {
      *                     for other unit types)
      * @return a String showing the skills for a particular slot in the format gunnery/piloting
      */
-    public String getSkillsAsString(int pos, boolean showPiloting) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getGunnery(pos));
+    public String getSkillsAsString(int pos, boolean showPiloting, boolean rpgSkills) {
         if (showPiloting) {
-            sb.append("/").append(getPiloting(pos));
+            return CrewSkillSummaryUtil.getPilotSkillSummary(
+                    getGunnery(pos),
+                    getGunneryL(pos),
+                    getGunneryM(pos),
+                    getGunneryB(pos),
+                    getPiloting(pos),
+                    rpgSkills);
+        } else {
+            return CrewSkillSummaryUtil.getGunnnerySkillSummary(
+                    getGunnery(pos),
+                    getGunneryL(pos),
+                    getGunneryM(pos),
+                    getGunneryB(pos),
+                    rpgSkills);
         }
-        return sb.toString();
     }
 
     /**
@@ -1054,18 +1075,6 @@ public class Crew implements Serializable {
      */
     public void setEjected(boolean abandoned) {
         ejected = abandoned;
-    }
-
-    /**
-     * @return a string description of the gunnery skills when using RPG
-     */
-    public String getGunneryRPG() {
-        return Arrays.toString(gunneryL) +
-                "(L)/" +
-                Arrays.toString(gunneryM) +
-                "(M)/" +
-                Arrays.toString(gunneryB) +
-                "(B)";
     }
 
     /**

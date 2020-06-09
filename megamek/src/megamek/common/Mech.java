@@ -3013,7 +3013,7 @@ public abstract class Mech extends Entity {
 
         // spreadable or split equipment only gets added to 1 crit at a time,
         // since we don't know how many are in this location
-        int reqSlots = mounted.getType().getCriticals(this);
+        int reqSlots = mounted.getCriticals();
         if (mounted.getType().isSpreadable() || mounted.isSplitable() || mounted.getType().isVariableSize()) {
             reqSlots = 1;
         }
@@ -3792,7 +3792,7 @@ public abstract class Mech extends Entity {
             }
 
             // we subtract per critical slot
-            toSubtract *= etype.getCriticals(this);
+            toSubtract *= mounted.getCriticals();
             ammoPenalty += toSubtract;
         }
         if (getJumpType() == JUMP_PROTOTYPE_IMPROVED) {
@@ -6722,7 +6722,7 @@ public abstract class Mech extends Entity {
             sb.append(newLine);
         }
         for (Mounted mounted : getMisc()) {
-            if ((mounted.getType().getCriticals(this) == 0)
+            if ((mounted.getCriticals() == 0)
                     && !mounted.getType().hasFlag(MiscType.F_CASE)
                     && !EquipmentType.isArmorType(mounted.getType())
                     && !EquipmentType.isStructureType(mounted.getType())) {
@@ -8050,11 +8050,11 @@ public abstract class Mech extends Entity {
                     && (mount.getLinkedBy() != null)) {
                 mountBv += ((MiscType) mount.getLinkedBy().getType()).getBV(
                         this, mount);
-                bv += mountBv * 0.05 * (mount.getType().getCriticals(this) + 1);
+                bv += mountBv * 0.05 * (mount.getCriticals() + 1);
             } else if (mountBv > 0) {
-                bv += mountBv * 0.05 * mount.getType().getCriticals(this);
+                bv += mountBv * 0.05 * mount.getCriticals();
             } else {
-                bv += 5 * mount.getType().getCriticals(this);
+                bv += 5 * mount.getCriticals();
             }
         }
 

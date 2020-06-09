@@ -492,9 +492,9 @@ public class TestMech extends TestEntity {
         EquipmentType et = mounted.getType();
         int criticals = 0;
         if (et instanceof MiscType) {
-            criticals = calcMiscCrits((MiscType) et);
+            criticals = calcMiscCrits((MiscType) et, mounted.getSize());
         } else {
-            criticals = et.getCriticals(entity);
+            criticals = mounted.getCriticals();
         }
         int count = 0;
 
@@ -552,7 +552,7 @@ public class TestMech extends TestEntity {
                         && (m.getUsableShotsLeft() <= 1)) {
                     continue;
                 }
-                if (m.getType().getCriticals(mech) == 0) {
+                if (m.getCriticals() == 0) {
                     continue;
                 }
                 if (!(m.getType() instanceof MiscType)) {

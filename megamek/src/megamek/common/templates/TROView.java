@@ -484,7 +484,7 @@ public class TROView {
                     fields.put("slots", crits.toString());
                 } else {
                     fields.put("location", loc);
-                    fields.put("slots", eq.getCriticals(entity) * count);
+                    fields.put("slots", eq.getCriticals(entity, entry.getValue()) * count);
                 }
                 eqList.add(fields);
             }

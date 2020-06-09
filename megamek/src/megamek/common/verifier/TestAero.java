@@ -756,7 +756,7 @@ public class TestAero extends TestEntity {
                     continue;
                 }
                 if ((entity instanceof Aero) && 
-                        (m.getType().getCriticals(entity) == 0)) {
+                        (m.getCriticals() == 0)) {
                     continue;
                 }
                 if (!(m.getType() instanceof MiscType)) {

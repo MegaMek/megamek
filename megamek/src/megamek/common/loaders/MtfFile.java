@@ -738,7 +738,7 @@ public class MtfFile implements IMechLoader {
                         }
                         if (bFound) {
                             m.setFoundCrits(m.getFoundCrits() + (mech.isSuperHeavy()? 2 : 1));
-                            if (m.getFoundCrits() >= etype.getCriticals(mech)) {
+                            if (m.getFoundCrits() >= m.getCriticals()) {
                                 vSplitWeapons.remove(m);
                             }
                             // if we're in a new location, set the weapon as

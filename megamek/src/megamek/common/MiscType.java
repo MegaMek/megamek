@@ -1052,7 +1052,7 @@ public class MiscType extends EquipmentType {
             if (isArmored) {
                 double armoredCost = costValue;
 
-                armoredCost += 150000 * getCriticals(entity);
+                armoredCost += 150000 * getCriticals(entity, size);
 
                 return armoredCost;
             }

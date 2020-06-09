@@ -78,7 +78,10 @@ public class BulldozerMovePath extends MovePath {
     @Override
     public MovePath addStep(final MoveStepType type) {
         BulldozerMovePath mp = (BulldozerMovePath) super.addStep(type);
-
+        IHex hex = mp.getGame().getBoard().getHex(mp.getFinalCoords());
+        int hexWaterDepth = (hex != null) && hex.containsTerrain(Terrains.WATER) ?
+                hex.depth() : Integer.MIN_VALUE;
+        
         if (!mp.isMoveLegal() && !mp.isJumping()) {
             // here, we will check if the step is illegal because the unit in question
             // is attempting to move through illegal terrain for its movement type, but
@@ -93,12 +96,21 @@ public class BulldozerMovePath extends MovePath {
             // we want to make note of when we're going into water (if we are capable of it)
             // it may look cheaper, but it slows you down to max walking speed or worse, 
             // and we should flag it as costing extra, that extra being the difference between walking and running speed
-            IHex hex = mp.getGame().getBoard().getHex(mp.getFinalCoords());
-            if((hex != null) && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)) {
+            if(hexWaterDepth > 0) {
                 MovementType mType = MovementType.getMovementType(mp.getEntity());
                 if(mType == MovementType.Walker || mType == MovementType.WheeledAmphi || mType == MovementType.TrackedAmphi) {
                     additionalCosts.put(mp.getFinalCoords(), 1);
                 }
+            }
+        }
+
+        if (mp.isJumping()) {
+            // special case - mech jumping into depth 1 water might not be all that bad, jump mp cost wise
+            if(hexWaterDepth == 1) {
+                additionalCosts.put(mp.getFinalCoords(), mp.getCachedEntityState().getJumpMP() - mp.getCachedEntityState().getTorsoJumpJets());
+            // jumping into water that submerges you entirely pretty much ruins jump MP for at least a turn while you clamber out
+            } else {
+                additionalCosts.put(mp.getFinalCoords(), mp.getCachedEntityState().getJumpMP());
             }
         }
 

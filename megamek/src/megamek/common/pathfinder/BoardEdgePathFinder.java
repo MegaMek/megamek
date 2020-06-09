@@ -531,7 +531,6 @@ public class BoardEdgePathFinder {
         Coords dest = movePath.getFinalCoords();
         IBoard board = movePath.getGame().getBoard();
         Coords src = movePath.getSecondLastStep().getPosition();
-        IHex srcHex = board.getHex(src);
         Entity entity = movePath.getEntity();
 
         MoveLegalityIndicator mli = new MoveLegalityIndicator();
@@ -557,7 +556,7 @@ public class BoardEdgePathFinder {
         // jumpers can just hop down wherever they want
         int maxDownwardElevationChange = movePath.getCachedEntityState().getJumpMP() > 0 ? 999 : entity.getMaxElevationDown();
         int destHexElevation = calculateUnitElevationInHex(destHex, entity, isHovercraft, isAmphibious);
-        int srcHexElevation = calculateUnitElevationInHex(srcHex, entity, isHovercraft, isAmphibious);        
+        int srcHexElevation = movePath.getFinalElevation();        
         
         mli.destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
         boolean destinationHasBuildingOrBridge = destinationBuilding != null;
@@ -576,6 +575,15 @@ public class BoardEdgePathFinder {
 
         // this condition indicates that we are unable to go to the destination because it's too low compared to the source
         mli.goingDownTooLow = srcHexElevation - destHexElevation > maxDownwardElevationChange;
+        
+        // consider bridges if the destination has one, and we can step on it and we've flagged ourselves
+        // as not being able to ascend/descend the elevation
+        if(destinationHasBridge && !mli.destinationHasWeakBridge && (mli.goingUpTooHigh || mli.goingDownTooLow)) {
+            destHexElevation = destHex.maxTerrainFeatureElevation(false);
+            
+            mli.goingUpTooHigh = destHexElevation - srcHexElevation > maxUpwardElevationChange;
+            mli.goingDownTooLow = srcHexElevation - destHexElevation > maxDownwardElevationChange;
+        }
 
         // tanks cannot go into jungles or heavy woods unless there is a road
         mli.tankIntoHeavyWoods = isTracked &&

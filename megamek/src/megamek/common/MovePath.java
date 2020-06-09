@@ -1850,7 +1850,7 @@ public class MovePath implements Cloneable, Serializable {
         Set<Coords> destinationSet = princess.getClusterTracker().getDestinationCoords(entity, CardinalEdge.WEST, true);
         
         long marker1 = System.currentTimeMillis();
-        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, true);
+        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, false);
         long marker2 = System.currentTimeMillis();
         long marker3 = marker2 - marker1;
         

@@ -1480,13 +1480,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     @SuppressWarnings("unused")
     private void renderClusters(Graphics2D g) {
         BoardClusterTracker bct = new BoardClusterTracker();
-        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false);
+        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false, true);
         
         for(BoardCluster cluster : clusterMap.values().stream().distinct().collect(Collectors.toList())) {
             for(Coords coords : cluster.contents) {
                 Point p = getCentreHexLocation(coords.getX(), coords.getY(), true);
                 p.translate(HEX_W  / 2, HEX_H  / 2);
-                drawHexBorder(g, p, Color.PINK, 0, 6);
+                drawHexBorder(g, p, new Color(0, 0, (20 * cluster.id) % 255), 0, 6);
             }
         }
     }

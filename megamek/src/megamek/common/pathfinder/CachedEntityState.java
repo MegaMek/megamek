@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import megamek.common.Entity;
+import megamek.common.Mech;
 
 /**
  * A transient class used to lazy-load "calculated" information from an entity
@@ -21,6 +22,7 @@ public class CachedEntityState {
     private Integer jumpMP;
     private Integer jumpMPWithTerrain;
     private Map<BigInteger, Boolean> hasWorkingMisc;
+    private Integer torsoJumpJets;
     
     public CachedEntityState(Entity entity) {
         backingEntity = entity;
@@ -89,5 +91,17 @@ public class CachedEntityState {
         }
         
         return hasWorkingMisc.get(flag);
+    }
+    
+    public int getTorsoJumpJets() {
+        if(torsoJumpJets == null) {
+            if(backingEntity instanceof Mech) {
+                torsoJumpJets = ((Mech) backingEntity).torsoJumpJets();
+            } else {
+                torsoJumpJets = 0;
+            }
+        }
+        
+        return torsoJumpJets;
     }
 }

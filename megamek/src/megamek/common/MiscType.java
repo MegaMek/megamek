@@ -468,6 +468,9 @@ public class MiscType extends EquipmentType {
         if (hasFlag(F_CARGO) || hasFlag(F_LIQUID_CARGO)) {
             return 0.5;
         }
+        if (hasFlag(F_LADDER)) {
+            return 20.0;
+        }
         return super.variableStepSize();
     }
 
@@ -878,6 +881,9 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(F_CARGO) || hasFlag(F_LIQUID_CARGO) || hasFlag(F_COMMUNICATIONS)) {
             return defaultRounding.round(size, entity);
+        } else if (hasFlag(F_LADDER)) {
+            // 0.1 tons per 20 meters
+            return RoundWeight.nearestKg(size / 200.0);
         }
        // okay, I'm out of ideas
         return 1.0f;
@@ -1047,6 +1053,8 @@ public class MiscType extends EquipmentType {
                     weaponCost += mount.getCost();
                 }
                 costValue = weaponCost * 0.1;
+            } else if (hasFlag(F_LADDER)) {
+                costValue = size * 5;
             }
             
             if (isArmored) {
@@ -1766,11 +1774,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBulldozer());
         EquipmentType.addType(MiscType.createExternalStoresHardpoint());
         EquipmentType.addType(MiscType.createManipulator());
-        EquipmentType.addType(MiscType.create20mLadder());
-        EquipmentType.addType(MiscType.create40mLadder());
-        EquipmentType.addType(MiscType.create60mLadder());
-        EquipmentType.addType(MiscType.create80mLadder());
-        EquipmentType.addType(MiscType.create100mLadder());
+        EquipmentType.addType(MiscType.createLadder());
         EquipmentType.addType(MiscType.createMaritimeLifeboat());
         EquipmentType.addType(MiscType.createMaritimeEscapePod());
         EquipmentType.addType(MiscType.createAtmossphericLifeboat());
@@ -7325,96 +7329,21 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType create20mLadder() {
+    public static MiscType createLadder() {
         MiscType misc = new MiscType();
-        misc.name = "Ladder (20m)";
+        misc.name = "Ladder";
         misc.setInternalName(misc.name);
+        misc.addLookupName("Ladder (20m)");
+        misc.addLookupName("Ladder (40m)");
+        misc.addLookupName("Ladder (60m)");
+        misc.addLookupName("Ladder (80m)");
+        misc.addLookupName("Ladder (100m)");
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.1;
-        misc.cost = 100;
-        misc.flags = misc.flags.or(F_LADDER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
-                .andNot(F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "244,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType create40mLadder() {
-        MiscType misc = new MiscType();
-        misc.name = "Ladder (40m)";
-        misc.setInternalName(misc.name);
-        misc.tankslots = 1;
-        misc.criticals = 1;
-        misc.tonnage = 0.2;
-        misc.cost = 200;
-        misc.flags = misc.flags.or(F_LADDER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_LADDER)
-                .andNot(F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "244,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType create60mLadder() {
-        MiscType misc = new MiscType();
-        misc.name = "Ladder (60m)";
-        misc.setInternalName(misc.name);
-        misc.tankslots = 1;
-        misc.criticals = 1;
-        misc.tonnage = 0.3;
-        misc.cost = 300;
-        misc.flags = misc.flags.or(F_LADDER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_LADDER)
-                .andNot(F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "244,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType create80mLadder() {
-        MiscType misc = new MiscType();
-        misc.name = "Ladder (80m)";
-        misc.setInternalName(misc.name);
-        misc.tankslots = 1;
-        misc.criticals = 1;
-        misc.tonnage = 0.4;
-        misc.cost = 400;
-        misc.flags = misc.flags.or(F_LADDER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_LADDER)
-                .andNot(F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "244,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    public static MiscType create100mLadder() {
-        MiscType misc = new MiscType();
-        misc.name = "Ladder (100m)";
-        misc.setInternalName(misc.name);
-        misc.tankslots = 1;
-        misc.criticals = 1;
-        misc.tonnage = 0.5;
-        misc.cost = 500;
-        misc.flags = misc.flags.or(F_LADDER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_LADDER)
-                .andNot(F_FIGHTER_EQUIPMENT);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_LADDER).or(F_VARIABLE_SIZE).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.rulesRefs = "244,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)

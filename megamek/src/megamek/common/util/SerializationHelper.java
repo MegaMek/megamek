@@ -29,7 +29,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import megamek.common.Coords;
 
 /**
- * Class that off-loads network related code from Server.java
+ * Class that off-loads serialization related code from Server.java
  */
 public class SerializationHelper {
     

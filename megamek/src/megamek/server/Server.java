@@ -1344,46 +1344,7 @@ public class Server implements Runnable {
 
         IGame newGame;
         try (InputStream is = new FileInputStream(f); InputStream gzi = new GZIPInputStream(is)) {
-            XStream xstream = new XStream();
-
-            // This mirrors the settings is saveGame
-            xstream.setMode(XStream.ID_REFERENCES);
-
-            xstream.registerConverter(new Converter() {
-                @Override
-                public boolean canConvert(Class cls) {
-                    return (cls == Coords.class);
-                }
-
-                @Override
-                public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-                    int x = 0, y = 0;
-                    boolean foundX = false, foundY = false;
-                    while(reader.hasMoreChildren()) {
-                        reader.moveDown();
-                        switch(reader.getNodeName()) {
-                            case "x":
-                                x = Integer.parseInt(reader.getValue());
-                                foundX = true;
-                                break;
-                            case "y":
-                                y = Integer.parseInt(reader.getValue());
-                                foundY = true;
-                                break;
-                            default:
-                                // Unknown node, or <hash>
-                                break;
-                        }
-                        reader.moveUp();
-                    }
-                    return (foundX && foundY) ? new Coords(x, y) : null;
-                }
-
-                @Override
-                public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
-                    // Unused here
-                }
-            });
+            XStream xstream = ServerNetworkHelper.getXStream();
             newGame = (IGame) xstream.fromXML(gzi);
         } catch (Exception e) {
             getLogger().error(getClass(), METHOD_NAME, "Unable to load file: " + f, e); //$NON-NLS-1$

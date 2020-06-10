@@ -36,6 +36,12 @@
 # smoke
 # elevator
 
+super * "incline_top:*" "" "saxarba/misc/blank.png"
+super * "incline_bottom:*" "" "saxarba/misc/blank.png"
+super * "incline_high_top:*" "" "saxarba/misc/blank.png"
+super * "incline_high_bottom:*" "" "saxarba/misc/blank.png"
+include "Cliff/Cliffs.tileinc"
+
 include "bloodwolf/grass/ThemeGrass.tileinc"
 
 super * "rough:1" "lunar" "transparent/rough_0.png;transparent/rough_0.png(0,72-84,-72);transparent/rough_0.png(84,0--84,72);transparent/rough_0.png(84,72--84,-72);transparent/rough_1.png;transparent/rough_1.png(0,72-84,-72);transparent/rough_1.png(84,0--84,72);transparent/rough_1.png(84,72--84,-72);transparent/rough_2.png;transparent/rough_2.png(0,72-84,-72);transparent/rough_2.png(84,0--84,72);transparent/rough_2.png(84,72--84,-72)"

@@ -156,27 +156,26 @@ public class Terrains implements ITerrainFactory {
     //TODO: + Inf: Forbidden (MoveStep)
     //TODO: + Inf: MovePath MP cost
     //TODO: + Inf: Server, forbidden
-    //TODO: check quadvee movement over cliffs
     //TODO: hover skidding down cliff
     //TODO: + ordering of PSRs when turning on pavement then walking up a cliff!?
-    //TODO: check if QuadVee can cross lvl2 at all -> apply to cliff
     //TODO: how to treat roads across cliffs?
     //TODO: + no climbing action of mechs! seems ok
-    //TODO: AO shadows only on cliffs and lvl3 incs
+    //TODO: + AO shadows only on cliffs and lvl3 incs
     //TODO: + show PSRs as danger (5*) in move paths 
     //TODO: WIGE can skid up a cliff ???
-    //TODO: test LAMs
     //TODO: check the first step for danger!? --> another time
     //TODO: REMOVE THE AUTOMATIC FAILS FROM SERVER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //TODO: + underwater cliffs, naval -> remove any underwater inclines for now
-    //TODO: Test QuadVees
-    //TODO: Test LAMs
-    //TODO: Finding: Climbing action not in the game. Mountain Troops can go up 3 levels but not a 2 lvl cliff. OK.
-    //TODO: Finding: Hover skidding into cliffside works as with other hills. Strange: skids into next hex instead of hitting cliff and remaining in place.
-    //TODO: Finding: Mechs work. Up and down.
-    //TODO: Finding: VTOL, Aero, WIGE works
+    //TODO: + Test QuadVees
+    //TODO: + Test LAMs
+    //TODO: + Finding: Climbing action not in the game. Mountain Troops can go up 3 levels but not a 2 lvl cliff. OK.
+    //TODO: + Finding: Hover skidding into cliffside works as with other hills. Strange: skids into next hex instead of hitting cliff and remaining in place.
+    //TODO: + Finding: Mechs work. Up and down.
+    //TODO: + Finding: VTOL, Aero, WIGE works
     //TODO: Spider in Water, cliff to step out of water, fails, now has 6 MP left but all moves illegal -> INCORRECT -> REPRODUCIBLE
     //TODO: Make inclines transparten in other tilesets
+    //TODO: PSR check order in Server; turn on pavement, then walk up cliff !
+    //TODO: check if AO shadows can be made as low incline gfx instead of hardcodeds
 
     /**
      * Keeps track of the different type of terrains that can have exits.

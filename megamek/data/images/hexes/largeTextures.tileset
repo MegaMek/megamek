@@ -37,6 +37,12 @@
 # smoke
 # elevator
 
+super * "incline_top:*" "" "saxarba/misc/blank.png"
+super * "incline_bottom:*" "" "saxarba/misc/blank.png"
+super * "incline_high_top:*" "" "saxarba/misc/blank.png"
+super * "incline_high_bottom:*" "" "saxarba/misc/blank.png"
+include "Cliff/Cliffs.tileinc"
+
 super * "swamp:1" "grass" "bloodwolf/hq_boring/swamp_1.png;bloodwolf/hq_boring/swamp_1.png(0,72-84,-72);bloodwolf/hq_boring/swamp_1.png(84,0--84,72);bloodwolf/hq_boring/swamp_1.png(84,72--84,-72)"
 super * "swamp:1" "" "bloodwolf/hq_boring/swamp_0.png;bloodwolf/hq_boring/swamp_0.png(0,72-84,-72);bloodwolf/hq_boring/swamp_0.png(84,0--84,72);bloodwolf/hq_boring/swamp_0.png(84,72--84,-72)"
 super * "swamp:2" "" "swamp/quicksand_0.gif;swamp/quicksand_0.gif(0,72-84,-72);swamp/quicksand_0.gif(84,0--84,72);swamp/quicksand_0.gif(84,72--84,-72);swamp/quicksand_1.gif;swamp/quicksand_1.gif(0,72-84,-72);swamp/quicksand_1.gif(84,0--84,72);swamp/quicksand_1.gif(84,72--84,-72);swamp/quicksand_2.gif;swamp/quicksand_2.gif(0,72-84,-72);swamp/quicksand_2.gif(84,0--84,72);swamp/quicksand_2.gif(84,72--84,-72);swamp/quicksand_3.gif;swamp/quicksand_3.gif(0,72-84,-72);swamp/quicksand_3.gif(84,0--84,72);swamp/quicksand_3.gif(84,72--84,-72)"

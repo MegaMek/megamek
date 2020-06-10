@@ -1691,9 +1691,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     Transparency.TRANSLUCENT);
             Graphics gS = elevShadow.getGraphics();
             Point2D p1 = new Point2D.Double(eSize.width/2, eSize.height/2);
-            for (int i = 0; i<n*lDiff; i++) {
-                gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
-                p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+            if (GUIPreferences.getInstance().getHexInclines()) {
+                // With inclines, the level 1 shadows are only very slight
+                int beg = 4;
+                p1.setLocation(p1.getX()+deltaX*beg, p1.getY()+deltaY*beg);
+                for (int i = beg; i<n*(lDiff-0.4); i++) {
+                    gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
+                    p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+                }   
+            } else {
+                for (int i = 0; i<n*lDiff; i++) {
+                    gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
+                    p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+                }
+                
             }
             gS.dispose();
             hS.put(lDiff, elevShadow);
@@ -3220,6 +3231,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         {
             // no shadow area when the current hex is not lower than the next hex in direction
             if (srcHex.getLevel() >= destHex.getLevel()) return null;
+            if (GUIPreferences.getInstance().getHexInclines()
+                    && (destHex.getLevel() - srcHex.getLevel() < 2)
+                    && !destHex.hasCliffTopTowards(srcHex)) {
+                return null;
+            }
         }
 
         return(AffineTransform.getScaleInstance(scale, scale).createTransformedShape(

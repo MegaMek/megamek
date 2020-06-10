@@ -884,6 +884,9 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_LADDER)) {
             // 0.1 tons per 20 meters
             return RoundWeight.nearestKg(size / 200.0);
+        } else if (hasFlag(F_BA_MISSION_EQUIPMENT)) {
+            // Size is weight in kg
+            return RoundWeight.nearestKg(size / 1000.0);
         }
        // okay, I'm out of ideas
         return 1.0f;
@@ -1721,9 +1724,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBAPowerPack());
         EquipmentType.addType(MiscType.createBAShotgunMicrophone());
         EquipmentType.addType(MiscType.createISBAMineDispenser());
-        EquipmentType.addType(MiscType.createBAMissionEquipStorage200());
-        EquipmentType.addType(MiscType.createBAMissionEquipStorage20());
-        EquipmentType.addType(MiscType.createBAMissionEquipStorage5());
+        EquipmentType.addType(MiscType.createBAMissionEquipStorage());
         EquipmentType.addType(MiscType.createISBADropChuteCamo());
         EquipmentType.addType(MiscType.createISBADropChuteCamo());
         EquipmentType.addType(MiscType.createISBADropChuteStd());
@@ -10836,65 +10837,26 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createBAMissionEquipStorage20() {
+    public static MiscType createBAMissionEquipStorage() {
         MiscType misc = new MiscType();
         // Not Covered in IO so using the old stats from TO.
-        misc.name = "Mission Equipment Storage (20 kg)";
-        misc.addLookupName("Mission Equipment Storage");
+        misc.name = "Mission Equipment Storage";
+        misc.addLookupName("Mission Equipment Storage (20 kg)");
+        misc.addLookupName("Mission Equipment Storage (5kg)");
+        misc.addLookupName("Mission Equipment Storage (200 kg)");
         misc.setInternalName(misc.name);
-        misc.tonnage = 0.02;
+        misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BA_MISSION_EQUIPMENT)
+        misc.flags = misc.flags.or(F_VARIABLE_SIZE).or(F_BA_EQUIPMENT).or(F_BA_MISSION_EQUIPMENT)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 750;
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false);
-        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2720);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(DATE_NONE, DATE_NONE, 2720)
+                .setTechRating(RATING_C).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
         return misc;
     }
     
-    public static MiscType createBAMissionEquipStorage5() {
-        MiscType misc = new MiscType();
-        // Not Covered in IO so using the old stats from TO.
-        misc.name = "Mission Equipment Storage (5kg)";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 0.005;
-        misc.criticals = 1;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BA_MISSION_EQUIPMENT)
-                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
-        misc.bv = 0;
-        misc.cost = 750;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false);
-        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2720);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
-        return misc;
-    }
-    
-    public static MiscType createBAMissionEquipStorage200() {
-        MiscType misc = new MiscType();
-        // Not Covered in IO so using the old stats from TO.
-        misc.name = "Mission Equipment Storage (200 kg)";
-        misc.addLookupName("Mission Equipment Storage");
-        misc.setInternalName(misc.name);
-        misc.tonnage = 0.2;
-        misc.criticals = 1;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BA_MISSION_EQUIPMENT)
-                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
-        misc.bv = 0;
-        misc.cost = 750;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false);
-        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2720);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
-        return misc;
-    }
-
     /*
      * // TODO Warrior Augmentations - IO pg 58. A lot of these are already in game
      * as SPA's. Should be reviewed and determine if they need a piece of equipment.

@@ -37,6 +37,7 @@ VERSION HISTORY:
    will also attempt to destroy intervening terrain if doing so would allow a unit to move across the map; massive performance improvement to unit deployment; 
    VTOLs can now adjust their height to get over obstacles;
 + Data: Tech Progression Fixes.
++ PR #1999: fix the /localload command
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

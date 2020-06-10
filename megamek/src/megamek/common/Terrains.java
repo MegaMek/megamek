@@ -38,7 +38,6 @@ public class Terrains implements ITerrainFactory {
     public static final int SPACE = 11;
     // unimplemented
     // Level 1 Foliage
-    // Sheer Cliffs
 
     // Terrain modifications
     public static final int PAVEMENT = 12;
@@ -134,49 +133,6 @@ public class Terrains implements ITerrainFactory {
     public static final int INCLINE_HIGH_TOP = 52;
     public static final int INCLINE_HIGH_BOTTOM = 53; 
     
-    //TODO: + implement hidden in editor 
-    //TODO: + correct auto placement
-    //TODO: + auto place cliff-Bottom?
-    //TODO: OPT shadows...
-    //TODO: + Add gfx option
-    //TODO: + no saving of auto terrain
-    //TODO: + cliff rules
-    //TODO: + only remove incline when cliff at the same exit
-    //TODO: + add lower 
-    //TODO: OPT check: predict graphics when lower and hihger present?
-    //TODO: OPT shadow/cliff interaction: bldgs/trees must become orthos! draw shadows over supers, orthos over shadows
-    //TODO: OPT add decal level for rooftop stuff
-    //TODO: + no backwards movement across sheer cliffs at all
-    //TODO: + Mechs up cliff: PSR, +1 for lvl1 cliff +2 for lvl2 cliff, if lost, nothing happens, MP lost
-    //TODO: + Mechs down cliff: PSR, +0 for lvl1 cliff +1 for lvl2 cliff, if lost, fall, movement over
-    //TODO: + Veh (exc VTOL/WIGE) up cliff: not possible; 
-    //TODO: + up cliff WIGE: 1MP extra 
-    //TODO: + Veh (exc VTOL/WIGE) down cliff: DSR, fail: Motive roll, move over; 
-    //TODO: + down cliff VTOL/WIGE: no effect at all
-    //TODO: + Inf: Forbidden (MoveStep)
-    //TODO: + Inf: MovePath MP cost
-    //TODO: + Inf: Server, forbidden
-    //TODO: hover skidding down cliff
-    //TODO: + ordering of PSRs when turning on pavement then walking up a cliff!?
-    //TODO: how to treat roads across cliffs?
-    //TODO: + no climbing action of mechs! seems ok
-    //TODO: + AO shadows only on cliffs and lvl3 incs
-    //TODO: + show PSRs as danger (5*) in move paths 
-    //TODO: WIGE can skid up a cliff ???
-    //TODO: check the first step for danger!? --> another time
-    //TODO: REMOVE THE AUTOMATIC FAILS FROM SERVER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //TODO: + underwater cliffs, naval -> remove any underwater inclines for now
-    //TODO: + Test QuadVees
-    //TODO: + Test LAMs
-    //TODO: + Finding: Climbing action not in the game. Mountain Troops can go up 3 levels but not a 2 lvl cliff. OK.
-    //TODO: + Finding: Hover skidding into cliffside works as with other hills. Strange: skids into next hex instead of hitting cliff and remaining in place.
-    //TODO: + Finding: Mechs work. Up and down.
-    //TODO: + Finding: VTOL, Aero, WIGE works
-    //TODO: Spider in Water, cliff to step out of water, fails, now has 6 MP left but all moves illegal -> INCORRECT -> REPRODUCIBLE
-    //TODO: Make inclines transparten in other tilesets
-    //TODO: PSR check order in Server; turn on pavement, then walk up cliff !
-    //TODO: check if AO shadows can be made as low incline gfx instead of hardcodeds
-
     /**
      * Keeps track of the different type of terrains that can have exits.
      */

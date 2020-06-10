@@ -100,7 +100,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
 
         while(!candidates.isEmpty()) {
             BulldozerMovePath currentPath = candidates.pollFirst();
-            candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords));            
+            if(currentPath.getFinalCoords().getX() == 24 && currentPath.getFinalCoords().getY() == 30) {
+                int alpha = 1;
+            }
+            
+            candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords));      
             
             if(destinationCoords.contains(currentPath.getFinalCoords()) &&
                     ((bestPath == null) || (movePathComparator.compare(bestPath, currentPath) > 0))) {
@@ -175,7 +179,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * to the list of child paths.
      */
     protected void processChild(BulldozerMovePath child, List<BulldozerMovePath> children, 
-            Map<Coords, BulldozerMovePath> shortestPathsToCoords) {        
+            Map<Coords, BulldozerMovePath> shortestPathsToCoords) {
+        
+        if(child.getFinalCoords().getX() == 24 && child.getFinalCoords().getY() == 30) {
+            int alpha = 1;
+        }
         // (if we haven't visited these coordinates before
         // or we have, and this is a shorter path)
         // and (it is a legal move

@@ -531,6 +531,7 @@ public class BoardEdgePathFinder {
         Coords dest = movePath.getFinalCoords();
         IBoard board = movePath.getGame().getBoard();
         Coords src = movePath.getSecondLastStep().getPosition();
+        IHex srcHex = board.getHex(src);
         Entity entity = movePath.getEntity();
 
         MoveLegalityIndicator mli = new MoveLegalityIndicator();
@@ -552,18 +553,17 @@ public class BoardEdgePathFinder {
                             movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
         boolean destHexHasRoad = destHex.containsTerrain(Terrains.ROAD);
         // jumpers can clear higher objects than walkers and crawlers
-        int maxUpwardElevationChange = Math.max(entity.getJumpMP(), entity.getMaxElevationChange());
+        int maxUpwardElevationChange = movePath.isJumping() ? movePath.getCachedEntityState().getJumpMP() : entity.getMaxElevationChange();
         // jumpers can just hop down wherever they want
-        int maxDownwardElevationChange = movePath.getCachedEntityState().getJumpMP() > 0 ? 999 : entity.getMaxElevationDown();
+        int maxDownwardElevationChange = movePath.isJumping() ? 999 : entity.getMaxElevationDown();
         int destHexElevation = calculateUnitElevationInHex(destHex, entity, isHovercraft, isAmphibious);
-        int srcHexElevation = movePath.getFinalElevation();        
+        int srcHexElevation = calculateUnitElevationInHex(srcHex, entity, isHovercraft, isAmphibious);        
         
         mli.destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
-        boolean destinationHasBuildingOrBridge = destinationBuilding != null;
-        boolean destinationHasBridge = destinationHasBuildingOrBridge && destHex.containsTerrain(Terrains.BRIDGE_CF);
-        boolean destinationHasBuilding = destinationHasBuildingOrBridge && 
-                (destHex.containsTerrain(Terrains.BLDG_CF) || destHex.containsTerrain(Terrains.FUEL_TANK_CF));
-
+        boolean destinationHasBridge = destHex.containsTerrain(Terrains.BRIDGE_CF);
+        boolean destinationHasBuilding = destHex.containsTerrain(Terrains.BLDG_CF) || destHex.containsTerrain(Terrains.FUEL_TANK_CF);
+        boolean sourceHasBridge = srcHex.containsTerrain(Terrains.BRIDGE_CF);
+        
         // if we're going to step onto a bridge that will collapse, let's not consider going there
         mli.destinationHasWeakBridge =  destinationHasBridge && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
 
@@ -578,9 +578,10 @@ public class BoardEdgePathFinder {
         
         // consider bridges if the destination has one, and we can step on it and we've flagged ourselves
         // as not being able to ascend/descend the elevation
-        if(destinationHasBridge && !mli.destinationHasWeakBridge && (mli.goingUpTooHigh || mli.goingDownTooLow)) {
-            destHexElevation = destHex.maxTerrainFeatureElevation(false);
-            
+        if((sourceHasBridge || (destinationHasBridge && !mli.destinationHasWeakBridge)) && (mli.goingUpTooHigh || mli.goingDownTooLow)) {
+            srcHexElevation = calculateUnitElevationInHex(srcHex, entity, isHovercraft, isAmphibious, true);
+            destHexElevation = calculateUnitElevationInHex(destHex, entity, isHovercraft, isAmphibious, true);
+
             mli.goingUpTooHigh = destHexElevation - srcHexElevation > maxUpwardElevationChange;
             mli.goingDownTooLow = srcHexElevation - destHexElevation > maxDownwardElevationChange;
         }
@@ -624,14 +625,30 @@ public class BoardEdgePathFinder {
      * @return The effective elevation
      */
     public static int calculateUnitElevationInHex(IHex hex, Entity entity, boolean isHovercraft, boolean isAmphibious) {
+        return calculateUnitElevationInHex(hex, entity, isHovercraft, isAmphibious, false);
+    }
+    
+    /**
+     * Helper function that calculates the effective elevation for a unit standing there.
+     * @param hex The hex to check
+     * @param entity The entity to check
+     * @param bridgeTop Whether we're going on top of a bridge or under it
+     * @return The effective elevation
+     */
+    public static int calculateUnitElevationInHex(IHex hex, Entity entity, boolean isHovercraft, boolean isAmphibious, boolean useBridgeTop) {
         // we calculate the height of a hex as "on the ground" by default
         // Special exceptions:
-        // We are a mech, which can hopping on top of some buildings
+        // We are a mech, which can hop on top of some buildings
         // We are naval unit going under a bridge, in which case the height is the water level (naval units go on the surface, mostly)
         // We are non-naval going into water but not onto a bridge, in which case the height is the floor (mechs sink to the bottom)
-
+        // if we are explicitly going to the top of a bridge, use that.
+        
+        if(useBridgeTop && !entity.isSurfaceNaval() && hex.containsTerrain(Terrains.BRIDGE_CF)) {
+            return hex.ceiling();
+        }
+        
         int hexElevation = hex.getLevel();
-
+        
         if (entity.hasETypeFlag(Entity.ETYPE_MECH) && 
                 (hex.containsTerrain(Terrains.BLDG_CF) || hex.containsTerrain(Terrains.FUEL_TANK_CF))) {
             hexElevation = hex.ceiling();

@@ -54,11 +54,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -121,6 +116,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -1344,7 +1340,7 @@ public class Server implements Runnable {
 
         IGame newGame;
         try (InputStream is = new FileInputStream(f); InputStream gzi = new GZIPInputStream(is)) {
-            XStream xstream = ServerNetworkHelper.getXStream();
+            XStream xstream = SerializationHelper.getXStream();
             newGame = (IGame) xstream.fromXML(gzi);
         } catch (Exception e) {
             getLogger().error(getClass(), METHOD_NAME, "Unable to load file: " + f, e); //$NON-NLS-1$

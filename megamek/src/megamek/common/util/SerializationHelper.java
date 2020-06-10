@@ -17,7 +17,7 @@
  * along with MegaMek.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package megamek.server;
+package megamek.common.util;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
@@ -31,7 +31,7 @@ import megamek.common.Coords;
 /**
  * Class that off-loads network related code from Server.java
  */
-public class ServerNetworkHelper {
+public class SerializationHelper {
     
     /**
      * Factory method that produces an XStream object suitable for loading MegaMek save games

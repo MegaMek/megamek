@@ -40,11 +40,6 @@ import java.util.zip.GZIPInputStream;
 import javax.swing.SwingUtilities;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import megamek.MegaMek;
 import megamek.client.commands.AddBotCommand;
@@ -58,7 +53,6 @@ import megamek.client.commands.RulerCommand;
 import megamek.client.commands.ShowEntityCommand;
 import megamek.client.commands.ShowTileCommand;
 import megamek.client.commands.SitrepCommand;
-import megamek.client.generator.RandomNameGenerator;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
@@ -116,8 +110,8 @@ import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
-import megamek.server.ServerNetworkHelper;
 import megamek.server.SmokeCloud;
 
 /**
@@ -920,7 +914,7 @@ public class Client implements IClientCommandHandler {
         try (InputStream is = new GZIPInputStream(new FileInputStream(f))) {
             game.reset();
             
-            XStream xstream = ServerNetworkHelper.getXStream();            
+            XStream xstream = SerializationHelper.getXStream();            
             IGame newGame = (IGame) xstream.fromXML(is);
 
             send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { newGame }));

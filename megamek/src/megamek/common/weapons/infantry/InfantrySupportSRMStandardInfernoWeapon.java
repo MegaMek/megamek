@@ -37,13 +37,15 @@ public class InfantrySupportSRMStandardInfernoWeapon extends InfantryWeapon {
 		addLookupName("InfantryStandardSRMInferno");
 		addLookupName("Infantry2ShotSRMInferno");
 		addLookupName("Infantry Two-Shot SRM Launcher (Inferno)");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 1500;
 		bv = 3.48;
         tonnage = .030;
 		flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
 		infantryDamage = 0.68;
 		infantryRange = 2;
+		ammoWeight = 0.02;
+		shots = 2;
 		String[] modeStrings = { "Damage", "Heat" };
 		setModes(modeStrings);
 		rulesRefs = "273,TM";

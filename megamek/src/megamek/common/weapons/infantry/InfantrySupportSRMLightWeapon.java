@@ -37,13 +37,15 @@ public class InfantrySupportSRMLightWeapon extends InfantryWeapon {
 		addLookupName("InfantrySRMLight");
 		addLookupName("InfantrySRM");
 		addLookupName("Light SRM Launcher");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 1500;
 		bv = 2.91;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
 		infantryDamage = 0.57;
 		infantryRange = 2;
 		tonnage = .010;
+		ammoWeight = 0.009;
+		shots = 2;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

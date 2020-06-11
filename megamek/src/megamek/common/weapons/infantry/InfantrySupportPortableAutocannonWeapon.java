@@ -37,7 +37,7 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
 		addLookupName("InfantryPortableAutocannon");
 		addLookupName("InfantrySemiPortableAutocannon");
 		addLookupName("Infantry Semi Portable Autocannon");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 2000;
 		bv = 2.35;
         tonnage = .025;
@@ -45,6 +45,9 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
 		infantryDamage = 0.77;
 		infantryRange = 1;
 		crew = 2;
+		ammoWeight = 0.008;
+		shots = 200;
+		bursts = 8;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2255, 2300, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

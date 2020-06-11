@@ -36,13 +36,15 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMk2PortableAA");
 		addLookupName("Infantry Mk 2 Man-Portable AA Weapon");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 3500;
 		bv = 4.14;
 		tonnage = .035;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
 		infantryDamage = 0.81;
 		infantryRange = 2;
+		ammoWeight = 0.014;
+		shots = 4;
 		crew = 2;
 		damage = 1;
 		minimumRange = 0;

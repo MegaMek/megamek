@@ -36,7 +36,7 @@ public class InfantrySupportGrenadeLauncherAutoInfernoWeapon extends InfantryWea
 		setInternalName(name);
 		addLookupName("InfantryAutoGLInferno");
 		addLookupName("Infantry Inferno Auto Grenade Launcher");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 975;
 		bv = 1.25;
 		tonnage = .012;
@@ -44,6 +44,9 @@ public class InfantrySupportGrenadeLauncherAutoInfernoWeapon extends InfantryWea
 		infantryDamage = 0.41;
 		infantryRange = 1;
 		crew = 1;
+		ammoWeight = 0.009;
+		shots = 20;
+		bursts = 4;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)

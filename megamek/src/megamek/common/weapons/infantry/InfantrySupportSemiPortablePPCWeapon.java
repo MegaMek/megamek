@@ -37,13 +37,15 @@ public class InfantrySupportSemiPortablePPCWeapon extends InfantryWeapon {
 		addLookupName("InfantrySemiPortablePPC");
 		addLookupName("InfantryManPackPPC");
 		addLookupName("Infantry Semi-Portable PPC");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 7000;
 		bv = 3.68;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
 		infantryDamage = 0.72;
 		infantryRange = 2;
 		crew = 2;
+		ammoWeight = 0.003;
+		shots = 25;
 		tonnage = .040;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2430, 2436, 2450, DATE_NONE, DATE_NONE)

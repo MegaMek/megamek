@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons.infantry;
 
+import megamek.common.AmmoType;
+
 /**
  * @author Sebastian Brocks
  */
@@ -36,6 +38,7 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
 		addLookupName("Portable Flamer");
 		addLookupName("Flamer (man-portable)");
 		addLookupName("Flamer (Man-Pack)");
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 100;
 		bv = 0.50;
         tonnage = .015;
@@ -43,6 +46,8 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
 		infantryDamage = 0.55;
 		infantryRange = 0;
 		crew = 1;
+		ammoWeight = 0.0084;
+		shots = 12;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

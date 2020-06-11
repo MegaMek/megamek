@@ -36,12 +36,14 @@ public class InfantrySupportSRMHeavyInfernoWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryHeavySRMInferno");
 		addLookupName("Infantry Heavy SRM Launcher (Inferno)");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 3000;
 		bv = 1.74;
 		flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
 		infantryDamage = 0.34;
 		infantryRange = 2;
+		ammoWeight = 0.018;
+		shots = 1;
 		String[] modeStrings = { "Damage", "Heat" };
 		setModes(modeStrings);
 		rulesRefs = "273,TM";

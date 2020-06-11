@@ -36,7 +36,7 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryGungnirHeavySupportGaussRifle");
 		addLookupName("GungnirHeavySupportGaussRifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 15000;
 		tonnage = 0.006;
 		bv = 0.0;
@@ -44,6 +44,8 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
 		infantryDamage = 1.23;
 		infantryRange = 3;
 		crew = 3;
+		ammoWeight = 0.02;
+		shots = 10;
 		tonnage = .060;
 		rulesRefs = "176,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3074, 3080, DATE_NONE, DATE_NONE, DATE_NONE)

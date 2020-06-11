@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons.infantry;
 
+import megamek.common.AmmoType;
+
 /**
  * @author Ben Grills
  */
@@ -36,6 +38,7 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
 		addLookupName("InfantryPlasmaPortable");
 		addLookupName("InfantryMPPR");
 		addLookupName("Portable Plasma Rifle");
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 7500;
 		bv = 8.08;
 		flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
@@ -44,6 +47,8 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
 		infantryDamage = 1.58;
 		infantryRange = 2;
 		crew = 1;
+		ammoWeight = 0.018;
+		shots = 10;
 		rulesRefs = "273,TM";
 		tonnage = .030;
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)

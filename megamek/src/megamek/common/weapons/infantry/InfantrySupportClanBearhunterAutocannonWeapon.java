@@ -37,7 +37,7 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
         addLookupName("InfantryBearhunter");
         addLookupName("InfantryBearhunterAutocannon");
         addLookupName("Infantry Bearhunter Super-Heavy Autocannon");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.T_INFANTRY;
         cost = 3000;
         bv = 2.13;
         tonnage = 0.040;
@@ -45,6 +45,9 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
         infantryDamage = 2.33;
         infantryRange = 0;
         crew = 2;
+        ammoWeight = 0.009;
+        shots = 180;
+        bursts = 6;
         rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN)
 		        .setClanAdvancement(3059, 3062, DATE_NONE, DATE_NONE, DATE_NONE)

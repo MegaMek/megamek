@@ -36,7 +36,7 @@ public class InfantrySupportWireGuidedMissileWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryWireGuidedMissileLauncher");
 		addLookupName("WireGuidedMissileLauncher");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 800000;
 		tonnage = 0.095;
 		bv = 0.00;
@@ -45,6 +45,8 @@ public class InfantrySupportWireGuidedMissileWeapon extends InfantryWeapon {
 		infantryRange = 2;
 		toHitModifier = -2;
 		crew = 4;
+		ammoWeight = 0.022;
+		shots = 1;
 		rulesRefs = "195,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

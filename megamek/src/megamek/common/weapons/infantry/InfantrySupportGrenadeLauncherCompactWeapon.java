@@ -37,7 +37,7 @@ public class InfantrySupportGrenadeLauncherCompactWeapon extends InfantryWeapon 
 		addLookupName("InfantryCompactGL");
 		addLookupName("InfantryCompactGrenadeLauncher");
 		addLookupName("Infantry Compact Grenade Launcher");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 290;
 		bv = 0.49;
 		tonnage = .003;
@@ -45,6 +45,8 @@ public class InfantrySupportGrenadeLauncherCompactWeapon extends InfantryWeapon 
 		infantryDamage = 0.16;
 		infantryRange = 1;
 		crew = 1;
+		ammoWeight = 0.0002;
+		shots = 1;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)

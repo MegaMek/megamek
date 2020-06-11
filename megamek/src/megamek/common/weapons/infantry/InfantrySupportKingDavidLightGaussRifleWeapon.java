@@ -37,7 +37,7 @@ public class InfantrySupportKingDavidLightGaussRifleWeapon extends InfantryWeapo
 		addLookupName("InfantryKingDavid");
 		addLookupName("InfantryKingDavidLightGaussRifle");
 		addLookupName("Infantry King David Light Gauss Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 8000;
 		bv = 4.87;
 		tonnage = .03;
@@ -46,6 +46,9 @@ public class InfantrySupportKingDavidLightGaussRifleWeapon extends InfantryWeapo
 		infantryRange = 3;
 		crew = 2;
 		tonnage = .030;
+		ammoWeight = 0.016;
+		shots = 80;
+		bursts = 16;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3060, 3063, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

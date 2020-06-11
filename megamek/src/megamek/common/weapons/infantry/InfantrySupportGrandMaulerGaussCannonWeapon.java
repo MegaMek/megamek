@@ -37,7 +37,7 @@ public class InfantrySupportGrandMaulerGaussCannonWeapon extends InfantryWeapon 
 		addLookupName("InfantryGrandMaulerGaussCannon");
 		addLookupName("InfantryGrandMauler");
 		addLookupName("Infantry Grand Mauler Gauss Cannon");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 5000;
 		bv = 3.22;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
@@ -45,6 +45,8 @@ public class InfantrySupportGrandMaulerGaussCannonWeapon extends InfantryWeapon 
 		infantryRange = 2;
 		crew = 1;
 		tonnage = .014;
+		ammoWeight = 0.0045;
+		shots = 5;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3059, 3065, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

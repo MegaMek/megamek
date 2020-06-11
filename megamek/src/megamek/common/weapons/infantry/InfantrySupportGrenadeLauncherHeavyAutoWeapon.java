@@ -36,7 +36,7 @@ public class InfantrySupportGrenadeLauncherHeavyAutoWeapon extends InfantryWeapo
 		setInternalName(name);
 		addLookupName("InfantryHeavyAutoGrenadeLauncher");
 		addLookupName("Infantry Heavy Auto Grenade Launcher");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 4500;
 		bv = 5.90;
 		tonnage = .020;
@@ -45,6 +45,9 @@ public class InfantrySupportGrenadeLauncherHeavyAutoWeapon extends InfantryWeapo
 		infantryRange = 1;
 		crew = 1;
 		tonnage = .020;
+		ammoWeight = 0.012;
+		shots = 20;
+		bursts = 3;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2896, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
 				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSF, F_CHH)

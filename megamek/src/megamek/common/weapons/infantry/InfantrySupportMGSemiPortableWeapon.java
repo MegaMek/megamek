@@ -37,7 +37,7 @@ public class InfantrySupportMGSemiPortableWeapon extends InfantryWeapon {
 		addLookupName("InfantryMGSemiPortable");
 		addLookupName("Infantry MG Semi Portable");
 		addLookupName("InfantrySemiMG");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 1000;
 		bv = 2.29;
 		tonnage = .020;
@@ -46,6 +46,9 @@ public class InfantrySupportMGSemiPortableWeapon extends InfantryWeapon {
 		        .or(F_INF_ENCUMBER);
 		infantryDamage = 0.75;
 		infantryRange = 1;
+		ammoWeight = 0.004;
+		shots = 80;
+		bursts = 4;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

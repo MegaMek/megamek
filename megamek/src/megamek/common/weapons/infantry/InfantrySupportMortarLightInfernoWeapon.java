@@ -36,7 +36,7 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryLightMortarInferno");
 		addLookupName("Infantry Light Mortar Inferno");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 1400;
 		bv = 0.79;
 		tonnage = .050;
@@ -46,6 +46,8 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
 		infantryDamage = 0.26;
 		infantryRange = 1;
 		crew = 2;
+		ammoWeight = 0.002;
+		shots = 1;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

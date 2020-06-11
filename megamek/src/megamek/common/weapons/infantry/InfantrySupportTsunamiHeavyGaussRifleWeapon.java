@@ -37,7 +37,7 @@ public class InfantrySupportTsunamiHeavyGaussRifleWeapon extends InfantryWeapon 
 		addLookupName("InfantryTsunamiHeavyGaussRifle");
 		addLookupName("InfantryTsunamiGauss");
 		addLookupName("Infantry Tsunami Heavy Gauss Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 5500;
 		bv = 3.22;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
@@ -45,6 +45,8 @@ public class InfantrySupportTsunamiHeavyGaussRifleWeapon extends InfantryWeapon 
 		infantryRange = 2;
 		crew = 1;
 		tonnage = .0125;
+		ammoWeight = 0.0045;
+		shots = 5;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3053, 3056, 3068, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

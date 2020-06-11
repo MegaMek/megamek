@@ -36,12 +36,14 @@ public class InfantrySupportSRMHeavyWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryHeavySRM");
 		addLookupName("Infantry Heavy SRM Launcher");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 3000;
 		bv = 2.91;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
 		infantryDamage = 0.57;
 		infantryRange = 2;
+		ammoWeight = 0.018;
+		shots = 1;
 		tonnage = .020;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2366, 2370, 2400, DATE_NONE, DATE_NONE)

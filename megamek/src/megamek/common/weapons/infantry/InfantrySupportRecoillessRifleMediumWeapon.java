@@ -37,7 +37,7 @@ public class InfantrySupportRecoillessRifleMediumWeapon extends InfantryWeapon {
 		addLookupName("InfantryMRR");
 		addLookupName("InfantryMediumRecoillessRifle");
 		addLookupName("Infantry Medium Recoilless Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 2000;
 		bv = 2.71;
 		tonnage = .032;
@@ -45,6 +45,8 @@ public class InfantrySupportRecoillessRifleMediumWeapon extends InfantryWeapon {
 		infantryDamage = 0.53;
 		infantryRange = 2;
 		crew = 2;
+		ammoWeight = 0.002;
+		shots = 1;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

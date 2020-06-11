@@ -37,13 +37,15 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
 		addLookupName("InfantrySupportPPC");
 		addLookupName("InfantryHeavyPPC");
 		addLookupName("Infantry Support PPC");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 45000;
 		bv = 11.32;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
 		infantryDamage = 1.58;
 		infantryRange = 3;
 		crew = 5;
+		ammoWeight = 0.0025;
+		shots = 150;
 		tonnage = 1.800;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2465, 2470, 2500, DATE_NONE, DATE_NONE)

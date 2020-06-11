@@ -37,7 +37,7 @@ public class InfantrySupportRecoillessRifleHeavyInfernoWeapon extends InfantryWe
 		addLookupName("InfantryInfernoHRR");
 		addLookupName("InfantryHeavyRecoillessRifleInferno");
 		addLookupName("Infantry Inferno Heavy Recoilless Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 3000;
 		bv = 1.74;
 		tonnage = .060;
@@ -47,6 +47,8 @@ public class InfantrySupportRecoillessRifleHeavyInfernoWeapon extends InfantryWe
 		infantryDamage = 0.34;
 		infantryRange = 2;
 		crew = 3;
+		ammoWeight = 0.004;
+		shots = 1;
 		tonnage = .060;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

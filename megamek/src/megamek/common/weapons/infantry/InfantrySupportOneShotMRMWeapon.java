@@ -37,7 +37,7 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
 		addLookupName("InfantryMRM");
 		addLookupName("InfantryOneShotMRM");
 		addLookupName("Infantry One-Shot MRM Launcher");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 2500;
 		bv = 2.71;
 		tonnage = .03;
@@ -45,6 +45,8 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
 		infantryDamage = 0.53;
 		infantryRange = 2;
 		crew = 1;
+		ammoWeight = 0.005;
+		shots = 1;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)

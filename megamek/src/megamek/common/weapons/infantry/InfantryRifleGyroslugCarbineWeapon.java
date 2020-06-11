@@ -35,13 +35,15 @@ public class InfantryRifleGyroslugCarbineWeapon extends InfantryWeapon {
 		name = "Gyroslug Carbine";
 		setInternalName(name);
 		addLookupName("InfantryGyroslugCarbine");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 800;
 		bv = 0.86;
 		tonnage = .004;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.28;
 		infantryRange = 1;
+		ammoWeight = 0.00184;
+		shots = 20;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2570, 2580, 2650, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

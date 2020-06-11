@@ -35,13 +35,15 @@ public class InfantryRifleStalkerSniperRifleWeapon extends InfantryWeapon {
         name = "Rifle (Stalker Sniper Rifle)";
         setInternalName(name);
         addLookupName("StalkerInfantryRifle");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.T_INFANTRY;
         cost = 5000;
         bv = .25;
         tonnage = .009;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.25;
         infantryRange = 2;
+        ammoWeight = 0.00011;
+        shots = 9;
         damage = 1;
         rulesRefs =" HBHL, 147";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)

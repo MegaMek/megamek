@@ -36,13 +36,15 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryShredder");
 		addLookupName("Shredder Heavy Needler");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 150;
 		bv = 0.31;
 		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
 		infantryDamage = 0.34;
 		infantryRange = 0;
+		ammoWeight = 0.00024;
+		shots = 10;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3051, 3054, 3067, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

@@ -35,13 +35,16 @@ public class InfantryRifleStrikerCarbineRifleWeapon extends InfantryWeapon {
         name = "Rifle (Striker Carbine)";
         setInternalName(name);
         addLookupName("StrikerCarbineRifle");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.T_INFANTRY;
         cost = 875;
         bv = .29;
         tonnage = .003;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.29;
         infantryRange = 1;
+        ammoWeight = 0.00034;
+        shots = 60;
+        bursts = 2;
         damage = 1;
         rulesRefs =" HBHL, 147";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)

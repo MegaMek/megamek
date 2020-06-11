@@ -36,13 +36,15 @@ public class InfantryRifleThunderstrokeWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryThunderstroke");
 		addLookupName("Thunderstroke");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 2500;
 		bv = 0.79;
 		tonnage = .007;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_BALLISTIC);
 		infantryDamage = 0.26;
 		infantryRange = 1;
+		ammoWeight = 0.00033;
+		shots = 5;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3058, 3081, 3095, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

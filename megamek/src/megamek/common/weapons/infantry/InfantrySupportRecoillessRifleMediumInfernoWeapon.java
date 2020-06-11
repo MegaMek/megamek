@@ -48,6 +48,7 @@ public class InfantrySupportRecoillessRifleMediumInfernoWeapon extends InfantryW
 		infantryRange = 2;
 		crew = 2;
 		ammoWeight = 0.002;
+		ammoCost = 30;
 		shots = 1;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

@@ -45,6 +45,7 @@ public class InfantrySupportMortarHeavyWeapon extends InfantryWeapon {
 		infantryRange = 3;
 		crew = 3;
 		ammoWeight = 0.004;
+		ammoCost = 32;
 		shots = 1;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

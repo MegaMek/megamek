@@ -48,6 +48,7 @@ public class InfantrySupportOneShotMRMInfernoWeapon extends InfantryWeapon {
 		infantryRange = 2;
 		crew = 1;
 		ammoWeight = 0.005;
+		ammoCost = 21;
 		shots = 1;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)

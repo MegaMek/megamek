@@ -45,6 +45,7 @@ public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
 		infantryRange = 0;
 		crew = 2;
 		ammoWeight = 0.0029;
+		ammoCost = 200;
 		shots = 3;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)

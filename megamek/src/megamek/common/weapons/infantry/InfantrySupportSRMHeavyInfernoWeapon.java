@@ -43,6 +43,7 @@ public class InfantrySupportSRMHeavyInfernoWeapon extends InfantryWeapon {
 		infantryDamage = 0.34;
 		infantryRange = 2;
 		ammoWeight = 0.018;
+		ammoCost = 500;
 		shots = 1;
 		String[] modeStrings = { "Damage", "Heat" };
 		setModes(modeStrings);

@@ -43,6 +43,7 @@ public class InfantryRifleNeedlerWeapon extends InfantryWeapon {
 		infantryDamage = 0.23;
 		infantryRange = 0;
 		ammoWeight = 0.0002;
+		ammoCost = 2;
 		shots = 20;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)

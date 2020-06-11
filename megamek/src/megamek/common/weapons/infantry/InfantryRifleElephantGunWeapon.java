@@ -43,6 +43,7 @@ public class InfantryRifleElephantGunWeapon extends InfantryWeapon {
 		infantryDamage = 0.11;
 		infantryRange = 1;
 		ammoWeight = 0.00004;
+		ammoCost = 2;
 		shots = 2;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

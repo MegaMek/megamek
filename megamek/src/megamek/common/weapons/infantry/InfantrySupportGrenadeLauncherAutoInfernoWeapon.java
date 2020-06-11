@@ -45,6 +45,7 @@ public class InfantrySupportGrenadeLauncherAutoInfernoWeapon extends InfantryWea
 		infantryRange = 1;
 		crew = 1;
 		ammoWeight = 0.009;
+		ammoCost = 160;
 		shots = 20;
 		bursts = 4;
 		rulesRefs = " 273,TM";

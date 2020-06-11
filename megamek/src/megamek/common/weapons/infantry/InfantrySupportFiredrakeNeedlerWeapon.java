@@ -47,6 +47,7 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
 		infantryRange = 1;
 		crew = 2;
 		ammoWeight = 0.003;
+		ammoCost = 10;
 		shots = 30;
 		bursts = 3;
 		tonnage = .025;

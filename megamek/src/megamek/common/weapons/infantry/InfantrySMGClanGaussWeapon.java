@@ -44,6 +44,7 @@ public class InfantrySMGClanGaussWeapon extends InfantryWeapon {
 		infantryDamage = 0.45;
 		infantryRange = 1;
 		ammoWeight = 0.00052;
+		ammoCost = 10;
 		shots = 30;
 		bursts = 10;
 		rulesRefs = "273,TM";

@@ -44,6 +44,7 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 		infantryDamage = 0.81;
 		infantryRange = 2;
 		ammoWeight = 0.014;
+		ammoCost = 1000;
 		shots = 4;
 		crew = 2;
 		damage = 1;

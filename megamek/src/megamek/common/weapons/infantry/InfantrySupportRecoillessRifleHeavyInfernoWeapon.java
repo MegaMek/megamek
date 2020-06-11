@@ -48,6 +48,7 @@ public class InfantrySupportRecoillessRifleHeavyInfernoWeapon extends InfantryWe
 		infantryRange = 2;
 		crew = 3;
 		ammoWeight = 0.004;
+		ammoCost = 40;
 		shots = 1;
 		tonnage = .060;
 		rulesRefs = " 273,TM";

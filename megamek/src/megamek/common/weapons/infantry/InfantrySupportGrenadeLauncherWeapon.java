@@ -45,6 +45,7 @@ public class InfantrySupportGrenadeLauncherWeapon extends InfantryWeapon {
 		infantryRange = 1;
 		crew = 1;
 		ammoWeight = 0.0045;
+		ammoCost = 80;
 		shots = 10;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

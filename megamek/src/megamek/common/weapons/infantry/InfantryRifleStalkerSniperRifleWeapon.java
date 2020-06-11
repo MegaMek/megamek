@@ -43,6 +43,7 @@ public class InfantryRifleStalkerSniperRifleWeapon extends InfantryWeapon {
         infantryDamage = 0.25;
         infantryRange = 2;
         ammoWeight = 0.00011;
+        ammoCost = 6;
         shots = 9;
         damage = 1;
         rulesRefs =" HBHL, 147";

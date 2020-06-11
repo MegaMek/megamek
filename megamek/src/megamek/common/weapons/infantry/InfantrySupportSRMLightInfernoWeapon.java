@@ -43,6 +43,7 @@ public class InfantrySupportSRMLightInfernoWeapon extends InfantryWeapon {
 		infantryDamage = 0.34;
 		infantryRange = 2;
 		ammoWeight = 0.009;
+		ammoCost = 300;
 		shots = 2;
 		String[] modeStrings = { "Damage", "Heat" };
 		setModes(modeStrings);

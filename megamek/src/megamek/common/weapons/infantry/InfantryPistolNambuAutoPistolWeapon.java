@@ -44,6 +44,7 @@ public class InfantryPistolNambuAutoPistolWeapon extends InfantryWeapon {
 		infantryDamage = 0.21;
 		infantryRange = 0;
 		ammoWeight = 0.00016;
+		ammoCost = 2;
 		shots = 12;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2535, 2540, 2600, DATE_NONE, DATE_NONE)

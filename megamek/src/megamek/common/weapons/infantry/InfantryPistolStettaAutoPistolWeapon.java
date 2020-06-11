@@ -44,6 +44,7 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.17;
         infantryRange = 0;
         ammoWeight = 0.00068;
+        ammoCost = 10;
         shots = 100;
         bursts = 10;
         rulesRefs = "273,TM";

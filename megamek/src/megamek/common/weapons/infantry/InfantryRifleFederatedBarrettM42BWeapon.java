@@ -44,6 +44,7 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
         infantryDamage = 1.02;
         infantryRange = 1;
         ammoWeight = 0.00024;
+        ammoCost = 12;
         shots = 50;
         bursts = 5;
         rulesRefs = "273,TM";

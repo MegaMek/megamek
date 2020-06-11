@@ -43,6 +43,7 @@ public class InfantrySupportSRMHeavyWeapon extends InfantryWeapon {
 		infantryDamage = 0.57;
 		infantryRange = 2;
 		ammoWeight = 0.018;
+		ammoCost = 500;
 		shots = 1;
 		tonnage = .020;
 		rulesRefs = "273,TM";

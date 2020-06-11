@@ -46,6 +46,7 @@ public class InfantrySupportMGPortableWeapon extends InfantryWeapon {
 		infantryDamage = 0.65;
 		infantryRange = 1;
 		ammoWeight = 0.003;
+		ammoCost = 10;
 		shots = 75;
 		bursts = 5;
 		damage = 1;

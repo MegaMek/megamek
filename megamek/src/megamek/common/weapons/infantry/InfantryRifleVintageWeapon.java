@@ -44,6 +44,7 @@ public class InfantryRifleVintageWeapon extends InfantryWeapon {
 		infantryDamage = 0.17;
 		infantryRange = 1;
 		ammoWeight = 0.00048;
+		ammoCost = 40;
 		shots = 30;
 		bursts = 3;
 		rulesRefs = "195,ATOW-C";

@@ -43,6 +43,7 @@ public class InfantryRifleGyroslugCarbineWeapon extends InfantryWeapon {
 		infantryDamage = 0.28;
 		infantryRange = 1;
 		ammoWeight = 0.00184;
+		ammoCost = 5;
 		shots = 20;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2570, 2580, 2650, DATE_NONE, DATE_NONE)

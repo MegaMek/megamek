@@ -44,6 +44,7 @@ public class InfantryShotgunBuccaneerGelGunWeapon extends InfantryWeapon {
 		infantryDamage = 0.07;
 		infantryRange = 0;
 		ammoWeight = 0.00085;
+		ammoCost = 20;
 		shots = 15;
     	rulesRefs = "269, ATOW";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3030, 3035, 3057, DATE_NONE, DATE_NONE)

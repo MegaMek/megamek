@@ -47,6 +47,7 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
 		infantryRange = 0;
 		crew = 1;
 		ammoWeight = 0.0084;
+		ammoCost = 2;
 		shots = 12;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

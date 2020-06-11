@@ -67,6 +67,7 @@ public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
 		infantryDamage = 0.04;
 		infantryRange = 0;
 		ammoWeight = 0.00002;
+		ammoCost = 1;
 		shots = 2;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)

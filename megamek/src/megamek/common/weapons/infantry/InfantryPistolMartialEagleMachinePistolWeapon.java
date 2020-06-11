@@ -44,6 +44,7 @@ public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapo
 		infantryDamage = 0.25;
 		infantryRange = 0;
 		ammoWeight = 0.00025;
+		ammoCost = 20;
 		shots = 30;
 		bursts = 3;
 		rulesRefs = "273,TM";

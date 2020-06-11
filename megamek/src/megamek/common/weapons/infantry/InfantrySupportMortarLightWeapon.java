@@ -45,6 +45,7 @@ public class InfantrySupportMortarLightWeapon extends InfantryWeapon {
 		infantryRange = 1;
 		crew = 2;
 		ammoWeight = 0.002;
+		ammoCost = 24;
 		shots = 1;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

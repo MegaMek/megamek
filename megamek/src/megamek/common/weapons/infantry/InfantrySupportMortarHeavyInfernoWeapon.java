@@ -44,7 +44,8 @@ public class InfantrySupportMortarHeavyInfernoWeapon extends InfantryWeapon {
 		String[] modeStrings = { "Damage", "Heat" };
 		setModes(modeStrings);
 		infantryDamage = 0.34;
-		infantryRange = 3;
+		ammoCost = 32;
+ 		infantryRange = 3;
 		crew = 3;
 		ammoWeight = 0.004;
 		shots = 1;

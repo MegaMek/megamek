@@ -46,6 +46,7 @@ public class InfantryPistolMakeshiftPistolWeapon extends InfantryWeapon {
 		infantryDamage = 0.02;
 		infantryRange = 0;
 		ammoWeight = 0.00001;
+		ammoCost = 1;
 		shots = 1;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

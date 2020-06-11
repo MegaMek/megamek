@@ -44,6 +44,7 @@ public class InfantryPistolTKEnforcerAutoPistolWeapon extends InfantryWeapon {
 		infantryDamage = 0.20;
 		infantryRange = 0;
 		ammoWeight = 0.0002;
+		ammoCost = 3;
 		shots = 20;
 		bursts = 5;
 		rulesRefs = "273,TM";

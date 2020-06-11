@@ -44,6 +44,7 @@ public class InfantrySMGRuganWeapon extends InfantryWeapon {
 		infantryDamage = 0.20;
 		infantryRange = 0;
 		ammoWeight = 0.00061;
+		ammoCost = 8;
 		shots = 100;
 		bursts = 7;
 		rulesRefs = "273,TM";

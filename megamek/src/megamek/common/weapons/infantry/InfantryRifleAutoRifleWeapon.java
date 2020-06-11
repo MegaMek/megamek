@@ -49,6 +49,7 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
 		infantryDamage = 0.52;
 		infantryRange = 1;
 		ammoWeight = 0.00048;
+		ammoCost = 2;
 		shots = 30;
 		bursts = 2;
 		damage = 1;

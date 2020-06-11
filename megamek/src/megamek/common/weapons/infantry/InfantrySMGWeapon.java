@@ -44,6 +44,7 @@ public class InfantrySMGWeapon extends InfantryWeapon {
 		infantryDamage = 0.25;
 		infantryRange = 0;
 		ammoWeight = 0.00057;
+		ammoCost = 5;
 		shots = 50;
 		bursts = 5;
 		rulesRefs = " 273,TM";

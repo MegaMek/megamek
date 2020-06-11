@@ -44,6 +44,7 @@ public class InfantrySupportHeavyGrenadeLauncherWeapon extends InfantryWeapon {
 		infantryRange = 1;
 		crew = 1;
 		ammoWeight = 0.012;
+		ammoCost = 320;
 		shots = 20;
 		bursts = 4;
 		tonnage = .018;

@@ -45,6 +45,7 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
 		infantryRange = 3;
 		crew = 3;
 		ammoWeight = 0.02;
+		ammoCost = 50;
 		shots = 10;
 		tonnage = .060;
 		rulesRefs = "176,ATOW-C";

@@ -44,6 +44,7 @@ public class InfantryShotgunCombatWeapon extends InfantryWeapon {
 		infantryDamage = 0.27;
 		infantryRange = 0;
 		ammoWeight = 0.00014;
+		ammoCost = 2;
 		shots = 8;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

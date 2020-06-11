@@ -43,6 +43,7 @@ public class InfantryShotgunWakazashiWeapon extends InfantryWeapon {
         infantryDamage = 0.35;
         infantryRange = 0;
         ammoWeight = 0.0002;
+        ammoCost = 2;
         shots = 10;
         bursts = 3;
         rulesRefs =" 176,HBHK";

@@ -44,6 +44,7 @@ public class InfantryShotgunAvengerCCWWeapon extends InfantryWeapon {
 		infantryDamage = 0.33;
 		infantryRange = 0;
 		ammoWeight = 0.0004;
+		ammoCost = 4;
 		shots = 15;
 		bursts = 5;
 		rulesRefs = "273,TM";

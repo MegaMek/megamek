@@ -44,6 +44,7 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
 		infantryDamage = 0.32;
 		infantryRange = 2;
 		ammoWeight = 0.00015;
+		ammoCost = 5;
 		shots = 9;
 		bursts = 3;
 		rulesRefs = "273,TM";

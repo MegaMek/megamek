@@ -44,6 +44,7 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
 		infantryRange = 3;
 		crew = 1;
 		ammoWeight = 0.002;
+		ammoCost = 20;
 		shots = 8;
 		bursts = 2;
 		damage = 1;

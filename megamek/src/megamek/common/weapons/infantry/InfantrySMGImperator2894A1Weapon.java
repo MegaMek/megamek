@@ -44,6 +44,7 @@ public class InfantrySMGImperator2894A1Weapon extends InfantryWeapon {
 		infantryDamage = 0.22;
 		infantryRange = 0;
 		ammoWeight = 0.00038;
+		ammoCost = 5;
 		shots = 50;
 		bursts = 5;
 		rulesRefs = "273,TM";

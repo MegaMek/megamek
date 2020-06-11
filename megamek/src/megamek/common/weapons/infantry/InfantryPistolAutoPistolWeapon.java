@@ -41,6 +41,7 @@ public class InfantryPistolAutoPistolWeapon extends InfantryWeapon {
 		bv = 0.19;
 		tonnage = .0005;
 		ammoWeight = 0.00014;
+		ammoCost = 2;
 		shots = 10;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.21;

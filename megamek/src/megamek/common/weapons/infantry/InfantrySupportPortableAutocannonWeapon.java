@@ -46,6 +46,7 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
 		infantryRange = 1;
 		crew = 2;
 		ammoWeight = 0.008;
+		ammoCost = 150;
 		shots = 200;
 		bursts = 8;
 		rulesRefs = "273,TM";

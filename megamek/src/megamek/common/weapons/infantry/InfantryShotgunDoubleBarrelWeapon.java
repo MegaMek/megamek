@@ -44,6 +44,7 @@ public class InfantryShotgunDoubleBarrelWeapon extends InfantryWeapon {
 		infantryDamage = 0.03;
 		infantryRange = 0;
 		ammoWeight = 0.00004;
+		ammoCost = 1;
 		shots = 2;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

@@ -46,6 +46,7 @@ public class InfantrySupportMGLightWeapon extends InfantryWeapon {
 		infantryRange = 1;
 		crew = 1;
 		ammoWeight = 0.002;
+		ammoCost = 6;
 		shots = 45;
 		bursts = 3;
 		rulesRefs = " 273,TM";

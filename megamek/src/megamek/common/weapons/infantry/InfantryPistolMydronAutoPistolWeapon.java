@@ -44,6 +44,7 @@ public class InfantryPistolMydronAutoPistolWeapon extends InfantryWeapon {
 		infantryDamage = 0.14;
 		infantryRange = 0;
 		ammoWeight = 0.00014;
+		ammoCost = 4;
 		shots = 20;
 		bursts = 4;
 		rulesRefs = "273,TM";

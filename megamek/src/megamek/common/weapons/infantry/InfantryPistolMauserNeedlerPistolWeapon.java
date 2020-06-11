@@ -44,6 +44,7 @@ public class InfantryPistolMauserNeedlerPistolWeapon extends InfantryWeapon {
 		infantryDamage = 0.11;
 		infantryRange = 0;
 		ammoWeight = 0.00017;
+		ammoCost = 4;
 		shots = 15;
 		bursts = 3;
 		rulesRefs = "273,TM";

@@ -44,6 +44,7 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
 		infantryDamage = 0.36;
 		infantryRange = 3;
 		ammoWeight = 0.00033;
+		ammoCost = 650;
 		shots = 5;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2582, 2583, DATE_NONE, 2607, 3062)

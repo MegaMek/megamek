@@ -46,6 +46,7 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
         infantryRange = 0;
         crew = 2;
         ammoWeight = 0.009;
+        ammoCost = 200;
         shots = 180;
         bursts = 6;
         rulesRefs = "273,TM";

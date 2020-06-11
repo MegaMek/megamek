@@ -44,6 +44,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
 		infantryDamage = 0.33;
 		infantryRange = 0;
 		ammoWeight = 0.00034;
+		ammoCost = 5;
 		shots = 30;
 		bursts = 6;
 		rulesRefs = "273,TM";

@@ -44,6 +44,7 @@ public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
 		infantryDamage = 0.22;
 		infantryRange = 0;
 		ammoWeight = 0.0003;
+		ammoCost = 6;
 		shots = 40;
 		bursts = 4;
 		rulesRefs = "273,TM";

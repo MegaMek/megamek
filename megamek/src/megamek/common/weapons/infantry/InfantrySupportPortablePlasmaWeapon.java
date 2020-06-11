@@ -48,6 +48,7 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
 		infantryRange = 2;
 		crew = 1;
 		ammoWeight = 0.018;
+		ammoCost = 10;
 		shots = 10;
 		rulesRefs = "273,TM";
 		tonnage = .030;

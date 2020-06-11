@@ -44,6 +44,7 @@ public class InfantryRifleZeusHeavyWeapon extends InfantryWeapon {
 		infantryDamage = 0.22;
 		infantryRange = 1;
 		ammoWeight = 0.00008;
+		ammoCost = 3;
 		shots = 5;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2740, 2745, 2750, DATE_NONE, DATE_NONE)

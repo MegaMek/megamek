@@ -45,6 +45,7 @@ public class InfantrySupportGrenadeLauncherHeavyAutoInfernoWeapon extends Infant
 		infantryRange = 1;
 		crew = 1;
 		ammoWeight = 0.012;
+		ammoCost = 400;
 		shots = 20;
 		bursts = 3;
 		tonnage = .020;

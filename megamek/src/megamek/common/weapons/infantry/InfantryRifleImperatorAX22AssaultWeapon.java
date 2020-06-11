@@ -44,6 +44,7 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
 		infantryDamage = 0.52;
 		infantryRange = 1;
 		ammoWeight = 0.00024;
+		ammoCost = 3;
 		shots = 15;
 		bursts = 1;
 		rulesRefs = "273,TM";

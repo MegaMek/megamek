@@ -46,6 +46,7 @@ public class InfantrySupportRecoillessRifleHeavyWeapon extends InfantryWeapon {
 		infantryRange = 2;
 		crew = 3;
 		ammoWeight = 0.004;
+		ammoCost = 40;
 		shots = 1;
 		rulesRefs = " 273,TM";
 		tonnage = .060;

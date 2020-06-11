@@ -45,6 +45,7 @@ public class InfantrySupportVintageGatlingGunWeapon extends InfantryWeapon {
 		infantryRange = 2;
 		crew = 4;
 		ammoWeight = 0.015;
+		ammoCost = 650;
 		shots = 480;
 		bursts = 40;
 		rulesRefs = "195,ATOW-C";

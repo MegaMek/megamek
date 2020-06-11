@@ -47,6 +47,7 @@ public class InfantrySupportMGSemiPortableWeapon extends InfantryWeapon {
 		infantryDamage = 0.75;
 		infantryRange = 1;
 		ammoWeight = 0.004;
+		ammoCost = 10;
 		shots = 80;
 		bursts = 4;
 		rulesRefs = " 273,TM";

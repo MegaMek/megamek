@@ -44,6 +44,7 @@ public class InfantryPistolSeaEagleNeedlerPistolWeapon extends InfantryWeapon {
 		infantryDamage = 0.11;
 		infantryRange = 0;
 		ammoWeight = 0.0001;
+		ammoCost = 5;
 		shots = 10;
 		bursts = 2;
 		rulesRefs = "273,TM";

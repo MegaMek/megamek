@@ -45,6 +45,7 @@ public class InfantrySupportVintageMiniGunWeapon extends InfantryWeapon {
 		infantryRange = 2;
 		crew = 2;
 		ammoWeight = 0.012;
+		ammoCost = 600;
 		shots = 500;
 		bursts = 10;
 		rulesRefs = "195,ATOW-C";

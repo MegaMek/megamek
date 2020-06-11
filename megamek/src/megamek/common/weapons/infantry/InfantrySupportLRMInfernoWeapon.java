@@ -44,6 +44,7 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
         bv = 1.36;
         tonnage = .03;
         ammoWeight = 0.0083;
+        ammoCost = 1500;
         shots = 1;
         flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
         infantryDamage = 0.19;

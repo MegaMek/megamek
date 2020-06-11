@@ -46,6 +46,7 @@ public class InfantrySupportMGSupportWeapon extends InfantryWeapon {
 		crew = 2;
 		infantryRange = 2;
 		ammoWeight = 0.005;
+		ammoCost = 50;
 		shots = 100;
 		bursts = 5;
 		damage = 1;

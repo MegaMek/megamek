@@ -45,6 +45,7 @@ public class InfantryPistolSMGGHTSpec7aWeapon extends InfantryWeapon {
 		infantryDamage = 0.13;
 		infantryRange = 0;
 		ammoWeight = 0.0002;
+		ammoCost = 25;
 		shots = 7;
 		bursts = 1;
 		rulesRefs = "176,HBHK";

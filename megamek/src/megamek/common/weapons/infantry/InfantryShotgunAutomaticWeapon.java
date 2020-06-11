@@ -44,6 +44,7 @@ public class InfantryShotgunAutomaticWeapon extends InfantryWeapon {
 		infantryDamage = 0.23;
 		infantryRange = 0;
 		ammoWeight = 0.00027;
+		ammoCost = 2;
 		shots = 12;
 		bursts = 3;
 		rulesRefs = " 273,TM";

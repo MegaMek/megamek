@@ -46,6 +46,7 @@ public class InfantrySupportWireGuidedMissileWeapon extends InfantryWeapon {
 		toHitModifier = -2;
 		crew = 4;
 		ammoWeight = 0.022;
+		ammoCost = 2500;
 		shots = 1;
 		rulesRefs = "195,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)

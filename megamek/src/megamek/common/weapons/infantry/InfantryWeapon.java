@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -39,6 +39,7 @@ public abstract class InfantryWeapon extends Weapon {
     protected int infantryRange;
     protected int crew;
     protected double ammoWeight;
+    protected int ammoCost;
     protected int shots;
     protected int bursts;
 
@@ -59,6 +60,7 @@ public abstract class InfantryWeapon extends Weapon {
         infantryDamage = 0;
         crew = 1;
         ammoWeight = 0.0;
+        ammoCost = 0;
         shots = 0;
         bursts = 0;
         infantryRange = 0;
@@ -120,6 +122,13 @@ public abstract class InfantryWeapon extends Weapon {
      */
     public int getBursts() {
         return bursts;
+    }
+
+    /**
+     * @return The cost of an ammo clip in C-bills
+     */
+    public int getAmmoCost() {
+        return ammoCost;
     }
 
     /*

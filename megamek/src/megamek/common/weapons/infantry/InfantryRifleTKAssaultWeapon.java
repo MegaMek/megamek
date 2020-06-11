@@ -44,6 +44,7 @@ public class InfantryRifleTKAssaultWeapon extends InfantryWeapon {
 		infantryDamage = 0.44;
 		infantryRange = 1;
 		ammoWeight = 0.00032;
+		ammoCost = 3;
 		shots = 20;
 		bursts = 2;
 		rulesRefs = "273,TM";

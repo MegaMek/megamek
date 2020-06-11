@@ -46,6 +46,7 @@ public class InfantrySupportGrenadeLauncherHeavyAutoWeapon extends InfantryWeapo
 		crew = 1;
 		tonnage = .020;
 		ammoWeight = 0.012;
+		ammoCost = 400;
 		shots = 20;
 		bursts = 3;
 		rulesRefs = "273,TM";

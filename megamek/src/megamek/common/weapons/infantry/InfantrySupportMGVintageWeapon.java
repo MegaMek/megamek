@@ -45,6 +45,7 @@ public class InfantrySupportMGVintageWeapon extends InfantryWeapon {
 		infantryRange = 1;
 		crew = 1;
 		ammoWeight = 0.004;
+		ammoCost = 150;
 		shots = 90;
 		bursts = 9;
 		rulesRefs = "195,ATOW-C";

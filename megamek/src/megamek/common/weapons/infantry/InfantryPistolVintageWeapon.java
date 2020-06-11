@@ -44,6 +44,7 @@ public class InfantryPistolVintageWeapon extends InfantryWeapon {
         infantryDamage = 0.11;
         infantryRange = 1;
         ammoWeight = 0.00006;
+        ammoCost = 12;
         shots = 9;
 		rulesRefs = "195,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

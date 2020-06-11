@@ -46,6 +46,7 @@ public class InfantrySupportSRMStandardWeapon extends InfantryWeapon {
 		infantryRange = 2;
 		crew = 1;
 		ammoWeight = 0.02;
+		ammoCost = 450;
 		shots = 2;
 		tonnage = .030;
 		rulesRefs = "273,TM";

@@ -44,6 +44,7 @@ public class InfantryPistolSpitballGasPistolWeapon extends InfantryWeapon {
 		infantryDamage = 0.0;
 		infantryRange = 0;
 		ammoWeight = 0.00004;
+		ammoCost = 2;
 		shots = 25;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3056, 3059, 3100, DATE_NONE, DATE_NONE)

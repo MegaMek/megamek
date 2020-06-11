@@ -43,6 +43,7 @@ public class InfantryRifleStrikerCarbineRifleWeapon extends InfantryWeapon {
         infantryDamage = 0.29;
         infantryRange = 1;
         ammoWeight = 0.00034;
+        ammoCost = 8;
         shots = 60;
         bursts = 2;
         damage = 1;

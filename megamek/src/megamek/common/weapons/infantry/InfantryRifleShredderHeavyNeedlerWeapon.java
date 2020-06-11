@@ -44,6 +44,7 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
 		infantryDamage = 0.34;
 		infantryRange = 0;
 		ammoWeight = 0.00024;
+		ammoCost = 3;
 		shots = 10;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3051, 3054, 3067, DATE_NONE, DATE_NONE)

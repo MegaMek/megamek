@@ -46,6 +46,7 @@ public class InfantryRifleThunderstrokeIIWeapon extends InfantryWeapon {
 		infantryDamage = 0.53;
 		infantryRange = 2;
 		ammoWeight = 0.00042;
+		ammoCost = 10;
 		shots = 20;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3062, 3090, DATE_NONE, DATE_NONE)

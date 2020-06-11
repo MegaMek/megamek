@@ -43,6 +43,7 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
 		infantryDamage = 0.14;
 		infantryRange = 0;
 		ammoWeight = 0.00001;
+		ammoCost = 1;
 		shots = 4;
 		rulesRefs = "273,TM";
 		;

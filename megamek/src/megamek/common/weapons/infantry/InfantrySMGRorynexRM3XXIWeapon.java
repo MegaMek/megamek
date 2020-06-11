@@ -44,6 +44,7 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
 		infantryDamage = 0.20;
 		infantryRange = 0;
 		ammoWeight = 0.00076;
+		ammoCost = 10;
 		shots = 100;
 		bursts = 6;
 		rulesRefs = "273,TM";

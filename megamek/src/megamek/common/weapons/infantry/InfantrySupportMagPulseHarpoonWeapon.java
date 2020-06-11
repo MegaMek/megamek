@@ -44,6 +44,7 @@ public class InfantrySupportMagPulseHarpoonWeapon extends InfantryWeapon {
 		infantryRange = 3;
 		crew = 2;
 		ammoWeight = 0.022;
+		ammoCost = 1000;
 		shots = 1;
 		tonnage = .095;
 		rulesRefs = "176,ATOW-C";

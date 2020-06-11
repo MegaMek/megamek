@@ -47,6 +47,7 @@ public class InfantrySupportLRMWeapon extends InfantryWeapon {
         infantryDamage = 0.48;
         infantryRange = 3;
         ammoWeight = 0.0083;
+        ammoCost = 1500;
         shots = 1;
         rulesRefs = "273,TM";
         techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3057, 3065, DATE_NONE, DATE_NONE)

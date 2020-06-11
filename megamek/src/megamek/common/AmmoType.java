@@ -139,7 +139,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_KILLER_WHALE_T = 110;
     public static final int T_WHITE_SHARK_T = 111;
     public static final int T_BARRACUDA_T = 112;
-    public static final int NUM_TYPES = 113;  //Should always be at the end with the highest number
+    public static final int T_INFANTRY = 113;
+    public static final int NUM_TYPES = 114;  //Should always be at the end with the highest number
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);

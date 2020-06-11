@@ -36,13 +36,16 @@ public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapo
 		setInternalName(name);
 		addLookupName("InfantryMartialEaglepistol");
 		addLookupName("Martial Eagle Machine Pistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 180;
 		bv = 0.23;
 		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.25;
 		infantryRange = 0;
+		ammoWeight = 0.00025;
+		shots = 30;
+		bursts = 3;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3040, 3045, 3060, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)

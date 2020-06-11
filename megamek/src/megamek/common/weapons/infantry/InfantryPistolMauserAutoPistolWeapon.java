@@ -36,13 +36,15 @@ public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryMauserAutopistol");
         addLookupName("M&G Auto Pistol");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.T_INFANTRY;
         cost = 60;
         bv = 0.16;
 		tonnage = .00065;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 0;
+        ammoWeight = 0.00011;
+        shots = 8;
         rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2490, 2495, 2550, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)

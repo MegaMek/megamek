@@ -38,7 +38,9 @@ public abstract class InfantryWeapon extends Weapon {
     protected double infantryDamage;
     protected int infantryRange;
     protected int crew;
-
+    protected double ammoWeight;
+    protected int shots;
+    protected int bursts;
 
     public InfantryWeapon() {
         super();
@@ -56,6 +58,9 @@ public abstract class InfantryWeapon extends Weapon {
         svslots = 1;
         infantryDamage = 0;
         crew = 1;
+        ammoWeight = 0.0;
+        shots = 0;
+        bursts = 0;
         infantryRange = 0;
         infDamageClass = WEAPON_NA;
     }
@@ -94,6 +99,27 @@ public abstract class InfantryWeapon extends Weapon {
             return infantryRange * 4;
         }
         return extremeRange;
+    }
+
+    /**
+     * @return The weight of an ammo clip in tons
+     */
+    public double getAmmoWeight() {
+        return ammoWeight;
+    }
+
+    /**
+     * @return The number of shots in an ammo clip
+     */
+    public int getShots() {
+        return shots;
+    }
+
+    /**
+     * @return The number of bursts in an ammo clip.
+     */
+    public int getBursts() {
+        return bursts;
     }
 
     /*

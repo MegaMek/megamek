@@ -35,13 +35,15 @@ public class InfantryPistolSternsnachtPythonAutoPistolWeapon extends InfantryWea
 		setInternalName(name);
 		addLookupName("InfantrySternsnachtPython");
 		addLookupName("Sternsnacht Python AutoPistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 125;
 		bv = 0.26;
 		tonnage = .00075;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.28;
 		infantryRange = 0;
+		ammoWeight = 0.00016;
+		shots = 12;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3048, 3051, 3068, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)

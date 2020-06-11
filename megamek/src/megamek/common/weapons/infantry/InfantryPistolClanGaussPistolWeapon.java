@@ -35,13 +35,15 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
 		name = "Gauss Pistol [Clan]";
 		setInternalName(name);
 		addLookupName("CLInfantryGausspistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 1500;
 		bv = 0.13;
 		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.14;
 		infantryRange = 0;
+		ammoWeight = 0.00001;
+		shots = 4;
 		rulesRefs = "273,TM";
 		;
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2845, 2850, DATE_NONE, DATE_NONE, DATE_NONE)

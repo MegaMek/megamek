@@ -36,13 +36,15 @@ public class InfantryShotgunSawnoffDoubleBarrelWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryDoubleSawnOff");
 		addLookupName("Double Barrel Sawed-off Shotgun");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 30;
 		bv = 0.03;
 		tonnage = .003;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.03;
 		infantryRange = 0;
+		ammoWeight = 0.00004;
+		shots = 2;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

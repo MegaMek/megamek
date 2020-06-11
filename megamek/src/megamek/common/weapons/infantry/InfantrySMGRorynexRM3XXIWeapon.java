@@ -36,13 +36,16 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryRorynexRM3XXI");
 		addLookupName("Rorynex RM-3/XXI");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 80;
 		bv = 0.18;
 		tonnage = .003;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.20;
 		infantryRange = 0;
+		ammoWeight = 0.00076;
+		shots = 100;
+		bursts = 6;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2655, 2660, 2663, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

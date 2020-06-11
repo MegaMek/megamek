@@ -36,13 +36,16 @@ public class InfantrySMGRuganWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryRuganSMG");
 		addLookupName("Rugan SMG");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 100;
 		bv = 0.18;
 		tonnage = .0035;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.20;
 		infantryRange = 0;
+		ammoWeight = 0.00061;
+		shots = 100;
+		bursts = 7;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2718, 2720, 2750, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

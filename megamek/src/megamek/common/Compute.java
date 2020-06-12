@@ -554,7 +554,7 @@ public class Compute {
                 && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
         boolean vehicleAffectedByCliff = entity instanceof Tank 
                 && !entity.isAirborneVTOLorWIGE();
-        boolean mechAffectedByCliff = entity instanceof Mech 
+        boolean mechAffectedByCliff = (entity instanceof Mech || entity instanceof Protomech) 
                 && movementType != EntityMovementType.MOVE_JUMP
                 && !entity.isAero(); // LAM
         int stepHeight = destElevation + destHex.getLevel() - (srcElevation + srcHex.getLevel());

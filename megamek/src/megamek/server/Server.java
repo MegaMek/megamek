@@ -8727,7 +8727,7 @@ public class Server implements Runnable {
                     && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
                     && ((QuadVee)entity).getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
-            boolean mechAffectedByCliff = entity instanceof Mech
+            boolean mechAffectedByCliff = (entity instanceof Mech || entity instanceof Protomech)
                     && moveType != EntityMovementType.MOVE_JUMP
                     && !entity.isAero();
             // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
@@ -8754,7 +8754,7 @@ public class Server implements Runnable {
                 }
             }
 
-            // Mechs moving down a cliff
+            // Mechs and Protomechs moving down a cliff
             // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133
             if (mechAffectedByCliff && !quadveeVehMode && isDownCliff) {
                 rollTarget = entity.getBasePilotingRoll(moveType);

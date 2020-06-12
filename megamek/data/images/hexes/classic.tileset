@@ -15,10 +15,8 @@
 # smoke
 # elevator
 
-super * "incline_top:*" "" "saxarba/misc/blank.png"
-super * "incline_bottom:*" "" "saxarba/misc/blank.png"
-super * "incline_high_top:*" "" "saxarba/misc/blank.png"
-super * "incline_high_bottom:*" "" "saxarba/misc/blank.png"
+include "incline/inclines2.tileinc"
+include "high_incline/high_inclines.tileinc"
 include "Cliff/Cliffs.tileinc"
 
 include "StandardIncludes/StandardThemes.tileinc"

@@ -37,10 +37,8 @@
 # smoke
 # elevator
 
-super * "incline_top:*" "" "saxarba/misc/blank.png"
-super * "incline_bottom:*" "" "saxarba/misc/blank.png"
-super * "incline_high_top:*" "" "saxarba/misc/blank.png"
-super * "incline_high_bottom:*" "" "saxarba/misc/blank.png"
+include "incline/inclines2.tileinc"
+include "high_incline/high_inclines.tileinc"
 include "Cliff/Cliffs.tileinc"
 
 super * "swamp:1" "grass" "bloodwolf/hq_boring/swamp_1.png;bloodwolf/hq_boring/swamp_1.png(0,72-84,-72);bloodwolf/hq_boring/swamp_1.png(84,0--84,72);bloodwolf/hq_boring/swamp_1.png(84,72--84,-72)"

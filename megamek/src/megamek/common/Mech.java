@@ -8556,7 +8556,7 @@ public abstract class Mech extends Entity {
 
         if (getEngineHits() >= 2) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
-                    getDisplayName() + " CRIPPLED: 2 Engine Hits.");
+                    getDisplayName() + " CRIPPLED: 2 or more Engine Hits.");
             return true;
 
         }
@@ -8715,7 +8715,7 @@ public abstract class Mech extends Entity {
 
         if (countInternalDamagedTorsos() == 1) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
-                    getDisplayName() + " HEAVY DAMAGE: Torse internal damage");
+                    getDisplayName() + " HEAVY DAMAGE: Torso internal damage");
             return true;
         }
 
@@ -8759,7 +8759,7 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean isDmgModerate() {
-        final String METHOD_NAME = "isDmgHeavy";
+        final String METHOD_NAME = "isDmgModerate";
         MMLogger logger = DefaultMmLogger.getInstance();
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.67) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
@@ -8800,7 +8800,7 @@ public abstract class Mech extends Entity {
 
         if (((double) totalInoperable / totalWeapons) >= 0.5) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
-                    getDisplayName() + " HEAVY DAMAGE: Less than 50% weapons operable");
+                    getDisplayName() + " MODERATE DAMAGE: Less than 50% weapons operable");
             return true;
         }
         return false;
@@ -8808,7 +8808,7 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean isDmgLight() {
-        final String METHOD_NAME = "isDmgHeavy";
+        final String METHOD_NAME = "isDmgLight";
         MMLogger logger = DefaultMmLogger.getInstance();
         if (getArmor(LOC_HEAD) < getOArmor(LOC_HEAD)) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
@@ -8843,7 +8843,7 @@ public abstract class Mech extends Entity {
 
         if (((double) totalInoperable / totalWeapons) >= 0.5) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
-                    getDisplayName() + " HEAVY DAMAGE: Less than 75% weapons operable");
+                    getDisplayName() + " LIGHT DAMAGE: Less than 75% weapons operable");
             return true;
         }
         return false;

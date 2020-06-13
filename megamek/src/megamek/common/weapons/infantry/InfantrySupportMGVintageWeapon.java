@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -31,7 +31,6 @@ public class InfantrySupportMGVintageWeapon extends InfantryWeapon {
 
 	public InfantrySupportMGVintageWeapon() {
 		super();
-		;
 		name = "Machine Gun (Vintage)";
 		setInternalName(name);
 		addLookupName("InfantryVintageMachineGun");

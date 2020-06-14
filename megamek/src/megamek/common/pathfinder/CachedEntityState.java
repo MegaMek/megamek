@@ -112,6 +112,6 @@ public class CachedEntityState {
     public boolean isAmphibious() {
         return hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) || 
                 hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
-                hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
+                hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
     }
 }

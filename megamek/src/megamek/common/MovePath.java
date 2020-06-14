@@ -1838,6 +1838,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Debugging method that calculates a destruction-aware move path to the destination coordinates
      */
+    @SuppressWarnings("unused")
     public MovePath calculateDestructionAwarePath(Coords dest) {
         // code that's useful to test the destruction-aware pathfinder
         DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();

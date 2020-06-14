@@ -368,6 +368,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * @param mp
      * @param dest
      * @param board
+     * @param ignore
      * @return
      */
     public static int getLevelDiff(final MovePath mp, Coords dest, IBoard board, boolean ignore) {

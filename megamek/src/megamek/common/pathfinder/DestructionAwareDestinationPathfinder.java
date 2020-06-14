@@ -261,6 +261,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
          * Favors paths that move closer to the destination edge first.
          * in case of tie, favors paths that cost less MP
          */
+        @Override
         public int compare(BulldozerMovePath first, BulldozerMovePath second) {
             IBoard board = first.getGame().getBoard();
             boolean backwards = false;

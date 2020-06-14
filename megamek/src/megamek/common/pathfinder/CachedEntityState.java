@@ -6,6 +6,7 @@ import java.util.Map;
 
 import megamek.common.Entity;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 
 /**
  * A transient class used to lazy-load "calculated" information from an entity
@@ -103,5 +104,14 @@ public class CachedEntityState {
         }
         
         return torsoJumpJets;
+    }
+    
+    /**
+     * Convenience property to determine if the backing entity is amphibious.
+     */
+    public boolean isAmphibious() {
+        return hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) || 
+                hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
+                hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
     }
 }

@@ -209,12 +209,12 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                 boolean backwards = stepType == MoveStepType.BACKWARDS;
                 h1 = first.getFinalCoords().distance(destination)
                         + getFacingDiff(first, destination, backwards)
-                        + getLevelDiff(first, destination, board)
+                        + getLevelDiff(first, destination, board, first.isJumping())
                         + getElevationDiff(first, destination, board,
                                 first.getEntity());
                 h2 = second.getFinalCoords().distance(destination)
                         + getFacingDiff(second, destination, backwards)
-                        + getLevelDiff(second, destination, board)
+                        + getLevelDiff(second, destination, board, second.isJumping())
                         + getElevationDiff(second, destination, board,
                                 second.getEntity());
             }
@@ -370,13 +370,9 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * @param board
      * @return
      */
-    public static int getLevelDiff(final MovePath mp, Coords dest, IBoard board) {
+    public static int getLevelDiff(final MovePath mp, Coords dest, IBoard board, boolean ignore) {
         // Ignore level differences if we're not on the ground
-        if (mp.getFinalElevation() != 0) {
-            return 0;
-        }
-        // Jumping should ignore level differences
-        if (mp.isJumping()) {
+        if (ignore || (mp.getFinalElevation() != 0)) {
             return 0;
         }
         IHex currHex = board.getHex(mp.getFinalCoords());

@@ -108,12 +108,12 @@ public class BulldozerMovePath extends MovePath {
             // if we are jumping, but not on top of a bridge (because jumping always goes to the top of a bridge)
             // and are jumping into terrain that would impede jump jet functionality (aka water)
             // then we are impeding future jump movement and should add an extra cost to this step
-            if((hex != null) && !hex.containsTerrain(Terrains.BRIDGE)) {
+            if ((hex != null) && !hex.containsTerrain(Terrains.BRIDGE)) {
                 // special case - mech jumping into depth 1 water might not be all that bad, jump mp cost wise
-                if(hexWaterDepth == 1) {
+                if (hexWaterDepth == 1) {
                     additionalCosts.put(mp.getFinalCoords(), mp.getCachedEntityState().getJumpMP() - mp.getCachedEntityState().getTorsoJumpJets());
                 // jumping into water that submerges you entirely pretty much ruins jump MP for at least a turn while you clamber out
-                } else {
+                } else if (hexWaterDepth > 1) {
                     additionalCosts.put(mp.getFinalCoords(), mp.getCachedEntityState().getJumpMP());
                 }
             }

@@ -135,6 +135,29 @@ public class BoardClusterTracker {
     }
     
     /**
+     * Determines whether, for the given entity, the two sets of coordinates share any cluster.
+     */
+    public boolean coordinatesShareCluster(Entity mover, Coords first, Coords second, int firstElevation, int secondElevation) {
+        updateMovableAreas(mover);
+        
+        MovementType movementType = MovementType.getMovementType(mover);
+        
+        return coordinatesShareCluster(first, second, firstElevation, secondElevation, movableAreasBridges.get(movementType).get(first)) ||
+            coordinatesShareCluster(first, second, firstElevation, secondElevation, movableAreasBridgesWithTerrainReduction.get(movementType).get(first)) ||
+            coordinatesShareCluster(first, second, firstElevation, secondElevation, movableAreas.get(movementType).get(first)) ||
+            coordinatesShareCluster(first, second, firstElevation, secondElevation, movableAreasWithTerrainReduction.get(movementType).get(first));
+    }
+    
+    /**
+     * Determines if the given cluster contains both the given sets of coordinates.
+     */
+    public boolean coordinatesShareCluster(Coords first, Coords second, int firstElevation, int secondElevation, BoardCluster cluster) {
+        // two coordinates are considered to share a cluster if they are both in it at the precise elevations we're considering        
+        return (cluster != null) && cluster.contents.containsKey(first) && cluster.contents.containsKey(second) &&
+                cluster.contents.get(first) == firstElevation && cluster.contents.get(second) == secondElevation;
+    }
+    
+    /**
      * Returns a set of coordinates on a given board edge that intersects with the cluster
      * in which the given entity resides. May return an empty set.
      */
@@ -299,12 +322,12 @@ public class BoardClusterTracker {
                 // start up a new cluster if we have no mutually accessible neighbors
                 if(neighborsToJoin.isEmpty() || biggestNeighbor == null) {
                     BoardCluster newCluster = new BoardCluster(clusterID++);
-                    newCluster.contents.add(c);
+                    newCluster.contents.put(c, myElevation);
                     clusters.put(c, newCluster);
                 // otherwise, join an existing cluster, bringing any other mutually accessible neighbors and their clusters with me
                 // join the biggest neighbor to reduce shuffling.
                 } else {
-                    biggestNeighbor.contents.add(c);
+                    biggestNeighbor.contents.put(c, myElevation);
                     clusters.put(c, biggestNeighbor);
                     
                     // merge any other clusters belonging to joined neighbors to this cluster
@@ -314,8 +337,8 @@ public class BoardClusterTracker {
                             continue;
                         }
                         
-                        for(Coords member : oldCluster.contents) {
-                            biggestNeighbor.contents.add(member);
+                        for(Coords member : oldCluster.contents.keySet()) {
+                            biggestNeighbor.contents.put(member, oldCluster.contents.get(member));
                             clusters.put(member, biggestNeighbor);
                         }
                     }
@@ -367,7 +390,7 @@ public class BoardClusterTracker {
      * A data structure representing a set of coordinates to which an entity can move.
      */
     public static class BoardCluster {
-        public Set<Coords> contents = new HashSet<>();
+        public Map<Coords, Integer> contents = new HashMap<>();
         public int id;
         
         public BoardCluster(int id) {
@@ -421,7 +444,7 @@ public class BoardClusterTracker {
             for(int x = xStart; x < xEnd; x++) {
                 for(int y = yStart; y < yEnd; y++) {
                     Coords coords = new Coords(x, y);
-                    if(contents.contains(coords)) {
+                    if(contents.containsKey(coords)) {
                         retVal.add(coords);
                     }
                 }

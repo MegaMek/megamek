@@ -3172,7 +3172,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getMaxElevationChange() {
         if (isAirborne()) {
-            return 999;
+            return UNLIMITED_JUMP_DOWN;
         }
         return 1;
     }

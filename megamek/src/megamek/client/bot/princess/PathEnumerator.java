@@ -356,14 +356,14 @@ public class PathEnumerator {
         }
         
         // calculate a ground-bound long range path
-        BulldozerMovePath bmp = dpf.findPathToCoords(mover, destinations);
+        BulldozerMovePath bmp = dpf.findPathToCoords(mover, destinations, owner.getClusterTracker());
         
         if(bmp != null) {
             getLongRangePaths().get(mover.getId()).add(bmp);
         }
         
         // calculate a jumping long range path
-        BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, true); 
+        BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, owner.getClusterTracker()); 
         if(jmp != null) {
             getLongRangePaths().get(mover.getId()).add(jmp);
         }

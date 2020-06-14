@@ -97,6 +97,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private static final long serialVersionUID = 1430806396279853295L;
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
+    public static final int UNLIMITED_JUMP_DOWN = 999;
 
     /**
      * Entity Type Id Definitions These are used to identify the type of Entity,

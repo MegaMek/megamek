@@ -365,11 +365,11 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * goal location. This prevents the heuristic from under-estimating when a
      * unit is on top of a hill.
      * 
-     * @param mp
-     * @param dest
-     * @param board
-     * @param ignore
-     * @return
+     * @param mp MovePath to evaluate
+     * @param dest Destination coordinates
+     * @param board Board on which the move path takes place
+     * @param ignore Whether to ignore this calculation and return 0
+     * @return level difference between the final coordinates of the given move path and the destination coordinates
      */
     public static int getLevelDiff(final MovePath mp, Coords dest, IBoard board, boolean ignore) {
         // Ignore level differences if we're not on the ground

@@ -1062,8 +1062,8 @@ public class MULParser {
      * @param attributes A map of attribute values keyed to the attribute names.
      */
     private void setPilotAttributes(Crew crew, int slot, Map<String, String> attributes) {
-        boolean hasGun = attributes.containsKey(GUNNERY) && (attributes.get(GUNNERY).length() > 0);
-        boolean hasRpgGun = attributes.containsKey(GUNNERYL) && (attributes.get(GUNNERYL).length() > 0) &&
+        final boolean hasGun = attributes.containsKey(GUNNERY) && (attributes.get(GUNNERY).length() > 0);
+        final boolean hasRpgGun = attributes.containsKey(GUNNERYL) && (attributes.get(GUNNERYL).length() > 0) &&
                 attributes.containsKey(GUNNERYM) && (attributes.get(GUNNERYM).length() > 0) &&
                 attributes.containsKey(GUNNERYB) && (attributes.get(GUNNERYB).length() > 0);
 

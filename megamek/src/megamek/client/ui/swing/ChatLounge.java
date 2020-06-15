@@ -3362,7 +3362,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                             + clientgui.getClient().getGame().getPlayer(entity.getOwnerId()).getTeam();
                 }
             } else if (col == COL_PILOT) {
-                boolean rpgSkills = clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
+                final boolean rpgSkills = clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
                 if (compact) {
                     return formatPilotCompact(entity.getCrew(), blindDrop, rpgSkills);
                 }

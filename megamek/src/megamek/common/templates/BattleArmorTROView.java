@@ -162,7 +162,7 @@ public class BattleArmorTROView extends TROView {
             if (name.length() >= nameWidth) {
                 nameWidth = name.length() + 1;
             }
-            row.put("slots", m.getType().getCriticals(ba));
+            row.put("slots", m.getCriticals());
             if (m.getType() instanceof AmmoType) {
                 row.put("mass", ((AmmoType) m.getType()).getKgPerShot() * m.getOriginalShots());
             } else {

@@ -30,7 +30,7 @@ public class CrewSkillSummaryUtil {
         }
     }
 
-    public static String getGunnnerySkillSummary(int gunnery, int gunneryL, int gunneryM, int gunneryB, boolean rpgGunnery) {
+    public static String getGunnerySkillSummary(int gunnery, int gunneryL, int gunneryM, int gunneryB, boolean rpgGunnery) {
         if (rpgGunnery) {
             return MessageFormat.format(SKILL_SUMMARY_RPG_GUNNERY, gunneryL, gunneryM, gunneryB);
         } else {
@@ -38,7 +38,7 @@ public class CrewSkillSummaryUtil {
         }
     }
 
-    public static String getGunnnerySkillSummary(String gunnery, String gunneryL, String gunneryM, String gunneryB, boolean rpgGunnery) {
+    public static String getGunnerySkillSummary(String gunnery, String gunneryL, String gunneryM, String gunneryB, boolean rpgGunnery) {
         if (rpgGunnery) {
             return MessageFormat.format(SKILL_SUMMARY_RPG_GUNNERY, gunneryL, gunneryM, gunneryB);
         } else {

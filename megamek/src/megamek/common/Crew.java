@@ -492,7 +492,7 @@ public class Crew implements Serializable {
                     getPiloting(),
                     rpgSkills);
         } else {
-            return CrewSkillSummaryUtil.getGunnnerySkillSummary(
+            return CrewSkillSummaryUtil.getGunnerySkillSummary(
                     getGunnery(),
                     getGunneryL(),
                     getGunneryM(),
@@ -523,7 +523,7 @@ public class Crew implements Serializable {
                     getPiloting(pos),
                     rpgSkills);
         } else {
-            return CrewSkillSummaryUtil.getGunnnerySkillSummary(
+            return CrewSkillSummaryUtil.getGunnerySkillSummary(
                     getGunnery(pos),
                     getGunneryL(pos),
                     getGunneryM(pos),

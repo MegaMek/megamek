@@ -222,7 +222,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         
         // if we jumped into a hole and this results into us moving into a different cluster than the destination,
         // that's not great and we should not consider the possibility for long range path finding.
-        if(irreversibleJumpDown && 
+        if (irreversibleJumpDown && 
                 !clusterTracker.coordinatesShareCluster(child.getEntity(), child.getFinalCoords(), destinationCoords,
                         mli.destHexElevation, destHexElevation)) {
             return;

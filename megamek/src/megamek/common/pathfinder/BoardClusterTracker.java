@@ -115,7 +115,7 @@ public class BoardClusterTracker {
         
         updateMovableAreas(entity);
         
-        if(terrainReduction) {
+        if (terrainReduction) {
             BoardCluster noBridgeCluster = movableAreasWithTerrainReduction.get(movementType).get(actualCoords);
             int noBridgeClusterSize = noBridgeCluster == null ? 0 : noBridgeCluster.contents.size();
             
@@ -185,14 +185,14 @@ public class BoardClusterTracker {
         }
         
         // try with bridges
-        if(retVal.size() == 0) {
-            if(terrainReduction) {
+        if (retVal.size() == 0) {
+            if (terrainReduction) {
                 entityCluster = movableAreasBridgesWithTerrainReduction.get(movementType).get(entity.getPosition());
             } else {
                 entityCluster = movableAreasBridges.get(movementType).get(entity.getPosition());
             }
             
-            if(entityCluster != null) {
+            if (entityCluster != null) {
                 retVal = entityCluster.getIntersectingHexes(actualEdge, entity.getGame().getBoard());
             }
         }
@@ -277,7 +277,7 @@ public class BoardClusterTracker {
                 int myElevation = 0; 
                         
                 if (useBridgeTop && board.getHex(c).containsTerrain(Terrains.BRIDGE) &&
-                        canUseBridge && entity.getWeight() <= board.getBuildingAt(c).getCurrentCF(c)) {
+                        canUseBridge && (entity.getWeight() <= board.getBuildingAt(c).getCurrentCF(c))) {
                     myElevation = board.getHex(c).ceiling();
                 } else {
                     myElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(c), entity, isHovercraft, isAmphibious);
@@ -294,7 +294,7 @@ public class BoardClusterTracker {
                         int neighborElevation = 0;
                         
                         if (useBridgeTop && board.getHex(neighbor).containsTerrain(Terrains.BRIDGE) &&
-                                canUseBridge && entity.getWeight() <= board.getBuildingAt(neighbor).getCurrentCF(neighbor)) {
+                                canUseBridge && (entity.getWeight() <= board.getBuildingAt(neighbor).getCurrentCF(neighbor))) {
                             neighborElevation = board.getHex(neighbor).ceiling();
                         } else {
                             neighborElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(neighbor), entity, isHovercraft, isAmphibious);
@@ -444,7 +444,7 @@ public class BoardClusterTracker {
             for(int x = xStart; x < xEnd; x++) {
                 for(int y = yStart; y < yEnd; y++) {
                     Coords coords = new Coords(x, y);
-                    if(contents.containsKey(coords)) {
+                    if (contents.containsKey(coords)) {
                         retVal.add(coords);
                     }
                 }

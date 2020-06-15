@@ -79,7 +79,7 @@ public class BulldozerMovePath extends MovePath {
     public MovePath addStep(final MoveStepType type) {
         BulldozerMovePath mp = (BulldozerMovePath) super.addStep(type);
         IHex hex = mp.getGame().getBoard().getHex(mp.getFinalCoords());
-        int hexWaterDepth = (hex != null) && hex.containsTerrain(Terrains.WATER) ?
+        int hexWaterDepth = ((hex != null) && hex.containsTerrain(Terrains.WATER)) ?
                 hex.depth() : Integer.MIN_VALUE;
         
         if (!mp.isMoveLegal() && !mp.isJumping()) {

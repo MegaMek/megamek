@@ -1483,7 +1483,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false, true);
         
         for(BoardCluster cluster : clusterMap.values().stream().distinct().collect(Collectors.toList())) {
-            for(Coords coords : cluster.contents.keySet()) {
+            for (Coords coords : cluster.contents.keySet()) {
                 Point p = getCentreHexLocation(coords.getX(), coords.getY(), true);
                 p.translate(HEX_W  / 2, HEX_H  / 2);
                 drawHexBorder(g, p, new Color(0, 0, (20 * cluster.id) % 255), 0, 6);

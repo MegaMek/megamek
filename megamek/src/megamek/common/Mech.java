@@ -211,7 +211,6 @@ public abstract class Mech extends Entity {
     public static final int HAS_UNKNOWN = 0;
 
     public static final int HAS_TRUE = 1;
-    
     // rear armor
     private int[] rearArmor;
 

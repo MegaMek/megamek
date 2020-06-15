@@ -211,7 +211,6 @@ public abstract class Mech extends Entity {
     public static final int HAS_UNKNOWN = 0;
 
     public static final int HAS_TRUE = 1;
-
     // rear armor
     private int[] rearArmor;
 
@@ -5743,7 +5742,7 @@ public abstract class Mech extends Entity {
     @Override
     public int getMaxElevationDown(int currElevation) {
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
-            return 999;
+            return UNLIMITED_JUMP_DOWN;
         }
         return getMaxElevationChange();
     }

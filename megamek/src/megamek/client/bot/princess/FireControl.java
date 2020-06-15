@@ -94,7 +94,6 @@ public class FireControl {
     protected static final double EJECTED_PILOT_DISUTILITY = 1000.0;
     protected static final double CIVILIAN_TARGET_DISUTILITY = 250.0;
     protected static final double TARGET_HP_FRACTION_DEALT_UTILITY = -30.0;
-    static final int DOES_NOT_TRACK_HEAT = 999;
 
     private static final double TARGET_POTENTIAL_DAMAGE_UTILITY = 1.0;
     static final double COMMANDER_UTILITY = 0.5;
@@ -1646,7 +1645,7 @@ public class FireControl {
         // the "alpha strike" may be a bombing plan.
         if(shooter.isAirborneAeroOnGroundMap()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), true);
-            calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
+            calculateUtility(bombingPlan, Entity.DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
             if(bombingPlan.getUtility() > myPlan.getUtility()) {
                 return bombingPlan;
@@ -1738,7 +1737,7 @@ public class FireControl {
         
         // if we are here, we have already confirmed the target is under the flight path and are guessing
         final FiringPlan bombPlan = getDiveBombPlan(shooter, flightPath, target, game, true, true);
-        calculateUtility(bombPlan, DOES_NOT_TRACK_HEAT, shooter.isAero()); // bombs don't generate heat so don't bother with this calculation
+        calculateUtility(bombPlan, Entity.DOES_NOT_TRACK_HEAT, shooter.isAero()); // bombs don't generate heat so don't bother with this calculation
         
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
@@ -1875,7 +1874,7 @@ public class FireControl {
         
         if(shooter.isAero()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), false);
-            calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
+            calculateUtility(bombingPlan, Entity.DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
             // if the bombing plan actually involves doing something
             if((bombingPlan.size() > 0) && 
@@ -1891,8 +1890,8 @@ public class FireControl {
                                   @Nullable Boolean isAero) {
 
         // If the unit doesn't track heat, we won't worry about it.
-        if (DOES_NOT_TRACK_HEAT == entity.getHeatCapacity()) {
-            return DOES_NOT_TRACK_HEAT;
+        if (Entity.DOES_NOT_TRACK_HEAT == entity.getHeatCapacity()) {
+            return Entity.DOES_NOT_TRACK_HEAT;
         }
 
         int baseTolerance = entity.getHeatCapacity() - entity.getHeat();
@@ -2038,7 +2037,7 @@ public class FireControl {
             final FiringPlan diveBombPlan = this.getDiveBombPlan(shooter, null, target,
                                                                  shooter.getGame(), shooter.passedOver(target), false);
             
-            calculateUtility(diveBombPlan, DOES_NOT_TRACK_HEAT, true);
+            calculateUtility(diveBombPlan, Entity.DOES_NOT_TRACK_HEAT, true);
             if(diveBombPlan.getUtility() > bestPlans[0].getUtility()) {
                 bestPlans[0] = diveBombPlan;
             }
@@ -2085,7 +2084,7 @@ public class FireControl {
         // heat-tracking units.
         
         // conventional fighters can drop bombs
-        if (DOES_NOT_TRACK_HEAT == shooter.getHeatCapacity()
+        if (Entity.DOES_NOT_TRACK_HEAT == shooter.getHeatCapacity()
             && ((shooter.getEntityType() & Entity.ETYPE_INFANTRY) == 0)) {
             return alphaStrike; // No need to worry about heat if the unit
                                 // doesn't track it.

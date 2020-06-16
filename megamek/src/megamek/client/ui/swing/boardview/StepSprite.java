@@ -78,7 +78,7 @@ class StepSprite extends Sprite {
         Image tempImage = new BufferedImage(BoardView1.HEX_W, BoardView1.HEX_H,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics graph = tempImage.getGraphics();
-        Graphics2D g2D = (Graphics2D)graph;
+        Graphics2D g2D = (Graphics2D) graph;
 
         GUIPreferences.AntiAliasifSet(graph);
 
@@ -151,7 +151,7 @@ class StepSprite extends Sprite {
             case LOOP:
                 // forward movement arrow
                 drawArrowShape(g2D, moveArrow, col);
-                drawMovementCost(step, isLastStep, new Point(0,0), graph, col, true);
+                drawMovementCost(step, isLastStep, new Point(0, 0), graph, col, true);
                 drawRemainingVelocity(step, graph, true);
                 break;
             case GO_PRONE:
@@ -206,7 +206,7 @@ class StepSprite extends Sprite {
                 }
 
                 if (bv.game.useVectorMove()) {
-                    drawMovementCost(step, isLastStep, new Point(0,0), graph, col, false);
+                    drawMovementCost(step, isLastStep, new Point(0, 0), graph, col, false);
                 }
                 break;
             case BOOTLEGGER:
@@ -262,7 +262,7 @@ class StepSprite extends Sprite {
                 int modePos = 38;
                 if (step.getMp() > 0) {
                     // draw movement cost
-                    drawMovementCost(step, isLastStep, new Point(0,0), graph, col, true);
+                    drawMovementCost(step, isLastStep, new Point(0, 0), graph, col, true);
                     modePos += 16;
                 }
                 // show new movement mode

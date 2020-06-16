@@ -18449,19 +18449,6 @@ public class Server implements Runnable {
             addReport(vehicleMotiveDamage((Tank)ae, mod));
         }
 
-        // work out which locations have spikes
-        int[] spikes = new int[ae.locations()];
-        for (int i = 0; i < ae.locations(); i++) {
-            spikes[i] = 0;
-        }
-        for (Mounted m : ae.getMisc()) {
-            if ((m.getLocation() != Entity.LOC_NONE)
-                && m.getType().hasFlag(MiscType.F_SPIKES)) {
-                spikes[m.getLocation()] = 1;
-            }
-        }
-        int spikeDamage = 0;
-
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(toHit.getHitTable(), ae.sideTable(te.getPosition()));
@@ -18470,23 +18457,37 @@ public class Server implements Runnable {
                 cluster = damageTaken;
                 hit = new HitData(Mech.LOC_CT);
             }
+            damageTaken -= cluster;
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-            if (spikes[hit.getLocation()] == 1) {
-                r = new Report(4335);
+            if (ae.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
+                cluster = Math.max(1, cluster - 4);
+                r = new Report(4330);
                 r.indent(2);
                 r.subject = ae.getId();
                 addReport(r);
-                spikes[hit.getLocation()] = 0;
-                checkBreakSpikes(ae, hit.getLocation());
-                spikeDamage += 2;
+                checkBreakSpikes(te, hit.getLocation());
             }
             addReport(damageEntity(ae, hit, cluster, false, DamageType.NONE,
                     false, false, throughFront));
-            damageTaken -= cluster;
         }
 
         // Damage to target
-        damage += spikeDamage;
+        if (ae instanceof Mech) {
+            int spikeDamage = 0;
+            for (int loc = 0; loc < ae.locations(); loc++) {
+                if (((Mech) ae).locationIsTorso(loc) && ae.hasWorkingMisc(MiscType.F_SPIKES, -1, loc)) {
+                    spikeDamage += 2;
+                }
+            }
+            if (spikeDamage > 0) {
+                r = new Report(4335);
+                r.indent(2);
+                r.subject = ae.getId();
+                r.add(spikeDamage);
+                addReport(r);
+            }
+            damage += spikeDamage;
+        }
         r = new Report(4230);
         r.subject = ae.getId();
         r.add(damage);
@@ -18509,19 +18510,8 @@ public class Server implements Runnable {
             addReport(vehicleMotiveDamage((Tank)te, mod));
         }
 
-        // work out which locations have spikes
-        spikes = new int[te.locations()];
-        for (int i = 0; i < te.locations(); i++) {
-            spikes[i] = 0;
-        }
-        for (Mounted m : te.getMisc()) {
-            if ((m.getLocation() != Entity.LOC_NONE)
-                && m.getType().hasFlag(MiscType.F_SPIKES)) {
-                spikes[m.getLocation()] = 1;
-            }
-        }
-        spikeDamage = 0;
-
+        // track any additional damage to the attacker due to the target having spikes
+        int spikeDamage = 0;
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             // Airmech ramming attacks do all damage to a single location
@@ -18558,14 +18548,13 @@ public class Server implements Runnable {
                 if (bDirect) {
                     hit.makeDirectBlow(directBlowCritMod);
                 }
-                if (spikes[hit.getLocation()] == 1) {
+                if (te.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
                     r = new Report(4330);
                     r.indent(2);
                     r.subject = ae.getId();
                     addReport(r);
-                    spikes[hit.getLocation()] = 0;
                     checkBreakSpikes(te, hit.getLocation());
-                    cluster = 1;
+                    cluster = Math.max(1, cluster - 4);
                     spikeDamage += 2;
                 }
                 addReport(damageEntity(te, hit, cluster, false,
@@ -18574,6 +18563,14 @@ public class Server implements Runnable {
         }
         // finally apply spike damage to attacker
         if (ae instanceof Mech) {
+            if (ae.hasWorkingMisc(MiscType.F_SPIKES, -1, Mech.LOC_CT)) {
+                spikeDamage = Math.max(1, spikeDamage - 4);
+                r = new Report(4330);
+                r.indent(2);
+                r.subject = ae.getId();
+                addReport(r);
+                checkBreakSpikes(te, Mech.LOC_CT);
+            }
             addReport(damageEntity(ae, new HitData(Mech.LOC_CT), spikeDamage,
                                    false, DamageType.NONE, false, false, throughFront));
         } else if (ae instanceof Tank) {

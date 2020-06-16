@@ -38,6 +38,7 @@ VERSION HISTORY:
    VTOLs can now adjust their height to get over obstacles;
 + Data: Tech Progression Fixes.
 + PR #1999: fix the /localload command
++ Issue #2008: fix NPE related to artillery being fired from unit with phantom ammo trailer
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

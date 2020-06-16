@@ -5595,7 +5595,7 @@ public class AmmoType extends EquipmentType {
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setISAdvancement(3065, 3081, 3090, DATE_NONE, DATE_NONE)
             .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return ammo;
     }
         
@@ -7209,7 +7209,7 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
             .setISAdvancement(3058, 3082, 3090).setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.STANDARD);
         return ammo;
     }
 
@@ -7231,7 +7231,7 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
             .setISAdvancement(3058, 3082, 3090).setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.STANDARD);
         return ammo;
     }
 
@@ -7253,7 +7253,7 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
             .setISAdvancement(3058, 3082, 3090).setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.STANDARD);
         return ammo;
     }
 
@@ -7275,7 +7275,7 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
             .setISAdvancement(3058, 3082, 3090).setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.STANDARD);
         return ammo;
     }
     //EXTENDED LRMs
@@ -7523,7 +7523,7 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
                 .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)
                 .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
             return ammo;
         }
            private static AmmoType createCLStreakLRM10Ammo() {
@@ -7546,7 +7546,7 @@ public class AmmoType extends EquipmentType {
                     .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
                     .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)
                     .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
-                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 return ammo;
             }
             
@@ -7571,7 +7571,7 @@ public class AmmoType extends EquipmentType {
                     .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
                     .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)
                     .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
-                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 return ammo;
             }           
 
@@ -7595,7 +7595,7 @@ public class AmmoType extends EquipmentType {
                     .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
                     .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)
                     .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
-                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
                 return ammo;
             }
             

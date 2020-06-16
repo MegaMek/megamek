@@ -52,6 +52,6 @@ public class ISEnhancedLRM10 extends EnhancedLRMWeapon {
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
             .setISAdvancement(3058, 3082, 3090).setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

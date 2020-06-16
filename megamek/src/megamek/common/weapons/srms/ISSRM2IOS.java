@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.srms;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Sebastian Brocks
  */
@@ -55,6 +57,7 @@ public class ISSRM2IOS extends SRMWeapon {
             .setISAdvancement(3056, 3081, 3085, DATE_NONE, DATE_NONE)
             .setISApproximate(false, true, false,false, false)
             .setPrototypeFactions(F_DC)
-            .setProductionFactions(F_DC);
+            .setProductionFactions(F_DC)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

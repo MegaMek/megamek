@@ -53,6 +53,6 @@ public class CLStreakLRM10 extends StreakLRMWeapon {
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)
             .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

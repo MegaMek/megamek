@@ -185,7 +185,7 @@ public class InfantryTROView extends TROView {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.SingleFieldGun"),
                     fieldGuns.get(0).getName(), shots, (int) fieldGuns.get(0).getTonnage(inf)));
         }
-        if (inf.getSecondaryN() > 1) {
+        if (inf.getSecondaryWeapon() != null) {
             if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_BURST)) {
                 notes.add(Messages.getString("TROView.InfantryNote.Burst"));
             }

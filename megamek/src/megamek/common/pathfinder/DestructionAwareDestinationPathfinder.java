@@ -84,6 +84,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         // if we're on the ground, let's try to get up first before moving 
         if(entity.isProne() || entity.isHullDown()) {
             startPath.addStep(MoveStepType.GET_UP);
+            
+            // if we can't even get up, no need to do anything else
+            if(!startPath.isMoveLegal()) {
+                return null;
+            }
         }
 
         Coords closest = getClosestCoords(destinationCoords, entity);

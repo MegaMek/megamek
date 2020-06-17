@@ -378,6 +378,10 @@ public class EquipmentType implements ITechnology {
     }
 
     public int getCriticals(Entity entity) {
+        return getCriticals(entity, 1.0);
+    }
+
+    public int getCriticals(Entity entity, double size) {
         return criticals;
     }
 

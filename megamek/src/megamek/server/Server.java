@@ -54,11 +54,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -121,6 +116,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -1344,46 +1340,7 @@ public class Server implements Runnable {
 
         IGame newGame;
         try (InputStream is = new FileInputStream(f); InputStream gzi = new GZIPInputStream(is)) {
-            XStream xstream = new XStream();
-
-            // This mirrors the settings is saveGame
-            xstream.setMode(XStream.ID_REFERENCES);
-
-            xstream.registerConverter(new Converter() {
-                @Override
-                public boolean canConvert(Class cls) {
-                    return (cls == Coords.class);
-                }
-
-                @Override
-                public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-                    int x = 0, y = 0;
-                    boolean foundX = false, foundY = false;
-                    while(reader.hasMoreChildren()) {
-                        reader.moveDown();
-                        switch(reader.getNodeName()) {
-                            case "x":
-                                x = Integer.parseInt(reader.getValue());
-                                foundX = true;
-                                break;
-                            case "y":
-                                y = Integer.parseInt(reader.getValue());
-                                foundY = true;
-                                break;
-                            default:
-                                // Unknown node, or <hash>
-                                break;
-                        }
-                        reader.moveUp();
-                    }
-                    return (foundX && foundY) ? new Coords(x, y) : null;
-                }
-
-                @Override
-                public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
-                    // Unused here
-                }
-            });
+            XStream xstream = SerializationHelper.getXStream();
             newGame = (IGame) xstream.fromXML(gzi);
         } catch (Exception e) {
             getLogger().error(getClass(), METHOD_NAME, "Unable to load file: " + f, e); //$NON-NLS-1$

@@ -845,7 +845,7 @@ public class Infantry extends Entity {
      */
     @Override
     public int getHeatCapacity(boolean radicalHeatSinks) {
-        return 999;
+        return DOES_NOT_TRACK_HEAT;
     }
 
     /**

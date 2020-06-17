@@ -742,7 +742,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                         new EntityState(path),
                                         target,
                                         null,
-                                        FireControl.DOES_NOT_TRACK_HEAT,
+                                        Entity.DOES_NOT_TRACK_HEAT,
                                         null);
             FiringPlan myFiringPlan = getFireControl(path.getEntity()).determineBestFiringPlan(guess);
             

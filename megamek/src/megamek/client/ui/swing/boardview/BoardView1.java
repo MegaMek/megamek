@@ -1480,13 +1480,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     @SuppressWarnings("unused")
     private void renderClusters(Graphics2D g) {
         BoardClusterTracker bct = new BoardClusterTracker();
-        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false);
+        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false, true);
         
         for(BoardCluster cluster : clusterMap.values().stream().distinct().collect(Collectors.toList())) {
-            for(Coords coords : cluster.contents) {
+            for (Coords coords : cluster.contents.keySet()) {
                 Point p = getCentreHexLocation(coords.getX(), coords.getY(), true);
                 p.translate(HEX_W  / 2, HEX_H  / 2);
-                drawHexBorder(g, p, Color.PINK, 0, 6);
+                drawHexBorder(g, p, new Color(0, 0, (20 * cluster.id) % 255), 0, 6);
             }
         }
     }
@@ -3253,15 +3253,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         IHex hex = game.getBoard().getHex(x, y);
         if ((hex != null) && useIsometric() && !ignoreElevation) {
-            int level = hex.getLevel();
-            if (level != 0) {
-                elevationAdjust = level * HEX_ELEV * scale * -1.0f;
-            }
+            elevationAdjust = hex.getLevel() * HEX_ELEV * scale * -1.0f;
         }
         int ypos = (y * (int) (HEX_H * scale))
                    + ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0);
-        return new Point(x * (int) (HEX_WC * scale), ypos
-                                                     + (int) elevationAdjust);
+        return new Point(x * (int) (HEX_WC * scale), ypos + (int) elevationAdjust);
     }
 
     /**

@@ -2257,7 +2257,7 @@ public class WeaponType extends EquipmentType {
     public double getCost(Entity entity, boolean isArmored, int loc, double size) {
         if (isArmored) {
             double armoredCost = cost;
-            armoredCost += 150000 * getCriticals(entity);
+            armoredCost += 150000 * getCriticals(entity, size);
 
             return armoredCost;
         }

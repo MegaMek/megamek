@@ -112,9 +112,12 @@ public class BLKFile {
             return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
                     eqName.indexOf(" ton")));
         }
+        if (eqName.startsWith("CommsGear")) {
+            return Double.parseDouble(eqName.substring(eqName.indexOf(":") + 1));
+        }
         if (eqName.startsWith("Mission Equipment Storage")) {
             return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
-                    eqName.indexOf(" kg")));
+                    eqName.indexOf("kg")).trim());
         }
         if (eqName.startsWith("Ladder")) {
             return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,

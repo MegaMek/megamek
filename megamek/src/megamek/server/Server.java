@@ -18613,12 +18613,13 @@ public class Server implements Runnable {
             }
             // An attack that deals zero damage can still damage the attacker in the case of a push
             if (attackerLocation != Entity.LOC_NONE) {
-                Report r = new Report(4330);
-                r.indent(2);
-                r.newlines = 0;
-                r.subject = attacker.getId();
-                addReport(r);
-                if (attackerLocation2 == Entity.LOC_NONE) {
+                // Spikes also protect from retaliatory spike damage
+                if (attacker.hasWorkingMisc(MiscType.F_SPIKES, -1, attackerLocation)) {
+                    Report r = new Report(4332);
+                    r.indent(2);
+                    r.subject = attacker.getId();
+                    addReport(r);
+                } else if (attackerLocation2 == Entity.LOC_NONE) {
                     addReport(damageEntity(attacker, new HitData(attackerLocation), 2, false,
                             DamageType.NONE,false, false, false));
                 } else {
@@ -23724,6 +23725,11 @@ public class Server implements Runnable {
             if ((hit.getEffect() & HitData.EFFECT_VEHICLE_MOVE_DAMAGED) == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
                 vDesc.addAll(vehicleMotiveDamage((Tank) te, hit.getMotiveMod()));
             }
+            // Damage from any source can break spikes
+            if (te.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
+                vDesc.add(checkBreakSpikes(te, hit.getLocation()));
+            }
+
             // roll all critical hits against this location
             // unless the section destroyed in a previous phase?
             // Cause a crit.
@@ -35602,33 +35608,33 @@ public class Server implements Runnable {
     }
 
     /**
-     * check if spikes get broken in the given location
+     * Check if spikes get broken in the given location
      *
-     * @param e   the <code>Entity</code> to check
-     * @param loc the <code>int</code> location
+     * @param e   The {@link Entity} to check
+     * @param loc The location index
+     * @return    A report showing the results of the roll
      */
-    private void checkBreakSpikes(Entity e, int loc) {
+    private Report checkBreakSpikes(Entity e, int loc) {
         int roll = Compute.d6(2);
         Report r;
         if (roll < 9) {
             r = new Report(4445);
-            r.newlines = 0;
+            r.indent(2);
             r.add(roll);
             r.subject = e.getId();
-            addReport(r);
-            return;
-        }
-        r = new Report(4440);
-        r.newlines = 0;
-        r.add(roll);
-        r.subject = e.getId();
-        addReport(r);
-        for (Mounted m : e.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_SPIKES)
-                && (m.getLocation() == loc)) {
-                m.setHit(true);
+        } else {
+            r = new Report(4440);
+            r.indent(2);
+            r.add(roll);
+            r.subject = e.getId();
+            for (Mounted m : e.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_SPIKES)
+                        && (m.getLocation() == loc)) {
+                    m.setHit(true);
+                }
             }
         }
+        return r;
     }
 
     /**

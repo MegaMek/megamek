@@ -126,7 +126,7 @@ public class InfantryTROView extends TROView {
         setModelData("squadCount", inf.getSquadN());
         setModelData("armorDivisor", inf.getDamageDivisor());
         InfantryWeapon rangeWeapon = inf.getPrimaryWeapon();
-        if (inf.getSecondaryN() > 1) {
+        if (inf.getSecondaryWeapon() != null) {
             rangeWeapon = inf.getSecondaryWeapon();
         }
 

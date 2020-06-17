@@ -1555,7 +1555,11 @@ public class Princess extends BotClient {
                     // Also set the behavior to "engaged"
                     // so it doesn't hump walls due to "self preservation mods"
                     if(los.canSee()) {
-                        getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
+                        // if we've explicitly forced 'move to contact' behavior, don't flip back to 'engaged'
+                        if(!forceMoveToContact) {
+                            getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
+                        }
+                        
                         return getPrecognition().getPathEnumerator()
                                 .getUnitPaths()
                                 .get(mover.getId());

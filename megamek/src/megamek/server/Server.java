@@ -15493,7 +15493,7 @@ public class Server implements Runnable {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
 
-            damage = checkForSpikes(te, damage, hit.getLocation(), ae,
+            damage = checkForSpikes(te, hit.getLocation(), damage, ae,
                     (paa.getArm() == PunchAttackAction.LEFT) ?  Mech.LOC_LARM : Mech.LOC_RARM);
             DamageType damageType = DamageType.NONE;
             addReport(damageEntity(te, hit, damage, false, damageType, false,
@@ -17292,7 +17292,8 @@ public class Server implements Runnable {
             ((Mech) te).setCheckForCrit(true);
         }
 
-        checkForSpikes(te, Mech.LOC_CT, 0, ae, Mech.LOC_LARM, Mech.LOC_RARM);
+        checkForSpikes(te, ae.rollHitLocation(ToHitData.HIT_PUNCH, Compute.targetSideTable(ae, te)).getLocation(),
+                0, ae, Mech.LOC_LARM, Mech.LOC_RARM);
 
         addNewLines();
     }
@@ -18608,23 +18609,25 @@ public class Server implements Runnable {
     private int checkForSpikes(Entity target, int targetLocation, int damage,
                                Entity attacker, int attackerLocation, int attackerLocation2) {
         if (target.hasWorkingMisc(MiscType.F_SPIKES, -1, targetLocation)) {
-            if (damage > 0) {
-                Report r;
-                // Report differs on mention of damage  to attacker
-                if (attackerLocation != Entity.LOC_NONE) {
-                    r = new Report(4330);
-                } else {
-                    r = new Report(4331);
-                }
-                r.indent(2);
-                r.subject = target.getId();
-                addReport(r);
+            Report r;
+            if (damage == 0) {
+                // Only show damage to attacker (push attack)
+                r = new Report(4333);
+            } else if (attackerLocation != Entity.LOC_NONE) {
+                // Show damage reduction and damage to attacker
+                r = new Report(4330);
+            } else {
+                // Only show damage reduction (club/physical weapon attack)
+                r = new Report(4331);
             }
+            r.indent(2);
+            r.subject = target.getId();
+            addReport(r);
             // An attack that deals zero damage can still damage the attacker in the case of a push
             if (attackerLocation != Entity.LOC_NONE) {
                 // Spikes also protect from retaliatory spike damage
                 if (attacker.hasWorkingMisc(MiscType.F_SPIKES, -1, attackerLocation)) {
-                    Report r = new Report(4332);
+                    r = new Report(4332);
                     r.indent(2);
                     r.subject = attacker.getId();
                     addReport(r);

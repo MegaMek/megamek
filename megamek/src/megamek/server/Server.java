@@ -18609,7 +18609,13 @@ public class Server implements Runnable {
                                Entity attacker, int attackerLocation, int attackerLocation2) {
         if (target.hasWorkingMisc(MiscType.F_SPIKES, -1, targetLocation)) {
             if (damage > 0) {
-                Report r = new Report(4330);
+                Report r;
+                // Report differs on mention of damage  to attacker
+                if (attackerLocation != Entity.LOC_NONE) {
+                    r = new Report(4330);
+                } else {
+                    r = new Report(4331);
+                }
                 r.indent(2);
                 r.subject = target.getId();
                 addReport(r);

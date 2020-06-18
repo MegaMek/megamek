@@ -18416,12 +18416,15 @@ public class Server implements Runnable {
         }
 
         while (damageTaken > 0) {
-            int cluster = Math.min(5, damageTaken);
-            HitData hit = ae.rollHitLocation(toHit.getHitTable(), ae.sideTable(te.getPosition()));
+            int cluster;
+            HitData hit;
             // An airmech ramming attack does all damage to attacker's CT
             if (airmechRam) {
                 cluster = damageTaken;
                 hit = new HitData(Mech.LOC_CT);
+            } else {
+                cluster = Math.min(5, damageTaken);
+                hit = ae.rollHitLocation(toHit.getHitTable(), ae.sideTable(te.getPosition()));
             }
             damageTaken -= cluster;
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);

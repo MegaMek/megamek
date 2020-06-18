@@ -126,7 +126,7 @@ public class InfantryTROView extends TROView {
         setModelData("squadCount", inf.getSquadN());
         setModelData("armorDivisor", inf.getDamageDivisor());
         InfantryWeapon rangeWeapon = inf.getPrimaryWeapon();
-        if (inf.getSecondaryWeapon() != null) {
+        if ((inf.getSecondaryN() > 1) && (inf.getSecondaryWeapon() != null)) {
             rangeWeapon = inf.getSecondaryWeapon();
         }
 
@@ -185,7 +185,7 @@ public class InfantryTROView extends TROView {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.SingleFieldGun"),
                     fieldGuns.get(0).getName(), shots, (int) fieldGuns.get(0).getTonnage(inf)));
         }
-        if (inf.getSecondaryWeapon() != null) {
+        if ((inf.getSecondaryN() > 1) && (inf.getSecondaryWeapon() != null)) {
             if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_BURST)) {
                 notes.add(Messages.getString("TROView.InfantryNote.Burst"));
             }

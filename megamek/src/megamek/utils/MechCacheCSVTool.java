@@ -22,12 +22,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
 
-import megamek.common.Aero;
-import megamek.common.EquipmentType;
-import megamek.common.Mech;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.TechConstants;
+import megamek.common.*;
+
 
 /**
  * This class provides a utility to read in all of the data/mechfiles and print
@@ -51,7 +47,7 @@ public class MechCacheCSVTool {
         
         try {
             StringBuffer csvLine = new StringBuffer();
-            csvLine.append("Chassis,Model,Combined,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,BV,Rules,Engine Name,Internal Structure," +
+            csvLine.append("Chassis,Model,Combined,Unit Type,BV,role,Weight,Intro Date,Experimental year,Advanced year,Standard year,Rules,Source,Engine Name,Internal Structure," +
                     "Myomer,Cockpit Type,Gyro Type," +
                     "Armor Types," +
                     "Equipment (multiple entries)\n");
@@ -70,8 +66,14 @@ public class MechCacheCSVTool {
                 //Combined Name
                 csvLine.append(mech.getChassis() + " " + mech.getModel()+ ",");
                 
-                //Source Book
-                csvLine.append(mech.getSourceFile() + ",");
+                //Unit Type
+                csvLine.append(mech.getUnitType()  + "-" + (mech.getUnitSubType() + ","));
+                
+                // BV
+                csvLine.append(mech.getBV()  + ",");
+                               
+                //Role
+                csvLine.append(UnitRoleHandler.getRoleFor(mech) + ",");
                 
                 //if (mech.getModel().equals("")){
                 //    csvLine.append("(Standard),");
@@ -106,14 +108,14 @@ public class MechCacheCSVTool {
                     } else {
                         csvLine.append(",");
                     }
-
-                //Unit Type
-                csvLine.append(mech.getUnitType()  + "-" + (mech.getUnitSubType() + ","));
                 
-                // BV
-                csvLine.append(mech.getBV()  + ",");
-
+                //Rules Level
                 csvLine.append(mech.getLevel() + ",");
+
+                //Source Book
+                csvLine.append(mech.getSourceFile() + ",");
+                
+                
                 // Engine Type
                 csvLine.append(mech.getEngineName() + ",");
                 

@@ -1420,7 +1420,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              * Common functionality that applies the panel's current ammo bin choice to the panel's weapon.
              */
             public void applyChoice() {
-                entity.loadWeapon(m_mounted, matchingAmmoBins.get(ammoBins.getSelectedIndex()));
+		int selectedIndex = ammoBins.getSelectedIndex();
+		if (selectedIndex >= 0 && selectedIndex < matchingAmmoBins.size()) {
+                    entity.loadWeapon(m_mounted, matchingAmmoBins.get(selectedIndex));
+		}
             }
         }
 

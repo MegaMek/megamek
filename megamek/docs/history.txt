@@ -42,6 +42,7 @@ VERSION HISTORY:
 + Issue #2008: fix NPE related to artillery being fired from unit with phantom ammo trailer
 + PR #2012: fix NPE when attempting to view TRO in meklab after setting # of secondary weapons on infantry to 0
 + Data: New Sprites with clean up of Vehicle folder.
++ Issue #2015: Only update valid ammo selections in Configure Mech dialog
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

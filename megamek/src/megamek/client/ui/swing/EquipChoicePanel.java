@@ -1421,7 +1421,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              */
             public void applyChoice() {
 		int selectedIndex = ammoBins.getSelectedIndex();
-		if (selectedIndex >= 0 && selectedIndex < matchingAmmoBins.size()) {
+		if ((selectedIndex >= 0) && (selectedIndex < matchingAmmoBins.size())) {
                     entity.loadWeapon(m_mounted, matchingAmmoBins.get(selectedIndex));
 		}
             }

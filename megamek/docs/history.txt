@@ -44,6 +44,7 @@ VERSION HISTORY:
 + Data: New Sprites with clean up of Vehicle folder.
 + Issue #2015: Only update valid ammo selections in Configure Mech dialog
 + Data: Resolving #2006, #1982, #1981, #1957, #1945, #1941, #1870
+Issue #2005: Allow units to flee if they made it into prohibited terrain
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

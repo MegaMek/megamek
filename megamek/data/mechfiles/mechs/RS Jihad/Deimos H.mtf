@@ -1,0 +1,156 @@
+Version:1.0
+Deimos
+H
+
+Config:Biped Omnimech
+techbase:Clan
+era:3085
+source:Jihad
+rules level:2
+
+mass:85
+engine:255 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:14 Double
+base chassis heat sinks:10
+walk mp:3
+jump mp:3
+
+armor:Standard(Clan)
+LA armor:24
+RA armor:24
+LT armor:28
+RT armor:28
+CT armor:36
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:8
+Gauss Rifle, Right Arm
+Gauss Rifle, Left Arm
+ER Large Laser, Right Arm
+Heavy Large Laser, Left Torso
+ER Large Laser, Left Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+Anti-Missile System, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLERLargeLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLERLargeLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Gauss Ammo (omnipod)
+Jump Jet (omnipod)
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+CLMASC
+CLMASC
+CLMASC
+Jump Jet (omnipod)
+Clan Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet (omnipod)
+CLAMS Ammo (omnipod)
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLAntiMissileSystem (omnipod)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

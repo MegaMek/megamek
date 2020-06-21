@@ -31,11 +31,9 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
-import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.MovePath;
-import megamek.common.OffBoardDirection;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.Targetable;
 import megamek.common.logging.LogLevel;
@@ -46,16 +44,19 @@ import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.util.BoardUtilities;
 import megamek.common.pathfinder.AeroLowAltitudePathFinder;
 import megamek.common.pathfinder.AeroSpacePathFinder;
-import megamek.common.pathfinder.BoardEdgePathFinder;
 import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
-import megamek.common.pathfinder.MovePathFinder;
 import megamek.common.pathfinder.NewtonianAerospacePathFinder;
-import megamek.common.pathfinder.PathDecorator;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.pathfinder.SpheroidPathFinder;
 
+/**
+ * This class contains logic that calculates and stores 
+ * a) possible paths that units in play can take, and
+ * b) their possible locations
+ *
+ */
 public class PathEnumerator {
 
     private final Princess owner;
@@ -68,8 +69,6 @@ public class PathEnumerator {
 
     private AtomicBoolean mapHasBridges = null;
     private final Object BRIDGE_LOCK = new Object();
-
-    //todo VTOL elevation changes.
 
     public PathEnumerator(Princess owningPrincess, IGame game) {
         owner = owningPrincess;
@@ -253,6 +252,9 @@ public class PathEnumerator {
                 InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
                 ipf.run(new MovePath(game, mover));
                 paths.addAll(ipf.getAllComputedPathsUncategorized());
+                
+                // generate long-range paths appropriate to the bot's current state
+                updateLongRangePaths(mover);
             } else { // Non-Aero movement
                 // TODO: Will this cause Princess to never use MASC?
                 LongestPathFinder lpf = LongestPathFinder
@@ -344,6 +346,11 @@ public class PathEnumerator {
                 break;
             default:
                 for(Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {
+                    // don't consider crippled units as valid long-range pathfinding targets 
+                    if((target.getTargetType() == Targetable.TYPE_ENTITY) && ((Entity) target).isCrippled()) {
+                        continue;
+                    }
+                    
                     destinations.add(target.getPosition());
                     // we can easily shoot at an entity from right next to it as well
                     destinations.addAll(target.getPosition().allAdjacent());

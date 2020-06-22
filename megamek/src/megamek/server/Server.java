@@ -15496,24 +15496,8 @@ public class Server implements Runnable {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
 
-            if ((damage >= 1)
-                    && te.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
-                r = new Report(4330);
-                r.indent(2);
-                r.newlines = 0;
-                r.subject = ae.getId();
-                addReport(r);
-                checkBreakSpikes(te, hit.getLocation());
-                damage = Math.max(1, damage - 4);
-                HitData ahit;
-                if (paa.getArm() == PunchAttackAction.LEFT) {
-                    ahit = new HitData(Mech.LOC_LARM);
-                } else {
-                    ahit = new HitData(Mech.LOC_RARM);
-                }
-                addReport(damageEntity(ae, ahit, 2, false, DamageType.NONE,
-                                       false, false, false));
-            }
+            damage = checkForSpikes(te, hit.getLocation(), damage, ae,
+                    (paa.getArm() == PunchAttackAction.LEFT) ?  Mech.LOC_LARM : Mech.LOC_RARM);
             DamageType damageType = DamageType.NONE;
             addReport(damageEntity(te, hit, damage, false, damageType, false,
                                    false, throughFront));
@@ -15776,42 +15760,31 @@ public class Server implements Runnable {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
 
-            if ((damage >= 1)
-                    && te.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
-                r = new Report(4330);
-                r.indent(2);
-                r.newlines = 0;
-                r.subject = ae.getId();
-                addReport(r);
-                checkBreakSpikes(te, hit.getLocation());
-                damage = Math.max(1, damage - 4);
-                HitData ahit;
-                switch (kaa.getLeg()) {
-                    case KickAttackAction.LEFT:
-                        if (ae instanceof QuadMech) {
-                            ahit = new HitData(Mech.LOC_LARM);
-                        } else {
-                            ahit = new HitData(Mech.LOC_LLEG);
-                        }
-                        break;
-                    case KickAttackAction.RIGHT:
-                        if (ae instanceof QuadMech) {
-                            ahit = new HitData(Mech.LOC_RARM);
-                        } else {
-                            ahit = new HitData(Mech.LOC_RLEG);
-                        }
-                        break;
-                    case KickAttackAction.LEFTMULE:
-                        ahit = new HitData(Mech.LOC_LLEG);
-                        break;
-                    case KickAttackAction.RIGHTMULE:
-                    default:
-                        ahit = new HitData(Mech.LOC_RLEG);
-                        break;
-                }
-                addReport(damageEntity(ae, ahit, 2, false, DamageType.NONE,
-                        false, false, false));
+            int leg;
+            switch (kaa.getLeg()) {
+                case KickAttackAction.LEFT:
+                    if (ae instanceof QuadMech) {
+                        leg = Mech.LOC_LARM;
+                    } else {
+                        leg = Mech.LOC_LLEG;
+                    }
+                    break;
+                case KickAttackAction.RIGHT:
+                    if (ae instanceof QuadMech) {
+                        leg = Mech.LOC_RARM;
+                    } else {
+                        leg = Mech.LOC_RLEG;
+                    }
+                    break;
+                case KickAttackAction.LEFTMULE:
+                    leg = Mech.LOC_LLEG;
+                    break;
+                case KickAttackAction.RIGHTMULE:
+                default:
+                    leg = Mech.LOC_RLEG;
+                    break;
             }
+            damage = checkForSpikes(te, hit.getLocation(), damage, ae, leg);
             DamageType damageType = DamageType.NONE;
             addReport(damageEntity(te, hit, damage, false, damageType, false,
                     false, throughFront));
@@ -17004,16 +16977,7 @@ public class Server implements Runnable {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
 
-            if ((damage >= 1)
-                && te.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
-                r = new Report(4331);
-                r.indent(2);
-                r.newlines = 0;
-                r.subject = ae.getId();
-                addReport(r);
-                checkBreakSpikes(te, hit.getLocation());
-                damage = Math.max(1, damage - 4);
-            }
+            damage = checkForSpikes(te, hit.getLocation(), damage, ae, Entity.LOC_NONE);
 
             DamageType damageType = DamageType.NONE;
             addReport(damageEntity(te, hit, damage, false, damageType, false,
@@ -17330,6 +17294,9 @@ public class Server implements Runnable {
         if ((te instanceof Mech) && ((Mech) te).isIndustrial()) {
             ((Mech) te).setCheckForCrit(true);
         }
+
+        checkForSpikes(te, ae.rollHitLocation(ToHitData.HIT_PUNCH, Compute.targetSideTable(ae, te)).getLocation(),
+                0, ae, Mech.LOC_LARM, Mech.LOC_RARM);
 
         addNewLines();
     }
@@ -18452,44 +18419,41 @@ public class Server implements Runnable {
             addReport(vehicleMotiveDamage((Tank)ae, mod));
         }
 
-        // work out which locations have spikes
-        int[] spikes = new int[ae.locations()];
-        for (int i = 0; i < ae.locations(); i++) {
-            spikes[i] = 0;
-        }
-        for (Mounted m : ae.getMisc()) {
-            if ((m.getLocation() != Entity.LOC_NONE)
-                && m.getType().hasFlag(MiscType.F_SPIKES)) {
-                spikes[m.getLocation()] = 1;
-            }
-        }
-        int spikeDamage = 0;
-
         while (damageTaken > 0) {
-            int cluster = Math.min(5, damageTaken);
-            HitData hit = ae.rollHitLocation(toHit.getHitTable(), ae.sideTable(te.getPosition()));
+            int cluster;
+            HitData hit;
             // An airmech ramming attack does all damage to attacker's CT
             if (airmechRam) {
                 cluster = damageTaken;
                 hit = new HitData(Mech.LOC_CT);
+            } else {
+                cluster = Math.min(5, damageTaken);
+                hit = ae.rollHitLocation(toHit.getHitTable(), ae.sideTable(te.getPosition()));
             }
+            damageTaken -= cluster;
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-            if (spikes[hit.getLocation()] == 1) {
-                r = new Report(4335);
-                r.indent(2);
-                r.subject = ae.getId();
-                addReport(r);
-                spikes[hit.getLocation()] = 0;
-                checkBreakSpikes(ae, hit.getLocation());
-                spikeDamage += 2;
-            }
+            cluster = checkForSpikes(ae, hit.getLocation(), cluster, te, Mech.LOC_CT);
             addReport(damageEntity(ae, hit, cluster, false, DamageType.NONE,
                     false, false, throughFront));
-            damageTaken -= cluster;
         }
 
         // Damage to target
-        damage += spikeDamage;
+        if (ae instanceof Mech) {
+            int spikeDamage = 0;
+            for (int loc = 0; loc < ae.locations(); loc++) {
+                if (((Mech) ae).locationIsTorso(loc) && ae.hasWorkingMisc(MiscType.F_SPIKES, -1, loc)) {
+                    spikeDamage += 2;
+                }
+            }
+            if (spikeDamage > 0) {
+                r = new Report(4335);
+                r.indent(2);
+                r.subject = ae.getId();
+                r.add(spikeDamage);
+                addReport(r);
+            }
+            damage += spikeDamage;
+        }
         r = new Report(4230);
         r.subject = ae.getId();
         r.add(damage);
@@ -18512,19 +18476,8 @@ public class Server implements Runnable {
             addReport(vehicleMotiveDamage((Tank)te, mod));
         }
 
-        // work out which locations have spikes
-        spikes = new int[te.locations()];
-        for (int i = 0; i < te.locations(); i++) {
-            spikes[i] = 0;
-        }
-        for (Mounted m : te.getMisc()) {
-            if ((m.getLocation() != Entity.LOC_NONE)
-                && m.getType().hasFlag(MiscType.F_SPIKES)) {
-                spikes[m.getLocation()] = 1;
-            }
-        }
-        spikeDamage = 0;
-
+        // track any additional damage to the attacker due to the target having spikes
+        int spikeDamage = 0;
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             // Airmech ramming attacks do all damage to a single location
@@ -18561,28 +18514,10 @@ public class Server implements Runnable {
                 if (bDirect) {
                     hit.makeDirectBlow(directBlowCritMod);
                 }
-                if (spikes[hit.getLocation()] == 1) {
-                    r = new Report(4330);
-                    r.indent(2);
-                    r.subject = ae.getId();
-                    addReport(r);
-                    spikes[hit.getLocation()] = 0;
-                    checkBreakSpikes(te, hit.getLocation());
-                    cluster = 1;
-                    spikeDamage += 2;
-                }
+                cluster = checkForSpikes(te, hit.getLocation(), cluster, ae, Mech.LOC_CT);
                 addReport(damageEntity(te, hit, cluster, false,
                                        DamageType.NONE, false, false, throughFront));
             }
-        }
-        // finally apply spike damage to attacker
-        if (ae instanceof Mech) {
-            addReport(damageEntity(ae, new HitData(Mech.LOC_CT), spikeDamage,
-                                   false, DamageType.NONE, false, false, throughFront));
-        } else if (ae instanceof Tank) {
-            addReport(damageEntity(ae, new HitData(Tank.LOC_FRONT),
-                                   spikeDamage, false, DamageType.NONE, false, false,
-                                   throughFront));
         }
 
         if (airmechRam) {
@@ -18638,6 +18573,81 @@ public class Server implements Runnable {
         }
 
     } // End private void resolveChargeDamage( Entity, Entity, ToHitData )
+
+    /**
+     * Checks whether the location has spikes, and if so handles the damage to the
+     * attack and returns the reduced damage. Locations without spikes return the
+     * original damage amount.
+     *
+     * @param target            The target of a physical attack
+     * @param targetLocation    The location that was hit
+     * @param damage            The amount of damage dealt to the target
+     * @param attacker          The attacker
+     * @param attackerLocation  The location on the attacker that is damaged if the
+     *                          target has spikes. Entity.LOC_NONE if the attacker
+     *                          can't be damaged by spikes in this attack.
+     * @return          The damage after applying any reduction due to spikes
+     */
+    private int checkForSpikes(Entity target, int targetLocation, int damage,
+                               Entity attacker, int attackerLocation) {
+        return checkForSpikes(target, targetLocation, damage, attacker, attackerLocation, Entity.LOC_NONE);
+    }
+
+    /**
+     * Checks whether the location has spikes, and if so handles the damage to the
+     * attack and returns the reduced damage. Locations without spikes return the
+     * original damage amount.
+     *
+     * @param target            The target of a physical attack
+     * @param targetLocation    The location that was hit
+     * @param damage            The amount of damage dealt to the target
+     * @param attacker          The attacker
+     * @param attackerLocation  The location on the attacker that is damaged if the
+     *                          target has spikes. Entity.LOC_NONE if the attacker
+     *                          can't be damaged by spikes in this attack.
+     * @param attackerLocation2 If not Entity.LOC_NONE, the damage to the attacker
+     *                          will be split between two locations.
+     * @return          The damage after applying any reduction due to spikes
+     */
+    private int checkForSpikes(Entity target, int targetLocation, int damage,
+                               Entity attacker, int attackerLocation, int attackerLocation2) {
+        if (target.hasWorkingMisc(MiscType.F_SPIKES, -1, targetLocation)) {
+            Report r;
+            if (damage == 0) {
+                // Only show damage to attacker (push attack)
+                r = new Report(4333);
+            } else if (attackerLocation != Entity.LOC_NONE) {
+                // Show damage reduction and damage to attacker
+                r = new Report(4330);
+            } else {
+                // Only show damage reduction (club/physical weapon attack)
+                r = new Report(4331);
+            }
+            r.indent(2);
+            r.subject = target.getId();
+            addReport(r);
+            // An attack that deals zero damage can still damage the attacker in the case of a push
+            if (attackerLocation != Entity.LOC_NONE) {
+                // Spikes also protect from retaliatory spike damage
+                if (attacker.hasWorkingMisc(MiscType.F_SPIKES, -1, attackerLocation)) {
+                    r = new Report(4332);
+                    r.indent(2);
+                    r.subject = attacker.getId();
+                    addReport(r);
+                } else if (attackerLocation2 == Entity.LOC_NONE) {
+                    addReport(damageEntity(attacker, new HitData(attackerLocation), 2, false,
+                            DamageType.NONE,false, false, false));
+                } else {
+                    addReport(damageEntity(attacker, new HitData(attackerLocation), 1, false,
+                            DamageType.NONE, false, false, false));
+                    addReport(damageEntity(attacker, new HitData(attackerLocation2), 1, false,
+                            DamageType.NONE, false, false, false));
+                }
+            }
+            return Math.max(1, damage - 4);
+        }
+        return damage;
+    }
 
     /**
      * End-phase checks for laid explosives; check whether explosives are
@@ -18950,18 +18960,6 @@ public class Server implements Runnable {
             r.indent(2);
             addReport(r);
 
-            // work out which locations have spikes
-            int[] spikes = new int[te.locations()];
-            for (int i = 0; i < te.locations(); i++) {
-                spikes[i] = 0;
-            }
-            for (Mounted m : te.getMisc()) {
-                if ((m.getLocation() != Entity.LOC_NONE) && m.getType().hasFlag(MiscType.F_SPIKES)) {
-                    spikes[m.getLocation()] = 1;
-                }
-            }
-            int spikeDamage = 0;
-
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
@@ -18969,47 +18967,10 @@ public class Server implements Runnable {
                 if (directBlow) {
                     hit.makeDirectBlow(toHit.getMoS() / 3);
                 }
-
-                if (spikes[hit.getLocation()] == 1) {
-                    r = new Report(4330);
-                    r.indent(2);
-                    r.newlines = 0;
-                    r.subject = ae.getId();
-                    addReport(r);
-                    cluster = 1;
-                    spikes[hit.getLocation()] = 0;
-                    checkBreakSpikes(te, hit.getLocation());
-                    spikeDamage += 2;
-                }
+                damage -= cluster;
+                cluster = checkForSpikes(te, hit.getLocation(), damage, ae, Mech.LOC_LLEG, Mech.LOC_RLEG);
                 addReport(damageEntity(te, hit, cluster, false,
                                        DamageType.NONE, false, false, throughFront));
-                damage -= 5;
-            }
-
-            if (spikeDamage > 0) {
-                if (ae instanceof QuadMech) {
-                    addReport(damageEntity(ae, new HitData(Mech.LOC_LARM),
-                            (spikeDamage + 2) / 4, false, DamageType.NONE,
-                            false, false, false));
-                    addReport(damageEntity(ae, new HitData(Mech.LOC_RARM),
-                            (spikeDamage + 2) / 4, false, DamageType.NONE,
-                            false, false, false));
-                    if (spikeDamage > 2) {
-                        addReport(damageEntity(ae, new HitData(Mech.LOC_LLEG),
-                                spikeDamage / 4, false, DamageType.NONE, false,
-                                false, false));
-                        addReport(damageEntity(ae, new HitData(Mech.LOC_RLEG),
-                                spikeDamage / 4, false, DamageType.NONE, false,
-                                false, false));
-                    }
-                } else {
-                    addReport(damageEntity(ae, new HitData(Mech.LOC_LLEG),
-                            spikeDamage / 2, false, DamageType.NONE, false,
-                            false, false));
-                    addReport(damageEntity(ae, new HitData(Mech.LOC_RLEG),
-                            spikeDamage / 2, false, DamageType.NONE, false,
-                            false, false));
-                }
             }
             if (target instanceof VTOL) {
                 // destroy rotor
@@ -23779,6 +23740,11 @@ public class Server implements Runnable {
             if ((hit.getEffect() & HitData.EFFECT_VEHICLE_MOVE_DAMAGED) == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
                 vDesc.addAll(vehicleMotiveDamage((Tank) te, hit.getMotiveMod()));
             }
+            // Damage from any source can break spikes
+            if (te.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
+                vDesc.add(checkBreakSpikes(te, hit.getLocation()));
+            }
+
             // roll all critical hits against this location
             // unless the section destroyed in a previous phase?
             // Cause a crit.
@@ -35657,33 +35623,33 @@ public class Server implements Runnable {
     }
 
     /**
-     * check if spikes get broken in the given location
+     * Check if spikes get broken in the given location
      *
-     * @param e   the <code>Entity</code> to check
-     * @param loc the <code>int</code> location
+     * @param e   The {@link Entity} to check
+     * @param loc The location index
+     * @return    A report showing the results of the roll
      */
-    private void checkBreakSpikes(Entity e, int loc) {
+    private Report checkBreakSpikes(Entity e, int loc) {
         int roll = Compute.d6(2);
         Report r;
         if (roll < 9) {
             r = new Report(4445);
-            r.newlines = 0;
+            r.indent(2);
             r.add(roll);
             r.subject = e.getId();
-            addReport(r);
-            return;
-        }
-        r = new Report(4440);
-        r.newlines = 0;
-        r.add(roll);
-        r.subject = e.getId();
-        addReport(r);
-        for (Mounted m : e.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_SPIKES)
-                && (m.getLocation() == loc)) {
-                m.setHit(true);
+        } else {
+            r = new Report(4440);
+            r.indent(2);
+            r.add(roll);
+            r.subject = e.getId();
+            for (Mounted m : e.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_SPIKES)
+                        && (m.getLocation() == loc)) {
+                    m.setHit(true);
+                }
             }
         }
+        return r;
     }
 
     /**

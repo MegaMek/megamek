@@ -3166,6 +3166,12 @@ public class MoveStep implements Serializable {
             return true;
         }
 
+        // If you want to flee, and you can flee, flee.
+        if ((type == MoveStepType.FLEE)
+                && entity.canFlee()) {
+            return true;
+        }
+
         // super-easy
         if (entity.isImmobile()) {
             // System.err.println("illegal - immobile");

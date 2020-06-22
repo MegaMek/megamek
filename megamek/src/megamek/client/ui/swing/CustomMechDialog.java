@@ -77,7 +77,6 @@ import megamek.common.QuadVee;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
-import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.enums.Gender;
 import megamek.common.options.IOption;
@@ -96,7 +95,7 @@ import megamek.common.verifier.TestInfantry;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
-import megamek.common.weapons.ArtilleryBayWeapon;
+import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 
 /**

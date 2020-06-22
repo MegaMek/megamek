@@ -14,11 +14,11 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.bayweapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.bayweapons.AmmoBayWeapon;
+import megamek.common.weapons.*;
 import megamek.server.Server;
 
 /**
@@ -49,10 +49,6 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_ARTILLERY;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
 
     /*
@@ -65,7 +61,7 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+                                              WeaponAttackAction waa, IGame game, Server server) {
         Entity ae = game.getEntity(waa.getEntityId());
         boolean useHoming = false;
         for (int wId : ae.getEquipment(waa.getWeaponId()).getBayWeapons()) {

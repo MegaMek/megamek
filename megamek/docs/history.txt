@@ -46,6 +46,7 @@ VERSION HISTORY:
 + Data: Resolving #2006, #1982, #1981, #1957, #1945, #1941, #1870
 + Issue #2005: Allow units to flee if they made it into prohibited terrain
 + Issue #2004: Spikes - Not working correctly
++ Issue #2019: 100-ton mechs no longer able to gracefully pirouette over thin wooden sticks laid across rivers (1-CF bridges)
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

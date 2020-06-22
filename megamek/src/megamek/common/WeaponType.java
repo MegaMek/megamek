@@ -18,7 +18,7 @@ import java.math.BigInteger;
 
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
-import megamek.common.weapons.ArtilleryBayWeapon;
+import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.LegAttack;
 import megamek.common.weapons.SpaceBombAttack;

@@ -8652,12 +8652,15 @@ public class Server implements Runnable {
             if (stepMoveType != EntityMovementType.MOVE_JUMP
                     && (step.getClearance() == 0
                         || (entity.getMovementMode() == EntityMovementMode.WIGE && step.getClearance() == 1)
-                        || curElevation == curHex.terrainLevel(Terrains.BLDG_ELEV))) {
+                        || curElevation == curHex.terrainLevel(Terrains.BLDG_ELEV)
+                        || curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV))) {
                 Building bldg = game.getBoard().getBuildingAt(curPos);
                 if ((bldg != null) && (entity.getElevation() >= 0)) {
                     boolean wigeFlyingOver = entity.getMovementMode() == EntityMovementMode.WIGE
-                            && curHex.containsTerrain(Terrains.BLDG_ELEV)
-                            && curElevation > curHex.terrainLevel(Terrains.BLDG_ELEV);
+                            && ((curHex.containsTerrain(Terrains.BLDG_ELEV)
+                                    && curElevation > curHex.terrainLevel(Terrains.BLDG_ELEV)) ||
+                            (curHex.containsTerrain(Terrains.BRIDGE_ELEV)
+                                    && curElevation > curHex.terrainLevel(Terrains.BRIDGE_ELEV)));
                     boolean collapse = checkBuildingCollapseWhileMoving(bldg, entity, curPos);
                     addAffectedBldg(bldg, collapse);
                     // If the building is collapsed by a WiGE flying over it, the WiGE drops one level of elevation.

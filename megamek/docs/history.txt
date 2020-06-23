@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+0.47.8-SNAPSHOT
+
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options
 + Issue #1850: Plasma Rifle Dealing too much damage to conventional fighters

@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-0.47.7-SNAPSHOT
+0.47.8-SNAPSHOT
+
+0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options
 + Issue #1850: Plasma Rifle Dealing too much damage to conventional fighters
 + Issue #1916: Primitive and Primitive Prototype Weapons should have fixed intro dates.
@@ -46,6 +48,7 @@ VERSION HISTORY:
 + Data: Resolving #2006, #1982, #1981, #1957, #1945, #1941, #1870
 + Issue #2005: Allow units to flee if they made it into prohibited terrain
 + Issue #2004: Spikes - Not working correctly
++ Issue #2019: 100-ton mechs no longer able to gracefully pirouette over thin wooden sticks laid across rivers (1-CF bridges)
 
 0.47.6 (2020-5-03 1715 UTC)
 + Issue #1814: Fuel-air bomb infantry insta-kill check is no longer reversed

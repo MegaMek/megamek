@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.47.8-SNAPSHOT
++ Data: New Sprites and numerous Mechset naming fixes.
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

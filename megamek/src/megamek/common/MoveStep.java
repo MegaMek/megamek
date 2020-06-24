@@ -3366,6 +3366,7 @@ public class MoveStep implements Serializable {
         }
         
         // Sheer Cliffs, TO p.39
+        // Roads over cliffs cancel the cliff effects for units that move on roads
         boolean vehicleAffectedByCliff = entity instanceof Tank 
                 && !entity.isAirborneVTOLorWIGE();
         boolean quadveeVehMode = entity instanceof QuadVee 
@@ -3383,7 +3384,8 @@ public class MoveStep implements Serializable {
         // For vehicles exc. VTOL, WIGE, upward Sheer Cliffs is forbidden
         // QuadVees in vehicle mode drive as vehicles, IO p.133
         if ((vehicleAffectedByCliff || quadveeVehMode) 
-                && isUpCliff) {
+                && isUpCliff
+                && !isPavementStep) {
             return false;
         }
 
@@ -3392,7 +3394,8 @@ public class MoveStep implements Serializable {
         // Climbing actions do not seem to be implemented, so Infantry cannot
         // cross sheer cliffs at all except for Mountain Troops across a level 1 cliff.
         if (entity instanceof Infantry 
-                && (isUpCliff || isDownCliff)) {
+                && (isUpCliff || isDownCliff)
+                && !isPavementStep) {
 
             boolean isMountainTroop = ((Infantry)entity).hasSpecialization(Infantry.MOUNTAIN_TROOPS);
             if (!isMountainTroop || stepHeight == 2) {

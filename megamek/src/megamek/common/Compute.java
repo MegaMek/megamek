@@ -550,6 +550,7 @@ public class Compute {
         }
         
         // Sheer Cliffs, TO p.39
+        // Roads over cliffs cancel the cliff effects for units that move on roads
         boolean quadveeVehMode = entity instanceof QuadVee 
                 && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
         boolean vehicleAffectedByCliff = entity instanceof Tank 
@@ -571,12 +572,16 @@ public class Compute {
         // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133 
         if ((mechAffectedByCliff || vehicleAffectedByCliff) 
                 && !quadveeVehMode
-                && isDownCliff) {
+                && isDownCliff
+                && !isPavementStep) {
             return true;
         }
 
         // Mechs moving up a cliff
-        if (mechAffectedByCliff && !quadveeVehMode && isUpCliff) {
+        if (mechAffectedByCliff 
+                && !quadveeVehMode 
+                && isUpCliff
+                && !isPavementStep) {
             return true;
         }
 

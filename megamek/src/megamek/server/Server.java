@@ -5348,9 +5348,9 @@ public class Server implements Runnable {
             }
 
             // Have skidding units suffer falls (off a cliff).
-            else if (curAltitude > (nextAltitude + entity.getMaxElevationChange())
-                    && !(entity.getMovementMode() == EntityMovementMode.WIGE
-                            && elevation > curHex.ceiling())) {
+            else if ( (curAltitude > (nextAltitude + entity.getMaxElevationChange())
+                    || (curHex.hasCliffTopTowards(nextHex) && curAltitude > nextAltitude) )
+                    && !(entity.getMovementMode() == EntityMovementMode.WIGE && elevation > curHex.ceiling())) {
                 addReport(doEntityFallsInto(entity, entity.getElevation(), curPos, nextPos,
                         entity.getBasePilotingRoll(moveType), true));
                 addReport(doEntityDisplacementMinefieldCheck(entity, curPos, nextPos, nextElevation));
@@ -8742,7 +8742,7 @@ public class Server implements Runnable {
                     && (stepHeight == -1 || stepHeight == -2);
 
             // Vehicles (exc. WIGE/VTOL) moving down a cliff
-            if (vehicleAffectedByCliff && isDownCliff) {
+            if (vehicleAffectedByCliff && isDownCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(stepMoveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), 0, "moving down a sheer cliff"));
                 if (doSkillCheckWhileMoving(entity, lastElevation,
@@ -8756,7 +8756,7 @@ public class Server implements Runnable {
 
             // Mechs and Protomechs moving down a cliff
             // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133
-            if (mechAffectedByCliff && !quadveeVehMode && isDownCliff) {
+            if (mechAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), -stepHeight - 1, "moving down a sheer cliff"));
                 if (doSkillCheckWhileMoving(entity, lastElevation,
@@ -8768,7 +8768,7 @@ public class Server implements Runnable {
             }
 
             // Mechs moving up a cliff
-            if (mechAffectedByCliff && !quadveeVehMode && isUpCliff) {
+            if (mechAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
                 if (doSkillCheckWhileMoving(entity, lastElevation,
@@ -12579,7 +12579,7 @@ public class Server implements Runnable {
             // If we rolled for the direction, we want to use that for the fall
             if (src.equals(dest)) {
                 vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation,
-                                                 direction, roll, false));
+                                                 direction, roll, false, srcHex.hasCliffTopTowards(destHex)));
             } else {
                 // Otherwise, we'll roll for the direction after the fall
                 vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation, roll));
@@ -12643,7 +12643,7 @@ public class Server implements Runnable {
                     PilotingRollData pilotRoll = entity.getBasePilotingRoll();
                     pilotRoll.append(roll);
                     vPhaseReport.addAll(doEntityFall(entity, dest,
-                            fallElevation, 3, pilotRoll, false));
+                            fallElevation, 3, pilotRoll, false, false));
                     vPhaseReport.addAll(doEntityDisplacementMinefieldCheck(
                             entity, src, dest, entity.getElevation()));
 
@@ -18891,7 +18891,7 @@ public class Server implements Runnable {
             if (ae.isProne()) {
                 // attacker prone during weapons phase
                 addReport(doEntityFall(ae, daa.getTargetPos(), 2, 3,
-                        ae.getBasePilotingRoll(), false));
+                        ae.getBasePilotingRoll(), false, false));
 
             } else {
                 // same effect as successful DFA
@@ -18986,7 +18986,7 @@ public class Server implements Runnable {
                 // entity isn't DFAing any more
                 ae.setDisplacementAttack(null);
                 addReport(doEntityFall(ae, dest, 2, 3, ae.getBasePilotingRoll(),
-                        false), 1);
+                        false, false), 1);
                 Entity violation = Compute.stackingViolation(game, ae.getId(), dest);
                 if (violation != null) {
                     // target gets displaced
@@ -28776,7 +28776,7 @@ public class Server implements Runnable {
      *            not.
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos, int fallHeight, int facing,
-                                        PilotingRollData roll, boolean intoBasement) {
+                                        PilotingRollData roll, boolean intoBasement, boolean fromCliff) {
         final String METHOD_NAME = "doEntityFall(Entity,Coords,int,int,PilotingRollData,boolean)";
         entity.setFallen(true);
 
@@ -28949,11 +28949,12 @@ public class Server implements Runnable {
                 damage = damage * Compute.d6(dice);
             }
         }
-        // Different rules (pg 151 of TW) for Tanks
+        // Different rules (pg 62/63/152 of TW) for Tanks
         if (entity instanceof Tank) {
-            // Falls from less than 1 elevation don't damage combat vehicles
-            if (damageHeight < 2) {
-                damage = 0;
+            // Falls from less than 2 levels don't damage combat vehicles
+            // except if they fall off a sheer cliff
+            if (damageHeight < 2 && !fromCliff) {
+                damage = 0; 
             }
             // Falls from >= 2 elevations damage like crashing VTOLs
             // Ends up being the regular damage: weight / 10 * (height + 1)
@@ -29231,7 +29232,7 @@ public class Server implements Runnable {
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos,
                                         int height, PilotingRollData roll) {
         return doEntityFall(entity, fallPos, height, Compute.d6(1) - 1, roll,
-                            false);
+                            false, false);
     }
 
     /**
@@ -32652,7 +32653,7 @@ public class Server implements Runnable {
                     // Damage is determined by the depth of the basement, so a
                     //  fall of 0 elevation is correct in this case
                     vPhaseReport.addAll(doEntityFall(entity, coords, 0,
-                            Compute.d6(), psr, true));
+                            Compute.d6(), psr, true, false));
                     runningCFTotal -= cfDamage * 2;
                 } else if ((bldg.getBasement(coords) != BasementType.NONE)
                            && (bldg.getBasement(coords) != BasementType.ONE_DEEP_NORMALINFONLY)) {
@@ -32660,7 +32661,7 @@ public class Server implements Runnable {
                     // Damage is determined by the depth of the basement, so a
                     //  fall of 0 elevation is correct in this case
                     vPhaseReport.addAll(doEntityFall(entity, coords, 0,
-                            Compute.d6(), psr, true));
+                            Compute.d6(), psr, true, false));
                     runningCFTotal -= cfDamage;
                 } else {
                     getLogger().error(getClass(), METHOD_NAME, entity.getDisplayName() + " is not falling into " + coords.toString());

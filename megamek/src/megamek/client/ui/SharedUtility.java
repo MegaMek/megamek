@@ -441,6 +441,7 @@ public class SharedUtility {
             }
             
             // Sheer Cliffs, TO p.39
+            // Roads over cliffs cancel the cliff effects for units that move on roads
             boolean vehicleAffectedByCliff = entity instanceof Tank 
                     && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
@@ -460,7 +461,7 @@ public class SharedUtility {
                     && (stepHeight == -1 || stepHeight == -2);
 
             // Vehicles (exc. WIGE/VTOL) moving down a cliff
-            if (vehicleAffectedByCliff && isDownCliff) {
+            if (vehicleAffectedByCliff && isDownCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), 0, "moving down a sheer cliff"));
                 checkNag(rollTarget, nagReport, psrList);
@@ -469,14 +470,14 @@ public class SharedUtility {
             // Mechs moving down a cliff
             // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133
             // Protomechs as Meks
-            if (mechAffectedByCliff && !quadveeVehMode && isDownCliff) {
+            if (mechAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), -stepHeight - 1, "moving down a sheer cliff"));
                 checkNag(rollTarget, nagReport, psrList);
             }
 
             // Mechs moving up a cliff
-            if (mechAffectedByCliff && !quadveeVehMode && isUpCliff) {
+            if (mechAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
                 checkNag(rollTarget, nagReport, psrList);

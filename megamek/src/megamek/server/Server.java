@@ -1571,7 +1571,6 @@ public class Server implements Runnable {
 
     /**
      * Deploys elligible offboard entities.
-     * @param game The current game object.
      */
     private void deployOffBoardEntities() {
         // place off board entities actually off-board

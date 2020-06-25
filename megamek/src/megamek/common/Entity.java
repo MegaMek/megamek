@@ -9344,7 +9344,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns true if the entity should be deployed
      */
     public boolean shouldDeploy(int round) {
-        return (!deployed && (getDeployRound() <= round) && !isOffBoard());
+        return !isDeployed() 
+            && (getDeployRound() <= round)
+            && !isOffBoard();
     }
 
     /**
@@ -9353,8 +9355,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return True if and only if the offboard entity should deploy this
      *         round, otherwise false.
      */
-    public boolean shouldOffboardDeploy(int round) {
-        return (isOffBoard() && (!deployed && (getDeployRound() <= round)));
+    public boolean shouldOffBoardDeploy(int round) {
+        return isOffBoard() 
+            && !isDeployed() 
+            && (getDeployRound() <= round);
     }
 
     /**
@@ -10176,7 +10180,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // deploy the unit, but only if it should be deployed this round
-        setDeployed(shouldOffboardDeploy(round));
+        setDeployed(shouldOffBoardDeploy(round));
     }
 
     public Vector<Integer> getPickedUpMechWarriors() {

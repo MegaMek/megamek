@@ -28,7 +28,6 @@ import megamek.common.PlanetaryConditions;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
-import megamek.common.options.PilotOptions;
 
 /**
  * Abstract superclass for any action where an entity is attacking another
@@ -76,12 +75,24 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         return g.getTarget(getTargetType(), getTargetId());
     }
 
+    /**
+     * Gets the entity associated with this attack action, using the passed-in game object.
+     * Returns the entity even if it was destroyed or fled.
+     */
     public Entity getEntity(IGame g) {
-        Entity e = g.getEntity(getEntityId());
+        return getEntity(g, getEntityId());
+    }
+    
+    /**
+     * Gets an entity with the given ID, using the passed-in game object.
+     * Returns the entity even if it was destroyed or fled.
+     */
+    public Entity getEntity(IGame g, int entityID) {
+        Entity e = g.getEntity(entityID);
         // if we have an artyattack, we might need to get an out-of-game entity
         // if it died or fled
         if (e == null) {
-            e = g.getOutOfGameEntity(getEntityId());
+            e = g.getOutOfGameEntity(entityID);
         }
         return e;
     }

@@ -38,7 +38,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
         client.getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerConnected(GamePlayerConnectedEvent e) {
-                String name = e != null && e.getPlayer() != null 
+                String name = (e != null) && (e.getPlayer() != null)
                             ? e.getPlayer().getName()
                             : "UNNAMED";
                 systemEvent("New player has connected. Their name is " + name + ".");
@@ -46,7 +46,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
-                String name = e != null && e.getPlayer() != null 
+                String name = (e != null) && (e.getPlayer() != null)
                             ? e.getPlayer().getName()
                             : "UNNAMED";
                 systemEvent("The player " + name + " has disconnected.");
@@ -75,7 +75,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gameEntityRemove(GameEntityRemoveEvent e) {
-                if (e != null && e.getEntity() != null) {
+                if ((e != null) && (e.getEntity() != null)) {
                     final Entity ent = e.getEntity();
                     String name = ent.getOwner() != null ? ent.getOwner().getName() : "UNNAMED";
                     systemEvent("Removed " + ent.getDisplayName() + " from player " + name + ".");
@@ -84,17 +84,19 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gameEntityChange(GameEntityChangeEvent e) {
-                if (e != null && e.getEntity() != null) {
+                if ((e != null) && (e.getEntity() != null)) {
                     systemEvent(e.getEntity().toString());
                 }
             }
 
             @Override
             public void gameNewAction(GameNewActionEvent e) {
-                if (e != null && e.getAction() != null) {
+                if ((e != null) && (e.getAction() != null)) {
                     final Entity ent = client.getEntity(e.getAction().getEntityId());
                     if (ent != null) {
-                        String name = ent.getOwner() != null ? ent.getOwner().getName() : "UNNAMED";
+                        String name = ent.getOwner() != null 
+                                    ? ent.getOwner().getName() 
+                                    : "UNNAMED";
                         systemEvent(ent.getDisplayName() + " from player " + name + " is doing " + e.getAction().toString() + ".");
                     }
                 }

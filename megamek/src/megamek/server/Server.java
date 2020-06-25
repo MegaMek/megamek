@@ -1570,6 +1570,20 @@ public class Server implements Runnable {
     }
 
     /**
+     * Deploys elligible offboard entities.
+     */
+    private void deployOffBoardEntities() {
+        // place off board entities actually off-board
+        Iterator<Entity> entities = game.getEntities();
+        while (entities.hasNext()) {
+            Entity en = entities.next();
+            if (en.isOffBoard() && !en.isDeployed()) {
+                en.deployOffBoard(game.getRoundCount());
+            }
+        }
+    }
+
+    /**
      * Called at the beginning of each phase. Sets and resets any entity
      * parameters that need to be reset.
      */
@@ -2319,12 +2333,7 @@ public class Server implements Runnable {
                 send(createTurnVectorPacket());
                 break;
             case PHASE_SET_ARTYAUTOHITHEXES:
-                // place off board entities actually off-board
-                Iterator<Entity> entities = game.getEntities();
-                while (entities.hasNext()) {
-                    Entity en = entities.next();
-                    en.deployOffBoard();
-                }
+                deployOffBoardEntities();
                 checkForObservers();
                 transmitAllPlayerUpdates();
                 resetActivePlayersDone();
@@ -2348,7 +2357,7 @@ public class Server implements Runnable {
                             return owner.equals(entity.getOwner()) && entity.isEligibleForArtyAutoHitHexes();
                         }
                     };
-                if (game.getSelectedEntities(playerArtySelector).hasNext()) {
+                    if (game.getSelectedEntities(playerArtySelector).hasNext()) {
                         // Yes, the player has arty-equipped units.
                         GameTurn gt = new GameTurn(p.getId());
                         turn.addElement(gt);
@@ -2366,6 +2375,8 @@ public class Server implements Runnable {
             case PHASE_PHYSICAL:
             case PHASE_TARGETING:
             case PHASE_OFFBOARD:
+                deployOffBoardEntities();
+
                 // Check for activating hidden units
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
                     for (Entity ent : game.getEntitiesVector()) {

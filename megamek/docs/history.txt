@@ -4,6 +4,7 @@ VERSION HISTORY:
 + Data: New Sprites and numerous Mechset naming fixes.
 + Issue #2024: Fix possible NREs in AccessibilityWindow during various game events
 + Issue #2023: Destroying artillery which has rounds in-flight no longer stops the game
++ Issue #2020: Respect deployment round for offboard entities
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

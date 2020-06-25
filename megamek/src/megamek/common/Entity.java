@@ -9348,6 +9348,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
+     * Returns true if the offboard entity should be deployed this round.
+     * @param round The current round number.
+     * @return True if and only if the offboard entity should deploy this
+     *         round, otherwise false.
+     */
+    public boolean shouldOffboardDeploy(int round) {
+        return (isOffBoard() && (!deployed && (getDeployRound() <= round)));
+    }
+
+    /**
      * Set the unit number for this entity.
      *
      * @param unit the number for the low-level unit that this
@@ -10127,8 +10137,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * <p/>
      * Onboard units (units with an offboard distance of zero and a direction of
      * <code>Entity.NONE</code>) will be unaffected by this method.
+     * @param round The current round number.
      */
-    public void deployOffBoard() {
+    public void deployOffBoard(int round) {
         if (null == game) {
             throw new IllegalStateException(
                     "game not set; possible serialization error");
@@ -10137,20 +10148,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // add a bit (because 17 % 2 == 1 and 16 % 2 == 0).
         switch (offBoardDirection) {
             case NONE:
-                break;
+                return;
             case NORTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
                         + (game.getBoard().getWidth() % 2),
                         -getOffBoardDistance()));
                 setFacing(3);
-                setDeployed(true);
                 break;
             case SOUTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
                         + (game.getBoard().getWidth() % 2), game.getBoard()
                         .getHeight() + getOffBoardDistance()));
                 setFacing(0);
-                setDeployed(true);
                 break;
             case EAST:
                 setPosition(new Coords(game.getBoard().getWidth()
@@ -10158,15 +10167,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         (game.getBoard().getHeight() / 2)
                                 + (game.getBoard().getHeight() % 2)));
                 setFacing(5);
-                setDeployed(true);
                 break;
             case WEST:
                 setPosition(new Coords(-getOffBoardDistance(), (game.getBoard()
                         .getHeight() / 2) + (game.getBoard().getHeight() % 2)));
                 setFacing(1);
-                setDeployed(true);
                 break;
         }
+
+        // deploy the unit, but only if it should be deployed this round
+        setDeployed(shouldOffboardDeploy(round));
     }
 
     public Vector<Integer> getPickedUpMechWarriors() {

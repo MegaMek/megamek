@@ -5292,7 +5292,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 default:
             }
             for (Entity en: game.getEntitiesVector()) {
-                if (en.getDamageLevel() != Entity.DMG_NONE) {
+                if (en.getDamageLevel() != Entity.DMG_NONE && en.damageThisRound != 0) {
                     tileManager.reloadImage(en);
                 }
             }

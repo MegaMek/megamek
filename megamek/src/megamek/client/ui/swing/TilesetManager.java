@@ -56,6 +56,7 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
+import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.Protomech;
@@ -85,10 +86,17 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private static final String FILENAME_ARTILLERY_AUTOHIT_IMAGE = "artyauto.gif"; //$NON-NLS-1$
     private static final String FILENAME_ARTILLERY_ADJUSTED_IMAGE = "artyadj.gif"; //$NON-NLS-1$
     private static final String FILENAME_ARTILLERY_INCOMING_IMAGE = "artyinc.gif"; //$NON-NLS-1$
-    private static final String FILENAME_DAMAGEDECAL_LIGHT = new File("units/DamageDecals", "DmgLight.png").toString(); //$NON-NLS-1$
-    private static final String FILENAME_DAMAGEDECAL_MODERATE = new File("units/DamageDecals", "DmgModerate.png").toString(); //$NON-NLS-1$
-    private static final String FILENAME_DAMAGEDECAL_HEAVY = new File("units/DamageDecals", "DmgHeavy.png").toString(); //$NON-NLS-1$
-    private static final String FILENAME_DAMAGEDECAL_CRIPPLED = new File("units/DamageDecals", "DmgCrippled.png").toString(); //$NON-NLS-1$
+    private static final File FILENAME_DAMAGEDECAL_LIGHT = new File("units/DamageDecals", "DmgLight.png"); //$NON-NLS-1$
+    private static final File FILENAME_DAMAGEDECAL_MODERATE = new File("units/DamageDecals", "DmgModerate.png"); //$NON-NLS-1$
+    private static final File FILENAME_DAMAGEDECAL_HEAVY = new File("units/DamageDecals", "DmgHeavy.png"); //$NON-NLS-1$
+    private static final File FILENAME_DAMAGEDECAL_CRIPPLED = new File("units/DamageDecals", "DmgCrippled.png"); //$NON-NLS-1$
+    private static final File FILE_SMOKE_SML = new File("units/DamageDecals", "Smoke1.png"); //$NON-NLS-1$
+    private static final File FILE_SMOKE_MED = new File("units/DamageDecals", "Smoke2.png"); //$NON-NLS-1$
+    private static final File FILE_SMOKE_LRG = new File("units/DamageDecals", "Smoke3.png"); //$NON-NLS-1$
+    private static final File FILE_SMOKEFIRE_SML = new File("units/DamageDecals", "SmokeFire1.png"); //$NON-NLS-1$
+    private static final File FILE_SMOKEFIRE_MED = new File("units/DamageDecals", "SmokeFire2.png"); //$NON-NLS-1$
+    private static final File FILE_SMOKEFIRE_LRG = new File("units/DamageDecals", "SmokeFire3.png"); //$NON-NLS-1$
+    private static final File FILE_DAMAGEDECAL_EMPTY = new File("units/DamageDecals", "Transparent.png"); //$NON-NLS-1$
 
     public static final int ARTILLERY_AUTOHIT = 0;
     public static final int ARTILLERY_ADJUSTED = 1;
@@ -130,6 +138,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private Image dmgModerate;
     private Image dmgHeavy;
     private Image dmgCrippled;
+    private Image SmokeSml;
+    private Image SmokeMed;
+    private Image SmokeLrg;
+    private Image SmokeFireSml;
+    private Image SmokeFireMed;
+    private Image SmokeFireLrg;
+    private Image dmgEmpty;
     private boolean decalLoaded = false;
     /**
      * Hexes under the effects of ECM have a shaded "static" image displayed,
@@ -468,33 +483,33 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         started = true;
     }
     
+    /** Loads the damage decal images. */
     private void loadDecals() {
-        // Load damage decals
-        dmgLight = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_LIGHT).toString());
-        if (dmgLight.getWidth(null) <= 0 || dmgLight.getHeight(null) <= 0) {
-            System.out.println("Error opening Damage Decal image!");
-        }
+        dmgLight = LoadDmgImage(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_LIGHT);
+        dmgModerate = LoadDmgImage(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_MODERATE);
+        dmgHeavy = LoadDmgImage(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_HEAVY);
+        dmgCrippled = LoadDmgImage(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_CRIPPLED);
         
-        dmgModerate = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_MODERATE).toString());
-        if (dmgModerate.getWidth(null) <= 0 || dmgModerate.getHeight(null) <= 0) {
-            System.out.println("Error opening Damage Decal image!");
-        }
+        SmokeSml = LoadDmgImage(Configuration.imagesDir(), FILE_SMOKE_SML);
+        SmokeMed = LoadDmgImage(Configuration.imagesDir(), FILE_SMOKE_MED);
+        SmokeLrg = LoadDmgImage(Configuration.imagesDir(), FILE_SMOKE_LRG);
+        SmokeFireSml = LoadDmgImage(Configuration.imagesDir(), FILE_SMOKEFIRE_SML);
+        SmokeFireMed = LoadDmgImage(Configuration.imagesDir(), FILE_SMOKEFIRE_MED);
+        SmokeFireLrg = LoadDmgImage(Configuration.imagesDir(), FILE_SMOKEFIRE_LRG);
         
-        dmgHeavy = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_HEAVY).toString());
-        if (dmgHeavy.getWidth(null) <= 0 || dmgHeavy.getHeight(null) <= 0) {
-            System.out.println("Error opening Damage Decal image!");
-        }
-        
-        dmgCrippled= ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_CRIPPLED).toString());
-        if (dmgCrippled.getWidth(null) <= 0 || dmgCrippled.getHeight(null) <= 0) {
-            System.out.println("Error opening Damage Decal image!");
-        }
+        dmgEmpty = LoadDmgImage(Configuration.imagesDir(), FILE_DAMAGEDECAL_EMPTY);
         
         decalLoaded = true;
+    }
+    
+    /** Local method. Loads and returns the image. */ 
+    private Image LoadDmgImage(File path, File file) {
+        Image result = ImageUtil.loadImageFromFile(
+                new MegaMekFile(path, file.toString()).toString());
+        if (result.getWidth(null) <= 0 || result.getHeight(null) <= 0) {
+            System.out.println("TilesetManager.LoadImage(): Error opening image "+file.toString()+"!");
+        }
+        return result;
     }
 
     public synchronized void reloadImage(Entity en) {
@@ -550,7 +565,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      */
     public Image loadPreviewImage(Entity entity, Image camo, int tint, Component bp) {
         Image base = mechTileset.imageFor(entity, boardview, -1);
-        EntityImage entityImage = new EntityImage(base, tint, camo, bp);
+        EntityImage entityImage = new EntityImage(base, tint, camo, bp, entity);
         entityImage.loadFacings();
         Image preview = entityImage.getFacing(entity.getFacing());
 
@@ -660,7 +675,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         // if we don't have a cached image, make a new one
         if (entityImage == null) {
-            entityImage = new EntityImage(base, wreck, tint, camo, boardview, entity.getDamageLevel());
+            entityImage = new EntityImage(base, wreck, tint, camo, boardview, entity);
             mechImageList.add(entityImage);
             entityImage.loadFacings();
             for (int j = 0; j < 6; j++) {
@@ -694,35 +709,37 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private class EntityImage {
         private Image base;
         private Image wreck;
+        
+        /** A smaller icon used for the unit overview. */
         private Image icon;
+        
         int tint;
         private Image camo;
         private Image[] facings = new Image[6];
         private Image[] wreckFacings = new Image[6];
         private Component parent;
         private int dmgLevel;
+        private double weight;
+        private boolean isInfantry;
 
         private final int IMG_WIDTH = HexTileset.HEX_W;
         private final int IMG_HEIGHT = HexTileset.HEX_H;
         private final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
 
-        public EntityImage(Image base, int tint, Image camo, Component comp) {
-            this(base, null, tint, camo, comp);
+        public EntityImage(Image base, int tint, Image camo, Component comp, Entity entity) {
+            this(base, null, tint, camo, comp, entity);
         }
         
         public EntityImage(Image base, Image wreck, int tint, Image camo,
-                Component comp) {
-            this(base, wreck, tint, camo, comp, Entity.DMG_NONE);
-        }
-
-        public EntityImage(Image base, Image wreck, int tint, Image camo,
-                Component comp, int dmgLevel) {
+                Component comp, Entity entity) {
             this.base = base;
             this.tint = tint;
             this.camo = camo;
             parent = comp;
             this.wreck = wreck;
-            this.dmgLevel = dmgLevel;
+            this.dmgLevel = entity.getDamageLevel();
+            this.weight = entity.getWeight();
+            isInfantry = entity instanceof Infantry;
         }
 
         public Image getCamo() {
@@ -734,53 +751,50 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         public void loadFacings() {
-            if(null == base) {
+            if (base == null) {
                 return;
             }
+            
+            // Apply the camo and damage decal (if not infantry)
             base = applyColor(base);
-            base = applyDamageDecal(base);
+            if (!isInfantry) {
+                base = applyDamageDecal(base);
+            }
 
+            // Save a small icon for the unit overview
             icon = ImageUtil.getScaledImage(base,  56, 48);
+            
+            // Generate rotated images for the unit and for a wreck
             for (int i = 0; i < 6; i++) {
-                double cx = base.getWidth(parent) / 2.0;
-                double cy = base.getHeight(parent) / 2.0;
-                AffineTransformOp xform = new AffineTransformOp(
-                        AffineTransform.getRotateInstance(
-                                (-Math.PI / 3) * (6 - i), cx, cy),
-                        AffineTransformOp.TYPE_BICUBIC);
-                BufferedImage src;
-                if (base instanceof BufferedImage) {
-                    src = (BufferedImage) base;
-                } else {
-                    src = ImageUtil.createAcceleratedImage(base);
-                }
-                BufferedImage dst = ImageUtil.createAcceleratedImage(
-                        src.getWidth(), src.getHeight());
-                xform.filter(src, dst);
-                facings[i] = dst;
+                facings[i] = rotateImage(base, i);
             }
 
             if (wreck != null) {
                 wreck = applyColor(wreck);
                 for (int i = 0; i < 6; i++) {
-                    double cx = base.getWidth(parent) / 2.0;
-                    double cy = base.getHeight(parent) / 2.0;
-                    AffineTransformOp xform = new AffineTransformOp(
-                            AffineTransform.getRotateInstance(
-                                    (-Math.PI / 3) * (6 - i), cx, cy),
-                            AffineTransformOp.TYPE_BICUBIC);
-                    BufferedImage src;
-                    if (wreck instanceof BufferedImage) {
-                        src = (BufferedImage) wreck;
-                    } else {
-                        src = ImageUtil.createAcceleratedImage(wreck);
-                    }
-                    BufferedImage dst = ImageUtil.createAcceleratedImage(
-                            src.getWidth(), src.getHeight());
-                    xform.filter(src, dst);
-                    wreckFacings[i] = dst;
+                    wreckFacings[i] = rotateImage(wreck, i);
                 }
             }
+        }
+        
+        /** Rotates a given unit image towards direction dir. */
+        private BufferedImage rotateImage(Image img, int dir) {
+            double cx = base.getWidth(parent) / 2.0;
+            double cy = base.getHeight(parent) / 2.0;
+            AffineTransformOp xform = new AffineTransformOp(
+                    AffineTransform.getRotateInstance(
+                            (-Math.PI / 3) * (6 - dir), cx, cy),
+                    AffineTransformOp.TYPE_BICUBIC);
+            BufferedImage src;
+            if (img instanceof BufferedImage) {
+                src = (BufferedImage) img;
+            } else {
+                src = ImageUtil.createAcceleratedImage(img);
+            }
+            BufferedImage dst = ImageUtil.createAcceleratedImage(
+                    src.getWidth(), src.getHeight());
+            xform.filter(src, dst);
+            return dst;
         }
 
         @SuppressWarnings("unused")
@@ -806,181 +820,170 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         private Image applyColor(Image image) {
-            if(null == image) {
+            if (image == null) {
                 return null;
             }
-            Image iMech;
             boolean useCamo = (camo != null);
-
-            iMech = image;
-
+            
+            // Prepare the images for access
             int[] pMech = new int[IMG_SIZE];
             int[] pCamo = new int[IMG_SIZE];
-            PixelGrabber pgMech = new PixelGrabber(iMech, 0, 0, IMG_WIDTH,
-                    IMG_HEIGHT, pMech, 0, IMG_WIDTH);
-
             try {
-                pgMech.grabPixels();
-            } catch (InterruptedException e) {
-                System.err.println("EntityImage.applyColor(): " //$NON-NLS-1$
-                        + "Failed to grab pixels for mech image. " //$NON-NLS-1$
+                grabImagePixels(image, pMech);
+                if (useCamo) {
+                    grabImagePixels(camo, pCamo);
+                }
+            } catch (Exception e) {
+                System.err.println("TilesetManager.EntityImage: " //$NON-NLS-1$
+                        + "Failed to grab pixels for image. " //$NON-NLS-1$
                         + e.getMessage());
                 return image;
             }
-            if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
-                System.err.println("EntityImage.applyColor(): " //$NON-NLS-1$
-                        + "Failed to grab pixels for mech image. " //$NON-NLS-1$
-                        + "ImageObserver aborted."); //$NON-NLS-1$
-                return image;
-            }
 
-            if (useCamo) {
-                PixelGrabber pgCamo = new PixelGrabber(camo, 0, 0, IMG_WIDTH,
-                        IMG_HEIGHT, pCamo, 0, IMG_WIDTH);
-                try {
-                    pgCamo.grabPixels();
-                } catch (InterruptedException e) {
-                    System.err.println("EntityImage.applyColor(): " //$NON-NLS-1$
-                            + "Failed to grab pixels for camo image. " //$NON-NLS-1$
-                            + e.getMessage());
-                    return image;
-                }
-                if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
-                    System.err.println("EntityImage.applyColor(): " //$NON-NLS-1$
-                            + "Failed to grab pixels for camo image. " //$NON-NLS-1$
-                            + "ImageObserver aborted."); //$NON-NLS-1$
-                    return image;
-                }
-            }
-
+            // Overlay the camo or color  
             for (int i = 0; i < IMG_SIZE; i++) {
                 int pixel = pMech[i];
                 int alpha = (pixel >> 24) & 0xff;
-                float red = ((float) ((pixel >> 16) & 0xff)) / 255;
-                float green = ((float) ((pixel >> 8) & 0xff)) / 255;
-                float blue = ((float) ((pixel) & 0xff)) / 255;
-                // Ignore colors
+                int red = (pixel >> 16) & 0xff;
+                int green = (pixel >> 8) & 0xff;
+                int blue = (pixel) & 0xff;
+                
+                // Don't apply the camo over colored (not gray) pixels
                 if (!(red == green && green == blue)) {
                     continue;
                 }
+                
+                // Apply the camo only on the icon pixels, not on transparent pixels
                 if (alpha != 0) {
                     int pixel1 = useCamo ? pCamo[i] : tint;
-                    float red1 = ((float) ((pixel1 >> 16) & 0xff)) / 255;
-                    float green1 = ((float) ((pixel1 >> 8) & 0xff)) / 255;
-                    float blue1 = ((float) ((pixel1) & 0xff)) / 255;
-                    float black = ((pMech[i]) & 0xff);
+                    int red1 = (pixel1 >> 16) & 0xff;
+                    int green1 = (pixel1 >> 8) & 0xff;
+                    int blue1 = (pixel1) & 0xff;
 
-                    int red2 = Math.round(red1 * black);
-                    int green2 = Math.round(green1 * black);
-                    int blue2 = Math.round(blue1 * black);
+                    int red2 = red1 * blue / 255;
+                    int green2 = green1 * blue / 255;
+                    int blue2 = blue1 * blue / 255;
 
-                    pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8)
-                            | blue2;
+                    pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
                 }
             }
+            
             Image result = parent.createImage(new MemoryImageSource(IMG_WIDTH,
                     IMG_HEIGHT, pMech, 0, IMG_WIDTH));
             return ImageUtil.createAcceleratedImage(result);
         }
         
+        /** Applies decal images based on the damage and weight of the unit. */
         private Image applyDamageDecal(Image image) {
             if (image == null) {
                 return null;
             }
             
-            Image unitImage = image;
-            Image dmgDecal;
-            
             if (!decalLoaded) {
                 loadDecals();
             }
-            
-            switch (dmgLevel) {
-            case Entity.DMG_LIGHT:
-                dmgDecal = dmgLight;
-                break;
-            case Entity.DMG_MODERATE:
-                dmgDecal = dmgModerate;
-                break;
-            case Entity.DMG_HEAVY:
-                dmgDecal = dmgHeavy;
-                break;
-            case Entity.DMG_CRIPPLED:
-                dmgDecal = dmgCrippled;
-                break;
-            default:
-                return image;
-            }
 
-            // Safety catch
+            // Get the damage decal; will be null for undamaged
+            Image dmgDecal = getDamageDecal();
             if (dmgDecal == null) {
-                System.out.println("EntityImage.applyDamageDecal(): Damage decal image is null."); //$NON-NLS-1$
+                return image;
+            }
+            
+            // Get the smoke image for heavier damage; is transparent for lighter damage
+            Image smokeImg = getSmokeOverlay();
+            if (smokeImg == null) {
+                System.err.println("TilesetManager.EntityImage: " //$NON-NLS-1$
+                        + "Smoke decal image is null."); //$NON-NLS-1$
                 return image;
             }
 
+            // Prepare the images for access
             int[] pUnit = new int[IMG_SIZE];
             int[] pDmgD = new int[IMG_SIZE];
-            PixelGrabber pgUnit = new PixelGrabber(unitImage, 0, 0, IMG_WIDTH,
-                    IMG_HEIGHT, pUnit, 0, IMG_WIDTH);
-
             try {
-                pgUnit.grabPixels();
-            } catch (InterruptedException e) {
-                System.err.println("EntityImage.applyDamageDecal(): " //$NON-NLS-1$
-                        + "Failed to grab pixels for mech image. " //$NON-NLS-1$
+                grabImagePixels(image, pUnit);
+                grabImagePixels(dmgDecal, pDmgD);
+            } catch (Exception e) {
+                System.err.println("TilesetManager.EntityImage: " //$NON-NLS-1$
+                        + "Failed to grab pixels for image. " //$NON-NLS-1$
                         + e.getMessage());
                 return image;
             }
-            if ((pgUnit.getStatus() & ImageObserver.ABORT) != 0) {
-                System.err.println("EntityImage.applyDamageDecal(): " //$NON-NLS-1$
-                        + "Failed to grab pixels for mech image. " //$NON-NLS-1$
-                        + "ImageObserver aborted."); //$NON-NLS-1$
-                return image;
-            }
 
-            PixelGrabber pgDmgD = new PixelGrabber(dmgDecal, 0, 0, IMG_WIDTH,  // DamageDecal!!
-                    IMG_HEIGHT, pDmgD, 0, IMG_WIDTH);
-            try {
-                pgDmgD.grabPixels();
-            } catch (InterruptedException e) {
-                System.err.println("EntityImage.applyDamageDecal(): " //$NON-NLS-1$
-                        + "Failed to grab pixels for decal image. " //$NON-NLS-1$
-                        + e.getMessage());
-                return image;
-            }
-            if ((pgDmgD.getStatus() & ImageObserver.ABORT) != 0) {
-                System.err.println("EntityImage.applyDamageDecal(): " //$NON-NLS-1$
-                        + "Failed to grab pixels for decal image. " //$NON-NLS-1$
-                        + "ImageObserver aborted."); //$NON-NLS-1$
-                return image;
-            }
-
-            // Apply the decal as an overlay
+            // Overlay the damage decal where the unit image 
+            // is not transparent
             for (int i = 0; i < IMG_SIZE; i++) {
-                int pixel = pUnit[i];
-                int alpha = (pixel >> 24) & 0xff;
+                int alp = (pUnit[i] >> 24) & 0xff;
+                int alpD = (pDmgD[i] >> 24) & 0xff;
                 
-                int pixelD = pDmgD[i];
-                int alphaD = (pixelD >> 24) & 0xff;
-                if (alpha != 0 && alphaD != 0) {
-                    float red = ((float) ((pixel >> 16) & 0xff)) / 255;
-                    float green = ((float) ((pixel >> 8) & 0xff)) / 255;
-                    float blue = ((float) ((pixel) & 0xff)) / 255;
-                    float red1 = (pixelD >> 16) & 0xff;
-                    float green1 = (pixelD >> 8) & 0xff;
-                    float blue1 = (pixelD) & 0xff;
+                if (alp != 0 && alpD != 0) {
+                    int red = (pUnit[i] >> 16) & 0xff;
+                    int grn = (pUnit[i] >> 8) & 0xff;
+                    int blu = (pUnit[i]) & 0xff;
+                    int redD = (pDmgD[i] >> 16) & 0xff;
+                    int grnD = (pDmgD[i] >> 8) & 0xff;
+                    int bluD = (pDmgD[i]) & 0xff;
 
-                    int red2 = Math.min(255, Math.round(red * (255f - alphaD) + red1 * alphaD / 255));
-                    int green2 = Math.min(255, Math.round(green * (255f - alphaD) + green1 * alphaD / 255));
-                    int blue2 = Math.min(255, Math.round(blue * (255f - alphaD) + blue1 * alphaD / 255));
-
-                    pUnit[i] = (alpha << 24) | (red2 << 16) | (green2 << 8)
-                            | blue2;
+                    red = Math.min(255, (red * (255 - alpD) + redD * alpD ) / 255);
+                    grn = Math.min(255, (grn * (255 - alpD) + grnD * alpD ) / 255);
+                    blu = Math.min(255, (blu * (255 - alpD) + bluD * alpD ) / 255);
+                    
+                    pUnit[i] = (alp << 24) | (red << 16) | (grn << 8) | blu;
                 }
             }
-            Image result = parent.createImage(new MemoryImageSource(IMG_WIDTH,
+            
+            Image temp = parent.createImage(new MemoryImageSource(IMG_WIDTH,
                     IMG_HEIGHT, pUnit, 0, IMG_WIDTH));
-            return ImageUtil.createAcceleratedImage(result);
+            Image result = ImageUtil.createAcceleratedImage(temp);
+            
+            // Overlay the smoke image
+            Graphics g = result.getGraphics();
+            g.drawImage(smokeImg, 0, 0, null);
+            
+            return result;
+        }
+        
+        private void grabImagePixels(Image img, int[] pixels) 
+        throws InterruptedException, RuntimeException {
+            PixelGrabber pg = new PixelGrabber(img, 0, 0, IMG_WIDTH,
+                    IMG_HEIGHT, pixels, 0, IMG_WIDTH);
+            pg.grabPixels();
+            if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
+                throw new RuntimeException("ImageObserver aborted.");
+            }
+        }
+        
+        /** Returns the smoke overlay or a transparent image based on damage level and weight. */
+        private Image getSmokeOverlay() {
+            if (dmgLevel == Entity.DMG_NONE 
+                    || dmgLevel == Entity.DMG_LIGHT
+                    || dmgLevel == Entity.DMG_MODERATE) {
+                return dmgEmpty;
+            }
+            
+            if (weight > 70) {
+                return dmgLevel == Entity.DMG_HEAVY ? SmokeLrg : SmokeFireLrg;
+            } else if (weight > 40) {
+                return dmgLevel == Entity.DMG_HEAVY ? SmokeMed : SmokeFireMed;
+            } else {
+                return dmgLevel == Entity.DMG_HEAVY ? SmokeSml : SmokeFireSml;
+            }
+        }
+
+        /** Returns the damage decal based on damage level. */
+        private Image getDamageDecal() {
+            switch (dmgLevel) {
+            case Entity.DMG_LIGHT:
+                return dmgLight;
+            case Entity.DMG_MODERATE:
+                return dmgModerate;
+            case Entity.DMG_HEAVY:
+                return dmgHeavy;
+            case Entity.DMG_CRIPPLED:
+                return dmgCrippled;
+            default: // DMG_NONE:
+                return null;
+            }
         }
     }
 

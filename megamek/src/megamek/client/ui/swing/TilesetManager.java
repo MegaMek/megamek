@@ -675,7 +675,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         // if we don't have a cached image, make a new one
         if (entityImage == null) {
-            entityImage = new EntityImage(base, wreck, tint, camo, boardview, entity);
+            entityImage = new EntityImage(base, wreck, tint, camo, boardview, entity, secondaryPos);
             mechImageList.add(entityImage);
             entityImage.loadFacings();
             for (int j = 0; j < 6; j++) {
@@ -712,26 +712,38 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         
         /** A smaller icon used for the unit overview. */
         private Image icon;
-        
+        /** A color used instead of a camo. */
         int tint;
         private Image camo;
         private Image[] facings = new Image[6];
         private Image[] wreckFacings = new Image[6];
         private Component parent;
+        /** The damage level, from none to crippled. */
         private int dmgLevel;
+        /** The tonnage of the unit. */
         private double weight;
+        /** True for units of class or subclass of Infantry. */
         private boolean isInfantry;
+        /** True when the image is for an additional hex of multi-hex units. */
+        private boolean isSecondaryPos;
+        /** True when the image is for the lobby. */
+        private boolean isPreview;
 
         private final int IMG_WIDTH = HexTileset.HEX_W;
         private final int IMG_HEIGHT = HexTileset.HEX_H;
         private final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
 
         public EntityImage(Image base, int tint, Image camo, Component comp, Entity entity) {
-            this(base, null, tint, camo, comp, entity);
+            this(base, null, tint, camo, comp, entity, -1, true);
         }
         
         public EntityImage(Image base, Image wreck, int tint, Image camo,
-                Component comp, Entity entity) {
+                Component comp, Entity entity, int secondaryPos) {
+            this(base, null, tint, camo, comp, entity, secondaryPos, false);
+        }
+        
+        public EntityImage(Image base, Image wreck, int tint, Image camo,
+                Component comp, Entity entity, int secondaryPos, boolean preview) {
             this.base = base;
             this.tint = tint;
             this.camo = camo;
@@ -740,6 +752,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             this.dmgLevel = entity.getDamageLevel();
             this.weight = entity.getWeight();
             isInfantry = entity instanceof Infantry;
+            isSecondaryPos = secondaryPos != 0 && secondaryPos != -1;
+            isPreview = preview;
         }
 
         public Image getCamo() {
@@ -757,7 +771,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             
             // Apply the camo and damage decal (if not infantry)
             base = applyColor(base);
-            if (!isInfantry) {
+            if (!isInfantry && !isSecondaryPos && !isPreview) {
                 base = applyDamageDecal(base);
             }
 

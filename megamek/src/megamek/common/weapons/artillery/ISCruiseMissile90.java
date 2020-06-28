@@ -55,7 +55,7 @@ public class ISCruiseMissile90 extends ArtilleryWeapon {
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setISAdvancement(3065, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
+            .setISApproximate(false, true, false,false, false)
             .setPrototypeFactions(F_FS)
             .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }

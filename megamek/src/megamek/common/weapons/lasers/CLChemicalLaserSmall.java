@@ -55,7 +55,7 @@ public class CLChemicalLaserSmall extends CLChemicalLaserWeapon {
         rulesRefs = "320,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-            .setClanAdvancement(3059, 3083, 3145).setPrototypeFactions(F_CHH)
+            .setClanAdvancement(DATE_NONE, 3083, 3145).setPrototypeFactions(F_CHH)
             .setProductionFactions(F_CHH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

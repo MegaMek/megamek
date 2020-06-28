@@ -52,12 +52,12 @@ public class ISCruiseMissile120 extends ArtilleryWeapon {
         this.cost = 3000000;
         rulesRefs = "284,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(3065, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setISAdvancement(3065, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, true, false,false, false)
+        .setPrototypeFactions(F_FS)
+        .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
 }

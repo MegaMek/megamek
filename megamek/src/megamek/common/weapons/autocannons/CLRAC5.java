@@ -58,7 +58,8 @@ public class CLRAC5 extends RACWeapon {
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setClanAdvancement(3073, 3104, 3145).setClanApproximate(false, false, false)
+            .setClanAdvancement(3073, DATE_NONE, 3104, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false, false, false)
             .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }

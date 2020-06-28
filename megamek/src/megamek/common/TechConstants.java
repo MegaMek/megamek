@@ -617,13 +617,16 @@ public class TechConstants {
                         if (year <= 3055) {
                             return T_CLAN_UNOFFICIAL;
                         }
-                        return T_CLAN_EXPERIMENTAL;
+                        if ((year >3055) && (year <3070)) {
+                        return T_CLAN_ADVANCED;
+                        }
+                        if (year >=3070) {
+                    	return T_CLAN_TW;
+                        }
                     }
                     if (year <= 3053) {
                         return T_IS_UNOFFICIAL;
-                    } else if (year <= 3075) {
-                        return T_IS_EXPERIMENTAL;
-                    } else if (year <= 3100) {
+                    } else if (year <= 3070) {
                         return T_IS_ADVANCED;
                     } else {
                         return T_IS_TW_NON_BOX;

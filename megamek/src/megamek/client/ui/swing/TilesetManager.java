@@ -769,10 +769,16 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 return;
             }
             
-            // Apply the camo and damage decal (if not infantry)
+            // Apply the camo and damage decal (if not infantry and not for the lobby)
             base = applyColor(base);
-            if (!isInfantry && !isSecondaryPos && !isPreview) {
+            // All hexes of a multi-hex unit get scars
+            if (!isInfantry && !isPreview) {
                 base = applyDamageDecal(base);
+            }
+            // Only the center hex in multi-hex units gets smoke,
+            // as the other hexes sometimes contain only small parts of the unit
+            if (!isInfantry && !isSecondaryPos && !isPreview) {
+                base = applyDamageSmoke(base);
             }
 
             // Save a small icon for the unit overview
@@ -903,14 +909,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 return image;
             }
             
-            // Get the smoke image for heavier damage; is transparent for lighter damage
-            Image smokeImg = getSmokeOverlay();
-            if (smokeImg == null) {
-                System.err.println("TilesetManager.EntityImage: " //$NON-NLS-1$
-                        + "Smoke decal image is null."); //$NON-NLS-1$
-                return image;
-            }
-
             // Prepare the images for access
             int[] pUnit = new int[IMG_SIZE];
             int[] pDmgD = new int[IMG_SIZE];
@@ -948,15 +946,36 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             
             Image temp = parent.createImage(new MemoryImageSource(IMG_WIDTH,
                     IMG_HEIGHT, pUnit, 0, IMG_WIDTH));
-            Image result = ImageUtil.createAcceleratedImage(temp);
+            return ImageUtil.createAcceleratedImage(temp);
+        }
+        
+        /** Applies decal images based on the damage and weight of the unit. */
+        private Image applyDamageSmoke(Image image) {
+            if (image == null) {
+                return null;
+            }
+            
+            if (!decalLoaded) {
+                loadDecals();
+            }
+
+            // Get the smoke image for heavier damage; is transparent for lighter damage
+            Image smokeImg = getSmokeOverlay();
+            if (smokeImg == null) {
+                System.err.println("TilesetManager.EntityImage: " //$NON-NLS-1$
+                        + "Smoke decal image is null."); //$NON-NLS-1$
+                return image;
+            }
             
             // Overlay the smoke image
+            Image result = ImageUtil.createAcceleratedImage(base);
             Graphics g = result.getGraphics();
             g.drawImage(smokeImg, 0, 0, null);
             
             return result;
         }
         
+        /** Inititates the PixelGrabber for the given image and int array. */
         private void grabImagePixels(Image img, int[] pixels) 
         throws InterruptedException, RuntimeException {
             PixelGrabber pg = new PixelGrabber(img, 0, 0, IMG_WIDTH,

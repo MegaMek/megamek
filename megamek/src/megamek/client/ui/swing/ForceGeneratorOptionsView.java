@@ -52,6 +52,7 @@ import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ratgenerator.TOCNode;
 import megamek.client.ratgenerator.ValueNode;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.tileset.MechTileset;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.Game;

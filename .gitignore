@@ -62,7 +62,6 @@ build/
 /megamek/data/mechfiles/customs/
 
 # Images
-/megamek/data/images/hexes/defaulthexset.txt
 /megamek/data/images/*_atlas.png
 /megamek/data/images/imgFileAtlasMap.xml
 #Portraits

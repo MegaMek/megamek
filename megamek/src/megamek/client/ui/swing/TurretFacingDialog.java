@@ -33,6 +33,7 @@ import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.common.Hex;
 import megamek.common.Mech;
 import megamek.common.MiscType;

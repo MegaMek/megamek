@@ -19,7 +19,7 @@
  * Created on May 9, 2002, 1:33 PM
  */
 
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.tileset;
 
 import java.awt.Component;
 import java.awt.Image;

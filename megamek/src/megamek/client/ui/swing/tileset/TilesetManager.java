@@ -458,68 +458,42 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     }
 
     /**
-     * Get the camo pattern for the given player.
-     *
-     * @param player - the <code>Player</code> whose camo pattern is needed.
-     * @return The <code>Image</code> of the player's camo pattern. This value
-     *         will be <code>null</code> if the player has selected no camo
-     *         pattern or if there was an error loading it.
+     * Returns the camo pattern for the given player 
+     * or null, if the player has no camo or there was an error.
      */
     public Image getPlayerCamo(IPlayer player) {
-
-        // Return a null if the player has selected no camo file.
-        if ((null == player.getCamoCategory())
-                || IPlayer.NO_CAMO.equals(player.getCamoCategory())) {
-            return null;
-        }
-
-        // Try to get the player's camo file.
-        Image camo = null;
-        try {
-
-            // Translate the root camo directory name.
-            String category = player.getCamoCategory();
-            if (IPlayer.ROOT_CAMO.equals(category)) {
-                category = ""; //$NON-NLS-1$
-            }
-            camo = (Image) camos.getItem(category, player.getCamoFileName());
-
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        return camo;
+        return getCamo(player.getCamoCategory(), player.getCamoFileName());
     }
 
     /**
-     * Get the camo pattern for the given player.
-     *
-     * @param entity - the <code>Entity</code> whose camo pattern is needed.
-     * @return The <code>Image</code> of the player's camo pattern. This value
-     *         will be <code>null</code> if the player has selected no camo
-     *         pattern or if there was an error loading it.
+     * Returns the camo pattern for the given entity 
+     * or null, if the player has no camo or there was an error.
      */
     public Image getEntityCamo(Entity entity) {
-        // Return a null if the player has selected no camo file.
-        if ((null == entity.getCamoCategory())
-                || IPlayer.NO_CAMO.equals(entity.getCamoCategory())) {
+        return getCamo(entity.getCamoCategory(), entity.getCamoFileName());
+    }
+
+    /** Returns the camo pattern, if possible or null. */
+    private Image getCamo(String category, String name) {
+        // Return a null if no camo
+        if ((category == null) || category.equals(IPlayer.NO_CAMO)) {
             return null;
         }
 
-        // Try to get the player's camo file.
+        // Try to get the camo file.
         Image camo = null;
         try {
             // Translate the root camo directory name.
-            String category = entity.getCamoCategory();
             if (IPlayer.ROOT_CAMO.equals(category)) {
                 category = ""; //$NON-NLS-1$
             }
-            camo = (Image) camos.getItem(category, entity.getCamoFileName());
+            camo = (Image) camos.getItem(category, name);
         } catch (Exception err) {
             err.printStackTrace();
         }
         return camo;
     }
-
+    
     /**
      * Load a single entity image
      */

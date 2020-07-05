@@ -81,7 +81,7 @@ public class EntityImage {
     private boolean isSecondaryPos;
     /** True when the image is for the lobby. */
     private boolean isPreview;
-    /** True when the unit is likely to be more long than wide (tanks). */
+    /** True when the unit is likely to be more long than wide (e.g. tanks). */
     private boolean isSlim;
     /** True when the unit is likely to be very narrow (VTOL). */
     private boolean isVerySlim;
@@ -97,7 +97,7 @@ public class EntityImage {
     
     public EntityImage(Image base, Image wreck, int tint, Image camo,
             Component comp, Entity entity, int secondaryPos) {
-        this(base, null, tint, camo, comp, entity, secondaryPos, false);
+        this(base, wreck, tint, camo, comp, entity, secondaryPos, false);
     }
     
     public EntityImage(Image base, Image wreck, int tint, Image camo,
@@ -112,7 +112,7 @@ public class EntityImage {
         isInfantry = entity instanceof Infantry;
         isSecondaryPos = secondaryPos != 0 && secondaryPos != -1;
         isPreview = preview;
-        isSlim = entity instanceof Tank;
+        isSlim = entity instanceof Tank || entity instanceof Aero;
         isVerySlim = entity instanceof VTOL;
     }
 
@@ -124,6 +124,7 @@ public class EntityImage {
         return dmgLevel;
     }
 
+    /** Creates images applying damage decals, rotating and scaling. */
     public void loadFacings() {
         if (base == null) {
             return;
@@ -131,6 +132,9 @@ public class EntityImage {
         
         // Apply the player/unit camo or color
         base = applyColor(base);
+        
+        // Save a small icon (without damage decals) for the unit overview
+        icon = ImageUtil.getScaledImage(base,  56, 48);
         
         // All hexes of a multi-hex unit get scars; also in the lobby
         if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
@@ -146,9 +150,6 @@ public class EntityImage {
                 && GUIPreferences.getInstance().getShowDamageDecal()) {
             base = applyDamageSmoke(base);
         }
-
-        // Save a small icon for the unit overview
-        icon = ImageUtil.getScaledImage(base,  56, 48);
         
         // Generate rotated images for the unit and for a wreck
         for (int i = 0; i < 6; i++) {
@@ -181,12 +182,6 @@ public class EntityImage {
                 src.getWidth(), src.getHeight());
         xform.filter(src, dst);
         return dst;
-    }
-
-    @SuppressWarnings("unused")
-    public Image loadPreviewImage() {
-        base = applyColor(base);
-        return base;
     }
 
     public Image getFacing(int facing) {
@@ -326,7 +321,7 @@ public class EntityImage {
         }
 
         // Get the smoke image for heavier damage; is transparent for lighter damage
-        Image smokeImg = getSmokeOverlay();
+        Image smokeImg = chooseSmokeOverlay();
         if (smokeImg == null) {
             System.err.println("TilesetManager.EntityImage: " //$NON-NLS-1$
                     + "Smoke decal image is null."); //$NON-NLS-1$
@@ -353,7 +348,7 @@ public class EntityImage {
     }
     
     /** Returns the smoke overlay or a transparent image based on damage level and weight. */
-    private Image getSmokeOverlay() {
+    private Image chooseSmokeOverlay() {
         if (dmgLevel == Entity.DMG_NONE 
                 || dmgLevel == Entity.DMG_LIGHT
                 || dmgLevel == Entity.DMG_MODERATE) {
@@ -407,13 +402,4 @@ public class EntityImage {
         decalLoaded = true;
     }
     
-    /** Local method. Loads and returns the image. */ 
-//    private static Image LoadDmgImage(File path, File file) {
-//        Image result = ImageUtil.loadImageFromFile(
-//                new MegaMekFile(path, file.toString()).toString());
-//        if (result.getWidth(null) <= 0 || result.getHeight(null) <= 0) {
-//            System.out.println("TilesetManager.LoadImage(): Error opening image "+file.toString()+"!");
-//        }
-//        return result;
-//    }
 }

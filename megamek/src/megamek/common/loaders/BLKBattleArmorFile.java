@@ -217,7 +217,13 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                             shotString.replace(":Shots", "").replace("#", ""));
                     saEquip[x] = saEquip[x].replace(shotString, "");
                 }
-                
+                double size = 0.0;
+                int sizeIndex = saEquip[x].toUpperCase().indexOf(":SIZE:");
+                if (sizeIndex > 0) {
+                    size = Double.parseDouble(saEquip[x].substring(sizeIndex + 6));
+                    saEquip[x] = saEquip[x].substring(0, sizeIndex);
+                }
+
                 String equipName = saEquip[x].trim();
                 EquipmentType etype = EquipmentType.get(equipName);
 
@@ -234,7 +240,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                         if (numShots != 0 && (m.getType() instanceof AmmoType)){
                             m.setShotsLeft(numShots);
                             m.setOriginalShots(numShots);
-                            m.setAmmoCapacity(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
+                            m.setSize(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
                         }
                         if ((etype instanceof MiscType)
                                 && (etype.hasFlag(MiscType.F_AP_MOUNT) || etype.hasFlag(MiscType.F_ARMORED_GLOVE))) {
@@ -250,6 +256,12 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                             }
                         }
                         m.setSquadSupportWeapon(sswMounted);
+                        if (etype.isVariableSize()) {
+                            if (size == 0.0) {
+                                size = getLegacyVariableSize(equipName);
+                            }
+                            m.setSize(size);
+                        }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }

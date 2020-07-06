@@ -1,0 +1,78 @@
+# Pavement
+
+# Unfortunately super pavements will interfere too heavily with terrain shadows
+# until a better system is found, this is reverted to the old pavement as base
+## INACTIVE: Using super for pavement instead of base because of the ground_fluff use
+## super terrains will only find exact matches while base terrain
+## will find best matches; super avoids having unwanted terrain images
+## Pavement should be included very early as it should be underneath everything (draw first)
+
+# pavement:1 is saxarba's pavement
+## pavement:1;ground_fluff:1 is SirMegaV's pavement (not implemented currently)
+## pavement:1;ground_fluff:2 is saxarba's pavement urban garden variation (not implemented currently)
+# pavement:2 is saxarba's pavement urban garden variation (should be changed to not use terrain level)
+
+
+# SirMegaV's pavement
+#super -3 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-13.png"
+#super -2 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-14.png"
+#super -1 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-15.png"
+#super 0 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-16.png"
+#super 1 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-17.png"
+#super 2 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-18.png"
+#super 3 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-19.png"
+#super 4 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-20.png"
+#super 5 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-21.png"
+#super 6 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-22.png"
+#super 7 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-23.png"
+#super 8 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-24.png"
+#super 9 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-25.png"
+#super 10 "pavement:1;ground_fluff:1" "" "saxarba/SMV_Pavement/pavement-26.png"
+
+# Urban garden variation
+#super -1 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_-1.png"
+#super -2 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_-2.png"
+#super -3 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_-3.png"
+#super 0 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_0.png"
+#super 1 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_1.png"
+#super 2 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_2.png"
+#super 3 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_3.png"
+#super 4 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_4.png"
+#super 5 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_5.png"
+#super 6 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_6.png"
+#super 7 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_7.png"
+#super 8 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_8.png"
+#super 9 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_9.png"
+#super 10 "pavement:1;ground_fluff:2" "" "saxarba/base/base_pavement_urban_10.png"
+
+# Standard pavement
+base -1 "pavement:1" "" "saxarba/base/base_pavement_-1.png"
+base -2 "pavement:1" "" "saxarba/base/base_pavement_-2.png"
+base -3 "pavement:1" "" "saxarba/base/base_pavement_-3.png"
+base 0 "pavement:1" "" "saxarba/base/base_pavement_0.png"
+base 1 "pavement:1" "" "saxarba/base/base_pavement_1.png"
+base 2 "pavement:1" "" "saxarba/base/base_pavement_2.png"
+base 3 "pavement:1" "" "saxarba/base/base_pavement_3.png"
+base 4 "pavement:1" "" "saxarba/base/base_pavement_4.png"
+base 5 "pavement:1" "" "saxarba/base/base_pavement_5.png"
+base 6 "pavement:1" "" "saxarba/base/base_pavement_6.png"
+base 7 "pavement:1" "" "saxarba/base/base_pavement_7.png"
+base 8 "pavement:1" "" "saxarba/base/base_pavement_8.png"
+base 9 "pavement:1" "" "saxarba/base/base_pavement_9.png"
+base 10 "pavement:1" "" "saxarba/base/base_pavement_10.png"
+
+# Urban garden variation 
+base -1 "pavement:2" "" "saxarba/base/base_pavement_urban_-1.png"
+base -2 "pavement:2" "" "saxarba/base/base_pavement_urban_-2.png"
+base -3 "pavement:2" "" "saxarba/base/base_pavement_urban_-3.png"
+base 0 "pavement:2" "" "saxarba/base/base_pavement_urban_0.png"
+base 1 "pavement:2" "" "saxarba/base/base_pavement_urban_1.png"
+base 2 "pavement:2" "" "saxarba/base/base_pavement_urban_2.png"
+base 3 "pavement:2" "" "saxarba/base/base_pavement_urban_3.png"
+base 4 "pavement:2" "" "saxarba/base/base_pavement_urban_4.png"
+base 5 "pavement:2" "" "saxarba/base/base_pavement_urban_5.png"
+base 6 "pavement:2" "" "saxarba/base/base_pavement_urban_6.png"
+base 7 "pavement:2" "" "saxarba/base/base_pavement_urban_7.png"
+base 8 "pavement:2" "" "saxarba/base/base_pavement_urban_8.png"
+base 9 "pavement:2" "" "saxarba/base/base_pavement_urban_9.png"
+base 10 "pavement:2" "" "saxarba/base/base_pavement_urban_10.png"

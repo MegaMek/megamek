@@ -1,6 +1,7 @@
 /*
  * MegaMek - Copyright (C) 2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team  
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -12,28 +13,24 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
+
 package megamek.client.ui.swing;
 
 import static megamek.MegaMek.TIMESTAMP;
 import static megamek.MegaMek.VERSION;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.BorderLayout;
 import java.awt.Image;
-import java.awt.Insets;
 import java.awt.MediaTracker;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Date;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import megamek.client.ui.Messages;
@@ -44,14 +41,10 @@ import megamek.common.util.MegaMekFile;
  * Every about dialog in MegaMek should have an identical look-and-feel.
  */
 public class CommonAboutDialog extends JDialog {
-    private static final String FILENAME_MEGAMEK_SPLASH2 = "megamek-splash2.gif"; //$NON-NLS-1$
-    /**
-     * 
-     */
     private static final long serialVersionUID = -9019180090528719535L;
-    /**
-     * We only need a single copy of the "about" title image that we share.
-     */
+    
+    private static final String FILENAME_MEGAMEK_SPLASH2 = "megamek-splash2.gif"; //$NON-NLS-1$
+    /** We only need a single copy of the "about" title image. */
     private static Image imgTitleImage;
 
     /**
@@ -78,34 +71,22 @@ public class CommonAboutDialog extends JDialog {
             }
         } // End load-imgTitleImage
 
-        // Return our image.
         return imgTitleImage;
     }
 
     /**
-     * Create an "about" dialog for MegaMek.
+     * Create an "About" dialog for MegaMek.
      * 
-     * @param frame - the parent <code>JFrame</code> for this dialog.
+     * @param parentFrame - the parent <code>JFrame</code> for this dialog.
      */
-    public CommonAboutDialog(JFrame frame) {
-        // Construct the superclass.
-        super(frame, Messages.getString("CommonAboutDialog.title")); //$NON-NLS-1$
+    public CommonAboutDialog(JFrame parentFrame) {
+        super(parentFrame, Messages.getString("CommonAboutDialog.title"), true); //$NON-NLS-1$
 
-        // Make sure we close at the appropriate times.
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                quit();
-            }
-        });
-
-        // Make a splash image panel.
-        Image imgSplash = getTitleImage(frame);
+        // Splash image
+        Image imgSplash = getTitleImage(parentFrame);
         JLabel panTitle = new JLabel(new ImageIcon(imgSplash));
-        panTitle.setPreferredSize(new Dimension(imgSplash.getWidth(null),
-                imgSplash.getHeight(null)));
 
-        // Make a label containing the version of this app.
+        // Version text
         StringBuffer buff = new StringBuffer();
         buff.append(Messages.getString("CommonAboutDialog.version"))//$NON-NLS-1$
                 .append(VERSION).append(
@@ -118,62 +99,35 @@ public class CommonAboutDialog extends JDialog {
         JTextArea lblVersion = new JTextArea(buff.toString());
         lblVersion.setEditable(false);
         lblVersion.setOpaque(false);
+        
+        // Copyright notice
         JTextArea lblCopyright = new JTextArea(Messages
                 .getString("CommonAboutDialog.copyright")); //$NON-NLS-1$
         lblCopyright.setEditable(false);
         lblCopyright.setOpaque(false);
+        
+        // MegaMek About message
         JTextArea lblAbout = new JTextArea(Messages
                 .getString("CommonAboutDialog.about")); //$NON-NLS-1$
         lblAbout.setEditable(false);
         lblAbout.setOpaque(false);
 
-        // Add a "Close" button.
-        JButton butClose = new JButton(Messages
-                .getString("CommonAboutDialog.Close")); //$NON-NLS-1$
-        butClose.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                quit();
-            }
-        });
+        // Close Button
+        JButton butClose = new ButtonEsc(new CloseAction(this));
 
-        // Layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        getContentPane().setLayout(gridbag);
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.NORTH;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.insets = new Insets(4, 4, 1, 1);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.ipadx = 10;
-        c.ipady = 5;
-        c.gridx = 0;
-        c.gridy = 0;
-        getContentPane().add(panTitle, c);
-        c.weighty = 1.0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridy = 1;
-        getContentPane().add(lblVersion, c);
-        c.gridy = 2;
-        getContentPane().add(lblCopyright, c);
-        c.gridy = 3;
-        getContentPane().add(lblAbout, c);
-        c.gridy = 4;
-        getContentPane().add(butClose, c);
+        // Assemble all
+        JPanel middlePanel = new JPanel();
+        middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+        add(panTitle, BorderLayout.PAGE_START);
+        middlePanel.add(lblVersion);
+        middlePanel.add(lblCopyright);
+        middlePanel.add(lblAbout);
+        add(middlePanel, BorderLayout.CENTER);
+        add(butClose, BorderLayout.PAGE_END);
 
-        // Place this dialog on middle of screen.
+        // Place in the middle of the screen
         pack();
-        setLocationRelativeTo(frame);
-
-        // Stop allowing resizing.
+        setLocationRelativeTo(parentFrame);
         setResizable(false);
-    }
-
-    /**
-     * Close this dialog.
-     */
-    void quit() {
-        setVisible(false);
     }
 }

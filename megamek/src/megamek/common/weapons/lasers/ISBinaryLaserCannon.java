@@ -54,7 +54,7 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         bv = 222;
         cost = 200000;
         shortAV = 16;
-        medAV = 16;
+        medAV = 12;
         maxRange = RANGE_MED;
         rulesRefs = "319,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)

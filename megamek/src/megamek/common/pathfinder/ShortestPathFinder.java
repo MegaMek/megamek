@@ -209,12 +209,12 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                 boolean backwards = stepType == MoveStepType.BACKWARDS;
                 h1 = first.getFinalCoords().distance(destination)
                         + getFacingDiff(first, destination, backwards)
-                        + getLevelDiff(first, destination, board)
+                        + getLevelDiff(first, destination, board, first.isJumping())
                         + getElevationDiff(first, destination, board,
                                 first.getEntity());
                 h2 = second.getFinalCoords().distance(destination)
                         + getFacingDiff(second, destination, backwards)
-                        + getLevelDiff(second, destination, board)
+                        + getLevelDiff(second, destination, board, second.isJumping())
                         + getElevationDiff(second, destination, board,
                                 second.getEntity());
             }
@@ -271,30 +271,6 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                         new ShortestPathFinder.MovePathMPCostComparator(),
                         stepType, game);
         spf.addFilter(new MovePathLengthFilter(maxMP));
-        spf.addFilter(new MovePathLegalityFilter(game));
-        return spf;
-    }
-    
-    public static ShortestPathFinder newInstanceOfOneToAllAerodyne(
-            final MoveStepType stepType, final IGame game) {
-        final ShortestPathFinder spf =
-                new ShortestPathFinder(
-                        new ShortestPathFinder.AeroMovePathRelaxer(),
-                        new ShortestPathFinder.MovePathVelocityCostComparator(),
-                        stepType, game);
-        spf.addFilter(new MovePathVelocityFilter());
-        spf.addFilter(new MovePathLegalityFilter(game));
-        return spf;
-    }
-    
-    public static ShortestPathFinder newInstanceOfOneToAllSpheroid(
-            final MoveStepType stepType, final IGame game) {
-        final ShortestPathFinder spf =
-                new ShortestPathFinder(
-                        new ShortestPathFinder.AeroMovePathRelaxer(),
-                        new ShortestPathFinder.MovePathLengthComparator(),
-                        stepType, game);
-        spf.addFilter(new MovePathVelocityFilter());
         spf.addFilter(new MovePathLegalityFilter(game));
         return spf;
     }
@@ -389,18 +365,15 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * goal location. This prevents the heuristic from under-estimating when a
      * unit is on top of a hill.
      * 
-     * @param mp
-     * @param dest
-     * @param board
-     * @return
+     * @param mp MovePath to evaluate
+     * @param dest Destination coordinates
+     * @param board Board on which the move path takes place
+     * @param ignore Whether to ignore this calculation and return 0
+     * @return level difference between the final coordinates of the given move path and the destination coordinates
      */
-    public static int getLevelDiff(final MovePath mp, Coords dest, IBoard board) {
+    public static int getLevelDiff(final MovePath mp, Coords dest, IBoard board, boolean ignore) {
         // Ignore level differences if we're not on the ground
-        if (mp.getFinalElevation() != 0) {
-            return 0;
-        }
-        // Jumping should ignore level differences
-        if (mp.isJumping()) {
+        if (ignore || (mp.getFinalElevation() != 0)) {
             return 0;
         }
         IHex currHex = board.getHex(mp.getFinalCoords());

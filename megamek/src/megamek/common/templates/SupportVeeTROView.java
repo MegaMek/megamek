@@ -191,7 +191,7 @@ public class SupportVeeTROView extends TROView {
                 }
                 fields.put("tonnage", adjustWeight(eq.getTonnage(entity, entry.getKey().getSize()) * count));
                 fields.put("location", loc);
-                fields.put("slots", eq.getCriticals(entity) * count);
+                fields.put("slots", eq.getCriticals(entity, entry.getValue()) * count);
                 weaponList.add(fields);
             }
         }

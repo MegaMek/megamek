@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
 import megamek.common.BombType;
 import megamek.common.Building;
@@ -105,11 +106,19 @@ public abstract class PathRanker implements IPathRanker {
             final BigDecimal numberPaths = new BigDecimal(validPaths.size());
             BigDecimal count = BigDecimal.ZERO;
             BigDecimal interval = new BigDecimal(5);
+            
+            boolean pathsHaveExpectedDamage = false;
+            
             for (MovePath path : validPaths) {
                 count = count.add(BigDecimal.ONE);
                 
-                returnPaths.add(rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
-                                         allyCenter));
+                RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
+                        allyCenter);
+                returnPaths.add(rankedPath);
+                
+                // we want to keep track of if any of the paths we've considered have some kind of damage potential
+                pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
+                
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                                           .round(new MathContext(0, RoundingMode.DOWN));
                 if (percent.compareTo(interval) >= 0) {
@@ -117,6 +126,20 @@ public abstract class PathRanker implements IPathRanker {
                     interval = percent.add(new BigDecimal(5));
                 }
             }
+            
+            Entity mover = movePaths.get(0).getEntity();
+            UnitBehavior behaviorTracker = getOwner().getUnitBehaviorTracker();
+            boolean noDamageButCanDoDamage = !pathsHaveExpectedDamage && (FireControl.getMaxDamageAtRange(mover, 1, false, false) > 0);
+            
+            // if we're trying to fight, but aren't going to be doing any damage no matter how we move
+            // then let's try to get closer
+            if(noDamageButCanDoDamage && behaviorTracker.getBehaviorType(mover, getOwner()) == BehaviorType.Engaged) {
+                
+                behaviorTracker.overrideBehaviorType(mover, BehaviorType.MoveToContact);
+                return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true), game, maxRange, fallTolerance, 
+                        startingHomeDistance, enemies, friends);
+            }
+            
             return returnPaths;
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
@@ -143,8 +166,6 @@ public abstract class PathRanker implements IPathRanker {
 
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
         boolean inRange = (maxRange >= startingTargetDistance);
-        CardinalEdge homeEdge = getOwner().getHomeEdge(mover);
-        boolean fleeing = getOwner().isFallingBack(mover);
         
         boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
         boolean needToUnjamRAC = mover.canUnjamRAC();
@@ -171,13 +192,6 @@ public abstract class PathRanker implements IPathRanker {
             	}
             	
                 Coords finalCoords = path.getFinalCoords();
-
-                // If fleeing, skip any paths that don't get me closer to home.
-                if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) >= startingHomeDistance)) {
-                    logLevel = LogLevel.INFO;
-                    msg.append("\n\tINVALID: Running away in wrong direction.");
-                    continue;
-                }
 
                 // Make sure I'm trying to get/stay in range of a target.
                 // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
@@ -220,9 +234,9 @@ public abstract class PathRanker implements IPathRanker {
             }
         }
 
-        // If we've eliminated all valid paths, we'll just have to pick from the best of the invalid paths.
+        // If we've eliminated all valid paths, let's try to pick out a long range path instead
         if (returnPaths.isEmpty()) {
-            return startingPathList;
+            return getOwner().getMovePathsAndSetNecessaryTargets(mover, true);
         }
 
         return returnPaths;
@@ -257,16 +271,20 @@ public abstract class PathRanker implements IPathRanker {
     public void initUnitTurn(Entity unit, IGame game) {
     }
 
+    public Targetable findClosestEnemy(Entity me, Coords position, IGame game) {
+        return findClosestEnemy(me, position, game, true);
+    }
+    
     /**
      * Find the closest enemy to a unit with a path
      */
-    public Entity findClosestEnemy(Entity me, Coords position, IGame game) {
+    public Targetable findClosestEnemy(Entity me, Coords position, IGame game, boolean includeStrategicTargets) {
         final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
         getOwner().methodBegin(PathRanker.class, METHOD_NAME);
 
         try {
             int range = 9999;
-            Entity closest = null;
+            Targetable closest = null;
             List<Entity> enemies = getOwner().getEnemyEntities();
             for (Entity e : enemies) {
                 // Skip airborne aero units as they're further away than they seem and hard to catch.
@@ -282,11 +300,24 @@ public abstract class PathRanker implements IPathRanker {
                     unmovedDistMod = e.getWalkMP(true, false, false);
                 }
 
-                if ((position.distance(e.getPosition()) + unmovedDistMod) < range) {
-                    range = position.distance(e.getPosition());
+                int distance = position.distance(e.getPosition());
+                if ((distance + unmovedDistMod) < range) {
+                    range = distance;
                     closest = e;
                 }
             }
+            
+            // if specified, we also consider strategic targets
+            if(includeStrategicTargets) {
+                for(Targetable t : getOwner().getFireControlState().getAdditionalTargets()) {
+                    int distance = position.distance(t.getPosition());
+                    if(distance < range) {
+                        range = distance;
+                        closest = t;
+                    }
+                }
+            }
+            
             return closest;
         } finally {
             getOwner().methodEnd(PathRanker.class, METHOD_NAME);

@@ -110,7 +110,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if ((target instanceof Mech) || (target instanceof Aero)) {
+        if (target.tracksHeat()) {
             int toReturn = 10;
             toReturn = applyGlancingBlowModifier(toReturn, false);
             if (game.getOptions().booleanOption(

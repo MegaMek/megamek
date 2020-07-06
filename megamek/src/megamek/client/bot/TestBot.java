@@ -52,6 +52,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.BoardClusterTracker;
 
 public class TestBot extends BotClient {
 
@@ -70,7 +71,7 @@ public class TestBot extends BotClient {
 
     @Override
     public void initialize() {
-        // removed
+        boardClusterTracker = new BoardClusterTracker();
     }
 
     @Override

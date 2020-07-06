@@ -150,6 +150,8 @@ public class QuirksHandler {
 
     private static final String MODEL_ALL = "all";
     
+    private static final String NO_QUIRKS = "none";
+    
     private static Map<String, List<QuirkEntry>> canonQuirkMap;
     private static Map<String, List<QuirkEntry>> customQuirkMap;
     private static AtomicBoolean customQuirksDirty = new AtomicBoolean(false);
@@ -446,34 +448,40 @@ public class QuirksHandler {
 
                 // Write out quirks
                 List<QuirkEntry> quirks = customQuirkMap.get(unitId);
-                for (QuirkEntry quirk : quirks) {
-                    // Write Weapon Quirk
-                    if (quirk.isWeaponQuirk()) {
-                        output.write("\t\t" + getOpenTag(WEAPON_QUIRK) + "\n");
-                        // Quirk Name
-                        output.write("\t\t\t" + getOpenTag(WEAPON_QUIRK_NAME));
-                        output.write(quirk.getQuirk());
-                        output.write(getCloseTag(WEAPON_QUIRK_NAME) + "\n");
-                        // Location
-                        output.write("\t\t\t" + getOpenTag(LOCATION));
-                        output.write(quirk.getLocation());
-                        output.write(getCloseTag(LOCATION) + "\n");
-                        // Slot
-                        output.write("\t\t\t" + getOpenTag(SLOT));
-                        output.write(quirk.getSlot() + "");
-                        output.write(getCloseTag(SLOT) + "\n");
-                        // Weapon Name
-                        output.write("\t\t\t" + getOpenTag(WEAPON_NAME));
-                        output.write(quirk.getWeaponName());
-                        output.write(getCloseTag(WEAPON_NAME) + "\n");
-                        // Close Tag
-                        output.write("\t\t" + getCloseTag(WEAPON_QUIRK) + "\n");
-                    } else { // Write normal quirk
-                        output.write("\t\t" + getOpenTag(QUIRK));
-                        output.write(quirk.getQuirk());
-                        output.write(getCloseTag(QUIRK) + "\n");
-                    }
-                }               
+                if (quirks.isEmpty()) {
+                    output.write("\t\t" + getOpenTag(QUIRK));
+                    output.write(NO_QUIRKS);
+                    output.write(getCloseTag(QUIRK) + "\n");
+                } else {
+                    for (QuirkEntry quirk : quirks) {
+                        // Write Weapon Quirk
+                        if (quirk.isWeaponQuirk()) {
+                            output.write("\t\t" + getOpenTag(WEAPON_QUIRK) + "\n");
+                            // Quirk Name
+                            output.write("\t\t\t" + getOpenTag(WEAPON_QUIRK_NAME));
+                            output.write(quirk.getQuirk());
+                            output.write(getCloseTag(WEAPON_QUIRK_NAME) + "\n");
+                            // Location
+                            output.write("\t\t\t" + getOpenTag(LOCATION));
+                            output.write(quirk.getLocation());
+                            output.write(getCloseTag(LOCATION) + "\n");
+                            // Slot
+                            output.write("\t\t\t" + getOpenTag(SLOT));
+                            output.write(quirk.getSlot() + "");
+                            output.write(getCloseTag(SLOT) + "\n");
+                            // Weapon Name
+                            output.write("\t\t\t" + getOpenTag(WEAPON_NAME));
+                            output.write(quirk.getWeaponName());
+                            output.write(getCloseTag(WEAPON_NAME) + "\n");
+                            // Close Tag
+                            output.write("\t\t" + getCloseTag(WEAPON_QUIRK) + "\n");
+                        } else { // Write normal quirk
+                            output.write("\t\t" + getOpenTag(QUIRK));
+                            output.write(quirk.getQuirk());
+                            output.write(getCloseTag(QUIRK) + "\n");
+                        }
+                    }   
+                }            
                 output.write("\t" + getCloseTag(UNIT) + "\n\n");
             }
             
@@ -506,7 +514,6 @@ public class QuirksHandler {
     @Nullable
     static List<QuirkEntry> getQuirks(Entity entity) {
         final String METHOD_NAME = "getQuirks(Entity)";
-        final String NO_QUIRKS = "none";
 
         if (!initialized.get() || (null == canonQuirkMap)) {
             return null;
@@ -604,7 +611,7 @@ public class QuirksHandler {
             Quirks entQuirks = entity.getQuirks();
             Enumeration<IOptionGroup> quirksGroup = entQuirks.getGroups();
             Enumeration<IOption> quirkOptions;
-           while (quirksGroup.hasMoreElements()) {
+            while (quirksGroup.hasMoreElements()) {
                 IOptionGroup group = quirksGroup.nextElement();
                 quirkOptions = group.getSortedOptions();
                 while (quirkOptions.hasMoreElements()) {

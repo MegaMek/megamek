@@ -97,6 +97,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private static final long serialVersionUID = 1430806396279853295L;
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
+    public static final int UNLIMITED_JUMP_DOWN = 999;
 
     /**
      * Entity Type Id Definitions These are used to identify the type of Entity,
@@ -4935,19 +4936,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * This method checks to see if a unit has Underwater Maneuvering Units Only
-     * Battle Mechs may have UMU's
+     * This method checks to see if a unit has Underwater Maneuvering Units
      *
      * @return <code>boolean</code> if the entity has usable UMU crits.
      */
     public boolean hasUMU() {
-        if (!(this instanceof Mech) && !(this instanceof Infantry)) {
-            return false;
-        }
-
-        int umuCount = getActiveUMUCount();
-
-        return umuCount > 0;
+        return getActiveUMUCount() > 0;
     }
 
     /**
@@ -4956,20 +4950,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return number <code>int</code>of useable UMU's
      */
     public int getActiveUMUCount() {
-        int count = 0;
-
-        if (this instanceof Infantry) {
-            if ((getMovementMode() == EntityMovementMode.INF_UMU)
-            		|| (getMovementMode() == EntityMovementMode.SUBMARINE)) {
-	            // UMU MP for Infantry is stored in jumpMP
-	            return jumpMP;
-            }
-        }
-
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
-
+        int count = 0;
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_UMU)
@@ -4977,7 +4961,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 count++;
             }
         }
-
         return count;
     }
 
@@ -4987,29 +4970,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return <code>int</code>Total number of UMUs a mech has.
      */
     public int getAllUMUCount() {
-        int count = 0;
-
-        if ((this instanceof Infantry)
-            && (getMovementMode() == EntityMovementMode.INF_UMU)) {
-            // UMU MP for Infantry is stored in jumpMP
-            return jumpMP;
-        }
-
-        if (!(this instanceof Mech)) {
-            return 0;
-        }
-
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
-
+        int count = 0;
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_UMU)) {
                 count++;
             }
         }
-
         return count;
     }
 
@@ -8228,17 +8198,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return the number of docking collars
      */
     public int getDocks() {
-        int n = 0;
+        return getDocks(false);
+    }
 
+    /**
+     * @param forCost Whether this value is being used for cost calculations, in which case
+     *                dropshuttle bays count as two collars.
+     * @return The number of docking collars
+     */
+    public int getDocks(boolean forCost) {
+        int n = 0;
         for (Transporter next : transports) {
-            if (next instanceof DockingCollar) {
-                n++;
+            if ((next instanceof DockingCollar)
+                    || (forCost && (next instanceof DropshuttleBay))) {
+                n += next.hardpointCost();
             }
         }
-
-        // Return the number
         return n;
-
     }
 
     /**
@@ -9368,7 +9344,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns true if the entity should be deployed
      */
     public boolean shouldDeploy(int round) {
-        return (!deployed && (getDeployRound() <= round) && !isOffBoard());
+        return !isDeployed() 
+            && (getDeployRound() <= round)
+            && !isOffBoard();
+    }
+
+    /**
+     * Returns true if the offboard entity should be deployed this round.
+     * @param round The current round number.
+     * @return True if and only if the offboard entity should deploy this
+     *         round, otherwise false.
+     */
+    public boolean shouldOffBoardDeploy(int round) {
+        return isOffBoard() 
+            && !isDeployed() 
+            && (getDeployRound() <= round);
     }
 
     /**
@@ -10151,8 +10141,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * <p/>
      * Onboard units (units with an offboard distance of zero and a direction of
      * <code>Entity.NONE</code>) will be unaffected by this method.
+     * @param round The current round number.
      */
-    public void deployOffBoard() {
+    public void deployOffBoard(int round) {
         if (null == game) {
             throw new IllegalStateException(
                     "game not set; possible serialization error");
@@ -10161,20 +10152,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // add a bit (because 17 % 2 == 1 and 16 % 2 == 0).
         switch (offBoardDirection) {
             case NONE:
-                break;
+                return;
             case NORTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
                         + (game.getBoard().getWidth() % 2),
                         -getOffBoardDistance()));
                 setFacing(3);
-                setDeployed(true);
                 break;
             case SOUTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
                         + (game.getBoard().getWidth() % 2), game.getBoard()
                         .getHeight() + getOffBoardDistance()));
                 setFacing(0);
-                setDeployed(true);
                 break;
             case EAST:
                 setPosition(new Coords(game.getBoard().getWidth()
@@ -10182,15 +10171,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         (game.getBoard().getHeight() / 2)
                                 + (game.getBoard().getHeight() % 2)));
                 setFacing(5);
-                setDeployed(true);
                 break;
             case WEST:
                 setPosition(new Coords(-getOffBoardDistance(), (game.getBoard()
                         .getHeight() / 2) + (game.getBoard().getHeight() % 2)));
                 setFacing(1);
-                setDeployed(true);
                 break;
         }
+
+        // deploy the unit, but only if it should be deployed this round
+        setDeployed(shouldOffBoardDeploy(round));
     }
 
     public Vector<Integer> getPickedUpMechWarriors() {

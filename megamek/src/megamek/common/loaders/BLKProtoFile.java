@@ -26,15 +26,7 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestProtomech;
 
@@ -172,6 +164,12 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
 
         for (String element : saEquip) {
             String equipName = element.trim();
+            double size = 0.0;
+            int sizeIndex = equipName.toUpperCase().indexOf(":SIZE:");
+            if (sizeIndex > 0) {
+                size = Double.parseDouble(equipName.substring(sizeIndex + 6));
+                equipName = equipName.substring(0, sizeIndex);
+            }
             if (equipName.startsWith("(R) ")) {
                 rearMount = true;
                 equipName = equipName.substring(4);
@@ -206,17 +204,24 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                 try {
                     // If this is an Ammo slot, only add
                     // the indicated number of shots.
+                    Mounted mount;
                     if (ammoIndex > 0) {
-                        t.addEquipment(etype, Protomech.LOC_BODY, false, shotsCount);
+                        mount = t.addEquipment(etype, Protomech.LOC_BODY, false, shotsCount);
                     } else if (TestProtomech.requiresSlot(etype)) {
-                        Mounted mount = t.addEquipment(etype, nLoc);
+                        mount = t.addEquipment(etype, nLoc);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             mount.setFacing(defaultVGLFacing(nLoc, rearMount));
                         }
                     } else {
-                        t.addEquipment(etype, Protomech.LOC_BODY);
+                        mount = t.addEquipment(etype, Protomech.LOC_BODY);
+                    }
+                    if (etype.isVariableSize()) {
+                        if (size == 0.0) {
+                            size = getLegacyVariableSize(equipName);
+                        }
+                        mount.setSize(size);
                     }
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());

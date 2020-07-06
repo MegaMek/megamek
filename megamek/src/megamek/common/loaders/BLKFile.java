@@ -98,6 +98,33 @@ public class BLKFile {
         }
     }
 
+    /**
+     * Legacy support for variable equipment that had a separate EquipmentType entry for each possible
+     * size
+     *
+     * @param eqName The equipment lookup name
+     * @return       The size of the equipment
+     */
+    static double getLegacyVariableSize(String eqName) {
+        if (eqName.startsWith("Cargo")
+                || eqName.startsWith("Liquid Cargo")
+                || eqName.startsWith("Communications Equipment")) {
+            return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
+                    eqName.indexOf(" ton")));
+        }
+        if (eqName.startsWith("CommsGear")) {
+            return Double.parseDouble(eqName.substring(eqName.indexOf(":") + 1));
+        }
+        if (eqName.startsWith("Mission Equipment Storage")) {
+            return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
+                    eqName.indexOf("kg")).trim());
+        }
+        if (eqName.startsWith("Ladder")) {
+            return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
+                    eqName.indexOf("m)")));
+        }
+        return 1.0;
+    }
 
     protected void loadEquipment(Entity t, String sName, int nLoc)
             throws EntityLoadingException {
@@ -120,6 +147,12 @@ public class BLKFile {
                 boolean isOmniMounted = false;
                 boolean isTurreted = false;
                 boolean isPintleTurreted = false;
+                double size = 0.0;
+                int sizeIndex = equipName.toUpperCase().indexOf(":SIZE:");
+                if (sizeIndex > 0) {
+                    size = Double.parseDouble(equipName.substring(sizeIndex + 6));
+                    equipName = equipName.substring(0, sizeIndex);
+                }
                 if (equipName.toUpperCase().endsWith(":OMNI")) {
                     isOmniMounted = true;
                     equipName = equipName.substring(0, equipName.length() - 5).trim();
@@ -177,6 +210,12 @@ public class BLKFile {
                             } else {
                                 mount.setFacing(facing);
                             }
+                        }
+                        if (etype.isVariableSize()) {
+                            if (size == 0.0) {
+                                size = getLegacyVariableSize(equipName);
+                            }
+                            mount.setSize(size);
                         }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
@@ -1010,6 +1049,8 @@ public class BLKFile {
             name += ":Shots" + m.getBaseShotsLeft() + "#";
         } else if (m.getEntity() instanceof Protomech && (m.getType() instanceof AmmoType)) {
             name += " (" + m.getBaseShotsLeft() + ")";
+        } else if (m.getType().isVariableSize()) {
+            name += ":SIZE:" + m.getSize();
         }
         return name;
     }

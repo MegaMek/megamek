@@ -118,6 +118,7 @@ public class BotGeometry {
      * for directions 1,2,4,5 intercept is the x=0 intercept
      */
     public static class HexLine {
+        private static final Princess fakeOwner = new Princess("fake", "localhost", 2020, LogLevel.OFF);
         private final Princess owner;
 
         private int intercept;
@@ -130,7 +131,13 @@ public class BotGeometry {
             @SuppressWarnings("unused")
             final String METHOD_NAME = "HexLine(Coords, int)";
 
-            this.owner = owner;
+            // some places don't have a Princess available, in which case we pass in a singleton fake on
+            // to avoid having to initialize one every time we make a hex line
+            if (owner == null) {
+                this.owner = fakeOwner;
+            } else {
+                this.owner = owner;
+            }
 
             setDirection(dir);
             if ((getDirection() == 0) || (getDirection() == 3)) {

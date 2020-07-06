@@ -77,8 +77,8 @@ import megamek.common.QuadVee;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
-import megamek.common.VTOL;
 import megamek.common.WeaponType;
+import megamek.common.enums.Gender;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
@@ -95,7 +95,7 @@ import megamek.common.verifier.TestInfantry;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
-import megamek.common.weapons.ArtilleryBayWeapon;
+import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 
 /**
@@ -590,6 +590,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
     }
 
+    public ClientGUI getClientGUI() {
+        return clientgui;
+    }
+
     private void setupButtons() {
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
@@ -755,6 +759,19 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         DialogOptionComponent optionComp = new DialogOptionComponent(this, option, editable);
 
         if ((OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(option.getName())) { // $NON-NLS-1$
+            optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
+            TreeSet<String> uniqueWeapons = new TreeSet<String>();
+            for (int i = 0; i < entity.getWeaponList().size(); i++) {
+                Mounted m = entity.getWeaponList().get(i);
+                uniqueWeapons.add(m.getName());
+            }
+            for (String name : uniqueWeapons) {
+                optionComp.addValue(name);
+            }
+            optionComp.setSelected(option.stringValue());
+        }
+        
+        if ((OptionsConstants.GUNNERY_SANDBLASTER).equals(option.getName())) { // $NON-NLS-1$
             optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
             TreeSet<String> uniqueWeapons = new TreeSet<String>();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
@@ -1114,7 +1131,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (int i = 0; i < entities.get(0).getCrew().getSlotCount(); i++) {
                 String name = panCrewMember[i].getPilotName();
                 String nick = panCrewMember[i].getNickname();
-                int gender = panCrewMember[i].getGender();
+                Gender gender = panCrewMember[i].getGender();
+                if (gender == Gender.RANDOMIZE) {
+                    gender = entities.get(0).getCrew().getGender(i);
+                }
                 boolean missing = panCrewMember[i].getMissing();
                 int gunnery;
                 int gunneryL;

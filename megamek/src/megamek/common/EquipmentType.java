@@ -378,6 +378,10 @@ public class EquipmentType implements ITechnology {
     }
 
     public int getCriticals(Entity entity) {
+        return getCriticals(entity, 1.0);
+    }
+
+    public int getCriticals(Entity entity, double size) {
         return criticals;
     }
 
@@ -1110,6 +1114,28 @@ public class EquipmentType implements ITechnology {
 
     public boolean isVariableCriticals() {
         return criticals == CRITICALS_VARIABLE;
+    }
+
+    /**
+     * @return Whether the item's size is variable independent of external factors
+     */
+    public boolean isVariableSize() {
+        return false;
+    }
+
+    /**
+     * @return The increment between sizes of variable-sized equipment
+     */
+    public Double variableStepSize() {
+        return 1.0;
+    }
+
+    /**
+     * @return The maximum size of variable-sized equipment. Items with no maximum
+     *         return {@code null}.
+     */
+    public @Nullable Double variableMaxSize() {
+        return null;
     }
 
     public TechAdvancement getTechAdvancement() {

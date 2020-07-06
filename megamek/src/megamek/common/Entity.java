@@ -9192,15 +9192,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /**
      * Um, basically everything can spot for LRM indirect fire.
+     * Except for off-board units and units that sprinted.
      *
-     * @return true, if the entity is active
+     * @return true, if the entity is eligible to spot
      */
     public boolean canSpot() {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT)
-            && (this instanceof MechWarrior)) {
-            return false;
-        }
-        return isActive() && !isOffBoard();
+        return isActive() && !isOffBoard() && 
+        		(moved != EntityMovementType.MOVE_SPRINT) && 
+        		(moved != EntityMovementType.MOVE_VTOL_SPRINT);
     }
 
     @Override
@@ -9740,8 +9739,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * An entity is eligible if its to-hit number is anything but impossible.
-     * This is only really an issue if friendly fire is turned off.
+     * An entity is eligible for firing if it's not taking some kind of action
+     * that prevents it from firing, such as a full-round physical attack
+     * or sprinting.
      */
     public boolean isEligibleForFiring() {
         // if you're charging, no shooting
@@ -9763,18 +9763,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!isActive()) {
             return false;
         }
-
-        // Check for weapons. If we find them, return true. Otherwise... we
-        // return false.
-        // Bug 3648: No, no, no - you cannot skip units with no weapons - what
-        // about spotting, unjamming, etc.?
-        /*
-         * for (Mounted mounted : getWeaponList()) { WeaponType wtype =
-         * (WeaponType) mounted.getType(); if ((wtype != null) &&
-         * (!wtype.hasFlag(WeaponType.F_AMS) && !wtype.hasFlag(WeaponType.F_TAG)
-         * && mounted.isReady() && ((mounted.getLinked() == null) || (mounted
-         * .getLinked().getUsableShotsLeft() > 0)))) { return true; } }
-         */
 
         return true;
     }

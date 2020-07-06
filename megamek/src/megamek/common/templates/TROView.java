@@ -429,7 +429,8 @@ public class TROView {
             if (m.isOmniPodMounted() || !entity.isOmni()) {
                 final String loc = formatLocationTableEntry(entity, m);
                 equipment.putIfAbsent(loc, new HashMap<>());
-                equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize()),1, Integer::sum);
+                equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize(), m.isArmored()),
+                        1, Integer::sum);
             }
         }
         final List<Map<String, Object>> eqList = new ArrayList<>();
@@ -438,6 +439,9 @@ public class TROView {
                 final EquipmentType eq = entry.getKey().getType();
                 final int count = equipment.get(loc).get(entry.getKey());
                 String name = stripNotes(entry.getKey().name());
+                if (entry.getKey().isArmored()) {
+                    name += " (Armored)";
+                }
                 if (eq instanceof AmmoType) {
                     name = String.format("%s (%d)", name, ((AmmoType) eq).getShots() * count);
                 } else if (count > 1) {
@@ -767,10 +771,16 @@ public class TROView {
     static final class EquipmentKey {
         private final EquipmentType etype;
         private final double size;
+        private final boolean armored;
 
         EquipmentKey(EquipmentType etype, double size) {
+            this(etype, size, false);
+        }
+
+        EquipmentKey(EquipmentType etype, double size, boolean armored) {
             this.etype = etype;
             this.size = size;
+            this.armored = armored;
         }
 
         String name() {
@@ -785,16 +795,21 @@ public class TROView {
             return size;
         }
 
+        boolean isArmored() {
+            return armored;
+        }
+
         @Override
         public boolean equals(Object o) {
             return (o instanceof EquipmentKey)
                     && (etype.equals(((EquipmentKey) o).etype))
-                    && (size == ((EquipmentKey) o).size);
+                    && (size == ((EquipmentKey) o).size)
+                    && (armored == ((EquipmentKey) o).armored);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(etype, size);
+            return Objects.hash(etype, size, armored);
         }
     }
 }

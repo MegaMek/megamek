@@ -445,7 +445,7 @@ public class TROView {
                 if (eq instanceof AmmoType) {
                     name = String.format("%s (%d)", name, ((AmmoType) eq).getShots() * count);
                 } else if (count > 1) {
-                    name = String.format("%d %ss", count, entry.getKey().name());
+                    name = String.format("%d %s", count, name);
                 }
                 final Map<String, Object> fields = new HashMap<>();
                 fields.put("name", name);

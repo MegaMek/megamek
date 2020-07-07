@@ -941,7 +941,7 @@ public class MechView {
             String name = mounted.getName();
             if ((((mounted.getLocation() == Entity.LOC_NONE)
                         // Mechs can have zero-slot equipment in LOC_NONE that needs to be shown.
-                        && (!isMech || mounted.getType().getCriticals(entity) > 0)))
+                        && (!isMech || mounted.getCriticals() > 0)))
                     || name.contains("Jump Jet")
                     || (name.contains("CASE")
                         && !name.contains("II")

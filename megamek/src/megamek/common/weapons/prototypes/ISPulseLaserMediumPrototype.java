@@ -67,7 +67,7 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
             .setTechRating(RATING_E)
             .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
             .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)
-            .setISApproximate(true, false, false, true, false)
+            .setISApproximate(false, false, false, true, false)
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH);
     }

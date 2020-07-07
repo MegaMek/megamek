@@ -53,6 +53,7 @@ public class CLImprovedSRM6 extends SRMWeapon {
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
             .setClanAdvancement(2815, 2817, 2819, 2828, 3080)
+            .setClanApproximate(true,false,false,true,false)
             .setPrototypeFactions(F_CCC).setProductionFactions(F_CCC)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }

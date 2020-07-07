@@ -131,6 +131,7 @@ public class MtfFile implements IMechLoader {
     public static final String ARMORED = "(armored)";
     public static final String OMNIPOD = "(omnipod)";
     public static final String NO_CRIT = "nocrit:";
+    public static final String SIZE = ":size:";
 
     /**
      * Creates new MtfFile
@@ -617,13 +618,14 @@ public class MtfFile implements IMechLoader {
             boolean isArmored = false;
             boolean isTurreted = false;
             boolean isOmniPod = false;
+            double size = 0.0;
 
             // Check for Armored Actuators
             if (critName.toLowerCase().trim().endsWith(ARMORED)) {
                 critName = critName.substring(0, critName.length() - ARMORED.length()).trim();
                 isArmored = true;
             }
-            
+
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
                 mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, isArmored));
                 continue;
@@ -654,6 +656,11 @@ public class MtfFile implements IMechLoader {
                 continue;
             }
 
+            int sizeIndex = critName.toLowerCase().indexOf(SIZE);
+            if (sizeIndex > 0) {
+                size = Double.parseDouble(critName.substring(sizeIndex + SIZE.length()));
+                critName = critName.substring(0, sizeIndex);
+            }
             if (critName.toLowerCase().trim().endsWith(OMNIPOD)) {
                 critName = critName.substring(0, critName.length() - OMNIPOD.length()).trim();
                 isOmniPod = true;
@@ -731,7 +738,7 @@ public class MtfFile implements IMechLoader {
                         }
                         if (bFound) {
                             m.setFoundCrits(m.getFoundCrits() + (mech.isSuperHeavy()? 2 : 1));
-                            if (m.getFoundCrits() >= etype.getCriticals(mech)) {
+                            if (m.getFoundCrits() >= m.getCriticals()) {
                                 vSplitWeapons.remove(m);
                             }
                             // if we're in a new location, set the weapon as
@@ -775,6 +782,18 @@ public class MtfFile implements IMechLoader {
                             }
                             mount = mech.addEquipment(etype, etype2, loc, isOmniPod);
                         }
+                        if (etype.isVariableSize()) {
+                            if (size == 0.0) {
+                                size = BLKFile.getLegacyVariableSize(critName);
+                            }
+                            mount.setSize(size);
+                            // THe size may require additional critical slots
+                            for (int c = 1; c < mount.getCriticals(); c++) {
+                                CriticalSlot cs = new CriticalSlot(mount);
+                                mech.addCritical(loc, cs, i + c);
+                            }
+                        }
+
                         // vehicular grenade launchers need to have their facing
                         // set
                         if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {

@@ -37,11 +37,19 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import megamek.client.ui.swing.util.ImageCache;
+import megamek.common.Board;
 import megamek.common.Configuration;
 import megamek.common.Hex;
+import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Terrains;
+import megamek.common.event.BoardEvent;
+import megamek.common.event.BoardListener;
+import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.GameBoardNewEvent;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
 import megamek.common.util.StringUtil;
@@ -51,7 +59,7 @@ import megamek.common.util.StringUtil;
  *
  * @author Ben
  */
-public class HexTileset {
+public class HexTileset implements BoardListener {
 
     /**
      * The image width of a hex image.
@@ -64,6 +72,8 @@ public class HexTileset {
     public static final int HEX_H = 72;
 
     public static final String TRANSPARENT_THEME = "transparent";
+    
+    private IGame game;
 
     private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();
@@ -76,13 +86,26 @@ public class HexTileset {
     /**
      * Creates new HexTileset
      */
-    public HexTileset() {
+    public HexTileset(IGame g) {
+        game = g;
+        game.addGameListener(gameListener);
+        game.getBoard().addBoardListener(this);
     }
 
+    /** Clears the image cache for the given hex. */
     public synchronized void clearHex(IHex hex) {
         basesCache.remove(hex);
+        supersCache.remove(hex);
+        orthosCache.remove(hex);
     }
 
+    /** Clears the image cache for all hexes. */
+    public synchronized void clearAllHexes() {
+        basesCache = new ImageCache<IHex, Image>();
+        supersCache = new ImageCache<IHex, List<Image>>();
+        orthosCache = new ImageCache<IHex, List<Image>>();
+    }
+    
     /**
      * This assigns images to a hex based on the best matches it can find.
      * <p/>
@@ -296,7 +319,7 @@ public class HexTileset {
         r.close();
         themes.add(TRANSPARENT_THEME);
         long endTime = System.currentTimeMillis();
-
+        
         System.out.println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-2$ //$NON-NLS-2$
         System.out.println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-2$ //$NON-NLS-2$
         System.out.println("hexTileset: loaded " + orthos.size() + " ortho images"); //$NON-NLS-2$ //$NON-NLS-2$
@@ -356,12 +379,6 @@ public class HexTileset {
                 tracker.addImage(img, 1);
             }
         }
-    }
-
-    public synchronized void reset() {
-        basesCache = new ImageCache<IHex, Image>();
-        supersCache = new ImageCache<IHex, List<Image>>();
-        orthosCache = new ImageCache<IHex, List<Image>>();
     }
 
     /**
@@ -544,7 +561,7 @@ public class HexTileset {
             return images.firstElement();
         }
 
-        public void loadImage(Component comp) {
+        public void loadImage(Component c2) {
             images = new Vector<Image>();
             for (String filename: filenames) {
                 File imgFile = new MegaMekFile(Configuration.hexesDir(), filename).getFile();
@@ -561,5 +578,46 @@ public class HexTileset {
         public String toString() {
             return "HexTileset: " + hex.toString();
         }
+    }
+    
+    // The Board and Game listeners
+    // The HexTileSet caches images with the hex object as key. Therefore it
+    // must listen to Board events to clear changed (but not replaced) 
+    // hexes from the cache. 
+    // It must listen to Game events to catch when a board is entirely replaced
+    // to be able to register itself to the new board.
+    private GameListener gameListener = new GameListenerAdapter() {
+
+        @Override
+        public void gameBoardNew(GameBoardNewEvent e) {
+            clearAllHexes();
+            replacedBoard(e);
+        }
+
+        @Override
+        public void gameBoardChanged(GameBoardChangeEvent e) {
+            clearAllHexes();
+        }
+
+    };
+    
+    private void replacedBoard(GameBoardNewEvent e) {
+        e.getOldBoard().removeBoardListener(this);
+        e.getNewBoard().addBoardListener(this);
+    }
+    
+    @Override
+    public void boardNewBoard(BoardEvent b) {
+        clearAllHexes();
+   }
+
+    @Override
+    public void boardChangedHex(BoardEvent b) {
+        clearHex(((Board)b.getSource()).getHex(b.getCoords()));
+    }
+
+    @Override
+    public void boardChangedAllHexes(BoardEvent b) {
+        clearAllHexes();
     }
 }

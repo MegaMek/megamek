@@ -231,10 +231,9 @@ public class TestMech extends TestEntity {
 
     @Override
     public double getWeightPowerAmp() {
-        if (mech.isIndustrial()
-                && (!mech.hasEngine()
+        if (!mech.hasEngine()
                     || (mech.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                    || (mech.getEngine().getEngineType() == Engine.FUEL_CELL))) {
+                    || (mech.getEngine().getEngineType() == Engine.FUEL_CELL)) {
             double powerAmpWeight = 0;
             for (Mounted m : mech.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
@@ -493,9 +492,9 @@ public class TestMech extends TestEntity {
         EquipmentType et = mounted.getType();
         int criticals = 0;
         if (et instanceof MiscType) {
-            criticals = calcMiscCrits((MiscType) et);
+            criticals = calcMiscCrits((MiscType) et, mounted.getSize());
         } else {
-            criticals = et.getCriticals(entity);
+            criticals = mounted.getCriticals();
         }
         int count = 0;
 
@@ -553,7 +552,7 @@ public class TestMech extends TestEntity {
                         && (m.getUsableShotsLeft() <= 1)) {
                     continue;
                 }
-                if (m.getType().getCriticals(mech) == 0) {
+                if (m.getCriticals() == 0) {
                     continue;
                 }
                 if (!(m.getType() instanceof MiscType)) {
@@ -716,12 +715,12 @@ public class TestMech extends TestEntity {
                 correct = false;
             }
         }
-/*
+
         if (getEntity().getLabTotalArmorPoints() < getEntity().getTotalOArmor()) {
             correct = false;
             buff.append("Too many armor points allocated");
         }
-*/
+
         return correct;
     }
 

@@ -57,7 +57,7 @@ public class CLLB5XACPrototype extends CLLBXACPrototypeWeapon {
         .setTechRating(RATING_F)
         .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
         .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2825, DATE_NONE)
-        .setClanApproximate(false, false, false,true, false)
+        .setClanApproximate(true, false, false,true, false)
         .setPrototypeFactions(F_CCY);
     }
 }

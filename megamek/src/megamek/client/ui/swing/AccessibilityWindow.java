@@ -38,12 +38,18 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
         client.getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerConnected(GamePlayerConnectedEvent e) {
-                systemEvent("New player has connected. Their name is " + e.getPlayer().getName() + ".");
+                String name = (e != null) && (e.getPlayer() != null)
+                            ? e.getPlayer().getName()
+                            : "UNNAMED";
+                systemEvent("New player has connected. Their name is " + name + ".");
             }
 
             @Override
             public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
-                systemEvent("The player " + e.getPlayer().getName() + " has disconnected.");
+                String name = (e != null) && (e.getPlayer() != null)
+                            ? e.getPlayer().getName()
+                            : "UNNAMED";
+                systemEvent("The player " + name + " has disconnected.");
             }
 
             @Override
@@ -53,9 +59,12 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gameEntityNew(GameEntityNewEvent e) {
-                systemEvent("Added " + e.getNumberOfEntities() +  " new entities;" );
-                for(Entity ent: e.GetEntities()) {
-                    systemEvent(ent.getOwner().getName() + " adds " + ent.getDisplayName());
+                if (e != null) {
+                    systemEvent("Added " + e.getNumberOfEntities() +  " new entities;" );
+                    for (Entity ent : e.GetEntities()) {
+                        String name = ent.getOwner() != null ? ent.getOwner().getName() : "UNNAMED";
+                        systemEvent(name + " adds " + ent.getDisplayName());
+                    }
                 }
             }
 
@@ -66,20 +75,31 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gameEntityRemove(GameEntityRemoveEvent e) {
-                final Entity ent = e.getEntity();
-                systemEvent("Removed " + ent.getDisplayName() + " from player " + ent.getOwner().getName() + ".");
+                if ((e != null) && (e.getEntity() != null)) {
+                    final Entity ent = e.getEntity();
+                    String name = ent.getOwner() != null ? ent.getOwner().getName() : "UNNAMED";
+                    systemEvent("Removed " + ent.getDisplayName() + " from player " + name + ".");
+                }
             }
 
             @Override
             public void gameEntityChange(GameEntityChangeEvent e) {
-                final Entity ent = e.getEntity();
-                systemEvent(e.toString());
+                if ((e != null) && (e.getEntity() != null)) {
+                    systemEvent(e.getEntity().toString());
+                }
             }
 
             @Override
             public void gameNewAction(GameNewActionEvent e) {
-                final Entity ent = client.getEntity(e.getAction().getEntityId());
-                systemEvent( ent.getDisplayName() + " from player " + ent.getOwner().getName() + " is doing " + e.getAction().toString() + ".");
+                if ((e != null) && (e.getAction() != null)) {
+                    final Entity ent = client.getEntity(e.getAction().getEntityId());
+                    if (ent != null) {
+                        String name = ent.getOwner() != null 
+                                    ? ent.getOwner().getName() 
+                                    : "UNNAMED";
+                        systemEvent(ent.getDisplayName() + " from player " + name + " is doing " + e.getAction().toString() + ".");
+                    }
+                }
             }
 
             @Override
@@ -125,7 +145,9 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     }
 
     private void systemEvent(String s) {
-        chatArea.append(s + "\n");
+        if (s != null) {
+            chatArea.append(s + "\n");
+        }
     }
 
     /**

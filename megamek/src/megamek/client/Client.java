@@ -53,6 +53,8 @@ import megamek.client.commands.RulerCommand;
 import megamek.client.commands.ShowEntityCommand;
 import megamek.client.commands.ShowTileCommand;
 import megamek.client.commands.SitrepCommand;
+import megamek.client.generator.RandomSkillsGenerator;
+import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
@@ -108,6 +110,7 @@ import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
 
@@ -470,8 +473,7 @@ public class Client implements IClientCommandHandler {
         case PHASE_DEPLOYMENT:
             // free some memory thats only needed in lounge
             MechFileParser.dispose();
-            // We must do this last, as the name and unit generators can
-            // create
+            // We must do this last, as the name and unit generators can create
             // a new instance if they are running
             MechSummaryCache.dispose();
             memDump("entering deployment phase"); //$NON-NLS-1$
@@ -499,7 +501,6 @@ public class Client implements IClientCommandHandler {
                 e.printStackTrace();
             }
             UnitRoleHandler.initialize();
-            RandomNameGenerator.getInstance();
             MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
             if (MechSummaryCache.getInstance().isInitialized()) {
                 RandomUnitGenerator.getInstance();
@@ -911,9 +912,9 @@ public class Client implements IClientCommandHandler {
      */
     public void sendLoadGame(File f) {
         try (InputStream is = new GZIPInputStream(new FileInputStream(f))) {
-            XStream xstream = new XStream();
-
             game.reset();
+            
+            XStream xstream = SerializationHelper.getXStream();            
             IGame newGame = (IGame) xstream.fromXML(is);
 
             send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { newGame }));
@@ -1699,10 +1700,6 @@ public class Client implements IClientCommandHandler {
 
     public RandomSkillsGenerator getRandomSkillsGenerator() {
         return rsg;
-    }
-
-    public RandomNameGenerator getRandomNameGenerator() {
-        return RandomNameGenerator.getInstance();
     }
 
     public Set<BoardDimensions> getAvailableMapSizes() {

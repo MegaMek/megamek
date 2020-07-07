@@ -1,0 +1,88 @@
+# ----------------------------------------------------
+# --------------- SirMegaV Custom  -------------------
+# --------------- Spaceport System Set ---------------
+# ----------------------------------------------------
+
+# Landing Pads
+
+# fluff:40:1-6 are VTOL landing pads 
+# fluff:41:1-6 are medical landing pads
+# fluff:42:1-12 are Aero landing pads
+# fluff:43:1-6 are multihex dropship landing pads
+
+# Spaceport System Set
+# SMV_Landing Pad - VTOL 
+
+super * "fluff:40:1" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-01-VTOL-1-01.gif"
+super * "fluff:40:2" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-01-VTOL-1-02.gif"
+super * "fluff:40:3" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-01-VTOL-1-03.gif"
+
+super * "fluff:40:4" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-01-VTOL-2-01.gif"
+super * "fluff:40:5" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-01-VTOL-2-02.gif"
+super * "fluff:40:6" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-01-VTOL-2-03.gif"
+
+# Spaceport System Set
+# SMV_Landing Pad - Medic 
+
+super * "fluff:41:1" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-02-Medic-1-01.gif"
+super * "fluff:41:2" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-02-Medic-1-02.gif"
+super * "fluff:41:3" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-02-Medic-1-03.gif"
+
+super * "fluff:41:4" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-02-Medic-2-01.gif"
+super * "fluff:41:5" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-02-Medic-2-02.gif"
+super * "fluff:41:6" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-02-Medic-2-03.gif"
+
+# Spaceport System Set
+# SMV_Landing Pad - Aero 
+
+super * "fluff:42:1" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-1-01.gif"
+super * "fluff:42:2" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-1-02.gif"
+super * "fluff:42:3" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-1-03.gif"
+                
+super * "fluff:42:4" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-2-01.gif"
+super * "fluff:42:5" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-2-02.gif"
+super * "fluff:42:6" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-2-03.gif"
+                
+super * "fluff:42:7" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-3-01.gif"
+super * "fluff:42:8" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-3-02.gif"
+super * "fluff:42:9" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-3-03.gif"
+               
+super * "fluff:42:10" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-4-01.gif"
+super * "fluff:42:11" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-4-02.gif"
+super * "fluff:42:12" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-03-Aero-4-03.gif"
+
+# Spaceport System Set
+# SMV_Landing Pad - Dropship
+
+super * "fluff:43:1" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-1-01.gif"
+super * "fluff:43:2" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-1-02.gif"
+super * "fluff:43:3" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-1-03.gif"
+super * "fluff:43:4" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-1-04.gif"
+super * "fluff:43:5" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-1-05.gif"
+super * "fluff:43:6" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-1-06.gif"
+super * "fluff:43:7" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-1-07.gif"
+               
+super * "fluff:43:8" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-2-01.gif"
+super * "fluff:43:9" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-2-02.gif"
+super * "fluff:43:10" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-2-03.gif"
+super * "fluff:43:11" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-2-04.gif"
+super * "fluff:43:12" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-2-05.gif"
+super * "fluff:43:13" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-2-06.gif"
+super * "fluff:43:14" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-2-07.gif"
+               
+super * "fluff:43:15" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-3-01.gif"
+super * "fluff:43:16" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-3-02.gif"
+super * "fluff:43:17" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-3-03.gif"
+super * "fluff:43:18" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-3-04.gif"
+super * "fluff:43:19" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-3-05.gif"
+super * "fluff:43:20" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-3-06.gif"
+super * "fluff:43:21" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-3-07.gif"
+               
+super * "fluff:43:22" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-4-01.gif"
+super * "fluff:43:23" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-4-02.gif"
+super * "fluff:43:24" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-4-03.gif"
+super * "fluff:43:25" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-4-04.gif"
+super * "fluff:43:26" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-4-05.gif"
+super * "fluff:43:27" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-4-06.gif"
+super * "fluff:43:28" "" "saxarba/SMV_LandingPads/SpaceportSystem-01-LandingPad-04-Dropship-4-07.gif"
+

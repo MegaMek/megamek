@@ -29,10 +29,14 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import megamek.common.MovePath.MoveStepType;
+import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.Princess;
 import megamek.common.annotations.Nullable;
+import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
+import megamek.common.pathfinder.CachedEntityState;
+import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
 
@@ -44,6 +48,7 @@ public class MovePath implements Cloneable, Serializable {
 
     private Set<Coords> coordsSet = null;
     private final transient Object COORD_SET_LOCK = new Object();
+    private transient CachedEntityState cachedEntityState;
 
     public IGame getGame() {
         return game;
@@ -55,6 +60,7 @@ public class MovePath implements Cloneable, Serializable {
 
     public void setEntity(Entity entity) {
         this.entity = entity;
+        cachedEntityState = new CachedEntityState(entity);
     }
 
     public enum MoveStepType {
@@ -120,6 +126,10 @@ public class MovePath implements Cloneable, Serializable {
 
     public Entity getEntity() {
         return entity;
+    }
+    
+    public CachedEntityState getCachedEntityState() {
+        return cachedEntityState;
     }
 
     public Key getKey() {
@@ -223,7 +233,7 @@ public class MovePath implements Cloneable, Serializable {
                 || (getEntity().isUsingManAce()
                     && ((getEntity() instanceof BipedMech)
                         || ((getEntity() instanceof VTOL)
-                        && (getMpUsed() <= getEntity().getWalkMP()))))
+                        && (getMpUsed() <= getCachedEntityState().getWalkMP()))))
                 || (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)
                         && getEntity() instanceof Tank
                         && (getEntity().getMovementMode() == EntityMovementMode.VTOL
@@ -297,7 +307,7 @@ public class MovePath implements Cloneable, Serializable {
 
         if (compile) {
             try {
-                step.compile(getGame(), getEntity(), prev);
+                step.compile(getGame(), getEntity(), prev, getCachedEntityState());
             } catch (final RuntimeException re) {
                 // // N.B. the pathfinding will try steps off the map.
                 // re.printStackTrace();
@@ -407,7 +417,7 @@ public class MovePath implements Cloneable, Serializable {
         // unless using controlled sideslip
         if (containsLateralShift() && getEntity().isUsingManAce()
                 && (getEntity() instanceof VTOL)
-                && getMpUsed() > getEntity().getWalkMP()
+                && getMpUsed() > getCachedEntityState().getWalkMP()
                 && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
@@ -1109,30 +1119,14 @@ public class MovePath implements Cloneable, Serializable {
      * Returns true if the entity is jumping or if it's a flying lam.
      */
     public boolean isJumping() {
-        if (steps.size() > 0) {
-            boolean jump = false;
-            for (MoveStep step : steps) {
-                if (step.getType() == MovePath.MoveStepType.START_JUMP) {
-                    jump = true;
-                }
-            }
-            return jump;
-        }
-        return false;
+        return contains(MoveStepType.START_JUMP);
     }
     
     /**
      * @return true if the entity is a QuadVee or LAM changing movement mode
      */
     public boolean isChangingMode() {
-        if (steps.size() > 0) {
-            for (MoveStep step : steps) {
-                if (step.getType() == MovePath.MoveStepType.CONVERT_MODE) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return contains(MoveStepType.CONVERT_MODE);
     }
 
     /**
@@ -1193,7 +1187,7 @@ public class MovePath implements Cloneable, Serializable {
      * Extend the current path to the destination <code>Coords</code>.
      *
      * @param dest the destination <code>Coords</code> of the move.
-     * @param type the type of movment step required.
+     * @param type the type of movement step required.
      */
     public void findPathTo(final Coords dest, final MoveStepType type) {
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
@@ -1205,6 +1199,8 @@ public class MovePath implements Cloneable, Serializable {
 
         pf.run(this.clone());
         MovePath finPath = pf.getComputedPath(dest);
+        // this can be used for debugging the "destruction aware pathfinder"
+        //MovePath finPath = calculateDestructionAwarePath(dest);
 
         if (timeoutCondition.timeoutEngaged || finPath == null) {
             /*
@@ -1328,7 +1324,7 @@ public class MovePath implements Cloneable, Serializable {
                 final MovePath expandedPath = adjacent.next();
 
                 if (expandedPath.getLastStep().isMovementPossible(getGame(),
-                        startingPos, startingElev)) {
+                        startingPos, startingElev, getCachedEntityState())) {
 
                     if (discovered.containsKey(expandedPath.getKey())) {
                         continue;
@@ -1349,7 +1345,7 @@ public class MovePath implements Cloneable, Serializable {
                 MovePath expandedPath = candidatePath.clone();
                 expandedPath.addStep(type);
                 if (expandedPath.getLastStep().isMovementPossible(getGame(),
-                        startingPos, startingElev)) {
+                        startingPos, startingElev, getCachedEntityState())) {
 
                     if (discovered.containsKey(expandedPath.getKey())) {
                         continue;
@@ -1526,11 +1522,16 @@ public class MovePath implements Cloneable, Serializable {
     @Override
     public MovePath clone() {
         final MovePath copy = new MovePath(getGame(), getEntity());
+        copyFields(copy);
+        return copy;
+    }
+    
+    protected void copyFields(MovePath copy) {
         copy.steps = new Vector<MoveStep>(steps);
         copy.careful = careful;
         copy.containedStepTypes = new HashSet<>(containedStepTypes);
         copy.fliesOverEnemy = fliesOverEnemy;
-        return copy;
+        copy.cachedEntityState = cachedEntityState; // intentional pointer copy
     }
 
     /**
@@ -1832,5 +1833,28 @@ public class MovePath implements Cloneable, Serializable {
      */
     public boolean nextForwardStepOffBoard() {
         return !game.getBoard().contains(getFinalCoords().translated(getFinalFacing()));
+    }
+    
+    /**
+     * Debugging method that calculates a destruction-aware move path to the destination coordinates
+     */
+    @SuppressWarnings("unused")
+    public MovePath calculateDestructionAwarePath(Coords dest) {
+        // code that's useful to test the destruction-aware pathfinder
+        DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
+        // the destruction aware pathfinder takes either a CardinalEdge or an explicit set of coordinates
+        Set<Coords> destinationSet = new HashSet<Coords>();
+        destinationSet.add(dest);
+        
+        // debugging code that can be used to find a path to a specific edge
+        Princess princess = new Princess("test", "test", 2020, LogLevel.OFF);
+        //Set<Coords> destinationSet = princess.getClusterTracker().getDestinationCoords(entity, CardinalEdge.WEST, true);
+        
+        long marker1 = System.currentTimeMillis();
+        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, false, princess.getClusterTracker());
+        long marker2 = System.currentTimeMillis();
+        long marker3 = marker2 - marker1;
+        
+        return finPath;
     }
 }

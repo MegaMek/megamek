@@ -413,6 +413,12 @@ public class WeaponFireInfo {
             }
             return dmg;
         }
+        
+        // a little inaccurate, but better than ignoring cluster weapons entirely
+        if(weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+            return weaponType.getRackSize();
+        }
+                
         return weaponType.getDamage();
     }
     

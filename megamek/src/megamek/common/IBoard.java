@@ -587,4 +587,7 @@ public interface IBoard {
      * @param a A collection of annotations to assign to the hex. This may be null.
      */
     public abstract void setAnnotations(Coords c, @Nullable Collection<String> a);
+    
+    /** Sets a tileset theme for all hexes of the board. */ 
+    public void setTheme(String newTheme);
 }

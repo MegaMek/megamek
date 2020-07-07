@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
 
-import megamek.client.TimerSingleton;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.common.Aero;
@@ -64,7 +63,7 @@ import megamek.utils.RATGeneratorEditor;
 public class MegaMek {
     private static MMLogger logger = null;
 
-    public static String VERSION = "0.47.7-SNAPSHOT"; //$NON-NLS-1$
+    public static String VERSION = "0.47.8-SNAPSHOT";
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
             + File.separator + "timestamp").lastModified();
 

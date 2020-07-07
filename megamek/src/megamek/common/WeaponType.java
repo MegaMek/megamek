@@ -18,7 +18,7 @@ import java.math.BigInteger;
 
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
-import megamek.common.weapons.ArtilleryBayWeapon;
+import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.LegAttack;
 import megamek.common.weapons.SpaceBombAttack;
@@ -2254,15 +2254,15 @@ public class WeaponType extends EquipmentType {
     }
 
     @Override
-    public double getCost(Entity entity, boolean isArmored, int loc) {
+    public double getCost(Entity entity, boolean isArmored, int loc, double size) {
         if (isArmored) {
             double armoredCost = cost;
-            armoredCost += 150000 * getCriticals(entity);
+            armoredCost += 150000 * getCriticals(entity, size);
 
             return armoredCost;
         }
 
-        return super.getCost(entity, isArmored, loc);
+        return super.getCost(entity, isArmored, loc, size);
     }
 
     public boolean isSplitable() {

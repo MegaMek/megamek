@@ -580,59 +580,61 @@ public class Tank extends Entity {
 
         boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
+        boolean hexHasRoad =  hex.containsTerrain(Terrains.ROAD);
 
+        // roads allow movement through hexes that you normally couldn't go through
         switch (movementMode) {
             case TRACKED:
                 if (!isSuperHeavy()) {
-                    return (hex.terrainLevel(Terrains.WOODS) > 1)
+                    return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
                                     && !hasFlotationHull && !isAmphibious)
-                            || hex.containsTerrain(Terrains.JUNGLE)
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1)
                             || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                            || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+                            || ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
                 } else {
-                    return (hex.terrainLevel(Terrains.WOODS) > 1)
+                    return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
                                     && !hasFlotationHull && !isAmphibious)
-                            || hex.containsTerrain(Terrains.JUNGLE)
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
             case WHEELED:
                 if (!isSuperHeavy()) {
-                    return hex.containsTerrain(Terrains.WOODS)
-                            || hex.containsTerrain(Terrains.ROUGH)
+                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad)
+                            || (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
                                     && !hasFlotationHull && !isAmphibious)
-                            || hex.containsTerrain(Terrains.RUBBLE)
+                            || (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad)
                             || hex.containsTerrain(Terrains.MAGMA)
-                            || hex.containsTerrain(Terrains.JUNGLE)
-                            || (hex.terrainLevel(Terrains.SNOW) > 1)
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
+                            || ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.GEYSER) == 2);
                 } else {
-                    return hex.containsTerrain(Terrains.WOODS)
-                            || hex.containsTerrain(Terrains.ROUGH)
+                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad)
+                            || (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
                                     && !hasFlotationHull && !isAmphibious)
-                            || hex.containsTerrain(Terrains.RUBBLE)
+                            || (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad)
                             || hex.containsTerrain(Terrains.MAGMA)
-                            || hex.containsTerrain(Terrains.JUNGLE)
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.GEYSER) == 2);
                 }
             case HOVER:
                 if (!isSuperHeavy()) {
-                    return hex.containsTerrain(Terrains.WOODS)
-                            || hex.containsTerrain(Terrains.JUNGLE)
+                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad)
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                            || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                            || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+                            || ((hex.terrainLevel(Terrains.ROUGH) > 1) && !hexHasRoad)
+                            || ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !hexHasRoad);
                 } else {
-                    return hex.containsTerrain(Terrains.WOODS)
-                            || hex.containsTerrain(Terrains.JUNGLE)
+                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad)
+                            || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
 
@@ -1405,7 +1407,7 @@ public class Tank extends Entity {
                 MiscType mtype = (MiscType) etype;
                 double bv = mtype.getBV(this, mounted.getLocation());
                 bvText.append(startColumn);
-                bvText.append(etype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(bv);
@@ -1918,7 +1920,7 @@ public class Tank extends Entity {
                 bv = 7;
             }
             oEquipmentBV += bv;
-            bvText.append(mtype.getName());
+            bvText.append(mounted.getName());
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append(bv);
@@ -2290,7 +2292,7 @@ public class Tank extends Entity {
 
     @Override
     public int getHeatCapacity(boolean radicalHeatSinks) {
-        return 999;
+        return DOES_NOT_TRACK_HEAT;
     }
 
     @Override
@@ -3960,9 +3962,8 @@ public class Tank extends Entity {
                 specialAbilities.merge(BattleForceSPA.MDS, 1, Integer::sum);
             } else if (m.getType().hasFlag(MiscType.F_MINESWEEPER)) {
                 specialAbilities.put(BattleForceSPA.MSW, null);
-            } else if (m.getType().hasFlag(MiscType.F_MASH)
-                    || m.getType().hasFlag(MiscType.F_MASH_EXTRA)) { 
-                specialAbilities.merge(BattleForceSPA.MASH, 1, Integer::sum);
+            } else if (m.getType().hasFlag(MiscType.F_MASH)) {
+                specialAbilities.merge(BattleForceSPA.MASH, (int) m.getSize(), Integer::sum);
             } else if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
                 specialAbilities.put(BattleForceSPA.MFB, null);
             } else if (m.getType().hasFlag(MiscType.F_COMMAND_CONSOLE)) {

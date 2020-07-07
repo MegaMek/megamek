@@ -19,11 +19,14 @@
 package megamek.client.ui.swing.dialog;
 
 import megamek.client.Client;
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.UnitFailureDialog;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.common.*;
+import megamek.common.enums.Gender;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -133,9 +136,9 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
                 }
             }
             if (cs.generateNames()) {
-                boolean isFemale = clientGUI.getClient().getRandomNameGenerator().isFemale();
-                e.getCrew().setGender(isFemale, i);
-                e.getCrew().setName(clientGUI.getClient().getRandomNameGenerator().generate(isFemale), i);
+                Gender gender = RandomGenderGenerator.generate();
+                e.getCrew().setGender(gender, i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender), i);
             }
         }
         e.getCrew().sortRandomSkills();

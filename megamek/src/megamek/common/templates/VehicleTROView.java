@@ -131,17 +131,17 @@ public class VehicleTROView extends TROView {
     private void addArmorAndStructure() {
         if (tank.hasETypeFlag(Entity.ETYPE_SUPER_HEAVY_TANK)) {
             setModelData("structureValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOInternal(loc), SH_TANK_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOInternal, SH_TANK_ARMOR_LOCS));
             setModelData("armorValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOArmor(loc), SH_TANK_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOArmor, SH_TANK_ARMOR_LOCS));
             if (tank.hasPatchworkArmor()) {
                 setModelData("patchworkByLoc", addPatchworkATs(tank, SH_TANK_ARMOR_LOCS));
             }
         } else {
             setModelData("structureValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOInternal(loc), TANK_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOInternal, TANK_ARMOR_LOCS));
             setModelData("armorValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOArmor(loc), TANK_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOArmor, TANK_ARMOR_LOCS));
             if (tank.hasPatchworkArmor()) {
                 setModelData("patchworkByLoc", addPatchworkATs(tank, TANK_ARMOR_LOCS));
             }

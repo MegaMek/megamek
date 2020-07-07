@@ -80,7 +80,7 @@ public class InfantryTROView extends TROView {
         if (notes.isEmpty()) {
             setModelData("notes", Messages.getString("TROView.None"));
         } else {
-            setModelData("notes", notes.stream().collect(Collectors.joining(" ")));
+            setModelData("notes", String.join(" ", notes));
         }
 
         switch (inf.getMovementMode()) {
@@ -226,10 +226,8 @@ public class InfantryTROView extends TROView {
         }
         if (!options.isEmpty()) {
             notes.add(Messages.getString("TROView.InfantryNote.Augmented"));
-            options.forEach(o -> {
-                notes.add(o.getDisplayableName().replaceAll("\\s+\\(Not Implemn?ented\\)", "") + ": "
-                        + o.getDescription().replaceAll("See IO.*", ""));
-            });
+            options.forEach(o -> notes.add(o.getDisplayableName().replaceAll("\\s+\\(Not Implemented\\)", "") + ": "
+                    + o.getDescription().replaceAll("See IO.*", "")));
         }
     }
 }

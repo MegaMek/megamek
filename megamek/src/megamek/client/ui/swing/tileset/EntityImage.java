@@ -24,6 +24,7 @@ import java.io.File;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
+import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.ImageUtil;
 
 /** Handles the rotated and damaged and preview images for a unit. */
@@ -34,17 +35,17 @@ public class EntityImage {
     private static final int SMOKE_TWO = 40;
     
     // Damage decal images
-    private static final File FILENAME_DAMAGEDECAL_LIGHT = new File("units/DamageDecals", "DmgLight.png"); //$NON-NLS-1$
-    private static final File FILENAME_DAMAGEDECAL_MODERATE = new File("units/DamageDecals", "DmgModerate.png"); //$NON-NLS-1$
-    private static final File FILENAME_DAMAGEDECAL_HEAVY = new File("units/DamageDecals", "DmgHeavy.png"); //$NON-NLS-1$
-    private static final File FILENAME_DAMAGEDECAL_CRIPPLED = new File("units/DamageDecals", "DmgCrippled.png"); //$NON-NLS-1$
-    private static final File FILE_SMOKE_SML = new File("units/DamageDecals", "Smoke1.png"); //$NON-NLS-1$
-    private static final File FILE_SMOKE_MED = new File("units/DamageDecals", "Smoke2.png"); //$NON-NLS-1$
-    private static final File FILE_SMOKE_LRG = new File("units/DamageDecals", "Smoke3.png"); //$NON-NLS-1$
-    private static final File FILE_SMOKEFIRE_SML = new File("units/DamageDecals", "SmokeFire1.png"); //$NON-NLS-1$
-    private static final File FILE_SMOKEFIRE_MED = new File("units/DamageDecals", "SmokeFire2.png"); //$NON-NLS-1$
-    private static final File FILE_SMOKEFIRE_LRG = new File("units/DamageDecals", "SmokeFire3.png"); //$NON-NLS-1$
-    private static final File FILE_DAMAGEDECAL_EMPTY = new File("units/DamageDecals", "Transparent.png"); //$NON-NLS-1$
+    private static final File FILENAME_DAMAGEDECAL_LIGHT = new File("units/DamageDecals", "DmgLight.png"); 
+    private static final File FILENAME_DAMAGEDECAL_MODERATE = new File("units/DamageDecals", "DmgModerate.png"); 
+    private static final File FILENAME_DAMAGEDECAL_HEAVY = new File("units/DamageDecals", "DmgHeavy.png"); 
+    private static final File FILENAME_DAMAGEDECAL_CRIPPLED = new File("units/DamageDecals", "DmgCrippled.png");
+    private static final File FILE_SMOKE_SML = new File("units/DamageDecals", "Smoke1.png"); 
+    private static final File FILE_SMOKE_MED = new File("units/DamageDecals", "Smoke2.png"); 
+    private static final File FILE_SMOKE_LRG = new File("units/DamageDecals", "Smoke3.png"); 
+    private static final File FILE_SMOKEFIRE_SML = new File("units/DamageDecals", "SmokeFire1.png"); 
+    private static final File FILE_SMOKEFIRE_MED = new File("units/DamageDecals", "SmokeFire2.png"); 
+    private static final File FILE_SMOKEFIRE_LRG = new File("units/DamageDecals", "SmokeFire3.png"); 
+    private static final File FILE_DAMAGEDECAL_EMPTY = new File("units/DamageDecals", "Transparent.png"); 
     
     private static Image dmgLight;
     private static Image dmgModerate;
@@ -215,9 +216,10 @@ public class EntityImage {
                 grabImagePixels(camo, pCamo);
             }
         } catch (Exception e) {
-            System.err.println("TilesetManager.EntityImage: " //$NON-NLS-1$
-                    + "Failed to grab pixels for image. " //$NON-NLS-1$
-                    + e.getMessage());
+            DefaultMmLogger.getInstance().error(
+                    getClass(), 
+                    "applyColor()", 
+                    "Failed to grab pixels for an image to apply the camo." + e.getMessage());
             return image;
         }
 
@@ -277,9 +279,10 @@ public class EntityImage {
             grabImagePixels(image, pUnit);
             grabImagePixels(dmgDecal, pDmgD);
         } catch (Exception e) {
-            System.err.println("TilesetManager.EntityImage: " //$NON-NLS-1$
-                    + "Failed to grab pixels for image. " //$NON-NLS-1$
-                    + e.getMessage());
+            DefaultMmLogger.getInstance().error(
+                    getClass(), 
+                    "applyDamageDecal()", 
+                    "Failed to grab pixels for an image to apply the decal. " + e.getMessage());
             return image;
         }
 
@@ -323,8 +326,10 @@ public class EntityImage {
         // Get the smoke image for heavier damage; is transparent for lighter damage
         Image smokeImg = chooseSmokeOverlay();
         if (smokeImg == null) {
-            System.err.println("TilesetManager.EntityImage: " //$NON-NLS-1$
-                    + "Smoke decal image is null."); //$NON-NLS-1$
+            DefaultMmLogger.getInstance().error(
+                    getClass(), 
+                    "applyDamageSmoke()", 
+                    "Smoke decal image is null.");
             return image;
         }
         

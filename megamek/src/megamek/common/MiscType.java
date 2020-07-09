@@ -452,9 +452,9 @@ public class MiscType extends EquipmentType {
             } else if (shortName) {
                 return String.format(":%.1ft", size);
             } else {
-                    return String.format(" (%d %s)", (int) size, size > 1 ?
-                            Messages.getString("MiscType.tons") :
-                            Messages.getString("MiscType.ton"));
+                return String.format(" (%.1f %s)", size, size == 1 ?
+                        Messages.getString("MiscType.ton") :
+                        Messages.getString("MiscType.tons"));
             }
         }
         return "";

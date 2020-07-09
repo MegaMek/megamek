@@ -29,8 +29,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import megamek.common.MovePath.MoveStepType;
+import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.Princess;
 import megamek.common.annotations.Nullable;
+import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.CachedEntityState;
@@ -1185,7 +1187,7 @@ public class MovePath implements Cloneable, Serializable {
      * Extend the current path to the destination <code>Coords</code>.
      *
      * @param dest the destination <code>Coords</code> of the move.
-     * @param type the type of movment step required.
+     * @param type the type of movement step required.
      */
     public void findPathTo(final Coords dest, final MoveStepType type) {
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
@@ -1197,16 +1199,8 @@ public class MovePath implements Cloneable, Serializable {
 
         pf.run(this.clone());
         MovePath finPath = pf.getComputedPath(dest);
-        // code that's useful to test the destruction-aware pathfinder
-        // remove when code review and testing complete
-        /*DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
-        Set<Coords> destinationSet = new HashSet<Coords>();
-        destinationSet.add(dest);
-        
-        long marker1 = System.currentTimeMillis();
-        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, true);
-        long marker2 = System.currentTimeMillis();
-        long marker3 = marker2 - marker1;*/
+        // this can be used for debugging the "destruction aware pathfinder"
+        //MovePath finPath = calculateDestructionAwarePath(dest);
 
         if (timeoutCondition.timeoutEngaged || finPath == null) {
             /*
@@ -1839,5 +1833,28 @@ public class MovePath implements Cloneable, Serializable {
      */
     public boolean nextForwardStepOffBoard() {
         return !game.getBoard().contains(getFinalCoords().translated(getFinalFacing()));
+    }
+    
+    /**
+     * Debugging method that calculates a destruction-aware move path to the destination coordinates
+     */
+    @SuppressWarnings("unused")
+    public MovePath calculateDestructionAwarePath(Coords dest) {
+        // code that's useful to test the destruction-aware pathfinder
+        DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
+        // the destruction aware pathfinder takes either a CardinalEdge or an explicit set of coordinates
+        Set<Coords> destinationSet = new HashSet<Coords>();
+        destinationSet.add(dest);
+        
+        // debugging code that can be used to find a path to a specific edge
+        Princess princess = new Princess("test", "test", 2020, LogLevel.OFF);
+        //Set<Coords> destinationSet = princess.getClusterTracker().getDestinationCoords(entity, CardinalEdge.WEST, true);
+        
+        long marker1 = System.currentTimeMillis();
+        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, false, princess.getClusterTracker());
+        long marker2 = System.currentTimeMillis();
+        long marker3 = marker2 - marker1;
+        
+        return finPath;
     }
 }

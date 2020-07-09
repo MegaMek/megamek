@@ -145,12 +145,12 @@ public class SmallCraftDropshipTROView extends AeroTROView {
             { SmallCraft.LOC_RWING, SmallCraft.LOC_LWING }, { Aero.LOC_AFT } };
 
     private void addArmor() {
-        setModelData("armorValues", addArmorStructureEntries(aero, (en, loc) -> en.getOArmor(loc), SC_ARMOR_LOCS));
+        setModelData("armorValues", addArmorStructureEntries(aero, Entity::getOArmor, SC_ARMOR_LOCS));
     }
 
     @Override
     protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
-        String str = null;
+        String str;
         if (mounted.getLocation() == Aero.LOC_RWING) {
             str = "TROView.RS";
         } else if (mounted.getLocation() == Aero.LOC_LWING) {

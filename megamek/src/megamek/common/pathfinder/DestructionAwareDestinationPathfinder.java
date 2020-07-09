@@ -27,10 +27,15 @@ import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
+import megamek.common.IHex;
+import megamek.common.MiscType;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStep;
 import megamek.common.PlanetaryConditions;
+import megamek.common.Terrains;
 
 /**
  * Handles the generation of ground-based move paths that contain information relating to the destruction 
@@ -46,8 +51,8 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * Ignores move cost and makes note of hexes that need to be cleared for the path to
      * be viable.
      */
-    public BulldozerMovePath findPathToCoords(Entity entity, Set<Coords> destinationCoords) {
-        return findPathToCoords(entity, destinationCoords, false);
+    public BulldozerMovePath findPathToCoords(Entity entity, Set<Coords> destinationCoords, BoardClusterTracker clusterTracker) {
+        return findPathToCoords(entity, destinationCoords, false, clusterTracker);
     }
     
     /**
@@ -55,7 +60,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * Ignores move cost and makes note of hexes that need to be cleared for the path to
      * be viable.
      */
-    public BulldozerMovePath findPathToCoords(Entity entity, Set<Coords> destinationCoords, boolean jump) {
+    public BulldozerMovePath findPathToCoords(Entity entity, Set<Coords> destinationCoords, boolean jump, BoardClusterTracker clusterTracker) {
         BulldozerMovePath startPath = new BulldozerMovePath(entity.getGame(), entity);
         
         // if we're calculating a jump path and the entity has jump mp and can jump, start off with a jump
@@ -79,6 +84,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         // if we're on the ground, let's try to get up first before moving 
         if(entity.isProne() || entity.isHullDown()) {
             startPath.addStep(MoveStepType.GET_UP);
+            
+            // if we can't even get up, no need to do anything else
+            if(!startPath.isMoveLegal()) {
+                return null;
+            }
         }
 
         Coords closest = getClosestCoords(destinationCoords, entity);
@@ -101,10 +111,10 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         while(!candidates.isEmpty()) {
             BulldozerMovePath currentPath = candidates.pollFirst();
             
-            candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords));
+            candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords, clusterTracker, closest));      
             
             if(destinationCoords.contains(currentPath.getFinalCoords()) &&
-                    (bestPath == null || movePathComparator.compare(bestPath, currentPath) < 0)) {
+                    ((bestPath == null) || (movePathComparator.compare(bestPath, currentPath) > 0))) {
                 bestPath = currentPath;
                 maximumCost = bestPath.getMpUsed() + bestPath.getLevelingCost();
             }
@@ -148,7 +158,8 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * @param visitedCoords Set of visited coordinates so we don't loop around
      * @return List of valid children. Between 0 and 3 inclusive.
      */
-    protected List<BulldozerMovePath> generateChildNodes(BulldozerMovePath parentPath, Map<Coords, BulldozerMovePath> shortestPathsToCoords) {
+    protected List<BulldozerMovePath> generateChildNodes(BulldozerMovePath parentPath, Map<Coords, BulldozerMovePath> shortestPathsToCoords,
+            BoardClusterTracker clusterTracker, Coords destinationCoords) {
         List<BulldozerMovePath> children = new ArrayList<>();
 
         // there are six possible children of a move path, defined in AeroPathUtil.TURNS
@@ -165,7 +176,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             
             // move forward and process the generated child path
             childPath.addStep(MoveStepType.FORWARDS);
-            processChild(childPath, children, shortestPathsToCoords);
+            processChild(childPath, children, shortestPathsToCoords, clusterTracker, destinationCoords);
         }
 
         return children;
@@ -176,7 +187,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * to the list of child paths.
      */
     protected void processChild(BulldozerMovePath child, List<BulldozerMovePath> children, 
-            Map<Coords, BulldozerMovePath> shortestPathsToCoords) {
+            Map<Coords, BulldozerMovePath> shortestPathsToCoords, BoardClusterTracker clusterTracker, Coords destinationCoords) {
         // (if we haven't visited these coordinates before
         // or we have, and this is a shorter path)
         // and (it is a legal move
@@ -197,11 +208,36 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
                 !mli.destinationHasWeakBridge &&
                 !mli.groundTankIntoWater;
         
+        // legal jump moves are simpler:
+        // can't go out of bounds, can't jump too high (unless we can destroy the obstacle)
+        boolean legalJumpMove = child.isJumping() &&
+                !mli.outOfBounds &&
+                (!mli.goingUpTooHigh || child.needsLeveling());
+        
+        // this is true if we're jumping down further down than our max jump MP
+        // or jumping down lower than our max elevation change
+        boolean irreversibleJumpDown = 
+                (child.isJumping() && (Math.abs(mli.elevationChange) > child.getCachedEntityState().getJumpMP())) ||
+                (child.getEntity().getMaxElevationDown() == Entity.UNLIMITED_JUMP_DOWN) && (Math.abs(mli.elevationChange) > child.getEntity().getMaxElevationChange());
+        
+        boolean destinationUseBridge = child.getGame().getBoard().getHex(destinationCoords).getTerrain(Terrains.BRIDGE) != null;
+        int destHexElevation = calculateUnitElevationInHex(child.getGame().getBoard().getHex(destinationCoords), 
+                child.getEntity(), child.getEntity().getMovementMode() == EntityMovementMode.HOVER, child.getCachedEntityState().isAmphibious(),
+                destinationUseBridge);
+        
+        // if we jumped into a hole and this results into us moving into a different cluster than the destination,
+        // that's not great and we should not consider the possibility for long range path finding.
+        if (irreversibleJumpDown && 
+                !clusterTracker.coordinatesShareCluster(child.getEntity(), child.getFinalCoords(), destinationCoords,
+                        mli.destHexElevation, destHexElevation)) {
+            return;
+        }
+        
         if((!shortestPathsToCoords.containsKey(child.getFinalCoords()) ||
                 // shorter path to these coordinates
                 (movePathComparator.compare(shortestPathsToCoords.get(child.getFinalCoords()), child) > 0)) &&
-                // legal or needs leveling and not off-board
-                (mli.isLegal() || canLevel) &&
+                // legal or needs leveling or jumping and not off-board
+                (mli.isLegal() || canLevel || legalJumpMove) &&
                 // better than existing path to ultimate destination
                 (child.getMpUsed() + child.getLevelingCost() < maximumCost)) {
             shortestPathsToCoords.put(child.getFinalCoords(), child);
@@ -230,14 +266,15 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
          * Favors paths that move closer to the destination edge first.
          * in case of tie, favors paths that cost less MP
          */
-        public int compare(BulldozerMovePath first, BulldozerMovePath second) {            
+        @Override
+        public int compare(BulldozerMovePath first, BulldozerMovePath second) {
             IBoard board = first.getGame().getBoard();
             boolean backwards = false;
             int h1 = first.getFinalCoords().distance(destination)
-                    + ShortestPathFinder.getLevelDiff(first, destination, board)
+                    + ShortestPathFinder.getLevelDiff(first, destination, board, false)
                     + ShortestPathFinder.getElevationDiff(first, destination, board, first.getEntity());
             int h2 = second.getFinalCoords().distance(destination)
-                    + ShortestPathFinder.getLevelDiff(second, destination, board)
+                    + ShortestPathFinder.getLevelDiff(second, destination, board, false)
                     + ShortestPathFinder.getElevationDiff(second, destination, board, second.getEntity());
     
             int dd = (first.getMpUsed() + first.getLevelingCost() + first.getAdditionalCost() + h1) 
@@ -246,15 +283,22 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             // getFacingDiff returns a number between 0 and 3 inclusive. 
             // if the value diff is larger than 3, then it won't make a difference and we skip calculating it
             if (Math.abs(dd) < 4) {
+                dd *= 10; // facing diff doesn't matter as much as the other stuff, only use it as a tie-breaker
                 dd += ShortestPathFinder.getFacingDiff(first, destination, backwards);
                 dd -= ShortestPathFinder.getFacingDiff(second, destination, backwards);
             }
     
+            // dd != 0 implies that the two paths are not identical
             if (dd != 0) {
                 return dd;
             } else {
-                return first.getHexesMoved() - second.getHexesMoved();
-            }           
+                int tieBreakerDiff = first.getHexesMoved() - second.getHexesMoved();
+                if (tieBreakerDiff == 0) {
+                    tieBreakerDiff = first.getMpUsed() - second.getMpUsed();
+                }
+                
+                return tieBreakerDiff;
+            }
         }
     }
 }

@@ -47,7 +47,7 @@ public class ConvFighter extends Aero {
 
     @Override
     public int getHeatCapacity() {
-        return 999;
+        return DOES_NOT_TRACK_HEAT;
     }
     
     @Override

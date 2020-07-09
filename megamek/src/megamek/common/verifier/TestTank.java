@@ -567,7 +567,7 @@ public class TestTank extends TestEntity {
         boolean correct = true;
 
         for (Mounted mount : tank.getMisc()) {
-            if (mount.getLocation() == Entity.LOC_NONE && !(mount.getType().getCriticals(tank) == 0)) {
+            if (mount.getLocation() == Entity.LOC_NONE && !(mount.getCriticals() == 0)) {
                 unallocated.add(mount);
             }
         }

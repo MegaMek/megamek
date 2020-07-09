@@ -582,6 +582,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return retVal;
     }
 
+    public int getCriticals() {
+        return getType().getCriticals(getEntity(), getSize());
+    }
+
     /**
      * @return The cost of the mounted equipment
      */

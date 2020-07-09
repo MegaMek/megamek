@@ -276,11 +276,11 @@ public class Warship extends Jumpship {
         int baydoors = 0;
         long bayCost = 0;
         long quartersCost = 0;
+        // Passenger and crew quarters and infantry bays are considered part of the structure
+        // and don't add to the cost
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if (next.isQuarters()) {
-                quartersCost += next.getCost();
-            } else {
+            if (next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }

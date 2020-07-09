@@ -17,7 +17,6 @@ package megamek.common.verifier;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.HashMap;
@@ -25,16 +24,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.parsers.ParserConfigurationException;
 
-import org.xml.sax.SAXException;
-
+import megamek.MegaMek;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
@@ -104,8 +100,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             InputStream is = new FileInputStream(config);
             ev = (EntityVerifier) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
         } catch (Exception e) {
-            System.err.println("Error loading XML for entity verifier: " + e.getMessage()); //$NON-NLS-1$
-            e.printStackTrace();
+            MegaMek.getLogger().error(EntityVerifier.class, "getInstance",
+                    "Error loading XML for entity verifier: " + e.getMessage(), e);
 
             ev = new EntityVerifier();
         }
@@ -126,7 +122,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             boolean verbose, int ammoTechLvl, boolean failsOnly) {
         final NumberFormat FMT = NumberFormat.getNumberInstance(Locale.getDefault());
         boolean retVal = false;
-        TestEntity testEntity = null;
+        TestEntity testEntity;
         if (entity instanceof Mech) {
             testEntity = new TestMech((Mech) entity, mechOption, fileString);
         } else if (entity instanceof Protomech) {
@@ -142,11 +138,11 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             testEntity = new TestAdvancedAerospace((Jumpship) entity, aeroOption, fileString);
         } else if (entity.hasETypeFlag(Entity.ETYPE_AERO)
                 && !entity.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
-            testEntity = new TestAero((Aero)entity, aeroOption, fileString);
-        } else if (entity instanceof BattleArmor){
+            testEntity = new TestAero((Aero) entity, aeroOption, fileString);
+        } else if (entity instanceof BattleArmor) {
             testEntity = new TestBattleArmor((BattleArmor) entity, baOption,
                     fileString);
-        } else if (entity instanceof Infantry){
+        } else if (entity instanceof Infantry) {
             testEntity = new TestInfantry((Infantry) entity, infOption,
                     fileString);
         } else {
@@ -158,7 +154,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         if (verbose) {
             StringBuffer buff = new StringBuffer();
             boolean valid = testEntity.correctEntity(buff, ammoTechLvl);
-            if (!valid || !failsOnly){
+            if (!valid || !failsOnly) {
                 if (valid) {
                     System.out.println("---Entity is valid---");
                 } else {
@@ -280,11 +276,11 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                     }
                     entityName = args[i];
                 }
-            } else if (args[i].equals("-v") || args[i].equals("-verbose")){
+            } else if (args[i].equals("-v") || args[i].equals("-verbose")) {
                 verbose = true;
-            } else if (args[i].equals("-valid")){
+            } else if (args[i].equals("-valid")) {
                 failsOnly = false;
-            } else if (args[i].equals("-unofficial")){
+            } else if (args[i].equals("-unofficial")) {
                 ignoreUnofficial = false;
             } else {
                 System.err.println("Error: Invalid argument.\n");
@@ -300,7 +296,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         }
 
         if (f != null) {
-            Entity entity = null;
+            Entity entity;
             try {
                 entity = new MechFileParser(f, entityName).getEntity();
             } catch (megamek.common.loaders.EntityLoadingException e) {

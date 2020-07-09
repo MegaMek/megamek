@@ -124,23 +124,23 @@ public class MegaMekXmlUtil {
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, String val) {
-		pw1.println(indentStr(indent) + "<" + name + ">" + escape(val) + "</" + name + ">");
+        pw1.println(indentStr(indent) + "<" + name + ">" + escape(val) + "</" + name + ">");
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, int val) {
-		pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, boolean val) {
-		pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, long val) {
-		pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, double val) {
-		pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
     public static void writeSimpleXMLOpenIndentedLine(PrintWriter pw1, int indent, String name) {

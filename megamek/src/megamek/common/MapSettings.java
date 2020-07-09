@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 
+import megamek.MegaMek;
 import org.xml.sax.SAXException;
 
 import megamek.common.util.BuildingTemplate;
@@ -362,8 +363,8 @@ public class MapSettings implements Serializable {
             Unmarshaller um = jc.createUnmarshaller();
             ms = (MapSettings) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
         } catch (Exception e) {
-            System.err.println("Error loading XML for map settings: " + e.getMessage()); //$NON-NLS-1$
-            e.printStackTrace();
+            MegaMek.getLogger().error(MapSettings.class, "getInstance",
+                    "Error loading XML for map settings: " + e.getMessage(), e);
         }
 
         return ms;

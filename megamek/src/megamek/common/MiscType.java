@@ -22,6 +22,7 @@
 package megamek.common;
 
 import java.math.BigInteger;
+import java.text.NumberFormat;
 
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
@@ -450,11 +451,12 @@ public class MiscType extends EquipmentType {
             } else if (hasFlag(MiscType.F_BA_MISSION_EQUIPMENT)) {
                 return String.format(" (%d kg)", (int) size);
             } else if (shortName) {
-                return String.format(":%.1ft", size);
+                // Don't show decimal when not required
+                return String.format(":%st", NumberFormat.getInstance().format(size));
             } else {
-                    return String.format(" (%d %s)", (int) size, size > 1 ?
-                            Messages.getString("MiscType.tons") :
-                            Messages.getString("MiscType.ton"));
+                return String.format(" (%s %s)", NumberFormat.getInstance().format(size), size == 1 ?
+                        Messages.getString("MiscType.ton") :
+                        Messages.getString("MiscType.tons"));
             }
         }
         return "";

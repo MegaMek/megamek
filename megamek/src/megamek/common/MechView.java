@@ -365,7 +365,7 @@ public class MechView {
                         .append(a.getHeatCapacity()).append("]"); //$NON-NLS-1$
             }
             if (a.getHeatSinkHits() > 0) {
-                hsString.append(" ").append(warningStart()).append(a.getHeatSinkHits())
+                hsString.append(warningStart()).append(" (").append(a.getHeatSinkHits())
                         .append(" damaged)").append(warningEnd());
             }
             sBasic.add(new LabeledElement(Messages.getString("MechView.HeatSinks"), hsString.toString())); //$NON-NLS-1$

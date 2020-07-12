@@ -122,17 +122,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             hexTileset.incDepth = 0;
             hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
         } catch (Exception FileNotFoundException) {
-            DefaultMmLogger.getInstance().error(
-                    getClass(), 
-                    "TilesetManager()", 
+            DefaultMmLogger.getInstance().error(getClass(), "TilesetManager()", 
                     "Error loading tileset " + PreferenceManager.getClientPreferences().getMapTileset() +
                     " Reverting to default hexset! ");
             if (new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile().exists()){
                 hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);
             } else {
-                DefaultMmLogger.getInstance().fatal(
-                        getClass(), 
-                        "TilesetManager()", 
+                DefaultMmLogger.getInstance().fatal(getClass(), "TilesetManager()", 
                         "Could not load default tileset " + FILENAME_DEFAULT_HEX_SET);
             }
         }
@@ -165,9 +161,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image iconFor(Entity entity) {
         EntityImage entityImage = getFromCache(entity, -1);
         if (entityImage == null) {
-            DefaultMmLogger.getInstance().error(
-                    getClass(), 
-                    "iconFor()", 
+            DefaultMmLogger.getInstance().error(getClass(), "iconFor()", 
                     "Unable to load icon for entity: " + entity.getShortNameRaw());
             Image generic = getGenericImage(entity, -1, mechTileset);
             return (generic != null) ? ImageUtil.getScaledImage(generic, 56, 48) : null;
@@ -179,9 +173,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image wreckMarkerFor(Entity entity, int secondaryPos) {
         EntityImage entityImage = getFromCache(entity, secondaryPos);
         if (entityImage == null) {
-            DefaultMmLogger.getInstance().error(
-                    getClass(), 
-                    "wreckMarkerFor()", 
+            DefaultMmLogger.getInstance().error(getClass(), "wreckMarkerFor()", 
                     "Unable to load wreck image for entity: " + entity.getShortNameRaw());
             return getGenericImage(entity, -1, wreckTileset);
         }
@@ -208,9 +200,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image imageFor(Entity entity, int facing, int secondaryPos) {
         EntityImage entityImage = getFromCache(entity, secondaryPos);
         if (entityImage == null) {
-            DefaultMmLogger.getInstance().error(
-                    getClass(), 
-                    "imageFor()", 
+            DefaultMmLogger.getInstance().error(getClass(), "imageFor()", 
                     "Unable to load image for entity: " + entity.getShortNameRaw());
             return getGenericImage(entity, -1, mechTileset);
         }
@@ -227,9 +217,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         
         // Image could be null, for example with double blind
         if (result == null) {
-            DefaultMmLogger.getInstance().info(
-                    getClass(), 
-                    "getFromCache()", 
+            DefaultMmLogger.getInstance().info(getClass(), "getFromCache()", 
                     "Loading image on the fly: " + entity.getShortNameRaw());
             loadImage(entity, secondaryPos);
             result = mechImages.get(temp);
@@ -401,9 +389,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         Image result = ImageUtil.loadImageFromFile(
                 new MegaMekFile(path, name).toString());
         if (result.getWidth(null) <= 0 || result.getHeight(null) <= 0) {
-            DefaultMmLogger.getInstance().error(
-                    TilesetManager.class, 
-                    "LoadImage()", 
+            DefaultMmLogger.getInstance().error(TilesetManager.class, "LoadImage()", 
                     "Error opening image: " + name);
         }
         return result;

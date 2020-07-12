@@ -42,9 +42,11 @@ public class EntityImage {
     private static final File FILE_SMOKE_SML = new File("units/DamageDecals", "Smoke1.png"); 
     private static final File FILE_SMOKE_MED = new File("units/DamageDecals", "Smoke2.png"); 
     private static final File FILE_SMOKE_LRG = new File("units/DamageDecals", "Smoke3.png"); 
+    private static final File FILE_SMOKE_MUL = new File("units/DamageDecals", "SmokeMulti.png");
     private static final File FILE_SMOKEFIRE_SML = new File("units/DamageDecals", "SmokeFire1.png"); 
     private static final File FILE_SMOKEFIRE_MED = new File("units/DamageDecals", "SmokeFire2.png"); 
     private static final File FILE_SMOKEFIRE_LRG = new File("units/DamageDecals", "SmokeFire3.png"); 
+    private static final File FILE_SMOKEFIRE_MUL = new File("units/DamageDecals", "SmokeFireMulti.png");
     private static final File FILE_DAMAGEDECAL_EMPTY = new File("units/DamageDecals", "Transparent.png"); 
     
     private static Image dmgLight;
@@ -54,11 +56,16 @@ public class EntityImage {
     private static Image SmokeSml;
     private static Image SmokeMed;
     private static Image SmokeLrg;
+    private static Image SmokeMul;
     private static Image SmokeFireSml;
     private static Image SmokeFireMed;
     private static Image SmokeFireLrg;
+    private static Image SmokeFireMul;
     private static Image dmgEmpty;
     private static boolean decalLoaded = false;
+    
+    private static final int[] X_POS = {0, 0, 63, 63, 0, -63, -63};
+    private static final int[] Y_POS = {0, -72, -36, 36, 72, 36, -36};
 
     // Individual entity images
     private Image base;
@@ -78,14 +85,16 @@ public class EntityImage {
     private double weight;
     /** True for units of class or subclass of Infantry. */
     private boolean isInfantry;
-    /** True when the image is for an additional hex of multi-hex units. */
-    private boolean isSecondaryPos;
     /** True when the image is for the lobby. */
     private boolean isPreview;
     /** True when the unit is likely to be more long than wide (e.g. tanks). */
     private boolean isSlim;
     /** True when the unit is likely to be very narrow (VTOL). */
     private boolean isVerySlim;
+    /** The position in multi-hex units. */
+    private int pos;
+    /** True for units that occupy one hex (all but some dropships). */
+    private boolean isSingleHex;
     
 
     private final int IMG_WIDTH = HexTileset.HEX_W;
@@ -111,10 +120,11 @@ public class EntityImage {
         this.dmgLevel = entity.getDamageLevel();
         this.weight = entity.getWeight();
         isInfantry = entity instanceof Infantry;
-        isSecondaryPos = secondaryPos != 0 && secondaryPos != -1;
         isPreview = preview;
         isSlim = entity instanceof Tank || entity instanceof Aero;
         isVerySlim = entity instanceof VTOL;
+        pos = secondaryPos;
+        isSingleHex = secondaryPos == -1;
     }
 
     public Image getCamo() {
@@ -137,19 +147,13 @@ public class EntityImage {
         // Save a small icon (without damage decals) for the unit overview
         icon = ImageUtil.getScaledImage(base,  56, 48);
         
-        // All hexes of a multi-hex unit get scars; also in the lobby
+        // Add damage scars and smoke/fire; not to Infantry
         if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
             base = applyDamageDecal(base);
-        }
-        
-        // Only the center hex in multi-hex units gets smoke,
-        // as the other hexes sometimes contain only small parts of the unit
-        // No smoke in the lobby
-        if (!isInfantry 
-                && !isSecondaryPos 
-                && !isPreview 
-                && GUIPreferences.getInstance().getShowDamageDecal()) {
-            base = applyDamageSmoke(base);
+            // No smoke in the lobby            
+            if (!isPreview) {
+                base = applyDamageSmoke(base);
+            }
         }
         
         // Generate rotated images for the unit and for a wreck
@@ -216,9 +220,7 @@ public class EntityImage {
                 grabImagePixels(camo, pCamo);
             }
         } catch (Exception e) {
-            DefaultMmLogger.getInstance().error(
-                    getClass(), 
-                    "applyColor()", 
+            DefaultMmLogger.getInstance().error(getClass(), "applyColor()", 
                     "Failed to grab pixels for an image to apply the camo." + e.getMessage());
             return image;
         }
@@ -279,9 +281,7 @@ public class EntityImage {
             grabImagePixels(image, pUnit);
             grabImagePixels(dmgDecal, pDmgD);
         } catch (Exception e) {
-            DefaultMmLogger.getInstance().error(
-                    getClass(), 
-                    "applyDamageDecal()", 
+            DefaultMmLogger.getInstance().error(getClass(), "applyDamageDecal()", 
                     "Failed to grab pixels for an image to apply the decal. " + e.getMessage());
             return image;
         }
@@ -292,7 +292,9 @@ public class EntityImage {
             int alp = (pUnit[i] >> 24) & 0xff;
             int alpD = (pDmgD[i] >> 24) & 0xff;
             
-            if (alp != 0 && alpD != 0) {
+            // Don't apply the decal over semi-transparent pixels
+            // as these are normally the drop shadow
+            if (alp > 220 && alpD != 0) {
                 int red = (pUnit[i] >> 16) & 0xff;
                 int grn = (pUnit[i] >> 8) & 0xff;
                 int blu = (pUnit[i]) & 0xff;
@@ -326,9 +328,7 @@ public class EntityImage {
         // Get the smoke image for heavier damage; is transparent for lighter damage
         Image smokeImg = chooseSmokeOverlay();
         if (smokeImg == null) {
-            DefaultMmLogger.getInstance().error(
-                    getClass(), 
-                    "applyDamageSmoke()", 
+            DefaultMmLogger.getInstance().error(getClass(), "applyDamageSmoke()", 
                     "Smoke decal image is null.");
             return image;
         }
@@ -336,11 +336,18 @@ public class EntityImage {
         // Overlay the smoke image
         Image result = ImageUtil.createAcceleratedImage(base);
         Graphics g = result.getGraphics();
-        g.drawImage(smokeImg, 0, 0, null);
-        
+        if (isSingleHex) {
+            g.drawImage(smokeImg, 0, 0, null);
+        } else {
+            // Draw the right section of the bigger smoke/fire image
+            int sx = smokeImg.getWidth(null) / 2 - 42 + X_POS[pos];
+            int sy = smokeImg.getHeight(null) / 2 - 36 + Y_POS[pos];
+            g.drawImage(smokeImg, 0, 0, 84, 72, sx, sy, sx + 84, sy + 72, null);
+        }
+
         return result;
     }
-    
+
     /** Inititates the PixelGrabber for the given image and int array. */
     private void grabImagePixels(Image img, int[] pixels) 
     throws InterruptedException, RuntimeException {
@@ -354,12 +361,21 @@ public class EntityImage {
     
     /** Returns the smoke overlay or a transparent image based on damage level and weight. */
     private Image chooseSmokeOverlay() {
+        // No smoke and fire for damage up to moderate
         if (dmgLevel == Entity.DMG_NONE 
                 || dmgLevel == Entity.DMG_LIGHT
                 || dmgLevel == Entity.DMG_MODERATE) {
             return dmgEmpty;
         }
         
+        // Multi-hex units get their own overlays
+        if (pos > -1) {
+            return dmgLevel == Entity.DMG_HEAVY ? SmokeMul : SmokeFireMul;
+        }
+        
+        // Three stacks of smoke and fire for wide and heavy units,
+        // two for slimmer and medium units and one for very slim
+        // and light units
         if (weight > SMOKE_THREE && !isSlim) {
             return dmgLevel == Entity.DMG_HEAVY ? SmokeLrg : SmokeFireLrg;
         } else if (weight > SMOKE_TWO && !isVerySlim) {
@@ -397,9 +413,11 @@ public class EntityImage {
         SmokeSml = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKE_SML.toString());
         SmokeMed = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKE_MED.toString());
         SmokeLrg = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKE_LRG.toString());
+        SmokeMul = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKE_MUL.toString());
         SmokeFireSml = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKEFIRE_SML.toString());
         SmokeFireMed = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKEFIRE_MED.toString());
         SmokeFireLrg = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKEFIRE_LRG.toString());
+        SmokeFireMul = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKEFIRE_MUL.toString());
         
         // A transparent image (helper)
         dmgEmpty = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_DAMAGEDECAL_EMPTY.toString());

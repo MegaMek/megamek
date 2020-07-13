@@ -1780,7 +1780,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return Messages.getString("WeaponAttackAction.NoDirectCruiseMissile");
                 }
                 // Direct fire artillery cannot be fired at less than 6 hexes
-                if (isArtilleryDirect && (Compute.effectiveDistance(game, ae, target) <= 6)) {
+                if (isArtilleryDirect && !target.isAirborne() && (Compute.effectiveDistance(game, ae, target) <= 6)) {
                     return Messages.getString("WeaponAttackAction.TooShortForDirectArty");
                 }
                 // ...or more than 17 hexes

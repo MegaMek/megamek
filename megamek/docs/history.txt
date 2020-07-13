@@ -9,6 +9,10 @@ VERSION HISTORY:
 + Issue #2039: Tripod mechs with an active pilot now properly get +1 to physical attack rolls
 + PR #2049: Fixed bot NPE when trying to generate paths around hostile units blocking a straight path to a long-range destination
 + PR #2050: Entities which sprinted no longer report as being able to spot since that's illegal anyway
++ PR #2058: Fixed missing paren for damaged aero heat sinks in aerospace unit "Mech View"
++ PR #2042: Remove incorrect minimum range penalty on direct fire artillery vs aerospace units
+		Enable Princess to use artillery in direct-fire mode (vs both ground and air units), including artillery cannons
++ PR #2060: Fix game freeze for bot-controlled ejected pilots and hot-dropped infantry on ground maps
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

@@ -18,9 +18,8 @@
  */
 package megamek.client.generators;
 
+import megamek.MegaMek;
 import megamek.common.Configuration;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.util.MegaMekFile;
 import megamek.common.util.WeightedMap;
 
@@ -34,21 +33,20 @@ import java.util.Scanner;
  * Callsign is a String that does not include a ','
  * Weight is an integer weight that is used during generation
  *
- *
  * Future Ideas:
  * Have it generate based on the role in question, so you could have unique
  * callsigns for MechWarriors, Aerospace Jocks, Administrators, Doctors, etc.
  */
 public class RandomCallsignGenerator implements Serializable {
     //region Variable Declarations
-    // Default File Name
+    private static final long serialVersionUID = 4721410214327210288L;
+
     private static final String CALLSIGN_FILE_NAME = "callsigns.csv";
 
     private static WeightedMap<String> callsigns;
 
     private static RandomCallsignGenerator rcg;
 
-    private static final MMLogger logger = DefaultMmLogger.getInstance();
     private static volatile boolean initialized = false; // volatile to ensure readers get the current version
     //endregion Variable Declarations
 
@@ -81,7 +79,7 @@ public class RandomCallsignGenerator implements Serializable {
         if (initialized) {
             callsign = callsigns.randomItem();
         } else {
-            logger.warning(getClass(), "generate",
+            MegaMek.getLogger().warning(getClass(), "generate",
                     "Attempted to generate a callsign before the list was initialized.");
         }
 
@@ -105,18 +103,22 @@ public class RandomCallsignGenerator implements Serializable {
         try (InputStream is = new FileInputStream(callsignFile);
              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
 
+            // skip the first line, as that's the header
+            lineNumber++;
+            input.nextLine();
+
             while (input.hasNextLine()) {
                 lineNumber++;
                 String[] values = input.nextLine().split(",");
                 if (values.length >= 2) {
                     callsigns.add(Integer.parseInt(values[1]), values[0]);
                 } else {
-                    logger.error(getClass(), "populateCallsigns",
+                    MegaMek.getLogger().error(getClass(), "populateCallsigns",
                             "Not enough fields in " + callsignFile.toString() + " on " + lineNumber);
                 }
             }
         } catch (Exception e) {
-            logger.error(getClass(), "populateCallsigns",
+            MegaMek.getLogger().error(getClass(), "populateCallsigns",
                     "Failed to populate callsigns.", e);
         }
 

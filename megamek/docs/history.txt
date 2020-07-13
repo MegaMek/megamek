@@ -12,6 +12,7 @@ VERSION HISTORY:
 + PR #2058: Fixed missing paren for damaged aero heat sinks in aerospace unit "Mech View"
 + PR #2042: Remove incorrect minimum range penalty on direct fire artillery vs aerospace units
 		Enable Princess to use artillery in direct-fire mode (vs both ground and air units), including artillery cannons
++ PR #2060: Fix game freeze for bot-controlled ejected pilots and hot-dropped infantry on ground maps
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

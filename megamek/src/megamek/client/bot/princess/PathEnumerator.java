@@ -248,16 +248,16 @@ public class PathEnumerator {
                 spf.run(new MovePath(game, mover));
                 paths.addAll(spf.getAllComputedPathsUncategorized());
             // this handles the case of the mover being an infantry unit of some kind, that's not airborne.
-            } else if(mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && !mover.isAirborne()) {
+            } else if (mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && !mover.isAirborne()) {
                 InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
                 ipf.run(new MovePath(game, mover));
                 paths.addAll(ipf.getAllComputedPathsUncategorized());
                 
                 // generate long-range paths appropriate to the bot's current state
                 updateLongRangePaths(mover);
-            // this handles situations wher a unit is high up in the air, but is not an aircraft
+            // this handles situations where a unit is high up in the air, but is not an aircraft
             // such as an ejected pilot or a unit hot dropping from a dropship, as these cannot move
-            } else if(!mover.isAero() && mover.isAirborne()) {
+            } else if (!mover.isAero() && mover.isAirborne()) {
                 paths.add(new MovePath(game, mover));
             } else { // Non-Aero movement
                 // TODO: Will this cause Princess to never use MASC?

@@ -247,7 +247,7 @@ public class PathEnumerator {
                 SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game);
                 spf.run(new MovePath(game, mover));
                 paths.addAll(spf.getAllComputedPathsUncategorized());
-            // this handles the case of the mover being an infantry unit of some kind, 
+            // this handles the case of the mover being an infantry unit of some kind, that's not airborne.
             } else if(mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && !mover.isAirborne()) {
                 InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
                 ipf.run(new MovePath(game, mover));

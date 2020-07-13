@@ -365,7 +365,7 @@ public class MechView {
                         .append(a.getHeatCapacity()).append("]"); //$NON-NLS-1$
             }
             if (a.getHeatSinkHits() > 0) {
-                hsString.append(" ").append(warningStart()).append(a.getHeatSinkHits())
+                hsString.append(warningStart()).append(" (").append(a.getHeatSinkHits())
                         .append(" damaged)").append(warningEnd());
             }
             sBasic.add(new LabeledElement(Messages.getString("MechView.HeatSinks"), hsString.toString())); //$NON-NLS-1$
@@ -941,24 +941,15 @@ public class MechView {
             String name = mounted.getName();
             if ((((mounted.getLocation() == Entity.LOC_NONE)
                         // Mechs can have zero-slot equipment in LOC_NONE that needs to be shown.
-                        && (!isMech || mounted.getType().getCriticals(entity) > 0)))
+                        && (!isMech || mounted.getCriticals() > 0)))
                     || name.contains("Jump Jet")
                     || (name.contains("CASE")
                         && !name.contains("II")
                         && entity.isClan())
                     || (name.contains("Heat Sink") 
                         && !name.contains("Radical"))
-                    || name.contains("Endo Steel")
-                    || name.contains("Ferro-Fibrous")
-                    || name.contains("Reactive")
-                    || name.contains("BA Stealth")
-                    || name.contains("BA Fire Resistant")
-                    || name.contains("BA Mimetic")
-                    || name.contains("BA Standard")
-                    || name.contains("BA Advanced")
-                    || name.contains("Reflective")
-                    || name.contains("Ferro-Lamellor")
-                    || name.contains("Standard")) {
+                    || EquipmentType.isArmorType(mounted.getType())
+                    || EquipmentType.isStructureType(mounted.getType())) {
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }

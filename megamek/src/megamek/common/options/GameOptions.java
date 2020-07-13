@@ -11,12 +11,10 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.common.options;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
@@ -31,10 +29,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
 
-import org.xml.sax.SAXException;
-
+import megamek.MegaMek;
 import megamek.common.TechConstants;
 import megamek.utils.MegaMekXmlUtil;
 
@@ -80,7 +76,8 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_BREEZE, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_AUTO_AMS, true); //$NON-NLS-1$
-        
+        addOption(base, OptionsConstants.BASE_TURN_TIMER, 0); //$NON-NLS-1$
+
         IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
         addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false); //$NON-NLS-1$
         addOption(victory, OptionsConstants.VICTORY_CHECK_VICTORY, true); //$NON-NLS-1$
@@ -326,7 +323,7 @@ public class GameOptions extends AbstractOptions {
     }
 
     public synchronized Vector<IOption> loadOptions(File file, boolean print) {
-        Vector<IOption> changedOptions = new Vector<IOption>(1, 1);
+        Vector<IOption> changedOptions = new Vector<>(1, 1);
 
         if (!file.exists()) {
             return changedOptions;
@@ -342,9 +339,9 @@ public class GameOptions extends AbstractOptions {
             for (IBasicOption bo : opts.getOptions()) {
                 changedOptions.add(parseOptionNode(bo, print));
             }
-        } catch (IOException | JAXBException | SAXException | ParserConfigurationException ex) {
-            System.err.println("Error loading XML for game options: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
+        } catch (Exception e) {
+            MegaMek.getLogger().error(getClass(), "loadOptions",
+                    "Error loading XML for game options: " + e.getMessage(), e);
         }
 
         return changedOptions;
@@ -396,9 +393,8 @@ public class GameOptions extends AbstractOptions {
                     }
                 }
             } else {
-                System.out.println("Invalid option '" + name
-                        + "' when trying to load options file.");
-                //$NON-NLS-1$ //$NON-NLS-2$
+                MegaMek.getLogger().warning(getClass(), "parseOptionNode",
+                        "Invalid option '" + name + "' when trying to load options file.");
             }
         }
 

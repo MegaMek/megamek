@@ -1,0 +1,230 @@
+# ----------------------------------------------------
+# --------------- SirMegaV Custom  -------------------
+# --------------- Faction Symbols and Red Cross ------
+# ----------------------------------------------------
+
+# Faction Symbols and the Red Cross
+# Should be included late so they draw on top of buildings
+
+# fluff:50:1-13 are Cappellan Confederation Faction Symbols
+# fluff:51:1-13 are Draconis Combine Faction Symbols
+# fluff:52:1-13 are Federated Suns Faction Symbols
+# fluff:53:1-13 are Free Worlds League Faction Symbols
+# fluff:54:1-13 are Lyran Commonwealth Faction Symbols
+# fluff:55:1-13 are Terran Hegemony Faction Symbols
+# fluff:56:1-13 are Magistracy of Canopus Faction Symbols
+# fluff:57:1-13 are Outworlds Alliance Faction Symbols
+# fluff:58:1-13 are Rimworlds Republic Faction Symbols
+# fluff:59:1-13 are Taurian Concordat Faction Symbols
+# fluff:60:1-13 are Star League/Star League Faction Symbols
+# fluff:61:1-13 are Star League/ComStar Faction Symbols
+# fluff:62:1-13 are Red Cross Symbols
+
+
+super * "fluff:50:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-01.png"
+super * "fluff:50:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-02.png"
+super * "fluff:50:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-03.png"
+               
+super * "fluff:50:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-04.png"
+super * "fluff:50:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-05.png"
+super * "fluff:50:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-06.png"
+               
+super * "fluff:50:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-07.png"
+super * "fluff:50:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-08.png"
+super * "fluff:50:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-09.png"
+super * "fluff:50:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-10.png"
+super * "fluff:50:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-11.png"
+super * "fluff:50:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-12.png"
+super * "fluff:50:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-1-CapellanCondederation-13.png"
+
+super * "fluff:51:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-01.png"
+super * "fluff:51:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-02.png"
+super * "fluff:51:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-03.png"
+                
+super * "fluff:51:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-04.png"
+super * "fluff:51:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-05.png"
+super * "fluff:51:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-06.png"
+                
+super * "fluff:51:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-07.png"
+super * "fluff:51:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-08.png"
+super * "fluff:51:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-09.png"
+super * "fluff:51:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-10.png"
+super * "fluff:51:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-11.png"
+super * "fluff:51:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-12.png"
+super * "fluff:51:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-2-DraconisCombine-13.png"
+
+super * "fluff:52:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-01.png"
+super * "fluff:52:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-02.png"
+super * "fluff:52:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-03.png"
+                
+super * "fluff:52:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-04.png"
+super * "fluff:52:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-05.png"
+super * "fluff:52:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-06.png"
+                
+super * "fluff:52:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-07.png"
+super * "fluff:52:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-08.png"
+super * "fluff:52:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-09.png"
+super * "fluff:52:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-10.png"
+super * "fluff:52:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-11.png"
+super * "fluff:52:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-12.png"
+super * "fluff:52:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-3-FederatedSuns-13.png"
+
+super * "fluff:53:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-01.png"
+super * "fluff:53:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-02.png"
+super * "fluff:53:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-03.png"
+                
+super * "fluff:53:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-04.png"
+super * "fluff:53:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-05.png"
+super * "fluff:53:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-06.png"
+                
+super * "fluff:53:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-07.png"
+super * "fluff:53:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-08.png"
+super * "fluff:53:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-09.png"
+super * "fluff:53:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-10.png"
+super * "fluff:53:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-11.png"
+super * "fluff:53:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-12.png"
+super * "fluff:53:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-4-FreeWorldsLeague-13.png"
+
+super * "fluff:54:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-01.png"
+super * "fluff:54:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-02.png"
+super * "fluff:54:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-03.png"
+                
+super * "fluff:54:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-04.png"
+super * "fluff:54:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-05.png"
+super * "fluff:54:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-06.png"
+                
+super * "fluff:54:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-07.png"
+super * "fluff:54:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-08.png"
+super * "fluff:54:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-09.png"
+super * "fluff:54:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-10.png"
+super * "fluff:54:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-11.png"
+super * "fluff:54:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-12.png"
+super * "fluff:54:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-5-LyranCommonwealth-13.png"
+
+super * "fluff:55:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-01.png"
+super * "fluff:55:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-02.png"
+super * "fluff:55:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-03.png"
+                
+super * "fluff:55:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-04.png"
+super * "fluff:55:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-05.png"
+super * "fluff:55:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-06.png"
+                
+super * "fluff:55:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-07.png"
+super * "fluff:55:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-08.png"
+super * "fluff:55:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-09.png"
+super * "fluff:55:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-10.png"
+super * "fluff:55:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-11.png"
+super * "fluff:55:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-12.png"
+super * "fluff:55:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-01-PreAgeofWarIS-6-TerranHegemony-13.png"
+
+super * "fluff:56:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-01.png"
+super * "fluff:56:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-02.png"
+super * "fluff:56:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-03.png"
+                
+super * "fluff:56:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-04.png"
+super * "fluff:56:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-05.png"
+super * "fluff:56:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-06.png"
+                
+super * "fluff:56:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-07.png"
+super * "fluff:56:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-08.png"
+super * "fluff:56:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-09.png"
+super * "fluff:56:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-10.png"
+super * "fluff:56:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-11.png"
+super * "fluff:56:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-12.png"
+super * "fluff:56:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-1-MagistracyofCanopus-13.png"
+
+super * "fluff:57:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-01.png"
+super * "fluff:57:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-02.png"
+super * "fluff:57:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-03.png"
+                
+super * "fluff:57:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-04.png"
+super * "fluff:57:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-05.png"
+super * "fluff:57:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-06.png"
+                
+super * "fluff:57:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-07.png"
+super * "fluff:57:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-08.png"
+super * "fluff:57:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-09.png"
+super * "fluff:57:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-10.png"
+super * "fluff:57:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-11.png"
+super * "fluff:57:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-12.png"
+super * "fluff:57:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-2-OutworldsAlliance-13.png"
+
+super * "fluff:58:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-01.png"
+super * "fluff:58:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-02.png"
+super * "fluff:58:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-03.png"
+                
+super * "fluff:58:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-04.png"
+super * "fluff:58:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-05.png"
+super * "fluff:58:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-06.png"
+                
+super * "fluff:58:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-07.png"
+super * "fluff:58:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-08.png"
+super * "fluff:58:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-09.png"
+super * "fluff:58:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-10.png"
+super * "fluff:58:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-11.png"
+super * "fluff:58:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-12.png"
+super * "fluff:58:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-3-RimWorldsRepublic-13.png"
+
+super * "fluff:59:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-01.png"
+super * "fluff:59:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-02.png"
+super * "fluff:59:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-03.png"
+                
+super * "fluff:59:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-04.png"
+super * "fluff:59:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-05.png"
+super * "fluff:59:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-06.png"
+                
+super * "fluff:59:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-07.png"
+super * "fluff:59:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-08.png"
+super * "fluff:59:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-09.png"
+super * "fluff:59:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-10.png"
+super * "fluff:59:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-11.png"
+super * "fluff:59:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-12.png"
+super * "fluff:59:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-02-PreAgeofWarPeriphery-4-TaurianConcordat-13.png"
+
+super * "fluff:60:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-01.png"
+super * "fluff:60:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-02.png"
+super * "fluff:60:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-03.png"
+               
+super * "fluff:60:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-04.png"
+super * "fluff:60:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-05.png"
+super * "fluff:60:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-06.png"
+               
+super * "fluff:60:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-07.png"
+super * "fluff:60:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-08.png"
+super * "fluff:60:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-09.png"
+super * "fluff:60:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-10.png"
+super * "fluff:60:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-11.png"
+super * "fluff:60:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-12.png"
+super * "fluff:60:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-1-StarLeague-13.png"
+
+super * "fluff:61:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-01.png"
+super * "fluff:61:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-02.png"
+super * "fluff:61:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-03.png"
+               
+super * "fluff:61:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-04.png"
+super * "fluff:61:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-05.png"
+super * "fluff:61:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-06.png"
+               
+super * "fluff:61:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-07.png"
+super * "fluff:61:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-08.png"
+super * "fluff:61:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-09.png"
+super * "fluff:61:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-10.png"
+super * "fluff:61:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-11.png"
+super * "fluff:61:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-12.png"
+super * "fluff:61:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-06-Faction-07-StarLeagueIS-2-ComStar-13.png"
+
+super * "fluff:62:1" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-01.png"
+super * "fluff:62:2" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-02.png"
+super * "fluff:62:3" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-03.png"
+                
+super * "fluff:62:4" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-04.png"
+super * "fluff:62:5" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-05.png"
+super * "fluff:62:6" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-06.png"
+                
+super * "fluff:62:7" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-07.png"
+super * "fluff:62:8" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-08.png"
+super * "fluff:62:9" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-09.png"
+super * "fluff:62:10" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-10.png"
+super * "fluff:62:11" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-11.png"
+super * "fluff:62:12" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-12.png"
+super * "fluff:62:13" "" "saxarba/SMV_GroundSymbols/FluffSystem-05-Symbol-01-RedCross-1-13.png"

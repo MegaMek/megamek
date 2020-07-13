@@ -99,6 +99,7 @@
 	 Juliez <juliez@users.sourceforge.net>
 	 Derrick Turk <derrickturk@users.sourceforge.net>
 	 Justin "Windchild" Bowen
+	 Graysho
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
@@ -221,6 +222,7 @@
   Camo Pack
   	 SeaVea
      Colonel Sanders Light (Folders noted with CSL)
+     Teerayne
 	 
   Splash Screen
  	 Florian "SpOoKy777" Mellies (https://www.deviantart.com/spooky777)

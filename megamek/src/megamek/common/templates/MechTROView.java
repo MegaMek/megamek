@@ -248,8 +248,12 @@ public class MechTROView extends TROView {
     @Override
     protected boolean skipMount(Mounted mount, boolean includeAmmo) {
         if (mount.getLocation() == Entity.LOC_NONE) {
-            return (mount.getType().getCriticals(mech) > 0)
-                    || mount.getType().hasFlag(MiscType.F_CASE);
+            // Skip heat sinks, Clan CASE, armor, and structure. We do want to show things
+            // like robotic control systems.
+            return (mount.getCriticals() > 0)
+                    || mount.getType().hasFlag(MiscType.F_CASE)
+                    || EquipmentType.isArmorType(mount.getType())
+                    || EquipmentType.isStructureType(mount.getType());
         }
         return super.skipMount(mount, includeAmmo);
     }

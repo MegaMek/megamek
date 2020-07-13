@@ -443,11 +443,11 @@ public class Dropship extends SmallCraft {
         int baydoors = 0;
         long bayCost = 0;
         long quartersCost = 0;
+        // Passenger and crew quarters and infantry bays are considered part of the structure
+        // and don't add to the cost
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if (next.isQuarters()) {
-                quartersCost += next.getCost();
-            } else {
+            if (next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }
@@ -722,7 +722,7 @@ public class Dropship extends SmallCraft {
                 defEqBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append(etype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append("+");
@@ -1325,7 +1325,7 @@ public class Dropship extends SmallCraft {
                 bvText.append(startRow);
                 bvText.append(startColumn);
 
-                bvText.append(mtype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(endColumn);

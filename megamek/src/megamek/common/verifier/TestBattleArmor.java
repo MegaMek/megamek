@@ -355,7 +355,7 @@ public class TestBattleArmor extends TestEntity {
                 if (m.getType().isSpreadable()) {
                     numUsedCrits++;
                 } else {
-                    numUsedCrits += m.getType().getCriticals(ba);
+                    numUsedCrits += m.getCriticals();
                 }
             }
         }
@@ -387,7 +387,7 @@ public class TestBattleArmor extends TestEntity {
         if (newMount.getType().isSpreadable()) {
             newCrits = 1;
         } else {
-            newCrits = newMount.getType().getCriticals(ba);
+            newCrits = newMount.getCriticals();
         }
         if ((numUsedCrits + newCrits) <= ba.getNumCrits(loc)) {
             // Weapons require extra criticism
@@ -787,7 +787,7 @@ public class TestBattleArmor extends TestEntity {
             if (m.getType().isSpreadable()) {
                 critSize = 1;
             } else {
-                critSize = m.getType().getCriticals(ba);
+                critSize = m.getCriticals();
             }
             
             // Manipulators don't take up slots in BA
@@ -1015,7 +1015,7 @@ public class TestBattleArmor extends TestEntity {
                 }
 
                 // Equipment taking up no slots doesn't need to be mounted
-                if ((m.getType().getCriticals(entity) == 0) 
+                if ((m.getCriticals() == 0)
                         && !((m.getType() instanceof InfantryWeapon) 
                                 && !m.isAPMMounted())) {
                     continue;

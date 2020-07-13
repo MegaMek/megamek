@@ -40,58 +40,9 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.BipedMech;
-import megamek.common.Board;
-import megamek.common.Building;
-import megamek.common.BuildingTarget;
-import megamek.common.CargoBay;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.DockingCollar;
-import megamek.common.Dropship;
-import megamek.common.EjectedCrew;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityMovementType;
-import megamek.common.EntitySelector;
-import megamek.common.GameTurn;
-import megamek.common.IAero;
-import megamek.common.IBoard;
-import megamek.common.IBomber;
-import megamek.common.IGame;
+import megamek.common.*;
 import megamek.common.IGame.Phase;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.InfantryBay;
-import megamek.common.LandAirMech;
-import megamek.common.ManeuverType;
-import megamek.common.Mech;
-import megamek.common.Minefield;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.PilotingRollData;
-import megamek.common.Protomech;
-import megamek.common.ProtomechClampMount;
-import megamek.common.QuadVee;
-import megamek.common.Report;
-import megamek.common.SmallCraft;
-import megamek.common.Tank;
-import megamek.common.TankTrailerHitch;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.TeleMissile;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.Transporter;
-import megamek.common.VTOL;
 import megamek.common.actions.AirmechRamAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -105,6 +56,15 @@ import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
+import megamek.client.ui.swing.util.TurnTimer;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
@@ -134,6 +94,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                       | CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL
                                           | CMD_AERO | CMD_AERO_VECTORED;
+    private TurnTimer tt;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
@@ -241,7 +202,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
          */
         public int priority;
 
-        private MoveCommand(String c, int f) {
+        MoveCommand(String c, int f) {
             cmd = c;
             flag = f;
             priority = ordinal();
@@ -1061,6 +1022,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.setDisplayVisible(true);
         }
         selectEntity(clientgui.getClient().getFirstEntityNum());
+        //check if there should be a turn timer running
+        tt = TurnTimer.init(this, clientgui.getClient());
     }
 
     /**
@@ -1068,6 +1031,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     private synchronized void endMyTurn() {
         final Entity ce = ce();
+
+        //get rid of still running timer, if turn is concluded before time is up
+        if (tt != null) {
+            tt.stopTimer();
+            tt = null;
+        }
 
         // end my turn, then.
         disableButtons();
@@ -1305,7 +1274,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     @Override
     public synchronized void ready() {
-
         if (ce() == null) {
             return;
         }
@@ -1809,9 +1777,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             Coords moveto = b.getCoords();
             clientgui.bv.drawMovementData(ce(), cmd);
-            if (!shiftheld) {
-                clientgui.getBoardView().select(b.getCoords());
-            }
             if (shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
                 butDone.setText("<html><b>"
                         + Messages.getString("MovementDisplay.Move")
@@ -1828,6 +1793,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     //$NON-NLS-1$
                 }
                 return;
+            } else {
+                clientgui.getBoardView().select(b.getCoords());
             }
             if (gear == MovementDisplay.GEAR_RAM) {
                 // check if target is valid
@@ -3428,7 +3395,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
      * Uses player input to find a legal hex where an EjectedCrew unit can be placed
      * @param abandoned - The vessel we're escaping from
-     * @param crew - The EjectedCrew unit we're placing
      * @return
      */
     private Coords getEjectPosition(Entity abandoned) {
@@ -3843,7 +3809,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
      * Worker function that consolidates code for loading dropships/small craft with passengers
      * 
-     * @param En - The launching entity, which has already been tested to see if it's a small craft
+     * @param en - The launching entity, which has already been tested to see if it's a small craft
      */
      private void loadPassengerAtLaunch(Entity en) {
          SmallCraft craft = (SmallCraft) en;

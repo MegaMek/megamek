@@ -219,10 +219,11 @@ public class Warship extends Jumpship {
         double[] driveCost = new double[6];
         int driveIdx = 0;
         double driveCosts = 0;
+        int dockingCollars = 0;
         // Drive Coil
-        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks());
+        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks(true));
         // Initiator
-        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks());
+        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks(true));
         // Controller
         driveCost[driveIdx++] += 50000000.0;
         // Tankage
@@ -230,7 +231,7 @@ public class Warship extends Jumpship {
         // Sail
         driveCost[driveIdx++] += 50000.0 * (30 + (weight / 20000.0));
         // Charging System
-        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks()); 
+        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks(true));
         
         for (int i = 0; i < driveIdx; i++) {
             driveCosts += driveCost[i];
@@ -275,11 +276,11 @@ public class Warship extends Jumpship {
         int baydoors = 0;
         long bayCost = 0;
         long quartersCost = 0;
+        // Passenger and crew quarters and infantry bays are considered part of the structure
+        // and don't add to the cost
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if (next.isQuarters()) {
-                quartersCost += next.getCost();
-            } else {
+            if (next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }

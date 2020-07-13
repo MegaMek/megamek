@@ -57,18 +57,20 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.Client;
-import megamek.client.RandomUnitGenerator;
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.generator.RandomNameGenerator;
+import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
-import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IGame.Phase;
 import megamek.common.IPlayer;
+import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameSettingsChangeEvent;
@@ -84,12 +86,7 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
 
-public class RandomArmyDialog extends JDialog implements ActionListener,
-WindowListener, TreeSelectionListener {
-
-    /**
-     *
-     */
+public class RandomArmyDialog extends JDialog implements ActionListener, WindowListener, TreeSelectionListener {
     private static final long serialVersionUID = 4072453002423681675L;
     
     @SuppressWarnings("unused")
@@ -766,15 +763,14 @@ WindowListener, TreeSelectionListener {
                     p.maxYear = Integer.parseInt(m_tMaxYear.getText());
                     unitsModel.setData(RandomArmyCreator.generateArmy(p));
                 }
-            } catch (NumberFormatException ex) {
-                //ignored
-            }finally{
+            } catch (NumberFormatException ignored) {
+            } finally {
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         } else if (ev.getSource().equals(m_bGenerate)) {
         	generateRAT();
         } else if (ev.getSource().equals(m_bAddToForce)) {
-            for(int sel : m_lRAT.getSelectedRows()) {
+            for (int sel : m_lRAT.getSelectedRows()) {
                 MechSummary ms = generatedRAT.getMechSummary(sel);
                 if (ms != null) {
                 	armyModel.addUnit(ms);
@@ -873,7 +869,7 @@ WindowListener, TreeSelectionListener {
 
     private void updateRATs() {
         Iterator<String> rats = rug.getRatList();
-        if(null == rats) {
+        if (null == rats) {
             return;
         }  
         
@@ -949,10 +945,10 @@ WindowListener, TreeSelectionListener {
     	if (fRec != null) {
 			generatedRAT = UnitTable.findTable(fRec, m_pRATGenOptions.getUnitType(),
 			        m_pRATGenOptions.getYear(), m_pRATGenOptions.getRating(),
-			        (List<Integer>)m_pRATGenOptions.getListOption("weightClasses"),
+			        (List<Integer>) m_pRATGenOptions.getListOption("weightClasses"),
 					m_pRATGenOptions.getIntegerOption("networkMask"),
-					(List<EntityMovementMode>)m_pRATGenOptions.getListOption("motiveTypes"),
-					(List<MissionRole>)m_pRATGenOptions.getListOption("roles"),
+					(List<EntityMovementMode>) m_pRATGenOptions.getListOption("motiveTypes"),
+					(List<MissionRole>) m_pRATGenOptions.getListOption("roles"),
 					m_pRATGenOptions.getIntegerOption("roleStrictness"));
 			ratModel.refreshData();
     	}
@@ -971,7 +967,7 @@ WindowListener, TreeSelectionListener {
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-            if(cs.useAverageSkills()) {
+            if (cs.useAverageSkills()) {
                 int[] skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
     
                 int gunnery = skills[0];
@@ -982,15 +978,15 @@ WindowListener, TreeSelectionListener {
 
                 if (e.getCrew() instanceof LAMPilot) {
                     skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
-                    ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
-                    ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
+                    ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
+                    ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
                 }
             }
             e.getCrew().sortRandomSkills();
             if (cs.generateNames()) {
-                boolean isFemale = m_client.getRandomNameGenerator().isFemale();
-                e.getCrew().setGender(isFemale, i);
-                e.getCrew().setName(m_client.getRandomNameGenerator().generate(isFemale), i);
+                Gender gender = RandomGenderGenerator.generate();
+                e.getCrew().setGender(gender, i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, (String) m_chPlayer.getSelectedItem()), i);
             }
         }
     }

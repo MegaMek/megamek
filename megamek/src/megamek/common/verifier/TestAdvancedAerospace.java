@@ -15,27 +15,9 @@
 package megamek.common.verifier;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Bay;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.ITechManager;
-import megamek.common.Jumpship;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.NavalRepairFacility;
-import megamek.common.TechConstants;
-import megamek.common.Warship;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
@@ -50,7 +32,7 @@ public class TestAdvancedAerospace extends TestAero {
     
     private final Jumpship vessel;
 
-    public static enum CapitalArmor{
+    public enum CapitalArmor{
         PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false),   
         STANDARD(EquipmentType.T_ARMOR_AEROSPACE, false),   
         CLAN_STANDARD(EquipmentType.T_ARMOR_AEROSPACE, true),
@@ -144,10 +126,13 @@ public class TestAdvancedAerospace extends TestAero {
     /**
      * Filters all capital armor according to given tech constraints
      * 
-     * @param techManager
+     * @param techManager Constraints used to filter the possible armor types
      * @return A list of all armors that meet the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
+    public static List<EquipmentType> legalArmorsFor(ITechManager techManager, boolean primitive) {
+        if (primitive) {
+            return Collections.singletonList(CapitalArmor.PRIMITIVE.getArmorEqType());
+        }
         List<EquipmentType> retVal = new ArrayList<>();
         for (CapitalArmor armor : CapitalArmor.values()) {
             final EquipmentType eq = armor.getArmorEqType();
@@ -380,7 +365,7 @@ public class TestAdvancedAerospace extends TestAero {
             crew = 6 + (int) Math.ceil(vessel.getWeight() / 20000);
         }
         for (Mounted m : vessel.getMisc()) {
-            crew += equipmentCrewRequirements(m.getType());
+            crew += equipmentCrewRequirements(m);
         }
         return crew;
     }
@@ -524,8 +509,9 @@ public class TestAdvancedAerospace extends TestAero {
     
     @Override
     public double getWeightFuel() {
-        // Add 2% for pumps and round up to the half ton
-        return ceil(vessel.getFuelTonnage() * 1.02, Ceil.TON);
+        // Fuel tanks and pumps add an additional 2%, rounded to the nearest ton
+        double pumpWeight = RoundWeight.nextTon(vessel.getFuelTonnage() * 0.02);
+        return vessel.getFuelTonnage() + pumpWeight;
     }
 
     @Override

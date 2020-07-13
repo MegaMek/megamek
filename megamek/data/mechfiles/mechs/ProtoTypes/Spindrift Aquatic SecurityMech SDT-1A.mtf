@@ -11,7 +11,7 @@ Rules Level:4
 Mass:30
 Engine:120 Fusion Engine
 Structure:Industrial
-Cockpit:Industrial Cockpit
+Cockpit:Industrial Cockpit (AFC)
 Myomer:Standard
 
 Heat Sinks:10 Single
@@ -69,7 +69,7 @@ Heat Sink
 Heat Sink
 ISUMU
 ISERSmallLaser
-ISSRM6 Ammo
+IS Ammo SRTorpedo-6
 Environmental Sealing
 -Empty-
 -Empty-

@@ -1262,7 +1262,7 @@ public class Jumpship extends Aero {
                 defEqBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append(etype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append("+");
@@ -1827,7 +1827,7 @@ public class Jumpship extends Aero {
                 bvText.append(startRow);
                 bvText.append(startColumn);
 
-                bvText.append(mtype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(endColumn);
@@ -2082,9 +2082,9 @@ public class Jumpship extends Aero {
         int driveIdx = 0;
         double driveCosts = 0;
         // Drive Coil
-        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks());
+        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks(true));
         // Initiator
-        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks());
+        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks(true));
         // Controller
         driveCost[driveIdx++] += 50000000.0;
         // Tankage
@@ -2092,7 +2092,7 @@ public class Jumpship extends Aero {
         // Sail
         driveCost[driveIdx++] += 50000.0 * (30 + (weight / 7500.0));
         // Charging System
-        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks()); 
+        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks(true));
         
         for (int i = 0; i < driveIdx; i++) {
             driveCosts += driveCost[i];
@@ -2136,11 +2136,11 @@ public class Jumpship extends Aero {
         int baydoors = 0;
         long bayCost = 0;
         long quartersCost = 0;
+        // Passenger and crew quarters and infantry bays are considered part of the structure
+        // and don't add to the cost
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if (next.isQuarters()) {
-                quartersCost += next.getCost();
-            } else {
+            if (next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }

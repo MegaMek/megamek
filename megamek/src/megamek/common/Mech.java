@@ -211,7 +211,6 @@ public abstract class Mech extends Entity {
     public static final int HAS_UNKNOWN = 0;
 
     public static final int HAS_TRUE = 1;
-
     // rear armor
     private int[] rearArmor;
 
@@ -3013,7 +3012,7 @@ public abstract class Mech extends Entity {
 
         // spreadable or split equipment only gets added to 1 crit at a time,
         // since we don't know how many are in this location
-        int reqSlots = mounted.getType().getCriticals(this);
+        int reqSlots = mounted.getCriticals();
         if (mounted.getType().isSpreadable() || mounted.isSplitable()) {
             reqSlots = 1;
         }
@@ -3612,7 +3611,7 @@ public abstract class Mech extends Entity {
                 bvText.append(startRow);
                 bvText.append(startColumn);
 
-                bvText.append(etype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(endColumn);
@@ -3792,7 +3791,7 @@ public abstract class Mech extends Entity {
             }
 
             // we subtract per critical slot
-            toSubtract *= etype.getCriticals(this);
+            toSubtract *= mounted.getCriticals();
             ammoPenalty += toSubtract;
         }
         if (getJumpType() == JUMP_PROTOTYPE_IMPROVED) {
@@ -4932,7 +4931,7 @@ public abstract class Mech extends Entity {
                 bvText.append(startRow);
                 bvText.append(startColumn);
 
-                bvText.append(mtype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(endColumn);
@@ -5743,7 +5742,7 @@ public abstract class Mech extends Entity {
     @Override
     public int getMaxElevationDown(int currElevation) {
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
-            return 999;
+            return UNLIMITED_JUMP_DOWN;
         }
         return getMaxElevationChange();
     }
@@ -6722,8 +6721,10 @@ public abstract class Mech extends Entity {
             sb.append(newLine);
         }
         for (Mounted mounted : getMisc()) {
-            if ((mounted.getType().getCriticals(this) == 0)
-                    && !mounted.getType().hasFlag(MiscType.F_CASE)) {
+            if ((mounted.getCriticals() == 0)
+                    && !mounted.getType().hasFlag(MiscType.F_CASE)
+                    && !EquipmentType.isArmorType(mounted.getType())
+                    && !EquipmentType.isStructureType(mounted.getType())) {
                 sb.append(MtfFile.NO_CRIT).append(mounted.getType().getInternalName())
                         .append(":").append(getLocationAbbr(mounted.getLocation()))
                         .append(newLine);
@@ -6912,6 +6913,9 @@ public abstract class Mech extends Entity {
             }
             if (m.isOmniPodMounted()) {
                 toReturn.append(" ").append(MtfFile.OMNIPOD);
+            }
+            if (m.getType().isVariableSize()) {
+                toReturn.append(MtfFile.SIZE).append(m.getSize());
             }
         } else {
             return "?" + index;
@@ -7938,11 +7942,7 @@ public abstract class Mech extends Entity {
         }
     }
 
-    /**
-     * Is this a primitive Mech?
-     *
-     * @return
-     */
+    @Override
     public boolean isPrimitive() {
         return (getCockpitType() == Mech.COCKPIT_PRIMITIVE)
                 || (getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL);
@@ -8049,11 +8049,11 @@ public abstract class Mech extends Entity {
                     && (mount.getLinkedBy() != null)) {
                 mountBv += ((MiscType) mount.getLinkedBy().getType()).getBV(
                         this, mount);
-                bv += mountBv * 0.05 * (mount.getType().getCriticals(this) + 1);
+                bv += mountBv * 0.05 * (mount.getCriticals() + 1);
             } else if (mountBv > 0) {
-                bv += mountBv * 0.05 * mount.getType().getCriticals(this);
+                bv += mountBv * 0.05 * mount.getCriticals();
             } else {
-                bv += 5 * mount.getType().getCriticals(this);
+                bv += 5 * mount.getCriticals();
             }
         }
 
@@ -8555,7 +8555,7 @@ public abstract class Mech extends Entity {
 
         if (getEngineHits() >= 2) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
-                    getDisplayName() + " CRIPPLED: 2 Engine Hits.");
+                    getDisplayName() + " CRIPPLED: 2 or more Engine Hits.");
             return true;
 
         }
@@ -8714,7 +8714,7 @@ public abstract class Mech extends Entity {
 
         if (countInternalDamagedTorsos() == 1) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
-                    getDisplayName() + " HEAVY DAMAGE: Torse internal damage");
+                    getDisplayName() + " HEAVY DAMAGE: Torso internal damage");
             return true;
         }
 
@@ -8758,7 +8758,7 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean isDmgModerate() {
-        final String METHOD_NAME = "isDmgHeavy";
+        final String METHOD_NAME = "isDmgModerate";
         MMLogger logger = DefaultMmLogger.getInstance();
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.67) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
@@ -8799,7 +8799,7 @@ public abstract class Mech extends Entity {
 
         if (((double) totalInoperable / totalWeapons) >= 0.5) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
-                    getDisplayName() + " HEAVY DAMAGE: Less than 50% weapons operable");
+                    getDisplayName() + " MODERATE DAMAGE: Less than 50% weapons operable");
             return true;
         }
         return false;
@@ -8807,7 +8807,7 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean isDmgLight() {
-        final String METHOD_NAME = "isDmgHeavy";
+        final String METHOD_NAME = "isDmgLight";
         MMLogger logger = DefaultMmLogger.getInstance();
         if (getArmor(LOC_HEAD) < getOArmor(LOC_HEAD)) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
@@ -8842,7 +8842,7 @@ public abstract class Mech extends Entity {
 
         if (((double) totalInoperable / totalWeapons) >= 0.5) {
             logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
-                    getDisplayName() + " HEAVY DAMAGE: Less than 75% weapons operable");
+                    getDisplayName() + " LIGHT DAMAGE: Less than 75% weapons operable");
             return true;
         }
         return false;

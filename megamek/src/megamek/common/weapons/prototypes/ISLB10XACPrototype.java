@@ -64,7 +64,7 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         .setTechRating(RATING_E)
         .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
         .setISAdvancement(2590, DATE_NONE, DATE_NONE, 2595, 3035)
-        .setISApproximate(true, false, false, true, true)
+        .setISApproximate(false, false, false, true, true)
         .setPrototypeFactions(F_TH)
         .setProductionFactions(F_TH)
         .setReintroductionFactions(F_FS,F_LC);

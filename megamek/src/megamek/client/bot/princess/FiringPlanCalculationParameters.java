@@ -43,7 +43,7 @@ public final class FiringPlanCalculationParameters {
         private EntityState shooterState = null;
         private Targetable target = null;
         private EntityState targetState = null;
-        private int maxHeat = FireControl.DOES_NOT_TRACK_HEAT;
+        private int maxHeat = Entity.DOES_NOT_TRACK_HEAT;
         private Map<Mounted, Double> ammoConservation = new HashMap<>();
         private FiringPlanCalculationType calculationType = GUESS;
 

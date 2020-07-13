@@ -13,7 +13,7 @@ Tank
 </UnitType>
 
 <Name>
-Desert Scorpion
+Desert Scorpion Light Tank
 </Name>
 
 <Model>
@@ -78,8 +78,27 @@ Large Laser
 Machine Gun
 </Turret Equipment>
 
+<manufacturer>
+Stotzing
+</manufacturer>
+
+<primaryFactory>
+Stotzing Coastal Shipyards
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM
+</systemManufacturers>
+
+<systemModels>
+ENGINE:125
+ARMOR:ProtecTech 9 Standard with CASE
+COMMUNICATIONS:Scarborough Talky-1
+TARGETING:Scarborough Track-1-1
+</systemModels>
+
 <source>
-Clan Invasion
+ToS - Stotzing- Clan Invasion
 </source>
 
 <tonnage>

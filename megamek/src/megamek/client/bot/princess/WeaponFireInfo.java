@@ -405,6 +405,13 @@ public class WeaponFireInfo {
             return 7D;
         }
 
+        // artillery and cluster table use the rack size as the base damage amount
+        // a little inaccurate, but better than ignoring those weapons entirely       
+        if((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
+           (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
+            return weaponType.getRackSize();
+        }
+        
         if (getTarget() instanceof Entity) {
             double dmg = Compute.getExpectedDamage(getGame(), getAction(),
                     true, owner.getPrecognition().getECMInfo());
@@ -413,6 +420,7 @@ public class WeaponFireInfo {
             }
             return dmg;
         }
+                
         return weaponType.getDamage();
     }
     

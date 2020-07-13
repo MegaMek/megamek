@@ -101,7 +101,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
                       new EntityState(path),
                       enemy,
                       null,
-                      FireControl.DOES_NOT_TRACK_HEAT,
+                      Entity.DOES_NOT_TRACK_HEAT,
                       null);
         myFiringPlan = getFireControl(path.getEntity()).determineBestFiringPlan(guess);
 

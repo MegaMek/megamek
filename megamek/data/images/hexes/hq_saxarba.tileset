@@ -31,6 +31,9 @@
 
 #####SUPER TERRAINS#####
 
+include "saxarba/Includes/Pavement.tileinc"
+
+
 #GRAY SAND
 super -3 "sand:*" "lunar" "saxarba/base/base_sand_gray_-3.png"
 super -2 "sand:*" "lunar" "saxarba/base/base_sand_gray_-2.png"
@@ -88,6 +91,8 @@ super * "water:0" "lunar" "saxarba/theme_lunar/water_lunar_0.png"
 super * "water:0" "volcano" "saxarba/theme_volcano/water_anim_volcano_0.gif"
 
 #WATER
+# Garden Lakes use water:0 so they must be included now
+include "saxarba/SMV_Fluff/GardenLakes.tileinc"
 super * "water:0" "" "saxarba/water/water_anim_0.gif"
 
 #ELEVATOR
@@ -113,6 +118,10 @@ super * "elevator:-8" "" "saxarba/misc/elevator_-8.png"
 super * "elevator:-9" "" "saxarba/misc/elevator_-9.png"
 super * "elevator:-10" "" "saxarba/misc/elevator_-10.png"
 super * "elevator:*" "" "saxarba/misc/elevator_0.png"
+
+#Basement states have no graphical representation
+super * "bldg_basement_type:*" "" "saxarba/misc/blank.png"
+super * "bldg_base_collapsed:*" "" "saxarba/misc/blank.png"
 
 #LIGHT SNOW
 super -1 "snow:1" "" "saxarba/base/base_snow_light_-1.png;saxarba/base/base_snow_light_-1b.png"
@@ -165,9 +174,6 @@ super * "mud:*" "" "saxarba/misc/deep_mud.png"
 super * "rough:1" "lunar" "saxarba/theme_lunar/rough_lunar_a.png;saxarba/theme_lunar/rough_lunar_b.png;saxarba/theme_lunar/rough_lunar_c.png;saxarba/theme_lunar/rough_lunar_d.png"
 super * "rough:2" "lunar" "saxarba/theme_lunar/ultra_rough_lunar.png"
 
-#GRASS THEME ROUGH
-super * "rough:1" "grass" "saxarba/theme_grass/rough_grass_a.png;saxarba/theme_grass/rough_grass_b.png;saxarba/theme_grass/rough_grass_c.png;saxarba/theme_grass/rough_grass_d.png"
-super * "rough:2" "grass" "saxarba/theme_grass/ultra_rough_grass.png"
 
 #TROPICAL THEME ROUGH
 super * "rough:1" "tropical" "saxarba/theme_grass/rough_grass_a.png;saxarba/theme_grass/rough_grass_b.png;saxarba/theme_grass/rough_grass_c.png;saxarba/theme_grass/rough_grass_d.png"
@@ -181,9 +187,14 @@ super * "rough:2" "volcano" "saxarba/theme_volcano/ultra_rough_volcano.png"
 super * "rough:1" "mars" "saxarba/theme_mars/rough_mars_a.png;saxarba/theme_mars/rough_mars_b.png;saxarba/theme_mars/rough_mars_c.png;saxarba/theme_mars/rough_mars_d.png"
 super * "rough:2" "mars" "saxarba/theme_mars/ultra_rough_mars.png"
 
-#ROUGH
-super * "rough:1" "" "saxarba/misc/rough_a.png;saxarba/misc/rough_b.png;saxarba/misc/rough_c.png;saxarba/misc/rough_d.png"
-super * "rough:2" "" "saxarba/misc/ultra_rough.png"
+#DESERT ROUGH
+super * "rough:1" "desert" "saxarba/misc/rough_a.png;saxarba/misc/rough_b.png;saxarba/misc/rough_c.png;saxarba/misc/rough_d.png"
+super * "rough:2" "desert" "saxarba/misc/ultra_rough.png"
+
+
+#GRASS THEME ROUGH
+super * "rough:1" "" "saxarba/theme_grass/rough_grass_a.png;saxarba/theme_grass/rough_grass_b.png;saxarba/theme_grass/rough_grass_c.png;saxarba/theme_grass/rough_grass_d.png"
+super * "rough:2" "" "saxarba/theme_grass/ultra_rough_grass.png"
 super * "rough:*" "" "saxarba/misc/ultra_rough.png"
 
 #METAL DEPOSIT
@@ -245,7 +256,7 @@ super * "water:1" "volcano" "saxarba/theme_volcano/water_anim_volcano_1.gif"
 super * "water:1" "" "saxarba/water/water_anim_1.gif"
 
 #ROADS
-include "saxarba/BasicRoads.tileinc"
+include "saxarba/Includes/BasicRoads.tileinc"
 #For maps with roads!=1
 super * "road:*" "" "saxarba/misc/legacy_road0.png"
 
@@ -253,7 +264,9 @@ super * "road:*" "" "saxarba/misc/legacy_road0.png"
 include "StandardIncludes/StandardRailMaglev.tileinc"
 
 #FUEL TANKS
-include "saxarba/FuelTanks.tileinc"
+include "saxarba/Includes/FuelTanks.tileinc"
+
+include "saxarba/SMV_SeaPort/SeaPort.tileinc"
 
 #TROPICAL THEME TREES
 super * "woods:1;fluff:12" "tropical" "saxarba/theme_tropical/orchard_tropical.png"
@@ -275,20 +288,21 @@ super * "woods:1;fluff:12" "mars" "saxarba/theme_mars/orchard_mars.png"
 super * "woods:1" "mars" "saxarba/theme_mars/woods_light_mars_a.png;saxarba/theme_mars/woods_light_mars_b.png;saxarba/theme_mars/woods_light_mars_c.png;saxarba/theme_mars/woods_light_mars_d.png;saxarba/theme_mars/woods_light_mars_e.png;saxarba/theme_mars/woods_light_mars_f.png"
 super * "woods:2" "mars" "saxarba/theme_mars/woods_heavy_mars_a.png;saxarba/theme_mars/woods_heavy_mars_b.png;saxarba/theme_mars/woods_heavy_mars_c.png;saxarba/theme_mars/woods_heavy_mars_d.png"
 
-#GRASS THEME TREES
-super * "woods:1;fluff:12" "grass" "saxarba/theme_grass/orchard_grass.png"
-super * "woods:1" "grass" "saxarba/theme_grass/woods_light_grass_a.png;saxarba/theme_grass/woods_light_grass_b.png;saxarba/theme_grass/woods_light_grass_c.png;saxarba/theme_grass/woods_light_grass_d.png;saxarba/theme_grass/woods_light_grass_e.png;saxarba/theme_grass/woods_light_grass_f.png"
-super * "woods:2" "grass" "saxarba/theme_grass/woods_heavy_grass_a.png;saxarba/theme_grass/woods_heavy_grass_b.png;saxarba/theme_grass/woods_heavy_grass_c.png;saxarba/theme_grass/woods_heavy_grass_d.png"
-
 #VOLCANO THEME TREES
 super * "woods:1;fluff:12" "volcano" "saxarba/theme_volcano/orchard_volcano.png"
 super * "woods:1" "volcano" "saxarba/theme_volcano/woods_light_volcano_a.png;saxarba/theme_volcano/woods_light_volcano_b.png;saxarba/theme_volcano/woods_light_volcano_c.png;saxarba/theme_volcano/woods_light_volcano_d.png;saxarba/theme_volcano/woods_light_volcano_e.png;saxarba/theme_volcano/woods_light_volcano_f.png"
 super * "woods:2" "volcano" "saxarba/theme_volcano/woods_heavy_volcano_a.png;saxarba/theme_volcano/woods_heavy_volcano_b.png;saxarba/theme_volcano/woods_heavy_volcano_c.png;saxarba/theme_volcano/woods_heavy_volcano_d.png"
 
-#WOODS
-super * "woods:1;fluff:12" "" "saxarba/vegetation/orchard.png"
-super * "woods:1" "" "saxarba/vegetation/woods_light_a.png;saxarba/vegetation/woods_light_b.png;saxarba/vegetation/woods_light_c.png;saxarba/vegetation/woods_light_d.png;saxarba/vegetation/woods_light_e.png;saxarba/vegetation/woods_light_f.png"
-super * "woods:2" "" "saxarba/vegetation/woods_heavy_a.png;saxarba/vegetation/woods_heavy_b.png;saxarba/vegetation/woods_heavy_c.png;saxarba/vegetation/woods_heavy_d.png"
+#DESERT WOODS
+super * "woods:1;fluff:12" "desert" "saxarba/vegetation/orchard.png"
+super * "woods:1" "desert" "saxarba/vegetation/woods_light_a.png;saxarba/vegetation/woods_light_b.png;saxarba/vegetation/woods_light_c.png;saxarba/vegetation/woods_light_d.png;saxarba/vegetation/woods_light_e.png;saxarba/vegetation/woods_light_f.png"
+super * "woods:2" "desert" "saxarba/vegetation/woods_heavy_a.png;saxarba/vegetation/woods_heavy_b.png;saxarba/vegetation/woods_heavy_c.png;saxarba/vegetation/woods_heavy_d.png"
+
+#TREES
+super * "woods:1;fluff:12" "" "saxarba/theme_grass/orchard_grass.png"
+super * "woods:1" "" "saxarba/theme_grass/woods_light_grass_a.png;saxarba/theme_grass/woods_light_grass_b.png;saxarba/theme_grass/woods_light_grass_c.png;saxarba/theme_grass/woods_light_grass_d.png;saxarba/theme_grass/woods_light_grass_e.png;saxarba/theme_grass/woods_light_grass_f.png"
+super * "woods:2" "" "saxarba/theme_grass/woods_heavy_grass_a.png;saxarba/theme_grass/woods_heavy_grass_b.png;saxarba/theme_grass/woods_heavy_grass_c.png;saxarba/theme_grass/woods_heavy_grass_d.png"
+
 
 #LUNAR THEME JUNGLE
 super * "jungle:1" "lunar" "saxarba/theme_lunar/jungle_light_lunar_a.png;saxarba/theme_lunar/jungle_light_lunar_b.png;saxarba/theme_lunar/jungle_light_lunar_c.png;saxarba/theme_lunar/jungle_light_lunar_d.png;saxarba/theme_lunar/jungle_light_lunar_e.png;saxarba/theme_lunar/jungle_light_lunar_f.png"
@@ -327,14 +341,14 @@ super * "woods:3" "lunar" "saxarba/theme_lunar/woods_ultra_lunar.png"
 #MARS THEME TREES
 super * "woods:3" "mars" "saxarba/theme_mars/woods_ultra_mars.png"
 
-#GRASS THEME TREES
-super * "woods:3" "grass" "saxarba/theme_grass/woods_ultra_grass.png"
-
 #VOLCANO THEME TREES
 super * "woods:3" "volcano" "saxarba/theme_volcano/woods_ultra_volcano.png"
 
-#WOODS
-super * "woods:3" "" "saxarba/vegetation/woods_ultra.png"
+#DESERT THEME WOODS
+super * "woods:3" "desert" "saxarba/vegetation/woods_ultra.png"
+
+#TREES
+super * "woods:3" "" "saxarba/theme_grass/woods_ultra_grass.png"
 super * "woods:*" "" "saxarba/vegetation/woods_ultra.png"
 
 #LUNAR THEME JUNGLE
@@ -378,31 +392,37 @@ super * "rapids:*" "" "saxarba/water/torrent_anim.gif"
 super * "ice:1" "" "saxarba/misc/ice.png"
 super * "ice:*" "" "saxarba/misc/ice.png"
 
+
+#SPECIAL SIRMEGAV BUILDINGS
+include "saxarba/SMV_Buildings/SirMegaVBuildings.tileinc"
+include "saxarba/Includes/BuildingsAddtlSaxarba.tileinc"
+
 #BUILDINGS
 #Standard buildings for mars and lunar and volcano themes
-include "saxarba/BuildingsSealedLunar.tileinc"
-include "saxarba/BuildingsSealedMars.tileinc"
-include "saxarba/BuildingsSealedVolcano.tileinc"
+include "saxarba/Includes/BuildingsSealedLunar.tileinc"
+include "saxarba/Includes/BuildingsSealedMars.tileinc"
+include "saxarba/Includes/BuildingsSealedVolcano.tileinc"
 
-include "saxarba/BuildingsNonSClassArmor.tileinc"
-include "saxarba/BuildingsNonSClassNoArmor.tileinc"
+include "saxarba/Includes/BuildingsNonSClassArmor.tileinc"
+include "saxarba/Includes/BuildingsNonSClassNoArmor.tileinc"
 
-include "saxarba/BuildingsSealedLunar_noClassSpecified.tileinc"
-include "saxarba/BuildingsSealedMars_noClassSpecified.tileinc"
-include "saxarba/BuildingsSealedVolcano_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSealedLunar_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSealedMars_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSealedVolcano_noClassSpecified.tileinc"
 
-include "saxarba/BuildingsSClassArmor.tileinc"
-include "saxarba/BuildingsSClassNoArmor.tileinc"
-
-include "saxarba/BuildingsSClassArmor_noClassSpecified.tileinc"
-include "saxarba/BuildingsSClassNoArmor_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSClassArmor_noClassSpecified.tileinc"
+include "saxarba/Includes/BuildingsSClassNoArmor_noClassSpecified.tileinc"
 
 #BRIDGES
-include "saxarba/BasicBridges.tileinc"
-
+include "saxarba/Includes/BasicBridges.tileinc"
 #REMAINS
 #FLUFF
-include "saxarba/StandardFluff.tileinc"
+include "saxarba/SMV_LandingPads/LandingPads.tileinc"
+include "saxarba/SMV_GroundSymbols/GroundSymbols.tileinc"
+include "saxarba/SMV_Letters/Letters.tileinc"
+include "saxarba/SMV_Fluff/Fluff.tileinc"
+
+include "saxarba/Includes/StandardFluff.tileinc"
 
 #ARMS & LEGS
 super * "arms:1" "" "saxarba/misc/arm1.png"
@@ -438,51 +458,20 @@ super * "screen:*" "" "saxarba/misc/light_smoke.png"
 base 0 "space:1" "" "saxarba/base/base_space_a.png;saxarba/base/base_space_b.png;saxarba/base/base_space_c.png;saxarba/base/base_space_d.png;saxarba/base/base_space_e.png"
 
 #DEFAULT BASE
-base 0 "" "" "saxarba/base/base_default_0.png"
-base 1 "" "" "saxarba/base/base_default_1.png"
-base 2 "" "" "saxarba/base/base_default_2.png"
-base 3 "" "" "saxarba/base/base_default_3.png"
-base 4 "" "" "saxarba/base/base_default_4.png"
-base 5 "" "" "saxarba/base/base_default_5.png"
-base 6 "" "" "saxarba/base/base_default_6.png"
-base 7 "" "" "saxarba/base/base_default_7.png"
-base 8 "" "" "saxarba/base/base_default_8.png"
-base 9 "" "" "saxarba/base/base_default_9.png"
-base 10 "" "" "saxarba/base/base_default_10.png"
-base -1 "" "" "saxarba/base/base_default_-1.png"
-base -2 "" "" "saxarba/base/base_default_-2.png"
-base -3 "" "" "saxarba/base/base_default_-3.png"
-
-#PAVEMENT
-base -1 "pavement:1" "" "saxarba/base/base_pavement_-1.png"
-base -2 "pavement:1" "" "saxarba/base/base_pavement_-2.png"
-base -3 "pavement:1" "" "saxarba/base/base_pavement_-3.png"
-base 0 "pavement:1" "" "saxarba/base/base_pavement_0.png"
-base 1 "pavement:1" "" "saxarba/base/base_pavement_1.png"
-base 2 "pavement:1" "" "saxarba/base/base_pavement_2.png"
-base 3 "pavement:1" "" "saxarba/base/base_pavement_3.png"
-base 4 "pavement:1" "" "saxarba/base/base_pavement_4.png"
-base 5 "pavement:1" "" "saxarba/base/base_pavement_5.png"
-base 6 "pavement:1" "" "saxarba/base/base_pavement_6.png"
-base 7 "pavement:1" "" "saxarba/base/base_pavement_7.png"
-base 8 "pavement:1" "" "saxarba/base/base_pavement_8.png"
-base 9 "pavement:1" "" "saxarba/base/base_pavement_9.png"
-base 10 "pavement:1" "" "saxarba/base/base_pavement_10.png"
-#Urban garden variation
-base -1 "pavement:2" "" "saxarba/base/base_pavement_urban_-1.png"
-base -2 "pavement:2" "" "saxarba/base/base_pavement_urban_-2.png"
-base -3 "pavement:2" "" "saxarba/base/base_pavement_urban_-3.png"
-base 0 "pavement:2" "" "saxarba/base/base_pavement_urban_0.png"
-base 1 "pavement:2" "" "saxarba/base/base_pavement_urban_1.png"
-base 2 "pavement:2" "" "saxarba/base/base_pavement_urban_2.png"
-base 3 "pavement:2" "" "saxarba/base/base_pavement_urban_3.png"
-base 4 "pavement:2" "" "saxarba/base/base_pavement_urban_4.png"
-base 5 "pavement:2" "" "saxarba/base/base_pavement_urban_5.png"
-base 6 "pavement:2" "" "saxarba/base/base_pavement_urban_6.png"
-base 7 "pavement:2" "" "saxarba/base/base_pavement_urban_7.png"
-base 8 "pavement:2" "" "saxarba/base/base_pavement_urban_8.png"
-base 9 "pavement:2" "" "saxarba/base/base_pavement_urban_9.png"
-base 10 "pavement:2" "" "saxarba/base/base_pavement_urban_10.png"
+base 0 "" "" "saxarba/theme_grass/base_grass_0.png"
+base 1 "" "" "saxarba/theme_grass/base_grass_1.png"
+base 2 "" "" "saxarba/theme_grass/base_grass_2.png"
+base 3 "" "" "saxarba/theme_grass/base_grass_3.png"
+base 4 "" "" "saxarba/theme_grass/base_grass_4.png"
+base 5 "" "" "saxarba/theme_grass/base_grass_5.png"
+base 6 "" "" "saxarba/theme_grass/base_grass_6.png"
+base 7 "" "" "saxarba/theme_grass/base_grass_7.png"
+base 8 "" "" "saxarba/theme_grass/base_grass_8.png"
+base 9 "" "" "saxarba/theme_grass/base_grass_9.png"
+base 10 "" "" "saxarba/theme_grass/base_grass_10.png"
+base -1 "" "" "saxarba/theme_grass/base_grass_-1.png"
+base -2 "" "" "saxarba/theme_grass/base_grass_-2.png"
+base -3 "" "" "saxarba/theme_grass/base_grass_-3.png"
 
 #CRUST
 base -3 "magma:1" "" "saxarba/base/base_crust_-3.png"
@@ -569,21 +558,23 @@ base 8 "" "snow" "saxarba/theme_grass/snow_light_grass_8.png;saxarba/theme_grass
 base 9 "" "snow" "saxarba/theme_grass/snow_light_grass_9.png;saxarba/theme_grass/snow_light_grass_9b.png"
 base 10 "" "snow" "saxarba/theme_grass/snow_light_grass_10.png;saxarba/theme_grass/snow_light_grass_10b.png"
 
-#GRASS THEME
-base -1 "" "grass" "saxarba/theme_grass/base_grass_-1.png"
-base -2 "" "grass" "saxarba/theme_grass/base_grass_-2.png"
-base -3 "" "grass" "saxarba/theme_grass/base_grass_-3.png"
-base 0 "" "grass" "saxarba/theme_grass/base_grass_0.png"
-base 1 "" "grass" "saxarba/theme_grass/base_grass_1.png"
-base 2 "" "grass" "saxarba/theme_grass/base_grass_2.png"
-base 3 "" "grass" "saxarba/theme_grass/base_grass_3.png"
-base 4 "" "grass" "saxarba/theme_grass/base_grass_4.png"
-base 5 "" "grass" "saxarba/theme_grass/base_grass_5.png"
-base 6 "" "grass" "saxarba/theme_grass/base_grass_6.png"
-base 7 "" "grass" "saxarba/theme_grass/base_grass_7.png"
-base 8 "" "grass" "saxarba/theme_grass/base_grass_8.png"
-base 9 "" "grass" "saxarba/theme_grass/base_grass_9.png"
-base 10 "" "grass" "saxarba/theme_grass/base_grass_10.png"
+
+#DESERT THEME
+base -3 "" "desert" "saxarba/base/base_default_-3.png"
+base -2 "" "desert" "saxarba/base/base_default_-2.png"
+base -1 "" "desert" "saxarba/base/base_default_-1.png"
+base 0 "" "desert" "saxarba/base/base_default_0.png"
+base 1 "" "desert" "saxarba/base/base_default_1.png"
+base 2 "" "desert" "saxarba/base/base_default_2.png"
+base 3 "" "desert" "saxarba/base/base_default_3.png"
+base 4 "" "desert" "saxarba/base/base_default_4.png"
+base 5 "" "desert" "saxarba/base/base_default_5.png"
+base 6 "" "desert" "saxarba/base/base_default_6.png"
+base 7 "" "desert" "saxarba/base/base_default_7.png"
+base 8 "" "desert" "saxarba/base/base_default_8.png"
+base 9 "" "desert" "saxarba/base/base_default_9.png"
+base 10 "" "desert" "saxarba/base/base_default_10.png"
+
 
 #VOLCANO THEME
 base -3 "" "volcano" "saxarba/theme_volcano/base_volcano_-3.png"
@@ -649,4 +640,13 @@ base 8 "" "lunar" "saxarba/theme_lunar/base_lunar_8.png;saxarba/theme_lunar/base
 base 9 "" "lunar" "saxarba/theme_lunar/base_lunar_9.png;saxarba/theme_lunar/base_lunar_9b.png;saxarba/theme_lunar/base_lunar_9c.png;saxarba/theme_lunar/base_lunar_9d.png;saxarba/theme_lunar/base_lunar_9e.png;saxarba/theme_lunar/base_lunar_9f.png"
 base 10 "" "lunar" "saxarba/theme_lunar/base_lunar_10.png;saxarba/theme_lunar/base_lunar_10b.png;saxarba/theme_lunar/base_lunar_10c.png;saxarba/theme_lunar/base_lunar_10d.png;saxarba/theme_lunar/base_lunar_10e.png;saxarba/theme_lunar/base_lunar_10f.png"
 
-include "classic.tileset"
+
+
+# To avoid errors
+super * "fluff:*" "" "saxarba/misc/blank.png"
+super * "road_fluff:*" "" "saxarba/misc/blank.png"
+super * "ground_fluff:*" "" "saxarba/misc/blank.png"
+super * "water_fluff:*" "" "saxarba/misc/blank.png"
+super * "bldg_fluff:*" "" "saxarba/misc/blank.png"
+
+super * "bldg_class:0" "" "saxarba/misc/blank.png"

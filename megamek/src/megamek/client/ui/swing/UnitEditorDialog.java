@@ -360,7 +360,7 @@ public class UnitEditorDialog extends JDialog {
                     || !m.getType().isHittable() || m.isWeaponGroup()) {
                 continue;
             }
-            int nCrits = m.getType().getCriticals(entity);
+            int nCrits = m.getCriticals();
             int eqNum = entity.getEquipmentNum(m);
             int hits = entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT,
                     eqNum, m.getLocation());

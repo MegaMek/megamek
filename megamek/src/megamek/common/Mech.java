@@ -175,6 +175,8 @@ public abstract class Mech extends Entity {
     public static final int COCKPIT_SUPERHEAVY_COMMAND_CONSOLE = 15;
     
     public static final int COCKPIT_SMALL_COMMAND_CONSOLE = 16;
+	
+    public static final int COCKPIT_TORSO_MOUNTED_INDUSTRIAL = 17;
 
     public static final String[] COCKPIT_STRING = { "Standard Cockpit",
             "Small Cockpit", "Command Console", "Torso-Mounted Cockpit",
@@ -183,14 +185,14 @@ public abstract class Mech extends Entity {
             "Superheavy Tripod Cockpit", "Tripod Cockpit", "Interface Cockpit",
             "Virtual Reality Piloting Pod", "QuadVee Cockpit",
             "Superheavy Industrial Cockpit", "Superheavy Command Console", 
-	    "Small Command Console"};
+	    "Small Command Console", "Torso-Mounted Industrial Cockpit"};
 
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",
             "Primitive", "Primitive Industrial", "Superheavy",
             "Superheavy Tripod", "Tripod", "Interface", "VRRP", "Quadvee",
             "Superheavy Industrial", "Superheavy Command", 
-            "Small Command"};
+            "Small Command", "Torso Mounted Industrial"};
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
@@ -3273,6 +3275,12 @@ public abstract class Mech extends Entity {
                 .setPrototypeFactions(F_FS).setProductionFactions(F_FS, F_CJF)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Small Command Console
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3053, 3080, 3100)
+                .setClanAdvancement(3055, 3080, 3100)
+                .setPrototypeFactions(F_FS, F_LC, F_CSJ).setProductionFactions(F_LC)
+                .setApproximate(false, true, false).setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), //Torso mounted Industrial
     };
 
     // Advanced fire control for industrial mechs is implemented with a standard cockpit,
@@ -5144,7 +5152,8 @@ public abstract class Mech extends Entity {
         }
 
         if ((getCockpitType() == Mech.COCKPIT_INDUSTRIAL)
-                || (getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
+                || (getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)
+	   	|| (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)) {
             // industrial without advanced firing control get's 0.9 mod to
             // offensive BV
             bvText.append("Weapon BV * Firing Control Modifier");
@@ -5241,7 +5250,8 @@ public abstract class Mech extends Entity {
         double cockpitMod = 1;
         if ((getCockpitType() == Mech.COCKPIT_SMALL)
                 || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
-                || (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE)) {
+                || (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE)
+	   	|| (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)) {
             cockpitMod = 0.95;
             finalBV *= cockpitMod;
         } else if ((getCockpitType() == Mech.COCKPIT_TRIPOD)
@@ -5357,7 +5367,10 @@ public abstract class Mech extends Entity {
             cockpitCost = 500000;
         } else if (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
             // The cost is the sum of both small and command console
-            cockpitCost = 675000;            
+            cockpitCost = 675000; 
+        } else if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL) {
+            cockpitCost = 750000;
+            // There is no cost for the industrial variant, and the cost is same as torso-mounted cockpit
         } else {
             cockpitCost = 200000;
         }
@@ -5690,7 +5703,8 @@ public abstract class Mech extends Entity {
                 && (!hasAbility(OptionsConstants.MD_BVDNI)
                 && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT))) {
             roll.addModifier(1, "Small Cockpit");
-        } else if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+        } else if ((getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
+		   || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)){
             roll.addModifier(1, "Torso-Mounted Cockpit");
             int sensorHits = getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                     Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
@@ -6503,6 +6517,9 @@ public abstract class Mech extends Entity {
             case COCKPIT_SMALL_COMMAND_CONSOLE:
                 inName = "COCKPIT_SMALL_COMMAND_CONSOLE";
                 break;
+            case COCKPIT_TORSO_MOUNTED_INDUSTRIAL:
+                inName = "COCKPIT_TORSO_MOUNTED_INDUSTRIAL";
+                break;
             default:
                 inName = "COCKPIT_UNKNOWN";
         }
@@ -7242,6 +7259,52 @@ public abstract class Mech extends Entity {
                 setCockpitType(COCKPIT_VRRP);
             } else {
                 setCockpitType(COCKPIT_TORSO_MOUNTED);
+            }
+        }
+        return success;
+    }
+	
+
+    public boolean addTorsoMountedIndustrialCockpit(boolean vrpp) {
+        boolean success = true;
+        if (getEmptyCriticals(LOC_HEAD) < 2) {
+            success = false;
+        } else {
+            addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_SENSORS));
+            addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_SENSORS));
+        }
+
+        if ((getEmptyCriticals(LOC_CT) < 2) || !success) {
+            success = false;
+        } else {
+            addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
+                    CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+            if (vrpp) {
+                addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            } else {
+                addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            }
+        }
+
+        if ((getEmptyCriticals(LOC_LT) < 1) || (getEmptyCriticals(LOC_RT) < 1)
+                || !success) {
+            success = false;
+        } else {
+            addCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_LIFE_SUPPORT));
+            addCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_LIFE_SUPPORT));
+        }
+
+        if (success) {
+            if (vrpp) {
+                setCockpitType(COCKPIT_VRRP);
+            } else {
+                setCockpitType(COCKPIT_TORSO_MOUNTED_INDUSTRIAL);
             }
         }
         return success;

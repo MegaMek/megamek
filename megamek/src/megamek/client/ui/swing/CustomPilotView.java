@@ -32,6 +32,7 @@ import javax.swing.SwingConstants;
 
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
+import megamek.client.generators.RandomCallsignGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
@@ -107,14 +108,18 @@ public class CustomPilotView extends JPanel {
         portraitDialog.setPilot(entity.getCrew(), slot);
         add(button, GBC.std().gridheight(2));
 
-        button = new JButton(Messages.getString("CustomMechDialog.RandomName")); //$NON-NLS-1$
+        button = new JButton(Messages.getString("CustomMechDialog.RandomName"));
         button.addActionListener(e -> {
             gender = RandomGenderGenerator.generate();
             fldName.setText(RandomNameGenerator.getInstance().generate(gender, entity.getOwner().getName()));
         });
         add(button, GBC.eop());
 
-        button = new JButton(Messages.getString("CustomMechDialog.RandomSkill")); //$NON-NLS-1$
+        button = new JButton(Messages.getString("CustomMechDialog.RandomCallsign"));
+        button.addActionListener(e -> fldNick.setText(RandomCallsignGenerator.getInstance().generate()));
+        add(button, GBC.eop());
+
+        button = new JButton(Messages.getString("CustomMechDialog.RandomSkill"));
         button.addActionListener(e -> {
             int[] skills = parent.clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
             fldGunnery.setText(Integer.toString(skills[0]));

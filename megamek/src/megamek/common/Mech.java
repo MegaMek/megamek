@@ -7265,7 +7265,7 @@ public abstract class Mech extends Entity {
     }
 	
 
-    public boolean addTorsoMountedIndustrialCockpit(boolean vrpp) {
+    public boolean addTorsoMountedIndustrialCockpit() {
         boolean success = true;
         if (getEmptyCriticals(LOC_HEAD) < 2) {
             success = false;
@@ -7281,13 +7281,8 @@ public abstract class Mech extends Entity {
         } else {
             addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
                     CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-            if (vrpp) {
-                addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
-                        CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-            } else {
-                addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
+            addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
                         CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-            }
         }
 
         if ((getEmptyCriticals(LOC_LT) < 1) || (getEmptyCriticals(LOC_RT) < 1)
@@ -7301,11 +7296,7 @@ public abstract class Mech extends Entity {
         }
 
         if (success) {
-            if (vrpp) {
-                setCockpitType(COCKPIT_VRRP);
-            } else {
-                setCockpitType(COCKPIT_TORSO_MOUNTED_INDUSTRIAL);
-            }
+        	setCockpitType(COCKPIT_TORSO_MOUNTED_INDUSTRIAL);
         }
         return success;
     }

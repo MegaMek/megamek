@@ -64,6 +64,7 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
+import megamek.client.generators.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.ImageFileFactory;
@@ -178,6 +179,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     };
 
     CamoChoiceDialog camoDialog;
+
+    //region Action Commands
+    private static final String NAME_COMMAND = "NAME";
+    private static final String CALLSIGN_COMMAND = "CALLSIGN";
+    //endregion Action Commands
 
     /**
      * Creates a new chat lounge for the clientgui.getClient().
@@ -302,8 +308,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
         butNames = new JButton(Messages.getString("ChatLounge.butNames")); //$NON-NLS-1$
 
-        // Initialize the RandomNameGenerator
+        // Initialize the RandomNameGenerator and RandomCallsignGenerator
         RandomNameGenerator.getInstance();
+        RandomCallsignGenerator.getInstance();
 
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
@@ -870,7 +877,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         panGroundMap.add(labBoardsAvailable);
 
         scrBoardsAvailable = new JScrollPane(lisBoardsAvailable);
-        c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridx = 3;
@@ -3642,7 +3648,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     e.getCrew().sortRandomSkills();
                     c.sendUpdateEntity(e);
                 }
-            } else if (command.equalsIgnoreCase("NAME")) {
+            } else if (command.equalsIgnoreCase(NAME_COMMAND)) {
                 Client c = clientgui.getBots().get(entity.getOwner().getName());
                 if (c == null) {
                     c = clientgui.getClient();
@@ -3652,6 +3658,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         Gender gender = RandomGenderGenerator.generate();
                         e.getCrew().setGender(gender, i);
                         e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getOwner().getName()), i);
+                    }
+                    c.sendUpdateEntity(e);
+                }
+            } else if (command.equals(CALLSIGN_COMMAND)) {
+                Client c = clientgui.getBots().get(entity.getOwner().getName());
+                if (c == null) {
+                    c = clientgui.getClient();
+                }
+                for (Entity e : entities) {
+                    for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+                        e.getCrew().setNickname(RandomCallsignGenerator.getInstance().generate(), i);
                     }
                     c.sendUpdateEntity(e);
                 }
@@ -4031,7 +4048,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
             if (e.isPopupTrigger()) {
                 // This menu uses the following Mnemonics:
-                // B, C, D, E, I, N, O, S, V
+                // B, C, D, E, I, O, R, V
                 JMenuItem menuItem;
                 if (oneSelected) {
                     menuItem = new JMenuItem("View...");
@@ -4088,12 +4105,24 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setMnemonic(KeyEvent.VK_D);
                 popup.add(menuItem);
 
+                //region Randomize Submenu
+                // This menu uses the following Mnemonic Keys:
+                // C, N, S
                 JMenu menu = new JMenu("Randomize");
+                menu.setMnemonic(KeyEvent.VK_R);
+
                 menuItem = new JMenuItem("Name");
-                menuItem.setActionCommand("NAME");
+                menuItem.setActionCommand(NAME_COMMAND);
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
                 menuItem.setMnemonic(KeyEvent.VK_N);
+                menu.add(menuItem);
+
+                menuItem = new JMenuItem("Callsign");
+                menuItem.setActionCommand(CALLSIGN_COMMAND);
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(isOwner || isBot);
+                menuItem.setMnemonic(KeyEvent.VK_C);
                 menu.add(menuItem);
 
                 menuItem = new JMenuItem("Skills");
@@ -4103,6 +4132,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setMnemonic(KeyEvent.VK_S);
                 menu.add(menuItem);
                 popup.add(menu);
+                //endregion Randomize Submenu
 
                 // Change Owner Menu Item
                 menu = new JMenu(Messages.getString("ChatLounge.ChangeOwner"));
@@ -4432,11 +4462,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     }
 
-    public class MekInfo extends JPanel {
-
-        /**
-         *
-         */
+    public static class MekInfo extends JPanel {
         private static final long serialVersionUID = -7337823041775639463L;
 
         private JLabel lblImage;

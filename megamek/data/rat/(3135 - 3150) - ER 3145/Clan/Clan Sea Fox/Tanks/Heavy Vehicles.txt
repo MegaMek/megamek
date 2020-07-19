@@ -11,4 +11,4 @@ Sekhmet Assault Vehicle (Standard),3
 Oro Heavy Tank (HAG),2
 Hanse MBT (Standard),1
 Oro Heavy Tank (Standard),2
-SM2 Heavy Artilley Vehicle (Standard),1
+SM2 Heavy Artillery Vehicle (Standard),1

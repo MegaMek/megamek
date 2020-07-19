@@ -15,6 +15,7 @@ VERSION HISTORY:
 + PR #2060: Fix game freeze for bot-controlled ejected pilots and hot-dropped infantry on ground maps
 + PR #2061: Random Callsign Generator
 + PR #2041: Remove weird 'Hardened' on the equipment section of some Combat Vehicles
++ Issue #2066: Changing year or tech level for DropShip sometimes removes anti-missile systems from assigned bays
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

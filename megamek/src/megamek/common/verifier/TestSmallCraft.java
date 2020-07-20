@@ -527,7 +527,7 @@ public class TestSmallCraft extends TestAero {
     /**
      * Checks to see if this unit has valid armor assignment.
      * 
-     * @param buff A buffer that collects messages about validation failurs
+     * @param buff A buffer that collects messages about validation failures
      * @return     Whether the unit's armor is valid
      */
     @Override
@@ -546,7 +546,7 @@ public class TestSmallCraft extends TestAero {
     /**
      * Checks that the heatsink type is a legal value.
      *
-     * @param buff A buffer that collects messages about validation failurs
+     * @param buff A buffer that collects messages about validation failures
      * @return     Whether the unit's heat sinks are valid.
      */
     @Override

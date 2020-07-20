@@ -384,17 +384,20 @@ public class TestSmallCraft extends TestAero {
         }
     }
 
+    @Override
     public double getWeightEngine() {
         return calculateEngineTonnage(smallCraft.isClan(), smallCraft.getWeight(),
                 smallCraft.getOriginalWalkMP(), smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP),
                 smallCraft.getOriginalBuildYear());
     }
-    
+
+    @Override
     public String printWeightEngine() {
         return StringUtil.makeLength("Engine: ", getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightEngine()) + "\n";
     }
 
+    @Override
     public double getWeightFuel() {
         // Add 2% for pumps and round up to the half ton
         return ceil(smallCraft.getFuelTonnage() * 1.02, Ceil.HALFTON);
@@ -499,13 +502,15 @@ public class TestSmallCraft extends TestAero {
                 "Control Systems:", getPrintSize() - 5) + makeWeightString(getWeightControls()) +
                 "\n";
     }
-        
+
+    @Override
     public String printWeightFuel() {
         return StringUtil.makeLength(
                 "Fuel: ", getPrintSize() - 5) + makeWeightString(getWeightFuel()) +
                 "\n";
     }
 
+    @Override
     public Aero getAero() {
         return smallCraft;
     }
@@ -514,6 +519,7 @@ public class TestSmallCraft extends TestAero {
         return smallCraft;
     }
 
+    @Override
     public String printArmorLocProp(int loc, int wert) {
         return " is greater than " + wert + "!";
     }
@@ -524,6 +530,7 @@ public class TestSmallCraft extends TestAero {
      * @param buff A buffer that collects messages about validation failurs
      * @return     Whether the unit's armor is valid
      */
+    @Override
     public boolean correctArmor(StringBuffer buff) {
         boolean correct = true;
         double maxArmor = maxArmorWeight(smallCraft);
@@ -542,6 +549,7 @@ public class TestSmallCraft extends TestAero {
      * @param buff A buffer that collects messages about validation failurs
      * @return     Whether the unit's heat sinks are valid.
      */
+    @Override
     public boolean correctHeatSinks(StringBuffer buff) {
         if ((smallCraft.getHeatType() != Aero.HEAT_SINGLE) 
                 && (smallCraft.getHeatType() != Aero.HEAT_DOUBLE)) {
@@ -843,7 +851,8 @@ public class TestSmallCraft extends TestAero {
         }
         return buff.toString();
     }
-    
+
+    @Override
     public boolean correctCriticals(StringBuffer buff) {
         double[] extra = extraSlotCost(getSmallCraft());
         
@@ -868,7 +877,4 @@ public class TestSmallCraft extends TestAero {
             return "Small Craft: " + smallCraft.getDisplayName();
         }
     }
-
-
-
 }

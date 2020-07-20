@@ -197,6 +197,11 @@ public class BLKFile {
                     continue;
                 }
 
+                // The stealth armor mount is added when the armor type is set
+                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_STEALTH)) {
+                    continue;
+                }
+
                 if (etype != null) {
                     try {
                         Mounted mount = t.addEquipment(etype, nLoc, false,

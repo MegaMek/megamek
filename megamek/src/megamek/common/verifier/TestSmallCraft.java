@@ -47,11 +47,11 @@ public class TestSmallCraft extends TestAero {
     public static final int ARC_LWING = SmallCraft.LOC_LWING;
     public static final int ARC_RWING = SmallCraft.LOC_RWING;
     public static final int ARC_AFT = SmallCraft.LOC_AFT;
-    public static final int ARC_NONE = SmallCraft.LOC_HULL;
+    public static final int REAR_ARC_OFFSET = SmallCraft.LOC_HULL;
     public static final int ARC_FWD_LEFT = SmallCraft.LOC_LWING;
     public static final int ARC_FWD_RIGHT = SmallCraft.LOC_RWING;
-    public static final int ARC_AFT_LEFT = SmallCraft.LOC_LWING + 4;
-    public static final int ARC_AFT_RIGHT = SmallCraft.LOC_RWING + 4;
+    public static final int ARC_AFT_LEFT = SmallCraft.LOC_LWING + REAR_ARC_OFFSET;
+    public static final int ARC_AFT_RIGHT = SmallCraft.LOC_RWING + REAR_ARC_OFFSET;
     
     private final SmallCraft smallCraft;
 
@@ -173,8 +173,8 @@ public class TestSmallCraft extends TestAero {
      */
     public static double[] extraSlotCost(SmallCraft sc) {
         int arcs = sc.isSpheroid()? 7 : 5;
-        int weaponsPerArc[] = new int[arcs];
-        double weaponTonnage[] = new double[arcs];
+        int[] weaponsPerArc = new int[arcs];
+        double[] weaponTonnage = new double[arcs];
         boolean hasNC3 = sc.hasWorkingMisc(MiscType.F_NAVAL_C3);
 
         for (Mounted m : sc.getEquipment()) {
@@ -184,7 +184,7 @@ public class TestSmallCraft extends TestAero {
                     continue;
                 }
                 if (sc.isSpheroid() && m.isRearMounted()) {
-                    arc += 3;
+                    arc += REAR_ARC_OFFSET;
                 }
                 weaponsPerArc[arc]++;
                 weaponTonnage[arc] += m.getTonnage();

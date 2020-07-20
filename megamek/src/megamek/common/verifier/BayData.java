@@ -156,7 +156,8 @@ public enum BayData {
      * Identifies the type of bay.
      * 
      * @param bay A <code>Bay</code> that is (or can be) mounted on a unit. 
-     * @return    The enum value for the bay.
+     * @return    The enum value for the bay. Returns null if the bay is not a transport by
+     *            (e.g. crew quarters)
      */
     public static @Nullable BayData getBayType(Bay bay) {
         if (bay instanceof MechBay) {
@@ -234,8 +235,8 @@ public enum BayData {
      * Determines whether the bay is legal to mount on a given <code>Entity</code>. Whether it is
      * technically possible or practical is another matter.
      * 
-     * @param en
-     * @return
+     * @param en The entity
+     * @return   Whether the bay is legal
      */
     public boolean isLegalFor(Entity en) {
         //TODO: Container cargo bays aren't implemented, but when added they can be carried by

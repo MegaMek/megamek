@@ -724,8 +724,18 @@ public class TestSmallCraft extends TestAero {
             buff.append("Left and right side weapon loads do not match.\n");
             illegal = true;
         }
-        
-        int bayDoors = smallCraft.getTransportBays().stream().mapToInt(Bay::getDoors).sum();
+
+        int bayDoors = 0;
+        for (Bay bay : smallCraft.getTransportBays()) {
+            bayDoors += bay.getDoors();
+            if (bay.getDoors() == 0) {
+                BayData data = BayData.getBayType(bay);
+                if ((data != null) && !data.isCargoBay() && !data.isInfantryBay()) {
+                    buff.append("Transport bays other than cargo and infantry require at least one door.\n");
+                    illegal = true;
+                }
+            }
+        }
         if (bayDoors > maxBayDoors(smallCraft)) {
             buff.append("Exceeds maximum number of bay doors.\n");
             illegal = true;

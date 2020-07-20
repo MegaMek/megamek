@@ -91,11 +91,11 @@ public enum BayData {
     LIVESTOCK_CARGO ("Cargo Livestock)", 1/0.83, 0, CargoBay.techAdvancement(),
             (size, num) -> new LivestockCargoBay(size, 1, num));
     
-    private String name;
-    private double weight;
-    private int personnel;
-    private TechAdvancement techAdvancement;
-    private BiFunction<Double,Integer,Bay> init;
+    private final String name;
+    private final double weight;
+    private final int personnel;
+    private final TechAdvancement techAdvancement;
+    private final BiFunction<Double,Integer,Bay> init;
     
     BayData(String name, double weight, int personnel,
             TechAdvancement techAdvancement, BiFunction<Double,Integer,Bay> init) {
@@ -220,6 +220,14 @@ public enum BayData {
      */
     public boolean isCargoBay() {
         return ordinal() >= CARGO.ordinal();
+    }
+
+    /**
+     * @return true if the bay is an infantry transport bay (including battlearmor)
+     */
+    public boolean isInfantryBay() {
+        return (ordinal() >= INFANTRY_FOOT.ordinal())
+                && (ordinal() <= CS_BATTLE_ARMOR.ordinal());
     }
     
     /**

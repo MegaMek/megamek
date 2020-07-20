@@ -32,7 +32,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.*;
 import megamek.common.logging.DefaultMmLogger;
@@ -111,7 +111,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             camos = new DirectoryItems(
                     Configuration.camoDir(),
                     "", //$NON-NLS-1$
-                    ImageFileFactory.getInstance()
+                    ScaledImageFileFactory.getInstance()
             );
         } catch (Exception e) {
             camos = null;

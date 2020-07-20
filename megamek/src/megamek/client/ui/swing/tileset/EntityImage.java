@@ -21,10 +21,13 @@ import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.File;
+import java.util.Iterator;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.*;
 import megamek.common.logging.DefaultMmLogger;
+import megamek.common.util.DirectoryItems;
 import megamek.common.util.ImageUtil;
 
 /** Handles the rotated and damaged and preview images for a unit. */
@@ -35,42 +38,58 @@ public class EntityImage {
     private static final int SMOKE_TWO = 40;
     
     // Damage decal images
-    private static final File FILENAME_DAMAGEDECAL_LIGHT = new File("units/DamageDecals", "DmgLight.png"); 
-    private static final File FILENAME_DAMAGEDECAL_MODERATE = new File("units/DamageDecals", "DmgModerate.png"); 
-    private static final File FILENAME_DAMAGEDECAL_HEAVY = new File("units/DamageDecals", "DmgHeavy.png"); 
-    private static final File FILENAME_DAMAGEDECAL_CRIPPLED = new File("units/DamageDecals", "DmgCrippled.png");
-    private static final File FILE_SMOKE_SML = new File("units/DamageDecals", "Smoke1.png"); 
-    private static final File FILE_SMOKE_MED = new File("units/DamageDecals", "Smoke2.png"); 
-    private static final File FILE_SMOKE_LRG = new File("units/DamageDecals", "Smoke3.png"); 
-    private static final File FILE_SMOKE_MUL = new File("units/DamageDecals", "SmokeMulti.png");
-    private static final File FILE_SMOKEFIRE_SML = new File("units/DamageDecals", "SmokeFire1.png"); 
-    private static final File FILE_SMOKEFIRE_MED = new File("units/DamageDecals", "SmokeFire2.png"); 
-    private static final File FILE_SMOKEFIRE_LRG = new File("units/DamageDecals", "SmokeFire3.png"); 
-    private static final File FILE_SMOKEFIRE_MUL = new File("units/DamageDecals", "SmokeFireMulti.png");
-    private static final File FILE_DAMAGEDECAL_EMPTY = new File("units/DamageDecals", "Transparent.png"); 
+    private static final File DECAL_PATH = new File(Configuration.imagesDir(), "units/DamageDecals");
+    private static final File FILE_DAMAGEDECAL_EMPTY = new File("Transparent.png");
     
-    private static Image dmgLight;
-    private static Image dmgModerate;
-    private static Image dmgHeavy;
-    private static Image dmgCrippled;
-    private static Image SmokeSml;
-    private static Image SmokeMed;
-    private static Image SmokeLrg;
-    private static Image SmokeMul;
-    private static Image SmokeFireSml;
-    private static Image SmokeFireMed;
-    private static Image SmokeFireLrg;
-    private static Image SmokeFireMul;
+    // Directory paths within DECAL_PATH
+    private static final String PATH_FIRE1 = "Fire1/";
+    private static final String PATH_FIRE2 = "Fire2/";
+    private static final String PATH_FIRE3 = "Fire3/";
+    private static final String PATH_FIREMULTI = "FireMulti/";
+    
+    private static final String PATH_SMOKE1 = "Smoke1/";
+    private static final String PATH_SMOKE2 = "Smoke2/";
+    private static final String PATH_SMOKE3 = "Smoke3/";
+    private static final String PATH_SMOKEMULTI = "SmokeMulti/";
+    
+    private static final String PATH_LIGHT = "Light/";
+    private static final String PATH_MODERATE = "Moderate/";
+    private static final String PATH_HEAVY = "Heavy/";
+    private static final String PATH_CRIPPLED = "Crippled/";
+    
+    /** A transparent image used as a no-damage decal. */
     private static Image dmgEmpty;
-    private static boolean decalLoaded = false;
     
     private static final int[] X_POS = {0, 0, 63, 63, 0, -63, -63};
     private static final int[] Y_POS = {0, -72, -36, 36, 72, 36, -36};
-
-    // Individual entity images
-    private Image base;
-    private Image wreck;
     
+    private static final int IMG_WIDTH = HexTileset.HEX_W;
+    private static final int IMG_HEIGHT = HexTileset.HEX_H;
+    private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
+    
+    /** All damage decal/fire/smoke files in DECAL_PATH. */
+    private static DirectoryItems DecalImages;
+    
+    static {
+        try {
+            DecalImages = new DirectoryItems(DECAL_PATH, "",  
+                    ImageFileFactory.getInstance());
+        } catch (Exception e) {
+            DecalImages = null;
+            DefaultMmLogger.getInstance().warning(EntityImage.class, "static{}", 
+                    "Failed to find the damage decal images." + e.getMessage());
+        }
+        dmgEmpty = TilesetManager.LoadSpecificImage(DECAL_PATH, FILE_DAMAGEDECAL_EMPTY.toString());
+    }
+    
+    /** The base (unit) image used for this icon. */
+    private Image base;
+    /** The wreck base image used for this icon. */
+    private Image wreck;
+    /** The damage decal image used for this icon. */
+    private Image decal;
+    /** The smoke image used for this icon. */
+    private Image smoke;
     /** A smaller icon used for the unit overview. */
     private Image icon;
     /** A color used instead of a camo. */
@@ -80,26 +99,21 @@ public class EntityImage {
     private Image[] wreckFacings = new Image[6];
     private Component parent;
     /** The damage level, from none to crippled. */
-    private int dmgLevel;
+    private final int dmgLevel;
     /** The tonnage of the unit. */
-    private double weight;
+    private final double weight;
     /** True for units of class or subclass of Infantry. */
-    private boolean isInfantry;
+    private final boolean isInfantry;
     /** True when the image is for the lobby. */
-    private boolean isPreview;
+    private final boolean isPreview;
     /** True when the unit is likely to be more long than wide (e.g. tanks). */
-    private boolean isSlim;
+    private final boolean isSlim;
     /** True when the unit is likely to be very narrow (VTOL). */
-    private boolean isVerySlim;
+    private final boolean isVerySlim;
     /** The position in multi-hex units. */
-    private int pos;
+    private final int pos;
     /** True for units that occupy one hex (all but some dropships). */
-    private boolean isSingleHex;
-    
-
-    private final int IMG_WIDTH = HexTileset.HEX_W;
-    private final int IMG_HEIGHT = HexTileset.HEX_H;
-    private final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
+    private final boolean isSingleHex;
 
     public EntityImage(Image base, int tint, Image camo, Component comp, Entity entity) {
         this(base, null, tint, camo, comp, entity, -1, true);
@@ -125,6 +139,8 @@ public class EntityImage {
         isVerySlim = entity instanceof VTOL;
         pos = secondaryPos;
         isSingleHex = secondaryPos == -1;
+        decal = getDamageDecal(entity, secondaryPos);
+        smoke = getSmokeImage(entity, secondaryPos);
     }
 
     public Image getCamo() {
@@ -205,6 +221,7 @@ public class EntityImage {
         return icon;
     }
 
+    /** Applies the unit individual or player color or camo to the icon. */
     private Image applyColor(Image image) {
         if (image == null) {
             return null;
@@ -258,19 +275,14 @@ public class EntityImage {
         return ImageUtil.createAcceleratedImage(result);
     }
     
-    /** Applies decal images based on the damage and weight of the unit. */
+    /** Applies the damage decal image to the icon. */
     private Image applyDamageDecal(Image image) {
         if (image == null) {
             return null;
         }
         
-        if (!decalLoaded) {
-            loadDecals();
-        }
-
         // Get the damage decal; will be null for undamaged
-        Image dmgDecal = getDamageDecal();
-        if (dmgDecal == null) {
+        if (decal == null) {
             return image;
         }
         
@@ -279,7 +291,7 @@ public class EntityImage {
         int[] pDmgD = new int[IMG_SIZE];
         try {
             grabImagePixels(image, pUnit);
-            grabImagePixels(dmgDecal, pDmgD);
+            grabImagePixels(decal, pDmgD);
         } catch (Exception e) {
             DefaultMmLogger.getInstance().error(getClass(), "applyDamageDecal()", 
                     "Failed to grab pixels for an image to apply the decal. " + e.getMessage());
@@ -315,19 +327,14 @@ public class EntityImage {
         return ImageUtil.createAcceleratedImage(temp);
     }
     
-    /** Applies decal images based on the damage and weight of the unit. */
+    /** Applies the smoke/fire image to the icon. */
     private Image applyDamageSmoke(Image image) {
         if (image == null) {
             return null;
         }
         
-        if (!decalLoaded) {
-            loadDecals();
-        }
-
         // Get the smoke image for heavier damage; is transparent for lighter damage
-        Image smokeImg = chooseSmokeOverlay();
-        if (smokeImg == null) {
+        if (smoke == null) {
             DefaultMmLogger.getInstance().error(getClass(), "applyDamageSmoke()", 
                     "Smoke decal image is null.");
             return image;
@@ -337,12 +344,12 @@ public class EntityImage {
         Image result = ImageUtil.createAcceleratedImage(base);
         Graphics g = result.getGraphics();
         if (isSingleHex) {
-            g.drawImage(smokeImg, 0, 0, null);
+            g.drawImage(smoke, 0, 0, null);
         } else {
             // Draw the right section of the bigger smoke/fire image
-            int sx = smokeImg.getWidth(null) / 2 - 42 + X_POS[pos];
-            int sy = smokeImg.getHeight(null) / 2 - 36 + Y_POS[pos];
-            g.drawImage(smokeImg, 0, 0, 84, 72, sx, sy, sx + 84, sy + 72, null);
+            int sx = smoke.getWidth(null) / 2 - IMG_WIDTH / 2 + X_POS[pos];
+            int sy = smoke.getHeight(null) / 2 - IMG_HEIGHT / 2 + Y_POS[pos];
+            g.drawImage(smoke, 0, 0, IMG_WIDTH, IMG_HEIGHT, sx, sy, sx + IMG_WIDTH, sy + IMG_HEIGHT, null);
         }
 
         return result;
@@ -359,70 +366,86 @@ public class EntityImage {
         }
     }
     
-    /** Returns the smoke overlay or a transparent image based on damage level and weight. */
-    private Image chooseSmokeOverlay() {
-        // No smoke and fire for damage up to moderate
-        if (dmgLevel == Entity.DMG_NONE 
-                || dmgLevel == Entity.DMG_LIGHT
-                || dmgLevel == Entity.DMG_MODERATE) {
-            return dmgEmpty;
+    /** Returns the damage decal based on damage level. */
+    private Image getDamageDecal(Entity entity, int pos) {
+        try {
+            switch (entity.getDamageLevel()) {
+            case Entity.DMG_LIGHT:
+                return getIM(PATH_LIGHT, entity.getShortName(), pos);
+            case Entity.DMG_MODERATE:
+                return getIM(PATH_MODERATE, entity.getShortName(), pos);
+            case Entity.DMG_HEAVY:
+                return getIM(PATH_HEAVY, entity.getShortName(), pos);
+            case Entity.DMG_CRIPPLED:
+                return getIM(PATH_CRIPPLED, entity.getShortName(), pos);
+            default: // DMG_NONE:
+                return null;
+            }
+        } catch (Exception e) {
+            DefaultMmLogger.getInstance().error(getClass(), "getDamageDecal()", 
+                    "Could not load decal image.");
+            e.printStackTrace();
         }
-        
-        // Multi-hex units get their own overlays
-        if (pos > -1) {
-            return dmgLevel == Entity.DMG_HEAVY ? SmokeMul : SmokeFireMul;
+        return null;
+    }
+    
+    /** Returns the smoke/fire image based on damage level. */
+    private Image getSmokeImage(Entity entity, int pos) {
+        try {
+            // No smoke and fire for damage up to moderate
+            if (dmgLevel == Entity.DMG_NONE 
+                    || dmgLevel == Entity.DMG_LIGHT
+                    || dmgLevel == Entity.DMG_MODERATE) {
+                return dmgEmpty;
+            }
+
+            String path = "";
+            if (pos > -1) {
+                // Multi-hex units get their own overlays
+                path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKEMULTI : PATH_FIREMULTI;
+            } else {
+                // Three stacks of smoke and fire for wide and heavy units,
+                // two for slimmer and medium units and one for very slim
+                // and light units
+                if (weight > SMOKE_THREE && !isSlim) {
+                    path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKE3 : PATH_FIRE3;
+                } else if (weight > SMOKE_TWO && !isVerySlim) {
+                    path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKE2 : PATH_FIRE2;
+                } else {
+                    path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKE1 : PATH_FIRE1;
+                }
+            }
+            // Use the same smoke image for all positions of multi-hex units (pos = 0)!
+            return getIM(path, entity.getShortName(), 0); 
+        } catch (Exception e) {
+            DefaultMmLogger.getInstance().error(getClass(), "getSmokeImage()", 
+                    "Could not load smoke/fire image.");
+            e.printStackTrace();
         }
-        
-        // Three stacks of smoke and fire for wide and heavy units,
-        // two for slimmer and medium units and one for very slim
-        // and light units
-        if (weight > SMOKE_THREE && !isSlim) {
-            return dmgLevel == Entity.DMG_HEAVY ? SmokeLrg : SmokeFireLrg;
-        } else if (weight > SMOKE_TWO && !isVerySlim) {
-            return dmgLevel == Entity.DMG_HEAVY ? SmokeMed : SmokeFireMed;
-        } else {
-            return dmgLevel == Entity.DMG_HEAVY ? SmokeSml : SmokeFireSml;
-        }
+        return null;
     }
 
-    /** Returns the damage decal based on damage level. */
-    private Image getDamageDecal() {
-        switch (dmgLevel) {
-        case Entity.DMG_LIGHT:
-            return dmgLight;
-        case Entity.DMG_MODERATE:
-            return dmgModerate;
-        case Entity.DMG_HEAVY:
-            return dmgHeavy;
-        case Entity.DMG_CRIPPLED:
-            return dmgCrippled;
-        default: // DMG_NONE:
-            return null;
+    /** 
+     * Returns a random image of all the images in the category (= directory) cat.
+     * To have reproducible images for individual units the image is chosen 
+     * based on the hash value of the name (and the hex in multi-hex units).
+     */
+    private static Image getIM(String cat, String name, int pos) throws Exception {
+        int img = Math.abs((name + pos).hashCode()) % getSize(DecalImages.getItemNames(cat));
+        Iterator<String> iter = DecalImages.getItemNames(cat);
+        String n = "";
+        for (int i = 0; i <= img; i++) {
+            n = iter.next();
         }
+        return (Image)DecalImages.getItem(cat, n);
     }
     
-    /** Loads the damage decal images. */
-    private static void loadDecals() {
-        // Damage scars
-        dmgLight = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_LIGHT.toString());
-        dmgModerate = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_MODERATE.toString());
-        dmgHeavy = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_HEAVY.toString());
-        dmgCrippled = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILENAME_DAMAGEDECAL_CRIPPLED.toString());
-        
-        // Smoke and fire
-        SmokeSml = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKE_SML.toString());
-        SmokeMed = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKE_MED.toString());
-        SmokeLrg = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKE_LRG.toString());
-        SmokeMul = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKE_MUL.toString());
-        SmokeFireSml = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKEFIRE_SML.toString());
-        SmokeFireMed = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKEFIRE_MED.toString());
-        SmokeFireLrg = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKEFIRE_LRG.toString());
-        SmokeFireMul = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_SMOKEFIRE_MUL.toString());
-        
-        // A transparent image (helper)
-        dmgEmpty = TilesetManager.LoadSpecificImage(Configuration.imagesDir(), FILE_DAMAGEDECAL_EMPTY.toString());
-        
-        decalLoaded = true;
+    /** Returns the size of the collection of an iterator. Local helper function for DirectoryItems. */
+    private static <T> int getSize(Iterator<T> iter) {
+        int result = 0;
+        for (;iter.hasNext();iter.next(), result++);
+        return result;
     }
-    
+
+
 }

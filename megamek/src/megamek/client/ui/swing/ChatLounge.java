@@ -66,7 +66,7 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -194,7 +194,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         try {
             portraits = new DirectoryItems(Configuration.portraitImagesDir(), "", //$NON-NLS-1$
-                    ImageFileFactory.getInstance());
+                    ScaledImageFileFactory.getInstance());
         } catch (Exception e) {
             portraits = null;
         }

@@ -1,6 +1,5 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * MegaMek - Copyright (C) 2020 - The MegaMek Team  
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -25,23 +24,41 @@ import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import megamek.common.util.*;
+import megamek.common.util.ImageUtil;
+import megamek.common.util.ItemFile;
+import megamek.common.util.ItemFileFactory;
 
 /**
- * A FilenameFilter that produces image files (PNG, JPG/JPEG, GIF). 
- * (The images are not scaled. To produce images scaled to 84x72
- * use ScaledImageFileFactory.)
+ * This class will produce <code>Image</code> objects from files. If an image
+ * file is inside of JAR and ZIP file, then it must save the contents to a
+ * temporary file. <p/> <p/> Created on January 18, 2004
+ * 
+ * @author James Damour
+ * @version 1
  */
-public class ImageFileFactory implements ItemFileFactory {
+public class ScaledImageFileFactory implements ItemFileFactory {
 
-    /** Accepted image file extentions */
+    /**
+     * Accepted image file extentions
+     */
     private static final String JPG = "JPG", JPEG = "JPEG", GIF = "GIF", PNG = "PNG"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
-    /** Singleton */
-    private ImageFileFactory() {}
-    private static ImageFileFactory singleton = new ImageFileFactory();
-    /** Returns the singleton ImageFileFactory. */
-    public static ImageFileFactory getInstance() {
+    /**
+     * Implement the Singleton pattern.
+     */
+    private ScaledImageFileFactory() {
+    }
+
+    private static ScaledImageFileFactory singleton = null;
+
+    /**
+     * Get the Singleton <code>ImageFileFactory</code>.
+     * 
+     * @return the Singleton <code>ImageFileFactory</code>.
+     */
+    public static ScaledImageFileFactory getInstance() {
+        if (null == singleton)
+            singleton = new ScaledImageFileFactory();
         return singleton;
     }
 
@@ -74,7 +91,8 @@ public class ImageFileFactory implements ItemFileFactory {
                     String name = itemFile.getAbsolutePath();
                     image = ImageUtil.loadImageFromFile(name);
                 }
-                return ImageUtil.createAcceleratedImage(image);
+                // Return a copy of the image.
+                return ImageUtil.getScaledImage(image, 84, 72);
             } // End getItem()
         };
 
@@ -149,7 +167,8 @@ public class ImageFileFactory implements ItemFileFactory {
 
                 } // End get-image
 
-                return ImageUtil.createAcceleratedImage(image);
+                // Return a copy of the image.
+                return ImageUtil.getScaledImage(image, 84, 72);
 
             } // End getItem()
         };

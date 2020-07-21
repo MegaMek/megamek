@@ -1,7 +1,7 @@
 Clan Wolf Heavy Vehicles 3135+
 Oro Heavy Tank (Standard),1
 Pike Support Vehicle (Clan),2
-SM2 Heavy Artilley Vehicle (Standard),3
+SM2 Heavy Artillery Vehicle (Standard),3
 Oro Heavy Tank (HAG),4
 Axel Heavy Tank IIC (Standard),5
 Pike Support Vehicle (Clan),6

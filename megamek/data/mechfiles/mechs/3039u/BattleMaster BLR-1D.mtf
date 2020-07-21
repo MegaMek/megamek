@@ -152,3 +152,19 @@ Heat Sink
 -Empty-
 
 
+Overview: A storied and well-regarded assault 'Mech, the BattleMaster is likely one of the most recognizable command vehicles to be found in the armies of the Inner Sphere. Durable and reliable, the design has served in many key line regiments since its inception in 2633. Though nearly every MechWarrior is familiar with its abilities, few are able to use their knowledge to their advantage when facing this formidable BattleMech.
+
+Capabilities: The BattleMaster's combination of long-ranged, short-ranged, and anti-infantry firepower give it an intimidating and flexible damage profile. Even flankers have to take care, as the BattleMaster is one of the rare designs to mount rear-facing lasers on the base variant. Additionally, the large cockpit lends itself well to the needs of commanding officers. Spacious and well-equipped, it is often modified into a dedicated command console, though the large viewport makes the head slightly more vulnerable to enemy fire than other more armored designs.
+
+Deployment: Although never produced in great numbers, the BattleMaster remains common due to the efforts of commands to keep each machine functional. Due to their production lines, Houses Steiner and Marik fielded the greatest concentrations of the design during the Succession Wars, though every Great House could lay claim to more than a few. House Davion, having no native manufacturing plant for the design, modified their BattleMaster to the BLR-1D specifications. Increased armor and the removal of the volatile SRM ammunition make this variant tougher than most, though these changes never proved common beyond traditional Federated Suns borders.
+
+systemmanufacturer:CHASSIS:Hollis
+systemmode:CHASSIS:Mark X
+systemmanufacturer:ENGINE:VOX
+systemmode:ENGINE:340
+systemmanufacturer:ARMOR:StarGuard
+systemmode:ARMOR:IV
+systemmanufacturer:COMMUNICATIONS:HarfordCo
+systemmode:COMMUNICATIONS:COM 4000
+systemmanufacturer:TARGETING:HarfordCo
+systemmode:TARGETING:XKZ 1

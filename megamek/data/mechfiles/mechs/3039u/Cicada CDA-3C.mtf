@@ -148,3 +148,19 @@ Machine Gun
 -Empty-
 
 
+Overview: The Cicada was the sole BattleMech offering from reknown communications and targeting system manufacturer HartfordCo. Competing against one of the most famed light 'Mechs of Bergan Industries, the Locust, the Cicada offered similar capabilities on a reinforced frame. The Terran Hegemony felt like the advantages (and price) were what they were looking for, and purchases as many Cicadas as HartfordCo could produce. The fall of the Star League and the ensuing Succession Wars saw the Cicada quickly spread throughout many of its battlefields. There its greatest flaw, the faulty heat sinks HartfordCo had used, quickly became apparent. Though many of the sinks were replaced over time, certain Cicada's still suffer from major heat dissipation problems.
+
+Capabilities: As a heavy scout, the Cicada is meant to accomplish most of the same tasks as Stingers, Wasps, or Locusts. The heavier chassis does allow the Cicada to take more punishment, and therefore it remains a popular alternative to the lighter 'Mechs whenever it is available.
+
+Deployment: Though the 'Mech began the Succession Wars in the hands of every Great House, Free Worlds Defense Industries eventually became the sole manufacturer to produce the chassis. House Marik gradually became the Cicada's heaviest user as a result. With its massive PPC, the CDA-3C was the most unusual Cicada of the Succession Wars. Meant to be more of a skirmisher, the inclusion of two machine guns also gave it enough anti-infantry firepower to allow it to devastate conventional platoons. As with the other Capellan variant, no -3C's have been seen in the Confederation (or elsewhere in the Inner Sphere) since the end of the Clan Invasion.
+
+systemmanufacturer:CHASSIS:Hartford
+systemmode:CHASSIS:300
+systemmanufacturer:ENGINE:Vox
+systemmode:ENGINE:280
+systemmanufacturer:ARMOR:StarSlab
+systemmode:ARMOR:/3
+systemmanufacturer:COMMUNICATIONS:Datacom
+systemmode:COMMUNICATIONS:50
+systemmanufacturer:TARGETING:Dynatec
+systemmode:TARGETING:1122

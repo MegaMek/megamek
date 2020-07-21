@@ -15,6 +15,11 @@ VERSION HISTORY:
 + PR #2060: Fix game freeze for bot-controlled ejected pilots and hot-dropped infantry on ground maps
 + PR #2061: Random Callsign Generator
 + PR #2041: Remove weird 'Hardened' on the equipment section of some Combat Vehicles
++ Issue #2066: Changing year or tech level for DropShip sometimes removes anti-missile systems from assigned bays
++ Data: First units from Fluff Text project (Thanks to Greekfire for this batch)
++ Data: RAT and Force Gen name fixes.
++ Issue #2054: New Ahne Texture pack (Tileset) for the megamek client
++ Issue #2037: New additions to TheJungle for Kaji maps (and some other new maps)
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

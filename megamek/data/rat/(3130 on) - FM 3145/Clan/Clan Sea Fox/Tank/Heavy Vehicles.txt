@@ -9,4 +9,4 @@ Ishtar Heavy Fire Support Tank (Standard), 5
 Athena Combat Vehicle (Standard), 4
 Sekhmet Assault Vehicle (Standard), 3
 Oro Heavy Tank (HAG), 2
-SM2 Heavy Artilley Vehicle (Standard), 1
+SM2 Heavy Artillery Vehicle (Standard), 1

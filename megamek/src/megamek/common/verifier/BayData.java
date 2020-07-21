@@ -91,11 +91,11 @@ public enum BayData {
     LIVESTOCK_CARGO ("Cargo Livestock)", 1/0.83, 0, CargoBay.techAdvancement(),
             (size, num) -> new LivestockCargoBay(size, 1, num));
     
-    private String name;
-    private double weight;
-    private int personnel;
-    private TechAdvancement techAdvancement;
-    private BiFunction<Double,Integer,Bay> init;
+    private final String name;
+    private final double weight;
+    private final int personnel;
+    private final TechAdvancement techAdvancement;
+    private final BiFunction<Double,Integer,Bay> init;
     
     BayData(String name, double weight, int personnel,
             TechAdvancement techAdvancement, BiFunction<Double,Integer,Bay> init) {
@@ -156,7 +156,8 @@ public enum BayData {
      * Identifies the type of bay.
      * 
      * @param bay A <code>Bay</code> that is (or can be) mounted on a unit. 
-     * @return    The enum value for the bay.
+     * @return    The enum value for the bay. Returns null if the bay is not a transport by
+     *            (e.g. crew quarters)
      */
     public static @Nullable BayData getBayType(Bay bay) {
         if (bay instanceof MechBay) {
@@ -221,13 +222,21 @@ public enum BayData {
     public boolean isCargoBay() {
         return ordinal() >= CARGO.ordinal();
     }
+
+    /**
+     * @return true if the bay is an infantry transport bay (including battlearmor)
+     */
+    public boolean isInfantryBay() {
+        return (ordinal() >= INFANTRY_FOOT.ordinal())
+                && (ordinal() <= CS_BATTLE_ARMOR.ordinal());
+    }
     
     /**
      * Determines whether the bay is legal to mount on a given <code>Entity</code>. Whether it is
      * technically possible or practical is another matter.
      * 
-     * @param en
-     * @return
+     * @param en The entity
+     * @return   Whether the bay is legal
      */
     public boolean isLegalFor(Entity en) {
         //TODO: Container cargo bays aren't implemented, but when added they can be carried by

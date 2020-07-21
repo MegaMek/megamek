@@ -135,41 +135,41 @@ public class ScaledImageFileFactory implements ItemFileFactory {
                 if (null == image) {
 
                     // Get ready to read from the item.
-                    InputStream in = new BufferedInputStream(zipFile
-                            .getInputStream(itemEntry), (int) itemEntry
-                            .getSize());
+                    try (InputStream in = new BufferedInputStream(
+                            zipFile.getInputStream(itemEntry), 
+                            (int) itemEntry.getSize())) {
 
-                    // Make a buffer big enough to hold the item,
-                    // read from the ZIP file, and write it to temp.
-                    byte[] buffer = new byte[(int) itemEntry.getSize()];
-                    in.read(buffer);
+                        // Make a buffer big enough to hold the item,
+                        // read from the ZIP file, and write it to temp.
+                        byte[] buffer = new byte[(int) itemEntry.getSize()];
+                        in.read(buffer);
 
-                    // Check the last 10 bytes. I've been having
-                    // some problems with incomplete image files,
-                    // and I want to detect it early and give advice
-                    // to players for dealing with the problem.
-                    int index = (int) itemEntry.getSize() - 10;
-                    while (itemEntry.getSize() > index) {
-                        if (0 != buffer[index]) {
-                            break;
+                        // Check the last 10 bytes. I've been having
+                        // some problems with incomplete image files,
+                        // and I want to detect it early and give advice
+                        // to players for dealing with the problem.
+                        int index = (int) itemEntry.getSize() - 10;
+                        while (itemEntry.getSize() > index) {
+                            if (0 != buffer[index]) {
+                                break;
+                            }
+                            index++;
                         }
-                        index++;
-                    }
-                    if (itemEntry.getSize() <= index) {
-                        throw new IOException(
-                                "Error reading " + itemEntry.getName() + //$NON-NLS-1$
-                                        "\nYou may want to unzip " + //$NON-NLS-1$
-                                        zipFile.getName());
-                    }
+                        if (itemEntry.getSize() <= index) {
+                            throw new IOException(
+                                    "Error reading " + itemEntry.getName() + //$NON-NLS-1$
+                                    "\nYou may want to unzip " + //$NON-NLS-1$
+                                    zipFile.getName());
+                        }
 
-                    // Create the image from the buffer.
-                    image = Toolkit.getDefaultToolkit().createImage(buffer);
+                        // Create the image from the buffer.
+                        image = Toolkit.getDefaultToolkit().createImage(buffer);
 
-                } // End get-image
-
+                    } // End get-image
+                }
                 // Return a copy of the image.
                 return ImageUtil.getScaledImage(image, 84, 72);
-
+                
             } // End getItem()
         };
 

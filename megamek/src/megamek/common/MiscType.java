@@ -7909,7 +7909,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Liquid Storage";
         misc.setInternalName(misc.name);
         misc.addLookupName("Liquid Storage (1 ton)");
-        misc.addLookupName("Liquid Storage (0.5 ton)");
+        misc.addLookupName("Liquid Storage (0.5 tons)");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = 0;

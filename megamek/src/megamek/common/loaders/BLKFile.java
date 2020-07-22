@@ -107,7 +107,7 @@ public class BLKFile {
      */
     static double getLegacyVariableSize(String eqName) {
         if (eqName.startsWith("Cargo")
-                || eqName.startsWith("Liquid Cargo")
+                || eqName.startsWith("Liquid Storage")
                 || eqName.startsWith("Communications Equipment")) {
             return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
                     eqName.indexOf(" ton")));
@@ -116,8 +116,14 @@ public class BLKFile {
             return Double.parseDouble(eqName.substring(eqName.indexOf(":") + 1));
         }
         if (eqName.startsWith("Mission Equipment Storage")) {
-            return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
-                    eqName.indexOf("kg")).trim());
+            int pos = eqName.indexOf("(");
+            if (pos > 0) {
+                return Double.parseDouble(eqName.substring(pos + 1,
+                        eqName.indexOf("kg")).trim());
+            } else {
+                // If the internal name does not include a size, it's the original 20 kg version.
+                return 0.02;
+            }
         }
         if (eqName.startsWith("Ladder")) {
             return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,

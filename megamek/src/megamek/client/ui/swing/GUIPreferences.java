@@ -112,7 +112,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_POS_Y = "DisplayPosY";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
-    public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
+    public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
+    public static final String UNIT_LABEL_BORDER_TEAM = "EntityTeamLabelColor";
     public static final String FOCUS = "Focus";
     public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
     public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
@@ -306,7 +307,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
-        store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
+        store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
         store.setDefault(FIRING_SOLUTIONS,true);
@@ -403,6 +404,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ALLY_UNIT_COLOR, new Color(80, 250, 250));
         setDefault(ENEMY_UNIT_COLOR, new Color(220, 20, 20));
         setDefault(MY_UNIT_COLOR, new Color(20, 220, 20));
+        setDefault(UNIT_LABEL_BORDER_TEAM, true);
         
     }
 
@@ -441,6 +443,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getAutoEndFiring() {
         return store.getBoolean(AUTO_END_FIRING);
     }
+    
+    public boolean getUnitLabelBorderTeam() {
+        return store.getBoolean(UNIT_LABEL_BORDER_TEAM);
+    }
 
     public boolean getAutoDeclareSearchlight() {
         return store.getBoolean(AUTO_DECLARE_SEARCHLIGHT);
@@ -474,8 +480,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(DISPLAY_SIZE_WIDTH);
     }
 
-    public boolean getEntityOwnerLabelColor() {
-        return store.getBoolean(ENTITY_OWNER_LABEL_COLOR);
+    public boolean getUnitLabelBorder() {
+        return store.getBoolean(UNIT_LABEL_BORDER);
     }
 
     public boolean getFocus() {
@@ -916,8 +922,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(DISPLAY_SIZE_WIDTH, i);
     }
 
-    public void setEntityOwnerLabelColor(boolean i) {
-        store.setValue(ENTITY_OWNER_LABEL_COLOR, i);
+    public void setUnitLabelBorder(boolean i) {
+        store.setValue(UNIT_LABEL_BORDER, i);
     }
 
     public void setGetFocus(boolean state) {
@@ -1059,6 +1065,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setBoardEditLoadWidth(int i) {
         store.setValue(BOARDEDIT_LOAD_SIZE_WIDTH, i);
+    }
+    
+    public void setUnitLabelBorderTeam(boolean bt) {
+        store.setValue(UNIT_LABEL_BORDER_TEAM, bt);
     }
 
     public void setMiniReportSizeHeight(int i) {

@@ -44,6 +44,7 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -439,14 +440,20 @@ public class CommonSettingsDialog extends ClientDialog implements
         borderPlayerColor = new JRadioButton(Messages.getString("CommonSettingsDialog.borderPlayerColor"));
         borderPlayerColor.addItemListener(this);
         row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(borderPlayerColor);
         comps.add(row);
         
         borderTeamColor = new JRadioButton(Messages.getString("CommonSettingsDialog.borderTeamColor"));
         borderTeamColor.addItemListener(this);
         row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(borderTeamColor);
         comps.add(row);
+        
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(borderPlayerColor);
+        bg.add(borderTeamColor);
 
         useSoftCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useSoftCenter")); //$NON-NLS-1$
         useSoftCenter.setToolTipText(Messages.getString("CommonSettingsDialog.useSoftCenterTip"));
@@ -807,7 +814,11 @@ public class CommonSettingsDialog extends ClientDialog implements
         levelhighlight.setSelected(gs.getLevelHighlight());
         shadowMap.setSelected(gs.getShadowMap());
         useSoftCenter.setSelected(gs.getBoolean("SOFTCENTER"));
-        entityOwnerColor.setSelected(gs.getEntityOwnerLabelColor());
+        entityOwnerColor.setSelected(gs.getUnitLabelBorder());
+        borderPlayerColor.setSelected(!gs.getUnitLabelBorderTeam());
+        borderTeamColor.setSelected(gs.getUnitLabelBorderTeam());
+        borderPlayerColor.setEnabled(entityOwnerColor.isSelected());
+        borderTeamColor.setEnabled(entityOwnerColor.isSelected());
 
 
         File dir = Configuration.hexesDir();
@@ -912,7 +923,8 @@ public class CommonSettingsDialog extends ClientDialog implements
         IClientPreferences cs = PreferenceManager.getClientPreferences();
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
-        gs.setEntityOwnerLabelColor(entityOwnerColor.isSelected());
+        gs.setUnitLabelBorder(entityOwnerColor.isSelected());
+        gs.setUnitLabelBorderTeam(borderTeamColor.isSelected());
         gs.setMinimapEnabled(minimapEnabled.isSelected());
         gs.setAutoEndFiring(autoEndFiring.isSelected());
         gs.setAutoDeclareSearchlight(autoDeclareSearchlight.isSelected());
@@ -1235,6 +1247,13 @@ public class CommonSettingsDialog extends ClientDialog implements
                 clientgui.minimap.drawMap();
             }
 
+        } else if (source.equals(entityOwnerColor) 
+                || source.equals(borderPlayerColor)
+                || source.equals(borderTeamColor)) {
+            guip.setUnitLabelBorder(entityOwnerColor.isSelected());
+            guip.setUnitLabelBorderTeam(borderTeamColor.isSelected());
+            borderPlayerColor.setEnabled(entityOwnerColor.isSelected());
+            borderTeamColor.setEnabled(entityOwnerColor.isSelected());
         }
     }
 

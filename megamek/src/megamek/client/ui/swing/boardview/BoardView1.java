@@ -722,8 +722,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         firstLOSSprite = new CursorSprite(this, Color.red);
         secondLOSSprite = new CursorSprite(this, Color.red);
 
-        PreferenceManager.getClientPreferences().addPreferenceChangeListener(
-                this);
+        PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
 
         SpecialHexDisplay.Type.ARTILLERY_HIT.init();
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
@@ -1078,7 +1078,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
         }
-        if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+        if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)
+                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER)
+                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER_TEAM)) {
             updateEntityLabels();
             for (Sprite s: wreckSprites) {
                 s.prepare();

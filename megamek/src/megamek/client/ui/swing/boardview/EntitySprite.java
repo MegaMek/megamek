@@ -38,7 +38,6 @@ import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
-import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadVee;
 import megamek.common.RangeType;
@@ -511,20 +510,23 @@ class EntitySprite extends Sprite {
                 graph.fillRoundRect(labelRect.x, labelRect.y, labelRect.width,
                         labelRect.height, 5, 10);
 
-                if (guip.getEntityOwnerLabelColor()) {
-                    graph.setColor(PlayerColors.getColor(
-                            entity.getOwner().getColorIndex(), false));
-                    
-                    boolean isLocalTeam = entity.getOwner().getTeam() == bv.clientgui.getClient().getLocalPlayer().getTeam();
-                    boolean isLocalPlayer = entity.getOwner().equals(bv.clientgui.getClient().getLocalPlayer());
-                    if (isLocalPlayer) {
-                        graph.setColor(GUIPreferences.getInstance().getMyUnitColor());
-                    } else if (isLocalTeam) {
-                        graph.setColor(GUIPreferences.getInstance().getAllyUnitColor());
+                // Draw a label border with player colors or team coloring
+                if (guip.getUnitLabelBorder()) {
+                    if (guip.getUnitLabelBorderTeam())
+                    {
+                        boolean isLocalTeam = entity.getOwner().getTeam() == bv.clientgui.getClient().getLocalPlayer().getTeam();
+                        boolean isLocalPlayer = entity.getOwner().equals(bv.clientgui.getClient().getLocalPlayer());
+                        if (isLocalPlayer) {
+                            graph.setColor(GUIPreferences.getInstance().getMyUnitColor());
+                        } else if (isLocalTeam) {
+                            graph.setColor(GUIPreferences.getInstance().getAllyUnitColor());
+                        } else {
+                            graph.setColor(GUIPreferences.getInstance().getEnemyUnitColor());
+                        }
                     } else {
-                        graph.setColor(GUIPreferences.getInstance().getEnemyUnitColor());
+                        graph.setColor(PlayerColors.getColor(
+                                entity.getOwner().getColorIndex(), false));
                     }
-                    
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
                     graph.drawRoundRect(labelRect.x - 1, labelRect.y - 1,

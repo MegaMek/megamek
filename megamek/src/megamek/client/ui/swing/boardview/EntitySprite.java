@@ -38,6 +38,7 @@ import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadVee;
 import megamek.common.RangeType;
@@ -513,6 +514,17 @@ class EntitySprite extends Sprite {
                 if (guip.getEntityOwnerLabelColor()) {
                     graph.setColor(PlayerColors.getColor(
                             entity.getOwner().getColorIndex(), false));
+                    
+                    boolean isLocalTeam = entity.getOwner().getTeam() == bv.clientgui.getClient().getLocalPlayer().getTeam();
+                    boolean isLocalPlayer = entity.getOwner().equals(bv.clientgui.getClient().getLocalPlayer());
+                    if (isLocalPlayer) {
+                        graph.setColor(GUIPreferences.getInstance().getMyUnitColor());
+                    } else if (isLocalTeam) {
+                        graph.setColor(GUIPreferences.getInstance().getAllyUnitColor());
+                    } else {
+                        graph.setColor(GUIPreferences.getInstance().getEnemyUnitColor());
+                    }
+                    
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
                     graph.drawRoundRect(labelRect.x - 1, labelRect.y - 1,

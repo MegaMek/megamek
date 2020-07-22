@@ -206,6 +206,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARDEDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
     public static final String BOARDEDIT_RNDDIALOG_START = "BoardEditRandomDialogStart";
     public static final String WARNING_COLOR = "WarningColor";
+    public static final String ALLY_UNIT_COLOR = "AllyUnitColor";
+    public static final String MY_UNIT_COLOR = "MyUnitColor";
+    public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -396,6 +399,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         
         store.setDefault(DEFAULT_WEAP_SORT_ORDER,
                 Entity.WeaponSortOrder.DEFAULT.ordinal());
+        
+        setDefault(ALLY_UNIT_COLOR, new Color(80, 250, 250));
+        setDefault(ENEMY_UNIT_COLOR, new Color(220, 20, 20));
+        setDefault(MY_UNIT_COLOR, new Color(20, 220, 20));
         
     }
 
@@ -699,6 +706,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public boolean getNagForWiGELanding() {
         return store.getBoolean(NAG_FOR_WIGE_LANDING);
+    }
+    
+    public Color getMyUnitColor() {
+        return getColor(MY_UNIT_COLOR);
+    }
+    
+    public Color getEnemyUnitColor() {
+        return getColor(ENEMY_UNIT_COLOR);
+    }
+    
+    public Color getAllyUnitColor() {
+        return getColor(ALLY_UNIT_COLOR);
     }
 
     public Color getRulerColor1() {
@@ -1324,6 +1343,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setBoardEdRndStart(boolean b) {
         store.setValue(BOARDEDIT_RNDDIALOG_START, b);
+    }
+    
+    public void setMyUnitColor(Color col) {
+        store.setValue(MY_UNIT_COLOR, getColorString(col));
+    }
+    
+    public void setEnemyUnitColor(Color col) {
+        store.setValue(ENEMY_UNIT_COLOR, getColorString(col));
+    }
+    
+    public void setAllyUnitColor(Color col) {
+        store.setValue(ALLY_UNIT_COLOR, getColorString(col));
     }
 
     protected ColorParser p = new ColorParser();

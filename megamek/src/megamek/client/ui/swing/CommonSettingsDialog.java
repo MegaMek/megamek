@@ -53,6 +53,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
@@ -225,6 +226,8 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox floatingIso;
     private JCheckBox mmSymbol;
     private JCheckBox entityOwnerColor;
+    private JRadioButton borderTeamColor;
+    private JRadioButton borderPlayerColor;
     private JCheckBox useSoftCenter;
     private JCheckBox levelhighlight;
     private JCheckBox shadowMap;
@@ -431,6 +434,18 @@ public class CommonSettingsDialog extends ClientDialog implements
         entityOwnerColor.addItemListener(this);
         row = new ArrayList<>();
         row.add(entityOwnerColor);
+        comps.add(row);
+        
+        borderPlayerColor = new JRadioButton(Messages.getString("CommonSettingsDialog.borderPlayerColor"));
+        borderPlayerColor.addItemListener(this);
+        row = new ArrayList<>();
+        row.add(borderPlayerColor);
+        comps.add(row);
+        
+        borderTeamColor = new JRadioButton(Messages.getString("CommonSettingsDialog.borderTeamColor"));
+        borderTeamColor.addItemListener(this);
+        row = new ArrayList<>();
+        row.add(borderTeamColor);
         comps.add(row);
 
         useSoftCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useSoftCenter")); //$NON-NLS-1$

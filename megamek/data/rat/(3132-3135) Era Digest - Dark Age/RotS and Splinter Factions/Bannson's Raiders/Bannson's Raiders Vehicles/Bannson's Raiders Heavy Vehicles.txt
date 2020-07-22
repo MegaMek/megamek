@@ -1,7 +1,7 @@
 Heavy Vehicles
 Praetorian Mobile Strategic Command HQ (Standard), 1
 JES III Missile Carrier (Standard), 2
-SM2 Heavy Artilley Vehicle (LTC), 3
+SM2 Heavy Artillery Vehicle (LTC), 3
 Thumper Artillery Vehicle TAV-1, 4
 MHI Defense AA Tank (Standard), 5
 Po II Heavy Tank (Standard), 6

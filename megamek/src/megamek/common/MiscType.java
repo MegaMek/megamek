@@ -22,6 +22,7 @@
 package megamek.common;
 
 import java.math.BigInteger;
+import java.text.NumberFormat;
 
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
@@ -450,11 +451,12 @@ public class MiscType extends EquipmentType {
             } else if (hasFlag(MiscType.F_BA_MISSION_EQUIPMENT)) {
                 return String.format(" (%d kg)", (int) size);
             } else if (shortName) {
-                return String.format(":%.1ft", size);
+                // Don't show decimal when not required
+                return String.format(":%st", NumberFormat.getInstance().format(size));
             } else {
-                    return String.format(" (%d %s)", (int) size, size > 1 ?
-                            Messages.getString("MiscType.tons") :
-                            Messages.getString("MiscType.ton"));
+                return String.format(" (%s %s)", NumberFormat.getInstance().format(size), size == 1 ?
+                        Messages.getString("MiscType.ton") :
+                        Messages.getString("MiscType.tons"));
             }
         }
         return "";
@@ -7289,6 +7291,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Fluid Suction System[Standard]";
         misc.setInternalName(misc.name);
+        misc.addLookupName("Fluid Suction System");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.tankslots = 1;
@@ -7907,7 +7910,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Liquid Storage";
         misc.setInternalName(misc.name);
         misc.addLookupName("Liquid Storage (1 ton)");
-        misc.addLookupName("Liquid Storage (0.5 ton)");
+        misc.addLookupName("Liquid Storage (0.5 tons)");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = 0;
@@ -8100,6 +8103,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.addLookupName("Extended Fuel Tank (1 ton)");
         misc.addLookupName("Extended Fuel Tank (0.5 tons)");
+        misc.addLookupName("Extended Fuel Tank (1.5 tons)");
         misc.addLookupName("Extended Fuel Tank (2 tons)");
         misc.addLookupName("Extended Fuel Tank (2.5 tons)");
         misc.addLookupName("Extended Fuel Tank (3 tons)");
@@ -9935,8 +9939,9 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Extended Life Support";
-        misc.setInternalName("ISBAExtendedLifeSupport");
+        misc.setInternalName("BAExtendedLifeSupport");
         misc.addLookupName("CLBAExtendedLifeSupport");
+        misc.addLookupName("ISBAExtendedLifeSupport");
         misc.cost = 10000;
         misc.tonnage = 0.025;
         misc.criticals = 1;

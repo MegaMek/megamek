@@ -57,7 +57,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
 import megamek.common.Entity;
@@ -123,7 +123,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         // Parse the camo directory.
         try {
             camos = new DirectoryItems(Configuration.camoDir(), "", //$NON-NLS-1$
-                    ImageFileFactory.getInstance());
+                    ScaledImageFileFactory.getInstance());
         } catch (Exception e) {
             camos = null;
         }

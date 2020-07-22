@@ -200,6 +200,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String USE_ISOMETRIC = "UseIsometric";
     public static final String SHOW_UNIT_OVERVIEW = "ShowUnitOverview";
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
+    public static final String SHOW_DAMAGE_DECAL = "ShowDamageDecal";
     public static final String SKIN_FILE = "SkinFile";
     public static final String DEFAULT_WEAP_SORT_ORDER = "DefaultWeaponSortOrder";
     public static final String UI_THEME = "UITheme";
@@ -379,6 +380,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(USE_ISOMETRIC, false);
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
+        store.setDefault(SHOW_DAMAGE_DECAL, true);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
         store.setDefault(SOFTCENTER, false);
         store.setDefault(UI_THEME, javax.swing.UIManager.getSystemLookAndFeelClassName());
@@ -885,6 +887,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getShowDamageLevel() {
         return store.getBoolean(SHOW_DAMAGE_LEVEL);
     }
+    
+    public boolean getShowDamageDecal() {
+        return store.getBoolean(SHOW_DAMAGE_DECAL);
+    }
 
     public void setAutoEndFiring(boolean state) {
         store.setValue(AUTO_END_FIRING, state);
@@ -1249,6 +1255,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setShowDamageLevel(boolean b){
         store.setValue(SHOW_DAMAGE_LEVEL, b);
+    }
+    
+    public void setShowDamageDecal(boolean b){
+        store.setValue(SHOW_DAMAGE_DECAL, b);
     }
     
     public void setSkinFile(String s) {

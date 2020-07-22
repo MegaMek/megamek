@@ -91,9 +91,9 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.ChatterBox2;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.HexTileset;
 import megamek.client.ui.swing.MovementDisplay;
-import megamek.client.ui.swing.TilesetManager;
+import megamek.client.ui.swing.tileset.HexTileset;
+import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -5293,6 +5293,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     highlight(null);
                 default:
             }
+            for (Entity en: game.getEntitiesVector()) {
+                if (en.getDamageLevel() != Entity.DMG_NONE && en.damageThisRound != 0) {
+                    tileManager.reloadImage(en);
+                }
+            }
+
         }
     };
 

@@ -92,7 +92,7 @@ public class TdbFile implements IMechLoader {
             TdbFile tdbFile = (TdbFile) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
             
             return tdbFile;
-        } catch (JAXBException | SAXException | ParserConfigurationException e) {
+        } catch (Exception e) {
             throw new EntityLoadingException("   Failure to parse XML ("
                     + e.getLocalizedMessage() + ")", e);
         }

@@ -884,9 +884,9 @@ public class BLKFile {
             if (et != null) {
             	blk.writeBlockData("armorKit", et.getInternalName());
             }
-            if (infantry.getDamageDivisor() != 1) {
+            if (infantry.getArmorDamageDivisor() != 1) {
                 blk.writeBlockData("armordivisor",
-                        Double.toString(infantry.getDamageDivisor()));
+                        Double.toString(infantry.getArmorDamageDivisor()));
             }
             if (infantry.isArmorEncumbering()) {
                 blk.writeBlockData("encumberingarmor", "true");

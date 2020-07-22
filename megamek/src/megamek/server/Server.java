@@ -22557,12 +22557,12 @@ public class Server implements Runnable {
         }
 
         // infantry armor can reduce damage
-        if (isPlatoon && (((Infantry) te).getDamageDivisor() != 1.0)) {
+        if (isPlatoon && (((Infantry) te).calcDamageDivisor() != 1.0)) {
             r = new Report(6074);
             r.subject = te_n;
             r.indent(2);
             r.add(damage);
-            damage = (int) Math.ceil((damage) / ((Infantry) te).getDamageDivisor());
+            damage = (int) Math.ceil((damage) / ((Infantry) te).calcDamageDivisor());
             r.add(damage);
             vDesc.addElement(r);
         }

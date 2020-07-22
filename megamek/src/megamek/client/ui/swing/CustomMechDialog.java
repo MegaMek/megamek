@@ -1271,15 +1271,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 } else {
                     ((BattleArmor) entity).setInternal(1);
                 }
-            } else if (entity instanceof Infantry) {
-                // need to reset armor on conventional infantry
-                if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-                    entity.initializeArmor(
-                            entity.getOInternal(Infantry.LOC_INFANTRY),
-                            Infantry.LOC_INFANTRY);
-                } else {
-                    entity.initializeArmor(0, Infantry.LOC_INFANTRY);
-                }
             }
         }
 

@@ -417,8 +417,8 @@ public class Infantry extends Entity {
             mp = Math.max(mp - 1, 1);
         }
         if((getSecondaryN() > 1)
-                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_TSM_IMPLANT))
-                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_DERMAL_ARMOR))
+                && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
+                && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)
                 && (getMovementMode() != EntityMovementMode.TRACKED)
                 && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
@@ -487,8 +487,8 @@ public class Infantry extends Entity {
             mp = getOriginalJumpMP();
         }
         if ((getSecondaryN() > 1)
-                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_TSM_IMPLANT))
-                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_DERMAL_ARMOR))
+                && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
+                && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                 && (getMovementMode() != EntityMovementMode.SUBMARINE)
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
             mp = Math.max(mp - 1, 0);

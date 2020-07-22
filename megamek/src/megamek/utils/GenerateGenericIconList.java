@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.client.ui.swing.MechTileset;
-import megamek.client.ui.swing.MechTileset.MechEntry;
+import megamek.client.ui.swing.tileset.MechTileset;
+import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;

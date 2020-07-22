@@ -56,6 +56,7 @@ import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.tileset.MechTileset;
 import megamek.common.Entity;
 import megamek.common.IGame.Phase;
 import megamek.common.logging.DefaultMmLogger;

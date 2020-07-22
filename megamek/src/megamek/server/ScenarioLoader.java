@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Board;
@@ -132,7 +132,7 @@ public class ScenarioLoader {
     public ScenarioLoader(File f) {
         scenarioFile = f;
         try {
-            camos = new DirectoryItems(Configuration.camoDir(), "", ImageFileFactory.getInstance()); //$NON-NLS-1$
+            camos = new DirectoryItems(Configuration.camoDir(), "", ScaledImageFileFactory.getInstance()); //$NON-NLS-1$
         } catch (Exception e) {
             camos = null;
         }

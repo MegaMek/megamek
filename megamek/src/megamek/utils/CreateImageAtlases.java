@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import megamek.client.ui.swing.HexTileset;
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.common.Configuration;
 

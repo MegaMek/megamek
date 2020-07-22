@@ -426,6 +426,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
         
         showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal")); //$NON-NLS-1$
+        showDamageDecal.addItemListener(this);
         row = new ArrayList<>();
         row.add(showDamageDecal);
         comps.add(row);
@@ -1262,6 +1263,8 @@ public class CommonSettingsDialog extends ClientDialog implements
             guip.setUnitLabelBorderTeam(borderTeamColor.isSelected());
             borderPlayerColor.setEnabled(entityOwnerColor.isSelected());
             borderTeamColor.setEnabled(entityOwnerColor.isSelected());
+        } else if (source.equals(showDamageDecal)) {
+            guip.setShowDamageDecal(showDamageDecal.isSelected());
         }
     }
 

@@ -1080,7 +1080,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)
                 || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER)
-                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER_TEAM)) {
+                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER_TEAM)
+                || e.getName().equals(GUIPreferences.SHOW_DAMAGE_DECAL)) {
             updateEntityLabels();
             for (Sprite s: wreckSprites) {
                 s.prepare();

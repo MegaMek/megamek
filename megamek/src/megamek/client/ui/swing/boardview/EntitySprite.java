@@ -512,8 +512,7 @@ class EntitySprite extends Sprite {
 
                 // Draw a label border with player colors or team coloring
                 if (guip.getUnitLabelBorder()) {
-                    if (guip.getUnitLabelBorderTeam())
-                    {
+                    if (guip.getUnitLabelBorderTeam()) {
                         boolean isLocalTeam = entity.getOwner().getTeam() == bv.clientgui.getClient().getLocalPlayer().getTeam();
                         boolean isLocalPlayer = entity.getOwner().equals(bv.clientgui.getClient().getLocalPlayer());
                         if (isLocalPlayer) {
@@ -1227,4 +1226,3 @@ class EntitySprite extends Sprite {
         return entity.getSpriteDrawPriority();
     }
 }
-

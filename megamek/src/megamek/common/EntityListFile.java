@@ -808,9 +808,9 @@ public class EntityListFile {
             if ((entity instanceof Infantry)
                     && !(entity instanceof BattleArmor)) {
                 Infantry inf = (Infantry) entity;
-                if (inf.getDamageDivisor() != 1) {
+                if (inf.getArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ARMOR_DIVISOR + "=\"");
-                    output.write(inf.getDamageDivisor() + "");
+                    output.write(inf.getArmorDamageDivisor() + "");
                 }
                 if (inf.isArmorEncumbering()) {
                     output.write("\" " + MULParser.ARMOR_ENC + "=\"1");

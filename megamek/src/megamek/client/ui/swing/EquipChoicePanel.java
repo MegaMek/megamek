@@ -1556,7 +1556,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 } else {
                     cbArmorKit.setSelectedIndex(armorKits.indexOf(kit) + 1);
                 }
-                fldDivisor.setText(Double.toString(inf.getDamageDivisor()));
+                fldDivisor.setText(Double.toString(inf.calcDamageDivisor()));
                 chEncumber.setSelected(inf.isArmorEncumbering());
                 chSpaceSuit.setSelected(inf.hasSpaceSuit());
                 chDEST.setSelected(inf.hasDEST());
@@ -1607,7 +1607,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     inf.setArmorKit(armorKits.get(cbArmorKit.getSelectedIndex() - 1));
                 } else {
                     inf.setArmorKit(null);
-                    inf.setDamageDivisor(Double.valueOf(fldDivisor.getText()));
+                    inf.setArmorDamageDivisor(Double.valueOf(fldDivisor.getText()));
                     inf.setArmorEncumbering(chEncumber.isSelected());
                     inf.setSpaceSuit(chSpaceSuit.isSelected());
                     inf.setDEST(chDEST.isSelected());

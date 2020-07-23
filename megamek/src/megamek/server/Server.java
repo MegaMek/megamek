@@ -22422,19 +22422,6 @@ public class Server implements Runnable {
         // We're actually going to abuse this for AX-head warheads, too, so as
         // to not add another parameter.
         switch (bFrag) {
-            case ANTI_INFANTRY:
-                if (isPlatoon
-                    && te.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-                    int reduce = Math.min(damage - 1, Compute.d6());
-                    damage -= reduce;
-                    r = new Report(6042);
-                    r.subject = te_n;
-                    r.add(reduce);
-                    r.add(damage);
-                    r.indent(2);
-                    vDesc.addElement(r);
-                }
-                break;
             case FRAGMENTATION:
                 // Fragmentation missiles deal full damage to conventional
                 // infantry
@@ -22557,12 +22544,12 @@ public class Server implements Runnable {
         }
 
         // infantry armor can reduce damage
-        if (isPlatoon && (((Infantry) te).getDamageDivisor() != 1.0)) {
+        if (isPlatoon && (((Infantry) te).calcDamageDivisor() != 1.0)) {
             r = new Report(6074);
             r.subject = te_n;
             r.indent(2);
             r.add(damage);
-            damage = (int) Math.ceil((damage) / ((Infantry) te).getDamageDivisor());
+            damage = (int) Math.ceil((damage) / ((Infantry) te).calcDamageDivisor());
             r.add(damage);
             vDesc.addElement(r);
         }

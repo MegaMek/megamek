@@ -7306,6 +7306,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Fluid Suction System[Standard]";
         misc.setInternalName(misc.name);
+        misc.addLookupName("Fluid Suction System");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.tankslots = 1;
@@ -8117,6 +8118,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.addLookupName("Extended Fuel Tank (1 ton)");
         misc.addLookupName("Extended Fuel Tank (0.5 tons)");
+        misc.addLookupName("Extended Fuel Tank (1.5 tons)");
         misc.addLookupName("Extended Fuel Tank (2 tons)");
         misc.addLookupName("Extended Fuel Tank (2.5 tons)");
         misc.addLookupName("Extended Fuel Tank (3 tons)");
@@ -9959,8 +9961,9 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Extended Life Support";
-        misc.setInternalName("ISBAExtendedLifeSupport");
+        misc.setInternalName("BAExtendedLifeSupport");
         misc.addLookupName("CLBAExtendedLifeSupport");
+        misc.addLookupName("ISBAExtendedLifeSupport");
         misc.cost = 10000;
         misc.tonnage = 0.025;
         misc.criticals = 1;

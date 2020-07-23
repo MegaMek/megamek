@@ -22,6 +22,7 @@ VERSION HISTORY:
 + Issue #2037: New additions to TheJungle for Kaji maps (and some other new maps)
 + Issue #2071: Battle armor taser attacks against battle armor no longer lock the game up when a BA suit in the target unit shuts down
 + Issue #2028: Units now visually indicate damage levels
++ PR #2079: Update dermal armor implant to use IO rules for conventional infantry 
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

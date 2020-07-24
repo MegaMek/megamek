@@ -3201,33 +3201,33 @@ public class Compute {
                     for (int wId : weapon.getBayWeapons()) {
                         Mounted bayW = attacker.getEquipment(wId);
                         WeaponType bayWType = ((WeaponType) bayW.getType());
-                    //Capital weapons have a different range scale
+                        //Capital weapons have a different range scale
                         if (wt.isCapital()) {
                             // Capital missiles get higher priority than standard missiles:
                             // damage plus a bonus for the critical hit threat they represent
                             threat = 12;
                             if (rangeToTarget > 50) {
-                            av = 0;
+                                av = 0;
                             } else if (rangeToTarget > 40) {
-                            av += bayWType.getExtAV();
+                                av += bayWType.getExtAV();
                             } else if (rangeToTarget > 25) {
-                            av += bayWType.getLongAV();
+                                av += bayWType.getLongAV();
                             } else if (rangeToTarget > 12) {
-                            av += bayWType.getMedAV();
+                                av += bayWType.getMedAV();
                             } else {
-                            av += bayWType.getShortAV();
+                                av += bayWType.getShortAV();
                             }
                         } else {
                             if (rangeToTarget > 25) {
-                            av = 0;
+                                av = 0;
                             } else if (rangeToTarget > 20) {
-                            av += bayWType.getExtAV();
+                                av += bayWType.getExtAV();
                             } else if (rangeToTarget > 12) {
-                            av += bayWType.getLongAV();
+                                av += bayWType.getLongAV();
                             } else if (rangeToTarget > 6) {
-                            av += bayWType.getMedAV();
+                                av += bayWType.getMedAV();
                             } else {
-                            av += bayWType.getShortAV();
+                                av += bayWType.getShortAV();
                             }
                         }
                         fDamage = (float) (av * threat);
@@ -3236,33 +3236,33 @@ public class Compute {
                     double av = 0;
                     double threat = 1;
                     //Capital weapons have a different range scale
-                        if (wt.isCapital()) {
-                            // Capital missiles should have higher priority than standard missiles
-                            threat = 12;
-                            if (rangeToTarget > 50) {
+                    if (wt.isCapital()) {
+                        // Capital missiles should have higher priority than standard missiles
+                        threat = 12;
+                        if (rangeToTarget > 50) {
                             av = 0;
-                            } else if (rangeToTarget > 40) {
+                        } else if (rangeToTarget > 40) {
                             av += (wt.getExtAV() * weapon.getNWeapons());
-                            } else if (rangeToTarget > 25) {
+                        } else if (rangeToTarget > 25) {
                             av += (wt.getLongAV() * weapon.getNWeapons());
-                            } else if (rangeToTarget > 12) {
+                        } else if (rangeToTarget > 12) {
                             av += (wt.getMedAV() * weapon.getNWeapons());
-                            } else {
-                            av += (wt.getShortAV() * weapon.getNWeapons());
-                            }
                         } else {
-                            if (rangeToTarget > 25) {
-                            av = 0;
-                            } else if (rangeToTarget > 20) {
-                            av += (wt.getExtAV() * weapon.getNWeapons());
-                            } else if (rangeToTarget > 12) {
-                            av += (wt.getLongAV() * weapon.getNWeapons());
-                            } else if (rangeToTarget > 6) {
-                            av += (wt.getMedAV() * weapon.getNWeapons());
-                            } else {
                             av += (wt.getShortAV() * weapon.getNWeapons());
-                            }
                         }
+                    } else {
+                        if (rangeToTarget > 25) {
+                            av = 0;
+                        } else if (rangeToTarget > 20) {
+                            av += (wt.getExtAV() * weapon.getNWeapons());
+                        } else if (rangeToTarget > 12) {
+                            av += (wt.getLongAV() * weapon.getNWeapons());
+                        } else if (rangeToTarget > 6) {
+                            av += (wt.getMedAV() * weapon.getNWeapons());
+                        } else {
+                            av += (wt.getShortAV() * weapon.getNWeapons());
+                        }
+                    }
                     fDamage = (float) (av * threat);
 
                 } else if ((wt.getAmmoType() == AmmoType.T_ARROW_IV)
@@ -3289,8 +3289,8 @@ public class Compute {
                         // If the target is a Mek that is not swarmed, this is a
                         // good thing
                         if ((g.getEntity(waa.getTargetId())
-                              .getSwarmAttackerId() == Entity.NONE)
-                            && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
+                                .getSwarmAttackerId() == Entity.NONE)
+                                && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
 
                             fDamage = 1.5f
                                     * (float)inf_attacker.getDamagePerTrooper()
@@ -3313,8 +3313,8 @@ public class Compute {
                         // If the target is a Mek that is not swarmed, this is a
                         // good thing
                         if ((g.getEntity(waa.getTargetId())
-                              .getSwarmAttackerId() == Entity.NONE)
-                            && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
+                                .getSwarmAttackerId() == Entity.NONE)
+                                && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
                             // Overestimated, but the chance at crits and head
                             // shots deserves a boost
                             fDamage = 10.0f * ba_attacker.getShootingStrength();

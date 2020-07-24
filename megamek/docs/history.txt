@@ -23,6 +23,7 @@ VERSION HISTORY:
 + Issue #2071: Battle armor taser attacks against battle armor no longer lock the game up when a BA suit in the target unit shuts down
 + Issue #2028: Units now visually indicate damage levels
 + PR #2079: Update dermal armor implant to use IO rules for conventional infantry 
++ PR #2082: Wasp and Stinger LAMs are now more rare when using RAT generator; Wasp Mk I LAM now has actual bomb bays instead of cargo bays
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

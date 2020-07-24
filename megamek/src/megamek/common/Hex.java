@@ -591,6 +591,12 @@ public class Hex implements IHex, Serializable {
         }
     }
     
+    /** 
+     * True if this hex has a clifftop towards otherHex. This hex
+     * must have the terrain CLIFF_TOP, it must have exits
+     * specified (exits set to active) for the CLIFF_TOP terrain,
+     * and must have an exit in the direction of otherHex.  
+     */
     public boolean hasCliffTopTowards(IHex otherHex) {
     	return containsTerrain(Terrains.CLIFF_TOP) 
 		&& getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()

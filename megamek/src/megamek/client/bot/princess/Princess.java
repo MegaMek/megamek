@@ -1518,7 +1518,7 @@ public class Princess extends BotClient {
                 getLongRangePaths().get(mover.getId());
             
             // for whatever reason (most likely it's wheeled), there are no long-range paths for this unit, 
-            // so just have it mill around in place as usual. Also set the behavior to "engaged"
+            // so just have it mill around in place as usual. Also set the behavior to "no path to destination"
             // so it doesn't hump the walls due to "self preservation mods"
             if ((bulldozerPaths == null) || (bulldozerPaths.size() == 0)) {
                 getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.NoPathToDestination);
@@ -1555,7 +1555,11 @@ public class Princess extends BotClient {
                     // Also set the behavior to "engaged"
                     // so it doesn't hump walls due to "self preservation mods"
                     if(los.canSee()) {
-                        getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
+                        // if we've explicitly forced 'move to contact' behavior, don't flip back to 'engaged'
+                        if(!forceMoveToContact) {
+                            getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
+                        }
+                        
                         return getPrecognition().getPathEnumerator()
                                 .getUnitPaths()
                                 .get(mover.getId());

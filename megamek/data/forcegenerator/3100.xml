@@ -13458,7 +13458,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='SM2 Heavy Artilley Vehicle' unitType='Tank'>
+	<chassis name='SM2 Heavy Artillery Vehicle' unitType='Tank'>
 		<availability>DTA:4,OP:4,CDS:4,ROS:4,CNC:5,FWL:4,MSC:4,MERC:4,CJF:4,DC:5</availability>
 		<model name='(Standard)'>
 			<roles>artillery</roles>

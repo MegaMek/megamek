@@ -901,11 +901,7 @@ public abstract class BotClient extends Client {
         // attempt to deploy in the biggest area this unit can access instead
         if(highestFitness < -10) {
             for(RankedCoords rc : validCoords) {
-                BoardCluster boardCluster = getClusterTracker().getCurrentBoardCluster(deployed_ent, rc.coords, false);
-                
-                if (boardCluster != null) {
-                    rc.fitness += boardCluster.contents.size();
-                }
+                rc.fitness += getClusterTracker().getBoardClusterSize(deployed_ent, rc.coords, false);
             }
         }
         

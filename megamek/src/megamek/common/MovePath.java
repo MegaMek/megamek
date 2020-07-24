@@ -1199,7 +1199,7 @@ public class MovePath implements Cloneable, Serializable {
 
         pf.run(this.clone());
         MovePath finPath = pf.getComputedPath(dest);
-	// this can be used for debugging the "destruction aware pathfinder"
+        // this can be used for debugging the "destruction aware pathfinder"
         //MovePath finPath = calculateDestructionAwarePath(dest);
 
         if (timeoutCondition.timeoutEngaged || finPath == null) {
@@ -1838,19 +1838,20 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Debugging method that calculates a destruction-aware move path to the destination coordinates
      */
+    @SuppressWarnings("unused")
     public MovePath calculateDestructionAwarePath(Coords dest) {
         // code that's useful to test the destruction-aware pathfinder
         DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
-	// the destruction aware pathfinder takes either a CardinalEdge or an explicit set of coordinates
-        //Set<Coords> destinationSet = new HashSet<Coords>();
-        //destinationSet.add(dest);
+        // the destruction aware pathfinder takes either a CardinalEdge or an explicit set of coordinates
+        Set<Coords> destinationSet = new HashSet<Coords>();
+        destinationSet.add(dest);
         
         // debugging code that can be used to find a path to a specific edge
         Princess princess = new Princess("test", "test", 2020, LogLevel.OFF);
-        Set<Coords> destinationSet = princess.getClusterTracker().getDestinationCoords(entity, CardinalEdge.WEST, true);
+        //Set<Coords> destinationSet = princess.getClusterTracker().getDestinationCoords(entity, CardinalEdge.WEST, true);
         
         long marker1 = System.currentTimeMillis();
-        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, true);
+        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, false, princess.getClusterTracker());
         long marker2 = System.currentTimeMillis();
         long marker3 = marker2 - marker1;
         

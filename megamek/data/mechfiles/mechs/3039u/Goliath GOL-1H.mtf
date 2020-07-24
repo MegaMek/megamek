@@ -150,3 +150,19 @@ Heat Sink
 -Empty-
 
 
+Overview: The development of Quad BattleMechs was not an easy. With major flaws reducing the popularity of the Scorpion and Xanthos, many expected Brigadier Corporation's new quad to be just as problematic. Brigadier, however, had learnt from their mistakes, and the Goliath had none of the problems that had plagued its ancestors. Unfortunately for Brigadier, this did not translate into lucrative contracts with the SLDF; instead, the company had to make do with middling sales to the Great Houses and periphery states. As a result, few Goliaths were produced before the Succession Wars, and the rapid destruction of their main factory made the BattleMech a rare sight.
+
+Capabilities: The Goliath attempts to bypass the main quad limitation through a focus on ranged fire support. This is accomplished admirably, though it has few weapons to defend itself with if an enemy charges into short range. The 'Mech is nimble for its size, though, and well protected through a tough shell of armor. Generous cooling capabilities also allow most Goliath's to offer steady and constant firepower throughout entire battles.
+
+Deployment: The destruction of Brigadier's facilities on Oliver in 2837 put an already rare machine on the extinction list. Against all odds, though, Corean Enterprises would begin producing a few Goliath's every year, putting a steady stream of the design into Free Worlds hands. Remaining Goliaths would mostly be concentrated in Lyran hands, though their historical deployement in the periphery has kept their numbers in that region of space high.
+
+systemmanufacturer:CHASSIS:Corean
+systemmode:CHASSIS:VIII
+systemmanufacturer:ENGINE:Hermes
+systemmode:ENGINE:320
+systemmanufacturer:ARMOR:StarSlab
+systemmode:ARMOR:/3
+systemmanufacturer:COMMUNICATIONS:Corean
+systemmode:COMMUNICATIONS:TransBand-J9
+systemmanufacturer:TARGETING:Corean
+systemmode:TARGETING:B-Tech

@@ -753,7 +753,7 @@ public class MULParser {
             Infantry inf = (Infantry) entity;
             String armorDiv = entityTag.getAttribute(ARMOR_DIVISOR);
             if (armorDiv.length() > 0) {
-                inf.setDamageDivisor(Double.parseDouble(armorDiv));
+                inf.setArmorDamageDivisor(Double.parseDouble(armorDiv));
             }
             if (entityTag.getAttribute(ARMOR_ENC).length() > 0) {
                 inf.setArmorEncumbering(true);

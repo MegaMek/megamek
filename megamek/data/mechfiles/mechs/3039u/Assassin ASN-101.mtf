@@ -151,3 +151,19 @@ Small Laser
 -Empty-
 
 
+Overview: The Assassin, though a serviceable BattleMech, was the result of industrial corruption and corner-cutting at its finest. Embellished and aggrandized, the capabilities of the Assassin were exaggerated enough for the BattleMech to enter production for the SLDF. Once its true capabilites were known, however, the 'Mech was quickly relegated to inferior markets, often ending up in the hands of militia or periphery units.
+
+Capabilities: With its paltry array of weaponry, the Assassin was originally sold as a heavier alterative to the Stinger or the Wasp. In this, the 'Mech works as intended, but its reliance on ammunition led to its disfavor in many commands. On paper, however, the Assassin remains a popular alternative to these lighter 'Mechs due to its tougher armor, increased speed, and higher firepower. The design would find little favor amongst MechWarriors, though. With its intensely cramped cockpit and sub-par life support system, MechWarriors despised being forced to pilot the design. As if not enough, a common ammunition feed problem affecting the SRM launcher hardly helped the Assassin's already questionable popularity.
+
+Deployment: The Assassin saw deployment throughout most of the Inner Sphere during the Succession Wars. Though its numbers were few and parts were scarce, they remained on battlefields through sheer need. A testament to its durability, the chassis remains in use even today. A Davion experiment, the ASN-101 increased firepower at the expense of armor and jumping ability. Although rumors abounded of increased numbers of the design, only three of this variant have ever been confirmed, and none appear to have survived the onslaught of the Clan Invasion.
+
+systemmanufacturer:CHASSIS:Maltex
+systemmode:CHASSIS:40
+systemmanufacturer:ENGINE:VOX
+systemmode:ENGINE:280
+systemmanufacturer:ARMOR:AFVTA
+systemmode:ARMOR:100
+systemmanufacturer:COMMUNICATIONS:Garret
+systemmode:COMMUNICATIONS:T15 B
+systemmanufacturer:TARGETING:Garret
+systemmode:TARGETING:500S

@@ -34,6 +34,7 @@ public class RocketLauncher15 extends RLWeapon {
         addLookupName("ISRocketLauncher15");
         addLookupName("RL 15");
         addLookupName("IS RLauncher-15");
+        addLookupName("Rocket Launcher 15");
         heat = 4;
         rackSize = 15;
         shortRange = 4;

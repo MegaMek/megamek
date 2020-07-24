@@ -220,6 +220,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JComboBox<String> displayLocale;
 
     private JCheckBox showDamageLevel;
+    private JCheckBox showDamageDecal;
     private JCheckBox showMapsheets;
     private JCheckBox aOHexShadows;
     private JCheckBox floatingIso;
@@ -419,6 +420,11 @@ public class CommonSettingsDialog extends ClientDialog implements
         showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(showDamageLevel);
+        comps.add(row);
+        
+        showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(showDamageDecal);
         comps.add(row);
         
         showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
@@ -787,6 +793,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         showMapsheets.setSelected(gs.getShowMapsheets());
         chkAntiAliasing.setSelected(gs.getAntiAliasing());
         showDamageLevel.setSelected(gs.getShowDamageLevel());
+        showDamageDecal.setSelected(gs.getShowDamageDecal());
         aOHexShadows.setSelected(gs.getAOHexShadows());
         floatingIso.setSelected(gs.getFloatingIso());
         mmSymbol.setSelected(gs.getMmSymbol());
@@ -899,6 +906,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         IClientPreferences cs = PreferenceManager.getClientPreferences();
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
+        gs.setShowDamageDecal(showDamageDecal.isSelected());
         gs.setEntityOwnerLabelColor(entityOwnerColor.isSelected());
         gs.setMinimapEnabled(minimapEnabled.isSelected());
         gs.setAutoEndFiring(autoEndFiring.isSelected());

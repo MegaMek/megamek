@@ -361,7 +361,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public int getHeatCapacity() {
-        return 999;
+        return DOES_NOT_TRACK_HEAT;
     }
 
     @Override

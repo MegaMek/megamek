@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Vector;
 
-import megamek.client.ui.swing.TilesetManager;
+import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.common.Configuration;
 import megamek.common.ITerrain;
 import megamek.common.util.StringUtil;
@@ -179,7 +179,6 @@ public class HexSetTest {
                 }
             }
             // Create the default hexset, so we can validate it as well
-            TilesetManager.createDefaultHexSet();
             testFile(hexesDir, TilesetManager.FILENAME_DEFAULT_HEX_SET, 0);
 
         }catch (IOException e){

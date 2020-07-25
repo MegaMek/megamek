@@ -19,6 +19,7 @@ import java.util.Map;
 
 import megamek.common.Entity;
 import megamek.common.EntityFluff;
+import megamek.common.GunEmplacement;
 import megamek.common.Messages;
 import megamek.common.Mounted;
 import megamek.common.SuperHeavyTank;
@@ -44,6 +45,13 @@ public class VehicleTROView extends TROView {
 
     @Override
     protected String getTemplateFileName(boolean html) {
+        if(tank instanceof GunEmplacement) {
+            if (html) {
+                return "gunemplacement.ftlh";
+            }
+            return "gunemplacement.ftl";
+        }
+        
         if (html) {
             return "vehicle.ftlh";
         }

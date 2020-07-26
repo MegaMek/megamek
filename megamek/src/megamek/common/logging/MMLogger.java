@@ -3,10 +3,6 @@ package megamek.common.logging;
 import megamek.common.annotations.Nullable;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-
 /**
  * Interface for the Logger object.
  *
@@ -317,6 +313,16 @@ public interface MMLogger {
      * @param message      The message to be logged.
      */
     void info(Class<?> callingClass, String methodName, StringBuilder message);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#INFO} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void info(Object callingObject, String message);
     
     /**
      * Writes the passed {@link Throwable} to the log file at the

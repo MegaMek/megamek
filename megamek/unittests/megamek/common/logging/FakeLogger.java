@@ -198,6 +198,12 @@ public class FakeLogger implements MMLogger {
 
         
     }
+    
+    @Override
+    public void info(Object callingObject, String message) {
+
+        
+    }
 
     @Override
     public <T extends Throwable> T trace(String callingClass, String methodName, String message, T throwable) {

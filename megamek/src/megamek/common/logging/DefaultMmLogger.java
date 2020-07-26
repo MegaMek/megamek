@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -278,6 +279,20 @@ public class DefaultMmLogger implements MMLogger {
                      final StringBuilder message) {
         log(callingClass, methodName, LogLevel.INFO, message);
     }
+    
+    public void info(Object callingObject,
+            final String message) {
+        
+        try {
+            String callingMethod = Thread.currentThread() 
+                    .getStackTrace()[2] 
+                    .getMethodName();
+            log(callingObject.getClass(), callingMethod, LogLevel.INFO, message);
+        } catch (NoSuchElementException e) {
+            log(callingObject.getClass(), "Error: Could not obtain method name", LogLevel.INFO, message);
+        }
+        
+}
 
     @Override
     public <T extends Throwable> T trace(final String callingClass,

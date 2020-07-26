@@ -24,6 +24,8 @@ VERSION HISTORY:
 + Issue #2028: Units now visually indicate damage levels
 + PR #2079: Update dermal armor implant to use IO rules for conventional infantry 
 + PR #2082: Wasp and Stinger LAMs are now more rare when using RAT generator; Wasp Mk I LAM now has actual bomb bays instead of cargo bays
++ PR #2085: Recolor movement in tooltip for dark themes
++ PR #2080: Unit Label Team Coloring
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

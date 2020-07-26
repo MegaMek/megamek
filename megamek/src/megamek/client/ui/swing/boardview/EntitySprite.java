@@ -510,9 +510,22 @@ class EntitySprite extends Sprite {
                 graph.fillRoundRect(labelRect.x, labelRect.y, labelRect.width,
                         labelRect.height, 5, 10);
 
-                if (guip.getEntityOwnerLabelColor()) {
-                    graph.setColor(PlayerColors.getColor(
-                            entity.getOwner().getColorIndex(), false));
+                // Draw a label border with player colors or team coloring
+                if (guip.getUnitLabelBorder()) {
+                    if (guip.getUnitLabelBorderTeam()) {
+                        boolean isLocalTeam = entity.getOwner().getTeam() == bv.clientgui.getClient().getLocalPlayer().getTeam();
+                        boolean isLocalPlayer = entity.getOwner().equals(bv.clientgui.getClient().getLocalPlayer());
+                        if (isLocalPlayer) {
+                            graph.setColor(GUIPreferences.getInstance().getMyUnitColor());
+                        } else if (isLocalTeam) {
+                            graph.setColor(GUIPreferences.getInstance().getAllyUnitColor());
+                        } else {
+                            graph.setColor(GUIPreferences.getInstance().getEnemyUnitColor());
+                        }
+                    } else {
+                        graph.setColor(PlayerColors.getColor(
+                                entity.getOwner().getColorIndex(), false));
+                    }
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
                     graph.drawRoundRect(labelRect.x - 1, labelRect.y - 1,
@@ -1192,4 +1205,3 @@ class EntitySprite extends Sprite {
         return entity.getSpriteDrawPriority();
     }
 }
-

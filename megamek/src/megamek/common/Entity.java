@@ -1372,6 +1372,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isClanArmor(int loc) {
+        // if the location does not exist, it does not have clan armor
+        if (loc >= locations()) {
+            return false;
+        }
+        
         if (getArmorTechLevel(loc) == TechConstants.T_TECH_UNKNOWN) {
             return isClan();
         }

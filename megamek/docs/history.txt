@@ -26,6 +26,7 @@ VERSION HISTORY:
 + PR #2082: Wasp and Stinger LAMs are now more rare when using RAT generator; Wasp Mk I LAM now has actual bomb bays instead of cargo bays
 + PR #2085: Recolor movement in tooltip for dark themes
 + PR #2080: Unit Label Team Coloring
++ Issue #2022: Lobby summary/TRO view for gun emplacements no longer shows up blank
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

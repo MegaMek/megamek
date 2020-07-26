@@ -2514,6 +2514,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      * Pop up the dialog to load a mech
      */
     private void loadMech() {
+        clientgui.getMechSelectorDialog().updateOptionValues();
         clientgui.getMechSelectorDialog().setVisible(true);
     }
 

@@ -510,9 +510,22 @@ class EntitySprite extends Sprite {
                 graph.fillRoundRect(labelRect.x, labelRect.y, labelRect.width,
                         labelRect.height, 5, 10);
 
-                if (guip.getEntityOwnerLabelColor()) {
-                    graph.setColor(PlayerColors.getColor(
-                            entity.getOwner().getColorIndex(), false));
+                // Draw a label border with player colors or team coloring
+                if (guip.getUnitLabelBorder()) {
+                    if (guip.getUnitLabelBorderTeam()) {
+                        boolean isLocalTeam = entity.getOwner().getTeam() == bv.clientgui.getClient().getLocalPlayer().getTeam();
+                        boolean isLocalPlayer = entity.getOwner().equals(bv.clientgui.getClient().getLocalPlayer());
+                        if (isLocalPlayer) {
+                            graph.setColor(GUIPreferences.getInstance().getMyUnitColor());
+                        } else if (isLocalTeam) {
+                            graph.setColor(GUIPreferences.getInstance().getAllyUnitColor());
+                        } else {
+                            graph.setColor(GUIPreferences.getInstance().getEnemyUnitColor());
+                        }
+                    } else {
+                        graph.setColor(PlayerColors.getColor(
+                                entity.getOwner().getColorIndex(), false));
+                    }
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
                     graph.drawRoundRect(labelRect.x - 1, labelRect.y - 1,
@@ -954,29 +967,8 @@ class EntitySprite extends Sprite {
                     
                 // Unit did move
                 } else {
-                    // Colored arrow
-                    // get the color resource
-                    String guipName = "AdvancedMoveDefaultColor";
-                    if ((entity.moved == EntityMovementType.MOVE_RUN)
-                            || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
-                            || (entity.moved == EntityMovementType.MOVE_OVER_THRUST)) 
-                        guipName = "AdvancedMoveRunColor";
-                    else if (entity.moved == EntityMovementType.MOVE_SPRINT
-                            || entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) 
-                        guipName = "AdvancedMoveSprintColor";
-                    else if (entity.moved == EntityMovementType.MOVE_JUMP) 
-                        guipName = "AdvancedMoveJumpColor";
-
-                    // HTML color String from Preferences
-                    String moveTypeColor = Integer
-                            .toHexString(GUIPreferences.getInstance()
-                                    .getColor(guipName).getRGB() & 0xFFFFFF);
-
-                    // Arrow
-                    addToTT("Arrow", BR, moveTypeColor);
-
                     // Actual movement and modifier
-                    addToTT("MovementF", NOBR,
+                    addToTT("MovementF", BR,
                             entity.getMovementString(entity.moved),
                             entity.delta_distance,
                             tmm);
@@ -1213,4 +1205,3 @@ class EntitySprite extends Sprite {
         return entity.getSpriteDrawPriority();
     }
 }
-

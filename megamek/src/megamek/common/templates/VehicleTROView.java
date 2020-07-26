@@ -45,11 +45,12 @@ public class VehicleTROView extends TROView {
 
     @Override
     protected String getTemplateFileName(boolean html) {
-        if(tank instanceof GunEmplacement) {
+        if (tank instanceof GunEmplacement) {
             if (html) {
                 return "gunemplacement.ftlh";
+            } else {
+                return "gunemplacement.ftl";
             }
-            return "gunemplacement.ftl";
         }
         
         if (html) {

@@ -613,6 +613,7 @@ public class TechConstants {
                         return T_IS_TW_NON_BOX;
                     }
                 case Mech.COCKPIT_TORSO_MOUNTED:
+                case Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL:
                     if (isClan) {
                         if (year <= 3055) {
                             return T_CLAN_UNOFFICIAL;
@@ -760,24 +761,6 @@ public class TechConstants {
                     } else {
                         return T_IS_TW_NON_BOX;
                     }
-                //Same as Torso-Mounted
-                case Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL:
-                    if (isClan) {
-                        if (year <= 3055) {
-                            return T_CLAN_UNOFFICIAL;
-                        }
-                        return T_CLAN_EXPERIMENTAL;
-                    }
-                    if (year <= 3053) {
-                        return T_IS_UNOFFICIAL;
-                    } else if (year <= 3075) {
-                        return T_IS_EXPERIMENTAL;
-                    } else if (year <= 3100) {
-                        return T_IS_ADVANCED;
-                    } else {
-                        return T_IS_TW_NON_BOX;
-                    }
-
             }
         } else if ((entityType & Entity.ETYPE_AERO) != 0) {
             switch (cockpitType) {

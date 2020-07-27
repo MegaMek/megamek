@@ -1444,7 +1444,9 @@ public class TestMech extends TestEntity {
         if (mech.hasFullHeadEject()) {
             if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
                     || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)
-                    || (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE)) {
+                    || (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE)
+                    || (mech.getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE)
+                    || (mech.getCockpitType() == Mech.COCKPIT_VRRP)) {
                 buff.append("full head ejection system incompatible with cockpit type\n");
                 illegal = true;
             }

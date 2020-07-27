@@ -341,7 +341,8 @@ public class PushAttackAction extends DisplacementAttackAction {
         // If it has a torso-mounted cockpit and two head sensor hits or three
         // sensor hits...
         // It gets a =4 penalty for being blind!
-        if (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+        if (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED
+           || ((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL) {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                                 Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,

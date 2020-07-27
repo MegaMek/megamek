@@ -3448,7 +3448,7 @@ public abstract class Mech extends Entity {
             }
 
             // BV for torso mounted cockpit.
-            if ((getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
+            if (((getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL))
                     && (loc == LOC_CT)) {
                 bvText.append(startRow);
                 bvText.append(startColumn);
@@ -5336,7 +5336,7 @@ public abstract class Mech extends Entity {
         int i = 0;
 
         double cockpitCost = 0;
-        if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+        if ((getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)) {
             cockpitCost = 750000;
         } else if (getCockpitType() == Mech.COCKPIT_DUAL) {
             // Solaris VII - The Game World (German) This is not actually
@@ -5368,9 +5368,6 @@ public abstract class Mech extends Entity {
         } else if (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
             // The cost is the sum of both small and command console
             cockpitCost = 675000; 
-        } else if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL) {
-            cockpitCost = 750000;
-            // There is no cost for the industrial variant, and the cost is same as torso-mounted cockpit
         } else {
             cockpitCost = 200000;
         }
@@ -6144,7 +6141,8 @@ public abstract class Mech extends Entity {
      */
     public boolean isAutoEject() {
         boolean hasEjectSeat = true;
-        if (getCockpitType() == COCKPIT_TORSO_MOUNTED
+        if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED
+                || getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL
                 || hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT)) {
             hasEjectSeat = false;
         }
@@ -8013,7 +8011,8 @@ public abstract class Mech extends Entity {
 
     public boolean hasArmoredCockpit() {
 
-        int location = getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED ? Mech.LOC_CT
+        int location = ((getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL))
+		? Mech.LOC_CT
                 : Mech.LOC_HEAD;
 
         for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
@@ -8623,7 +8622,7 @@ public abstract class Mech extends Entity {
         if (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, LOC_HEAD) > 1) {
             // If the cockpit isn't torso-mounted, we're done; if it is, we
             // need to look at the CT sensor slot as well.
-            if ((getCockpitType() != COCKPIT_TORSO_MOUNTED)
+            if (((getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) && (getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL))
                     || (getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                             SYSTEM_SENSORS, LOC_CT) > 0)) {
                 logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
@@ -8937,6 +8936,7 @@ public abstract class Mech extends Entity {
     @Override
     public boolean isEjectionPossible() {
         return (getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)
+		&& (getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)
                 && getCrew().isActive() && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 

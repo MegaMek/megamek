@@ -365,7 +365,7 @@ public class TestMech extends TestEntity {
 
     public boolean isCockpitLocation(int location) {
         if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED
-                || getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL
+                || mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL
                 || mech.getCockpitType() == Mech.COCKPIT_VRRP) {
             return location == Mech.LOC_CT;
         }
@@ -1443,7 +1443,7 @@ public class TestMech extends TestEntity {
         
         if (mech.hasFullHeadEject()) {
             if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
-                    || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)
+                    || (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)
                     || (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE)
                     || (mech.getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE)
                     || (mech.getCockpitType() == Mech.COCKPIT_VRRP)) {

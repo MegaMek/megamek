@@ -5704,7 +5704,7 @@ public abstract class Mech extends Entity {
                 && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT))) {
             roll.addModifier(1, "Small Cockpit");
         } else if ((getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
-		   || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)){
+                || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)) {
             roll.addModifier(1, "Torso-Mounted Cockpit");
             int sensorHits = getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                     Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);

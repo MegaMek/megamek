@@ -34,9 +34,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
+import megamek.common.logging.*;
 import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.*;
 
@@ -50,7 +48,7 @@ import megamek.common.verifier.*;
 public class MechSummaryCache {
     
     private static final MMLogger LOG = DefaultMmLogger.getInstance();
-    private static final LogLevel LOGLVL = LogLevel.DEBUG;
+    private static final LogLevel LOGLVL = LogLevel.WARNING;
 
     public interface Listener {
         void doneLoading();

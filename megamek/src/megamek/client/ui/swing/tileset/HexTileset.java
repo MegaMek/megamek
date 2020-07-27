@@ -37,22 +37,9 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.common.Board;
-import megamek.common.Configuration;
-import megamek.common.Hex;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.ITerrain;
-import megamek.common.Terrains;
-import megamek.common.event.BoardEvent;
-import megamek.common.event.BoardListener;
-import megamek.common.event.GameBoardChangeEvent;
-import megamek.common.event.GameBoardNewEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
+import megamek.common.*;
+import megamek.common.event.*;
+import megamek.common.logging.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
 import megamek.common.util.StringUtil;
@@ -65,7 +52,7 @@ import megamek.common.util.StringUtil;
 public class HexTileset implements BoardListener {
     
     private static final MMLogger LOG = DefaultMmLogger.getInstance();
-    private static final LogLevel LOGLVL = LogLevel.DEBUG;
+    private static final LogLevel LOGLVL = LogLevel.WARNING;
 
     /**
      * The image width of a hex image.

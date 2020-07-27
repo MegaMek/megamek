@@ -305,7 +305,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // sensor hits...
         // It gets a =4 penalty for being blind!
         if ((ae instanceof Mech)
-            && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
+            && ((((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
+                || (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL))) {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                                 Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,

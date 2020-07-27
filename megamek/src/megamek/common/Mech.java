@@ -5153,7 +5153,7 @@ public abstract class Mech extends Entity {
 
         if ((getCockpitType() == Mech.COCKPIT_INDUSTRIAL)
                 || (getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)
-	   	|| (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)) {
+	     	|| (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL)) {
             // industrial without advanced firing control get's 0.9 mod to
             // offensive BV
             bvText.append("Weapon BV * Firing Control Modifier");

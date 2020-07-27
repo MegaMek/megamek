@@ -29,6 +29,7 @@ VERSION HISTORY:
 + Issue #2022: Lobby summary/TRO view for gun emplacements no longer shows up blank
 + PR #1998: Improving formatting of legacy gunnery skills
 + Data: New Sprites (first of the ones based on KS images.Thanks to Deadborder)
++ PR #2087: Gun emplacements are no longer considered to have dual turrets (fixing some tech progression calculation issues for those units)
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

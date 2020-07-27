@@ -69,6 +69,11 @@ public class FakeLogger implements MMLogger {
     public void setLogLevel(String category, LogLevel level) {
 
     }
+    
+    @Override
+    public void setLogLevel(Object callingObject, LogLevel level) {
+
+    }
 
     @Override
     public LogLevel getLogLevel(String category) {
@@ -200,11 +205,20 @@ public class FakeLogger implements MMLogger {
     }
     
     @Override
-    public void info(Object callingObject, String message) {
-
-        
-    }
-
+    public void info(Object callingObject, String message) {}
+    @Override
+    public void debug(Object callingObject, String message) {}
+    @Override
+    public void trace(Object callingObject, String message) {}
+    @Override
+    public void warning(Object callingObject, String message) {}
+    @Override
+    public void fatal(Object callingObject, String message) {}
+    @Override
+    public void error(Object callingObject, String message) {}
+    
+    
+    
     @Override
     public <T extends Throwable> T trace(String callingClass, String methodName, String message, T throwable) {
 

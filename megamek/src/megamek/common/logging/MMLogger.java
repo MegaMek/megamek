@@ -161,6 +161,16 @@ public interface MMLogger {
     void debug(Class<?> callingClass, String methodName, StringBuilder message);
     
     /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#DEBUG} level. Extracts the calling method
+     * automatically.
+     *
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
+     * @param message      The message to be logged.
+     */
+    void debug(Object callingObject, String message);
+    
+    /**
      * Writes the passed {@link Throwable} to the log file at the
      * {@link LogLevel#ERROR} level.
      *
@@ -216,6 +226,16 @@ public interface MMLogger {
     void error(Class<?> callingClass, String methodName, StringBuilder message);
     
     /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#ERROR} level. Extracts the calling method
+     * automatically.
+     *
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
+     * @param message      The message to be logged.
+     */
+    void error(Object callingObject, String message);
+    
+    /**
      * Writes the passed {@link Throwable} to the log file at the
      * {@link LogLevel#FATAL} level.
      *
@@ -259,6 +279,16 @@ public interface MMLogger {
      */
     void fatal(Class<?> callingClass, String methodName, StringBuilder message);
     
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#FATAL} level. Extracts the calling method
+     * automatically.
+     *
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
+     * @param message      The message to be logged.
+     */
+    void fatal(Object callingObject, String message);
+
     /**
      * Writes the passed {@link Throwable} to the log file at the
      * {@link LogLevel#INFO} level.
@@ -316,10 +346,10 @@ public interface MMLogger {
     
     /**
      * Writes the passed log entry to the file at the
-     * {@link LogLevel#INFO} level.
+     * {@link LogLevel#INFO} level. Extracts the calling method
+     * automatically.
      *
-     * @param callingClass The name of the originating class.
-     * @param methodName   The name of the originating method.
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param message      The message to be logged.
      */
     void info(Object callingObject, String message);
@@ -389,6 +419,17 @@ public interface MMLogger {
      * @param throwable    The error object to be logged.
      * @return The same throwable passed in to this method so that it may be re-thrown if desired.
      */
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#TRACE} level. Extracts the calling method
+     * automatically.
+     *
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
+     * @param message      The message to be logged.
+     */
+    void trace(Object callingObject, String message);
+    
     <T extends Throwable> T warning(String callingClass, String methodName, String message, T throwable);
 
     /**
@@ -433,6 +474,16 @@ public interface MMLogger {
      * @param message      The message to be logged.
      */
     void warning(Class<?> callingClass, String methodName, StringBuilder message);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#WARNING} level. Extracts the calling method
+     * automatically.
+     *
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
+     * @param message      The message to be logged.
+     */
+    void warning(Object callingObject, String message);
     
     // End convenience methods
     
@@ -480,6 +531,15 @@ public interface MMLogger {
      * @param level    The logging level to be set.
      */
     void setLogLevel(String category, LogLevel level);
+    
+    /**
+     * Sets the {@link LogLevel} for the class of callingObject. 
+     * Should be called using <code><I>this</I></code> as the first parameter.  
+     *
+     * @param callingObject the calling object. Use <code><I>this</I></code>
+     * @param level    The logging level to be set.
+     */
+    void setLogLevel(Object callingObject, LogLevel level);
 
     /**
      * Returns the {@link LogLevel} for the given category.

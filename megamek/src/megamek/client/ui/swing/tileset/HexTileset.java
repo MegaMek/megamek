@@ -65,6 +65,7 @@ import megamek.common.util.StringUtil;
 public class HexTileset implements BoardListener {
     
     private static final MMLogger LOG = DefaultMmLogger.getInstance();
+    private static final LogLevel LOGLVL = LogLevel.DEBUG;
 
     /**
      * The image width of a hex image.
@@ -95,7 +96,7 @@ public class HexTileset implements BoardListener {
         game = g;
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
-        LOG.setLogLevel(getClass().getName(), LogLevel.DEBUG);
+        LOG.setLogLevel(this, LOGLVL);
     }
 
     /** Clears the image cache for the given hex. */
@@ -576,7 +577,7 @@ public class HexTileset implements BoardListener {
                 if (null != image) {
                     images.add(image);
                 } else {
-                    System.out.println("Received null image from " + "ImageUtil.loadImageFromFile!  File: " + imgFile);
+                    LOG.error(this, "Received null image from ImageUtil.loadImageFromFile! File: " + imgFile);
                 }
             }
         }

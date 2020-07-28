@@ -410,17 +410,6 @@ public interface MMLogger {
     void trace(Class<?> callingClass, String methodName, StringBuilder message);
     
     /**
-     * Writes the passed {@link Throwable} to the log file at the
-     * {@link LogLevel#WARNING} level.
-     *
-     * @param callingClass The name of the originating class.
-     * @param methodName   The name of the originating method.
-     * @param message      The message to be logged.
-     * @param throwable    The error object to be logged.
-     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
-     */
-    
-    /**
      * Writes the passed log entry to the file at the
      * {@link LogLevel#TRACE} level. Extracts the calling method
      * automatically.
@@ -430,6 +419,16 @@ public interface MMLogger {
      */
     void trace(Object callingObject, String message);
     
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#WARNING} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
     <T extends Throwable> T warning(String callingClass, String methodName, String message, T throwable);
 
     /**

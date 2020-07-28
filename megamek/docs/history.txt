@@ -30,6 +30,7 @@ VERSION HISTORY:
 + PR #1998: Improving formatting of legacy gunnery skills
 + Data: New Sprites (first of the ones based on KS images.Thanks to Deadborder)
 + PR #2087: Gun emplacements are no longer considered to have dual turrets (fixing some tech progression calculation issues for those units)
++ Data: Some infantry name fixes.
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

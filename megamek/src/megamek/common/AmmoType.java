@@ -12983,8 +12983,6 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Machine Gun Ammo";
         ammo.shortName = "Machine Gun";
         ammo.setInternalName("Clan Machine Gun Ammo - Proto");
-        ammo.addLookupName("CLMG Ammo");
-        ammo.addLookupName("Clan Machine Gun Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;

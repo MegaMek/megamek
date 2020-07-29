@@ -859,12 +859,11 @@ class EntitySprite extends Sprite {
             if (entity.getCrew().getSlotCount() > 1) {
                 pnameStr += " (" + entity.getCrew().getCrewType().getRoleName(i) + ")";
             }
-            
-            addToTT("Pilot", NOBR,
-                    pnameStr, 
-                    entity.getCrew().getGunnery(i), 
-                    entity.getCrew().getPiloting(i));
-    
+
+            addToTT("Pilot", NOBR, pnameStr,
+                    entity.getCrew().getSkillsAsString(
+                            bv.game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)));
+
             // Pilot Status
             if (!entity.getCrew().getStatusDesc(i).equals(""))
                 addToTT("PilotStatus", NOBR, 

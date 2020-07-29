@@ -1287,7 +1287,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         clientgui.getMenuBar().setUnitList(localUnits);
     }
 
-    public static String formatPilotCompact(Crew pilot, boolean blindDrop) {
+    public static String formatPilotCompact(Crew pilot, boolean blindDrop, boolean rpgSkills) {
 
         String value = "";
         if (blindDrop) {
@@ -1295,7 +1295,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         } else {
             value += pilot.getDesc();
         }
-        value += " (" + pilot.getSkillsAsString() + ")";
+
+        value += " (" + pilot.getSkillsAsString(rpgSkills) + ")";
         if (pilot.countOptions() > 0) {
             value += " (" + pilot.countOptions() + Messages.getString("ChatLounge.abilities") + ")";
         }
@@ -1304,7 +1305,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     }
 
-    public static String formatPilotHTML(Crew pilot, boolean blindDrop) {
+    public static String formatPilotHTML(Crew pilot, boolean blindDrop, boolean rpgSkill) {
 
         int crewAdvCount = pilot.countOptions(PilotOptions.LVL3_ADVANTAGES);
         int implants = pilot.countOptions(PilotOptions.MD_ADVANTAGES);
@@ -1316,7 +1317,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     value += "<b>No " + pilot.getCrewType().getRoleName(i) + "</b>";
                 } else {
                     value += "<b>" + pilot.getDesc(i) + "</b> (" + pilot.getCrewType().getRoleName(i) + "): ";
-                    value += pilot.getSkillsAsString(i);
+                    value += pilot.getSkillsAsString(i, rpgSkill);
                 }
                 value += "<br/>";
             }
@@ -1326,7 +1327,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             } else {
                 value += "<b>" + pilot.getDesc() + "</b><br/>";
             }
-            value += "" + pilot.getSkillsAsString();
+            value += "" + pilot.getSkillsAsString(rpgSkill);
         }
         if (crewAdvCount > 0) {
             value += ", " + crewAdvCount + Messages.getString("ChatLounge.advs");
@@ -1341,7 +1342,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     }
 
-    public static String formatPilotTooltip(Crew pilot, boolean command, boolean init, boolean tough) {
+    public static String formatPilotTooltip(Crew pilot, boolean command, boolean init, boolean tough, boolean rpgSkills) {
 
         String value = "<html>";
         value += "<b>" + pilot.getDesc() + "</b><br>";
@@ -1351,7 +1352,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         if (pilot.getHits() > 0) {
             value += "<font color='red'>" + Messages.getString("ChatLounge.Hits") + pilot.getHits() + "</font><br>";
         }
-        value += "" + pilot.getSkillsAsString() + "<br>";
+        value += "" + pilot.getSkillsAsString(rpgSkills) + "<br>";
         if (tough) {
             value += Messages.getString("ChatLounge.Tough") + pilot.getToughness(0) + "<br>";
         }
@@ -1863,10 +1864,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         int posQuirkCount = entity.countQuirks(Quirks.POS_QUIRKS);
         int negQuirkCount = entity.countQuirks(Quirks.NEG_QUIRKS);
 
-        String gunnery = Integer.toString(entity.getCrew().getGunnery());
-        if (rpgSkills) {
-            gunnery = entity.getCrew().getGunneryRPG();
-        }
+        String gunnery = entity.getCrew().getSkillsAsString(false, rpgSkills);
 
         if (blindDrop) {
             String unitClass;
@@ -3371,10 +3369,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                             + clientgui.getClient().getGame().getPlayer(entity.getOwnerId()).getTeam();
                 }
             } else if (col == COL_PILOT) {
+                final boolean rpgSkills = clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
                 if (compact) {
-                    return formatPilotCompact(entity.getCrew(), blindDrop);
+                    return formatPilotCompact(entity.getCrew(), blindDrop, rpgSkills);
                 }
-                return formatPilotHTML(entity.getCrew(), blindDrop);
+                return formatPilotHTML(entity.getCrew(), blindDrop, rpgSkills);
             } else {
                 if (compact) {
                     return formatUnitCompact(entity, blindDrop);
@@ -3460,7 +3459,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                                 clientgui.getClient().getGame().getOptions()
                                         .booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE),
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption(OptionsConstants.RPG_TOUGHNESS)));
+                                        .booleanOption(OptionsConstants.RPG_TOUGHNESS),
+                                clientgui.getClient().getGame().getOptions()
+                                        .booleanOption(OptionsConstants.RPG_RPG_GUNNERY)));
                     }
                 }
 

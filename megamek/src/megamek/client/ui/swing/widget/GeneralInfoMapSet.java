@@ -305,7 +305,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         if (en.getCrew() != null) {
             Crew c = en.getCrew();
             String pilotString = c.getDesc(c.getCurrentPilotIndex()) + " (";
-            pilotString += c.getGunnery() + "/" + c.getPiloting();
+            pilotString += c.getSkillsAsString(
+                    en.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
             int crewAdvCount = c.countOptions(PilotOptions.LVL3_ADVANTAGES);
             if (crewAdvCount > 0) {
                 pilotString += ", +" + crewAdvCount;

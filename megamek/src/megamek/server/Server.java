@@ -19725,10 +19725,10 @@ public class Server implements Runnable {
 
             int capHeat = 0;
             for (Mounted m : entity.getEquipment()) {
-                if ((m.hasChargedCapacitor() == 1) && !m.isUsedThisRound()) {
+                if ((m.hasChargedOrChargingCapacitor() == 1) && !m.isUsedThisRound()) {
                     capHeat += 5;
                 }
-                if ((m.hasChargedCapacitor() == 2) && !m.isUsedThisRound()) {
+                if ((m.hasChargedOrChargingCapacitor() == 2) && !m.isUsedThisRound()) {
                     capHeat += 10;
                 }
             }

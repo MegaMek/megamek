@@ -21,7 +21,7 @@ GunEmplacement
 </UnitType>
 
 <Name>
-Small Pulse Laser Turret
+Micro Pulse Laser Turret
 </Name>
 
 <Model>
@@ -29,7 +29,7 @@ Small Pulse Laser Turret
 </Model>
 
 <Year>
-2609
+3059
 </Year>
 
 <Type>
@@ -43,6 +43,6 @@ IS Level 3
 </Turret>
 
 <Guns Equipment>
-ISSmallPulseLaser
-ISSmallPulseLaser
+CLMicroPulseLaser
+CLMicroPulseLaser
 </Guns Equipment>

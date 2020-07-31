@@ -33,6 +33,8 @@ VERSION HISTORY:
 + Data: Some infantry name fixes.
 + Data: New Sprites (fix for HMG ranges)
 + PR #2092: Screamer, Pwkka, Yurei LAMs have actual bomb bays; removed incorrect alias for protomech MG ammo; micro laser tech ratings corrected
++ PR #1992: Inclines and cliffs, as per TacOps page 39
++ Issue #2065: PPCs with charging capacitors now build up heat on the first turn of the charge
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

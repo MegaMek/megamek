@@ -98,6 +98,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static final String ANTIALIASING = "AntiAliasing";
     public static final String SHADOWMAP = "ShadowMap";
+    public static final String INCLINES = "Inclines";
     public static final String AOHEXSHADOWS = "AoHexShadows";
     public static final String LEVELHIGHLIGHT = "LevelHighlight";
     public static final String FLOATINGISO = "FloatingIsometric";
@@ -301,6 +302,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ANTIALIASING, true);
         store.setDefault(AOHEXSHADOWS, false);
         store.setDefault(SHADOWMAP, false);
+        store.setDefault(INCLINES, true);
         store.setDefault(FLOATINGISO, false);
         store.setDefault(LEVELHIGHLIGHT, false);
         store.setDefault(AUTO_END_FIRING, true);
@@ -440,6 +442,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShadowMap() {
         return store.getBoolean(SHADOWMAP);
+    }
+    
+    public boolean getHexInclines() {
+        return store.getBoolean(INCLINES);
     }
 
     public boolean getLevelHighlight() {
@@ -885,6 +891,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setShadowMap(boolean state) {
         store.setValue(SHADOWMAP, state);
+    }
+    
+    public void setHexInclines(boolean state) {
+        store.setValue(INCLINES, state);
     }
 
     public void setAOHexShadows(boolean state) {

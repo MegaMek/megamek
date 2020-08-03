@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-0.47.8-SNAPSHOT
+0.47.9-SNAPSHOT
+
+0.47.8 (2020-08-02 2300 UTC)
 + Data: New Sprites and numerous Mechset naming fixes.
 + Issue #2024: Fix possible NREs in AccessibilityWindow during various game events
 + Issue #2023: Destroying artillery which has rounds in-flight no longer stops the game

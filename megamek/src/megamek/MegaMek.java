@@ -63,7 +63,7 @@ import megamek.utils.RATGeneratorEditor;
 public class MegaMek {
     private static MMLogger logger = null;
 
-    public static String VERSION = "0.47.8-SNAPSHOT";
+    public static String VERSION = "0.47.8";
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
             + File.separator + "timestamp").lastModified();
 

@@ -189,7 +189,7 @@ public class EntityImage {
             wreck = applyColor(wreck);
             
             // Add damage scars and smoke/fire; not to Infantry
-            if (!isInfantry && isTank && GUIPreferences.getInstance().getShowDamageDecal()) {
+            if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
                 wreck = applyDamageDecal(wreck);
                 // No smoke in the lobby            
                 if (!isPreview) {

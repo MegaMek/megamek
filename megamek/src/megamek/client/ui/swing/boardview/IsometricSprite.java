@@ -14,6 +14,7 @@ import java.awt.Transparency;
 import java.awt.image.ImageObserver;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -148,11 +149,33 @@ class IsometricSprite extends Sprite {
         } else if (makeTranslucent) {
             g2.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 0.35f));
+            
+            drawImmobileElements(g2, x, y, observer);
+            
             g2.drawImage(image, x, y, observer);
             g2.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 1.0f));
         } else {
+            drawImmobileElements(g, x, y, observer);
             g.drawImage(image, x, y, observer);
+        }
+    }
+    
+    public void drawImmobileElements(Graphics graph, int x, int y, ImageObserver observer) {
+        // draw the 'fuel leak' decal where appropriate
+        boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
+        
+        if(drawFuelLeak) {
+            Image fuelLeak = bv.getScaledImage(bv.tileManager.bottomLayerFuelLeakMarkerFor(entity), true);
+            if (null != fuelLeak) {
+                graph.drawImage(fuelLeak, x, y, observer);
+            }
+        }
+        
+        // draw the 'tires' or 'tracks' decal where appropriate
+        Image motiveWreckage = bv.getScaledImage(bv.tileManager.bottomLayerMotiveMarkerFor(entity), true);
+        if (null != motiveWreckage) {
+            graph.drawImage(motiveWreckage, x, y, observer);
         }
     }
 

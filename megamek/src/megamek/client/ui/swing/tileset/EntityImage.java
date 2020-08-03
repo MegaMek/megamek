@@ -114,6 +114,8 @@ public class EntityImage {
     private final int pos;
     /** True for units that occupy one hex (all but some dropships). */
     private final boolean isSingleHex;
+    /** True for tanks */
+    private final boolean isTank;
 
     public EntityImage(Image base, int tint, Image camo, Component comp, Entity entity) {
         this(base, null, tint, camo, comp, entity, -1, true);
@@ -131,9 +133,10 @@ public class EntityImage {
         this.camo = camo;
         parent = comp;
         this.wreck = wreck;
-        this.dmgLevel = entity.getDamageLevel();
+        this.dmgLevel = entity.getDamageLevel(false);
         this.weight = entity.getWeight();
         isInfantry = entity instanceof Infantry;
+        isTank = entity instanceof Tank;
         isPreview = preview;
         isSlim = entity instanceof Tank || entity instanceof Aero;
         isVerySlim = entity instanceof VTOL;
@@ -179,6 +182,16 @@ public class EntityImage {
 
         if (wreck != null) {
             wreck = applyColor(wreck);
+            
+            // Add damage scars and smoke/fire; not to Infantry
+            if (!isInfantry && isTank && GUIPreferences.getInstance().getShowDamageDecal()) {
+                wreck = applyDamageDecal(wreck);
+                // No smoke in the lobby            
+                if (!isPreview) {
+                    wreck = applyDamageSmoke(wreck);
+                }
+            }
+            
             for (int i = 0; i < 6; i++) {
                 wreckFacings[i] = rotateImage(wreck, i);
             }
@@ -369,7 +382,7 @@ public class EntityImage {
     /** Returns the damage decal based on damage level. */
     private Image getDamageDecal(Entity entity, int pos) {
         try {
-            switch (entity.getDamageLevel()) {
+            switch (entity.getDamageLevel(false)) {
             case Entity.DMG_LIGHT:
                 return getIM(PATH_LIGHT, entity.getShortName(), pos);
             case Entity.DMG_MODERATE:

@@ -70,9 +70,11 @@ public abstract class AbstractWreckSprite extends Sprite {
         image = ImageUtil.createAcceleratedImage(bounds.width, bounds.height);
         Graphics2D graph = (Graphics2D) image.getGraphics();
         
-        // if the entity is underwater or would sink underwater
+        // if the entity is underwater or would sink underwater, we want to make the wreckage translucent
+        // so it looks like it sunk
         boolean entityIsUnderwater = (entity.relHeight() < 0) ||
-                ((entity.relHeight() == 0) && entity.getGame().getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.WATER));
+                ((entity.relHeight() >= 0) && entity.getGame().getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.WATER)) &&
+                !EntityWreckHelper.entityOnBridge(entity);
         
         if(entityIsUnderwater) {
             graph.setComposite(AlphaComposite.getInstance(
@@ -87,22 +89,23 @@ public abstract class AbstractWreckSprite extends Sprite {
             if (null != destroyed) {
                 graph.drawImage(destroyed, 0, 0, this);
             }
-        }
         
-        // draw the 'fuel leak' decal where appropriate
-        boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
         
-        if(drawFuelLeak) {
-            Image fuelLeak = bv.tileManager.bottomLayerFuelLeakMarkerFor(entity);
-            if (null != fuelLeak) {
-                graph.drawImage(fuelLeak, 0, 0, this);
+            // draw the 'fuel leak' decal where appropriate
+            boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
+            
+            if(drawFuelLeak) {
+                Image fuelLeak = bv.tileManager.bottomLayerFuelLeakMarkerFor(entity);
+                if (null != fuelLeak) {
+                    graph.drawImage(fuelLeak, 0, 0, this);
+                }
             }
-        }
-        
-        // draw the 'tires' or 'tracks' decal where appropriate
-        Image motiveWreckage = bv.tileManager.bottomLayerMotiveMarkerFor(entity);
-        if (null != motiveWreckage) {
-            graph.drawImage(motiveWreckage, 0, 0, this);
+            
+            // draw the 'tires' or 'tracks' decal where appropriate
+            Image motiveWreckage = bv.tileManager.bottomLayerMotiveMarkerFor(entity);
+            if (null != motiveWreckage) {
+                graph.drawImage(motiveWreckage, 0, 0, this);
+            }
         }
         
         // Draw wreck image, if we've got one.
@@ -112,8 +115,8 @@ public abstract class AbstractWreckSprite extends Sprite {
             wreck = bv.tileManager.getCraterFor(entity, secondaryPos);
         } else {
             wreck = useBottomLayer ? 
-                    bv.tileManager.imageFor(entity, secondaryPos) :
-                    bv.tileManager.wreckMarkerFor(entity, secondaryPos);
+                        bv.tileManager.imageFor(entity, secondaryPos) :
+                        bv.tileManager.wreckMarkerFor(entity, secondaryPos);
         }
 
         if (null != wreck) {

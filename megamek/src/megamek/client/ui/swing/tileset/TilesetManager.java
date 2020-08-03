@@ -187,8 +187,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image getCraterFor(Entity entity, int secondaryPos) {
         Image marker = null;
         
-        String postfix = EntityWreckHelper.getWeightPostfix(entity);
-        String filename = String.format("crater_decal_%s.png", postfix);
+        String suffix = EntityWreckHelper.getWeightSuffix(entity);
+        String filename = String.format("crater_decal_%s.png", suffix);
         String path = String.format("%s/%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
         
         if(wreckageDecals.containsKey(filename)) {
@@ -205,8 +205,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image bottomLayerWreckMarkerFor(Entity entity, int secondaryPos) {
         Image marker = null;
         
-        String postfix = EntityWreckHelper.getWeightPostfix(entity);
-        String filename = String.format("destroyed_decal_%s.png", postfix);
+        String suffix = EntityWreckHelper.getWeightSuffix(entity);
+        String filename = String.format("destroyed_decal_%s.png", suffix);
         String path = String.format("%s/%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
         
         if(wreckageDecals.containsKey(filename)) {
@@ -223,8 +223,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image bottomLayerFuelLeakMarkerFor(Entity entity) {
         Image marker = null;
         
-        String postfix = EntityWreckHelper.getWeightPostfix(entity);
-        String filename = String.format("fuelleak_decal_%s.png", postfix);
+        String suffix = EntityWreckHelper.getWeightSuffix(entity);
+        String filename = String.format("fuelleak_decal_%s.png", suffix);
         String path = String.format("%s/%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
         
         if(wreckageDecals.containsKey(filename)) {
@@ -241,10 +241,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image bottomLayerMotiveMarkerFor(Entity entity) {
         Image marker = null;
         
-        String weightPostfix = EntityWreckHelper.getWeightPostfix(entity);
+        String weightSuffix = EntityWreckHelper.getWeightSuffix(entity);
         String motivePrefix = EntityWreckHelper.getMotivePrefix(entity);
         if(motivePrefix != null) {
-            String filename = String.format("%s_decal_%s.png", motivePrefix, weightPostfix);
+            String filename = String.format("%s_decal_%s.png", motivePrefix, weightSuffix);
             String path = String.format("%s/%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
             
             if(wreckageDecals.containsKey(filename)) {

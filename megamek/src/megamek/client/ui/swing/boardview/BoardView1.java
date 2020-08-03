@@ -113,6 +113,7 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.EntityVisibilityUtils;
 import megamek.common.Flare;
+import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
@@ -5207,11 +5208,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             GUIPreferences guip = GUIPreferences.getInstance();
 
             updateEcmList();
+            
             //For Entities that have converted to another mode, check for a different sprite
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
                     && en.isConvertingNow()) {
                 tileManager.reloadImage(en);
             }
+            
+            // for gun emplacements that have been blown up, force a reload
+            if((en instanceof GunEmplacement) && (e.getOldEntity() != null) &&
+                    (en.isDestroyed() != e.getOldEntity().isDestroyed())) {
+                tileManager.reloadImage(en);
+            }
+            
             redrawAllEntities();
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();

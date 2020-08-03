@@ -133,12 +133,17 @@ public class EntityImage {
         this.camo = camo;
         parent = comp;
         this.wreck = wreck;
-        this.dmgLevel = entity.getDamageLevel(false);
-        this.weight = entity.getWeight();
+        // hack: gun emplacements don't show up as crippled when destroyed
+        this.dmgLevel = (entity instanceof GunEmplacement) && entity.isDestroyed() ? 
+                Entity.DMG_CRIPPLED :
+                entity.getDamageLevel(false);
+        // hack: gun emplacements are pretty beefy but have weight 0
+        this.weight = entity instanceof GunEmplacement ?
+                SMOKE_THREE + 1 : entity.getWeight();
         isInfantry = entity instanceof Infantry;
         isTank = entity instanceof Tank;
         isPreview = preview;
-        isSlim = entity instanceof Tank || entity instanceof Aero;
+        isSlim = (entity instanceof Tank && !(entity instanceof GunEmplacement)) || (entity instanceof Aero);
         isVerySlim = entity instanceof VTOL;
         pos = secondaryPos;
         isSingleHex = secondaryPos == -1;
@@ -392,6 +397,12 @@ public class EntityImage {
             case Entity.DMG_CRIPPLED:
                 return getIM(PATH_CRIPPLED, entity.getShortName(), pos);
             default: // DMG_NONE:
+                // hack: gun emplacements show up as "undamaged" when they are destroyed
+                if((entity instanceof GunEmplacement) &&
+                        entity.isDestroyed()) {
+                    return getIM(PATH_CRIPPLED, entity.getShortName(), pos);
+                }
+                
                 return null;
             }
         } catch (Exception e) {

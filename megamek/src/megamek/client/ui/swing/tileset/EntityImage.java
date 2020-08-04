@@ -395,7 +395,9 @@ public class EntityImage {
             case Entity.DMG_HEAVY:
                 return getIM(PATH_HEAVY, entity.getShortName(), pos);
             case Entity.DMG_CRIPPLED:
-                return getIM(PATH_CRIPPLED, entity.getShortName(), pos);
+                // units that just run out of ammo without getting shot at shouldn't show damage
+                return (entity.getArmorRemainingPercent() < 100) ?
+                        getIM(PATH_CRIPPLED, entity.getShortName(), pos) : null;
             default: // DMG_NONE:
                 // hack: gun emplacements show up as "undamaged" when they are destroyed
                 if((entity instanceof GunEmplacement) &&

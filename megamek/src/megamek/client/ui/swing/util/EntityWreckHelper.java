@@ -48,8 +48,6 @@ public class EntityWreckHelper {
             return false;
         }
         
-        
-        
         return true;
     }
     

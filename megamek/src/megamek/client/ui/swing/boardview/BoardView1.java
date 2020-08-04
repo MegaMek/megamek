@@ -5215,9 +5215,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 tileManager.reloadImage(en);
             }
             
-            // for gun emplacements that have been blown up, force a reload
-            if((en instanceof GunEmplacement) && (e.getOldEntity() != null) &&
-                    (en.isDestroyed() != e.getOldEntity().isDestroyed())) {
+            // for units that have been blown up or damaged, force a reload
+            if((e.getOldEntity() != null) &&
+                    ((en.getDamageLevel() != e.getOldEntity().getDamageLevel()) ||
+                    (en.isDestroyed() != e.getOldEntity().isDestroyed()))) {
                 tileManager.reloadImage(en);
             }
             

@@ -2002,7 +2002,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (type >= 0) {
                 slots = BombType.getBombCost(type);
             } else {
-                slots = mounted.getType().getCriticals(this);
+                slots = mounted.getCriticals();
             }
         }
         for (int i = 0; i < crits[loc].length; i++) {

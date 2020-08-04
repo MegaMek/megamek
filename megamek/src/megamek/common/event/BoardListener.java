@@ -29,21 +29,22 @@ package megamek.common.event;
  */
 public interface BoardListener extends java.util.EventListener {
     /**
-     * Sent when Board completely changed
+     * Sent when the Board is completely changed. 
+     * The board's size may have changed.
      *
      * @param b an event containing information about the change
      */
     public void boardNewBoard(BoardEvent b);
 
     /**
-     * Sent when Hex on the Board changed
+     * Sent when a single hex on the Board changed.
      *
      * @param b an event containing information about the change
      */
     public void boardChangedHex(BoardEvent b);
 
     /**
-     * Sent when all hexes on the board changed
+     * Sent when all hexes on the board changed.
      *
      * @param b an event containing information about the change
      */

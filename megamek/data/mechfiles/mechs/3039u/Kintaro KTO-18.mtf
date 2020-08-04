@@ -151,3 +151,19 @@ Foot Actuator
 -Empty-
 
 
+Overview: The Kintaro is a BattleMech with an unusual conception. Contrary to most other designs, the Kintaro was built around a single new revolutionary weapon system: the NARC launcher. Able to emit loud homing signals, NARC pods would guide all friendly NARC-capable missiles onto the target, potentially increasing missile accuracy for entire forces at a time. The SLDF lept on the opportunity to field this advanced technology, and Kintaros became a popular element of their missile-heavy formations. It was only after the fall of the Star League and the extinction of NARC technology that Kintaro variants based around other systems would emerge; these would, however, be few and far between.
+
+Capabilities: Kintaros, whether mounting a NARC launcher or not, a;ways carry missile-heavy armaments means to take advantage of the NARC homing signal. They are always capable BattleMechs, mounting impressive firepower and carrying heavy amounts of armor to facilitate the delivery of their missile weaponry. Rather fast for their size, the Kintaro as a whole can act as a capable cavalry design, able to brawl well and exploit holes in the armor of other damaged BattleMechs.
+
+Deployment: The Kintaro was a popular Star League design but never spread much to the Successor States. ComStar, as the inheritor of most examples of the design, would eventually deliver some to the Draconis Combine as part of Operation:ROSEBUD. Even so, the design mostly stayed in the hands of the telecommunications company and their branch-off sect, the Word of Blake. The few downgraded KTO-18's, the result of the technological degradation of the Succession Wars, mostly ended up in Federated Suns space. While the Draconis Combine would eventually lay their hands on a few thanks to ComStar, most of their examples were of the better-upgraded -20 variant, and the -18 largely remained a House Davion BattleMech.
+
+systemmanufacturer:CHASSIS:Technicron
+systemmode:CHASSIS:-1
+systemmanufacturer:ENGINE:Core Tek
+systemmode:ENGINE:275
+systemmanufacturer:ARMOR:Leopard
+systemmode:ARMOR:V
+systemmanufacturer:COMMUNICATIONS:Omnicomm
+systemmode:COMMUNICATIONS:3
+systemmanufacturer:TARGETING:Starbeam
+systemmode:TARGETING:3000

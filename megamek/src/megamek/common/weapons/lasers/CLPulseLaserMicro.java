@@ -61,7 +61,7 @@ public class CLPulseLaserMicro extends PulseLaserWeapon {
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C)
+            .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
             .setClanAdvancement(3059, 3060, 3061, DATE_NONE, DATE_NONE)
             .setClanApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_CSJ)

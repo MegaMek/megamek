@@ -11,7 +11,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.common.util;
 
 /**
@@ -20,17 +19,13 @@ package megamek.common.util;
  * <code>start</code> function
  */
 public abstract class AbstractCommandLineParser {
-
     /**
      * Exception thrown in case of error
      */
     public static class ParseException extends Exception {
-        /**
-         * 
-         */
         private static final long serialVersionUID = -3077985683676777509L;
 
-        ParseException(String message) {
+        public ParseException(String message) {
             super(message);
         }
     }
@@ -38,7 +33,7 @@ public abstract class AbstractCommandLineParser {
     /**
      * Prefix of the option. Subclasses may overwrite.
      */
-    protected String OPTION_PREFIX = "-"; //$NON-NLS-1$
+    protected String OPTION_PREFIX = "-";
 
     /**
      * End of input token
@@ -51,7 +46,7 @@ public abstract class AbstractCommandLineParser {
     protected static final int TOK_OPTION = 0;
 
     /**
-     * Literal (any string that doesn not start with defice actually)
+     * Literal (any string that does not start with defice (sp?) actually)
      */
     protected static final int TOK_LITERAL = 3;
 
@@ -91,7 +86,7 @@ public abstract class AbstractCommandLineParser {
      * @param args <code>array</code> of arguments to parse
      */
     public AbstractCommandLineParser(String[] args) {
-        assert (args != null) : "args must be non null"; //$NON-NLS-1$
+        assert (args != null) : "args must be non null";
         this.args = args;
         argsLen = args.length;
     }
@@ -99,7 +94,7 @@ public abstract class AbstractCommandLineParser {
     /**
      * Main entry point of the parser
      * 
-     * @throws ParseException
+     * @throws ParseException if it fails to parse
      */
     public void parse() throws ParseException {
         nextToken();
@@ -107,17 +102,15 @@ public abstract class AbstractCommandLineParser {
     }
 
     /**
-     * Returns current arg
      * 
-     * @return current arg
+     * @return current argument
      */
     protected String getArgValue() {
         return argValue;
     }
 
     /**
-     * Returns current token
-     * 
+     *
      * @return current token
      */
     protected int getToken() {
@@ -125,36 +118,32 @@ public abstract class AbstractCommandLineParser {
     }
 
     /**
-     * Sets the current token
      * 
-     * @param token
+     * @param token to set the current token to
      */
     protected void setToken(int token) {
         this.token = token;
     }
 
     /**
-     * Returns <code>String</code> value of the current token
      * 
-     * @return
+     * @return <code>String</code> value of the current token
      */
     protected String getTokenValue() {
         return tokenValue;
     }
 
     /**
-     * Sets the current token
      * 
-     * @param tokenValue
+     * @param tokenValue to set the current token to
      */
     protected void setTokenValue(String tokenValue) {
         this.tokenValue = tokenValue;
     }
 
     /**
-     * Returns <code>String</code> value of the current token
      * 
-     * @return
+     * @return <code>String</code> value of the current token
      */
     protected int getPosition() {
         return position;
@@ -163,13 +152,14 @@ public abstract class AbstractCommandLineParser {
     /**
      * Real entry point of parser
      * 
-     * @throws ParseException
+     * @throws ParseException if the parser fails
      */
     protected abstract void start() throws ParseException;
 
     protected boolean hasNext() {
         return position < argsLen;
     }
+
     /**
      * Reads the next available token.
      */
@@ -196,15 +186,4 @@ public abstract class AbstractCommandLineParser {
             argValue = null;
         }
     }
-
-    /**
-     * Indicates the parse error
-     * 
-     * @param message
-     * @throws ParseException
-     */
-    protected void error(String message) throws ParseException {
-        throw new ParseException(message);
-    }
-
 }

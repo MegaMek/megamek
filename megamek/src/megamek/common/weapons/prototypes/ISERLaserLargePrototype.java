@@ -18,6 +18,7 @@
 package megamek.common.weapons.prototypes;
 
 import megamek.common.IGame;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -67,7 +68,8 @@ public class ISERLaserLargePrototype extends LaserWeapon {
             .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
             .setISAdvancement(3030, DATE_NONE, DATE_NONE, 3037, DATE_NONE)
             .setISApproximate(false, false, false,true, false)
-            .setPrototypeFactions(F_FS);
+            .setPrototypeFactions(F_FS)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
      }
 
     /*

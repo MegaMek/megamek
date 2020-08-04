@@ -80,6 +80,8 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
+import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -226,7 +228,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     // some dialogs...
     GameOptionsDialog gameOptionsDialog;
-    private UnitSelectorDialog mechSelectorDialog;
+    private AbstractUnitSelectorDialog mechSelectorDialog;
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
@@ -615,7 +617,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (!MechSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
-        mechSelectorDialog = new UnitSelectorDialog(this, unitLoadingDialog);
+        mechSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
         randomNameDialog = new RandomNameDialog(this);
@@ -1060,7 +1062,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         return gameOptionsDialog;
     }
 
-    public UnitSelectorDialog getMechSelectorDialog() {
+    public AbstractUnitSelectorDialog getMechSelectorDialog() {
         return mechSelectorDialog;
     }
 

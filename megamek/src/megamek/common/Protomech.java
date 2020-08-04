@@ -486,11 +486,11 @@ public class Protomech extends Entity {
     /**
      * Returns the amount of heat that the entity can sink each turn. Pmechs
      * have no heat. //FIXME However, the number of heat sinks they have IS
-     * importnat... For cost and validation purposes.
+     * important... For cost and validation purposes.
      */
     @Override
     public int getHeatCapacity(boolean radicalHeatSinks) {
-        return 999;
+        return DOES_NOT_TRACK_HEAT;
     }
 
     @Override

@@ -107,14 +107,23 @@ public class BLKFile {
      */
     static double getLegacyVariableSize(String eqName) {
         if (eqName.startsWith("Cargo")
-                || eqName.startsWith("Liquid Cargo")
+                || eqName.startsWith("Liquid Storage")
                 || eqName.startsWith("Communications Equipment")) {
             return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
                     eqName.indexOf(" ton")));
         }
+        if (eqName.startsWith("CommsGear")) {
+            return Double.parseDouble(eqName.substring(eqName.indexOf(":") + 1));
+        }
         if (eqName.startsWith("Mission Equipment Storage")) {
-            return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
-                    eqName.indexOf(" kg")));
+            int pos = eqName.indexOf("(");
+            if (pos > 0) {
+                return Double.parseDouble(eqName.substring(pos + 1,
+                        eqName.indexOf("kg")).trim());
+            } else {
+                // If the internal name does not include a size, it's the original 20 kg version.
+                return 0.02;
+            }
         }
         if (eqName.startsWith("Ladder")) {
             return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
@@ -191,6 +200,11 @@ public class BLKFile {
                     etype = EquipmentType.get(prefix + equipName);
                 }
                 if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
+                    continue;
+                }
+
+                // The stealth armor mount is added when the armor type is set
+                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_STEALTH)) {
                     continue;
                 }
 
@@ -870,9 +884,9 @@ public class BLKFile {
             if (et != null) {
             	blk.writeBlockData("armorKit", et.getInternalName());
             }
-            if (infantry.getDamageDivisor() != 1) {
+            if (infantry.getArmorDamageDivisor() != 1) {
                 blk.writeBlockData("armordivisor",
-                        Double.toString(infantry.getDamageDivisor()));
+                        Double.toString(infantry.getArmorDamageDivisor()));
             }
             if (infantry.isArmorEncumbering()) {
                 blk.writeBlockData("encumberingarmor", "true");

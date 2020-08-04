@@ -55,6 +55,6 @@ public class ISNarc extends NarcWeapon {
             .setClanApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH)
-            .setReintroductionFactions(F_FS,F_LC);
+            .setReintroductionFactions(F_FW);
     }
 }

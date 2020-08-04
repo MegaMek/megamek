@@ -510,9 +510,15 @@ public class FighterSquadron extends Aero implements IAero {
         for(Entity fighter : activeFighters) {
             pilotingTotal += fighter.getCrew().getPiloting();
             gunneryTotal += fighter.getCrew().getGunnery();
-            gunneryLTotal += fighter.getCrew().getGunneryL();
-            gunneryMTotal += fighter.getCrew().getGunneryM();
-            gunneryBTotal += fighter.getCrew().getGunneryB();
+            if (fighter.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+                gunneryLTotal += fighter.getCrew().getGunneryL();
+                gunneryMTotal += fighter.getCrew().getGunneryM();
+                gunneryBTotal += fighter.getCrew().getGunneryB();
+            } else {
+                gunneryLTotal = gunneryTotal;
+                gunneryMTotal = gunneryTotal;
+                gunneryBTotal = gunneryTotal;
+            }
         }
         getCrew().setPiloting(pilotingTotal / activeFighters.size(), 0);
         getCrew().setGunnery(gunneryTotal / activeFighters.size(), 0);

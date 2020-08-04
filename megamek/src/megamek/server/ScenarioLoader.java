@@ -13,7 +13,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.server;
 
 import java.io.BufferedReader;
@@ -35,8 +34,9 @@ import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import megamek.client.RandomNameGenerator;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.generator.RandomNameGenerator;
+import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Board;
@@ -69,6 +69,7 @@ import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.enums.Gender;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
@@ -131,7 +132,7 @@ public class ScenarioLoader {
     public ScenarioLoader(File f) {
         scenarioFile = f;
         try {
-            camos = new DirectoryItems(Configuration.camoDir(), "", ImageFileFactory.getInstance()); //$NON-NLS-1$
+            camos = new DirectoryItems(Configuration.camoDir(), "", ScaledImageFileFactory.getInstance()); //$NON-NLS-1$
         } catch (Exception e) {
             camos = null;
         }
@@ -564,12 +565,12 @@ public class ScenarioLoader {
             if ((parts.length > 4) && parts[4].matches("-?\\d+")) {
                 e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
                         Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-                        Integer.parseInt(parts[4]), null));
+                        Gender.parseFromString(parts[4]), null));
                 i = 5; // direction will be part 5, as the scenario has the gender of its pilots included
             } else {
                 e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1,
                         Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-                        RandomNameGenerator.getInstance().generateGender(), null));
+                        RandomGenderGenerator.generate(), null));
                 i = 4; // direction will be part 4, as the scenario does not contain gender
             }
 

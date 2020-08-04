@@ -218,6 +218,8 @@
      Bloodwolf
      SirMegaV
 	 Saxarba
+	 Ahne
+	 AskAgain
 
   Camo Pack
   	 SeaVea

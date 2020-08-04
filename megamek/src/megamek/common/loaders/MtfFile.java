@@ -722,12 +722,6 @@ public class MtfFile implements IMechLoader {
                                               BattleArmor.MOUNT_LOC_NONE, isArmored,
                                               isTurreted);
                         m.setOmniPodMounted(isOmniPod);
-                        if (etype.isVariableSize()) {
-                            if (size == 0.0) {
-                                size = BLKFile.getLegacyVariableSize(critName);
-                            }
-                            m.setSize(size);
-                        }
                         hSharedEquip.put(etype, m);
                     } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable()) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer
@@ -744,7 +738,7 @@ public class MtfFile implements IMechLoader {
                         }
                         if (bFound) {
                             m.setFoundCrits(m.getFoundCrits() + (mech.isSuperHeavy()? 2 : 1));
-                            if (m.getFoundCrits() >= etype.getCriticals(mech)) {
+                            if (m.getFoundCrits() >= m.getCriticals()) {
                                 vSplitWeapons.remove(m);
                             }
                             // if we're in a new location, set the weapon as
@@ -788,6 +782,18 @@ public class MtfFile implements IMechLoader {
                             }
                             mount = mech.addEquipment(etype, etype2, loc, isOmniPod);
                         }
+                        if (etype.isVariableSize()) {
+                            if (size == 0.0) {
+                                size = BLKFile.getLegacyVariableSize(critName);
+                            }
+                            mount.setSize(size);
+                            // THe size may require additional critical slots
+                            for (int c = 1; c < mount.getCriticals(); c++) {
+                                CriticalSlot cs = new CriticalSlot(mount);
+                                mech.addCritical(loc, cs, i + c);
+                            }
+                        }
+
                         // vehicular grenade launchers need to have their facing
                         // set
                         if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {

@@ -59,6 +59,7 @@ import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -90,9 +91,9 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.ChatterBox2;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.HexTileset;
 import megamek.client.ui.swing.MovementDisplay;
-import megamek.client.ui.swing.TilesetManager;
+import megamek.client.ui.swing.tileset.HexTileset;
+import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -163,6 +164,8 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.BoardClusterTracker;
+import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -238,7 +241,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Font font_elev = FONT_9;
     private Font font_minefield = FONT_12;
 
-    IGame game;
+    public final IGame game;
     ClientGUI clientgui;
 
     private Dimension boardSize;
@@ -338,6 +341,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     Shape[] movementPolys;
     Shape[] facingPolys;
+    Shape[] finalFacingPolys;
     Shape upArrow;
     Shape downArrow;
 
@@ -718,8 +722,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         firstLOSSprite = new CursorSprite(this, Color.red);
         secondLOSSprite = new CursorSprite(this, Color.red);
 
-        PreferenceManager.getClientPreferences().addPreferenceChangeListener(
-                this);
+        PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
 
         SpecialHexDisplay.Type.ARTILLERY_HIT.init();
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
@@ -1074,7 +1078,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
         }
-        if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+        if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)
+                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER)
+                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER_TEAM)
+                || e.getName().equals(GUIPreferences.SHOW_DAMAGE_DECAL)) {
             updateEntityLabels();
             for (Sprite s: wreckSprites) {
                 s.prepare();
@@ -1082,6 +1089,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             for (Sprite s: isometricWreckSprites) {
                 s.prepare();
             }
+        }
+        if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
+                || e.getName().equals(GUIPreferences.FLOATINGISO)
+                || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)) {
+            clearHexImageCache();
+            repaint();
+        }
+        if (e.getName().equals(GUIPreferences.INCLINES)) {
+            game.getBoard().initializeAllAutomaticTerrain();
+            clearHexImageCache();
+            repaint();
         }
     }
 
@@ -1385,10 +1403,32 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // debugging method that renders the bounding box of a unit's movement envelope.
+        //renderClusters((Graphics2D) g);
         //renderMovementBoundingBox((Graphics2D) g);
         //renderDonut(g, new Coords(10, 10), 2);
+        //renderApproxHexDirection((Graphics2D) g);
     }
 
+    /**
+     * Debugging method that renders a hex in the approximate direction 
+     * from the selected entity to the selected hex, of both exist.
+     * @param g Graphics object on which to draw.
+     */
+    @SuppressWarnings("unused")
+    private void renderApproxHexDirection(Graphics2D g) {
+        if(selectedEntity == null || selected == null) {
+            return;
+        }
+        
+        int direction = selectedEntity.getPosition().approximateDirection(selected, 0, 0);
+        
+        Coords donutCoords = selectedEntity.getPosition().translated(direction);
+        
+        Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
+        p.translate(HEX_W  / 2, HEX_H  / 2);
+        drawHexBorder(g, p, Color.BLUE, 0, 6);
+    }
+    
     /**
      * Debugging method that renders the bounding hex of a unit's movement envelope.
      * Warning: very slow when rendering the bounding hex for really fast units.
@@ -1436,6 +1476,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Debugging method that renders a hex donut around the given coordinates, with the given radius.
      * @param g Graphics object on which to draw.
      */
+    @SuppressWarnings("unused")
     private void renderDonut(Graphics2D g, Coords coords, int radius) {
         Set<Coords> donut = BotGeometry.getHexDonut(coords, radius);
 
@@ -1443,6 +1484,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
             p.translate(HEX_W  / 2, HEX_H  / 2);
             drawHexBorder(g, p, Color.PINK, 0, 6);
+        }
+    }
+    
+    /**
+     * Debugging method that renders a obnoxious pink lines around hexes in "Board Clusters"
+     * @param g Graphics object on which to draw.
+     */
+    @SuppressWarnings("unused")
+    private void renderClusters(Graphics2D g) {
+        BoardClusterTracker bct = new BoardClusterTracker();
+        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false, true);
+        
+        for(BoardCluster cluster : clusterMap.values().stream().distinct().collect(Collectors.toList())) {
+            for (Coords coords : cluster.contents.keySet()) {
+                Point p = getCentreHexLocation(coords.getX(), coords.getY(), true);
+                p.translate(HEX_W  / 2, HEX_H  / 2);
+                drawHexBorder(g, p, new Color(0, 0, (20 * cluster.id) % 255), 0, 6);
+            }
         }
     }
 
@@ -1634,9 +1693,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     Transparency.TRANSLUCENT);
             Graphics gS = elevShadow.getGraphics();
             Point2D p1 = new Point2D.Double(eSize.width/2, eSize.height/2);
-            for (int i = 0; i<n*lDiff; i++) {
-                gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
-                p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+            if (GUIPreferences.getInstance().getHexInclines()) {
+                // With inclines, the level 1 shadows are only very slight
+                int beg = 4;
+                p1.setLocation(p1.getX()+deltaX*beg, p1.getY()+deltaY*beg);
+                for (int i = beg; i<n*(lDiff-0.4); i++) {
+                    gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
+                    p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+                }   
+            } else {
+                for (int i = 0; i<n*lDiff; i++) {
+                    gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
+                    p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+                }
+                
             }
             gS.dispose();
             hS.put(lDiff, elevShadow);
@@ -2635,7 +2705,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // AO Hex Shadow in this hex when a higher one is adjacent
         if (guip.getBoolean(GUIPreferences.AOHEXSHADOWS)
-                || guip.getBoolean(GUIPreferences.SHADOWMAP)) {
+               ) {
             for (int dir : allDirections) {
                 Shape ShadowShape = getElevationShadowArea(c, dir);
                 GradientPaint gpl = getElevationShadowGP(c, dir);
@@ -3163,6 +3233,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         {
             // no shadow area when the current hex is not lower than the next hex in direction
             if (srcHex.getLevel() >= destHex.getLevel()) return null;
+            if (GUIPreferences.getInstance().getHexInclines()
+                    && (destHex.getLevel() - srcHex.getLevel() < 2)
+                    && !destHex.hasCliffTopTowards(srcHex)) {
+                return null;
+            }
         }
 
         return(AffineTransform.getScaleInstance(scale, scale).createTransformedShape(
@@ -3208,15 +3283,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         IHex hex = game.getBoard().getHex(x, y);
         if ((hex != null) && useIsometric() && !ignoreElevation) {
-            int level = hex.getLevel();
-            if (level != 0) {
-                elevationAdjust = level * HEX_ELEV * scale * -1.0f;
-            }
+            elevationAdjust = hex.getLevel() * HEX_ELEV * scale * -1.0f;
         }
         int ypos = (y * (int) (HEX_H * scale))
                    + ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0);
-        return new Point(x * (int) (HEX_WC * scale), ypos
-                                                     + (int) elevationAdjust);
+        return new Point(x * (int) (HEX_WC * scale), ypos + (int) elevationAdjust);
     }
 
     /**
@@ -4593,65 +4664,80 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public void initPolys() {
 
-        AffineTransform FacingRotate = new AffineTransform();
+        AffineTransform facingRotate = new AffineTransform();
 
         // facing polygons
-        Polygon facingPoly_tmp = new Polygon();
-        facingPoly_tmp.addPoint(41, 3);
-        facingPoly_tmp.addPoint(35, 9);
-        facingPoly_tmp.addPoint(41, 7);
-        facingPoly_tmp.addPoint(42, 7);
-        facingPoly_tmp.addPoint(48, 9);
-        facingPoly_tmp.addPoint(42, 3);
+        Polygon facingPolyTmp = new Polygon();
+        facingPolyTmp.addPoint(41, 3);
+        facingPolyTmp.addPoint(35, 9);
+        facingPolyTmp.addPoint(41, 7);
+        facingPolyTmp.addPoint(42, 7);
+        facingPolyTmp.addPoint(48, 9);
+        facingPolyTmp.addPoint(42, 3);
 
         // create the rotated shapes
         facingPolys = new Shape[8];
-        for (int dir: allDirections)
-        {
-            facingPolys[dir] = FacingRotate.createTransformedShape(facingPoly_tmp);
-            FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
+        for (int dir : allDirections) {
+            facingPolys[dir] = facingRotate.createTransformedShape(facingPolyTmp);
+            facingRotate.rotate(Math.toRadians(60), HEX_W / 2, HEX_H / 2);
+        }
+
+        // final facing polygons
+        Polygon finalFacingPolyTmp = new Polygon();
+        finalFacingPolyTmp.addPoint(41, 3);
+        finalFacingPolyTmp.addPoint(21, 18);
+        finalFacingPolyTmp.addPoint(41, 14);
+        finalFacingPolyTmp.addPoint(42, 14);
+        finalFacingPolyTmp.addPoint(61, 18);
+        finalFacingPolyTmp.addPoint(42, 3);
+
+        // create the rotated shapes
+        facingRotate.setToIdentity();
+        finalFacingPolys = new Shape[8];
+        for (int dir : allDirections) {
+            finalFacingPolys[dir] = facingRotate.createTransformedShape(finalFacingPolyTmp);
+            facingRotate.rotate(Math.toRadians(60), HEX_W / 2, HEX_H / 2);
         }
 
         // movement polygons
-        Polygon movementPoly_tmp = new Polygon();
-        movementPoly_tmp.addPoint(47, 67);
-        movementPoly_tmp.addPoint(48, 66);
-        movementPoly_tmp.addPoint(42, 62);
-        movementPoly_tmp.addPoint(41, 62);
-        movementPoly_tmp.addPoint(35, 66);
-        movementPoly_tmp.addPoint(36, 67);
+        Polygon movementPolyTmp = new Polygon();
+        movementPolyTmp.addPoint(47, 67);
+        movementPolyTmp.addPoint(48, 66);
+        movementPolyTmp.addPoint(42, 62);
+        movementPolyTmp.addPoint(41, 62);
+        movementPolyTmp.addPoint(35, 66);
+        movementPolyTmp.addPoint(36, 67);
 
-        movementPoly_tmp.addPoint(47, 67);
-        movementPoly_tmp.addPoint(45, 68);
-        movementPoly_tmp.addPoint(38, 68);
-        movementPoly_tmp.addPoint(38, 69);
-        movementPoly_tmp.addPoint(45, 69);
-        movementPoly_tmp.addPoint(45, 68);
+        movementPolyTmp.addPoint(47, 67);
+        movementPolyTmp.addPoint(45, 68);
+        movementPolyTmp.addPoint(38, 68);
+        movementPolyTmp.addPoint(38, 69);
+        movementPolyTmp.addPoint(45, 69);
+        movementPolyTmp.addPoint(45, 68);
 
-        movementPoly_tmp.addPoint(45, 70);
-        movementPoly_tmp.addPoint(38, 70);
-        movementPoly_tmp.addPoint(38, 71);
-        movementPoly_tmp.addPoint(45, 71);
-        movementPoly_tmp.addPoint(45, 68);
+        movementPolyTmp.addPoint(45, 70);
+        movementPolyTmp.addPoint(38, 70);
+        movementPolyTmp.addPoint(38, 71);
+        movementPolyTmp.addPoint(45, 71);
+        movementPolyTmp.addPoint(45, 68);
 
         // create the rotated shapes
-        FacingRotate.setToIdentity();
+        facingRotate.setToIdentity();
         movementPolys = new Shape[8];
-        for (int dir: allDirections)
-        {
-            movementPolys[dir] = FacingRotate.createTransformedShape(movementPoly_tmp);
-            FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
+        for (int dir : allDirections) {
+            movementPolys[dir] = facingRotate.createTransformedShape(movementPolyTmp);
+            facingRotate.rotate(Math.toRadians(60), HEX_W / 2, HEX_H / 2);
         }
 
         // Up and Down Arrows
-        FacingRotate.setToIdentity();
-        FacingRotate.translate(0, -31);
-        upArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
+        facingRotate.setToIdentity();
+        facingRotate.translate(0, -31);
+        upArrow = facingRotate.createTransformedShape(movementPolyTmp);
 
-        FacingRotate.setToIdentity();
-        FacingRotate.rotate(Math.toRadians(180),HEX_W/2,HEX_H/2);
-        FacingRotate.translate(0, -31);
-        downArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
+        facingRotate.setToIdentity();
+        facingRotate.rotate(Math.toRadians(180), HEX_W / 2, HEX_H / 2);
+        facingRotate.translate(0, -31);
+        downArrow = facingRotate.createTransformedShape(movementPolyTmp);
     }
 
     synchronized boolean doMoveUnits(long idleTime) {
@@ -5061,6 +5147,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void boardNewBoard(BoardEvent b) {
         updateBoard();
         clearHexImageCache();
+        clearShadowMap();
+        repaint();
     }
 
     /*
@@ -5069,36 +5157,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * @see
      * megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
-    public synchronized void boardChangedHex(BoardEvent b) {
-        ArrayList<Coords> cArray = new ArrayList<>();
-        if (game.getBoard().contains(b.getCoords()))
-            cArray.add(b.getCoords());
+    public void boardChangedHex(BoardEvent b) {
+        hexImageCache.remove(b.getCoords());
         // Also repaint the surrounding hexes because of shadows, border etc.
-        for (int dir: allDirections) 
-            if (game.getBoard().contains(b.getCoords().translated(dir)))
-                cArray.add(b.getCoords().translated(dir));
-
-        for (Coords c: cArray) {
-            hexImageCache.remove(c);
-            IHex hex = game.getBoard().getHex(c);
-            tileManager.clearHex(hex);
-            // Don't wait in the board editor because many hex changes 
-            // makes this very slow 
-            if (clientgui != null) {
-                tileManager.waitForHex(hex);
-            }
-            clearShadowMap();
-            // Maybe have to set the hexes' theme.  Null clientgui implies board editor - don't mess with theme
-            if ((selectedTheme != null) && !selectedTheme.equals("(Original Theme)") && (clientgui != null)) {
-                if (selectedTheme.equals("(No Theme)") && (hex.getTheme() != null) && !hex.getTheme().equals("")) {
-                    hex.setTheme("");
-                    game.getBoard().setHex(c, hex);
-                } else if (!selectedTheme.equals(hex.getTheme())) {
-                    hex.setTheme(selectedTheme);
-                    game.getBoard().setHex(c, hex);
-                }
-            }
+        for (int dir: allDirections) { 
+            hexImageCache.remove(b.getCoords().translated(dir));
         }
+        clearShadowMap();
         repaint();
     }
 
@@ -5256,6 +5321,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     highlight(null);
                 default:
             }
+            for (Entity en: game.getEntitiesVector()) {
+                if (en.getDamageLevel() != Entity.DMG_NONE && en.damageThisRound != 0) {
+                    tileManager.reloadImage(en);
+                }
+            }
+
         }
     };
 
@@ -6651,22 +6722,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (selectedTheme == null) {
             return;
+        } else if (selectedTheme.equals("(Original Theme)")) {
+            selectedTheme = null;
+        } else if (selectedTheme.equals("(No Theme)")) {
+            selectedTheme = "";
         }
-        if (selectedTheme.equals("(Original Theme)")) {
-            for (Coords c: allBoardHexes()) {
-                IHex hex = board.getHex(c);
-                hex.resetTheme();
-                board.setHex(c, hex);
-            }
-
-        } else {
-            for (Coords c: allBoardHexes()) {
-                IHex hex = board.getHex(c);
-                hex.setTheme(selectedTheme.equals("(No Theme)")?
-                        "":selectedTheme);
-                board.setHex(c, hex);
-            }
-        }
+        
+        board.setTheme(selectedTheme);
     }
 
     private Image getBoardBackgroundHexImage(Coords c, IHex hex) {

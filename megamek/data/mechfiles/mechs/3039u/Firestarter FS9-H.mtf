@@ -153,3 +153,19 @@ Heat Sink
 -Empty-
 
 
+Overview: The Firestarter is a specialized BattleMech. Its role is somewhat self evident; it has served as an incendiary 'Mech for centuries, and has only undergone minor updates that rarely detract from its primary role. Due to its value as a niche combatant, most Firestarters are not assigned to standard lances in a force's TOE. Instead, they are often attached to forces on a company or even regimental level, where they act as force multipliers for these larger commands. It was only the sudden and real shortage of BattleMechs during the Succession Wars that would lead to the inclusion of the Firestarter in more generalized commands.
+
+Capabilities: The many Flamers on the Firestarter betray its main purpose. As an incendiary platform, the 'Mech is often deployed to scout, interdict, or screen other 'Mechs in wooded or grassy terrain. Its armor and firepower also make it effective against other lighter 'Mechs, and it can quickly break contact with hostile forces by starting fires as needed. The Succession Wars would bring forth a darker side of the Firestarter; many would be used for scorched-earth tactics, denying assets to the enemy even in retreat.
+
+Deployment: Argile Technologies produced many Firestarters during the height of the Star League. Although the company's destruction would temporarily stop production, Coventry MetalWorks would claim the design and continue manufacturing the design. Its numbers have remained stable throughout all of the Inner Sphere and Periphery no matter the era, and the Firestarter will likely remain a regular sight for years to come.
+
+systemmanufacturer:CHASSIS:Argile
+systemmode:CHASSIS:H/09
+systemmanufacturer:ENGINE:Omni
+systemmode:ENGINE:210
+systemmanufacturer:ARMOR:Livingston
+systemmode:ARMOR:Ceramics
+systemmanufacturer:COMMUNICATIONS:Cyclops
+systemmode:COMMUNICATIONS:14
+systemmanufacturer:TARGETING:Tansech
+systemmode:TARGETING:C39-97

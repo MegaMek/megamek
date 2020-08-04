@@ -1526,18 +1526,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         int nDamage;
         missed = false;
 
-        hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
-        hit.setGeneralDamageType(generalDamageType);
-        hit.setCapital(wtype.isCapital());
-        hit.setBoxCars(roll == 12);
-        hit.setCapMisCritMod(getCapMisMod());
-        hit.setFirstHit(firstHit);
-        hit.setAttackerId(getAttackerId());
-        if (weapon.isWeaponGroup()) {
-            hit.setSingleAV(attackValue);
-        }
+        initHit(entityTarget);
+        
         boolean isIndirect = wtype.hasModes()
                 && weapon.curMode().equals("Indirect");
         IHex targetHex = game.getBoard().getHex(target.getPosition());
@@ -1834,6 +1824,26 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
     }
 
+    /**
+     * Worker function that initializes the actual hit, including a hit location and various other properties.
+     * @param entityTarget Entity being hit.
+     */
+    protected void initHit(Entity entityTarget) {
+        hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                toHit.getSideTable(), waa.getAimedLocation(),
+                waa.getAimingMode(), toHit.getCover());
+        hit.setGeneralDamageType(generalDamageType);
+        hit.setCapital(wtype.isCapital());
+        hit.setBoxCars(roll == 12);
+        hit.setCapMisCritMod(getCapMisMod());
+        hit.setFirstHit(firstHit);
+        hit.setAttackerId(getAttackerId());
+        
+        if (weapon.isWeaponGroup()) {
+            hit.setSingleAV(attackValue);
+        }
+    }
+    
     protected void useAmmo() {
         if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
             ArrayList<Mounted> chain = new ArrayList<>();

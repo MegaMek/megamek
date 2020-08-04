@@ -40,6 +40,21 @@ public class GunEmplacement extends Tank {
     private static int[] CRITICAL_SLOTS = new int[] { 0 };
     private static String[] LOCATION_ABBRS = { "GUN" };
     private static String[] LOCATION_NAMES = { "GUNS" };
+        
+    private static final TechAdvancement TA_GUN_EMPLACEMENT = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_B).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.INTRO);
+    
+    public static final TechAdvancement TA_LIGHT_BUILDING = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.INTRO);
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return TA_GUN_EMPLACEMENT;
+    }
 
     public GunEmplacement() {
         initializeInternal(IArmorState.ARMOR_NA, LOC_GUNS);
@@ -58,6 +73,14 @@ public class GunEmplacement extends Tank {
 
     @Override
     public boolean isImmobile() {
+        return true;
+    }
+    
+    /**
+     * Our gun emplacements do not support dual turrets at this time
+     */
+    @Override
+    public boolean hasNoDualTurret() {
         return true;
     }
 
@@ -361,7 +384,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public int getHeatCapacity() {
-        return 999;
+        return DOES_NOT_TRACK_HEAT;
     }
 
     @Override
@@ -479,11 +502,14 @@ public class GunEmplacement extends Tank {
 
     @Override
     public boolean isCrippled(boolean checkCrew) {
-        return isCrippled();
-    }
-
-    @Override
-    public boolean isCrippled() {
+        if (checkCrew && (null != getCrew()) && getCrew().isDead()) {
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out.println(getDisplayName()
+                        + " CRIPPLED: crew dead.");
+            }
+            return true;
+        }
+        
         if (isMilitary() && !hasViableWeapons()) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
@@ -492,6 +518,11 @@ public class GunEmplacement extends Tank {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean isCrippled() {
+        return isCrippled(true);
     }
 
     @Override

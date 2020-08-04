@@ -27,7 +27,7 @@ import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Entity;
@@ -69,7 +69,7 @@ public class PilotMapSet implements DisplayMapSet {
         comp = c;
         try {
             portraits = new DirectoryItems(Configuration.portraitImagesDir(), "", //$NON-NLS-1$
-                    ImageFileFactory.getInstance());
+                    ScaledImageFileFactory.getInstance());
         } catch (Exception e) {
             portraits = null;
         }

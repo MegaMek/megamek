@@ -29,8 +29,7 @@ public class ServerHelper {
             boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
         
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
-                && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)
-                && !te.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
+                && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)) {
         	
         	if(te_hex == null) {
         		te_hex = game.getBoard().getHex(te.getPosition());

@@ -26,14 +26,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.Facing;
 import megamek.common.IGame;
 import megamek.common.MovePath;
-import megamek.common.UnitType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.Tank;
@@ -196,7 +194,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 previousPosition = entity.getPosition();
             }
             return (edge.getLastStep().isMovementPossible(
-                    game, previousPosition, previousElevation));
+                    game, previousPosition, previousElevation, edge.getCachedEntityState()));
         }
     }
 
@@ -215,24 +213,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         public boolean shouldStay(MovePath mp) {
             return (mp.getMpUsed() <= maxMP);
 
-        }
-    }
-
-    /**
-     * This filter removes paths that have spent all of of the Aeros current
-     * velocity.
-     *
-     * @author arlith
-     *
-     */
-    public static class MovePathVelocityFilter extends Filter<MovePath> {
-
-        public MovePathVelocityFilter() {
-        }
-
-        @Override
-        public boolean shouldStay(MovePath mp) {
-            return mp.getFinalVelocity() >= 0;
         }
     }
 
@@ -265,51 +245,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             final int firstSteps = first.getStepVector().size();
             final int secondSteps = second.getStepVector().size();
             return firstSteps - secondSteps;
-        }
-    }
-
-    /**
-     * A MovePath comparator that compares remaining velocity points.  Aerodynes
-     * need to spend all of their remaining velocity, so should explore
-     * paths that expend the velocity first.
-     *
-     * However, a path that flies over an enemy is superior to one that does not. Treat those as having nominally greater value.
-     *
-     * Order paths with lower remaining velocities higher.
-     */
-    public static class MovePathVelocityCostComparator implements
-            Comparator<MovePath> {
-        @Override
-        public int compare(final MovePath first, final MovePath second) {
-        	// Check whether we will stall or not, we want to keep paths that will not stall
-            if(AeroPathUtil.willStall(first) || AeroPathUtil.willStall(second)) {
-                int firstPathWillStall = AeroPathUtil.willStall(first) ? 1 : 0;
-                int secondPathWillStall = AeroPathUtil.willStall(second) ? 1 : 0;
-
-                // if they both stall, then the rest of the comparisons still don't matter, just throw one out and move on
-                return firstPathWillStall - secondPathWillStall;
-            }
-
-        	boolean firstFlyoff = first.fliesOffBoard();
-            int velFirst = first.getFinalVelocityLeft();
-            // If we are flying off, treat this as 0 remaining velocity
-            if (firstFlyoff) {
-                velFirst = 0;
-            }
-            boolean secondFlyoff = second.fliesOffBoard();
-            int velSecond = second.getFinalVelocityLeft();
-            // If we are flying off, treat this as 0 remaining velocity
-            if (secondFlyoff) {
-                velSecond = 0;
-            }
-
-            // If both paths are flying off, compare on number of steps
-            // Shorter paths are better
-            if (firstFlyoff && secondFlyoff) {
-                return first.length() - second.length();
-            } else {
-                return velFirst - velSecond;
-            }
         }
     }
 
@@ -381,38 +316,16 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
             if (backwardsStep &&
                     mp.getGame().getBoard().contains(mp.getFinalCoords().translated((mp.getFinalFacing() + 3) % 6))) {
-                result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
+                MovePath newPath = mp.clone();
+                PathDecorator.AdjustElevationForForwardMovement(newPath);
+                result.add(newPath.addStep(MoveStepType.BACKWARDS));
             } else if(mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
-                result.add(mp.clone().addStep(MoveStepType.FORWARDS));
+                MovePath newPath = mp.clone();
+                PathDecorator.AdjustElevationForForwardMovement(newPath);
+                result.add(newPath.addStep(MoveStepType.FORWARDS));
             }
-
-            addUpAndDown(result, last, entity, mp);
 
             return result;
-        }
-
-        /**
-         * Worker method that adds "UP" and "DOWN" steps to the given move path collection if
-         * the entity is eligible to do so
-         *
-         * @param result The collection of move paths to improve
-         * @param last The last step along the parent move path
-         * @param entity The entity taking the move path
-         * @param mp The parent movePath
-         * @see AbstractPathFinder.AdjacencyMap
-         */
-        void addUpAndDown(Collection<MovePath> result, final MoveStep last, final Entity entity, final MovePath mp) {
-            Coords pos;
-            int elevation;
-            pos = last != null ? last.getPosition() : entity.getPosition();
-            elevation = last != null ? last.getElevation() : entity.getElevation();
-
-            if (entity.canGoUp(elevation, pos)) {
-                result.add(mp.clone().addStep(MoveStepType.UP));
-            }
-            if (entity.canGoDown(elevation, pos)) {
-                result.add(mp.clone().addStep(MoveStepType.DOWN));
-            }
         }
     }
 

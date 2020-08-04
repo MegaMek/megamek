@@ -94,7 +94,6 @@ public class FireControl {
     protected static final double EJECTED_PILOT_DISUTILITY = 1000.0;
     protected static final double CIVILIAN_TARGET_DISUTILITY = 250.0;
     protected static final double TARGET_HP_FRACTION_DEALT_UTILITY = -30.0;
-    static final int DOES_NOT_TRACK_HEAT = 999;
 
     private static final double TARGET_POTENTIAL_DAMAGE_UTILITY = 1.0;
     static final double COMMANDER_UTILITY = 0.5;
@@ -1388,7 +1387,6 @@ public class FireControl {
         final int targetHP = Compute.getTargetTotalHP(owner.getGame(), target);
         final double damageFraction = (existingDamage + expectedDamage) / ((double) targetHP);
         final double previousDamageFraction = existingDamage / ((double) targetHP);
-        //double currentDamageFraction = expectedDamage / ((double)targetHP);
 
         //Do not shoot at units we already expect to deal more than their total HP of damage to!
         if (1.0 <= previousDamageFraction) {
@@ -1402,6 +1400,7 @@ public class FireControl {
             // damage to them normally).
         } else if (0.5 > damageFraction
                    || Targetable.TYPE_BUILDING == target.getTargetType()
+                   || Targetable.TYPE_HEX_CLEAR == target.getTargetType()
                    || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry
                    || owner.getGame().getEntity(target.getTargetId()) instanceof BattleArmor) {
             return 0;
@@ -1646,7 +1645,7 @@ public class FireControl {
         // the "alpha strike" may be a bombing plan.
         if(shooter.isAirborneAeroOnGroundMap()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), true);
-            calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
+            calculateUtility(bombingPlan, Entity.DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
             if(bombingPlan.getUtility() > myPlan.getUtility()) {
                 return bombingPlan;
@@ -1738,7 +1737,7 @@ public class FireControl {
         
         // if we are here, we have already confirmed the target is under the flight path and are guessing
         final FiringPlan bombPlan = getDiveBombPlan(shooter, flightPath, target, game, true, true);
-        calculateUtility(bombPlan, DOES_NOT_TRACK_HEAT, shooter.isAero()); // bombs don't generate heat so don't bother with this calculation
+        calculateUtility(bombPlan, Entity.DOES_NOT_TRACK_HEAT, shooter.isAero()); // bombs don't generate heat so don't bother with this calculation
         
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
@@ -1875,7 +1874,7 @@ public class FireControl {
         
         if(shooter.isAero()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), false);
-            calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
+            calculateUtility(bombingPlan, Entity.DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
             // if the bombing plan actually involves doing something
             if((bombingPlan.size() > 0) && 
@@ -1891,8 +1890,8 @@ public class FireControl {
                                   @Nullable Boolean isAero) {
 
         // If the unit doesn't track heat, we won't worry about it.
-        if (DOES_NOT_TRACK_HEAT == entity.getHeatCapacity()) {
-            return DOES_NOT_TRACK_HEAT;
+        if (Entity.DOES_NOT_TRACK_HEAT == entity.getHeatCapacity()) {
+            return Entity.DOES_NOT_TRACK_HEAT;
         }
 
         int baseTolerance = entity.getHeatCapacity() - entity.getHeat();
@@ -2038,7 +2037,7 @@ public class FireControl {
             final FiringPlan diveBombPlan = this.getDiveBombPlan(shooter, null, target,
                                                                  shooter.getGame(), shooter.passedOver(target), false);
             
-            calculateUtility(diveBombPlan, DOES_NOT_TRACK_HEAT, true);
+            calculateUtility(diveBombPlan, Entity.DOES_NOT_TRACK_HEAT, true);
             if(diveBombPlan.getUtility() > bestPlans[0].getUtility()) {
                 bestPlans[0] = diveBombPlan;
             }
@@ -2085,7 +2084,7 @@ public class FireControl {
         // heat-tracking units.
         
         // conventional fighters can drop bombs
-        if (DOES_NOT_TRACK_HEAT == shooter.getHeatCapacity()
+        if (Entity.DOES_NOT_TRACK_HEAT == shooter.getHeatCapacity()
             && ((shooter.getEntityType() & Entity.ETYPE_INFANTRY) == 0)) {
             return alphaStrike; // No need to worry about heat if the unit
                                 // doesn't track it.
@@ -2455,8 +2454,8 @@ public class FireControl {
      * @param useExtremeRange Is the extreme range optional rule in effect?
      * @return The most damage done at that range.
      */
-    // todo cluster and other variable damage.
-    double getMaxDamageAtRange(final Entity shooter,
+    // todo: cluster and other variable damage.
+    public static double getMaxDamageAtRange(final Entity shooter,
                                final int range,
                                final boolean useExtremeRange,
                                final boolean useLOSRange) {
@@ -2469,8 +2468,23 @@ public class FireControl {
                                                        weaponType.getRanges(weapon),
                                                        useExtremeRange,
                                                        useLOSRange);
-            if ((RangeType.RANGE_OUT != bracket) && (0 < weaponType.getDamage())) {
-                maxDamage += weaponType.getDamage();
+            // if the weapon has been disabled or is out of ammo, don't count it
+            if(weapon.isCrippled()) {
+                continue;
+            }
+            
+            int weaponDamage = weaponType.getDamage();
+            
+            // just a ball park estimate of missile and/or other cluster damage
+            // only a little over half of a cluster will generally hit
+            // but some cluster munitions do more than 1 point of damage per individual hit
+            // still better than just discounting them completely.
+            if(weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                weaponDamage = weaponType.getRackSize();
+            }
+            
+            if ((RangeType.RANGE_OUT != bracket) && (0 < weaponDamage)) {
+                maxDamage += weaponDamage;
             }
         }
 

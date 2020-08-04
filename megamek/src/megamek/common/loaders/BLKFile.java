@@ -45,6 +45,8 @@ public class BLKFile {
     public static final int EXTERNAL = 13;
     
     private static final String COMSTAR_BAY = "c*";
+
+    static final String BLK_EXTRA_SEATS = "extra_seats";
     
     /**
      * If a vehicular grenade launcher does not have a facing provided, assign a default facing.
@@ -962,6 +964,9 @@ public class BLKFile {
             }
             if (!t.isSupportVehicle() && t.isTrailer()) {
                 blk.writeBlockData("trailer", 1);
+            }
+            if (tank.getExtraCrewSeats() > 0) {
+                blk.writeBlockData(BLK_EXTRA_SEATS, tank.getExtraCrewSeats());
             }
         }
         

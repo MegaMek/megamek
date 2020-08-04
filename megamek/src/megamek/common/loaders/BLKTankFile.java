@@ -137,6 +137,9 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         t.setMovementMode(nMotion);
 
         addTransports(t);
+        if (dataFile.exists(BLK_EXTRA_SEATS)) {
+            t.setExtraCrewSeats(dataFile.getDataAsInt(BLK_EXTRA_SEATS)[0]);
+        }
 
         int engineCode = BLKFile.FUSION;
         if (dataFile.exists("engine_type")) {

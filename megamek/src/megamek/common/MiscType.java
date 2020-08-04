@@ -1065,7 +1065,6 @@ public class MiscType extends EquipmentType {
                 costValue = weaponCost * 0.1;
             } else if (hasFlag(F_LADDER)) {
                 costValue = size * 5;
-                costValue = weaponCost * 0.1;
             } else if (hasFlag(F_RAM_PLATE)) {
                 costValue = getTonnage(entity, loc) * 10000;
             }

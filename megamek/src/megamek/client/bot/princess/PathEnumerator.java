@@ -182,7 +182,7 @@ public class PathEnumerator {
             
             // if the entity does not exist in the game for any reason, let's cut out safely
             // otherwise, we'll run into problems calculating paths
-            if(getGame().getEntity(mover.getId()) == null) {
+            if (getGame().getEntity(mover.getId()) == null) {
                 // clean up orphaned entries in local storage
                 getUnitMovableAreas().remove(mover.getId());
                 getUnitPotentialLocations().remove(mover.getId());

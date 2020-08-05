@@ -23,6 +23,7 @@ import java.awt.image.*;
 import java.io.File;
 import java.util.Iterator;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.*;
@@ -239,6 +240,24 @@ public class EntityImage {
         return icon;
     }
 
+    public Image loadPreviewImage() {
+        if (base == null) {
+            return null;
+        }
+
+        base = applyColor(getBase());
+
+        // Add damage scars and smoke/fire; not to Infantry
+        if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
+            base = applyDamageDecal(getBase());
+            // No smoke in the lobby
+            if (!isPreview) {
+                base = applyDamageSmoke(getBase());
+            }
+        }
+        return getBase();
+    }
+
     /** Applies the unit individual or player color or camo to the icon. */
     private Image applyColor(Image image) {
         if (image == null) {
@@ -373,11 +392,9 @@ public class EntityImage {
         return result;
     }
 
-    /** Inititates the PixelGrabber for the given image and int array. */
-    private void grabImagePixels(Image img, int[] pixels) 
-    throws InterruptedException, RuntimeException {
-        PixelGrabber pg = new PixelGrabber(img, 0, 0, IMG_WIDTH,
-                IMG_HEIGHT, pixels, 0, IMG_WIDTH);
+    /** Initiates the PixelGrabber for the given image and int array. */
+    private void grabImagePixels(Image img, int[] pixels) throws InterruptedException, RuntimeException {
+        PixelGrabber pg = new PixelGrabber(img, 0, 0, IMG_WIDTH, IMG_HEIGHT, pixels, 0, IMG_WIDTH);
         pg.grabPixels();
         if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
             throw new RuntimeException("ImageObserver aborted.");
@@ -408,10 +425,11 @@ public class EntityImage {
                 return null;
             }
         } catch (Exception e) {
-            DefaultMmLogger.getInstance().error(getClass(), "getDamageDecal()", 
+            MegaMek.getLogger().error(getClass(), "getDamageDecal()",
                     "Could not load decal image.");
-            e.printStackTrace();
+            MegaMek.getLogger().error(getClass(), "getDamageDecal", e);
         }
+
         return null;
     }
     
@@ -425,7 +443,7 @@ public class EntityImage {
                 return dmgEmpty;
             }
 
-            String path = "";
+            String path;
             if (pos > -1) {
                 // Multi-hex units get their own overlays
                 path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKEMULTI : PATH_FIREMULTI;
@@ -463,7 +481,7 @@ public class EntityImage {
         for (int i = 0; i <= img; i++) {
             n = iter.next();
         }
-        return (Image)DecalImages.getItem(cat, n);
+        return (Image) DecalImages.getItem(cat, n);
     }
     
     /** Returns the size of the collection of an iterator. Local helper function for DirectoryItems. */
@@ -472,6 +490,4 @@ public class EntityImage {
         for (;iter.hasNext();iter.next(), result++);
         return result;
     }
-
-
 }

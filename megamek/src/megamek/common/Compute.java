@@ -7011,7 +7011,7 @@ public class Compute {
             }
             return crew + (int) Math.ceil(crew / 6.0);
         } else if (entity instanceof Tank) {
-            return (int) Math.ceil(entity.getWeight() / 15.0);
+            return (int) Math.ceil(entity.getWeight() / 15.0) + ((Tank) entity).getExtraCrewSeats();
         } else if (entity instanceof BattleArmor) {
             int ntroopers = 0;
             for (int trooper = 1; trooper < entity.locations(); trooper++) {

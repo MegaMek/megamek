@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.47.9-SNAPSHOT
++ Issue 1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit
 
 0.47.8 (2020-08-02 2300 UTC)
 + Data: New Sprites and numerous Mechset naming fixes.

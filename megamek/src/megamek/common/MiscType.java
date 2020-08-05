@@ -276,7 +276,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_CASPAR = BigInteger.valueOf(1).shiftLeft(214);
     public static final BigInteger F_CASPARII = BigInteger.valueOf(1).shiftLeft(215);
     public static final BigInteger F_ATAC = BigInteger.valueOf(1).shiftLeft(216);
-    public static final BigInteger F_ARTS = BigInteger.valueOf(1).shiftLeft(217);
+    // Empty place left by removal of F_ARTS
     public static final BigInteger F_DTAC = BigInteger.valueOf(1).shiftLeft(218);
     public static final BigInteger F_SDS_DESTRUCT = BigInteger.valueOf(1).shiftLeft(219);
     public static final BigInteger F_SDS_JAMMER = BigInteger.valueOf(1).shiftLeft(220);
@@ -1026,7 +1026,6 @@ public class MiscType extends EquipmentType {
                 costValue = (getTonnage(entity, loc) * 20000) + 50000;
             } else if (hasFlag(MiscType.F_ATAC)) {
                 costValue = (getTonnage(entity, loc, size) * 100000);
-            //TODO NEO - ARTS see IO pg 188    
             } else if (hasFlag(MiscType.F_DTAC)) {
                 costValue = (getTonnage(entity, loc, size) * 50000);
                              
@@ -1824,7 +1823,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCasparIIDroneControlSystem());
         EquipmentType.addType(MiscType.createImprovedCasparIIDroneControlSystem());
         EquipmentType.addType(MiscType.createAutoTacticalAnalysisComputer());
-        EquipmentType.addType(MiscType.createAdvRoboticTransportSystem());
         EquipmentType.addType(MiscType.createDirectTacticalAnalysisSystem());
         EquipmentType.addType(MiscType.createSDSSelfDestructSystem());
         EquipmentType.addType(MiscType.createSDSJammerSystem());
@@ -5803,26 +5801,6 @@ public class MiscType extends EquipmentType {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2705, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_TH);
-
-        return misc;
-    }
-
-    public static MiscType createAdvRoboticTransportSystem() {
-        // TODO Game Rules.
-        MiscType misc = new MiscType();
-        misc.name = "Advanced Robotic Transport System (ARTS)";
-        misc.setInternalName("AdvRoboticTransportSystem");
-        misc.tonnage = 0; //TODO weight by bay (see IO pg 147)
-        misc.criticals = 0;
-        misc.cost = 0; //TODO Costs
-        misc.flags = misc.flags.or(F_ARTS).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        misc.rulesRefs = "147,IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_E).setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
-                .setISAdvancement(2600, 2609, DATE_NONE, 2804, 3068).setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2600, 2609, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH);
 
         return misc;
     }

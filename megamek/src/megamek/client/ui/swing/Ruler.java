@@ -375,7 +375,7 @@ public class Ruler extends JDialog implements BoardViewListener {
             // leave at default value
         }
 
-        if(!client.getGame().getBoard().contains(start) || !client.getGame().getBoard().contains(end)) {
+        if (!client.getGame().getBoard().contains(start) || !client.getGame().getBoard().contains(end)) {
             return;
         }
         

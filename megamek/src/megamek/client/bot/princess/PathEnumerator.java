@@ -179,6 +179,16 @@ public class PathEnumerator {
             // Clear out any already calculated paths.
             getUnitPaths().remove(mover.getId());
             getLongRangePaths().remove(mover.getId());
+            
+            // if the entity does not exist in the game for any reason, let's cut out safely
+            // otherwise, we'll run into problems calculating paths
+            if (getGame().getEntity(mover.getId()) == null) {
+                // clean up orphaned entries in local storage
+                getUnitMovableAreas().remove(mover.getId());
+                getUnitPotentialLocations().remove(mover.getId());
+                getLastKnownLocations().remove(mover.getId());
+                return;
+            }
 
             // Start constructing the new list of paths.
             List<MovePath> paths = new ArrayList<>();

@@ -156,16 +156,17 @@ public final class SmallCraftBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        if (showrecovery) {
-            return "Small Craft " + numDoorsString() + " - "
-                    + String.format("%1$,.0f", getUnused())
-                    + (getUnused() > 1 ? " units (" : " unit (")
-                    + getRecoverySlots() + " recovery open)";
-        } else {
-            return "Small Craft " + numDoorsString() + " - "
-                    + String.format("%1$,.0f", getUnused())
-                    + (getUnused() > 1 ? " units" : " unit");
+        StringBuilder sb = new StringBuilder();
+        if (arts) {
+            sb.append("ARTS ");
         }
+        sb.append("Small Craft ").append(numDoorsString()).append(" - ")
+            .append(String.format("%1$,.0f", getUnused()))
+            .append(getUnused() > 1 ? " units" : " unit");
+        if (showrecovery) {
+            sb.append(" (").append(getRecoverySlots()).append(" recovery open)");
+        }
+        return sb.toString();
     }
 
     @Override

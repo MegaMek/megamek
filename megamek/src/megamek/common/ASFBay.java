@@ -154,14 +154,20 @@ public final class ASFBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        if (showrecovery) {
-            return "Aerospace Fighter " + numDoorsString() + " - "
-                    + String.format("%1$,.0f", getUnused()) + " units ("
-                    + getRecoverySlots() + " recovery open)";
+        StringBuilder sb = new StringBuilder();
+        if (arts) {
+            sb.append("ARTS ");
         }
-        return String.format("Aerospace Fighter Bay %s - %2$,.0f",
-                numDoorsString(), getUnused())
-                + (getUnused() > 1 ? " units" : " unit");
+        sb.append("Aerospace Fighter ");
+        if (showrecovery) {
+            sb.append(numDoorsString()).append(" - ")
+                .append(String.format("%1$,.0f", getUnused()))
+                .append(" units (").append(getRecoverySlots()).append(" recovery open)");
+        } else {
+            sb.append(String.format(" Bay %s - %2$,.0f", numDoorsString(), getUnused()))
+                    .append(getUnused() > 1 ? " units" : " unit");
+        }
+        return sb.toString();
     }
 
     @Override
@@ -271,7 +277,7 @@ public final class ASFBay extends Bay {
 
     @Override
     public String toString() {
-        return (arts ? "artsasfbay" : "asfbay:") + totalSpace + ":" + doors + ":" + bayNumber;
+        return (arts ? "artsasfbay:" : "asfbay:") + totalSpace + ":" + doors + ":" + bayNumber;
     }
 
     public static TechAdvancement techAdvancement() {

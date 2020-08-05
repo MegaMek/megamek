@@ -23,10 +23,9 @@ import java.util.Vector;
 
 public final class ASFBay extends Bay {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -4110012474950158433L;
+
+    private final boolean arts;
 
     /**
      * The default constructor is only for serialization.
@@ -34,20 +33,30 @@ public final class ASFBay extends Bay {
     protected ASFBay() {
         totalSpace = 0;
         currentSpace = 0;
+        arts = false;
     }
 
     // Public constructors and methods.
 
     /**
-     * Create a space for the given tonnage of troops. For this class, only the
-     * weight of the troops (and their equipment) are considered; if you'd like
-     * to think that they are stacked like lumber, be my guest.
+     * Create a space for the given number of fighters.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
-     * @param bayNumber
+     * @param space      The number of cubicles
+     * @param doors      The number of bay doors
+     * @param bayNumber  The id number for the bay
      */
     public ASFBay(double space, int doors, int bayNumber) {
+        this(space, doors, bayNumber, false);
+    }
+        /**
+         * Create a space for the given number of fighters.
+         *
+         * @param space      The number of cubicles
+         * @param doors      The number of bay doors
+         * @param bayNumber  The id number for the bay
+         * @param arts       Whether the bay has the advanced robotic transport system
+         */
+    public ASFBay(double space, int doors, int bayNumber, boolean arts) {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;
@@ -55,6 +64,16 @@ public final class ASFBay extends Bay {
         this.currentdoors = doors;
         recoverySlots = initializeRecoverySlots();
         this.bayNumber = bayNumber;
+        this.arts = arts;
+    }
+
+    /**
+     * Advanced Robotic Transport System (ARTS). See IO, p. 147
+     *
+     * @return Whether the bay has the ARTS automated system
+     */
+    public boolean hasARTS() {
+        return arts;
     }
 
     /**
@@ -97,7 +116,7 @@ public final class ASFBay extends Bay {
      *
      * @param unit
      *            - the <code>Entity</code> to be loaded.
-     * @exception - If the unit can't be loaded, an
+     * @throws IllegalArgumentException- If the unit can't be loaded, an
      *            <code>IllegalArgumentException</code> exception will be
      *            thrown.
      */
@@ -147,7 +166,7 @@ public final class ASFBay extends Bay {
 
     @Override
     public String getType() {
-        return "Fighter";
+        return arts ? "ARTS Fighter" : "Fighter";
     }
 
     // update the time remaining in recovery slots
@@ -167,7 +186,7 @@ public final class ASFBay extends Bay {
 
     public Vector<Integer> initializeRecoverySlots() {
 
-        Vector<Integer> slots = new Vector<Integer>();
+        Vector<Integer> slots = new Vector<>();
         	// We have to account for changes in the number of doors, so remove all slots first.
         	slots.removeAllElements();
         	//now add 2 slots back on for each functional door.
@@ -242,17 +261,17 @@ public final class ASFBay extends Bay {
 
     @Override
     public double getWeight() {
-        return totalSpace * 150;
+        return totalSpace * (arts ? 187.5 : 150);
     }
 
     @Override
     public int getPersonnel(boolean clan) {
-        return (int)totalSpace * 2;
+        return arts ? 0 : (int) totalSpace * 2;
     }
 
     @Override
     public String toString() {
-        return "asfbay:" + totalSpace + ":" + doors + ":" + bayNumber;
+        return (arts ? "artsasfbay" : "asfbay:") + totalSpace + ":" + doors + ":" + bayNumber;
     }
 
     public static TechAdvancement techAdvancement() {
@@ -263,13 +282,21 @@ public final class ASFBay extends Bay {
     }
     
     public TechAdvancement getTechAdvancement() {
-        return ASFBay.techAdvancement();
+        if (arts) {
+            return Bay.artsTechAdvancement();
+        } else {
+            return ASFBay.techAdvancement();
+        }
     }
 
     @Override
     public long getCost() {
         // Based on the number of cubicles
-        return 20000L * (long) totalSpace;
+        long cost = 20000L * (long) totalSpace;
+        if (arts) {
+            cost += 1000000L;
+        }
+        return cost;
     }
 
 }

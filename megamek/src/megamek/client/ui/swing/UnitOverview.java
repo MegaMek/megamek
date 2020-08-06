@@ -45,7 +45,7 @@ import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
 
 public class UnitOverview implements IDisplayable {

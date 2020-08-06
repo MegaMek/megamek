@@ -35,7 +35,7 @@ import java.util.zip.ZipFile;
 
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.logging.DefaultMmLogger;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 
 /**

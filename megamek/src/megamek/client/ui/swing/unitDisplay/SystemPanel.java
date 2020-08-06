@@ -51,7 +51,7 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * This class shows the critical hits and systems for a mech

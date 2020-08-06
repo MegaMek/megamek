@@ -51,7 +51,7 @@ import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
 
 /**

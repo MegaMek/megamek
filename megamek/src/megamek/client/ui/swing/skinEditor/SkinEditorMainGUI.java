@@ -80,7 +80,7 @@ import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 public class SkinEditorMainGUI extends JPanel implements WindowListener,
         BoardViewListener, ActionListener, ComponentListener {

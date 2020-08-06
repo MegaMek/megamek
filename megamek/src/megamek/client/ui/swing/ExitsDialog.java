@@ -34,7 +34,7 @@ import javax.swing.JPanel;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * A dialog of which exits are connected for terrain.

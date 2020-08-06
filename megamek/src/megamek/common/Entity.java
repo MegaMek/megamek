@@ -1324,10 +1324,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
          * be possible in their era, so we're just going to add a stub to get the tech rating right
          * for cost purposes. */
         if (isSupportVehicle()) {
-            ctl.addComponent(new TechAdvancement(TECH_BASE_ALL).setTechRating(getEngineTechRating()));
-            ctl.addComponent(new TechAdvancement(TECH_BASE_ALL).setTechRating(getStructuralTechRating()));
+            TechAdvancement blank = new TechAdvancement(getConstructionTechAdvancement());
+            ctl.addComponent(blank.setTechRating(getEngineTechRating()));
+            ctl.addComponent(blank.setTechRating(getStructuralTechRating()));
             if (!hasPatchworkArmor() && (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD)) {
-                ctl.addComponent(new TechAdvancement(TECH_BASE_ALL).setTechRating(getArmorTechRating()));
+                ctl.addComponent(blank.setTechRating(getArmorTechRating()));
             }
         }
     }

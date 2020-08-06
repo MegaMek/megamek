@@ -302,6 +302,10 @@ public class DefaultMmLogger implements MMLogger {
     /** 
      * Retrieves the name of the method calling log/info/error etc. 
      * from the stack trace. 
+     *
+     * This method MUST be called from a top-level method (such as info or fatal)
+     * as it depends on the call stack depth of exactly three methods between
+     * internally calling getStackTrace and the user's code.
      */
     private String getCallingMethod() {
         try {

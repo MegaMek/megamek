@@ -526,7 +526,7 @@ public final class Player extends TurnOrdered implements IPlayer {
     public int getCommandBonus() {
         int commandb = 0;
         
-        if(game == null) {
+        if (game == null) {
             return 0;
         }
         

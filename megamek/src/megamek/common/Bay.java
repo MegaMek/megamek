@@ -551,6 +551,19 @@ public class Bay implements Transporter, ITechnology {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
+    /**
+     * Shared by several types of bays
+     * @return Tech advancement for advanced robotic transport system.
+     */
+    public static TechAdvancement artsTechAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2600, 2609, DATE_NONE, 2804, 3068)
+                .setApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_WB)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
     public TechAdvancement getTechAdvancement() {
         return Bay.techAdvancement();
     }

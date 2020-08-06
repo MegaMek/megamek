@@ -6,6 +6,7 @@ VERSION HISTORY:
 + Issue #2113: Fixing Alternate Pilot Skill BV Mod Tooltip
 + PR #2111: Another attempt to get Princess to stop firing on crippled units when using forced withdrawal rules
 + Issue #2115: Prevent NPE when rolling individual initiative for non-existing units belonging to phantom player who's not in the game
++ Issue #2116: Going hull down from the top-level dropdown menu no longer attempts to sweep mines instead
 
 0.47.8 (2020-08-02 2300 UTC)
 + Data: New Sprites and numerous Mechset naming fixes.

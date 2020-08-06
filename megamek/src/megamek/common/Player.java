@@ -525,6 +525,11 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public int getCommandBonus() {
         int commandb = 0;
+        
+        if(game == null) {
+            return 0;
+        }
+        
         for (Entity entity : game.getEntitiesVector()) {
             if ((null != entity.getOwner())
                     && entity.getOwner().equals(this)

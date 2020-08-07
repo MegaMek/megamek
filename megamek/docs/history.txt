@@ -9,6 +9,7 @@ VERSION HISTORY:
 + Issue #2116: Going hull down from the top-level dropdown menu no longer attempts to sweep mines instead
 + Data: Updated Sprites (This includes some temporary removal of existing Royal Sprites but they will return)
 + Issue #2122: Blazer has incorrect short range AV
++ Data: Moving the unused sprites to the extras repo to space space in releases.
 
 0.47.8 (2020-08-02 2300 UTC)
 + Data: New Sprites and numerous Mechset naming fixes.

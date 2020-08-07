@@ -5501,3 +5501,11 @@ MuckRaker GMMM-2M MiningMech MOD:AMBUSHER
 MuckRaker GMMM-2M-B MiningMech MOD:MISSILE_BOAT
 St. Florian FLN-366-M FireMech MOD:JUGGERNAUT    
 #St. Florian FLN-366 FireMech:NONE
+#OTP Hanseatic League
+Cazador:STRIKER
+Snow Fox (Omni) Prime:SCOUT
+Snow Fox (Omni) A:STRIKER
+Snow Fox (Omni) B:SNIPER
+Surtur SUR-T1:SKIRMISHER
+Tolva:SKIRMISHER
+Rhino:SKIRMISHER

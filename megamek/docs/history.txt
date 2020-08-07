@@ -1,12 +1,15 @@
 VERSION HISTORY:
 ----------------
-0.47.9-SNAPSHOT
+0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit
 + Issue #2110: When using the LOS tool, if you somehow manage to select an out-of-bounds hex, it will no longer throw an error
 + Issue #2113: Fixing Alternate Pilot Skill BV Mod Tooltip
 + PR #2111: Another attempt to get Princess to stop firing on crippled units when using forced withdrawal rules
 + Issue #2115: Prevent NPE when rolling individual initiative for non-existing units belonging to phantom player who's not in the game
 + Issue #2116: Going hull down from the top-level dropdown menu no longer attempts to sweep mines instead
++ Data: Updated Sprites (This includes some temporary removal of existing Royal Sprites but they will return)
++ Issue #2122: Blazer has incorrect short range AV
++ Data: Moving the unused sprites to the extras repo to save space in releases.
 
 0.47.8 (2020-08-02 2300 UTC)
 + Data: New Sprites and numerous Mechset naming fixes.

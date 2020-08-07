@@ -5605,6 +5605,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Smart Robotic Control System (SRCS)";
         misc.setInternalName("SmartRoboticControlSystem");
+        misc.shortName = "SRCS";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = COST_VARIABLE;
@@ -5626,6 +5627,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Smart Robotic Control System (SRCS)(Improved)";
         misc.setInternalName("ImprovedSmartRoboticControlSystem");
         misc.addLookupName("ImprovedSRCS");
+        misc.shortName = "Improved SRCS";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = COST_VARIABLE;

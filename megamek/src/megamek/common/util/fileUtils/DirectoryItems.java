@@ -11,8 +11,11 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
+package megamek.common.util.fileUtils;
 
-package megamek.common.util;
+import megamek.common.util.ItemFile;
+import megamek.common.util.ItemFileFactory;
+import megamek.common.util.StringUtil;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -35,8 +35,8 @@ import megamek.common.Infantry;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.DirectoryItems;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Set of elements to represent pilot information in MechDisplay

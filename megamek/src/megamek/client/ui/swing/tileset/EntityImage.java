@@ -28,7 +28,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.*;
 import megamek.common.logging.DefaultMmLogger;
-import megamek.common.util.DirectoryItems;
+import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.ImageUtil;
 
 /** Handles the rotated and damaged and preview images for a unit. */

@@ -1,4 +1,4 @@
-package megamek.common.util;
+package megamek.common.util.fileUtils;
 
 import java.io.File;
 

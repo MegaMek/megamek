@@ -48,7 +48,7 @@ import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 public class Board implements Serializable, IBoard {
     private static final long serialVersionUID = -5744058872091016636L;

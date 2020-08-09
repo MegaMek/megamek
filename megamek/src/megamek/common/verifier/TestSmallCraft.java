@@ -593,6 +593,7 @@ public class TestSmallCraft extends TestAero {
         correct &= !hasIllegalEquipmentCombinations(buff);
         correct &= correctHeatSinks(buff);
         correct &= correctCrew(buff);
+        correct &= correctCriticals(buff);
         
         return correct;
     }
@@ -878,7 +879,7 @@ public class TestSmallCraft extends TestAero {
                 buff.append(" requires ").append(extra[i]).append(" tons of additional fire control.\n");
             }
         }
-        return true;
+        return super.correctCriticals(buff);
     }
     
     @Override

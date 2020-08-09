@@ -19,8 +19,6 @@
 
 package megamek.common.verifier;
 
-import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Function;
 
@@ -746,32 +744,14 @@ public class TestAero extends TestEntity {
         return true;
     }
     
-    public void checkCriticalSlotsForEquipment(Entity entity,
-            Vector<Mounted> unallocated, Vector<Serializable> allocation,
-            Vector<Integer> heatSinks) {
+    public List<Mounted> checkCriticalSlotsForEquipment(Entity entity) {
+        List<Mounted> unallocated = new ArrayList<>();
         for (Mounted m : entity.getEquipment()) {
-            if (m.getLocation() == Entity.LOC_NONE) {
-                if ((m.getType() instanceof AmmoType)
-                        && (m.getUsableShotsLeft() <= 1)) {
-                    continue;
-                }
-                if ((entity instanceof Aero) && 
-                        (m.getCriticals() == 0)) {
-                    continue;
-                }
-                if (!(m.getType() instanceof MiscType)) {
-                    unallocated.addElement(m);
-                    continue;
-                }
-                MiscType mt = (MiscType) m.getType();
-                if (!mt.hasFlag(MiscType.F_HEAT_SINK)
-                        && !mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                        && !mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
-                    unallocated.addElement(m);
-                    continue;
-                }
+            if ((m.getLocation() == Entity.LOC_NONE) && !m.isOneShotAmmo() && m.getCriticals() > 0) {
+                unallocated.add(m);
             }
         }
+        return unallocated;
     }
 
     /**
@@ -784,12 +764,9 @@ public class TestAero extends TestEntity {
      * @return  True if the mounted weapons are valid, else false
      */
     public boolean correctCriticals(StringBuffer buff) {
-        Vector<Mounted> unallocated = new Vector<Mounted>();
-        Vector<Serializable> allocation = new Vector<Serializable>();
-        Vector<Integer> heatSinks = new Vector<Integer>();
-        checkCriticalSlotsForEquipment(aero, unallocated, allocation, heatSinks);
         boolean correct = true;
-        
+
+        List<Mounted> unallocated = checkCriticalSlotsForEquipment(aero);
         if (!unallocated.isEmpty()) {
             buff.append("Unallocated Equipment:\n");
             for (Mounted mount : unallocated) {
@@ -797,23 +774,7 @@ public class TestAero extends TestEntity {
             }
             correct = false;
         }
-        if (!allocation.isEmpty()) {
-            buff.append("Allocated Equipment:\n");
-            for (Enumeration<Serializable> serializableEnum = allocation
-                    .elements(); serializableEnum.hasMoreElements();) {
-                Mounted mount = (Mounted) serializableEnum.nextElement();
-                int needCrits = ((Integer) serializableEnum.nextElement())
-                        .intValue();
-                int aktCrits = ((Integer) serializableEnum.nextElement())
-                        .intValue();
-                buff.append(mount.getType().getInternalName()).append(" has ")
-                        .append(needCrits).append(" Slots, but ")
-                        .append(aktCrits).append(" Slots are allocated!")
-                        .append("\n");
-            }
-            correct = false;
-        }
-        int numWeapons[] = new int[aero.locations()];
+        int[] numWeapons = new int[aero.locations()];
         int numBombs = 0;
         
         for (Mounted m : aero.getWeaponList()){
@@ -841,9 +802,8 @@ public class TestAero extends TestEntity {
                     if (wt.getAmmoType() == AmmoType.T_AC_LBX && 
                             linkedAT.getMunitionType() != AmmoType.M_CLUSTER) {
                         correct = false;
-                        buff.append("Aeros must use cluster munitions!" + 
-                                m.getType().getInternalName() + " is using "
-                                + linkedAT.getInternalName() + "\n");
+                        buff.append("Aeros must use cluster munitions!").append(m.getType().getInternalName())
+                                .append(" is using ").append(linkedAT.getInternalName()).append("\n");
                     }
                     // Allow Artemis munitions for artemis-linked launchers
                     if (hasArtemisFCS
@@ -851,25 +811,20 @@ public class TestAero extends TestEntity {
                             && linkedAT.getMunitionType() != AmmoType.M_ARTEMIS_CAPABLE
                             && linkedAT.getMunitionType() != AmmoType.M_ARTEMIS_V_CAPABLE) {
                         correct = false;
-                        buff.append("Aero using illegal special missile type!"
-                                + m.getType().getInternalName() + " is using "
-                                + linkedAT.getInternalName() + "\n");
+                        buff.append("Aero using illegal special missile type!").append(m.getType().getInternalName())
+                                .append(" is using ").append(linkedAT.getInternalName()).append("\n");
                     }
                     if (linkedAT.getMunitionType() != AmmoType.M_STANDARD 
                             && !hasArtemisFCS 
                             && wt.getAmmoType() != AmmoType.T_AC_LBX
                     		&& wt.getAmmoType() != AmmoType.T_SBGAUSS){
                         correct = false;
-                        buff.append("Aeros may not use special munitions! "
-                                + m.getType().getInternalName() + " is using "
-                                + linkedAT.getInternalName() + "\n");
+                        buff.append("Aeros may not use special munitions! ").append(m.getType().getInternalName())
+                                .append(" is using ").append(linkedAT.getInternalName()).append("\n");
                     }
                     
                 }
-                
-                
             }
-
             
             if (m.getType().hasFlag(AmmoType.F_SPACE_BOMB) 
                     || m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
@@ -882,18 +837,17 @@ public class TestAero extends TestEntity {
             }
         }
         
-        int availSpace[] = availableSpace(aero);
+        int[] availSpace = availableSpace(aero);
         if (availSpace == null){
-            buff.append("Invalid armor type! Armor: " + 
-                    EquipmentType.armorNames[aero.getArmorType(Aero.LOC_NOSE)]);
+            buff.append("Invalid armor type! Armor: ")
+                    .append(EquipmentType.armorNames[aero.getArmorType(Aero.LOC_NOSE)]);
             buff.append("\n");
             return false;
         }       
         
         if (numBombs > aero.getMaxBombPoints()){
-            buff.append("Invalid number of bombs! Unit can mount "
-                    + aero.getMaxBombPoints() + " but " + numBombs
-                    + "are present!");
+            buff.append("Invalid number of bombs! Unit can mount ").append(aero.getMaxBombPoints())
+                    .append(" but ").append(numBombs).append("are present!");
             buff.append("\n");
             return false;
         }
@@ -903,9 +857,8 @@ public class TestAero extends TestEntity {
         while (loc >= 0){
             correct &= !(numWeapons[loc] > availSpace[loc]);
             if (numWeapons[loc] > availSpace[loc]){
-                buff.append(locNames[loc] + " has " + numWeapons[loc] + 
-                        " weapons but it can only fit " + availSpace[loc] + 
-                        " weapons!");
+                buff.append(locNames[loc]).append(" has ").append(numWeapons[loc])
+                        .append(" weapons but it can only fit ").append(availSpace[loc]).append(" weapons!");
                 buff.append("\n");
             }
             loc--;

@@ -31,7 +31,7 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.SupportVTOL;
 import megamek.common.VTOL;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to represent Tank unit in

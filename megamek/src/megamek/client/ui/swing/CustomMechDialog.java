@@ -86,7 +86,7 @@ import megamek.common.options.PartialRepairs;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;

@@ -38,9 +38,9 @@ import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.*;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.preference.*;
-import megamek.common.util.DirectoryItems;
+import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the

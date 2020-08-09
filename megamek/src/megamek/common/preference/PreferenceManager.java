@@ -40,7 +40,7 @@ import javax.xml.namespace.QName;
 
 import megamek.MegaMek;
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
 public class PreferenceManager {

@@ -35,7 +35,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import megamek.client.generator.RandomGenderGenerator;
-import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -74,8 +73,8 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.DirectoryItems;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ScenarioLoader {
     private static final String COMMENT_MARK = "#"; //$NON-NLS-1$

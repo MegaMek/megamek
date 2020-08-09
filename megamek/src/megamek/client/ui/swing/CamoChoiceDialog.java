@@ -15,7 +15,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -62,7 +61,7 @@ import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
-import megamek.common.util.DirectoryItems;
+import megamek.common.util.fileUtils.DirectoryItems;
 
 /**
  * This dialog allows players to select the camo pattern (or color) used by

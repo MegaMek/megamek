@@ -108,7 +108,7 @@ import megamek.common.MapSettings;
 import megamek.common.Terrains;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 // TODO: center map
 // TODO: background on the whole screen

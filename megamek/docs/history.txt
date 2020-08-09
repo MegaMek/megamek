@@ -3,6 +3,7 @@ VERSION HISTORY:
 0.47.10-SNAPSHOT
 + Issue #2127 - Physical attack to-hit values incorrect
 + Data: Fed Com armor has wrong modifier.
++ Data: Fluff text (Thx Greekfire) and some royal Sprites.
 
 0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit

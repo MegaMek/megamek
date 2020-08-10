@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.common.util.CrewSkillSummaryUtil;
+
 /**
  * Crew class for LAMs which tracks separate skills for 'Mech and Fighter modes,
  * and chooses the correct one based on the LAM's current movement mode.
@@ -223,9 +225,8 @@ public class LAMPilot extends Crew {
         }
     }
 
-    @Override
-    public String getSkillsAsString(boolean showPiloting) {
-        return getSkillsAsString(0, showPiloting);
+    public String getSkillsAsString(boolean showPiloting, boolean rpgSkills) {
+        return getSkillsAsString(0, showPiloting, rpgSkills);
     }
 
     /**
@@ -233,8 +234,32 @@ public class LAMPilot extends Crew {
      *         (Mech)/piloting (Mech)/gunnery (Aero)/piloting (Aero)
      */
     @Override
-    public String getSkillsAsString(int pos, boolean showPiloting) {
-        return getGunneryMech() + "/" + getPilotingMech() + "/" + getGunneryAero() + "/" + getPilotingAero();
+    public String getSkillsAsString(int pos, boolean showPiloting, boolean rpgSkills) {
+        if (showPiloting) {
+            return CrewSkillSummaryUtil.getLAMPilotSkillSummary(
+                    getGunnery(pos),
+                    getGunneryL(pos),
+                    getGunneryM(pos),
+                    getGunneryB(pos),
+                    getPiloting(pos),
+                    getGunneryAero(),
+                    getGunneryAeroL(),
+                    getGunneryAeroM(),
+                    getGunneryAeroB(),
+                    getPilotingAero(),
+                    rpgSkills);
+        } else {
+            return CrewSkillSummaryUtil.getLAMGunnerySkillSummary(
+                    getGunnery(pos),
+                    getGunneryL(pos),
+                    getGunneryM(pos),
+                    getGunneryB(pos),
+                    getGunneryAero(),
+                    getGunneryAeroL(),
+                    getGunneryAeroM(),
+                    getGunneryAeroB(),
+                    rpgSkills);
+        }
     }
 
     /**

@@ -52,7 +52,7 @@ import megamek.common.TeleMissile;
 import megamek.common.TripodMech;
 import megamek.common.Warship;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs

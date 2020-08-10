@@ -44,6 +44,7 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -53,6 +54,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
@@ -226,9 +228,12 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox floatingIso;
     private JCheckBox mmSymbol;
     private JCheckBox entityOwnerColor;
+    private JRadioButton borderTeamColor;
+    private JRadioButton borderPlayerColor;
     private JCheckBox useSoftCenter;
     private JCheckBox levelhighlight;
     private JCheckBox shadowMap;
+    private JCheckBox hexInclines;
     private JCheckBox mouseWheelZoom;
     private JCheckBox mouseWheelZoomFlip;
 
@@ -422,6 +427,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
         
         showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal")); //$NON-NLS-1$
+        showDamageDecal.addItemListener(this);
         row = new ArrayList<>();
         row.add(showDamageDecal);
         comps.add(row);
@@ -438,6 +444,24 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(entityOwnerColor);
         comps.add(row);
+        
+        borderPlayerColor = new JRadioButton(Messages.getString("CommonSettingsDialog.borderPlayerColor"));
+        borderPlayerColor.addItemListener(this);
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(borderPlayerColor);
+        comps.add(row);
+        
+        borderTeamColor = new JRadioButton(Messages.getString("CommonSettingsDialog.borderTeamColor"));
+        borderTeamColor.addItemListener(this);
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(borderTeamColor);
+        comps.add(row);
+        
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(borderPlayerColor);
+        bg.add(borderTeamColor);
 
         useSoftCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useSoftCenter")); //$NON-NLS-1$
         useSoftCenter.setToolTipText(Messages.getString("CommonSettingsDialog.useSoftCenterTip"));
@@ -798,8 +822,13 @@ public class CommonSettingsDialog extends ClientDialog implements
         mmSymbol.setSelected(gs.getMmSymbol());
         levelhighlight.setSelected(gs.getLevelHighlight());
         shadowMap.setSelected(gs.getShadowMap());
+        hexInclines.setSelected(gs.getHexInclines());
         useSoftCenter.setSelected(gs.getBoolean("SOFTCENTER"));
-        entityOwnerColor.setSelected(gs.getEntityOwnerLabelColor());
+        entityOwnerColor.setSelected(gs.getUnitLabelBorder());
+        borderPlayerColor.setSelected(!gs.getUnitLabelBorderTeam());
+        borderTeamColor.setSelected(gs.getUnitLabelBorderTeam());
+        borderPlayerColor.setEnabled(entityOwnerColor.isSelected());
+        borderTeamColor.setEnabled(entityOwnerColor.isSelected());
 
 
         File dir = Configuration.hexesDir();
@@ -905,7 +934,8 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
         gs.setShowDamageDecal(showDamageDecal.isSelected());
-        gs.setEntityOwnerLabelColor(entityOwnerColor.isSelected());
+        gs.setUnitLabelBorder(entityOwnerColor.isSelected());
+        gs.setUnitLabelBorderTeam(borderTeamColor.isSelected());
         gs.setMinimapEnabled(minimapEnabled.isSelected());
         gs.setAutoEndFiring(autoEndFiring.isSelected());
         gs.setAutoDeclareSearchlight(autoDeclareSearchlight.isSelected());
@@ -957,6 +987,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setMmSymbol(mmSymbol.isSelected());
         gs.setLevelHighlight(levelhighlight.isSelected());
         gs.setShadowMap(shadowMap.isSelected());
+        gs.setHexInclines(hexInclines.isSelected());
         gs.setValue("SOFTCENTER", useSoftCenter.isSelected());
 
         if ((gs.getAntiAliasing() != chkAntiAliasing.isSelected()) &&
@@ -1210,6 +1241,8 @@ public class CommonSettingsDialog extends ClientDialog implements
                 clientgui.bv.clearHexImageCache();
                 clientgui.bv.repaint();
             }
+        } else if (source.equals(hexInclines)) {
+            guip.setHexInclines(hexInclines.isSelected());
         } else if (source.equals(levelhighlight)) {
             guip.setLevelHighlight(levelhighlight.isSelected());
             if ((clientgui != null) && (clientgui.bv != null)) {
@@ -1228,6 +1261,15 @@ public class CommonSettingsDialog extends ClientDialog implements
                 clientgui.minimap.drawMap();
             }
 
+        } else if (source.equals(entityOwnerColor) 
+                || source.equals(borderPlayerColor)
+                || source.equals(borderTeamColor)) {
+            guip.setUnitLabelBorder(entityOwnerColor.isSelected());
+            guip.setUnitLabelBorderTeam(borderTeamColor.isSelected());
+            borderPlayerColor.setEnabled(entityOwnerColor.isSelected());
+            borderTeamColor.setEnabled(entityOwnerColor.isSelected());
+        } else if (source.equals(showDamageDecal)) {
+            guip.setShowDamageDecal(showDamageDecal.isSelected());
         }
     }
 
@@ -1309,6 +1351,13 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         shadowMap.addItemListener(this);
         row.add(shadowMap);
+        comps.add(row);
+        
+        // Use Incline graphics (hex border highlights/shadows)
+        hexInclines = new JCheckBox(Messages.getString("CommonSettingsDialog.useInclines")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        hexInclines.addItemListener(this);
+        row.add(hexInclines);
         comps.add(row);
         
         // Level Highlight = borders around level changes

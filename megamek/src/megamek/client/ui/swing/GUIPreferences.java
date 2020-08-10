@@ -98,6 +98,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static final String ANTIALIASING = "AntiAliasing";
     public static final String SHADOWMAP = "ShadowMap";
+    public static final String INCLINES = "Inclines";
     public static final String AOHEXSHADOWS = "AoHexShadows";
     public static final String LEVELHIGHLIGHT = "LevelHighlight";
     public static final String FLOATINGISO = "FloatingIsometric";
@@ -112,7 +113,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_POS_Y = "DisplayPosY";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
-    public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
+    public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
+    public static final String UNIT_LABEL_BORDER_TEAM = "EntityTeamLabelColor";
     public static final String FOCUS = "Focus";
     public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
     public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
@@ -142,6 +144,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MECH_SELECTOR_UNIT_TYPE= "MechSelectorUnitType";
     public static final String MECH_SELECTOR_WEIGHT_CLASS= "MechSelectorWeightClass";
     public static final String MECH_SELECTOR_RULES_LEVELS= "MechSelectorRuleType";
+    public static final String MECH_SELECTOR_SORT_COLUMN = "MechSelectorSortColumn";
+    public static final String MECH_SELECTOR_SORT_ORDER = "MechSelectorSortOrder";
     public static final String MECH_SELECTOR_SIZE_HEIGHT = "MechSelectorSizeHeight";
     public static final String MECH_SELECTOR_SIZE_WIDTH = "MechSelectorSizeWidth";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
@@ -207,6 +211,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARDEDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
     public static final String BOARDEDIT_RNDDIALOG_START = "BoardEditRandomDialogStart";
     public static final String WARNING_COLOR = "WarningColor";
+    public static final String ALLY_UNIT_COLOR = "AllyUnitColor";
+    public static final String MY_UNIT_COLOR = "MyUnitColor";
+    public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -295,6 +302,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ANTIALIASING, true);
         store.setDefault(AOHEXSHADOWS, false);
         store.setDefault(SHADOWMAP, false);
+        store.setDefault(INCLINES, true);
         store.setDefault(FLOATINGISO, false);
         store.setDefault(LEVELHIGHLIGHT, false);
         store.setDefault(AUTO_END_FIRING, true);
@@ -304,7 +312,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
-        store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
+        store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
         store.setDefault(FIRING_SOLUTIONS,true);
@@ -326,6 +334,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_UNIT_TYPE,0);
         store.setDefault(MECH_SELECTOR_WEIGHT_CLASS,15);
         store.setDefault(MECH_SELECTOR_RULES_LEVELS,"[0]");
+        store.setDefault(MECH_SELECTOR_SORT_COLUMN, 0);
+        store.setDefault(MECH_SELECTOR_SORT_ORDER, "ASCENDING");
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
         store.setDefault(MECH_SELECTOR_SIZE_HEIGHT,600);
         store.setDefault(MECH_SELECTOR_SIZE_WIDTH,800);
@@ -399,6 +409,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(DEFAULT_WEAP_SORT_ORDER,
                 Entity.WeaponSortOrder.DEFAULT.ordinal());
         
+        setDefault(ALLY_UNIT_COLOR, new Color(80, 250, 250));
+        setDefault(ENEMY_UNIT_COLOR, new Color(220, 20, 20));
+        setDefault(MY_UNIT_COLOR, new Color(20, 220, 20));
+        setDefault(UNIT_LABEL_BORDER_TEAM, true);
+        
     }
 
     public void setDefault(String name, Color color) {
@@ -428,6 +443,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getShadowMap() {
         return store.getBoolean(SHADOWMAP);
     }
+    
+    public boolean getHexInclines() {
+        return store.getBoolean(INCLINES);
+    }
 
     public boolean getLevelHighlight() {
         return store.getBoolean(LEVELHIGHLIGHT);
@@ -435,6 +454,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getAutoEndFiring() {
         return store.getBoolean(AUTO_END_FIRING);
+    }
+    
+    public boolean getUnitLabelBorderTeam() {
+        return store.getBoolean(UNIT_LABEL_BORDER_TEAM);
     }
 
     public boolean getAutoDeclareSearchlight() {
@@ -469,8 +492,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(DISPLAY_SIZE_WIDTH);
     }
 
-    public boolean getEntityOwnerLabelColor() {
-        return store.getBoolean(ENTITY_OWNER_LABEL_COLOR);
+    public boolean getUnitLabelBorder() {
+        return store.getBoolean(UNIT_LABEL_BORDER);
     }
 
     public boolean getFocus() {
@@ -577,6 +600,21 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getString(MECH_SELECTOR_RULES_LEVELS);
     }
 
+    public int getMechSelectorSortColumn() {
+        return store.getInt(MECH_SELECTOR_SORT_COLUMN);
+    }
+
+    public int getMechSelectorDefaultSortColumn() {
+        return store.getDefaultInt(MECH_SELECTOR_SORT_COLUMN);
+    }
+
+    public String getMechSelectorSortOrder() {
+        return store.getString(MECH_SELECTOR_SORT_ORDER);
+    }
+
+    public String getMechSelectorDefaultSortOrder() {
+        return store.getDefaultString(MECH_SELECTOR_SORT_ORDER);
+    }
 
     public int getMechSelectorSizeHeight() {
         return store.getInt(MECH_SELECTOR_SIZE_HEIGHT);
@@ -701,6 +739,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public boolean getNagForWiGELanding() {
         return store.getBoolean(NAG_FOR_WIGE_LANDING);
+    }
+    
+    public Color getMyUnitColor() {
+        return getColor(MY_UNIT_COLOR);
+    }
+    
+    public Color getEnemyUnitColor() {
+        return getColor(ENEMY_UNIT_COLOR);
+    }
+    
+    public Color getAllyUnitColor() {
+        return getColor(ALLY_UNIT_COLOR);
     }
 
     public Color getRulerColor1() {
@@ -842,6 +892,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setShadowMap(boolean state) {
         store.setValue(SHADOWMAP, state);
     }
+    
+    public void setHexInclines(boolean state) {
+        store.setValue(INCLINES, state);
+    }
 
     public void setAOHexShadows(boolean state) {
         store.setValue(AOHEXSHADOWS, state);
@@ -903,8 +957,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(DISPLAY_SIZE_WIDTH, i);
     }
 
-    public void setEntityOwnerLabelColor(boolean i) {
-        store.setValue(ENTITY_OWNER_LABEL_COLOR, i);
+    public void setUnitLabelBorder(boolean i) {
+        store.setValue(UNIT_LABEL_BORDER, i);
     }
 
     public void setGetFocus(boolean state) {
@@ -1007,6 +1061,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MECH_SELECTOR_RULES_LEVELS,rulesLevels);
     }
 
+    public void setMechSelectorSortColumn(int columnId) {
+        store.setValue(MECH_SELECTOR_SORT_COLUMN, columnId);
+    }
+
+    public void setMechSelectorSortOrder(String order) {
+        store.setValue(MECH_SELECTOR_SORT_ORDER, order);
+    }
 
     public void setMechSelectorSizeHeight(int i) {
         store.setValue(MECH_SELECTOR_SIZE_HEIGHT, i);
@@ -1046,6 +1107,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setBoardEditLoadWidth(int i) {
         store.setValue(BOARDEDIT_LOAD_SIZE_WIDTH, i);
+    }
+    
+    public void setUnitLabelBorderTeam(boolean bt) {
+        store.setValue(UNIT_LABEL_BORDER_TEAM, bt);
     }
 
     public void setMiniReportSizeHeight(int i) {
@@ -1334,6 +1399,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setBoardEdRndStart(boolean b) {
         store.setValue(BOARDEDIT_RNDDIALOG_START, b);
+    }
+    
+    public void setMyUnitColor(Color col) {
+        store.setValue(MY_UNIT_COLOR, getColorString(col));
+    }
+    
+    public void setEnemyUnitColor(Color col) {
+        store.setValue(ENEMY_UNIT_COLOR, getColorString(col));
+    }
+    
+    public void setAllyUnitColor(Color col) {
+        store.setValue(ALLY_UNIT_COLOR, getColorString(col));
     }
 
     protected ColorParser p = new ColorParser();

@@ -80,6 +80,14 @@ public enum BayData {
             (size, num) -> new NavalRepairFacility(size, 1, num, 0, true)),
     REPAIR_REINFORCED ("Reinforced Repair Facility", 0.1, 0, ReinforcedRepairFacility.techAdvancement(),
             (size, num) -> new ReinforcedRepairFacility(size, 1, num, 0)),
+    ARTS_FIGHTER ("ARTS Fighter", 187.5, 0, Bay.artsTechAdvancement(),
+            (size, num) -> new ASFBay(size, 1, num, true)),
+    ARTS_SMALL_CRAFT ("ARTS Small Craft", 250.0, 0, Bay.artsTechAdvancement(),
+            (size, num) -> new SmallCraftBay(size, 1, num, true)),
+    ARTS_REPAIR_UNPRESSURIZED ("ARTS Standard Repair Facility (Unpressurized)", 0.03125, 0, Bay.artsTechAdvancement(),
+            (size, num) -> new NavalRepairFacility(size, 1, num, 0, false, true)),
+    ARTS_REPAIR_PRESSURIZED ("ARTS Standard Repair Facility (Pressurized)", 0.09375, 0, Bay.artsTechAdvancement(),
+            (size, num) -> new NavalRepairFacility(size, 1, num, 0, true, true)),
     CARGO ("Cargo", 1.0, 0, CargoBay.techAdvancement(),
             (size, num) -> new CargoBay(size, 1, num)),
     LIQUID_CARGO ("Cargo (Liquid)", 1/0.91, 0, CargoBay.techAdvancement(),
@@ -191,15 +199,19 @@ public enum BayData {
             }
             return IS_BATTLE_ARMOR;
         } else if (bay instanceof ASFBay) {
-            return FIGHTER;
+            return ((ASFBay) bay).hasARTS() ? ARTS_FIGHTER : FIGHTER;
         } else if (bay instanceof DropshuttleBay) {
             return DROPSHUTTLE;
         } else if (bay instanceof ReinforcedRepairFacility) {
             return REPAIR_REINFORCED;
         } else if (bay instanceof NavalRepairFacility) {
-            return ((NavalRepairFacility) bay).isPressurized()? REPAIR_PRESSURIZED : REPAIR_UNPRESSURIZED;
+            if (((NavalRepairFacility) bay).isPressurized()) {
+                return ((NavalRepairFacility) bay).hasARTS() ? ARTS_REPAIR_PRESSURIZED : REPAIR_PRESSURIZED;
+            } else {
+                return ((NavalRepairFacility) bay).hasARTS() ? ARTS_REPAIR_UNPRESSURIZED : REPAIR_UNPRESSURIZED;
+            }
         } else if (bay instanceof SmallCraftBay) {
-            return SMALL_CRAFT;
+            return ((SmallCraftBay) bay).hasARTS() ? ARTS_SMALL_CRAFT : SMALL_CRAFT;
         } else if (bay instanceof LiquidCargoBay) {
             return LIQUID_CARGO;
         } else if (bay instanceof LivestockCargoBay) {
@@ -261,7 +273,9 @@ public enum BayData {
         return (this == DROPSHUTTLE)
                 || (this == REPAIR_UNPRESSURIZED)
                 || (this == REPAIR_PRESSURIZED)
-                || (this == REPAIR_REINFORCED);
+                || (this == REPAIR_REINFORCED)
+                || (this == ARTS_REPAIR_PRESSURIZED)
+                || (this == ARTS_REPAIR_UNPRESSURIZED);
     }
 
     /**

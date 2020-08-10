@@ -41,7 +41,7 @@ import megamek.common.*;
 import megamek.common.event.*;
 import megamek.common.logging.*;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
 
 /**

@@ -28,6 +28,7 @@ import megamek.common.Mech;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.TechConstants;
+import megamek.common.UnitRoleHandler;
 
 /**
  * This class provides a utility to read in all of the data/mechfiles and print
@@ -51,7 +52,7 @@ public class MechCacheCSVTool {
         
         try {
             StringBuffer csvLine = new StringBuffer();
-            csvLine.append("Chassis,Model,Combined,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,BV,Rules,Engine Name,Internal Structure," +
+            csvLine.append("Chassis,Model,Combined,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,Role,BV,Rules,Engine Name,Internal Structure," +
                     "Myomer,Cockpit Type,Gyro Type," +
                     "Armor Types," +
                     "Equipment (multiple entries)\n");
@@ -62,7 +63,7 @@ public class MechCacheCSVTool {
                 }
                 
                 csvLine = new StringBuffer();
-                // Chasis Name
+                // Chassis Name
                 csvLine.append(mech.getChassis() + ",");
                 // Model Name
                 csvLine.append(mech.getModel() + ",");
@@ -109,6 +110,9 @@ public class MechCacheCSVTool {
 
                 //Unit Type
                 csvLine.append(mech.getUnitType()  + "-" + (mech.getUnitSubType() + ","));
+                
+                //Role
+                csvLine.append(UnitRoleHandler.getRoleFor(mech) + ",");
                 
                 // BV
                 csvLine.append(mech.getBV()  + ",");

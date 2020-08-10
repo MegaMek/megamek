@@ -24,7 +24,7 @@ import megamek.common.Configuration;
 import megamek.common.enums.Gender;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.WeightedMap;
 
 /**

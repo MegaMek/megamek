@@ -1319,6 +1319,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         ctl.addComponent(EquipmentType.getStructureTechAdvancement(structureType,
                 TechConstants.isClan(structureTechLevel)));
+        /* TM, p. 122 gives general eras for each tech rating, but not specific dates.
+         * Besides that, there are many canon units with higher tech ratings than should
+         * be possible in their era, so we're just going to add a stub to get the tech rating right
+         * for cost purposes. */
+        if (isSupportVehicle()) {
+            TechAdvancement blank = new TechAdvancement(getConstructionTechAdvancement());
+            ctl.addComponent(blank.setTechRating(getEngineTechRating()));
+            ctl.addComponent(blank.setTechRating(getStructuralTechRating()));
+            if (!hasPatchworkArmor() && (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD)) {
+                ctl.addComponent(blank.setTechRating(getArmorTechRating()));
+            }
+        }
     }
 
     public int getRecoveryTurn() {
@@ -1372,6 +1384,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isClanArmor(int loc) {
+        // if the location does not exist, it does not have clan armor
+        if (loc >= locations()) {
+            return false;
+        }
+        
         if (getArmorTechLevel(loc) == TechConstants.T_TECH_UNKNOWN) {
             return isClan();
         }

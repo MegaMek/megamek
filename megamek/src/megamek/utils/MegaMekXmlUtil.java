@@ -21,6 +21,7 @@ package megamek.utils;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -176,12 +177,15 @@ public class MegaMekXmlUtil {
      */
     public static LocalDate parseDate(String value) throws DateTimeParseException {
         // Accept (truncates): yyyy-MM-dd HH:mm:ss
+        // Accept (legacy): YYYYMMDD
         // Accept: yyyy-MM-dd
         int firstSpace = value.indexOf(' ');
-        if (firstSpace < 0) {
-            return LocalDate.parse(value);
-        } else {
+        if (firstSpace >= 0) {
             return LocalDate.parse(value.substring(0, firstSpace));
+        } else if (value.indexOf('-') < 0) {
+            return LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyyMMdd"));
+        } else { // default parsing
+            return LocalDate.parse(value);
         }
     }
 

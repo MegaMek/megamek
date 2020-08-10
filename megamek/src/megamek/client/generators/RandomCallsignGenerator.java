@@ -20,7 +20,7 @@ package megamek.client.generators;
 
 import megamek.MegaMek;
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.WeightedMap;
 
 import java.io.*;

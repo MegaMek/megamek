@@ -4279,7 +4279,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.addLookupName("DavionKit3030");
         misc.addLookupName("EarlyFedComKit");
-        misc.damageDivisor = 1;
+        misc.damageDivisor = 2;
         misc.cost = 1040;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318,TO";
@@ -4321,7 +4321,6 @@ public class MiscType extends EquipmentType {
         misc.cost = 360;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318,TO";
-        ;
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
                 .setISAdvancement(3035, 3040, DATE_NONE, DATE_NONE, DATE_NONE)

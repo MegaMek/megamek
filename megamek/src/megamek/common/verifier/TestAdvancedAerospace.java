@@ -757,7 +757,8 @@ public class TestAdvancedAerospace extends TestAero {
         correct &= correctCrew(buff);
         correct &= correctGravDecks(buff);
         correct &= correctBays(buff);
-        
+        correct &= correctCriticals(buff);
+
         return correct;
     }
 
@@ -1177,7 +1178,7 @@ public class TestAdvancedAerospace extends TestAero {
                 buff.append(" requires ").append(extra[i]).append(" tons of additional fire control.\n");
             }
         }
-        return true;
+        return super.correctCriticals(buff);
     }
     
     @Override

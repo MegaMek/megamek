@@ -836,33 +836,34 @@ public class TestAero extends TestEntity {
                 numWeapons[m.getLocation()]++;
             }
         }
-        
-        int[] availSpace = availableSpace(aero);
-        if (availSpace == null){
-            buff.append("Invalid armor type! Armor: ")
-                    .append(EquipmentType.armorNames[aero.getArmorType(Aero.LOC_NOSE)]);
-            buff.append("\n");
-            return false;
-        }       
-        
-        if (numBombs > aero.getMaxBombPoints()){
-            buff.append("Invalid number of bombs! Unit can mount ").append(aero.getMaxBombPoints())
-                    .append(" but ").append(numBombs).append("are present!");
-            buff.append("\n");
-            return false;
-        }
-        
-        String[] locNames = aero.getLocationNames();
-        int loc = Aero.LOC_AFT;
-        while (loc >= 0){
-            correct &= !(numWeapons[loc] > availSpace[loc]);
-            if (numWeapons[loc] > availSpace[loc]){
-                buff.append(locNames[loc]).append(" has ").append(numWeapons[loc])
-                        .append(" weapons but it can only fit ").append(availSpace[loc]).append(" weapons!");
+
+        if (aero.isFighter()) {
+            int[] availSpace = availableSpace(aero);
+            if (availSpace == null) {
+                buff.append("Invalid armor type! Armor: ")
+                        .append(EquipmentType.armorNames[aero.getArmorType(Aero.LOC_NOSE)]);
                 buff.append("\n");
+                return false;
             }
-            loc--;
-        }        
+            if (numBombs > aero.getMaxBombPoints()) {
+                buff.append("Invalid number of bombs! Unit can mount ").append(aero.getMaxBombPoints())
+                        .append(" but ").append(numBombs).append("are present!");
+                buff.append("\n");
+                return false;
+            }
+
+            String[] locNames = aero.getLocationNames();
+            int loc = Aero.LOC_AFT;
+            while (loc >= 0) {
+                correct &= !(numWeapons[loc] > availSpace[loc]);
+                if (numWeapons[loc] > availSpace[loc]) {
+                    buff.append(locNames[loc]).append(" has ").append(numWeapons[loc])
+                            .append(" weapons but it can only fit ").append(availSpace[loc]).append(" weapons!");
+                    buff.append("\n");
+                }
+                loc--;
+            }
+        }
         
         return correct;
     }

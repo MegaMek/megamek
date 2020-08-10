@@ -747,7 +747,7 @@ public class TestAero extends TestEntity {
     public List<Mounted> checkCriticalSlotsForEquipment(Entity entity) {
         List<Mounted> unallocated = new ArrayList<>();
         for (Mounted m : entity.getEquipment()) {
-            if ((m.getLocation() == Entity.LOC_NONE) && !m.isOneShotAmmo() && m.getCriticals() > 0) {
+            if ((m.getLocation() == Entity.LOC_NONE) && !m.isOneShotAmmo() && (m.getCriticals() > 0)) {
                 unallocated.add(m);
             }
         }

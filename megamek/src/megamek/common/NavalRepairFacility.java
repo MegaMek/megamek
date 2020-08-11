@@ -30,6 +30,7 @@ public class NavalRepairFacility extends Bay {
     // No more than one bay is allowed per armor facing
     private int facing = Entity.LOC_NONE;
     private boolean pressurized = false;
+    private final boolean arts;
 
     /**
      * The default constructor is only for serialization.
@@ -38,16 +39,33 @@ public class NavalRepairFacility extends Bay {
     protected NavalRepairFacility() {
         totalSpace = 0;
         currentSpace = 0;
+        arts = false;
     }
 
     /**
      * Create a new repair facility
      *
      * @param size   Maximum capacity in tons
-     * @param pressurized Whether the facility is pressurized
+     * @param doors The number of bay doors
+     * @param bayNumber The id number for the bay
      * @param facing The armor facing of the facility
+     * @param pressurized Whether the bay is pressurized
      */
     public NavalRepairFacility(double size, int doors, int bayNumber, int facing, boolean pressurized) {
+        this(size, doors, bayNumber, facing, pressurized, false);
+    }
+        /**
+         * Create a new repair facility
+         *
+         * @param size   Maximum capacity in tons
+         * @param doors The number of bay doors
+         * @param bayNumber The id number for the bay
+         * @param facing The armor facing of the facility
+         * @param pressurized Whether the bay is pressurized
+         * @param arts       Whether the bay has the advanced robotic transport system
+         */
+    public NavalRepairFacility(double size, int doors, int bayNumber, int facing,
+                               boolean pressurized, boolean arts) {
         totalSpace = size;
         currentSpace = size;
         this.doors = doors;
@@ -56,6 +74,7 @@ public class NavalRepairFacility extends Bay {
         currentdoors = doors;
         this.facing = facing;
         this.pressurized = pressurized;
+        this.arts = arts;
     }
     
     /**
@@ -66,13 +85,33 @@ public class NavalRepairFacility extends Bay {
     public boolean isPressurized() {
         return pressurized;
     }
+
+    /**
+     * Advanced Robotic Transport System (ARTS). See IO, p. 147
+     *
+     * @return Whether the bay has the ARTS automated system
+     */
+    public boolean hasARTS() {
+        return arts;
+    }
     
     public void setPressurized(boolean pressurized) {
         this.pressurized = pressurized;
     }
 
+    @Override
     public String getType() {
-        return "Naval Repair Facility " + (pressurized? "(Pressurized)" : "Unpressurized");
+        StringBuilder sb = new StringBuilder();
+        if (arts) {
+            sb.append("ARTS ");
+        }
+        sb.append("Naval Repair Facility ");
+        if (pressurized) {
+            sb.append("(Pressurized)");
+        } else {
+            sb.append("Unpressurized");
+        }
+        return sb.toString();
     }
 
     public boolean canLoad(Entity unit) {
@@ -94,7 +133,16 @@ public class NavalRepairFacility extends Bay {
     
     @Override
     public double getWeight() {
-        return RoundWeight.nextHalfTon(totalSpace * (pressurized? 0.075 : 0.025));
+        double factor;
+        if (pressurized) {
+            factor = 0.075;
+        } else {
+            factor = 0.025;
+        }
+        if (arts) {
+            factor *= 1.25;
+        }
+        return RoundWeight.nextHalfTon(totalSpace * factor);
     }
     
     @Override
@@ -112,7 +160,8 @@ public class NavalRepairFacility extends Bay {
     
     @Override
     public String toString() {
-        return "navalrepair" + (pressurized? "pressurized:" : "unpressurized:")
+        return (arts ? "artsnavalrepair" : "navalrepair")
+                + (pressurized? "pressurized:" : "unpressurized:")
                 + totalSpace + FIELD_SEPARATOR
                 + doors + FIELD_SEPARATOR
                 + bayNumber + FIELD_SEPARATOR
@@ -126,6 +175,9 @@ public class NavalRepairFacility extends Bay {
             sb.append("Pressurized");
         } else {
             sb.append("Unpressurized");
+        }
+        if (arts) {
+            sb.append(" ARTS");
         }
         sb.append(" Naval Repair Facility: ");
         sb.append(DecimalFormat.getInstance().format(totalSpace)).append(" tons");
@@ -145,8 +197,24 @@ public class NavalRepairFacility extends Bay {
     }
 
     @Override
+    public TechAdvancement getTechAdvancement() {
+        if (arts) {
+            return Bay.artsTechAdvancement();
+        } else {
+            return NavalRepairFacility.techAdvancement();
+        }
+    }
+
+    @Override
     public long getCost() {
-        return (isPressurized() ? 10000L : 5000L) * (long) totalSpace;
+        long cost = (long) totalSpace * 5000L;
+        if (pressurized) {
+            cost *= 2;
+        }
+        if (arts) {
+            cost += 1000000L;
+        }
+        return cost;
     }
 
 }

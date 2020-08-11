@@ -145,7 +145,8 @@ public class BattleArmorTROView extends TROView {
         Map<String, Object> row;
         int nameWidth = 30;
         for (final Mounted m : ba.getEquipment()) {
-            if (m.isAPMMounted() || (m.getType() instanceof InfantryAttack) || (m.getType() == armor)) {
+            if (m.isAPMMounted() || (m.getType() instanceof InfantryAttack)
+                    || (m.getType() == armor) || (m.getLocation() == BattleArmor.LOC_NONE)) {
                 continue;
             }
             if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {

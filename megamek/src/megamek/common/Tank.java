@@ -2725,7 +2725,7 @@ public class Tank extends Entity {
         costs[i++] = 2000 * Math.max(0, sinks - freeHeatSinks);
         costs[i++] = turretWeight * 5000;
 
-        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
+        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo) + getExtraCrewSeats() * 100;
 
         if (!isSupportVehicle()) {
             double diveTonnage;

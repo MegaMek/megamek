@@ -27,7 +27,7 @@ import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
 import org.w3c.dom.Document;

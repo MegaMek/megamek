@@ -117,7 +117,7 @@ import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.SharedConfiguration;
 import megamek.common.util.StringUtil;
 

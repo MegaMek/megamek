@@ -30,7 +30,7 @@ import megamek.common.Configuration;
 import megamek.common.DockingCollar;
 import megamek.common.Entity;
 import megamek.common.Jumpship;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 /**
  * Class which keeps set of all areas required to 
  * represent ASF unit in MechDsiplay.ArmorPanel class.

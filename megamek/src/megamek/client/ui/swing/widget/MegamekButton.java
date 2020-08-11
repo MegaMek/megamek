@@ -27,7 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * A subclass of JButton that supports specifying the look and feel of the

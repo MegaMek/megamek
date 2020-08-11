@@ -56,7 +56,7 @@ import megamek.common.event.GameVictoryEvent;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 public abstract class AbstractPhaseDisplay extends JPanel implements 
         BoardViewListener, GameListener, Distractable {

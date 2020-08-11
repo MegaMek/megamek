@@ -5439,3 +5439,73 @@ Phoenix PX-1KC:BRAWLER
 Phoenix PX-1KL:BRAWLER
 Phoenix PX-1KT:MISSILE_BOAT
 Phoenix PX-1KR:BRAWLER
+#IrTech
+Sturmvogel Maritime Patrol WiGE:STRIKER
+Sturmvogel Gunship WiGE:SNIPER
+Sturmvogel Maritime Patrol WiGE (LB-2X):SNIPER
+Sturmvogel Maritime Patrol WiGE (LB-10X):STRIKER
+#Prime Mover:NONE
+Wheeled SCOUT:SCOUT
+#Exo HaulerMech HMX-1:NONE
+#Exo HaulerMech HMX-2:NONE
+#Exo HaulerMech HMX-3:NONE
+#Exo HaulerMech HMX-3M:NONE
+Guard SecurityMech GS-54:AMBUSHER
+Guard SecurityMech GS-107X:AMBUSHER
+Pompier PoliceMech GM-4P:AMBUSHER
+Gulon MiningMech GLN-1A:AMBUSHER
+Gulon SecurityMech GLN-1B:AMBUSHER
+Gulon SolahmaMech C:AMBUSHER
+#Opossum SalvageMech OPO-2:NONE
+Opossum SalvageMech OPO-3 MOD:SNIPER
+Carbine CON-9M-J ConstructionMech MOD:AMBUSHER
+Carbine CON-9M-JB ConstructionMech MOD:AMBUSHER
+Carbine CON-9M Karenna:SNIPER
+Crosscut ED-X4M-L LoggerMech MOD:SNIPER
+Crosscut ED-X4M-A LoggerMech MOD:SNIPER
+Crosscut ED-X4M-E LoggerMech MOD:SNIPER
+Demeter WLD-1-M AgroMech MOD:AMBUSHER
+#Demeter WLD-1 AgroMech:NONE
+Pacifier SecurityMech CCU-36:AMBUSHER
+Pacifier SecurityMech CCU-40:AMBUSHER
+Firebee WI-WAM MilitiaMech:MISSILE_BOAT
+DemolitionMech WI-DMM MOD:AMBUSHER
+Inquisitor ITW-80 SecurityMech:SCOUT
+Inquisitor ITW-85 SecurityMech:SCOUT
+#StrongArm SC CV ConstructionMech:NONE
+#StrongArm SC CVI ConstructionMech:NONE
+StrongArm SC CV-M ConstructionMech MOD:AMBUSHER
+Harvester HVR-199M AgroMech MOD:SNIPER
+Harvester HVR-199M-A AgroMech MOD:AMBUSHER
+Harvester HVR-199M-B AgroMech MOD:SNIPER
+Harvester HVR-199M-M AgroMech MOD:SNIPER
+#Harvester HVR-199 AgroMech:NONE
+Buster BC XXI-M HaulerMech MOD:AMBUSHER
+Centurion CN9-H2 MilitiaMech:BRAWLER
+Centurion CN9-H2H MilitiaMech:BRAWLER
+Centurion CN9-H3 MilitiaMech:BRAWLER
+Heavy Lifter HCL-1M CargoMech MOD:BRAWLER
+Heavy Lifter HCL-1MM MilitiaMech:BRAWLER
+#Heavy Forester HFL-1 LoggerMech:NONE
+Heavy Forester HFL-1M LoggerMech MOD:SNIPER
+Ground Pounder DVM-2 MiningMech:AMBUSHER
+Ground Pounder DVM-2M MiningMech MOD:AMBUSHER
+#Burrower DTM-1 MiningMech:NONE
+Burrower DTM-1M MiningMech MOD:AMBUSHER
+Deep Lord MilitiaMech RCL-Z1M:JUGGERNAUT
+Deep Lord MilitiaMech RCL-Z1M-B:BRAWLER
+Dig Lord RCL-4M MiningMech MOD:JUGGERNAUT
+Dig Lord RCL-4M-B MiningMech MOD:JUGGERNAUT
+MuckRaker GMMM-2M MiningMech MOD:AMBUSHER
+#MuckRaker GMMM-2 MiningMech:NONE
+MuckRaker GMMM-2M-B MiningMech MOD:MISSILE_BOAT
+St. Florian FLN-366-M FireMech MOD:JUGGERNAUT    
+#St. Florian FLN-366 FireMech:NONE
+#OTP Hanseatic League
+Cazador:STRIKER
+Snow Fox (Omni) Prime:SCOUT
+Snow Fox (Omni) A:STRIKER
+Snow Fox (Omni) B:SNIPER
+Surtur SUR-T1:SKIRMISHER
+Tolva:SKIRMISHER
+Rhino:SKIRMISHER

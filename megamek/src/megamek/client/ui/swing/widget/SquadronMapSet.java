@@ -32,7 +32,7 @@ import megamek.common.FighterSquadron;
 import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to represent Capital Fighter unit

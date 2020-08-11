@@ -375,6 +375,10 @@ public class Ruler extends JDialog implements BoardViewListener {
             // leave at default value
         }
 
+        if (!client.getGame().getBoard().contains(start) || !client.getGame().getBoard().contains(end)) {
+            return;
+        }
+        
         String toHit1 = "", toHit2 = ""; //$NON-NLS-1$ //$NON-NLS-2$
         ToHitData thd;
         if (flip) {

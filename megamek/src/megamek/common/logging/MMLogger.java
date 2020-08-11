@@ -3,10 +3,6 @@ package megamek.common.logging;
 import megamek.common.annotations.Nullable;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-
 /**
  * Interface for the Logger object.
  *
@@ -165,6 +161,16 @@ public interface MMLogger {
     void debug(Class<?> callingClass, String methodName, StringBuilder message);
     
     /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#DEBUG} level. Extracts the calling method
+     * automatically.
+     *
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
+     * @param message      The message to be logged.
+     */
+    void debug(Object callingObject, String message);
+    
+    /**
      * Writes the passed {@link Throwable} to the log file at the
      * {@link LogLevel#ERROR} level.
      *
@@ -220,6 +226,16 @@ public interface MMLogger {
     void error(Class<?> callingClass, String methodName, StringBuilder message);
     
     /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#ERROR} level. Extracts the calling method
+     * automatically.
+     *
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
+     * @param message      The message to be logged.
+     */
+    void error(Object callingObject, String message);
+    
+    /**
      * Writes the passed {@link Throwable} to the log file at the
      * {@link LogLevel#FATAL} level.
      *
@@ -263,6 +279,16 @@ public interface MMLogger {
      */
     void fatal(Class<?> callingClass, String methodName, StringBuilder message);
     
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#FATAL} level. Extracts the calling method
+     * automatically.
+     *
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
+     * @param message      The message to be logged.
+     */
+    void fatal(Object callingObject, String message);
+
     /**
      * Writes the passed {@link Throwable} to the log file at the
      * {@link LogLevel#INFO} level.
@@ -317,6 +343,16 @@ public interface MMLogger {
      * @param message      The message to be logged.
      */
     void info(Class<?> callingClass, String methodName, StringBuilder message);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#INFO} level. Extracts the calling method
+     * automatically.
+     *
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
+     * @param message      The message to be logged.
+     */
+    void info(Object callingObject, String message);
     
     /**
      * Writes the passed {@link Throwable} to the log file at the
@@ -374,6 +410,16 @@ public interface MMLogger {
     void trace(Class<?> callingClass, String methodName, StringBuilder message);
     
     /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#TRACE} level. Extracts the calling method
+     * automatically.
+     *
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
+     * @param message      The message to be logged.
+     */
+    void trace(Object callingObject, String message);
+    
+    /**
      * Writes the passed {@link Throwable} to the log file at the
      * {@link LogLevel#WARNING} level.
      *
@@ -428,6 +474,16 @@ public interface MMLogger {
      */
     void warning(Class<?> callingClass, String methodName, StringBuilder message);
     
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#WARNING} level. Extracts the calling method
+     * automatically.
+     *
+     * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
+     * @param message      The message to be logged.
+     */
+    void warning(Object callingObject, String message);
+    
     // End convenience methods
     
     /**
@@ -474,6 +530,15 @@ public interface MMLogger {
      * @param level    The logging level to be set.
      */
     void setLogLevel(String category, LogLevel level);
+    
+    /**
+     * Sets the {@link LogLevel} for the class of callingObject. 
+     * Should be called using <code><I>this</I></code> as the first parameter.  
+     *
+     * @param callingObject the calling object. Use <code><I>this</I></code>
+     * @param level    The logging level to be set.
+     */
+    void setLogLevel(Object callingObject, LogLevel level);
 
     /**
      * Returns the {@link LogLevel} for the given category.

@@ -35,7 +35,7 @@ import javax.swing.JTextArea;
 
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Every about dialog in MegaMek should have an identical look-and-feel.

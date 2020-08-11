@@ -18,8 +18,10 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 
 import megamek.common.net.Packet;
+import org.nibblesec.tools.SerialKiller;
 
 /**
  * Marshaller that Java native serialization for <code>Packet</code>
@@ -48,7 +50,7 @@ class NativeSerializationMarshaller extends PacketMarshaller {
      */
     @Override
     public Packet unmarshall(InputStream stream) throws Exception {
-        ObjectInputStream in = new ObjectInputStream(stream);
+        ObjectInputStream in = new SerialKiller(stream, Objects.requireNonNull(getClass().getClassLoader().getResource("./megamek/serialkiller.xml")).toString());
         int command = in.readInt();
         Object[] data = (Object[]) in.readObject();
         return new Packet(command, data);

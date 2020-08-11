@@ -37,6 +37,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.logging.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
+import org.nibblesec.tools.SerialKiller;
 
 /**
  * Cache of the Mech summary information. Implemented as Singleton so a client
@@ -204,7 +205,7 @@ public class MechSummaryCache {
                     lLastCheck = unit_cache_path.lastModified();
                     InputStream istream = new BufferedInputStream(
                             new FileInputStream(unit_cache_path));
-                    ObjectInputStream fin = new ObjectInputStream(istream);
+                    ObjectInputStream fin = new SerialKiller(istream, Objects.requireNonNull(getClass().getClassLoader().getResource("./megamek/serialkiller.xml")).toString());
                     Integer num_units = (Integer) fin.readObject();
                     for (int i = 0; i < num_units; i++) {
                         if (interrupted) {

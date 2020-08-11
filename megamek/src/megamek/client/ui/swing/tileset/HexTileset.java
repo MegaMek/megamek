@@ -37,19 +37,9 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.common.Board;
-import megamek.common.Configuration;
-import megamek.common.Hex;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.ITerrain;
-import megamek.common.Terrains;
-import megamek.common.event.BoardEvent;
-import megamek.common.event.BoardListener;
-import megamek.common.event.GameBoardChangeEvent;
-import megamek.common.event.GameBoardNewEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
+import megamek.common.*;
+import megamek.common.event.*;
+import megamek.common.logging.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
@@ -60,6 +50,9 @@ import megamek.common.util.StringUtil;
  * @author Ben
  */
 public class HexTileset implements BoardListener {
+    
+    private static final MMLogger LOG = DefaultMmLogger.getInstance();
+    private static final LogLevel LOGLVL = LogLevel.WARNING;
 
     /**
      * The image width of a hex image.
@@ -90,6 +83,7 @@ public class HexTileset implements BoardListener {
         game = g;
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
+        LOG.setLogLevel(this, LOGLVL);
     }
 
     /** Clears the image cache for the given hex. */
@@ -309,7 +303,7 @@ public class HexTileset implements BoardListener {
                 incDepth++;
                 if (incDepth < 100) {
                     String incFile = st.sval;
-                    System.out.println("Including " + incFile); //$NON-NLS-1$
+                    LOG.info(this, "Including " + incFile);
                     loadFromFile(incFile);
                 }
             }
@@ -320,15 +314,16 @@ public class HexTileset implements BoardListener {
         themes.add(TRANSPARENT_THEME);
         long endTime = System.currentTimeMillis();
         
-        System.out.println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-2$ //$NON-NLS-2$
-        System.out.println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-2$ //$NON-NLS-2$
-        System.out.println("hexTileset: loaded " + orthos.size() + " ortho images"); //$NON-NLS-2$ //$NON-NLS-2$
+        String loadInfo = String.format("Loaded %o base images, %o super images and %o ortho images", 
+                bases.size(), supers.size(), orthos.size());
+        LOG.info(this, loadInfo);
+        
         if (incDepth == 0) {
-            System.out.println("hexTileset loaded in " + (endTime - startTime) + "ms.");
+            LOG.info(this, "hexTileset loaded in " + (endTime - startTime) + "ms.");
         }
         incDepth--;
     }
-
+    
     /**
      * Initializes all the images in this tileset and adds them to the tracker
      */
@@ -569,7 +564,7 @@ public class HexTileset implements BoardListener {
                 if (null != image) {
                     images.add(image);
                 } else {
-                    System.out.println("Received null image from " + "ImageUtil.loadImageFromFile!  File: " + imgFile);
+                    LOG.error(this, "Received null image from ImageUtil.loadImageFromFile! File: " + imgFile);
                 }
             }
         }

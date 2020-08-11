@@ -205,7 +205,7 @@ public class MechSummaryCache {
                     lLastCheck = unit_cache_path.lastModified();
                     InputStream istream = new BufferedInputStream(
                             new FileInputStream(unit_cache_path));
-                    ObjectInputStream fin = new SerialKiller(istream, Objects.requireNonNull(getClass().getClassLoader().getResource("./megamek/serialkiller.xml")).toString());
+                    ObjectInputStream fin = new SerialKiller(istream, "mmconf/serialkiller.xml");
                     Integer num_units = (Integer) fin.readObject();
                     for (int i = 0; i < num_units; i++) {
                         if (interrupted) {

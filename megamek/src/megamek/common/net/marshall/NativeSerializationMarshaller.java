@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.Objects;
 
 import megamek.common.net.Packet;
 import org.nibblesec.tools.SerialKiller;

@@ -16,28 +16,18 @@
 
 package megamek.client;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.awt.*;
+import java.awt.image.RenderedImage;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
+
 
 import com.thoughtworks.xstream.XStream;
 
@@ -56,35 +46,9 @@ import megamek.client.commands.SitrepCommand;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
-import megamek.common.Board;
-import megamek.common.BoardDimensions;
-import megamek.common.Building;
+import megamek.client.ui.swing.tileset.MechTileset;
+import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.FighterSquadron;
-import megamek.common.Flare;
-import megamek.common.Game;
-import megamek.common.GameLog;
-import megamek.common.GameTurn;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.MapSettings;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummaryCache;
-import megamek.common.Minefield;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.PlanetaryConditions;
-import megamek.common.QuirksHandler;
-import megamek.common.Report;
-import megamek.common.SpecialHexDisplay;
-import megamek.common.TagInfo;
-import megamek.common.UnitLocation;
-import megamek.common.UnitRoleHandler;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -160,6 +124,9 @@ public class Client implements IClientCommandHandler {
     private Hashtable<String, Integer> duplicateNameHash = new Hashtable<String, Integer>();
 
     public Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
+
+    //get the image data
+    private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
 
     ConnectionHandler packetUpdate;
 
@@ -237,7 +204,7 @@ public class Client implements IClientCommandHandler {
      * @param port
      *            the host port
      */
-    public Client(String name, String host, int port) {
+    public Client(String name, String host, int port){
         // construct new client
         this.name = name;
         this.host = host;
@@ -254,6 +221,11 @@ public class Client implements IClientCommandHandler {
         registerCommand(new AssignNovaNetworkCommand(this));
         registerCommand(new SitrepCommand(this));
 
+        try {
+            mechTileset.loadFromFile("mechset.txt"); //$NON-NLS-1$
+        }catch (IOException ex){
+            System.out.println(ex);
+        }
         rsg = new RandomSkillsGenerator();
     }
 
@@ -1125,7 +1097,42 @@ public class Client implements IClientCommandHandler {
         for (Report r : v) {
             report.append(r.getText());
         }
-        return report.toString();
+
+        String text = report.toString();
+
+        Set<Integer> set = new HashSet<Integer>();
+        //find id stored between two |, e.g. |1| returns 1
+        Pattern p = Pattern.compile("\\|(.*?)\\|");
+        Matcher m = p.matcher(text);
+        //add all instances to a hashset to prevent duplicates
+        while(m.find()){
+            set.add(Integer.parseInt(m.group(1)));
+        }
+
+        //loop through the hashset of unique ids
+        for (int i : set) {
+            //get the entity and image for it
+            Entity e = game.getEntityFromAllSources(i);
+            Image base = mechTileset.imageFor(e, null, -1);
+            //attempt to convert the image to Base64, then set it as src for img tag
+            try
+            {
+                String base64Text;
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write((RenderedImage)base, "png", baos);
+                baos.flush();
+                base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
+                baos.close();
+                String img = "<img src='data:image/png;base64," + base64Text + "'>";
+                text = text.replace("|" + e.getId() + "|", img);
+            }
+            catch (final IOException ioe)
+            {
+                throw new UncheckedIOException(ioe);
+            }
+        }
+
+        return text;
     }
 
     /**

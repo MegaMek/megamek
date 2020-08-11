@@ -80,7 +80,7 @@ public class InfantryTROView extends TROView {
         if (notes.isEmpty()) {
             setModelData("notes", Messages.getString("TROView.None"));
         } else {
-            setModelData("notes", notes.stream().collect(Collectors.joining(" ")));
+            setModelData("notes", String.join(" ", notes));
         }
 
         switch (inf.getMovementMode()) {
@@ -124,9 +124,9 @@ public class InfantryTROView extends TROView {
         }
         setModelData("squadSize", inf.getSquadSize());
         setModelData("squadCount", inf.getSquadN());
-        setModelData("armorDivisor", inf.getDamageDivisor());
+        setModelData("armorDivisor", inf.calcDamageDivisor());
         InfantryWeapon rangeWeapon = inf.getPrimaryWeapon();
-        if (inf.getSecondaryN() > 1) {
+        if ((inf.getSecondaryN() > 1) && (inf.getSecondaryWeapon() != null)) {
             rangeWeapon = inf.getSecondaryWeapon();
         }
 
@@ -185,7 +185,7 @@ public class InfantryTROView extends TROView {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.SingleFieldGun"),
                     fieldGuns.get(0).getName(), shots, (int) fieldGuns.get(0).getTonnage(inf)));
         }
-        if (inf.getSecondaryN() > 1) {
+        if ((inf.getSecondaryN() > 1) && (inf.getSecondaryWeapon() != null)) {
             if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_BURST)) {
                 notes.add(Messages.getString("TROView.InfantryNote.Burst"));
             }
@@ -226,10 +226,8 @@ public class InfantryTROView extends TROView {
         }
         if (!options.isEmpty()) {
             notes.add(Messages.getString("TROView.InfantryNote.Augmented"));
-            options.forEach(o -> {
-                notes.add(o.getDisplayableName().replaceAll("\\s+\\(Not Implemn?ented\\)", "") + ": "
-                        + o.getDescription().replaceAll("See IO.*", ""));
-            });
+            options.forEach(o -> notes.add(o.getDisplayableName().replaceAll("\\s+\\(Not Implemented\\)", "") + ": "
+                    + o.getDescription().replaceAll("See IO.*", "")));
         }
     }
 }

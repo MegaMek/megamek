@@ -31,11 +31,9 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
-import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.MovePath;
-import megamek.common.OffBoardDirection;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.Targetable;
 import megamek.common.logging.LogLevel;
@@ -46,16 +44,19 @@ import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.util.BoardUtilities;
 import megamek.common.pathfinder.AeroLowAltitudePathFinder;
 import megamek.common.pathfinder.AeroSpacePathFinder;
-import megamek.common.pathfinder.BoardEdgePathFinder;
 import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
-import megamek.common.pathfinder.MovePathFinder;
 import megamek.common.pathfinder.NewtonianAerospacePathFinder;
-import megamek.common.pathfinder.PathDecorator;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.pathfinder.SpheroidPathFinder;
 
+/**
+ * This class contains logic that calculates and stores 
+ * a) possible paths that units in play can take, and
+ * b) their possible locations
+ *
+ */
 public class PathEnumerator {
 
     private final Princess owner;
@@ -68,8 +69,6 @@ public class PathEnumerator {
 
     private AtomicBoolean mapHasBridges = null;
     private final Object BRIDGE_LOCK = new Object();
-
-    //todo VTOL elevation changes.
 
     public PathEnumerator(Princess owningPrincess, IGame game) {
         owner = owningPrincess;
@@ -180,6 +179,16 @@ public class PathEnumerator {
             // Clear out any already calculated paths.
             getUnitPaths().remove(mover.getId());
             getLongRangePaths().remove(mover.getId());
+            
+            // if the entity does not exist in the game for any reason, let's cut out safely
+            // otherwise, we'll run into problems calculating paths
+            if (getGame().getEntity(mover.getId()) == null) {
+                // clean up orphaned entries in local storage
+                getUnitMovableAreas().remove(mover.getId());
+                getUnitPotentialLocations().remove(mover.getId());
+                getLastKnownLocations().remove(mover.getId());
+                return;
+            }
 
             // Start constructing the new list of paths.
             List<MovePath> paths = new ArrayList<>();
@@ -248,11 +257,18 @@ public class PathEnumerator {
                 SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game);
                 spf.run(new MovePath(game, mover));
                 paths.addAll(spf.getAllComputedPathsUncategorized());
-            // this handles the case of the mover being an infantry unit of some kind
-            } else if(mover.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+            // this handles the case of the mover being an infantry unit of some kind, that's not airborne.
+            } else if (mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && !mover.isAirborne()) {
                 InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
                 ipf.run(new MovePath(game, mover));
                 paths.addAll(ipf.getAllComputedPathsUncategorized());
+                
+                // generate long-range paths appropriate to the bot's current state
+                updateLongRangePaths(mover);
+            // this handles situations where a unit is high up in the air, but is not an aircraft
+            // such as an ejected pilot or a unit hot dropping from a dropship, as these cannot move
+            } else if (!mover.isAero() && mover.isAirborne()) {
+                paths.add(new MovePath(game, mover));
             } else { // Non-Aero movement
                 // TODO: Will this cause Princess to never use MASC?
                 LongestPathFinder lpf = LongestPathFinder
@@ -344,6 +360,11 @@ public class PathEnumerator {
                 break;
             default:
                 for(Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {
+                    // don't consider crippled units as valid long-range pathfinding targets 
+                    if((target.getTargetType() == Targetable.TYPE_ENTITY) && ((Entity) target).isCrippled()) {
+                        continue;
+                    }
+                    
                     destinations.add(target.getPosition());
                     // we can easily shoot at an entity from right next to it as well
                     destinations.addAll(target.getPosition().allAdjacent());
@@ -356,14 +377,14 @@ public class PathEnumerator {
         }
         
         // calculate a ground-bound long range path
-        BulldozerMovePath bmp = dpf.findPathToCoords(mover, destinations);
+        BulldozerMovePath bmp = dpf.findPathToCoords(mover, destinations, owner.getClusterTracker());
         
         if(bmp != null) {
             getLongRangePaths().get(mover.getId()).add(bmp);
         }
         
         // calculate a jumping long range path
-        BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, true); 
+        BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, owner.getClusterTracker()); 
         if(jmp != null) {
             getLongRangePaths().get(mover.getId()).add(jmp);
         }

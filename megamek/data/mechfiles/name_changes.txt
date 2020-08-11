@@ -51,6 +51,15 @@ Vulture (Standard)|Vulture (2312)
 Clan Motorized Combat Engineers|Clan Motorized Point (Rifle)
 Motorized Combat Engineers|Combat Engineer Royal Engineers, 1st Lyran Royal Guards RCT
 
+Bridge-builder Engineers Take the Time III-chi, Forty-eighth Division|Bridge-builder Engineers Take the Time III-chi; Forty-eighth Division
+Firefighter Twenty-fourth Hellfire Firefighting Battalion, 84th Avalon LI, 17th Avalon Hussars|Firefighter Twenty-fourth Hellfire Firefighting Battalion; 84th Avalon
+Mountaineer 45th Cerulean Mountain Infantry, 3rd Davion Guards|Mountaineer 45th Cerulean Mountain Infantry; 3rd Davion Guards
+Recon Infantry Recon Battalion, 201st Pesht Assault Team, 3rd Proserpina Hussars|Recon Infantry Recon Battalion; 201st Pesht Assault Team; 3rd Proserpina Hussars
+Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard; Magistracy Cavaliers
+Ceremonial Guard Caesar's Royal Guard, Marion Hegemony|Ceremonial Guard Caesar's Royal Guard; Marion Hegemony
+Combat Engineer Royal Engineers, 1st Lyran Royal Guards RCT|Combat Engineer Royal Engineers; 1st Lyran Royal Guards RCT
+Minesweepers Thirty-fifth Cluster Support Force, Red Chasseurs|Minesweepers Thirty-fifth Cluster Support Force; Red Chasseurs
+
 #Jumpships
 Comitatus JumpShip (Standard)|Comitatus JumpShip (2995)
 Hunter Jumpship (Standard)|Hunter Jumpship (2832)
@@ -102,6 +111,11 @@ Snowden Mining Station Mk I|Snowden Mining Station (MK I)
 Nuberu Anti Aircraft Tank 2 'Numantia'|Nuberu Anti Aircraft Tank 2 'Numantia'
 SturmFeur "Kalki" Cruise Missile Launcher (Standard)|SturmFeur 'Kalki' Cruise Missile Launcher (Standard)
 Command Van|Command Van (Standard)
+Desert Scorpion|Desert Scorpion Light Tank
+Vargr APC|Vargr APC Tank
+Vargr APC (LRM)| Vargr APC Tank (LRM)
+Sleipnir APC|Sleipnir AP Tank
+Sleipnir APC (SRM)|Sleipnir AP Tank (SRM)
 
 #Warships
 Aegis Heavy Cruiser (Clan)|Aegis Heavy Cruiser (2843)

@@ -150,3 +150,19 @@ Heat Sink
 -Empty-
 
 
+Overview: As a product of, unsurprisingly, Ostmann Industries, the Ostroc was created to fight in urban environments. First appearing in 2511, the low profile of the BattleMech made it a difficult target when surrounded by buildings and trees, making it a popular 'Mech in the SLDF's garrison units. The 'Mech was slow to spread beyond the Hegemony; Ostmann Industries' production on Terra was limited, and largely served to feed the massive demand of the SLDF. Even so, the fall of the Star League would spread the design throughout the Successor States where it would become a popular component of many regiments.
+
+Capabilities: With a wide array of weaponry and reasonable cooling capabilities, Ostrocs make for powerful heavy BattleMechs. Their above-average speed for their weight class also makes them well suited to cavalry or quick reaction roles. While their armor is mostly adequate, Ostroc arms are notoriously fragile and are often destroyed in combat. Indeed, in ComStar's original 3025 Technical Readout, their holo of the Ostroc featured repurposed Ostwar arms instead of the original limbs.
+
+Deployment: While not a numerous design, the Ostroc is widespread. Production originally ceased after the destruction of Ostmann's facilities on Terra in 2777, and the Ostroc did not reenter full production until the rediscovery of the Helm Core. Kong Interstellar, owning a century-old license to the design, would be the first to reintroduce the BattleMech.
+
+systemmanufacturer:CHASSIS:Ost
+systemmode:CHASSIS:-II
+systemmanufacturer:ENGINE:Vlar
+systemmode:ENGINE:300
+systemmanufacturer:ARMOR:Riese
+systemmode:ARMOR:475
+systemmanufacturer:COMMUNICATIONS:Ostmann
+systemmode:COMMUNICATIONS:-L
+systemmanufacturer:TARGETING:Ferdinand
+systemmode:TARGETING:-a

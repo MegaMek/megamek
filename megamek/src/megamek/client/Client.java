@@ -53,7 +53,6 @@ import megamek.client.commands.RulerCommand;
 import megamek.client.commands.ShowEntityCommand;
 import megamek.client.commands.ShowTileCommand;
 import megamek.client.commands.SitrepCommand;
-import megamek.client.generator.RandomNameGenerator;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
@@ -111,6 +110,7 @@ import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
 
@@ -912,9 +912,9 @@ public class Client implements IClientCommandHandler {
      */
     public void sendLoadGame(File f) {
         try (InputStream is = new GZIPInputStream(new FileInputStream(f))) {
-            XStream xstream = new XStream();
-
             game.reset();
+            
+            XStream xstream = SerializationHelper.getXStream();            
             IGame newGame = (IGame) xstream.fromXML(is);
 
             send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { newGame }));

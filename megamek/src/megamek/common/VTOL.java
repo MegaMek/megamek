@@ -109,7 +109,7 @@ public class VTOL extends Tank implements IBomber {
 
     @Override
     public int getMaxElevationChange() {
-        return 999;
+        return UNLIMITED_JUMP_DOWN;
     }
 
     @Override

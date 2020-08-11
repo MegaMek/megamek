@@ -90,20 +90,25 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find movement block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
-        EntityMovementMode nMotion = EntityMovementMode.NONE;
-        if (sMotion.equalsIgnoreCase("leg")) {
-            nMotion = EntityMovementMode.INF_LEG;
-        } else if (sMotion.equalsIgnoreCase("jump")) {
-            nMotion = EntityMovementMode.INF_JUMP;
-        } else if (sMotion.equalsIgnoreCase("vtol")) {
-            nMotion = EntityMovementMode.VTOL;
-        } else if (sMotion.equalsIgnoreCase("umu")) {
-            nMotion = EntityMovementMode.INF_UMU;
+        t.setMovementMode(EntityMovementMode.getMode(sMotion));
+        // Add equipment to calculate unit tech advancement correctly
+        try {
+            switch (t.getMovementMode()) {
+                case INF_JUMP:
+                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_JUMP_JET), Entity.LOC_NONE);
+                    break;
+                case VTOL:
+                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_VTOL), Entity.LOC_NONE);
+                    break;
+                case INF_UMU:
+                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_UMU), Entity.LOC_NONE);
+                    break;
+                case NONE:
+                    throw new EntityLoadingException("Invalid movement type: " + sMotion);
+            }
+        } catch (LocationFullException ignore) {
+            // Adding to LOC_NONE
         }
-        if (nMotion == EntityMovementMode.NONE) {
-            throw new EntityLoadingException("Invalid movement type: " + sMotion);
-        }
-        t.setMovementMode(nMotion);
 
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");

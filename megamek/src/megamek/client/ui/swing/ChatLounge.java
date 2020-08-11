@@ -64,9 +64,10 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
+import megamek.client.generators.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -85,8 +86,8 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.DirectoryItems;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, ItemListener,
         ListSelectionListener, MouseListener, IMapSettingsObserver {
@@ -179,6 +180,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     CamoChoiceDialog camoDialog;
 
+    //region Action Commands
+    private static final String NAME_COMMAND = "NAME";
+    private static final String CALLSIGN_COMMAND = "CALLSIGN";
+    //endregion Action Commands
+
     /**
      * Creates a new chat lounge for the clientgui.getClient().
      */
@@ -194,7 +200,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         try {
             portraits = new DirectoryItems(Configuration.portraitImagesDir(), "", //$NON-NLS-1$
-                    ImageFileFactory.getInstance());
+                    ScaledImageFileFactory.getInstance());
         } catch (Exception e) {
             portraits = null;
         }
@@ -302,8 +308,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
         butNames = new JButton(Messages.getString("ChatLounge.butNames")); //$NON-NLS-1$
 
-        // Initialize the RandomNameGenerator
+        // Initialize the RandomNameGenerator and RandomCallsignGenerator
         RandomNameGenerator.getInstance();
+        RandomCallsignGenerator.getInstance();
 
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
@@ -870,7 +877,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         panGroundMap.add(labBoardsAvailable);
 
         scrBoardsAvailable = new JScrollPane(lisBoardsAvailable);
-        c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridx = 3;
@@ -1281,7 +1287,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         clientgui.getMenuBar().setUnitList(localUnits);
     }
 
-    public static String formatPilotCompact(Crew pilot, boolean blindDrop) {
+    public static String formatPilotCompact(Crew pilot, boolean blindDrop, boolean rpgSkills) {
 
         String value = "";
         if (blindDrop) {
@@ -1289,7 +1295,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         } else {
             value += pilot.getDesc();
         }
-        value += " (" + pilot.getSkillsAsString() + ")";
+
+        value += " (" + pilot.getSkillsAsString(rpgSkills) + ")";
         if (pilot.countOptions() > 0) {
             value += " (" + pilot.countOptions() + Messages.getString("ChatLounge.abilities") + ")";
         }
@@ -1298,7 +1305,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     }
 
-    public static String formatPilotHTML(Crew pilot, boolean blindDrop) {
+    public static String formatPilotHTML(Crew pilot, boolean blindDrop, boolean rpgSkill) {
 
         int crewAdvCount = pilot.countOptions(PilotOptions.LVL3_ADVANTAGES);
         int implants = pilot.countOptions(PilotOptions.MD_ADVANTAGES);
@@ -1310,7 +1317,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     value += "<b>No " + pilot.getCrewType().getRoleName(i) + "</b>";
                 } else {
                     value += "<b>" + pilot.getDesc(i) + "</b> (" + pilot.getCrewType().getRoleName(i) + "): ";
-                    value += pilot.getSkillsAsString(i);
+                    value += pilot.getSkillsAsString(i, rpgSkill);
                 }
                 value += "<br/>";
             }
@@ -1320,7 +1327,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             } else {
                 value += "<b>" + pilot.getDesc() + "</b><br/>";
             }
-            value += "" + pilot.getSkillsAsString();
+            value += "" + pilot.getSkillsAsString(rpgSkill);
         }
         if (crewAdvCount > 0) {
             value += ", " + crewAdvCount + Messages.getString("ChatLounge.advs");
@@ -1335,7 +1342,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     }
 
-    public static String formatPilotTooltip(Crew pilot, boolean command, boolean init, boolean tough) {
+    public static String formatPilotTooltip(Crew pilot, boolean command, boolean init, boolean tough, boolean rpgSkills) {
 
         String value = "<html>";
         value += "<b>" + pilot.getDesc() + "</b><br>";
@@ -1345,7 +1352,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         if (pilot.getHits() > 0) {
             value += "<font color='red'>" + Messages.getString("ChatLounge.Hits") + pilot.getHits() + "</font><br>";
         }
-        value += "" + pilot.getSkillsAsString() + "<br>";
+        value += "" + pilot.getSkillsAsString(rpgSkills) + "<br>";
         if (tough) {
             value += Messages.getString("ChatLounge.Tough") + pilot.getToughness(0) + "<br>";
         }
@@ -1857,10 +1864,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         int posQuirkCount = entity.countQuirks(Quirks.POS_QUIRKS);
         int negQuirkCount = entity.countQuirks(Quirks.NEG_QUIRKS);
 
-        String gunnery = Integer.toString(entity.getCrew().getGunnery());
-        if (rpgSkills) {
-            gunnery = entity.getCrew().getGunneryRPG();
-        }
+        String gunnery = entity.getCrew().getSkillsAsString(false, rpgSkills);
 
         if (blindDrop) {
             String unitClass;
@@ -2508,6 +2512,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      * Pop up the dialog to load a mech
      */
     private void loadMech() {
+        clientgui.getMechSelectorDialog().updateOptionValues();
         clientgui.getMechSelectorDialog().setVisible(true);
     }
 
@@ -3364,10 +3369,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                             + clientgui.getClient().getGame().getPlayer(entity.getOwnerId()).getTeam();
                 }
             } else if (col == COL_PILOT) {
+                final boolean rpgSkills = clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
                 if (compact) {
-                    return formatPilotCompact(entity.getCrew(), blindDrop);
+                    return formatPilotCompact(entity.getCrew(), blindDrop, rpgSkills);
                 }
-                return formatPilotHTML(entity.getCrew(), blindDrop);
+                return formatPilotHTML(entity.getCrew(), blindDrop, rpgSkills);
             } else {
                 if (compact) {
                     return formatUnitCompact(entity, blindDrop);
@@ -3453,7 +3459,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                                 clientgui.getClient().getGame().getOptions()
                                         .booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE),
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption(OptionsConstants.RPG_TOUGHNESS)));
+                                        .booleanOption(OptionsConstants.RPG_TOUGHNESS),
+                                clientgui.getClient().getGame().getOptions()
+                                        .booleanOption(OptionsConstants.RPG_RPG_GUNNERY)));
                     }
                 }
 
@@ -3642,7 +3650,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     e.getCrew().sortRandomSkills();
                     c.sendUpdateEntity(e);
                 }
-            } else if (command.equalsIgnoreCase("NAME")) {
+            } else if (command.equalsIgnoreCase(NAME_COMMAND)) {
                 Client c = clientgui.getBots().get(entity.getOwner().getName());
                 if (c == null) {
                     c = clientgui.getClient();
@@ -3652,6 +3660,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         Gender gender = RandomGenderGenerator.generate();
                         e.getCrew().setGender(gender, i);
                         e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getOwner().getName()), i);
+                    }
+                    c.sendUpdateEntity(e);
+                }
+            } else if (command.equals(CALLSIGN_COMMAND)) {
+                Client c = clientgui.getBots().get(entity.getOwner().getName());
+                if (c == null) {
+                    c = clientgui.getClient();
+                }
+                for (Entity e : entities) {
+                    for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+                        e.getCrew().setNickname(RandomCallsignGenerator.getInstance().generate(), i);
                     }
                     c.sendUpdateEntity(e);
                 }
@@ -4031,7 +4050,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
             if (e.isPopupTrigger()) {
                 // This menu uses the following Mnemonics:
-                // B, C, D, E, I, N, O, S, V
+                // B, C, D, E, I, O, R, V
                 JMenuItem menuItem;
                 if (oneSelected) {
                     menuItem = new JMenuItem("View...");
@@ -4088,12 +4107,24 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setMnemonic(KeyEvent.VK_D);
                 popup.add(menuItem);
 
+                //region Randomize Submenu
+                // This menu uses the following Mnemonic Keys:
+                // C, N, S
                 JMenu menu = new JMenu("Randomize");
+                menu.setMnemonic(KeyEvent.VK_R);
+
                 menuItem = new JMenuItem("Name");
-                menuItem.setActionCommand("NAME");
+                menuItem.setActionCommand(NAME_COMMAND);
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
                 menuItem.setMnemonic(KeyEvent.VK_N);
+                menu.add(menuItem);
+
+                menuItem = new JMenuItem("Callsign");
+                menuItem.setActionCommand(CALLSIGN_COMMAND);
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(isOwner || isBot);
+                menuItem.setMnemonic(KeyEvent.VK_C);
                 menu.add(menuItem);
 
                 menuItem = new JMenuItem("Skills");
@@ -4103,6 +4134,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setMnemonic(KeyEvent.VK_S);
                 menu.add(menuItem);
                 popup.add(menu);
+                //endregion Randomize Submenu
 
                 // Change Owner Menu Item
                 menu = new JMenu(Messages.getString("ChatLounge.ChangeOwner"));
@@ -4432,11 +4464,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     }
 
-    public class MekInfo extends JPanel {
-
-        /**
-         *
-         */
+    public static class MekInfo extends JPanel {
         private static final long serialVersionUID = -7337823041775639463L;
 
         private JLabel lblImage;

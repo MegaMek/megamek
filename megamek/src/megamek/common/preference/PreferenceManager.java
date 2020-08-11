@@ -12,7 +12,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.common.preference;
 
 import java.io.File;
@@ -38,12 +37,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
 
-import org.xml.sax.SAXException;
-
+import megamek.MegaMek;
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
 public class PreferenceManager {
@@ -60,7 +57,7 @@ public class PreferenceManager {
     protected static PreferenceManager instance = new PreferenceManager();
 
     protected PreferenceManager() {
-        stores = new Hashtable<String, IPreferenceStore>();
+        stores = new Hashtable<>();
         clientPreferenceStore = new PreferenceStore();
         load();
         clientPreferences = new ClientPreferences(clientPreferenceStore);
@@ -95,7 +92,7 @@ public class PreferenceManager {
     }
 
     protected void load(String fileName) {
-        InputStream is = null;
+        InputStream is;
 
         try {
             is = new FileInputStream(new File(fileName));
@@ -121,9 +118,9 @@ public class PreferenceManager {
                     }
                 }
             }
-        } catch (JAXBException | SAXException | ParserConfigurationException ex) {
-            System.err.println("Error loading XML for client settings: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
+        } catch (Exception e) {
+            MegaMek.getLogger().error(getClass(), "load",
+                    "Error loading XML for client settings: " + e.getMessage(), e);
         }
     }
 

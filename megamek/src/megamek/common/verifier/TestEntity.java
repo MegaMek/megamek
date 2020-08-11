@@ -709,7 +709,7 @@ public abstract class TestEntity implements TestEntityOption {
         return buff.toString();
     }
 
-    public int calcMiscCrits(MiscType mt) {
+    public int calcMiscCrits(MiscType mt, double size) {
         if (mt.hasFlag(MiscType.F_CLUB)
                 && (mt.hasSubType(MiscType.S_HATCHET)
                         || mt.hasSubType(MiscType.S_SWORD)
@@ -818,7 +818,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
             return 10;
         }
-        return mt.getCriticals(getEntity());
+        return mt.getCriticals(getEntity(), size);
     }
 
     /**

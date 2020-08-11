@@ -91,9 +91,9 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.ChatterBox2;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.HexTileset;
 import megamek.client.ui.swing.MovementDisplay;
-import megamek.client.ui.swing.TilesetManager;
+import megamek.client.ui.swing.tileset.HexTileset;
+import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -172,7 +172,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
@@ -722,8 +722,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         firstLOSSprite = new CursorSprite(this, Color.red);
         secondLOSSprite = new CursorSprite(this, Color.red);
 
-        PreferenceManager.getClientPreferences().addPreferenceChangeListener(
-                this);
+        PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
 
         SpecialHexDisplay.Type.ARTILLERY_HIT.init();
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
@@ -1078,7 +1078,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
         }
-        if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+        if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)
+                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER)
+                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER_TEAM)
+                || e.getName().equals(GUIPreferences.SHOW_DAMAGE_DECAL)) {
             updateEntityLabels();
             for (Sprite s: wreckSprites) {
                 s.prepare();
@@ -1086,6 +1089,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             for (Sprite s: isometricWreckSprites) {
                 s.prepare();
             }
+        }
+        if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
+                || e.getName().equals(GUIPreferences.FLOATINGISO)
+                || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)) {
+            clearHexImageCache();
+            repaint();
+        }
+        if (e.getName().equals(GUIPreferences.INCLINES)) {
+            game.getBoard().initializeAllAutomaticTerrain();
+            clearHexImageCache();
+            repaint();
         }
     }
 
@@ -1480,13 +1494,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     @SuppressWarnings("unused")
     private void renderClusters(Graphics2D g) {
         BoardClusterTracker bct = new BoardClusterTracker();
-        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false);
+        Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false, true);
         
         for(BoardCluster cluster : clusterMap.values().stream().distinct().collect(Collectors.toList())) {
-            for(Coords coords : cluster.contents) {
+            for (Coords coords : cluster.contents.keySet()) {
                 Point p = getCentreHexLocation(coords.getX(), coords.getY(), true);
                 p.translate(HEX_W  / 2, HEX_H  / 2);
-                drawHexBorder(g, p, Color.PINK, 0, 6);
+                drawHexBorder(g, p, new Color(0, 0, (20 * cluster.id) % 255), 0, 6);
             }
         }
     }
@@ -1679,9 +1693,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     Transparency.TRANSLUCENT);
             Graphics gS = elevShadow.getGraphics();
             Point2D p1 = new Point2D.Double(eSize.width/2, eSize.height/2);
-            for (int i = 0; i<n*lDiff; i++) {
-                gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
-                p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+            if (GUIPreferences.getInstance().getHexInclines()) {
+                // With inclines, the level 1 shadows are only very slight
+                int beg = 4;
+                p1.setLocation(p1.getX()+deltaX*beg, p1.getY()+deltaY*beg);
+                for (int i = beg; i<n*(lDiff-0.4); i++) {
+                    gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
+                    p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+                }   
+            } else {
+                for (int i = 0; i<n*lDiff; i++) {
+                    gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
+                    p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+                }
+                
             }
             gS.dispose();
             hS.put(lDiff, elevShadow);
@@ -2680,7 +2705,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // AO Hex Shadow in this hex when a higher one is adjacent
         if (guip.getBoolean(GUIPreferences.AOHEXSHADOWS)
-                || guip.getBoolean(GUIPreferences.SHADOWMAP)) {
+               ) {
             for (int dir : allDirections) {
                 Shape ShadowShape = getElevationShadowArea(c, dir);
                 GradientPaint gpl = getElevationShadowGP(c, dir);
@@ -3208,6 +3233,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         {
             // no shadow area when the current hex is not lower than the next hex in direction
             if (srcHex.getLevel() >= destHex.getLevel()) return null;
+            if (GUIPreferences.getInstance().getHexInclines()
+                    && (destHex.getLevel() - srcHex.getLevel() < 2)
+                    && !destHex.hasCliffTopTowards(srcHex)) {
+                return null;
+            }
         }
 
         return(AffineTransform.getScaleInstance(scale, scale).createTransformedShape(
@@ -3253,15 +3283,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         IHex hex = game.getBoard().getHex(x, y);
         if ((hex != null) && useIsometric() && !ignoreElevation) {
-            int level = hex.getLevel();
-            if (level != 0) {
-                elevationAdjust = level * HEX_ELEV * scale * -1.0f;
-            }
+            elevationAdjust = hex.getLevel() * HEX_ELEV * scale * -1.0f;
         }
         int ypos = (y * (int) (HEX_H * scale))
                    + ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0);
-        return new Point(x * (int) (HEX_WC * scale), ypos
-                                                     + (int) elevationAdjust);
+        return new Point(x * (int) (HEX_WC * scale), ypos + (int) elevationAdjust);
     }
 
     /**
@@ -5295,6 +5321,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     highlight(null);
                 default:
             }
+            for (Entity en: game.getEntitiesVector()) {
+                if (en.getDamageLevel() != Entity.DMG_NONE && en.damageThisRound != 0) {
+                    tileManager.reloadImage(en);
+                }
+            }
+
         }
     };
 

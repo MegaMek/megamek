@@ -151,3 +151,19 @@ Ferro-Fibrous
 -Empty-
 
 
+Overview: The Catapult, though a well-designed BattleMech, has had a tumultuous existence. Produced by Hollis Incorporated in record numbers for the SLDF, the Terran Hegemony ultimately decided to forgo contract renewal, leaving Hollis with a BattleMech line but no customer. When the facility was eventually retooled to produce the BattleMaster, they chose to completely abandon their Catapult chassis, and its numbers began to decline. The attrition of the Succession Wars left the Draconis Combine with many Catapults but no parts for them. Contracting Yori Mech Works, a production line was eventually built and new Catapults began entering the DCMS by 3033. The Capellan Confederation would follow suit and the Catapult would finally claim the popularity that it deserved.
+
+Capabilities: Carrying two LRM launchers in its "ears" and four medium lasers in its body, the Catapult was a fire support 'Mech akin to the slightly larger Archer. The inclusion of jump jets, though, and the placement of the lasers allowed many Catapults to be their own bodyguards. Many Catapult MechWarriors choose to fire all of their LRM missiles at their chosen targets before closing in to exploit any armor breaches with their lasers. This does make the Catapult slightly more flexible than many traditional support 'Mechs, although its limited ammunition stores can hamper it in extended ranged battles.
+
+Deployment: While visible in every military of note, the Capellan Confederation and Draconis Combine would lay claim to the lion's share of the design. When production for the Catapult began in both states, the divide only increased, with many states losing all of their examples of the design by the conclusion of the Jihad. The Royal variant of the Catapult, developed for the SLDF, improved every facet of the design. Better heat dissipation, stronger armor, more missile reloads, and integral CASE protection made for a powerful fire-support design. The CPLT-C1b and its advanced technology would be victims of the Succession Wars, but the discovery of the New Dallas Memory Core would bring the variant back into most militaries. The raging devastation of the Jihad left Houses Kurita and Liao as the sole Great Houses to field this variant, though the -C1b has also been seen in both mercenary and periphery state hands.
+
+systemmanufacturer:CHASSIS:Hollis
+systemmode:CHASSIS:Mark II
+systemmanufacturer:ENGINE:Magna
+systemmode:ENGINE:260
+systemmanufacturer:ARMOR:Durallex
+systemmode:ARMOR:Heavy
+systemmanufacturer:COMMUNICATIONS:O/P
+systemmode:COMMUNICATIONS:Com-211
+systemmanufacturer:TARGETING:O/P
+systemmode:TARGETING:1078

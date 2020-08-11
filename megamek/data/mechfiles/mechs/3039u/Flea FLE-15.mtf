@@ -152,3 +152,19 @@ Heat Sink
 -Empty-
 
 
+Overview: The Flea was the direct decendant of the Free Worlds League first scout 'Mech, the Trooper. Neither the Trooper nor the Flea would impress any military analysts, though, with their generally slow speed and fragile armor making them easy prey for even the lightest opposing BattleMechs. With production of the Flea ceasing even before the start of the Succession Wars, this generally unpopular design seemed destined for the history books until the appearance of Wolf's Dragoons and their many ancient BattleMechs, Flea included.
+
+Capabilities: The Flea, as a 'Mech with many different variants, can accomplish many different roles. However, most of these models work best in infantry support roles, where the heavier armor and firepower of the 'Mech make it a valued friend and a dangerous foe. The firepower of the Flea itself is stronger than one might suspect; if cornered, inattentive scout 'Mechs can quickly find themselves at the mercy of a Flea.
+
+Deployment: The main Earthwerks factory for the Flea was reopened following the signing of an exclusive contract with the Wolf's Dragoons. Initially only producing replacement parts and an occasional replacement 'Mech, Earthwerks eventually opened a second line to keep up with increasing demand. Expiration of the Dragoon contract in 3041 was welcomed by Earthwerks; the publicity gained through the Dragoons had created a healthy market for the Flea. A common variant, the FLE-15 was a dedicated anti-infantry variant found within the Free Worlds League and Dragoon forces. Its role saw low attrition rates, and this older model remained in service until the end of the Jihad.
+
+systemmanufacturer:CHASSIS:Earthwerks
+systemmode:CHASSIS:Trooper
+systemmanufacturer:ENGINE:GM
+systemmode:ENGINE:120
+systemmanufacturer:ARMOR:Livingston
+systemmode:ARMOR:Ceramics
+systemmanufacturer:COMMUNICATIONS:Neil
+systemmode:COMMUNICATIONS:2000
+systemmanufacturer:TARGETING:Dalban
+systemmode:TARGETING:HiRez-B

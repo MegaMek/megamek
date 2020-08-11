@@ -43,10 +43,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.common.Configuration;
 import megamek.common.Crew;
-import megamek.common.util.DirectoryItems;
+import megamek.common.util.fileUtils.DirectoryItems;
 
 /**
  * This dialog allows players to select a portrait for your pilot.
@@ -91,7 +91,7 @@ public class PortraitChoiceDialog extends JDialog {
            portraits = new DirectoryItems(
                    Configuration.portraitImagesDir(),
                    "", //$NON-NLS-1$
-                   ImageFileFactory.getInstance()
+                   ScaledImageFileFactory.getInstance()
            );
        } catch (Exception e) {
            portraits = null;

@@ -15,7 +15,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -57,12 +56,12 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
-import megamek.common.util.DirectoryItems;
+import megamek.common.util.fileUtils.DirectoryItems;
 
 /**
  * This dialog allows players to select the camo pattern (or color) used by
@@ -123,7 +122,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         // Parse the camo directory.
         try {
             camos = new DirectoryItems(Configuration.camoDir(), "", //$NON-NLS-1$
-                    ImageFileFactory.getInstance());
+                    ScaledImageFileFactory.getInstance());
         } catch (Exception e) {
             camos = null;
         }

@@ -92,7 +92,7 @@ public class TdbFile implements IMechLoader {
             TdbFile tdbFile = (TdbFile) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
             
             return tdbFile;
-        } catch (JAXBException | SAXException | ParserConfigurationException e) {
+        } catch (Exception e) {
             throw new EntityLoadingException("   Failure to parse XML ("
                     + e.getLocalizedMessage() + ")", e);
         }
@@ -409,7 +409,7 @@ public class TdbFile implements IMechLoader {
                         }
                         if (bFound) {
                             m.setFoundCrits(m.getFoundCrits() + 1);
-                            if (m.getFoundCrits() >= etype.getCriticals(mech)) {
+                            if (m.getFoundCrits() >= m.getCriticals()) {
                                 vSplitWeapons.remove(m);
                             }
                             // if we're in a new location, set the

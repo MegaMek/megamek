@@ -64,6 +64,9 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
                 e.setHasNoTurret(true);
             }
         }
+        
+        // our gun emplacements do not support dual turrets at this time
+        e.setHasNoDualTurret(true);
 
         loadEquipment(e, "Guns", GunEmplacement.LOC_GUNS);
         e.setArmorTonnage(e.getArmorWeight());

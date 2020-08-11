@@ -808,9 +808,9 @@ public class EntityListFile {
             if ((entity instanceof Infantry)
                     && !(entity instanceof BattleArmor)) {
                 Infantry inf = (Infantry) entity;
-                if (inf.getDamageDivisor() != 1) {
+                if (inf.getArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ARMOR_DIVISOR + "=\"");
-                    output.write(inf.getDamageDivisor() + "");
+                    output.write(inf.getArmorDamageDivisor() + "");
                 }
                 if (inf.isArmorEncumbering()) {
                     output.write("\" " + MULParser.ARMOR_ENC + "=\"1");
@@ -1175,8 +1175,6 @@ public class EntityListFile {
         output.write("\" nick=\"");
         output.write(crew.getNickname(pos).replaceAll("\"", "&quot;"));
         output.write("\" gender=\"" + crew.getGender(pos).name());
-        output.write("\" gunnery=\"");
-        output.write(String.valueOf(crew.getGunnery(pos)));
 
         if ((null != entity.getGame())
                 && entity.getGame().getOptions()
@@ -1187,6 +1185,9 @@ public class EntityListFile {
             output.write(String.valueOf(crew.getGunneryM(pos)));
             output.write("\" gunneryB=\"");
             output.write(String.valueOf(crew.getGunneryB(pos)));
+        } else {
+            output.write("\" gunnery=\"");
+            output.write(String.valueOf(crew.getGunnery(pos)));
         }
         output.write("\" piloting=\"");
         output.write(String.valueOf(crew.getPiloting(pos)));

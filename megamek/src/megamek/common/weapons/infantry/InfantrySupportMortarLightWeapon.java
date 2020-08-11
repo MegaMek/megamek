@@ -33,8 +33,8 @@ public class InfantrySupportMortarLightWeapon extends InfantryWeapon {
 		super();
 
 		name = "Mortar (Light)";
-		setInternalName(name);
-		addLookupName("InfantryLightMortar");
+		setInternalName("InfantryLightMortar");
+		addLookupName(name);
 		addLookupName("Infantry Light Mortar");
 		ammoType = AmmoType.T_INFANTRY;
 		cost = 1400;

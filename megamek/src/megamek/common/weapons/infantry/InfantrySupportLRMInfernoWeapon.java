@@ -35,7 +35,8 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
         super();
 
         name = "LRM Launcher (Corean Farshot) w/Inferno";
-        setInternalName(name);
+        setInternalName("InfantryLRMInferno");
+        addLookupName(name);
         addLookupName("InfantryInfernoLRM");
         addLookupName("LRM Inferno Launcher");
         addLookupName("LRM Inferno Launcher (FarShot)");

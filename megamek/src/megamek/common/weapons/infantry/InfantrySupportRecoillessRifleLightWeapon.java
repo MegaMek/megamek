@@ -33,8 +33,8 @@ public class InfantrySupportRecoillessRifleLightWeapon extends InfantryWeapon {
 		super();
 
 		name = "Recoilless Rifle (Light)";
-		setInternalName(name);
-		addLookupName("InfantryLRR");
+		setInternalName("InfantryLRR");
+		addLookupName(name);
 		addLookupName("InfantryLightRecoillessRifle");
 		addLookupName("Infantry Light Recoilless Rifle");
 		ammoType = AmmoType.T_INFANTRY;

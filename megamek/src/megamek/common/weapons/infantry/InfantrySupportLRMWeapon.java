@@ -35,8 +35,8 @@ public class InfantrySupportLRMWeapon extends InfantryWeapon {
         super();
 
         name = "LRM Launcher (Corean Farshot)";
-        setInternalName(name);
-        addLookupName("InfantryLRM");
+        setInternalName("InfantryLRM");
+        addLookupName(name);
         addLookupName("LRM Launcher");
         addLookupName("LRM Launcher (FarShot)");
         ammoType = AmmoType.T_INFANTRY;

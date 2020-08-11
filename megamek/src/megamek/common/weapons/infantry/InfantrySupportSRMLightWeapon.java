@@ -33,8 +33,8 @@ public class InfantrySupportSRMLightWeapon extends InfantryWeapon {
 		super();
 
 		name = "SRM Launcher (Light)";
-		setInternalName(name);
-		addLookupName("InfantrySRMLight");
+		setInternalName("InfantrySRMLight");
+		addLookupName(name);
 		addLookupName("InfantrySRM");
 		addLookupName("Light SRM Launcher");
 		ammoType = AmmoType.T_INFANTRY;

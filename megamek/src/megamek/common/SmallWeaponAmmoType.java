@@ -31,7 +31,12 @@ public class SmallWeaponAmmoType extends AmmoType {
         ammoType = T_INFANTRY;
         setInternalName(generateInternalName(weapon));
         name = weapon.name + " Ammo";
-        munitionType = M_STANDARD;
+        if (weapon.getInternalName().endsWith("Inferno")) {
+            munitionType = M_INFERNO;
+            name += " (Inferno)";
+        } else {
+            munitionType = M_STANDARD;
+        }
         tonnage = weapon.getAmmoWeight();
         cost = weapon.getAmmoCost();
         shots = weapon.getShots();
@@ -41,7 +46,7 @@ public class SmallWeaponAmmoType extends AmmoType {
     }
 
     private String generateInternalName(EquipmentType weapon) {
-        return weapon.getInternalName() + " Ammo";
+        return weapon.getInternalName().replace("Inferno", "") + " Ammo";
     }
 
     public int getBursts() {

@@ -33,8 +33,8 @@ public class InfantrySupportRecoillessRifleHeavyWeapon extends InfantryWeapon {
 		super();
 
 		name = "Recoilless Rifle (Heavy)";
-		setInternalName(name);
-		addLookupName("InfantryHRR");
+		setInternalName("InfantryHRR");
+		addLookupName(name);
 		addLookupName("InfantryHeavyRecoillessRifle");
 		addLookupName("Infantry Heavy Recoilless Rifle");
 		ammoType = AmmoType.T_INFANTRY;

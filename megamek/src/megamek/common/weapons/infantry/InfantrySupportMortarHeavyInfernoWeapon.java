@@ -33,8 +33,8 @@ public class InfantrySupportMortarHeavyInfernoWeapon extends InfantryWeapon {
 		super();
 
 		name = "Mortar (Heavy) - Inferno";
-		setInternalName(name);
-		addLookupName("InfantryHeavyMortarInferno");
+		setInternalName("InfantryHeavyMortarInferno");
+		addLookupName(name);
 		addLookupName("Infantry Heavy Inferno Mortar");
 		ammoType = AmmoType.T_INFANTRY;
 		cost = 5000;

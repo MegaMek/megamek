@@ -33,7 +33,8 @@ public class InfantrySupportOneShotMRMInfernoWeapon extends InfantryWeapon {
 		super();
 
 		name = "MRM Launcher w/Inferno";
-		setInternalName(name);
+		setInternalName("InfantryOneShotMRMInferno");
+		addLookupName(name);
 		addLookupName("InfantryInfernoMRM");
 		addLookupName("InfantryOneShotInfernoMRM");
 		addLookupName("Infantry One-Shot MRM Inferno Launcher");

@@ -33,8 +33,8 @@ public class InfantrySupportSRMHeavyWeapon extends InfantryWeapon {
 		super();
 
 		name = "SRM Launcher (Hvy, One-Shot)";
-		setInternalName(name);
-		addLookupName("InfantryHeavySRM");
+		setInternalName("InfantryHeavySRM");
+		addLookupName(name);
 		addLookupName("Infantry Heavy SRM Launcher");
 		ammoType = AmmoType.T_INFANTRY;
 		cost = 3000;

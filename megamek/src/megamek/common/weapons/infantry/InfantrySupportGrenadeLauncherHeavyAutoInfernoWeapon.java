@@ -33,8 +33,8 @@ public class InfantrySupportGrenadeLauncherHeavyAutoInfernoWeapon extends Infant
 		super();
 
 		name = "Grenade Launcher (Heavy Auto) w/Inferno";
-		setInternalName(name);
-		addLookupName("InfantryHeavyAutoGrenadeLauncherInferno");
+		setInternalName("InfantryHeavyAutoGrenadeLauncherInferno");
+		addLookupName(name);
 		addLookupName("nfantry Inferno Heavy Auto Grenade Launcher");
 		ammoType = AmmoType.T_INFANTRY;
 		cost = 4500;

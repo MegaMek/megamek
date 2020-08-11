@@ -33,7 +33,8 @@ public class InfantrySupportRecoillessRifleMediumInfernoWeapon extends InfantryW
 		super();
 
 		name = "Recoilless Rifle (Medium) - Inferno";
-		setInternalName(name);
+		setInternalName("InfantryMRRInferno");
+		addLookupName(name);
 		addLookupName("InfantryInfernoMRR");
 		addLookupName("InfantryMediumRecoillessRifleInferno");
 		addLookupName("Infantry InfernoMediumRecoillessRifle");

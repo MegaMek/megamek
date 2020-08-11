@@ -33,7 +33,8 @@ public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
 		super();
 
 		name = "Grenade (Mini) (Inferno)";
-		setInternalName(name);
+		setInternalName("InfantryMiniGrenadeInferno");
+		addLookupName(name);
 		addLookupName("InfantryMiniInfernoGrenade");
 		addLookupName("Mini Inferno Grenades");
 		ammoType = AmmoType.T_NA;

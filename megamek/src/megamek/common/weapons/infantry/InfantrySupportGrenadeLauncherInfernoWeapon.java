@@ -33,8 +33,8 @@ public class InfantrySupportGrenadeLauncherInfernoWeapon extends InfantryWeapon 
 		super();
 
 		name = "Grenade Launcher - Inferno";
-		setInternalName(name);
-		addLookupName("InfantryGrenadeLauncherInferno");
+		setInternalName("InfantryGrenadeLauncherInferno");
+		addLookupName(name);
 		addLookupName("InfantryInfernoGrenadeLauncher");
 		addLookupName("Infantry Inferno Grenade Launcher");
 		ammoType = AmmoType.T_INFANTRY;

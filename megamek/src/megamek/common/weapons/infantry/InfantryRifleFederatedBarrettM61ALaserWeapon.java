@@ -33,8 +33,8 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
 		super();
 
 		name = "Laser Rifle (Federated-Barrett M61A)";
-		setInternalName(name);
-		addLookupName("InfantryFederatedBarrettM61A");
+		setInternalName("InfantryFederatedBarrettM61A");
+		addLookupName(name);
 		addLookupName("Federated Barrett M61A");
 		ammoType = AmmoType.T_INFANTRY;
 		cost = 2150;

@@ -33,8 +33,8 @@ public class InfantrySupportSRMStandardWeapon extends InfantryWeapon {
 		super();
 
 		name = "SRM Launcher (Std, Two-Shot)";
-		setInternalName(name);
-		addLookupName("InfantryStandardSRM");
+		setInternalName("InfantryStandardSRM");
+		addLookupName(name);
 		addLookupName("Infantry2ShotSRM");
 		addLookupName("Infantry Two-Shot SRM Launcher");
 		ammoType = AmmoType.T_INFANTRY;

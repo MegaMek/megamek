@@ -83,6 +83,7 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
@@ -1472,7 +1473,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void doAlertDialog(String title, String message) {
         JTextPane textArea = new JTextPane();
         ReportDisplay.setupStylesheet(textArea);
-
+        BASE64ToolKit toolKit = new BASE64ToolKit();
+        textArea.setEditorKit(toolKit);
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,

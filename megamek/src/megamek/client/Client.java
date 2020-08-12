@@ -136,7 +136,7 @@ public class Client implements IClientCommandHandler {
     private DirectoryItems camos;
 
     //Hashtable for storing image tags containing base64Text src
-    Hashtable<Integer, String> cache;
+    Hashtable<Integer, String> imgCache;
 
     ConnectionHandler packetUpdate;
 
@@ -1113,33 +1113,32 @@ public class Client implements IClientCommandHandler {
             report.append(r.getText());
         }
 
-        String text = report.toString();
-
         Set<Integer> set = new HashSet<Integer>();
         //find id stored between two |, e.g. |1| returns 1
         Pattern p = Pattern.compile("\\|(.*?)\\|");
-        Matcher m = p.matcher(text);
+        Matcher m = p.matcher(report.toString());
         //add all instances to a hashset to prevent duplicates
         while(m.find()){
             set.add(Integer.parseInt(m.group(1)));
         }
 
+        String updatedReport = report.toString();
         //loop through the hashset of unique ids and replace the ids with img tags
         for (int i : set) {
-            text = text.replace("|" + i + "|", getCachedImage(i));
+            updatedReport = updatedReport.replace("|" + i + "|", getCachedImageData(i));
         }
 
-        return text;
+        return updatedReport;
     }
 
     /**
      * get img tag for unit id
      */
-    private String getCachedImage(int id){
-        if(!cache.containsKey(id)) {
+    private String getCachedImageData(int id){
+        if(!imgCache.containsKey(id)) {
             return null;
         }
-        return cache.get(id);
+        return imgCache.get(id);
     }
 
     /**
@@ -1147,8 +1146,8 @@ public class Client implements IClientCommandHandler {
      */
     private void cacheImageData(Entity entity){
 
-        if (cache == null) {
-            cache = new Hashtable<>();
+        if (imgCache == null) {
+            imgCache = new Hashtable<>();
 
             //get the camo images
             try {
@@ -1163,22 +1162,24 @@ public class Client implements IClientCommandHandler {
         }
 
         //create the image with color and camo, encode as base64 and store in cache
-        if(entity != null && !cache.containsKey(entity.getId())) {
+        if(entity != null && !imgCache.containsKey(entity.getId())) {
             Image base = mechTileset.imageFor(entity, null, -1);
             IPlayer player = entity.getOwner();
 
-            Image camo;
-            if (camos != null && entity.getCamoFileName() != null) {
+            Image camo = null;
+            if (camos != null) {
                 camo = getCamo(entity.getCamoCategory(), entity.getCamoFileName());
-            } else {
-                camo = getCamo(entity.getCamoCategory(), entity.getCamoFileName());
+                if(camo == null){
+                    camo = getCamo(player.getCamoCategory(), player.getCamoFileName());
+                }
             }
 
             int tint = PlayerColors.getColorRGB(player.getColorIndex());
             EntityImage entityImage = new EntityImage(base, tint, camo, new JLabel(), entity);
             entityImage.loadFacings();
-            Image composite = entityImage.getFacing(3);
+            Image composite = entityImage.getFacing(0);
 
+            //try to encode the image into base64, then create an img tag
             try
             {
                 String base64Text;
@@ -1187,8 +1188,8 @@ public class Client implements IClientCommandHandler {
                 baos.flush();
                 base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
                 baos.close();
-                String img = "<img src='data:image/png;base64," + base64Text + "'>";
-                cache.put(entity.getId(), img);
+                String img = "<img class='test' src='data:image/png;base64," + base64Text + "'>";
+                imgCache.put(entity.getId(), img);
             }
             catch (final IOException ioe)
             {

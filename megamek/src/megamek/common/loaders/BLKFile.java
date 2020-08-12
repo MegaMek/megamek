@@ -24,6 +24,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class BLKFile {
 
@@ -224,7 +225,8 @@ public class BLKFile {
                                 mount.setFacing(facing);
                             }
                         }
-                        if (etype.isVariableSize()) {
+                        if (etype.isVariableSize()
+                                || (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon))) {
                             if (size == 0.0) {
                                 size = getLegacyVariableSize(equipName);
                             }
@@ -1065,7 +1067,8 @@ public class BLKFile {
             name += ":Shots" + m.getBaseShotsLeft() + "#";
         } else if (m.getEntity() instanceof Protomech && (m.getType() instanceof AmmoType)) {
             name += " (" + m.getBaseShotsLeft() + ")";
-        } else if (m.getType().isVariableSize()) {
+        } else if (m.getType().isVariableSize()
+                || (m.getEntity().isSupportVehicle() && (m.getType() instanceof InfantryWeapon))) {
             name += ":SIZE:" + m.getSize();
         }
         return name;

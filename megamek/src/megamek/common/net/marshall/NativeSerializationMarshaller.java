@@ -49,7 +49,7 @@ class NativeSerializationMarshaller extends PacketMarshaller {
      */
     @Override
     public Packet unmarshall(InputStream stream) throws Exception {
-        ObjectInputStream in = new SerialKiller(stream, "mmconf/serialkiller.xml");
+        ObjectInputStream in = new SerialKiller(stream, getClass().getResource("/megamek/serialkiller.xml").toString());
         int command = in.readInt();
         Object[] data = (Object[]) in.readObject();
         return new Packet(command, data);

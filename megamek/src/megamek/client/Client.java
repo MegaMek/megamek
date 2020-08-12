@@ -956,12 +956,14 @@ public class Client implements IClientCommandHandler {
         game.setEntitiesVector(newEntities);
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
+            for(Entity e: newOutOfGame) {
+                cacheImageData(e);
+            }
         }
         //cache the image data for the entities
-        for(Entity e: newEntities)
+        for(Entity e: newEntities) {
             cacheImageData(e);
-        for(Entity e: newOutOfGame)
-            cacheImageData(e);
+        }
     }
 
     /**

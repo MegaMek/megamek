@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 
 import com.thoughtworks.xstream.XStream;
@@ -46,7 +46,10 @@ import megamek.client.commands.SitrepCommand;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
+import megamek.client.ui.swing.tileset.EntityImage;
 import megamek.client.ui.swing.tileset.MechTileset;
+import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -76,6 +79,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
+import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.server.SmokeCloud;
 
 /**
@@ -127,6 +131,12 @@ public class Client implements IClientCommandHandler {
 
     //get the image data
     private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
+
+    // keep track of camo images
+    private DirectoryItems camos;
+
+    //Hashtable for storing image tags containing base64Text src
+    Hashtable<Integer, String> cache;
 
     ConnectionHandler packetUpdate;
 
@@ -942,12 +952,16 @@ public class Client implements IClientCommandHandler {
     protected void receiveEntities(Packet c) {
         List<Entity> newEntities = (List<Entity>) c.getObject(0);
         List<Entity> newOutOfGame = (List<Entity>) c.getObject(1);
-
         // Replace the entities in the game.
         game.setEntitiesVector(newEntities);
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
         }
+        //cache the image data for the entities
+        for(Entity e: newEntities)
+            cacheImageData(e);
+        for(Entity e: newOutOfGame)
+            cacheImageData(e);
     }
 
     /**
@@ -1087,6 +1101,7 @@ public class Client implements IClientCommandHandler {
         }
     }
 
+
     // Should be private?
     public String receiveReport(Vector<Report> v) {
         if (v == null) {
@@ -1109,30 +1124,98 @@ public class Client implements IClientCommandHandler {
             set.add(Integer.parseInt(m.group(1)));
         }
 
-        //loop through the hashset of unique ids
+        //loop through the hashset of unique ids and replace the ids with img tags
         for (int i : set) {
-            //get the entity and image for it
-            Entity e = game.getEntityFromAllSources(i);
-            Image base = mechTileset.imageFor(e, null, -1);
-            //attempt to convert the image to Base64, then set it as src for img tag
+            text = text.replace("|" + i + "|", getCachedImage(i));
+        }
+
+        return text;
+    }
+
+    /**
+     * get img tag for unit id
+     */
+    private String getCachedImage(int id){
+        if(!cache.containsKey(id)) {
+            return null;
+        }
+        return cache.get(id);
+    }
+
+    /**
+     * Hashtable for storing image tags containing base64Text src
+     */
+    private void cacheImageData(Entity entity){
+
+        if (cache == null) {
+            cache = new Hashtable<>();
+
+            //get the camo images
+            try {
+                camos = new DirectoryItems(
+                        Configuration.camoDir(),
+                        "", //$NON-NLS-1$
+                        ScaledImageFileFactory.getInstance()
+                );
+            } catch (Exception ex) {
+                camos = null;
+            }
+        }
+
+        //create the image with color and camo, encode as base64 and store in cache
+        if(entity != null && !cache.containsKey(entity.getId())) {
+            Image base = mechTileset.imageFor(entity, null, -1);
+            IPlayer player = entity.getOwner();
+
+            Image camo;
+            if (camos != null && entity.getCamoFileName() != null) {
+                camo = getCamo(entity.getCamoCategory(), entity.getCamoFileName());
+            } else {
+                camo = getCamo(entity.getCamoCategory(), entity.getCamoFileName());
+            }
+
+            int tint = PlayerColors.getColorRGB(player.getColorIndex());
+            EntityImage entityImage = new EntityImage(base, tint, camo, new JLabel(), entity);
+            entityImage.loadFacings();
+            Image composite = entityImage.getFacing(3);
+
             try
             {
                 String base64Text;
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write((RenderedImage)base, "png", baos);
+                ImageIO.write((RenderedImage)composite, "png", baos);
                 baos.flush();
                 base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
                 baos.close();
                 String img = "<img src='data:image/png;base64," + base64Text + "'>";
-                text = text.replace("|" + e.getId() + "|", img);
+                cache.put(entity.getId(), img);
             }
             catch (final IOException ioe)
             {
                 throw new UncheckedIOException(ioe);
             }
         }
+    }
 
-        return text;
+    /** Returns the camo pattern, if possible or null. */
+    private Image getCamo(String category, String name) {
+        // Return a null if no camo
+        if ((category == null) || category.equals(IPlayer.NO_CAMO)) {
+            return null;
+        }
+
+        // Try to get the camo file.
+        Image camo = null;
+        try {
+            // Translate the root camo directory name.
+            if (IPlayer.ROOT_CAMO.equals(category)) {
+                category = ""; //$NON-NLS-1$
+            }
+            camo = (Image) camos.getItem(category, name);
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        return camo;
     }
 
     /**

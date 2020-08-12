@@ -78,7 +78,7 @@ public class BASE64ImageView extends ImageView {
         if (!isBase64Encoded(src)) {
             return null;
         }
-        return src.substring(src.indexOf("base64,") + 7, src.length() - 1);
+        return src.substring(src.indexOf("base64,") + 7);
     }
 
 }

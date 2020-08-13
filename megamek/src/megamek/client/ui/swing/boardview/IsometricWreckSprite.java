@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
+import megamek.common.Coords;
 import megamek.common.Entity;
 
 /**
@@ -71,5 +72,13 @@ class IsometricWreckSprite extends AbstractWreckSprite {
 
     public Entity getEntity() {
         return entity;
+    }
+    
+    public Coords getPosition() {
+        if (secondaryPos == -1) {
+            return entity.getPosition();
+        } else {
+            return entity.getSecondaryPositions().get(secondaryPos);
+        }
     }
 }

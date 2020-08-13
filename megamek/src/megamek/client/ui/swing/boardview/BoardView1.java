@@ -1913,7 +1913,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             Graphics g, ArrayList<IsometricWreckSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricWreckSprite sprite : spriteArrayList) {
-            Coords cp = sprite.getEntity().getPosition();
+            Coords cp = sprite.getPosition();
             if (cp.equals(c) && view.intersects(sprite.getBounds())
                 && !sprite.isHidden()) {
                 if (!sprite.isReady()) {

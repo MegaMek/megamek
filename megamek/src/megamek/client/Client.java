@@ -1153,7 +1153,7 @@ public class Client implements IClientCommandHandler {
      * Hashtable for storing image tags containing base64Text src
      */
     private void cacheImageData(Entity entity){
-
+        
         if(entity == null) {
             System.out.println("Null entity reference");
             return;

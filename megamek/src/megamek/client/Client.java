@@ -1154,12 +1154,15 @@ public class Client implements IClientCommandHandler {
      */
     private void cacheImageData(Entity entity){
 
-        if (imgCache == null) {
-            imgCache = new Hashtable<>();
+        if(entity == null) {
+            System.out.println("Null entity");
+            return;
         }
 
-        //remove images that should be regenerated
-        if(imgCache.containsKey(entity.getId())){
+        if (imgCache == null) {
+            imgCache = new Hashtable<>();
+        }else if (imgCache.containsKey(entity.getId())) {
+            //remove images that should be regenerated
             imgCache.remove(entity.getId());
         }
 
@@ -1186,10 +1189,11 @@ public class Client implements IClientCommandHandler {
      * Gets the current mech image
      */
     private Image getTargetImage(Entity e){
-        if(e.isDestroyed())
+        if(e.isDestroyed()) {
             return bv.getTilesetManager().wreckMarkerFor(e, -1);
-        else
+        }else {
             return bv.getTilesetManager().imageFor(e);
+        }
     }
 
     /**

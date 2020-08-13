@@ -113,7 +113,6 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.EntityVisibilityUtils;
 import megamek.common.Flare;
-import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
@@ -5215,10 +5214,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 tileManager.reloadImage(en);
             }
             
-            // for units that have been blown up or damaged, force a reload
+            // for units that have been blown up, damaged or ejected, force a reload
             if((e.getOldEntity() != null) &&
                     ((en.getDamageLevel() != e.getOldEntity().getDamageLevel()) ||
-                    (en.isDestroyed() != e.getOldEntity().isDestroyed()))) {
+                    (en.isDestroyed() != e.getOldEntity().isDestroyed()) ||
+                    (en.getCrew().isEjected() != e.getOldEntity().getCrew().isEjected()))) {
                 tileManager.reloadImage(en);
             }
             

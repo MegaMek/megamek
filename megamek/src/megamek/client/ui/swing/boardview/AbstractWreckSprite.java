@@ -23,6 +23,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.EntitySprite.Positioning;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.Entity;
 import megamek.common.Terrains;
@@ -46,9 +47,18 @@ public abstract class AbstractWreckSprite extends Sprite {
     
     @Override
     public Rectangle getBounds() {
-        Rectangle tempBounds = new Rectangle(bv.hex_size).union(modelRect);
-        tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
-        bounds = tempBounds;
+        // Start with the hex and add the label
+        bounds = new Rectangle(0,0,bv.hex_size.width, bv.hex_size.height);
+        
+        // Move to board position, save this origin for correct drawing
+        Point hexOrigin = bounds.getLocation();
+        Point ePos;
+        if (secondaryPos == -1) {
+            ePos = bv.getHexLocation(entity.getPosition());
+        } else {
+            ePos = bv.getHexLocation(entity.getSecondaryPositions().get(secondaryPos));
+        }
+        bounds.setLocation(hexOrigin.x + ePos.x, hexOrigin.y + ePos.y);
 
         return bounds;
     }
@@ -82,26 +92,29 @@ public abstract class AbstractWreckSprite extends Sprite {
         }
 
         // draw the 'destroyed decal' where appropriate
-        boolean useBottomLayer = EntityWreckHelper.displayDestroyedDecal(entity);
+        boolean displayDestroyedDecal = EntityWreckHelper.displayDestroyedDecal(entity);
         
-        if(useBottomLayer) {
+        if(displayDestroyedDecal) {
             Image destroyed = bv.tileManager.bottomLayerWreckMarkerFor(entity, 0);
             if (null != destroyed) {
                 graph.drawImage(destroyed, 0, 0, this);
             }
+        }
         
+        // draw the 'fuel leak' decal where appropriate
+        boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
         
-            // draw the 'fuel leak' decal where appropriate
-            boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
-            
-            if(drawFuelLeak) {
-                Image fuelLeak = bv.tileManager.bottomLayerFuelLeakMarkerFor(entity);
-                if (null != fuelLeak) {
-                    graph.drawImage(fuelLeak, 0, 0, this);
-                }
+        if(drawFuelLeak) {
+            Image fuelLeak = bv.tileManager.bottomLayerFuelLeakMarkerFor(entity);
+            if (null != fuelLeak) {
+                graph.drawImage(fuelLeak, 0, 0, this);
             }
-            
-            // draw the 'tires' or 'tracks' decal where appropriate
+        }
+        
+        // draw the 'tires' or 'tracks' decal where appropriate
+        boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
+        
+        if(drawMotiveWreckage) {
             Image motiveWreckage = bv.tileManager.bottomLayerMotiveMarkerFor(entity);
             if (null != motiveWreckage) {
                 graph.drawImage(motiveWreckage, 0, 0, this);
@@ -114,7 +127,7 @@ public abstract class AbstractWreckSprite extends Sprite {
         if(EntityWreckHelper.displayDevastation(entity)) {
             wreck = bv.tileManager.getCraterFor(entity, secondaryPos);
         } else {
-            wreck = useBottomLayer ? 
+            wreck = displayDestroyedDecal ? 
                         bv.tileManager.imageFor(entity, secondaryPos) :
                         bv.tileManager.wreckMarkerFor(entity, secondaryPos);
         }

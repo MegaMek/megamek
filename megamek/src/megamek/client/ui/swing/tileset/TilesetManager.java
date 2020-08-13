@@ -23,8 +23,12 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Polygon;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageProducer;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 
 import megamek.client.ui.ITilesetManager;
@@ -35,6 +39,7 @@ import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.util.RotateFilter;
 import megamek.common.*;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.preference.*;
@@ -52,6 +57,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     
     public static final String DIR_NAME_WRECKS = "wrecks"; //$NON-NLS-1$
     public static final String DIR_NAME_BOTTOM_DECALS = "bottomdecals";
+    public static final String FILENAME_PREFIX_WRECKS = "destroyed_decal_";
+    public static final String FILENAME_SUFFIX_WRECKS_ASSAULTPLUS = "assaultplus";
+    public static final String FILENAME_SUFFIX_WRECKS_ULTRALIGHT = "ultralight";
 
     public static final String FILENAME_DEFAULT_HEX_SET = "defaulthexset.txt"; //$NON-NLS-1$
 
@@ -83,6 +91,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private List<EntityImage> mechImageList = new ArrayList<EntityImage>();
     private Map<ArrayList<Integer>, EntityImage> mechImages = new HashMap<ArrayList<Integer>, EntityImage>();
     private Map<String, Image> wreckageDecals = new HashMap<>();
+    private Map<String, Integer> wreckageDecalCount;
 
     // hex images
     private HexTileset hexTileset;
@@ -116,6 +125,32 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                     "", //$NON-NLS-1$
                     ScaledImageFileFactory.getInstance()
             );
+            
+            String wreckDecalPath = String.format("%s/%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
+            File wreckDir = new File(Configuration.unitImagesDir(), wreckDecalPath);
+            
+            int bigWreckCount = wreckDir.list(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.startsWith(FILENAME_PREFIX_WRECKS) && 
+                            name.contains(FILENAME_SUFFIX_WRECKS_ASSAULTPLUS) &&
+                            name.endsWith(".png");
+                }
+            }).length;
+            
+            int tinyWreckCount = wreckDir.list(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.startsWith(FILENAME_PREFIX_WRECKS) && 
+                            name.contains(FILENAME_SUFFIX_WRECKS_ULTRALIGHT) &&
+                            name.endsWith(".png");
+                }
+            }).length;
+
+            wreckageDecalCount = new HashMap<>();
+            wreckageDecalCount.put(FILENAME_SUFFIX_WRECKS_ULTRALIGHT, tinyWreckCount);
+            wreckageDecalCount.put(FILENAME_SUFFIX_WRECKS_ASSAULTPLUS, bigWreckCount);
+            
         } catch (Exception e) {
             camos = null;
         }
@@ -204,9 +239,12 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     /** Retrieves the "destroyed" decoration for the given entity */
     public Image bottomLayerWreckMarkerFor(Entity entity, int secondaryPos) {
         Image marker = null;
-        
+
+        // wreck filenames are in the format destroyed_decal_x_weightsuffix, where x is 1 through however many bottom splats we have
+        // in the directory. To make sure we don't swap splats between entities, we make it depend on entity ID        
         String suffix = EntityWreckHelper.getWeightSuffix(entity);
-        String filename = String.format("destroyed_decal_%s.png", suffix);
+        int wreckNum = (entity.getId() % this.wreckageDecalCount.get(suffix)) + 1;
+        String filename = String.format("%s%d_%s.png", FILENAME_PREFIX_WRECKS, wreckNum, suffix);
         String path = String.format("%s/%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
         
         if(wreckageDecals.containsKey(filename)) {
@@ -227,12 +265,23 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         String filename = String.format("fuelleak_decal_%s.png", suffix);
         String path = String.format("%s/%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
         
-        if(wreckageDecals.containsKey(filename)) {
-            marker = wreckageDecals.get(filename);
-        } else {
-            marker = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
-            wreckageDecals.put(filename, marker);
+        int rotationKey = entity.getId() % 4;
+        String imageKey = String.format("%s%s", filename, rotationKey);
+        
+        if(!wreckageDecals.containsKey(imageKey)) {
+            Image baseImage = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
+            
+            for(double x = 0; x < 4; x++) {
+                RotateFilter rf = new RotateFilter(x * 90);
+                String newImageKey = String.format("%s%s", filename, (int) x);
+                
+                ImageProducer ip = new FilteredImageSource(baseImage.getSource(), rf);
+                Image resultImage = Toolkit.getDefaultToolkit().createImage(ip);
+                wreckageDecals.put(newImageKey, resultImage);
+            }
         }
+        
+        marker = wreckageDecals.get(imageKey);
         
         return marker;
     }
@@ -243,16 +292,28 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         
         String weightSuffix = EntityWreckHelper.getWeightSuffix(entity);
         String motivePrefix = EntityWreckHelper.getMotivePrefix(entity);
+        
         if(motivePrefix != null) {
             String filename = String.format("%s_decal_%s.png", motivePrefix, weightSuffix);
             String path = String.format("%s/%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
             
-            if(wreckageDecals.containsKey(filename)) {
-                marker = wreckageDecals.get(filename);
-            } else {
-                marker = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
-                wreckageDecals.put(filename, marker);
+            int rotationKey = entity.getId() % 4;
+            String imageKey = String.format("%s%s", filename, rotationKey);
+            
+            if(!wreckageDecals.containsKey(imageKey)) {
+                Image baseImage = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
+                
+                for(double x = 0; x < 4; x++) {
+                    RotateFilter rf = new RotateFilter(x * 90);
+                    String newImageKey = String.format("%s%s", filename, (int) x);
+                    
+                    ImageProducer ip = new FilteredImageSource(baseImage.getSource(), rf);
+                    Image resultImage = Toolkit.getDefaultToolkit().createImage(ip);
+                    wreckageDecals.put(newImageKey, resultImage);
+                }
             }
+            
+            marker = wreckageDecals.get(imageKey);
         }
         
         return marker;

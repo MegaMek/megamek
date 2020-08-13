@@ -134,22 +134,48 @@ public class EntityImage {
         this.camo = camo;
         parent = comp;
         this.wreck = wreck;
-        // hack: gun emplacements don't show up as crippled when destroyed
-        this.dmgLevel = (entity instanceof GunEmplacement) && entity.isDestroyed() ? 
-                Entity.DMG_CRIPPLED :
-                entity.getDamageLevel(false);
+        this.dmgLevel = calculateDamageLevel(entity);
         // hack: gun emplacements are pretty beefy but have weight 0
         this.weight = entity instanceof GunEmplacement ?
                 SMOKE_THREE + 1 : entity.getWeight();
         isInfantry = entity instanceof Infantry;
         isTank = entity instanceof Tank;
         isPreview = preview;
-        isSlim = (entity instanceof Tank && !(entity instanceof GunEmplacement)) || (entity instanceof Aero);
+        isSlim = (isTank && !(entity instanceof GunEmplacement));// || (entity instanceof Aero);
         isVerySlim = entity instanceof VTOL;
         pos = secondaryPos;
         isSingleHex = secondaryPos == -1;
         decal = getDamageDecal(entity, secondaryPos);
         smoke = getSmokeImage(entity, secondaryPos);
+    }
+    
+    /**
+     * Worker function that calculates the entity's damage level for the purposes of displaying damage 
+     * to avoid particularly dumb-looking situations
+     */
+    private int calculateDamageLevel(Entity entity) {
+        // gun emplacements don't show up as crippled when destroyed, which leads to them looking pristine
+        if((entity instanceof GunEmplacement) && entity.isDestroyed()) {
+            return Entity.DMG_CRIPPLED;
+        }
+        
+        // aerospace fighters where the pilot ejects look pretty dumb without any damage decals
+        // so let's give them at least some damage
+        if(entity.isAirborne() && entity.getCrew().isEjected()) {
+            return Math.max(Entity.DMG_HEAVY, entity.getDamageLevel(false));
+        }
+        
+        int calculatedDamageLevel = entity.getDamageLevel();
+        
+        // crippled entities may be "crippled" due to harmless weapon jams or being out of ammo but 
+        // not having taken any actual damage
+        if(calculatedDamageLevel == Entity.DMG_CRIPPLED) {
+            if(entity.getArmorRemainingPercent() == 1.0) {
+                calculatedDamageLevel = Entity.DMG_NONE;
+            }
+        }
+        
+        return calculatedDamageLevel;
     }
 
     public Image getCamo() {
@@ -404,7 +430,7 @@ public class EntityImage {
     /** Returns the damage decal based on damage level. */
     private Image getDamageDecal(Entity entity, int pos) {
         try {
-            switch (entity.getDamageLevel(false)) {
+            switch (dmgLevel) {
             case Entity.DMG_LIGHT:
                 return getIM(PATH_LIGHT, entity.getShortName(), pos);
             case Entity.DMG_MODERATE:
@@ -412,16 +438,8 @@ public class EntityImage {
             case Entity.DMG_HEAVY:
                 return getIM(PATH_HEAVY, entity.getShortName(), pos);
             case Entity.DMG_CRIPPLED:
-                // units that just run out of ammo without getting shot at shouldn't show damage
-                return (entity.getArmorRemainingPercent() < 100) ?
-                        getIM(PATH_CRIPPLED, entity.getShortName(), pos) : null;
+                return getIM(PATH_CRIPPLED, entity.getShortName(), pos);
             default: // DMG_NONE:
-                // hack: gun emplacements show up as "undamaged" when they are destroyed
-                if((entity instanceof GunEmplacement) &&
-                        entity.isDestroyed()) {
-                    return getIM(PATH_CRIPPLED, entity.getShortName(), pos);
-                }
-                
                 return null;
             }
         } catch (Exception e) {

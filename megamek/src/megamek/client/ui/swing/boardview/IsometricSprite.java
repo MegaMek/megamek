@@ -161,6 +161,9 @@ class IsometricSprite extends Sprite {
         }
     }
     
+    /**
+     * Worker function that draws "immobile" decals.
+     */
     public void drawImmobileElements(Graphics graph, int x, int y, ImageObserver observer) {
         // draw the 'fuel leak' decal where appropriate
         boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
@@ -173,9 +176,13 @@ class IsometricSprite extends Sprite {
         }
         
         // draw the 'tires' or 'tracks' decal where appropriate
-        Image motiveWreckage = bv.getScaledImage(bv.tileManager.bottomLayerMotiveMarkerFor(entity), true);
-        if (null != motiveWreckage) {
-            graph.drawImage(motiveWreckage, x, y, observer);
+        boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
+        
+        if(drawMotiveWreckage) {
+            Image motiveWreckage = bv.getScaledImage(bv.tileManager.bottomLayerMotiveMarkerFor(entity), true);
+            if (null != motiveWreckage) {
+                graph.drawImage(motiveWreckage, x, y, observer);
+            }
         }
     }
 

@@ -349,9 +349,13 @@ class EntitySprite extends Sprite {
                 }
                 
                 // draw the 'tires' or 'tracks' decal where appropriate
-                Image motiveWreckage = bv.getScaledImage(bv.tileManager.bottomLayerMotiveMarkerFor(entity), true);
-                if (null != motiveWreckage) {
-                    graph.drawImage(motiveWreckage, 0, 0, this);
+                boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
+                
+                if(drawMotiveWreckage) {
+                    Image motiveWreckage = bv.getScaledImage(bv.tileManager.bottomLayerMotiveMarkerFor(entity), true);
+                    if (null != motiveWreckage) {
+                        graph.drawImage(motiveWreckage, 0, 0, this);
+                    }
                 }
                 
                 graph.drawImage(bv.getScaledImage(bv.tileManager.imageFor(entity, secondaryPos), true),

@@ -30,6 +30,9 @@ import megamek.common.Entity;
  */
 class IsometricWreckSprite extends AbstractWreckSprite {
 
+    /**
+     * Isometric wreck sprite constructor, calculates boundaries
+     */
     public IsometricWreckSprite(BoardView1 boardView1, final Entity entity, int secondaryPos) {
         super(boardView1);
         this.entity = entity;
@@ -40,7 +43,7 @@ class IsometricWreckSprite extends AbstractWreckSprite {
         Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
         modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
                 shortName) + 1, bv.getFontMetrics(font).getAscent());
-        int altAdjust = 0;
+        /*int altAdjust = 0;
         if (bv.useIsometric()
                 && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
             altAdjust = (int) (bv.DROPSHDW_DIST * bv.scale);
@@ -61,7 +64,7 @@ class IsometricWreckSprite extends AbstractWreckSprite {
         if (entity.getElevation() > 0) {
             tempBounds.y = tempBounds.y - altAdjust;
         }
-        bounds = tempBounds;
+        bounds = tempBounds;*/
         image = null;
     }
 

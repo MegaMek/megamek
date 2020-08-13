@@ -46,8 +46,7 @@ import megamek.client.commands.SitrepCommand;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
-import megamek.client.ui.swing.tileset.EntityImage;
-import megamek.client.ui.swing.tileset.MechTileset;
+import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.common.*;
@@ -77,6 +76,7 @@ import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -128,12 +128,6 @@ public class Client implements IClientCommandHandler {
     private Hashtable<String, Integer> duplicateNameHash = new Hashtable<String, Integer>();
 
     public Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
-
-    //get the image data
-    private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
-
-    // keep track of camo images
-    private DirectoryItems camos;
 
     //Hashtable for storing image tags containing base64Text src
     Hashtable<Integer, String> imgCache;
@@ -231,11 +225,6 @@ public class Client implements IClientCommandHandler {
         registerCommand(new AssignNovaNetworkCommand(this));
         registerCommand(new SitrepCommand(this));
 
-        try {
-            mechTileset.loadFromFile("mechset.txt"); //$NON-NLS-1$
-        }catch (IOException ex){
-            System.out.println(ex);
-        }
         rsg = new RandomSkillsGenerator();
     }
 
@@ -256,6 +245,14 @@ public class Client implements IClientCommandHandler {
         }
     }
 
+    private BoardView1 bv;
+    public void setBoardView(BoardView1 bv){
+        this.bv = bv;
+    }
+
+    //public getBoardView(){
+
+    //}
     /**
      * Attempt to connect to the specified host
      */
@@ -954,6 +951,9 @@ public class Client implements IClientCommandHandler {
         List<Entity> newOutOfGame = (List<Entity>) c.getObject(1);
         // Replace the entities in the game.
         game.setEntitiesVector(newEntities);
+        if(imgCache != null) {
+            imgCache.clear();
+        }
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
             for(Entity e: newOutOfGame) {
@@ -1116,20 +1116,25 @@ public class Client implements IClientCommandHandler {
         }
 
         Set<Integer> set = new HashSet<Integer>();
-        //find id stored between two |, e.g. |1| returns 1
-        Pattern p = Pattern.compile("\\|(.*?)\\|");
+        //find id stored in spans and extract it
+        Pattern p = Pattern.compile("<s(.*?)n>");
         Matcher m = p.matcher(report.toString());
+
         //add all instances to a hashset to prevent duplicates
         while(m.find()){
-            set.add(Integer.parseInt(m.group(1)));
+            String cleanedText = m.group(1).replaceAll("\\D", "");
+            if(cleanedText.length() > 0) {
+                set.add(Integer.parseInt(cleanedText));
+            }
         }
 
         String updatedReport = report.toString();
         //loop through the hashset of unique ids and replace the ids with img tags
         for (int i : set) {
-            updatedReport = updatedReport.replace("|" + i + "|", getCachedImageData(i));
+            if(getCachedImageData(i) != null) {
+                updatedReport = updatedReport.replace("<span id='" +i + "'></span>", getCachedImageData(i));
+            }
         }
-
         return updatedReport;
     }
 
@@ -1150,75 +1155,25 @@ public class Client implements IClientCommandHandler {
 
         if (imgCache == null) {
             imgCache = new Hashtable<>();
-
-            //get the camo images
-            try {
-                camos = new DirectoryItems(
-                        Configuration.camoDir(),
-                        "", //$NON-NLS-1$
-                        ScaledImageFileFactory.getInstance()
-                );
-            } catch (Exception ex) {
-                camos = null;
-            }
         }
 
-        //create the image with color and camo, encode as base64 and store in cache
-        if(entity != null && !imgCache.containsKey(entity.getId())) {
-            Image base = mechTileset.imageFor(entity, null, -1);
-            IPlayer player = entity.getOwner();
-
-            Image camo = null;
-            if (camos != null) {
-                camo = getCamo(entity.getCamoCategory(), entity.getCamoFileName());
-                if(camo == null){
-                    camo = getCamo(player.getCamoCategory(), player.getCamoFileName());
+        if (entity != null && !imgCache.containsKey(entity.getId())) {
+            Image image = ImageUtil.getScaledImage(bv.getTilesetManager().imageFor(entity),  56, 48);
+            if(image!=null) {
+                try {
+                    String base64Text;
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ImageIO.write((RenderedImage) image, "png", baos);
+                    baos.flush();
+                    base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
+                    baos.close();
+                    String img = "<img class='test' src='data:image/png;base64," + base64Text + "'>";
+                    imgCache.put(entity.getId(), img);
+                } catch (final IOException ioe) {
+                    throw new UncheckedIOException(ioe);
                 }
             }
-
-            int tint = PlayerColors.getColorRGB(player.getColorIndex());
-            EntityImage entityImage = new EntityImage(base, tint, camo, new JLabel(), entity);
-            entityImage.loadFacings();
-            Image composite = entityImage.getFacing(0);
-
-            //try to encode the image into base64, then create an img tag
-            try
-            {
-                String base64Text;
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write((RenderedImage)composite, "png", baos);
-                baos.flush();
-                base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
-                baos.close();
-                String img = "<img class='test' src='data:image/png;base64," + base64Text + "'>";
-                imgCache.put(entity.getId(), img);
-            }
-            catch (final IOException ioe)
-            {
-                throw new UncheckedIOException(ioe);
-            }
         }
-    }
-
-    /** Returns the camo pattern, if possible or null. */
-    private Image getCamo(String category, String name) {
-        // Return a null if no camo
-        if ((category == null) || category.equals(IPlayer.NO_CAMO)) {
-            return null;
-        }
-
-        // Try to get the camo file.
-        Image camo = null;
-        try {
-            // Translate the root camo directory name.
-            if (IPlayer.ROOT_CAMO.equals(category)) {
-                category = ""; //$NON-NLS-1$
-            }
-            camo = (Image) camos.getItem(category, name);
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        return camo;
     }
 
     /**

@@ -13,15 +13,35 @@ import java.util.Base64;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+/**
+ *  MegaMek - Copyright (C) 2020 - The MegaMek Team
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 public class BASE64ImageView extends ImageView {
 
     private URL url;
 
+    /**
+     * Returns a unique url for the image. It's created by getting the code location and adding the element to it.
+     * This doesn't strictly need to be an actual url, it just needs to be unique and properly formatted.
+     *
+     * @param elmnt the html element containing the base64 src
+     */
     public BASE64ImageView(Element elmnt) {
         super(elmnt);
         populateImage();
     }
 
+    //Creates a cache of images for each <img> src,
     @SuppressWarnings("unchecked")
     private void populateImage() {
         Dictionary<URL, Image> cache = (Dictionary<URL, Image>) getDocument()
@@ -36,6 +56,7 @@ public class BASE64ImageView extends ImageView {
 
     }
 
+    //decodes the Base64 string into an image and returns it
     private Image loadImage() {
         String b64 = getBASE64Image();
         BufferedImage newImage = null;
@@ -50,6 +71,12 @@ public class BASE64ImageView extends ImageView {
         return newImage;
     }
 
+    /**
+     * Returns a unique url for the image. It's created by getting the code location and adding the element to it.
+     * This doesn't strictly need to be an actual url, it just needs to be unique and properly formatted.
+     *
+     * @return the generated url for the image
+     */
     @Override
     public URL getImageURL() {
         String src = (String) getElement().getAttributes()
@@ -58,7 +85,7 @@ public class BASE64ImageView extends ImageView {
 
             try {
                 this.url = new URL(BASE64ImageView.class.getProtectionDomain()
-                        .getCodeSource().getLocation().toString() + "/" + this.getElement().toString());
+                        .getCodeSource().getLocation().toString() + this.getElement().toString());
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -68,10 +95,12 @@ public class BASE64ImageView extends ImageView {
         return super.getImageURL();
     }
 
+    //checks if the given src is encoded
     private boolean isBase64Encoded(String src) {
         return src != null && src.contains("base64,");
     }
 
+    //returns the string without the base64 text
     private String getBASE64Image() {
         String src = (String) getElement().getAttributes()
                 .getAttribute(HTML.Attribute.SRC);

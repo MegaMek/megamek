@@ -457,7 +457,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bvc = bv.getComponent();
             bvc.setName("BoardView");
             bv.addBoardViewListener(this);
-
+            client.setBoardView(bv);
         } catch (Exception e) {
             e.printStackTrace();
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$

@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColors;
 
 /**
@@ -162,6 +163,9 @@ public class Report implements Serializable {
 
     /** bool for determining when code should be used to show image. */
     private transient boolean showImage = false;
+
+    /** string to add to reports to show sprites **/
+    private String imageCode = "";
 
     /**
      * Default constructor, note that using this means the
@@ -310,12 +314,12 @@ public class Report implements Serializable {
      */
     public void addDesc(Entity entity) {
         if (entity != null) {
-            String imageCode = "";
-            if(indentation <= Report.DEFAULT_INDENTATION || showImage) {
-                imageCode = "|" + entity.getId() + "|";
+            if(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_ROUND_REPORT_SPRITES)
+                    && (indentation <= Report.DEFAULT_INDENTATION || showImage)) {
+                imageCode = "<span id='" +entity.getId() + "'></span>";
             }
             add("<font color='0xffffff'><a href=\"#entity:" + entity.getId()
-                    + "\">" + entity.getShortName() + "</a></font>" + imageCode, true);
+                    + "\">" + entity.getShortName() + "</a></font>", true);
             String colorcode = Integer.toHexString(PlayerColors.getColor(
                     entity.getOwner().getColorIndex()).getRGB() & 0x00f0f0f0);
             add("<B><font color='" + colorcode + "'>"
@@ -482,6 +486,15 @@ public class Report implements Serializable {
                     i = endTagIdx;
                 }
                 i++;
+            }
+            //draw the sprite at the beginning of the line
+            if(imageCode != null && imageCode.length() > 0){
+                if(text.substring(0,1).equals("\n")){
+                    text.insert(1, imageCode);
+                }
+                else {
+                    text.insert(0, imageCode);
+                }
             }
             text.append(raw.substring(mark));
             handleIndentation(text);

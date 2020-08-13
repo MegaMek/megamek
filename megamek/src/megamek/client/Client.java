@@ -1155,7 +1155,7 @@ public class Client implements IClientCommandHandler {
     private void cacheImageData(Entity entity){
 
         if(entity == null) {
-            System.out.println("Null entity");
+            System.out.println("Null entity reference");
             return;
         }
 

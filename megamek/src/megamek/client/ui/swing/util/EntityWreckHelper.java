@@ -14,6 +14,7 @@
 
 package megamek.client.ui.swing.util;
 
+import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -26,6 +27,11 @@ import megamek.common.Mech;
 import megamek.common.Tank;
 import megamek.common.Terrains;
 
+/**
+ * This class handles logic for displaying various kinds of damage and destruction decals
+ * @author NickAragua
+ * 
+ */
 public class EntityWreckHelper {    
     /**
      * Logic that determines if we should be display "destroyed" decals below the destroyed entity.
@@ -42,8 +48,7 @@ public class EntityWreckHelper {
                 (entity instanceof Mech) ||
                 (entity instanceof Infantry) ||
                 (entity instanceof GunEmplacement) ||
-                (entity.getMovementMode() == EntityMovementMode.VTOL) ||
-                (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED) ||
+                !entity.getSecondaryPositions().isEmpty() ||
                 entityOnBridge(entity)) {
             return false;
         }
@@ -69,6 +74,7 @@ public class EntityWreckHelper {
         return entity.isPermanentlyImmobilized(false) && 
                 ((entity.getMovementMode() == EntityMovementMode.WHEELED) ||
                 (entity.getMovementMode() == EntityMovementMode.TRACKED)) && 
+                entity.getSecondaryPositions().isEmpty() &&
                 !entityOnBridge(entity);
     }
     
@@ -103,17 +109,17 @@ public class EntityWreckHelper {
     public static String getWeightSuffix(Entity entity) {
         switch(entity.getWeightClass()) {
         case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
-            return "ultralight";
+            return TilesetManager.FILENAME_SUFFIX_WRECKS_ULTRALIGHT;
         case EntityWeightClass.WEIGHT_LIGHT:
             // this is a "hack" as some units < 20 tons are classified as 'light'
             // additionally, gun emplacements are "light" but should really have a little more debris.
             if ((entity.getWeight() > 0) && (entity.getWeight() < 20)) {
-               return "ultralight"; 
+               return TilesetManager.FILENAME_SUFFIX_WRECKS_ULTRALIGHT; 
             } else {
-                return "assaultplus";
+                return TilesetManager.FILENAME_SUFFIX_WRECKS_ASSAULTPLUS;
             }
         default:
-            return "assaultplus";
+            return TilesetManager.FILENAME_SUFFIX_WRECKS_ASSAULTPLUS;
         }
     }
     

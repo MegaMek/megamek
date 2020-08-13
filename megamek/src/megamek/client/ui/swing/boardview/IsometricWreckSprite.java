@@ -43,28 +43,7 @@ class IsometricWreckSprite extends AbstractWreckSprite {
         Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
         modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
                 shortName) + 1, bv.getFontMetrics(font).getAscent());
-        /*int altAdjust = 0;
-        if (bv.useIsometric()
-                && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
-            altAdjust = (int) (bv.DROPSHDW_DIST * bv.scale);
-        } else if (bv.useIsometric() && (entity.getElevation() != 0)) {
-            altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * bv.scale);
-        }
 
-        Dimension dim = new Dimension(bv.hex_size.width, bv.hex_size.height
-                + altAdjust);
-        Rectangle tempBounds = new Rectangle(dim).union(modelRect);
-
-        if (secondaryPos == -1) {
-            tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
-        } else {
-            tempBounds.setLocation(bv.getHexLocation(entity
-                    .getSecondaryPositions().get(secondaryPos)));
-        }
-        if (entity.getElevation() > 0) {
-            tempBounds.y = tempBounds.y - altAdjust;
-        }
-        bounds = tempBounds;*/
         image = null;
     }
 

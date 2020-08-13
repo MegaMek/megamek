@@ -23,7 +23,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.boardview.EntitySprite.Positioning;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.Entity;
 import megamek.common.Terrains;

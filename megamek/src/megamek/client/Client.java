@@ -951,9 +951,6 @@ public class Client implements IClientCommandHandler {
         List<Entity> newOutOfGame = (List<Entity>) c.getObject(1);
         // Replace the entities in the game.
         game.setEntitiesVector(newEntities);
-        if(imgCache != null) {
-            imgCache.clear();
-        }
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
             for(Entity e: newOutOfGame) {
@@ -995,6 +992,10 @@ public class Client implements IClientCommandHandler {
         @SuppressWarnings("unchecked")
         List<Integer> entityIds = (List<Integer>) packet.getObject(0);
         int condition = packet.getIntValue(1);
+        //create a final image for the entity
+        for(int id: entityIds) {
+            cacheImageData(game.getEntity(id));
+        }
         // Move the unit to its final resting place.
         game.removeEntities(entityIds, condition);
     }
@@ -1142,7 +1143,7 @@ public class Client implements IClientCommandHandler {
      * get img tag for unit id
      */
     private String getCachedImageData(int id){
-        if(!imgCache.containsKey(id)) {
+        if(imgCache == null || !imgCache.containsKey(id)) {
             return null;
         }
         return imgCache.get(id);
@@ -1157,8 +1158,13 @@ public class Client implements IClientCommandHandler {
             imgCache = new Hashtable<>();
         }
 
+        //remove images that should be regenerated
+        if(imgCache.containsKey(entity.getId())){
+            imgCache.remove(entity.getId());
+        }
+
         if (entity != null && !imgCache.containsKey(entity.getId())) {
-            Image image = ImageUtil.getScaledImage(bv.getTilesetManager().imageFor(entity),  56, 48);
+            Image image = ImageUtil.getScaledImage(getTargetImage(entity),  56, 48);
             if(image!=null) {
                 try {
                     String base64Text;
@@ -1174,6 +1180,16 @@ public class Client implements IClientCommandHandler {
                 }
             }
         }
+    }
+
+    /**
+     * Gets the current mech image
+     */
+    private Image getTargetImage(Entity e){
+        if(e.isDestroyed())
+            return bv.getTilesetManager().wreckMarkerFor(e, -1);
+        else
+            return bv.getTilesetManager().imageFor(e);
     }
 
     /**

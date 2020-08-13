@@ -3084,16 +3084,16 @@ public abstract class Mech extends Entity {
     //From IO pg 50
     public static TechAdvancement getTechAdvancement(long etype, boolean primitive, boolean industrial, int weightClass) {
         if ((etype & ETYPE_TRIPOD_MECH) != 0) {
-            if (weightClass == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+            if (weightClass != EntityWeightClass.WEIGHT_SUPER_HEAVY) {
                 return new TechAdvancement(TECH_BASE_IS)
-                        .setISAdvancement(2585, 2602).setISApproximate(true).setPrototypeFactions(F_FW)
-                        .setProductionFactions(F_FW).setTechRating(RATING_D)
+                        .setISAdvancement(2585, 2602).setISApproximate(true).setPrototypeFactions(F_TH)
+                        .setProductionFactions(F_TH).setTechRating(RATING_D)
                         .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
             } else {
                 return new TechAdvancement(TECH_BASE_IS)
-                        .setISAdvancement(2930, 2940).setISApproximate(true).setPrototypeFactions(F_TH)
-                        .setProductionFactions(F_TH).setTechRating(RATING_D)
+                        .setISAdvancement(2930, 2940).setISApproximate(true).setPrototypeFactions(F_FW)
+                        .setProductionFactions(F_FW).setTechRating(RATING_D)
                         .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
             }

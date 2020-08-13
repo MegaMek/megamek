@@ -64,6 +64,7 @@ public class EntityWreckHelper {
                 (entity.getMovementMode() != EntityMovementMode.VTOL) && 
                 (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
                 entity.isPermanentlyImmobilized(false) &&
+                !entity.getGame().getBoard().inSpace() &&
                 !entityOnBridge(entity);
     }
     
@@ -75,6 +76,7 @@ public class EntityWreckHelper {
                 ((entity.getMovementMode() == EntityMovementMode.WHEELED) ||
                 (entity.getMovementMode() == EntityMovementMode.TRACKED)) && 
                 entity.getSecondaryPositions().isEmpty() &&
+                !entity.getGame().getBoard().inSpace() &&
                 !entityOnBridge(entity);
     }
     

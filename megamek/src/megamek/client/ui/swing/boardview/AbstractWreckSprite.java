@@ -124,7 +124,10 @@ public abstract class AbstractWreckSprite extends Sprite {
         Image wreck = null;
         
         if(EntityWreckHelper.displayDevastation(entity)) {
-            wreck = bv.tileManager.getCraterFor(entity, secondaryPos);
+            // objects in space should not have craters
+            wreck = entity.getGame().getBoard().inSpace() ?
+                    bv.tileManager.wreckMarkerFor(entity, secondaryPos) :
+                    bv.tileManager.getCraterFor(entity, secondaryPos);
         } else {
             wreck = displayDestroyedDecal ? 
                         bv.tileManager.imageFor(entity, secondaryPos) :

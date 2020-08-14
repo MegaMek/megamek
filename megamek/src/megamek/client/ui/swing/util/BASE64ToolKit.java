@@ -1,9 +1,3 @@
-package megamek.client.ui.swing.util;
-
-import javax.swing.text.*;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLEditorKit;
-
 /**
  *  MegaMek - Copyright (C) 2020 - The MegaMek Team
  *
@@ -17,6 +11,13 @@ import javax.swing.text.html.HTMLEditorKit;
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
+package megamek.client.ui.swing.util;
+
+import javax.swing.text.*;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLEditorKit;
+
+
 public class BASE64ToolKit extends HTMLEditorKit {
 
     private static HTMLFactory factory = null;

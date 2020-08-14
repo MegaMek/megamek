@@ -47,8 +47,6 @@ import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.util.PlayerColors;
-import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -79,7 +77,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
-import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.server.SmokeCloud;
 
 /**
@@ -130,7 +127,10 @@ public class Client implements IClientCommandHandler {
     public Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
 
     //Hashtable for storing image tags containing base64Text src
-    Hashtable<Integer, String> imgCache;
+    private Hashtable<Integer, String> imgCache;
+
+    //board view for getting entity art assets
+    private BoardView1 bv;
 
     ConnectionHandler packetUpdate;
 
@@ -245,14 +245,10 @@ public class Client implements IClientCommandHandler {
         }
     }
 
-    private BoardView1 bv;
     public void setBoardView(BoardView1 bv){
         this.bv = bv;
     }
 
-    //public getBoardView(){
-
-    //}
     /**
      * Attempt to connect to the specified host
      */
@@ -954,12 +950,12 @@ public class Client implements IClientCommandHandler {
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
             for(Entity e: newOutOfGame) {
-                cacheImageData(e);
+                cacheImgTag(e);
             }
         }
         //cache the image data for the entities
         for(Entity e: newEntities) {
-            cacheImageData(e);
+            cacheImgTag(e);
         }
     }
 
@@ -994,7 +990,7 @@ public class Client implements IClientCommandHandler {
         int condition = packet.getIntValue(1);
         //create a final image for the entity
         for(int id: entityIds) {
-            cacheImageData(game.getEntity(id));
+            cacheImgTag(game.getEntity(id));
         }
         // Move the unit to its final resting place.
         game.removeEntities(entityIds, condition);
@@ -1132,17 +1128,17 @@ public class Client implements IClientCommandHandler {
         String updatedReport = report.toString();
         //loop through the hashset of unique ids and replace the ids with img tags
         for (int i : set) {
-            if(getCachedImageData(i) != null) {
-                updatedReport = updatedReport.replace("<span id='" +i + "'></span>", getCachedImageData(i));
+            if(getCachedImgTag(i) != null) {
+                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
             }
         }
         return updatedReport;
     }
 
     /**
-     * get img tag for unit id
+     * returns the stored <img> tag for given unit id
      */
-    private String getCachedImageData(int id){
+    private String getCachedImgTag(int id){
         if(imgCache == null || !imgCache.containsKey(id)) {
             return null;
         }
@@ -1150,9 +1146,9 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Hashtable for storing image tags containing base64Text src
+     * Hashtable for storing <img> tags containing base64Text src.
      */
-    private void cacheImageData(Entity entity){
+    private void cacheImgTag(Entity entity){
 
         if(entity == null) {
             System.out.println("Null entity reference");
@@ -1166,6 +1162,7 @@ public class Client implements IClientCommandHandler {
             imgCache.remove(entity.getId());
         }
 
+        //convert to base64, add to to <img> tag and store in cache
         if (!imgCache.containsKey(entity.getId())) {
             Image image = ImageUtil.getScaledImage(getTargetImage(entity),  56, 48);
             if(image!=null) {
@@ -1176,7 +1173,7 @@ public class Client implements IClientCommandHandler {
                     baos.flush();
                     base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
                     baos.close();
-                    String img = "<img class='test' src='data:image/png;base64," + base64Text + "'>";
+                    String img = "<img src='data:image/png;base64," + base64Text + "'>";
                     imgCache.put(entity.getId(), img);
                 } catch (final IOException ioe) {
                     throw new UncheckedIOException(ioe);

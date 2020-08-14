@@ -21,9 +21,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
@@ -553,10 +555,16 @@ public class EquipmentType implements ITechnology {
     		return false;
     	}
     	
-    	for(EquipmentMode mode : modes) {
-    		if(mode.getName().equals(modeType)) {
-    			return true;
-    		}
+    	// sometimes, the list of modes may be modified while we're looping through it
+    	// so let's do this in a thread-safe way
+    	List<EquipmentMode> threadSafeModes = Collections.synchronizedList(modes);
+    	
+    	synchronized(threadSafeModes) {
+	    	for(EquipmentMode mode : threadSafeModes) {
+	    		if(mode.getName().equals(modeType)) {
+	    			return true;
+	    		}
+	    	}
     	}
     	
     	return false;

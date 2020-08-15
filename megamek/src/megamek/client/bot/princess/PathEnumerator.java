@@ -23,6 +23,8 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import megamek.MegaMek;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.Aero;
@@ -163,13 +165,40 @@ public class PathEnumerator {
     }
 
     /**
-     * calculates all moves for a given unit, keeping the shortest path to each hex/facing pair
+     * Calculate what to do on my turn.
+     * Has a retry mechanism for when the turn calculation fails due to concurrency issues
      */
-    public void recalculateMovesFor(final Entity mover) {
+    public synchronized void recalculateMovesFor(final Entity mover) {
+    	int retryCount = 0;
+        boolean success = false;
+        
+        while((retryCount < BotClient.BOT_TURN_RETRY_COUNT) && !success) {
+        	success = recalculateMovesForWorker(mover);
+        	
+        	if(!success) {
+	        	// if we fail, take a nap for 500-1500 milliseconds, then try again
+	            // as it may be due to some kind of thread-related issue
+        		// limit number of retries so we're not endlessly spinning
+        		// if we can't recover from the error
+	            retryCount++;
+	            try {
+					Thread.sleep(Compute.randomInt(1000) + 500);
+				} catch (InterruptedException e) {
+					MegaMek.getLogger().error(this, e.toString());
+				}
+	        }
+        }
+    }
+    
+    /**
+     * calculates all moves for a given unit, keeping the shortest (or longest, depending) path to each facing/pair
+     */
+    private boolean recalculateMovesForWorker(final Entity mover) {
         final String METHOD_NAME = "recalculateMovesFor(IGame, Entity)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
-        try {
 
+        try {
+	
             // Record it's current position.
             getLastKnownLocations().put(
                     mover.getId(),
@@ -187,7 +216,7 @@ public class PathEnumerator {
                 getUnitMovableAreas().remove(mover.getId());
                 getUnitPotentialLocations().remove(mover.getId());
                 getLastKnownLocations().remove(mover.getId());
-                return;
+                return true;
             }
 
             // Start constructing the new list of paths.
@@ -223,20 +252,8 @@ public class PathEnumerator {
                 this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out offboard paths: " + paths.size());
                 
                 // This is code useful for debugging, but puts out a lot of log entries, which slows things down. 
-                HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
-                for(MovePath path : paths) {
-                    if(!pathLengths.containsKey(path.length())) {
-                        pathLengths.put(path.length(), 0);
-                    }
-                    Integer lengthCount = pathLengths.get(path.length());
-                    pathLengths.put(path.length(), lengthCount + 1);
-                    
-                    this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
-                }
-                
-                for(Integer length : pathLengths.keySet()) {
-                    this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Paths of length " + length + ": " + pathLengths.get(length));
-                }
+                // disabled
+                // logAllPaths(paths);
             // this handles the case of the mover being an aerospace unit and "advances space flight" rules being on
             } else if(mover.isAero() && game.useVectorMove()) {
                 NewtonianAerospacePathFinder npf = NewtonianAerospacePathFinder.getInstance(getGame());
@@ -326,6 +343,11 @@ public class PathEnumerator {
             myArea.addCoordFacingCombos(getUnitPotentialLocations().get(
                     mover.getId()).iterator());
             getUnitMovableAreas().put(mover.getId(), myArea);
+            
+            return true;
+        } catch(Exception e) {
+        	MegaMek.getLogger().error(this, e.toString());
+        	return false;
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
@@ -531,5 +553,25 @@ public class PathEnumerator {
         }
 
         return mapHasBridges.get();
+    }
+    
+    /**
+     * Logs all the passed-in paths.
+     */
+    private void logAllPaths(List<MovePath> paths) {
+	    HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
+	    for(MovePath path : paths) {
+	        if(!pathLengths.containsKey(path.length())) {
+	            pathLengths.put(path.length(), 0);
+	        }
+	        Integer lengthCount = pathLengths.get(path.length());
+	        pathLengths.put(path.length(), lengthCount + 1);
+	        
+	        this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
+	    }
+	    
+	    for(Integer length : pathLengths.keySet()) {
+	        this.owner.log(this.getClass(), "recalculateMovesFor", LogLevel.DEBUG, "Paths of length " + length + ": " + pathLengths.get(length));
+	    }
     }
 }

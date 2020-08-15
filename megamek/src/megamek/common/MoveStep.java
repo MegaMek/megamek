@@ -2015,9 +2015,11 @@ public class MoveStep implements Serializable {
             
             // spheroids in atmosphere can move a max of 1 hex on the low atmo map
             // and 8 hexes on the ground map, regardless of any other considerations
+            // unless they're out of control, in which case, well...
             if(useSpheroidAtmosphere(game, entity) && 
+            		(((IAero) entity).isOutControlTotal() ||
                     (!game.getBoard().onGround() && (this.getDistance() > 1) || 
-                            (game.getBoard().onGround() && (getDistance() > 8)))) {
+                            (game.getBoard().onGround() && (getDistance() > 8))))) {
                 return;
             }
 

@@ -555,16 +555,10 @@ public class EquipmentType implements ITechnology {
     		return false;
     	}
     	
-    	// sometimes, the list of modes may be modified while we're looping through it
-    	// so let's do this in a thread-safe way
-    	List<EquipmentMode> threadSafeModes = Collections.synchronizedList(modes);
-    	
-    	synchronized(threadSafeModes) {
-	    	for(EquipmentMode mode : threadSafeModes) {
-	    		if(mode.getName().equals(modeType)) {
-	    			return true;
-	    		}
-	    	}
+    	for(EquipmentMode mode : modes) {
+    		if(mode.getName().equals(modeType)) {
+    			return true;
+    		}
     	}
     	
     	return false;

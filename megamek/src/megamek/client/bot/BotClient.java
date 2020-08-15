@@ -34,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
@@ -83,6 +84,8 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 
 public abstract class BotClient extends Client {
+	public static final int BOT_TURN_RETRY_COUNT = 3;
+	
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
     
@@ -507,57 +510,71 @@ public abstract class BotClient extends Client {
         currentTurnEnemyEntities = null;
         currentTurnFriendlyEntities = null;
         
-        try {
-            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
-                MovePath mp;
-                if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
-                    GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game
-                            .getTurn();
-                    Entity mustMove = game.getEntity(turn.getEntityNum());
-                    mp = continueMovementFor(mustMove);
-                } else {
-                    if (config.isForcedIndividual()) {
-                        Entity mustMove = getRandomUnmovedEntity();
-                        mp = continueMovementFor(mustMove);
-                    } else {
-                        mp = calculateMoveTurn();
-                    }
-                }
-                moveEntity(mp.getEntity().getId(), mp);
-            } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-                // TODO: consider that if you're hidden you should hold fire
-                calculateFiringTurn();
-            } else if (game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
-                PhysicalOption po = calculatePhysicalTurn();
-                // Bug #1072137: don't crash if the bot can't find a physical.
-                if (null != po) {
-                    sendAttackData(po.attacker.getId(), po.getVector());
-                } else {
-                    // Send a "no attack" to clear the game turn, if any.
-                    sendAttackData(game.getFirstEntityNum(getMyTurn()),
-                                   new Vector<>(0));
-                }
-            } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
-                calculateDeployment();
-            } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
-                Vector<Minefield> mines = calculateMinefieldDeployment();
-                for (Minefield mine : mines) {
-                    game.addMinefield(mine);
-                }
-                sendDeployMinefields(mines);
-                sendPlayerInfo();
-            } else if (game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
-                // For now, declare no autohit hexes.
-                Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
-                sendArtyAutoHitHexes(autoHitHexes);
-            } else if ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
-                       || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
-                // Send a "no attack" to clear the game turn, if any.
-                // TODO: Fix for real arty stuff
-                calculateTargetingOffBoardTurn();
-            }
-        } catch (Throwable t) {
-            t.printStackTrace();
+        int retryCount = 0;
+        boolean success = false;
+        
+        while((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
+	        try {
+	            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+	                MovePath mp;
+	                if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
+	                    GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game
+	                            .getTurn();
+	                    Entity mustMove = game.getEntity(turn.getEntityNum());
+	                    mp = continueMovementFor(mustMove);
+	                } else {
+	                    if (config.isForcedIndividual()) {
+	                        Entity mustMove = getRandomUnmovedEntity();
+	                        mp = continueMovementFor(mustMove);
+	                    } else {
+	                        mp = calculateMoveTurn();
+	                    }
+	                }
+	                moveEntity(mp.getEntity().getId(), mp);
+	            } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
+	                calculateFiringTurn();
+	            } else if (game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
+	                PhysicalOption po = calculatePhysicalTurn();
+	                // Bug #1072137: don't crash if the bot can't find a physical.
+	                if (null != po) {
+	                    sendAttackData(po.attacker.getId(), po.getVector());
+	                } else {
+	                    // Send a "no attack" to clear the game turn, if any.
+	                    sendAttackData(game.getFirstEntityNum(getMyTurn()),
+	                                   new Vector<>(0));
+	                }
+	            } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
+	                calculateDeployment();
+	            } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
+	                Vector<Minefield> mines = calculateMinefieldDeployment();
+	                for (Minefield mine : mines) {
+	                    game.addMinefield(mine);
+	                }
+	                sendDeployMinefields(mines);
+	                sendPlayerInfo();
+	            } else if (game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+	                // For now, declare no autohit hexes.
+	                Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
+	                sendArtyAutoHitHexes(autoHitHexes);
+	            } else if ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
+	                       || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
+	                // Princess implements arty targeting; no plans to do so for testbod
+	                calculateTargetingOffBoardTurn();
+	            }
+	            
+	            success = true;
+	        } catch (Throwable t) {
+	            MegaMek.getLogger().error(this, t.toString());
+	            
+	            // if we fail, take a nap for 500-1500 milliseconds, then try again
+	            // as it may be due to some kind of thread-related issue
+	            retryCount++;
+	            try {
+					Thread.sleep(Compute.randomInt(1000) + 500);
+				} catch (InterruptedException e) {
+					MegaMek.getLogger().error(this, t.toString());
+				}
+	        }
         }
     }
 

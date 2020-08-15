@@ -39,6 +39,7 @@
         <regexp>\[Ljava\.lang\.String;$</regexp>
         <regexp>\[Ljava\.util\.concurrent\.ConcurrentHashMap\$Segment;$</regexp>
         <regexp>\[\[Lmegamek\.common.*</regexp>
+        <regexp>\[Lmegamek\.common.*</regexp>
         <regexp>megamek\.common.*</regexp>
         <regexp>\[Z$</regexp>
     </regexps>

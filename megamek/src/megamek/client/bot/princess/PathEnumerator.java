@@ -165,178 +165,191 @@ public class PathEnumerator {
     }
 
     /**
-     * calculates all moves for a given unit, keeping the shortest path to each hex/facing pair
+     * Calculate what to do on my turn.
+     * Has a retry mechanism for when the turn calculation fails due to concurrency issues
      */
-    public void recalculateMovesFor(final Entity mover) {
-        final String METHOD_NAME = "recalculateMovesFor(IGame, Entity)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
-        
-        int retryCount = 0;
+    public synchronized void recalculateMovesFor(final Entity mover) {
+    	int retryCount = 0;
         boolean success = false;
         
-        while ((retryCount < BotClient.BOT_TURN_RETRY_COUNT) && !success) {
-	        try {
-	
-	            // Record it's current position.
-	            getLastKnownLocations().put(
-	                    mover.getId(),
-	                    CoordFacingCombo.createCoordFacingCombo(
-	                            mover.getPosition(), mover.getFacing()));
-	
-	            // Clear out any already calculated paths.
-	            getUnitPaths().remove(mover.getId());
-	            getLongRangePaths().remove(mover.getId());
-	            
-	            // if the entity does not exist in the game for any reason, let's cut out safely
-	            // otherwise, we'll run into problems calculating paths
-	            if (getGame().getEntity(mover.getId()) == null) {
-	                // clean up orphaned entries in local storage
-	                getUnitMovableAreas().remove(mover.getId());
-	                getUnitPotentialLocations().remove(mover.getId());
-	                getLastKnownLocations().remove(mover.getId());
-	                return;
-	            }
-	
-	            // Start constructing the new list of paths.
-	            List<MovePath> paths = new ArrayList<>();
-	            
-	            // Aero movement on atmospheric ground maps
-	            // currently only applies to a) conventional aircraft, b) aerotech units, c) lams in air mode
-	            if(mover.isAirborneAeroOnGroundMap() && !((IAero) mover).isSpheroid()) {
-	                AeroGroundPathFinder apf = AeroGroundPathFinder.getInstance(getGame());
-	                MovePath startPath = new MovePath(getGame(), mover);
-	                apf.run(startPath);
-	                paths.addAll(apf.getAllComputedPathsUncategorized());
-	                
-	                // Remove illegal paths.
-	                Filter<MovePath> filter = new Filter<MovePath>() {
-	                    @Override
-	                    public boolean shouldStay(MovePath movePath) {
-	                        return isLegalAeroMove(movePath);
-	                    }
-	                };
-	                
-	                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Unfiltered paths: " + paths.size());
-	                paths = new ArrayList<>(filter.doFilter(paths));
-	                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out illegal paths: " + paths.size());
-	                AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
-	                paths = new ArrayList<>(offBoardFilter.doFilter(paths));
-	                
-	                MovePath offBoardPath = offBoardFilter.getShortestPath();
-	                if(offBoardPath != null) {
-	                    paths.add(offBoardFilter.getShortestPath());
-	                }
-	                
-	                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out offboard paths: " + paths.size());
-	                
-	                // This is code useful for debugging, but puts out a lot of log entries, which slows things down. 
-	                // disabled
-	                // logAllPaths(paths);
-	            // this handles the case of the mover being an aerospace unit and "advances space flight" rules being on
-	            } else if(mover.isAero() && game.useVectorMove()) {
-	                NewtonianAerospacePathFinder npf = NewtonianAerospacePathFinder.getInstance(getGame());
-	                npf.run(new MovePath(game, mover));
-	                paths.addAll(npf.getAllComputedPathsUncategorized());
-	            // this handles the case of the mover being an aerospace unit on a space map
-	            } else if(mover.isAero() && game.getBoard().inSpace()) {
-	                AeroSpacePathFinder apf = AeroSpacePathFinder.getInstance(getGame());
-	                apf.run(new MovePath(game, mover));
-	                paths.addAll(apf.getAllComputedPathsUncategorized());
-	            // this handles the case of the mover being a winged aerospace unit on a low-atmo map
-	            } else if(mover.isAero() && game.getBoard().inAtmosphere() && !Compute.useSpheroidAtmosphere(game, mover)) {
-	                AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
-	                apf.run(new MovePath(game, mover));
-	                paths.addAll(apf.getAllComputedPathsUncategorized());
-	            // this handles the case of the mover acting like a spheroid aerospace unit in an atmosphere
-	            } else if(Compute.useSpheroidAtmosphere(game, mover)) {
-	                SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game);
-	                spf.run(new MovePath(game, mover));
-	                paths.addAll(spf.getAllComputedPathsUncategorized());
-	            // this handles the case of the mover being an infantry unit of some kind, that's not airborne.
-	            } else if (mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && !mover.isAirborne()) {
-	                InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
-	                ipf.run(new MovePath(game, mover));
-	                paths.addAll(ipf.getAllComputedPathsUncategorized());
-	                
-	                // generate long-range paths appropriate to the bot's current state
-	                updateLongRangePaths(mover);
-	            // this handles situations where a unit is high up in the air, but is not an aircraft
-	            // such as an ejected pilot or a unit hot dropping from a dropship, as these cannot move
-	            } else if (!mover.isAero() && mover.isAirborne()) {
-	                paths.add(new MovePath(game, mover));
-	            } else { // Non-Aero movement
-	                // TODO: Will this cause Princess to never use MASC?
-	                LongestPathFinder lpf = LongestPathFinder
-	                        .newInstanceOfLongestPath(mover.getRunMPwithoutMASC(),
-	                                MoveStepType.FORWARDS, getGame());
-	                lpf.run(new MovePath(game, mover));
-	                paths.addAll(lpf.getLongestComputedPaths());
-	
-	                //add walking moves
-	                lpf = LongestPathFinder.newInstanceOfLongestPath(
-	                        mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
-	                lpf.run(new MovePath(getGame(), mover));
-	                paths.addAll(lpf.getLongestComputedPaths());
-	
-	                //add jumping moves
-	                if (mover.getJumpMP() > 0) {
-	                    ShortestPathFinder spf = ShortestPathFinder
-	                            .newInstanceOfOneToAll(mover.getJumpMP(),
-	                                    MoveStepType.FORWARDS, getGame());
-	                    spf.run((new MovePath(game, mover))
-	                            .addStep(MoveStepType.START_JUMP));
-	                    paths.addAll(spf.getAllComputedPathsUncategorized());
-	                }
-	
-	                for(MovePath path : paths) {
-	                    this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
-	                }
-	                
-	                // Try climbing over obstacles and onto bridges
-	                adjustPathsForBridges(paths);
-	
-	                //filter those paths that end in illegal state
-	                Filter<MovePath> filter = new Filter<MovePath>() {
-	                    @Override
-	                    public boolean shouldStay(MovePath movePath) {
-	                        boolean isLegal = movePath.isMoveLegal();
-	                        return isLegal
-	                                && (Compute.stackingViolation(getGame(),
-	                                        mover.getId(),
-	                                        movePath.getFinalCoords()) == null);
-	                    }
-	                };
-	                paths = new ArrayList<>(filter.doFilter(paths));
-	                
-	                // generate long-range paths appropriate to the bot's current state
-	                updateLongRangePaths(mover);
-	            }
-	
-	            // Update our locations and add the computed paths.
-	            updateUnitLocations(mover, paths);
-	            getUnitPaths().put(mover.getId(), paths);
-	
-	            // calculate bounding area for move
-	            ConvexBoardArea myArea = new ConvexBoardArea(owner);
-	            myArea.addCoordFacingCombos(getUnitPotentialLocations().get(
-	                    mover.getId()).iterator());
-	            getUnitMovableAreas().put(mover.getId(), myArea);
-	            
-	            success = true;
-	        } catch(Exception e) {
-	        	MegaMek.getLogger().error(this, e.toString());
-	            
-	            // if we fail, take a nap for 500-1500 milliseconds, then try again
+        while((retryCount < BotClient.BOT_TURN_RETRY_COUNT) && !success) {
+        	success = recalculateMovesForWorker(mover);
+        	
+        	if(!success) {
+	        	// if we fail, take a nap for 500-1500 milliseconds, then try again
 	            // as it may be due to some kind of thread-related issue
+        		// limit number of retries so we're not endlessly spinning
+        		// if we can't recover from the error
 	            retryCount++;
 	            try {
 					Thread.sleep(Compute.randomInt(1000) + 500);
-				} catch (InterruptedException t) {
-					MegaMek.getLogger().error(this, t.toString());
+				} catch (InterruptedException e) {
+					MegaMek.getLogger().error(this, e.toString());
 				}
-	        } finally {
-	            getOwner().methodEnd(getClass(), METHOD_NAME);
 	        }
+        }
+    }
+    
+    /**
+     * calculates all moves for a given unit, keeping the shortest (or longest, depending) path to each facing/pair
+     */
+    private boolean recalculateMovesForWorker(final Entity mover) {
+        final String METHOD_NAME = "recalculateMovesFor(IGame, Entity)";
+        getOwner().methodBegin(getClass(), METHOD_NAME);
+
+        try {
+	
+            // Record it's current position.
+            getLastKnownLocations().put(
+                    mover.getId(),
+                    CoordFacingCombo.createCoordFacingCombo(
+                            mover.getPosition(), mover.getFacing()));
+
+            // Clear out any already calculated paths.
+            getUnitPaths().remove(mover.getId());
+            getLongRangePaths().remove(mover.getId());
+            
+            // if the entity does not exist in the game for any reason, let's cut out safely
+            // otherwise, we'll run into problems calculating paths
+            if (getGame().getEntity(mover.getId()) == null) {
+                // clean up orphaned entries in local storage
+                getUnitMovableAreas().remove(mover.getId());
+                getUnitPotentialLocations().remove(mover.getId());
+                getLastKnownLocations().remove(mover.getId());
+                return true;
+            }
+
+            // Start constructing the new list of paths.
+            List<MovePath> paths = new ArrayList<>();
+            
+            // Aero movement on atmospheric ground maps
+            // currently only applies to a) conventional aircraft, b) aerotech units, c) lams in air mode
+            if(mover.isAirborneAeroOnGroundMap() && !((IAero) mover).isSpheroid()) {
+                AeroGroundPathFinder apf = AeroGroundPathFinder.getInstance(getGame());
+                MovePath startPath = new MovePath(getGame(), mover);
+                apf.run(startPath);
+                paths.addAll(apf.getAllComputedPathsUncategorized());
+                
+                // Remove illegal paths.
+                Filter<MovePath> filter = new Filter<MovePath>() {
+                    @Override
+                    public boolean shouldStay(MovePath movePath) {
+                        return isLegalAeroMove(movePath);
+                    }
+                };
+                
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Unfiltered paths: " + paths.size());
+                paths = new ArrayList<>(filter.doFilter(paths));
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out illegal paths: " + paths.size());
+                AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
+                paths = new ArrayList<>(offBoardFilter.doFilter(paths));
+                
+                MovePath offBoardPath = offBoardFilter.getShortestPath();
+                if(offBoardPath != null) {
+                    paths.add(offBoardFilter.getShortestPath());
+                }
+                
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out offboard paths: " + paths.size());
+                
+                // This is code useful for debugging, but puts out a lot of log entries, which slows things down. 
+                // disabled
+                // logAllPaths(paths);
+            // this handles the case of the mover being an aerospace unit and "advances space flight" rules being on
+            } else if(mover.isAero() && game.useVectorMove()) {
+                NewtonianAerospacePathFinder npf = NewtonianAerospacePathFinder.getInstance(getGame());
+                npf.run(new MovePath(game, mover));
+                paths.addAll(npf.getAllComputedPathsUncategorized());
+            // this handles the case of the mover being an aerospace unit on a space map
+            } else if(mover.isAero() && game.getBoard().inSpace()) {
+                AeroSpacePathFinder apf = AeroSpacePathFinder.getInstance(getGame());
+                apf.run(new MovePath(game, mover));
+                paths.addAll(apf.getAllComputedPathsUncategorized());
+            // this handles the case of the mover being a winged aerospace unit on a low-atmo map
+            } else if(mover.isAero() && game.getBoard().inAtmosphere() && !Compute.useSpheroidAtmosphere(game, mover)) {
+                AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
+                apf.run(new MovePath(game, mover));
+                paths.addAll(apf.getAllComputedPathsUncategorized());
+            // this handles the case of the mover acting like a spheroid aerospace unit in an atmosphere
+            } else if(Compute.useSpheroidAtmosphere(game, mover)) {
+                SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game);
+                spf.run(new MovePath(game, mover));
+                paths.addAll(spf.getAllComputedPathsUncategorized());
+            // this handles the case of the mover being an infantry unit of some kind, that's not airborne.
+            } else if (mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && !mover.isAirborne()) {
+                InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
+                ipf.run(new MovePath(game, mover));
+                paths.addAll(ipf.getAllComputedPathsUncategorized());
+                
+                // generate long-range paths appropriate to the bot's current state
+                updateLongRangePaths(mover);
+            // this handles situations where a unit is high up in the air, but is not an aircraft
+            // such as an ejected pilot or a unit hot dropping from a dropship, as these cannot move
+            } else if (!mover.isAero() && mover.isAirborne()) {
+                paths.add(new MovePath(game, mover));
+            } else { // Non-Aero movement
+                // TODO: Will this cause Princess to never use MASC?
+                LongestPathFinder lpf = LongestPathFinder
+                        .newInstanceOfLongestPath(mover.getRunMPwithoutMASC(),
+                                MoveStepType.FORWARDS, getGame());
+                lpf.run(new MovePath(game, mover));
+                paths.addAll(lpf.getLongestComputedPaths());
+
+                //add walking moves
+                lpf = LongestPathFinder.newInstanceOfLongestPath(
+                        mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
+                lpf.run(new MovePath(getGame(), mover));
+                paths.addAll(lpf.getLongestComputedPaths());
+
+                //add jumping moves
+                if (mover.getJumpMP() > 0) {
+                    ShortestPathFinder spf = ShortestPathFinder
+                            .newInstanceOfOneToAll(mover.getJumpMP(),
+                                    MoveStepType.FORWARDS, getGame());
+                    spf.run((new MovePath(game, mover))
+                            .addStep(MoveStepType.START_JUMP));
+                    paths.addAll(spf.getAllComputedPathsUncategorized());
+                }
+
+                for(MovePath path : paths) {
+                    this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
+                }
+                
+                // Try climbing over obstacles and onto bridges
+                adjustPathsForBridges(paths);
+
+                //filter those paths that end in illegal state
+                Filter<MovePath> filter = new Filter<MovePath>() {
+                    @Override
+                    public boolean shouldStay(MovePath movePath) {
+                        boolean isLegal = movePath.isMoveLegal();
+                        return isLegal
+                                && (Compute.stackingViolation(getGame(),
+                                        mover.getId(),
+                                        movePath.getFinalCoords()) == null);
+                    }
+                };
+                paths = new ArrayList<>(filter.doFilter(paths));
+                
+                // generate long-range paths appropriate to the bot's current state
+                updateLongRangePaths(mover);
+            }
+
+            // Update our locations and add the computed paths.
+            updateUnitLocations(mover, paths);
+            getUnitPaths().put(mover.getId(), paths);
+
+            // calculate bounding area for move
+            ConvexBoardArea myArea = new ConvexBoardArea(owner);
+            myArea.addCoordFacingCombos(getUnitPotentialLocations().get(
+                    mover.getId()).iterator());
+            getUnitMovableAreas().put(mover.getId(), myArea);
+            
+            return true;
+        } catch(Exception e) {
+        	MegaMek.getLogger().error(this, e.toString());
+        	return false;
+        } finally {
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
     

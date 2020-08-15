@@ -14353,6 +14353,7 @@ public class Server implements Runnable {
                 TorsoTwistAction tta = (TorsoTwistAction) ea;
                 if (entity.canChangeSecondaryFacing()) {
                     entity.setSecondaryFacing(tta.getFacing());
+                    entity.postProcessFacingChange();
                 }
             } else if (ea instanceof FlipArmsAction) {
                 FlipArmsAction faa = (FlipArmsAction) ea;

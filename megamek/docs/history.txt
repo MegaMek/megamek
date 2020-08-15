@@ -5,6 +5,8 @@ VERSION HISTORY:
 + Data: Fed Com armor has wrong modifier.
 + Data: Fluff text (Thx Greekfire) and some royal Sprites.
 + PR #2088: Reduced unnecessary logging for tileset and mech summary cache
++ Issue #2146: Grounded LAMs no longer have to make PSRs when prone and taking damage.
++ Issue #2099: Advanced option to display attacker/defender sprites in the combat log
 
 0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit

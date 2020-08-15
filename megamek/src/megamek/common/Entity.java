@@ -84,6 +84,7 @@ import megamek.common.weapons.bombs.ISASMissileWeapon;
 import megamek.common.weapons.bombs.ISBombTAG;
 import megamek.common.weapons.bombs.ISLAAMissileWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
@@ -10653,6 +10654,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
             long itemCost = (long) mounted.getCost();
+            if (!ignoreAmmo && isSupportVehicle() && (mounted.getSize() > 1)
+                    && (mounted.getType() instanceof InfantryWeapon)) {
+                itemCost += (mounted.getSize() - 1)
+                        * ((InfantryWeapon) mounted.getType()).getAmmoCost();
+            }
 
             cost += itemCost;
             if ((bvText != null) && (itemCost > 0)) {

@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import megamek.MegaMek;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.Aero;
@@ -173,7 +174,7 @@ public class PathEnumerator {
         int retryCount = 0;
         boolean success = false;
         
-        while ((retryCount < 3) && !success) {
+        while ((retryCount < BotClient.BOT_TURN_RETRY_COUNT) && !success) {
 	        try {
 	
 	            // Record it's current position.

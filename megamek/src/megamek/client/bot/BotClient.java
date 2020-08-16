@@ -34,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
@@ -83,6 +84,8 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 
 public abstract class BotClient extends Client {
+	public static final int BOT_TURN_RETRY_COUNT = 3;
+	
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
     
@@ -501,8 +504,37 @@ public abstract class BotClient extends Client {
         }
         return unMoved.get(Compute.randomInt(unMoved.size()));
     }
-
+    
+    /**
+     * Calculate what to do on my turn.
+     * Has a retry mechanism for when the turn calculation fails due to concurrency issues
+     */
     private synchronized void calculateMyTurn() {
+    	int retryCount = 0;
+        boolean success = false;
+        
+        while((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
+        	success = calculateMyTurnWorker();
+        	
+        	if(!success) {
+	        	// if we fail, take a nap for 500-1500 milliseconds, then try again
+	            // as it may be due to some kind of thread-related issue
+        		// limit number of retries so we're not endlessly spinning
+        		// if we can't recover from the error
+	            retryCount++;
+	            try {
+					Thread.sleep(Compute.randomInt(1000) + 500);
+				} catch (InterruptedException e) {
+					MegaMek.getLogger().error(this, e.toString());
+				}
+	        }
+        }
+    }
+
+    /**
+     * Worker function for a single attempt to calculate the bot's turn.
+     */
+    private synchronized boolean calculateMyTurnWorker() {
         // clear out transient data
         currentTurnEnemyEntities = null;
         currentTurnFriendlyEntities = null;
@@ -525,7 +557,6 @@ public abstract class BotClient extends Client {
                 }
                 moveEntity(mp.getEntity().getId(), mp);
             } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-                // TODO: consider that if you're hidden you should hold fire
                 calculateFiringTurn();
             } else if (game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
                 PhysicalOption po = calculatePhysicalTurn();
@@ -552,12 +583,15 @@ public abstract class BotClient extends Client {
                 sendArtyAutoHitHexes(autoHitHexes);
             } else if ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                        || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
-                // Send a "no attack" to clear the game turn, if any.
-                // TODO: Fix for real arty stuff
+                // Princess implements arty targeting; no plans to do so for testbod
                 calculateTargetingOffBoardTurn();
             }
+            
+            return true;
         } catch (Throwable t) {
-            t.printStackTrace();
+            MegaMek.getLogger().error(this, t.toString());
+            
+            return false;
         }
     }
 

@@ -34,9 +34,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
+import org.nibblesec.tools.SerialKiller;
 
 /**
  * Cache of the Mech summary information. Implemented as Singleton so a client
@@ -46,6 +47,9 @@ import megamek.common.verifier.*;
  * @author Others...
  */
 public class MechSummaryCache {
+    
+    private static final MMLogger LOG = DefaultMmLogger.getInstance();
+    private static final LogLevel LOGLVL = LogLevel.WARNING;
 
     public interface Listener {
         void doneLoading();
@@ -139,6 +143,7 @@ public class MechSummaryCache {
     private MechSummaryCache() {
         m_nameMap = new HashMap<>();
         m_fileNameMap = new HashMap<>();
+        LOG.setLogLevel(this, LOGLVL);
     }
 
     public MechSummary[] getAllMechs() {
@@ -200,7 +205,7 @@ public class MechSummaryCache {
                     lLastCheck = unit_cache_path.lastModified();
                     InputStream istream = new BufferedInputStream(
                             new FileInputStream(unit_cache_path));
-                    ObjectInputStream fin = new ObjectInputStream(istream);
+                    ObjectInputStream fin = new SerialKiller(istream, getClass().getResource("./megamek/serialkiller.xml").toString());
                     Integer num_units = (Integer) fin.readObject();
                     for (int i = 0; i < num_units; i++) {
                         if (interrupted) {
@@ -300,7 +305,7 @@ public class MechSummaryCache {
          * .append(failedUnitsDesc.nextElement()).append("\n"); }
          */
 
-        System.out.print(loadReport.toString());
+        LOG.info(this, loadReport.toString());
 
         done();
     }

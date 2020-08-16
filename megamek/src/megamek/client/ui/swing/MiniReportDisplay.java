@@ -32,6 +32,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.BASE64ToolKit;
 
 /**
  * Shows reports, with an Okay JButton
@@ -92,6 +93,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
             String text =  c.receiveReport(c.getGame().getReports(round));
             JTextPane ta = new JTextPane();
             setupStylesheet(ta);
+            BASE64ToolKit toolKit = new BASE64ToolKit();
+            ta.setEditorKit(toolKit);
             ta.setText("<pre>" + text + "</pre>");
             ta.setEditable(false);
             ta.setOpaque(false);
@@ -101,6 +104,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         // add the new current phase tab
         JTextPane ta = new JTextPane();
         setupStylesheet(ta);
+        BASE64ToolKit toolKit = new BASE64ToolKit();
+        ta.setEditorKit(toolKit);
         ta.setText("<pre>" + c.roundReport + "</pre>");
         ta.setEditable(false);
         ta.setOpaque(false);

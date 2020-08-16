@@ -14,11 +14,7 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -39,6 +35,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
@@ -202,6 +199,8 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 ta = new JTextPane();
                 ta.addHyperlinkListener(this);
                 setupStylesheet(ta);
+                BASE64ToolKit toolKit = new BASE64ToolKit();
+                ta.setEditorKit(toolKit);
                 ta.setText("<pre>" + text + "</pre>");
                 ta.setEditable(false);
                 ta.setOpaque(false);
@@ -212,6 +211,8 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             ta = new JTextPane();
             ta.addHyperlinkListener(this);
             setupStylesheet(ta);
+            BASE64ToolKit toolKit = new BASE64ToolKit();
+            ta.setEditorKit(toolKit);
             ta.setText("<pre>" + phaseText + "</pre>");
             ta.setEditable(false);
             ta.setOpaque(false);
@@ -238,9 +239,13 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         int phaseTab = tabs.indexOfTab("Phase");
         if (phaseTab > 0) {
             JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport().getView());
+            BASE64ToolKit toolKit = new BASE64ToolKit();
+            pane.setEditorKit(toolKit);
             pane.setText(pane.getText() + "<pre>"+additionalText+"</pre>");
         }
         JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab)).getViewport().getView());
+        BASE64ToolKit toolKit = new BASE64ToolKit();
+        pane.setEditorKit(toolKit);
         pane.setText(pane.getText() + "<pre>"+additionalText+"</pre>");
     }
 

@@ -138,7 +138,7 @@ public class DefaultMmLogger implements MMLogger {
                     final StringBuilder message) {
         log(callingClass, methodName, level, message.toString());
     }
-
+    
     @Override
     public <T extends Throwable> T debug(final String callingClass,
                                          final String methodName,
@@ -173,6 +173,11 @@ public class DefaultMmLogger implements MMLogger {
                       final String methodName,
                       final StringBuilder message) {
         log(callingClass, methodName, LogLevel.DEBUG, message);
+    }
+    
+    @Override
+    public void debug(Object callingObject, String message) {
+        log(callingObject.getClass(), getCallingMethod(), LogLevel.DEBUG, message);
     }
 
     @Override
@@ -211,6 +216,11 @@ public class DefaultMmLogger implements MMLogger {
                       final StringBuilder message) {
         log(callingClass, methodName, LogLevel.ERROR, message);
     }
+    
+    @Override
+    public void error(Object callingObject, String message) {
+        log(callingObject.getClass(), getCallingMethod(), LogLevel.ERROR, message);
+    }
 
     @Override
     public <T extends Throwable> T fatal(final String callingClass,
@@ -240,6 +250,11 @@ public class DefaultMmLogger implements MMLogger {
                       final String methodName,
                       final StringBuilder message) {
         log(callingClass, methodName, LogLevel.FATAL, message);
+    }
+    
+    @Override
+    public void fatal(Object callingObject, String message) {
+        log(callingObject.getClass(), getCallingMethod(), LogLevel.FATAL, message);
     }
 
     @Override
@@ -280,6 +295,27 @@ public class DefaultMmLogger implements MMLogger {
     }
 
     @Override
+    public void info(Object callingObject, String message) {
+        log(callingObject.getClass(), getCallingMethod(), LogLevel.INFO, message);
+    }
+    
+    /** 
+     * Retrieves the name of the method calling log/info/error etc. 
+     * from the stack trace. 
+     *
+     * This method MUST be called from a top-level method (such as info or fatal)
+     * as it depends on the call stack depth of exactly three methods between
+     * internally calling getStackTrace and the user's code.
+     */
+    private String getCallingMethod() {
+        try {
+            return Thread.currentThread().getStackTrace()[3].getMethodName() + "()";
+        } catch (Exception e) {
+            return "DefaultMMLogger Error: Could not obtain method name";
+        }
+    }
+
+    @Override
     public <T extends Throwable> T trace(final String callingClass,
                                          final String methodName,
                                          final String message,
@@ -314,6 +350,11 @@ public class DefaultMmLogger implements MMLogger {
                       final String methodName,
                       final StringBuilder message) {
         log(callingClass, methodName, LogLevel.TRACE, message);
+    }
+    
+    @Override
+    public void trace(Object callingObject, String message) {
+        log(callingObject.getClass(), getCallingMethod(), LogLevel.TRACE, message);
     }
 
     @Override
@@ -354,11 +395,16 @@ public class DefaultMmLogger implements MMLogger {
     }
     
     @Override
+    public void warning(Object callingObject, String message) {
+        log(callingObject.getClass(), getCallingMethod(), LogLevel.WARNING, message);
+    }
+    
+    @Override
     public void methodBegin(Class<?> callingClass, String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG,
             METHOD_BEGIN + methodName);
     }
-
+    
     @Override
     public void methodEnd(Class<?> callingClass, String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG,
@@ -380,6 +426,12 @@ public class DefaultMmLogger implements MMLogger {
     @Override
     public void setLogLevel(final String category, final LogLevel level) {
         Logger logger = getLogger(category);
+        logger.setLevel(level.getLevel());
+    }
+    
+    @Override
+    public void setLogLevel(Object callingObject, final LogLevel level) {
+        Logger logger = getLogger(callingObject.getClass().getName());
         logger.setLevel(level.getLevel());
     }
 

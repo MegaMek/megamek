@@ -19,6 +19,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
@@ -397,7 +398,7 @@ public class MegaMek {
         final String METHOD_NAME = "showInfo";
         // echo some useful stuff
         String msg = "Starting MegaMek v" + VERSION + " ..." + "\n\tCompiled on " +
-                new Date(TIMESTAMP).toString() + "\n\tToday is " + new Date().toString() +
+                new Date(TIMESTAMP).toString() + "\n\tToday is " + LocalDate.now().toString() +
                 "\n\tJava vendor " + System.getProperty("java.vendor") + "\n\tJava version "
                 + System.getProperty("java.version") + "\n\tPlatform " + System.getProperty("os.name")
                 + " " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")"

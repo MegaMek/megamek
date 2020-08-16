@@ -11,18 +11,16 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
-
 package megamek.common.util;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
 
 public class StringUtil {
-
     // XML Escape Strings.
     private static final String ESC_QUOTE = "&quote;";
     private static final String ESC_APOSTROPHE = "&apos;";
@@ -31,11 +29,11 @@ public class StringUtil {
     private static final String ESC_GREATER_THAN = "&gt;";
 
     public static Vector<String> splitString(String s, String divider) {
-        if (s == null || s.equals("")) { //$NON-NLS-1$
-            return new Vector<String>();
+        if ((s == null) || s.equals("")) {
+            return new Vector<>();
         }
 
-        Vector<String> v = new Vector<String>();
+        Vector<String> v = new Vector<>();
         int oldIndex = 0;
         int newIndex = s.indexOf(divider);
 
@@ -55,11 +53,7 @@ public class StringUtil {
     }
 
     public static Comparator<String> stringComparator() {
-        return new Comparator<String>() {
-            public int compare(String s1, String s2) {
-                return s1.compareTo(s2);
-            }
-        };
+        return String::compareTo;
     }
 
     /**
@@ -76,10 +70,9 @@ public class StringUtil {
     public static boolean parseBoolean(String input) {
         if (null == input) {
             return false;
-        } else if (input.equalsIgnoreCase("true")) { //$NON-NLS-1$
-            return true;
+        } else {
+            return input.equalsIgnoreCase("true");
         }
-        return false;
     }
 
     private static final String SPACES = "                                                                     ";
@@ -118,21 +111,21 @@ public class StringUtil {
      * last period. If there is no period in the filename, the stamp is added to
      * the end. The format of the stamp is dictated by the client option
      * "StampFormat", which must use the same formatting as Java's
-     * SimpleDateFormat class.
+     * DateTimeFormatter class.
      * 
      * @param filename the String containing the filename (with extension)
-     * @return the filname with date/time stamp added
+     * @return the filename with date/time stamp added
      */
     public static String addDateTimeStamp(String filename) {
-        SimpleDateFormat formatter = new SimpleDateFormat(PreferenceManager
-                .getClientPreferences().getStampFormat());
-        Date current = new Date();
+        String current = LocalDate.now().format(DateTimeFormatter.ofPattern(
+                PreferenceManager.getClientPreferences().getStampFormat()));
         if (filename.lastIndexOf(".") == -1) {
-            return filename + formatter.format(current);
+            return filename + current;
+        } else {
+            return filename.substring(0, filename.lastIndexOf("."))
+                    + current
+                    + filename.substring(filename.lastIndexOf("."));
         }
-        return filename.substring(0, filename.lastIndexOf("."))
-                + formatter.format(current)
-                + filename.substring(filename.lastIndexOf("."));
     }
 
     /**
@@ -155,14 +148,16 @@ public class StringUtil {
     }
 
     /**
-     * Takes in a string, and replaces all XML special characters with the approprate
+     * Takes in a string, and replaces all XML special characters with the appropriate
      * escape strings.
      *
      * @param text The text to be made XML safe.
      * @return
      */
     public static String makeXmlSafe(String text) {
-        if (StringUtil.isNullOrEmpty(text)) return "";
+        if (StringUtil.isNullOrEmpty(text)) {
+            return "";
+        }
 
         text = text.replace(ESC_AMPERSAND, "&");
         text = text.replace("\"", ESC_QUOTE);
@@ -173,7 +168,7 @@ public class StringUtil {
         text = text.replace("\u0000", " ");
 
         return text;
-    } //public static String makeXmlSafe(String text)
+    }
 
     /**
      * Returns TRUE if the passed string is a valid number.
@@ -190,7 +185,7 @@ public class StringUtil {
             return true;
         } catch (NumberFormatException ex) {
             return false;
-        } //catch (NumberFormatException ex)
+        }
     }
 
     /**

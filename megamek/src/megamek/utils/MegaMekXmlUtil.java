@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -122,6 +123,14 @@ public class MegaMekXmlUtil {
      */
     public static Source createSafeXmlSource(InputStream inputStream) {
         return new SAXSource(createSafeXMLReader(), new InputSource(inputStream));
+    }
+
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, UUID val) {
+        writeSimpleXmlTag(pw1, indent, name, val.toString());
+    }
+
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, LocalDate val) {
+        writeSimpleXmlTag(pw1, indent, name, saveFormattedDate(val));
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, String val) {

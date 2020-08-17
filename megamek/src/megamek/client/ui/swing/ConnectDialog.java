@@ -1,5 +1,5 @@
 /*  
-* MegaMek - Copyright (C) 2020 - The MegaMek Team  
+* MegaMek - Copyright (C) 2020 - The MegaMek Team. All Rights Reserved.
 *  
 * This program is free software; you can redistribute it and/or modify it under  
 * the terms of the GNU General Public License as published by the Free Software  
@@ -11,7 +11,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
 * details.  
 */
-
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -38,9 +37,9 @@ public class ConnectDialog extends ClientDialog implements ActionListener {
     
     private static final long serialVersionUID = 5895056240077042429L;
     
-    public String playerName;
-    public String serverAddr;
-    public int port;
+    private String playerName;
+    private String serverAddr;
+    private int port;
     private JTextField yourNameF;
     private JTextField serverAddrF;
     private JTextField portF;
@@ -48,18 +47,15 @@ public class ConnectDialog extends ClientDialog implements ActionListener {
     private IClientPreferences cPrefs = PreferenceManager.getClientPreferences();
 
     public ConnectDialog(JFrame frame) {
-        super(frame, Messages.getString("MegaMek.ConnectDialog.title"), true); //$NON-NLS-1$
-        JLabel yourNameL = new JLabel(
-                Messages.getString("MegaMek.yourNameL"), SwingConstants.RIGHT); //$NON-NLS-1$
-        JLabel serverAddrL = new JLabel(
-                Messages.getString("MegaMek.serverAddrL"), SwingConstants.RIGHT); //$NON-NLS-1$
-        JLabel portL = new JLabel(
-                Messages.getString("MegaMek.portL"), SwingConstants.RIGHT); //$NON-NLS-1$
+        super(frame, Messages.getString("MegaMek.ConnectDialog.title"), true);
+        JLabel yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), SwingConstants.RIGHT);
+        JLabel serverAddrL = new JLabel(Messages.getString("MegaMek.serverAddrL"), SwingConstants.RIGHT);
+        JLabel portL = new JLabel(Messages.getString("MegaMek.portL"), SwingConstants.RIGHT);
         yourNameF = new JTextField(cPrefs.getLastPlayerName(), 16);
         yourNameF.addActionListener(this);
         serverAddrF = new JTextField(cPrefs.getLastConnectAddr(), 16);
         serverAddrF.addActionListener(this);
-        portF = new JTextField(cPrefs.getLastConnectPort() + "", 4); //$NON-NLS-1$
+        portF = new JTextField(cPrefs.getLastConnectPort() + "", 4);
         portF.addActionListener(this);
         
         JPanel middlePanel = new JPanel(new GridBagLayout());
@@ -90,21 +86,46 @@ public class ConnectDialog extends ClientDialog implements ActionListener {
         center();
     }
 
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public String getServerAddr() {
+        return serverAddr;
+    }
+
+    public void setServerAddr(String serverAddr) {
+        this.serverAddr = serverAddr;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e) {
         // reached from the Okay button or pressing Enter in
         // the text fields
         try {
-            playerName = yourNameF.getText();
-            serverAddr = serverAddrF.getText();
-            port = Integer.decode(portF.getText().trim()).intValue();
+            setPlayerName(yourNameF.getText());
+            setServerAddr(serverAddrF.getText());
+            setPort(Integer.decode(portF.getText().trim()));
         } catch (NumberFormatException ex) {
             System.err.println(ex.getMessage());
         }
 
         // update settings
-        cPrefs.setLastPlayerName(playerName);
-        cPrefs.setLastConnectAddr(serverAddr);
-        cPrefs.setLastConnectPort(port);
+        cPrefs.setLastPlayerName(getPlayerName());
+        cPrefs.setLastConnectAddr(getServerAddr());
+        cPrefs.setLastConnectPort(getPort());
         setVisible(false);
     }
 }

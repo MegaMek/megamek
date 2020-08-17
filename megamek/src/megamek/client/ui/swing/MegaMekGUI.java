@@ -841,14 +841,14 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         cd.setVisible(true);
 
         // verify dialog data
-        if ((cd.playerName == null) || (cd.serverAddr == null)
-                || (cd.port == 0)) {
+        if ((cd.getPlayerName() == null) || (cd.getServerAddr() == null)
+                || (cd.getPort() == 0)) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
-        char[] nameChars = cd.playerName.toCharArray();
+        char[] nameChars = cd.getPlayerName().toCharArray();
         for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
@@ -863,14 +863,14 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         }
 
         // initialize game
-        client = new Client(cd.playerName, cd.serverAddr, cd.port);
+        client = new Client(cd.getPlayerName(), cd.getServerAddr(), cd.getPort());
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
-            String error = "Error: could not connect to server at " + cd.serverAddr + ':' + cd.port + '.';
+            String error = "Error: could not connect to server at " + cd.getServerAddr() + ':' + cd.getPort() + '.';
             JOptionPane
                     .showMessageDialog(
                             frame,
@@ -887,14 +887,14 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
         // verify dialog data
-        if ((cd.playerName == null) || (cd.serverAddr == null)
-                || (cd.port == 0)) {
+        if ((cd.getPlayerName() == null) || (cd.getServerAddr() == null)
+                || (cd.getPort() == 0)) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
-        char[] nameChars = cd.playerName.toCharArray();
+        char[] nameChars = cd.getPlayerName().toCharArray();
         for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
@@ -914,13 +914,13 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         if (bcd.dialogAborted) {
             return; // user didn't click 'ok', add no bot
         }
-        client = bcd.getSelectedBot(cd.serverAddr, cd.port);
+        client = bcd.getSelectedBot(cd.getServerAddr(), cd.getPort());
         client.getGame().addGameListener(new BotGUI((BotClient) client));
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         gui.initialize();
         if (!client.connect()) {
-            String error = "Error: could not connect to server at " + cd.serverAddr + ':' + cd.port + '.';
+            String error = "Error: could not connect to server at " + cd.getServerAddr() + ':' + cd.getPort() + '.';
             JOptionPane
                     .showMessageDialog(
                             frame,

@@ -1151,33 +1151,31 @@ public class Client implements IClientCommandHandler {
     private void cacheImgTag(Entity entity){
 
         if(entity == null) {
-            System.out.println("Null entity reference");
+            MegaMek.getLogger().error(this, "Null entity reference");
             return;
         }
 
         if (imgCache == null) {
             imgCache = new Hashtable<>();
-        }else if (imgCache.containsKey(entity.getId())) {
-            //remove images that should be regenerated
+        } else if (imgCache.containsKey(entity.getId())) {
+            //remove images that should be refreshed
             imgCache.remove(entity.getId());
         }
 
-        //convert to base64, add to to <img> tag and store in cache
-        if (!imgCache.containsKey(entity.getId())) {
-            Image image = ImageUtil.getScaledImage(getTargetImage(entity),  56, 48);
-            if(image!=null) {
-                try {
-                    String base64Text;
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    ImageIO.write((RenderedImage) image, "png", baos);
-                    baos.flush();
-                    base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
-                    baos.close();
-                    String img = "<img src='data:image/png;base64," + base64Text + "'>";
-                    imgCache.put(entity.getId(), img);
-                } catch (final IOException ioe) {
-                    throw new UncheckedIOException(ioe);
-                }
+        if (getTargetImage(entity) != null) {
+            //convert image to base64, add to to <img> tag and store in cache
+            Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
+            try {
+                String base64Text;
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write((RenderedImage) image, "png", baos);
+                baos.flush();
+                base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
+                baos.close();
+                String img = "<img src='data:image/png;base64," + base64Text + "'>";
+                imgCache.put(entity.getId(), img);
+            } catch (final IOException ioe) {
+                throw new UncheckedIOException(ioe);
             }
         }
     }
@@ -1186,9 +1184,11 @@ public class Client implements IClientCommandHandler {
      * Gets the current mech image
      */
     private Image getTargetImage(Entity e){
-        if(e.isDestroyed()) {
+        if (bv == null) {
+            return null;
+        } else if (e.isDestroyed()) {
             return bv.getTilesetManager().wreckMarkerFor(e, -1);
-        }else {
+        } else {
             return bv.getTilesetManager().imageFor(e);
         }
     }

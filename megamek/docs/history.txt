@@ -11,6 +11,7 @@ VERSION HISTORY:
 + PR #2148: Out-of-control spheroid dropships in atmo no longer pretend to let the player control movement
 + Data: New Sprites
 + PR #2132: No more sending malformed game data objects over to the server to exploit deserialization vulnerabilities. Sorry.
++ Issue #2150: Fixing Princess Vehicle Abandonment NPE
 
 0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit

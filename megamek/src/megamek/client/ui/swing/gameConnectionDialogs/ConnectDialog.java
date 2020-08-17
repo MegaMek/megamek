@@ -11,7 +11,7 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
 * details.  
 */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.gameConnectionDialogs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -29,6 +29,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ButtonEsc;
+import megamek.client.ui.swing.ClientDialog;
+import megamek.client.ui.swing.CloseAction;
+import megamek.client.ui.swing.OkayAction;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 

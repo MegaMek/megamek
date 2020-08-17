@@ -2,16 +2,17 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
@@ -67,6 +68,8 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
+import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -96,13 +99,13 @@ import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
 public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
-    private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek-splash.jpg"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png"; //$NON-NLS-1$
+    private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek-splash.jpg";
+    private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
+    private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
+    private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
+    private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
-    private static final String FILENAME_BT_CLASSIC_FONT = "btclassic/BTLogo_old.ttf"; //$NON-NLS-1$
+    private static final String FILENAME_BT_CLASSIC_FONT = "btclassic/BTLogo_old.ttf";
 
     private JFrame frame;
     private Client client;
@@ -165,7 +168,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             ToolTipManager.sharedInstance().setDismissDelay(
                     GUIPreferences.getInstance().getTooltipDismissDelay());
         }
-        frame = new JFrame("MegaMek"); //$NON-NLS-1$
+        frame = new JFrame("MegaMek");
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -223,11 +226,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
 
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {
-            ConfirmDialog confirm = new ConfirmDialog(
-                    frame,
-                    Messages.getString("MegaMek.welcome.title") + MegaMek.VERSION, //$NON-NLS-1$
-                    Messages.getString("MegaMek.welcome.message"), //$NON-NLS-1$
-                    true);
+            ConfirmDialog confirm = new ConfirmDialog(frame,
+                    Messages.getString("MegaMek.welcome.title") + MegaMek.VERSION,
+                    Messages.getString("MegaMek.welcome.message"), true);
             confirm.setVisible(true);
             if (!confirm.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForReadme(false);
@@ -240,8 +241,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
 
     public void createController() {
         controller = new MegaMekController();
-        KeyboardFocusManager kbfm = KeyboardFocusManager
-                .getCurrentKeyboardFocusManager();
+        KeyboardFocusManager kbfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         kbfm.addKeyEventDispatcher(controller);
 
         KeyBindParser.parseKeyBindings(controller);
@@ -266,40 +266,41 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         MegamekButton scenB;
         MegamekButton loadB;
         MegamekButton quitB;
-        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMek.VERSION, JLabel.CENTER); //$NON-NLS-1$
+        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMek.VERSION,
+                JLabel.CENTER);
         labVersion.setPreferredSize(new Dimension(250,15));
         if (skinSpec.fontColors.size() > 0) {
             labVersion.setForeground(skinSpec.fontColors.get(0));
         }
-        hostB = new MegamekButton(Messages.getString("MegaMek.hostNewGame.label"), //$NON-NLS-1$
+        hostB = new MegamekButton(Messages.getString("MegaMek.hostNewGame.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         hostB.setActionCommand(ClientGUI.FILE_GAME_NEW);
         hostB.addActionListener(actionListener);
-        scenB = new MegamekButton(Messages.getString("MegaMek.hostScenario.label"), //$NON-NLS-1$
+        scenB = new MegamekButton(Messages.getString("MegaMek.hostScenario.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         scenB.setActionCommand(ClientGUI.FILE_GAME_SCENARIO);
         scenB.addActionListener(actionListener);
-        loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"), //$NON-NLS-1$
+        loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         loadB.setActionCommand(ClientGUI.FILE_GAME_OPEN);
         loadB.addActionListener(actionListener);
-        connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"), //$NON-NLS-1$
+        connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         connectB.setActionCommand(ClientGUI.FILE_GAME_CONNECT);
         connectB.addActionListener(actionListener);
-        botB = new MegamekButton(Messages.getString("MegaMek.ConnectAsBot.label"), //$NON-NLS-1$
+        botB = new MegamekButton(Messages.getString("MegaMek.ConnectAsBot.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         botB.setActionCommand(ClientGUI.FILE_GAME_CONNECT_BOT);
         botB.addActionListener(actionListener);
-        editB = new MegamekButton(Messages.getString("MegaMek.MapEditor.label"), //$NON-NLS-1$
+        editB = new MegamekButton(Messages.getString("MegaMek.MapEditor.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         editB.setActionCommand(ClientGUI.FILE_BOARD_NEW);
         editB.addActionListener(actionListener);
-        skinEditB = new MegamekButton(Messages.getString("MegaMek.SkinEditor.label"), //$NON-NLS-1$
+        skinEditB = new MegamekButton(Messages.getString("MegaMek.SkinEditor.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         skinEditB.setActionCommand(ClientGUI.MAIN_SKIN_NEW);
         skinEditB.addActionListener(actionListener);
-        quitB = new MegamekButton(Messages.getString("MegaMek.Quit.label"), //$NON-NLS-1$
+        quitB = new MegamekButton(Messages.getString("MegaMek.Quit.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         quitB.setActionCommand(ClientGUI.MAIN_QUIT);
         quitB.addActionListener(actionListener);
@@ -316,7 +317,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                 File file = new MegaMekFile(Configuration.widgetsDir(),
                         skinSpec.backgrounds.get(1)).getFile();
                 if (!file.exists()) {
-                    System.err.println("MainMenu Error: background icon doesn't exist: "
+                    MegaMek.getLogger().error(this, "MainMenu Error: background icon doesn't exist: "
                             + file.getAbsolutePath());
                 } else {
                     backgroundIcon = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
@@ -491,10 +492,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             }
         }
         if (!foundValid) {
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages.getString("MegaMek.PlayerNameAlert.message"), Messages.getString("MegaMek.PlayerNameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("MegaMek.PlayerNameAlert.message"),
+                    Messages.getString("MegaMek.PlayerNameAlert.title"),
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -505,19 +506,15 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             server = new Server(hd.getServerPass(), hd.getPort(), hd.isRegister(),
                     hd.isRegister() ? hd.getMetaserver() : "");
         } catch (IOException ex) {
-            System.err.println("could not create server socket on port "
-                    + hd.getPort());
+            MegaMek.getLogger().error(this, "could not create server socket on port " + hd.getPort());
             String error = "Error: could not start server at localhost" + ":" + hd.getPort() + " (" +
                     ex.getMessage() + ").";
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            error,
-                            Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(frame, error,
+                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         // initialize client
-        client = new Client(hd.getPlayerName(), "localhost", hd.getPort()); //$NON-NLS-1$
+        client = new Client(hd.getPlayerName(), "localhost", hd.getPort());
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -525,11 +522,8 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
             String error = "Error: could not connect to server at localhost" + ":" + hd.getPort() + ".";
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            error,
-                            Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(frame, error,
+                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
         }
@@ -545,7 +539,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return ((dir.getName().endsWith(".sav") || dir.getName().endsWith(".sav.gz") || dir.isDirectory())); //$NON-NLS-1$
+                return ((dir.getName().endsWith(".sav") || dir.getName().endsWith(".sav.gz") || dir.isDirectory()));
             }
 
             @Override
@@ -554,8 +548,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             }
         });
         int returnVal = fc.showOpenDialog(frame);
-        if ((returnVal != JFileChooser.APPROVE_OPTION)
-                || (fc.getSelectedFile() == null)) {
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!
             return;
         }
@@ -574,10 +567,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             }
         }
         if (!foundValid) {
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages.getString("MegaMek.PlayerNameAlert1.message"), Messages.getString("MegaMek.PlayerNameAlert1.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("MegaMek.PlayerNameAlert1.message"),
+                    Messages.getString("MegaMek.PlayerNameAlert1.title"),
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -587,26 +580,23 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         try {
             server = new Server(hd.getServerPass(), hd.getPort(), hd.isRegister(), hd.isRegister() ? hd.getMetaserver() : "");
         } catch (IOException ex) {
-            System.err.println("could not create server socket on port " + hd.getPort());
+            MegaMek.getLogger().error(this, "could not create server socket on port " + hd.getPort());
             String error = "Error: could not start server at localhost" + ":" + hd.getPort() + " (" +
                     ex.getMessage() + ").";
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            error,
-                            Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(frame, error,
+                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (!server.loadGame(fc.getSelectedFile())) {
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages.getString("MegaMek.LoadGameAlert.message"), Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("MegaMek.LoadGameAlert.message"),
+                    Messages.getString("MegaMek.LoadGameAlert.title"),
+                    JOptionPane.ERROR_MESSAGE);
             server.die();
             server = null;
             return;
         }
-        client = new Client(hd.getPlayerName(), "localhost", hd.getPort()); //$NON-NLS-1$
+        client = new Client(hd.getPlayerName(), "localhost", hd.getPort());
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -615,7 +605,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         if (!client.connect()) {
             String error = "Error: could not connect to server at localhost" + ":" + hd.getPort() + ".";
             JOptionPane.showMessageDialog(frame, error,
-                            Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
         }
@@ -636,11 +626,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
      * Host a game constructed from a scenario file
      */
     void scenario() {
-        JFileChooser fc = new JFileChooser("data" + File.separatorChar
-                + "scenarios");
+        JFileChooser fc = new JFileChooser("data" + File.separatorChar + "scenarios");
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-        fc.setDialogTitle(Messages
-                .getString("MegaMek.SelectScenarioDialog.title"));
+        fc.setDialogTitle(Messages.getString("MegaMek.SelectScenarioDialog.title"));
 
         FileFilter filter = new FileFilter() {
 
@@ -684,17 +672,16 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         try {
             g = sl.createGame();
         } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages.getString("MegaMek.HostScenarioAlert.message") + e.getMessage(), Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            MegaMek.getLogger().error(getClass(), "scenario", e);
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("MegaMek.HostScenarioAlert.message") + e.getMessage(),
+                    Messages.getString("MegaMek.HostScenarioAlert.title"),
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         // popup options dialog
-        GameOptionsDialog god = new GameOptionsDialog(frame, g.getOptions(),
-                false);
+        GameOptionsDialog god = new GameOptionsDialog(frame, g.getOptions(), false);
         god.update(g.getOptions());
         god.setEditable(true);
         god.setVisible(true);
@@ -704,8 +691,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         }
 
         // popup planetary conditions dialog
-        PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(frame,
-                g.getPlanetaryConditions());
+        PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(frame, g.getPlanetaryConditions());
         pcd.update(g.getPlanetaryConditions());
         pcd.setVisible(true);
         g.setPlanetaryConditions(pcd.getConditions());
@@ -742,10 +728,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             }
         }
         if (!foundValid) {
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages.getString("MegaMek.HostScenarioAlert1.message"), Messages.getString("MegaMek.HostScenarioAlert1.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("MegaMek.HostScenarioAlert1.message"),
+                    Messages.getString("MegaMek.HostScenarioAlert1.title"),
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -756,15 +742,11 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         try {
             server = new Server(hd.getServerPass(), hd.getPort());
         } catch (IOException ex) {
-            System.err.println("could not create server socket on port "
-                    + hd.getPort());
+            MegaMek.getLogger().error(this, "could not create server socket on port " + hd.getPort());
             String error = "Error: could not start server at localhost" + ":" + hd.getPort() + " (" +
                     ex.getMessage() + ").";
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            error,
-                            Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(frame, error,
+                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         server.setGame(g);
@@ -772,19 +754,16 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // apply any scenario damage
         sl.applyDamage(server);
         ClientGUI gui = null;
-        if (!"".equals(sd.localName)) { //$NON-NLS-1$
+        if (!"".equals(sd.localName)) {
             // initialize game
-            client = new Client(hd.getPlayerName(), "localhost", hd.getPort()); //$NON-NLS-1$
+            client = new Client(hd.getPlayerName(), "localhost", hd.getPort());
             gui = new ClientGUI(client, controller);
             controller.clientgui = gui;
             gui.initialize();
             if (!client.connect()) {
                 String error = "Error: could not connect to server at localhost" + ":" + hd.getPort() + ".";
-                JOptionPane
-                        .showMessageDialog(
-                                frame,
-                                error,
-                                Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                JOptionPane.showMessageDialog(frame, error,
+                        Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE);
                 frame.setVisible(false);
                 client.die();
             }
@@ -797,15 +776,14 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // setup any bots
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
-                BotClient c = new TestBot(pa[x].getName(), "localhost", hd.getPort()); //$NON-NLS-1$
+                BotClient c = new TestBot(pa[x].getName(), "localhost", hd.getPort());
                 c.getGame().addGameListener(new BotGUI(c));
             }
         }
 
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_OBOT) {
-                BotClient c = new Princess(pa[x].getName(),
-                        "localhost", hd.getPort(), LogLevel.ERROR); //$NON-NLS-1$
+                BotClient c = new Princess(pa[x].getName(), "localhost", hd.getPort(), LogLevel.ERROR);
                 c.getGame().addGameListener(new BotGUI(c));
             }
         }
@@ -834,8 +812,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         cd.setVisible(true);
 
         // verify dialog data
-        if ((cd.getPlayerName() == null) || (cd.getServerAddr() == null)
-                || (cd.getPort() == 0)) {
+        if ((cd.getPlayerName() == null) || (cd.getServerAddr() == null) || (cd.getPort() == 0)) {
             return;
         }
 
@@ -848,10 +825,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             }
         }
         if (!foundValid) {
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages.getString("MegaMek.ConnectAlert.message"), Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("MegaMek.ConnectAlert.message"),
+                    Messages.getString("MegaMek.ConnectAlert.title"),
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -864,11 +841,8 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
             String error = "Error: could not connect to server at " + cd.getServerAddr() + ':' + cd.getPort() + '.';
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            error,
-                            Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(frame, error,
+                    Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
         }
@@ -894,10 +868,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             }
         }
         if (!foundValid) {
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            Messages.getString("MegaMek.ConnectGameAlert.message"), Messages.getString("MegaMek.ConnectGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("MegaMek.ConnectGameAlert.message"),
+                    Messages.getString("MegaMek.ConnectGameAlert.title"),
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -914,19 +888,15 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         gui.initialize();
         if (!client.connect()) {
             String error = "Error: could not connect to server at " + cd.getServerAddr() + ':' + cd.getPort() + '.';
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            error,
-                            Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(frame, error,
+                    Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
         }
         launch(gui.getFrame());
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         frame.getContentPane().add(comp);
     }
@@ -949,8 +919,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
      */
     void showHelp() {
         if (help == null) {
-            help = showHelp(frame,
-                    Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
+            help = showHelp(frame, Messages.getString("CommonMenuBar.helpFilePath"));
         }
         // Show the help dialog.
         help.setVisible(true);

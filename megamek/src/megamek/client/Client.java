@@ -1162,7 +1162,8 @@ public class Client implements IClientCommandHandler {
             imgCache.remove(entity.getId());
         }
 
-        if(getTargetImage(entity) != null){//convert image to base64, add to to <img> tag and store in cache
+        if (getTargetImage(entity) != null) {
+            //convert image to base64, add to to <img> tag and store in cache
             Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
             try {
                 String base64Text;

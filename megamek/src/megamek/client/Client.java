@@ -1184,14 +1184,12 @@ public class Client implements IClientCommandHandler {
      * Gets the current mech image
      */
     private Image getTargetImage(Entity e){
-        if(bv == null){
-            return  null;
-        }else {
-            if (e.isDestroyed()) {
-                return bv.getTilesetManager().wreckMarkerFor(e, -1);
-            } else {
-                return bv.getTilesetManager().imageFor(e);
-            }
+        if (bv == null) {
+            return null;
+        } else if (e.isDestroyed()) {
+            return bv.getTilesetManager().wreckMarkerFor(e, -1);
+        } else {
+            return bv.getTilesetManager().imageFor(e);
         }
     }
 

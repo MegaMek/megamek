@@ -725,11 +725,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         if (!("".equals(sd.localName))) {
             hasSlot = true;
         }
-        hd.yourNameF.setText(sd.localName);
+        hd.getYourNameF().setText(sd.localName);
         hd.setVisible(true);
         // verify dialog data
-        if ((hd.getPlayerName() == null) || (hd.getServerPass() == null)
-                || (hd.getPort() == 0)) {
+        if ((hd.getPlayerName() == null) || (hd.getServerPass() == null) || (hd.getPort() == 0)) {
             return;
         }
         sd.localName = hd.getPlayerName();

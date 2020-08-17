@@ -62,9 +62,9 @@ public class HostDialog extends ClientDialog implements ActionListener {
         JLabel yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), SwingConstants.RIGHT);
         JLabel serverPassL = new JLabel(Messages.getString("MegaMek.serverPassL"), SwingConstants.RIGHT);
         JLabel portL = new JLabel(Messages.getString("MegaMek.portL"), SwingConstants.RIGHT);
-        yourNameF = new JTextField(cPrefs.getLastPlayerName(), 16);
-        yourNameL.setLabelFor(yourNameF);
-        yourNameF.addActionListener(this);
+        setYourNameF(new JTextField(cPrefs.getLastPlayerName(), 16));
+        yourNameL.setLabelFor(getYourNameF());
+        getYourNameF().addActionListener(this);
         serverPassF = new JTextField(cPrefs.getLastServerPass(), 16);
         serverPassL.setLabelFor(serverPassF);
         serverPassF.addActionListener(this);
@@ -96,7 +96,7 @@ public class HostDialog extends ClientDialog implements ActionListener {
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         
-        addOptionRow(middlePanel, c, yourNameL, yourNameF);
+        addOptionRow(middlePanel, c, yourNameL, getYourNameF());
         addOptionRow(middlePanel, c, serverPassL, serverPassF);
         addOptionRow(middlePanel, c, portL, portF);
         
@@ -162,12 +162,20 @@ public class HostDialog extends ClientDialog implements ActionListener {
         this.metaserver = metaserver;
     }
 
+    public JTextField getYourNameF() {
+        return yourNameF;
+    }
+
+    public void setYourNameF(JTextField yourNameF) {
+        this.yourNameF = yourNameF;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         // reached from the Okay button or pressing Enter in
         // the text fields
         try {
-            setPlayerName(yourNameF.getText());
+            setPlayerName(getYourNameF().getText());
             setServerPass(serverPassF.getText());
             setRegister(registerC.isSelected());
             setMetaserver(metaserverF.getText());

@@ -1157,7 +1157,8 @@ public class Client implements IClientCommandHandler {
 
         if (imgCache == null) {
             imgCache = new Hashtable<>();
-        }else if (imgCache.containsKey(entity.getId())) {//remove images that should be refreshed
+        } else if (imgCache.containsKey(entity.getId())) {
+            //remove images that should be refreshed
             imgCache.remove(entity.getId());
         }
 

@@ -176,8 +176,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         frame.setContentPane(new JPanel() {
             private static final long serialVersionUID = 5174313603291016012L;
 
+            @Override
             protected void paintComponent(Graphics g) {
-                if (backgroundIcon == null){
+                if (backgroundIcon == null) {
                     super.paintComponent(g);
                     return;
                 }
@@ -189,8 +190,8 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                 if ((iW < 1) || (iH < 1)) {
                     return;
                 }
-                for (int x = 0; x < w; x+=iW){
-                    for (int y = 0; y < h; y+=iH){
+                for (int x = 0; x < w; x += iW) {
+                    for (int y = 0; y < h; y += iH) {
                         g.drawImage(backgroundIcon, x, y,null);
                     }
                 }
@@ -314,7 +315,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             if (skinSpec.backgrounds.size() > 1) {
                 File file = new MegaMekFile(Configuration.widgetsDir(),
                         skinSpec.backgrounds.get(1)).getFile();
-                if (!file.exists()){
+                if (!file.exists()) {
                     System.err.println("MainMenu Error: background icon doesn't exist: "
                             + file.getAbsolutePath());
                 } else {
@@ -354,8 +355,8 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // Strive for no more than ~90% of the screen and use golden ratio to make
         // the button width "look" reasonable.
         int imageWidth = imgSplash.getWidth(frame);
-        int maximumWidth = (int)(0.9 * currentMonitor.getWidth()) - imageWidth;
-        Dimension minButtonDim = new Dimension((int)(maximumWidth / 1.618), 25);
+        int maximumWidth = (int) (0.9 * currentMonitor.getWidth()) - imageWidth;
+        Dimension minButtonDim = new Dimension((int) (maximumWidth / 1.618), 25);
         if (textDim.getWidth() > minButtonDim.getWidth()) {
             minButtonDim = textDim;
         }
@@ -442,11 +443,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         BoardEditor editor = new BoardEditor(controller);
         controller.boardEditor = editor;
         launch(editor.getFrame());
-        if (GUIPreferences.getInstance().getBoardEdRndStart()) {
-            editor.boardNew(true);
-        } else {
-            editor.boardNew(false);
-        }
+        editor.boardNew(GUIPreferences.getInstance().getBoardEdRndStart());
     }
     
     void showSkinEditor() {
@@ -478,18 +475,16 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
      * Start instances of both the client and the server.
      */
     void host() {
-        HostDialog hd;
-        hd = new HostDialog(frame);
+        HostDialog hd = new HostDialog(frame);
         hd.setVisible(true);
         // verify dialog data
-        if ((hd.playerName == null) || (hd.serverPass == null)
-                || (hd.port == 0)) {
+        if ((hd.getPlayerName() == null) || (hd.getServerPass() == null) || (hd.getPort() == 0)) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
-        char[] nameChars = hd.playerName.toCharArray();
+        char[] nameChars = hd.getPlayerName().toCharArray();
         for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
@@ -507,12 +502,12 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         d6();
         // start server
         try {
-            server = new Server(hd.serverPass, hd.port, hd.register,
-                    hd.register ? hd.metaserver : "");
+            server = new Server(hd.getServerPass(), hd.getPort(), hd.isRegister(),
+                    hd.isRegister() ? hd.getMetaserver() : "");
         } catch (IOException ex) {
             System.err.println("could not create server socket on port "
-                    + hd.port);
-            String error = "Error: could not start server at localhost" + ":" + hd.port + " (" +
+                    + hd.getPort());
+            String error = "Error: could not start server at localhost" + ":" + hd.getPort() + " (" +
                     ex.getMessage() + ").";
             JOptionPane
                     .showMessageDialog(
@@ -522,14 +517,14 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             return;
         }
         // initialize client
-        client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
+        client = new Client(hd.getPlayerName(), "localhost", hd.getPort()); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
-            String error = "Error: could not connect to server at localhost" + ":" + hd.port + ".";
+            String error = "Error: could not connect to server at localhost" + ":" + hd.getPort() + ".";
             JOptionPane
                     .showMessageDialog(
                             frame,
@@ -566,13 +561,13 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         }
         HostDialog hd = new HostDialog(frame);
         hd.setVisible(true);
-        if ((hd.playerName == null) || (hd.serverPass == null) || (hd.port == 0)) {
+        if ((hd.getPlayerName() == null) || (hd.getServerPass() == null) || (hd.getPort() == 0)) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
-        char[] nameChars = hd.playerName.toCharArray();
+        char[] nameChars = hd.getPlayerName().toCharArray();
         for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
@@ -590,10 +585,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         d6();
         // start server
         try {
-            server = new Server(hd.serverPass, hd.port, hd.register, hd.register ? hd.metaserver : "");
+            server = new Server(hd.getServerPass(), hd.getPort(), hd.isRegister(), hd.isRegister() ? hd.getMetaserver() : "");
         } catch (IOException ex) {
-            System.err.println("could not create server socket on port " + hd.port);
-            String error = "Error: could not start server at localhost" + ":" + hd.port + " (" +
+            System.err.println("could not create server socket on port " + hd.getPort());
+            String error = "Error: could not start server at localhost" + ":" + hd.getPort() + " (" +
                     ex.getMessage() + ").";
             JOptionPane
                     .showMessageDialog(
@@ -611,14 +606,14 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             server = null;
             return;
         }
-        client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
+        client = new Client(hd.getPlayerName(), "localhost", hd.getPort()); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
-            String error = "Error: could not connect to server at localhost" + ":" + hd.port + ".";
+            String error = "Error: could not connect to server at localhost" + ":" + hd.getPort() + ".";
             JOptionPane.showMessageDialog(frame, error,
                             Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             frame.setVisible(false);
@@ -733,15 +728,15 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         hd.yourNameF.setText(sd.localName);
         hd.setVisible(true);
         // verify dialog data
-        if ((hd.playerName == null) || (hd.serverPass == null)
-                || (hd.port == 0)) {
+        if ((hd.getPlayerName() == null) || (hd.getServerPass() == null)
+                || (hd.getPort() == 0)) {
             return;
         }
-        sd.localName = hd.playerName;
+        sd.localName = hd.getPlayerName();
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
-        char[] nameChars = hd.playerName.toCharArray();
+        char[] nameChars = hd.getPlayerName().toCharArray();
         for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
@@ -760,11 +755,11 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
 
         // start server
         try {
-            server = new Server(hd.serverPass, hd.port);
+            server = new Server(hd.getServerPass(), hd.getPort());
         } catch (IOException ex) {
             System.err.println("could not create server socket on port "
-                    + hd.port);
-            String error = "Error: could not start server at localhost" + ":" + hd.port + " (" +
+                    + hd.getPort());
+            String error = "Error: could not start server at localhost" + ":" + hd.getPort() + " (" +
                     ex.getMessage() + ").";
             JOptionPane
                     .showMessageDialog(
@@ -780,12 +775,12 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         ClientGUI gui = null;
         if (!"".equals(sd.localName)) { //$NON-NLS-1$
             // initialize game
-            client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
+            client = new Client(hd.getPlayerName(), "localhost", hd.getPort()); //$NON-NLS-1$
             gui = new ClientGUI(client, controller);
             controller.clientgui = gui;
             gui.initialize();
             if (!client.connect()) {
-                String error = "Error: could not connect to server at localhost" + ":" + hd.port + ".";
+                String error = "Error: could not connect to server at localhost" + ":" + hd.getPort() + ".";
                 JOptionPane
                         .showMessageDialog(
                                 frame,
@@ -803,7 +798,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // setup any bots
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
-                BotClient c = new TestBot(pa[x].getName(), "localhost", hd.port); //$NON-NLS-1$
+                BotClient c = new TestBot(pa[x].getName(), "localhost", hd.getPort()); //$NON-NLS-1$
                 c.getGame().addGameListener(new BotGUI(c));
             }
         }
@@ -811,7 +806,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_OBOT) {
                 BotClient c = new Princess(pa[x].getName(),
-                        "localhost", hd.port, LogLevel.ERROR); //$NON-NLS-1$
+                        "localhost", hd.getPort(), LogLevel.ERROR); //$NON-NLS-1$
                 c.getGame().addGameListener(new BotGUI(c));
             }
         }
@@ -836,8 +831,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
      * Connect to to a game and then launch the chat lounge.
      */
     void connect() {
-        ConnectDialog cd;
-        cd = new ConnectDialog(frame);
+        ConnectDialog cd = new ConnectDialog(frame);
         cd.setVisible(true);
 
         // verify dialog data

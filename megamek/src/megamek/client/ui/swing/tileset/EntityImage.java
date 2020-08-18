@@ -141,7 +141,7 @@ public class EntityImage {
         isInfantry = entity instanceof Infantry;
         isTank = entity instanceof Tank;
         isPreview = preview;
-        isSlim = (isTank && !(entity instanceof GunEmplacement));// || (entity instanceof Aero);
+        isSlim = (isTank && !(entity instanceof GunEmplacement));
         isVerySlim = entity instanceof VTOL;
         pos = secondaryPos;
         isSingleHex = secondaryPos == -1;
@@ -404,7 +404,7 @@ public class EntityImage {
         }
         
         // Overlay the smoke image
-        Image result = ImageUtil.createAcceleratedImage(base);
+        Image result = ImageUtil.createAcceleratedImage(image);
         Graphics g = result.getGraphics();
         if (isSingleHex) {
             g.drawImage(smoke, 0, 0, null);

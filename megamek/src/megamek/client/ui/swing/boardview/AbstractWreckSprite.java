@@ -129,9 +129,9 @@ public abstract class AbstractWreckSprite extends Sprite {
                     bv.tileManager.wreckMarkerFor(entity, secondaryPos) :
                     bv.tileManager.getCraterFor(entity, secondaryPos);
         } else {
-            wreck = displayDestroyedDecal ? 
-                        bv.tileManager.imageFor(entity, secondaryPos) :
-                        bv.tileManager.wreckMarkerFor(entity, secondaryPos);
+            wreck = EntityWreckHelper.useExplicitWreckImage(entity) ? 
+                        bv.tileManager.wreckMarkerFor(entity, secondaryPos) :
+                        bv.tileManager.imageFor(entity, secondaryPos);
         }
 
         if (null != wreck) {

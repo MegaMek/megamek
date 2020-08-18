@@ -641,9 +641,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             .getViewport().getSize().getHeight());
                     Dimension drawDimension = new Dimension();
                     drawDimension.setSize(width, height);
-                    if (disp.isMouseOver(point, drawDimension)) {
-                        refreshDisplayables();
-                    }
+                    disp.isMouseOver(point, drawDimension);
                 }
             }
 
@@ -1032,7 +1030,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                 });
         
-        // Register the action for TOGGLE_CHAT
+        // Register the action for TOGGLE_KEYBIND_DISPLAY
         controller.registerCommandAction(KeyCommandBind.TOGGLE_KEYBIND_DISPLAY.cmd,
                 new CommandAction() {
 

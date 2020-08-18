@@ -1897,11 +1897,11 @@ public class Dropship extends SmallCraft {
     
     @Override
     public boolean canChangeSecondaryFacing() {
-    	// flying dropships can execute the "ECHO" maneuver (stratops 113), aka a torso twist, 
-    	// if they have the MP for it
-    	return isAirborne() && !isEvading() && (mpUsed <= getRunMP() - 2);
+        // flying dropships can execute the "ECHO" maneuver (stratops 113), aka a torso twist, 
+        // if they have the MP for it
+        return isAirborne() && !isEvading() && (mpUsed <= getRunMP() - 2);
     }
-
+    
     /**
      * Can this dropship "torso twist" in the given direction?
      */
@@ -1914,7 +1914,7 @@ public class Dropship extends SmallCraft {
         }
         return rotate == 0;
     }
-
+    
     /**
      * Return the nearest valid direction to "torso twist" in
      */
@@ -1928,21 +1928,22 @@ public class Dropship extends SmallCraft {
         if (!canChangeSecondaryFacing()) {
             return getFacing();
         }
+        
         // otherwise, twist once in the appropriate direction
         final int rotate = (dir + (6 - getFacing())) % 6;
-
+        
         return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
     }
     
     @Override
     public void newRound(int roundNumber) {
-    	super.newRound(roundNumber);
-    	
-    	if(getGame().useVectorMove()) {
-    		setFacing(getSecondaryFacing());
-    	}
-    	
-    	setSecondaryFacing(getFacing());
+        super.newRound(roundNumber);
+        
+        if (getGame().useVectorMove()) {
+            setFacing(getSecondaryFacing());
+        }
+        
+        setSecondaryFacing(getFacing());
     }
     
     /**
@@ -1951,7 +1952,6 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public void postProcessFacingChange() {
-    	mpUsed += 2;
+        mpUsed += 2;
     }
-
 }

@@ -568,13 +568,13 @@ public class Warship extends Jumpship {
     
     @Override
     public boolean canChangeSecondaryFacing() {
-    	// flying dropships can execute the "ECHO" maneuver (stratops 113), aka a torso twist, 
-    	// if they have the MP for it
-    	return isAirborne() && !isEvading() && (mpUsed <= getRunMP() - 2);
+        // flying warships can execute the "ECHO" maneuver (stratops 113), aka a torso twist, 
+        // if they have the MP for it
+        return isAirborne() && !isEvading() && (mpUsed <= getRunMP() - 2);
     }
-
+    
     /**
-     * Can this dropship "torso twist" in the given direction?
+     * Can this warship "torso twist" in the given direction?
      */
     @Override
     public boolean isValidSecondaryFacing(int dir) {
@@ -585,7 +585,7 @@ public class Warship extends Jumpship {
         }
         return rotate == 0;
     }
-
+    
     /**
      * Return the nearest valid direction to "torso twist" in
      */
@@ -599,9 +599,10 @@ public class Warship extends Jumpship {
         if (!canChangeSecondaryFacing()) {
             return getFacing();
         }
+        
         // otherwise, twist once in the appropriate direction
         final int rotate = (dir + (6 - getFacing())) % 6;
-
+        
         return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
     }
     
@@ -610,13 +611,13 @@ public class Warship extends Jumpship {
      */
     @Override
     public void newRound(int roundNumber) {
-    	super.newRound(roundNumber);
-    	
-    	if(getGame().useVectorMove()) {
-    		setFacing(getSecondaryFacing());
-    	}
-    	
-    	setSecondaryFacing(getFacing());
+        super.newRound(roundNumber);
+        
+        if (getGame().useVectorMove()) {
+            setFacing(getSecondaryFacing());
+        }
+        
+        setSecondaryFacing(getFacing());
     }
     
     /**
@@ -625,6 +626,6 @@ public class Warship extends Jumpship {
      */
     @Override
     public void postProcessFacingChange() {
-    	mpUsed += 2;
+        mpUsed += 2;
     }
 }

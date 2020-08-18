@@ -12,6 +12,7 @@ VERSION HISTORY:
 + Data: New Sprites
 + PR #2132: No more sending malformed game data objects over to the server to exploit deserialization vulnerabilities. Sorry.
 + Issue #2150: Fixing Princess Vehicle Abandonment NPE
++ Issue #2089: Generate Names from Specified Historical Ethnicity
 
 0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit

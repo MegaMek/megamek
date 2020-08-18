@@ -223,7 +223,7 @@ public class KeyBindingsOverlay implements IDisplayable {
             String label = Messages.getString("KeyBinds.cmdNames." + kcb.cmd);
             String mod = KeyEvent.getKeyModifiersText(kcb.modifiers);
             String key = KeyEvent.getKeyText(kcb.key);
-            result.add(label + ": " + (mod.isBlank() ? "" : mod + "+") + key);
+            result.add(label + ": " + (mod.isEmpty() ? "" : mod + "+") + key);
         }
         return result;
     }

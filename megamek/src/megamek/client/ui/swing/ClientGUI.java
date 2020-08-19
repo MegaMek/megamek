@@ -83,6 +83,7 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
@@ -117,7 +118,7 @@ import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.SharedConfiguration;
 import megamek.common.util.StringUtil;
 
@@ -456,7 +457,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bvc = bv.getComponent();
             bvc.setName("BoardView");
             bv.addBoardViewListener(this);
-
+            client.setBoardView(bv);
         } catch (Exception e) {
             e.printStackTrace();
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1472,7 +1473,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void doAlertDialog(String title, String message) {
         JTextPane textArea = new JTextPane();
         ReportDisplay.setupStylesheet(textArea);
-
+        BASE64ToolKit toolKit = new BASE64ToolKit();
+        textArea.setEditorKit(toolKit);
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,

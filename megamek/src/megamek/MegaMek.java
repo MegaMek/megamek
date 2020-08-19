@@ -19,6 +19,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
@@ -46,7 +47,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
@@ -63,7 +64,7 @@ import megamek.utils.RATGeneratorEditor;
 public class MegaMek {
     private static MMLogger logger = null;
 
-    public static String VERSION = "0.47.8-SNAPSHOT";
+    public static String VERSION = "0.47.10-SNAPSHOT";
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
             + File.separator + "timestamp").lastModified();
 
@@ -397,7 +398,7 @@ public class MegaMek {
         final String METHOD_NAME = "showInfo";
         // echo some useful stuff
         String msg = "Starting MegaMek v" + VERSION + " ..." + "\n\tCompiled on " +
-                new Date(TIMESTAMP).toString() + "\n\tToday is " + new Date().toString() +
+                new Date(TIMESTAMP).toString() + "\n\tToday is " + LocalDate.now().toString() +
                 "\n\tJava vendor " + System.getProperty("java.vendor") + "\n\tJava version "
                 + System.getProperty("java.version") + "\n\tPlatform " + System.getProperty("os.name")
                 + " " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")"

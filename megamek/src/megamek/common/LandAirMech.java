@@ -1031,7 +1031,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     @Override
     public boolean canFall(boolean gyroLegDamage) {
-        return getConversionMode() != CONV_MODE_FIGHTER && !isAirborneVTOLorWIGE();
+        return getConversionMode() != CONV_MODE_FIGHTER && !isAirborneVTOLorWIGE() && super.canFall(gyroLegDamage);
     }
     
     private static final TechAdvancement[] TA_LAM = {

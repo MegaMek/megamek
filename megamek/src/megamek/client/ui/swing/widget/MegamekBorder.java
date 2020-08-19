@@ -27,7 +27,7 @@ import javax.swing.ImageIcon;
 import javax.swing.border.EtchedBorder;
 
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * A Border that has an image for each corner as well as images for the line

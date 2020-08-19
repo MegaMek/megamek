@@ -16,28 +16,18 @@
 
 package megamek.client;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.awt.*;
+import java.awt.image.RenderedImage;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
-import javax.swing.SwingUtilities;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+
 
 import com.thoughtworks.xstream.XStream;
 
@@ -56,35 +46,9 @@ import megamek.client.commands.SitrepCommand;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
-import megamek.common.Board;
-import megamek.common.BoardDimensions;
-import megamek.common.Building;
+import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.FighterSquadron;
-import megamek.common.Flare;
-import megamek.common.Game;
-import megamek.common.GameLog;
-import megamek.common.GameTurn;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.MapSettings;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummaryCache;
-import megamek.common.Minefield;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.PlanetaryConditions;
-import megamek.common.QuirksHandler;
-import megamek.common.Report;
-import megamek.common.SpecialHexDisplay;
-import megamek.common.TagInfo;
-import megamek.common.UnitLocation;
-import megamek.common.UnitRoleHandler;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -110,6 +74,7 @@ import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
@@ -160,6 +125,12 @@ public class Client implements IClientCommandHandler {
     private Hashtable<String, Integer> duplicateNameHash = new Hashtable<String, Integer>();
 
     public Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
+
+    //Hashtable for storing image tags containing base64Text src
+    private Hashtable<Integer, String> imgCache;
+
+    //board view for getting entity art assets
+    private BoardView1 bv;
 
     ConnectionHandler packetUpdate;
 
@@ -237,7 +208,7 @@ public class Client implements IClientCommandHandler {
      * @param port
      *            the host port
      */
-    public Client(String name, String host, int port) {
+    public Client(String name, String host, int port){
         // construct new client
         this.name = name;
         this.host = host;
@@ -272,6 +243,10 @@ public class Client implements IClientCommandHandler {
         if (connection != null && !connection.isClosed()) {
             connection.update();
         }
+    }
+
+    public void setBoardView(BoardView1 bv){
+        this.bv = bv;
     }
 
     /**
@@ -970,11 +945,17 @@ public class Client implements IClientCommandHandler {
     protected void receiveEntities(Packet c) {
         List<Entity> newEntities = (List<Entity>) c.getObject(0);
         List<Entity> newOutOfGame = (List<Entity>) c.getObject(1);
-
         // Replace the entities in the game.
         game.setEntitiesVector(newEntities);
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
+            for(Entity e: newOutOfGame) {
+                cacheImgTag(e);
+            }
+        }
+        //cache the image data for the entities
+        for(Entity e: newEntities) {
+            cacheImgTag(e);
         }
     }
 
@@ -1007,6 +988,10 @@ public class Client implements IClientCommandHandler {
         @SuppressWarnings("unchecked")
         List<Integer> entityIds = (List<Integer>) packet.getObject(0);
         int condition = packet.getIntValue(1);
+        //create a final image for the entity
+        for(int id: entityIds) {
+            cacheImgTag(game.getEntity(id));
+        }
         // Move the unit to its final resting place.
         game.removeEntities(entityIds, condition);
     }
@@ -1115,6 +1100,7 @@ public class Client implements IClientCommandHandler {
         }
     }
 
+
     // Should be private?
     public String receiveReport(Vector<Report> v) {
         if (v == null) {
@@ -1125,7 +1111,86 @@ public class Client implements IClientCommandHandler {
         for (Report r : v) {
             report.append(r.getText());
         }
-        return report.toString();
+
+        Set<Integer> set = new HashSet<Integer>();
+        //find id stored in spans and extract it
+        Pattern p = Pattern.compile("<s(.*?)n>");
+        Matcher m = p.matcher(report.toString());
+
+        //add all instances to a hashset to prevent duplicates
+        while(m.find()){
+            String cleanedText = m.group(1).replaceAll("\\D", "");
+            if(cleanedText.length() > 0) {
+                set.add(Integer.parseInt(cleanedText));
+            }
+        }
+
+        String updatedReport = report.toString();
+        //loop through the hashset of unique ids and replace the ids with img tags
+        for (int i : set) {
+            if(getCachedImgTag(i) != null) {
+                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
+            }
+        }
+        return updatedReport;
+    }
+
+    /**
+     * returns the stored <img> tag for given unit id
+     */
+    private String getCachedImgTag(int id){
+        if(imgCache == null || !imgCache.containsKey(id)) {
+            return null;
+        }
+        return imgCache.get(id);
+    }
+
+    /**
+     * Hashtable for storing <img> tags containing base64Text src.
+     */
+    private void cacheImgTag(Entity entity){
+
+        if(entity == null) {
+            MegaMek.getLogger().error(this, "Null entity reference");
+            return;
+        }
+
+        if (imgCache == null) {
+            imgCache = new Hashtable<>();
+        } else if (imgCache.containsKey(entity.getId())) {
+            //remove images that should be refreshed
+            imgCache.remove(entity.getId());
+        }
+
+        if (getTargetImage(entity) != null) {
+            //convert image to base64, add to to <img> tag and store in cache
+            Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
+            try {
+                String base64Text;
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write((RenderedImage) image, "png", baos);
+                baos.flush();
+                base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
+                baos.close();
+                String img = "<img src='data:image/png;base64," + base64Text + "'>";
+                imgCache.put(entity.getId(), img);
+            } catch (final IOException ioe) {
+                throw new UncheckedIOException(ioe);
+            }
+        }
+    }
+
+    /**
+     * Gets the current mech image
+     */
+    private Image getTargetImage(Entity e){
+        if (bv == null) {
+            return null;
+        } else if (e.isDestroyed()) {
+            return bv.getTilesetManager().wreckMarkerFor(e, -1);
+        } else {
+            return bv.getTilesetManager().imageFor(e);
+        }
     }
 
     /**

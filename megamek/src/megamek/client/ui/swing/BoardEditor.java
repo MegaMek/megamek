@@ -108,7 +108,7 @@ import megamek.common.MapSettings;
 import megamek.common.Terrains;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 // TODO: center map
 // TODO: background on the whole screen
@@ -876,11 +876,16 @@ public class BoardEditor extends JComponent
         panlisHex.add(new JScrollPane(lisTerrain));
         panlisHex.add(canHex);
 
-        // Terrain Type Chooser, Level
-        TerrainHelper[] terrains = new TerrainHelper[Terrains.SIZE - 1];
+        // Build the terrain list for the chooser ComboBox,
+        // excluding terrains that are handled internally
+        ArrayList<TerrainHelper> tList = new ArrayList<>();
         for (int i = 1; i < Terrains.SIZE; i++) {
-            terrains[i - 1] = new TerrainHelper(i);
+            if (!Terrains.AUTOMATIC.contains(i)) {
+                tList.add(new TerrainHelper(i));
+            }
         }
+        TerrainHelper[] terrains = new TerrainHelper[tList.size()]; 
+        tList.toArray(terrains);
         Arrays.sort(terrains);
         texTerrainLevel = new EditorTextField("0", 2, 0); //$NON-NLS-1$
         texTerrainLevel.addActionListener(this);
@@ -1232,7 +1237,7 @@ public class BoardEditor extends JComponent
         List<TerrainTypeHelper> types = new ArrayList<>();
         for (int terrainType : terrainTypes) {
             ITerrain terrain = curHex.getTerrain(terrainType);
-            if (terrain != null) {
+            if (terrain != null && !Terrains.AUTOMATIC.contains(terrainType)) {
                 TerrainTypeHelper tth = new TerrainTypeHelper(terrain);
                 types.add(tth);
             }
@@ -1407,6 +1412,8 @@ public class BoardEditor extends JComponent
         }
         if (!userCancel) {
             board = BoardUtilities.generateRandom(mapSettings);
+            // "Initialize" all hexes to add internally handled terrains
+            correctExits();
             game.setBoard(board);
             curfile = null;
             choTheme.setSelectedItem(mapSettings.getTheme());

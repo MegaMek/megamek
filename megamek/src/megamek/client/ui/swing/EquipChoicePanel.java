@@ -62,7 +62,7 @@ import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;

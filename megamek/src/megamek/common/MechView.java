@@ -1014,6 +1014,10 @@ public class MechView {
             }
             retVal.add(crewTable);
         }
+        if (isVehicle && ((Tank) entity).getExtraCrewSeats() > 0) {
+            retVal.add(new SingleLine(Messages.getString("MechView.ExtraCrewSeats")
+                    + ((Tank) entity).getExtraCrewSeats()));
+        }
         return retVal;
     }
 

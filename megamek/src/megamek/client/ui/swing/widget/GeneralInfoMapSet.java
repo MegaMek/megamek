@@ -48,7 +48,7 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Set of elements to represent general unit information in MechDisplay

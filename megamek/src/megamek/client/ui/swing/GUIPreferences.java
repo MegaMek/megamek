@@ -93,11 +93,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG = "AdvancedArmorMiniColorPartialDmg";
     public static final String ADVANCED_ARMORMINI_COLOR_DAMAGED = "AdvancedArmorMiniColorDamaged";
     public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFrontSizeMod";
+    public static final String ADVANCED_ROUND_REPORT_SPRITES = "AdvancedRoundReportSprites";
     /* --End advanced settings-- */
 
 
     public static final String ANTIALIASING = "AntiAliasing";
     public static final String SHADOWMAP = "ShadowMap";
+    public static final String INCLINES = "Inclines";
     public static final String AOHEXSHADOWS = "AoHexShadows";
     public static final String LEVELHIGHLIGHT = "LevelHighlight";
     public static final String FLOATINGISO = "FloatingIsometric";
@@ -293,6 +295,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_SHOW_FPS, "false");
         store.setDefault(ADVANCED_SHOW_COORDS, "true");
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 5);
+        store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, false);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -301,6 +304,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ANTIALIASING, true);
         store.setDefault(AOHEXSHADOWS, false);
         store.setDefault(SHADOWMAP, false);
+        store.setDefault(INCLINES, true);
         store.setDefault(FLOATINGISO, false);
         store.setDefault(LEVELHIGHLIGHT, false);
         store.setDefault(AUTO_END_FIRING, true);
@@ -440,6 +444,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShadowMap() {
         return store.getBoolean(SHADOWMAP);
+    }
+    
+    public boolean getHexInclines() {
+        return store.getBoolean(INCLINES);
     }
 
     public boolean getLevelHighlight() {
@@ -885,6 +893,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setShadowMap(boolean state) {
         store.setValue(SHADOWMAP, state);
+    }
+    
+    public void setHexInclines(boolean state) {
+        store.setValue(INCLINES, state);
     }
 
     public void setAOHexShadows(boolean state) {

@@ -31,7 +31,7 @@ import javax.xml.parsers.DocumentBuilder;
 
 import megamek.common.Entity.WeaponSortOrder;
 import megamek.common.annotations.Nullable;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
 import org.w3c.dom.Document;

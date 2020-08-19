@@ -21,7 +21,9 @@ package megamek.utils;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -123,6 +125,14 @@ public class MegaMekXmlUtil {
         return new SAXSource(createSafeXMLReader(), new InputSource(inputStream));
     }
 
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, UUID val) {
+        writeSimpleXmlTag(pw1, indent, name, val.toString());
+    }
+
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, LocalDate val) {
+        writeSimpleXmlTag(pw1, indent, name, saveFormattedDate(val));
+    }
+
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, String val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + escape(val) + "</" + name + ">");
     }
@@ -176,12 +186,15 @@ public class MegaMekXmlUtil {
      */
     public static LocalDate parseDate(String value) throws DateTimeParseException {
         // Accept (truncates): yyyy-MM-dd HH:mm:ss
+        // Accept (legacy): YYYYMMDD
         // Accept: yyyy-MM-dd
         int firstSpace = value.indexOf(' ');
-        if (firstSpace < 0) {
-            return LocalDate.parse(value);
-        } else {
+        if (firstSpace >= 0) {
             return LocalDate.parse(value.substring(0, firstSpace));
+        } else if (value.indexOf('-') < 0) {
+            return LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyyMMdd"));
+        } else { // default parsing
+            return LocalDate.parse(value);
         }
     }
 

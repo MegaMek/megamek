@@ -641,7 +641,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
                 Messages.getString("CommonMenuBar.moveClear"), MovementDisplay.MoveCommand.MOVE_CLEAR.getCmd()); //$NON-NLS-1$
         moveHullDown = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.moveHullDown"), MovementDisplay.MoveCommand.MOVE_CLEAR.getCmd()); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveHullDown"), MovementDisplay.MoveCommand.MOVE_HULL_DOWN.getCmd()); //$NON-NLS-1$
         moveLayMine = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.moveLayMine"), MovementDisplay.MoveCommand.MOVE_LAY_MINE.getCmd()); //$NON-NLS-1$

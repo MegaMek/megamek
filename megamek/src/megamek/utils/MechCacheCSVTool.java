@@ -22,8 +22,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
 
-import megamek.common.*;
-
+import megamek.common.Aero;
+import megamek.common.EquipmentType;
+import megamek.common.Mech;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.TechConstants;
+import megamek.common.UnitRoleHandler;
 
 /**
  * This class provides a utility to read in all of the data/mechfiles and print
@@ -47,7 +52,7 @@ public class MechCacheCSVTool {
         
         try {
             StringBuffer csvLine = new StringBuffer();
-            csvLine.append("Chassis,Model,Combined,Unit Type,BV,role,Weight,Intro Date,Experimental year,Advanced year,Standard year,Rules,Source,Engine Name,Internal Structure," +
+            csvLine.append("Chassis,Model,Combined,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,Role,BV,Rules,Engine Name,Internal Structure," +
                     "Myomer,Cockpit Type,Gyro Type," +
                     "Armor Types," +
                     "Equipment (multiple entries)\n");
@@ -58,7 +63,7 @@ public class MechCacheCSVTool {
                 }
                 
                 csvLine = new StringBuffer();
-                // Chasis Name
+                // Chassis Name
                 csvLine.append(mech.getChassis() + ",");
                 // Model Name
                 csvLine.append(mech.getModel() + ",");
@@ -66,14 +71,8 @@ public class MechCacheCSVTool {
                 //Combined Name
                 csvLine.append(mech.getChassis() + " " + mech.getModel()+ ",");
                 
-                //Unit Type
-                csvLine.append(mech.getUnitType()  + "-" + (mech.getUnitSubType() + ","));
-                
-                // BV
-                csvLine.append(mech.getBV()  + ",");
-                               
-                //Role
-                csvLine.append(UnitRoleHandler.getRoleFor(mech) + ",");
+                //Source Book
+                csvLine.append(mech.getSourceFile() + ",");
                 
                 //if (mech.getModel().equals("")){
                 //    csvLine.append("(Standard),");
@@ -108,14 +107,17 @@ public class MechCacheCSVTool {
                     } else {
                         csvLine.append(",");
                     }
-                
-                //Rules Level
-                csvLine.append(mech.getLevel() + ",");
 
-                //Source Book
-                csvLine.append(mech.getSourceFile() + ",");
+                //Unit Type
+                csvLine.append(mech.getUnitType()  + "-" + (mech.getUnitSubType() + ","));
                 
+                //Role
+                csvLine.append(UnitRoleHandler.getRoleFor(mech) + ",");
                 
+                // BV
+                csvLine.append(mech.getBV()  + ",");
+
+                csvLine.append(mech.getLevel() + ",");
                 // Engine Type
                 csvLine.append(mech.getEngineName() + ",");
                 

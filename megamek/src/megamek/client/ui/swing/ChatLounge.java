@@ -86,8 +86,8 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.DirectoryItems;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, ItemListener,
         ListSelectionListener, MouseListener, IMapSettingsObserver {

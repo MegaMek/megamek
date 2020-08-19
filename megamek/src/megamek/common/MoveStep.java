@@ -2015,9 +2015,11 @@ public class MoveStep implements Serializable {
             
             // spheroids in atmosphere can move a max of 1 hex on the low atmo map
             // and 8 hexes on the ground map, regardless of any other considerations
+            // unless they're out of control, in which case, well...
             if(useSpheroidAtmosphere(game, entity) && 
+            		(((IAero) entity).isOutControlTotal() ||
                     (!game.getBoard().onGround() && (this.getDistance() > 1) || 
-                            (game.getBoard().onGround() && (getDistance() > 8)))) {
+                            (game.getBoard().onGround() && (getDistance() > 8))))) {
                 return;
             }
 
@@ -2352,7 +2354,7 @@ public class MoveStep implements Serializable {
         if ((getEntity().getMovementMode() == EntityMovementMode.BIPED_SWIM)
                 || (getEntity().getMovementMode() == EntityMovementMode.QUAD_SWIM)
                 || ((getEntity() instanceof Infantry
-                		&& getEntity().getMovementMode() == EntityMovementMode.SUBMARINE))) {
+                        && getEntity().getMovementMode() == EntityMovementMode.SUBMARINE))) {
             tmpWalkMP = entity.getActiveUMUCount();
         }
 
@@ -3069,6 +3071,14 @@ public class MoveStep implements Serializable {
                         && destHex.ceiling() > srcHex.ceiling()))) {
             mp += 2;
         }
+        
+        // WIGEs spend one extra MP to ascend a sheer cliff, TO p.39
+        if (entity.getMovementMode() == EntityMovementMode.WIGE 
+                && distance > 0 
+                && destHex.hasCliffTopTowards(srcHex)
+                && nDestEl > nSrcEl) {
+            mp += 1;
+        }
 
         // If we entering a building, all non-infantry pay additional MP.
         if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV)) {
@@ -3362,24 +3372,76 @@ public class MoveStep implements Serializable {
                 return false;
             }
         }
+        
+        // Sheer Cliffs, TO p.39
+        // Roads over cliffs cancel the cliff effects for units that move on roads
+        boolean vehicleAffectedByCliff = entity instanceof Tank 
+                && !entity.isAirborneVTOLorWIGE();
+        boolean quadveeVehMode = entity instanceof QuadVee 
+                && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
+        int stepHeight = destAlt - srcAlt;
+        // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
+        // Everything that does not have a 1 or 2 level drop shouldn't be handled as a cliff
+        boolean isUpCliff = !src.equals(dest)
+                && destHex.hasCliffTopTowards(srcHex)
+                && (stepHeight == 1 || stepHeight == 2);
+        boolean isDownCliff = !src.equals(dest) 
+                && srcHex.hasCliffTopTowards(destHex)
+                && (stepHeight == -1 || stepHeight == -2);
+        
+        // For vehicles exc. VTOL, WIGE, upward Sheer Cliffs is forbidden
+        // QuadVees in vehicle mode drive as vehicles, IO p.133
+        if ((vehicleAffectedByCliff || quadveeVehMode) 
+                && isUpCliff
+                && !isPavementStep) {
+            return false;
+        }
 
+        // For Infantry, up or down sheer cliffs requires a climbing action 
+        // except for Mountain Troops across a level 1 cliff.
+        // Climbing actions do not seem to be implemented, so Infantry cannot
+        // cross sheer cliffs at all except for Mountain Troops across a level 1 cliff.
+        if (entity instanceof Infantry 
+                && (isUpCliff || isDownCliff)
+                && !isPavementStep) {
+
+            boolean isMountainTroop = ((Infantry)entity).hasSpecialization(Infantry.MOUNTAIN_TROOPS);
+            if (!isMountainTroop || stepHeight == 2) {
+                return false;
+            }
+        }
+        
         if ((entity instanceof Mech) && ((srcAlt - destAlt) > 2)) {
             setLeapDistance(srcAlt - destAlt);
         }
 
         // Units moving backwards may not change elevation levels.
-        // (Ben thinks this rule is dumb)
         if (((type == MoveStepType.BACKWARDS)
                 || (type == MoveStepType.LATERAL_LEFT_BACKWARDS) || (type == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                 && (destAlt != srcAlt)
                 && !(entity instanceof VTOL)
                 && !(isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))) {
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)
-                    && (Math.abs(destAlt - srcAlt) > 1)) {
+            // Generally forbidden without TacOps Expanded Backward Movement p.22
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)) {
                 return false;
             }
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)
-                    && (destAlt != srcAlt)) {
+            // Even with Expanded Backward Movement, ...
+            // May not move across a cliff (up) moving backwards at all
+            if (destHex.containsTerrain(Terrains.CLIFF_TOP)
+                    && destHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+                    && ((destHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << dest.direction(src))) != 0) 
+                    && (!src.equals(dest))) {
+                return false;
+            }
+            // May not move across a cliff (down) moving backwards at all
+            if (srcHex.containsTerrain(Terrains.CLIFF_TOP)
+                    && srcHex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+                    && ((srcHex.getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << src.direction(dest))) != 0)
+                    && (!src.equals(dest))) {
+                return false;
+            }
+            // May not move across more than 1 level 
+            if (Math.abs(destAlt - srcAlt) > 1) {
                 return false;
             }
         }
@@ -3944,7 +4006,7 @@ public class MoveStep implements Serializable {
      * Should we treat this movement as if it is occuring for an aerodyne unit
      * flying in atmosphere?
      */
-	boolean useAeroAtmosphere(IGame game, Entity en) {
+    boolean useAeroAtmosphere(IGame game, Entity en) {
         if (!en.isAero()) {
             return false;
         }

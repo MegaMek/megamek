@@ -40,8 +40,15 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
 		cost = 1385;
 		bv = 2.3;
 		tonnage = .006;
-		flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-		infantryDamage = 0.82;
+		flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST);
+		/*Errata
+		 * https://bg.battletech.com/forums/index.php?topic=60038.msg1377699#msg1377699
+		 * No Primary Infantry Weapon may have a Damage Value greater than 0.60. 
+		 * If the weapon selected has a Damage Value greater than 0.60, then reduce it's Damage Value to 0.60 
+		 * when determining final damage values (pg.152). Platoons that have their primary weapon damage reduced 
+		 * in this way automatically gain the Heavy Burst Weapon special feature
+		*/
+		infantryDamage = 0.60; //was .82
 		infantryRange = 1;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3060, 3064, 3095, DATE_NONE, DATE_NONE)

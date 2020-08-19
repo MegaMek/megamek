@@ -5,6 +5,14 @@ VERSION HISTORY:
 + Data: Fed Com armor has wrong modifier.
 + Data: Fluff text (Thx Greekfire) and some royal Sprites.
 + PR #2088: Reduced unnecessary logging for tileset and mech summary cache
++ Issue #2146: Grounded LAMs no longer have to make PSRs when prone and taking damage.
++ Issue #2099: Advanced option to display attacker/defender sprites in the combat log
++ Issue #2141, 2142: Attempts to fix multiple threading-related bot freezes (addressable by kicking and replacing)
++ PR #2148: Out-of-control spheroid dropships in atmo no longer pretend to let the player control movement
++ Data: New Sprites
++ PR #2132: No more sending malformed game data objects over to the server to exploit deserialization vulnerabilities. Sorry.
++ Issue #2150: Fixing Princess Vehicle Abandonment NPE
++ Issue #2089: Generate Names from Specified Historical Ethnicity
 
 0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit

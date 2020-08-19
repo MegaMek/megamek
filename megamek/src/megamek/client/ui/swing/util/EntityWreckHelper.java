@@ -56,6 +56,10 @@ public class EntityWreckHelper {
         return true;
     }
     
+    public static boolean useExplicitWreckImage(Entity entity) {
+        return entity instanceof Mech;
+    }
+    
     /**
      * Logic that determines whether we should display a 'fuel leak' for the given entity.
      */

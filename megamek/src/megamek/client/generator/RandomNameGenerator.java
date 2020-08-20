@@ -20,10 +20,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import megamek.MegaMek;
 import megamek.common.Configuration;
 import megamek.common.enums.Gender;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.WeightedMap;
 
@@ -118,6 +117,11 @@ public class RandomNameGenerator implements Serializable {
      * this is weighted to ensure that more common pairings for the faction are more common
      */
     private static Map<String, WeightedMap<Integer>> factionEthnicCodes;
+
+    /**
+     * historical ethnicity is a map of the ethnic code to the historical region of origin on Earth
+     */
+    private static Map<Integer, String> historicalEthnicity;
     //endregion Data Maps
 
     //region Faction Keys
@@ -133,7 +137,6 @@ public class RandomNameGenerator implements Serializable {
 
     private String chosenFaction;
 
-    private static final MMLogger logger = DefaultMmLogger.getInstance();
     private static volatile boolean initialized = false; // volatile to ensure readers get the current version
     //endregion Variable Declarations
 
@@ -190,9 +193,29 @@ public class RandomNameGenerator implements Serializable {
             final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
-            name = gender.isFemale()
-                    ? femaleGivenNames.get(givenNameEthnicCode).randomItem()
-                    : maleGivenNames.get(givenNameEthnicCode).randomItem();
+            name = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(givenNameEthnicCode).randomItem();
+
+            if (!isClan) {
+                name += " " + surnames.get(ethnicCode).randomItem();
+            }
+        }
+        return name;
+    }
+
+    /**
+     * @param gender the gender to generate the name for
+     * @param faction the specified faction code
+     * @param ethnicCode the specified ethnic code
+     * @return a string containing the randomly generated name
+     */
+    public String generateWithEthnicCode(Gender gender, String faction, int ethnicCode) {
+        String name = UNNAMED_FULL_NAME;
+        if (initialized) {
+            // this is a total hack, but for now lets assume that if the faction name contains
+            // the word "clan" we should only spit out first names
+            boolean isClan = faction.toLowerCase().equals("clan");
+
+            name = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(ethnicCode).randomItem();
 
             if (!isClan) {
                 name += " " + surnames.get(ethnicCode).randomItem();
@@ -227,10 +250,25 @@ public class RandomNameGenerator implements Serializable {
             final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
-            name[0] = gender.isFemale()
-                    ? femaleGivenNames.get(givenNameEthnicCode).randomItem()
-                    : maleGivenNames.get(givenNameEthnicCode).randomItem();
+            name[0] = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(givenNameEthnicCode).randomItem();
 
+            name[1] = isClan ? "" : surnames.get(ethnicCode).randomItem();
+        }
+        return name;
+    }
+
+    /**
+     * @param gender the gender to generate the name for
+     * @param isClan true if the name should be for a clanner, otherwise false
+     * @param ethnicCode the specified ethnic code
+     * @return - a String[] containing the name,
+     *              with the given name at String[0]
+     *              and the surname at String[1]
+     */
+    public String[] generateGivenNameSurnameSplitWithEthnicCode(Gender gender, boolean isClan, int ethnicCode) {
+        String[] name = { UNNAMED, UNNAMED_SURNAME };
+        if (initialized) {
+            name[0] = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(ethnicCode).randomItem();
             name[1] = isClan ? "" : surnames.get(ethnicCode).randomItem();
         }
         return name;
@@ -258,6 +296,13 @@ public class RandomNameGenerator implements Serializable {
      */
     public void setChosenFaction(String chosenFaction) {
         this.chosenFaction = chosenFaction;
+    }
+
+    /**
+     * @return the historical ethnicity map
+     */
+    public Map<Integer, String> getHistoricalEthnicity() {
+        return (historicalEthnicity != null) ? historicalEthnicity : new HashMap<>();
     }
 
     /**
@@ -293,6 +338,7 @@ public class RandomNameGenerator implements Serializable {
         surnames = new HashMap<>();
         factionGivenNames = new HashMap<>();
         factionEthnicCodes = new HashMap<>();
+        historicalEthnicity = new HashMap<>();
 
         // Determine the number of ethnic codes
         File masterAncestryFile = new MegaMekFile(Configuration.namesDir(), HISTORICAL_ETHNICITY_FILE).getFile();
@@ -300,12 +346,16 @@ public class RandomNameGenerator implements Serializable {
              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
 
             while (input.hasNextLine()) {
-                input.nextLine();
+                String[] values = input.nextLine().split(",");
+
+                if (values.length >= 2) {
+                    historicalEthnicity.put(Integer.parseInt(values[0]), values[1]);
+                }
                 numEthnicCodes++;
             }
         } catch (IOException e) {
-            logger.error(RandomNameGenerator.class, "populateNames",
-                    "Could not find " + masterAncestryFile + "!");
+            MegaMek.getLogger().error(this, "Could not find " + masterAncestryFile + "!");
+            return;
         }
 
         // Then immediately instantiate the number of weighted maps needed for Given Names and Surnames
@@ -329,8 +379,7 @@ public class RandomNameGenerator implements Serializable {
 
         if ((fileNames == null) || (fileNames.length == 0)) {
             //region No Factions Specified
-            logger.error(RandomNameGenerator.class, "populateNames",
-                    "No faction files found!");
+            MegaMek.getLogger().error(this, "No faction files found!");
 
             // We will create a general list where everything is weighted at one to allow players to
             // continue to play with named characters, indexing it at 1
@@ -380,12 +429,11 @@ public class RandomNameGenerator implements Serializable {
                         if (!factionGivenNames.get(key).get(ethnicCode).isEmpty()) {
                             factionEthnicCodes.get(key).add(Integer.parseInt(values[2]), ethnicCode);
                         } else {
-                            logger.error(getClass(), "populateNames", "There are no possible options for " + ethnicCode + " for key " + key);
+                            MegaMek.getLogger().error(this, "There are no possible options for " + ethnicCode + " for key " + key);
                         }
                     }
                 } catch (IOException fne) {
-                    logger.error(RandomNameGenerator.class, "populateNames",
-                            "Could not find " + factionFile + "!");
+                    MegaMek.getLogger().error(this, "Could not find " + factionFile + "!");
                 }
             }
         }
@@ -406,16 +454,14 @@ public class RandomNameGenerator implements Serializable {
                 lineNumber++;
                 String[] values = input.nextLine().split(",");
                 if (values.length < 3) {
-                    logger.error(RandomNameGenerator.class, "readNamesFileToMap",
-                            "Not enough fields in " + file.toString() + " on " + lineNumber);
+                    MegaMek.getLogger().error(this, "Not enough fields in " + file.toString() + " on " + lineNumber);
                     continue;
                 }
 
                 map.get(Integer.parseInt(values[0])).add(Integer.parseInt(values[2]), values[1]);
             }
         } catch (IOException e) {
-            logger.error(RandomNameGenerator.class, "populateNames",
-                    "Could not find " + file + "!");
+            MegaMek.getLogger().error(this, "Could not find " + file + "!");
         }
     }
     //endregion Initialization

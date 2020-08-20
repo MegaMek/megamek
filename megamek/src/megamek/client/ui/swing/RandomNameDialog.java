@@ -22,13 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
@@ -46,22 +40,18 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     private ClientGUI clientgui;
     private List<Entity> units;
 
-    private JLabel lblFaction;
-    private JLabel lblGender;
     private JComboBox<String> comboFaction;
     private JSlider sldGender;
+    private JComboBox<String> comboHistoricalEthnicity;
 
     private JButton butOkay;
     private JButton butSave;
     private JButton butCancel;
 
-    private JPanel panButtons;
-    private JPanel panMain;
-
     private JComboBox<String> chPlayer;
 
     public RandomNameDialog(ClientGUI clientgui) {
-        super(clientgui.frame, Messages.getString("RandomNameDialog.title"), true); //$NON-NLS-1$
+        super(clientgui.frame, Messages.getString("RandomNameDialog.title"), true);
         this.clientgui = clientgui;
         init();
     }
@@ -72,6 +62,8 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         client = clientgui.getClient();
 
         updateFactions();
+
+        updateHistoricalEthnicities();
 
         updatePlayerChoice();
 
@@ -93,7 +85,15 @@ public class RandomNameDialog extends JDialog implements ActionListener {
             comboFaction.addItem(faction);
         }
         comboFaction.setSelectedItem(RandomNameGenerator.getInstance().getChosenFaction());
+    }
 
+    private void updateHistoricalEthnicities() {
+        DefaultComboBoxModel<String> historicalEthnicityModel = new DefaultComboBoxModel<>();
+        historicalEthnicityModel.addElement("None");
+        for (String value : RandomNameGenerator.getInstance().getHistoricalEthnicity().values()) {
+            historicalEthnicityModel.addElement(value);
+        }
+        comboHistoricalEthnicity.setModel(historicalEthnicityModel);
     }
 
     private void updatePlayerChoice() {
@@ -117,20 +117,12 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
         comboFaction.setSelectedItem(RandomNameGenerator.getInstance().getChosenFaction());
         sldGender.setValue(RandomGenderGenerator.getPercentFemale());
+        comboHistoricalEthnicity.setSelectedIndex(0);
     }
 
     private void saveSettings() {
         RandomNameGenerator.getInstance().setChosenFaction((String) comboFaction.getSelectedItem());
         RandomGenderGenerator.setPercentFemale(sldGender.getValue());
-    }
-
-    @Override
-    public void setVisible(boolean show) {
-        if (show) {
-            updateFactions();
-            updatePlayerChoice();
-        }
-        super.setVisible(show);
     }
 
     public void showDialog(List<Entity> units) {
@@ -144,8 +136,9 @@ public class RandomNameDialog extends JDialog implements ActionListener {
          showDialog(units);
     }
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getSource() == butOkay) {
+        if (ev.getSource().equals(butOkay)) {
             Client c = null;
             if (chPlayer.getSelectedIndex() > 0) {
                 String name = (String) chPlayer.getSelectedItem();
@@ -161,7 +154,13 @@ public class RandomNameDialog extends JDialog implements ActionListener {
                     for (int i = 0; i < ent.getCrew().getSlotCount(); i++) {
                         Gender gender = RandomGenderGenerator.generate();
                         ent.getCrew().setGender(gender, i);
-                        ent.getCrew().setName(RandomNameGenerator.getInstance().generate(gender), i);
+                        if (comboHistoricalEthnicity.getSelectedIndex() == 0) {
+                            ent.getCrew().setName(RandomNameGenerator.getInstance().generate(gender), i);
+                        } else {
+                            ent.getCrew().setName(RandomNameGenerator.getInstance().generateWithEthnicCode(
+                                    gender, (String) comboFaction.getSelectedItem(),
+                                    comboHistoricalEthnicity.getSelectedIndex()), i);
+                        }
                     }
                     c.sendUpdateEntity(ent);
                 }
@@ -169,12 +168,12 @@ public class RandomNameDialog extends JDialog implements ActionListener {
             clientgui.chatlounge.refreshEntities();
             // need to notify about customization not updating entities in server
             setVisible(false);
-        } else if (ev.getSource() == butSave) {
+        } else if (ev.getSource().equals(butSave)) {
             saveSettings();
             setVisible(false);
-        } else if (ev.getSource() == butCancel) {
+        } else if (ev.getSource().equals(butCancel)) {
             setVisible(false);
-        } else if (ev.getSource() == chPlayer) {
+        } else if (ev.getSource().equals(chPlayer)) {
             updatePlayerChoice();
         }
     }
@@ -184,18 +183,22 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     }
 
     private void initComponents() {
-        panButtons = new JPanel();
+        JPanel panButtons = new JPanel();
         butOkay = new JButton(Messages.getString("RandomSkillDialog.Okay"));
         butSave = new JButton(Messages.getString("RandomSkillDialog.Save"));
         butCancel = new JButton(Messages.getString("Cancel"));
-        panMain = new JPanel();
-        lblFaction = new JLabel(Messages.getString("RandomNameDialog.lblFaction"));
-        lblGender = new JLabel(Messages.getString("RandomNameDialog.lblGender"));
+        JPanel panMain = new JPanel();
+        JLabel lblFaction = new JLabel(Messages.getString("RandomNameDialog.lblFaction"));
+        JLabel lblGender = new JLabel(Messages.getString("RandomNameDialog.lblGender"));
         comboFaction = new JComboBox<>();
         sldGender = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 50);
         sldGender.setMajorTickSpacing(25);
         sldGender.setPaintTicks(true);
         sldGender.setPaintLabels(true);
+        comboHistoricalEthnicity = new JComboBox<>();
+        JLabel lblHistoricalEthnicity = new JLabel(Messages.getString("RandomNameDialog.lblHistoricalEthnicity"));
+        lblHistoricalEthnicity.setToolTipText(Messages.getString("RandomNameDialog.lblHistoricalEthnicity.toolTipText"));
+
         chPlayer = new JComboBox<>();
         chPlayer.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Item 1", "Item 2", "Item 3", "Item 4"}));
 
@@ -221,35 +224,22 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         c.weighty = 1.0;
         panMain.add(lblFaction, c);
 
-        c = new GridBagConstraints();
         c.gridx = 1;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
         panMain.add(comboFaction, c);
 
-        c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
         panMain.add(lblGender, c);
 
-        c = new GridBagConstraints();
         c.gridx = 1;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
         panMain.add(sldGender, c);
+
+        c.gridx = 0;
+        c.gridy = 2;
+        panMain.add(lblHistoricalEthnicity, c);
+
+        c.gridx = 1;
+        panMain.add(comboHistoricalEthnicity, c);
 
         getContentPane().add(panMain, java.awt.BorderLayout.PAGE_START);
 

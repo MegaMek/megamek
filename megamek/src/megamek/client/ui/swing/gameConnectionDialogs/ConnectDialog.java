@@ -1,27 +1,29 @@
-/*  
-* MegaMek - Copyright (C) 2020 - The MegaMek Team. All Rights Reserved.
-*  
-* This program is free software; you can redistribute it and/or modify it under  
-* the terms of the GNU General Public License as published by the Free Software  
-* Foundation; either version 2 of the License, or (at your option) any later  
-* version.  
-*  
-* This program is distributed in the hope that it will be useful, but WITHOUT  
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
-* details.  
-*/
+/*
+ * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.gameConnectionDialogs;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,38 +31,30 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ButtonEsc;
-import megamek.client.ui.swing.ClientDialog;
-import megamek.client.ui.swing.CloseAction;
-import megamek.client.ui.swing.OkayAction;
-import megamek.common.preference.IClientPreferences;
-import megamek.common.preference.PreferenceManager;
 
 /** The Connect to game (as Bot or Player) dialog */
-public class ConnectDialog extends ClientDialog implements ActionListener {
-    
+public class ConnectDialog extends AbstractGameConnectionDialog {
     private static final long serialVersionUID = 5895056240077042429L;
-    
-    private String playerName;
-    private String serverAddr;
-    private int port;
-    private JTextField yourNameF;
-    private JTextField serverAddrF;
-    private JTextField portF;
-    
-    private IClientPreferences cPrefs = PreferenceManager.getClientPreferences();
+
+    private String serverAddress;
+    private JTextField serverAddressField;
 
     public ConnectDialog(JFrame frame) {
         super(frame, Messages.getString("MegaMek.ConnectDialog.title"), true);
+    }
+
+    //region Initialization
+    @Override
+    protected void initComponents() {
         JLabel yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), SwingConstants.RIGHT);
         JLabel serverAddrL = new JLabel(Messages.getString("MegaMek.serverAddrL"), SwingConstants.RIGHT);
         JLabel portL = new JLabel(Messages.getString("MegaMek.portL"), SwingConstants.RIGHT);
-        yourNameF = new JTextField(cPrefs.getLastPlayerName(), 16);
-        yourNameF.addActionListener(this);
-        serverAddrF = new JTextField(cPrefs.getLastConnectAddr(), 16);
-        serverAddrF.addActionListener(this);
-        portF = new JTextField(cPrefs.getLastConnectPort() + "", 4);
-        portF.addActionListener(this);
+        setPlayerNameField(new JTextField(getClientPreferences().getLastPlayerName(), 16));
+        getPlayerNameField().addActionListener(this);
+        serverAddressField = new JTextField(getClientPreferences().getLastConnectAddr(), 16);
+        serverAddressField.addActionListener(this);
+        setPortField(new JTextField(getClientPreferences().getLastConnectPort() + "", 4));
+        getPortField().addActionListener(this);
         
         JPanel middlePanel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -70,66 +64,45 @@ public class ConnectDialog extends ClientDialog implements ActionListener {
         c.insets = new Insets(5, 5, 5, 5);
         c.gridwidth = 1;
         
-        addOptionRow(middlePanel, c, yourNameL, yourNameF);
-        addOptionRow(middlePanel, c, serverAddrL, serverAddrF);
-        addOptionRow(middlePanel, c, portL, portF);
+        addOptionRow(middlePanel, c, yourNameL, getPlayerNameField());
+        addOptionRow(middlePanel, c, serverAddrL, serverAddressField);
+        addOptionRow(middlePanel, c, portL, getPortField());
         
         add(middlePanel, BorderLayout.CENTER);
         
-        // The buttons
-        JButton okayB = new JButton(new OkayAction(this));
-        JButton cancelB = new ButtonEsc(new CloseAction(this));
-        
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.add(okayB);
-        buttonPanel.add(cancelB);
-        add(buttonPanel, BorderLayout.PAGE_END);
+        createButtons();
         
         pack();
         setResizable(false);
         center();
     }
+    //endregion Initialization
 
-    public String getPlayerName() {
-        return playerName;
+    //region Getters and Setters
+    public String getServerAddress() {
+        return serverAddress;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
     }
+    //endregion Getters and Setters
 
-    public String getServerAddr() {
-        return serverAddr;
+    //region Validation
+    @Override
+    public boolean dataValidation(String errorTitleKey, String errorMessageKey) {
+        return !super.dataValidation(errorTitleKey, errorMessageKey) || (getServerAddress() == null);
     }
-
-    public void setServerAddr(String serverAddr) {
-        this.serverAddr = serverAddr;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
+    //endregion Validation
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // reached from the Okay button or pressing Enter in
-        // the text fields
-        try {
-            setPlayerName(yourNameF.getText());
-            setServerAddr(serverAddrF.getText());
-            setPort(Integer.decode(portF.getText().trim()));
-        } catch (NumberFormatException ex) {
-            System.err.println(ex.getMessage());
-        }
+        // reached from the Okay button or pressing Enter in the text fields
+        super.actionPerformed(e);
+        setServerAddress(serverAddressField.getText());
 
         // update settings
-        cPrefs.setLastPlayerName(getPlayerName());
-        cPrefs.setLastConnectAddr(getServerAddr());
-        cPrefs.setLastConnectPort(getPort());
+        getClientPreferences().setLastConnectAddr(getServerAddress());
         setVisible(false);
     }
 }

@@ -503,6 +503,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
     private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
+    
+    /** A map overlay showing some important keybinds. */ 
+    KeyBindingsOverlay keybindOverlay;
 
 
     /**
@@ -520,6 +523,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
+        
+        keybindOverlay = new KeyBindingsOverlay(game, clientgui);
+        addDisplayable(keybindOverlay);
         ourTask = scheduleRedrawTimer();// call only once
         clearSprites();
         addMouseListener(this);
@@ -625,8 +631,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     return;
                 }
 
-                for (int i = 0; i < displayables.size(); i++) {
-                    IDisplayable disp = displayables.get(i);
+                for (IDisplayable disp: displayables) {
                     if (disp.isBeingDragged()) {
                         return;
                     }
@@ -1024,6 +1029,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
 
                 });
+        
+        // Register the action for TOGGLE_KEYBIND_DISPLAY
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_KEYBIND_DISPLAY.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        toggleKeybindsOverlay();
+                    }
+                });
     }
 
     private boolean shouldIgnoreKeyCommands() {
@@ -1382,8 +1406,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         displayablesRect.y = -getY();
         displayablesRect.width = scrollpane.getViewport().getViewRect().width;
         displayablesRect.height = scrollpane.getViewport().getViewRect().height;
-        for (int i = 0; i < displayables.size(); i++) {
-            IDisplayable disp = displayables.get(i);
+        for (IDisplayable disp: displayables) {
             disp.draw(g, displayablesRect);
         }
 
@@ -6814,5 +6837,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     
     public Rectangle getDisplayablesRect() {
         return displayablesRect;
+    }
+    
+    public void toggleKeybindsOverlay() {
+        keybindOverlay.setVisible(!keybindOverlay.isVisible());
+        repaint();
     }
 }

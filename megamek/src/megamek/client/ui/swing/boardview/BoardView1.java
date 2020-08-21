@@ -78,7 +78,6 @@ import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.MegaMek;
 import megamek.client.TimerSingleton;
-import megamek.client.bot.princess.BotGeometry;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.PathEnumerator;
 import megamek.client.bot.princess.Princess;
@@ -1513,7 +1512,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     @SuppressWarnings("unused")
     private void renderDonut(Graphics2D g, Coords coords, int radius) {
-        Set<Coords> donut = BotGeometry.getHexDonut(coords, radius);
+        List<Coords> donut = coords.allAtDistance(radius);
 
         for(Coords donutCoords : donut) {
             Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
@@ -6673,7 +6672,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             fieldFire.add(new HashSet<Coords>());
             // Add all hexes up to the weapon range to separate lists
             while (range<=fieldofFireRanges[fieldofFireWpUnderwater][bracket]) {
-                fieldFire.get(bracket).addAll(Compute.coordsAtRange(c, range));
+                fieldFire.get(bracket).addAll(c.allAtDistance(range));
                 range++;
                 if (range>100) break; // only to avoid hangs
             }

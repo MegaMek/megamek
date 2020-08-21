@@ -6059,28 +6059,6 @@ public class Compute {
     }
 
     /**
-     * Gets a ring of hexes at a specified distance from the centre
-     *
-     * @param centre The centre point of the ring
-     * @param range  The radius of the ring
-     */
-    public static ArrayList<Coords> coordsAtRange(Coords centre, int range) {
-        ArrayList<Coords> result = new ArrayList<Coords>(range * 6);
-        if (range < 1) {
-            result.add(centre);
-            return result;
-        }
-        for (int dir = 0; dir < 6; dir++) {
-            Coords corner = centre.translated(dir, range);
-            for (int count = 0; count < range; count++) {
-                result.add(corner);
-                corner = corner.translated((dir + 2) % 6);
-            }
-        }
-        return result;
-    }
-
-    /**
      * Gets a new target for a flight of swarm missiles that was just shot at an
      * entity and has missiles left
      *
@@ -6695,7 +6673,7 @@ public class Compute {
     }
 
     public static ArrayList<Coords> getAcceptableUnloadPositions(
-            ArrayList<Coords> ring, Entity unit, IGame game, int elev) {
+            List<Coords> ring, Entity unit, IGame game, int elev) {
 
         ArrayList<Coords> acceptable = new ArrayList<Coords>();
 
@@ -6724,7 +6702,7 @@ public class Compute {
 
         // the rules don't say that the unit must be facing loader
         // so lets take the ring
-        for (Coords c : coordsAtRange(pos, 1)) {
+        for (Coords c : pos.allAdjacent()) {
             IHex hex = game.getBoard().getHex(c);
             if (null == hex) {
                 continue;

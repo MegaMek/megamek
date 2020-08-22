@@ -47,12 +47,12 @@ public abstract class AbstractWreckSprite extends Sprite {
     @Override
     public Rectangle getBounds() {
         // Start with the hex and add the label
-        bounds = new Rectangle(0,0,bv.hex_size.width, bv.hex_size.height);
+        bounds = new Rectangle(0, 0, bv.hex_size.width, bv.hex_size.height);
         
         // Move to board position, save this origin for correct drawing
         Point hexOrigin = bounds.getLocation();
         Point ePos;
-        if (secondaryPos == -1) {
+        if (secondaryPos < 0 || secondaryPos >= entity.getSecondaryPositions().size()) {
             ePos = bv.getHexLocation(entity.getPosition());
         } else {
             ePos = bv.getHexLocation(entity.getSecondaryPositions().get(secondaryPos));
@@ -143,7 +143,7 @@ public abstract class AbstractWreckSprite extends Sprite {
                     AlphaComposite.SRC_OVER, 1.0f));
         }
         
-        if ((secondaryPos == -1) && GUIPreferences.getInstance()
+        if ((secondaryPos < 0) && GUIPreferences.getInstance()
                 .getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
             // draw box with shortName
             Color text = Color.lightGray;

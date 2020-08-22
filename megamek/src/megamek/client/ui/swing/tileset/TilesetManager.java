@@ -88,8 +88,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
     private MechTileset wreckTileset = new MechTileset(
             new MegaMekFile(Configuration.unitImagesDir(), DIR_NAME_WRECKS).getFile());
-    private List<EntityImage> mechImageList = new ArrayList<EntityImage>();
-    private Map<ArrayList<Integer>, EntityImage> mechImages = new HashMap<ArrayList<Integer>, EntityImage>();
+    private List<EntityImage> mechImageList = new ArrayList<>();
+    private Map<ArrayList<Integer>, EntityImage> mechImages = new HashMap<>();
     private Map<String, Image> wreckageDecals = new HashMap<>();
     private Map<String, Integer> wreckageDecalCount;
 
@@ -112,7 +112,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      * images for various colors (for Players, and possibly multiple players
      * in the same hex).
      */
-    private Map<Color, Image> ecmStaticImages = new HashMap<Color, Image>();
+    private Map<Color, Image> ecmStaticImages = new HashMap<>();
     
     /** Creates new TilesetManager. */
     public TilesetManager(BoardView1 bv) throws IOException {

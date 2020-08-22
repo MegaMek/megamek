@@ -75,7 +75,7 @@ class IsometricWreckSprite extends AbstractWreckSprite {
     }
     
     public Coords getPosition() {
-        if (secondaryPos == -1) {
+        if (secondaryPos < 0 || secondaryPos >= entity.getSecondaryPositions().size()) {
             return entity.getPosition();
         } else {
             return entity.getSecondaryPositions().get(secondaryPos);

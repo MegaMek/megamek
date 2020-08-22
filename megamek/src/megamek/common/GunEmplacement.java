@@ -51,8 +51,8 @@ public class GunEmplacement extends Tank {
             .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
     
-    public int initialBuildingCF;
-    public int initialBuildingArmor;
+    private int initialBuildingCF;
+    private int initialBuildingArmor;
     
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -613,14 +613,14 @@ public class GunEmplacement extends Tank {
     @Override
     public double getArmorRemainingPercent() {
         if(getPosition() == null) {
-            return 100;
+            return 1.0;
         }
         
         Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
         
         // we'll consider undeployed emplacements to be fully intact
         if((occupiedStructure == null) || (initialBuildingCF + initialBuildingArmor == 0)) {
-            return 100;
+            return 1.0;
         }
         
         return (occupiedStructure.getCurrentCF(getPosition()) + occupiedStructure.getArmor(getPosition())) / 

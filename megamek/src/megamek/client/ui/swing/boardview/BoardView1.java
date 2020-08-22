@@ -1936,7 +1936,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             Graphics g, ArrayList<IsometricWreckSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricWreckSprite sprite : spriteArrayList) {
-            Coords cp = sprite.getEntity().getPosition();
+            Coords cp = sprite.getPosition();
             if (cp.equals(c) && view.intersects(sprite.getBounds())
                 && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
@@ -5230,11 +5230,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             GUIPreferences guip = GUIPreferences.getInstance();
 
             updateEcmList();
+            
             //For Entities that have converted to another mode, check for a different sprite
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
                     && en.isConvertingNow()) {
                 tileManager.reloadImage(en);
             }
+            
+            // for units that have been blown up, damaged or ejected, force a reload
+            if((e.getOldEntity() != null) &&
+                    ((en.getDamageLevel() != e.getOldEntity().getDamageLevel()) ||
+                    (en.isDestroyed() != e.getOldEntity().isDestroyed()) ||
+                    (en.getCrew().isEjected() != e.getOldEntity().getCrew().isEjected()))) {
+                tileManager.reloadImage(en);
+            }
+            
             redrawAllEntities();
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();

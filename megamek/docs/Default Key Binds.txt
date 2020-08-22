@@ -1,6 +1,15 @@
-Default Keyboard Commands. 
+Default Keyboard Commands for MegaMek
 These can be edited under
 VIEW->CLIENT SETTINGS->KEY BINDS
+
+Toggle in-game keyboard shortcuts helper----- Ctrl-K
+
+GENERAL COMMANDS
+Toggle Chat----- Enter
+Toggle Chat Command ----- /
+Undo----- Backspace
+Cancel----- Escape
+Done---- Ctrl-Enter
 
 SCROLLING
 Scroll Map North----- W
@@ -33,13 +42,6 @@ Next Weapon----- E
 Fire selected Weapon----- F
 Previous Unit----- Shift-Q
 Next Unit----- Shift-E
-
-GENERAL COMMANDS
-Toggle Chat----- Enter
-Toggle Chat Command ----- /
-Undo----- Backspace
-Cancel----- Escape
-Done---- Ctrl-Enter
 
 DIAGRAMS
 Show Movement Envelope----- R

@@ -36,6 +36,7 @@ public abstract class AbstractIcon implements Serializable {
 
     public static final String ROOT_CATEGORY = "-- General --";
     public static final String DEFAULT_ICON_FILENAME = "None";
+    public static final int DEFAULT_IMAGE_SCALE = 75;
 
     private String category;
     private String fileName;
@@ -142,8 +143,8 @@ public abstract class AbstractIcon implements Serializable {
      * @return a clear blank image
      */
     protected Image createBlankImage() {
-        final int width = (getWidth() == 0) ? 75 : getWidth();
-        final int height = (getHeight() == 0) ? 75 : getHeight();
+        final int width = (getWidth() == 0) ? DEFAULT_IMAGE_SCALE : getWidth();
+        final int height = (getHeight() == 0) ? DEFAULT_IMAGE_SCALE : getHeight();
         BufferedImage blankImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = blankImage.createGraphics();
         graphics.setComposite(AlphaComposite.Clear);

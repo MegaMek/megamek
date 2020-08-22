@@ -26,6 +26,7 @@ import java.awt.*;
 
 public class Portrait extends AbstractIcon {
     private static final long serialVersionUID = -7562297705213174435L;
+    public static final String DEFAULT_PORTRAIT_FILENAME = "default.gif";
 
     @Override
     public Image getBaseImage(DirectoryItems imageDirectory) {
@@ -34,7 +35,7 @@ public class Portrait extends AbstractIcon {
 
         // Return the default image if the player has selected no portrait file.
         if ((category == null) || (filename == null) || Crew.PORTRAIT_NONE.equals(filename)) {
-            filename = "default.gif";
+            filename = DEFAULT_PORTRAIT_FILENAME;
         }
 
         // Try to get the player's portrait file.
@@ -42,7 +43,7 @@ public class Portrait extends AbstractIcon {
         try {
             portrait = (Image) imageDirectory.getItem(category, filename);
             if (portrait == null) {
-                portrait = (Image) imageDirectory.getItem("", "default.gif");
+                portrait = (Image) imageDirectory.getItem("", DEFAULT_PORTRAIT_FILENAME);
             }
         } catch (Exception e) {
             MegaMek.getLogger().error(getClass(), "setPortrait", e);

@@ -492,6 +492,11 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                                 StringBuilder formula) {
         BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner()); 
         
+        if(path.getFinalCoords().getX() == 11 &&
+                path.getFinalCoords().getY() == 9) {
+            int alpha = 1;
+        }
+        
         if (behaviorType == BehaviorType.ForcedWithdrawal ||
                 behaviorType == BehaviorType.MoveToDestination) {
             int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(),

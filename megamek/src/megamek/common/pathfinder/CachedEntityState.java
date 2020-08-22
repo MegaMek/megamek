@@ -18,12 +18,14 @@ public class CachedEntityState {
     private Integer walkMP;
     private Integer runMP;
     private Integer runMPWithoutMasc;
+    private Integer runMPNoGravity;
     private Integer sprintMP;
     private Integer sprintMPWithoutMasc;
     private Integer jumpMP;
     private Integer jumpMPWithTerrain;
     private Map<BigInteger, Boolean> hasWorkingMisc;
     private Integer torsoJumpJets;
+    private Integer jumpMPNoGravity;
     
     public CachedEntityState(Entity entity) {
         backingEntity = entity;
@@ -104,6 +106,22 @@ public class CachedEntityState {
         }
         
         return torsoJumpJets;
+    }
+    
+    public int getJumpMPNoGravity() {
+        if(jumpMPNoGravity == null) {
+            jumpMPNoGravity = backingEntity.getJumpMP(false);
+        }
+        
+        return jumpMPNoGravity;
+    }
+    
+    public int getRunMPNoGravity() {
+        if(runMPNoGravity == null) {
+            runMPNoGravity = backingEntity.getRunningGravityLimit();
+        }
+        
+        return runMPNoGravity;
     }
     
     /**

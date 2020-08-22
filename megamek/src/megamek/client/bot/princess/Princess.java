@@ -1521,7 +1521,10 @@ public class Princess extends BotClient {
             // so just have it mill around in place as usual. Also set the behavior to "no path to destination"
             // so it doesn't hump the walls due to "self preservation mods"
             if ((bulldozerPaths == null) || (bulldozerPaths.size() == 0)) {
-                getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.NoPathToDestination);
+                
+                if(!mover.isAirborne()) {                
+                    getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.NoPathToDestination);
+                }
                 return getPrecognition().getPathEnumerator()
                         .getUnitPaths()
                         .get(mover.getId());

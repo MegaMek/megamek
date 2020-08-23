@@ -131,7 +131,7 @@ public class MoralUtil implements IMoralUtil {
                 }
             }
         } finally {
-            logger.log(getClass(), "checkMoral(boolean, int, int, IPlayer, IGame)", LogLevel.INFO, logMsg);
+            logger.log(getClass(), "checkMoral(boolean, int, int, IPlayer, IGame)", LogLevel.INFO, logMsg.toString());
         }
     }
 

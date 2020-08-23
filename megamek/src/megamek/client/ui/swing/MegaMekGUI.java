@@ -277,7 +277,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         hostB.setActionCommand(ClientGUI.FILE_GAME_NEW);
         hostB.addActionListener(actionListener);
-        scenB = new MegamekButton(Messages.getString("MegaMek.HostScenario.title"),
+        scenB = new MegamekButton(Messages.getString("MegaMek.hostScenario.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         scenB.setActionCommand(ClientGUI.FILE_GAME_SCENARIO);
         scenB.addActionListener(actionListener);
@@ -643,8 +643,8 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         } catch (Exception e) {
             MegaMek.getLogger().error(getClass(), "scenario", e);
             JOptionPane.showMessageDialog(frame,
-                    Messages.getString("error") + e.getMessage(),
-                    Messages.getString("MegaMek.HostScenario.title"),
+                    Messages.getString("MegaMek.HostScenarioAlert.message") + e.getMessage(),
+                    Messages.getString("MegaMek.HostScenarioAlert.title"),
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -682,7 +682,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         hd.getPlayerNameField().setText(sd.localName);
         hd.setVisible(true);
 
-        if (!hd.dataValidation("MegaMek.HostScenario.title", "MegaMek.PlayerNameAlert.message")) {
+        if (!hd.dataValidation("MegaMek.HostScenarioAlert1.title", "MegaMek.HostScenarioAlert1.message")) {
             return;
         }
 
@@ -716,7 +716,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             if (!client.connect()) {
                 String error = "Error: could not connect to server at localhost" + ":" + hd.getPort() + ".";
                 JOptionPane.showMessageDialog(frame, error,
-                        Messages.getString("MegaMek.HostScenario.title"), JOptionPane.ERROR_MESSAGE);
+                        Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE);
                 frame.setVisible(false);
                 client.die();
             }
@@ -764,7 +764,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         ConnectDialog cd = new ConnectDialog(frame);
         cd.setVisible(true);
 
-        if (cd.dataValidation("MegaMek.ConnectDialog.title", "MegaMek.ConnectDialog.errorMessage")) {
+        if (cd.dataValidation("MegaMek.ConnectAlert.title", "MegaMek.ConnectAlert.errorMessage")) {
             return;
         }
 
@@ -778,7 +778,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         if (!client.connect()) {
             String error = "Error: could not connect to server at " + cd.getServerAddress() + ':' + cd.getPort() + '.';
             JOptionPane.showMessageDialog(frame, error,
-                    Messages.getString("MegaMek.ConnectDialog.title"), JOptionPane.ERROR_MESSAGE);
+                    Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
         }
@@ -789,7 +789,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         ConnectDialog cd = new ConnectDialog(frame);
         cd.setVisible(true);
 
-        if (!cd.dataValidation("MegaMek.ConnectDialog.title", "MegaMek.ConnectDialog.errorMessage")) {
+        if (!cd.dataValidation("MegaMek.ConnectGameAlert.title", "MegaMek.ConnectGameAlert.errorMessage")) {
             return;
         }
 
@@ -807,7 +807,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         if (!client.connect()) {
             String error = "Error: could not connect to server at " + cd.getServerAddress() + ':' + cd.getPort() + '.';
             JOptionPane.showMessageDialog(frame, error,
-                    Messages.getString("MegaMek.ConnectDialog.title"), JOptionPane.ERROR_MESSAGE);
+                    Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
         }

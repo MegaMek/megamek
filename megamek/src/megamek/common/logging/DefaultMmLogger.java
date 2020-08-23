@@ -350,7 +350,7 @@ public class DefaultMmLogger implements MMLogger {
     }
 
     @Override
-    public void warning(Object callingObject, String message) {
+    public void warning(final Object callingObject, final String message) {
         log(callingObject.getClass(), getCallingMethod(), LogLevel.WARNING, message);
     }
 
@@ -366,19 +366,19 @@ public class DefaultMmLogger implements MMLogger {
     }
     
     @Override
-    public void methodBegin(Class<?> callingClass, String methodName) {
+    public void methodBegin(final Class<?> callingClass, final String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG,
             METHOD_BEGIN + methodName);
     }
     
     @Override
-    public void methodEnd(Class<?> callingClass, String methodName) {
+    public void methodEnd(final Class<?> callingClass, final String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG,
             METHOD_END + methodName);
     }
 
     @Override
-    public void methodCalled(Class<?> callingClass, String methodName) {
+    public void methodCalled(final Class<?> callingClass, final String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG,
             METHOD_CALLED + methodName);
     }
@@ -396,13 +396,13 @@ public class DefaultMmLogger implements MMLogger {
     }
     
     @Override
-    public void setLogLevel(Object callingObject, final LogLevel level) {
+    public void setLogLevel(final Object callingObject, final LogLevel level) {
         Logger logger = getLogger(callingObject.getClass().getName());
         logger.setLevel(level.getLevel());
     }
 
     @Override
-    public LogLevel getLogLevel(String category) {
+    public LogLevel getLogLevel(final String category) {
         return LogLevel.getFromLog4jLevel(getLogger(category).getLevel().toInt());
     }
 

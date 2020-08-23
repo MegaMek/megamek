@@ -277,7 +277,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         hostB.setActionCommand(ClientGUI.FILE_GAME_NEW);
         hostB.addActionListener(actionListener);
-        scenB = new MegamekButton(Messages.getString("MegaMek.hostScenario.label"),
+        scenB = new MegamekButton(Messages.getString("MegaMek.HostScenario.title"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         scenB.setActionCommand(ClientGUI.FILE_GAME_SCENARIO);
         scenB.addActionListener(actionListener);
@@ -644,7 +644,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             MegaMek.getLogger().error(getClass(), "scenario", e);
             JOptionPane.showMessageDialog(frame,
                     Messages.getString("error") + e.getMessage(),
-                    Messages.getString("MegaMek.hostScenario.title"),
+                    Messages.getString("MegaMek.HostScenario.title"),
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -764,7 +764,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         ConnectDialog cd = new ConnectDialog(frame);
         cd.setVisible(true);
 
-        if (cd.dataValidation("MegaMek.ConnectDialog.title", "MegaMek.PlayerNameAlert.message")) {
+        if (cd.dataValidation("MegaMek.ConnectDialog.title", "MegaMek.ConnectDialog.errorMessage")) {
             return;
         }
 
@@ -778,7 +778,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         if (!client.connect()) {
             String error = "Error: could not connect to server at " + cd.getServerAddress() + ':' + cd.getPort() + '.';
             JOptionPane.showMessageDialog(frame, error,
-                    Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE);
+                    Messages.getString("MegaMek.ConnectDialog.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
         }
@@ -789,7 +789,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         ConnectDialog cd = new ConnectDialog(frame);
         cd.setVisible(true);
 
-        if (!cd.dataValidation("MegaMek.ConnectDialog.title", "MegaMek.PlayerNameAlert.message")) {
+        if (!cd.dataValidation("MegaMek.ConnectDialog.title", "MegaMek.ConnectDialog.errorMessage")) {
             return;
         }
 
@@ -807,7 +807,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         if (!client.connect()) {
             String error = "Error: could not connect to server at " + cd.getServerAddress() + ':' + cd.getPort() + '.';
             JOptionPane.showMessageDialog(frame, error,
-                    Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE);
+                    Messages.getString("MegaMek.ConnectDialog.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
         }

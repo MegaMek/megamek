@@ -197,7 +197,7 @@ public abstract class PathRanker implements IPathRanker {
                 // Make sure I'm trying to get/stay in range of a target.
                 // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
                 // also skip this part if I'm attempting to retreat, as engagement is not the point here
-                if(!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover)) {
+                if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover)) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
                     String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
                     if (!StringUtil.isNullOrEmpty(validation)) {

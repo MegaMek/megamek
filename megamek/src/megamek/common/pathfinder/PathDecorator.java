@@ -66,7 +66,7 @@ public class PathDecorator {
         desiredMPs.add(source.getCachedEntityState().getJumpMP());
         desiredMPs.add(source.getCachedEntityState().getJumpMPNoGravity());
         
-        for(int desiredMP : desiredMPs) {
+        for (int desiredMP : desiredMPs) {
             List<MovePath> clippedPaths = clipToDesiredMP(clippedSource, desiredMP);
             retVal.addAll(clippedPaths);
         }

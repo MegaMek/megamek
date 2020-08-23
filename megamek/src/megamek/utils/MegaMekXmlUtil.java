@@ -188,6 +188,16 @@ public class MegaMekXmlUtil {
         // Accept (truncates): yyyy-MM-dd HH:mm:ss
         // Accept (legacy): YYYYMMDD
         // Accept: yyyy-MM-dd
+        switch (value.length()) {
+            case 3:
+                return LocalDate.ofYearDay(Integer.parseInt(value) * 10, 1);
+            case 4:
+                return LocalDate.ofYearDay(Integer.parseInt(value), 1);
+            case 6:
+            case 7:
+                return LocalDate.parse(value + "-01");
+        }
+
         int firstSpace = value.indexOf(' ');
         if (firstSpace >= 0) {
             return LocalDate.parse(value.substring(0, firstSpace));

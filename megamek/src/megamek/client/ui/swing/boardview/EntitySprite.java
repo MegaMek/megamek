@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.Compute;
@@ -336,6 +337,27 @@ class EntitySprite extends Sprite {
                     graph.setComposite(AlphaComposite.getInstance(
                             AlphaComposite.SRC_OVER, 0.5f));
                 }
+                
+                // draw the 'fuel leak' decal where appropriate
+                boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
+                
+                if(drawFuelLeak) {
+                    Image fuelLeak = bv.getScaledImage(bv.tileManager.bottomLayerFuelLeakMarkerFor(entity), true);
+                    if (null != fuelLeak) {
+                        graph.drawImage(fuelLeak, 0, 0, this);
+                    }
+                }
+                
+                // draw the 'tires' or 'tracks' decal where appropriate
+                boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
+                
+                if(drawMotiveWreckage) {
+                    Image motiveWreckage = bv.getScaledImage(bv.tileManager.bottomLayerMotiveMarkerFor(entity), true);
+                    if (null != motiveWreckage) {
+                        graph.drawImage(motiveWreckage, 0, 0, this);
+                    }
+                }
+                
                 graph.drawImage(bv.getScaledImage(bv.tileManager.imageFor(entity, secondaryPos), true),
                         0, 0, this);
                 graph.setComposite(AlphaComposite.getInstance(

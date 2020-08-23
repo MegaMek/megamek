@@ -29,11 +29,8 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
-import megamek.common.IHex;
-import megamek.common.MiscType;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Terrains;
 

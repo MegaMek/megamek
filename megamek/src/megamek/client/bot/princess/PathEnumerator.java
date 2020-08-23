@@ -406,7 +406,7 @@ public class PathEnumerator {
         }
         
         // calculate a jumping long range path
-        BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, owner.getClusterTracker()); 
+        BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, true, owner.getClusterTracker()); 
         if(jmp != null) {
             getLongRangePaths().get(mover.getId()).add(jmp);
         }

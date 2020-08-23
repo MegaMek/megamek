@@ -14,6 +14,7 @@
         <regexp>java\.lang\.Boolean$</regexp>
         <regexp>java\.lang\.Enum$</regexp>
         <regexp>java\.lang\.Integer$</regexp>
+        <regexp>java\.lang\.Double$</regexp>
         <regexp>java\.lang\.Number$</regexp>
         <regexp>java\.lang\.StringBuffer$</regexp>
         <regexp>java\.util\.ArrayList$</regexp>

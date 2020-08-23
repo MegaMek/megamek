@@ -147,7 +147,7 @@ public class HostDialog extends AbstractGameConnectionDialog {
     //region Validation
     @Override
     public boolean dataValidation(String errorTitleKey, String errorMessageKey) {
-        return !super.dataValidation(errorTitleKey, errorMessageKey) || (getServerPass() == null);
+        return super.dataValidation(errorTitleKey, errorMessageKey) && (getServerPass() != null);
     }
     //endregion Validation
 

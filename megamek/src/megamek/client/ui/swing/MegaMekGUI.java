@@ -764,7 +764,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         ConnectDialog cd = new ConnectDialog(frame);
         cd.setVisible(true);
 
-        if (cd.dataValidation("MegaMek.ConnectAlert.title", "MegaMek.ConnectAlert.errorMessage")) {
+        if (!cd.dataValidation("MegaMek.ConnectAlert.title", "MegaMek.ConnectAlert.errorMessage")) {
             return;
         }
 

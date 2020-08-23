@@ -91,7 +91,7 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
     //region Validation
     @Override
     public boolean dataValidation(String errorTitleKey, String errorMessageKey) {
-        return !super.dataValidation(errorTitleKey, errorMessageKey) || (getServerAddress() == null);
+        return super.dataValidation(errorTitleKey, errorMessageKey) && (getServerAddress() != null);
     }
     //endregion Validation
 

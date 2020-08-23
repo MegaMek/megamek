@@ -119,7 +119,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     private boolean validatePlayerName() {
         // Players should have to enter a non-blank, non-whitespace name.
-        return getPlayerName().trim().equals("");
+        return !getPlayerName().trim().equals("");
     }
     //endregion Validation
 

@@ -170,7 +170,7 @@ public class EntityImage {
         // crippled entities may be "crippled" due to harmless weapon jams or being out of ammo but 
         // not having taken any actual damage
         if(calculatedDamageLevel == Entity.DMG_CRIPPLED) {
-            if(entity.getArmorRemainingPercent() == 1.0) {
+            if(entity.getArmorRemainingPercent() >= 1.0) {
                 calculatedDamageLevel = Entity.DMG_NONE;
             }
         }

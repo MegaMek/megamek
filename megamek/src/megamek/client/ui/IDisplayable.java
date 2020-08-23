@@ -1,8 +1,8 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- *
  * This file (C) 2008 Jörg Walter <j.walter@syntax-k.de>
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team  
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -23,33 +23,101 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 /**
- *
- * An object that is displayed over the part of the IBoardView
- * that is currently visible
+ * Used for Boardview overlays that don't move when the map is scrolled
+ * (such as the chat window). Use BoardView1.addDisplayable() to 
+ * add it to the boardview.
+ * 
  * @author jwalt
  */
 public interface IDisplayable {
 
-    public boolean isBeingDragged();
+    /** 
+     * Returns true when this IDisplayable is being dragged or resized
+     * using mouse movement. This will prevent the boardview from reacting to 
+     * this mouse action. 
+     * The default for this method will always return false.
+     */
+    default public boolean isBeingDragged() {
+        return false;
+    };
 
-    public boolean isDragged(Point point, Dimension backSize);
+    /** 
+     * Returns true when this IDisplayable is dragged or resized
+     * using mouse dragging. This will prevent the boardview from reacting to 
+     * this mouse action. 
+     * The default for this method will always return false.
+     */
+    default public boolean isDragged(Point point, Dimension backSize) {
+        return false;
+    };
+    
+    /** 
+     * Returns true when the mouse position point is considered "within" 
+     * this IDisplayable. This is called when a mouse button is pressed.
+     * The default for this method will always return false.
+     */
+    default public boolean isHit(Point point, Dimension size) {
+        return false;
+    };
 
-    public boolean isHit(Point point, Dimension size);
+    /** 
+     * Returns true when the mouse position point is considered "within" 
+     * this IDisplayable. This is called when the mouse or mouse wheel is moved.
+     * backSize is the pixel size of the boardview.
+     * The default for this method will always return false. 
+     */
+    default public boolean isMouseOver(Point point, Dimension backSize) {
+        return false;
+    };
 
-    public boolean isMouseOver(Point point, Dimension backSize);
-
-    public boolean isReleased();
+    default public boolean isReleased() {
+        return false;
+    };
 
     /**
-     * Draw this IDisplayable
-     * @param graph -           the <code>Graphics</code> to draw on
+     * Draw this IDisplayable to the Graphics graph, which is the boardview
+     * graphics. The currently visible part of the boardview is given by
+     * the Rectangle rect, so the upper left corner of the visible
+     * boardview is rect.x, rect.y.
      */
     public void draw(Graphics graph, Rectangle rect);
 
-    public boolean isSliding();
+    /** 
+     * Return true while sliding.
+     * "Sliding" means that this IDisplayable is in the process of
+     * opening, closing moving or fading. The boardview will repaint
+     * at some fps while an IDisplayable is sliding.  
+     * The default for this method will always return false. 
+     */
+    default public boolean isSliding() {
+        return false;
+    };
 
-    public void setIdleTime(long l, boolean b);
+    /**
+     * The boardview calls this to pass on the elapsed time elTime to the 
+     * IDisplayable. when add is true, elTime is usually the elapsed
+     * time since the last call to setIdleTime and should be added to 
+     * a stored elapsed time. 
+     * When add is false, elTime should replace the previously stored elapsed
+     * time (this is usually used with elTime = 0 to reset the elapsed time).
+     * Can be used to make this IDisplayable "slide" after some elapsed
+     * time, see slide().
+     * See ChatterBox2 for examples. 
+     * The default for this method will do nothing.
+     */
+    default public void setIdleTime(long elTime, boolean add) { };
 
-    public boolean slide();
+    /** 
+     * Conducts a frame update when sliding.
+     * "Sliding" means that this IDisplayable is in the process of
+     * opening, closing moving or fading. The boardview will repaint
+     * at some fps while an IDisplayable is sliding. 
+     * Return true as long as the slide process is not finished.
+     * See ChatterBox2 and KeyBindingsOverlay for examples.
+     * The default for this method will always return false.
+     */
+    default public boolean slide() {
+        return false;
+    };
 
 }

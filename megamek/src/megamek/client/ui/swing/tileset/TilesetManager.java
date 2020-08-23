@@ -61,6 +61,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public static final String FILENAME_SUFFIX_WRECKS_ASSAULTPLUS = "assaultplus";
     public static final String FILENAME_SUFFIX_WRECKS_ULTRALIGHT = "ultralight";
 
+    private static final int NUM_DECAL_ROTATIONS = 4;
+    
     public static final String FILENAME_DEFAULT_HEX_SET = "defaulthexset.txt"; //$NON-NLS-1$
 
     private static final String FILENAME_NIGHT_IMAGE = new File("transparent", "night.png").toString();  //$NON-NLS-1$  //$NON-NLS-2$
@@ -88,8 +90,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
     private MechTileset wreckTileset = new MechTileset(
             new MegaMekFile(Configuration.unitImagesDir(), DIR_NAME_WRECKS).getFile());
-    private List<EntityImage> mechImageList = new ArrayList<EntityImage>();
-    private Map<ArrayList<Integer>, EntityImage> mechImages = new HashMap<ArrayList<Integer>, EntityImage>();
+    private List<EntityImage> mechImageList = new ArrayList<>();
+    private Map<ArrayList<Integer>, EntityImage> mechImages = new HashMap<>();
     private Map<String, Image> wreckageDecals = new HashMap<>();
     private Map<String, Integer> wreckageDecalCount;
 
@@ -112,7 +114,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      * images for various colors (for Players, and possibly multiple players
      * in the same hex).
      */
-    private Map<Color, Image> ecmStaticImages = new HashMap<Color, Image>();
+    private Map<Color, Image> ecmStaticImages = new HashMap<>();
     
     /** Creates new TilesetManager. */
     public TilesetManager(BoardView1 bv) throws IOException {
@@ -265,13 +267,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         String filename = String.format("fuelleak_decal_%s.png", suffix);
         String path = String.format("%s/%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
         
-        int rotationKey = entity.getId() % 4;
+        int rotationKey = entity.getId() % NUM_DECAL_ROTATIONS;
         String imageKey = String.format("%s%s", filename, rotationKey);
         
         if(!wreckageDecals.containsKey(imageKey)) {
             Image baseImage = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
             
-            for(double x = 0; x < 4; x++) {
+            for(double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                 RotateFilter rf = new RotateFilter(x * 90);
                 String newImageKey = String.format("%s%s", filename, (int) x);
                 
@@ -297,13 +299,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             String filename = String.format("%s_decal_%s.png", motivePrefix, weightSuffix);
             String path = String.format("%s/%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
             
-            int rotationKey = entity.getId() % 4;
+            int rotationKey = entity.getId() % NUM_DECAL_ROTATIONS;
             String imageKey = String.format("%s%s", filename, rotationKey);
             
             if(!wreckageDecals.containsKey(imageKey)) {
                 Image baseImage = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
                 
-                for(double x = 0; x < 4; x++) {
+                for(double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                     RotateFilter rf = new RotateFilter(x * 90);
                     String newImageKey = String.format("%s%s", filename, (int) x);
                     

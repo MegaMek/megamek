@@ -13,6 +13,12 @@ VERSION HISTORY:
 + PR #2132: No more sending malformed game data objects over to the server to exploit deserialization vulnerabilities. Sorry.
 + Issue #2150: Fixing Princess Vehicle Abandonment NPE
 + Issue #2089: Generate Names from Specified Historical Ethnicity
++ PR #2158: Press ctrl-k for a handy summary of keyboard shortcuts
++ PR #2103: Graphical upgrade for all unit wrecks, except mechs and infantry. 
+	Immobilized tanks also have a visual indicator depending on motive type and power plant.
++ Data New Sprites, add Rec Guide Vol 1/2 and Golden Century.
++ Data: Updated Maps including AGoAC maps
+	
 
 0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit

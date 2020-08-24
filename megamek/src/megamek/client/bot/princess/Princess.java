@@ -1522,7 +1522,7 @@ public class Princess extends BotClient {
             // so it doesn't hump the walls due to "self preservation mods"
             if ((bulldozerPaths == null) || (bulldozerPaths.size() == 0)) {
                 
-                if(!mover.isAirborne()) {                
+                if (!mover.isAirborne()) {
                     getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.NoPathToDestination);
                 }
                 return getPrecognition().getPathEnumerator()

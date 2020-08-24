@@ -109,7 +109,7 @@ public class CachedEntityState {
     }
     
     public int getJumpMPNoGravity() {
-        if(jumpMPNoGravity == null) {
+        if (jumpMPNoGravity == null) {
             jumpMPNoGravity = backingEntity.getJumpMP(false);
         }
         
@@ -117,7 +117,7 @@ public class CachedEntityState {
     }
     
     public int getRunMPNoGravity() {
-        if(runMPNoGravity == null) {
+        if (runMPNoGravity == null) {
             runMPNoGravity = backingEntity.getRunningGravityLimit();
         }
         

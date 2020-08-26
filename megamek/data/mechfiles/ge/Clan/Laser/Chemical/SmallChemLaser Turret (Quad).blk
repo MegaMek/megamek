@@ -25,7 +25,7 @@ Small Chemical Laser Turret
 </Name>
 
 <Model>
-(Dual)
+(Quad)
 </Model>
 
 <Year>
@@ -45,6 +45,10 @@ Clan Level 3
 <Guns Equipment>
 CLSmallChemLaser
 CLSmallChemLaser
+CLSmallChemLaser
+CLSmallChemLaser
+CLSmallChemLaserAmmo
+CLSmallChemLaserAmmo
 CLSmallChemLaserAmmo
 CLSmallChemLaserAmmo
 CLSmallChemLaserAmmo

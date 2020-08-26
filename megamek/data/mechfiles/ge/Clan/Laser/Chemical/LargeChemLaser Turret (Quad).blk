@@ -21,11 +21,11 @@ GunEmplacement
 </UnitType>
 
 <Name>
-Small Chemical Laser Turret
+Large Chemical Laser Turret
 </Name>
 
 <Model>
-(Dual)
+(Quad)
 </Model>
 
 <Year>
@@ -43,10 +43,8 @@ Clan Level 3
 </Turret>
 
 <Guns Equipment>
-CLSmallChemLaser
-CLSmallChemLaser
-CLSmallChemLaserAmmo
-CLSmallChemLaserAmmo
-CLSmallChemLaserAmmo
-CLSmallChemLaserAmmo
+CLLargeChemLaser
+CLLargeChemLaser
+CLLargeChemLaser
+CLLargeChemLaser
 </Guns Equipment>

@@ -13,7 +13,7 @@ GunEmplacement
 LB-5-X Turret
 </Name>
 <model>
-(Dual)
+(Quad)
 </model>
 <Year>
 2828
@@ -32,6 +32,8 @@ CLLBXAC5
 CLLBXAC5 Ammo
 CLLBXAC5 Ammo
 CLLBXAC5 Ammo
+CLLBXAC5 Ammo
+CLLBXAC5 CL Ammo
 CLLBXAC5 CL Ammo
 CLLBXAC5 CL Ammo
 CLLBXAC5 CL Ammo

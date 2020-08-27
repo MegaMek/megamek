@@ -19,6 +19,7 @@ VERSION HISTORY:
 + Data New Sprites, add Rec Guide Vol 1/2 and Golden Century.
 + Data: Updated Maps including AGoAC maps
 + PR #2168: Improvements to Princess behavior when attempting to navigate to a destination/retreat edge
++ Issue #2176: Added multiple "unofficial" high-powered turrets
 	
 
 0.47.9 (2020-08-07 1830 UTC)

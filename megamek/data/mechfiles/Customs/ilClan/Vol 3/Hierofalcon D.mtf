@@ -1,0 +1,154 @@
+Version:1.0
+Hierofalcon
+D
+
+Config:Biped Omnimech
+techbase:Clan
+era:3150
+source:ilClan Vol 3 - Dark Age
+rules level:3
+
+mass:45
+engine:270 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Double
+base chassis heat sinks:10
+walk mp:6
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:14
+RA armor:14
+LT armor:15
+RT armor:15
+CT armor:21
+HD armor:8
+LL armor:18
+RL armor:18
+RTL armor:7
+RTR armor:7
+RTC armor:7
+
+Weapons:6
+ER Medium Pulse Laser, Left Arm
+ER Medium Pulse Laser, Right Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ATM 6, Left Torso
+ATM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERMediumPulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERMediumPulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing (omnipod)
+CLPartialWing (omnipod)
+CLPartialWing (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+CLCASEII (omnipod)
+Clan Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing (omnipod)
+CLPartialWing (omnipod)
+CLPartialWing (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+CLCASEII (omnipod)
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Supercharger (Clan) (omnipod)
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

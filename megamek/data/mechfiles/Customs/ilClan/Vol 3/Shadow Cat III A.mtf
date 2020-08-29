@@ -1,0 +1,150 @@
+Version:1.0
+Shadow Cat III
+A
+
+Config:Biped Omnimech
+techbase:Clan
+era:3145
+source:ilClan Vol 3 - Dark Age
+rules level:2
+
+mass:45
+engine:270 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:13 Double
+base chassis heat sinks:10
+walk mp:6
+jump mp:8
+
+armor:Ferro-Fibrous(Clan)
+LA armor:14
+RA armor:14
+LT armor:18
+RT armor:18
+CT armor:22
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:4
+RTR armor:4
+RTC armor:6
+
+Weapons:2
+ER Large Laser, Left Arm
+ER Large Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMASC
+CLMASC
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Improved Jump Jet (omnipod)
+Improved Jump Jet (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -63,6 +63,14 @@ Aerodyne
 0
 </engine_type>
 
+<armor_type>
+39
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <armor>
 21
 13

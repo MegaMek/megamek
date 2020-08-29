@@ -1,0 +1,149 @@
+Version:1.0
+Panther
+PNT-14K
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3150
+source:Dark Age
+rules level:3
+
+mass:35
+engine:140 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 Double
+walk mp:4
+jump mp:4
+
+armor:Ballistic-Reinforced(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:12
+RT armor:12
+CT armor:16
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:4
+RTR armor:4
+RTC armor:6
+
+Weapons:2
+ER PPC, Right Arm
+Streak SRM 4, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Endo Steel
+IS Endo Steel
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Streak SRM 4 Ammo
+CLCASEII
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLStreakSRM4
+Supercharger
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

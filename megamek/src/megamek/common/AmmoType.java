@@ -1311,6 +1311,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createHeavyMassDriverAmmo());
         EquipmentType.addType(AmmoType.createMediumMassDriverAmmo());
         EquipmentType.addType(AmmoType.createLightMassDriverAmmo());
+        EquipmentType.addType(AmmoType.createInfantryAmmo());
+        EquipmentType.addType(AmmoType.createInfantryInfernoAmmo());
 
         base = AmmoType.createISAPMortar1Ammo();
         mortarAmmos.add(base);
@@ -15122,6 +15124,32 @@ public class AmmoType extends EquipmentType {
             .setISAdvancement(2200).setPrototypeFactions(F_TA)
             .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        return ammo;
+    }
+
+    // Generic infantry ammo, stats are determined by the weapon it's linked to
+    private static AmmoType createInfantryAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Standard Ammo";
+        ammo.setInternalName(EquipmentTypeLookup.INFANTRY_AMMO);
+        ammo.ammoType = AmmoType.T_INFANTRY;
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_A)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return ammo;
+    }
+
+    private static AmmoType createInfantryInfernoAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Inferno Ammo";
+        ammo.setInternalName(EquipmentTypeLookup.INFANTRY_INFERNO_AMMO);
+        ammo.ammoType = AmmoType.T_INFANTRY;
+        ammo.munitionType = M_INFERNO;
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_A)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return ammo;
     }
 

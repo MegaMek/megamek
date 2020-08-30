@@ -36,6 +36,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
@@ -3608,29 +3609,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
 
             // one-shot launchers need their single shot of ammo added.
-            if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
+            if ((mounted.getType().hasFlag(WeaponType.F_ONESHOT)
+                    || (isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)))
                     && (AmmoType.getOneshotAmmo(mounted) != null)) {
-                Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
-                m.setOmniPodMounted(mounted.isOmniPodMounted());
-                int shots = 1;
-                // BA pop-up mines can be fired individually and need a shot for each launcher in the squad.
-                if (mounted.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)) {
-                    shots = getTotalInternal();
-                }
-                m.setShotsLeft(shots);
-                mounted.setLinked(m);
-                // Oneshot ammo will be identified by having a location
-                // of null. Other areas in the code will rely on this.
-                addEquipment(m, Entity.LOC_NONE, false);
-                // Fusillade gets a second round, which can be a different munition type so
-                // need to allow for two separate mounts.
-                if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
-                    Mounted m2 = new Mounted(this, m.getType());
-                    m2.setOmniPodMounted(mounted.isOmniPodMounted());
-                    m2.setShotsLeft(shots);
-                    m.setLinked(m2);
-                    addEquipment(m2, Entity.LOC_NONE, false);
-                }
+                addOneshotAmmo(mounted);
             }
         }
         if (mounted.getType() instanceof AmmoType) {
@@ -3641,6 +3623,49 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         if (mounted.getType() instanceof MiscType) {
             miscList.add(mounted);
+        }
+    }
+
+    private void addOneshotAmmo(Mounted mounted) throws LocationFullException {
+        EquipmentType ammo;
+        int shots;
+        if (mounted.getType() instanceof InfantryWeapon) {
+            ammo = EquipmentType.get(EquipmentTypeLookup.INFANTRY_AMMO);
+            shots = ((InfantryWeapon) mounted.getType()).getShots();
+        } else {
+            ammo = AmmoType.getOneshotAmmo(mounted);
+            shots = 1;
+        }
+        if (ammo == null) {
+            MegaMek.getLogger().error(getClass(), "addOneshotAmmo(Mounted)",
+                    "Equipment lookup failed for ammo for " + mounted.getName());
+            return;
+        }
+        Mounted m = new Mounted(this, ammo);
+        m.setOmniPodMounted(mounted.isOmniPodMounted());
+        // BA pop-up mines can be fired individually and need a shot for each launcher in the squad.
+        if (mounted.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)) {
+            shots = getTotalInternal();
+        }
+        m.setShotsLeft(shots);
+        mounted.setLinked(m);
+        addEquipment(m, Entity.LOC_NONE, false);
+        // Fusillade gets a second round, which can be a different munition type so
+        // need to allow for two separate mounts. Some infantry weapons have alternate
+        // inferno ammo, which will use the saMe mechanism but start with zero shots.
+        if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+            Mounted m2 = new Mounted(this, m.getType());
+            m2.setOmniPodMounted(mounted.isOmniPodMounted());
+            m2.setShotsLeft(shots);
+            m.setLinked(m2);
+            addEquipment(m2, Entity.LOC_NONE, false);
+        } else if ((mounted.getType() instanceof InfantryWeapon)
+                && mounted.getType().getInternalName().endsWith("Inferno")) {
+            Mounted m2 = new Mounted(this, EquipmentType.get(EquipmentTypeLookup.INFANTRY_AMMO));
+            m2.setOmniPodMounted(mounted.isOmniPodMounted());
+            m2.setShotsLeft(0);
+            m.setLinked(m2);
+            addEquipment(m2, Entity.LOC_NONE, false);
         }
     }
 

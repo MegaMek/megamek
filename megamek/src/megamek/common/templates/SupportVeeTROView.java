@@ -33,6 +33,7 @@ import megamek.common.Tank;
 import megamek.common.VTOL;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestSupportVehicle;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Creates a TRO template model for support vehicles.
@@ -182,7 +183,7 @@ public class SupportVeeTROView extends TROView {
                 if (eq instanceof AmmoType) {
                     name = String.format("%s (%d)", name, ((AmmoType) eq).getShots() * count);
                 } else if (count > 1) {
-                    name = String.format("%d %ss", count, entry.getKey().name());
+                    name = String.format("%d %s", count, entry.getKey().name());
                 }
                 final Map<String, Object> fields = new HashMap<>();
                 fields.put("name", name);
@@ -193,6 +194,19 @@ public class SupportVeeTROView extends TROView {
                 fields.put("location", loc);
                 fields.put("slots", eq.getCriticals(entity, entry.getValue()) * count);
                 weaponList.add(fields);
+                if (eq instanceof InfantryWeapon) {
+                    Map<String, Object> ammoFields = new HashMap<>();
+                    name += " Ammo";
+                    ammoFields.put("name", name);
+                    if (name.length() >= nameWidth) {
+                        nameWidth = name.length() + 1;
+                    }
+                    ammoFields.put("tonnage",
+                            Math.ceil(((InfantryWeapon) eq).getAmmoWeight() * entry.getValue() * 1000));
+                    ammoFields.put("location", loc);
+                    ammoFields.put("slots", 0);
+                    weaponList.add(ammoFields);
+                }
             }
         }
         setModelData("weaponList", weaponList);

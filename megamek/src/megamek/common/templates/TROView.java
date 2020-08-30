@@ -56,6 +56,7 @@ import megamek.common.options.Quirks;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Fills in a template to produce a unit summary in TRO format.
@@ -481,6 +482,19 @@ public class TROView {
                     fields.put("slots", eq.getCriticals(entity, entry.getValue()) * count);
                 }
                 eqList.add(fields);
+                if (includeAmmo && entity.isSupportVehicle() && (eq instanceof InfantryWeapon)) {
+                    Map<String, Object> ammoFields = new HashMap<>();
+                    name += " Ammo";
+                    ammoFields.put("name", name);
+                    if (name.length() >= nameWidth) {
+                        nameWidth = name.length() + 1;
+                    }
+                    ammoFields.put("tonnage",
+                            Math.ceil(((InfantryWeapon) eq).getAmmoWeight() * entry.getValue() * 1000));
+                    ammoFields.put("location", loc);
+                    ammoFields.put("slots", 0);
+                    eqList.add(ammoFields);
+                }
             }
         }
         model.put("equipment", eqList);

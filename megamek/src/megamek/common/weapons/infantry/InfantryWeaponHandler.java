@@ -19,15 +19,8 @@ package megamek.common.weapons.infantry;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.Infantry;
-import megamek.common.Report;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.MegaMek;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.WeaponHandler;
@@ -163,16 +156,42 @@ public class InfantryWeaponHandler extends WeaponHandler {
         int av = 0;
         //Sigh, another rules oversight - nobody bothered to figure this out
         //To be consistent with other cluster weapons we will assume 60% hit
-        double damage = ((InfantryWeapon)wtype).getInfantryDamage();
-        if((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
-            damage = ((Infantry)ae).getDamagePerTrooper();
-            av = (int) Math.round(damage * 0.6 * ((Infantry)ae).getShootingStrength());
+        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+            double damage = ((Infantry) ae).getDamagePerTrooper();
+            av = (int) Math.round(damage * 0.6 * ((Infantry) ae).getShootingStrength());
         }
-        if(bDirect) {
-            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        if (bDirect) {
+            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
         av = applyGlancingBlowModifier(av, false);
         return av;
     }
 
+    @Override
+    public void useAmmo() {
+        if (ae.isSupportVehicle()) {
+            Mounted ammo = weapon.getLinked();
+            if (ammo == null) {
+                ae.loadWeapon(weapon);
+                ammo = weapon.getLinked();
+            }
+            if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
+                // *shouldn't* fire.
+                MegaMek.getLogger().error(getClass(), "useAmmo()",
+                        String.format("Handler can't find any ammo for %s firing %s",
+                                ae.getShortName(), weapon.getName()));
+                return;
+            }
+
+            ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
+            // Swap between standard and inferno if the unit has some left of the other type
+            if ((ammo.getUsableShotsLeft() <= 0)
+                    && (ammo.getLinked() != null)
+                    && (ammo.getLinked().getUsableShotsLeft() > 0)) {
+                weapon.setLinked(ammo.getLinked());
+                weapon.getLinked().setLinked(ammo);
+            }
+            super.useAmmo();
+        }
+    }
 }

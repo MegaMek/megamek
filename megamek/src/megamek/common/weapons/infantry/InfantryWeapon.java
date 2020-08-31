@@ -17,10 +17,7 @@
  */
 package megamek.common.weapons.infantry;
 
-import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.Mounted;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
@@ -129,6 +126,18 @@ public abstract class InfantryWeapon extends Weapon {
      */
     public int getAmmoCost() {
         return ammoCost;
+    }
+
+    /**
+     * Check for whether small support vehicles have an option of standard or
+     * inferno munitions for this weapon. Returns true for both the inferno and
+     * the standard variant.
+     *
+     * @return Whether the weapon has alternate inferno ammo
+     */
+    public boolean hasInfernoAmmo() {
+        return internalName.endsWith("Inferno")
+                || (EquipmentType.get(internalName + "Inferno") != null);
     }
 
     /*

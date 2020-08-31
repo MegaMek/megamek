@@ -3648,20 +3648,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             shots = getTotalInternal();
         }
         m.setShotsLeft(shots);
+        m.setOriginalShots(shots);
         mounted.setLinked(m);
         addEquipment(m, Entity.LOC_NONE, false);
         // Fusillade gets a second round, which can be a different munition type so
         // need to allow for two separate mounts. Some infantry weapons have alternate
-        // inferno ammo, which will use the saMe mechanism but start with zero shots.
+        // inferno ammo, which will use the same mechanism but start with zero shots.
         if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
             Mounted m2 = new Mounted(this, m.getType());
             m2.setOmniPodMounted(mounted.isOmniPodMounted());
             m2.setShotsLeft(shots);
+            m2.setOriginalShots(shots);
             m.setLinked(m2);
             addEquipment(m2, Entity.LOC_NONE, false);
         } else if ((mounted.getType() instanceof InfantryWeapon)
-                && mounted.getType().getInternalName().endsWith("Inferno")) {
-            Mounted m2 = new Mounted(this, EquipmentType.get(EquipmentTypeLookup.INFANTRY_AMMO));
+                && ((InfantryWeapon) mounted.getType()).hasInfernoAmmo()) {
+            Mounted m2 = new Mounted(this, EquipmentType.get(EquipmentTypeLookup.INFANTRY_INFERNO_AMMO));
             m2.setOmniPodMounted(mounted.isOmniPodMounted());
             m2.setShotsLeft(0);
             m.setLinked(m2);

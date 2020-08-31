@@ -1330,7 +1330,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              */
             public WeaponAmmoChoicePanel(Mounted weapon) {
                 // for safety purposes, if the given mounted isn't a weapon, don't do anything.
-                if(!(weapon.getType() instanceof WeaponType)) {
+                if (!(weapon.getType() instanceof WeaponType)) {
                     return;
                 }
                 
@@ -1349,8 +1349,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     // One-shot weapons can only access their own bin
                     matchingAmmoBins.add(m_mounted.getLinked());
                 } else {
-                    for(Mounted ammoBin : weapon.getEntity().getAmmo()) {
-                        if((ammoBin.getLocation() != Entity.LOC_NONE)
+                    for (Mounted ammoBin : weapon.getEntity().getAmmo()) {
+                        if ((ammoBin.getLocation() != Entity.LOC_NONE)
                             && ((WeaponType) weapon.getType()).getAmmoType() == ((AmmoType) ammoBin.getType()).getAmmoType()) {
                             matchingAmmoBins.add(ammoBin);
                         }
@@ -1369,16 +1369,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 ammoBins.removeAllItems();
                 
                 int currentIndex = 0;
-                for(Mounted ammoBin : matchingAmmoBins) {
+                for (Mounted ammoBin : matchingAmmoBins) {
                     ammoBins.addItem("(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") " + ammoBin.getName());
-                    if(m_mounted.getLinked() == ammoBin) {
+                    if (m_mounted.getLinked() == ammoBin) {
                         selectedIndex = currentIndex;
                     }
                     
                     currentIndex++;
                 }
                 
-                if(selectedIndex >= 0) {
+                if (selectedIndex >= 0) {
                     ammoBins.setSelectedIndex(selectedIndex);
                 }
                 
@@ -1395,20 +1395,20 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 int index = 0;
                 boolean matchFound = false;
                 
-                for(index = 0; index < matchingAmmoBins.size(); index++) {
-                    if(matchingAmmoBins.get(index) == ammoBin) {
+                for (index = 0; index < matchingAmmoBins.size(); index++) {
+                    if (matchingAmmoBins.get(index) == ammoBin) {
                         matchFound = true;
                         break;
                     }
                 }
                 
-                if(matchFound) {
+                if (matchFound) {
                     int currentBinIndex = ammoBins.getSelectedIndex();
                     
                     ammoBins.removeItemAt(index);
                     ammoBins.insertItemAt("(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") " + selectedAmmoType.getName(), index);
                     
-                    if(currentBinIndex == index) {                    
+                    if (currentBinIndex == index) {
                         ammoBins.setSelectedIndex(index);
                     }
                     

@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import megamek.client.bot.princess.AeroPathUtil;
+import megamek.client.bot.princess.FireControl;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -227,6 +228,12 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         if (irreversibleJumpDown && 
                 !clusterTracker.coordinatesShareCluster(child.getEntity(), child.getFinalCoords(), destinationCoords,
                         mli.destHexElevation, destHexElevation)) {
+            return;
+        }
+        
+        // let's avoid pathing through buildings containing our immobile units - 
+        // they're not going to get out of the way and we can probably do better than killing our own guys
+        if(!child.isJumping() && FireControl.friendlyFireCheck(child.getEntity(), child.getGame(), child.getFinalCoords(), false)) {
             return;
         }
         

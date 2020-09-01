@@ -2399,30 +2399,6 @@ public class FireControl {
     }
 
     /**
-     * Utility function that returns true if an attack on the building in the given coordinates
-     * will result in damage to friendly units.
-     */
-    public static boolean friendlyFireCheck(Entity shooter, IGame game, Coords position, boolean includeMobileUnits) {
-        Building building = game.getBoard().getBuildingAt(position);
-        
-        // no building, no problem
-        if (building == null) {
-            return false;
-        }
-        
-        // check if there are any entities in the building that meet the following criteria:
-        // - is friendly
-        // - if we care only about mobile units, has no MP 
-        for(Entity entity : game.getEntitiesVector(position, true)) {
-            if(!entity.isEnemyOf(shooter) && (includeMobileUnits || (entity.getWalkMP(true, false) == 0))) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    /**
      * This is it. Calculate the 'best' possible firing plan for this entity.
      * Overload this function if you think you can do better.
      *

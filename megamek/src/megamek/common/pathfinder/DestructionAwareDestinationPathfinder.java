@@ -24,12 +24,13 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.client.bot.princess.FireControl;
+import megamek.common.Building;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
+import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.PlanetaryConditions;
@@ -43,6 +44,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
 
     Comparator<BulldozerMovePath> movePathComparator;
     int maximumCost = Integer.MAX_VALUE;
+    Map<Coords, Boolean> friendlyFireCheckResults = new HashMap<>();
     
     /**
      * Uses an A* search to find the "optimal" path to the destination coordinates.
@@ -233,7 +235,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         
         // let's avoid pathing through buildings containing our immobile units - 
         // they're not going to get out of the way and we can probably do better than killing our own guys
-        if(!child.isJumping() && FireControl.friendlyFireCheck(child.getEntity(), child.getGame(), child.getFinalCoords(), false)) {
+        if(!child.isJumping() && friendlyFireCheck(child.getEntity(), child.getGame(), child.getFinalCoords(), false)) {
             return;
         }
         
@@ -247,6 +249,37 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             shortestPathsToCoords.put(child.getFinalCoords(), child);
             children.add(child);
         }
+    }
+    
+    /**
+     * Utility function that returns true if an attack on the building in the given coordinates
+     * will result in damage to friendly units. Computation is cached as it is somewhat expensive to perform for each possible path node.
+     */
+    public boolean friendlyFireCheck(Entity shooter, IGame game, Coords position, boolean includeMobileUnits) {
+        if(friendlyFireCheckResults.containsKey(position)) {
+            return friendlyFireCheckResults.get(position);
+        }
+        
+        Building building = game.getBoard().getBuildingAt(position);
+        
+        // no building, no problem
+        if (building == null) {
+            friendlyFireCheckResults.put(position, false);
+            return false;
+        }
+        
+        // check if there are any entities in the building that meet the following criteria:
+        // - is friendly
+        // - if we care only about mobile units, has no MP 
+        for(Entity entity : game.getEntitiesVector(position, true)) {
+            if(!entity.isEnemyOf(shooter) && (includeMobileUnits || (entity.getWalkMP(true, false) == 0))) {
+                friendlyFireCheckResults.put(position, true);
+                return true;
+            }
+        }
+        
+        friendlyFireCheckResults.put(position, false);
+        return false;
     }
     
     /**

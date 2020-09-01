@@ -27,7 +27,6 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BombType;
-import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;

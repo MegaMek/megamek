@@ -126,11 +126,15 @@ public class MegaMekXmlUtil {
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, UUID val) {
-        writeSimpleXmlTag(pw1, indent, name, val.toString());
+        if (val != null) {
+            writeSimpleXmlTag(pw1, indent, name, val.toString());
+        }
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, LocalDate val) {
-        writeSimpleXmlTag(pw1, indent, name, saveFormattedDate(val));
+        if (val != null) {
+            writeSimpleXmlTag(pw1, indent, name, saveFormattedDate(val));
+        }
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, String val) {
@@ -154,11 +158,11 @@ public class MegaMekXmlUtil {
     }
 
     public static void writeSimpleXMLOpenIndentedLine(PrintWriter pw1, int indent, String name) {
-        pw1.println(indentStr(indent) + "<" + name + ">");
+        pw1.println(indentStr(indent) + "<" + escape(name) + ">");
     }
 
     public static void writeSimpleXMLCloseIndentedLine(PrintWriter pw1, int indent, String name) {
-        pw1.println(indentStr(indent) + "</" + name + ">");
+        pw1.println(indentStr(indent) + "</" + escape(name) + ">");
     }
 
     private static final String[] INDENTS = new String[] {
@@ -187,7 +191,10 @@ public class MegaMekXmlUtil {
     public static LocalDate parseDate(String value) throws DateTimeParseException {
         // Accept (truncates): yyyy-MM-dd HH:mm:ss
         // Accept (legacy): YYYYMMDD
-        // Accept: yyyy-MM-dd
+        // Accept (preferred): yyyy-MM-dd
+        // Accept (assumes first day of month): yyyy-MM
+        // Accept (assumes first day of year: yyyy
+        // Accept (assumes decade specification, so multiplied by 10 at first day of year): yyy
         switch (value.length()) {
             case 3:
                 return LocalDate.ofYearDay(Integer.parseInt(value) * 10, 1);

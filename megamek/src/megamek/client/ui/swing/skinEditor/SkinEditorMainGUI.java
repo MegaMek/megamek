@@ -872,7 +872,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
    
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
         Image camo = CamoManager.getPlayerCamoImage(player);
-        if (entity.getCamoCategory() != null) {
+        if (entity.getCamoCategory() != null && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
             camo = CamoManager.getEntityCamoImage(entity);
         }
         int tint = PlayerColors.getColorRGB(player.getColorIndex());

@@ -189,7 +189,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     protected int id = Entity.NONE;
 
-    protected String camoCategory = null;
+    protected String camoCategory = IPlayer.NO_CAMO;
     protected String camoFileName = null;
 
     /**

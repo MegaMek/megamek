@@ -33,7 +33,7 @@ IS Level 4
 </type>
 
 <motion_type>
-Aerodyne
+None
 </motion_type>
 
 <transporters>
@@ -44,7 +44,7 @@ Aerodyne
 </SafeThrust>
 
 <cockpit_type>
-0
+3
 </cockpit_type>
 
 <heatsinks>
@@ -68,7 +68,7 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+1
 </armor_tech>
 
 <armor>
@@ -80,8 +80,8 @@ Aerodyne
 
 <Nose Equipment>
 ISMML5
-ISArtemisIV
 ISMML5
+ISArtemisIV
 ISArtemisIV
 </Nose Equipment>
 

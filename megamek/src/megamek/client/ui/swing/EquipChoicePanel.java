@@ -40,26 +40,7 @@ import javax.swing.border.TitledBorder;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Configuration;
-import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.IBomber;
-import megamek.common.IGame;
-import megamek.common.Infantry;
-import megamek.common.LocationFullException;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Protomech;
-import megamek.common.SimpleTechLevel;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -394,7 +375,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             ((MunitionChoicePanel) newVar2).applyChoice();
         }
         if (panMunitions instanceof BayMunitionsChoicePanel) {
-            ((BayMunitionsChoicePanel)panMunitions).apply();
+            ((BayMunitionsChoicePanel) panMunitions).apply();
+        } else if (panMunitions instanceof SmallSVMunitionsChoicePanel) {
+            ((SmallSVMunitionsChoicePanel) panMunitions).apply();
         } else {
             // update ammo names for weapon ammo choice selectors
             for(WeaponAmmoChoicePanel wacPanel : m_vWeaponAmmoChoice) {
@@ -646,6 +629,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         if (entity.usesWeaponBays() || entity instanceof Dropship) {
             //Grounded dropships don't *use* weapon bays as such, but should load ammo as if they did
             panMunitions = new BayMunitionsChoicePanel(entity, game);
+            return;
+        }
+        // Small support vehicle ammo is part of the weapon, and the only munitions choice is
+        // standard or inferno, and only for some weapons.
+        if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            panMunitions = new SmallSVMunitionsChoicePanel(entity);
             return;
         }
         panMunitions.setLayout(gbl);

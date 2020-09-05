@@ -3631,7 +3631,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int shots;
         if (mounted.getType() instanceof InfantryWeapon) {
             ammo = EquipmentType.get(EquipmentTypeLookup.INFANTRY_AMMO);
-            shots = ((InfantryWeapon) mounted.getType()).getShots();
+            shots = ((InfantryWeapon) mounted.getType()).getShots() * (int) mounted.getSize();
         } else {
             ammo = AmmoType.getOneshotAmmo(mounted);
             shots = 1;

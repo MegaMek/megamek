@@ -67,7 +67,9 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generators.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.util.ScaledImageFileFactory;
+import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
+import megamek.client.ui.swing.tileset.CamoManager;
+import megamek.client.ui.swing.tileset.PortraitManager;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -86,7 +88,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.DirectoryItem;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, ItemListener,
@@ -164,9 +166,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     ClientDialog boardPreviewW;
     private Game boardPreviewGame = new Game();
 
-    // keep track of portrait images
-    private DirectoryItems portraits;
-
     private String cmdSelectedTab = null;
 
     private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
@@ -178,7 +177,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
     };
 
-    CamoChoiceDialog camoDialog;
+    CamoChooser camoDialog;
 
     //region Action Commands
     private static final String NAME_COMMAND = "NAME";
@@ -197,13 +196,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
                 GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize")); //$NON-NLS-1$
         panTabs.setFont(tabPanelFont);
-
-        try {
-            portraits = new DirectoryItems(Configuration.portraitImagesDir(), "", //$NON-NLS-1$
-                    ScaledImageFileFactory.getInstance());
-        } catch (Exception e) {
-            portraits = null;
-        }
 
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
@@ -465,17 +457,31 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         butCamo = new JButton();
         butCamo.setPreferredSize(new Dimension(84, 72));
-        butCamo.setActionCommand("camo"); //$NON-NLS-1$
+        butCamo.setActionCommand("camo");
         butCamo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                camoDialog.setPlayer(getPlayerSelected().getLocalPlayer());
-                camoDialog.setEntity(null);
-                camoDialog.setVisible(true);
+                // Show the CamoChooser for the selected player
+                IPlayer player = getPlayerSelected().getLocalPlayer();
+                int result = camoDialog.showDialog(player);
+                
+                // If the dialog was canceled or nothing selected, do nothing
+                if (result == JOptionPane.CANCEL_OPTION || camoDialog.getSelectedItem() == null) {
+                    return; 
+                }
+                
+                // Update the player from the camo selection
+                DirectoryItem selectedItem = camoDialog.getSelectedItem();
+                if (selectedItem.getCategory().equals(IPlayer.NO_CAMO)) {
+                    player.setColorIndex(camoDialog.getSelectedIndex());
+                }
+                player.setCamoCategory(selectedItem.getCategory());
+                player.setCamoFileName(selectedItem.getItem());
+                butCamo.setIcon(CamoManager.getPlayerCamoIcon(player));
                 getPlayerSelected().sendPlayerInfo();
             }
         });
-        camoDialog = new CamoChoiceDialog(clientgui.getFrame(), butCamo);
+        camoDialog = new CamoChooser(clientgui.getFrame());
         refreshCamos();
 
         butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
@@ -1935,8 +1941,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     private void refreshCamos() {
-        Client c = getPlayerSelected();
-        camoDialog.setPlayer(c.getLocalPlayer());
+//        Client c = getPlayerSelected();
+//        camoDialog.setPlayer(c.getLocalPlayer());
+        butCamo.setIcon(CamoManager.getPlayerCamoIcon(getPlayerSelected().getLocalPlayer()));
     }
 
     /**
@@ -2339,38 +2346,68 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
     }
 
+    /** 
+     * Displays a CamoChooser to choose an individual camo for 
+     * the given vector of entities. The camo will only be applied
+     * to units configurable by the local player, i.e. his own units
+     * or those of his bots.
+     */
     public void mechCamo(Vector<Entity> entities) {
-        if (entities.size() < 0) {
+        if (entities.size() < 1) {
             return;
         }
-        Entity entity = entities.get(0);
-        boolean editable;
-        editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
-        Client c;
-        if (editable) {
-            c = clientgui.getBots().get(entity.getOwner().getName());
-        } else {
-            editable |= entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId();
-            c = clientgui.getClient();
+
+        // Display the CamoChooser and await the result
+        // The dialog is preset to the first selected unit's settings
+        CamoChooser mcd = new CamoChooser(clientgui.getFrame());
+        int result = mcd.showDialog(entities.get(0));
+
+        // If the dialog was canceled or nothing was selected, do nothing
+        if (result == JOptionPane.CANCEL_OPTION || mcd.getSelectedItem() == null) {
+            return;
         }
 
-        // display dialog
-        CamoChoiceDialog mcd = new CamoChoiceDialog(clientgui.getFrame(), null);
-        mcd.setPlayer(c.getLocalPlayer());
-        mcd.setEntity(entity);
-        mcd.setVisible(true);
-        if (editable && mcd.isSelect()) {
-            // send changes
-            for (Entity ent : entities) {
-                if (mcd.category.equals(IPlayer.NO_CAMO)) {
+        // Choosing the player camo resets the units to have no 
+        // individual camo.
+        DirectoryItem selectedItem = mcd.getSelectedItem();
+        IPlayer owner = entities.get(0).getOwner();
+        DirectoryItem ownerCamo = new DirectoryItem(owner.getCamoCategory(), owner.getCamoFileName());
+        boolean noIndividualCamo = selectedItem.equals(ownerCamo);
+        
+        // Update all allowed entities with the camo
+        for (Entity ent : entities) {
+            if (isEditable(ent)) {
+                if (noIndividualCamo) {
                     ent.setCamoCategory(null);
                     ent.setCamoFileName(null);
                 } else {
-                    ent.setCamoCategory(mcd.category);
-                    ent.setCamoFileName(mcd.filename);
+                    ent.setCamoCategory(selectedItem.getCategory());
+                    ent.setCamoFileName(selectedItem.getItem());
                 }
-                c.sendUpdateEntity(ent);
+                getLocalClient(ent).sendUpdateEntity(ent);
             }
+        }
+    }
+    
+    /** 
+     * Returns true when the given entity may be configured
+     * by the local player, i.e. if it is his own unit or one
+     * of his bot's units.
+     */
+    private boolean isEditable(Entity entity) {
+        return clientgui.getBots().containsKey(entity.getOwner().getName())
+                || entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId();
+    }
+    
+    /** 
+     * Returns the Client associated with a given entity that may be configured
+     * by the local player (his own unit or one of his bot's units).
+     */
+    private Client getLocalClient(Entity entity) {
+        if (clientgui.getBots().containsKey(entity.getOwner().getName())) {
+            return clientgui.getBots().get(entity.getOwner().getName());
+        } else {
+            return clientgui.getClient();
         }
     }
 
@@ -3502,43 +3539,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
 
             public void setPortrait(Crew pilot) {
-
                 String category = pilot.getPortraitCategory(0);
                 String file = pilot.getPortraitFileName(0);
-
-                // Return a null if the player has selected no portrait file.
-                if ((null == category) || (null == file) || (null == portraits)) {
-                    return;
-                }
-
-                if (Crew.ROOT_PORTRAIT.equals(category)) {
-                    category = "";
-                }
-
-                if (Crew.PORTRAIT_NONE.equals(file)) {
-                    file = "default.gif";
-                }
-
-                // Try to get the player's portrait file.
-                Image portrait = null;
-                try {
-                    portrait = (Image) portraits.getItem(category, file);
-                    if (null == portrait) {
-                        // the image could not be found so switch to default one
-                        pilot.setPortraitCategory(Crew.ROOT_PORTRAIT, 0);
-                        category = "";
-                        pilot.setPortraitFileName(Crew.PORTRAIT_NONE, 0);
-                        file = "default.gif";
-                        portrait = (Image) portraits.getItem(category, file);
-                    }
-                    // make sure no images are longer than 72 pixels
-                    if (null != portrait) {
-                        portrait = portrait.getScaledInstance(-1, 50, Image.SCALE_SMOOTH);
-                        setImage(portrait);
-                    }
-                } catch (Exception err) {
-                    err.printStackTrace();
-                }
+                setImage(PortraitManager.getPreviewPortraitImage(category, file));
             }
 
         }

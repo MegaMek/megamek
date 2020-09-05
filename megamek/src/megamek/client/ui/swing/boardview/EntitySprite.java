@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.tileset.PortraitManager;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.Compute;
@@ -900,7 +901,16 @@ class EntitySprite extends Sprite {
                 String imagePath = Configuration.portraitImagesDir() + "/" + category + file;
                 File f = new File(imagePath);
                 if(f.exists()) {
-                    addToTT("PilotPortrait",BR,imagePath);
+                    // HACK: Get the real portrait to find the size of the image
+                    // and scale the tooltip HTML IMG accordingly
+                    Image portrait = PortraitManager.getUnscaledPortraitImage(category, file);
+                    if (portrait.getWidth(null) > portrait.getHeight(null)) {
+                        float h = 60f * portrait.getHeight(null) / portrait.getWidth(null);
+                        addToTT("PilotPortraitW", BR, imagePath, (int)h);
+                    } else {
+                        float w = 60f * portrait.getWidth(null) / portrait.getHeight(null);
+                        addToTT("PilotPortraitH", BR, imagePath, (int)w);
+                    }
                 }
             }
         }

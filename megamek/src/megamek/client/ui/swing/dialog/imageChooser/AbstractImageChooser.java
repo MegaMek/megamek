@@ -37,6 +37,7 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListCellRenderer;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -107,6 +108,7 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
         treeCategories = tree;
         treeCategories.addTreeSelectionListener(this);
         scrpTree = new JScrollPane(treeCategories);
+        scrpTree.setBackground(UIManager.getColor("Table.background"));
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, scrpTree, scrpImages);
         splitPane.setResizeWeight(0.5);

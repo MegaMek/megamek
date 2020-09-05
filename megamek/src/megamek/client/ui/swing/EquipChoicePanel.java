@@ -1334,9 +1334,17 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 ammoBins = new JComboBox<>();
                 matchingAmmoBins = new ArrayList<>();
                 
-                if (m_mounted.isOneShot()) {
+                if (m_mounted.isOneShot() || (entity.isSupportVehicle()
+                        && (m_mounted.getType() instanceof InfantryWeapon))) {
                     // One-shot weapons can only access their own bin
                     matchingAmmoBins.add(m_mounted.getLinked());
+                    // Fusillade and some small SV weapons are treated like one-shot
+                    // weapons but may have a second munition type available.
+                    if ((m_mounted.getLinked().getLinked() != null)
+                            && (((AmmoType) m_mounted.getLinked().getType()).getMunitionType()
+                                != (((AmmoType) m_mounted.getLinked().getLinked().getType()).getMunitionType()))) {
+                        matchingAmmoBins.add(m_mounted.getLinked().getLinked());
+                    }
                 } else {
                     for (Mounted ammoBin : weapon.getEntity().getAmmo()) {
                         if ((ammoBin.getLocation() != Entity.LOC_NONE)

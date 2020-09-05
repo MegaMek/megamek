@@ -38,4 +38,9 @@ public class DirectoryItem {
         }
         return false;
     }
+    
+    @Override
+    public int hashCode() {
+        return (category + item).hashCode();
+    }
 }

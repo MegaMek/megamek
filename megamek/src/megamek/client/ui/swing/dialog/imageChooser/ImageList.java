@@ -64,6 +64,9 @@ public class ImageList extends JList<DirectoryItem> {
      */
     public void updateImages(ArrayList<DirectoryItem> items) {
         itemModel.clear();
-        itemModel.addAll(items);
+        // LGTM does not accept addAll
+        for (DirectoryItem di: items) {
+            itemModel.addElement(di);
+        }
     }
 }

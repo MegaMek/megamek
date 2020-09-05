@@ -376,9 +376,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         }
         if (panMunitions instanceof BayMunitionsChoicePanel) {
             ((BayMunitionsChoicePanel) panMunitions).apply();
-        } else if (panMunitions instanceof SmallSVMunitionsChoicePanel) {
-            ((SmallSVMunitionsChoicePanel) panMunitions).apply();
         } else {
+            if (panMunitions instanceof SmallSVMunitionsChoicePanel) {
+                ((SmallSVMunitionsChoicePanel) panMunitions).apply();
+            }
             // update ammo names for weapon ammo choice selectors
             for(WeaponAmmoChoicePanel wacPanel : m_vWeaponAmmoChoice) {
                 wacPanel.applyChoice();

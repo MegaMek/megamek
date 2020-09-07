@@ -20,7 +20,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColors;
 
 /**
@@ -314,9 +313,8 @@ public class Report implements Serializable {
      */
     public void addDesc(Entity entity) {
         if (entity != null) {
-            if(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_ROUND_REPORT_SPRITES)
-                    && (indentation <= Report.DEFAULT_INDENTATION || showImage)) {
-                imageCode = "<span id='" +entity.getId() + "'></span>";
+            if(indentation <= Report.DEFAULT_INDENTATION || showImage) {
+                imageCode = "<span id='" + entity.getId() + "'></span>";
             }
             add("<font color='0xffffff'><a href=\"#entity:" + entity.getId()
                     + "\">" + entity.getShortName() + "</a></font>", true);

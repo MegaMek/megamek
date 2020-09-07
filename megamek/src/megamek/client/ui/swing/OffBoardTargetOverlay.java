@@ -174,16 +174,6 @@ public class OffBoardTargetOverlay implements IDisplayable {
     }
     
     @Override
-    public boolean isBeingDragged() {
-        return false;
-    }
-
-    @Override
-    public boolean isDragged(Point point, Dimension backSize) {
-        return false;
-    }
-
-    @Override
     public boolean isHit(Point point, Dimension size) {
         Point actualPoint = point;
         actualPoint.x = (int) (point.getX() + clientgui.getBoardView().getDisplayablesRect().getX());
@@ -200,11 +190,6 @@ public class OffBoardTargetOverlay implements IDisplayable {
             }
         }
                 
-        return false;
-    }
-
-    @Override
-    public boolean isMouseOver(Point point, Dimension backSize) {
         return false;
     }
 
@@ -305,20 +290,6 @@ public class OffBoardTargetOverlay implements IDisplayable {
         }
     }
 
-    @Override
-    public boolean isSliding() {
-        return false;
-    }
-
-    @Override
-    public void setIdleTime(long l, boolean b) {
-    }
-
-    @Override
-    public boolean slide() {
-        return false;
-    }
-    
     /**
      * Worker function that handles a click on a 'counterbattery fire' overlay button.
      * Possibly shows a target selection popup

@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColors;
 
 /**
@@ -159,6 +160,12 @@ public class Report implements Serializable {
 
     /** Keep track of what data we have already substituted for tags. */
     private transient int tagCounter = 0;
+
+    /** bool for determining when code should be used to show image. */
+    private transient boolean showImage = false;
+
+    /** string to add to reports to show sprites **/
+    private String imageCode = "";
 
     /**
      * Default constructor, note that using this means the
@@ -307,6 +314,10 @@ public class Report implements Serializable {
      */
     public void addDesc(Entity entity) {
         if (entity != null) {
+            if(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_ROUND_REPORT_SPRITES)
+                    && (indentation <= Report.DEFAULT_INDENTATION || showImage)) {
+                imageCode = "<span id='" +entity.getId() + "'></span>";
+            }
             add("<font color='0xffffff'><a href=\"#entity:" + entity.getId()
                     + "\">" + entity.getShortName() + "</a></font>", true);
             String colorcode = Integer.toHexString(PlayerColors.getColor(
@@ -314,6 +325,13 @@ public class Report implements Serializable {
             add("<B><font color='" + colorcode + "'>"
                     + entity.getOwner().getName() + "</font></B>");
         }
+    }
+
+    /**
+     * Manually Toggle if the report should show an image of the entity
+    */
+    public void setShowImage(boolean showImage){
+        this.showImage = showImage;
     }
 
     /**
@@ -468,6 +486,15 @@ public class Report implements Serializable {
                     i = endTagIdx;
                 }
                 i++;
+            }
+            //draw the sprite at the beginning of the line
+            if(imageCode != null && imageCode.length() > 0){
+                if(text.substring(0,1).equals("\n")){
+                    text.insert(1, imageCode);
+                }
+                else {
+                    text.insert(0, imageCode);
+                }
             }
             text.append(raw.substring(mark));
             handleIndentation(text);

@@ -51,6 +51,9 @@ public class GunEmplacement extends Tank {
             .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
     
+    private int initialBuildingCF;
+    private int initialBuildingArmor;
+    
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return TA_GUN_EMPLACEMENT;
@@ -584,5 +587,43 @@ public class GunEmplacement extends Tank {
     @Override
     public boolean hasStealth() {
         return false;
+    }
+    
+    /**
+     * Sets the deployed flag. 
+     * Has the side effect of initializing building CF if deployed
+     */
+    @Override
+    public void setDeployed(boolean deployed) {
+        super.setDeployed(deployed);
+        
+        if(deployed) {
+            Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
+            
+            initialBuildingCF = occupiedStructure.getCurrentCF(getPosition());
+            initialBuildingArmor = occupiedStructure.getArmor(getPosition());
+        } else {
+            initialBuildingCF = initialBuildingArmor = 0;
+        }
+    }
+    
+    /**
+     * How much more damage, percentage-wise, the gun emplacement's building can take
+     */
+    @Override
+    public double getArmorRemainingPercent() {
+        if(getPosition() == null) {
+            return 1.0;
+        }
+        
+        Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
+        
+        // we'll consider undeployed emplacements to be fully intact
+        if((occupiedStructure == null) || (initialBuildingCF + initialBuildingArmor == 0)) {
+            return 1.0;
+        }
+        
+        return (occupiedStructure.getCurrentCF(getPosition()) + occupiedStructure.getArmor(getPosition())) / 
+                (initialBuildingCF + initialBuildingArmor);
     }
 }

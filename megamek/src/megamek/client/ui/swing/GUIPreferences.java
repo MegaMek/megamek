@@ -93,6 +93,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG = "AdvancedArmorMiniColorPartialDmg";
     public static final String ADVANCED_ARMORMINI_COLOR_DAMAGED = "AdvancedArmorMiniColorDamaged";
     public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFrontSizeMod";
+    public static final String ADVANCED_ROUND_REPORT_SPRITES = "AdvancedRoundReportSprites";
     /* --End advanced settings-- */
 
 
@@ -214,6 +215,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ALLY_UNIT_COLOR = "AllyUnitColor";
     public static final String MY_UNIT_COLOR = "MyUnitColor";
     public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
+    public static final String SHOW_KEYBINDS_OVERLAY = "ShowKeybindsOverlay";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -294,6 +296,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_SHOW_FPS, "false");
         store.setDefault(ADVANCED_SHOW_COORDS, "true");
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 5);
+        store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, false);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -413,6 +416,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ENEMY_UNIT_COLOR, new Color(220, 20, 20));
         setDefault(MY_UNIT_COLOR, new Color(20, 220, 20));
         setDefault(UNIT_LABEL_BORDER_TEAM, true);
+        setDefault(SHOW_KEYBINDS_OVERLAY, true);
         
     }
 

@@ -105,7 +105,7 @@ public class EntityListFile {
                 if (mount.getEntity().usesWeaponBays() 
                         || mount.getEntity() instanceof Dropship) {
                     output.append("\" capacity=\"")
-                        .append(String.valueOf(mount.getAmmoCapacity()));
+                        .append(String.valueOf(mount.getSize()));
                 }
             }
             if ((mount.getType() instanceof WeaponType)
@@ -594,8 +594,7 @@ public class EntityListFile {
             if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
                 if(null != killer
-                        && !killer.getExternalIdAsString().equals("-1")
-                        && killer.getOwnerId() == client.getLocalPlayer().getId()) {
+                        && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
                 } else {
                     kills.put(entity.getDisplayName(), "None");
@@ -611,8 +610,7 @@ public class EntityListFile {
             if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
                 if(null != killer
-                        && !killer.getExternalIdAsString().equals("-1")
-                        && killer.getOwnerId() == client.getLocalPlayer().getId()) {
+                        && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
                 } else {
                     kills.put(entity.getDisplayName(), "None");

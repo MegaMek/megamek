@@ -5258,8 +5258,9 @@ public class Server implements Runnable {
                     if (entity instanceof Protomech) {
                         table = ToHitData.HIT_SPECIAL_PROTO;
                     }
-                    addReport(damageEntity(entity, entity.rollHitLocation(table, side),
-                            Math.min(5, damage)));
+                    HitData hitData = entity.rollHitLocation(table, side);
+                    hitData.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    addReport(damageEntity(entity, hitData, Math.min(5, damage)));
                     damage -= 5;
                 }
                 // Stay in the current hex and stop skidding.
@@ -28058,6 +28059,11 @@ public class Server implements Runnable {
      */
     public Vector<Report> destroyEntity(Entity entity, String reason, boolean survivable,
                                          boolean canSalvage) {
+        // can't destroy an entity if it's already been destroyed        
+        if(entity.isDestroyed()) {
+            return new Vector<Report>();
+        }
+        
         Vector<Report> vDesc = new Vector<>();
         Report r;
         
@@ -33184,6 +33190,13 @@ public class Server implements Runnable {
             vDesc.add(r);
             // If the CF is zero, the building should fall.
             if ((curCF == 0) && (bldg.getPhaseCF(coords) != 0)) {
+                
+                // when a building collapses due to an ammo explosion, we can consider
+                // that turret annihilated for the purposes of salvage.
+                for (GunEmplacement gun : guns) {
+                    vDesc.addAll(destroyEntity(gun, "ammo explosion", false, false));
+                }
+                
                 if (bldg instanceof FuelTank) {
                     // If this is a fuel tank, we'll give it its own
                     // message.

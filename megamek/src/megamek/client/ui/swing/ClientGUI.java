@@ -83,6 +83,7 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
@@ -164,6 +165,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     //region view menu
     public static final String VIEW_MEK_DISPLAY = "viewMekDisplay"; //$NON-NLS-1$
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow"; //$NON-NLS-1$
+    public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
     public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
@@ -233,7 +235,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
     private RandomSkillDialog randomSkillDialog;
-    private RandomNameDialog randomNameDialog;
     private PlanetaryConditionsDialog conditionsDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
@@ -456,7 +457,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bvc = bv.getComponent();
             bvc.setName("BoardView");
             bv.addBoardViewListener(this);
-
+            client.setBoardView(bv);
         } catch (Exception e) {
             e.printStackTrace();
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
@@ -620,8 +621,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         mechSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
-        randomNameDialog = new RandomNameDialog(this);
-        new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
+        new Thread(mechSelectorDialog, "Mech Selector Dialog").start();
         frame.setVisible(true);
     }
 
@@ -839,6 +839,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 break;
             case VIEW_ACCESSIBILITY_WINDOW:
                 toggleAccessibilityWindow();
+                break;
+            case VIEW_KEYBINDS_OVERLAY:
+                bv.toggleKeybindsOverlay();
                 break;
             case VIEW_MINI_MAP:
                 toggleMap();
@@ -1472,7 +1475,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void doAlertDialog(String title, String message) {
         JTextPane textArea = new JTextPane();
         ReportDisplay.setupStylesheet(textArea);
-
+        BASE64ToolKit toolKit = new BASE64ToolKit();
+        textArea.setEditorKit(toolKit);
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -2322,7 +2326,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public RandomNameDialog getRandomNameDialog() {
-        return randomNameDialog;
+        return new RandomNameDialog(this);
     }
 
     /**

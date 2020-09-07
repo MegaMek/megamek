@@ -81,39 +81,43 @@ public class InfantryWeaponHandler extends WeaponHandler {
             nHitMod -= 4;
         }
         
-        if(this.bLowProfileGlancing) {
+        if (this.bLowProfileGlancing) {
             nHitMod -= 4;
         }
         
         int troopersHit = 0;
         //when swarming all troopers hit
         if (ae.getSwarmTargetId() == target.getTargetId()) {
-            troopersHit = ((Infantry)ae).getShootingStrength();
+            troopersHit = ((Infantry) ae).getShootingStrength();
         } else if (!(ae instanceof Infantry)) {
             troopersHit = 1;
         } else {
             troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength(), nHitMod);
         }
-        double damage = ((InfantryWeapon)wtype).getInfantryDamage();
-        if((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+        double damage;
+        if (ae.isConventionalInfantry()) {
             //for conventional infantry, we have to calculate primary and secondary weapons
             //to get damage per trooper
-            damage = ((Infantry)ae).getDamagePerTrooper();
+            damage = ((Infantry) ae).getDamagePerTrooper();
+        } else if (ae.isSupportVehicle()) {
+            // Damage for some weapons depends on what type of ammo is being used
+            if (((AmmoType) weapon.getLinked().getType()).getMunitionType() == AmmoType.M_INFERNO) {
+                damage = ((InfantryWeapon) wtype).getInfernoVariant().getInfantryDamage();
+            } else {
+                damage = ((InfantryWeapon) wtype).getNonInfernoVariant().getInfantryDamage();
+            }
+        } else {
+            damage = ((InfantryWeapon) wtype).getInfantryDamage();
         }
-        if((ae instanceof Infantry)
+        if ((ae instanceof Infantry)
                 && nRange == 0
                 && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
-        if((target instanceof Infantry) && !(target instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INF_BURST)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INF_BURST)) {
             damageDealt += Compute.d6();
-        }
-        if((ae instanceof Infantry)
-                && nRange == 0
-                && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-
         }
         if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
             damageDealt /= 2;

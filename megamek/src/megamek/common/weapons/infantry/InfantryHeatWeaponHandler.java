@@ -16,14 +16,8 @@ package megamek.common.weapons.infantry;
 
 import java.util.Vector;
 
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.IGame;
-import megamek.common.Mech;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.MegaMek;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
@@ -75,8 +69,8 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             if (entityTarget.getArmor(hit) > 0 && 
                     (entityTarget.getArmorType(hit.getLocation()) == 
                     EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
-                entityTarget.heatFromExternal += nDamPerHit/2;
-                r.add(nDamPerHit/2);
+                entityTarget.heatFromExternal += nDamPerHit / 2;
+                r.add(nDamPerHit / 2);
                 r.choose(true);
                 r.messageId=3406;
                 r.add(EquipmentType.armorNames
@@ -90,6 +84,34 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
+        }
+    }
+
+    @Override
+    public void useAmmo() {
+        if (ae.isSupportVehicle()) {
+            Mounted ammo = weapon.getLinked();
+            if (ammo == null) {
+                ae.loadWeapon(weapon);
+                ammo = weapon.getLinked();
+            }
+            if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
+                // *shouldn't* fire.
+                MegaMek.getLogger().error(getClass(), "useAmmo()",
+                        String.format("Handler can't find any ammo for %s firing %s",
+                                ae.getShortName(), weapon.getName()));
+                return;
+            }
+
+            ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
+            // Swap between standard and inferno if the unit has some left of the other type
+            if ((ammo.getUsableShotsLeft() <= 0)
+                    && (ammo.getLinked() != null)
+                    && (ammo.getLinked().getUsableShotsLeft() > 0)) {
+                weapon.setLinked(ammo.getLinked());
+                weapon.getLinked().setLinked(ammo);
+            }
+            super.useAmmo();
         }
     }
 }

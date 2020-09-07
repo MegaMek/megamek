@@ -15146,6 +15146,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName(EquipmentTypeLookup.INFANTRY_INFERNO_AMMO);
         ammo.ammoType = AmmoType.T_INFANTRY;
         ammo.munitionType = M_INFERNO;
+        ammo.subMunitionLength = ammo.name.indexOf(" ");
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_A)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                 .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
@@ -15752,7 +15753,7 @@ public class AmmoType extends EquipmentType {
             return name.substring(subMunitionBegin, subMunitionBegin
                     + subMunitionLength);
         } else {
-            return shortName.substring(subMunitionBegin, subMunitionBegin
+            return getShortName().substring(subMunitionBegin, subMunitionBegin
                     + subMunitionLength);
         }
     }

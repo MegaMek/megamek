@@ -1128,7 +1128,6 @@ public class Client implements IClientCommandHandler {
 
         String updatedReport = report.toString();
         //loop through the hashset of unique ids and replace the ids with img tags
-        MegaMek.getLogger().info(this, set.size() + "");
         for (int i : set) {
             if(getCachedImgTag(i) != null) {
                 updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));

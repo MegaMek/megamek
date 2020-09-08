@@ -22,6 +22,7 @@ VERSION HISTORY:
 + Issue #2176: Added multiple "unofficial" high-powered turrets
 + Data: New Sprites, undated SimonLandmine and Dervs map packs
 + Issue #2029: Skidding into terrain will now properly apply 2x damage to reflective armor
++ Issue #2074: Mech mortars now properly apply only 1/2 damage to reactive armor
 	
 
 0.47.9 (2020-08-07 1830 UTC)

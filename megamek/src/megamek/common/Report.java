@@ -485,9 +485,9 @@ public class Report implements Serializable {
                 }
                 i++;
             }
-            //draw the sprite at the beginning of the line
-            if(imageCode != null && imageCode.length() > 0){
-                if(text.length() >= 2 && text.substring(0,1).equals("\n")){
+            //add the sprite code at the beginning of the line
+            if(!imageCode.isEmpty()){
+                if(text.toString().startsWith("\n")){
                     text.insert(1, imageCode);
                 }
                 else {

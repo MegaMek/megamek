@@ -68,6 +68,7 @@ public class BASE64ImageView extends ImageView {
                 bais = new ByteArrayInputStream(
                         Base64.getDecoder().decode(b64.getBytes()));
                 newImage = ImageIO.read(bais);
+                bais.close();
             } catch (Throwable ex) {
                 ex.printStackTrace();
             }

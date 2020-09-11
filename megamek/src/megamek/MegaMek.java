@@ -113,7 +113,7 @@ public class MegaMek {
         } catch (CommandLineParser.ParseException e) {
             String message = INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
                     + ARGUMENTS_DESCRIPTION_MESSAGE;
-            getLogger().info(MegaMek.class, "main(String[])", message);
+            getLogger().fatal(MegaMek.class, "main(String[])", message);
             System.exit(1);
         }
     }
@@ -312,7 +312,7 @@ public class MegaMek {
         }
         IMegaMekGUI mainGui = MegaMek.getGui(guiName);
         if (mainGui == null) {
-            getLogger().info(MegaMek.class, METHOD_NAME, UNKNOWN_GUI_MESSAGE + guiName);
+            getLogger().fatal(MegaMek.class, METHOD_NAME, UNKNOWN_GUI_MESSAGE + guiName);
             System.exit(1);
         } else {
             StringBuffer message = new StringBuffer("Starting GUI ");

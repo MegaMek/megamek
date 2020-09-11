@@ -13,7 +13,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.client.bot.princess;
 
 import megamek.common.Compute;
@@ -42,7 +41,7 @@ public class MoralUtil implements IMoralUtil {
 
     private static final DecimalFormat DEC_FORMAT = new DecimalFormat("0.00");
 
-    private final Set<Integer> BROKEN_UNITS = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+    private final Set<Integer> BROKEN_UNITS = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private final MMLogger logger;
 
@@ -131,7 +130,7 @@ public class MoralUtil implements IMoralUtil {
                 }
             }
         } finally {
-            logger.log(getClass(), "checkMoral(boolean, int, int, IPlayer, IGame)", LogLevel.INFO, logMsg.toString());
+            logger.info(this, logMsg.toString());
         }
     }
 

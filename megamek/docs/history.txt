@@ -18,6 +18,12 @@ VERSION HISTORY:
 	Immobilized tanks also have a visual indicator depending on motive type and power plant.
 + Data New Sprites, add Rec Guide Vol 1/2 and Golden Century.
 + Data: Updated Maps including AGoAC maps
++ PR #2168: Improvements to Princess behavior when attempting to navigate to a destination/retreat edge
++ Issue #2176: Added multiple "unofficial" high-powered turrets
++ Data: New Sprites, undated SimonLandmine and Dervs map packs
++ Issue #2029: Skidding into terrain will now properly apply 2x damage to reflective armor
++ Issue #2074: Mech mortars now properly apply only 1/2 damage to reactive armor
++ Issue #2207: Fixing Typo on Partial Repairs tab
 	
 
 0.47.9 (2020-08-07 1830 UTC)

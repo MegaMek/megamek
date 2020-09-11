@@ -33,7 +33,7 @@ IS Level 4
 </type>
 
 <motion_type>
-Aerodyne
+None
 </motion_type>
 
 <transporters>
@@ -44,7 +44,7 @@ Aerodyne
 </SafeThrust>
 
 <cockpit_type>
-0
+3
 </cockpit_type>
 
 <heatsinks>
@@ -68,7 +68,7 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+1
 </armor_tech>
 
 <armor>
@@ -79,20 +79,20 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-Medium Laser
 Autocannon/10
 </Nose Equipment>
 
 <Left Wing Equipment>
 Medium Laser
+Medium Laser
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 Medium Laser
+Medium Laser
 </Right Wing Equipment>
 
 <Aft Equipment>
-Medium Laser
 </Aft Equipment>
 
 <Wings Equipment>

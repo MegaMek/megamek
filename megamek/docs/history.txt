@@ -24,6 +24,7 @@ VERSION HISTORY:
 + Issue #2029: Skidding into terrain will now properly apply 2x damage to reflective armor
 + Issue #2074: Mech mortars now properly apply only 1/2 damage to reactive armor
 + Issue #2207: Fixing Typo on Partial Repairs tab
++ PR #2194: Princess will avoid bulldozing her own turrets when doing long-range pathfinding
 	
 
 0.47.9 (2020-08-07 1830 UTC)

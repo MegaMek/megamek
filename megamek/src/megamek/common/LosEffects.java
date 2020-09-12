@@ -1183,10 +1183,40 @@ public class LosEffects {
             int smokeLevel = hex.terrainLevel(Terrains.SMOKE);
             int woodsLevel = hex.terrainLevel(Terrains.WOODS);
             int jungleLevel = hex.terrainLevel(Terrains.JUNGLE);
-            // Check smoke, woods and jungle
-            if ((smokeLevel != ITerrain.LEVEL_NONE) 
-                    || (woodsLevel != ITerrain.LEVEL_NONE)
-                    || (jungleLevel != ITerrain.LEVEL_NONE)) {
+            int foliageElev = hex.terrainLevel(Terrains.FOLIAGE_ELEV);
+            boolean hasFoliage = (woodsLevel != ITerrain.LEVEL_NONE) || (jungleLevel != ITerrain.LEVEL_NONE);
+            
+            // Check 1 level high woods and jungle
+            if (hasFoliage && foliageElev == 1) {
+                int terrainEl = hexEl + 1;
+                boolean affectsLoS;
+                if (diagramLoS) {
+                    affectsLoS = terrainEl > (ai.targetAbsHeight
+                            * ai.attackPos.distance(coords) + ai.attackAbsHeight
+                            * ai.targetPos.distance(coords))
+                            / (ai.targetPos.distance(coords) + ai.attackPos
+                                    .distance(coords));
+                } else {
+                    affectsLoS = ((terrainEl > ai.attackAbsHeight) && (terrainEl > ai.targetAbsHeight))
+                            || ((terrainEl > ai.attackAbsHeight) && (ai.attackPos
+                                    .distance(coords) == 1))
+                            || ((terrainEl > ai.targetAbsHeight) && (ai.targetPos
+                                    .distance(coords) == 1));
+                }
+                if (affectsLoS) {
+                    if ((woodsLevel == 1) || (jungleLevel == 1)) {
+                        los.lightWoods++;
+                    } else if ((woodsLevel == 2) || (jungleLevel == 2)) {
+                        los.heavyWoods++;
+                    } else {
+                        los.ultraWoods++;
+                    }
+                }
+            }
+            
+            // Check smoke and regular 2/3 elevation woods and jungle
+            if (smokeLevel != ITerrain.LEVEL_NONE 
+                    || (hasFoliage && foliageElev > 1)) {
                 // Regular smoke/woods/jungle rise 2 levels above the hex level
                 int terrainEl = hexEl + 2;
                 boolean affectsLoS;

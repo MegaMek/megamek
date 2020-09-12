@@ -811,12 +811,13 @@ public abstract class BotClient extends Client {
 
             // Mech
             if (deployed_ent.hasETypeFlag(Entity.ETYPE_MECH)) {
-                // -> Trees are good
+                // -> Trees are good, when they're tall enough
                 // -> Water isn't that great below depth 1 -> this saves actual
                 // ground space for infantry/vehicles (minor)
                 int x = coord.getX();
                 int y = coord.getY();
-                if (board.getHex(x, y).containsTerrain(Terrains.WOODS)) {
+                if (board.getHex(x, y).containsTerrain(Terrains.WOODS)
+                        && board.getHex(x, y).terrainLevel(Terrains.FOLIAGE_ELEV) > 1) {
                     coord.fitness += 1;
                 }
                 if (board.getHex(x, y).containsTerrain(Terrains.WATER)) {

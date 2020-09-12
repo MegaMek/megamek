@@ -631,82 +631,101 @@ public class Hex implements IHex, Serializable {
         return true;
     }
 
-    @Override
+    @Override 
     public boolean isValid(@Nullable StringBuffer errBuff) {
-        boolean rv = true;
-
+        boolean valid = true;
+        
+        // When no StringBuffer is passed, use a dummy
+        // to avoid numerous null checks
+        if (errBuff == null) {
+            errBuff = new StringBuffer();
+        }
+        
         // Check individual terrains for validity
         for (ITerrain terrain : terrains.values()) {
             if (terrain == null) {
-                continue;
+                valid = false;
+                errBuff.append("Hex contains a null terrain!\n");
             }
-            StringBuffer currBuff = new StringBuffer();
-            boolean isValid = terrain.isValid(currBuff);
-            if (!isValid && (errBuff == null)) {
-                return false;
-            } else if (!isValid) {
-                rv = false;
+            StringBuffer terrainErr = new StringBuffer();
+            if (!terrain.isValid(terrainErr)) {
+                valid = false;
                 if (errBuff.length() > 0) {
                     errBuff.append("\n");
                 }
-                errBuff.append(currBuff);
+                errBuff.append(terrainErr);
             }
         }
-        // Some terrains must be grouped, check for those.
 
         // Rapids
         if ((containsTerrain(Terrains.RAPIDS))) {
             if (!containsTerrain(Terrains.WATER)) {
-                rv = false;
-                if (errBuff != null) {
-                    errBuff.append("Rapids must occurr within water!\n");
-                }
+                valid = false;
+                errBuff.append("Rapids must occur within water!\n");
             }
             if (this.depth() <1) {
-                rv = false;
-                if (errBuff != null) {
-                    errBuff.append("Rapids must occurr in depth 1 or greater!\n");
-                }
+                valid = false;
+                errBuff.append("Rapids must occurr in depth 1 or greater!\n");
             }
         }
 
+        // Foliage (Woods and Jungles)
+        if (containsTerrain(Terrains.WOODS) && containsTerrain(Terrains.JUNGLE)) {
+            valid = false;
+            errBuff.append("Woods and Jungle cannot appear in the same hex!\n");
+        }
+        if ((containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE))
+                && containsTerrain(Terrains.FOLIAGE_ELEV)) {
+            int wl = terrainLevel(Terrains.WOODS);
+            int jl = terrainLevel(Terrains.JUNGLE);
+            int el = terrainLevel(Terrains.FOLIAGE_ELEV);
+            
+            boolean isLightOrHeavy = wl == 1 || jl == 1 || wl == 2 || jl == 2;
+            boolean isUltra = wl == 3 || jl == 3;
+            
+            if (! ((el == 1) || (isLightOrHeavy && el == 2) || (isUltra && el == 3))) {
+                valid = false;
+                errBuff.append("Foliage elevation is wrong, must be 1 or 2 for Light/Heavy and 1 or 3 for Ultra Woods/Jungle!\n");
+            }
+        }
+        if (!(containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE))
+                && containsTerrain(Terrains.FOLIAGE_ELEV)) {
+            valid = false;
+            errBuff.append("Woods and Jungle elevation terrain present without Woods or Jungle!\n");
+        }
+        
         // Buildings
         if ((containsTerrain(Terrains.BUILDING) && !containsTerrain(Terrains.BLDG_ELEV))
                 || (containsTerrain(Terrains.BLDG_ELEV) && !containsTerrain(Terrains.BUILDING))) {
-            if (errBuff != null) {
-                StringBuilder missingType = new StringBuilder();
-                if (!containsTerrain(Terrains.BUILDING)) {
-                    missingType.append(Terrains.getName(Terrains.BUILDING));
-                }
-                if (!containsTerrain(Terrains.BLDG_ELEV)) {
-                    if (missingType.length() > 0) {
-                        missingType.append(", ");
-                    }
-                    missingType.append(Terrains.getName(Terrains.BLDG_ELEV));
-                }
-
-                errBuff.append("Incomplete building!  Missing terrain(s): " + missingType + "\n");
+            valid = false;
+            StringBuilder missingType = new StringBuilder();
+            if (!containsTerrain(Terrains.BUILDING)) {
+                missingType.append(Terrains.getName(Terrains.BUILDING));
             }
-            rv = false;
+            if (!containsTerrain(Terrains.BLDG_ELEV)) {
+                if (missingType.length() > 0) {
+                    missingType.append(", ");
+                }
+                missingType.append(Terrains.getName(Terrains.BLDG_ELEV));
+            }
+            errBuff.append("Incomplete building! Missing terrain(s): " + missingType + "\n");
         }
 
         // Bridges
         if ((containsTerrain(Terrains.BRIDGE) && !containsTerrain(Terrains.BRIDGE_ELEV))
                 || (containsTerrain(Terrains.BRIDGE_ELEV) && !containsTerrain(Terrains.BRIDGE))) {
-            if (errBuff != null) {
-                StringBuilder missingType = new StringBuilder();
-                if (!containsTerrain(Terrains.BRIDGE)) {
-                    missingType.append(Terrains.getName(Terrains.BRIDGE));
-                }
-                if (!containsTerrain(Terrains.BRIDGE_ELEV)) {
-                    if (missingType.length() > 0) {
-                        missingType.append(", ");
-                    }
-                    missingType.append(Terrains.getName(Terrains.BRIDGE_ELEV));
-                }
-                errBuff.append("Incomplete bridge!  Missing terrain(s): " + missingType + "\n");
+            valid = false;
+            StringBuilder missingType = new StringBuilder();
+            if (!containsTerrain(Terrains.BRIDGE)) {
+                missingType.append(Terrains.getName(Terrains.BRIDGE));
             }
-            rv = false;
+            if (!containsTerrain(Terrains.BRIDGE_ELEV)) {
+                if (missingType.length() > 0) {
+                    missingType.append(", ");
+                }
+                missingType.append(Terrains.getName(Terrains.BRIDGE_ELEV));
+            }
+            errBuff.append("Incomplete bridge! Missing terrain(s): " + missingType + "\n");
         }
 
         // Fuel Tank
@@ -718,35 +737,33 @@ public class Hex implements IHex, Serializable {
                 || (hasFuelTankCF && (!hasFuelTank || !hasFuelTankElev || !hasFuelTankMag))
                 || (hasFuelTankElev && (!hasFuelTank || !hasFuelTankCF || !hasFuelTankMag))
                 || (hasFuelTankMag && (!hasFuelTank || !hasFuelTankElev || !hasFuelTankCF))) {
-            if (errBuff != null) {
-                StringBuilder missingType = new StringBuilder();
-                if (!hasFuelTank) {
-                    missingType.append(Terrains.getName(Terrains.FUEL_TANK));
-                }
-                if (!hasFuelTankCF) {
-                    if (missingType.length() > 0) {
-                        missingType.append(", ");
-                    }
-                    missingType.append(Terrains.getName(Terrains.FUEL_TANK_CF));
-                }
-                if (!hasFuelTankElev) {
-                    if (missingType.length() > 0) {
-                        missingType.append(", ");
-                    }
-                    missingType.append(Terrains.getName(Terrains.FUEL_TANK_ELEV));
-                }
-                if (!hasFuelTankMag) {
-                    if (missingType.length() > 0) {
-                        missingType.append(", ");
-                    }
-                    missingType.append(Terrains.getName(Terrains.FUEL_TANK_MAGN));
-                }
-                errBuff.append("Incomplete fuel tank!  Missing terrain(s): " + missingType + "\n");
+            valid = false;
+            StringBuilder missingType = new StringBuilder();
+            if (!hasFuelTank) {
+                missingType.append(Terrains.getName(Terrains.FUEL_TANK));
             }
-            rv = false;
+            if (!hasFuelTankCF) {
+                if (missingType.length() > 0) {
+                    missingType.append(", ");
+                }
+                missingType.append(Terrains.getName(Terrains.FUEL_TANK_CF));
+            }
+            if (!hasFuelTankElev) {
+                if (missingType.length() > 0) {
+                    missingType.append(", ");
+                }
+                missingType.append(Terrains.getName(Terrains.FUEL_TANK_ELEV));
+            }
+            if (!hasFuelTankMag) {
+                if (missingType.length() > 0) {
+                    missingType.append(", ");
+                }
+                missingType.append(Terrains.getName(Terrains.FUEL_TANK_MAGN));
+            }
+            errBuff.append("Incomplete fuel tank!  Missing terrain(s): " + missingType + "\n");
         }
 
-        return rv;
+        return valid;
     }
 
 }

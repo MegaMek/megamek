@@ -848,11 +848,14 @@ public class BoardUtilities {
 
                 if (newlevel <= level) {
                     field.removeTerrain(Terrains.WOODS);
+                    field.removeTerrain(Terrains.FOLIAGE_ELEV);
                     if (newlevel <= 0) {
                         field.addTerrain(f.createTerrain(Terrains.ROUGH, 1));
                     } else {
                         field.addTerrain(f.createTerrain(Terrains.WOODS,
                                 newlevel));
+                        field.addTerrain(f.createTerrain(Terrains.FOLIAGE_ELEV,
+                                newlevel == 3 ? 3 : 2));
                         field.addTerrain(f.createTerrain(Terrains.FIRE, 1));
                     }
                 }

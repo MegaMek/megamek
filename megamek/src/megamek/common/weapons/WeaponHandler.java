@@ -1925,21 +1925,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     public int checkTerrain(int nDamage, Entity entityTarget,
             Vector<Report> vPhaseReport) {
-        boolean isAboveWoods = ((entityTarget != null) && ((entityTarget
-                .relHeight() >= 2) || (entityTarget.isAirborne())));
+        if (entityTarget == null) {
+            return nDamage;
+        }
+        IHex hex = game.getBoard().getHex(entityTarget.getPosition());
+        boolean hasWoods = hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE);
+        boolean isAboveWoods = (entityTarget.relHeight() >= hex.terrainLevel(Terrains.FOLIAGE_ELEV)) 
+                || entityTarget.isAirborne() || !hasWoods;
+        
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)
+                && hasWoods
                 && !isAboveWoods
-                && (game.getBoard().getHex(entityTarget.getPosition())
-                        .containsTerrain(Terrains.WOODS) || game.getBoard()
-                        .getHex(entityTarget.getPosition())
-                        .containsTerrain(Terrains.JUNGLE))
                 && !(entityTarget.getSwarmAttackerId() == ae.getId())) {
-            ITerrain woodHex = game.getBoard()
-                    .getHex(entityTarget.getPosition())
-                    .getTerrain(Terrains.WOODS);
-            ITerrain jungleHex = game.getBoard()
-                    .getHex(entityTarget.getPosition())
-                    .getTerrain(Terrains.JUNGLE);
+            ITerrain woodHex = hex.getTerrain(Terrains.WOODS);
+            ITerrain jungleHex = hex.getTerrain(Terrains.JUNGLE);
             int treeAbsorbs = 0;
             String hexType = "";
             if (woodHex != null) {

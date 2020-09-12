@@ -2639,10 +2639,18 @@ public class Compute {
         }
 
 
-        boolean isAboveWoodsAndSmoke = ((entityTarget != null) && (hex != null))
-                                       && ((entityTarget.relHeight() >= 2) || (entityTarget
-                                                                                       .isAirborne()));
-        boolean isUnderwater = ((entityTarget != null) && (hex != null))
+        boolean hasWoods = hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE);
+        // Standard mechs (standing) report their height as 1, tanks as 0
+        // Standard mechs should not benefit from 1 level high woods
+        
+        boolean isAboveWoods = (entityTarget == null) 
+                || (entityTarget.relHeight() + 1 > hex.terrainLevel(Terrains.FOLIAGE_ELEV)) 
+                || entityTarget.isAirborne() 
+                || !hasWoods;
+        boolean isAboveSmoke = (entityTarget == null)
+                || (entityTarget.relHeight() + 1 > 2) 
+                || !hex.containsTerrain(Terrains.SMOKE);
+        boolean isUnderwater = (entityTarget != null)
                                && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)
                                && (entityTarget.getElevation() < hex.surface());
         ToHitData toHit = new ToHitData();
@@ -2674,7 +2682,7 @@ public class Compute {
         }
 
         if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)
-            && !isAboveWoodsAndSmoke
+            && !isAboveWoods
             && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR)
                  || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                  || (t.getTargetType() == Targetable.TYPE_HEX_BOMB)
@@ -2690,7 +2698,7 @@ public class Compute {
                 }
             }
         }
-        if (!isAboveWoodsAndSmoke && !isUnderwater && !underwaterWeapon) {
+        if (!isAboveSmoke && !isUnderwater && !underwaterWeapon) {
             if ((hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LIGHT)
                 || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_LIGHT)
                 || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_HEAVY)

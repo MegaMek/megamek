@@ -5121,11 +5121,12 @@ public class Server implements Runnable {
             int nextElevation = nextAltitude - nextHex.surface();
 
             boolean crashedIntoTerrain = curAltitude < nextAltitude;
-            if (entity.getMovementMode() == EntityMovementMode.VTOL) {
-                if (nextHex.containsTerrain(Terrains.WOODS)
-                        || nextHex.containsTerrain(Terrains.JUNGLE)) {
-                    crashedIntoTerrain = nextElevation <= nextHex.terrainLevel(Terrains.FOLIAGE_ELEV);
-                }
+            if (entity.getMovementMode() == EntityMovementMode.VTOL
+                && (nextHex.containsTerrain(Terrains.WOODS)
+                        || nextHex.containsTerrain(Terrains.JUNGLE)) 
+                && nextElevation <= nextHex.terrainLevel(Terrains.FOLIAGE_ELEV)) {
+                    crashedIntoTerrain = true;
+                
             }
 
             if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {

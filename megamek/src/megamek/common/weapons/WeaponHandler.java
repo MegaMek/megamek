@@ -1930,7 +1930,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         IHex hex = game.getBoard().getHex(entityTarget.getPosition());
         boolean hasWoods = hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE);
-        boolean isAboveWoods = (entityTarget.relHeight() >= hex.terrainLevel(Terrains.FOLIAGE_ELEV)) 
+        boolean isAboveWoods = (entityTarget.relHeight() + 1 > hex.terrainLevel(Terrains.FOLIAGE_ELEV)) 
                 || entityTarget.isAirborne() || !hasWoods;
         
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)

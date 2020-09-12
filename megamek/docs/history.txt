@@ -25,6 +25,7 @@ VERSION HISTORY:
 + Issue #2074: Mech mortars now properly apply only 1/2 damage to reactive armor
 + Issue #2207: Fixing Typo on Partial Repairs tab
 + PR #2194: Princess will avoid bulldozing her own turrets when doing long-range pathfinding
++ Data: New Sprites (Includes start of new Deadborder Proto sprites)
 	
 
 0.47.9 (2020-08-07 1830 UTC)

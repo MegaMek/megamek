@@ -1,0 +1,155 @@
+Version:1.0
+Bushwacker
+BSW-X4
+
+Config:Biped
+techbase:Inner Sphere
+era:3125
+source:ilClan Vol 2 - Dark Age
+rules level:2
+
+mass:55
+engine:275 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:11 Double
+walk mp:5
+jump mp:0
+
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:20
+RT armor:20
+CT armor:24
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:10
+
+Weapons:6
+MML 5, Left Arm
+Plasma Rifle, Right Arm
+Medium Laser, Left Torso
+MML 5, Left Torso
+Medium Laser, Right Torso
+ER Large Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISMML5
+ISMML5
+ISMML5
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISPlasmaRifle
+ISPlasmaRifle
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+ISMML5
+ISMML5
+ISMML5
+IS Ammo MML-5 LRM
+IS Ammo MML-5 SRM
+ISCASEII
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+ISMASC
+ISMASC
+ISMASC
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERLargeLaser
+ISERLargeLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Light Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:TharHes Industries
+primaryfactory:Tharkad
+

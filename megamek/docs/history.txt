@@ -26,6 +26,7 @@ VERSION HISTORY:
 + Issue #2207: Fixing Typo on Partial Repairs tab
 + PR #2194: Princess will avoid bulldozing her own turrets when doing long-range pathfinding
 + Data: New Sprites (Includes start of new Deadborder Proto sprites)
++ Data: Fixing Issues #2203, #2159, #2157, #2145
 	
 
 0.47.9 (2020-08-07 1830 UTC)

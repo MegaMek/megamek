@@ -1,35 +1,34 @@
-Version:1.2
-Pack Hunter II
-4
+Version:1.0
+Pack Hunter
+5
 
 Config:Biped
-techbase:Clan
-era:3093
-source:RS 3145 NT NU
-rules level:4
+techbase:Mixed (Clan Chassis)
+era:3145
+source:ilClan Vol 1 - Dark Age
+rules level:2
 
 mass:30
-engine:210 XL (Clan) Engine(IS)
-structure:Clan Endo Steel
+engine:270 XL Engine(IS)
+structure:IS Endo Steel
 myomer:Standard
-ejection:Full Head Ejection System
 
 heat sinks:10 Double
-walk mp:7
+walk mp:9
 jump mp:7
 
 armor:Ferro-Fibrous(Clan)
-LA armor:9
-RA armor:9
-LT armor:11
-RT armor:11
-CT armor:12
-HD armor:7
-LL armor:10
-RL armor:10
-RTL armor:2
-RTR armor:2
-RTC armor:3
+LA armor:10
+RA armor:10
+LT armor:10
+RT armor:10
+CT armor:15
+HD armor:9
+LL armor:14
+RL armor:14
+RTL armor:4
+RTR armor:4
+RTC armor:5
 
 Weapons:1
 ER PPC, Right Torso
@@ -39,10 +38,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISAES
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 Clan Ferro-Fibrous
-Clan Ferro-Fibrous
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -53,10 +52,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISAES
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 Clan Ferro-Fibrous
-Clan Ferro-Fibrous
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -65,28 +64,28 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
 CLERPPC
 CLERPPC
-Clan Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
 Clan Ferro-Fibrous
 -Empty-
 
@@ -108,7 +107,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Clan Endo Steel
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -123,8 +122,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAES
-Clan Endo Steel
+IS Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -137,8 +136,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAES
-Clan Endo Steel
+IS Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -146,4 +145,6 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
+manufacturer:Technicron Manufacturing/IBMU 
+primaryfactory:Tongatapu
 

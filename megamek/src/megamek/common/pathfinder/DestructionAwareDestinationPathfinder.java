@@ -42,9 +42,9 @@ import megamek.common.Terrains;
  */
 public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
 
-    Comparator<BulldozerMovePath> movePathComparator;
-    int maximumCost = Integer.MAX_VALUE;
-    Map<Coords, Boolean> friendlyFireCheckResults = new HashMap<>();
+    private Comparator<BulldozerMovePath> movePathComparator;
+    private int maximumCost = Integer.MAX_VALUE;
+    private Map<Coords, Boolean> friendlyFireCheckResults = new HashMap<>();
     
     /**
      * Uses an A* search to find the "optimal" path to the destination coordinates.
@@ -65,7 +65,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         
         // if we're calculating a jump path and the entity has jump mp and can jump, start off with a jump
         // if we're trying to calc a jump path and the entity does not have jump mp, we're done
-        if(jump && (startPath.getCachedEntityState().getJumpMPWithTerrain() > 0) &&
+        if (jump && (startPath.getCachedEntityState().getJumpMPWithTerrain() > 0) &&
                 !entity.isProne() && !entity.isHullDown() && 
                 (entity.getGame().getPlanetaryConditions().getWindStrength() != PlanetaryConditions.WI_TORNADO_F4)) {
             startPath.addStep(MoveStepType.START_JUMP);
@@ -235,11 +235,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         
         // let's avoid pathing through buildings containing our immobile units - 
         // they're not going to get out of the way and we can probably do better than killing our own guys
-        if(!child.isJumping() && friendlyFireCheck(child.getEntity(), child.getGame(), child.getFinalCoords(), false)) {
+        if (!child.isJumping() && friendlyFireCheck(child.getEntity(), child.getGame(), child.getFinalCoords(), false)) {
             return;
         }
         
-        if((!shortestPathsToCoords.containsKey(child.getFinalCoords()) ||
+        if ((!shortestPathsToCoords.containsKey(child.getFinalCoords()) ||
                 // shorter path to these coordinates
                 (movePathComparator.compare(shortestPathsToCoords.get(child.getFinalCoords()), child) > 0)) &&
                 // legal or needs leveling or jumping and not off-board
@@ -255,8 +255,8 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * Utility function that returns true if an attack on the building in the given coordinates
      * will result in damage to friendly units. Computation is cached as it is somewhat expensive to perform for each possible path node.
      */
-    public boolean friendlyFireCheck(Entity shooter, IGame game, Coords position, boolean includeMobileUnits) {
-        if(friendlyFireCheckResults.containsKey(position)) {
+    private boolean friendlyFireCheck(Entity shooter, IGame game, Coords position, boolean includeMobileUnits) {
+        if (friendlyFireCheckResults.containsKey(position)) {
             return friendlyFireCheckResults.get(position);
         }
         
@@ -271,8 +271,8 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         // check if there are any entities in the building that meet the following criteria:
         // - is friendly
         // - if we care only about mobile units, has no MP 
-        for(Entity entity : game.getEntitiesVector(position, true)) {
-            if(!entity.isEnemyOf(shooter) && (includeMobileUnits || (entity.getWalkMP(true, false) == 0))) {
+        for (Entity entity : game.getEntitiesVector(position, true)) {
+            if (!entity.isEnemyOf(shooter) && (includeMobileUnits || (entity.getWalkMP(true, false) == 0))) {
                 friendlyFireCheckResults.put(position, true);
                 return true;
             }

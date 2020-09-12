@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2017, 2020 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common.logging;
 
 import org.apache.log4j.Logger;
@@ -21,11 +39,6 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T log(Class<?> callingClass, String methodName, T throwable) {
-        return null;
-    }
-
-    @Override
     public <T extends Throwable> T log(Class<?> callingClass, String methodName, LogLevel logLevel, T throwable) {
         return null;
     }
@@ -41,8 +54,208 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public void log(Class<?> callingClass, String methodName, LogLevel level, StringBuilder message) {
+    public <T extends Throwable> T debug(String callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
 
+    @Override
+    public <T extends Throwable> T debug(Class<?> callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T debug(Class<?> callingClass, String methodName, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void debug(Class<?> callingClass, String methodName, String message) {
+
+    }
+
+    @Override
+    public void debug(Object callingObject, String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T debug(Object callingObject, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T debug(Object callingObject, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T error(String callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T error(Class<?> callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T error(Class<?> callingClass, String methodName, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void error(Class<?> callingClass, String methodName, String message) {
+
+    }
+
+    @Override
+    public void error(Object callingObject, String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T error(Object callingObject, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T error(Object callingObject, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T fatal(String callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T fatal(Class<?> callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void fatal(Class<?> callingClass, String methodName, String message) {
+
+    }
+
+    @Override
+    public void fatal(Object callingObject, String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T fatal(Object callingObject, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T fatal(Object callingObject, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T info(String callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T info(Class<?> callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T info(Class<?> callingClass, String methodName, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void info(Class<?> callingClass, String methodName, String message) {
+
+    }
+
+    @Override
+    public void info(Object callingObject, String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T info(Object callingObject, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T info(Object callingObject, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T trace(String callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T trace(Class<?> callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T trace(Class<?> callingClass, String methodName, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void trace(Class<?> callingClass, String methodName, String message) {
+
+    }
+
+    @Override
+    public void trace(Object callingObject, String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T trace(Object callingObject, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T trace(Object callingObject, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T warning(String callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T warning(Class<?> callingClass, String methodName, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T warning(Class<?> callingClass, String methodName, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void warning(Class<?> callingClass, String methodName, String message) {
+
+    }
+
+    @Override
+    public void warning(Object callingObject, String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T warning(Object callingObject, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T warning(Object callingObject, String message, T throwable) {
+        return null;
     }
 
     @Override
@@ -69,7 +282,7 @@ public class FakeLogger implements MMLogger {
     public void setLogLevel(String category, LogLevel level) {
 
     }
-    
+
     @Override
     public void setLogLevel(Object callingObject, LogLevel level) {
 
@@ -88,194 +301,5 @@ public class FakeLogger implements MMLogger {
     @Override
     public void resetLogFile(String logFileName) {
 
-    }
-
-    @Override
-    public <T extends Throwable> T debug(String callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T debug(Class<?> callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T debug(Class<?> callingClass, String methodName, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public void debug(Class<?> callingClass, String methodName, String message) {
-
-        
-    }
-
-    @Override
-    public void debug(Class<?> callingClass, String methodName, StringBuilder message) {
-
-        
-    }
-
-    @Override
-    public <T extends Throwable> T error(String callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T error(Class<?> callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T error(Class<?> callingClass, String methodName, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public void error(Class<?> callingClass, String methodName, String message) {
-
-        
-    }
-
-    @Override
-    public void error(Class<?> callingClass, String methodName, StringBuilder message) {
-
-        
-    }
-
-    @Override
-    public <T extends Throwable> T fatal(String callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T fatal(Class<?> callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public void fatal(Class<?> callingClass, String methodName, String message) {
-
-        
-    }
-
-    @Override
-    public void fatal(Class<?> callingClass, String methodName, StringBuilder message) {
-
-        
-    }
-
-    @Override
-    public <T extends Throwable> T info(String callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T info(Class<?> callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T info(Class<?> callingClass, String methodName, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public void info(Class<?> callingClass, String methodName, String message) {
-
-        
-    }
-
-    @Override
-    public void info(Class<?> callingClass, String methodName, StringBuilder message) {
-
-        
-    }
-    
-    @Override
-    public void info(Object callingObject, String message) {}
-    @Override
-    public void debug(Object callingObject, String message) {}
-    @Override
-    public void trace(Object callingObject, String message) {}
-    @Override
-    public void warning(Object callingObject, String message) {}
-    @Override
-    public void fatal(Object callingObject, String message) {}
-    @Override
-    public void error(Object callingObject, String message) {}
-    
-    
-    
-    @Override
-    public <T extends Throwable> T trace(String callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T trace(Class<?> callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T trace(Class<?> callingClass, String methodName, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public void trace(Class<?> callingClass, String methodName, String message) {
-
-        
-    }
-
-    @Override
-    public void trace(Class<?> callingClass, String methodName, StringBuilder message) {
-
-        
-    }
-
-    @Override
-    public <T extends Throwable> T warning(String callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T warning(Class<?> callingClass, String methodName, String message, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T warning(Class<?> callingClass, String methodName, T throwable) {
-
-        return null;
-    }
-
-    @Override
-    public void warning(Class<?> callingClass, String methodName, String message) {
-
-        
-    }
-
-    @Override
-    public void warning(Class<?> callingClass, String methodName, StringBuilder message) {
-
-        
     }
 }

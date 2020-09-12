@@ -646,6 +646,7 @@ public class Hex implements IHex, Serializable {
             if (terrain == null) {
                 valid = false;
                 errBuff.append("Hex contains a null terrain!\n");
+                continue;
             }
             StringBuffer terrainErr = new StringBuffer();
             if (!terrain.isValid(terrainErr)) {

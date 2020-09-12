@@ -1268,10 +1268,12 @@ public class TestSupportVehicle extends TestEntity {
                 unallocated.add(mount);
             }
         }
-        for (Mounted mount : supportVee.getAmmo()) {
-            if ((mount.getLocation() == Entity.LOC_NONE) &&
-                    !mount.isOneShotAmmo()) {
-                unallocated.add(mount);
+        if (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            for (Mounted mount : supportVee.getAmmo()) {
+                if ((mount.getLocation() == Entity.LOC_NONE) &&
+                        !mount.isOneShotAmmo()) {
+                    unallocated.add(mount);
+                }
             }
         }
 
@@ -1487,10 +1489,14 @@ public class TestSupportVehicle extends TestEntity {
      * @return The number of slots taken up by ammo.
      */
     public int getAmmoSlots() {
+        // Small SV ammo occupies the same slot as the weapon.
+        if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            return 0;
+        }
         int slots = 0;
         Set<String> foundAmmo = new HashSet<>();
         for (Mounted ammo : supportVee.getAmmo()) {
-            // don't count oneshot ammo
+            // don't count oneshot
             if (ammo.isOneShotAmmo()) {
                 continue;
             }

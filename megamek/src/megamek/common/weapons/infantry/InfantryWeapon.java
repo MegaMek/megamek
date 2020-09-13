@@ -175,6 +175,11 @@ public abstract class InfantryWeapon extends Weapon {
         return this;
     }
 
+    @Override
+    public int getSupportVeeSlots(Entity entity) {
+        return 1;
+    }
+
     /*
      * (non-Javadoc)
      *

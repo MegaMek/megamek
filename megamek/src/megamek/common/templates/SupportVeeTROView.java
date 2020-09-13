@@ -192,11 +192,11 @@ public class SupportVeeTROView extends TROView {
                 }
                 fields.put("tonnage", adjustWeight(eq.getTonnage(entity, entry.getKey().getSize()) * count));
                 fields.put("location", loc);
-                fields.put("slots", eq.getCriticals(entity, entry.getValue()) * count);
+                fields.put("slots", eq.getSupportVeeSlots(entity) * count);
                 weaponList.add(fields);
                 if (eq instanceof InfantryWeapon) {
                     Map<String, Object> ammoFields = new HashMap<>();
-                    name += " Ammo";
+                    name += " Ammo (" + (entry.getValue() * ((InfantryWeapon) eq).getShots()) + " shots)";
                     ammoFields.put("name", name);
                     if (name.length() >= nameWidth) {
                         nameWidth = name.length() + 1;

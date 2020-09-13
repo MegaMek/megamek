@@ -73,6 +73,7 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.TripodMech;
 import megamek.common.VTOL;
+import megamek.common.Warship;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DiveBombAttack;
@@ -3747,6 +3748,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             || wtype.getAtClass() == WeaponType.CLASS_AR10
                             || wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE))) {
                 toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeEvading"));
+            }
+            
+            // stratops page 113: ECHO maneuvers for large craft
+            if (((aero instanceof Warship) || (aero instanceof Dropship)) &&
+                    (aero.getFacing() != aero.getSecondaryFacing())) {
+                // if we're computing this for an "attack preview", then we add 2 MP to 
+                // the mp used, as we haven't used the MP yet. If we're actually processing
+                // the attack, then the entity will be marked as 'done' and we have already added
+                // the 2 MP, so we don't need to double-count it
+                int extraMP = aero.isDone() ? 0 : 2;
+                boolean willUseRunMP = aero.mpUsed + extraMP > aero.getWalkMP();
+                int mod = willUseRunMP ? 2 : 1;
+                toHit.addModifier(mod, Messages.getString("WeaponAttackAction.LargeCraftEcho"));
             }
 
             // check for particular kinds of weapons in weapon bays

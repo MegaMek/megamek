@@ -1,0 +1,159 @@
+Version:1.0
+Behemoth (Stone Rhino)
+8
+
+Config:Biped
+techbase:Clan
+era:3128
+source:ilClan Vol 2 - Dark Age
+rules level:3
+
+mass:100
+engine:300 Fusion (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:32
+RA armor:32
+LT armor:27
+RT armor:27
+CT armor:46
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:14
+RTR armor:14
+RTC armor:15
+
+Weapons:5
+Small Pulse Laser, Head
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Right Arm
+Gauss Rifle, Left Torso
+Gauss Rifle, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+ISAES
+ISAES
+ISAES
+ISAES
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+ISAES
+ISAES
+ISAES
+ISAES
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo
+Clan Gauss Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo
+Clan Gauss Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLSmallPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Csesztreg Industriplex Alpha
+primaryfactory:Csesztreg
+systemmanufacturer:CHASSIS:Star League Monster
+systemmanufacturer:ENGINE:Heavy Force 300
+systemmanufacturer:ARMOR:Compound 12A1 Standard
+systemmanufacturer:JUMPJET:Grandthrust Mk 5
+systemmanufacturer:COMMUNICATIONS:Garret L15
+systemmanufacturer:TARGETING:RCA Instatrac Version 8a

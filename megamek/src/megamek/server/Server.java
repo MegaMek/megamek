@@ -14364,6 +14364,7 @@ public class Server implements Runnable {
                 TorsoTwistAction tta = (TorsoTwistAction) ea;
                 if (entity.canChangeSecondaryFacing()) {
                     entity.setSecondaryFacing(tta.getFacing());
+                    entity.postProcessFacingChange();
                 }
             } else if (ea instanceof FlipArmsAction) {
                 FlipArmsAction faa = (FlipArmsAction) ea;
@@ -33758,10 +33759,8 @@ public class Server implements Runnable {
                                 step, moveType));
                     }
                 } else if (moveType == EntityMovementType.MOVE_JUMP) {
-                    getLogger().error(getClass(), METHOD_NAME, "gravity move check jump: "
+                    getLogger().debug(getClass(), METHOD_NAME, "gravity move check jump: "
                             + step.getMpUsed() + "/" + cachedMaxMPExpenditure);
-                    // TODO : Don't know if this still needs to be here after updating for new logging system.
-                    System.err.flush();
                     int origWalkMP = entity.getWalkMP(false, false);
                     int gravWalkMP = entity.getWalkMP();
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {

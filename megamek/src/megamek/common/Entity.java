@@ -2529,6 +2529,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             game.processGameEvent(new GameEntityChangeEvent(this, this));
         }
     }
+    
+    /**
+     * Utility function that handles situations where a facing change
+     * imparts some kind of permanent effect to the entity.
+     */
+    public void postProcessFacingChange() {
+    	
+    }
 
     /**
      * Can this entity change secondary facing at all?

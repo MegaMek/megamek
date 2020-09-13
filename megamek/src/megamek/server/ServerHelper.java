@@ -23,7 +23,7 @@ public class ServerHelper {
      * @param isPlatoon Whether the target unit is a platoon.
      * @param ammoExplosion Whether we're considering a "big boom" ammo explosion from tacops.
      * @param ignoreInfantryDoubleDamage Whether we should ignore double damage to infantry.
-     * @return
+     * @return Whether the infantry unit can be considered to be "in the open"
      */
     public static boolean infantryInOpen(Entity te, IHex te_hex, IGame game, 
             boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {

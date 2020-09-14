@@ -29,6 +29,7 @@ import megamek.client.Client;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * This class provides static methods to save a list of <code>Entity</code>s to,
@@ -112,6 +113,18 @@ public class EntityListFile {
                     && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
                 output.append("\" munition=\"");
                 output.append(mount.getLinked().getType().getInternalName());
+            }
+            if (mount.getEntity().isSupportVehicle()
+                    && (mount.getType() instanceof InfantryWeapon)) {
+                for (Mounted ammo = mount.getLinked(); ammo != null; ammo = ammo.getLinked()) {
+                    if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
+                        output.append("\" inferno=\"").append(ammo.getBaseShotsLeft())
+                            .append(":").append(ammo.getOriginalShots());
+                    } else {
+                        output.append("\" standard=\"").append(ammo.getBaseShotsLeft())
+                                .append(":").append(ammo.getOriginalShots());
+                    }
+                }
             }
             if (mount.isRapidfire()) {
                 output.append("\" rfmg=\"true");
@@ -350,9 +363,11 @@ public class EntityListFile {
                     }
 
                     // Record the munition type of oneshot launchers
+                    // and the ammunition shots of small SV weapons
                     else if (!isDestroyed && (mount != null)
                             && (mount.getType() instanceof WeaponType)
-                            && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+                            && ((mount.getType()).hasFlag(WeaponType.F_ONESHOT)
+                            || (entity.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)))) {
                         thisLoc.append(EntityListFile.formatSlot(
                                 String.valueOf(loop + 1), mount, slot.isHit(),
                                 slot.isDestroyed(), slot.isRepairable(),

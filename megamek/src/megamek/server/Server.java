@@ -19045,7 +19045,7 @@ public class Server implements Runnable {
                     hit.makeDirectBlow(toHit.getMoS() / 3);
                 }
                 damage -= cluster;
-                cluster = checkForSpikes(te, hit.getLocation(), damage, ae, Mech.LOC_LLEG, Mech.LOC_RLEG);
+                cluster = checkForSpikes(te, hit.getLocation(), cluster, ae, Mech.LOC_LLEG, Mech.LOC_RLEG);
                 addReport(damageEntity(te, hit, cluster, false,
                                        DamageType.NONE, false, false, throughFront));
             }

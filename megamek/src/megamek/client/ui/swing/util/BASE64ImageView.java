@@ -68,7 +68,7 @@ public class BASE64ImageView extends ImageView {
                         Base64.getDecoder().decode(b64.getBytes()))) {
                 newImage = ImageIO.read(bais);
             } catch (Exception ex) {
-                MegaMek.getLogger().error(this.getClass(), "loadImage()", ex);
+                MegaMek.getLogger().error(this, ex);
             }
             return newImage;
         } else {

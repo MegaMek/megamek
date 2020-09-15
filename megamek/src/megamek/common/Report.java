@@ -313,7 +313,7 @@ public class Report implements Serializable {
      */
     public void addDesc(Entity entity) {
         if (entity != null) {
-            if(indentation <= Report.DEFAULT_INDENTATION || showImage) {
+            if ((indentation <= Report.DEFAULT_INDENTATION) || showImage) {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
             add("<font color='0xffffff'><a href=\"#entity:" + entity.getId()
@@ -486,8 +486,8 @@ public class Report implements Serializable {
                 i++;
             }
             //add the sprite code at the beginning of the line
-            if(!imageCode.isEmpty()){
-                if(text.toString().startsWith("\n")){
+            if (!imageCode.isEmpty()) {
+                if (text.toString().startsWith("\n")) {
                     text.insert(1, imageCode);
                 }
                 else {

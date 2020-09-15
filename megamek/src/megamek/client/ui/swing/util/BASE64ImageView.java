@@ -53,7 +53,7 @@ public class BASE64ImageView extends ImageView {
         }
         URL src = getImageURL();
         Image image = loadImage();
-        if(image != null) {
+        if (image != null) {
             cache.put(src, image);
         }
     }
@@ -61,18 +61,17 @@ public class BASE64ImageView extends ImageView {
     //decodes the Base64 string into an image and returns it
     private Image loadImage() {
         String b64 = getBASE64Image();
-        if(b64 != null) {
+        if (b64 != null) {
             BufferedImage newImage = null;
             try (ByteArrayInputStream bais = new ByteArrayInputStream(
                         Base64.getDecoder().decode(b64.getBytes()))) {
                 newImage = ImageIO.read(bais);
-            } catch (Throwable ex) {
-                ex.printStackTrace();
+            } catch (Exception ex) {
+                MegaMek.getLogger(getClass(), "loadImage", ex);
             }
             return newImage;
-        }
-        else{
-            return  null;
+        } else {
+            return null;
         }
     }
 

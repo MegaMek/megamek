@@ -30,6 +30,7 @@ VERSION HISTORY:
 + PR #2149: StratOps ECHO maneuver for airborne dropships and warships (basically, torso twisting with an MP/to-hit cost)
 + Issue #2206: Reduced DFA damage to proper levels
 + PR #2219: Track ammo for small support vehicles
++ Issue #2186, 2190: Inconsistent Combat Log Sprites
 
 0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit

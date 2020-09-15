@@ -13,6 +13,8 @@
  */
 package megamek.client.ui.swing.util;
 
+import megamek.MegaMek;
+
 import javax.imageio.ImageIO;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
@@ -67,7 +69,7 @@ public class BASE64ImageView extends ImageView {
                         Base64.getDecoder().decode(b64.getBytes()))) {
                 newImage = ImageIO.read(bais);
             } catch (Exception ex) {
-                MegaMek.getLogger(getClass(), "loadImage", ex);
+                MegaMek.getLogger().error(this.getClass(), "loadImage()", ex);
             }
             return newImage;
         } else {

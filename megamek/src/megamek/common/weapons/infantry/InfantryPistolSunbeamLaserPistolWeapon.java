@@ -36,13 +36,15 @@ public class InfantryPistolSunbeamLaserPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantrySunbeamLaserpistol");
 		addLookupName("Sunbeam Laser Pistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 750;
 		bv = 0.86;
 		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
 		infantryDamage = 0.28;
 		infantryRange = 1;
+		ammoWeight = 0.0003;
+		shots = 7;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3015, 3020, 3050, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FW)

@@ -36,13 +36,15 @@ public class InfantryPistolHoldOutLaserPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryHoldoutLaserpistol");
 		addLookupName("Holdout Laser Pistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 100;
 		bv = 0.13;
 		tonnage = .00005;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
 		infantryDamage = 0.14;
 		infantryRange = 0;
+		ammoWeight = 0.00002;
+		shots = 6;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2318, 2320, 2350, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)

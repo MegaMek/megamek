@@ -35,13 +35,15 @@ public class InfantryPistolSonicStunnerWeapon extends InfantryWeapon {
 		name = "Sonic Stunner";
 		setInternalName(name);
 		addLookupName("InfantrySonicStunnerpistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 100;
 		bv = 0.06;
 		tonnage = .0006;
 		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_ENERGY);
 		infantryDamage = 0.07;
 		infantryRange = 0;
+		ammoWeight = 0.0003;
+		shots = 30;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2365, 2375, 2400, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)

@@ -37,13 +37,16 @@ public class InfantryPistolAutoPistolNissanWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryAutopistolNissan");
         addLookupName("Auto Pistol Nissan");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.T_INFANTRY;
         cost = 250;
         bv = 0.19;
         tonnage = .0027;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 1;
+        ammoWeight = 0.00016;
+        ammoCost = 3;
+        shots = 8;
         rulesRefs = "176,HBHK";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2600, 2620, 2630);

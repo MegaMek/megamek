@@ -36,13 +36,17 @@ public class InfantryPistolTKEnforcerAutoPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryTKEnforcerAutopistol");
 		addLookupName("TK Enforcer Auto Pistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 110;
 		bv = 0.18;
 		tonnage = .0016;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.20;
 		infantryRange = 0;
+		ammoWeight = 0.0002;
+		ammoCost = 3;
+		shots = 20;
+		bursts = 5;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3058, 3085, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

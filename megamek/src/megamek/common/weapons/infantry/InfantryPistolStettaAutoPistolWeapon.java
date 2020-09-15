@@ -36,13 +36,17 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryStettaAutopistol");
         addLookupName("Stetta AutoPistol");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.T_INFANTRY;
         cost = 150;
         bv = 0.16;
         tonnage = .002;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 0;
+        ammoWeight = 0.00068;
+        ammoCost = 10;
+        shots = 100;
+        bursts = 10;
         rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3005, 3010, 3050, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)

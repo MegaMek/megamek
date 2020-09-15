@@ -63,12 +63,9 @@ public class BASE64ImageView extends ImageView {
         String b64 = getBASE64Image();
         if(b64 != null) {
             BufferedImage newImage = null;
-            ByteArrayInputStream bais = null;
-            try {
-                bais = new ByteArrayInputStream(
-                        Base64.getDecoder().decode(b64.getBytes()));
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(
+                        Base64.getDecoder().decode(b64.getBytes()))) {
                 newImage = ImageIO.read(bais);
-                bais.close();
             } catch (Throwable ex) {
                 ex.printStackTrace();
             }

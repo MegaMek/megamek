@@ -14,7 +14,6 @@
 package megamek.client.ui.swing.util;
 
 import megamek.MegaMek;
-
 import javax.imageio.ImageIO;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;

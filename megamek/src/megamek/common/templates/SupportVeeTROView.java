@@ -151,13 +151,13 @@ public class SupportVeeTROView extends TROView {
     }
 
     @Override
-    protected int addEquipment(Entity entity) {
+    protected int addEquipment(Entity entity, boolean includeAmmo) {
         final Map<String, Map<EquipmentKey, Integer>> weapons = new HashMap<>();
         final List<String> chassisMods = new ArrayList<>();
         final Map<EquipmentKey, Integer> miscCount = new HashMap<>();
         int nameWidth = 20;
         for (final Mounted m : entity.getEquipment()) {
-            if ((m.getLocation() < 0) || m.isWeaponGroup()) {
+            if (skipMount(m, includeAmmo)) {
                 continue;
             }
             if ((m.getType() instanceof MiscType) && (m.getLinked() == null) && (m.getLinkedBy() == null)) {
@@ -194,7 +194,7 @@ public class SupportVeeTROView extends TROView {
                 fields.put("location", loc);
                 fields.put("slots", eq.getSupportVeeSlots(entity) * count);
                 weaponList.add(fields);
-                if (eq instanceof InfantryWeapon) {
+                if ((eq instanceof InfantryWeapon) && includeAmmo) {
                     Map<String, Object> ammoFields = new HashMap<>();
                     name += " Ammo (" + (entry.getValue() * ((InfantryWeapon) eq).getShots()) + " shots)";
                     ammoFields.put("name", name);

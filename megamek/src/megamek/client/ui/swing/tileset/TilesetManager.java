@@ -37,13 +37,11 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.RotateFilter;
 import megamek.common.*;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.preference.*;
-import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -84,9 +82,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private boolean started = false;
     private boolean loaded = false;
 
-    // keep track of camo images
-    private DirectoryItems camos;
-
     // mech images
     private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
     private MechTileset wreckTileset = new MechTileset(
@@ -123,12 +118,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         hexTileset = new HexTileset(boardview.game);
         tracker = new MediaTracker(boardview);
         try {
-            camos = new DirectoryItems(
-                    Configuration.camoDir(),
-                    "", //$NON-NLS-1$
-                    ScaledImageFileFactory.getInstance()
-            );
-            
             String wreckDecalPath = String.format("%s\\%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
             File wreckDir = new File(Configuration.unitImagesDir(), wreckDecalPath);
             
@@ -161,7 +150,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             wreckageDecalCount.put(FILENAME_SUFFIX_WRECKS_ASSAULTPLUS, bigWreckCount);
             
         } catch (Exception e) {
-            camos = null;
         }
         mechTileset.loadFromFile("mechset.txt"); //$NON-NLS-1$
         wreckTileset.loadFromFile("wreckset.txt"); //$NON-NLS-1$
@@ -620,43 +608,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     }
 
     /**
-     * Returns the camo pattern for the given player 
-     * or null, if the player has no camo or there was an error.
-     */
-    public Image getPlayerCamo(IPlayer player) {
-        return getCamo(player.getCamoCategory(), player.getCamoFileName());
-    }
-
-    /**
-     * Returns the camo pattern for the given entity 
-     * or null, if the player has no camo or there was an error.
-     */
-    public Image getEntityCamo(Entity entity) {
-        return getCamo(entity.getCamoCategory(), entity.getCamoFileName());
-    }
-
-    /** Returns the camo pattern, if possible or null. */
-    private Image getCamo(String category, String name) {
-        // Return a null if no camo
-        if ((category == null) || category.equals(IPlayer.NO_CAMO)) {
-            return null;
-        }
-
-        // Try to get the camo file.
-        Image camo = null;
-        try {
-            // Translate the root camo directory name.
-            if (IPlayer.ROOT_CAMO.equals(category)) {
-                category = ""; //$NON-NLS-1$
-            }
-            camo = (Image) camos.getItem(category, name);
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        return camo;
-    }
-    
-    /**
      * Load a single entity image
      */
     public synchronized void loadImage(Entity entity, int secondaryPos) {
@@ -666,11 +617,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         IPlayer player = entity.getOwner();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
 
-        Image camo = null;
-        if (getEntityCamo(entity) != null) {
-            camo = getEntityCamo(entity);
-        } else {
-            camo = getPlayerCamo(player);
+        Image camo = CamoManager.getPlayerCamoImage(player);
+        if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
+            camo = CamoManager.getEntityCamoImage(entity);
         }
         EntityImage entityImage = null;
 

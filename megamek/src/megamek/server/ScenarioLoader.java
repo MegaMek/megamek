@@ -35,7 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import megamek.client.generator.RandomGenderGenerator;
-import megamek.client.ui.swing.util.ScaledImageFileFactory;
+import megamek.client.ui.swing.tileset.CamoManager;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Board;
@@ -73,7 +73,6 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ScenarioLoader {
@@ -126,15 +125,9 @@ public class ScenarioLoader {
     private final List<CritHitPlan> critHitPlans = new ArrayList<>();
     // Used to set ammo Spec Ammounts
     private final List<SetAmmoPlan> ammoPlans = new ArrayList<>();
-    private DirectoryItems camos;
 
     public ScenarioLoader(File f) {
         scenarioFile = f;
-        try {
-            camos = new DirectoryItems(Configuration.camoDir(), "", ScaledImageFileFactory.getInstance()); //$NON-NLS-1$
-        } catch (Exception e) {
-            camos = null;
-        }
     }
     
     // TODO: legal/valid ammo type handling and game options, since they are set at this point
@@ -661,7 +654,7 @@ public class ScenarioLoader {
         if(camoGroup.equals(IPlayer.NO_CAMO) || camoGroup.equals(IPlayer.ROOT_CAMO)) {
             validGroup = true;
         } else {
-            Iterator<String> catNames = camos.getCategoryNames();
+            Iterator<String> catNames = CamoManager.getCamos().getCategoryNames();
             while (catNames.hasNext()) {
                 String s = catNames.next();
                 if (s.equals(camoGroup)) {
@@ -686,9 +679,9 @@ public class ScenarioLoader {
         } else {
             Iterator<String> camoNames;
             if(camoGroup.equals(IPlayer.ROOT_CAMO)) {
-                camoNames = camos.getItemNames(""); //$NON-NLS-1$
+                camoNames = CamoManager.getCamos().getItemNames(""); //$NON-NLS-1$
             } else {
-                camoNames = camos.getItemNames(camoGroup);
+                camoNames = CamoManager.getCamos().getItemNames(camoGroup);
             }
             while (camoNames.hasNext()) {
                 String s = camoNames.next();

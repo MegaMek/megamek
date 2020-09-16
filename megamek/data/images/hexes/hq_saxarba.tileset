@@ -31,8 +31,8 @@
 
 #####SUPER TERRAINS#####
 
-include "incline/inclines2.tileinc"
-include "high_incline/high_inclines.tileinc"
+include "Incline/Inclines2.tileinc"
+include "High_Incline/High_Inclines.tileinc"
 include "Cliff/Cliffs.tileinc"
 
 include "saxarba/Includes/Pavement.tileinc"
@@ -270,7 +270,7 @@ include "StandardIncludes/StandardRailMaglev.tileinc"
 #FUEL TANKS
 include "saxarba/Includes/FuelTanks.tileinc"
 
-include "saxarba/SMV_SeaPort/SeaPort.tileinc"
+include "saxarba/SMV_Seaport/SeaPort.tileinc"
 
 #TROPICAL THEME TREES
 super * "woods:1;fluff:12" "tropical" "saxarba/theme_tropical/orchard_tropical.png"

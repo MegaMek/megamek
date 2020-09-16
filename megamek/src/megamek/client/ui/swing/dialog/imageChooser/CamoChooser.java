@@ -18,6 +18,7 @@ package megamek.client.ui.swing.dialog.imageChooser;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.tileset.CamoManager;
@@ -155,7 +156,7 @@ public class CamoChooser extends AbstractImageChooser {
      * Adds the camos of the given category to the given items ArrayList.
      * Assumes that the root of the path (IPlayer.ROOT_CAMO) is passed as ""! 
      * */
-    private void addCategoryItems(String category, ArrayList<DirectoryItem> items) {
+    private void addCategoryItems(String category, List<DirectoryItem> items) {
         for (Iterator<String> camoNames = CamoManager.getCamos().getItemNames(category); camoNames.hasNext(); ) {
             items.add(new DirectoryItem(category, camoNames.next()));
         }

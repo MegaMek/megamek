@@ -20,13 +20,13 @@ import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
 import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.DirectoryItem;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -39,8 +39,6 @@ import megamek.common.util.fileUtils.DirectoryItems;
  */
 public final class CamoManager {
 
-    private static final MMLogger LOG = DefaultMmLogger.getInstance();
-    
     // This class is not to be instantiated
     private CamoManager() {}
 
@@ -49,7 +47,8 @@ public final class CamoManager {
     
     /** 
      * True at startup and when the camo directory should be re-parsed.
-     * Used to avoid re-parsing the directory repeatedly when there's an error. */
+     * Used to avoid re-parsing the directory repeatedly when there's an error. 
+     */
     private static boolean parseDirectory = true; 
 
     /** 
@@ -79,7 +78,7 @@ public final class CamoManager {
                 camoDirectory = new DirectoryItems(Configuration.camoDir(), "", 
                         ScaledImageFileFactory.getInstance());
             } catch (Exception e) {
-                LOG.error(CamoManager.class, "Could not parse the camo directory!");
+                MegaMek.getLogger().error(CamoManager.class, "Could not parse the camo directory!");
                 e.printStackTrace();
                 // This could be improved by obtaining an empty DirectoryItems to avoid returning null
             }
@@ -146,7 +145,7 @@ public final class CamoManager {
         }
         
         // An error must have occured, fall back to the fail image
-        LOG.error(CamoManager.class, 
+        MegaMek.getLogger().error(CamoManager.class, 
                 "Could not create camo image! Category: " + category + "; Name: " + name);
         return ImageUtil.failStandardImage();
     }
@@ -227,7 +226,7 @@ public final class CamoManager {
      * When color is null, a "fail" standard image is returned. 
      * 
      * @see ImageUtil#failStandardImage()
-     * */
+     */
     public static BufferedImage colorCamoImage(Color color) {
         if (color == null) {
             DefaultMmLogger.getInstance().error(CamoManager.class, "A null color was passed.");
@@ -245,7 +244,7 @@ public final class CamoManager {
      * When color is null, a "fail" standard image is returned. 
      * 
      * @see ImageUtil#failStandardImage()
-     * */
+     */
     public static Icon colorCamoIcon(Color color) {
         return new ImageIcon(colorCamoImage(color));
     }

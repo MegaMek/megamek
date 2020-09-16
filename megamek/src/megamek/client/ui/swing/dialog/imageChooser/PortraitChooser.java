@@ -16,6 +16,7 @@ package megamek.client.ui.swing.dialog.imageChooser;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.tileset.PortraitManager;
@@ -69,8 +70,8 @@ public class PortraitChooser extends AbstractImageChooser  {
     /** 
      * Adds the portraits of the given category to the given items ArrayList.
      * Assumes that the root of the path (Crew.ROOT_PORTRAIT) is passed as ""! 
-     * */
-    private void addCategoryItems(String category, ArrayList<DirectoryItem> items) {
+     */
+    private void addCategoryItems(String category, List<DirectoryItem> items) {
         for (Iterator<String> portNames = PortraitManager.getPortraits().getItemNames(category); portNames.hasNext(); ) {
             items.add(new DirectoryItem(category, portNames.next()));
         }

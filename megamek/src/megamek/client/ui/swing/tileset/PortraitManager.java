@@ -23,11 +23,10 @@ import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Configuration;
 import megamek.common.Crew;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.DirectoryItems;
 
@@ -39,8 +38,6 @@ import megamek.common.util.fileUtils.DirectoryItems;
  */
 public class PortraitManager {
 
-    private static final MMLogger LOG = DefaultMmLogger.getInstance();
-    
     // This class is not to be instantiated
     private PortraitManager() {}
 
@@ -82,7 +79,7 @@ public class PortraitManager {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(), "", 
                         ImageFileFactory.getInstance());
             } catch (Exception e) {
-                LOG.error(PortraitManager.class, "Could not parse the portraits directory!");
+                MegaMek.getLogger().error(PortraitManager.class, "Could not parse the portraits directory!");
                 e.printStackTrace();
                 // This could be improved by obtaining an empty DirectoryItems to avoid returning null
             }
@@ -152,7 +149,7 @@ public class PortraitManager {
         }
         
         // An error must have occured, fall back to the default portrait
-        LOG.error(PortraitManager.class, 
+        MegaMek.getLogger().error(PortraitManager.class, 
                 "Could not load portrait image! Category: " + category + "; Name: " + name);
         return getDefaultPortrait();
     }
@@ -237,7 +234,7 @@ public class PortraitManager {
             e.printStackTrace();
         }
 
-        LOG.error(PortraitManager.class, "Could not load default portrait image!");
+        MegaMek.getLogger().error(PortraitManager.class, "Could not load default portrait image!");
         return failPortrait();
     }
     

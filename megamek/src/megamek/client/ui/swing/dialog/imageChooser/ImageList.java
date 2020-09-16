@@ -14,7 +14,8 @@
  */
 package megamek.client.ui.swing.dialog.imageChooser;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -62,7 +63,7 @@ public class ImageList extends JList<DirectoryItem> {
     /** 
      * Updates the list to show (only) the given items.
      */
-    public void updateImages(ArrayList<DirectoryItem> items) {
+    public void updateImages(List<DirectoryItem> items) {
         itemModel.clear();
         // LGTM does not accept addAll
         for (DirectoryItem di: items) {

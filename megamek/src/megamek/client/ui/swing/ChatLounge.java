@@ -177,7 +177,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
     };
 
-    CamoChooser camoDialog;
+    private CamoChooser camoDialog;
 
     //region Action Commands
     private static final String NAME_COMMAND = "NAME";
@@ -1941,8 +1941,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     private void refreshCamos() {
-//        Client c = getPlayerSelected();
-//        camoDialog.setPlayer(c.getLocalPlayer());
         butCamo.setIcon(CamoManager.getPlayerCamoIcon(getPlayerSelected().getLocalPlayer()));
     }
 

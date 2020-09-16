@@ -31,8 +31,8 @@
 
 #####SUPER TERRAINS#####
 
-include "incline/inclines2.tileinc"
-include "high_incline/high_inclines.tileinc"
+include "Incline/Inclines2.tileinc"
+include "High_Incline/High_Inclines.tileinc"
 include "Cliff/Cliffs.tileinc"
 
 include "saxarba/Includes/Pavement.tileinc"

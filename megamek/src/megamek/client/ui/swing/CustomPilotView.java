@@ -108,7 +108,7 @@ public class CustomPilotView extends JPanel {
                     if (portraitDialog.getSelectedItem() != null) {
                         String category = portraitDialog.getSelectedItem().getCategory();
                         String filename = portraitDialog.getSelectedItem().getItem();
-                        ((JButton)e.getSource()).setIcon(PortraitManager.getPortraitIcon(category, filename));
+                        ((JButton) e.getSource()).setIcon(PortraitManager.getPortraitIcon(category, filename));
                     } 
                 }
             }

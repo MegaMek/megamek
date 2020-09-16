@@ -1852,7 +1852,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
         Image camo = CamoManager.getPlayerCamoImage(player);
-        if (entity.getCamoCategory() != null && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
+        if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
             camo = CamoManager.getEntityCamoImage(entity);
         }
         // This seems unnecessary as the CamoManager will return an image for a playercolor:

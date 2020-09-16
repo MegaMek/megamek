@@ -89,7 +89,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                     int result = camoDialog.showDialog(curPlayer);
 
                     // If the dialog was canceled or nothing selected, do nothing
-                    if (result == JOptionPane.CANCEL_OPTION || camoDialog.getSelectedItem() == null) {
+                    if ((result == JOptionPane.CANCEL_OPTION) || (camoDialog.getSelectedItem() == null)) {
                         return; 
                     }
 

@@ -116,8 +116,8 @@ public class PortraitManager {
     public static Image getUnscaledPortraitImage(String category, String name) {
         // Return the default portrait when parameters are null
         // or no portrait is selected 
-        if (category == null 
-                || name == null
+        if ((category == null)
+                || (name == null)
                 || category.equals(Crew.PORTRAIT_NONE)) {
             return getDefaultPortrait();
         }

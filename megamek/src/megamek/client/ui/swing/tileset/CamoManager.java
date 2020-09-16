@@ -111,7 +111,7 @@ public final class CamoManager {
      */
     public static Image getCamoImage(String category, String name) {
         // Return a fail image when parameters are null
-        if (category == null || name == null) {
+        if ((category == null) || (name == null)) {
             return ImageUtil.failStandardImage();
         }
         

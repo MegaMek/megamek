@@ -928,10 +928,10 @@ class EntitySprite extends Sprite {
                     Image portrait = PortraitManager.getUnscaledPortraitImage(category, file);
                     if (portrait.getWidth(null) > portrait.getHeight(null)) {
                         float h = 60f * portrait.getHeight(null) / portrait.getWidth(null);
-                        addToTT("PilotPortraitW", BR, imagePath, (int)h);
+                        addToTT("PilotPortraitW", BR, imagePath, (int) h);
                     } else {
                         float w = 60f * portrait.getWidth(null) / portrait.getHeight(null);
-                        addToTT("PilotPortraitH", BR, imagePath, (int)w);
+                        addToTT("PilotPortraitH", BR, imagePath, (int) w);
                     }
                 }
             }

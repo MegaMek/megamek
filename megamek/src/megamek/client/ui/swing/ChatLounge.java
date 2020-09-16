@@ -466,7 +466,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 int result = camoDialog.showDialog(player);
                 
                 // If the dialog was canceled or nothing selected, do nothing
-                if (result == JOptionPane.CANCEL_OPTION || camoDialog.getSelectedItem() == null) {
+                if ((result == JOptionPane.CANCEL_OPTION) || (camoDialog.getSelectedItem() == null)) {
                     return; 
                 }
                 
@@ -2363,7 +2363,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         int result = mcd.showDialog(entities.get(0));
 
         // If the dialog was canceled or nothing was selected, do nothing
-        if (result == JOptionPane.CANCEL_OPTION || mcd.getSelectedItem() == null) {
+        if ((result == JOptionPane.CANCEL_OPTION) || (mcd.getSelectedItem() == null)) {
             return;
         }
 
@@ -2396,7 +2396,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      */
     private boolean isEditable(Entity entity) {
         return clientgui.getBots().containsKey(entity.getOwner().getName())
-                || entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId();
+                || (entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId());
     }
     
     /** 

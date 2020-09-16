@@ -31,12 +31,14 @@ public class DirectoryItem {
     @Override public boolean equals(Object other) {
         if (this == other) {
             return true;
-        }
-        if (other instanceof DirectoryItem) {
-            DirectoryItem dOther = (DirectoryItem)other;
+        } else if (other instanceof DirectoryItem) {
+
+            DirectoryItem dOther = (DirectoryItem) other;
+
             return dOther.getCategory().equals(category) && dOther.getItem().equals(item);
+        } else {
+            return false;
         }
-        return false;
     }
     
     @Override

@@ -71,23 +71,50 @@ public class RandomMapPanelAdvanced extends JPanel {
     private final VerifiableTextField craterSizeMaxField = new VerifiableTextField(4);
 
     // Natural Features
-    private final VerifiableTextField roughsMinField = new VerifiableTextField(4);
-    private final VerifiableTextField roughsMaxField = new VerifiableTextField(4);
-    private final VerifiableTextField roughsMinSizeField = new VerifiableTextField(4);
-    private final VerifiableTextField roughsMaxSizeField = new VerifiableTextField(4);
-    private final VerifiableTextField sandsMinField = new VerifiableTextField(4);
-    private final VerifiableTextField sandsMaxField = new VerifiableTextField(4);
-    private final VerifiableTextField sandsSizeMinField = new VerifiableTextField(4);
-    private final VerifiableTextField sandsSizeMaxField = new VerifiableTextField(4);
-    private final VerifiableTextField swampsMinField = new VerifiableTextField(4);
-    private final VerifiableTextField swampsMaxField = new VerifiableTextField(4);
-    private final VerifiableTextField swampsMinSizeField = new VerifiableTextField(4);
-    private final VerifiableTextField swampsMaxSizeField = new VerifiableTextField(4);
-    private final VerifiableTextField woodsMinField = new VerifiableTextField(4);
-    private final VerifiableTextField woodsMaxField = new VerifiableTextField(4);
-    private final VerifiableTextField woodsMinSizeField = new VerifiableTextField(4);
-    private final VerifiableTextField woodsMaxSizeField = new VerifiableTextField(4);
-    private final VerifiableTextField woodsHeavyChanceField = new VerifiableTextField(4);
+    private final VerifiableTextField roughsMinField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField roughsMaxField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField roughsMinSizeField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField roughsMaxSizeField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField sandsMinField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField sandsMaxField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField sandsSizeMinField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField sandsSizeMaxField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField swampsMinField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField swampsMaxField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField swampsMinSizeField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField swampsMaxSizeField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField woodsMinField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField woodsMaxField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField woodsMinSizeField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField woodsMaxSizeField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField woodsHeavyChanceField = 
+            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
+    private final VerifiableTextField foliageMinField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField foliageMaxField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField foliageMinSizeField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField foliageMaxSizeField = 
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField foliageHeavyChanceField = 
+            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
 
     // Civilized Features.
     private final VerifiableTextField fieldsMinField = new VerifiableTextField(4);
@@ -210,6 +237,11 @@ public class RandomMapPanelAdvanced extends JPanel {
         woodsMinSizeField.setText(String.valueOf(mapSettings.getMinForestSize()));
         woodsMaxSizeField.setText(String.valueOf(mapSettings.getMaxForestSize()));
         woodsHeavyChanceField.setText(String.valueOf(mapSettings.getProbHeavy()));
+        foliageMinField.setText(String.valueOf(mapSettings.getMinFoliageSpots()));
+        foliageMaxField.setText(String.valueOf(mapSettings.getMaxFoliageSpots()));
+        foliageMinSizeField.setText(String.valueOf(mapSettings.getMinFoliageSize()));
+        foliageMaxSizeField.setText(String.valueOf(mapSettings.getMaxFoliageSize()));
+        foliageHeavyChanceField.setText(String.valueOf(mapSettings.getProbFoliageHeavy()));
         swampsMinField.setText(String.valueOf(mapSettings.getMinSwampSpots()));
         swampsMaxField.setText(String.valueOf(mapSettings.getMaxSwampSpots()));
         swampsMinSizeField.setText(String.valueOf(mapSettings.getMinSwampSize()));
@@ -279,24 +311,12 @@ public class RandomMapPanelAdvanced extends JPanel {
     }
 
     private JScrollPane setupWaterPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = setupConstraints();
-        JPanel panel = new JPanel(layout);
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-        // Row 1
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.weightx = 1;
-        panel.add(setupLakesPanel(), constraints);
-
-        // Row 2
-        constraints.gridy++;
-        panel.add(setupRiverPanel(), constraints);
-
-        // Row 3.
-        constraints.gridy++;
-        constraints.weighty = 1;
-        panel.add(setupIcePanel(), constraints);
+        panel.add(setupLakesPanel());
+        panel.add(setupRiverPanel());
+        panel.add(setupIcePanel());
 
         return new JScrollPane(panel);
     }
@@ -519,36 +539,15 @@ public class RandomMapPanelAdvanced extends JPanel {
     }
 
     private JScrollPane setupCivilizedPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = setupConstraints();
-        JPanel panel = new JPanel(layout);
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-        // Row 1
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.weightx = 1;
-        panel.add(setupCityPanel(), constraints);
-
-        // Row 2
-        constraints.gridy++;
-        panel.add(setupFortifiedPanel(), constraints);
-
-        // Row 3
-        constraints.gridy++;
-        panel.add(setupPavementPanel(), constraints);
-
-        // Row 4
-        constraints.gridy++;
-        panel.add(setupFieldsPanel(), constraints);
-
-        // Row 5
-        constraints.gridy++;
-        panel.add(setupRoadPanel(), constraints);
-
-        // Row 6
-        constraints.gridy++;
-        constraints.weighty = 1;
-        panel.add(setupRubblePanel(), constraints);
+        panel.add(setupCityPanel());
+        panel.add(setupFortifiedPanel());
+        panel.add(setupPavementPanel());
+        panel.add(setupFieldsPanel());
+        panel.add(setupRoadPanel());
+        panel.add(setupRubblePanel());
 
         return new JScrollPane(panel);
     }
@@ -1109,365 +1108,192 @@ public class RandomMapPanelAdvanced extends JPanel {
     }
 
     private JScrollPane setupNaturalFeaturesPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = setupConstraints();
-        JPanel panel = new JPanel(layout);
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-        // Row 1
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.weightx = 1;
-        panel.add(setupRoughsPanel(), constraints);
-
-        // Row 2
-        constraints.gridy++;
-        panel.add(setupSandsPanel(), constraints);
-
-        // Row 3
-        constraints.gridy++;
-        panel.add(setupSwampsPanel(), constraints);
-
-        // Row 4
-        constraints.gridy++;
-        constraints.weighty = 1;
-        panel.add(setupWoodsPanel(), constraints);
+        panel.add(setupRoughsPanel());
+        panel.add(setupSandsPanel());
+        panel.add(setupSwampsPanel());
+        panel.add(setupWoodsPanel());
+        panel.add(setupFoliagePanel());
 
         return new JScrollPane(panel);
     }
 
     private JPanel setupWoodsPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = setupConstraints();
-        JPanel panel = new JPanel(layout);
-
-        // Row 1, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.gridwidth = 1;
+        JPanel panel = new FeaturePanel(new SpringLayout());
+        
         JLabel numberWoodsLabel = new JLabel(Messages.getString("RandomMapDialog.labForestSpots"));
-        panel.add(numberWoodsLabel, constraints);
-
-        // Row 1, Column 2.
-        constraints.gridx++;
-        woodsMinField.setRequired(true);
-        woodsMinField.setSelectAllTextOnGotFocus(true);
-        woodsMinField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(numberWoodsLabel);
         woodsMinField.setToolTipText(Messages.getString("RandomMapDialog.woodsMinField.toolTip"));
-        woodsMinField.setName(numberWoodsLabel.getText());
-        panel.add(woodsMinField, constraints);
-
-        // Row 1, Column 3.
-        constraints.gridx++;
+        panel.add(woodsMinField);
         JLabel numberWoodsToLabel = new JLabel(Messages.getString("to"));
-        panel.add(numberWoodsToLabel, constraints);
-
-        // Row 1, Column 4.
-        constraints.gridx++;
-        constraints.weightx = 1;
-        woodsMaxField.setRequired(true);
-        woodsMaxField.setSelectAllTextOnGotFocus(true);
-        woodsMaxField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(numberWoodsToLabel);
         woodsMaxField.setToolTipText(Messages.getString("RandomMapDialog.woodsMaxField.toolTip"));
-        woodsMaxField.setName(numberWoodsLabel.getText());
-        panel.add(woodsMaxField, constraints);
+        panel.add(woodsMaxField);
 
-        // Row 2, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
         JLabel sizesWoodsLabel = new JLabel(Messages.getString("RandomMapDialog.labSwampSize"));
-        panel.add(sizesWoodsLabel, constraints);
-
-        // Row 2, Column 2.
-        constraints.gridx++;
-        woodsMinSizeField.setRequired(true);
-        woodsMinSizeField.setSelectAllTextOnGotFocus(true);
-        woodsMinSizeField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(sizesWoodsLabel);
         woodsMinSizeField.setToolTipText(Messages.getString("RandomMapDialog.woodsMinSizeField.toolTip"));
-        woodsMinSizeField.setName(sizesWoodsLabel.getText());
-        panel.add(woodsMinSizeField, constraints);
-
-        // Row 2, Column 3.
-        constraints.gridx++;
+        panel.add(woodsMinSizeField);
         JLabel sizeWoodsToLabel = new JLabel(Messages.getString("to"));
-        panel.add(sizeWoodsToLabel, constraints);
-
-        // Row 2, Column 4.
-        constraints.gridx++;
-        constraints.weightx = 1;
-        woodsMaxSizeField.setRequired(true);
-        woodsMaxSizeField.setSelectAllTextOnGotFocus(true);
-        woodsMaxSizeField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(sizeWoodsToLabel);
         woodsMaxSizeField.setToolTipText(Messages.getString("RandomMapDialog.woodsMaxSizeField.toolTip"));
-        woodsMaxSizeField.setName(sizesWoodsLabel.getText());
-        panel.add(woodsMaxSizeField, constraints);
+        panel.add(woodsMaxSizeField);
 
-        // Row 3, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
         JLabel heavyWoodsLabel = new JLabel(Messages.getString("RandomMapDialog.labProbHeavy"));
-        panel.add(heavyWoodsLabel, constraints);
-
-        // Row 3, Columns 2-4
-        constraints.gridx++;
-        constraints.gridwidth = 3;
-        constraints.weightx = 1;
-        constraints.weighty = 1;
-        woodsHeavyChanceField.setRequired(true);
-        woodsHeavyChanceField.setSelectAllTextOnGotFocus(true);
-        woodsHeavyChanceField.addVerifier(new VerifyInRange(0, 100, true));
+        panel.add(heavyWoodsLabel);
         woodsHeavyChanceField.setToolTipText(Messages.getString("RandomMapDialog.woodsHeavyChanceField.toolTip"));
-        woodsHeavyChanceField.setName(heavyWoodsLabel.getText());
-        panel.add(woodsHeavyChanceField, constraints);
+        panel.add(woodsHeavyChanceField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                          Messages.getString("RandomMapDialog.borderWoods")));
 
         return panel;
     }
+    
+    private class FeaturePanel extends JPanel {
+        private static final long serialVersionUID = 2064014325837995657L;
+
+        public FeaturePanel(LayoutManager layout) {
+            super(layout);
+        }
+        
+        @Override
+        public Dimension getMaximumSize() {
+            // Make this Panel not stretch vertically
+            Dimension size = getPreferredSize();
+            Dimension maxSize = super.getMaximumSize();
+            return new Dimension(maxSize.width, size.height);
+        }        
+    }
+    
+    private JPanel setupFoliagePanel() {
+        JPanel panel = new FeaturePanel(new SpringLayout());
+        
+        JLabel numberWoodsLabel = new JLabel(Messages.getString("RandomMapDialog.labFoliageSpots"));
+        panel.add(numberWoodsLabel);
+        foliageMinField.setToolTipText(Messages.getString("RandomMapDialog.foliageMinField.toolTip"));
+        panel.add(foliageMinField);
+        panel.add(new JLabel(Messages.getString("to")));
+        foliageMaxField.setToolTipText(Messages.getString("RandomMapDialog.foliageMaxField.toolTip"));
+        panel.add(foliageMaxField);
+
+        JLabel sizesWoodsLabel = new JLabel(Messages.getString("RandomMapDialog.labFoliageSize"));
+        panel.add(sizesWoodsLabel);
+        foliageMinSizeField.setToolTipText(Messages.getString("RandomMapDialog.foliageMinSizeField.toolTip"));
+        panel.add(foliageMinSizeField);
+        panel.add(new JLabel(Messages.getString("to")));
+        foliageMaxSizeField.setToolTipText(Messages.getString("RandomMapDialog.foliageMaxSizeField.toolTip"));
+        panel.add(foliageMaxSizeField);
+
+        JLabel heavyWoodsLabel = new JLabel(Messages.getString("RandomMapDialog.labProbHeavy"));
+        panel.add(heavyWoodsLabel);
+        foliageHeavyChanceField.setToolTipText(Messages.getString("RandomMapDialog.foliageHeavyChanceField.toolTip"));
+        panel.add(foliageHeavyChanceField);
+        panel.add(new JLabel());
+        panel.add(new JLabel());
+
+        panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
+                                         Messages.getString("RandomMapDialog.borderFoliage")));
+
+        RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
+        return panel;
+    }
 
     private JPanel setupSwampsPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = setupConstraints();
-        JPanel panel = new JPanel(layout);
-
-        // Row 1, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.gridwidth = 1;
+        JPanel panel = new FeaturePanel(new SpringLayout());
+        
         JLabel numberSwampsLabel = new JLabel(Messages.getString("RandomMapDialog.labSwampSpots"));
-        panel.add(numberSwampsLabel, constraints);
-
-        // Row 1, Column 2.
-        constraints.gridx++;
-        swampsMinField.setRequired(true);
-        swampsMinField.setSelectAllTextOnGotFocus(true);
-        swampsMinField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(numberSwampsLabel);
         swampsMinField.setToolTipText(Messages.getString("RandomMapDialog.swampsMinField.toolTip"));
-        swampsMinField.setName(numberSwampsLabel.getText());
-        panel.add(swampsMinField, constraints);
+        panel.add(swampsMinField);
 
-        // Row 1, Column 3.
-        constraints.gridx++;
         JLabel numberSwampsToLabel = new JLabel(Messages.getString("to"));
-        panel.add(numberSwampsToLabel, constraints);
-
-        // Row 1, Column 4.
-        constraints.gridx++;
-        constraints.weightx = 1;
-        swampsMaxField.setRequired(true);
-        swampsMaxField.setSelectAllTextOnGotFocus(true);
-        swampsMaxField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(numberSwampsToLabel);
         swampsMaxField.setToolTipText(Messages.getString("RandomMapDialog.swampsMaxField.toolTip"));
-        swampsMaxField.setName(numberSwampsLabel.getText());
-        panel.add(swampsMaxField, constraints);
+        panel.add(swampsMaxField);
 
-        // Row 2, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
         JLabel sizeSwampsLabel = new JLabel(Messages.getString("RandomMapDialog.labSwampSize"));
-        panel.add(sizeSwampsLabel, constraints);
-
-        // Row 2, Column 2.
-        constraints.gridx++;
-        swampsMinSizeField.setRequired(true);
-        swampsMinSizeField.setSelectAllTextOnGotFocus(true);
-        swampsMinSizeField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(sizeSwampsLabel);
         swampsMinSizeField.setToolTipText(Messages.getString("RandomMapDialog.swampsMinSizeField.toolTip"));
-        swampsMinSizeField.setName(sizeSwampsLabel.getText());
-        panel.add(swampsMinSizeField, constraints);
+        panel.add(swampsMinSizeField);
 
-        // Row 2, Column 3.
-        constraints.gridx++;
         JLabel sizeSwampsToLabel = new JLabel(Messages.getString("to"));
-        panel.add(sizeSwampsToLabel, constraints);
-
-        // Row 2, Column 4.
-        constraints.gridx++;
-        constraints.weightx = 1;
-        constraints.weighty = 1;
-        swampsMaxSizeField.setRequired(true);
-        swampsMaxSizeField.setSelectAllTextOnGotFocus(true);
-        swampsMaxSizeField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(sizeSwampsToLabel);
         swampsMaxSizeField.setToolTipText(Messages.getString("RandomMapDialog.swampsMaxSizeField.toolTip"));
-        swampsMaxSizeField.setName(sizeSwampsLabel.getText());
-        panel.add(swampsMaxSizeField, constraints);
+        panel.add(swampsMaxSizeField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                          Messages.getString("RandomMapDialog.borderSwamp")));
-
+        
+        RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
         return panel;
     }
 
     private JPanel setupSandsPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = setupConstraints();
-        JPanel panel = new JPanel(layout);
+        JPanel panel = new FeaturePanel(new SpringLayout());
 
-        // Row 1, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.gridwidth = 1;
         JLabel numberSandsLabel = new JLabel(Messages.getString("RandomMapDialog.labSandSpots"));
-        panel.add(numberSandsLabel, constraints);
-
-        // Row 1, Column 2.
-        constraints.gridx++;
-        sandsMinField.setRequired(true);
-        sandsMinField.setSelectAllTextOnGotFocus(true);
-        sandsMinField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(numberSandsLabel);
         sandsMinField.setToolTipText(Messages.getString("RandomMapDialog.sandsMinField.toolTip"));
-        sandsMinField.setName(numberSandsLabel.getText());
-        panel.add(sandsMinField, constraints);
-
-        // Row 1, Column 3.
-        constraints.gridx++;
+        panel.add(sandsMinField);
         JLabel numberSandsToLabel = new JLabel(Messages.getString("to"));
-        panel.add(numberSandsToLabel, constraints);
-
-        // Row 1, Column 4.
-        constraints.gridx++;
-        constraints.weightx = 1;
-        sandsMaxField.setRequired(true);
-        sandsMaxField.setSelectAllTextOnGotFocus(true);
-        sandsMaxField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(numberSandsToLabel);
         sandsMaxField.setToolTipText(Messages.getString("RandomMapDialog.sandsMaxField.toolTip"));
-        sandsMaxField.setName(numberSandsLabel.getText());
-        panel.add(sandsMaxField, constraints);
+        panel.add(sandsMaxField);
 
-        // Row 2, Column 1.
-        constraints.gridx = 0;
-        constraints.weightx = 0;
-        constraints.gridy++;
         JLabel sizeSandsLabel = new JLabel(Messages.getString("RandomMapDialog.labSandSize"));
-        panel.add(sizeSandsLabel, constraints);
-
-        // Row 2, Column 2.
-        constraints.gridx++;
-        sandsSizeMinField.setRequired(true);
-        sandsSizeMinField.setSelectAllTextOnGotFocus(true);
-        sandsSizeMinField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(sizeSandsLabel);
         sandsSizeMinField.setToolTipText(Messages.getString("RandomMapDialog.sandsSizeMinField.toolTip"));
-        sandsSizeMinField.setName(sizeSandsLabel.getText());
-        panel.add(sandsSizeMinField, constraints);
-
-        // Row 2, Column 3.
-        constraints.gridx++;
+        panel.add(sandsSizeMinField);
         JLabel sizeSandsToLabel = new JLabel(Messages.getString("to"));
-        panel.add(sizeSandsToLabel, constraints);
-
-        // Row 2, Column 4.
-        constraints.gridx++;
-        constraints.weightx = 1;
-        constraints.weighty = 1;
-        sandsSizeMaxField.setRequired(true);
-        sandsSizeMaxField.setSelectAllTextOnGotFocus(true);
-        sandsSizeMaxField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(sizeSandsToLabel);
         sandsSizeMaxField.setToolTipText(Messages.getString("RandomMapDialog.sandsSizeMaxField.toolTip"));
-        sandsSizeMaxField.setName(sizeSandsLabel.getText());
-        panel.add(sandsSizeMaxField, constraints);
+        panel.add(sandsSizeMaxField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                          Messages.getString("RandomMapDialog.borderSand")));
 
+        RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
         return panel;
     }
 
     private JPanel setupRoughsPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = setupConstraints();
-        JPanel panel = new JPanel(layout);
+        JPanel panel = new FeaturePanel(new SpringLayout());
 
-        // Row 1, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.gridwidth = 1;
         JLabel numberRoughsLabel = new JLabel(Messages.getString("RandomMapDialog.labRoughSpots"));
-        panel.add(numberRoughsLabel, constraints);
-
-        // Row 1, Column 2.
-        constraints.gridx++;
-        roughsMinField.setRequired(true);
-        roughsMinField.setSelectAllTextOnGotFocus(true);
-        roughsMinField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(numberRoughsLabel);
         roughsMinField.setToolTipText(Messages.getString("RandomMapDialog.roughsMinField.toolTip"));
-        roughsMinField.setName(numberRoughsLabel.getText());
-        panel.add(roughsMinField, constraints);
-
-        // Row 1, Column 3.
-        constraints.gridx++;
+        panel.add(roughsMinField);
         JLabel numberRoughsToLabel = new JLabel(Messages.getString("to"));
-        panel.add(numberRoughsToLabel, constraints);
-
-        // Row 1, Column 4.
-        constraints.gridx++;
-        constraints.weightx = 1;
-        roughsMaxField.setRequired(true);
-        roughsMaxField.setSelectAllTextOnGotFocus(true);
-        roughsMaxField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(numberRoughsToLabel);
         roughsMaxField.setToolTipText(Messages.getString("RandomMapDialog.roughsMaxField.toolTip"));
-        roughsMaxField.setName(numberRoughsLabel.getText());
-        panel.add(roughsMaxField, constraints);
+        panel.add(roughsMaxField);
 
-        // Row 2, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
         JLabel sizeRoughsLabel = new JLabel(Messages.getString("RandomMapDialog.labRoughSize"));
-        panel.add(sizeRoughsLabel, constraints);
-
-        // Row 2, Column 2.
-        constraints.gridx++;
-        roughsMinSizeField.setRequired(true);
-        roughsMinSizeField.setSelectAllTextOnGotFocus(true);
-        roughsMinSizeField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(sizeRoughsLabel);
         roughsMinSizeField.setToolTipText(Messages.getString("RandomMapDialog.roughsMinSizeField.toolTip"));
-        roughsMinSizeField.setName(sizeRoughsLabel.getText());
-        panel.add(roughsMinSizeField, constraints);
-
-        // Row 2, Column 3.
-        constraints.gridx++;
+        panel.add(roughsMinSizeField);
         JLabel sizeRoughsToLabel = new JLabel(Messages.getString("to"));
-        panel.add(sizeRoughsToLabel, constraints);
-
-        // Row 2, Column 4.
-        constraints.gridx++;
-        constraints.weightx = 1;
-        constraints.weighty = 1;
-        roughsMaxSizeField.setRequired(true);
-        roughsMaxSizeField.setSelectAllTextOnGotFocus(true);
-        roughsMaxSizeField.addVerifier(new VerifyIsPositiveInteger());
+        panel.add(sizeRoughsToLabel);
         roughsMaxSizeField.setToolTipText(Messages.getString("RandomMapDialog.roughsMaxSizeField.toolTip"));
-        roughsMaxSizeField.setName(sizeRoughsLabel.getText());
-        panel.add(roughsMaxSizeField, constraints);
+        panel.add(roughsMaxSizeField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                          Messages.getString("RandomMapDialog.borderRough")));
 
+        RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
         return panel;
     }
 
     private JScrollPane setupElevationPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = setupConstraints();
-        JPanel panel = new JPanel(layout);
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-        // Row 1
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.weightx = 1;
-        panel.add(setupElevationGeneralPanel(), constraints);
-
-        // Row 2
-        constraints.gridy++;
-        panel.add(setupMountainsPanel(), constraints);
-
-        // Row 3
-        constraints.gridy++;
-        constraints.weighty = 1;
-        panel.add(setupCratersPanel(), constraints);
+        panel.add(setupElevationGeneralPanel());
+        panel.add(setupMountainsPanel());
+        panel.add(setupCratersPanel());
 
         return new JScrollPane(panel);
     }
@@ -1875,8 +1701,8 @@ public class RandomMapPanelAdvanced extends JPanel {
             new RuntimeException(INVALID).printStackTrace();
             min.setOldToolTip(min.getToolTipText());
             max.setOldToolTip(max.getToolTipText());
-            min.setBackground(VerifiableTextField.BK_INVALID);
-            max.setBackground(VerifiableTextField.BK_INVALID);
+            min.setBackground(VerifiableTextField.getInvalidColor());
+            max.setBackground(VerifiableTextField.getInvalidColor());
             min.setToolTipText(INVALID);
             max.setToolTipText(INVALID);
             min.requestFocus();
@@ -1969,6 +1795,18 @@ public class RandomMapPanelAdvanced extends JPanel {
         }
 
         if (!isFieldVerified(woodsHeavyChanceField)) {
+            return false;
+        }
+        
+        if (!isMinMaxVerified(foliageMinField, foliageMaxField)) {
+            return false;
+        }
+
+        if (!isMinMaxVerified(foliageMinSizeField, foliageMaxSizeField)) {
+            return false;
+        }
+
+        if (!isFieldVerified(foliageHeavyChanceField)) {
             return false;
         }
 
@@ -2127,6 +1965,11 @@ public class RandomMapPanelAdvanced extends JPanel {
                                        woodsMinSizeField.getAsInt(),
                                        woodsMaxSizeField.getAsInt(),
                                        woodsHeavyChanceField.getAsInt());
+        newMapSettings.setFoliageParams(foliageMinField.getAsInt(),
+                                       foliageMaxField.getAsInt(),
+                                       foliageMinSizeField.getAsInt(),
+                                       foliageMaxSizeField.getAsInt(),
+                                       foliageHeavyChanceField.getAsInt());
         newMapSettings.setPlantedFieldParams(fieldsMinField.getAsInt(),
                                              fieldsMaxField.getAsInt(),
                                              fieldSizeMinField.getAsInt(),

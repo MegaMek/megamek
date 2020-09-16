@@ -31,11 +31,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-
 import megamek.MegaMek;
-import org.xml.sax.SAXException;
-
 import megamek.common.util.BuildingTemplate;
 import megamek.utils.MegaMekXmlUtil;
 
@@ -131,6 +127,22 @@ public class MapSettings implements Serializable {
     /** probability for heavy woods, Range 0..100 */
     @XmlElement(name = "FORESTHEAVYPROB")
     private int probHeavy = 30;
+    
+    /** how much foliage at least */
+    @XmlElement(name = "FOLIAGEMINSPOTS")
+    private int minFoliageSpots = 0;
+    /** how much foliage at most */
+    @XmlElement(name = "FOLIAGEMAXSPOTS")
+    private int maxFoliageSpots = 3;
+    /** minimum size of a forest */
+    @XmlElement(name = "FOLIAGEMINHEXES")
+    private int minFoliageSize = 2;
+    /** maximum Size of a forest */
+    @XmlElement(name = "FOLIAGEMAXHEXES")
+    private int maxFoliageSize = 5;
+    /** probability for heavy foliage, Range 0..100 */
+    @XmlElement(name = "FOLIAGEHEAVYPROB")
+    private int probFoliageHeavy = 30;
 
     /** how much rough spots at least */
     @XmlElement(name = "ROUGHMINSPOTS")
@@ -418,6 +430,11 @@ public class MapSettings implements Serializable {
         minForestSize = other.getMinForestSize();
         maxForestSize = other.getMaxForestSize();
         probHeavy = other.getProbHeavy();
+        minFoliageSpots = other.getMinFoliageSpots();
+        maxFoliageSpots = other.getMaxFoliageSpots();
+        minFoliageSize = other.getMinFoliageSize();
+        maxFoliageSize = other.getMaxFoliageSize();
+        probFoliageHeavy = other.getProbFoliageHeavy();
         minRoughSpots = other.getMinRoughSpots();
         maxRoughSpots = other.getMaxRoughSpots();
         minRoughSize = other.getMinRoughSize();
@@ -738,6 +755,24 @@ public class MapSettings implements Serializable {
         if (probHeavy > 100) {
             probHeavy = 100;
         }
+        if (minFoliageSpots < 0) {
+            minFoliageSpots = 0;
+        }
+        if (maxFoliageSpots < minFoliageSpots) {
+            maxFoliageSpots = minFoliageSpots;
+        }
+        if (minFoliageSize < 0) {
+            minFoliageSize = 0;
+        }
+        if (maxFoliageSize < minFoliageSize) {
+            maxFoliageSize = minFoliageSize;
+        }
+        if (probFoliageHeavy < 0) {
+            probFoliageHeavy = 0;
+        }
+        if (probFoliageHeavy > 100) {
+            probFoliageHeavy = 100;
+        }
         if (minRoughSpots < 0) {
             minRoughSpots = 0;
         }
@@ -896,6 +931,9 @@ public class MapSettings implements Serializable {
                 || (probDeep != other.getProbDeep()) || (minForestSpots != other.getMinForestSpots())
                 || (maxForestSpots != other.getMaxForestSpots()) || (minForestSize != other.getMinForestSize())
                 || (maxForestSize != other.getMaxForestSize()) || (probHeavy != other.getProbHeavy())
+                || (minFoliageSpots != other.getMinFoliageSpots())
+                || (maxFoliageSpots != other.getMaxFoliageSpots()) || (minFoliageSize != other.getMinFoliageSize())
+                || (maxFoliageSize != other.getMaxFoliageSize()) || (probFoliageHeavy != other.getProbFoliageHeavy())
                 || (minRoughSpots != other.getMinRoughSpots()) || (maxRoughSpots != other.getMaxRoughSpots())
                 || (minRoughSize != other.getMinRoughSize()) || (maxRoughSize != other.getMaxRoughSize())
                 || (minSandSpots != other.getMinSandSpots()) || (maxSandSpots != other.getMaxSandSpots())
@@ -993,6 +1031,26 @@ public class MapSettings implements Serializable {
 
     public int getProbHeavy() {
         return probHeavy;
+    }
+    
+    public int getMinFoliageSpots() {
+        return minFoliageSpots;
+    }
+
+    public int getMaxFoliageSpots() {
+        return maxFoliageSpots;
+    }
+
+    public int getMinFoliageSize() {
+        return minFoliageSize;
+    }
+
+    public int getMaxFoliageSize() {
+        return maxFoliageSize;
+    }
+
+    public int getProbFoliageHeavy() {
+        return probFoliageHeavy;
     }
 
     public int getMinRoughSpots() {
@@ -1292,6 +1350,17 @@ public class MapSettings implements Serializable {
         minForestSize = minSize;
         maxForestSize = maxSize;
         probHeavy = prob;
+    }
+    
+    /**
+     * set the Parameters for the Map Generator
+     */
+    public void setFoliageParams(int minSpots, int maxSpots, int minSize, int maxSize, int prob) {
+        minFoliageSpots = minSpots;
+        maxFoliageSpots = maxSpots;
+        minFoliageSize = minSize;
+        maxFoliageSize = maxSize;
+        probFoliageHeavy = prob;
     }
 
     /**

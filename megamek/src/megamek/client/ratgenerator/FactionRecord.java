@@ -294,7 +294,7 @@ public class FactionRecord {
 						retVal.merge(fKey, fRec.getSalvage(era).get(fKey), Integer::sum);
 					}					
 				} else {
-		            DefaultMmLogger.getInstance().debug(getClass(), "getSalvage(int)",
+		            DefaultMmLogger.getInstance().debug(this,
 		                    "RATGenerator: could not locate salvage faction " + pKey
 							+ " for " + key);
 				}

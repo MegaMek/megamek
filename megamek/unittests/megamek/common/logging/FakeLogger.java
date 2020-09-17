@@ -54,16 +54,6 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T debug(String callingClass, String methodName, String message, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T debug(Class<?> callingClass, String methodName, String message, T throwable) {
-        return null;
-    }
-
-    @Override
     public <T extends Throwable> T debug(Class<?> callingClass, String methodName, T throwable) {
         return null;
     }
@@ -74,8 +64,18 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
+    public void debug(Class<?> callingClass, String message) {
+
+    }
+
+    @Override
     public void debug(Object callingObject, String message) {
 
+    }
+
+    @Override
+    public <T extends Throwable> T debug(Class<?> callingClass, T throwable) {
+        return null;
     }
 
     @Override
@@ -85,11 +85,6 @@ public class FakeLogger implements MMLogger {
 
     @Override
     public <T extends Throwable> T debug(Object callingObject, String message, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T error(String callingClass, String methodName, String message, T throwable) {
         return null;
     }
 
@@ -109,8 +104,18 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
+    public void error(Class<?> callingClass, String message) {
+
+    }
+
+    @Override
     public void error(Object callingObject, String message) {
 
+    }
+
+    @Override
+    public <T extends Throwable> T error(Class<?> callingClass, T throwable) {
+        return null;
     }
 
     @Override
@@ -124,17 +129,7 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T fatal(String callingClass, String methodName, String message, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T fatal(Class<?> callingClass, String methodName, String message, T throwable) {
-        return null;
-    }
-
-    @Override
-    public void fatal(Class<?> callingClass, String methodName, String message) {
+    public void fatal(Class<?> callingClass, String message) {
 
     }
 
@@ -144,22 +139,22 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
+    public <T extends Throwable> T fatal(Class<?> callingClass, T throwable) {
+        return null;
+    }
+
+    @Override
     public <T extends Throwable> T fatal(Object callingObject, T throwable) {
         return null;
     }
 
     @Override
+    public <T extends Throwable> T fatal(Class<?> callingClass, String message, T throwable) {
+        return null;
+    }
+
+    @Override
     public <T extends Throwable> T fatal(Object callingObject, String message, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T info(String callingClass, String methodName, String message, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T info(Class<?> callingClass, String methodName, String message, T throwable) {
         return null;
     }
 
@@ -174,8 +169,18 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
+    public void info(Class<?> callingClass, String message) {
+
+    }
+
+    @Override
     public void info(Object callingObject, String message) {
 
+    }
+
+    @Override
+    public <T extends Throwable> T info(Class<?> callingClass, T throwable) {
+        return null;
     }
 
     @Override
@@ -189,13 +194,8 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T trace(String callingClass, String methodName, String message, T throwable) {
-        return null;
-    }
+    public void trace(Class<?> callingClass, String message) {
 
-    @Override
-    public <T extends Throwable> T trace(Class<?> callingClass, String methodName, String message, T throwable) {
-        return null;
     }
 
     @Override
@@ -204,13 +204,13 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public void trace(Class<?> callingClass, String methodName, String message) {
+    public void trace(Object callingObject, String message) {
 
     }
 
     @Override
-    public void trace(Object callingObject, String message) {
-
+    public <T extends Throwable> T trace(Class<?> callingClass, T throwable) {
+        return null;
     }
 
     @Override
@@ -224,17 +224,7 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T warning(String callingClass, String methodName, String message, T throwable) {
-        return null;
-    }
-
-    @Override
     public <T extends Throwable> T warning(Class<?> callingClass, String methodName, String message, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T warning(Class<?> callingClass, String methodName, T throwable) {
         return null;
     }
 
@@ -244,12 +234,27 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
+    public void warning(Class<?> callingClass, String message) {
+
+    }
+
+    @Override
     public void warning(Object callingObject, String message) {
 
     }
 
     @Override
+    public <T extends Throwable> T warning(Class<?> callingClass, T throwable) {
+        return null;
+    }
+
+    @Override
     public <T extends Throwable> T warning(Object callingObject, T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T warning(Class<?> callingClass, String message, T throwable) {
         return null;
     }
 

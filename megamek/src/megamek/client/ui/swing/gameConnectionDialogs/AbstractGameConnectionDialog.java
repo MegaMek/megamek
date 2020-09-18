@@ -105,11 +105,11 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     //endregion Getters and Setters
 
     //region Validation
-    public boolean dataValidation(String errorTitleKey, String errorMessageKey) {
+    public boolean dataValidation(String errorTitleKey) {
         if (StringUtil.isNullOrEmpty(getPlayerName()) || (getPort() == 0)) {
             return false;
         } else if (!validatePlayerName()) {
-            JOptionPane.showMessageDialog(getOwner(), Messages.getString(errorMessageKey),
+            JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.PlayerNameError"),
                     Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);
             return false;
         }

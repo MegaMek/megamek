@@ -313,7 +313,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         String splashFilename;
         if (skinSpec.hasBackgrounds()) {
             splashFilename = determineSplashScreen(skinSpec.backgrounds, 
-            		currentMonitor.getWidth(), currentMonitor.getHeight());
+                    currentMonitor.getWidth(), currentMonitor.getHeight());
             if (skinSpec.backgrounds.size() > 1) {
                 File file = new MegaMekFile(Configuration.widgetsDir(),
                         skinSpec.backgrounds.get(1)).getFile();
@@ -480,7 +480,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         HostDialog hd = new HostDialog(frame);
         hd.setVisible(true);
 
-        if (!hd.dataValidation("MegaMek.PlayerNameAlert.title", "MegaMek.PlayerNameAlert.message")) {
+        if (!hd.dataValidation("MegaMek.HostGameAlert.title")) {
             return;
         }
 
@@ -492,9 +492,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             server = new Server(hd.getServerPass(), hd.getPort(), hd.isRegister(),
                     hd.isRegister() ? hd.getMetaserver() : "");
         } catch (Exception e) {
-            MegaMek.getLogger().error(this, "could not create server socket on port " + hd.getPort());
+            MegaMek.getLogger().error(this, "could not create server socket on port " + hd.getPort(), e);
             JOptionPane.showMessageDialog(frame,
-                    "Error: could not start server at localhost" + ":" + hd.getPort() + " (" + e.getMessage() + ").",
+                    Messages.getString("MegaMek.StartServerError", hd.getPort(), e.getMessage()),
                     Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -506,8 +506,8 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
-            String error = "Error: could not connect to server at localhost" + ":" + hd.getPort() + ".";
-            JOptionPane.showMessageDialog(frame, error,
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("MegaMek.ServerConnectionError", "localhost", hd.getPort()),
                     Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
@@ -540,7 +540,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         HostDialog hd = new HostDialog(frame);
         hd.setVisible(true);
 
-        if (!hd.dataValidation("MegaMek.PlayerNameAlert1.title", "MegaMek.PlayerNameAlert.message")) {
+        if (!hd.dataValidation("MegaMek.LoadGameAlert.title")) {
             return;
         }
 
@@ -550,16 +550,16 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         try {
             server = new Server(hd.getServerPass(), hd.getPort(), hd.isRegister(), hd.isRegister() ? hd.getMetaserver() : "");
         } catch (IOException ex) {
-            MegaMek.getLogger().error(this, "could not create server socket on port " + hd.getPort());
+            MegaMek.getLogger().error(this, "could not create server socket on port " + hd.getPort(), ex);
             JOptionPane.showMessageDialog(frame,
-                    "Error: could not start server at localhost" + ":" + hd.getPort() + " (" + ex.getMessage() + ").",
-                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+                    Messages.getString("MegaMek.StartServerError", hd.getPort(), ex.getMessage()),
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (!server.loadGame(fc.getSelectedFile())) {
             JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"),
-                    Messages.getString("MegaMek.LoadGame.title"), JOptionPane.ERROR_MESSAGE);
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             server.die();
             server = null;
             return;
@@ -573,8 +573,8 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
             JOptionPane.showMessageDialog(frame,
-                    "Error: could not connect to server at localhost" + ":" + hd.getPort() + ".",
-                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+                    Messages.getString("MegaMek.ServerConnectionError", "localhost", hd.getPort()),
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
         }
@@ -641,9 +641,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         try {
             g = sl.createGame();
         } catch (Exception e) {
-            MegaMek.getLogger().error(getClass(), "scenario", e);
+            MegaMek.getLogger().error(this, e);
             JOptionPane.showMessageDialog(frame,
-                    Messages.getString("MegaMek.HostScenarioAlert.message") + e.getMessage(),
+                    Messages.getString("MegaMek.HostScenarioAlert.message", e.getMessage()),
                     Messages.getString("MegaMek.HostScenarioAlert.title"),
                     JOptionPane.ERROR_MESSAGE);
             return;
@@ -682,7 +682,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         hd.getPlayerNameField().setText(sd.localName);
         hd.setVisible(true);
 
-        if (!hd.dataValidation("MegaMek.HostScenarioAlert1.title", "MegaMek.HostScenarioAlert1.message")) {
+        if (!hd.dataValidation("MegaMek.HostScenarioAlert.title")) {
             return;
         }
 
@@ -694,12 +694,11 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // start server
         try {
             server = new Server(hd.getServerPass(), hd.getPort());
-        } catch (IOException ex) {
-            MegaMek.getLogger().error(this, "could not create server socket on port " + hd.getPort());
-            String error = "Error: could not start server at localhost" + ":" + hd.getPort() + " (" +
-                    ex.getMessage() + ").";
-            JOptionPane.showMessageDialog(frame, error,
-                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            MegaMek.getLogger().error(this, "could not create server socket on port " + hd.getPort(), ex);
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("MegaMek.StartServerError", hd.getPort(), ex.getMessage()),
+                    Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         server.setGame(g);
@@ -714,8 +713,8 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             controller.clientgui = gui;
             gui.initialize();
             if (!client.connect()) {
-                String error = "Error: could not connect to server at localhost" + ":" + hd.getPort() + ".";
-                JOptionPane.showMessageDialog(frame, error,
+                JOptionPane.showMessageDialog(frame,
+                        Messages.getString("MegaMek.ServerConnectionError", "localhost", hd.getPort()),
                         Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE);
                 frame.setVisible(false);
                 client.die();
@@ -764,7 +763,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         ConnectDialog cd = new ConnectDialog(frame);
         cd.setVisible(true);
 
-        if (!cd.dataValidation("MegaMek.ConnectAlert.title", "MegaMek.ConnectAlert.errorMessage")) {
+        if (!cd.dataValidation("MegaMek.ConnectDialog.title")) {
             return;
         }
 
@@ -776,9 +775,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         gui.initialize();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
-            String error = "Error: could not connect to server at " + cd.getServerAddress() + ':' + cd.getPort() + '.';
-            JOptionPane.showMessageDialog(frame, error,
-                    Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("MegaMek.ServerConnectionError", cd.getServerAddress(), cd.getPort()),
+                    Messages.getString("MegaMek.ConnectDialog.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
         }
@@ -789,7 +788,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         ConnectDialog cd = new ConnectDialog(frame);
         cd.setVisible(true);
 
-        if (!cd.dataValidation("MegaMek.ConnectGameAlert.title", "MegaMek.ConnectGameAlert.errorMessage")) {
+        if (!cd.dataValidation("MegaMek.ConnectDialog.title")) {
             return;
         }
 
@@ -805,9 +804,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         controller.clientgui = gui;
         gui.initialize();
         if (!client.connect()) {
-            String error = "Error: could not connect to server at " + cd.getServerAddress() + ':' + cd.getPort() + '.';
-            JOptionPane.showMessageDialog(frame, error,
-                    Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("MegaMek.ServerConnectionError", cd.getServerAddress(), cd.getPort()),
+                    Messages.getString("MegaMek.ConnectDialog.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             client.die();
         }
@@ -1044,24 +1043,24 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
      * 		String that represents the splash screen that should be displayed.
      */
     private String determineSplashScreen(final List<String> splashScreens, 
-    		final int screenWidth, final int screenHeight) {
-    	// Ensure that the list is of appropriate size to contain HD, FHD, and UHD splash 
-    	// screens.
-    	if (splashScreens.size() > 3) {
-    		// Default to the HD splash screen.
-    		String splashFileName = splashScreens.get(3);
-    		// If both height and width is greater than 1080p use the UHD splash screen.
-	    	if (screenWidth > 1920 && screenHeight > 1080) {
-	    		splashFileName = splashScreens.get(2);
-	    	}
-	    	// If both height and width is greater than 720p then use the FHD splash screen.
-	    	else if (screenWidth > 1280 && screenHeight > 720)
-	    	{
-	    		splashFileName = splashScreens.get(0);
-	    	}
-	    	return splashFileName;
-    	}
-    	// List of splash screens is not complete so default to the first splash screen.
-    	return splashScreens.get(0);
+            final int screenWidth, final int screenHeight) {
+        // Ensure that the list is of appropriate size to contain HD, FHD, and UHD splash
+        // screens.
+        if (splashScreens.size() > 3) {
+            // Default to the HD splash screen.
+            String splashFileName = splashScreens.get(3);
+            // If both height and width is greater than 1080p use the UHD splash screen.
+            if (screenWidth > 1920 && screenHeight > 1080) {
+                splashFileName = splashScreens.get(2);
+            }
+            // If both height and width is greater than 720p then use the FHD splash screen.
+            else if (screenWidth > 1280 && screenHeight > 720)
+            {
+                splashFileName = splashScreens.get(0);
+            }
+            return splashFileName;
+        }
+        // List of splash screens is not complete so default to the first splash screen.
+        return splashScreens.get(0);
     }
 }

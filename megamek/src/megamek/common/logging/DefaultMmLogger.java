@@ -98,7 +98,6 @@ public class DefaultMmLogger implements MMLogger {
     @Override
     public <T extends Throwable> T log(final Class<?> callingClass, final String methodName,
                                        final LogLevel logLevel, final T throwable) {
-
         // Construct the message from the Throwable's message.
         String message = "";
         if (null != throwable) {
@@ -110,8 +109,7 @@ public class DefaultMmLogger implements MMLogger {
     @Override
     public <T extends Throwable> T log(final Class<?> callingClass, final String methodName,
                                        final LogLevel level, final String message, final T throwable) {
-        return log(callingClass.getName(), methodName, level, message,
-                   throwable);
+        return log(callingClass.getName(), methodName, level, message, throwable);
     }
 
     @Override
@@ -119,29 +117,17 @@ public class DefaultMmLogger implements MMLogger {
                     final String message) {
         log(callingClass.getName(), methodName, level, message, null);
     }
-    
-    @Override
-    public <T extends Throwable> T debug(final String callingClass, final String methodName,
-                                         final String message, final T throwable) {
-        return log(callingClass, methodName,LogLevel.DEBUG, message, throwable);
-    }
 
-
+    //region Debug
     @Override
-    public <T extends Throwable> T debug(final Class<?> callingClass, final String methodName,
-                                         final String message, final T throwable) {
-        return log(callingClass, methodName, LogLevel.DEBUG, message, throwable);
-    }
-
-    @Override
-    public <T extends Throwable> T debug(final Class<?> callingClass, final String methodName,
-                                         final T throwable) {
-        return log(callingClass, methodName, LogLevel.DEBUG, throwable);
-    }
-
-    @Override
+    @Deprecated
     public void debug(final Class<?> callingClass, final String methodName, final String message) {
         log(callingClass, methodName, LogLevel.DEBUG, message);
+    }
+
+    @Override
+    public void debug(final Class<?> callingClass, final String message) {
+        log(callingClass, getCallingMethod(), LogLevel.DEBUG, message);
     }
 
     @Override
@@ -150,8 +136,19 @@ public class DefaultMmLogger implements MMLogger {
     }
 
     @Override
+    public <T extends Throwable> T debug(final Class<?> callingClass, final T throwable) {
+        return log(callingClass, getCallingMethod(), LogLevel.DEBUG, throwable);
+    }
+
+    @Override
     public <T extends Throwable> T debug(final Object callingObject, final T throwable) {
         return log(callingObject.getClass(), getCallingMethod(), LogLevel.DEBUG, throwable);
+    }
+
+    @Override
+    public <T extends Throwable> T debug(final Class<?> callingClass, final String message,
+                                         final T throwable) {
+        return log(callingClass, getCallingMethod(), LogLevel.DEBUG, message, throwable);
     }
 
     @Override
@@ -159,33 +156,42 @@ public class DefaultMmLogger implements MMLogger {
                                          final T throwable) {
         return log(callingObject.getClass(), getCallingMethod(), LogLevel.DEBUG, message, throwable);
     }
+    //endregion Debug
 
+    //region Error
     @Override
-    public <T extends Throwable> T error(final String callingClass, final String methodName,
-                                         final String message, final T throwable) {
-        return log(callingClass, methodName, LogLevel.ERROR, message, throwable);
-    }
-
-    @Override
+    @Deprecated
     public <T extends Throwable> T error(final Class<?> callingClass, final String methodName,
                                          final String message, final T throwable) {
         return log(callingClass, methodName, LogLevel.ERROR, message, throwable);
     }
 
     @Override
+    @Deprecated
     public <T extends Throwable> T error(final Class<?> callingClass, final String methodName,
                                          final T throwable) {
         return log(callingClass, methodName, LogLevel.ERROR, throwable);
     }
 
     @Override
+    @Deprecated
     public void error(final Class<?> callingClass, final String methodName, final String message) {
         log(callingClass, methodName, LogLevel.ERROR, message);
     }
     
     @Override
+    public void error(final Class<?> callingClass, final String message) {
+        log(callingClass, getCallingMethod(), LogLevel.ERROR, message);
+    }
+
+    @Override
     public void error(final Object callingObject, final String message) {
         log(callingObject.getClass(), getCallingMethod(), LogLevel.ERROR, message);
+    }
+
+    @Override
+    public <T extends Throwable> T error(final Class<?> callingClass, final T throwable) {
+        return log(callingClass, getCallingMethod(), LogLevel.ERROR, throwable);
     }
 
     @Override
@@ -193,32 +199,36 @@ public class DefaultMmLogger implements MMLogger {
         return log(callingObject.getClass(), getCallingMethod(), LogLevel.ERROR, throwable);
     }
 
+    // TODO : Enable me once the Deprecated
+    // TODO : error(final Class<?> callingClass, final String methodName, final T throwable)
+    // TODO : is removed
+    //@Override
+    //public <T extends Throwable> T error(final Object callingObject, final String message,
+    //                                     final T throwable) {
+    //    return log(callingObject.getClass(), getCallingMethod(), LogLevel.ERROR, message, throwable);
+    //}
+
     @Override
     public <T extends Throwable> T error(final Object callingObject, final String message,
                                          final T throwable) {
         return log(callingObject.getClass(), getCallingMethod(), LogLevel.ERROR, message, throwable);
     }
+    //endregion Error
 
+    //region Fatal
     @Override
-    public <T extends Throwable> T fatal(final String callingClass, final String methodName,
-                                         final String message, final T throwable) {
-        return log(callingClass, methodName, LogLevel.FATAL, message, throwable);
+    public void fatal(final Class<?> callingClass, final String message) {
+        log(callingClass, getCallingMethod(), LogLevel.FATAL, message);
     }
 
-    @Override
-    public <T extends Throwable> T fatal(final Class<?> callingClass, final String methodName,
-                                         final String message, final T throwable) {
-        return log(callingClass, methodName, LogLevel.FATAL, message, throwable);
-    }
-
-    @Override
-    public void fatal(final Class<?> callingClass, final String methodName, final String message) {
-        log(callingClass, methodName, LogLevel.FATAL, message);
-    }
-    
     @Override
     public void fatal(final Object callingObject, final String message) {
         log(callingObject.getClass(), getCallingMethod(), LogLevel.FATAL, message);
+    }
+
+    @Override
+    public <T extends Throwable> T fatal(final Class<?> callingClass, final T throwable) {
+        return log(callingClass, getCallingMethod(), LogLevel.FATAL, throwable);
     }
 
     @Override
@@ -227,32 +237,28 @@ public class DefaultMmLogger implements MMLogger {
     }
 
     @Override
+    public <T extends Throwable> T fatal(final Class<?> callingClass, final String message,
+                                         final T throwable) {
+        return log(callingClass, getCallingMethod(), LogLevel.FATAL, message, throwable);
+    }
+
+    @Override
     public <T extends Throwable> T fatal(final Object callingObject, final String message,
                                          final T throwable) {
         return log(callingObject.getClass(), getCallingMethod(), LogLevel.FATAL, message, throwable);
     }
+    //endregion Fatal
 
+    //region Info
     @Override
-    public <T extends Throwable> T info(final String callingClass, final String methodName,
-                                        final String message, final T throwable) {
-        return log(callingClass, methodName, LogLevel.INFO, message, throwable);
-    }
-
-    @Override
-    public <T extends Throwable> T info(final Class<?> callingClass, final String methodName,
-                                        final String message, final T throwable) {
-        return log(callingClass, methodName, LogLevel.INFO, message, throwable);
-    }
-
-    @Override
-    public <T extends Throwable> T info(final Class<?> callingClass, final String methodName,
-                                        final T throwable) {
-        return log(callingClass, methodName, LogLevel.INFO, throwable);
-    }
-
-    @Override
+    @Deprecated
     public void info(final Class<?> callingClass, final String methodName, final String message) {
         log(callingClass, methodName, LogLevel.INFO, message);
+    }
+
+    @Override
+    public void info(final Class<?> callingClass, final String message) {
+        log(callingClass, getCallingMethod(), LogLevel.INFO, message);
     }
 
     @Override
@@ -261,19 +267,127 @@ public class DefaultMmLogger implements MMLogger {
     }
 
     @Override
+    public <T extends Throwable> T info(final Class<?> callingClass, final T throwable) {
+        return log(callingClass, getCallingMethod(), LogLevel.INFO, throwable);
+    }
+
+    @Override
     public <T extends Throwable> T info(final Object callingObject, final T throwable) {
         return log(callingObject.getClass(), getCallingMethod(), LogLevel.INFO, throwable);
     }
 
     @Override
+    public <T extends Throwable> T info(final Class<?> callingClass, final String message,
+                                        final T throwable) {
+        return log(callingClass, getCallingMethod(), LogLevel.INFO, message, throwable);
+    }
+
+    @Override
     public <T extends Throwable> T info(final Object callingObject, final String message,
-                                         final T throwable) {
+                                        final T throwable) {
         return log(callingObject.getClass(), getCallingMethod(), LogLevel.INFO, message, throwable);
     }
+    //endregion Info
+
+    //region Trace
+    @Override
+    public void trace(final Class<?> callingClass, final String message) {
+        log(callingClass, getCallingMethod(), LogLevel.TRACE, message);
+    }
+
+    @Override
+    public void trace(final Object callingObject, final String message) {
+        log(callingObject.getClass(), getCallingMethod(), LogLevel.TRACE, message);
+    }
+
+    @Override
+    public <T extends Throwable> T trace(final Class<?> callingClass, final T throwable) {
+        return log(callingClass, getCallingMethod(), LogLevel.TRACE, throwable);
+    }
+
+    @Override
+    public <T extends Throwable> T trace(final Object callingObject, final T throwable) {
+        return log(callingObject.getClass(), getCallingMethod(), LogLevel.TRACE, throwable);
+    }
+
+    @Override
+    public <T extends Throwable> T trace(final Class<?> callingClass, final String message,
+                                         final T throwable) {
+        return log(callingClass, getCallingMethod(), LogLevel.TRACE, message, throwable);
+    }
+
+    @Override
+    public <T extends Throwable> T trace(final Object callingObject, final String message,
+                                         final T throwable) {
+        return log(callingObject.getClass(), getCallingMethod(), LogLevel.TRACE, message, throwable);
+    }
+    //endregion Trace
+
+    //region Warning
+    @Override
+    @Deprecated
+    public <T extends Throwable> T warning(final Class<?> callingClass, final String methodName,
+                                           final String message, final T throwable) {
+        return log(callingClass, methodName, LogLevel.WARNING, message, throwable);
+    }
+
+    @Override
+    @Deprecated
+    public void warning(final Class<?> callingClass, final String methodName, final String message) {
+        log(callingClass, methodName, LogLevel.WARNING, message);
+    }
+
+    @Override
+    public void warning(final Class<?> callingClass, final String message) {
+        log(callingClass, getCallingMethod(), LogLevel.WARNING, message);
+    }
+
+    @Override
+    public void warning(final Object callingObject, final String message) {
+        log(callingObject.getClass(), getCallingMethod(), LogLevel.WARNING, message);
+    }
+
+    @Override
+    public <T extends Throwable> T warning(final Class<?> callingClass, final T throwable) {
+        return log(callingClass, getCallingMethod(), LogLevel.WARNING, throwable);
+    }
+
+    @Override
+    public <T extends Throwable> T warning(final Object callingObject, final T throwable) {
+        return log(callingObject.getClass(), getCallingMethod(), LogLevel.WARNING, throwable);
+    }
+
+    @Override
+    public <T extends Throwable> T warning(final Class<?> callingClass, final String message,
+                                           final T throwable) {
+        return log(callingClass, getCallingMethod(), LogLevel.WARNING, message, throwable);
+    }
+
+    @Override
+    public <T extends Throwable> T warning(final Object callingObject, final String message,
+                                           final T throwable) {
+        return log(callingObject.getClass(), getCallingMethod(), LogLevel.WARNING, message, throwable);
+    }
+    //endregion Warning
     
-    /** 
-     * Retrieves the name of the method calling log/info/error etc. 
-     * from the stack trace. 
+    @Override
+    public void methodBegin(final Class<?> callingClass, final String methodName) {
+        log(callingClass, methodName, LogLevel.DEBUG, METHOD_BEGIN + methodName);
+    }
+    
+    @Override
+    public void methodEnd(final Class<?> callingClass, final String methodName) {
+        log(callingClass, methodName, LogLevel.DEBUG, METHOD_END + methodName);
+    }
+
+    @Override
+    public void methodCalled(final Class<?> callingClass, final String methodName) {
+        log(callingClass, methodName, LogLevel.DEBUG, METHOD_CALLED + methodName);
+    }
+
+    /**
+     * Retrieves the name of the method calling log/info/error etc.
+     * from the stack trace.
      *
      * This method MUST be called from a top-level method (such as info or fatal)
      * as it depends on the call stack depth of exactly three methods between
@@ -285,102 +399,6 @@ public class DefaultMmLogger implements MMLogger {
         } catch (Exception e) {
             return "DefaultMMLogger Error: Could not obtain method name";
         }
-    }
-
-    @Override
-    public <T extends Throwable> T trace(final String callingClass, final String methodName,
-                                         final String message, final T throwable) {
-        return log(callingClass, methodName, LogLevel.TRACE, message, throwable);
-    }
-
-    @Override
-    public <T extends Throwable> T trace(final Class<?> callingClass, final String methodName,
-                                         final String message, final T throwable) {
-        return log(callingClass, methodName, LogLevel.TRACE, message, throwable);
-    }
-
-    @Override
-    public <T extends Throwable> T trace(final Class<?> callingClass, final String methodName,
-                                         final T throwable) {
-        return log(callingClass, methodName, LogLevel.TRACE, throwable);
-    }
-
-    @Override
-    public void trace(final Class<?> callingClass, final String methodName, final String message) {
-        log(callingClass, methodName, LogLevel.TRACE, message);
-    }
-
-    @Override
-    public void trace(final Object callingObject, final String message) {
-        log(callingObject.getClass(), getCallingMethod(), LogLevel.TRACE, message);
-    }
-
-    @Override
-    public <T extends Throwable> T trace(final Object callingObject, final T throwable) {
-        return log(callingObject.getClass(), getCallingMethod(), LogLevel.TRACE, throwable);
-    }
-
-    @Override
-    public <T extends Throwable> T trace(final Object callingObject, final String message,
-                                        final T throwable) {
-        return log(callingObject.getClass(), getCallingMethod(), LogLevel.TRACE, message, throwable);
-    }
-
-    @Override
-    public <T extends Throwable> T warning(final String callingClass, final String methodName,
-                                           final String message, final T throwable) {
-        return log(callingClass, methodName, LogLevel.WARNING, message, throwable);
-    }
-
-    @Override
-    public <T extends Throwable> T warning(final Class<?> callingClass, final String methodName,
-                                           final String message, final T throwable) {
-        return log(callingClass, methodName, LogLevel.WARNING, message, throwable);
-    }
-
-    @Override
-    public <T extends Throwable> T warning(final Class<?> callingClass, final String methodName,
-                                           final T throwable) {
-        return log(callingClass, methodName, LogLevel.WARNING, throwable);
-    }
-
-    @Override
-    public void warning(final Class<?> callingClass, final String methodName, final String message) {
-        log(callingClass, methodName, LogLevel.WARNING, message);
-    }
-
-    @Override
-    public void warning(final Object callingObject, final String message) {
-        log(callingObject.getClass(), getCallingMethod(), LogLevel.WARNING, message);
-    }
-
-    @Override
-    public <T extends Throwable> T warning(final Object callingObject, final T throwable) {
-        return log(callingObject.getClass(), getCallingMethod(), LogLevel.WARNING, throwable);
-    }
-
-    @Override
-    public <T extends Throwable> T warning(final Object callingObject, final String message,
-                                         final T throwable) {
-        return log(callingObject.getClass(), getCallingMethod(), LogLevel.WARNING, message, throwable);
-    }
-    
-    @Override
-    public void methodBegin(final Class<?> callingClass, final String methodName) {
-        log(callingClass, methodName, LogLevel.DEBUG,
-            METHOD_BEGIN + methodName);
-    }
-    
-    @Override
-    public void methodEnd(final Class<?> callingClass, final String methodName) {
-        log(callingClass, methodName, LogLevel.DEBUG,
-            METHOD_END + methodName);
-    }
-
-    @Override
-    public void methodCalled(final Class<?> callingClass, final String methodName) {
-        log(callingClass, methodName, LogLevel.DEBUG,
-            METHOD_CALLED + methodName);
     }
 
     @Override

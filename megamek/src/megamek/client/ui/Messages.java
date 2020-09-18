@@ -53,4 +53,12 @@ public class Messages {
     public static String getString(String key, Object... args) {
         return MessageFormat.format(getString(key), args);
     }
+
+    /**
+     * Returns the formatted internationalized text for the given key in the resource bundle,
+     * replacing occurrences of %s in the message with the contents of args.
+     */
+    public static String getFormattedString(String key, Object... args) {
+        return String.format(getString(key), args);
+    }
 }

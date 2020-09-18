@@ -37,7 +37,7 @@ public class InfantrySupportMGPortableWeapon extends InfantryWeapon {
 		addLookupName("InfantryMGPortable");
 		addLookupName("Infantry MG Portable");
 		addLookupName("InfantryMG");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 1000;
 		bv = 1.99;
 		tonnage = .0115;
@@ -45,6 +45,10 @@ public class InfantrySupportMGPortableWeapon extends InfantryWeapon {
 		        .or(F_INF_ENCUMBER);
 		infantryDamage = 0.65;
 		infantryRange = 1;
+		ammoWeight = 0.003;
+		ammoCost = 10;
+		shots = 75;
+		bursts = 5;
 		damage = 1;
 		minimumRange = 0;
 		shortRange = 1;

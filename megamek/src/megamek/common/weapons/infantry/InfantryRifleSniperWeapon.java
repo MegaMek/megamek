@@ -36,13 +36,16 @@ public class InfantryRifleSniperWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryBoltActionSniperRifle");
 		addLookupName("Infantry Sniper Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 350;
 		bv = 0.92;
 		tonnage = .010;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.18;
 		infantryRange = 2;
+		ammoWeight = 0.00006;
+		ammoCost = 4;
+		shots = 5;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

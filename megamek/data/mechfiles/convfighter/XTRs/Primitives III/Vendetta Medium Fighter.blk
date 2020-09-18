@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-Aero
+FixedWingSupport
 </UnitType>
 
 <Name>
@@ -29,7 +29,7 @@ Vendetta Medium Fighter
 </originalBuildYear>
 
 <type>
-IS Level 3
+IS Level 4
 </type>
 
 <motion_type>
@@ -37,6 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
+standardseats:3.0:0
 </transporters>
 
 <SafeThrust>
@@ -44,11 +45,11 @@ Aerodyne
 </SafeThrust>
 
 <cockpit_type>
-3
+0
 </cockpit_type>
 
 <heatsinks>
-15
+0
 </heatsinks>
 
 <sink_type>
@@ -56,12 +57,16 @@ Aerodyne
 </sink_type>
 
 <fuel>
-400
+250
 </fuel>
 
 <engine_type>
 0
 </engine_type>
+
+<internal_type>
+-1
+</internal_type>
 
 <armor>
 15
@@ -73,7 +78,6 @@ Aerodyne
 <Nose Equipment>
 Large Laser
 Small Laser
-Advanced Fire Control
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -85,19 +89,37 @@ Medium Laser
 </Right Wing Equipment>
 
 <Aft Equipment>
-External Stores Hardpoint
-External Stores Hardpoint
-External Stores Hardpoint
-External Stores Hardpoint
-External Stores Hardpoint
-External Stores Hardpoint
 </Aft Equipment>
 
 <Wings Equipment>
 </Wings Equipment>
 
-<Fuselage Equipment>
-</Fuselage Equipment>
+<Body Equipment>
+Armored Chassis
+Advanced Fire Control
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+</Body Equipment>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
 
 <source>
 XTRO Prim III - Age of War

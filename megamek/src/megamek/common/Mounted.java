@@ -36,6 +36,7 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * This describes equipment mounted on a mech.

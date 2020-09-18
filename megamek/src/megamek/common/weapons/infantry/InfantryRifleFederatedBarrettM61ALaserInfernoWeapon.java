@@ -33,9 +33,9 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
         super();
 
         name = "Laser Rifle (Federated-Barrett M61A) (Inferno Grenades)";
-        setInternalName(name);
-        addLookupName("InfantryFederatedBarrettM61AInferno");
-        ammoType = AmmoType.T_NA;
+        setInternalName("InfantryFederatedBarrettM61AInferno");
+        addLookupName(name);
+        ammoType = AmmoType.T_INFANTRY;
         cost = 2150;
         bv = 1.17;
 		tonnage = .006;
@@ -44,6 +44,8 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
         setModes(modeStrings);
         infantryDamage = 0.55;
         infantryRange = 2;
+        ammoWeight = 0.0003;
+        shots = 6;
         rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3062, 3085, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false, false, false)

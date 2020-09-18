@@ -36,13 +36,17 @@ public class InfantryRifleTKAssaultWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryTKAssaultRifle");
 		addLookupName("TK Assault Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 150;
 		bv = 1.34;
 		tonnage = .0055;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.44;
 		infantryRange = 1;
+		ammoWeight = 0.00032;
+		ammoCost = 3;
+		shots = 20;
+		bursts = 2;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2865, 2870, 2925, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

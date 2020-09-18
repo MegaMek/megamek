@@ -3,36 +3,36 @@ Ares
 ARS-V1C Aphrodite
 
 Config:Tripod Omnimech
-TechBase:Mixed (IS Chassis)
-Era:3136
-Source:TRO 3145 Republic of the Sphere - Dark Ages
-Rules Level:3
+techbase:Mixed (IS Chassis)
+era:3136
+source:TRO 3145 Republic of the Sphere - Dark Ages
+rules level:3
 
-Mass:135
-Engine:270 Fusion Engine(IS)
-Structure:IS Endo-Composite
-Myomer:Standard
-Cockpit:Superheavy Tripod Cockpit
-Gyro:Superheavy Gyro
+mass:135
+engine:270 Fusion Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+cockpit:Superheavy Tripod Cockpit
+gyro:Superheavy Gyro
 
-Heat Sinks:15 Double
-Base Chassis Heat Sinks:10
-Walk MP:2
-Jump MP:0
+heat sinks:15 Double
+base chassis heat sinks:10
+walk mp:2
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:41
-RA Armor:41
-LT Armor:40
-RT Armor:40
-CT Armor:60
-HD Armor:12
-LL Armor:56
-RL Armor:56
-CL Armor:56
-RTL Armor:16
-RTR Armor:16
-RTC Armor:22
+armor:Standard(Inner Sphere)
+LA armor:41
+RA armor:41
+LT armor:40
+RT armor:40
+CT armor:60
+HD armor:12
+LL armor:56
+RL armor:56
+CL armor:56
+RTL armor:16
+RTR armor:16
+RTC armor:22
 
 Weapons:16
 Rotary AC/5, Left Arm
@@ -43,12 +43,12 @@ ER Medium Laser, Left Torso
 ER Small Laser, Left Torso
 LRM 5, Left Torso
 SRM 2, Left Torso
-C3 Master with TAG, Left Torso
+C3 Computer [Master], Left Torso
 ER Medium Laser, Right Torso
 ER Small Laser, Right Torso
 LRM 5, Right Torso
 SRM 2, Right Torso
-C3 Master with TAG, Right Torso
+C3 Computer [Master], Right Torso
 ER Small Laser, Center Torso
 SRM 2, Center Torso
 
@@ -61,8 +61,8 @@ CLRotaryAC5 (omnipod)
 CLRotaryAC5 (omnipod)
 CLRotaryAC5 (omnipod)
 CLRotaryAC5 (omnipod)
-CLRotaryAC5 Ammo (omnipod)
-CLRotaryAC5 Ammo (omnipod)
+CLRotaryAC5 Ammo|CLRotaryAC5 Ammo (omnipod)
+CLRotaryAC5 Ammo|CLRotaryAC5 Ammo (omnipod)
 ISCASEII (omnipod)
 IS Endo-Composite
 
@@ -74,7 +74,7 @@ ISDoubleHeatSink (omnipod)
 CLStreakLRM5 (omnipod)
 CLStreakLRM5 (omnipod)
 CLStreakLRM5 (omnipod)
-Clan Streak LRM 5 Ammo (omnipod)
+Clan Streak LRM 5 Ammo|Clan Streak LRM 5 Ammo (omnipod)
 ISCASEII (omnipod)
 IS Endo-Composite
 -Empty-
@@ -119,8 +119,8 @@ ISDoubleHeatSink (omnipod)
 CLERSmallLaser
 SRM 2
 ISAngelECMSuite (omnipod)
-ISAngelECMSuite (omnipod)
 IS Endo-Composite
+-Empty-
 
 Head:
 Life Support

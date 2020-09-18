@@ -36,13 +36,15 @@ public class InfantryRifleMaxellPL10LaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMaxellPL10Laser");
 		addLookupName("Maxell PL10 Laser Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 2000;
 		bv = 1.33;
 		tonnage = .0065;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.26;
 		infantryRange = 2;
+		ammoWeight = 0.0003;
+		shots = 3;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3057, 3059, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

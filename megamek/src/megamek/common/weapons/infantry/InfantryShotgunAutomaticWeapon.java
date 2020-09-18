@@ -36,13 +36,17 @@ public class InfantryShotgunAutomaticWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryAutoShotgun");
 		addLookupName("Automatic Shotgun");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 200;
 		bv = 0.21;
 		tonnage = .005;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.23;
 		infantryRange = 0;
+		ammoWeight = 0.00027;
+		ammoCost = 2;
+		shots = 12;
+		bursts = 3;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

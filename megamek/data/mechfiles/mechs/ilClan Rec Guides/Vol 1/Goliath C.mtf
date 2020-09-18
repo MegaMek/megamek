@@ -1,0 +1,158 @@
+Version:1.1
+Goliath
+C
+
+Config:Quad
+techbase:Mixed (IS Chassis)
+era:3143
+source:ilClan Vol 1 - Dark Age
+rules level:3
+
+mass:80
+engine:240 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Compact Gyro
+
+heat sinks:11 Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+FLL armor:24
+FRL armor:24
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+RLL armor:30
+RRL armor:30
+RTL armor:13
+RTR armor:13
+RTC armor:19
+
+Weapons:9
+ATM 9, Right Torso
+ER Medium Laser, Head
+ER Large Laser, Left Torso
+Micro Pulse Laser, Left Torso
+Gauss Rifle, Left Torso
+Anti-BattleArmor Pods (B-Pods), Front Right Leg
+Anti-BattleArmor Pods (B-Pods), Front Left Leg
+Anti-BattleArmor Pods (B-Pods), Rear Right Leg
+Anti-BattleArmor Pods (B-Pods), Rear Left Leg
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISBPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISBPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLGaussRifle (T)
+CLGaussRifle (T)
+CLGaussRifle (T)
+CLGaussRifle (T)
+CLGaussRifle (T)
+CLGaussRifle (T)
+Clan Gauss Ammo
+CLERLargeLaser (T)
+CLMicroPulseLaser (T)
+Clan Ammo ATM-9
+ISQuadTurret
+CLCASEII
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+Clan Ammo ATM-9
+CLCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISBPod
+Clan Gauss Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISBPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -18,7 +18,6 @@
  */
 package megamek.client.ui.swing.gameConnectionDialogs;
 
-import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -45,7 +44,7 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
 
     //region Initialization
     @Override
-    protected void initComponents() {
+    protected JPanel createMiddlePanel() {
         JLabel yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), SwingConstants.RIGHT);
         JLabel serverAddrL = new JLabel(Messages.getString("MegaMek.serverAddrL"), SwingConstants.RIGHT);
         JLabel portL = new JLabel(Messages.getString("MegaMek.portL"), SwingConstants.RIGHT);
@@ -67,14 +66,8 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
         addOptionRow(middlePanel, c, yourNameL, getPlayerNameField());
         addOptionRow(middlePanel, c, serverAddrL, serverAddressField);
         addOptionRow(middlePanel, c, portL, getPortField());
-        
-        add(middlePanel, BorderLayout.CENTER);
-        
-        createButtons();
-        
-        pack();
-        setResizable(false);
-        center();
+
+        return middlePanel;
     }
     //endregion Initialization
 

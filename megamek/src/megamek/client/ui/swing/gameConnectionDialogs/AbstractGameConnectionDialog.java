@@ -53,7 +53,17 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     }
 
     //region Initialization
-    protected abstract void initComponents();
+    private void initComponents() {
+        add(createMiddlePanel(), BorderLayout.CENTER);
+
+        createButtons();
+
+        pack();
+        setResizable(false);
+        center();
+    }
+
+    protected abstract JPanel createMiddlePanel();
 
     protected void createButtons() {
         JButton okayB = new JButton(new OkayAction(this));

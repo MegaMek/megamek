@@ -18,7 +18,6 @@
  */
 package megamek.client.ui.swing.gameConnectionDialogs;
 
-import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -55,7 +54,7 @@ public class HostDialog extends AbstractGameConnectionDialog {
 
     //region Initialization
     @Override
-    protected void initComponents() {
+    protected JPanel createMiddlePanel() {
         JLabel playerNameLabel = new JLabel(Messages.getString("MegaMek.yourNameL"), SwingConstants.RIGHT);
         JLabel serverPassLabel = new JLabel(Messages.getString("MegaMek.serverPassL"), SwingConstants.RIGHT);
         JLabel portLabel = new JLabel(Messages.getString("MegaMek.portL"), SwingConstants.RIGHT);
@@ -75,15 +74,14 @@ public class HostDialog extends AbstractGameConnectionDialog {
 
         setMetaserver(getClientPreferences().getMetaServerName());
         metaserverField = new JTextField(getMetaserver());
-        metaserverLabel.setEnabled(isRegister());
+        metaserverLabel.setEnabled(false);
         metaserverLabel.setLabelFor(metaserverField);
-        metaserverField.setEnabled(isRegister());
+        metaserverField.setEnabled(false);
 
         chkRegister = new JCheckBox(Messages.getString("MegaMek.registerC"));
         setRegister(false);
         chkRegister.setSelected(isRegister());
         metaserverLabel.setEnabled(chkRegister.isSelected());
-        chkRegister.setEnabled(chkRegister.isSelected());
         chkRegister.addItemListener(event -> {
             metaserverLabel.setEnabled(chkRegister.isSelected());
             metaserverField.setEnabled(chkRegister.isSelected());
@@ -108,13 +106,7 @@ public class HostDialog extends AbstractGameConnectionDialog {
 
         addOptionRow(middlePanel, c, metaserverLabel, metaserverField);
 
-        add(middlePanel, BorderLayout.CENTER);
-
-        createButtons();
-
-        pack();
-        setResizable(false);
-        center();
+        return middlePanel;
     }
     //endregion Initialization
 

@@ -133,16 +133,16 @@ public class MapSettings implements Serializable {
     private int minFoliageSpots = 0;
     /** how much foliage at most */
     @XmlElement(name = "FOLIAGEMAXSPOTS")
-    private int maxFoliageSpots = 3;
+    private int maxFoliageSpots = 0;
     /** minimum size of a forest */
     @XmlElement(name = "FOLIAGEMINHEXES")
-    private int minFoliageSize = 2;
+    private int minFoliageSize = 0;
     /** maximum Size of a forest */
     @XmlElement(name = "FOLIAGEMAXHEXES")
-    private int maxFoliageSize = 5;
+    private int maxFoliageSize = 0;
     /** probability for heavy foliage, Range 0..100 */
     @XmlElement(name = "FOLIAGEHEAVYPROB")
-    private int probFoliageHeavy = 30;
+    private int probFoliageHeavy = 0;
 
     /** how much rough spots at least */
     @XmlElement(name = "ROUGHMINSPOTS")

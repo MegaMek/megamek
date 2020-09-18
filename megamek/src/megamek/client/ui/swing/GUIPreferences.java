@@ -199,6 +199,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String WINDOW_POS_Y = "WindowPosY";
     public static final String WINDOW_SIZE_HEIGHT = "WindowSizeHeight";
     public static final String WINDOW_SIZE_WIDTH = "WindowSizeWidth";
+    public static final String RND_MAP_POS_X = "RndMapPosX";
+    public static final String RND_MAP_POS_Y = "RndMapPosY";
+    public static final String RND_MAP_SIZE_HEIGHT = "RndMapSizeHeight";
+    public static final String RND_MAP_SIZE_WIDTH = "RndMapSizeWidth";
+    public static final String RND_MAP_ADVANCED = "RndMapAdvanced";
     public static final String LOS_MECH_IN_FIRST = "LOSMechInFirst";
     public static final String LOS_MECH_IN_SECOND = "LOSMechInSecond";
     public static final String SHOW_MAPSHEETS = "ShowMapsheets";
@@ -384,6 +389,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(TOOLTIP_DIST_SUPRESSION, BoardView1.HEX_DIAG);
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
+        store.setDefault(RND_MAP_SIZE_HEIGHT, 500);
+        store.setDefault(RND_MAP_SIZE_WIDTH, 500);
+        store.setDefault(RND_MAP_POS_X, 400);
+        store.setDefault(RND_MAP_POS_Y, 400);
+        store.setDefault(RND_MAP_ADVANCED, false);
         store.setDefault(SHOW_MAPSHEETS, false);
         store.setDefault(SHOW_WPS_IN_TT, false);
         store.setDefault(SHOW_ARMOR_MINIVIS_TT, false);

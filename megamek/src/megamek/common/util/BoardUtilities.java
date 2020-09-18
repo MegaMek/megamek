@@ -457,6 +457,9 @@ public class BoardUtilities {
             int tempInt = (Compute.randomInt(100) < probMore) ? 2 : 1;
             ITerrain tempTerrain = f.createTerrain(terrainType, tempInt);
             field.addTerrain(tempTerrain);
+            if (terrainType == Terrains.WOODS) {
+                field.addTerrain(f.createTerrain(Terrains.FOLIAGE_ELEV, 2));
+            }
             unUsed.remove(field);
             findAllUnused(board, terrainType, alreadyUsed, unUsed, field,
                     reverseHex);

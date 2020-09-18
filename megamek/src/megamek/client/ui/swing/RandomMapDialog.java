@@ -485,4 +485,41 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             guip.setBoardEdRndStart(showAtStartButton.isSelected());
         }
     }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            loadWindowSettings();
+        } else {
+            saveWindowSettings();
+        }
+        super.setVisible(b);
+    }
+
+    /** Saves the position, size and split of the dialog. */
+    private void saveWindowSettings() {
+        GUIPreferences guip = GUIPreferences.getInstance();
+        guip.setValue(GUIPreferences.RND_MAP_POS_X, getLocation().x);
+        guip.setValue(GUIPreferences.RND_MAP_POS_Y, getLocation().y);
+        guip.setValue(GUIPreferences.RND_MAP_SIZE_WIDTH, getSize().width);
+        guip.setValue(GUIPreferences.RND_MAP_SIZE_HEIGHT, getSize().height);
+        guip.setValue(GUIPreferences.RND_MAP_ADVANCED, advancedButton.isSelected());
+    }
+    
+    private void loadWindowSettings() {
+        GUIPreferences guip = GUIPreferences.getInstance();
+        setSize(guip.getInt(GUIPreferences.RND_MAP_SIZE_WIDTH), 
+                guip.getInt(GUIPreferences.RND_MAP_SIZE_HEIGHT));
+        setLocation(guip.getInt(GUIPreferences.RND_MAP_POS_X), 
+                guip.getInt(GUIPreferences.RND_MAP_POS_Y));
+        // Restore the advanced view if it was used last
+        if (guip.getBoolean(GUIPreferences.RND_MAP_ADVANCED)) {
+            switchView(VIEW_ADVANCED, false);
+            advancedButton.setSelected(true);
+        } else {
+            switchView(VIEW_BASIC, false);
+            basicButton.setSelected(true);
+        }
+    }
+    
 }

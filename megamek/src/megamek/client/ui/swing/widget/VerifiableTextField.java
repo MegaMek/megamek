@@ -36,15 +36,7 @@ import java.util.Set;
  */
 public class VerifiableTextField extends JTextField implements FocusListener {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -4169356645839508584L;
-//    public static final Color BK_INVALID = Color.pink;
-//    public static final Color BK_REQUIRED = Color.cyan;
-//    public static final Color BK_DEFAULT = UIManager.getColor("TextField.background");
-//    public static final Color BK_INVALID = 
-//            new Color(Math.min(255, BK_DEFAULT.getRed() + 50), BK_DEFAULT.getGreen(),BK_DEFAULT.getBlue());
 
     private boolean selectAllTextOnGotFocus = false;
     private final Set<DataVerifier> verifiers = new HashSet<>();
@@ -275,12 +267,17 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         Color bgColor = UIManager.getColor("TextField.background");
         Color warnColor = GUIPreferences.getInstance().getWarningColor();
         double part = 0.1;
-//        int b = Math.max(0, bgColor.getBlue() - 20);
-//        int g = Math.max(0, bgColor.getGreen() - 20);
-//        int r = Math.min(255, bgColor.getRed() + 20);
         int r = (int)(part * warnColor.getRed()   + (1-part) * bgColor.getRed());  
         int g = (int)(part * warnColor.getGreen() + (1-part) * bgColor.getGreen());
         int b = (int)(part * warnColor.getBlue()  + (1-part) * bgColor.getBlue());
         return new Color(r, g, b);
+    }
+    
+    @Override
+    public Dimension getMaximumSize() {
+        // Make this TextField not stretch vertically
+        Dimension size = getPreferredSize();
+        Dimension maxSize = super.getMaximumSize();
+        return new Dimension(maxSize.width, size.height);
     }
 }

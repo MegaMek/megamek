@@ -18,7 +18,6 @@
  */
 package megamek.common.util.sorter;
 
-import java.io.Serializable;
 import java.text.Collator;
 import java.util.Comparator;
 
@@ -37,8 +36,7 @@ import java.util.Comparator;
  * would be sorted into { "Atlas 0", "Atlas 1", "Atlas 2", "Atlas 5", "Atlas 15" }
  * instead of ASCII's { "Atlas 0", "Atlas 1", "Atlas 15", "Atlas 2", "Atlas 5" }
  */
-public class NaturalOrderComparator implements Comparator<String>, Serializable {
-    private static final long serialVersionUID = -5116813198443091269L;
+public class NaturalOrderComparator implements Comparator<String> {
     private final Collator collator;
 
     public NaturalOrderComparator() {

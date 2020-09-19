@@ -643,7 +643,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         } catch (Exception e) {
             MegaMek.getLogger().error(this, e);
             JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.HostScenarioAlert.message", e.getMessage()),
+                    Messages.getString("MegaMek.HostScenarioAlert.message", e.getMessage()),
                     Messages.getString("MegaMek.HostScenarioAlert.title"),
                     JOptionPane.ERROR_MESSAGE);
             return;

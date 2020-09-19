@@ -57,6 +57,8 @@ public class Messages {
     /**
      * Returns the formatted internationalized text for the given key in the resource bundle,
      * replacing occurrences of %s in the message with the contents of args.
+     *
+     * This is ONLY to be used for string that need to be formatted without formatting the number
      */
     public static String getFormattedString(String key, Object... args) {
         return String.format(getString(key), args);

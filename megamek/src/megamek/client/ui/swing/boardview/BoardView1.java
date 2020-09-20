@@ -113,6 +113,7 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.EntityVisibilityUtils;
 import megamek.common.Flare;
+import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
@@ -5355,7 +5356,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 default:
             }
             for (Entity en: game.getEntitiesVector()) {
-                if (en.getDamageLevel() != Entity.DMG_NONE && en.damageThisRound != 0) {
+                if (en.getDamageLevel() != Entity.DMG_NONE && 
+                        (en.damageThisRound != 0 || en instanceof GunEmplacement)) {
                     tileManager.reloadImage(en);
                 }
             }

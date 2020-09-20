@@ -4038,6 +4038,7 @@ public class Server implements Runnable {
             if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
                 hex.removeTerrain(Terrains.WOODS);
                 hex.removeTerrain(Terrains.JUNGLE);
+                hex.removeTerrain(Terrains.FOLIAGE_ELEV);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
             }
             sendChangedHex(pos);
@@ -5120,13 +5121,12 @@ public class Server implements Runnable {
             int nextElevation = nextAltitude - nextHex.surface();
 
             boolean crashedIntoTerrain = curAltitude < nextAltitude;
-            if (entity.getMovementMode() == EntityMovementMode.VTOL) {
-                if ((nextElevation == 0)
-                        || ((nextElevation == 1)
-                            && (nextHex.containsTerrain(Terrains.WOODS)
-                            || nextHex.containsTerrain(Terrains.JUNGLE)))) {
+            if (entity.getMovementMode() == EntityMovementMode.VTOL
+                && (nextHex.containsTerrain(Terrains.WOODS)
+                        || nextHex.containsTerrain(Terrains.JUNGLE)) 
+                && nextElevation <= nextHex.terrainLevel(Terrains.FOLIAGE_ELEV)) {
                     crashedIntoTerrain = true;
-                }
+                
             }
 
             if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -6327,17 +6327,22 @@ public class Server implements Runnable {
             if (h.containsTerrain(Terrains.WOODS)) {
                 if (entity instanceof Dropship) {
                     h.removeTerrain(Terrains.WOODS);
+                    h.removeTerrain(Terrains.FOLIAGE_ELEV);
                     h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                             Terrains.ROUGH, 1));
                 } else {
                     int level = h.terrainLevel(Terrains.WOODS) - 1;
+                    int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
                     h.removeTerrain(Terrains.WOODS);
                     if (level > 0) {
                         h.addTerrain(Terrains.getTerrainFactory()
-                                             .createTerrain(Terrains.WOODS, level));
+                                .createTerrain(Terrains.WOODS, level));
+                        h.addTerrain(Terrains.getTerrainFactory()
+                                .createTerrain(Terrains.FOLIAGE_ELEV, folEl == 1 ? 1 : 2));
                     } else {
                         h.addTerrain(Terrains.getTerrainFactory()
                                              .createTerrain(Terrains.ROUGH, 1));
+                        h.removeTerrain(Terrains.FOLIAGE_ELEV);
                     }
                 }
             }
@@ -6345,17 +6350,22 @@ public class Server implements Runnable {
             if (h.containsTerrain(Terrains.JUNGLE)) {
                 if (entity instanceof Dropship) {
                     h.removeTerrain(Terrains.JUNGLE);
+                    h.removeTerrain(Terrains.FOLIAGE_ELEV);
                     h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                             Terrains.ROUGH, 1));
                 } else {
                     int level = h.terrainLevel(Terrains.JUNGLE) - 1;
+                    int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
                     h.removeTerrain(Terrains.JUNGLE);
                     if (level > 0) {
                         h.addTerrain(Terrains.getTerrainFactory()
-                                             .createTerrain(Terrains.JUNGLE, level));
+                                .createTerrain(Terrains.JUNGLE, level));
+                        h.addTerrain(Terrains.getTerrainFactory()
+                                .createTerrain(Terrains.FOLIAGE_ELEV, folEl == 1 ? 1 : 2));
                     } else {
                         h.addTerrain(Terrains.getTerrainFactory()
                                              .createTerrain(Terrains.ROUGH, 1));
+                        h.removeTerrain(Terrains.FOLIAGE_ELEV);
                     }
                 }
             }
@@ -15129,8 +15139,10 @@ public class Server implements Runnable {
         if (woods != null) {
             int tf = woods.getTerrainFactor() - nDamage;
             int level = woods.getLevel();
+            int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
             if (tf <= 0) {
                 h.removeTerrain(Terrains.WOODS);
+                h.removeTerrain(Terrains.FOLIAGE_ELEV);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.ROUGH, 1));
                 // light converted to rough
@@ -15141,6 +15153,10 @@ public class Server implements Runnable {
                 h.removeTerrain(Terrains.WOODS);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.WOODS, 1));
+                if (folEl != 1) {
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                            Terrains.FOLIAGE_ELEV, 2));
+                }
                 woods = h.getTerrain(Terrains.WOODS);
                 // heavy converted to light
                 r = new Report(3085, reportType);
@@ -15150,6 +15166,10 @@ public class Server implements Runnable {
                 h.removeTerrain(Terrains.WOODS);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.WOODS, 2));
+                if (folEl != 1) {
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                            Terrains.FOLIAGE_ELEV, 2));
+                }
                 woods = h.getTerrain(Terrains.WOODS);
                 // ultra heavy converted to heavy
                 r = new Report(3082, reportType);
@@ -15161,8 +15181,10 @@ public class Server implements Runnable {
         if (jungle != null) {
             int tf = jungle.getTerrainFactor() - nDamage;
             int level = jungle.getLevel();
+            int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
             if (tf < 0) {
                 h.removeTerrain(Terrains.JUNGLE);
+                h.removeTerrain(Terrains.FOLIAGE_ELEV);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.ROUGH, 1));
                 // light converted to rough
@@ -15173,6 +15195,10 @@ public class Server implements Runnable {
                 h.removeTerrain(Terrains.JUNGLE);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.JUNGLE, 1));
+                if (folEl != 1) {
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                            Terrains.FOLIAGE_ELEV, 2));
+                }
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // heavy converted to light
                 r = new Report(3086, reportType);
@@ -15182,6 +15208,10 @@ public class Server implements Runnable {
                 h.removeTerrain(Terrains.JUNGLE);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.JUNGLE, 2));
+                if (folEl != 1) {
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                            Terrains.FOLIAGE_ELEV, 2));
+                }
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // ultra heavy converted to heavy
                 r = new Report(3083, reportType);
@@ -24816,9 +24846,16 @@ public class Server implements Runnable {
                         int terrainType = (myHex.containsTerrain(Terrains.WOODS)
                                 ? Terrains.WOODS : Terrains.JUNGLE);
                         int oldLevel = myHex.terrainLevel(terrainType);
+                        int oldEl = myHex.terrainLevel(Terrains.FOLIAGE_ELEV);
                         myHex.removeTerrain(terrainType);
                         if (oldLevel > numCleared) {
                             myHex.addTerrain(new Terrain(terrainType, oldLevel - numCleared));
+                            if (oldEl != 1) {
+                                myHex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 
+                                        oldLevel - numCleared == 3 ? 3 : 2));
+                            }
+                        } else {
+                            myHex.removeTerrain(Terrains.FOLIAGE_ELEV);
                         }
                     }
 

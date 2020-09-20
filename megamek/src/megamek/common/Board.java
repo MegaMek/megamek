@@ -504,8 +504,33 @@ public class Board implements Serializable, IBoard {
         // Internally handled terrain (inclines, cliff-bottoms)
         initializeAutomaticTerrain(x, y);
         
+        // Add woods/jungle elevation where none was saved
+        initializeFoliageElev(x, y);
+        
         if (event) {
             processBoardEvent(new BoardEvent(this, new Coords(x, y), BoardEvent.BOARD_CHANGED_HEX));
+        }
+    }
+    
+    /** Adds the FOLIAGE_ELEV terrain when none is present. */
+    private void initializeFoliageElev(int x, int y) {
+        IHex hex = getHex(x, y);
+
+        // If the foliage elevation is present or the hex doesn't even have foliage,
+        // nothing needs to be done
+        if (hex.containsTerrain(Terrains.FOLIAGE_ELEV) || 
+                (!hex.containsTerrain(Terrains.WOODS) && !hex.containsTerrain(Terrains.JUNGLE))) {
+            return;
+        }
+        
+        // Foliage is missing, therefore add it with the standard TW values
+        // elevation 3 for Ultra Woods/Jungle and 2 for Light/Heavy
+        if (hex.terrainLevel(Terrains.WOODS) == 3 || hex.terrainLevel(Terrains.JUNGLE) == 3) {
+            hex.addTerrain(Terrains.getTerrainFactory()
+                    .createTerrain(Terrains.FOLIAGE_ELEV, 3));    
+        } else {
+            hex.addTerrain(Terrains.getTerrainFactory()
+                    .createTerrain(Terrains.FOLIAGE_ELEV, 2));
         }
     }
     

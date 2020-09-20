@@ -1798,9 +1798,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             // Woods are 2 levels high, but then shadows
                             // appear very extreme, therefore only
                             // 1.5 levels: (shadowcaster+1.5-shadowed)
+                            double shadowHeight = .75 * hex.terrainLevel(Terrains.FOLIAGE_ELEV);
                             p1.setLocation(p0);
-                            if ((shadowcaster+1.5-shadowed) > 0) {
-                                for (int i = 0; i<n*(shadowcaster+1.5-shadowed); i++) {
+                            if ((shadowcaster + shadowHeight - shadowed) > 0) {
+                                for (int i = 0; i < n * (shadowcaster + shadowHeight - shadowed); i++) {
                                     g.drawImage(lastSuper, (int)p1.getX(), (int)p1.getY(), null);
                                     p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
                                 }
@@ -2877,6 +2878,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         "AdvancedBuildingTextColor"));                 //$NON-NLS-1$
                 drawCenteredString(
                         Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
+                        0, (int) (ypos * scale), font_elev, g);
+                ypos -= 10;
+            }
+            if (hex.terrainLevel(Terrains.FOLIAGE_ELEV) == 1) {
+                g.setColor(GUIPreferences.getInstance().getColor(
+                        GUIPreferences.ADVANCED_LOW_FOLIAGE_COLOR));  
+                drawCenteredString(Messages.getString("BoardView1.LowFoliage"), 
                         0, (int) (ypos * scale), font_elev, g);
                 ypos -= 10;
             }

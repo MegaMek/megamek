@@ -5356,8 +5356,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 default:
             }
             for (Entity en: game.getEntitiesVector()) {
-                if (en.getDamageLevel() != Entity.DMG_NONE && 
-                        (en.damageThisRound != 0 || en instanceof GunEmplacement)) {
+                if ((en.getDamageLevel() != Entity.DMG_NONE) && 
+                        ((en.damageThisRound != 0) || (en instanceof GunEmplacement))) {
                     tileManager.reloadImage(en);
                 }
             }

@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+0.47.11-SNAPSHOT
+
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect
 + Data: Fed Com armor has wrong modifier.

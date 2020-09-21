@@ -48,11 +48,16 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName) {
         super(owner, title, modal);
 
-        setPlayerName(playerName);
+        setPlayerName(""); // initialize player name
         setPort(2346);
         setConfirmed(false);
 
         initComponents();
+
+        // if the player name is specified, overwrite the preference with it
+        if (!StringUtil.isNullOrEmpty(playerName)) {
+            setPlayerName(playerName);
+        }
     }
 
     //region Initialization

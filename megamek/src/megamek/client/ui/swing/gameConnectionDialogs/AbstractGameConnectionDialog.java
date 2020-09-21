@@ -43,10 +43,10 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     private IClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
 
-    protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal) {
+    protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName) {
         super(owner, title, modal);
 
-        setPlayerName("");
+        setPlayerName(playerName);
         setPort(2346);
 
         initComponents();

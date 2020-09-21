@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
-0.47.10-SNAPSHOT
+0.47.11-SNAPSHOT
++ Data: Fixing missing ProtoMek Sprites
+
+0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect
 + Data: Fed Com armor has wrong modifier.
 + Data: Fluff text (Thx Greekfire) and some royal Sprites.
@@ -33,6 +36,9 @@ VERSION HISTORY:
 + Issue #2186, 2190: Inconsistent Combat Log Sprites
 + PR #2221: Combat Sprite are now default in the round report
 + PR #2198: New Camo and Portrait Choosers
++ Data: New Protomek Sprites, removing OTP Tokasha as the units are all in Golden Century.
++ Issue #1719: Level 1 Foliage
++ Issue #2212: Diagramming LOS calculation issue
 
 0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit

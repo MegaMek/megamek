@@ -283,6 +283,7 @@ public class BoardEditor extends JComponent
     
     // Easy terrain access buttons
     private JButton buttonLW, buttonLJ;
+    private JButton buttonOW, buttonOJ;
     private JButton buttonWa, buttonSw, buttonRo;
     private JButton buttonRd, buttonCl, buttonBu;
     private JButton buttonMd, buttonPv, buttonSn;
@@ -657,22 +658,24 @@ public class BoardEditor extends JComponent
 
         // Buttons to ease setting common terrain types
         ArrayList<JButton> terrainButtons = new ArrayList<>();
-        buttonLW = prepareButton("ButtonLW", "Woods", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonLJ = prepareButton("ButtonLJ", "Jungle", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonWa = prepareButton("ButtonWa", "Water", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonSw = prepareButton("ButtonSw", "Swamp", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonRo = prepareButton("ButtonRo", "Rough", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonMd = prepareButton("ButtonMd", "Mud", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonPv = prepareButton("ButtonPv", "Pavement", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonSn = prepareButton("ButtonSn", "Snow", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonBu = prepareButton("ButtonBu", "Buildings", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonRd = prepareButton("ButtonRd", "Roads", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonBr = prepareButton("ButtonBr", "Bridges", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonFT = prepareButton("ButtonFT", "Fuel Tanks", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonIc = prepareButton("ButtonIc", "Ice", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonTu = prepareButton("ButtonTu", "Tundra", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonMg = prepareButton("ButtonMg", "Magma", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonCl = prepareButton("ButtonCl", "Clear", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonLW = prepareButton("ButtonLW", "Woods", terrainButtons);
+        buttonLJ = prepareButton("ButtonLJ", "Jungle", terrainButtons);
+        buttonOW = prepareButton("ButtonLLW", "Low Woods", terrainButtons);
+        buttonOJ = prepareButton("ButtonLLJ", "Low Jungle", terrainButtons);
+        buttonWa = prepareButton("ButtonWa", "Water", terrainButtons);
+        buttonSw = prepareButton("ButtonSw", "Swamp", terrainButtons);
+        buttonRo = prepareButton("ButtonRo", "Rough", terrainButtons);
+        buttonMd = prepareButton("ButtonMd", "Mud", terrainButtons); 
+        buttonPv = prepareButton("ButtonPv", "Pavement", terrainButtons);
+        buttonSn = prepareButton("ButtonSn", "Snow", terrainButtons); 
+        buttonBu = prepareButton("ButtonBu", "Buildings", terrainButtons);
+        buttonRd = prepareButton("ButtonRd", "Roads", terrainButtons);
+        buttonBr = prepareButton("ButtonBr", "Bridges", terrainButtons);
+        buttonFT = prepareButton("ButtonFT", "Fuel Tanks", terrainButtons);
+        buttonIc = prepareButton("ButtonIc", "Ice", terrainButtons);
+        buttonTu = prepareButton("ButtonTu", "Tundra", terrainButtons);
+        buttonMg = prepareButton("ButtonMg", "Magma", terrainButtons);
+        buttonCl = prepareButton("ButtonCl", "Clear", terrainButtons);
 
         ArrayList<JToggleButton> brushButtons = new ArrayList<>();
         buttonBrush1 = addTerrainTButton("ButtonHex1", "Brush1", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
@@ -698,34 +701,50 @@ public class BoardEditor extends JComponent
             else if (e.getSource() == buttonWa) terrain = Terrains.WATER;
             else if (e.getSource() == buttonLW) terrain = Terrains.WOODS;
             else if (e.getSource() == buttonLJ) terrain = Terrains.JUNGLE;
+            else if (e.getSource() == buttonOW) terrain = Terrains.WOODS;
+            else if (e.getSource() == buttonOJ) terrain = Terrains.JUNGLE;
             else if (e.getSource() == buttonMd) terrain = Terrains.MUD;
             else if (e.getSource() == buttonPv) terrain = Terrains.PAVEMENT;
             else if (e.getSource() == buttonIc) terrain = Terrains.ICE;
             else if (e.getSource() == buttonSn) terrain = Terrains.SNOW;
             else if (e.getSource() == buttonTu) terrain = Terrains.TUNDRA;
             else if (e.getSource() == buttonMg) terrain = Terrains.MAGMA;
+            else {
+                return;
+            }
 
-            if (terrain >= 0) {
-                IHex saveHex = curHex.duplicate();
-                // change the terrain level by wheel direction if present,
-                // or set to 1 if not present
-                if (curHex.containsTerrain(terrain)) {
-                    addSetTerrainEasy(terrain,
-                            curHex.getTerrain(terrain).getLevel() +
-                            ((e.getWheelRotation() < 0) ? 1 : -1));
-                } else {
-                    if (!e.isShiftDown())
-                        curHex.removeAllTerrains();
-                    addSetTerrainEasy(terrain, 1);
-                }
-                // Reset the terrain to the former state
-                // if the new would be invalid.
-                if (!curHex.isValid(null)) {
-                    curHex = saveHex;
-                    refreshTerrainList();
-                    repaintWorkingHex();
+            IHex saveHex = curHex.duplicate();
+            // change the terrain level by wheel direction if present,
+            // or set to 1 if not present
+            int newLevel = 1;
+            if (curHex.containsTerrain(terrain)) {
+                newLevel = curHex.terrainLevel(terrain) + (e.getWheelRotation() < 0 ? 1 : -1);
+            } else {
+                if (!e.isShiftDown()) {
+                    curHex.removeAllTerrains();
                 }
             }
+            addSetTerrainEasy(terrain, newLevel);
+            // Add or adapt elevation helper terrain for foliage
+            // When the elevation was 1, it stays 1 (L1 Foliage, TO p.36)
+            // Otherwise, it is set to 3 for Ultra W/J and 2 otherwise (TW foliage)
+            if (terrain == Terrains.WOODS || terrain == Terrains.JUNGLE) {
+                int elev = curHex.terrainLevel(Terrains.FOLIAGE_ELEV);
+                if (elev != 1 && newLevel == 3) {
+                    elev = 3;
+                } else if (elev != 1) {
+                    elev = 2;
+                }
+                curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FOLIAGE_ELEV, elev));
+            }
+            // Reset the terrain to the former state
+            // if the new would be invalid.
+            if (!curHex.isValid(null)) {
+                curHex = saveHex;
+            }
+            
+            refreshTerrainList();
+            repaintWorkingHex();
         };
 
         buttonSw.addMouseWheelListener(wheelListener);
@@ -733,6 +752,8 @@ public class BoardEditor extends JComponent
         buttonRo.addMouseWheelListener(wheelListener);
         buttonLJ.addMouseWheelListener(wheelListener);
         buttonLW.addMouseWheelListener(wheelListener);
+        buttonOJ.addMouseWheelListener(wheelListener);
+        buttonOW.addMouseWheelListener(wheelListener);
         buttonMd.addMouseWheelListener(wheelListener);
         buttonPv.addMouseWheelListener(wheelListener);
         buttonSn.addMouseWheelListener(wheelListener);
@@ -1503,9 +1524,6 @@ public class BoardEditor extends JComponent
             // tell the board to load!
             StringBuffer errBuff = new StringBuffer();
             board.load(is, errBuff, true);
-            if (errBuff.length() > 0) {
-                showBoardValidationReport(errBuff);
-            }
             // Board generation in a game always calls BoardUtilities.combine
             // This serves no purpose here, but is necessary to create 
             // flipBGVert/flipBGHoriz lists for the board, which is necessary 
@@ -1515,6 +1533,14 @@ public class BoardEditor extends JComponent
             game.setBoard(board);
             cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
             mapSettings.setBoardSize(board.getWidth(), board.getHeight());
+            
+            // Now, *after* initialization of the board which will correct some errors,
+            // do a board validation
+            errBuff = new StringBuffer();
+            board.isValid(errBuff);
+            if (errBuff.length() > 0) {
+                showBoardValidationReport(errBuff);
+            }
             refreshTerrainList();
             setupUiFreshBoard();
         } catch (IOException ex) {
@@ -1933,6 +1959,19 @@ public class BoardEditor extends JComponent
             }  
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.WOODS, 1);
+            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FOLIAGE_ELEV, 2));
+            refreshTerrainList();
+            repaintWorkingHex();
+            
+        } else if (ae.getSource().equals(buttonOW)) {
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }  
+            buttonUpDn.setSelected(false);
+            addSetTerrainEasy(Terrains.WOODS, 1);
+            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FOLIAGE_ELEV, 1));
+            refreshTerrainList();
+            repaintWorkingHex();
             
         } else if (ae.getSource().equals(buttonMg)) {
             if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
@@ -1947,6 +1986,19 @@ public class BoardEditor extends JComponent
             }
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.JUNGLE, 1);
+            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FOLIAGE_ELEV, 2));
+            refreshTerrainList();
+            repaintWorkingHex();
+            
+        } else if (ae.getSource().equals(buttonOJ)) {
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+                curHex.removeAllTerrains();
+            }
+            buttonUpDn.setSelected(false);
+            addSetTerrainEasy(Terrains.JUNGLE, 1);
+            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FOLIAGE_ELEV, 1));
+            refreshTerrainList();
+            repaintWorkingHex();
             
         } else if (ae.getSource().equals(buttonWa)) {
             buttonUpDn.setSelected(false);

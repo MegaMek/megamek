@@ -94,6 +94,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_ARMORMINI_COLOR_DAMAGED = "AdvancedArmorMiniColorDamaged";
     public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFrontSizeMod";
     public static final String ADVANCED_ROUND_REPORT_SPRITES = "AdvancedRoundReportSprites";
+    public static final String ADVANCED_LOW_FOLIAGE_COLOR = "AdvancedLowFoliageColor";
     /* --End advanced settings-- */
 
 
@@ -132,6 +133,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOV_DARKEN_ALPHA = "FovDarkenAlpha";
     public static final String FOV_STRIPES = "FoVFogStripes";
     public static final String FOV_GRAYSCALE = "FoVFogGrayscale";
+    public static final String IMAGE_CHOOSER_POS_X = "ImageChooserPosX";
+    public static final String IMAGE_CHOOSER_POS_Y = "ImageChooserPosY";
+    public static final String IMAGE_CHOOSER_SIZE_HEIGHT = "ImageChooserSizeHeight";
+    public static final String IMAGE_CHOOSER_SIZE_WIDTH = "ImageChooserSizeWidth";
+    public static final String IMAGE_CHOOSER_SPLIT_POS = "ImageChooserSplitPos";
     public static final String MAP_TEXT_COLOR = "MapTextColor";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
     public static final String MECH_SELECTOR_INCLUDE_MODEL = "MechSelectorIncludeModel";
@@ -198,6 +204,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String WINDOW_POS_Y = "WindowPosY";
     public static final String WINDOW_SIZE_HEIGHT = "WindowSizeHeight";
     public static final String WINDOW_SIZE_WIDTH = "WindowSizeWidth";
+    public static final String RND_MAP_POS_X = "RndMapPosX";
+    public static final String RND_MAP_POS_Y = "RndMapPosY";
+    public static final String RND_MAP_SIZE_HEIGHT = "RndMapSizeHeight";
+    public static final String RND_MAP_SIZE_WIDTH = "RndMapSizeWidth";
+    public static final String RND_MAP_ADVANCED = "RndMapAdvanced";
     public static final String LOS_MECH_IN_FIRST = "LOSMechInFirst";
     public static final String LOS_MECH_IN_SECOND = "LOSMechInSecond";
     public static final String SHOW_MAPSHEETS = "ShowMapsheets";
@@ -273,6 +284,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(255, 204, 204));  // HTML hex #FFCCCC
         setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
         setDefault(WARNING_COLOR, Color.RED);
+        setDefault(ADVANCED_LOW_FOLIAGE_COLOR, new Color(80, 230, 80));
 
 
         setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");
@@ -296,7 +308,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_SHOW_FPS, "false");
         store.setDefault(ADVANCED_SHOW_COORDS, "true");
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 5);
-        store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, false);
+        store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, true);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -325,6 +337,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FOV_DARKEN_ALPHA, 100);
         store.setDefault(FOV_STRIPES, 35);
         store.setDefault(FOV_GRAYSCALE, "false");
+        store.setDefault(IMAGE_CHOOSER_POS_X, 200);
+        store.setDefault(IMAGE_CHOOSER_POS_Y, 150);
+        store.setDefault(IMAGE_CHOOSER_SIZE_WIDTH, 500);
+        store.setDefault(IMAGE_CHOOSER_SIZE_HEIGHT, 400);
+        store.setDefault(IMAGE_CHOOSER_SPLIT_POS, 50);
         setDefault(MAP_TEXT_COLOR, Color.black);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
@@ -382,6 +399,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(TOOLTIP_DIST_SUPRESSION, BoardView1.HEX_DIAG);
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
+        store.setDefault(RND_MAP_SIZE_HEIGHT, 500);
+        store.setDefault(RND_MAP_SIZE_WIDTH, 500);
+        store.setDefault(RND_MAP_POS_X, 400);
+        store.setDefault(RND_MAP_POS_Y, 400);
+        store.setDefault(RND_MAP_ADVANCED, false);
         store.setDefault(SHOW_MAPSHEETS, false);
         store.setDefault(SHOW_WPS_IN_TT, false);
         store.setDefault(SHOW_ARMOR_MINIVIS_TT, false);
@@ -682,6 +704,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getMiniReportSizeWidth() {
         return store.getInt(MINI_REPORT_SIZE_WIDTH);
+    }
+    
+    public int getImageChoicePosX() {
+        return store.getInt(IMAGE_CHOOSER_POS_X);
+    }
+
+    public int getImageChoicePosY() {
+        return store.getInt(IMAGE_CHOOSER_POS_Y);
+    }
+
+    public int getImageChoiceSizeHeight() {
+        return store.getInt(IMAGE_CHOOSER_SIZE_HEIGHT);
+    }
+
+    public int getImageChoiceSizeWidth() {
+        return store.getInt(IMAGE_CHOOSER_SIZE_WIDTH);
     }
 
     public boolean getMouseWheelZoom() {

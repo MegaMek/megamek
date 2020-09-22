@@ -49,6 +49,9 @@ public class InfantryRifleMauser960LaserWeapon extends InfantryWeapon {
 		 * in this way automatically gain the Heavy Burst Weapon special feature
 		*/
 		infantryDamage = 0.60; //.93
+		ammoWeight = 0.0003;
+		shots = 15;
+		bursts = 2;
 		infantryRange = 2;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2698, 2700, 2710, DATE_NONE, DATE_NONE)

@@ -46,6 +46,7 @@ import megamek.client.commands.SitrepCommand;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
@@ -1139,7 +1140,8 @@ public class Client implements IClientCommandHandler {
      * returns the stored <img> tag for given unit id
      */
     private String getCachedImgTag(int id){
-        if(imgCache == null || !imgCache.containsKey(id)) {
+        if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_ROUND_REPORT_SPRITES)
+                || (imgCache == null) || !imgCache.containsKey(id)) {
             return null;
         }
         return imgCache.get(id);

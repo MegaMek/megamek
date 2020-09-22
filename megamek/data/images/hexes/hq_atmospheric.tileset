@@ -74,22 +74,22 @@ include "StandardIncludes/StandardLimbs.tileinc"
 
 super * "water:1" "" "transparent/anim_water_1.gif"
 
-super * "woods:1" "tropical" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
-super * "woods:2" "tropical" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
-super * "woods:3" "tropical" "jungle/ultra_heavy_jungle1.png"
+super * "woods:1;foliage_elev:*" "tropical" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+super * "woods:2;foliage_elev:*" "tropical" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "woods:3;foliage_elev:*" "tropical" "jungle/ultra_heavy_jungle1.png"
 
-super * "woods:1" "snow" "snow/snow_lf.png"
-super * "woods:2" "snow" "snow/snow_hf.png"
+super * "woods:1;foliage_elev:*" "snow" "snow/snow_lf.png"
+super * "woods:2;foliage_elev:*" "snow" "snow/snow_hf.png"
 
-super * "woods:1;fluff:12" "" "boring/orchard.png"
-super * "woods:1" "" "hq_boring/lf0.png;hq_boring/lf1.png;hq_boring/lf2.png;hq_boring/lf3.png"
+super * "woods:1;foliage_elev:*;fluff:12" "" "boring/orchard.png"
+super * "woods:1;foliage_elev:*" "" "hq_boring/lf0.png;hq_boring/lf1.png;hq_boring/lf2.png;hq_boring/lf3.png"
 #hf2.gif has been taken out because it looks too much like ultra heavy
-super * "woods:2" "" "hq_boring/hf0.png;hq_boring/hf1.png;hq_boring/hf2.png"
-super * "woods:3" "" "boring/uhf.gif"
+super * "woods:2;foliage_elev:*" "" "hq_boring/hf0.png;hq_boring/hf1.png;hq_boring/hf2.png"
+super * "woods:3;foliage_elev:*" "" "boring/uhf.gif"
 
-super * "jungle:1" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
-super * "jungle:2" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
-super * "jungle:3" "" "jungle/ultra_heavy_jungle1.png"
+super * "jungle:1;foliage_elev:*" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+super * "jungle:2;foliage_elev:*" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "jungle:3;foliage_elev:*" "" "jungle/ultra_heavy_jungle1.png"
 
 super * "water:2" "" "transparent/anim_water_2.gif"
 super * "water:3" "" "transparent/anim_water_3.gif"

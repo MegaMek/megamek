@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ui.swing.tileset;
 
 import java.util.*;
@@ -23,21 +22,24 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Polygon;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
 
+import megamek.MegaMek;
 import megamek.client.ui.ITilesetManager;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
+import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.util.RotateFilter;
 import megamek.common.*;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.preference.*;
-import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -50,7 +52,14 @@ import megamek.common.util.fileUtils.MegaMekFile;
 public class TilesetManager implements IPreferenceChangeListener, ITilesetManager {
     
     public static final String DIR_NAME_WRECKS = "wrecks"; //$NON-NLS-1$
+    public static final String DIR_NAME_BOTTOM_DECALS = "bottomdecals";
+    public static final String FILENAME_PREFIX_WRECKS = "destroyed_decal";
+    public static final String FILENAME_SUFFIX_WRECKS_ASSAULTPLUS = "assaultplus";
+    public static final String FILENAME_SUFFIX_WRECKS_ULTRALIGHT = "ultralight";
 
+    private static final int NUM_DECAL_ROTATIONS = 4;
+    private static final int MAX_NUM_DECALS = 10;
+    
     public static final String FILENAME_DEFAULT_HEX_SET = "defaulthexset.txt"; //$NON-NLS-1$
 
     private static final String FILENAME_NIGHT_IMAGE = new File("transparent", "night.png").toString();  //$NON-NLS-1$  //$NON-NLS-2$
@@ -71,15 +80,14 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private boolean started = false;
     private boolean loaded = false;
 
-    // keep track of camo images
-    private DirectoryItems camos;
-
     // mech images
     private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
     private MechTileset wreckTileset = new MechTileset(
             new MegaMekFile(Configuration.unitImagesDir(), DIR_NAME_WRECKS).getFile());
-    private ArrayList<EntityImage> mechImageList = new ArrayList<EntityImage>();
-    private HashMap<ArrayList<Integer>, EntityImage> mechImages = new HashMap<ArrayList<Integer>, EntityImage>();
+    private List<EntityImage> mechImageList = new ArrayList<>();
+    private Map<ArrayList<Integer>, EntityImage> mechImages = new HashMap<>();
+    private Map<String, Image> wreckageDecals = new HashMap<>();
+    private Map<String, Integer> wreckageDecalCount;
 
     // hex images
     private HexTileset hexTileset;
@@ -100,7 +108,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      * images for various colors (for Players, and possibly multiple players
      * in the same hex).
      */
-    private HashMap<Color, Image> ecmStaticImages = new HashMap<Color, Image>();
+    private Map<Color, Image> ecmStaticImages = new HashMap<>();
     
     /** Creates new TilesetManager. */
     public TilesetManager(BoardView1 bv) throws IOException {
@@ -108,28 +116,52 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         hexTileset = new HexTileset(boardview.game);
         tracker = new MediaTracker(boardview);
         try {
-            camos = new DirectoryItems(
-                    Configuration.camoDir(),
-                    "", //$NON-NLS-1$
-                    ScaledImageFileFactory.getInstance()
-            );
-        } catch (Exception e) {
-            camos = null;
+            String wreckDecalPath = String.format("%s\\%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
+            File wreckDir = new File(Configuration.unitImagesDir(), wreckDecalPath);
+            
+            int bigWreckCount = 0;
+            int tinyWreckCount = 0;
+            
+            // this section of code counts how many of each type of image is accessible
+            for(int decalIndex = 1; decalIndex < MAX_NUM_DECALS; decalIndex++) {
+                String heavyFileName = String.format("%s_%d_%s.png", FILENAME_PREFIX_WRECKS, decalIndex, FILENAME_SUFFIX_WRECKS_ASSAULTPLUS);
+                String lightFileName = String.format("%s_%d_%s.png", FILENAME_PREFIX_WRECKS, decalIndex, FILENAME_SUFFIX_WRECKS_ULTRALIGHT);
+                Image heavyImage = LoadSpecificImage(wreckDir, heavyFileName);
+                Image lightImage = LoadSpecificImage(wreckDir, lightFileName);
+                
+                if (heavyImage != null) {
+                    bigWreckCount++;
+                }
+                
+                if (lightImage != null) {
+                    tinyWreckCount++;
+                }
+                
+                // if we can't load any more images, no need to keep failing
+                if (heavyImage == null && lightImage == null) {
+                    break;
+                }
+            }
+
+            wreckageDecalCount = new HashMap<>();
+            wreckageDecalCount.put(FILENAME_SUFFIX_WRECKS_ULTRALIGHT, tinyWreckCount);
+            wreckageDecalCount.put(FILENAME_SUFFIX_WRECKS_ASSAULTPLUS, bigWreckCount);
+            
+        } catch (Exception ignored) {
+
         }
-        mechTileset.loadFromFile("mechset.txt"); //$NON-NLS-1$
-        wreckTileset.loadFromFile("wreckset.txt"); //$NON-NLS-1$
+        mechTileset.loadFromFile("mechset.txt");
+        wreckTileset.loadFromFile("wreckset.txt");
         try {
             hexTileset.incDepth = 0;
             hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
         } catch (Exception FileNotFoundException) {
-            DefaultMmLogger.getInstance().error(getClass(), "TilesetManager()", 
-                    "Error loading tileset " + PreferenceManager.getClientPreferences().getMapTileset() +
-                    " Reverting to default hexset! ");
+            MegaMek.getLogger().error(this, "Error loading tileset "
+                    + PreferenceManager.getClientPreferences().getMapTileset() + " Reverting to default hexset!");
             if (new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile().exists()){
                 hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);
             } else {
-                DefaultMmLogger.getInstance().fatal(getClass(), "TilesetManager()", 
-                        "Could not load default tileset " + FILENAME_DEFAULT_HEX_SET);
+                MegaMek.getLogger().fatal(this, "Could not load default tileset " + FILENAME_DEFAULT_HEX_SET);
             }
         }
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
@@ -137,6 +169,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     }
 
     /** React to changes in the settings. */
+    @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         // A new Hex Tileset has been selected
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
@@ -158,11 +191,11 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     }
 
     /** Retrieve an icon for the unit (used in the Unit Overview). */
+    @Override
     public Image iconFor(Entity entity) {
         EntityImage entityImage = getFromCache(entity, -1);
         if (entityImage == null) {
-            DefaultMmLogger.getInstance().error(getClass(), "iconFor()", 
-                    "Unable to load icon for entity: " + entity.getShortNameRaw());
+            MegaMek.getLogger().error(this, "Unable to load icon for entity: " + entity.getShortNameRaw());
             Image generic = getGenericImage(entity, -1, mechTileset);
             return (generic != null) ? ImageUtil.getScaledImage(generic, 56, 48) : null;
         }
@@ -173,11 +206,117 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image wreckMarkerFor(Entity entity, int secondaryPos) {
         EntityImage entityImage = getFromCache(entity, secondaryPos);
         if (entityImage == null) {
-            DefaultMmLogger.getInstance().error(getClass(), "wreckMarkerFor()", 
-                    "Unable to load wreck image for entity: " + entity.getShortNameRaw());
+            MegaMek.getLogger().error(this, "Unable to load wreck image for entity: " + entity.getShortNameRaw());
             return getGenericImage(entity, -1, wreckTileset);
         }
         return entityImage.getWreckFacing(entity.getFacing());
+    }
+    
+    /** Retrieves the "devastated" decoration for the given entity */
+    public Image getCraterFor(Entity entity, int secondaryPos) {
+        Image marker;
+        
+        String suffix = EntityWreckHelper.getWeightSuffix(entity);
+        String filename = String.format("crater_decal_%s.png", suffix);
+        String path = String.format("%s\\%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
+        
+        if(wreckageDecals.containsKey(filename)) {
+            marker = wreckageDecals.get(filename);
+        } else {
+            marker = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
+            wreckageDecals.put(filename, marker);
+        }
+        
+        return marker;
+    }
+    
+    /** Retrieves the "destroyed" decoration for the given entity */
+    public Image bottomLayerWreckMarkerFor(Entity entity, int secondaryPos) {
+        Image marker;
+
+        // wreck filenames are in the format destroyed_decal_x_weightsuffix, where x is 1 through however many bottom splats we have
+        // in the directory. To make sure we don't swap splats between entities, we make it depend on entity ID        
+        String suffix = EntityWreckHelper.getWeightSuffix(entity);
+        
+        // defensive coding in case data is missing
+        if(wreckageDecalCount.get(suffix) == 0) {
+            return null;
+        }
+        
+        int wreckNum = (entity.getId() % this.wreckageDecalCount.get(suffix)) + 1;
+        String filename = String.format("%s_%d_%s.png", FILENAME_PREFIX_WRECKS, wreckNum, suffix);
+        String path = String.format("%s\\%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
+        
+        if(wreckageDecals.containsKey(filename)) {
+            marker = wreckageDecals.get(filename);
+        } else {
+            marker = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
+            wreckageDecals.put(filename, marker);
+        }
+        
+        return marker;
+    }
+    
+    /** Retrieves the "destroyed" decoration for the given entity */
+    public Image bottomLayerFuelLeakMarkerFor(Entity entity) {
+        Image marker;
+        
+        String suffix = EntityWreckHelper.getWeightSuffix(entity);
+        String filename = String.format("fuelleak_decal_%s.png", suffix);
+        String path = String.format("%s\\%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
+        
+        int rotationKey = entity.getId() % NUM_DECAL_ROTATIONS;
+        String imageKey = String.format("%s%s", filename, rotationKey);
+        
+        if(!wreckageDecals.containsKey(imageKey)) {
+            Image baseImage = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
+            
+            for(double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
+                RotateFilter rf = new RotateFilter(x * 90);
+                String newImageKey = String.format("%s%s", filename, (int) x);
+                
+                ImageProducer ip = new FilteredImageSource(baseImage.getSource(), rf);
+                Image resultImage = Toolkit.getDefaultToolkit().createImage(ip);
+                wreckageDecals.put(newImageKey, resultImage);
+            }
+        }
+        
+        marker = wreckageDecals.get(imageKey);
+        
+        return marker;
+    }
+    
+    /** Retrieves the "destroyed" decoration for the given entity */
+    public Image bottomLayerMotiveMarkerFor(Entity entity) {
+        Image marker = null;
+        
+        String weightSuffix = EntityWreckHelper.getWeightSuffix(entity);
+        String motivePrefix = EntityWreckHelper.getMotivePrefix(entity);
+        
+        if(motivePrefix != null) {
+            String filename = String.format("%s_decal_%s.png", motivePrefix, weightSuffix);
+            String path = String.format("%s\\%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
+            
+            int rotationKey = entity.getId() % NUM_DECAL_ROTATIONS;
+            String imageKey = String.format("%s%s", filename, rotationKey);
+            
+            if(!wreckageDecals.containsKey(imageKey)) {
+                Image baseImage = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
+                
+                for(double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
+                    RotateFilter rf = new RotateFilter(x * 90);
+                    String newImageKey = String.format("%s%s", filename, (int) x);
+                    
+                    ImageProducer ip = new FilteredImageSource(baseImage.getSource(), rf);
+                    Image resultImage = Toolkit.getDefaultToolkit().createImage(ip);
+                    wreckageDecals.put(newImageKey, resultImage);
+                }
+            }
+            
+            marker = wreckageDecals.get(imageKey);
+        }
+        
+        return marker;
     }
 
     /** Retrieve an image for the unit. */
@@ -200,25 +339,24 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image imageFor(Entity entity, int facing, int secondaryPos) {
         EntityImage entityImage = getFromCache(entity, secondaryPos);
         if (entityImage == null) {
-            DefaultMmLogger.getInstance().error(getClass(), "imageFor()", 
-                    "Unable to load image for entity: " + entity.getShortNameRaw());
+            MegaMek.getLogger().error(this, "Unable to load image for entity: " + entity.getShortNameRaw());
             return getGenericImage(entity, -1, mechTileset);
         }
         // get image rotated for facing
         return entityImage.getFacing(facing);
     }
     
+    
     /** Retrieves the image from the cache and loads it if not present. */
     private EntityImage getFromCache(Entity entity, int secondaryPos) {
-        ArrayList<Integer> temp = new ArrayList<Integer>();
+        List<Integer> temp = new ArrayList<>();
         temp.add(entity.getId());
         temp.add(secondaryPos);
         EntityImage result = mechImages.get(temp);
         
         // Image could be null, for example with double blind
         if (result == null) {
-            DefaultMmLogger.getInstance().info(getClass(), "getFromCache()", 
-                    "Loading image on the fly: " + entity.getShortNameRaw());
+            MegaMek.getLogger().info(this, "Loading image on the fly: " + entity.getShortNameRaw());
             loadImage(entity, secondaryPos);
             result = mechImages.get(temp);
         }
@@ -347,9 +485,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             // Find the largest size by size square we can fit in the cache
             int max_dim = (int)Math.sqrt(ImageCache.MAX_SIZE);
             if (width < max_dim) {
-        	        height = (int)(ImageCache.MAX_SIZE / width);
+                    height = (int)(ImageCache.MAX_SIZE / width);
             } else if (height < max_dim) {
-        	        width = (int)(ImageCache.MAX_SIZE / height);
+                    width = (int)(ImageCache.MAX_SIZE / height);
             } else {
                 width = height = max_dim;
             }
@@ -385,12 +523,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     }
     
     /** Local method. Loads and returns the image. */ 
-    protected static Image LoadSpecificImage(File path, String name) {
-        Image result = ImageUtil.loadImageFromFile(
-                new MegaMekFile(path, name).toString());
-        if (result.getWidth(null) <= 0 || result.getHeight(null) <= 0) {
-            DefaultMmLogger.getInstance().error(TilesetManager.class, "LoadImage()", 
-                    "Error opening image: " + name);
+    public static Image LoadSpecificImage(File path, String name) {
+        Image result = ImageUtil.loadImageFromFile(new MegaMekFile(path, name).toString());
+        if ((result == null) || (result.getWidth(null) <= 0) || (result.getHeight(null) <= 0)) {
+            MegaMek.getLogger().error(TilesetManager.class, "Error opening image: " + name);
         }
         return result;
     }
@@ -465,43 +601,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     }
 
     /**
-     * Returns the camo pattern for the given player 
-     * or null, if the player has no camo or there was an error.
-     */
-    public Image getPlayerCamo(IPlayer player) {
-        return getCamo(player.getCamoCategory(), player.getCamoFileName());
-    }
-
-    /**
-     * Returns the camo pattern for the given entity 
-     * or null, if the player has no camo or there was an error.
-     */
-    public Image getEntityCamo(Entity entity) {
-        return getCamo(entity.getCamoCategory(), entity.getCamoFileName());
-    }
-
-    /** Returns the camo pattern, if possible or null. */
-    private Image getCamo(String category, String name) {
-        // Return a null if no camo
-        if ((category == null) || category.equals(IPlayer.NO_CAMO)) {
-            return null;
-        }
-
-        // Try to get the camo file.
-        Image camo = null;
-        try {
-            // Translate the root camo directory name.
-            if (IPlayer.ROOT_CAMO.equals(category)) {
-                category = ""; //$NON-NLS-1$
-            }
-            camo = (Image) camos.getItem(category, name);
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        return camo;
-    }
-    
-    /**
      * Load a single entity image
      */
     public synchronized void loadImage(Entity entity, int secondaryPos) {
@@ -511,11 +610,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         IPlayer player = entity.getOwner();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
 
-        Image camo = null;
-        if (getEntityCamo(entity) != null) {
-            camo = getEntityCamo(entity);
-        } else {
-            camo = getPlayerCamo(player);
+        Image camo = CamoManager.getPlayerCamoImage(player);
+        if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
+            camo = CamoManager.getEntityCamoImage(entity);
         }
         EntityImage entityImage = null;
 
@@ -524,7 +621,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             EntityImage onList = j.next();
             if ((onList.getBase() != null) && onList.getBase().equals(base)
                     && (onList.tint == tint) && (onList.getCamo() != null)
-                    && onList.getCamo().equals(camo) && onList.getDmgLvl() == entity.getDamageLevel()) {
+                    && onList.getCamo().equals(camo) && onList.getDmgLvl() == entity.getDamageLevel(false)) {
                 entityImage = onList;
                 break;
             }
@@ -558,6 +655,5 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         mechImageList.clear();
         mechImages.clear();
         hexTileset.clearAllHexes();
-    }
-    
+    }    
 }

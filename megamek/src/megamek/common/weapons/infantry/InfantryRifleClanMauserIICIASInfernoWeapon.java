@@ -36,7 +36,7 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryClanMauserIICIASInferno");
 		addLookupName("Infantry Clan Mauser IIC Inferno");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		tonnage = 0.0012;
 		cost = 18000;
 		bv = 6.45;
@@ -51,6 +51,8 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
 		*/
 		infantryDamage = 0.60;  //was .90
 		infantryRange = 3;
+		ammoWeight = 0.0003;
+		shots = 6;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3013, 3015, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)

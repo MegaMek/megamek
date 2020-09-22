@@ -33,10 +33,10 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
         super();
 
         name = "Rifle (Federated-Barrett M42B)";
-        setInternalName(name);
-        addLookupName("InfantryFederatedBarrettM42B");
+        setInternalName("InfantryFederatedBarrettM42B");
+        addLookupName(name);
         addLookupName("Federated Barrett M42B");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.T_INFANTRY;
         cost = 1385;
         bv = 3.12;
 		tonnage = .006;
@@ -50,6 +50,10 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
 		*/
         infantryDamage = .6; // was 1.02;
         infantryRange = 1;
+        ammoWeight = 0.00024;
+        ammoCost = 12;
+        shots = 50;
+        bursts = 5;
         rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3060, 3064, 3095, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false, false, false)

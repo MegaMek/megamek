@@ -36,13 +36,15 @@ public class InfantryRifleMarxXXLaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMarxXXLaser");
 		addLookupName("Marx XX Laser Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 1750;
 		bv = 1.86;
 		tonnage = .006;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.26;
 		infantryRange = 3;
+		ammoWeight = 0.0003;
+		shots = 5;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2685, 2670, 2690, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

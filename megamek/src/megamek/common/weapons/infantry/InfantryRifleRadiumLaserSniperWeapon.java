@@ -36,13 +36,16 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryRadiumSniper");
 		addLookupName("Radium Sniper Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 9500;
 		bv = 2.58;
 		tonnage = .012;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.36;
 		infantryRange = 3;
+		ammoWeight = 0.00033;
+		ammoCost = 650;
+		shots = 5;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2582, 2583, DATE_NONE, 2607, 3062)
 		        .setISApproximate(true, false, false, false, false)

@@ -37,7 +37,7 @@ public class InfantrySupportMGSupportWeapon extends InfantryWeapon {
 		addLookupName("InfantryHMG");
 		addLookupName("InfantrySupportMG");
 		addLookupName("InfantrySupportMachineGun");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 1750;
 		bv = 4.80;
 		tonnage = .044;
@@ -45,6 +45,10 @@ public class InfantrySupportMGSupportWeapon extends InfantryWeapon {
 		infantryDamage = 0.94;
 		crew = 2;
 		infantryRange = 2;
+		ammoWeight = 0.005;
+		ammoCost = 50;
+		shots = 100;
+		bursts = 5;
 		damage = 1;
 		minimumRange = 0;
 		shortRange = 2;

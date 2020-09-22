@@ -56,6 +56,7 @@ import megamek.common.options.Quirks;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Fills in a template to produce a unit summary in TRO format.

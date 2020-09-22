@@ -37,13 +37,16 @@ public class InfantrySupportHeavyPulseLaserWeapon extends InfantryWeapon {
 		addLookupName("InfantryHeavyPulseLaser");
 		addLookupName("Infantry Heavy Pulse Laser");
 		addLookupName("InfantryMediumPulseLaser");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 60000;
 		bv = 9.58;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_BURST).or(F_INF_SUPPORT);
 		infantryDamage = 0.98;
 		infantryRange = 4;
 		crew = 4;
+		ammoWeight = 0.003;
+		shots = 18;
+		bursts = 3;
 		tonnage = .300;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2610, 2615, 2675, DATE_NONE, DATE_NONE)

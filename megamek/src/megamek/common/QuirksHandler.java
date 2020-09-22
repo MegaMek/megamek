@@ -368,7 +368,7 @@ public class QuirksHandler {
             getLogger().error(QuirksHandler.class, METHOD_NAME, e);
             throw new IOException(e);
         } finally {
-            getLogger().log(QuirksHandler.class, METHOD_NAME, LogLevel.INFO, log);
+            getLogger().log(QuirksHandler.class, METHOD_NAME, LogLevel.INFO, log.toString());
         }
     }
 

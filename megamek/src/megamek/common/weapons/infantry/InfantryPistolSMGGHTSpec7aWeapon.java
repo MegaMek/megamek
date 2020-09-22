@@ -37,13 +37,17 @@ public class InfantryPistolSMGGHTSpec7aWeapon extends InfantryWeapon {
 
 		name = "Machine Pistol (H-T Spec-7a)";
 		setInternalName(name);
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 190;
 		bv = 0.23;
 		tonnage = .0012;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.13;
 		infantryRange = 0;
+		ammoWeight = 0.0002;
+		ammoCost = 25;
+		shots = 7;
+		bursts = 1;
 		rulesRefs = "176,HBHK";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(DATE_NONE, DATE_NONE, 2950, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)

@@ -36,13 +36,16 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryClanPulseLaserPistol");
 		addLookupName("Clan Pulse Laser Pistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 1500;
 		bv = 0.61;
 		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
 		infantryDamage = 0.20;
 		infantryRange = 1;
+		ammoWeight = 0.0003;
+		shots = 10;
+		bursts = 2;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
 				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CFM)

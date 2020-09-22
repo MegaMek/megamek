@@ -33,10 +33,10 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
 		super();
 
 		name = "Laser Rifle (Federated-Barrett M61A)";
-		setInternalName(name);
-		addLookupName("InfantryFederatedBarrettM61A");
+		setInternalName("InfantryFederatedBarrettM61A");
+		addLookupName(name);
 		addLookupName("Federated Barrett M61A");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 2150;
 		bv = 3.83;
 		tonnage = .006;
@@ -50,6 +50,8 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
 		*/
 		infantryDamage = 0.60; //was .75
 		infantryRange = 2;
+		ammoWeight = 0.0003;
+		shots = 6;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3062, 3085, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

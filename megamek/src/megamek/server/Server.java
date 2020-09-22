@@ -4038,6 +4038,7 @@ public class Server implements Runnable {
             if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
                 hex.removeTerrain(Terrains.WOODS);
                 hex.removeTerrain(Terrains.JUNGLE);
+                hex.removeTerrain(Terrains.FOLIAGE_ELEV);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
             }
             sendChangedHex(pos);
@@ -5120,13 +5121,12 @@ public class Server implements Runnable {
             int nextElevation = nextAltitude - nextHex.surface();
 
             boolean crashedIntoTerrain = curAltitude < nextAltitude;
-            if (entity.getMovementMode() == EntityMovementMode.VTOL) {
-                if ((nextElevation == 0)
-                        || ((nextElevation == 1)
-                            && (nextHex.containsTerrain(Terrains.WOODS)
-                            || nextHex.containsTerrain(Terrains.JUNGLE)))) {
+            if (entity.getMovementMode() == EntityMovementMode.VTOL
+                && (nextHex.containsTerrain(Terrains.WOODS)
+                        || nextHex.containsTerrain(Terrains.JUNGLE)) 
+                && nextElevation <= nextHex.terrainLevel(Terrains.FOLIAGE_ELEV)) {
                     crashedIntoTerrain = true;
-                }
+                
             }
 
             if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -5258,8 +5258,9 @@ public class Server implements Runnable {
                     if (entity instanceof Protomech) {
                         table = ToHitData.HIT_SPECIAL_PROTO;
                     }
-                    addReport(damageEntity(entity, entity.rollHitLocation(table, side),
-                            Math.min(5, damage)));
+                    HitData hitData = entity.rollHitLocation(table, side);
+                    hitData.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    addReport(damageEntity(entity, hitData, Math.min(5, damage)));
                     damage -= 5;
                 }
                 // Stay in the current hex and stop skidding.
@@ -6326,17 +6327,22 @@ public class Server implements Runnable {
             if (h.containsTerrain(Terrains.WOODS)) {
                 if (entity instanceof Dropship) {
                     h.removeTerrain(Terrains.WOODS);
+                    h.removeTerrain(Terrains.FOLIAGE_ELEV);
                     h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                             Terrains.ROUGH, 1));
                 } else {
                     int level = h.terrainLevel(Terrains.WOODS) - 1;
+                    int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
                     h.removeTerrain(Terrains.WOODS);
                     if (level > 0) {
                         h.addTerrain(Terrains.getTerrainFactory()
-                                             .createTerrain(Terrains.WOODS, level));
+                                .createTerrain(Terrains.WOODS, level));
+                        h.addTerrain(Terrains.getTerrainFactory()
+                                .createTerrain(Terrains.FOLIAGE_ELEV, folEl == 1 ? 1 : 2));
                     } else {
                         h.addTerrain(Terrains.getTerrainFactory()
                                              .createTerrain(Terrains.ROUGH, 1));
+                        h.removeTerrain(Terrains.FOLIAGE_ELEV);
                     }
                 }
             }
@@ -6344,17 +6350,22 @@ public class Server implements Runnable {
             if (h.containsTerrain(Terrains.JUNGLE)) {
                 if (entity instanceof Dropship) {
                     h.removeTerrain(Terrains.JUNGLE);
+                    h.removeTerrain(Terrains.FOLIAGE_ELEV);
                     h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                             Terrains.ROUGH, 1));
                 } else {
                     int level = h.terrainLevel(Terrains.JUNGLE) - 1;
+                    int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
                     h.removeTerrain(Terrains.JUNGLE);
                     if (level > 0) {
                         h.addTerrain(Terrains.getTerrainFactory()
-                                             .createTerrain(Terrains.JUNGLE, level));
+                                .createTerrain(Terrains.JUNGLE, level));
+                        h.addTerrain(Terrains.getTerrainFactory()
+                                .createTerrain(Terrains.FOLIAGE_ELEV, folEl == 1 ? 1 : 2));
                     } else {
                         h.addTerrain(Terrains.getTerrainFactory()
                                              .createTerrain(Terrains.ROUGH, 1));
+                        h.removeTerrain(Terrains.FOLIAGE_ELEV);
                     }
                 }
             }
@@ -14353,6 +14364,7 @@ public class Server implements Runnable {
                 TorsoTwistAction tta = (TorsoTwistAction) ea;
                 if (entity.canChangeSecondaryFacing()) {
                     entity.setSecondaryFacing(tta.getFacing());
+                    entity.postProcessFacingChange();
                 }
             } else if (ea instanceof FlipArmsAction) {
                 FlipArmsAction faa = (FlipArmsAction) ea;
@@ -15127,8 +15139,10 @@ public class Server implements Runnable {
         if (woods != null) {
             int tf = woods.getTerrainFactor() - nDamage;
             int level = woods.getLevel();
+            int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
             if (tf <= 0) {
                 h.removeTerrain(Terrains.WOODS);
+                h.removeTerrain(Terrains.FOLIAGE_ELEV);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.ROUGH, 1));
                 // light converted to rough
@@ -15139,6 +15153,10 @@ public class Server implements Runnable {
                 h.removeTerrain(Terrains.WOODS);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.WOODS, 1));
+                if (folEl != 1) {
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                            Terrains.FOLIAGE_ELEV, 2));
+                }
                 woods = h.getTerrain(Terrains.WOODS);
                 // heavy converted to light
                 r = new Report(3085, reportType);
@@ -15148,6 +15166,10 @@ public class Server implements Runnable {
                 h.removeTerrain(Terrains.WOODS);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.WOODS, 2));
+                if (folEl != 1) {
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                            Terrains.FOLIAGE_ELEV, 2));
+                }
                 woods = h.getTerrain(Terrains.WOODS);
                 // ultra heavy converted to heavy
                 r = new Report(3082, reportType);
@@ -15159,8 +15181,10 @@ public class Server implements Runnable {
         if (jungle != null) {
             int tf = jungle.getTerrainFactor() - nDamage;
             int level = jungle.getLevel();
+            int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
             if (tf < 0) {
                 h.removeTerrain(Terrains.JUNGLE);
+                h.removeTerrain(Terrains.FOLIAGE_ELEV);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.ROUGH, 1));
                 // light converted to rough
@@ -15171,6 +15195,10 @@ public class Server implements Runnable {
                 h.removeTerrain(Terrains.JUNGLE);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.JUNGLE, 1));
+                if (folEl != 1) {
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                            Terrains.FOLIAGE_ELEV, 2));
+                }
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // heavy converted to light
                 r = new Report(3086, reportType);
@@ -15180,6 +15208,10 @@ public class Server implements Runnable {
                 h.removeTerrain(Terrains.JUNGLE);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.JUNGLE, 2));
+                if (folEl != 1) {
+                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                            Terrains.FOLIAGE_ELEV, 2));
+                }
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // ultra heavy converted to heavy
                 r = new Report(3083, reportType);
@@ -19043,7 +19075,7 @@ public class Server implements Runnable {
                     hit.makeDirectBlow(toHit.getMoS() / 3);
                 }
                 damage -= cluster;
-                cluster = checkForSpikes(te, hit.getLocation(), damage, ae, Mech.LOC_LLEG, Mech.LOC_RLEG);
+                cluster = checkForSpikes(te, hit.getLocation(), cluster, ae, Mech.LOC_LLEG, Mech.LOC_RLEG);
                 addReport(damageEntity(te, hit, cluster, false,
                                        DamageType.NONE, false, false, throughFront));
             }
@@ -19282,328 +19314,7 @@ public class Server implements Runnable {
 
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero && !(entity instanceof ConvFighter)) {
-                // If this aero is part of a squadron, we will deal with its
-                // heat with the fighter squadron
-                if ((game.getEntity(entity.getTransportId()) instanceof FighterSquadron)) {
-                    continue;
-                }
-
-                // should we even bother?
-                if (entity.isDestroyed() || entity.isDoomed()
-                    || entity.getCrew().isDoomed()
-                    || entity.getCrew().isDead()) {
-                    continue;
-                }
-
-                // engine hits add a lot of heat, provided the engine is on
-                entity.heatBuildup += entity.getEngineCritHeat();
-
-                // If an Aero had an active Stealth suite, add 10 heat.
-                if (entity.isStealthOn()) {
-                    entity.heatBuildup += 10;
-                    r = new Report(5015);
-                    r.subject = entity.getId();
-                    addReport(r);
-                }
-
-                // Combat computers help manage heat
-                if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
-                    int reduce = Math.min(entity.heatBuildup, 4);
-                    r = new Report(5026);
-                    r.subject = entity.getId();
-                    r.add(reduce);
-                    addReport(r);
-                    entity.heatBuildup -= reduce;
-                }
-
-                // Add heat from external sources to the heat buildup
-                int max_ext_heat = game.getOptions().intOption(
-                        OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT); // Check Game Options
-                if (max_ext_heat < 0) {
-                    max_ext_heat = 15; // standard value specified in TW p.159
-                }
-                entity.heatBuildup += Math.min(max_ext_heat, entity.heatFromExternal);
-                entity.heatFromExternal = 0;
-                // remove heat we cooled down
-                entity.heatBuildup -= Math.min(9, entity.coolFromExternal);
-                entity.coolFromExternal = 0;
-
-                // add the heat we've built up so far.
-                entity.heat += entity.heatBuildup;
-
-                // how much heat can we sink?
-                int tosink = entity.getHeatCapacityWithWater() + radicalHSBonus;
-
-                // should we use a coolant pod?
-                int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
-                int possibleSinkage = ((Aero) entity).getHeatSinks()
-                        - entity.getCoolantFailureAmount();
-                for (Mounted m : entity.getEquipment()) {
-                    if (m.getType() instanceof AmmoType) {
-                        AmmoType at = (AmmoType) m.getType();
-                        if ((at.getAmmoType() == AmmoType.T_COOLANT_POD) && m.isAmmoUsable()) {
-                            EquipmentMode mode = m.curMode();
-                            if (mode.equals("dump")) {
-                                r = new Report(5260);
-                                r.subject = entity.getId();
-                                addReport(r);
-                                m.setShotsLeft(0);
-                                tosink += possibleSinkage;
-                                break;
-                            }
-                            if (mode.equals("safe") && ((entity.heat - tosink) > safeHeat)) {
-                                r = new Report(5265);
-                                r.subject = entity.getId();
-                                addReport(r);
-                                m.setShotsLeft(0);
-                                tosink += possibleSinkage;
-                                break;
-                            }
-                            if (mode.equals("efficient")
-                                    && ((entity.heat - tosink) >= possibleSinkage)) {
-                                r = new Report(5270);
-                                r.subject = entity.getId();
-                                addReport(r);
-                                m.setShotsLeft(0);
-                                tosink += possibleSinkage;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                tosink = Math.min(tosink, entity.heat);
-                entity.heat -= tosink;
-                r = new Report(5035);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(entity.heatBuildup);
-                r.add(tosink);
-                r.add(entity.heat);
-                addReport(r);
-                entity.heatBuildup = 0;
-                vPhaseReport.addAll(rhsReports);
-
-                // add in the effects of heat
-
-                if ((entity instanceof Dropship) || (entity instanceof Jumpship)) {
-                    // only check for a possible control roll
-                    if (entity.heat > 0) {
-                        int bonus = (int) Math.ceil(entity.heat / 100.0);
-                        game.addControlRoll(new PilotingRollData(
-                                entity.getId(), bonus, "used too much heat"));
-                        entity.heat = 0;
-                    }
-                    continue;
-                }
-
-                // Capital fighters can overheat and require control rolls
-                if (entity.isCapitalFighter() && (entity.heat > 0)) {
-                    int penalty = (int) Math.ceil(entity.heat / 15.0);
-                    game.addControlRoll(new PilotingRollData(entity.getId(),
-                            penalty, "used too much heat"));
-                }
-
-                // Like other large craft, the rest of these rules don't apply
-                // to capital fighters
-                if (entity.isCapitalFighter()) {
-                    continue;
-                }
-
-                int autoShutDownHeat = 30;
-                boolean mtHeat = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
-                if (mtHeat) {
-                    autoShutDownHeat = 50;
-                }
-
-                // heat effects: start up
-                if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
-                    // only start up if not shut down by taser or a TSEMP
-                    if ((entity.getTaserShutdownRounds() == 0)
-                            && (entity.getTsempEffect() != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
-                        if ((entity.heat < 14) && !(entity.isManualShutdown())) {
-                            // automatically starts up again
-                            entity.setShutDown(false);
-                            r = new Report(5045);
-                            r.subject = entity.getId();
-                            r.addDesc(entity);
-                            addReport(r);
-                        } else if (!(entity.isManualShutdown())) {
-                            // If the pilot is KO and we need to roll, auto-fail.
-                            if (!entity.getCrew().isActive()) {
-                                r = new Report(5049);
-                                r.subject = entity.getId();
-                                r.addDesc(entity);
-                            } else {
-                                // roll for startup
-                                int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
-                                if (mtHeat) {
-                                    startup -= 5;
-                                    switch (entity.getCrew().getPiloting()) {
-                                        case 0:
-                                        case 1:
-                                            startup -= 2;
-                                            break;
-                                        case 2:
-                                        case 3:
-                                            startup -= 1;
-                                            break;
-                                        case 6:
-                                        case 7:
-                                            startup += 1;
-                                            break;
-                                    }
-                                }
-                                int startupRoll = entity.getCrew().rollPilotingSkill();
-                                r = new Report(5050);
-                                r.subject = entity.getId();
-                                r.addDesc(entity);
-                                r.add(startup);
-                                r.add(startupRoll);
-                                if (startupRoll >= startup) {
-                                    // start 'er back up
-                                    entity.setShutDown(false);
-                                    r.choose(true);
-                                } else {
-                                    r.choose(false);
-                                }
-                            }
-                            addReport(r);
-                        }
-                    } else {
-                        // if we're shutdown by a BA taser, we might activate
-                        // again
-                        if (entity.isBATaserShutdown()) {
-                            int roll = Compute.d6(2);
-                            if (roll >= 8) {
-                                entity.setTaserShutdownRounds(0);
-                                if (!(game.getOptions().booleanOption(
-                                        OptionsConstants.RPG_MANUAL_SHUTDOWN)
-                                        && entity.isManualShutdown())) {
-                                    entity.setShutDown(false);
-                                }
-                                entity.setBATaserShutdown(false);
-                            }
-                        }
-                    }
-                }
-                // heat effects: shutdown!
-                else if ((entity.heat >= 14) && !entity.isShutDown()) {
-                    if (entity.heat >= autoShutDownHeat) {
-                        r = new Report(5055);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        addReport(r);
-                        // okay, now mark shut down
-                        entity.setShutDown(true);
-                    } else {
-                        // Again, pilot KO means shutdown is automatic.
-                        if (!entity.getCrew().isActive()) {
-                            r = new Report(5056);
-                            r.subject = entity.getId();
-                            r.addDesc(entity);
-                            addReport(r);
-                            entity.setShutDown(true);
-                        } else {
-                            int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
-                            if (mtHeat) {
-                                shutdown -= 5;
-                                switch (entity.getCrew().getPiloting()) {
-                                    case 0:
-                                    case 1:
-                                        shutdown -= 2;
-                                        break;
-                                    case 2:
-                                    case 3:
-                                        shutdown -= 1;
-                                        break;
-                                    case 6:
-                                    case 7:
-                                        shutdown += 1;
-                                        break;
-                                }
-                            }
-                            int shutdownRoll = Compute.d6(2);
-                            r = new Report(5060);
-                            r.subject = entity.getId();
-                            r.addDesc(entity);
-                            r.add(shutdown);
-                            r.add(shutdownRoll);
-                            if (shutdownRoll >= shutdown) {
-                                // avoided
-                                r.choose(true);
-                                addReport(r);
-                            } else {
-                                // shutting down...
-                                r.choose(false);
-                                addReport(r);
-                                // okay, now mark shut down
-                                entity.setShutDown(true);
-                            }
-                        }
-                    }
-                }
-
-                checkRandomAeroMovement(entity, hotDogMod);
-
-                // heat effects: ammo explosion!
-                if (entity.heat >= 19) {
-                    int boom = (4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0))
-                            - hotDogMod;
-                    if (mtHeat) {
-                        boom += (entity.heat >= 35 ? 2 : 0)
-                                + (entity.heat >= 40 ? 2 : 0)
-                                + (entity.heat >= 45 ? 2 : 0);
-                        // Last line is a crutch; 45 heat should be no roll
-                        // but automatic explosion.
-                    }
-                    r = new Report(5065);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(boom);
-                    if (Compute.d6(2) >= boom) {
-                        // mech is ok
-                        r.choose(true);
-                        addReport(r);
-                    } else {
-                        // boom!
-                        r.choose(false);
-                        addReport(r);
-                        addReport(explodeAmmoFromHeat(entity));
-                    }
-                }
-
-                // heat effects: pilot damage
-                if (entity.heat >= 21) {
-                    int ouch = (6 + (entity.heat >= 27 ? 3 : 0)) - hotDogMod;
-                    int ouchRoll = Compute.d6(2);
-                    r = new Report(5075);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(ouch);
-                    r.add(ouchRoll);
-                    if (ouchRoll >= ouch) {
-                        // pilot is ok
-                        r.choose(true);
-                        addReport(r);
-                    } else {
-                        // pilot is hurting
-                        r.choose(false);
-                        addReport(r);
-                        addReport(damageCrew(entity, 1));
-                    }
-                }
-
-                // The pilot may have just expired.
-                if ((entity.getCrew().isDead() || entity.getCrew().isDoomed())
-                        && !entity.getCrew().isEjected()) {
-                    r = new Report(5080);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    addReport(r);
-                    addReport(destroyEntity(entity, "pilot death", true));
-                }
-
+                ServerHelper.resolveAeroHeat(game, entity, vPhaseReport, rhsReports, radicalHSBonus, hotDogMod, this);
                 continue;
             }
 
@@ -20292,7 +20003,7 @@ public class Server implements Runnable {
         }
     }
 
-    private void checkRandomAeroMovement(Entity entity, int hotDogMod) {
+    void checkRandomAeroMovement(Entity entity, int hotDogMod) {
         if (!entity.isAero()) {
             return;
         }
@@ -24814,9 +24525,16 @@ public class Server implements Runnable {
                         int terrainType = (myHex.containsTerrain(Terrains.WOODS)
                                 ? Terrains.WOODS : Terrains.JUNGLE);
                         int oldLevel = myHex.terrainLevel(terrainType);
+                        int oldEl = myHex.terrainLevel(Terrains.FOLIAGE_ELEV);
                         myHex.removeTerrain(terrainType);
                         if (oldLevel > numCleared) {
                             myHex.addTerrain(new Terrain(terrainType, oldLevel - numCleared));
+                            if (oldEl != 1) {
+                                myHex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 
+                                        oldLevel - numCleared == 3 ? 3 : 2));
+                            }
+                        } else {
+                            myHex.removeTerrain(Terrains.FOLIAGE_ELEV);
                         }
                     }
 
@@ -28058,6 +27776,11 @@ public class Server implements Runnable {
      */
     public Vector<Report> destroyEntity(Entity entity, String reason, boolean survivable,
                                          boolean canSalvage) {
+        // can't destroy an entity if it's already been destroyed        
+        if(entity.isDestroyed()) {
+            return new Vector<Report>();
+        }
+        
         Vector<Report> vDesc = new Vector<>();
         Report r;
         
@@ -28607,7 +28330,7 @@ public class Server implements Runnable {
     /**
      * Makes one slot of ammo, determined by certain rules, explode on a mech.
      */
-    private Vector<Report> explodeAmmoFromHeat(Entity entity) {
+    Vector<Report> explodeAmmoFromHeat(Entity entity) {
         int damage = 0;
         int rack = 0;
         int boomloc = -1;
@@ -33184,6 +32907,13 @@ public class Server implements Runnable {
             vDesc.add(r);
             // If the CF is zero, the building should fall.
             if ((curCF == 0) && (bldg.getPhaseCF(coords) != 0)) {
+                
+                // when a building collapses due to an ammo explosion, we can consider
+                // that turret annihilated for the purposes of salvage.
+                for (GunEmplacement gun : guns) {
+                    vDesc.addAll(destroyEntity(gun, "ammo explosion", false, false));
+                }
+                
                 if (bldg instanceof FuelTank) {
                     // If this is a fuel tank, we'll give it its own
                     // message.
@@ -33708,10 +33438,8 @@ public class Server implements Runnable {
                                 step, moveType));
                     }
                 } else if (moveType == EntityMovementType.MOVE_JUMP) {
-                    getLogger().error(getClass(), METHOD_NAME, "gravity move check jump: "
+                    getLogger().debug(getClass(), METHOD_NAME, "gravity move check jump: "
                             + step.getMpUsed() + "/" + cachedMaxMPExpenditure);
-                    // TODO : Don't know if this still needs to be here after updating for new logging system.
-                    System.err.flush();
                     int origWalkMP = entity.getWalkMP(false, false);
                     int gravWalkMP = entity.getWalkMP();
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {

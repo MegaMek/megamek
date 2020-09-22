@@ -30,8 +30,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
+import megamek.client.ui.swing.tileset.CamoManager;
 import megamek.common.IPlayer;
 import megamek.common.Player;
+import megamek.common.util.fileUtils.DirectoryItem;
 
 /**
  * Allow a user to set types and colors for scenario players
@@ -79,12 +82,26 @@ public class ScenarioDialog extends JDialog implements ActionListener {
             final JButton curButton = m_camoButtons[x];
             curButton.setText(Messages.getString("MegaMek.NoCamoBtn")); //$NON-NLS-1$
             curButton.setPreferredSize(new Dimension(84, 72));
-            final CamoChoiceDialog dialog = new CamoChoiceDialog(frame,
-                    curButton);
-            dialog.setPlayer(curPlayer);
+            
+            CamoChooser camoDialog = new CamoChooser(frame);
             curButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    dialog.setVisible(true);
+                    int result = camoDialog.showDialog(curPlayer);
+
+                    // If the dialog was canceled or nothing selected, do nothing
+                    if ((result == JOptionPane.CANCEL_OPTION) || (camoDialog.getSelectedItem() == null)) {
+                        return; 
+                    }
+
+                    // Otherwise, update the player data from the selection
+                    DirectoryItem selectedItem = camoDialog.getSelectedItem();
+                    String category = selectedItem.getCategory();
+                    if (category.equals(IPlayer.NO_CAMO)) {
+                        curPlayer.setColorIndex(camoDialog.getSelectedIndex());
+                    }
+                    curPlayer.setCamoCategory(category);
+                    curPlayer.setCamoFileName(selectedItem.getItem());
+                    curButton.setIcon(CamoManager.getPlayerCamoIcon(curPlayer));
                 }
             });
         }

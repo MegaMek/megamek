@@ -36,13 +36,16 @@ public class InfantryRifleVSPLaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryVSPRifle");
 		addLookupName("VariablePulseLaserRifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 4500;
 		tonnage = 0.006;
 		bv = 0.0;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.33;
 		infantryRange = 1;
+		ammoWeight = 0.0003;
+		shots = 6;
+		bursts = 1;
 		rulesRefs = "195,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3075, 3077, 3085, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

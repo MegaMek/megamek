@@ -1,0 +1,106 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Gotha C
+</Name>
+
+<Model>
+A
+</Model>
+
+<year>
+3000
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+None
+</motion_type>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+21
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+480
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+74
+54
+54
+48
+</armor>
+
+<Nose Equipment>
+CLLargePulseLaser
+CLLargePulseLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLSRM6
+CLSRM6
+CLERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLSRM6
+CLSRM6
+CLERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Clan Ammo SRM-6
+</Aft Equipment>
+
+<source>
+Succession Wars
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

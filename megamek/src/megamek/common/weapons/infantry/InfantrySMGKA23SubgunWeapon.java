@@ -36,13 +36,17 @@ public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryKA23");
 		addLookupName("KA-23 Subgun");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 350;
 		bv = 0.20;
 		tonnage = .0025;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.22;
 		infantryRange = 0;
+		ammoWeight = 0.0003;
+		ammoCost = 6;
+		shots = 40;
+		bursts = 4;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2890, 2895, 2950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

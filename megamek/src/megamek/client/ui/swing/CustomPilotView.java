@@ -83,6 +83,9 @@ public class CustomPilotView extends JPanel {
     
     private final ArrayList<Entity> entityUnitNum = new ArrayList<>();
     private final JComboBox<String> choUnitNum = new JComboBox<>();
+    
+    private String portraitCategory;
+    private String portraitFilename;
 
     public CustomPilotView(CustomMechDialog parent, Entity entity, int slot, boolean editable) {
         this.entity = entity;
@@ -106,15 +109,18 @@ public class CustomPilotView extends JPanel {
                 int result = portraitDialog.showDialog(entity.getCrew(), slot);
                 if (result == JOptionPane.OK_OPTION) {
                     if (portraitDialog.getSelectedItem() != null) {
-                        String category = portraitDialog.getSelectedItem().getCategory();
-                        String filename = portraitDialog.getSelectedItem().getItem();
-                        ((JButton) e.getSource()).setIcon(PortraitManager.getPortraitIcon(category, filename));
+                        portraitCategory = portraitDialog.getSelectedItem().getCategory();
+                        portraitFilename = portraitDialog.getSelectedItem().getItem();
+                        ((JButton) e.getSource()).setIcon(
+                                PortraitManager.getPortraitIcon(portraitCategory, portraitFilename));
                     } 
                 }
             }
         });
         
         portraitDialog = new PortraitChooser(parent);
+        portraitCategory = entity.getCrew().getPortraitCategory(slot);
+        portraitFilename = entity.getCrew().getPortraitFileName(slot);
         button.setIcon(PortraitManager.getPortraitIcon(entity.getCrew(), slot));
         add(button, GBC.std().gridheight(2));
 
@@ -424,17 +430,11 @@ public class CustomPilotView extends JPanel {
     }
     
     public String getPortraitCategory() {
-        if (portraitDialog.getSelectedItem() == null) {
-            return null;
-        }
-        return portraitDialog.getSelectedItem().getCategory();
+        return portraitCategory;
     }
     
     public String getPortraitFilename() {
-        if (portraitDialog.getSelectedItem() == null) {
-            return null;
-        }
-        return portraitDialog.getSelectedItem().getItem();
+        return portraitFilename;
     }
     
     public Entity getEntityUnitNumSwap() {

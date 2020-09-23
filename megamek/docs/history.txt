@@ -2,6 +2,9 @@ VERSION HISTORY:
 ----------------
 0.47.11-SNAPSHOT
 + Data: Fixing missing ProtoMek Sprites
++ Issue #2144: correctly report avoidance of ASF ammo explosions due to heat
++ PR #2230: fix NPE in portrait chooser when customizing a pilot twice in a row
++ PR #2231: Swapping to LocalDateTime For Hour, Minute, and/or Second Dated MegaMek Saves
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

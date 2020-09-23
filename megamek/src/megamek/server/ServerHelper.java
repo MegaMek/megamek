@@ -71,7 +71,7 @@ public class ServerHelper {
         
         // If this aero is part of a squadron, we will deal with its
         // heat with the fighter squadron
-        if ((game.getEntity(entity.getTransportId()) instanceof FighterSquadron)) {
+        if (game.getEntity(entity.getTransportId()) instanceof FighterSquadron) {
             return;
         }
 
@@ -208,14 +208,14 @@ public class ServerHelper {
             // only start up if not shut down by taser or a TSEMP
             if ((entity.getTaserShutdownRounds() == 0)
                     && (entity.getTsempEffect() != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
-                if ((entity.heat < 14) && !(entity.isManualShutdown())) {
+                if ((entity.heat < 14) && !entity.isManualShutdown()) {
                     // automatically starts up again
                     entity.setShutDown(false);
                     r = new Report(5045);
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     vPhaseReport.add(r);
-                } else if (!(entity.isManualShutdown())) {
+                } else if (!entity.isManualShutdown()) {
                     // If the pilot is KO and we need to roll, auto-fail.
                     if (!entity.getCrew().isActive()) {
                         r = new Report(5049);

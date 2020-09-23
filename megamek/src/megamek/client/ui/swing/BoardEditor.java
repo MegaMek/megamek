@@ -31,17 +31,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -96,18 +86,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.common.Building;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.ITerrain;
-import megamek.common.ITerrainFactory;
-import megamek.common.MapSettings;
-import megamek.common.Terrains;
+import megamek.common.*;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -1524,11 +1503,8 @@ public class BoardEditor extends JComponent
             
             // Now, *after* initialization of the board which will correct some errors,
             // do a board validation
-            StringBuffer errBuff = new StringBuffer();
-            board.isValid(errBuff);
-            if (errBuff.length() > 0) {
-                showBoardValidationReport(errBuff);
-            }
+            validateBoard(false);
+            
             refreshTerrainList();
             setupUiFreshBoard();
         } catch (IOException ex) {
@@ -1871,9 +1847,7 @@ public class BoardEditor extends JComponent
             }
         } else if (ae.getActionCommand().equals(FILE_BOARD_EDITOR_VALIDATE)) {
             correctExits();
-            StringBuffer errBuff = new StringBuffer();
-            board.isValid(errBuff);
-            showBoardValidationReport(errBuff);
+            validateBoard(true);
         } else if (ae.getSource().equals(butDelTerrain)
                    && (!lisTerrain.isSelectionEmpty())) {
             ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(

@@ -395,4 +395,22 @@ public class ServerHelper {
             vPhaseReport.addAll(s.destroyEntity(entity, "pilot death", true));
         }
     }
+    
+    /**
+     * Helper function that causes an entity to sink to the bottom of the water
+     * hex it's currently in.
+     */
+    public static void sinkToBottom(Entity entity) {
+        IHex fallHex = entity.getGame().getBoard().getHex(entity.getPosition());
+        int waterDepth = 0;
+        
+        // we're going hull down, we still sink to the bottom if appropriate
+        if (fallHex.containsTerrain(Terrains.WATER)) {
+            // *Only* use this if there actually is water in the hex, otherwise
+            // we get ITerrain.LEVEL_NONE, i.e. Integer.minValue...
+            waterDepth = fallHex.terrainLevel(Terrains.WATER);
+        }
+        
+        entity.setElevation(-waterDepth);
+    }
 }

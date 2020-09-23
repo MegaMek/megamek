@@ -12300,6 +12300,8 @@ public class Server implements Runnable {
                 || (entity.isHullDown() && !entity.canGoHullDown())) {
                 addReport(doEntityFall(entity, roll));
             } else {
+                ServerHelper.sinkToBottom(entity);
+                
                 r = new Report(2317);
                 r.subject = entity.getId();
                 r.add(entity.getDisplayName());
@@ -21126,6 +21128,8 @@ public class Server implements Runnable {
                             entity.setHullDown(true);
                         }
                         if (entity.isHullDown() && entity.canGoHullDown()) {
+                            ServerHelper.sinkToBottom(entity);
+                            
                             r = new Report(2317);
                             r.subject = entity.getId();
                             r.add(entity.getDisplayName());

@@ -2339,12 +2339,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             return;
         }
         // save!
-        try {
-            OutputStream os = new FileOutputStream(curfileBoard);
-            // tell the board to save!
+        try (OutputStream os = new FileOutputStream(curfileBoard)) {
             client.getGame().getBoard().save(os);
-            // okay, done!
-            os.close();
         } catch (IOException ex) {
             System.err.println("error opening file to save!"); //$NON-NLS-1$
             System.err.println(ex);
@@ -2390,17 +2386,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
-        fc.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File dir) {
-                return (dir.getName().endsWith(".board") || dir.isDirectory()); //$NON-NLS-1$
-            }
-
-            @Override
-            public String getDescription() {
-                return "*.board";
-            }
-        });
+        fc.setFileFilter(new BoardFileFilter());
         int returnVal = fc.showSaveDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!

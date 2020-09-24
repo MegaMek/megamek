@@ -401,16 +401,24 @@ public class ServerHelper {
      * hex it's currently in.
      */
     public static void sinkToBottom(Entity entity) {
+        if((entity == null) || !entity.getGame().getBoard().contains(entity.getPosition())) {
+            return;
+        }
+        
         IHex fallHex = entity.getGame().getBoard().getHex(entity.getPosition());
         int waterDepth = 0;
         
         // we're going hull down, we still sink to the bottom if appropriate
         if (fallHex.containsTerrain(Terrains.WATER)) {
-            // *Only* use this if there actually is water in the hex, otherwise
-            // we get ITerrain.LEVEL_NONE, i.e. Integer.minValue...
-            waterDepth = fallHex.terrainLevel(Terrains.WATER);
+            boolean hexHasBridge = fallHex.containsTerrain(Terrains.BRIDGE_CF);
+            boolean entityOnTopOfBridge = hexHasBridge && (entity.getElevation() == fallHex.ceiling());
+            
+            if (!entityOnTopOfBridge) {
+                // *Only* use this if there actually is water in the hex, otherwise
+                // we get ITerrain.LEVEL_NONE, i.e. Integer.minValue...
+                waterDepth = fallHex.terrainLevel(Terrains.WATER);
+                entity.setElevation(-waterDepth);
+            }
         }
-        
-        entity.setElevation(-waterDepth);
     }
 }

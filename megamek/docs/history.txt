@@ -7,6 +7,7 @@ VERSION HISTORY:
 + PR #2231: Swapping to LocalDateTime For Hour, Minute, and/or Second Dated MegaMek Saves
 + Issue #1233: VTOLs can now stack more than two per hex at different elevations
 + Issue #705: Jumping into water and getting a 'hull down' result on the PSR no longer causes the unit to become permanently stuck on top of the water
++ Issues #1762, #2233: Board editor fixes
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

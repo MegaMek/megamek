@@ -1571,13 +1571,13 @@ public class BoardEditor extends JComponent
                 return false;
             }
         }
-        butSourceFile.setEnabled(true);
 
         // write the board
-        try {
-            OutputStream os = new FileOutputStream(curBoardFile);
+        try (OutputStream os = new FileOutputStream(curBoardFile)) {
             board.save(os);
-            os.close();
+            
+            // Adapt to successful save
+            butSourceFile.setEnabled(true);
             savedUndoStackSize = undoStack.size();
             hasChanges = false;
             setFrameTitle();

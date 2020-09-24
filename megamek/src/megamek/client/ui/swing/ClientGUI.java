@@ -2339,12 +2339,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             return;
         }
         // save!
-        try {
-            OutputStream os = new FileOutputStream(curfileBoard);
-            // tell the board to save!
+        try (OutputStream os = new FileOutputStream(curfileBoard)) {
             client.getGame().getBoard().save(os);
-            // okay, done!
-            os.close();
         } catch (IOException ex) {
             System.err.println("error opening file to save!"); //$NON-NLS-1$
             System.err.println(ex);

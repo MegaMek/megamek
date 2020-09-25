@@ -1739,7 +1739,9 @@ public abstract class Mech extends Entity {
                 return m.getName();
             }
         }
-        return "";
+        
+        // if a mech has no heat sink equipment, we pretend like it has standard heat sinks.
+        return "Heat Sink";
     }
 
     public int getHeatCapacity(boolean includePartialWing,

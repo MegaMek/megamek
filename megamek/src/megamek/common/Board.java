@@ -374,7 +374,7 @@ public class Board implements Serializable, IBoard {
                             // Log the error and remove the
                             // building from the board.
                             if (errBuff == null) {
-                                System.err.println("Unable to create building.");
+                                MegaMek.getLogger().error(this, "Unable to create building.");
                                 excep.printStackTrace();
                             } else {
                                 errBuff.append("Unable to create building at " + coords.toString() + "!\n");
@@ -404,7 +404,7 @@ public class Board implements Serializable, IBoard {
                             // Log the error and remove the
                             // fuel tank from the board.
                             if (errBuff == null) {
-                                System.err.println("Unable to create fuel tank.");
+                                MegaMek.getLogger().error(this, "Unable to create fuel tank.");
                                 excep.printStackTrace();
                             } else {
                                 errBuff.append("Unable to create fuel tank at " + coords.toString() + "!\n");
@@ -434,7 +434,7 @@ public class Board implements Serializable, IBoard {
                             // Log the error and remove the
                             // bridge from the board.
                             if (errBuff == null) {
-                                System.err.println("Unable to create bridge.");
+                                MegaMek.getLogger().error(this, "Unable to create bridge.");
                                 excep.printStackTrace();
                             } else {
                                 errBuff.append("Unable to create bridge at " + coords.toString() + "!\n");
@@ -797,9 +797,7 @@ public class Board implements Serializable, IBoard {
     public static boolean boardIsSize(final File filepath, final BoardDimensions size) {
         int boardx = 0;
         int boardy = 0;
-        try {
-            // make inpustream for board
-            Reader r = new BufferedReader(new FileReader(filepath));
+        try (Reader r = new BufferedReader(new FileReader(filepath))) {
             // read board, looking for "size"
             StreamTokenizer st = new StreamTokenizer(r);
             st.eolIsSignificant(true);
@@ -815,7 +813,6 @@ public class Board implements Serializable, IBoard {
                     break;
                 }
             }
-            r.close();
         } catch (IOException ex) {
             return false;
         }
@@ -834,9 +831,7 @@ public class Board implements Serializable, IBoard {
     public static BoardDimensions getSize(final File filepath) {
         int boardx = 0;
         int boardy = 0;
-        try {
-            // make inpustream for board
-            Reader r = new BufferedReader(new FileReader(filepath));
+        try (Reader r = new BufferedReader(new FileReader(filepath))) {
             // read board, looking for "size"
             StreamTokenizer st = new StreamTokenizer(r);
             st.eolIsSignificant(true);
@@ -852,7 +847,6 @@ public class Board implements Serializable, IBoard {
                     break;
                 }
             }
-            r.close();
         } catch (IOException ex) {
             return null;
         }
@@ -957,16 +951,10 @@ public class Board implements Serializable, IBoard {
      */
     @Override
     public void load(final File filepath) {
-        // load a board
-        try {
-            java.io.InputStream is = new FileInputStream(filepath);
-            // tell the board to load!
+        try (InputStream is = new FileInputStream(filepath)) {
             load(is);
-            // okay, done!
-            is.close();
-        } catch (java.io.IOException ex) {
-            System.err.println("error opening file to load board!");
-            System.err.println(ex);
+        } catch (IOException ex) {
+            MegaMek.getLogger().error(this, "IO Error opening file to load board! " + ex);
         }
     }
 
@@ -982,8 +970,7 @@ public class Board implements Serializable, IBoard {
         IHex[] nd = new IHex[0];
         int index = 0;
         resetStoredElevation();
-        try {
-            Reader r = new BufferedReader(new InputStreamReader(is));
+        try (Reader r = new BufferedReader(new InputStreamReader(is))) {
             StreamTokenizer st = new StreamTokenizer(r);
             st.eolIsSignificant(true);
             st.commentChar('#');
@@ -1037,8 +1024,8 @@ public class Board implements Serializable, IBoard {
                     if (bgFile.exists()) {
                         backgroundPaths.add(bgFile.getPath());
                     } else {
-                        System.err.println("Board specified background image, " + "but path couldn't be found! Path: "
-                                + bgFile.getPath());
+                        MegaMek.getLogger().error(this, 
+                                "Board specified background image, but path couldn't be found! Path: " + bgFile.getPath());
                     }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("description")) {
                     st.nextToken();
@@ -1074,8 +1061,7 @@ public class Board implements Serializable, IBoard {
                 }
             }
         } catch (IOException ex) {
-            System.err.println("i/o error reading board");
-            System.err.println(ex);
+            MegaMek.getLogger().error(this, "I/O Error: " + ex);
         }
 
         // fill nulls with blank hexes
@@ -1089,10 +1075,10 @@ public class Board implements Serializable, IBoard {
         if (isValid(nd, nw, nh, errBuff) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
             newData(nw, nh, nd, errBuff);
         } else if (continueLoadOnError && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
-            System.err.println("Error reading board, data invalid.");
+            MegaMek.getLogger().error(this, "Invalid board data!");
             newData(nw, nh, nd, errBuff);
         } else if (errBuff == null){
-            System.err.println("Error reading board, data invalid.");
+            MegaMek.getLogger().error(this, "Invalid board data!");
         }
 
     }
@@ -1212,7 +1198,7 @@ public class Board implements Serializable, IBoard {
             // make sure it's written
             w.flush();
         } catch (IOException ex) {
-            MegaMek.getLogger().error(this, "I/O Error" + ex);
+            MegaMek.getLogger().error(this, "I/O Error: " + ex);
         }
     }
 
@@ -1225,8 +1211,7 @@ public class Board implements Serializable, IBoard {
             oos.writeObject(this);
             oos.flush();
         } catch (IOException ex) {
-            System.err.println("i/o error writing board");
-            System.err.println(ex);
+            MegaMek.getLogger().error(this, "I/O Error: " + ex);
         }
     }
 
@@ -1571,9 +1556,7 @@ public class Board implements Serializable, IBoard {
 
             // Handle garbage input.
             if (bldg == null) {
-                System.err.print("Could not find a match for ");
-                System.err.print(other);
-                System.err.println(" to update.");
+                MegaMek.getLogger().error(this, "Could not find a match for " + other + " to update.");
                 continue;
             }
             Enumeration<Coords> coordsEnum = bldg.getCoords();

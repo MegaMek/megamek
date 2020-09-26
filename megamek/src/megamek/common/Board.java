@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
@@ -979,6 +980,7 @@ public class Board implements Serializable, IBoard {
     public void load(InputStream is, StringBuffer errBuff, boolean continueLoadOnError) {
         int nw = 0, nh = 0, di = 0;
         IHex[] nd = new IHex[0];
+        int index = 0;
         resetStoredElevation();
         try {
             Reader r = new BufferedReader(new InputStreamReader(is));
@@ -987,8 +989,6 @@ public class Board implements Serializable, IBoard {
             st.commentChar('#');
             st.quoteChar('"');
             st.wordChars('_', '_');
-            int x_pos = 1;
-            int y_pos = 1;
             while (st.nextToken() != StreamTokenizer.TT_EOF) {
                 if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("size")) {
                     // read rest of line
@@ -1027,13 +1027,9 @@ public class Board implements Serializable, IBoard {
                         args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int) st.nval + "" : st.sval;
                     }
                     int elevation = Integer.parseInt(args[1]);
-                    int newIndex = indexFor(args[0], nw, y_pos);
-                    nd[newIndex] = new Hex(elevation, args[2], args[3], new Coords(x_pos - 1, y_pos - 1));
-                    x_pos++;
-                    if (x_pos > nw) {
-                        y_pos++;
-                        x_pos = 1;
-                    }
+                    // The coordinates in the .board file are ignored!
+                    nd[index] = new Hex(elevation, args[2], args[3], new Coords(index % width, index / width));
+                    index++;
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("background")) {
                     st.nextToken();
                     File bgFile = new MegaMekFile(Configuration.boardBackgroundsDir(),
@@ -1160,23 +1156,11 @@ public class Board implements Serializable, IBoard {
         return true;
     }
 
-    private int indexFor(String hexNum, int width, int row) {
-        int substringDiff = 2;
-        if (row > 99) {
-            substringDiff = Integer.toString(width).length();
-        }
-        int x = Integer.parseInt(hexNum.substring(0, hexNum.length() - substringDiff)) - 1;
-        int y = Integer.parseInt(hexNum.substring(hexNum.length() - substringDiff)) - 1;
-        return (y * width) + x;
-    }
-
     /**
      * Writes data for the board, as text to the OutputStream
      */
     public void save(OutputStream os) {
-        try {
-            Writer w = new OutputStreamWriter(os);
-            // write
+        try (Writer w = new OutputStreamWriter(os)) {
             w.write("size " + width + " " + height + "\r\n");
             if (!roadsAutoExit) {
                 w.write("option exit_roads_to_pavement false\r\n");
@@ -1186,6 +1170,7 @@ public class Board implements Serializable, IBoard {
                 boolean firstTerrain = true;
 
                 StringBuffer hexBuff = new StringBuffer("hex ");
+                // The coordinates in the .board file are ignored when loading the board!
                 hexBuff.append(new Coords(i % width, i / width).getBoardNum());
                 hexBuff.append(" ");
                 hexBuff.append(hex.getLevel());
@@ -1227,8 +1212,7 @@ public class Board implements Serializable, IBoard {
             // make sure it's written
             w.flush();
         } catch (IOException ex) {
-            System.err.println("i/o error writing board");
-            System.err.println(ex);
+            MegaMek.getLogger().error(this, "I/O Error" + ex);
         }
     }
 

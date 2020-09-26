@@ -1015,7 +1015,7 @@ public class Board implements Serializable, IBoard {
                     }
                     int elevation = Integer.parseInt(args[1]);
                     // The coordinates in the .board file are ignored!
-                    nd[index] = new Hex(elevation, args[2], args[3], new Coords(index % width, index / width));
+                    nd[index] = new Hex(elevation, args[2], args[3], new Coords(index % nw, index / nw));
                     index++;
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("background")) {
                     st.nextToken();

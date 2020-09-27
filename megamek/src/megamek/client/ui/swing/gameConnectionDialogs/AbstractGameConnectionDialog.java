@@ -38,18 +38,26 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     private String playerName;
     private int port;
 
+    private boolean confirmed;
+
     private JTextField playerNameField;
     private JTextField portField;
 
     private IClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
 
-    protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal) {
+    protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName) {
         super(owner, title, modal);
 
-        setPlayerName("");
+        setPlayerName(""); // initialize player name
         setPort(2346);
+        setConfirmed(false);
 
         initComponents();
+
+        // if the player name is specified, overwrite the preference with it
+        if (!StringUtil.isNullOrEmpty(playerName)) {
+            setPlayerName(playerName);
+        }
     }
 
     //region Initialization
@@ -93,6 +101,14 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         this.port = port;
     }
 
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
+    }
+
     public JTextField getPlayerNameField() {
         return playerNameField;
     }
@@ -116,7 +132,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     //region Validation
     public boolean dataValidation(String errorTitleKey) {
-        if (StringUtil.isNullOrEmpty(getPlayerName()) || (getPort() == 0)) {
+        if (!isConfirmed() || StringUtil.isNullOrEmpty(getPlayerName()) || (getPort() == 0)) {
             return false;
         } else if (!validatePlayerName()) {
             JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.PlayerNameError"),
@@ -143,6 +159,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
             MegaMek.getLogger().error(this, ex.getMessage());
         }
 
+        setConfirmed(true);
         getClientPreferences().setLastPlayerName(getPlayerName());
         getClientPreferences().setLastConnectPort(getPort());
     }

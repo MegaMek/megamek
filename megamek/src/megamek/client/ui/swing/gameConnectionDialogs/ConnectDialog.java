@@ -39,7 +39,11 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
     private JTextField serverAddressField;
 
     public ConnectDialog(JFrame frame) {
-        super(frame, Messages.getString("MegaMek.ConnectDialog.title"), true);
+        this(frame, "");
+    }
+
+    public ConnectDialog(JFrame frame, String playerName) {
+        super(frame, Messages.getString("MegaMek.ConnectDialog.title"), true, playerName);
     }
 
     //region Initialization

@@ -5,8 +5,10 @@ import java.util.Vector;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Dropship;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentMode;
 import megamek.common.FighterSquadron;
 import megamek.common.IGame;
@@ -418,6 +420,32 @@ public class ServerHelper {
                 // we get ITerrain.LEVEL_NONE, i.e. Integer.minValue...
                 waterDepth = fallHex.terrainLevel(Terrains.WATER);
                 entity.setElevation(-waterDepth);
+            }
+        }
+    }
+    
+    public static void checkAndApplyMagmaCrust(IHex hex, int elevation, Entity entity, Coords curPos,
+            boolean jumpLanding, Vector<Report> vPhaseReport, Server server) {
+        
+        if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
+            int reportID = jumpLanding ? 2396 : 2395;
+            
+            int roll = Compute.d6();
+            Report r = new Report(reportID);
+            r.addDesc(entity);
+            r.add(roll);
+            r.subject = entity.getId();
+            vPhaseReport.add(r);
+            
+            int rollTarget = jumpLanding ? 4 : 6;
+            
+            if (roll >= rollTarget) {
+                hex.removeTerrain(Terrains.MAGMA);
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
+                server.sendChangedHex(curPos);
+                for (Entity en : entity.getGame().getEntitiesVector(curPos)) {
+                    server.doMagmaDamage(en, false);
+                }
             }
         }
     }

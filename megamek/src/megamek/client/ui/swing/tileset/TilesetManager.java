@@ -116,8 +116,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         hexTileset = new HexTileset(boardview.game);
         tracker = new MediaTracker(boardview);
         try {
-            String wreckDecalPath = String.format("%s\\%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
-            File wreckDir = new File(Configuration.unitImagesDir(), wreckDecalPath);
+            File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
+            File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);
             
             int bigWreckCount = 0;
             int tinyWreckCount = 0;
@@ -126,8 +126,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             for(int decalIndex = 1; decalIndex < MAX_NUM_DECALS; decalIndex++) {
                 String heavyFileName = String.format("%s_%d_%s.png", FILENAME_PREFIX_WRECKS, decalIndex, FILENAME_SUFFIX_WRECKS_ASSAULTPLUS);
                 String lightFileName = String.format("%s_%d_%s.png", FILENAME_PREFIX_WRECKS, decalIndex, FILENAME_SUFFIX_WRECKS_ULTRALIGHT);
-                Image heavyImage = LoadSpecificImage(wreckDir, heavyFileName);
-                Image lightImage = LoadSpecificImage(wreckDir, lightFileName);
+                Image heavyImage = LoadSpecificImage(wreckDecalDir, heavyFileName);
+                Image lightImage = LoadSpecificImage(wreckDecalDir, lightFileName);
                 
                 if (heavyImage != null) {
                     bigWreckCount++;
@@ -218,12 +218,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         
         String suffix = EntityWreckHelper.getWeightSuffix(entity);
         String filename = String.format("crater_decal_%s.png", suffix);
-        String path = String.format("%s\\%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
+        File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
+        File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);
         
         if(wreckageDecals.containsKey(filename)) {
             marker = wreckageDecals.get(filename);
         } else {
-            marker = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
+            marker = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
             wreckageDecals.put(filename, marker);
         }
         
@@ -245,12 +246,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         
         int wreckNum = (entity.getId() % this.wreckageDecalCount.get(suffix)) + 1;
         String filename = String.format("%s_%d_%s.png", FILENAME_PREFIX_WRECKS, wreckNum, suffix);
-        String path = String.format("%s\\%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
+        File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
+        File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);
         
         if(wreckageDecals.containsKey(filename)) {
             marker = wreckageDecals.get(filename);
         } else {
-            marker = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
+            marker = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
             wreckageDecals.put(filename, marker);
         }
         
@@ -263,13 +265,14 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         
         String suffix = EntityWreckHelper.getWeightSuffix(entity);
         String filename = String.format("fuelleak_decal_%s.png", suffix);
-        String path = String.format("%s\\%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
+        File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
+        File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);
         
         int rotationKey = entity.getId() % NUM_DECAL_ROTATIONS;
         String imageKey = String.format("%s%s", filename, rotationKey);
         
         if(!wreckageDecals.containsKey(imageKey)) {
-            Image baseImage = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
+            Image baseImage = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
             
             for(double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                 RotateFilter rf = new RotateFilter(x * 90);
@@ -295,13 +298,14 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         
         if(motivePrefix != null) {
             String filename = String.format("%s_decal_%s.png", motivePrefix, weightSuffix);
-            String path = String.format("%s\\%s", DIR_NAME_WRECKS, DIR_NAME_BOTTOM_DECALS);
+            File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
+            File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);
             
             int rotationKey = entity.getId() % NUM_DECAL_ROTATIONS;
             String imageKey = String.format("%s%s", filename, rotationKey);
             
             if(!wreckageDecals.containsKey(imageKey)) {
-                Image baseImage = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
+                Image baseImage = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
                 
                 for(double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                     RotateFilter rf = new RotateFilter(x * 90);

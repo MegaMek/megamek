@@ -5665,30 +5665,9 @@ public class Server implements Runnable {
             }
 
             // check for breaking magma crust
-            if ((nextHex.terrainLevel(Terrains.MAGMA) == 1) && (nextElevation == 0)) {
-                int roll = Compute.d6(1);
-                r = new Report(2395);
-                r.addDesc(entity);
-                r.add(roll);
-                r.subject = entity.getId();
-                addReport(r);
-                if (roll == 6) {
-                    nextHex.removeTerrain(Terrains.MAGMA);
-                    nextHex.addTerrain(Terrains.getTerrainFactory()
-                            .createTerrain(Terrains.MAGMA, 2));
-                    sendChangedHex(curPos);
-                    for (Entity en : game.getEntitiesVector(curPos)) {
-                        if (en != entity) {
-                            doMagmaDamage(en, false);
-                        }
-                    }
-                }
-            }
-
-            // check for entering liquid magma
-            if ((nextHex.terrainLevel(Terrains.MAGMA) == 2) && (nextElevation == 0)) {
-                doMagmaDamage(entity, false);
-            }
+            // note that this must sequentially occur before the next 'entering liquid magma' check
+            // otherwise, magma crust won't have a chance to break
+            ServerHelper.checkAndApplyMagmaCrust(nextHex, nextElevation, entity, curPos, false, vPhaseReport, this);
 
             // is the next hex a swamp?
             PilotingRollData rollTarget = entity.checkBogDown(step, moveType, nextHex, curPos, nextPos,
@@ -8046,33 +8025,9 @@ public class Server implements Runnable {
                 }
             }
 
-            // check for breaking magma crust
-            if ((curHex.terrainLevel(Terrains.MAGMA) == 1)
-                    && (step.getElevation() == 0)
-                    && (stepMoveType != EntityMovementType.MOVE_JUMP)) {
-                int roll = Compute.d6(1);
-                r = new Report(2395);
-                r.addDesc(entity);
-                r.add(roll);
-                r.subject = entity.getId();
-                addReport(r);
-                if (roll == 6) {
-                    curHex.removeTerrain(Terrains.MAGMA);
-                    curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
-                    sendChangedHex(curPos);
-                    for (Entity en : game.getEntitiesVector(curPos)) {
-                        if (en != entity) {
-                            doMagmaDamage(en, false);
-                        }
-                    }
-                }
-            }
-
-            // check for entering liquid magma
-            if ((curHex.terrainLevel(Terrains.MAGMA) == 2)
-                    && (step.getElevation() == 0)
-                    && (stepMoveType != EntityMovementType.MOVE_JUMP)) {
-                doMagmaDamage(entity, false);
+            // check for breaking magma crust unless we are jumping over the hex
+            if (stepMoveType != EntityMovementType.MOVE_JUMP) {
+                ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false, vPhaseReport, this);
             }
 
             // check if we've moved into a swamp
@@ -9205,31 +9160,7 @@ public class Server implements Runnable {
 
             // Don't interact with terrain when jumping onto a building or a bridge
             if (entity.getElevation() == 0) {
-                // check for breaking magma crust
-                if (curHex.terrainLevel(Terrains.MAGMA) == 1) {
-                    int roll = Compute.d6(1);
-                    r = new Report(2395);
-                    r.addDesc(entity);
-                    r.add(roll);
-                    r.subject = entity.getId();
-                    addReport(r);
-                    if (roll == 6) {
-                        curHex.removeTerrain(Terrains.MAGMA);
-                        curHex.addTerrain(Terrains.getTerrainFactory()
-                                .createTerrain(Terrains.MAGMA, 2));
-                        sendChangedHex(curPos);
-                        for (Entity en : game.getEntitiesVector(curPos)) {
-                            if (en != entity) {
-                                doMagmaDamage(en, false);
-                            }
-                        }
-                    }
-                }
-
-                // check for entering liquid magma
-                if (curHex.terrainLevel(Terrains.MAGMA) == 2) {
-                    doMagmaDamage(entity, false);
-                }
+                ServerHelper.checkAndApplyMagmaCrust(curHex, entity.getElevation(), entity, curPos, true, vPhaseReport, this);
 
                 // jumped into swamp? maybe stuck!
                 if (curHex.getBogDownModifier(entity.getMovementMode(),
@@ -11647,7 +11578,15 @@ public class Server implements Runnable {
                 r.add(entity.getShortName(), true);
                 r.add(mf.getCoords().getBoardNum(), true);
                 vMineReport.add(r);
-                explodeVibrabomb(mf, vMineReport, false);
+                
+                // if the moving entity is not actually moving into the vibrabomb
+                // hex, it won't get damaged
+                Integer excludeEntityID = null;
+                if (!coords.equals(mf.getCoords())) {
+                    excludeEntityID = entity.getId();
+                }
+                    
+                explodeVibrabomb(mf, vMineReport, false, excludeEntityID);
             }
 
             // Hack; when moving, the Mech isn't in the hex during
@@ -11807,7 +11746,7 @@ public class Server implements Runnable {
      *
      * @param mf The <code>Minefield</code> to explode
      */
-    private void explodeVibrabomb(Minefield mf, Vector<Report> vBoomReport, boolean reduce) {
+    private void explodeVibrabomb(Minefield mf, Vector<Report> vBoomReport, boolean reduce, Integer entityToExclude) {
         Iterator<Entity> targets = game.getEntities(mf.getCoords());
         Report r;
 
@@ -11830,12 +11769,23 @@ public class Server implements Runnable {
                 vBoomReport.add(r);
                 continue;
             }
-            // report hitting vibrabomb
-            r = new Report(2160);
-            r.subject = entity.getId();
-            r.add(entity.getShortName(), true);
-            vBoomReport.add(r);
-
+            
+            // the "currently moving entity" may not be in the same hex, so it needs to be excluded
+            if ((entityToExclude != null) && (entity.getId() == entityToExclude)) {
+                // report not hitting vibrabomb
+                r = new Report(2157);
+                r.subject = entity.getId();
+                r.add(entity.getShortName(), true);
+                vBoomReport.add(r);
+                continue;
+            } else {
+                // report hitting vibrabomb
+                r = new Report(2160);
+                r.subject = entity.getId();
+                r.add(entity.getShortName(), true);
+                vBoomReport.add(r);
+            }
+            
             int damage = mf.getDensity();
             while (damage > 0) {
                 int cur_damage = Math.min(5, damage);
@@ -12784,24 +12734,9 @@ public class Server implements Runnable {
             }
             checkBuildingCollapseWhileMoving(bldg, entity, dest);
         }
-        if (destHex.containsTerrain(Terrains.MAGMA, 1)) {
-            int d6 = Compute.d6(1);
-            r = new Report(2395);
-            r.addDesc(entity);
-            r.add(d6);
-            r.subject = entity.getId();
-            addReport(r);
-            if (d6 == 6) {
-                destHex.removeTerrain(Terrains.MAGMA);
-                destHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
-                sendChangedHex(dest);
-                for (Entity en : game.getEntitiesVector(dest)) {
-                    if (en != entity) {
-                        doMagmaDamage(en, false);
-                    }
-                }
-            }
-        }
+        
+        ServerHelper.checkAndApplyMagmaCrust(destHex, entity.getElevation(), entity, dest, false, vPhaseReport, this);
+        
         Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
         if (violation == null) {
             // move and roll normally

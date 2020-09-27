@@ -7,6 +7,12 @@ VERSION HISTORY:
 + PR #2231: Swapping to LocalDateTime For Hour, Minute, and/or Second Dated MegaMek Saves
 + Issue #1233: VTOLs can now stack more than two per hex at different elevations
 + Issue #705: Jumping into water and getting a 'hull down' result on the PSR no longer causes the unit to become permanently stuck on top of the water
++ Issues #1762, #2233: Board editor fixes
++ Issue #1093: Addressed several issues with magma crust handling; hovercraft don't trigger breakthrough check, jumping onto crust breaks through on 4+
++ Issue #2093: Mech summary/TRO view properly displays mechs with 0 heat sinks
++ PR #2254: Fix wreck decal path Linux UI rendering problem
++ Issue #1918: Vibrabombs no longer damage units moving out of the mined hex
++ Issue #1813: Lasers (and other non-ammo weapons) are once again unable to clear minefields; prevent endless loops in weapon attack handling in certain cases
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

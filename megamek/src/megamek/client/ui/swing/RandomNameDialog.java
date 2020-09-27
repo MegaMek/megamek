@@ -89,7 +89,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
     private void updateHistoricalEthnicities() {
         DefaultComboBoxModel<String> historicalEthnicityModel = new DefaultComboBoxModel<>();
-        historicalEthnicityModel.addElement("None");
+        historicalEthnicityModel.addElement("Faction Weighted");
         for (String value : RandomNameGenerator.getInstance().getHistoricalEthnicity().values()) {
             historicalEthnicityModel.addElement(value);
         }

@@ -1159,7 +1159,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Only weapons allowed to clear minefields can target a hex for minefield clearance
-        if ((target instanceof MinefieldTarget) && atype != null && !AmmoType.canClearMinefield(atype)) {
+        if ((target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) && 
+                ((atype == null) || !AmmoType.canClearMinefield(atype))) {
             return Messages.getString("WeaponAttackAction.CantClearMines");
         }
         

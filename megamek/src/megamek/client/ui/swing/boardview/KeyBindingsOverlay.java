@@ -47,8 +47,7 @@ import megamek.common.util.ImageUtil;
  * @author SJuliez
  */
 public class KeyBindingsOverlay implements IDisplayable {
-
-    private static final Font FONT = new Font("SansSerif", Font.PLAIN, 13); //$NON-NLS-1$
+    private static final Font FONT = new Font("SansSerif", Font.PLAIN, 13);
     private static final int DIST_TOP = 30;
     private static final int DIST_SIDE = 30;
     private static final int PADDING_X = 10;
@@ -124,6 +123,7 @@ public class KeyBindingsOverlay implements IDisplayable {
         clientGui = cg;
     }
 
+    @Override
     public void draw(Graphics graph, Rectangle clipBounds) {
         if (!visible && !isSliding()) {
             return;
@@ -137,7 +137,7 @@ public class KeyBindingsOverlay implements IDisplayable {
             // calculate the size from the text lines, font and padding
             graph.setFont(FONT);
             FontMetrics fm = graph.getFontMetrics(FONT);
-            ArrayList<String> allLines = assembleTextLines(); 
+            List<String> allLines = assembleTextLines();
             Rectangle r = getSize(graph, allLines, fm);
             r = new Rectangle(r.width + 2 * PADDING_X, r.height + 2 * PADDING_Y);
             
@@ -164,18 +164,18 @@ public class KeyBindingsOverlay implements IDisplayable {
         // uses Composite to draw the image with variable transparency
         if (alpha < 1) {
             // Save the former composite and set an alpha blending composite
-            Composite saveComp = ((Graphics2D)graph).getComposite();
+            Composite saveComp = ((Graphics2D) graph).getComposite();
             int type = AlphaComposite.SRC_OVER;
-            ((Graphics2D)graph).setComposite(AlphaComposite.getInstance(type, alpha));
+            ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(type, alpha));
             graph.drawImage(displayImage, clipBounds.x + DIST_SIDE, clipBounds.y + DIST_TOP, null);
-            ((Graphics2D)graph).setComposite(saveComp);
+            ((Graphics2D) graph).setComposite(saveComp);
         } else {
             graph.drawImage(displayImage, clipBounds.x + DIST_SIDE, clipBounds.y + DIST_TOP, null);
         }
     }
 
     /** Calculates the pixel size of the display from the necessary text lines. */ 
-    private Rectangle getSize(Graphics graph, ArrayList<String> lines, FontMetrics fm) {
+    private Rectangle getSize(Graphics graph, List<String> lines, FontMetrics fm) {
         int width = 0;
         for (String line: lines) {
             if (fm.stringWidth(line) > width) {
@@ -187,24 +187,24 @@ public class KeyBindingsOverlay implements IDisplayable {
     }
     
     /** Returns an ArrayList of all text lines to be shown. */
-    private ArrayList<String> assembleTextLines() {
-        ArrayList<String> result = new ArrayList<String>();
+    private List<String> assembleTextLines() {
+        List<String> result = new ArrayList<>();
         
         result.add(Messages.getString("KeyBindingsDisplay.heading"));
 
         // Most of the keybinds are only active during the local player's turn 
-        if (clientGui.getClient().isMyTurn()) {
+        if ((clientGui.getClient() != null) && (clientGui.getClient().isMyTurn())) {
             List<KeyCommandBind> listForPhase = new ArrayList<>();
             switch (currentPhase) {
-            case PHASE_MOVEMENT:
-                listForPhase = BINDS_MOVE;
-                break;
-            case PHASE_FIRING:
-            case PHASE_OFFBOARD:
-            case PHASE_PHYSICAL:
-                listForPhase = BINDS_FIRE;
-                break;
-            default:
+                case PHASE_MOVEMENT:
+                    listForPhase = BINDS_MOVE;
+                    break;
+                case PHASE_FIRING:
+                case PHASE_OFFBOARD:
+                case PHASE_PHYSICAL:
+                    listForPhase = BINDS_FIRE;
+                    break;
+                default:
             }
 
             result.addAll(convertToStrings(listForPhase));
@@ -218,7 +218,7 @@ public class KeyBindingsOverlay implements IDisplayable {
     
     /** Converts a list of KeyCommandBinds to a list of formatted strings. */
     private List<String> convertToStrings(List<KeyCommandBind> kcbs) {
-        ArrayList<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         for (KeyCommandBind kcb: kcbs) {
             String label = Messages.getString("KeyBinds.cmdNames." + kcb.cmd);
             String mod = KeyEvent.getKeyModifiersText(kcb.modifiers);

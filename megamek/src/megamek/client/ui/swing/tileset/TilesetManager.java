@@ -272,7 +272,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         String imageKey = String.format("%s%s", filename, rotationKey);
         
         if(!wreckageDecals.containsKey(imageKey)) {
-            // Image baseImage = TilesetManager.LoadSpecificImage(new File(Configuration.unitImagesDir(), path), filename);
             Image baseImage = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
             
             for(double x = 0; x < NUM_DECAL_ROTATIONS; x++) {

@@ -11582,7 +11582,7 @@ public class Server implements Runnable {
                 // if the moving entity is not actually moving into the vibrabomb
                 // hex, it won't get damaged
                 Integer excludeEntityID = null;
-                if(!coords.equals(mf.getCoords())) {
+                if (!coords.equals(mf.getCoords())) {
                     excludeEntityID = entity.getId();
                 }
                     
@@ -11757,7 +11757,7 @@ public class Server implements Runnable {
             if (entity.isAirborne()) {
                 continue;
             }
-            
+
             // check for the OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA option
             // If it's set, and the target has not yet moved,
             // it doesn't get damaged.
@@ -11771,7 +11771,7 @@ public class Server implements Runnable {
             }
             
             // the "currently moving entity" may not be in the same hex, so it needs to be excluded
-            if((entityToExclude != null) && (entity.getId() == entityToExclude)) {
+            if ((entityToExclude != null) && (entity.getId() == entityToExclude)) {
                 // report not hitting vibrabomb
                 r = new Report(2157);
                 r.subject = entity.getId();

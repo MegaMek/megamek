@@ -11,6 +11,7 @@ VERSION HISTORY:
 + Issue #1093: Addressed several issues with magma crust handling; hovercraft don't trigger breakthrough check, jumping onto crust breaks through on 4+
 + Issue #2093: Mech summary/TRO view properly displays mechs with 0 heat sinks
 + PR #2254: Fix wreck decal path Linux UI rendering problem
++ Issue #1918: Vibrabombs no longer damage units moving out of the mined hex
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

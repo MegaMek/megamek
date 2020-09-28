@@ -50,6 +50,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.ratgenerator.ForceDescriptor;
@@ -59,8 +60,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.tileset.MechTileset;
 import megamek.common.Entity;
 import megamek.common.IGame.Phase;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
 import megamek.common.UnitType;
 
 /**
@@ -535,9 +534,7 @@ public class ForceGeneratorViewUi {
                     	clientGui.loadPreviewImage(this, fd.getEntity(),
                     			clientGui.getClient().getLocalPlayer());
                     } catch (NullPointerException ex) {
-                        DefaultMmLogger.getInstance().log(getClass(),
-                                "getTreeCellRendererComponent(JTree, Object, boolean, boolean, boolean, int, boolean)",
-                                LogLevel.WARNING, "No image found for " + fd.getEntity().getShortNameRaw());
+                        MegaMek.getLogger().warning("No image found for " + fd.getEntity().getShortNameRaw());
                     }
                 }
             } else {

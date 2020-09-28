@@ -49,7 +49,7 @@ public interface MMLogger {
      */
     <T extends Throwable> T log(final String className, final String methodName, final LogLevel logLevel,
                                 String message, final T throwable);
-
+    
     /**
      * Writes the passed log entry to the file.
      *
@@ -59,6 +59,7 @@ public interface MMLogger {
      * @param throwable    The error object to be logged.
      * @return The same throwable passed in to this method so that it may be re-thrown if desired.
      */
+    @Deprecated
     <T extends Throwable> T log(final Class<?> callingClass, final String methodName,
                                 final LogLevel logLevel, final T throwable);
 
@@ -72,6 +73,7 @@ public interface MMLogger {
      * @param throwable    The error object to be logged.
      * @return The same throwable passed in to this method so that it may be re-thrown if desired.
      */
+    @Deprecated
     <T extends Throwable> T log(final Class<?> callingClass, final String methodName, final LogLevel level,
                                 final String message, final T throwable);
 
@@ -83,6 +85,7 @@ public interface MMLogger {
      * @param level        The priority of the log entry.
      * @param message      The message to be logged.
      */
+    @Deprecated
     void log(final Class<?> callingClass, final String methodName, final LogLevel level, final String message);
 
     //region Convenience Methods
@@ -106,6 +109,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param message      The message to be logged.
      */
+    @Deprecated
     void debug(final Class<?> callingClass, final String message);
 
     /**
@@ -116,7 +120,17 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param message       The message to be logged.
      */
+    @Deprecated
     void debug(final Object callingObject, final String message);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#DEBUG} level. Extracts the calling method
+     * automatically.
+     *
+     * @param message       The message to be logged.
+     */
+    void debug(final String message);
 
     /**
      * Writes the passed log entry to the file at the
@@ -126,6 +140,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param throwable    The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T debug(final Class<?> callingClass, final T throwable);
 
     /**
@@ -136,7 +151,17 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T debug(final Object callingObject, final T throwable);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#DEBUG} level. Extracts the calling method
+     * automatically.
+     *
+     * @param throwable     The error object to be logged.
+     */
+    <T extends Throwable> T debug(final T throwable);
 
     /**
      * Writes the passed log entry to the file at the
@@ -147,6 +172,7 @@ public interface MMLogger {
      * @param message      The message to be logged.
      * @param throwable    The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T debug(final Class<?> callingClass, final String message, final T throwable);
 
     /**
@@ -158,7 +184,19 @@ public interface MMLogger {
      * @param message       The message to be logged.
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T debug(final Object callingObject, final String message, final T throwable);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#DEBUG} level. Extracts the calling method
+     * automatically.
+     *
+     * @param message       The message to be logged.
+     * @param throwable     The error object to be logged.
+     */
+    <T extends Throwable> T debug(final String message, final T throwable);
+
     //endregion Debug
 
     //region Error
@@ -206,6 +244,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param message      The message to be logged.
      */
+    @Deprecated
     void error(final Class<?> callingClass, final String message);
 
     /**
@@ -216,7 +255,17 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param message       The message to be logged.
      */
+    @Deprecated
     void error(final Object callingObject, final String message);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#ERROR} level. Extracts the calling method
+     * automatically.
+     *
+     * @param message       The message to be logged.
+     */
+    void error(final String message);
 
     /**
      * Writes the passed log entry to the file at the
@@ -226,6 +275,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param throwable    The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T error(final Class<?> callingClass, final T throwable);
 
     /**
@@ -236,7 +286,17 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T error(final Object callingObject, final T throwable);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#ERROR} level. Extracts the calling method
+     * automatically.
+     *
+     * @param throwable    The error object to be logged.
+     */
+    <T extends Throwable> T error(final T throwable);
 
     /**
      * Writes the passed log entry to the file at the
@@ -261,7 +321,19 @@ public interface MMLogger {
      * @param message       The message to be logged.
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T error(final Object callingObject, final String message, final T throwable);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#ERROR} level. Extracts the calling method
+     * automatically.
+     *
+     * @param message       The message to be logged.
+     * @param throwable     The error object to be logged.
+     */
+    <T extends Throwable> T error(final String message, final T throwable);
+
     //endregion Error
 
     //region Fatal
@@ -273,6 +345,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param message      The message to be logged.
      */
+    @Deprecated
     void fatal(final Class<?> callingClass, final String message);
 
     /**
@@ -283,7 +356,17 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param message       The message to be logged.
      */
+    @Deprecated
     void fatal(final Object callingObject, final String message);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#FATAL} level. Extracts the calling method
+     * automatically.
+     *
+     * @param message       The message to be logged.
+     */
+    void fatal(final String message);
 
     /**
      * Writes the passed log entry to the file at the
@@ -293,6 +376,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param throwable    The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T fatal(final Class<?> callingClass, final T throwable);
 
     /**
@@ -303,7 +387,17 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T fatal(final Object callingObject, final T throwable);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#FATAL} level. Extracts the calling method
+     * automatically.
+     *
+     * @param throwable     The error object to be logged.
+     */
+    <T extends Throwable> T fatal(final T throwable);
 
     /**
      * Writes the passed log entry to the file at the
@@ -314,6 +408,7 @@ public interface MMLogger {
      * @param message      The message to be logged.
      * @param throwable    The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T fatal(final Class<?> callingClass, final String message, final T throwable);
 
     /**
@@ -325,7 +420,19 @@ public interface MMLogger {
      * @param message       The message to be logged.
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T fatal(final Object callingObject, final String message, final T throwable);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#FATAL} level. Extracts the calling method
+     * automatically.
+     *
+     * @param message       The message to be logged.
+     * @param throwable     The error object to be logged.
+     */
+    <T extends Throwable> T fatal(final String message, final T throwable);
+
     //endregion Fatal
 
     //region Info
@@ -348,6 +455,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param message      The message to be logged.
      */
+    @Deprecated
     void info(final Class<?> callingClass, final String message);
 
     /**
@@ -358,7 +466,17 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param message       The message to be logged.
      */
+    @Deprecated
     void info(final Object callingObject, final String message);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#INFO} level. Extracts the calling method
+     * and class automatically.
+     *
+     * @param message       The message to be logged.
+     */
+    void info(final String message);
 
     /**
      * Writes the passed log entry to the file at the
@@ -368,6 +486,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param throwable    The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T info(final Class<?> callingClass, final T throwable);
 
     /**
@@ -378,7 +497,17 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T info(final Object callingObject, final T throwable);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#INFO} level. Extracts the calling method
+     * and class automatically.
+     *
+     * @param throwable     The error object to be logged.
+     */
+    <T extends Throwable> T info(final T throwable);
 
     /**
      * Writes the passed log entry to the file at the
@@ -389,6 +518,7 @@ public interface MMLogger {
      * @param message      The message to be logged.
      * @param throwable    The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T info(final Class<?> callingClass, final String message, final T throwable);
 
     /**
@@ -400,7 +530,18 @@ public interface MMLogger {
      * @param message       The message to be logged.
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T info(final Object callingObject, final String message, final T throwable);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#INFO} level. Extracts the calling method
+     * and class automatically.
+     *
+     * @param message       The message to be logged.
+     * @param throwable     The error object to be logged.
+     */
+    <T extends Throwable> T info(final String message, final T throwable);
     //endregion Info
 
     //region Trace
@@ -412,6 +553,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param message      The message to be logged.
      */
+    @Deprecated
     void trace(final Class<?> callingClass, final String message);
 
     /**
@@ -422,7 +564,17 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param message       The message to be logged.
      */
+    @Deprecated
     void trace(final Object callingObject, final String message);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#TRACE} level. Extracts the calling method
+     * and class automatically.
+     *
+     * @param message       The message to be logged.
+     */
+    void trace(final String message);
 
     /**
      * Writes the passed log entry to the file at the
@@ -432,6 +584,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param throwable    The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T trace(final Class<?> callingClass, final T throwable);
 
     /**
@@ -442,7 +595,17 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T trace(final Object callingObject, final T throwable);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#TRACE} level. Extracts the calling method
+     * and class automatically.
+     *
+     * @param throwable     The error object to be logged.
+     */
+    <T extends Throwable> T trace(final T throwable);
 
     /**
      * Writes the passed log entry to the file at the
@@ -453,6 +616,7 @@ public interface MMLogger {
      * @param message      The message to be logged.
      * @param throwable    The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T trace(final Class<?> callingClass, final String message, final T throwable);
 
     /**
@@ -464,7 +628,18 @@ public interface MMLogger {
      * @param message       The message to be logged.
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T trace(final Object callingObject, final String message, final T throwable);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#TRACE} level. Extracts the calling method
+     * and class automatically.
+     *
+     * @param message       The message to be logged.
+     * @param throwable     The error object to be logged.
+     */
+    <T extends Throwable> T trace(final String message, final T throwable);
     //endregion Trace
 
     //region Warning
@@ -500,6 +675,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param message      The message to be logged.
      */
+    @Deprecated
     void warning(final Class<?> callingClass, final String message);
 
     /**
@@ -510,8 +686,18 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param message       The message to be logged.
      */
+    @Deprecated
     void warning(final Object callingObject, final String message);
 
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#WARNING} level. Extracts the calling method
+     * and class automatically.
+     *
+     * @param message       The message to be logged.
+     */
+    void warning(final String message);
+    
     /**
      * Writes the passed log entry to the file at the
      * {@link LogLevel#WARNING} level. Extracts the calling method
@@ -520,7 +706,17 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param throwable    The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T warning(final Class<?> callingClass, final T throwable);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#WARNING} level. Extracts the calling method
+     * and class automatically.
+     *
+     * @param throwable    The error object to be logged.
+     */
+    <T extends Throwable> T warning(final T throwable);
 
     /**
      * Writes the passed log entry to the file at the
@@ -530,6 +726,7 @@ public interface MMLogger {
      * @param callingObject The object calling this method. Pass <code><I>this</I></code> as callingObject
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T warning(final Object callingObject, final T throwable);
 
     /**
@@ -541,6 +738,7 @@ public interface MMLogger {
      * @param message      The message to be logged.
      * @param throwable    The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T warning(final Class<?> callingClass, final String message, final T throwable);
 
     /**
@@ -552,7 +750,18 @@ public interface MMLogger {
      * @param message       The message to be logged.
      * @param throwable     The error object to be logged.
      */
+    @Deprecated
     <T extends Throwable> T warning(final Object callingObject, final String message, final T throwable);
+    
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#WARNING} level. Extracts the calling method
+     * and class automatically.
+     *
+     * @param message       The message to be logged.
+     * @param throwable     The error object to be logged.
+     */
+    <T extends Throwable> T warning(final String message, final T throwable);
     //endregion Warning
     //endregion Convenience Methods
     

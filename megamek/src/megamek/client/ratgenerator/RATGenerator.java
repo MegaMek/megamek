@@ -30,12 +30,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import megamek.MegaMek;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.UnitType;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
@@ -170,8 +170,7 @@ public class RATGenerator {
 
 	public AvailabilityRating findModelAvailabilityRecord(int era, String unit, FactionRecord fRec) {
 	    if (null == models.get(unit)) {
-	        DefaultMmLogger.getInstance().error(getClass(), "findModelAvailablilityRecord(int, String FactionRecord)",
-	                "Trying to find record for unknown model " + unit);
+	        MegaMek.getLogger().error("Trying to find record for unknown model " + unit);
 	        return null;
 	    }
 		if (fRec == null || models.get(unit).factionIsExcluded(fRec)) {
@@ -414,12 +413,6 @@ public class RATGenerator {
 			Collection<EntityMovementMode> movementModes,
 			Collection<MissionRole> roles, int roleStrictness,
 			FactionRecord user) {
-	    final String METHOD_NAME = "generateTable(FactionRecord, int, int,\n" + 
-                "            String, Collection<Integer>, int,\n" + 
-                "            Collection<EntityMovementMode>,\n" + 
-                "            Collection<MissionRole>, int,\n" + 
-                "            FactionRecord)";
-	    
 		HashMap<ModelRecord, Double> unitWeights = new HashMap<>();
 		HashMap<FactionRecord, Double> salvageWeights = new HashMap<>();
 		
@@ -463,8 +456,7 @@ public class RATGenerator {
 		for (String chassisKey : chassisIndex.get(early).keySet()) {
 			ChassisRecord cRec = chassis.get(chassisKey);
 			if (cRec == null) {
-                DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME,
-                        "Could not locate chassis " + chassisKey);
+			    MegaMek.getLogger().error("Could not locate chassis " + chassisKey);
 				continue;
 			}
 			
@@ -596,8 +588,8 @@ public class RATGenerator {
 			for (String fKey : salvageEntries.keySet()) {
 				FactionRecord salvageFaction = factions.get(fKey);
 				if (salvageFaction == null) {
-				    DefaultMmLogger.getInstance().debug(getClass(), METHOD_NAME,
-				            "Could not locate faction " + fKey + " for " + fRec.getKey() + " salvage");
+				    MegaMek.getLogger().debug("Could not locate faction " + fKey 
+				            + " for " + fRec.getKey() + " salvage");
 				} else {
 					double wt = salvage * salvageEntries.get(fKey) / totalFactionWeight;
 					salvageWeights.put(salvageFaction, wt);
@@ -826,8 +818,7 @@ public class RATGenerator {
         }
 
 		if (!(dir.exists() && dir.isDirectory())) {
-			DefaultMmLogger.getInstance().error(getClass(), "initialize(File)",
-					dir + " is not a directory");
+		    MegaMek.getLogger().error(dir + " is not a directory");
 		} else {
 			loadFactions(dir);
 
@@ -866,15 +857,12 @@ public class RATGenerator {
 	}
 	
 	private void loadFactions(File dir) {
-	    final String METHOD_NAME = "loadFactions(File)";
-	    
 		File file = new MegaMekFile(dir, "factions.xml").getFile();
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
-			DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, //$NON-NLS-1$
-			        "Unable to read RAT generator factions file"); //$NON-NLS-1$
+		    MegaMek.getLogger().error("Unable to read RAT generator factions file");
 			return;
 		}
 
@@ -884,7 +872,7 @@ public class RATGenerator {
 			DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
 			xmlDoc = db.parse(fis);
 		} catch (Exception ex) {
-			DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, ex);
+		    MegaMek.getLogger().error(ex);
 			return;
 		}
 
@@ -900,8 +888,7 @@ public class RATGenerator {
 					FactionRecord rec = FactionRecord.createFromXml(wn);
 					factions.put(rec.getKey(), rec);
 				} else {
-		            DefaultMmLogger.getInstance().warning(getClass(), METHOD_NAME,
-		                    "Faction key not found in " + file.getPath());
+				    MegaMek.getLogger().warning("Faction key not found in " + file.getPath());
 				}
 			}			
 		}
@@ -912,7 +899,6 @@ public class RATGenerator {
 	}
 	
 	private synchronized void loadEra(int era, File dir) {
-	    final String METHOD_NAME = "loadEra(int, File)"; //$NON-NLS-1$
 		if (eraIsLoaded(era)) {
 			return;
 		}
@@ -923,8 +909,7 @@ public class RATGenerator {
 		try {
 			fis = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
-            DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, //$NON-NLS-1$
-                    "Unable to read RAT generator file for era " + era); //$NON-NLS-1$
+		    MegaMek.getLogger().error("Unable to read RAT generator file for era " + era);
 			return;
 		}
 		while (!MechSummaryCache.getInstance().isInitialized()) {
@@ -941,7 +926,7 @@ public class RATGenerator {
 			DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
 			xmlDoc = db.parse(fis);
 		} catch (Exception ex) {
-            DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, ex);
+		    MegaMek.getLogger().error(ex);
             return;
 		}
 
@@ -962,13 +947,11 @@ public class RATGenerator {
 							if (rec != null) {
 								rec.loadEra(wn, era);
 							} else {
-					            DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME,
-					                    "Faction " + fKey + " not found in " //$NON-NLS-1$
+							    MegaMek.getLogger().error("Faction " + fKey + " not found in "
 										+ file.getPath());
 							}
 						} else {
-                            DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME,
-                                    "Faction key not found in " + file.getPath()); //$NON-NLS-1$
+						    MegaMek.getLogger().error("Faction key not found in " + file.getPath());
 						}
 					}
 				}
@@ -1068,8 +1051,8 @@ public class RATGenerator {
 				models.put(modelKey, mr);
 			}
 			if (mr == null) {
-                DefaultMmLogger.getInstance().error(getClass(), "parseModelNode(int, ChassisRecord, Node)", //$NON-NLS-1$
-                        cr.getChassis() + " " + wn.getAttributes().getNamedItem("name").getTextContent() + " not found."); //$NON-NLS-1$
+			    MegaMek.getLogger().error(cr.getChassis() + " " 
+			            + wn.getAttributes().getNamedItem("name").getTextContent() + " not found.");
 				return;
 			}
 		}

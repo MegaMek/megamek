@@ -307,4 +307,112 @@ public class FakeLogger implements MMLogger {
     public void resetLogFile(String logFileName) {
 
     }
+
+    @Override
+    public void debug(String message) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public <T extends Throwable> T debug(T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T debug(String message, T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void error(String message) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public <T extends Throwable> T error(T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T error(String message, T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void fatal(String message) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public <T extends Throwable> T fatal(T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T fatal(String message, T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void info(String message) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public <T extends Throwable> T info(T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T info(String message, T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void trace(String message) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public <T extends Throwable> T trace(T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T trace(String message, T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void warning(String message) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public <T extends Throwable> T warning(T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T warning(String message, T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import megamek.MegaMek;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.logging.*;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -180,7 +181,6 @@ public class MechSummaryCache {
     }
 
     public void loadMechData(boolean ignoreUnofficial) {
-        final String METHOD_NAME = "loadMechData(boolean)"; // $NON-NLS-1$
         Vector<MechSummary> vMechs = new Vector<>();
         Set<String> sKnownFiles = new HashSet<>();
         long lLastCheck = 0;
@@ -233,7 +233,7 @@ public class MechSummaryCache {
             } catch (Exception e) {
                 loadReport.append("  Unable to load unit cache: ")
                         .append(e.getMessage()).append("\n");
-                DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, e);
+                MegaMek.getLogger().error(e);
             }
         }
 
@@ -285,7 +285,7 @@ public class MechSummaryCache {
                 saveCache();
             } catch (Exception e) {
                 loadReport.append("  Unable to save mech cache\n");
-                DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, e);
+                MegaMek.getLogger().error(e);
             }
         }
 
@@ -611,7 +611,6 @@ public class MechSummaryCache {
 
     private boolean loadMechsFromZipFile(Vector<MechSummary> vMechs,
             Set<String> sKnownFiles, long lLastCheck, File fZipFile) {
-        final String METHOD_NAME = "loadMechsFromZipFile(Vector<MechSummary>, Set<String>, long, File)"; //$NON-NLS-1$
         boolean bNeedsUpdate = false;
         ZipFile zFile;
         int thisZipFileCount = 0;
@@ -636,7 +635,7 @@ public class MechSummaryCache {
                     zFile.close();
                     return false;
                 } catch (IOException e) {
-                    DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, e);
+                    MegaMek.getLogger().error(e);
                 }
             }
             ZipEntry zEntry = (ZipEntry) i.nextElement();
@@ -696,7 +695,7 @@ public class MechSummaryCache {
         try {
             zFile.close();
         } catch (Exception ex) {
-            DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, ex);
+            MegaMek.getLogger().error(ex);
         }
 
         loadReport.append("  ...loaded ").append(thisZipFileCount)
@@ -706,7 +705,6 @@ public class MechSummaryCache {
     }
 
     private boolean addLookupNames() {
-        final String METHOD_NAME = "addLookupNames(long)"; //$NON-NLS-1$
         File lookupNames = new MegaMekFile(getUnitCacheDir(),
                 FILENAME_LOOKUP).getFile();
         boolean needsUpdate = false;
@@ -736,7 +734,7 @@ public class MechSummaryCache {
                 }
                 reader.close();
             } catch (IOException ex) {
-                DefaultMmLogger.getInstance().error(MechSummaryCache.class, METHOD_NAME, ex);
+                MegaMek.getLogger().error(ex);
             }
         }
         return needsUpdate;

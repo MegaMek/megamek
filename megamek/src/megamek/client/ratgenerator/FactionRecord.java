@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Node;
 import org.apache.commons.text.StringEscapeUtils;
 
+import megamek.MegaMek;
 import megamek.common.UnitType;
-import megamek.common.logging.DefaultMmLogger;
 
 /**
  * Stores data about factions used for building RATs, including
@@ -294,8 +294,7 @@ public class FactionRecord {
                         retVal.merge(fKey, fRec.getSalvage(era).get(fKey), Integer::sum);
                     }
                 } else {
-                    DefaultMmLogger.getInstance().debug(this,
-                            "RATGenerator: could not locate salvage faction " + pKey
+                    MegaMek.getLogger().debug("RATGenerator: could not locate salvage faction " + pKey
                             + " for " + key);
                 }
             }
@@ -374,8 +373,7 @@ public class FactionRecord {
                 try {
                     list.add(Integer.parseInt(pct));
                 } catch (NumberFormatException ex) {
-                    DefaultMmLogger.getInstance().error(getClass(), "setPctTech(TechCategory, int, String)",
-                            "While loading faction data for " + key);
+                    MegaMek.getLogger().error("While loading faction data for " + key);
                 }
             }
         }
@@ -503,7 +501,7 @@ public class FactionRecord {
                 try {
                     retVal.setYears(wn.getTextContent());
                 } catch (ParseException ex) {
-                    DefaultMmLogger.getInstance().error(FactionRecord.class, "createFromXml(Node)", ex);
+                    MegaMek.getLogger().error(ex);
                 }
             } else if (wn.getNodeName().equalsIgnoreCase("ratingLevels")) {
                 retVal.setRatings(wn.getTextContent());
@@ -576,8 +574,7 @@ public class FactionRecord {
                     int unitType = ModelRecord.parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
                     setWeightDistribution(era, unitType, wn.getTextContent());
                 } catch (Exception ex) {
-                    DefaultMmLogger.getInstance().error(getClass(), "loadEra(Node, int)",
-                            "RATGenerator: error parsing weight distributions for " + key
+                    MegaMek.getLogger().error("RATGenerator: error parsing weight distributions for " + key
                             + ", " + era);
                 }
                 break;

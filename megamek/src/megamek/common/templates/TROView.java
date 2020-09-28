@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
+import megamek.MegaMek;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -49,14 +50,12 @@ import megamek.common.Transporter;
 import megamek.common.TroopSpace;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
-import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Fills in a template to produce a unit summary in TRO format.
@@ -105,7 +104,7 @@ public class TROView {
                 view.template = TemplateConfiguration.getInstance()
                         .getTemplate("tro/" + view.getTemplateFileName(html));
             } catch (final IOException e) {
-                DefaultMmLogger.getInstance().error(TROView.class, "createView(Entity, boolean)", e);
+                MegaMek.getLogger().error(e);
             }
             view.initModel(view.verifier);
         }
@@ -143,7 +142,7 @@ public class TROView {
                 template.process(model, out);
                 return os.toString();
             } catch (TemplateException | IOException e) {
-                DefaultMmLogger.getInstance().error(getClass(), "processTemplate()", e);
+                MegaMek.getLogger().error(e);
                 e.printStackTrace();
             }
         }
@@ -584,8 +583,7 @@ public class TROView {
                 bayRow.put("doors", bay.getDoors());
                 bays.add(bayRow);
             } else {
-                DefaultMmLogger.getInstance().warning(getClass(), "addBays()",
-                        "Could not determine bay type for " + bay.toString());
+                MegaMek.getLogger().warning("Could not determine bay type for " + bay.toString());
             }
         }
         setModelData("bays", bays);

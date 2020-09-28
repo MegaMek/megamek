@@ -16,8 +16,7 @@ package megamek.client.ratgenerator;
 
 import java.util.HashSet;
 
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
+import megamek.MegaMek;
 
 /**
  * The ChassisRecord tracks all available variants and determines how much total weight
@@ -49,8 +48,7 @@ public class ChassisRecord extends AbstractUnitRecord {
 	public int totalModelWeight(int era, String fKey) {
 		FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
 		if (fRec == null) {
-            DefaultMmLogger.getInstance().log(getClass(), "totalModelWeight(int, String)", LogLevel.WARNING,
-                    "Attempt to find totalModelWeight for non-existent faction " + fKey);
+		    MegaMek.getLogger().warning("Attempt to find totalModelWeight for non-existent faction " + fKey);
 			return 0;
 		}
 		return totalModelWeight(era, fRec);

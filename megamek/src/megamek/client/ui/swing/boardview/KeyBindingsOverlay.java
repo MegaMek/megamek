@@ -193,7 +193,7 @@ public class KeyBindingsOverlay implements IDisplayable {
         result.add(Messages.getString("KeyBindingsDisplay.heading"));
 
         // Most of the keybinds are only active during the local player's turn 
-        if ((clientGui.getClient() != null) && (clientGui.getClient().isMyTurn())) {
+        if ((clientGui != null) && (clientGui.getClient() != null) && (clientGui.getClient().isMyTurn())) {
             List<KeyCommandBind> listForPhase = new ArrayList<>();
             switch (currentPhase) {
                 case PHASE_MOVEMENT:

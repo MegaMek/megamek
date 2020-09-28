@@ -76,6 +76,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalTheme;
 
+import megamek.MegaMek;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.princess.BotGeometry;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
@@ -1259,10 +1260,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         xRem = clipping.x % w;
                     }
                     if (xRem != 0 || yRem != 0) {
-                        g.drawImage(
-                                bvBgImage.getSubimage(xRem, yRem, w - xRem,
-                                        h - yRem),
-                                clipping.x + x, clipping.y + y, this);
+                        try {
+                            g.drawImage(
+                                    bvBgImage.getSubimage(xRem, yRem, w - xRem,
+                                            h - yRem),
+                                    clipping.x + x, clipping.y + y, this);
+                        } catch (Exception e) {
+                            // if we somehow messed up the math, log the error and simply act as if we have no background image.
+                            Rectangle rasterBounds = bvBgImage.getRaster().getBounds();
+                            
+                            String errorData = String.format("Error drawing background image. Raster Bounds: %.2f, %.2f, width:%.2f, height:%.2f, Attempted Draw Coordinates: %d, %d, width:%d, height:%d",
+                                    rasterBounds.getMinX(), rasterBounds.getMinY(), rasterBounds.getWidth(), rasterBounds.getHeight(),
+                                    xRem, yRem, w - xRem, h - yRem);
+                            MegaMek.getLogger().error(this, errorData);
+                        }
                     } else {
                         g.drawImage(bvBgImage, clipping.x + x, clipping.y + y,
                                 this);

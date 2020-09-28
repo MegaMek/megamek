@@ -1269,7 +1269,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             // if we somehow messed up the math, log the error and simply act as if we have no background image.
                             Rectangle rasterBounds = bvBgImage.getRaster().getBounds();
                             
-                            String errorData = String.format("Raster Bounds: %.2f, %.2f, width:%.2f, height:%.2f, Attempted Draw Coordinates: %d, %d, width:%d, height:%d",
+                            String errorData = String.format("Error drawing background image. Raster Bounds: %.2f, %.2f, width:%.2f, height:%.2f, Attempted Draw Coordinates: %d, %d, width:%d, height:%d",
                                     rasterBounds.getMinX(), rasterBounds.getMinY(), rasterBounds.getWidth(), rasterBounds.getHeight(),
                                     xRem, yRem, w - xRem, h - yRem);
                             MegaMek.getLogger().error(this, errorData);

@@ -14,6 +14,7 @@ VERSION HISTORY:
 + Issue #1918: Vibrabombs no longer damage units moving out of the mined hex
 + Issue #1813: Lasers (and other non-ammo weapons) are once again unable to clear minefields; prevent endless loops in weapon attack handling in certain cases
 + PR #2260: Fixing a key bindings NPE
++ Issue #2251: Bandaid Fix for the Clan OmniFighter TRO View Panel
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

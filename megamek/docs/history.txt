@@ -16,6 +16,7 @@ VERSION HISTORY:
 + PR #2260: Fixing a key bindings NPE
 + Issue #2251: Bandaid Fix for the Clan OmniFighter TRO View Panel
 + Issue #2215: add exception handling when failing to draw background image
++ Issue #2269: 0.47.10 Prototype LB-10X record sheet typo
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

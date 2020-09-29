@@ -19,7 +19,6 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
 import megamek.server.Server;
@@ -71,6 +70,58 @@ public abstract class InfantryWeapon extends Weapon {
 
     public int getInfantryRange() {
         return infantryRange;
+    }
+
+    @Override
+    public double getShortAV() {
+        return infantryDamage;
+    }
+
+    @Override
+    public double getMedAV() {
+        if (infantryRange > AIRBORNE_WEAPON_RANGES[RANGE_SHORT]) {
+            return infantryDamage;
+        } else {
+            return 0.0;
+        }
+    }
+
+    @Override
+    public double getLongAV() {
+        if (infantryRange > AIRBORNE_WEAPON_RANGES[RANGE_MED]) {
+            return infantryDamage;
+        } else {
+            return 0.0;
+        }
+    }
+
+    @Override
+    public double getExtAV() {
+        if (infantryRange > AIRBORNE_WEAPON_RANGES[RANGE_LONG]) {
+            return infantryDamage;
+        } else {
+            return 0.0;
+        }
+    }
+
+    @Override
+    public int getRoundShortAV() {
+        return (int) Math.round(getShortAV());
+    }
+
+    @Override
+    public int getRoundMedAV() {
+        return (int) Math.round(getMedAV());
+    }
+
+    @Override
+    public int getRoundLongAV() {
+        return (int) Math.round(getLongAV());
+    }
+
+    @Override
+    public int getRoundExtAV() {
+        return (int) Math.round(getExtAV());
     }
 
     public int getCrew() {

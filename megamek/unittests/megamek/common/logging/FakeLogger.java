@@ -415,4 +415,28 @@ public class FakeLogger implements MMLogger {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public void methodBegin() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void methodEnd() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void methodCalled() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public <T extends Throwable> T log(LogLevel logLevel, String message, T throwable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

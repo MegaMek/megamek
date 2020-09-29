@@ -53,6 +53,16 @@ public interface MMLogger {
     /**
      * Writes the passed log entry to the file.
      *
+     * @param logLevel   The priority of the log entry.
+     * @param message    The message to be logged.
+     * @param throwable  The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T log(final LogLevel logLevel, String message, final T throwable);
+    
+    /**
+     * Writes the passed log entry to the file.
+     *
      * @param callingClass The name of the originating class.
      * @param methodName   The name of the originating method.
      * @param logLevel     The priority of the log entry.
@@ -774,6 +784,12 @@ public interface MMLogger {
      */
     @Deprecated
     void methodBegin(final Class<?> callingClass, final String methodName);
+    
+    /**
+     * Used to log entry into a method.  The log entry is written at the
+     * {@link LogLevel#DEBUG} level.
+     */
+    void methodBegin();
 
     /**
      * Used to log exit from a method.  The log entry is written at the
@@ -786,6 +802,12 @@ public interface MMLogger {
     void methodEnd(final Class<?> callingClass, final String methodName);
 
     /**
+     * Used to log exit from a method.  The log entry is written at the
+     * {@link LogLevel#DEBUG} level.
+     */
+    void methodEnd();
+
+    /**
      * Used to log when a method has been called.  The log entry is written at
      * the {@link LogLevel#DEBUG} level.
      *
@@ -794,6 +816,12 @@ public interface MMLogger {
      */
     @Deprecated
     void methodCalled(final Class<?> callingClass, final String methodName);
+
+    /**
+     * Used to log when a method has been called.  The log entry is written at
+     * the {@link LogLevel#DEBUG} level.
+     */
+    void methodCalled();
 
     /**
      * Returns true if the given class will have log entries written for the

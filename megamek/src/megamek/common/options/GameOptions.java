@@ -392,8 +392,7 @@ public class GameOptions extends AbstractOptions {
                     }
                 }
             } else {
-                MegaMek.getLogger().warning(getClass(), "parseOptionNode",
-                        "Invalid option '" + name + "' when trying to load options file.");
+                MegaMek.getLogger().warning("Invalid option '" + name + "' when trying to load options file.");
             }
         }
 

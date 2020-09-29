@@ -1595,8 +1595,6 @@ public class FireControl {
                                    final Targetable target,
                                    @Nullable EntityState targetState,
                                    final IGame game) {
-        final String METHOD_NAME = "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)";
-
         if (null == shooterState) {
             shooterState = new EntityState(shooter);
         }
@@ -1609,11 +1607,11 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
+            owner.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            owner.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
 
@@ -1673,9 +1671,6 @@ public class FireControl {
                                         final MovePath flightPath,
                                         final IGame game,
                                         final boolean assumeUnderFlightPath) {
-        final String METHOD_NAME = "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, " +
-                                   "boolean)";
-
         if (null == targetState) {
             targetState = new EntityState(target);
         }
@@ -1690,24 +1685,24 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
+            owner.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
 
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            owner.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
         
         // if we have no bombs on board, we can't attack from down here
         if (AeroGroundPathFinder.NAP_OF_THE_EARTH >= flightPath.getFinalAltitude() &&
             0 == shooter.getBombs(BombType.F_GROUND_BOMB).size()) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter will crash if striking at altitude 1!");
+            owner.getLogger().error("Shooter will crash if striking at altitude 1!");
             return myPlan;
         }
 
         if (AeroGroundPathFinder.OPTIMAL_STRIKE_ALTITUDE < flightPath.getFinalAltitude()) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's altitude is too high!");
+            owner.getLogger().error("Shooter's altitude is too high!");
             return myPlan;
         }
 
@@ -1821,7 +1816,6 @@ public class FireControl {
                                  final Targetable target,
                                  final Map<Mounted, Double> ammoConservation,
                                  final IGame game) {
-        final String METHOD_NAME = "getFullFiringPlan(Entity, Targetable, IGame)";
         final NumberFormat DECF = new DecimalFormat("0.000");
 
         final FiringPlan myPlan = new FiringPlan(target);
@@ -1829,11 +1823,11 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
+            owner.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            owner.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
 
@@ -1864,8 +1858,8 @@ public class FireControl {
                 continue;
             }            
             
-            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG,
-                      "\nTo Hit Chance (" + DECF.format(shoot.getProbabilityToHit()) + ") for " + weapon.getName() +
+            owner.getLogger().debug("\nTo Hit Chance (" + DECF.format(shoot.getProbabilityToHit()) 
+                      + ") for " + weapon.getName() +
                       " is less than threshold (" + DECF.format(toHitThreshold) + ")");
         }
 
@@ -2409,8 +2403,6 @@ public class FireControl {
                                  final IHonorUtil honorUtil,
                                  final IGame game,
                                  final Map<Mounted, Double> ammoConservation) {
-        final String METHOD_NAME = "getBestFiringPlan(Entity, IGame)";
-
         FiringPlan bestPlan = null;
 
         // Get a list of potential targets.
@@ -2425,7 +2417,7 @@ public class FireControl {
             final int playerId = (enemy instanceof Entity) ? ((Entity) enemy).getOwnerId() : -1;
             if (!priorityTarget && honorUtil.isEnemyBroken(enemy.getTargetId(), playerId,
                                                            owner.getForcedWithdrawal())) {
-                owner.log(getClass(), METHOD_NAME, LogLevel.INFO, enemy.getDisplayName() + " is broken - ignoring");
+                owner.getLogger().info(enemy.getDisplayName() + " is broken - ignoring");
                 continue;
             }
 
@@ -2435,7 +2427,7 @@ public class FireControl {
                                                                              ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
             
-            owner.log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " at " + enemy
+            owner.getLogger().info(shooter.getDisplayName() + " at " + enemy
                     .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((null == bestPlan) || (plan.getUtility() > bestPlan.getUtility())) {
                 bestPlan = plan;
@@ -2535,8 +2527,8 @@ public class FireControl {
             final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), weaponType);
             // if we found preferred ammo but can't apply it to the weapon, log it and continue.
             if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
-                owner.log(getClass(), "loadAmmo(Entity, Targetable)", LogLevel.WARNING,
-                          shooter.getDisplayName() + " tried to load " + currentWeapon.getName() + " with ammo " +
+                owner.getLogger().warning(shooter.getDisplayName() + " tried to load " 
+                          + currentWeapon.getName() + " with ammo " +
                           mountedAmmo.getDesc() + " but failed somehow.");
                 continue;
             // if we didn't find preferred ammo after all, continue
@@ -2596,8 +2588,6 @@ public class FireControl {
     Mounted getPreferredAmmo(final Entity shooter,
                              final Targetable target,
                              final WeaponType weaponType) {
-        final String METHOD_NAME = "getPreferredAmmo(Entity, Targetable, WeaponType)";
-
         final StringBuilder msg = new StringBuilder("Getting ammo for ").append(weaponType.getShortName())
                                                                         .append(" firing at ")
                                                                         .append(target.getDisplayName
@@ -2725,7 +2715,7 @@ public class FireControl {
             return preferredAmmo;
         } finally {
             msg.append("\n\tReturning: ").append(null == preferredAmmo ? "null" : preferredAmmo.getDesc());
-            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
+            owner.getLogger().debug(msg.toString());
         }
     }
 

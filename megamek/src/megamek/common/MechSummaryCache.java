@@ -48,7 +48,6 @@ import megamek.common.verifier.*;
  */
 public class MechSummaryCache {
     
-    private static final MMLogger LOG = DefaultMmLogger.getInstance();
     private static final LogLevel LOGLVL = LogLevel.WARNING;
 
     public interface Listener {
@@ -143,7 +142,7 @@ public class MechSummaryCache {
     private MechSummaryCache() {
         m_nameMap = new HashMap<>();
         m_fileNameMap = new HashMap<>();
-        LOG.setLogLevel(this, LOGLVL);
+        MegaMek.getLogger().setLogLevel(this, LOGLVL);
     }
 
     public MechSummary[] getAllMechs() {
@@ -304,7 +303,7 @@ public class MechSummaryCache {
          * .append(failedUnitsDesc.nextElement()).append("\n"); }
          */
 
-        LOG.info(this, loadReport.toString());
+        MegaMek.getLogger().info(loadReport.toString());
 
         done();
     }

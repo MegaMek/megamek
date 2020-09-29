@@ -1715,8 +1715,7 @@ public class ForceDescriptor {
                 "Element", "(1)", "(2)", "Flight", "Squadron", "Group", "Wing", "Regiment"
         };
 
-        MegaMek.getLogger().log(getClass().getName(), "show(String, LogLevel)",
-                logLevel, indent + weightClass + " " + unitType + " "
+        MegaMek.getLogger().log(logLevel, indent + weightClass + " " + unitType + " "
                         + ((unitType == UnitType.AERO || unitType == UnitType.CONV_FIGHTER)?airEschelonNames[eschelon]:eschelonNames[eschelon]), null);
         for (ForceDescriptor sub : subforces) {
             sub.show(indent + "  ", logLevel);

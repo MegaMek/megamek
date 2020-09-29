@@ -79,7 +79,7 @@ public class PortraitManager {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(), "", 
                         ImageFileFactory.getInstance());
             } catch (Exception e) {
-                MegaMek.getLogger().error(PortraitManager.class, "Could not parse the portraits directory!");
+                MegaMek.getLogger().error("Could not parse the portraits directory!");
                 e.printStackTrace();
                 // This could be improved by obtaining an empty DirectoryItems to avoid returning null
             }
@@ -149,8 +149,7 @@ public class PortraitManager {
         }
         
         // An error must have occured, fall back to the default portrait
-        MegaMek.getLogger().error(PortraitManager.class, 
-                "Could not load portrait image! Category: " + category + "; Name: " + name);
+        MegaMek.getLogger().error("Could not load portrait image! Category: " + category + "; Name: " + name);
         return getDefaultPortrait();
     }
     
@@ -234,7 +233,7 @@ public class PortraitManager {
             e.printStackTrace();
         }
 
-        MegaMek.getLogger().error(PortraitManager.class, "Could not load default portrait image!");
+        MegaMek.getLogger().error("Could not load default portrait image!");
         return failPortrait();
     }
     

@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
+import megamek.MegaMek;
 
 /**
  * This class provides a skeletal implementation of path finder algorithm in a
@@ -219,11 +217,6 @@ public class AbstractPathFinder<N, C, E> {
 
     private StopConditionsAlternation<E> stopCondition = new StopConditionsAlternation<>();
 
-    private MMLogger logger;
-    private MMLogger getLogger() {
-        return logger == null ? logger = DefaultMmLogger.getInstance() : logger;
-    }
-    
     /**
      * @param edgeDestinationMap functional interface for retrieving destination
      *            node of an edge.
@@ -282,8 +275,6 @@ public class AbstractPathFinder<N, C, E> {
      * @param startingEdges a collection of possible starting edges.
      */
     public void run(Collection<E> startingEdges) {
-        final String METHOD_NAME = "run";
-        
         try {
             if (candidates.size() > 0) {
                 candidates.clear();
@@ -316,9 +307,9 @@ public class AbstractPathFinder<N, C, E> {
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.";
             
-            getLogger().log(this.getClass(), METHOD_NAME, LogLevel.ERROR, memoryMessage, e);
+            MegaMek.getLogger().error(memoryMessage, e);
         } catch(Exception e) {
-            getLogger().error(this.getClass(), METHOD_NAME, e); //do something, don't just swallow the exception, good lord
+            MegaMek.getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
 

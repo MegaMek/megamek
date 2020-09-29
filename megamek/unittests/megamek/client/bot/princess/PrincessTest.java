@@ -63,8 +63,8 @@ public class PrincessTest {
 
         MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
-        Mockito.doNothing().when(mockPrincess).log(Mockito.any(Class.class), Mockito.anyString(),
-                                                   Mockito.any(LogLevel.class), Mockito.anyString());
+        Mockito.doNothing().when(mockPrincess).getLogger().log(Mockito.anyString(), Mockito.anyString(),
+                                                   Mockito.any(LogLevel.class), Mockito.anyString(), null);
         Mockito.when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);

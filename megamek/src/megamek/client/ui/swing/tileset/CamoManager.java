@@ -78,7 +78,7 @@ public final class CamoManager {
                 camoDirectory = new DirectoryItems(Configuration.camoDir(), "", 
                         ScaledImageFileFactory.getInstance());
             } catch (Exception e) {
-                MegaMek.getLogger().error(CamoManager.class, "Could not parse the camo directory!");
+                MegaMek.getLogger().error("Could not parse the camo directory!");
                 e.printStackTrace();
                 // This could be improved by obtaining an empty DirectoryItems to avoid returning null
             }
@@ -145,8 +145,7 @@ public final class CamoManager {
         }
         
         // An error must have occured, fall back to the fail image
-        MegaMek.getLogger().error(CamoManager.class, 
-                "Could not create camo image! Category: " + category + "; Name: " + name);
+        MegaMek.getLogger().error("Could not create camo image! Category: " + category + "; Name: " + name);
         return ImageUtil.failStandardImage();
     }
     
@@ -229,7 +228,7 @@ public final class CamoManager {
      */
     public static BufferedImage colorCamoImage(Color color) {
         if (color == null) {
-            DefaultMmLogger.getInstance().error(CamoManager.class, "A null color was passed.");
+            DefaultMmLogger.getInstance().error("A null color was passed.");
             return ImageUtil.failStandardImage();
         }
         BufferedImage result = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);

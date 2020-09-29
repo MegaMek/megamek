@@ -82,21 +82,19 @@ public class PathEnumerator {
     }
 
     void clear() {
-        final String METHOD_NAME = "clear()";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
         try {
             getUnitPaths().clear();
             getUnitPotentialLocations().clear();
             getLastKnownLocations().clear();
             getLongRangePaths().clear();
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
     Coords getLastKnownCoords(Integer entityId) {
-        final String METHOD_NAME = "getLastKnownCoords(Integer)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
         try {
             CoordFacingCombo ccr = getLastKnownLocations().get(entityId);
             if (ccr == null) {
@@ -104,7 +102,7 @@ public class PathEnumerator {
             }
             return ccr.getCoords();
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -116,8 +114,7 @@ public class PathEnumerator {
      * @return A {@link Set} of {@link Entity} objects at the given {@link Coords}.
      */
     public Set<Integer> getEntitiesWithLocation(Coords location, boolean groundOnly) {
-        final String METHOD_NAME = "getEntitiesWithLocation(Coords, boolean)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
         try {
             Set<Integer> returnSet = new TreeSet<>();
             if (location == null) {
@@ -140,7 +137,7 @@ public class PathEnumerator {
             }
             return returnSet;
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -148,8 +145,7 @@ public class PathEnumerator {
      * From a list of potential moves, make a potential ending location chart
      */
     void updateUnitLocations(Entity entity, List<MovePath> paths) {
-        final String METHOD_NAME = "updateUnitLocations(Entity, ArrayList<MovePath>)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
         try {
             // clear previous locations for this entity
             getUnitPotentialLocations().remove(entity.getId());
@@ -160,7 +156,7 @@ public class PathEnumerator {
             }
             getUnitPotentialLocations().put(entity.getId(), toAdd);
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -184,7 +180,7 @@ public class PathEnumerator {
 	            try {
 					Thread.sleep(Compute.randomInt(1000) + 500);
 				} catch (InterruptedException e) {
-					MegaMek.getLogger().error(this, e.toString());
+					MegaMek.getLogger().error(e.toString());
 				}
 	        }
         }
@@ -194,8 +190,7 @@ public class PathEnumerator {
      * calculates all moves for a given unit, keeping the shortest (or longest, depending) path to each facing/pair
      */
     private boolean recalculateMovesForWorker(final Entity mover) {
-        final String METHOD_NAME = "recalculateMovesFor(IGame, Entity)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
 	
@@ -238,9 +233,9 @@ public class PathEnumerator {
                     }
                 };
                 
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Unfiltered paths: " + paths.size());
+                this.owner.getLogger().debug("Unfiltered paths: " + paths.size());
                 paths = new ArrayList<>(filter.doFilter(paths));
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out illegal paths: " + paths.size());
+                this.owner.getLogger().debug("Filtered out illegal paths: " + paths.size());
                 AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
                 paths = new ArrayList<>(offBoardFilter.doFilter(paths));
                 
@@ -249,7 +244,7 @@ public class PathEnumerator {
                     paths.add(offBoardFilter.getShortestPath());
                 }
                 
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out offboard paths: " + paths.size());
+                this.owner.getLogger().debug("Filtered out offboard paths: " + paths.size());
                 
                 // This is code useful for debugging, but puts out a lot of log entries, which slows things down. 
                 // disabled
@@ -311,7 +306,7 @@ public class PathEnumerator {
                 }
 
                 for(MovePath path : paths) {
-                    this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
+                    this.owner.getLogger().debug(path.toString());
                 }
                 
                 // Try climbing over obstacles and onto bridges
@@ -346,10 +341,10 @@ public class PathEnumerator {
             
             return true;
         } catch(Exception e) {
-        	MegaMek.getLogger().error(this, e.toString());
+        	MegaMek.getLogger().error(e.toString());
         	return false;
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
     
@@ -449,7 +444,7 @@ public class PathEnumerator {
 
 //    public void debugPrintContents() {
 //        final String METHOD_NAME = "debugPrintContents()";
-//        getOwner().methodBegin(getClass(), METHOD_NAME);
+//        getOwner().getLogger().methodBegin();
 //        try {
 //            for (Integer id : getUnitPaths().keySet()) {
 //                Entity entity = getGame().getEntity(id);
@@ -460,7 +455,7 @@ public class PathEnumerator {
 //                getOwner().log(getClass(), METHOD_NAME, msg);
 //            }
 //        } finally {
-//            getOwner().methodEnd(getClass(), METHOD_NAME);
+//            getOwner().getLogger().methodEnd();
 //        }
 //    }
 
@@ -474,8 +469,7 @@ public class PathEnumerator {
      * @return TRUE if the path is legal.
      */
     public boolean isLegalAeroMove(MovePath path) {
-        final String METHOD_NAME = "isLegalAeroMove(MovePath)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
         try {
             // no non-aeros allowed
             if (!path.getEntity().isAero()) {
@@ -504,14 +498,12 @@ public class PathEnumerator {
             }
             return true;
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
     
     private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path) {
-    	this.getOwner().log(this.getClass(), "isLegalAeroMove", LogLevel.DEBUG, 
-    			path.length() + ":" + 
-    			path.toString() + ":" + whyNot);
+    	this.getOwner().getLogger().debug(path.length() + ":" + path.toString() + ":" + whyNot);
     }
 
     protected Map<Integer, List<BulldozerMovePath>> getLongRangePaths() {
@@ -567,11 +559,11 @@ public class PathEnumerator {
 	        Integer lengthCount = pathLengths.get(path.length());
 	        pathLengths.put(path.length(), lengthCount + 1);
 	        
-	        this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
+	        this.owner.getLogger().debug(path.toString());
 	    }
 	    
 	    for(Integer length : pathLengths.keySet()) {
-	        this.owner.log(this.getClass(), "recalculateMovesFor", LogLevel.DEBUG, "Paths of length " + length + ": " + pathLengths.get(length));
+	        this.owner.getLogger().debug("Paths of length " + length + ": " + pathLengths.get(length));
 	    }
     }
 }

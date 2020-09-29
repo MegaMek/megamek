@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import megamek.MegaMek;
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -28,9 +29,7 @@ import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 
@@ -46,7 +45,6 @@ public class AeroGroundPathFinder {
     public static final int OPTIMAL_STRIKE_ALTITUDE = 5; // also great for dive bombs
     public static final int NAP_OF_THE_EARTH = 1;
     public static final int OPTIMAL_STRAFE_ALTITUDE = 3; // future use
-    private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.AeroGroundPathFinder";
 
     protected int getMinimumVelocity(IAero mover) {
         return 1;
@@ -59,19 +57,14 @@ public class AeroGroundPathFinder {
     protected IGame game;
     private List<MovePath> aeroGroundPaths;
     protected int maxThrust;
-    private MMLogger logger;
 
     protected AeroGroundPathFinder(IGame game) {
         this.game = game;
-        getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
+        MegaMek.getLogger().setLogLevel(this, LogLevel.DEBUG);
     }
 
     public Collection<MovePath> getAllComputedPathsUncategorized() {
         return aeroGroundPaths;
-    }
-
-    private MMLogger getLogger() {
-        return logger == null ? logger = DefaultMmLogger.getInstance() : logger;
     }
 
     /**
@@ -80,8 +73,6 @@ public class AeroGroundPathFinder {
      * @param startingEdge a collection of possible starting edges.
      */
     public void run(MovePath startingEdge) {
-        final String METHOD_NAME = "run";
-
         try {
             aeroGroundPaths = new ArrayList<MovePath>();
             visitedCoords.clear();
@@ -114,9 +105,9 @@ public class AeroGroundPathFinder {
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.";
 
-            getLogger().log(this.getClass(), METHOD_NAME, LogLevel.ERROR, memoryMessage, e);
+            MegaMek.getLogger().error(memoryMessage, e);
         } catch(Exception e) {
-            getLogger().error(this.getClass(), METHOD_NAME, e); //do something, don't just swallow the exception, good lord
+            MegaMek.getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
 

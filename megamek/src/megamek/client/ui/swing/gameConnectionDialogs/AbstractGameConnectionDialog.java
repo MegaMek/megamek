@@ -156,7 +156,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         try {
             setPort(Integer.parseInt(getPortField().getText()));
         } catch (NumberFormatException ex) {
-            MegaMek.getLogger().error(this, ex.getMessage());
+            MegaMek.getLogger().error(ex.getMessage());
         }
 
         setConfirmed(true);

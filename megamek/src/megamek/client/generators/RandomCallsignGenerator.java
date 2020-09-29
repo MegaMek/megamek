@@ -79,7 +79,7 @@ public class RandomCallsignGenerator implements Serializable {
         if (initialized) {
             callsign = callsigns.randomItem();
         } else {
-            MegaMek.getLogger().warning(this, "Attempted to generate a callsign before the list was initialized.");
+            MegaMek.getLogger().warning("Attempted to generate a callsign before the list was initialized.");
         }
 
         return callsign;
@@ -112,11 +112,11 @@ public class RandomCallsignGenerator implements Serializable {
                 if (values.length >= 2) {
                     callsigns.add(Integer.parseInt(values[1]), values[0]);
                 } else {
-                    MegaMek.getLogger().error(this, "Not enough fields in " + callsignFile.toString() + " on " + lineNumber);
+                    MegaMek.getLogger().error("Not enough fields in " + callsignFile.toString() + " on " + lineNumber);
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error(this, "Failed to populate callsigns.", e);
+            MegaMek.getLogger().error("Failed to populate callsigns.", e);
         }
 
         initialized = true;

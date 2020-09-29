@@ -46,7 +46,7 @@ public class Portrait extends AbstractIcon {
                 portrait = (Image) imageDirectory.getItem("", DEFAULT_PORTRAIT_FILENAME);
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error(getClass(), "setPortrait", e);
+            MegaMek.getLogger().error(e);
         }
 
         return portrait;

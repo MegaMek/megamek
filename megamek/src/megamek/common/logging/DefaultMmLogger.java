@@ -39,9 +39,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class DefaultMmLogger implements MMLogger {
     private static final MMLogger instance = new DefaultMmLogger();
 
-    private static final String METHOD_BEGIN = "Begin ";
-    private static final String METHOD_END = "End ";
-    private static final String METHOD_CALLED = "Called ";
+    private static final String METHOD_BEGIN = "Method Begin";
+    private static final String METHOD_END = "Method End";
+    private static final String METHOD_CALLED = "Method Called";
 
     private final Map<String, Logger> nameToLogger = new ConcurrentHashMap<>();
 
@@ -96,6 +96,10 @@ public class DefaultMmLogger implements MMLogger {
     public <T extends Throwable> T log(final Class<?> callingClass, final String methodName,
                                        final LogLevel logLevel, final T throwable) {
         return log(callingClass.getName(), methodName, logLevel, throwable);
+    }
+
+    public <T extends Throwable> T log(final LogLevel logLevel, String message, final T throwable) {
+        return log(getCallingClass(), getCallingMethod(), logLevel, message, throwable);
     }
     
     public <T extends Throwable> T log(final String className, final String methodName,
@@ -464,14 +468,31 @@ public class DefaultMmLogger implements MMLogger {
     }
     
     @Override
+    public void methodBegin() {
+        log(getCallingClass(), getCallingMethod(), LogLevel.DEBUG, METHOD_BEGIN, null);
+    }
+
+    
+    @Override
     public void methodEnd(final Class<?> callingClass, final String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG, METHOD_END + methodName);
+    }
+    
+    @Override
+    public void methodEnd() {
+        log(getCallingClass(), getCallingMethod(), LogLevel.DEBUG, METHOD_END, null);
     }
 
     @Override
     public void methodCalled(final Class<?> callingClass, final String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG, METHOD_CALLED + methodName);
     }
+    
+    @Override
+    public void methodCalled() {
+        log(getCallingClass(), getCallingMethod(), LogLevel.DEBUG, METHOD_CALLED, null);
+    }
+
 
     /**
      * Retrieves the name of the method and the line number 
@@ -546,8 +567,8 @@ public class DefaultMmLogger implements MMLogger {
                 writer.print("");
             } catch (FileNotFoundException e) {
                 // This should not happen, but if it does we log it
-                error("resetLogFile", e);
-                error("resetLogFile", "Error resetting log file. Please submit a bug report at "
+                error(e);
+                error("Error resetting log file. Please submit a bug report at "
                                 + "https://github.com/MegaMek/megamek/issues");
             }
         }

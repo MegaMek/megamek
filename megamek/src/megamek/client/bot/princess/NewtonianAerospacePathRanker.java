@@ -43,8 +43,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
      */
     @Override
     public Entity findClosestEnemy(Entity me, Coords position, IGame game) {
-        final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
-        getOwner().methodBegin(PathRanker.class, METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             int range = 9999;
@@ -69,7 +68,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             }
             return closest;
         } finally {
-            getOwner().methodEnd(PathRanker.class, METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -114,10 +113,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
     EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
                                                   boolean useExtremeRange,
                                                   boolean useLOSRange) {
-        final String METHOD_NAME =
-                "EntityEvaluationResponse evaluateUnmovedEnemy(Entity," +
-                "MovePath,IGame)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             EntityEvaluationResponse returnResponse =
@@ -182,7 +178,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
 
             return returnResponse;
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 

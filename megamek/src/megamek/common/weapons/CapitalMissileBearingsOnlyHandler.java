@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Building;
@@ -101,7 +102,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     }
     
     protected void getMountedAmmo() {
-        final String METHOD_NAME = "getMountedAmmo()";
         for (int wId : weapon.getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
             // check the currently loaded ammo
@@ -109,7 +109,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
             if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                logDebug(METHOD_NAME, "Handler can't find any ammo! Oh no!");
+                MegaMek.getLogger().debug("Handler can't find any ammo! Oh no!");
             }
         }    
     }

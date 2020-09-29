@@ -647,8 +647,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
             Princess toReturn = new Princess(getBotName(), host, port,
                                              LogLevel.getLogLevel((String) verbosityCombo.getSelectedItem()));
             toReturn.setBehaviorSettings(princessBehavior);
-            toReturn.log(getClass(), "getSelectedBot(String, int)", LogLevel.DEBUG,
-                         toReturn.getBehaviorSettings().toLog());
+            toReturn.getLogger().debug(toReturn.getBehaviorSettings().toLog());
             return toReturn;
         }
         return null; // shouldn't happen

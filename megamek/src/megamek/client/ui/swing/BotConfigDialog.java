@@ -101,10 +101,11 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     public BotConfigDialog(JFrame parent, BotClient existingBot) {
         this(parent, new HashSet<>());
         
+        nameField.setEnabled(false);
+        
         if (existingBot instanceof Princess) {
             this.princessBehavior = ((Princess) existingBot).getBehaviorSettings();
             nameField.setText(existingBot.getName());
-            nameField.setEnabled(false);
             setPrincessFields();
         }
     }

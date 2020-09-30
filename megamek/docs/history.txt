@@ -18,6 +18,7 @@ VERSION HISTORY:
 + Issue #2215: add exception handling when failing to draw background image
 + Issue #2269: 0.47.10 Prototype LB-10X record sheet typo
 + Issue #2271: 0.47.9 Rocket Launcher introduction dates
++ Issue #2215: Fix for exception drawing background image in certain themes on 4k monitors
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

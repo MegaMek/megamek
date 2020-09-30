@@ -1259,7 +1259,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (x == 0) {
                         xRem = clipping.x % w;
                     }
-                    if (xRem != 0 || yRem != 0) {
+                    if ((xRem > 0) || (yRem > 0)) {
                         try {
                             g.drawImage(
                                     bvBgImage.getSubimage(xRem, yRem, w - xRem,

@@ -439,4 +439,16 @@ public class FakeLogger implements MMLogger {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public void setLogLevel(LogLevel level) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public LogLevel getLogLevel() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

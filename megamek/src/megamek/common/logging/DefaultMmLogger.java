@@ -39,9 +39,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class DefaultMmLogger implements MMLogger {
     private static final MMLogger instance = new DefaultMmLogger();
 
-    private static final String METHOD_BEGIN = "Method Begin";
-    private static final String METHOD_END = "Method End";
-    private static final String METHOD_CALLED = "Method Called";
+    private static final String METHOD_BEGIN = "--- Method Begin ---";
+    private static final String METHOD_END = "--- Method End ---";
+    private static final String METHOD_CALLED = "--- Method Called ---";
 
     private final Map<String, Logger> nameToLogger = new ConcurrentHashMap<>();
 
@@ -545,10 +545,21 @@ public class DefaultMmLogger implements MMLogger {
         Logger logger = getLogger(callingObject.getClass().getName());
         logger.setLevel(level.getLevel());
     }
+    
+    @Override
+    public void setLogLevel(final LogLevel level) {
+        Logger logger = getLogger(getCallingClass());
+        logger.setLevel(level.getLevel());
+    }
 
     @Override
     public LogLevel getLogLevel(final String category) {
         return LogLevel.getFromLog4jLevel(getLogger(category).getLevel().toInt());
+    }
+    
+    @Override
+    public LogLevel getLogLevel() {
+        return LogLevel.getFromLog4jLevel(getLogger(getCallingClass()).getLevel().toInt());
     }
 
     @Override

@@ -142,7 +142,7 @@ public class MechSummaryCache {
     private MechSummaryCache() {
         m_nameMap = new HashMap<>();
         m_fileNameMap = new HashMap<>();
-        MegaMek.getLogger().setLogLevel(this, LOGLVL);
+        MegaMek.getLogger().setLogLevel(LOGLVL);
     }
 
     public MechSummary[] getAllMechs() {

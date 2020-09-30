@@ -848,7 +848,15 @@ public interface MMLogger {
      * @param callingObject the calling object. Use <code><I>this</I></code>
      * @param level    The logging level to be set.
      */
+    @Deprecated
     void setLogLevel(Object callingObject, LogLevel level);
+    
+    /**
+     * Sets the {@link LogLevel} for the calling class. 
+     *
+     * @param level    The logging level to be set.
+     */
+    void setLogLevel(LogLevel level);
 
     /**
      * Returns the {@link LogLevel} for the given category.
@@ -857,6 +865,13 @@ public interface MMLogger {
      * @return The given category's log level.
      */
     LogLevel getLogLevel(String category);
+    
+    /**
+     * Returns the {@link LogLevel} for the calling class.
+     *
+     * @return The given category's log level.
+     */
+    LogLevel getLogLevel();
 
     /**
      * Clears all of the logging properties.

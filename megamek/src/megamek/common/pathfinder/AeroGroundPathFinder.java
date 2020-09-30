@@ -60,7 +60,7 @@ public class AeroGroundPathFinder {
 
     protected AeroGroundPathFinder(IGame game) {
         this.game = game;
-        MegaMek.getLogger().setLogLevel(this, LogLevel.DEBUG);
+        MegaMek.getLogger().setLogLevel(LogLevel.DEBUG);
     }
 
     public Collection<MovePath> getAllComputedPathsUncategorized() {

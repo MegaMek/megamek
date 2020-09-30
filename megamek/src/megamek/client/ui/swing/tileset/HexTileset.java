@@ -83,7 +83,7 @@ public class HexTileset implements BoardListener {
         game = g;
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
-        MegaMek.getLogger().setLogLevel(this, LOGLVL);
+        MegaMek.getLogger().setLogLevel(LOGLVL);
     }
 
     /** Clears the image cache for the given hex. */

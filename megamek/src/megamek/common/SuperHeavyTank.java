@@ -1,28 +1,24 @@
 /*
- *  MegaMek - Copyright (C) 2012 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2012 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
 import java.util.ArrayList;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.PreferenceManager;
 
 public class SuperHeavyTank extends Tank {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1310142644005330511L;
     // locations
     public static final int LOC_FRONTRIGHT = 2;
@@ -241,14 +237,7 @@ public class SuperHeavyTank extends Tank {
                 }
                 break;
             case 12:
-                if (m_bHasNoTurret) {
-                    if (game.getOptions().booleanOption(
-                            OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-                        setPotCrit(HitData.EFFECT_CRITICAL);
-                    } else {
-                        rv.setEffect(HitData.EFFECT_CRITICAL);
-                    }
-                } else {
+                if (!m_bHasNoTurret) {
                     if (!hasNoDualTurret()) {
                         int roll = Compute.d6();
                         if (side == ToHitData.SIDE_FRONT) {
@@ -264,15 +253,17 @@ public class SuperHeavyTank extends Tank {
                     } else {
                         rv = new HitData(LOC_TURRET, false);
                     }
-                    if (game.getOptions().booleanOption(
-                            OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-                        setPotCrit(HitData.EFFECT_CRITICAL);
-                    } else {
-                        rv.setEffect(HitData.EFFECT_CRITICAL);
-                    }
                 }
+
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                    setPotCrit(HitData.EFFECT_CRITICAL);
+                } else {
+                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                }
+                break;
             }
         }
+
         if (table == ToHitData.HIT_SWARM) {
             rv.setEffect(rv.getEffect() | HitData.EFFECT_CRITICAL);
         }
@@ -436,69 +427,42 @@ public class SuperHeavyTank extends Tank {
     }
 
     @Override
-    public boolean isCrippled() {
-        if (getArmor(LOC_FRONT) < 1 && getOArmor(LOC_FRONT) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front armor destroyed.");
-            }
+    public boolean isCrippled(boolean checkCrew) {
+        if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Front armor destroyed.");
             return true;
-        }
-        if (getArmor(LOC_FRONTRIGHT) < 1 && getOArmor(LOC_FRONTRIGHT) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front Right armor destroyed.");
-            }
+        } else if ((getArmor(LOC_FRONTRIGHT) < 1) && (getOArmor(LOC_FRONTRIGHT) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Front Right armor destroyed.");
             return true;
-        }
-        if (getArmor(LOC_FRONTLEFT) < 1 && getOArmor(LOC_FRONTLEFT) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front Left armor destroyed.");
-            }
+        } else if ((getArmor(LOC_FRONTLEFT) < 1) && (getOArmor(LOC_FRONTLEFT) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Front Left armor destroyed.");
             return true;
-        }
-        if (getArmor(LOC_REARRIGHT) < 1 && getOArmor(LOC_REARRIGHT) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Rear Right armor destroyed.");
-            }
+        } else if ((getArmor(LOC_REARRIGHT) < 1) && (getOArmor(LOC_REARRIGHT) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Rear Right armor destroyed.");
             return true;
-        }
-        if (getArmor(LOC_REARLEFT) < 1 && getOArmor(LOC_REARLEFT) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Rear Left armor destroyed.");
-            }
+        } else if ((getArmor(LOC_REARLEFT) < 1) && (getOArmor(LOC_REARLEFT) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Rear Left armor destroyed.");
             return true;
-        }
-        if (!hasNoTurret() && (getArmor(LOC_TURRET) < 1 && getOArmor(LOC_TURRET) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Turret armor destroyed.");
-            }
+        } else if (!hasNoTurret() && ((getArmor(LOC_TURRET) < 1) && (getOArmor(LOC_TURRET) > 0))) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Front armor destroyed.");
             return true;
-        }
-        if (!hasNoDualTurret() && (getArmor(LOC_TURRET_2) < 1 && getOArmor(LOC_TURRET_2) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front Turret armor destroyed.");
-            }
+        } else if (!hasNoDualTurret() && ((getArmor(LOC_TURRET_2) < 1) && (getOArmor(LOC_TURRET_2) > 0))) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Front Turret armor destroyed.");
             return true;
-        }
-        if (getArmor(LOC_REAR) < 1 && getOArmor(LOC_REAR) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Rear armor destroyed.");
-            }
+        } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Rear armor destroyed.");
             return true;
-        }
-        
-        if (isPermanentlyImmobilized(true)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out
-                        .println(getDisplayName() + " CRIPPLED: Immobilized.");
-            }
+        } else if (isPermanentlyImmobilized(checkCrew)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -512,10 +476,8 @@ public class SuperHeavyTank extends Tank {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: has no more viable weapons.");
-            }
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;

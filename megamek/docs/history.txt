@@ -10,6 +10,16 @@ VERSION HISTORY:
 + Issues #1762, #2233: Board editor fixes
 + Issue #1093: Addressed several issues with magma crust handling; hovercraft don't trigger breakthrough check, jumping onto crust breaks through on 4+
 + Issue #2093: Mech summary/TRO view properly displays mechs with 0 heat sinks
++ PR #2254: Fix wreck decal path Linux UI rendering problem
++ Issue #1918: Vibrabombs no longer damage units moving out of the mined hex
++ Issue #1813: Lasers (and other non-ammo weapons) are once again unable to clear minefields; prevent endless loops in weapon attack handling in certain cases
++ PR #2260: Fixing a key bindings NPE
++ Issue #2251: Bandaid Fix for the Clan OmniFighter TRO View Panel
++ Issue #2215: add exception handling when failing to draw background image
++ Issue #2269: 0.47.10 Prototype LB-10X record sheet typo
++ Issue #2271: 0.47.9 Rocket Launcher introduction dates
++ Issue #2215: Fix for exception drawing background image in certain themes on 4k monitors
++ Issue #2043: Artillery flak attacks can damage flying Battle Armor, WIGEs, LAMs in airmech mode, etc.
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

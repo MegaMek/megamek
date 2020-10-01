@@ -9,15 +9,15 @@ Source:XTRO Primitives IV - Age of War
 Rules Level:1
 
 Mass:40
-Engine:160 Fusion Engine(IS)
-Structure:IS Standard
+Engine:160 Fusion Engine
+Structure:Standard
 Myomer:Standard
 
 Heat Sinks:10 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Inner Sphere)
 LA Armor:10
 RA Armor:10
 LT Armor:14

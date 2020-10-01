@@ -11545,7 +11545,15 @@ public class Server implements Runnable {
                 r.add(entity.getShortName(), true);
                 r.add(mf.getCoords().getBoardNum(), true);
                 vMineReport.add(r);
-                explodeVibrabomb(mf, vMineReport, false);
+                
+                // if the moving entity is not actually moving into the vibrabomb
+                // hex, it won't get damaged
+                Integer excludeEntityID = null;
+                if (!coords.equals(mf.getCoords())) {
+                    excludeEntityID = entity.getId();
+                }
+                    
+                explodeVibrabomb(mf, vMineReport, false, excludeEntityID);
             }
 
             // Hack; when moving, the Mech isn't in the hex during
@@ -11705,7 +11713,7 @@ public class Server implements Runnable {
      *
      * @param mf The <code>Minefield</code> to explode
      */
-    private void explodeVibrabomb(Minefield mf, Vector<Report> vBoomReport, boolean reduce) {
+    private void explodeVibrabomb(Minefield mf, Vector<Report> vBoomReport, boolean reduce, Integer entityToExclude) {
         Iterator<Entity> targets = game.getEntities(mf.getCoords());
         Report r;
 
@@ -11728,12 +11736,23 @@ public class Server implements Runnable {
                 vBoomReport.add(r);
                 continue;
             }
-            // report hitting vibrabomb
-            r = new Report(2160);
-            r.subject = entity.getId();
-            r.add(entity.getShortName(), true);
-            vBoomReport.add(r);
-
+            
+            // the "currently moving entity" may not be in the same hex, so it needs to be excluded
+            if ((entityToExclude != null) && (entity.getId() == entityToExclude)) {
+                // report not hitting vibrabomb
+                r = new Report(2157);
+                r.subject = entity.getId();
+                r.add(entity.getShortName(), true);
+                vBoomReport.add(r);
+                continue;
+            } else {
+                // report hitting vibrabomb
+                r = new Report(2160);
+                r.subject = entity.getId();
+                r.add(entity.getShortName(), true);
+                vBoomReport.add(r);
+            }
+            
             int damage = mf.getDensity();
             while (damage > 0) {
                 int cur_damage = Math.min(5, damage);

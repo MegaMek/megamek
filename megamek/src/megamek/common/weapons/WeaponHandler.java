@@ -1117,33 +1117,34 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         r.subject = subjectId;
                         vPhaseReport.addElement(r);
                         hits = 0;
-                    }
-                    // targeting a hex for igniting
-                    if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                    // targeting a hex for igniting    
+                    } else if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                             || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
                         handleIgnitionDamage(vPhaseReport, bldg, hits);
                         hits = 0;
-                    }
                     // targeting a hex for clearing
-                    if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+                    } else if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
                         nDamage = nDamPerHit * hits;
                         handleClearDamage(vPhaseReport, bldg, nDamage);
                         hits = 0;
-                    }
                     // Targeting a building.
-                    if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+                    } else if (target.getTargetType() == Targetable.TYPE_BUILDING) {
                         // The building takes the full brunt of the attack.
                         nDamage = nDamPerHit * hits;
                         handleBuildingDamage(vPhaseReport, bldg, nDamage,
                                 target.getPosition());
                         hits = 0;
-                    }
-                    if (entityTarget != null) {
+                    } else if (entityTarget != null) {
                         handleEntityDamage(entityTarget, vPhaseReport, bldg,
                                 hits, nCluster, bldgAbsorbs);
                         server.creditKill(entityTarget, ae);
                         hits -= nCluster;
                         firstHit = false;
+                    } else {
+                        // we shouldn't be here, but if we get here, let's set hits to 0
+                        // to avoid infinite loops
+                        hits = 0;
+                        getLogger().error(getClass(), "Unexpected target type: " + target.getTargetType());
                     }
                 } // Handle the next cluster.
             } else { // We missed, but need to handle special miss cases

@@ -61,7 +61,6 @@ import megamek.common.verifier.EntityVerifier;
  * Fills in a template to produce a unit summary in TRO format.
  *
  * @author Neoancient
- *
  */
 public class TROView {
 
@@ -534,6 +533,11 @@ public class TROView {
                 row.put("equipment", "None");
                 row.put("remaining", remaining);
                 row.put("tonnage", 0.0);
+                row.put("heat", "-");
+                row.put("srv", "-");
+                row.put("mrv", "-");
+                row.put("lrv", "-");
+                row.put("erv", "-");
                 fixedList.add(row);
             } else {
                 boolean firstLine = true;
@@ -547,16 +551,29 @@ public class TROView {
                         row.put("location", "");
                         row.put("remaining", "");
                     }
+
                     if (entry.getValue() > 1) {
                         row.put("equipment", entry.getValue() + " " + entry.getKey());
                     } else {
                         row.put("equipment", entry.getKey());
                     }
+
                     if (fixedWeight.containsKey(entry.getKey())) {
                         // Not valid for mech systems
                         row.put("tonnage", fixedWeight.get(entry.getKey()));
                         fixedTonnage += fixedWeight.get(entry.getKey());
+                    } else {
+                        row.put("tonnage", "");
                     }
+
+                    // FIXME : I am not properly implemented, this is a temporary fix for testing
+                    // FIXME : and needs to be fixed.
+                    row.put("heat", "-");
+                    row.put("srv", "-");
+                    row.put("mrv", "-");
+                    row.put("lrv", "-");
+                    row.put("erv", "-");
+
                     fixedList.add(row);
                 }
             }

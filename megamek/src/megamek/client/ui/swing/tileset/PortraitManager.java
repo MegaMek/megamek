@@ -79,8 +79,7 @@ public class PortraitManager {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(), "", 
                         ImageFileFactory.getInstance());
             } catch (Exception e) {
-                MegaMek.getLogger().error("Could not parse the portraits directory!");
-                e.printStackTrace();
+                MegaMek.getLogger().error("Could not parse the portraits directory!", e);
                 // This could be improved by obtaining an empty DirectoryItems to avoid returning null
             }
         }

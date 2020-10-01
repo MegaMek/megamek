@@ -398,7 +398,7 @@ public abstract class PathRanker implements IPathRanker {
                 edgeCoords = new Coords(boardWidth, position.getY());
             } else {
                 msg.append("Default");
-                getOwner().getLogger().warning("Invalid home edge.  Defaulting to NORTH.");
+                getOwner().getLogger().warning("Invalid home edge. Defaulting to NORTH.");
                 edgeCoords = new Coords(boardWidth / 2, 0);
             }
             msg.append(edgeCoords.toFriendlyString());

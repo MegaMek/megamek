@@ -528,7 +528,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
             HelpDialog helpDialog = new HelpDialog(Messages.getString("BotConfigDialog.princessHelp.title"), helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            handleError("launchPrincessHelp", e);
+            handleError(e);
         }
     }
 
@@ -574,7 +574,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         }
     }
 
-    private void handleError(String method, Throwable t) {
+    private void handleError(Throwable t) {
         JOptionPane.showMessageDialog(this, t.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         MegaMek.getLogger().error(t);
     }
@@ -585,7 +585,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         try {
             tempBehavior.setDescription((String) princessBehaviorNames.getSelectedItem());
         } catch (PrincessException e) {
-            handleError("savePrincessProperties", e);
+            handleError(e);
         }
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());

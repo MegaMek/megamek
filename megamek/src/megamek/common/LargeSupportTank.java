@@ -340,11 +340,6 @@ public class LargeSupportTank extends SupportTank {
     }
 
     @Override
-    public boolean isCrippled() {
-        return isCrippled(true);
-    }
-
-    @Override
     public boolean isCrippled(boolean checkCrew) {
         if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
             MegaMek.getLogger().debug(this, getDisplayName()

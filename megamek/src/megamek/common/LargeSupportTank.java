@@ -1,22 +1,22 @@
 /*
- *  MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
 import java.util.ArrayList;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.PreferenceManager;
 
 /**
  * This is a large support vehicle
@@ -24,10 +24,6 @@ import megamek.common.preference.PreferenceManager;
  * @author beerockxs
  */
 public class LargeSupportTank extends SupportTank {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -3177191060629774478L;
     // locations
     public static final int LOC_FRONTRIGHT = 2;
@@ -169,10 +165,6 @@ public class LargeSupportTank extends SupportTank {
                     }
                     break;
                 case 10:
-                    if (!m_bHasNoTurret) {
-                        rv = new HitData(LOC_TURRET);
-                    }
-                    break;
                 case 11:
                     if (!m_bHasNoTurret) {
                         rv = new HitData(LOC_TURRET);
@@ -182,8 +174,7 @@ public class LargeSupportTank extends SupportTank {
                     if (m_bHasNoTurret) {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
                     } else {
-                        rv = new HitData(LOC_TURRET, false,
-                                HitData.EFFECT_CRITICAL);
+                        rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
                     }
             }
         }
@@ -350,68 +341,46 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public boolean isCrippled() {
-        if (getArmor(LOC_FRONT) < 1 && getOArmor(LOC_FRONT) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front armor destroyed.");
-            }
+        return isCrippled(true);
+    }
+
+    @Override
+    public boolean isCrippled(boolean checkCrew) {
+        if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Front armor destroyed.");
             return true;
-        }
-        if (getArmor(LOC_FRONTRIGHT) < 1 && getOArmor(LOC_FRONTRIGHT) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front Right armor destroyed.");
-            }
+        } else if ((getArmor(LOC_FRONTRIGHT) < 1) && (getOArmor(LOC_FRONTRIGHT) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Front Right armor destroyed.");
             return true;
-        }
-        if (getArmor(LOC_FRONTLEFT) < 1 && getOArmor(LOC_FRONTLEFT) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front Left armor destroyed.");
-            }
+        } else if ((getArmor(LOC_FRONTLEFT) < 1) && (getOArmor(LOC_FRONTLEFT) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Front Left armor destroyed.");
             return true;
-        }
-        if (getArmor(LOC_REARRIGHT) < 1 && getOArmor(LOC_REARRIGHT) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Rear Right armor destroyed.");
-            }
+        } else if ((getArmor(LOC_REARRIGHT) < 1) && (getOArmor(LOC_REARRIGHT) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Rear Right armor destroyed.");
             return true;
-        }
-        if (getArmor(LOC_REARLEFT) < 1 && getOArmor(LOC_REARLEFT) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Rear Left armor destroyed.");
-            }
+        } else if ((getArmor(LOC_REARLEFT) < 1) && (getOArmor(LOC_REARLEFT) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Rear Left armor destroyed.");
             return true;
-        }
-        if (!hasNoTurret() && (getArmor(LOC_TURRET) < 1 && getOArmor(LOC_TURRET) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Turret armor destroyed.");
-            }
+        } else if (!hasNoTurret() && ((getArmor(LOC_TURRET) < 1) && (getOArmor(LOC_TURRET) > 0))) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Front armor destroyed.");
             return true;
-        }
-        if (!hasNoDualTurret() && (getArmor(LOC_TURRET_2) < 1 && getOArmor(LOC_TURRET_2) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front Turret armor destroyed.");
-            }
+        } else if (!hasNoDualTurret() && ((getArmor(LOC_TURRET_2) < 1) && (getOArmor(LOC_TURRET_2) > 0))) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Front Turret armor destroyed.");
             return true;
-        }
-        if (getArmor(LOC_REAR) < 1 && getOArmor(LOC_REAR) > 0) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Rear armor destroyed.");
-            }
+        } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Rear armor destroyed.");
             return true;
-        }
-        
-        if (isPermanentlyImmobilized(true)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out
-                        .println(getDisplayName() + " CRIPPLED: Immobilized.");
-            }
+        } else if (isPermanentlyImmobilized(checkCrew)) {
+            MegaMek.getLogger().debug(this, getDisplayName()
+                    + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -425,7 +394,7 @@ public class LargeSupportTank extends SupportTank {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            System.out.println(getDisplayName()
+            MegaMek.getLogger().debug(this, getDisplayName()
                     + " CRIPPLED: has no more viable weapons.");
             return true;
         }
@@ -434,7 +403,7 @@ public class LargeSupportTank extends SupportTank {
 
 
     @Override
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK | Entity.ETYPE_LARGE_SUPPORT_TANK;
     }
 
@@ -474,6 +443,7 @@ public class LargeSupportTank extends SupportTank {
         return fuelTonnage;
     }
 
+    @Override
     public void setFuelTonnage(double fuel) {
         fuelTonnage = fuel;
     }

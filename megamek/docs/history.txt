@@ -21,6 +21,7 @@ VERSION HISTORY:
 + Issue #2215: Fix for exception drawing background image in certain themes on 4k monitors
 + Issue #2043: Artillery flak attacks can damage flying Battle Armor, WIGEs, LAMs in airmech mode, etc.
 + PR #2283: Fixing Large Support Tank isCrippled Check
++ PR #2284: Fix soft-lock when selecting infantry units using infantry weapons
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

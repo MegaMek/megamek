@@ -228,7 +228,8 @@ public final class CamoManager {
      */
     public static BufferedImage colorCamoImage(Color color) {
         if (color == null) {
-            DefaultMmLogger.getInstance().error("A null color was passed.");
+            MegaMek.getLogger().error("A null color was passed.");
+
             return ImageUtil.failStandardImage();
         }
         BufferedImage result = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);

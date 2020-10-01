@@ -1716,7 +1716,7 @@ public class ForceDescriptor {
         };
 
         MegaMek.getLogger().log(logLevel, indent + weightClass + " " + unitType + " "
-                        + ((unitType == UnitType.AERO || unitType == UnitType.CONV_FIGHTER)?airEschelonNames[eschelon]:eschelonNames[eschelon]), null);
+                        + (((unitType == UnitType.AERO) || (unitType == UnitType.CONV_FIGHTER)) ? airEschelonNames[eschelon] : eschelonNames[eschelon]), null);
         for (ForceDescriptor sub : subforces) {
             sub.show(indent + "  ", logLevel);
         }

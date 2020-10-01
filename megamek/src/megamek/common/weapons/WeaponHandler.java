@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -1144,7 +1145,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         // we shouldn't be here, but if we get here, let's set hits to 0
                         // to avoid infinite loops
                         hits = 0;
-                        getLogger().error(getClass(), "Unexpected target type: " + target.getTargetType());
+                        MegaMek.getLogger().error("Unexpected target type: " + target.getTargetType());
                     }
                 } // Handle the next cluster.
             } else { // We missed, but need to handle special miss cases

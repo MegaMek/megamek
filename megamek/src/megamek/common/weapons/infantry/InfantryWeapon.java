@@ -79,7 +79,7 @@ public abstract class InfantryWeapon extends Weapon {
 
     @Override
     public double getMedAV() {
-        if (infantryRange > AIRBORNE_WEAPON_RANGES[RANGE_SHORT]) {
+        if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[RANGE_SHORT]) {
             return infantryDamage;
         } else {
             return 0.0;
@@ -88,7 +88,7 @@ public abstract class InfantryWeapon extends Weapon {
 
     @Override
     public double getLongAV() {
-        if (infantryRange > AIRBORNE_WEAPON_RANGES[RANGE_MED]) {
+        if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[RANGE_MED]) {
             return infantryDamage;
         } else {
             return 0.0;
@@ -97,7 +97,7 @@ public abstract class InfantryWeapon extends Weapon {
 
     @Override
     public double getExtAV() {
-        if (infantryRange > AIRBORNE_WEAPON_RANGES[RANGE_LONG]) {
+        if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[RANGE_LONG]) {
             return infantryDamage;
         } else {
             return 0.0;
@@ -122,6 +122,16 @@ public abstract class InfantryWeapon extends Weapon {
     @Override
     public int getRoundExtAV() {
         return (int) Math.round(getExtAV());
+    }
+
+    @Override
+    public int getMaxRange(Mounted weapon) {
+        for (int range = RangeType.RANGE_EXTREME; range >= RangeType.RANGE_SHORT; range--) {
+            if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[range - 1]) {
+                return range;
+            }
+        }
+        return RangeType.RANGE_SHORT;
     }
 
     public int getCrew() {

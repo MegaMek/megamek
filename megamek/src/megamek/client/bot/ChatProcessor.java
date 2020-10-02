@@ -201,8 +201,6 @@ public class ChatProcessor {
     }
 
     void additionalPrincessCommands(GamePlayerChatEvent chatEvent, Princess princess) {
-        final String METHOD_NAME = "additionalPrincessCommands(GamePlayerChatEvent, Princess, IPlayer)";
-
         // Commands should be sent in this format:
         //   <botName>: <command> : <arguments>
 

@@ -25,7 +25,9 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.logging.FakeLogger;
 import megamek.common.logging.LogLevel;
+import megamek.common.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.VictoryCommand;
@@ -202,9 +204,9 @@ public class ChatProcessorTest {
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         Princess mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
+        MMLogger fakeLogger = new FakeLogger();
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -218,8 +220,7 @@ public class ChatProcessorTest {
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerKirk);
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -233,9 +234,8 @@ public class ChatProcessorTest {
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -249,8 +249,7 @@ public class ChatProcessorTest {
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -264,8 +263,7 @@ public class ChatProcessorTest {
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -279,8 +277,7 @@ public class ChatProcessorTest {
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -295,8 +292,7 @@ public class ChatProcessorTest {
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -312,8 +308,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -329,8 +324,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -346,8 +340,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -363,8 +356,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -379,8 +371,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -395,8 +386,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -411,8 +401,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -427,8 +416,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -443,8 +431,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -459,8 +446,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -475,8 +461,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -491,8 +476,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -507,8 +491,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -523,8 +506,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -539,8 +521,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -555,8 +536,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -571,8 +551,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -587,8 +566,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -603,8 +581,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -621,8 +598,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -638,8 +614,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -655,8 +630,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -673,8 +647,7 @@ public class ChatProcessorTest {
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-        Mockito.doNothing().when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                                                   ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
@@ -688,18 +661,19 @@ public class ChatProcessorTest {
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(null);
         mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));
         Mockito.doReturn(MOCK_GAME).when(mockPrincess).getGame();
+        MMLogger mockLogger = Mockito.mock(FakeLogger.class);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(mockLogger);
         mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
         Mockito.doAnswer(new Answer<Object>() {
             @Override
             public Object answer(final InvocationOnMock invocationOnMock) throws Throwable {
-                final String msg = (String) invocationOnMock.getArguments()[3];
+                final String msg = (String) invocationOnMock.getArguments()[0];
                 if ("speakerPlayer is NULL.".equalsIgnoreCase(msg)) {
                     Assert.fail("Should not reach this point.");
                 }
                 return null;
             }
-        }).when(mockPrincess).getLogger().log(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.any(LogLevel.class), ArgumentMatchers.anyString(), null);
+        }).when(mockLogger).error(ArgumentMatchers.anyString());
         Mockito.doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);

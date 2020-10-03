@@ -62,6 +62,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.*;
 import megamek.common.Entity;
@@ -74,8 +75,6 @@ import megamek.common.MechView;
 import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.templates.TROView;
@@ -145,8 +144,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected boolean canonOnly = false;
     protected int gameTechLevel = TechConstants.T_SIMPLE_INTRO;
     protected int techLevelDisplayType = TECH_LEVEL_DISPLAY_IS_CLAN;
-
-    protected static MMLogger logger = DefaultMmLogger.getInstance();
     //endregion Variable Declarations
 
     protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
@@ -180,8 +177,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             sortList.add(new SortKey(guiPreferences.getMechSelectorSortColumn(),
                     SortOrder.valueOf(guiPreferences.getMechSelectorSortOrder())));
         } catch (Exception e) {
-            logger.error(getClass(), "setUserPreferences",
-                    "Failed to set based on user preferences, attempting to use default", e);
+            MegaMek.getLogger().error("Failed to set based on user preferences, attempting to use default", e);
 
             sortList.add(new SortKey(guiPreferences.getMechSelectorDefaultSortColumn(),
                     SortOrder.valueOf(guiPreferences.getMechSelectorDefaultSortOrder())));
@@ -624,7 +620,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             mechView = new MechView(selectedEntity, false);
             troView = TROView.createView(selectedEntity, true);
         } catch (Exception e) {
-            logger.error(getClass(), "refreshUnitView", e);
+            MegaMek.getLogger().error(e);
             // error: unit didn't load right. this is bad news.
             populateTextFields = false;
         }
@@ -655,8 +651,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             // print so this sets the source file to the full path.
             return new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
         } catch (EntityLoadingException e) {
-            logger.error(getClass(), "getSelectedEntity",
-                    "Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName()
+            MegaMek.getLogger().error("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName()
                             + ": " + e.getMessage(), e);
             return null;
         }
@@ -671,7 +666,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         // break out if there are no units to filter
         if (mechs == null) {
-            logger.error(getClass(), "run", "No mechs were loaded");
+            MegaMek.getLogger().error("No mechs were loaded");
         } else {
             unitModel.setData(mechs);
         }

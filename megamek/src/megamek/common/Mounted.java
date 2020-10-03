@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
@@ -36,7 +36,6 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
-import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * This describes equipment mounted on a mech.
@@ -568,8 +567,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (bay != null) {
                 return defaultRounding.round(bay.getCapacity() * 0.05, getEntity());
             }
-            DefaultMmLogger.getInstance().warning(getClass(), "getTonnage(RoundWeight)",
-                    "Found dumper not linked to a cargo bay. Using zero for the weight.");
+            MegaMek.getLogger().warning("Found dumper not linked to a cargo bay. Using zero for the weight.");
             return 0.0;
         }
         double retVal = getType().getTonnage(getEntity(), getLocation(), getSize(), defaultRounding);

@@ -52,8 +52,6 @@ public class InfantryPathFinder {
      * @param startingEdge the starting node. Should be empty.
      */
     public void run(MovePath startingEdge) {
-        final String METHOD_NAME = "run";
-        
         try {
             infantryPaths = new ArrayList<MovePath>();
             // add an option to stand still
@@ -102,9 +100,9 @@ public class InfantryPathFinder {
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.";
             
-            getLogger().log(this.getClass(), METHOD_NAME, LogLevel.ERROR, memoryMessage, e);
+            getLogger().error(memoryMessage, e);
         } catch(Exception e) {
-            getLogger().error(this.getClass(), METHOD_NAME, e); //do something, don't just swallow the exception, good lord
+            getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
     

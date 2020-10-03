@@ -155,8 +155,7 @@ public class BotGeometry {
          * and 0 if the point is on the line
          */
         public int judgePoint(Coords c) {
-            final String METHOD_NAME = "judgePoint(Coords)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            owner.getLogger().methodBegin();
 
             try {
                 HexLine comparor = new HexLine(c, getDirection(), owner);
@@ -167,7 +166,7 @@ public class BotGeometry {
                 }
                 return 0;
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                owner.getLogger().methodEnd();
             }
         }
 
@@ -177,8 +176,7 @@ public class BotGeometry {
          * returns 0 if the area is divided by the line
          */
         public int judgeArea(ConvexBoardArea a) {
-            final String METHOD_NAME = "judgeArea(ConvexBoardArea)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            owner.getLogger().methodBegin();
 
             try {
                 boolean flip = getDirection() > 2;
@@ -204,7 +202,7 @@ public class BotGeometry {
                 }
                 return 0;
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                owner.getLogger().methodEnd();
             }
         }
 
@@ -213,8 +211,7 @@ public class BotGeometry {
          * Note that the function getXfromY would be multvalued
          */
         public int getYfromX(int x) {
-            final String METHOD_NAME = "getYfromX(int)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            owner.getLogger().methodBegin();
 
             try {
                 if ((getDirection() == 0) || (getDirection() == 3)) {
@@ -226,7 +223,7 @@ public class BotGeometry {
                 // direction==5||direction==2
                 return getIntercept() + ((x) / 2);     //halfs round down
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                owner.getLogger().methodEnd();
             }
         }
 
@@ -235,8 +232,7 @@ public class BotGeometry {
          * if lines are parallel (even if they are coincident) returns null
          */
         public Coords getIntersection(HexLine h) {
-            final String METHOD_NAME = "getIntersection(HexLine)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            owner.getLogger().methodBegin();
 
             try {
                 if ((h.getDirection() % 3) == (getDirection() % 3)) {
@@ -254,7 +250,7 @@ public class BotGeometry {
                 //direction must be 1 here, and h.direction=2
                 return new Coords(getIntercept() - h.getIntercept(), getYfromX(getIntercept() - h.getIntercept()));
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                owner.getLogger().methodEnd();
             }
         }
 
@@ -263,8 +259,7 @@ public class BotGeometry {
          * line to another point
          */
         public Coords getClosestPoint(Coords c) {
-            final String METHOD_NAME = "getClosestPoint(Coords)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            owner.getLogger().methodBegin();
 
             try {
                 if ((getDirection() == 0) || (getDirection() == 3)) { //technically two points are equidistant,
@@ -277,7 +272,7 @@ public class BotGeometry {
                 double myx = (-5.0 / 3.0) * (getIntercept() - (double) c.getY() - (2.0 * c.getX()));
                 return new Coords((int) myx, getYfromX((int) myx));
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                owner.getLogger().methodEnd();
             }
         }
 
@@ -395,8 +390,7 @@ public class BotGeometry {
         }
 
         void addCoordFacingCombos(Iterator<CoordFacingCombo> cfit) {
-            final String METHOD_NAME = "addCoordFacingCombos(Iterator<CoordFacingCombo>)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            owner.getLogger().methodBegin();
 
             try {
                 while (cfit.hasNext()) {
@@ -406,7 +400,7 @@ public class BotGeometry {
                     }
                 }
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                owner.getLogger().methodEnd();
             }
         }
 
@@ -415,8 +409,7 @@ public class BotGeometry {
          * false if it is not
          */
         public boolean contains(Coords c) {
-            final String METHOD_NAME = "contains(Coords)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            owner.getLogger().methodBegin();
 
             try {
                 HexLine[] edges = getEdges();
@@ -430,7 +423,7 @@ public class BotGeometry {
                 }
                 return true;
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                owner.getLogger().methodEnd();
             }
         }
 
@@ -438,8 +431,7 @@ public class BotGeometry {
          * expands the board area to include point onc
          */
         void expandToInclude(Coords onc) {
-            final String METHOD_NAME = "expandToInclude(Coords)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            owner.getLogger().methodBegin();
 
             try {
                 HexLine[] edges = getEdges();
@@ -450,7 +442,7 @@ public class BotGeometry {
                 }
                 setEdges(edges);
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                owner.getLogger().methodEnd();
             }
         }
 
@@ -458,8 +450,7 @@ public class BotGeometry {
          * Returns a vertex, with zero starting at the upper left of the hex
          */
         public Coords getVertexNum(int i) {
-            final String METHOD_NAME = "getVertexNum(int)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            owner.getLogger().methodBegin();
 
             try {
                 HexLine[] edges = getEdges();
@@ -469,7 +460,7 @@ public class BotGeometry {
                 }
                 return edges[i].getIntersection(edges[(i + 1) % 6]);
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                owner.getLogger().methodEnd();
             }
         }
 
@@ -477,8 +468,7 @@ public class BotGeometry {
          * returns the closest coord in the area to the given coord
          */
         public Coords getClosestCoordsTo(Coords c) {
-            final String METHOD_NAME = "getClosestCoordsTo(Coords)";
-            owner.methodBegin(getClass(), METHOD_NAME);
+            owner.getLogger().methodBegin();
 
             try {
                 Coords closest = null;
@@ -510,7 +500,7 @@ public class BotGeometry {
                 }
                 return closest;
             } finally {
-                owner.methodEnd(getClass(), METHOD_NAME);
+                owner.getLogger().methodEnd();
             }
         }
 
@@ -585,7 +575,6 @@ public class BotGeometry {
      * runs a series of self tests to make sure geometry is done correctly
      */
     static void debugSelfTest(Princess owner) {
-        final String METHOD_NAME = "debugSelfTest()";
         final String PASSED = "passed";
         final String FAILED = "failed";
 
@@ -655,7 +644,7 @@ public class BotGeometry {
             area.expandToInclude(areapt1);
             area.expandToInclude(areapt2);
             area.expandToInclude(areapt3);
-            owner.log(BotGeometry.class, METHOD_NAME, "Checking area contains proper points... ");
+            owner.getLogger().debug("Checking area contains proper points... ");
             msg.append("\n\tChecking area contains proper points... ");
             if (!area.contains(new Coords(1, 1))) {
                 passed = false;
@@ -721,7 +710,7 @@ public class BotGeometry {
             msg.append(passed ? PASSED : FAILED);
 
         } finally {
-            owner.log(BotGeometry.class, METHOD_NAME, LogLevel.DEBUG, msg);
+            owner.getLogger().debug(msg.toString());
         }
     }
 }

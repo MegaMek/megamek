@@ -93,11 +93,13 @@ public class DefaultMmLogger implements MMLogger {
         return throwable;
     }
 
+    @Override
     public <T extends Throwable> T log(final Class<?> callingClass, final String methodName,
                                        final LogLevel logLevel, final T throwable) {
         return log(callingClass.getName(), methodName, logLevel, throwable);
     }
 
+    @Override
     public <T extends Throwable> T log(final LogLevel logLevel, String message, final T throwable) {
         return log(getCallingClass(), getCallingMethod(), logLevel, message, throwable);
     }
@@ -112,11 +114,13 @@ public class DefaultMmLogger implements MMLogger {
         return log(className, methodName, logLevel, message, throwable);
     }
 
+    @Override
     public <T extends Throwable> T log(final Class<?> callingClass, final String methodName,
                                        final LogLevel level, final String message, final T throwable) {
         return log(callingClass.getName(), methodName, level, message, throwable);
     }
     
+    @Override
     public void log(final Class<?> callingClass, final String methodName, final LogLevel level,
                     final String message) {
         log(callingClass.getName(), methodName, level, message, null);

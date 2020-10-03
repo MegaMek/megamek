@@ -2605,7 +2605,7 @@ public class Infantry extends Entity {
     public boolean isCrippled() {
         double activeTroopPercent = (double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY);
         if (activeTroopPercent < 0.25) {
-            MegaMek.getLogger().debug(this, getDisplayName() + " CRIPPLED: Only "
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
                     + NumberFormat.getPercentInstance().format(activeTroopPercent) + " troops remaining.");
             return true;
         } else {

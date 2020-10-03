@@ -4028,32 +4028,25 @@ public class Tank extends Entity {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: Front armor destroyed.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         } else if ((getArmor(LOC_RIGHT) < 1) && (getOArmor(LOC_RIGHT) > 0)) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: Right armor destroyed.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Right armor destroyed.");
             return true;
         } else if ((getArmor(LOC_LEFT) < 1) && (getOArmor(LOC_LEFT) > 0)) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: Left armor destroyed.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Left armor destroyed.");
             return true;
         } else if (!hasNoTurret() && ((getArmor(getLocTurret()) < 1) && (getOArmor(getLocTurret()) > 0))) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: Turret destroyed.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Turret destroyed.");
             return true;
         } else if (!hasNoDualTurret() && ((getArmor(getLocTurret2()) < 1) && (getOArmor(getLocTurret2()) > 0))) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: Front Turret destroyed.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret destroyed.");
             return true;
         } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: Rear armor destroyed.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
             return true;
         } else if (isPermanentlyImmobilized(checkCrew)) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: Immobilized.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -4067,8 +4060,7 @@ public class Tank extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: has no more viable weapons.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;
@@ -4077,11 +4069,11 @@ public class Tank extends Entity {
     @Override
     public boolean isDmgHeavy() {
         if (((double) getWalkMP() / getOriginalWalkMP()) <= 0.5) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than or equal to half the original Walk MP");
             return true;
         } else if ((getArmorRemainingPercent() <= 0.33) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Heavily Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.33.");
             return true;
@@ -4106,7 +4098,7 @@ public class Tank extends Entity {
     @Override
     public boolean isDmgModerate() {
         if ((getArmorRemainingPercent() <= 0.67) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.67.");
             return true;
@@ -4132,11 +4124,11 @@ public class Tank extends Entity {
     @Override
     public boolean isDmgLight() {
         if (getWalkMP() < getOriginalWalkMP()) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than the original Walk MP");
             return true;
         } else if ((getArmorRemainingPercent() <= 0.8) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.8.");
             return true;

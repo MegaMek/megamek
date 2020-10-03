@@ -501,11 +501,10 @@ public class GunEmplacement extends Tank {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (checkCrew && (null != getCrew()) && getCrew().isDead()) {
-            MegaMek.getLogger().debug(this, getDisplayName() + " CRIPPLED: Crew dead.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Crew dead.");
             return true;
         } else if (isMilitary() && !hasViableWeapons()) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: no viable weapons left.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: no viable weapons left.");
             return true;
         } else {
             return false;

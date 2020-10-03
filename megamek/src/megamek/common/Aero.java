@@ -3946,31 +3946,26 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (isEjecting()) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: The crew is currently ejecting.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: The crew is currently ejecting.");
             return true;
         } else if (getInternalRemainingPercent() < 0.5) {
-            MegaMek.getLogger().debug(this, getDisplayName() + " CRIPPLED: Only "
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
                     + NumberFormat.getPercentInstance().format(getInternalRemainingPercent()) + " internals remaining.");
             return true;
         } else if (getEngineHits() > 0) {
-            MegaMek.getLogger().debug(this, getDisplayName() + " CRIPPLED: "
-                    + engineHits + " Engine Hits.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: " + engineHits + " Engine Hits.");
             return true;
         } else if (getPotCrit() == CRIT_FUEL_TANK) {
-            MegaMek.getLogger().debug(this, getDisplayName() + " CRIPPLED: Fuel Tank Hit");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Fuel Tank Hit");
             return true;
         } else if (checkCrew && (getCrew() != null) && (getCrew().getHits() >= 4)) {
-            MegaMek.getLogger().debug(this, getDisplayName() + " CRIPPLED: " + getCrew().getHits()
-                    + " Crew Hits taken.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: " + getCrew().getHits() + " Crew Hits taken.");
             return true;
         } else if (getFCSHits() >= 3) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: Fire Control Destroyed by taking " + fcsHits);
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Fire Control Destroyed by taking " + fcsHits);
             return true;
         } else if (getCICHits() >= 3) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: Combat Information Center Destroyed by taking " + cicHits);
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Combat Information Center Destroyed by taking " + cicHits);
             return true;
         }
 
@@ -3980,8 +3975,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
 
         if (!hasViableWeapons()) {
-            MegaMek.getLogger().debug(this, getDisplayName()
-                    + " CRIPPLED: No more viable weapons.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: No more viable weapons.");
             return true;
         } else {
             return false;
@@ -3991,17 +3985,17 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgHeavy() {
         if (getArmorRemainingPercent() <= 0.33) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Heavily Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.33.");
             return true;
         } else if (getInternalRemainingPercent() < 0.67) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Heavily Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.67.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 3)) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + "Moderately Damaged: The crew has taken a minimum of three hits.");
             return true;
         }
@@ -4025,17 +4019,17 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgModerate() {
         if (getArmorRemainingPercent() <= 0.5) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.50.");
             return true;
         } else if (getInternalRemainingPercent() < 0.75) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.75.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 2)) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: The crew has taken a minimum of two hits.");
             return true;
         }
@@ -4058,17 +4052,17 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgLight() {
         if (getArmorRemainingPercent() <= 0.75) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.75.");
             return true;
         } else if (getInternalRemainingPercent() < 0.9) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.9.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 1)) {
-            MegaMek.getLogger().debug(this, getDisplayName()
+            MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: The crew has taken a minimum of one hit.");
             return true;
         }

@@ -2133,7 +2133,7 @@ public class BattleArmor extends Infantry {
     public boolean isCrippled() {
         double activeTroopPercent = (double) getNumberActiverTroopers() / getSquadSize();
         if (activeTroopPercent < 0.5) {
-            MegaMek.getLogger().debug(this, getDisplayName() + " CRIPPLED: Only "
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
                     + NumberFormat.getPercentInstance().format(activeTroopPercent) + " troops remaining.");
             return true;
         } else {

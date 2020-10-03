@@ -22,15 +22,12 @@ import java.awt.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/13/14 3:55 PM
  */
 public class RandomMapPanelBasic extends JPanel {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -6971330721623187856L;
+    
     private static final String NONE = Messages.getString("RandomMapDialog.uiNONE");
     private static final String LOW = Messages.getString("RandomMapDialog.uiLow");
     private static final String MEDIUM = Messages.getString("RandomMapDialog.uiMedium");
@@ -65,6 +62,7 @@ public class RandomMapPanelBasic extends JPanel {
     private final CheckpointComboBox<String> sandsCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> swampsCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> woodsCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
+    private final CheckpointComboBox<String> foliageCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
 
     // Water
     private final CheckpointComboBox<String> lakesCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
@@ -127,6 +125,10 @@ public class RandomMapPanelBasic extends JPanel {
                                                 this.mapSettings.getMinForestSpots(),
                                                 this.mapSettings.getProbHeavy()));
         woodsCombo.checkpoint();
+        foliageCombo.setSelectedItem(woodsToRange(this.mapSettings.getMinFoliageSize(),
+                this.mapSettings.getMinFoliageSpots(),
+                this.mapSettings.getProbFoliageHeavy()));
+        foliageCombo.checkpoint();
         cliffsCombo.setSelectedItem(percentageToRange(this.mapSettings.getCliffs()));
         cliffsCombo.checkpoint();
         cratersCombo.setSelectedItem(cratersToRange(this.mapSettings.getProbCrater()));
@@ -157,294 +159,126 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private JScrollPane setupWaterPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = new GridBagConstraints();
-        JPanel panel = new JPanel(layout);
 
-        constraints.gridwidth = 1;
-        constraints.gridheight = 1;
-        constraints.weightx = 0;
-        constraints.weighty = 0;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.anchor = GridBagConstraints.NORTHWEST;
-        constraints.insets = new Insets(2, 2, 2, 2);
+        JPanel panel = new JPanel(new SpringLayout());
 
-        // Row 1, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.gridwidth = 1;
         final JLabel lakesLabel = new JLabel(Messages.getString("RandomMapDialog.labLakes"));
-        panel.add(lakesLabel, constraints);
-
-        // Row 1, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(lakesLabel);
         lakesCombo.setToolTipText(Messages.getString("RandomMapDialog.lakesCombo.toolTip"));
-        panel.add(lakesCombo, constraints);
+        panel.add(lakesCombo);
 
-        // Row 2, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
         final JLabel riversLabel = new JLabel(Messages.getString("RandomMapDialog.labRivers"));
-        panel.add(riversLabel, constraints);
-
-        // Row 2, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(riversLabel);
         riversCombo.setToolTipText(Messages.getString("RandomMapDialog.riversCombo.toolTip"));
-        panel.add(riversCombo, constraints);
-
-        // Row 3, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
-        constraints.weighty = 1;
+        panel.add(riversCombo);
+        
         final JLabel iceLabel = new JLabel(Messages.getString("RandomMapDialog.labIce"));
-        panel.add(iceLabel, constraints);
-
-        // Row 3, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(iceLabel);
         iceCombo.setToolTipText(Messages.getString("RandomMapDialog.iceCombo.toolTip"));
-        panel.add(iceCombo, constraints);
+        panel.add(iceCombo);
 
+        makeCompactGrid(panel, 3, 2, 6, 6, 6, 6);
         return new JScrollPane(panel);
     }
+    
 
     private String iceToRange(int minSize, int minSpots) {
-        int range = minSize + minSpots;
-        if (range >= 6) {
-            return HIGH;
-        }
-        if (range >= 4) {
-            return MEDIUM;
-        }
-        if (range >= 2) {
-            return LOW;
-        }
-        return NONE;
+        return convert(minSize + minSpots, 2, 4, 6);
     }
 
     private String lakesToRange(int minSize, int minSpots, int percentDeep) {
         int range = percentDeep + (minSize * 5) + (minSpots * 10);
-        if (range >= 100) {
+        return convert(range, 20, 65, 100);
+    }
+    
+    private String convert(int value, int low, int med, int high) {
+        if (value >= high) {
             return HIGH;
-        }
-        if (range >= 65) {
+        } else if (value >= med) {
             return MEDIUM;
-        }
-        if (range >= 20) {
+        } else if (value >= low) {
             return LOW;
         }
         return NONE;
     }
 
     private JScrollPane setupNaturalFeaturesPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = new GridBagConstraints();
-        JPanel panel = new JPanel(layout);
-
-        constraints.gridwidth = 1;
-        constraints.gridheight = 1;
-        constraints.weightx = 0;
-        constraints.weighty = 0;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.anchor = GridBagConstraints.NORTHWEST;
-        constraints.insets = new Insets(2, 2, 2, 2);
-
-        // Row 1, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.gridwidth = 1;
+        JPanel panel = new JPanel(new SpringLayout());
+        
         final JLabel roughsLabel = new JLabel(Messages.getString("RandomMapDialog.labRough"));
-        panel.add(roughsLabel, constraints);
-
-        // Row 1, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(roughsLabel);
         roughsCombo.setToolTipText(Messages.getString("RandomMapDialog.roughsCombo.toolTip"));
-        panel.add(roughsCombo, constraints);
+        panel.add(roughsCombo);
 
-        // Row 2, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
         final JLabel sandsLabel = new JLabel(Messages.getString(("RandomMapDialog.labSand")));
-        panel.add(sandsLabel, constraints);
-
-        // Row 2, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(sandsLabel);
         sandsCombo.setToolTipText(Messages.getString("RandomMapDialog.sandsCombo.toolTip"));
-        panel.add(sandsCombo, constraints);
+        panel.add(sandsCombo);
 
-        // Row 3, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
         final JLabel swampsLabel = new JLabel(Messages.getString("RandomMapDialog.labSwamp"));
-        panel.add(swampsLabel, constraints);
-
-        // Row 3, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(swampsLabel);
         swampsCombo.setToolTipText(Messages.getString("RandomMapDialog.swampsCombo.toolTip"));
-        panel.add(swampsCombo, constraints);
+        panel.add(swampsCombo);
 
-        // Row 4, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
-        constraints.weighty = 1;
         final JLabel woodsLabel = new JLabel(Messages.getString("RandomMapDialog.labWoods"));
-        panel.add(woodsLabel, constraints);
-
-        // Row 4, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(woodsLabel);
         woodsCombo.setToolTipText(Messages.getString("RandomMapDialog.woodsCombo.toolTip"));
-        panel.add(woodsCombo, constraints);
+        panel.add(woodsCombo);
 
+        final JLabel foliageLabel = new JLabel(Messages.getString("RandomMapDialog.labFoliage"));
+        panel.add(foliageLabel);
+        foliageCombo.setToolTipText(Messages.getString("RandomMapDialog.foliageCombo.toolTip"));
+        panel.add(foliageCombo);
+        
+        makeCompactGrid(panel, 5, 2, 6, 6, 6, 6);
         return new JScrollPane(panel);
     }
 
     private String roughsToRange(int minSize, int minSpots) {
-        int range = minSize + minSpots;
-        if (range >= 6) {
-            return HIGH;
-        }
-        if (range >= 4) {
-            return MEDIUM;
-        }
-        if (range >= 2) {
-            return LOW;
-        }
-        return NONE;
+        return convert(minSize + minSpots, 2, 4, 6);
     }
 
     private String sandsToRange(int minSize, int minSpots) {
-        int range = minSize + minSpots;
-        if (range >= 6) {
-            return HIGH;
-        }
-        if (range >= 4) {
-            return MEDIUM;
-        }
-        if (range >= 2) {
-            return LOW;
-        }
-        return NONE;
+        return convert(minSize + minSpots, 2, 4, 6);
     }
 
     private String swampsToRange(int minSize, int minSpots) {
-        int range = minSize + minSpots;
-        if (range >= 6) {
-            return HIGH;
-        }
-        if (range >= 4) {
-            return MEDIUM;
-        }
-        if (range >= 2) {
-            return LOW;
-        }
-        return NONE;
+        return convert(minSize + minSpots, 2, 4, 6);
     }
 
     private String woodsToRange(int minSize, int minSpots, int percentHeavy) {
-        int range = percentHeavy + (minSize * 5) + (minSpots * 6);
-        if (range >= 100) {
-            return HIGH;
-        }
-        if (range >= 65) {
-            return MEDIUM;
-        }
-        if (range >= 50) {
-            return LOW;
-        }
-        return NONE;
+        return convert(percentHeavy + (minSize * 5) + (minSpots * 6), 50, 65, 100);
     }
 
     private JScrollPane setupElevationPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = new GridBagConstraints();
-        JPanel panel = new JPanel(layout);
+        JPanel panel = new JPanel(new SpringLayout());
 
-        constraints.gridwidth = 1;
-        constraints.gridheight = 1;
-        constraints.weightx = 0;
-        constraints.weighty = 0;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.anchor = GridBagConstraints.NORTHWEST;
-        constraints.insets = new Insets(2, 2, 2, 2);
-
-        // Row 1, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.gridwidth = 1;
         final JLabel cliffsLabel = new JLabel(Messages.getString("RandomMapDialog.labCliffs"));
-        panel.add(cliffsLabel, constraints);
-
-        // Row 1, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(cliffsLabel);
         cliffsCombo.setToolTipText(Messages.getString("RandomMapDialog.cliffsCombo.toolTip"));
-        panel.add(cliffsCombo, constraints);
+        panel.add(cliffsCombo);
 
-        // Row 2, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
         final JLabel cratersLabel = new JLabel(Messages.getString("RandomMapDialog.labCraters"));
-        panel.add(cratersLabel, constraints);
-
-        // Row 2, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(cratersLabel);
         cratersCombo.setToolTipText(Messages.getString("RandomMapDialog.cratersCombo.toolTip"));
-        panel.add(cratersCombo, constraints);
+        panel.add(cratersCombo);
 
-        // Row 3, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
-        final JLabel hillsLabel = new JLabel(Messages.getString("RandomMapDialog.labElevation"));
-        panel.add(hillsLabel, constraints);
-
-        // Row 3, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        final JLabel hillinessLabel = new JLabel(Messages.getString("RandomMapDialog.labElevation"));
+        panel.add(hillinessLabel);
         hillinessCombo.setToolTipText(Messages.getString("RandomMapDialog.hillinessCombo.toolTip"));
-        panel.add(hillinessCombo, constraints);
+        panel.add(hillinessCombo);
 
-        // Row 4, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weighty = 1;
-        constraints.weightx = 0;
-        final JLabel mountainsLabel = new JLabel(Messages.getString("RandomMapDialog.labMountain"));
-        panel.add(mountainsLabel, constraints);
-
-        // Row 4, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        final JLabel mountainLabel = new JLabel(Messages.getString("RandomMapDialog.labMountain"));
+        panel.add(mountainLabel);
         mountainCombo.setToolTipText(Messages.getString("RandomMapDialog.mountainCombo.toolTip"));
-        panel.add(mountainCombo, constraints);
-
+        panel.add(mountainCombo);
+        
+        makeCompactGrid(panel, 4, 2, 6, 6, 6, 6);
         return new JScrollPane(panel);
     }
 
     private String cratersToRange(int craterProbability) {
-        if (craterProbability >= 60) {
-            return HIGH;
-        }
-        if (craterProbability >= 40) {
-            return MEDIUM;
-        }
-        if (craterProbability >= 15) {
-            return LOW;
-        }
-        return NONE;
+        return convert(craterProbability, 15, 40, 60);
     }
 
     private String convertMountain(int peaks, int minHeight, int minWidth, int style) {
@@ -471,166 +305,59 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private String percentageToRange(int value) {
-        if (value >= 60) {
-            return HIGH;
-        }
-        if (value >= 40) {
-            return MEDIUM;
-        }
-        if (value >= 15) {
-            return LOW;
-        }
-        return NONE;
+        return convert(value, 15, 40, 60);
     }
 
     private String fortifiedToRange(int minSize, int minSpots) {
-        int range = minSize + minSpots;
-        if (range >= 5) {
-            return HIGH;
-        }
-        if (range >= 3) {
-            return MEDIUM;
-        }
-        if (range >= 2) {
-            return LOW;
-        }
-        return NONE;
+        return convert(minSize + minSpots, 2, 3, 5);
     }
 
     private String pavementToRange(int minSize, int minSpots) {
-        int range = minSize + minSpots;
-        if (range >= 6) {
-            return HIGH;
-        }
-        if (range >= 4) {
-            return MEDIUM;
-        }
-        if (range >= 2) {
-            return LOW;
-        }
-        return NONE;
+        return convert(minSize + minSpots, 2, 4, 6);
     }
 
     private String plantedFieldsToRange(int minSize, int minSpots) {
-        int range = minSize + minSpots;
-        if (range >= 6) {
-            return HIGH;
-        }
-        if (range >= 4) {
-            return MEDIUM;
-        }
-        if (range >= 2) {
-            return LOW;
-        }
-        return NONE;
+        return convert(minSize + minSpots, 2, 4, 6);
     }
 
     private String rubbleToRange(int minSize, int minSpots) {
-        int range = minSize + minSpots;
-        if (range >= 6) {
-            return HIGH;
-        }
-        if (range >= 4) {
-            return MEDIUM;
-        }
-        if (range >= 2) {
-            return LOW;
-        }
-        return NONE;
+        return convert(minSize + minSpots, 2, 4, 6);
     }
 
     private JScrollPane setupCivilizationPanel() {
-        GridBagLayout layout = new GridBagLayout();
-        GridBagConstraints constraints = new GridBagConstraints();
-        JPanel panel = new JPanel(layout);
-
-        constraints.gridwidth = 1;
-        constraints.gridheight = 1;
-        constraints.weightx = 0;
-        constraints.weighty = 0;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.anchor = GridBagConstraints.NORTHWEST;
-        constraints.insets = new Insets(2, 2, 2, 2);
-
-        // Row 1, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.gridwidth = 1;
+        JPanel panel = new JPanel(new SpringLayout());
+        
         final JLabel cityTypeLabel = new JLabel(Messages.getString("RandomMapDialog.labCity"));
-        panel.add(cityTypeLabel, constraints);
-
-        // Row 1, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(cityTypeLabel);
         cityTypeCombo.setToolTipText(Messages.getString("RandomMapDialog.cityTypeCombo.toolTip"));
-        panel.add(cityTypeCombo, constraints);
+        panel.add(cityTypeCombo);
 
-        // Row 2, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
         final JLabel fortifiedLabel = new JLabel(Messages.getString("RandomMapDialog.labFortified"));
-        panel.add(fortifiedLabel, constraints);
-
-        // Row 2, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(fortifiedLabel);
         fortifiedCombo.setToolTipText(Messages.getString("RandomMapDialog.fortifiedCombo.toolTip"));
-        panel.add(fortifiedCombo, constraints);
+        panel.add(fortifiedCombo);
 
-        // Row 3, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
         final JLabel pavementLabel = new JLabel(Messages.getString("RandomMapDialog.labPavement"));
-        panel.add(pavementLabel, constraints);
-
-        // Row 3, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(pavementLabel);
         pavementCombo.setToolTipText(Messages.getString("RandomMapDialog.pavementCombo.toolTip"));
-        panel.add(pavementCombo, constraints);
+        panel.add(pavementCombo);
 
-        // Row 4, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
-        final JLabel planetedFieldsLabel = new JLabel(Messages.getString("RandomMapDialog.labPlantedField"));
-        panel.add(planetedFieldsLabel, constraints);
-
-        // Row 4, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        final JLabel plantedFieldsLabel = new JLabel(Messages.getString("RandomMapDialog.labPlantedField"));
+        panel.add(plantedFieldsLabel);
         plantedFieldsCombo.setToolTipText(Messages.getString("RandomMapDialog.plantedFieldsCombo.toolTip"));
-        panel.add(plantedFieldsCombo, constraints);
+        panel.add(plantedFieldsCombo);
 
-        // Row 5, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weightx = 0;
         final JLabel roadsLabel = new JLabel(Messages.getString("RandomMapDialog.labRoads"));
-        panel.add(roadsLabel, constraints);
-
-        // Row 5, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(roadsLabel);
         roadsCombo.setToolTipText(Messages.getString("RandomMapDialog.roadsCombo.toolTip"));
-        panel.add(roadsCombo, constraints);
+        panel.add(roadsCombo);
 
-        // Row 6, Column 1.
-        constraints.gridx = 0;
-        constraints.gridy++;
-        constraints.weighty = 1;
-        constraints.weightx = 0;
         final JLabel rubbleLabel = new JLabel(Messages.getString("RandomMapDialog.labRubble"));
-        panel.add(rubbleLabel, constraints);
-
-        // Row 6, Column 2.
-        constraints.gridx++;
-        constraints.weightx = 1;
+        panel.add(rubbleLabel);
         rubbleCombo.setToolTipText(Messages.getString("RandomMapDialog.rubbleCombo.toolTip"));
-        panel.add(rubbleCombo, constraints);
-
+        panel.add(rubbleCombo);
+        
+        makeCompactGrid(panel, 6, 2, 6, 6, 6, 6);
         return new JScrollPane(panel);
     }
 
@@ -654,6 +381,12 @@ public class RandomMapPanelBasic extends JPanel {
         if (woodsCombo.hasChanged()) {
             value = (String) woodsCombo.getSelectedItem();
             setupWoods(value, newMapSettings);
+            anyChanges = true;
+        }
+        
+        if (foliageCombo.hasChanged()) {
+            value = (String) foliageCombo.getSelectedItem();
+            setupFoliage(value, newMapSettings);
             anyChanges = true;
         }
 
@@ -904,6 +637,18 @@ public class RandomMapPanelBasic extends JPanel {
             mapSettings.setForestParams(6, 10, 8, 13, 45);
         }
     }
+    
+    private void setupFoliage(String foliageValue, MapSettings mapSettings) {
+        if (NONE.equalsIgnoreCase(foliageValue)) {
+            mapSettings.setFoliageParams(0, 0, 0, 0, 0);
+        } else if (LOW.equalsIgnoreCase(foliageValue)) {
+            mapSettings.setFoliageParams(3, 6, 3, 6, 20);
+        } else if (MEDIUM.equalsIgnoreCase(foliageValue)) {
+            mapSettings.setFoliageParams(4, 8, 3, 10, 30);
+        } else {
+            mapSettings.setFoliageParams(6, 10, 8, 13, 45);
+        }
+    }
 
     private void setupHills(String hillsValue, MapSettings mapSettings) {
         int percent = rangeToPercentage(hillsValue);
@@ -930,4 +675,86 @@ public class RandomMapPanelBasic extends JPanel {
         }
         return 75;
     }
+    
+    /**
+     * From https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/SpringGridProject/src/layout/SpringUtilities.java
+     * 
+     * Aligns the first <code>rows</code> * <code>cols</code>
+     * components of <code>parent</code> in
+     * a grid. Each component in a column is as wide as the maximum
+     * preferred width of the components in that column;
+     * height is similarly determined for each row.
+     * The parent is made just big enough to fit them all.
+     *
+     * @param rows number of rows
+     * @param cols number of columns
+     * @param initialX x location to start the grid at
+     * @param initialY y location to start the grid at
+     * @param xPad x padding between cells
+     * @param yPad y padding between cells
+     */
+    public static void makeCompactGrid(Container parent,
+            int rows, int cols,
+            int initialX, int initialY,
+            int xPad, int yPad) {
+        SpringLayout layout;
+        try {
+            layout = (SpringLayout)parent.getLayout();
+        } catch (ClassCastException exc) {
+            System.err.println("The first argument to makeCompactGrid must use SpringLayout.");
+            return;
+        }
+
+        //Align all cells in each column and make them the same width.
+        Spring x = Spring.constant(initialX);
+        for (int c = 0; c < cols; c++) {
+            Spring width = Spring.constant(0);
+            for (int r = 0; r < rows; r++) {
+                width = Spring.max(width,
+                        getConstraintsForCell(r, c, parent, cols).
+                        getWidth());
+            }
+            for (int r = 0; r < rows; r++) {
+                SpringLayout.Constraints constraints =
+                        getConstraintsForCell(r, c, parent, cols);
+                constraints.setX(x);
+                constraints.setWidth(width);
+            }
+            x = Spring.sum(x, Spring.sum(width, Spring.constant(xPad)));
+        }
+
+        //Align all cells in each row and make them the same height.
+        Spring y = Spring.constant(initialY);
+        for (int r = 0; r < rows; r++) {
+            Spring height = Spring.constant(0);
+            for (int c = 0; c < cols; c++) {
+                height = Spring.max(height,
+                        getConstraintsForCell(r, c, parent, cols).
+                        getHeight());
+            }
+            for (int c = 0; c < cols; c++) {
+                SpringLayout.Constraints constraints =
+                        getConstraintsForCell(r, c, parent, cols);
+                constraints.setY(y);
+                constraints.setHeight(height);
+            }
+            y = Spring.sum(y, Spring.sum(height, Spring.constant(yPad)));
+        }
+
+        //Set the parent's size.
+        SpringLayout.Constraints pCons = layout.getConstraints(parent);
+        pCons.setConstraint(SpringLayout.SOUTH, y);
+        pCons.setConstraint(SpringLayout.EAST, x);
+    }
+
+    private static SpringLayout.Constraints getConstraintsForCell(
+            int row, int col,
+            Container parent,
+            int cols) {
+        SpringLayout layout = (SpringLayout) parent.getLayout();
+        Component c = parent.getComponent(row * cols + col);
+        return layout.getConstraints(c);
+    }
+
+
 }

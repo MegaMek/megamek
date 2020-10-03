@@ -119,8 +119,7 @@ public class PreferenceManager {
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error(getClass(), "load",
-                    "Error loading XML for client settings: " + e.getMessage(), e);
+            MegaMek.getLogger().error("Error loading XML for client settings: " + e.getMessage(), e);
         }
     }
 

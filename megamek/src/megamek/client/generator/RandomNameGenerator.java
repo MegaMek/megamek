@@ -354,7 +354,7 @@ public class RandomNameGenerator implements Serializable {
                 numEthnicCodes++;
             }
         } catch (IOException e) {
-            MegaMek.getLogger().error(this, "Could not find " + masterAncestryFile + "!");
+            MegaMek.getLogger().error("Could not find " + masterAncestryFile + "!");
             return;
         }
 
@@ -379,7 +379,7 @@ public class RandomNameGenerator implements Serializable {
 
         if ((fileNames == null) || (fileNames.length == 0)) {
             //region No Factions Specified
-            MegaMek.getLogger().error(this, "No faction files found!");
+            MegaMek.getLogger().error("No faction files found!");
 
             // We will create a general list where everything is weighted at one to allow players to
             // continue to play with named characters, indexing it at 1
@@ -429,11 +429,11 @@ public class RandomNameGenerator implements Serializable {
                         if (!factionGivenNames.get(key).get(ethnicCode).isEmpty()) {
                             factionEthnicCodes.get(key).add(Integer.parseInt(values[2]), ethnicCode);
                         } else {
-                            MegaMek.getLogger().error(this, "There are no possible options for " + ethnicCode + " for key " + key);
+                            MegaMek.getLogger().error("There are no possible options for " + ethnicCode + " for key " + key);
                         }
                     }
                 } catch (IOException fne) {
-                    MegaMek.getLogger().error(this, "Could not find " + factionFile + "!");
+                    MegaMek.getLogger().error("Could not find " + factionFile + "!");
                 }
             }
         }
@@ -454,14 +454,14 @@ public class RandomNameGenerator implements Serializable {
                 lineNumber++;
                 String[] values = input.nextLine().split(",");
                 if (values.length < 3) {
-                    MegaMek.getLogger().error(this, "Not enough fields in " + file.toString() + " on " + lineNumber);
+                    MegaMek.getLogger().error("Not enough fields in " + file.toString() + " on " + lineNumber);
                     continue;
                 }
 
                 map.get(Integer.parseInt(values[0])).add(Integer.parseInt(values[2]), values[1]);
             }
         } catch (IOException e) {
-            MegaMek.getLogger().error(this, "Could not find " + file + "!");
+            MegaMek.getLogger().error("Could not find " + file + "!");
         }
     }
     //endregion Initialization

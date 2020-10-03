@@ -52,6 +52,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
+import megamek.MegaMek;
 import megamek.client.ratgenerator.AbstractUnitRecord;
 import megamek.client.ratgenerator.AvailabilityRating;
 import megamek.client.ratgenerator.FactionRecord;
@@ -61,7 +62,6 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
-import megamek.common.logging.DefaultMmLogger;
 
 /**
  * @author neoancient
@@ -1440,8 +1440,7 @@ public class RATGeneratorEditor extends JFrame {
                 if (dir.exists() && dir.isDirectory()) {
                     ui = new RATGeneratorEditor(dir);
                 } else {
-                    DefaultMmLogger.getInstance().info(RATGeneratorEditor.class,
-                            "main(String[])", args[0] + " is not a valid directory name");
+                    MegaMek.getLogger().info(args[0] + " is not a valid directory name");
                     ui = new RATGeneratorEditor();
                 }
             } else {

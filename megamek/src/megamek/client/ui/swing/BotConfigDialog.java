@@ -31,6 +31,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -41,7 +42,6 @@ import megamek.client.bot.princess.PrincessException;
 import megamek.client.ui.Messages;
 import megamek.common.IPlayer;
 import megamek.common.logging.LogLevel;
-import megamek.common.logging.DefaultMmLogger;
 
 /**
  * BotConfigDialog is a dialog box that configures bot properties
@@ -528,7 +528,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
             HelpDialog helpDialog = new HelpDialog(Messages.getString("BotConfigDialog.princessHelp.title"), helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            handleError("launchPrincessHelp", e);
+            handleError(e);
         }
     }
 
@@ -574,9 +574,9 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         }
     }
 
-    private void handleError(String method, Throwable t) {
+    private void handleError(Throwable t) {
         JOptionPane.showMessageDialog(this, t.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-        DefaultMmLogger.getInstance().error(getClass(), method, t);
+        MegaMek.getLogger().error(t);
     }
 
     private void savePrincessProperties() {
@@ -585,7 +585,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         try {
             tempBehavior.setDescription((String) princessBehaviorNames.getSelectedItem());
         } catch (PrincessException e) {
-            handleError("savePrincessProperties", e);
+            handleError(e);
         }
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
@@ -647,8 +647,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
             Princess toReturn = new Princess(getBotName(), host, port,
                                              LogLevel.getLogLevel((String) verbosityCombo.getSelectedItem()));
             toReturn.setBehaviorSettings(princessBehavior);
-            toReturn.log(getClass(), "getSelectedBot(String, int)", LogLevel.DEBUG,
-                         toReturn.getBehaviorSettings().toLog());
+            toReturn.getLogger().debug(toReturn.getBehaviorSettings().toLog());
             return toReturn;
         }
         return null; // shouldn't happen

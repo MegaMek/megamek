@@ -36,13 +36,16 @@ public class InfantryShotgunCombatWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryCombatShotgun");
 		addLookupName("Combat Shotgun");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 175;
 		bv = 0.25;
 		tonnage = .0045;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.27;
 		infantryRange = 0;
+		ammoWeight = 0.00014;
+		ammoCost = 2;
+		shots = 8;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

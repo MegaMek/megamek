@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
+import megamek.MegaMek;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -49,7 +50,6 @@ import megamek.common.Transporter;
 import megamek.common.TroopSpace;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
@@ -61,7 +61,6 @@ import megamek.common.verifier.EntityVerifier;
  * Fills in a template to produce a unit summary in TRO format.
  *
  * @author Neoancient
- *
  */
 public class TROView {
 
@@ -104,7 +103,7 @@ public class TROView {
                 view.template = TemplateConfiguration.getInstance()
                         .getTemplate("tro/" + view.getTemplateFileName(html));
             } catch (final IOException e) {
-                DefaultMmLogger.getInstance().error(TROView.class, "createView(Entity, boolean)", e);
+                MegaMek.getLogger().error(e);
             }
             view.initModel(view.verifier);
         }
@@ -142,7 +141,7 @@ public class TROView {
                 template.process(model, out);
                 return os.toString();
             } catch (TemplateException | IOException e) {
-                DefaultMmLogger.getInstance().error(getClass(), "processTemplate()", e);
+                MegaMek.getLogger().error(e);
                 e.printStackTrace();
             }
         }
@@ -534,6 +533,11 @@ public class TROView {
                 row.put("equipment", "None");
                 row.put("remaining", remaining);
                 row.put("tonnage", 0.0);
+                row.put("heat", "-");
+                row.put("srv", "-");
+                row.put("mrv", "-");
+                row.put("lrv", "-");
+                row.put("erv", "-");
                 fixedList.add(row);
             } else {
                 boolean firstLine = true;
@@ -547,16 +551,29 @@ public class TROView {
                         row.put("location", "");
                         row.put("remaining", "");
                     }
+
                     if (entry.getValue() > 1) {
                         row.put("equipment", entry.getValue() + " " + entry.getKey());
                     } else {
                         row.put("equipment", entry.getKey());
                     }
+
                     if (fixedWeight.containsKey(entry.getKey())) {
                         // Not valid for mech systems
                         row.put("tonnage", fixedWeight.get(entry.getKey()));
                         fixedTonnage += fixedWeight.get(entry.getKey());
+                    } else {
+                        row.put("tonnage", "");
                     }
+
+                    // FIXME : I am not properly implemented, this is a temporary fix for testing
+                    // FIXME : and needs to be fixed.
+                    row.put("heat", "-");
+                    row.put("srv", "-");
+                    row.put("mrv", "-");
+                    row.put("lrv", "-");
+                    row.put("erv", "-");
+
                     fixedList.add(row);
                 }
             }
@@ -583,8 +600,7 @@ public class TROView {
                 bayRow.put("doors", bay.getDoors());
                 bays.add(bayRow);
             } else {
-                DefaultMmLogger.getInstance().warning(getClass(), "addBays()",
-                        "Could not determine bay type for " + bay.toString());
+                MegaMek.getLogger().warning("Could not determine bay type for " + bay.toString());
             }
         }
         setModelData("bays", bays);

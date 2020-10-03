@@ -69,6 +69,7 @@ import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
@@ -82,6 +83,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
+import megamek.client.ui.swing.tileset.CamoManager;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -113,7 +115,6 @@ import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
@@ -165,6 +166,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     //region view menu
     public static final String VIEW_MEK_DISPLAY = "viewMekDisplay"; //$NON-NLS-1$
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow"; //$NON-NLS-1$
+    public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
     public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
@@ -679,7 +681,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } catch (MalformedURLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR", 
                     JOptionPane.ERROR_MESSAGE);
-            DefaultMmLogger.getInstance().error(getClass(), "showSkinningHowTo", e);
+            MegaMek.getLogger().error(e);
         }
     }
 
@@ -838,6 +840,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 break;
             case VIEW_ACCESSIBILITY_WINDOW:
                 toggleAccessibilityWindow();
+                break;
+            case VIEW_KEYBINDS_OVERLAY:
+                bv.toggleKeybindsOverlay();
                 break;
             case VIEW_MINI_MAP:
                 toggleMap();
@@ -1846,12 +1851,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo;
-        if (entity.getCamoFileName() != null) {
-            camo = bv.getTilesetManager().getEntityCamo(entity);
-        } else {
-            camo = bv.getTilesetManager().getPlayerCamo(player);
+        Image camo = CamoManager.getPlayerCamoImage(player);
+        if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
+            camo = CamoManager.getEntityCamoImage(entity);
         }
+        // This seems unnecessary as the CamoManager will return an image for a playercolor:
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
         Image icon = bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
         if (icon != null) {
@@ -2335,12 +2339,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             return;
         }
         // save!
-        try {
-            OutputStream os = new FileOutputStream(curfileBoard);
-            // tell the board to save!
+        try (OutputStream os = new FileOutputStream(curfileBoard)) {
             client.getGame().getBoard().save(os);
-            // okay, done!
-            os.close();
         } catch (IOException ex) {
             System.err.println("error opening file to save!"); //$NON-NLS-1$
             System.err.println(ex);
@@ -2386,17 +2386,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
-        fc.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File dir) {
-                return (dir.getName().endsWith(".board") || dir.isDirectory()); //$NON-NLS-1$
-            }
-
-            @Override
-            public String getDescription() {
-                return "*.board";
-            }
-        });
+        fc.setFileFilter(new BoardFileFilter());
         int returnVal = fc.showSaveDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!

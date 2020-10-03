@@ -78,7 +78,6 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
-import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
@@ -525,7 +524,7 @@ public abstract class BotClient extends Client {
 	            try {
 					Thread.sleep(Compute.randomInt(1000) + 500);
 				} catch (InterruptedException e) {
-					MegaMek.getLogger().error(this, e.toString());
+					MegaMek.getLogger().error(e.toString());
 				}
 	        }
         }
@@ -589,7 +588,7 @@ public abstract class BotClient extends Client {
             
             return true;
         } catch (Throwable t) {
-            MegaMek.getLogger().error(this, t.toString());
+            MegaMek.getLogger().error(t.toString());
             
             return false;
         }
@@ -811,12 +810,13 @@ public abstract class BotClient extends Client {
 
             // Mech
             if (deployed_ent.hasETypeFlag(Entity.ETYPE_MECH)) {
-                // -> Trees are good
+                // -> Trees are good, when they're tall enough
                 // -> Water isn't that great below depth 1 -> this saves actual
                 // ground space for infantry/vehicles (minor)
                 int x = coord.getX();
                 int y = coord.getY();
-                if (board.getHex(x, y).containsTerrain(Terrains.WOODS)) {
+                if (board.getHex(x, y).containsTerrain(Terrains.WOODS)
+                        && board.getHex(x, y).terrainLevel(Terrains.FOLIAGE_ELEV) > 1) {
                     coord.fitness += 1;
                 }
                 if (board.getHex(x, y).containsTerrain(Terrains.WATER)) {

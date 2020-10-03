@@ -13,6 +13,7 @@
  */
 package megamek.client.ui.swing.util;
 
+import megamek.MegaMek;
 import javax.imageio.ImageIO;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
@@ -51,25 +52,28 @@ public class BASE64ImageView extends ImageView {
             cache = new Hashtable<>();
             getDocument().putProperty("imageCache", cache);
         }
-
         URL src = getImageURL();
-        cache.put(src, loadImage());
-
+        Image image = loadImage();
+        if (image != null) {
+            cache.put(src, image);
+        }
     }
 
     //decodes the Base64 string into an image and returns it
     private Image loadImage() {
         String b64 = getBASE64Image();
-        BufferedImage newImage = null;
-        ByteArrayInputStream bais = null;
-        try {
-            bais = new ByteArrayInputStream(
-                    Base64.getDecoder().decode(b64.getBytes()));
-            newImage = ImageIO.read(bais);
-        } catch (Throwable ex) {
-            ex.printStackTrace();
+        if (b64 != null) {
+            BufferedImage newImage = null;
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(
+                        Base64.getDecoder().decode(b64.getBytes()))) {
+                newImage = ImageIO.read(bais);
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
+            }
+            return newImage;
+        } else {
+            return null;
         }
-        return newImage;
     }
 
     /**
@@ -85,8 +89,7 @@ public class BASE64ImageView extends ImageView {
         if (isBase64Encoded(src)) {
 
             try {
-                this.url = new URL(BASE64ImageView.class.getProtectionDomain()
-                        .getCodeSource().getLocation().toString() + this.getElement().toString());
+                this.url = new URL("file:/" + this.getElement().toString());
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

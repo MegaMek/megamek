@@ -13,6 +13,7 @@
  */
 package megamek.client.ui.swing.widget;
 
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.DataVerifier;
 import megamek.client.ui.swing.util.VerifyNotNullOrEmpty;
 import megamek.common.util.StringUtil;
@@ -35,13 +36,7 @@ import java.util.Set;
  */
 public class VerifiableTextField extends JTextField implements FocusListener {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -4169356645839508584L;
-    public static final Color BK_INVALID = Color.pink;
-//    public static final Color BK_REQUIRED = Color.cyan;
-    public static final Color BK_DEFAULT = UIManager.getColor("TextField.background");
 
     private boolean selectAllTextOnGotFocus = false;
     private final Set<DataVerifier> verifiers = new HashSet<>();
@@ -63,6 +58,14 @@ public class VerifiableTextField extends JTextField implements FocusListener {
     public VerifiableTextField(String text, int columns) throws HeadlessException {
         super(text, columns);
         addFocusListener(this);
+    }
+    
+    public VerifiableTextField(int columns, boolean isReqd, boolean selectOnFoc, DataVerifier ver) 
+            throws HeadlessException {
+        this(null, columns);
+        setRequired(isReqd);
+        setSelectAllTextOnGotFocus(selectOnFoc);
+        addVerifier(ver);
     }
 
     /**
@@ -141,7 +144,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
             }
         }
         verifiers.remove(v);
-        setBackground(BK_DEFAULT);
+        setBackground(UIManager.getColor("TextField.background"));
     }
 
     /**
@@ -176,7 +179,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
 
         // If verifyResult is null, no problems were found.
         if (verifyResult == null) {
-            setBackground(BK_DEFAULT);
+            setBackground(UIManager.getColor("TextField.background"));
             if (oldToolTip != null) {
                 setToolTipText(oldToolTip);
                 oldToolTip = null;
@@ -185,7 +188,8 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         }
 
         // Something failed validation.  Set the background color red and update the tooltip to inform the user.
-        setBackground(BK_INVALID);
+        
+        setBackground(getInvalidColor());
         oldToolTip = getToolTipText();
         setToolTipText(verifyResult);
     }
@@ -252,5 +256,28 @@ public class VerifiableTextField extends JTextField implements FocusListener {
 
     public void setOldToolTip(String oldToolTip) {
         this.oldToolTip = oldToolTip;
+    }
+
+    /** 
+     * Returns an "invalid background" color. It is mixed from the
+     * GUIPreferences WarningColor and the UIManager textfield 
+     * background color. 
+     */
+    public static Color getInvalidColor() {
+        Color bgColor = UIManager.getColor("TextField.background");
+        Color warnColor = GUIPreferences.getInstance().getWarningColor();
+        double part = 0.1;
+        int r = (int)(part * warnColor.getRed()   + (1-part) * bgColor.getRed());  
+        int g = (int)(part * warnColor.getGreen() + (1-part) * bgColor.getGreen());
+        int b = (int)(part * warnColor.getBlue()  + (1-part) * bgColor.getBlue());
+        return new Color(r, g, b);
+    }
+    
+    @Override
+    public Dimension getMaximumSize() {
+        // Make this TextField not stretch vertically
+        Dimension size = getPreferredSize();
+        Dimension maxSize = super.getMaximumSize();
+        return new Dimension(maxSize.width, size.height);
     }
 }

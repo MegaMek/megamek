@@ -735,6 +735,7 @@ public class EquipmentType implements ITechnology {
             AmmoType.initializeTypes();
             MiscType.initializeTypes();
             BombType.initializeTypes();
+            SmallWeaponAmmoType.initializeTypes();
             for (EquipmentType et : allTypes) {
                 if (et.getTechAdvancement().getStaticTechLevel() == null) {
                     et.getTechAdvancement().setStaticTechLevel(et.getTechAdvancement()

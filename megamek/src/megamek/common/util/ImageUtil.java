@@ -16,6 +16,8 @@
 
 package megamek.common.util;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -60,6 +62,9 @@ public final class ImageUtil {
 
     public static final int IMAGE_SCALE_BICUBIC = 1;
     public static final int IMAGE_SCALE_AVG_FILTER = 2;
+    
+    /** Holds a drawn "fail" image that can be used when image loading fails. */
+    public static BufferedImage failStandardImage; 
 
     /**
      * @return an image in a format best fitting for hardware acceleration, if
@@ -88,7 +93,25 @@ public final class ImageUtil {
         }
         return GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
     }
-
+    
+    /** 
+     * Returns a standard size (84x72) "fail" image having a red on white cross. 
+     * The image is drawn, not loaded and should therefore work in almost all cases. 
+     */
+    public static BufferedImage failStandardImage() {
+        if (failStandardImage == null) {
+            failStandardImage = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = failStandardImage.createGraphics();
+            graphics.setColor(Color.WHITE);
+            graphics.fillRect(0, 0, 84, 72);
+            graphics.setStroke(new BasicStroke(4f));
+            graphics.setColor(Color.RED);
+            graphics.drawLine(62, 56, 22, 16);
+            graphics.drawLine(62, 16, 22, 56);
+        }
+        return failStandardImage;
+    }
+    
     /**
      * Get a scaled version of the input image.
      *

@@ -13,13 +13,13 @@ GunEmplacement
 LB-5-X Turret
 </Name>
 <model>
-(Dual)
+(Quad)
 </model>
 <Year>
 2828
 </Year>
 <Type>
-Clan Level 2
+Clan Level 5
 </Type>
 <Turret>
 1
@@ -32,6 +32,8 @@ CLLBXAC5
 CLLBXAC5 Ammo
 CLLBXAC5 Ammo
 CLLBXAC5 Ammo
+CLLBXAC5 Ammo
+CLLBXAC5 CL Ammo
 CLLBXAC5 CL Ammo
 CLLBXAC5 CL Ammo
 CLLBXAC5 CL Ammo

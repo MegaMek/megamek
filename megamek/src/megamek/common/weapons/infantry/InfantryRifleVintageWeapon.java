@@ -36,13 +36,17 @@ public class InfantryRifleVintageWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryVintageAssaultRifle");
 		addLookupName("Vintage Assault Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 2000;
 		tonnage = 0.0045;
 		bv = 0.0;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.17;
 		infantryRange = 1;
+		ammoWeight = 0.00048;
+		ammoCost = 40;
+		shots = 30;
+		bursts = 3;
 		rulesRefs = "195,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

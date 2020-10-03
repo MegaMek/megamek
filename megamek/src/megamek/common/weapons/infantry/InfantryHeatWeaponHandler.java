@@ -16,14 +16,7 @@ package megamek.common.weapons.infantry;
 
 import java.util.Vector;
 
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.IGame;
-import megamek.common.Mech;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
@@ -75,8 +68,8 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             if (entityTarget.getArmor(hit) > 0 && 
                     (entityTarget.getArmorType(hit.getLocation()) == 
                     EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
-                entityTarget.heatFromExternal += nDamPerHit/2;
-                r.add(nDamPerHit/2);
+                entityTarget.heatFromExternal += nDamPerHit / 2;
+                r.add(nDamPerHit / 2);
                 r.choose(true);
                 r.messageId=3406;
                 r.add(EquipmentType.armorNames

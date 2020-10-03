@@ -83,8 +83,7 @@ public abstract class PathRanker implements IPathRanker {
     public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
                                     double fallTolerance, int startingHomeDistance,
                                     List<Entity> enemies, List<Entity> friends) {
-        final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             // No point in ranking an empty list.
@@ -97,8 +96,8 @@ public abstract class PathRanker implements IPathRanker {
             
             // Let's try to whittle down this list.
             List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
-            getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
-                                                               movePaths.size() + " possible paths.");
+            getOwner().getLogger().debug("Validated " + validPaths.size() + " out of " +
+                    movePaths.size() + " possible paths.");
 
             Coords allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
 
@@ -114,6 +113,7 @@ public abstract class PathRanker implements IPathRanker {
                 
                 RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
                         allyCenter);
+                
                 returnPaths.add(rankedPath);
                 
                 // we want to keep track of if any of the paths we've considered have some kind of damage potential
@@ -142,13 +142,12 @@ public abstract class PathRanker implements IPathRanker {
             
             return returnPaths;
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
     private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange,
                                          double fallTolerance, int startingHomeDistance) {
-        final String METHOD_NAME = "validatePaths(List<MovePath>, IGame, Targetable, int, double, int, int)";
         LogLevel logLevel = LogLevel.DEBUG;
 
         if (startingPathList.isEmpty()) {
@@ -195,7 +194,8 @@ public abstract class PathRanker implements IPathRanker {
 
                 // Make sure I'm trying to get/stay in range of a target.
                 // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
-                if(!isAirborneAeroOnGroundMap) {
+                // also skip this part if I'm attempting to retreat, as engagement is not the point here
+                if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover)) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
                     String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
                     if (!StringUtil.isNullOrEmpty(validation)) {
@@ -230,7 +230,7 @@ public abstract class PathRanker implements IPathRanker {
                 msg.append("\n\tVALID.");
                 returnPaths.add(path);
             } finally {
-                getOwner().log(getClass(), METHOD_NAME, logLevel, msg.toString());
+                getOwner().getLogger().log(logLevel, msg.toString(), null);
             }
         }
 
@@ -249,8 +249,7 @@ public abstract class PathRanker implements IPathRanker {
      * @return "Best" out of those paths
      */
     public RankedPath getBestPath(List<RankedPath> ps) {
-        final String METHOD_NAME = "getBestPath(ArrayList<Rankedpath>)";
-        getOwner().methodBegin(PathRanker.class, METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             if (ps.size() == 0) {
@@ -258,7 +257,7 @@ public abstract class PathRanker implements IPathRanker {
             }
             return Collections.max(ps);
         } finally {
-            getOwner().methodEnd(PathRanker.class, METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -279,8 +278,7 @@ public abstract class PathRanker implements IPathRanker {
      * Find the closest enemy to a unit with a path
      */
     public Targetable findClosestEnemy(Entity me, Coords position, IGame game, boolean includeStrategicTargets) {
-        final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
-        getOwner().methodBegin(PathRanker.class, METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             int range = 9999;
@@ -320,7 +318,7 @@ public abstract class PathRanker implements IPathRanker {
             
             return closest;
         } finally {
-            getOwner().methodEnd(PathRanker.class, METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -379,8 +377,7 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
-        final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             Coords edgeCoords;
@@ -401,7 +398,7 @@ public abstract class PathRanker implements IPathRanker {
                 edgeCoords = new Coords(boardWidth, position.getY());
             } else {
                 msg.append("Default");
-                getOwner().log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
+                getOwner().getLogger().warning("Invalid home edge. Defaulting to NORTH.");
                 edgeCoords = new Coords(boardWidth / 2, 0);
             }
             msg.append(edgeCoords.toFriendlyString());
@@ -409,10 +406,10 @@ public abstract class PathRanker implements IPathRanker {
             int distance = edgeCoords.distance(position);
             msg.append(" dist = ").append(NumberFormat.getInstance().format(distance));
 
-            getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
+            getOwner().getLogger().debug(msg.toString());
             return distance;
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -531,8 +528,8 @@ public abstract class PathRanker implements IPathRanker {
         Coords center = new Coords(xCenter, yCenter);
 
         if (!game.getBoard().contains(center)) {
-            getOwner().log(getClass(), "calcAllyCenter(int, List<Entity>, IGame)", LogLevel.ERROR,
-                           "Center of ally group " + center.toFriendlyString() + " not within board boundaries.");
+            getOwner().getLogger().error("Center of ally group " + center.toFriendlyString() 
+                    + " not within board boundaries.");
             return null;
         }
 

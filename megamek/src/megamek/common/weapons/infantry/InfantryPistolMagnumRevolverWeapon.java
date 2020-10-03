@@ -36,13 +36,16 @@ public class InfantryPistolMagnumRevolverWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMagnumRevolverpistol");
 		addLookupName("Magnum Revolver");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 60;
 		bv = 0.17;
 		tonnage = .0005;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.18;
 		infantryRange = 0;
+		ammoWeight = 0.00006;
+		ammoCost = 3;
+		shots = 5;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)

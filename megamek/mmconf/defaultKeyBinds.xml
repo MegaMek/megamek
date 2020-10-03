@@ -302,5 +302,12 @@
         <modifier>2</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
+   
+    <KeyBind>
+         <command>toggleKeyBindDisplay</command> <!-- Ctrl-K -->
+        <keyCode>75</keyCode>
+        <modifier>2</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
 
 </KeyBindings>

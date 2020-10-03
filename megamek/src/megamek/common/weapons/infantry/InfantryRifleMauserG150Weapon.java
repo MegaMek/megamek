@@ -36,13 +36,17 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryM&GG150");
 		addLookupName("Mauser and Grey G-150");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 270;
 		bv = 1.64;
 		tonnage = .0035;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.32;
 		infantryRange = 2;
+		ammoWeight = 0.00015;
+		ammoCost = 5;
+		shots = 9;
+		bursts = 3;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3060, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

@@ -33,10 +33,10 @@ public class InfantrySupportGrenadeLauncherHeavyAutoInfernoWeapon extends Infant
 		super();
 
 		name = "Grenade Launcher (Heavy Auto) w/Inferno";
-		setInternalName(name);
-		addLookupName("InfantryHeavyAutoGrenadeLauncherInferno");
+		setInternalName("InfantryHeavyAutoGrenadeLauncherInferno");
+		addLookupName(name);
 		addLookupName("nfantry Inferno Heavy Auto Grenade Launcher");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 4500;
 		bv = 2.93;
 		tonnage = .020;
@@ -44,6 +44,10 @@ public class InfantrySupportGrenadeLauncherHeavyAutoInfernoWeapon extends Infant
 		infantryDamage = 0.96;
 		infantryRange = 1;
 		crew = 1;
+		ammoWeight = 0.012;
+		ammoCost = 400;
+		shots = 20;
+		bursts = 3;
 		tonnage = .020;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2896, 2900, DATE_NONE, DATE_NONE, DATE_NONE)

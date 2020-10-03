@@ -33,6 +33,7 @@ import megamek.common.Tank;
 import megamek.common.VTOL;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestSupportVehicle;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Creates a TRO template model for support vehicles.
@@ -150,13 +151,13 @@ public class SupportVeeTROView extends TROView {
     }
 
     @Override
-    protected int addEquipment(Entity entity) {
+    protected int addEquipment(Entity entity, boolean includeAmmo) {
         final Map<String, Map<EquipmentKey, Integer>> weapons = new HashMap<>();
         final List<String> chassisMods = new ArrayList<>();
         final Map<EquipmentKey, Integer> miscCount = new HashMap<>();
         int nameWidth = 20;
         for (final Mounted m : entity.getEquipment()) {
-            if ((m.getLocation() < 0) || m.isWeaponGroup()) {
+            if (skipMount(m, includeAmmo)) {
                 continue;
             }
             if ((m.getType() instanceof MiscType) && (m.getLinked() == null) && (m.getLinkedBy() == null)) {
@@ -182,7 +183,7 @@ public class SupportVeeTROView extends TROView {
                 if (eq instanceof AmmoType) {
                     name = String.format("%s (%d)", name, ((AmmoType) eq).getShots() * count);
                 } else if (count > 1) {
-                    name = String.format("%d %ss", count, entry.getKey().name());
+                    name = String.format("%d %s", count, entry.getKey().name());
                 }
                 final Map<String, Object> fields = new HashMap<>();
                 fields.put("name", name);
@@ -191,8 +192,21 @@ public class SupportVeeTROView extends TROView {
                 }
                 fields.put("tonnage", adjustWeight(eq.getTonnage(entity, entry.getKey().getSize()) * count));
                 fields.put("location", loc);
-                fields.put("slots", eq.getCriticals(entity, entry.getValue()) * count);
+                fields.put("slots", eq.getSupportVeeSlots(entity) * count);
                 weaponList.add(fields);
+                if ((eq instanceof InfantryWeapon) && includeAmmo) {
+                    Map<String, Object> ammoFields = new HashMap<>();
+                    name += " Ammo (" + (entry.getValue() * ((InfantryWeapon) eq).getShots()) + " shots)";
+                    ammoFields.put("name", name);
+                    if (name.length() >= nameWidth) {
+                        nameWidth = name.length() + 1;
+                    }
+                    ammoFields.put("tonnage",
+                            Math.ceil(((InfantryWeapon) eq).getAmmoWeight() * entry.getValue() * 1000));
+                    ammoFields.put("location", loc);
+                    ammoFields.put("slots", 0);
+                    weaponList.add(ammoFields);
+                }
             }
         }
         setModelData("weaponList", weaponList);

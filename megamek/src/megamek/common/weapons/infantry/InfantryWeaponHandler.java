@@ -19,15 +19,8 @@ package megamek.common.weapons.infantry;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.Infantry;
-import megamek.common.Report;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.MegaMek;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.WeaponHandler;
@@ -88,39 +81,43 @@ public class InfantryWeaponHandler extends WeaponHandler {
             nHitMod -= 4;
         }
         
-        if(this.bLowProfileGlancing) {
+        if (this.bLowProfileGlancing) {
             nHitMod -= 4;
         }
         
         int troopersHit = 0;
         //when swarming all troopers hit
         if (ae.getSwarmTargetId() == target.getTargetId()) {
-            troopersHit = ((Infantry)ae).getShootingStrength();
+            troopersHit = ((Infantry) ae).getShootingStrength();
         } else if (!(ae instanceof Infantry)) {
             troopersHit = 1;
         } else {
             troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength(), nHitMod);
         }
-        double damage = ((InfantryWeapon)wtype).getInfantryDamage();
-        if((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+        double damage;
+        if (ae.isConventionalInfantry()) {
             //for conventional infantry, we have to calculate primary and secondary weapons
             //to get damage per trooper
-            damage = ((Infantry)ae).getDamagePerTrooper();
+            damage = ((Infantry) ae).getDamagePerTrooper();
+        } else if (ae.isSupportVehicle()) {
+            // Damage for some weapons depends on what type of ammo is being used
+            if (((AmmoType) weapon.getLinked().getType()).getMunitionType() == AmmoType.M_INFERNO) {
+                damage = ((InfantryWeapon) wtype).getInfernoVariant().getInfantryDamage();
+            } else {
+                damage = ((InfantryWeapon) wtype).getNonInfernoVariant().getInfantryDamage();
+            }
+        } else {
+            damage = ((InfantryWeapon) wtype).getInfantryDamage();
         }
-        if((ae instanceof Infantry)
+        if ((ae instanceof Infantry)
                 && nRange == 0
                 && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
-        if((target instanceof Infantry) && !(target instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INF_BURST)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INF_BURST)) {
             damageDealt += Compute.d6();
-        }
-        if((ae instanceof Infantry)
-                && nRange == 0
-                && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-
         }
         if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
             damageDealt /= 2;
@@ -163,16 +160,41 @@ public class InfantryWeaponHandler extends WeaponHandler {
         int av = 0;
         //Sigh, another rules oversight - nobody bothered to figure this out
         //To be consistent with other cluster weapons we will assume 60% hit
-        double damage = ((InfantryWeapon)wtype).getInfantryDamage();
-        if((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
-            damage = ((Infantry)ae).getDamagePerTrooper();
-            av = (int) Math.round(damage * 0.6 * ((Infantry)ae).getShootingStrength());
+        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+            double damage = ((Infantry) ae).getDamagePerTrooper();
+            av = (int) Math.round(damage * 0.6 * ((Infantry) ae).getShootingStrength());
         }
-        if(bDirect) {
-            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        if (bDirect) {
+            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
         av = applyGlancingBlowModifier(av, false);
         return av;
     }
 
+    @Override
+    public void useAmmo() {
+        if (ae.isSupportVehicle()) {
+            Mounted ammo = weapon.getLinked();
+            if (ammo == null) {
+                ae.loadWeapon(weapon);
+                ammo = weapon.getLinked();
+            }
+            if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
+                // *shouldn't* fire.
+                MegaMek.getLogger().error(String.format("Handler can't find any ammo for %s firing %s",
+                                ae.getShortName(), weapon.getName()));
+                return;
+            }
+
+            ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
+            // Swap between standard and inferno if the unit has some left of the other type
+            if ((ammo.getUsableShotsLeft() <= 0)
+                    && (ammo.getLinked() != null)
+                    && (ammo.getLinked().getUsableShotsLeft() > 0)) {
+                weapon.setLinked(ammo.getLinked());
+                weapon.getLinked().setLinked(ammo);
+            }
+            super.useAmmo();
+        }
+    }
 }

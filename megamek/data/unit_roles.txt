@@ -5509,3 +5509,8 @@ Snow Fox (Omni) B:SNIPER
 Surtur SUR-T1:SKIRMISHER
 Tolva:SKIRMISHER
 Rhino:SKIRMISHER
+#TOS Valencia
+Reconquista:BRAWLER
+#Shrapnel
+Centurion CN10-J:BRAWLER
+Centurion CN10-W:SNIPER

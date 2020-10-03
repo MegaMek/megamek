@@ -252,7 +252,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 game = unitDisplay.getClientGUI().getClient().getGame();
             }
 
-            StringBuffer wn = new StringBuffer(mounted.getDesc());
+            StringBuilder wn = new StringBuilder(mounted.getDesc());
             wn.append(" ["); //$NON-NLS-1$
             wn.append(en.getLocationAbbr(mounted.getLocation()));
             if (mounted.isSplit()) {
@@ -263,7 +263,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             // determine shots left & total shots left
             if ((wtype.getAmmoType() != AmmoType.T_NA)
                     && (!wtype.hasFlag(WeaponType.F_ONESHOT)
-                            || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))) {
+                            || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))
+                    && (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
                 int shotsLeft = 0;
                 if ((mounted.getLinked() != null)
                     && !mounted.getLinked().isDumping()) {
@@ -282,12 +283,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 wn.append('/'); //$NON-NLS-1$
                 wn.append(totalShotsLeft);
                 wn.append(')'); //$NON-NLS-1$
-            } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+            } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
+                    || (en.isSupportVehicle() && (wtype.getAmmoType() == AmmoType.T_INFANTRY))) {
                 int shotsLeft = 0;
                 int totalShots = 0;
+                long munition = ((AmmoType) mounted.getLinked().getType()).getMunitionType();
                 for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
-                    shotsLeft += current.getUsableShotsLeft();
-                    totalShots++;
+                    if (((AmmoType) current.getType()).getMunitionType() == munition) {
+                        shotsLeft += current.getUsableShotsLeft();
+                        totalShots += current.getOriginalShots();
+                    }
                 }
                 wn.append(" (").append(shotsLeft) //$NON-NLS-1$
                     .append("/").append(totalShots).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1877,7 +1882,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         
         if (wtype.getAmmoType() == AmmoType.T_NA) {
             m_chAmmo.setEnabled(false);
-        } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+        } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
+                || (entity.isSupportVehicle() && (wtype.getAmmoType() == AmmoType.T_INFANTRY))) {
             int count = 0;
             vAmmo = new ArrayList<>();
             for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
@@ -1936,7 +1942,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 
                 // covers the situation where a weapon using non-caseless ammo should 
                 // not be able to switch to caseless on the fly and vice versa
-                boolean amCaseless = ((AmmoType) mounted.getLinked().getType()).getMunitionType() == AmmoType.M_CASELESS;
+                boolean amCaseless = mounted.getLinked() != null && 
+                        ((AmmoType) mounted.getLinked().getType()).getMunitionType() == AmmoType.M_CASELESS;
                 boolean etCaseless = ((AmmoType) atype).getMunitionType() == AmmoType.M_CASELESS;
                 boolean caselessMismatch = amCaseless != etCaseless;                
 

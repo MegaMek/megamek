@@ -3,7 +3,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -41,6 +40,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import megamek.MegaMek;
 import megamek.client.ratgenerator.AbstractUnitRecord;
 import megamek.client.ratgenerator.CrewDescriptor;
 import megamek.client.ratgenerator.FactionRecord;
@@ -58,8 +58,6 @@ import megamek.common.EntityWeightClass;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.UnitType;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -678,8 +676,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                DefaultMmLogger.getInstance().log(getClass(),  "refreshUnitTypes()",
-                        LogLevel.WARNING, "No unit type node found.");
+                MegaMek.getLogger().warning("No unit type node found.");
                 cbUnitType.addItem(null);
             }
         } else {
@@ -754,8 +751,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         } else {
-            DefaultMmLogger.getInstance().log(getClass(), "refreshFormations()",
-                    LogLevel.WARNING, "No eschelon node found.");
+            MegaMek.getLogger().warning("No eschelon node found.");
         }
 
         if (hasCurrent) {
@@ -799,8 +795,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                DefaultMmLogger.getInstance().log(getClass(), "refreshRatings()",
-                        LogLevel.WARNING, "No rating found.");
+                MegaMek.getLogger().warning("No rating found.");
             }
         }
 

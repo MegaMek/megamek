@@ -35,13 +35,16 @@ public class InfantryRifleGyrojetRifleWeapon extends InfantryWeapon {
 		name = "Gyrojet Rifle";
 		setInternalName(name);
 		addLookupName("InfantryGyrojetRifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 1000;
 		bv = 1.07;
 		tonnage = .007;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.35;
 		infantryRange = 1;
+		ammoWeight = 0.0013;
+		ammoCost = 20;
+		shots = 10;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2535, 2540, 2570, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

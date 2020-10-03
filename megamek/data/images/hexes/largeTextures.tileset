@@ -72,41 +72,41 @@ include "StandardIncludes/StandardLimbs.tileinc"
 
 
 
-super * "woods:1" "snow" "Ahne/iLarge_Textures_trees/snow1.gif;Ahne/iLarge_Textures_trees/snow2.gif;Ahne/iLarge_Textures_trees/snow3.gif"
-super * "woods:2" "snow" "Ahne/iLarge_Textures_trees/snow4.gif"
+super * "woods:1;foliage_elev:*" "snow" "Ahne/iLarge_Textures_trees/snow1.gif;Ahne/iLarge_Textures_trees/snow2.gif;Ahne/iLarge_Textures_trees/snow3.gif"
+super * "woods:2;foliage_elev:*" "snow" "Ahne/iLarge_Textures_trees/snow4.gif"
 
-super * "woods:1;fluff:12" "" "boring/orchard.png"
+super * "woods:1;foliage_elev:*;fluff:12" "" "boring/orchard.png"
 
-super * "woods:1" "tropical" "Ahne/iLarge_Textures_trees/lj1.gif;Ahne/iLarge_Textures_trees/lj2.gif;Ahne/iLarge_Textures_trees/lj3.gif"
-super * "woods:2" "tropical" "Ahne/iLarge_Textures_trees/hj1.gif;Ahne/iLarge_Textures_trees/hj2.gif;Ahne/iLarge_Textures_trees/hj3.gif"
-super * "woods:3" "tropical" "Ahne/iLarge_Textures_trees/uhj.gif"
+super * "woods:1;foliage_elev:*" "tropical" "Ahne/iLarge_Textures_trees/lj1.gif;Ahne/iLarge_Textures_trees/lj2.gif;Ahne/iLarge_Textures_trees/lj3.gif"
+super * "woods:2;foliage_elev:*" "tropical" "Ahne/iLarge_Textures_trees/hj1.gif;Ahne/iLarge_Textures_trees/hj2.gif;Ahne/iLarge_Textures_trees/hj3.gif"
+super * "woods:3;foliage_elev:*" "tropical" "Ahne/iLarge_Textures_trees/uhj.gif"
 
-super * "woods:1" "" "Ahne/iLarge_Textures_trees/lf0.gif;Ahne/iLarge_Textures_trees/lf1.gif;Ahne/iLarge_Textures_trees/lf2.gif;Ahne/iLarge_Textures_trees/lf3.gif;Ahne/iLarge_Textures_trees/lf4.gif"
-super * "woods:2" "" "Ahne/iLarge_Textures_trees/hf0.gif;Ahne/iLarge_Textures_trees/hf1.gif;Ahne/iLarge_Textures_trees/hf2.gif;Ahne/iLarge_Textures_trees/hf3.gif"
-super * "woods:3" "" "Ahne/iLarge_Textures_trees/uhf.gif"
+super * "woods:1;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/lf0.gif;Ahne/iLarge_Textures_trees/lf1.gif;Ahne/iLarge_Textures_trees/lf2.gif;Ahne/iLarge_Textures_trees/lf3.gif;Ahne/iLarge_Textures_trees/lf4.gif"
+super * "woods:2;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/hf0.gif;Ahne/iLarge_Textures_trees/hf1.gif;Ahne/iLarge_Textures_trees/hf2.gif;Ahne/iLarge_Textures_trees/hf3.gif"
+super * "woods:3;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/uhf.gif"
 
-super * "jungle:1" "" "Ahne/iLarge_Textures_trees/lj1.gif;Ahne/iLarge_Textures_trees/lj2.gif;Ahne/iLarge_Textures_trees/lj3.gif"
-super * "jungle:2" "" "Ahne/iLarge_Textures_trees/hj1.gif;Ahne/iLarge_Textures_trees/hj2.gif;Ahne/iLarge_Textures_trees/hj3.gif"
-super * "jungle:3" "" "Ahne/iLarge_Textures_trees/uhj.gif"
-
-
+super * "jungle:1;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/lj1.gif;Ahne/iLarge_Textures_trees/lj2.gif;Ahne/iLarge_Textures_trees/lj3.gif"
+super * "jungle:2;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/hj1.gif;Ahne/iLarge_Textures_trees/hj2.gif;Ahne/iLarge_Textures_trees/hj3.gif"
+super * "jungle:3;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/uhj.gif"
 
 
-#super * "woods:1" "tropical" "Ahne/iLarge_Textures_trees/light_jungle1.png;Ahne/iLarge_Textures_trees/light_jungle1.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle2.png;Ahne/iLarge_Textures_trees/light_jungle2.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle3.png;Ahne/iLarge_Textures_trees/light_jungle3.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle4.png;Ahne/iLarge_Textures_trees/light_jungle4.png(84,0--84,72)"
-#super * "woods:2" "tropical" "Ahne/iLarge_Textures_trees/heavy_jungle1.png;Ahne/iLarge_Textures_trees/heavy_jungle1.png(84,0--84,72);Ahne/iLarge_Textures_trees/heavy_jungle2.png;Ahne/iLarge_Textures_trees/heavy_jungle2.png(84,0--84,72);Ahne/iLarge_Textures_trees/heavy_jungle3.png;Ahne/iLarge_Textures_trees/heavy_jungle3.png(84,0--84,72)"
-#super * "woods:3" "tropical" "Ahne/iLarge_Textures_trees/ultra_heavy_jungle1.png;Ahne/iLarge_Textures_trees/ultra_heavy_jungle1.png(84,0--84,72)"
 
-#super * "woods:1" "snow" "Ahne/iLarge_Textures_trees/snow_l_woods_0.png;Ahne/iLarge_Textures_trees/snow_l_woods_0.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_l_woods_0.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_l_woods_0.png(84,72--84,-72);Ahne/iLarge_Textures_trees/snow_l_woods_1.png;Ahne/iLarge_Textures_trees/snow_l_woods_1.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_l_woods_1.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_l_woods_1.png(84,72--84,-72);Ahne/iLarge_Textures_trees/snow_l_woods_2.png;Ahne/iLarge_Textures_trees/snow_l_woods_2.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_l_woods_2.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_l_woods_2.png(84,72--84,-72)"
-#super * "woods:2" "snow" "Ahne/iLarge_Textures_trees/snow_h_woods_0.png;Ahne/iLarge_Textures_trees/snow_h_woods_0.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_h_woods_0.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_h_woods_0.png(84,72--84,-72);Ahne/iLarge_Textures_trees/snow_h_woods_1.png;Ahne/iLarge_Textures_trees/snow_h_woods_1.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_h_woods_1.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_h_woods_1.png(84,72--84,-72);Ahne/iLarge_Textures_trees/snow_h_woods_2.png;Ahne/iLarge_Textures_trees/snow_h_woods_2.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_h_woods_2.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_h_woods_2.png(84,72--84,-72)"
 
-#super * "woods:1;fluff:12" "" "boring/orchard.png"
-#super * "woods:1" "" "Ahne/iLarge_Textures_trees/lf0.gif;Ahne/iLarge_Textures_trees/lf0.gif(84,0--84,72);Ahne/iLarge_Textures_trees/lf1.gif;Ahne/iLarge_Textures_trees/lf1.gif(84,0--84,72);Ahne/iLarge_Textures_trees/lf2.gif;Ahne/iLarge_Textures_trees/lf2.gif(84,0--84,72);Ahne/iLarge_Textures_trees/lf3.gif;Ahne/iLarge_Textures_trees/lf3.gif(84,0--84,72);Ahne/iLarge_Textures_trees/lf4.gif;Ahne/iLarge_Textures_trees/lf4.gif(84,0--84,72)"
-#super * "woods:2" "" "Ahne/iLarge_Textures_trees/hf0.gif;Ahne/iLarge_Textures_trees/hf0.gif(84,0--84,72);Ahne/iLarge_Textures_trees/hf1.gif;Ahne/iLarge_Textures_trees/hf1.gif(84,0--84,72);Ahne/iLarge_Textures_trees/hf2.gif;Ahne/iLarge_Textures_trees/hf2.gif(84,0--84,72);Ahne/iLarge_Textures_trees/hf3.gif;Ahne/iLarge_Textures_trees/hf3.gif(84,0--84,72)"
-#super * "woods:3" "" "Ahne/iLarge_Textures_trees/uhf.gif;Ahne/iLarge_Textures_trees/uhf.gif(84,0--84,72)"
+#super * "woods:1;foliage_elev:*" "tropical" "Ahne/iLarge_Textures_trees/light_jungle1.png;Ahne/iLarge_Textures_trees/light_jungle1.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle2.png;Ahne/iLarge_Textures_trees/light_jungle2.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle3.png;Ahne/iLarge_Textures_trees/light_jungle3.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle4.png;Ahne/iLarge_Textures_trees/light_jungle4.png(84,0--84,72)"
+#super * "woods:2;foliage_elev:*" "tropical" "Ahne/iLarge_Textures_trees/heavy_jungle1.png;Ahne/iLarge_Textures_trees/heavy_jungle1.png(84,0--84,72);Ahne/iLarge_Textures_trees/heavy_jungle2.png;Ahne/iLarge_Textures_trees/heavy_jungle2.png(84,0--84,72);Ahne/iLarge_Textures_trees/heavy_jungle3.png;Ahne/iLarge_Textures_trees/heavy_jungle3.png(84,0--84,72)"
+#super * "woods:3;foliage_elev:*" "tropical" "Ahne/iLarge_Textures_trees/ultra_heavy_jungle1.png;Ahne/iLarge_Textures_trees/ultra_heavy_jungle1.png(84,0--84,72)"
 
-#super * "jungle:1" "" "Ahne/iLarge_Textures_trees/light_jungle1.png;Ahne/iLarge_Textures_trees/light_jungle1.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle2.png;Ahne/iLarge_Textures_trees/light_jungle2.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle3.png;Ahne/iLarge_Textures_trees/light_jungle3.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle4.png;Ahne/iLarge_Textures_trees/light_jungle4.png(84,0--84,72)"
-#super * "jungle:2" "" "Ahne/iLarge_Textures_trees/heavy_jungle1.png;Ahne/iLarge_Textures_trees/heavy_jungle1.png(84,0--84,72);Ahne/iLarge_Textures_trees/heavy_jungle2.png;Ahne/iLarge_Textures_trees/heavy_jungle2.png(84,0--84,72);Ahne/iLarge_Textures_trees/heavy_jungle3.png;Ahne/iLarge_Textures_trees/heavy_jungle3.png(84,0--84,72)"
-#super * "jungle:3" "" "Ahne/iLarge_Textures_trees/ultra_heavy_jungle1.png;Ahne/iLarge_Textures_trees/ultra_heavy_jungle1.png(84,0--84,72)"
+#super * "woods:1;foliage_elev:*" "snow" "Ahne/iLarge_Textures_trees/snow_l_woods_0.png;Ahne/iLarge_Textures_trees/snow_l_woods_0.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_l_woods_0.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_l_woods_0.png(84,72--84,-72);Ahne/iLarge_Textures_trees/snow_l_woods_1.png;Ahne/iLarge_Textures_trees/snow_l_woods_1.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_l_woods_1.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_l_woods_1.png(84,72--84,-72);Ahne/iLarge_Textures_trees/snow_l_woods_2.png;Ahne/iLarge_Textures_trees/snow_l_woods_2.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_l_woods_2.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_l_woods_2.png(84,72--84,-72)"
+#super * "woods:2;foliage_elev:*" "snow" "Ahne/iLarge_Textures_trees/snow_h_woods_0.png;Ahne/iLarge_Textures_trees/snow_h_woods_0.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_h_woods_0.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_h_woods_0.png(84,72--84,-72);Ahne/iLarge_Textures_trees/snow_h_woods_1.png;Ahne/iLarge_Textures_trees/snow_h_woods_1.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_h_woods_1.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_h_woods_1.png(84,72--84,-72);Ahne/iLarge_Textures_trees/snow_h_woods_2.png;Ahne/iLarge_Textures_trees/snow_h_woods_2.png(0,72-84,-72);Ahne/iLarge_Textures_trees/snow_h_woods_2.png(84,0--84,72);Ahne/iLarge_Textures_trees/snow_h_woods_2.png(84,72--84,-72)"
+
+#super * "woods:1;foliage_elev:*;fluff:12" "" "boring/orchard.png"
+#super * "woods:1;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/lf0.gif;Ahne/iLarge_Textures_trees/lf0.gif(84,0--84,72);Ahne/iLarge_Textures_trees/lf1.gif;Ahne/iLarge_Textures_trees/lf1.gif(84,0--84,72);Ahne/iLarge_Textures_trees/lf2.gif;Ahne/iLarge_Textures_trees/lf2.gif(84,0--84,72);Ahne/iLarge_Textures_trees/lf3.gif;Ahne/iLarge_Textures_trees/lf3.gif(84,0--84,72);Ahne/iLarge_Textures_trees/lf4.gif;Ahne/iLarge_Textures_trees/lf4.gif(84,0--84,72)"
+#super * "woods:2;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/hf0.gif;Ahne/iLarge_Textures_trees/hf0.gif(84,0--84,72);Ahne/iLarge_Textures_trees/hf1.gif;Ahne/iLarge_Textures_trees/hf1.gif(84,0--84,72);Ahne/iLarge_Textures_trees/hf2.gif;Ahne/iLarge_Textures_trees/hf2.gif(84,0--84,72);Ahne/iLarge_Textures_trees/hf3.gif;Ahne/iLarge_Textures_trees/hf3.gif(84,0--84,72)"
+#super * "woods:3;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/uhf.gif;Ahne/iLarge_Textures_trees/uhf.gif(84,0--84,72)"
+
+#super * "jungle:1;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/light_jungle1.png;Ahne/iLarge_Textures_trees/light_jungle1.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle2.png;Ahne/iLarge_Textures_trees/light_jungle2.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle3.png;Ahne/iLarge_Textures_trees/light_jungle3.png(84,0--84,72);Ahne/iLarge_Textures_trees/light_jungle4.png;Ahne/iLarge_Textures_trees/light_jungle4.png(84,0--84,72)"
+#super * "jungle:2;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/heavy_jungle1.png;Ahne/iLarge_Textures_trees/heavy_jungle1.png(84,0--84,72);Ahne/iLarge_Textures_trees/heavy_jungle2.png;Ahne/iLarge_Textures_trees/heavy_jungle2.png(84,0--84,72);Ahne/iLarge_Textures_trees/heavy_jungle3.png;Ahne/iLarge_Textures_trees/heavy_jungle3.png(84,0--84,72)"
+#super * "jungle:3;foliage_elev:*" "" "Ahne/iLarge_Textures_trees/ultra_heavy_jungle1.png;Ahne/iLarge_Textures_trees/ultra_heavy_jungle1.png(84,0--84,72)"
 
 
 

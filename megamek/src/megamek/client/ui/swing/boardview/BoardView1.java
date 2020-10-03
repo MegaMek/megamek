@@ -76,6 +76,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalTheme;
 
+import megamek.MegaMek;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.princess.BotGeometry;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
@@ -113,6 +114,7 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.EntityVisibilityUtils;
 import megamek.common.Flare;
+import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
@@ -503,6 +505,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
     private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
+    
+    /** A map overlay showing some important keybinds. */ 
+    KeyBindingsOverlay keybindOverlay;
 
 
     /**
@@ -520,6 +525,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
+        
+        keybindOverlay = new KeyBindingsOverlay(game, clientgui);
+        addDisplayable(keybindOverlay);
         ourTask = scheduleRedrawTimer();// call only once
         clearSprites();
         addMouseListener(this);
@@ -625,8 +633,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     return;
                 }
 
-                for (int i = 0; i < displayables.size(); i++) {
-                    IDisplayable disp = displayables.get(i);
+                for (IDisplayable disp: displayables) {
                     if (disp.isBeingDragged()) {
                         return;
                     }
@@ -1024,6 +1031,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
 
                 });
+        
+        // Register the action for TOGGLE_KEYBIND_DISPLAY
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_KEYBIND_DISPLAY.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        toggleKeybindsOverlay();
+                    }
+                });
     }
 
     private boolean shouldIgnoreKeyCommands() {
@@ -1233,11 +1259,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (x == 0) {
                         xRem = clipping.x % w;
                     }
-                    if (xRem != 0 || yRem != 0) {
-                        g.drawImage(
-                                bvBgImage.getSubimage(xRem, yRem, w - xRem,
-                                        h - yRem),
-                                clipping.x + x, clipping.y + y, this);
+                    if ((xRem > 0) || (yRem > 0)) {
+                        try {
+                            g.drawImage(
+                                    bvBgImage.getSubimage(xRem, yRem, w - xRem,
+                                            h - yRem),
+                                    clipping.x + x, clipping.y + y, this);
+                        } catch (Exception e) {
+                            // if we somehow messed up the math, log the error and simply act as if we have no background image.
+                            Rectangle rasterBounds = bvBgImage.getRaster().getBounds();
+                            
+                            String errorData = String.format("Error drawing background image. Raster Bounds: %.2f, %.2f, width:%.2f, height:%.2f, Attempted Draw Coordinates: %d, %d, width:%d, height:%d",
+                                    rasterBounds.getMinX(), rasterBounds.getMinY(), rasterBounds.getWidth(), rasterBounds.getHeight(),
+                                    xRem, yRem, w - xRem, h - yRem);
+                            MegaMek.getLogger().error(this, errorData);
+                        }
                     } else {
                         g.drawImage(bvBgImage, clipping.x + x, clipping.y + y,
                                 this);
@@ -1382,8 +1418,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         displayablesRect.y = -getY();
         displayablesRect.width = scrollpane.getViewport().getViewRect().width;
         displayablesRect.height = scrollpane.getViewport().getViewRect().height;
-        for (int i = 0; i < displayables.size(); i++) {
-            IDisplayable disp = displayables.get(i);
+        for (IDisplayable disp: displayables) {
             disp.draw(g, displayablesRect);
         }
 
@@ -1774,9 +1809,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             // Woods are 2 levels high, but then shadows
                             // appear very extreme, therefore only
                             // 1.5 levels: (shadowcaster+1.5-shadowed)
+                            double shadowHeight = .75 * hex.terrainLevel(Terrains.FOLIAGE_ELEV);
                             p1.setLocation(p0);
-                            if ((shadowcaster+1.5-shadowed) > 0) {
-                                for (int i = 0; i<n*(shadowcaster+1.5-shadowed); i++) {
+                            if ((shadowcaster + shadowHeight - shadowed) > 0) {
+                                for (int i = 0; i < n * (shadowcaster + shadowHeight - shadowed); i++) {
                                     g.drawImage(lastSuper, (int)p1.getX(), (int)p1.getY(), null);
                                     p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
                                 }
@@ -1913,7 +1949,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             Graphics g, ArrayList<IsometricWreckSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricWreckSprite sprite : spriteArrayList) {
-            Coords cp = sprite.getEntity().getPosition();
+            Coords cp = sprite.getPosition();
             if (cp.equals(c) && view.intersects(sprite.getBounds())
                 && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
@@ -2853,6 +2889,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         "AdvancedBuildingTextColor"));                 //$NON-NLS-1$
                 drawCenteredString(
                         Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
+                        0, (int) (ypos * scale), font_elev, g);
+                ypos -= 10;
+            }
+            if (hex.terrainLevel(Terrains.FOLIAGE_ELEV) == 1) {
+                g.setColor(GUIPreferences.getInstance().getColor(
+                        GUIPreferences.ADVANCED_LOW_FOLIAGE_COLOR));  
+                drawCenteredString(Messages.getString("BoardView1.LowFoliage"), 
                         0, (int) (ypos * scale), font_elev, g);
                 ypos -= 10;
             }
@@ -5207,11 +5250,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             GUIPreferences guip = GUIPreferences.getInstance();
 
             updateEcmList();
+            
             //For Entities that have converted to another mode, check for a different sprite
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
                     && en.isConvertingNow()) {
                 tileManager.reloadImage(en);
             }
+            
+            // for units that have been blown up, damaged or ejected, force a reload
+            if((e.getOldEntity() != null) &&
+                    ((en.getDamageLevel() != e.getOldEntity().getDamageLevel()) ||
+                    (en.isDestroyed() != e.getOldEntity().isDestroyed()) ||
+                    (en.getCrew().isEjected() != e.getOldEntity().getCrew().isEjected()))) {
+                tileManager.reloadImage(en);
+            }
+            
             redrawAllEntities();
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
@@ -5322,7 +5375,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 default:
             }
             for (Entity en: game.getEntitiesVector()) {
-                if (en.getDamageLevel() != Entity.DMG_NONE && en.damageThisRound != 0) {
+                if ((en.getDamageLevel() != Entity.DMG_NONE) && 
+                        ((en.damageThisRound != 0) || (en instanceof GunEmplacement))) {
                     tileManager.reloadImage(en);
                 }
             }
@@ -6814,5 +6868,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     
     public Rectangle getDisplayablesRect() {
         return displayablesRect;
+    }
+    
+    public void toggleKeybindsOverlay() {
+        keybindOverlay.setVisible(!keybindOverlay.isVisible());
+        repaint();
     }
 }

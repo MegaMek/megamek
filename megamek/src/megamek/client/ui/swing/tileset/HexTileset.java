@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.common.*;
 import megamek.common.event.*;
@@ -51,7 +52,6 @@ import megamek.common.util.StringUtil;
  */
 public class HexTileset implements BoardListener {
     
-    private static final MMLogger LOG = DefaultMmLogger.getInstance();
     private static final LogLevel LOGLVL = LogLevel.WARNING;
 
     /**
@@ -83,7 +83,7 @@ public class HexTileset implements BoardListener {
         game = g;
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
-        LOG.setLogLevel(this, LOGLVL);
+        MegaMek.getLogger().setLogLevel(LOGLVL);
     }
 
     /** Clears the image cache for the given hex. */
@@ -303,7 +303,7 @@ public class HexTileset implements BoardListener {
                 incDepth++;
                 if (incDepth < 100) {
                     String incFile = st.sval;
-                    LOG.info(this, "Including " + incFile);
+                    MegaMek.getLogger().info("Including " + incFile);
                     loadFromFile(incFile);
                 }
             }
@@ -316,10 +316,10 @@ public class HexTileset implements BoardListener {
         
         String loadInfo = String.format("Loaded %o base images, %o super images and %o ortho images", 
                 bases.size(), supers.size(), orthos.size());
-        LOG.info(this, loadInfo);
+        MegaMek.getLogger().info(loadInfo);
         
         if (incDepth == 0) {
-            LOG.info(this, "hexTileset loaded in " + (endTime - startTime) + "ms.");
+            MegaMek.getLogger().info("HexTileset loaded in " + (endTime - startTime) + "ms.");
         }
         incDepth--;
     }
@@ -564,7 +564,8 @@ public class HexTileset implements BoardListener {
                 if (null != image) {
                     images.add(image);
                 } else {
-                    LOG.error(this, "Received null image from ImageUtil.loadImageFromFile! File: " + imgFile);
+                    MegaMek.getLogger().error("Received null image from "
+                            + "ImageUtil.loadImageFromFile! File: " + imgFile);
                 }
             }
         }

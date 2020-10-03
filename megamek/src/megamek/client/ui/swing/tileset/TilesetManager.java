@@ -156,12 +156,12 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             hexTileset.incDepth = 0;
             hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
         } catch (Exception FileNotFoundException) {
-            MegaMek.getLogger().error(this, "Error loading tileset "
+            MegaMek.getLogger().error("Error loading tileset "
                     + PreferenceManager.getClientPreferences().getMapTileset() + " Reverting to default hexset!");
             if (new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile().exists()){
                 hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);
             } else {
-                MegaMek.getLogger().fatal(this, "Could not load default tileset " + FILENAME_DEFAULT_HEX_SET);
+                MegaMek.getLogger().fatal("Could not load default tileset " + FILENAME_DEFAULT_HEX_SET);
             }
         }
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
@@ -195,7 +195,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image iconFor(Entity entity) {
         EntityImage entityImage = getFromCache(entity, -1);
         if (entityImage == null) {
-            MegaMek.getLogger().error(this, "Unable to load icon for entity: " + entity.getShortNameRaw());
+            MegaMek.getLogger().error("Unable to load icon for entity: " + entity.getShortNameRaw());
             Image generic = getGenericImage(entity, -1, mechTileset);
             return (generic != null) ? ImageUtil.getScaledImage(generic, 56, 48) : null;
         }
@@ -206,7 +206,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image wreckMarkerFor(Entity entity, int secondaryPos) {
         EntityImage entityImage = getFromCache(entity, secondaryPos);
         if (entityImage == null) {
-            MegaMek.getLogger().error(this, "Unable to load wreck image for entity: " + entity.getShortNameRaw());
+            MegaMek.getLogger().error("Unable to load wreck image for entity: " + entity.getShortNameRaw());
             return getGenericImage(entity, -1, wreckTileset);
         }
         return entityImage.getWreckFacing(entity.getFacing());
@@ -343,7 +343,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image imageFor(Entity entity, int facing, int secondaryPos) {
         EntityImage entityImage = getFromCache(entity, secondaryPos);
         if (entityImage == null) {
-            MegaMek.getLogger().error(this, "Unable to load image for entity: " + entity.getShortNameRaw());
+            MegaMek.getLogger().error("Unable to load image for entity: " + entity.getShortNameRaw());
             return getGenericImage(entity, -1, mechTileset);
         }
         // get image rotated for facing
@@ -360,7 +360,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         
         // Image could be null, for example with double blind
         if (result == null) {
-            MegaMek.getLogger().info(this, "Loading image on the fly: " + entity.getShortNameRaw());
+            MegaMek.getLogger().info("Loading image on the fly: " + entity.getShortNameRaw());
             loadImage(entity, secondaryPos);
             result = mechImages.get(temp);
         }
@@ -530,7 +530,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public static Image LoadSpecificImage(File path, String name) {
         Image result = ImageUtil.loadImageFromFile(new MegaMekFile(path, name).toString());
         if ((result == null) || (result.getWidth(null) <= 0) || (result.getHeight(null) <= 0)) {
-            MegaMek.getLogger().error(TilesetManager.class, "Error opening image: " + name);
+            MegaMek.getLogger().error("Error opening image: " + name);
         }
         return result;
     }

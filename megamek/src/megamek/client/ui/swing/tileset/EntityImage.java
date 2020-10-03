@@ -27,7 +27,6 @@ import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.*;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.ImageUtil;
 
@@ -77,8 +76,7 @@ public class EntityImage {
                     ImageFileFactory.getInstance());
         } catch (Exception e) {
             DecalImages = null;
-            DefaultMmLogger.getInstance().warning(EntityImage.class, "static{}", 
-                    "Failed to find the damage decal images." + e.getMessage());
+            MegaMek.getLogger().warning("Failed to find the damage decal images." + e.getMessage());
         }
         dmgEmpty = TilesetManager.LoadSpecificImage(DECAL_PATH, FILE_DAMAGEDECAL_EMPTY.toString());
     }
@@ -300,8 +298,7 @@ public class EntityImage {
                 grabImagePixels(camo, pCamo);
             }
         } catch (Exception e) {
-            DefaultMmLogger.getInstance().error(getClass(), "applyColor()", 
-                    "Failed to grab pixels for an image to apply the camo." + e.getMessage());
+            MegaMek.getLogger().error("Failed to grab pixels for an image to apply the camo." + e.getMessage());
             return image;
         }
 
@@ -356,8 +353,7 @@ public class EntityImage {
             grabImagePixels(image, pUnit);
             grabImagePixels(decal, pDmgD);
         } catch (Exception e) {
-            DefaultMmLogger.getInstance().error(getClass(), "applyDamageDecal()", 
-                    "Failed to grab pixels for an image to apply the decal. " + e.getMessage());
+            MegaMek.getLogger().error("Failed to grab pixels for an image to apply the decal. " + e.getMessage());
             return image;
         }
 
@@ -398,8 +394,7 @@ public class EntityImage {
         
         // Get the smoke image for heavier damage; is transparent for lighter damage
         if (smoke == null) {
-            DefaultMmLogger.getInstance().error(getClass(), "applyDamageSmoke()", 
-                    "Smoke decal image is null.");
+            MegaMek.getLogger().error("Smoke decal image is null.");
             return image;
         }
         
@@ -443,9 +438,8 @@ public class EntityImage {
                 return null;
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error(getClass(), "getDamageDecal()",
-                    "Could not load decal image.");
-            MegaMek.getLogger().error(getClass(), "getDamageDecal", e);
+            MegaMek.getLogger().error("Could not load decal image.");
+            MegaMek.getLogger().error(e);
         }
 
         return null;
@@ -480,8 +474,7 @@ public class EntityImage {
             // Use the same smoke image for all positions of multi-hex units (pos = 0)!
             return getIM(path, entity.getShortName(), 0); 
         } catch (Exception e) {
-            DefaultMmLogger.getInstance().error(getClass(), "getSmokeImage()", 
-                    "Could not load smoke/fire image.");
+            MegaMek.getLogger().error("Could not load smoke/fire image.");
             e.printStackTrace();
         }
         return null;

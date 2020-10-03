@@ -5195,8 +5195,8 @@ public class AmmoType extends EquipmentType {
         .setUnofficial(false)
         .setTechRating(RATING_E)
         .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
-        .setISAdvancement(2587, 2590, 3045, 2865, 3040)
-        .setISApproximate(false, false, false,false, false)
+        .setISAdvancement(2587, 2590, 3045, 2865, 3038)
+        .setISApproximate(false, false, false,false, true)
         .setPrototypeFactions(F_TH)
         .setProductionFactions(F_TH)
         .setReintroductionFactions(F_FC,F_FW,F_DC);     

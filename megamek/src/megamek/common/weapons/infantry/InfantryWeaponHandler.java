@@ -184,8 +184,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             }
             if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                MegaMek.getLogger().error(getClass(), "useAmmo()",
-                        String.format("Handler can't find any ammo for %s firing %s",
+                MegaMek.getLogger().error(String.format("Handler can't find any ammo for %s firing %s",
                                 ae.getShortName(), weapon.getName()));
                 return;
             }

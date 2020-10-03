@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Set;
 
+import megamek.MegaMek;
 import megamek.common.AmmoType;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
@@ -26,8 +27,6 @@ import megamek.common.MechSummary;
 import megamek.common.MiscType;
 import megamek.common.UnitType;
 import megamek.common.WeaponType;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
 
 /**
  * Specific unit variants; analyzes equipment to determine suitability for certain types
@@ -102,8 +101,8 @@ public class ModelRecord extends AbstractUnitRecord {
     	    //EquipmentType.get is throwing an NPE intermittently, and the only possibility I can see
     	    //is that there is a null equipment name.
     	    if (null == ms.getEquipmentNames().get(i)) {
-                DefaultMmLogger.getInstance().log(getClass(), "<init>(MechSummary)",
-                        LogLevel.ERROR, "RATGenerator ModelRecord encountered null equipment name in MechSummary for "
+    	        MegaMek.getLogger().error(
+    	                "RATGenerator ModelRecord encountered null equipment name in MechSummary for "
     	                + ms.getName() + ", index " + i);
     	        continue;
     	    }
@@ -292,8 +291,7 @@ public class ModelRecord extends AbstractUnitRecord {
 			if (mr != null) {
 				roles.add(mr);
 			} else {
-                DefaultMmLogger.getInstance().log(getClass(), "addRoles(String)",
-                        LogLevel.ERROR, "Could not parse mission role for "
+			    MegaMek.getLogger().error("Could not parse mission role for "
 						+ getChassis() + " " + getModel() + ": " + role);
 			}
 		}

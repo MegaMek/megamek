@@ -3645,8 +3645,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             shots = 1;
         }
         if (ammo == null) {
-            MegaMek.getLogger().error(getClass(), "addOneshotAmmo(Mounted)",
-                    "Equipment lookup failed for ammo for " + mounted.getName());
+            MegaMek.getLogger().error("Equipment lookup failed for ammo for " + mounted.getName());
             return;
         }
         Mounted m = new Mounted(this, ammo);

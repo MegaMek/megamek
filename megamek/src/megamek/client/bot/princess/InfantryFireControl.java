@@ -29,7 +29,6 @@ import megamek.common.RangeType;
 import megamek.common.Targetable;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.LogLevel;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.ServerHelper;
 
@@ -184,11 +183,11 @@ public class InfantryFireControl extends FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard()
                 || !game.getBoard().contains(shooter.getPosition())) {
-            owner.log(getClass(), "InfantryFireControl.guessFiringPlan", LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
+            owner.getLogger().error("Shooter's position is NULL/Off Board!");
             return bestPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.log(getClass(), "InfantryFireControl.guessFiringPlan", LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            owner.getLogger().error("Target's position is NULL/Off Board!");
             return bestPlan;
         }
         

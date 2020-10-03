@@ -375,8 +375,7 @@ public class MapSettings implements Serializable {
             Unmarshaller um = jc.createUnmarshaller();
             ms = (MapSettings) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
         } catch (Exception e) {
-            MegaMek.getLogger().error(MapSettings.class, "getInstance",
-                    "Error loading XML for map settings: " + e.getMessage(), e);
+            MegaMek.getLogger().error("Error loading XML for map settings: " + e.getMessage(), e);
         }
 
         return ms;

@@ -1508,7 +1508,7 @@ public class BoardEditor extends JComponent
             refreshTerrainList();
             setupUiFreshBoard();
         } catch (IOException ex) {
-            MegaMek.getLogger().error(this, ex);
+            MegaMek.getLogger().error(ex);
         }
     }
     
@@ -1583,7 +1583,7 @@ public class BoardEditor extends JComponent
             setFrameTitle();
             return true;
         } catch (IOException ex) {
-            MegaMek.getLogger().error(this, ex);
+            MegaMek.getLogger().error(ex);
             return false;
         }
     }

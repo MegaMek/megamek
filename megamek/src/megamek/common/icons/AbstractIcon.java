@@ -191,7 +191,7 @@ public abstract class AbstractIcon implements Serializable {
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error(AbstractIcon.class, "parseFromXML", "Failed to parse icon from nodes", e);
+            MegaMek.getLogger().error("Failed to parse icon from nodes", e);
         }
 
         return retVal;

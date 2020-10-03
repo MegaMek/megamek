@@ -19,6 +19,7 @@
  */
 package megamek.common.util.fileUtils;
 
+import megamek.MegaMek;
 import megamek.common.util.ItemFileFactory;
 
 import java.io.File;
@@ -74,8 +75,7 @@ public class DirectoryItems extends AbstractDirectory {
                 try {
                     addCategory(new ZippedItems(file, getRootName() + content, itemFactory));
                 } catch (Exception e) {
-                    logger.error(getClass(), "DirectoryItems",
-                            "Could not parse " + content, e);
+                    MegaMek.getLogger().error("Could not parse " + content, e);
                 }
             } else if (itemFactory.accept(rootDir, content)) { // Does the factory accept this entry?
                 // Save the ItemFile for this entry.

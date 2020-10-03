@@ -18,8 +18,6 @@
  */
 package megamek.common.util.fileUtils;
 
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.util.ItemFile;
 import megamek.common.util.ItemFileFactory;
 import megamek.common.util.StringUtil;
@@ -47,8 +45,6 @@ public abstract class AbstractDirectory implements Categorized {
      * category
      */
     protected TreeMap<String, Object> items = new TreeMap<>(StringUtil.stringComparator());
-
-    protected MMLogger logger = DefaultMmLogger.getInstance();
     //endregion Variable Declarations
 
     //region Constructors

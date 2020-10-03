@@ -14,9 +14,9 @@
  */
 
 package megamek.common.verifier;
+import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -725,8 +725,8 @@ public class TestSupportVehicle extends TestEntity {
                 if (null != mod) {
                     weight *= mod.multiplier;
                 } else {
-                    DefaultMmLogger.getInstance().warning(getClass(), "getWeightStructure()",
-                            "Could not find multiplier for " + m.getType().getName() + " chassis mod.");
+                    MegaMek.getLogger().warning("Could not find multiplier for " 
+                            + m.getType().getName() + " chassis mod.");
                 }
             }
         }

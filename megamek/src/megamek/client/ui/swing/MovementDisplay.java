@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
+import megamek.MegaMek;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -3093,7 +3094,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * value may be null if there are no eligible targets
      */
     private Entity getTowedUnit() {
-        final String METHOD_NAME = "getTowedUnit()";
         final IGame game = clientgui.getClient().getGame();
         Entity choice = null;
 
@@ -3110,7 +3110,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         // Handle error condition.
         if (choices.size() == 0) {
-            logDebug(METHOD_NAME, "Method called without towable units.");
+            MegaMek.getLogger().debug("Method called without towable units.");
             return null;
         }
 
@@ -3244,13 +3244,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * value will not be <code>null</code>.
      */
     private Entity getDisconnectedUnit() {
-        final String METHOD_NAME = "getDisconnectedUnit()";
         Entity ce = ce();
         Entity choice = null;
         
         // Handle error condition.
         if (ce.getAllTowedUnits().isEmpty()) {
-            logDebug(METHOD_NAME, "Method called without any towed units.");
+            MegaMek.getLogger().debug("Method called without any towed units.");
             return null;
         }
         

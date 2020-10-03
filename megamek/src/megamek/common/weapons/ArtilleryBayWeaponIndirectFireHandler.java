@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
@@ -92,7 +93,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         
     @Override
     protected void useAmmo() {
-        final String METHOD_NAME = "useAmmo()";
         nweaponsHit = weapon.getBayWeapons().size();
         for (int wId : weapon.getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
@@ -101,7 +101,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
             if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                logDebug(METHOD_NAME, "Handler can't find any ammo! Oh no!");
+                MegaMek.getLogger().debug("Handler can't find any ammo! Oh no!");
             }
 
             int shots = bayW.getCurrentShots();

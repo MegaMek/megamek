@@ -736,7 +736,7 @@ class EntitySprite extends Sprite {
                 // This is a really awkward way of making sure
                 addToTT("ArmorMiniPanelPartNoRear", BR, entity.getLocationAbbr(loc), fontSize);
                 for (int a = 0; a <= entity.getOInternal(loc)/visUnit; a++) {
-                    addToTT("BlockColored", NOBR, destroyedChar, fontSize, colorIntact);
+                    addToTT("BlockColored", NOBR, destroyedChar, fontSize, colorDamaged);
                 }
 
             } else {
@@ -758,6 +758,7 @@ class EntitySprite extends Sprite {
                             addToTT("BlockColored", NOBR, armorChar, fontSize, colorDamaged);
                         }
                     }
+                    tooltipString.append("&nbsp;&nbsp;");
                     addToTT("ArmorMiniPanelPart", BR, entity.getLocationAbbr(loc), fontSize);
                 } else {
                     addToTT("ArmorMiniPanelPartNoRear", BR, entity.getLocationAbbr(loc), fontSize);
@@ -1111,12 +1112,10 @@ class EntitySprite extends Sprite {
                 } else {
                     ranges = wtype.getRanges(curWp);
                 }
-                String rangeString = "(";
+                String rangeString = " \u22EF ";
                 if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA) 
                         && (ranges[RangeType.RANGE_MINIMUM] != 0)) {
-                    rangeString += ranges[RangeType.RANGE_MINIMUM] + "/";
-                } else {
-                    rangeString += "-/";
+                    rangeString += "(" + ranges[RangeType.RANGE_MINIMUM] + ") ";
                 }
                 int maxRange = RangeType.RANGE_LONG;
                 if (bv.game.getOptions().booleanOption(
@@ -1126,11 +1125,10 @@ class EntitySprite extends Sprite {
                 for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
                     rangeString += ranges[i];
                     if (i != maxRange) {
-                        rangeString += "/";
+                        rangeString += "\u2B1D";
                     }
                 }
-                
-                weapDesc += rangeString + ")";
+                weapDesc += rangeString;
                 if (wpNames.containsKey(weapDesc)) {
                     int number = wpNames.get(weapDesc);
                     if (number > 0) 

@@ -21,7 +21,6 @@ import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Protomech;
-import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
 
 import java.text.DecimalFormat;
@@ -130,7 +129,7 @@ public class MoralUtil implements IMoralUtil {
                 }
             }
         } finally {
-            logger.info(this, logMsg.toString());
+            logger.info(logMsg.toString());
         }
     }
 

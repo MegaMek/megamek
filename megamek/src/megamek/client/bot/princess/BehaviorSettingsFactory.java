@@ -13,7 +13,6 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.logging.LogLevel;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.utils.MegaMekXmlUtil;
@@ -133,22 +132,18 @@ public class BehaviorSettingsFactory {
     }
 
     private Document buildPrincessBehaviorDoc() {
-        final String METHOD_NAME = "buildPrincessBehaviorDoc()";
         
         try {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
             if (!behaviorFile.exists() || !behaviorFile.isFile()) {
-                getLogger().log(BehaviorSettingsFactory.class,
-                                "buildPrincessBehaviorDoc()",
-                                LogLevel.ERROR,
-                        "Could not load " + PRINCESS_BEHAVIOR_PATH);
+                getLogger().error("Could not load " + PRINCESS_BEHAVIOR_PATH);
                 return null;
             }
             try(InputStream is = new FileInputStream(behaviorFile)) {
                 return MegaMekXmlUtil.newSafeDocumentBuilder().parse(is);
             }
         } catch (Exception e) {
-            getLogger().error(getClass(), METHOD_NAME, e);
+            getLogger().error(e);
             return null;
         }
     }
@@ -160,7 +155,6 @@ public class BehaviorSettingsFactory {
      * @return TRUE if the load completes successfully.
      */
     boolean loadBehaviorSettings(Document princessBehaviorDoc) {
-        final String METHOD_NAME = "loadBehaviorSettings(Document)";
         synchronized (behaviorMap) {
             try {
                 if (princessBehaviorDoc == null) {
@@ -178,7 +172,7 @@ public class BehaviorSettingsFactory {
                 }
                 return true;
             } catch (Exception e) {
-                getLogger().error(getClass(), METHOD_NAME, e);
+                getLogger().error(e);
                 return false;
             } finally {
                 addDefaultBehaviors();
@@ -193,23 +187,18 @@ public class BehaviorSettingsFactory {
      * @return TRUE if the save is successful.
      */
     public boolean saveBehaviorSettings(boolean includeTargets) {
-        final String METHOD_NAME = "saveBehaviorSettings(boolean)";
         init(false);
 
         try {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
             if (!behaviorFile.exists()) {
                 if (!behaviorFile.createNewFile()) {
-                    getLogger().log(BehaviorSettingsFactory.class, METHOD_NAME,
-                                    LogLevel.ERROR,
-                            "Could not create " + PRINCESS_BEHAVIOR_PATH);
+                    getLogger().error("Could not create " + PRINCESS_BEHAVIOR_PATH);
                     return false;
                 }
             }
             if (!behaviorFile.canWrite()) {
-                getLogger().log(BehaviorSettingsFactory.class, METHOD_NAME,
-                                LogLevel.ERROR,
-                        "Could not write to " + PRINCESS_BEHAVIOR_PATH);
+                getLogger().error("Could not write to " + PRINCESS_BEHAVIOR_PATH);
                 return false;
             }
 
@@ -233,7 +222,7 @@ public class BehaviorSettingsFactory {
                 return true;
             }
         } catch (Exception e) {
-            getLogger().error(getClass(), METHOD_NAME, e);
+            getLogger().error(e);
             return false;
         }
     }
@@ -288,8 +277,7 @@ public class BehaviorSettingsFactory {
             berserkBehavior.setBraveryIndex(9);
             return berserkBehavior;
         } catch (Exception e) {
-            getLogger().error(BehaviorSettingsFactory.class,
-                            "buildBerserkBehavior", e);
+            getLogger().error(e);
             return null;
         }
     }
@@ -325,8 +313,7 @@ public class BehaviorSettingsFactory {
             cowardlyBehavior.setBraveryIndex(2);
             return cowardlyBehavior;
         } catch (Exception e) {
-            getLogger().error(BehaviorSettingsFactory.class,
-                            "buildCowardlyBehavior", e);
+            getLogger().error(e);
             return null;
         }
     }
@@ -365,8 +352,7 @@ public class BehaviorSettingsFactory {
             escapeBehavior.setBraveryIndex(2);
             return escapeBehavior;
         } catch (Exception e) {
-            getLogger().error(BehaviorSettingsFactory.class,
-                            "buildEscapeBehavior", e);
+            getLogger().error(e);
             return null;
         }
     }
@@ -402,8 +388,7 @@ public class BehaviorSettingsFactory {
             defaultBehavior.setBraveryIndex(5);
             return defaultBehavior;
         } catch (Exception e) {
-            getLogger().error(BehaviorSettingsFactory.class,
-                            "buildDefaultBehavior", e);
+            getLogger().error(e);
             return null;
         }
     }

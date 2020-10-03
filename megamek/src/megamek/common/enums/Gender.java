@@ -16,10 +16,8 @@
  */
 package megamek.common.enums;
 
+import megamek.MegaMek;
 import megamek.client.generator.RandomGenderGenerator;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +37,6 @@ public enum Gender {
     //region Variable Declarations
     private final boolean internal;
     private final String displayName;
-
-    private static final MMLogger logger = DefaultMmLogger.getInstance();
     //endregion Variable Declarations
 
     //region Constructors
@@ -139,8 +135,7 @@ public enum Gender {
 
         }
 
-        logger.error(Gender.class, "parseFromString",
-                "Failed to parse the gender value from input String " + input
+        MegaMek.getLogger().error("Failed to parse the gender value from input String " + input
                         + ". Returning a newly generated gender.");
         return RandomGenderGenerator.generate();
     }

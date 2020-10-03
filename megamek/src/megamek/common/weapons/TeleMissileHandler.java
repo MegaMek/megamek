@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.Mounted;
@@ -53,7 +54,6 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
      * in the process
      */
     private AmmoType getBayAmmoType() {
-        final String METHOD_NAME = "getBayAmmoType()";
         AmmoType at = null;
         for (int wId : weapon.getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
@@ -61,7 +61,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
             Mounted bayWAmmo = bayW.getLinked();
 
             if (bayWAmmo == null) {
-                logDebug(METHOD_NAME, "Handler can't find any ammo! Oh no!");
+                MegaMek.getLogger().debug("Handler can't find any ammo! Oh no!");
                 continue;
             }
              //Once we have some ammo to send to the server, stop looking
@@ -85,7 +85,6 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
     
     @Override
     protected void useAmmo() {
-        final String METHOD_NAME = "useAmmo()";
         for (int wId : weapon.getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
             // check the currently loaded ammo
@@ -93,7 +92,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
 
             if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                logDebug(METHOD_NAME, "Handler can't find any ammo! Oh no!");
+                MegaMek.getLogger().debug("Handler can't find any ammo! Oh no!");
             }
             int shots = bayW.getCurrentShots();
             for (int i = 0; i < shots; i++) {

@@ -1942,7 +1942,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 
                 // covers the situation where a weapon using non-caseless ammo should 
                 // not be able to switch to caseless on the fly and vice versa
-                boolean amCaseless = ((AmmoType) mounted.getLinked().getType()).getMunitionType() == AmmoType.M_CASELESS;
+                boolean amCaseless = mounted.getLinked() != null && 
+                        ((AmmoType) mounted.getLinked().getType()).getMunitionType() == AmmoType.M_CASELESS;
                 boolean etCaseless = ((AmmoType) atype).getMunitionType() == AmmoType.M_CASELESS;
                 boolean caselessMismatch = amCaseless != etCaseless;                
 

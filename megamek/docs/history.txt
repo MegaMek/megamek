@@ -30,7 +30,7 @@ VERSION HISTORY:
 + Issue #2270: Recovered Prototype Gauss Rifle Ammuntion intro date wrong
 + Issue #2235: Primitive Prototype Weapons missing Static Tech tags.
 + Data: Fix for #2154 Stoat Weight and new Protomek Sprites.
-
++ Issue #2253: Screwy speed on a Notos with QuadVee
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

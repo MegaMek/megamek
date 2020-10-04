@@ -150,3 +150,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
+
+Overview: Tasked by the SLDF to replace their aging fleet of Strikers, Technicron Manufacturing would present their Awesome in 2665. Few at the time realized that the design would quickly become one of the most coveted Assault 'Mechs of the Succession Wars to come. Nearly always tasked with the heaviest attacks, the Awesome and its PPC-based armament would come to be regarded as the quintessential "zombie" design. Durable, reliable, and near unstoppable, officers jump at any opportunity to field the design within their commands.
+
+Capabilities: The PPCs of most Awesomes give it intimidating firepower over long ranges. Its thick armor plating, intelligent system placement, and lack of explosive components makes disabling one a challenging task; indeed, even flaking 'Mechs will find their attempts thwarted by the Awesome's unusually heavy rear armor. Careful heat management is a must when at the helm of an Awesome. A standard "2-3-2" volley became the norm for most MechWarriors, giving the 'Mech the greatest damage output without compromizing its accuracy. Its slow speed and targeting trouble with the PPCs at short range does give it some weaknesses, however, and it always fares best when well supported by a larger formation.
+
+Deployment: Operation Guerrero saw the first use of the AWS-9Q variant. Much less technically complex than the older -9M, the -9Q instead chose to double down on what had made the older -8Q such a successful design: durability, and the ability to lay down an imposing and constant barrage of PPC fire. With a return towards the Awesome's original doctrine, the popularity of the -9Q was ensured, and the design spread quickly throughout the Inner Sphere.
+
+systemmanufacturer:CHASSIS:Technicron
+systemmode:CHASSIS:Type G
+systemmanufacturer:ENGINE:Pitban
+systemmode:ENGINE:240
+systemmanufacturer:ARMOR:Durallex
+systemmode:ARMOR:Heavy Special
+systemmanufacturer:COMMUNICATIONS:Garrett
+systemmode:COMMUNICATIONS:T19-G
+systemmanufacturer:TARGETING:Dynatec
+systemmode:TARGETING:2780

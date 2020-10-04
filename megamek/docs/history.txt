@@ -29,7 +29,7 @@ VERSION HISTORY:
 + Issue #2214: Generic Infantry Types Data
 + Issue #2270: Recovered Prototype Gauss Rifle Ammuntion intro date wrong
 + Issue #2235: Primitive Prototype Weapons missing Static Tech tags.
-+ Data: Fix for #2154 Stoat Weight and new Protomek Sprites.
++ Data: Fix for #2154 Stoat Weight, Protomek Sprites and Fluff for Units (Thanks Greekfire).
 + Issue #2253: Screwy speed on a Notos with QuadVee
 + Issue #2273: Address instability in BV calcs for Aeros
 + PR #2286 IS foot infantry fixes

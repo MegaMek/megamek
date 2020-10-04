@@ -151,3 +151,19 @@ ISAC20 Ammo
 -Empty-
 -Empty-
 
+Overview: With a reputation few MechWarriors choose to test, the Atlas is a true king of the battlefield. Its design specifications were laid down by Aleksandr Kerensky himself, the massive 'Mech and its famous death's head easily able to change the tide of a battle with its sheer presence alone. The 'Mech was originally requesitioned in an attempt to maintain SLDF superiority over the House Lords, where it achieved its task admirably. The fall of the Star League saw the Successor States scramble to lay their hands on as many of the BattleMech as possible, leading to the rapid spread of the Atlas throughout the Inner Sphere and periphery.
+
+Capabilities: The Atlas is built to deal frightening amounts of damage in short amounts of time. Often used as a command vehicle, the Atlas mounts an advanced antenna and communications array, allowing it to engage in surface-to space communications in real time. The massive 19-ton hide of armor that protects the Atlas makes it a difficult foe to take down. Indeed, most MechWarriors choose to fall back rather than face one head-one, as its lumbering gait mean it can rarely catch up to other 'Mechs that choose to flee it.
+
+Deployment: The Federated Commonwealth rapidly reconfigured their Hesperus lines to produce the AS7-S after the loss of their Quentin plants during the War of 3039. An unambitious upgrade, its performance was largely regarded to be lackluster at best, and the AS7-S was often outperformed on the field by newer Kuritan Atlases. The Clan Invasion would render this variant near-obsolete, and further Steiner-Davion models would not take long to reach development. Even so, this variant may still be found in the hands of lower-priority commands or poorer allies of the old FedCom power block.
+
+systemmanufacturer:CHASSIS:Foundation
+systemmode:CHASSIS:Type 10X
+systemmanufacturer:ENGINE:Vlar
+systemmode:ENGINE:300
+systemmanufacturer:ARMOR:Durallex
+systemmode:ARMOR:Special Heavy
+systemmanufacturer:COMMUNICATIONS:Angst
+systemmode:COMMUNICATIONS:Discom
+systemmanufacturer:TARGETING:Angst
+systemmode:TARGETING:Accuracy

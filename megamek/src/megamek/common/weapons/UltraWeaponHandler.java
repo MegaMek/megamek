@@ -157,6 +157,10 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (super.doChecks(vPhaseReport)) {
+            return true;
+        }
+        
         if ((roll == 2) && (howManyShots == 2) && !(ae instanceof Infantry)) {
             Report r = new Report();
             r.subject = subjectId;

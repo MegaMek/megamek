@@ -36,7 +36,6 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
-import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * This describes equipment mounted on a mech.
@@ -1200,7 +1199,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     && curMode().equals("Powered Down")) {
                 return 0;
             }
-            if (isHotLoaded() && (getLinked().getUsableShotsLeft() > 0)) {
+            if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS))
+                    && (getLinked().getUsableShotsLeft() > 0)) {
                 Mounted link = getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();

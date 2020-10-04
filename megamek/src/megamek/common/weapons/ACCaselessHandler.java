@@ -48,6 +48,10 @@ public class ACCaselessHandler extends ACWeaponHandler {
 
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+            return true;
+        }
+        
         if ((roll <= 2) && !(ae instanceof Infantry)) {
             int caselesscrit = Compute.d6(2);
 

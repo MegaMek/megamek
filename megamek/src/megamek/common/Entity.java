@@ -2129,15 +2129,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!getGame().getBoard().contains(assumedPos)) {
             return false;
         }
-        boolean inWaterOrWoods = false;
         IHex hex = getGame().getBoard().getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.surface();
         int minAlt = hex.surface();
-        if (hex.containsTerrain(Terrains.WOODS)
-            || hex.containsTerrain(Terrains.WATER)
-            || hex.containsTerrain(Terrains.JUNGLE)) {
-            inWaterOrWoods = true;
-        }
         switch (getMovementMode()) {
             case INF_JUMP:
             case INF_LEG:
@@ -2161,10 +2155,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
                 // else fall through
             case VTOL:
-                minAlt = hex.ceiling();
-                if (inWaterOrWoods) {
-                    minAlt++; // can't land here
+                int minElev = 0;
+                // When over a bridge, limit downward movement. Can land on a bridge.
+                if (hex.containsTerrain(Terrains.BRIDGE_ELEV)
+                        && (assumedElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV)) ) {
+                    minElev = hex.terrainLevel(Terrains.BRIDGE_ELEV);
                 }
+                // Cannot land on woods or water
+                if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
+                    minElev = Math.max(minElev, hex.terrainLevel(Terrains.FOLIAGE_ELEV) - hex.depth() + 1);
+                }
+                if (hex.depth() > 0) {
+                    minElev = Math.max(minElev, 1);
+                }
+                // Can land on buildings
+                if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    minElev = Math.max(minElev, hex.terrainLevel(Terrains.BLDG_ELEV) - hex.depth());
+                }
+                minAlt = minElev + hex.surface();
                 break;
             case AERODYNE:
             case SPHEROID:
@@ -2233,6 +2241,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             case VTOL:
                 maxAlt = hex.surface() + 50;
+                // When under a bridge, restrict upward movement
+                if (hex.containsTerrain(Terrains.BRIDGE_ELEV)
+                        && assumedElevation < hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
+                    maxAlt = hex.terrainLevel(Terrains.BRIDGE_ELEV) - height() - 1;   
+                }
                 break;
             case AERODYNE:
             case SPHEROID:
@@ -2287,23 +2300,34 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int assumedAlt = assumedElevation + hex.surface();
         if (getMovementMode() == EntityMovementMode.VTOL) {
             if ((this instanceof Infantry)
-                && (hex.containsTerrain(Terrains.BUILDING)
-                    || hex.containsTerrain(Terrains.WOODS) || hex
-                    .containsTerrain(Terrains.JUNGLE))) {
+                    && (hex.containsTerrain(Terrains.BUILDING)
+                            || hex.containsTerrain(Terrains.WOODS) 
+                            || hex.containsTerrain(Terrains.JUNGLE))) {
                 // VTOL BA (sylph) can move as ground unit as well
                 return ((assumedElevation <= 50) && (assumedAlt >= hex.floor()));
-            } else if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
-                // fly under a bridge as long as there is enough clearance below and above the unit
-                return (assumedElevation <= 50)
-                        && assumedElevation > hex.floor()
-                        && (assumedElevation > hex.terrainLevel(Terrains.BRIDGE_ELEV)
-                                || assumedElevation + height() < hex.terrainLevel(Terrains.BRIDGE_ELEV) - 1);
-            } else if (hex.containsTerrain(Terrains.WOODS)
-                       || hex.containsTerrain(Terrains.WATER)
-                       || hex.containsTerrain(Terrains.JUNGLE)) {
-                return ((assumedElevation <= 50) && (assumedAlt > hex.ceiling()));
+            } else {
+                // VTOLs can be anywhere on or above ground and fly beneath bridges,
+                // land on buildings and ignore planted fields and industrial zone 
+                // but cannot land on water or trees
+                // As always, height() reports one less than the rules (TW p.99) say
+                // Units may move under a bridge if their top is 
+                // lower than or equal to the bridge height (TW p.62)
+                boolean allowed = (assumedElevation <= 50) && (assumedElevation >= 0);
+                if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+                    allowed &= (assumedElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV))
+                            || (assumedElevation + height() + 1 <= hex.terrainLevel(Terrains.BRIDGE_ELEV));
+                }
+                if (hex.containsTerrain(Terrains.FOLIAGE_ELEV)) {
+                    allowed &= (assumedElevation > hex.terrainLevel(Terrains.FOLIAGE_ELEV) - hex.depth());
+                }
+                if (hex.depth() > 0) {
+                    allowed &= (assumedElevation > 0);
+                }
+                if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    allowed &= (assumedElevation >= hex.terrainLevel(Terrains.BLDG_ELEV) - hex.depth());
+                }
+                return allowed;
             }
-            return ((assumedElevation <= 50) && (assumedAlt >= hex.ceiling()));
         } else if ((getMovementMode() == EntityMovementMode.SUBMARINE)
                    || ((getMovementMode() == EntityMovementMode.INF_UMU) && hex
                 .containsTerrain(Terrains.WATER))

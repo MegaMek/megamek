@@ -637,6 +637,10 @@ public class Terrain implements ITerrain, Serializable {
             rv = false;
         } else if (type == Terrains.FOLIAGE_ELEV && (level < 1 || level > 3)) {
             rv = false;
+        } else if (type == Terrains.BLDG_ELEV && level < 1) {
+            rv = false;
+        } else if (type == Terrains.BRIDGE_ELEV && level < 0) {
+            rv = false;
         }
 
         if (!rv && (errBuff != null)) {

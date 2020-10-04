@@ -22,8 +22,10 @@ import java.util.Set;
 
 import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
+import megamek.common.EntityMovementMode;
 import megamek.common.IHex;
 import megamek.common.MovePath;
+import megamek.common.Terrains;
 import megamek.common.MovePath.MoveStepType;
 
 /**
@@ -160,37 +162,58 @@ public class PathDecorator {
     }
     
     /**
-     * Given a path, adds "UP" steps to it so that a forward movement can pass over intervening terrain
+     * For units using VTOL movement, add "UP" steps to the end of the MovePath source 
+     * so that a forward movement can pass over intervening terrain
      */
     public static void AdjustElevationForForwardMovement(MovePath source) {
+        // Do this only for VTOLs
+        if (!(source.getEntity().getMovementMode() == EntityMovementMode.VTOL)) {
+            return;
+        }
+        
         // get the hex that is in the direction we're facing
         Coords destinationCoords = source.getFinalCoords().translated(source.getFinalFacing());
         IHex destHex = source.getGame().getBoard().getHex(destinationCoords);
-        
-        if(destHex == null) {
+        if (destHex == null) {
             return;
         }
         
-        // determine if the destination hex allows the unit in question to go up
-        // if not, we're done here
+        // If the unit cannot go up in it's current hex, nothing can be done
         int entityElevation = source.getFinalElevation();
         boolean canGoUp = source.getEntity().canGoUp(entityElevation, source.getFinalCoords());
-        if(!canGoUp) {
+        if (!canGoUp) {
             return;
         }
         
-        // add as many UP steps as MP will allow, until we are above whatever terrain feature is in the way. 
-        int desiredElevation = destHex.maxTerrainFeatureElevation(false);
+        IHex srcHex = source.getGame().getBoard().getHex(source.getFinalCoords());
+        int absHeight = srcHex.getLevel() + entityElevation;  
+        int destElevation = absHeight - destHex.getLevel();
+        int safeElevation = destHex.maxTerrainFeatureElevation(false);
         
-        while(entityElevation <= desiredElevation) {
+        // Add as many UP steps as MP will allow, until able to move forward 
+        while (destElevation <= safeElevation) {
+            // Do not go up if the unit can go forward before rising above the 
+            // maximum terrain elevation, e.g. under a bridge
+            // VTOLs shouldn't land in this way, however.
+            boolean noLanding = (destElevation >= 1);
+            if (destHex.containsTerrain(Terrains.BLDG_ELEV)) {
+                noLanding &= destElevation > (destHex.terrainLevel(Terrains.BLDG_ELEV) - destHex.depth());
+            }
+            if (destHex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+                noLanding &= destElevation != destHex.terrainLevel(Terrains.BRIDGE_ELEV);
+            }
+            if (source.getEntity().isElevationValid(destElevation, destHex) && noLanding) {
+                return;
+            }   
+
             source.addStep(MoveStepType.UP);
-            
+
             if(!source.isMoveLegal()) {
                 source.removeLastStep();
                 return;
             }
             
-            entityElevation++;
+            destElevation++;
         }
     }
 }

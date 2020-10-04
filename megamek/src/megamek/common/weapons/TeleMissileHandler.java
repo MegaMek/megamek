@@ -78,7 +78,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
             WeaponType bayWType = ((WeaponType) bayW.getType());
             damage += (int) bayWType.getShortAV();
             ae.heatBuildup += bayW.getCurrentHeat();
-            missileArmor = bayWType.missileArmor;
+            missileArmor = bayWType.getMissileArmor();
         }
         return damage;
     }

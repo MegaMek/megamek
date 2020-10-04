@@ -2242,6 +2242,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case VTOL:
                 maxAlt = hex.surface() + 50;
                 // When under a bridge, restrict upward movement
+                // "- 1" to correct that height() reports one less than the rules (TW p.99) say
                 if (hex.containsTerrain(Terrains.BRIDGE_ELEV)
                         && assumedElevation < hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
                     maxAlt = hex.terrainLevel(Terrains.BRIDGE_ELEV) - height() - 1;   

@@ -167,7 +167,7 @@ public class PathDecorator {
      */
     public static void AdjustElevationForForwardMovement(MovePath source) {
         // Do this only for VTOLs
-        if (!(source.getEntity().getMovementMode() == EntityMovementMode.VTOL)) {
+        if (source.getEntity().getMovementMode() != EntityMovementMode.VTOL) {
             return;
         }
         

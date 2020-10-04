@@ -5190,12 +5190,15 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 40;
         ammo.cost = 20000;
         ammo.rulesRefs = "219,TM";
+        //This is going to be a rare difference between TT and MM. Removing the Extinction date on Gauss ammo.
+        //The prototype share the base ammo and rather than make a whole new ammo, just going say the IS can figure out
+        //how to make large round steel balls.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
         .setIntroLevel(false)
         .setUnofficial(false)
         .setTechRating(RATING_E)
         .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
-        .setISAdvancement(2587, 2590, 3045, 2865, 3038)
+        .setISAdvancement(2587, 2590, 3045, DATE_NONE, 3038)
         .setISApproximate(false, false, false,false, true)
         .setPrototypeFactions(F_TH)
         .setProductionFactions(F_TH)

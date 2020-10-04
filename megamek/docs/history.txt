@@ -27,6 +27,7 @@ VERSION HISTORY:
 + PR #2289: Fixing Unit Selector Name Generation
 + Issue #2240: Unit Tooltip Work
 + Issue #2214: Generic Infantry Types Data
++ Issue #2270: Recovered Prototype Gauss Rifle Ammuntion intro date wrong
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

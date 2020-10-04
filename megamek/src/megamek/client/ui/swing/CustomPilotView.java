@@ -37,7 +37,7 @@ import megamek.client.generators.RandomCallsignGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.imageChooser.PortraitChooser;
-import megamek.client.ui.swing.tileset.PortraitManager;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Infantry;
@@ -112,7 +112,7 @@ public class CustomPilotView extends JPanel {
                         portraitCategory = portraitDialog.getSelectedItem().getCategory();
                         portraitFilename = portraitDialog.getSelectedItem().getItem();
                         ((JButton) e.getSource()).setIcon(
-                                PortraitManager.getPortraitIcon(portraitCategory, portraitFilename));
+                                MMStaticDirectoryManager.getPortraitIcon(portraitCategory, portraitFilename));
                     } 
                 }
             }
@@ -121,7 +121,7 @@ public class CustomPilotView extends JPanel {
         portraitDialog = new PortraitChooser(parent);
         portraitCategory = entity.getCrew().getPortraitCategory(slot);
         portraitFilename = entity.getCrew().getPortraitFileName(slot);
-        button.setIcon(PortraitManager.getPortraitIcon(entity.getCrew(), slot));
+        button.setIcon(MMStaticDirectoryManager.getPortraitIcon(entity.getCrew(), slot));
         add(button, GBC.std().gridheight(2));
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomName"));

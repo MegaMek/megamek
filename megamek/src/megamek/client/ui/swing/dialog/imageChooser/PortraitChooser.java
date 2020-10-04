@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.tileset.PortraitManager;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.util.fileUtils.DirectoryItem;
@@ -55,7 +55,7 @@ public class PortraitChooser extends AbstractImageChooser  {
         // When the includeSubDirs flag is true, all categories
         // below the selected one are also presented.
         if (includeSubDirs) {
-            for (Iterator<String> catNames = PortraitManager.getPortraits().getCategoryNames(); catNames.hasNext(); ) {
+            for (Iterator<String> catNames = MMStaticDirectoryManager.getPortraits().getCategoryNames(); catNames.hasNext(); ) {
                 String tcat = catNames.next(); 
                 if (tcat.startsWith(category)) {
                     addCategoryItems(tcat, result);
@@ -72,7 +72,7 @@ public class PortraitChooser extends AbstractImageChooser  {
      * Assumes that the root of the path (Crew.ROOT_PORTRAIT) is passed as ""! 
      */
     private void addCategoryItems(String category, List<DirectoryItem> items) {
-        for (Iterator<String> portNames = PortraitManager.getPortraits().getItemNames(category); portNames.hasNext(); ) {
+        for (Iterator<String> portNames = MMStaticDirectoryManager.getPortraits().getItemNames(category); portNames.hasNext(); ) {
             items.add(new DirectoryItem(category, portNames.next()));
         }
     }
@@ -90,7 +90,7 @@ public class PortraitChooser extends AbstractImageChooser  {
     
     /** Reloads the camo directory from disk. */
     private void refreshPortraits() {
-        PortraitManager.refreshDirectory();
+        MMStaticDirectoryManager.refreshPortraitDirectory();
         refreshDirectory(new PortraitChooserTree());
     }
     

@@ -39,6 +39,7 @@ import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.RotateFilter;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.preference.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -81,7 +82,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private boolean loaded = false;
 
     // mech images
-    private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
     private MechTileset wreckTileset = new MechTileset(
             new MegaMekFile(Configuration.unitImagesDir(), DIR_NAME_WRECKS).getFile());
     private List<EntityImage> mechImageList = new ArrayList<>();
@@ -123,7 +123,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             int tinyWreckCount = 0;
             
             // this section of code counts how many of each type of image is accessible
-            for(int decalIndex = 1; decalIndex < MAX_NUM_DECALS; decalIndex++) {
+            for (int decalIndex = 1; decalIndex < MAX_NUM_DECALS; decalIndex++) {
                 String heavyFileName = String.format("%s_%d_%s.png", FILENAME_PREFIX_WRECKS, decalIndex, FILENAME_SUFFIX_WRECKS_ASSAULTPLUS);
                 String lightFileName = String.format("%s_%d_%s.png", FILENAME_PREFIX_WRECKS, decalIndex, FILENAME_SUFFIX_WRECKS_ULTRALIGHT);
                 Image heavyImage = LoadSpecificImage(wreckDecalDir, heavyFileName);
@@ -150,7 +150,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         } catch (Exception ignored) {
 
         }
-        mechTileset.loadFromFile("mechset.txt");
         wreckTileset.loadFromFile("wreckset.txt");
         try {
             hexTileset.incDepth = 0;
@@ -196,7 +195,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         EntityImage entityImage = getFromCache(entity, -1);
         if (entityImage == null) {
             MegaMek.getLogger().error("Unable to load icon for entity: " + entity.getShortNameRaw());
-            Image generic = getGenericImage(entity, -1, mechTileset);
+            Image generic = getGenericImage(entity, -1);
             return (generic != null) ? ImageUtil.getScaledImage(generic, 56, 48) : null;
         }
         return entityImage.getIcon();
@@ -344,7 +343,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         EntityImage entityImage = getFromCache(entity, secondaryPos);
         if (entityImage == null) {
             MegaMek.getLogger().error("Unable to load image for entity: " + entity.getShortNameRaw());
-            return getGenericImage(entity, -1, mechTileset);
+            return getGenericImage(entity, -1);
         }
         // get image rotated for facing
         return entityImage.getFacing(facing);
@@ -366,10 +365,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
         return result;
     }
-    
-    
+
+    private @Nullable Image getGenericImage(Entity entity, int secondaryPos) {
+        return getGenericImage(entity, secondaryPos, MMStaticDirectoryManager.getMechTileset());
+    }
+
     /** Retrieves a generic unit image if possible. May still return null! */
-    private Image getGenericImage(Entity entity, int secondaryPos, MechTileset tileSet) {
+    private @Nullable Image getGenericImage(Entity entity, int secondaryPos, MechTileset tileSet) {
         MechEntry defaultEntry = tileSet.genericFor(entity, secondaryPos);
         if (defaultEntry.getImage() == null) {
             defaultEntry.loadImage(boardview);
@@ -587,7 +589,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      *  Loads a preview image of the unit into the BufferedPanel.
      */
     public Image loadPreviewImage(Entity entity, Image camo, int tint, Component bp) {
-        Image base = mechTileset.imageFor(entity, boardview, -1);
+        Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity, boardview, -1);
         EntityImage entityImage = new EntityImage(base, tint, camo, bp, entity);
         entityImage.loadFacings();
         Image preview = entityImage.getFacing(entity.getFacing());
@@ -608,15 +610,15 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      * Load a single entity image
      */
     public synchronized void loadImage(Entity entity, int secondaryPos) {
-        Image base = mechTileset.imageFor(entity, boardview, secondaryPos);
+        Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity, boardview, secondaryPos);
         Image wreck = wreckTileset.imageFor(entity, boardview, secondaryPos);
 
         IPlayer player = entity.getOwner();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
 
-        Image camo = CamoManager.getPlayerCamoImage(player);
+        Image camo = MMStaticDirectoryManager.getPlayerCamoImage(player);
         if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
-            camo = CamoManager.getEntityCamoImage(entity);
+            camo = MMStaticDirectoryManager.getEntityCamoImage(entity);
         }
         EntityImage entityImage = null;
 
@@ -642,7 +644,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         // relate this id to this image set
-        ArrayList<Integer> temp = new ArrayList<Integer>();
+        ArrayList<Integer> temp = new ArrayList<>();
         temp.add(entity.getId());
         temp.add(secondaryPos);
         mechImages.put(temp, entityImage);

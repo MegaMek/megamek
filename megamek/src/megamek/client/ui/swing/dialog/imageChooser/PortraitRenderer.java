@@ -22,7 +22,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-import megamek.client.ui.swing.tileset.PortraitManager;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.util.fileUtils.DirectoryItem;
 
 /** 
@@ -52,10 +52,10 @@ public class PortraitRenderer extends JPanel implements ListCellRenderer<Directo
     
     /** 
      * Sets the image based on the passed category and name from 
-     * the DirectoryItems that the list currently displays.
+     * the displayed portrait directory
      */
     public void setImage(String category, String name) {
-        lblImage.setIcon(PortraitManager.getPortraitIcon(category, name));
+        lblImage.setIcon(MMStaticDirectoryManager.getPortraitIcon(category, name));
         tip = name;
     }
     

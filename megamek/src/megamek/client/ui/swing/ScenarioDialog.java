@@ -31,7 +31,7 @@ import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
-import megamek.client.ui.swing.tileset.CamoManager;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.IPlayer;
 import megamek.common.Player;
 import megamek.common.util.fileUtils.DirectoryItem;
@@ -101,7 +101,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                     }
                     curPlayer.setCamoCategory(category);
                     curPlayer.setCamoFileName(selectedItem.getItem());
-                    curButton.setIcon(CamoManager.getPlayerCamoIcon(curPlayer));
+                    curButton.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(curPlayer));
                 }
             });
         }

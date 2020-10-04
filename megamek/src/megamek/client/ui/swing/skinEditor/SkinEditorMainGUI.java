@@ -67,7 +67,7 @@ import megamek.client.ui.swing.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.tileset.CamoManager;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
@@ -871,9 +871,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     }
    
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = CamoManager.getPlayerCamoImage(player);
+        Image camo = MMStaticDirectoryManager.getPlayerCamoImage(player);
         if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
-            camo = CamoManager.getEntityCamoImage(entity);
+            camo = MMStaticDirectoryManager.getEntityCamoImage(entity);
         }
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
         bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(

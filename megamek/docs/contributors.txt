@@ -148,6 +148,7 @@
      Dave Nawton <hammer-gs@users.sourceforge.net>
      Phoenixstorm
 	 Greekfire
+	 SuperStucco
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>

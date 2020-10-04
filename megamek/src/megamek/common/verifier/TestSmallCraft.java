@@ -140,8 +140,8 @@ public class TestSmallCraft extends TestAero {
         AerospaceArmor a = AerospaceArmor.getArmor(sc.getArmorType(0),
                 TechConstants.isClan(sc.getArmorTechLevel(0)));
         if (null != a) {
-            return (int)Math.floor(a.pointsPerTon(sc) * maxArmorWeight(sc))
-                    + sc.get0SI() * 4;
+            return (int) Math.floor(a.pointsPerTon(sc) * maxArmorWeight(sc)
+                    + sc.get0SI() * (sc.isPrimitive() ? 2.64 : 4));
         } else {
             return 0;
         }

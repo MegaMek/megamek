@@ -14,6 +14,7 @@
  */
 package megamek.common.weapons.primitive;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
@@ -60,6 +61,7 @@ public class ISLaserPrimitiveMedium extends LaserWeapon {
             .setISAdvancement(2290, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_TA)
-            .setProductionFactions(F_TA);
+            .setProductionFactions(F_TA)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

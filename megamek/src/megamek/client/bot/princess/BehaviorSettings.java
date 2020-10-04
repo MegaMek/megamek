@@ -792,7 +792,7 @@ public class BehaviorSettings {
 
             return behavior;
         } catch (final Exception e) {
-            getLogger().error(getClass(), METHOD_NAME, e);
+            getLogger().error(e);
             
         }
 

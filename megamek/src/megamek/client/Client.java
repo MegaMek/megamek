@@ -1153,7 +1153,7 @@ public class Client implements IClientCommandHandler {
     private void cacheImgTag(Entity entity){
 
         if(entity == null) {
-            MegaMek.getLogger().error(this, "Null entity reference");
+            MegaMek.getLogger().error("Null entity reference");
             return;
         }
 

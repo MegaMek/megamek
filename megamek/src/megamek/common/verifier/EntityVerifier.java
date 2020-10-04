@@ -100,8 +100,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             InputStream is = new FileInputStream(config);
             ev = (EntityVerifier) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
         } catch (Exception e) {
-            MegaMek.getLogger().error(EntityVerifier.class, "getInstance",
-                    "Error loading XML for entity verifier: " + e.getMessage(), e);
+            MegaMek.getLogger().error("Error loading XML for entity verifier: " + e.getMessage(), e);
 
             ev = new EntityVerifier();
         }

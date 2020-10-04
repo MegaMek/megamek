@@ -56,7 +56,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
         // if the player name is specified, overwrite the preference with it
         if (!StringUtil.isNullOrEmpty(playerName)) {
-            setPlayerName(playerName);
+            getPlayerNameField().setText(playerName);
         }
     }
 
@@ -156,7 +156,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         try {
             setPort(Integer.parseInt(getPortField().getText()));
         } catch (NumberFormatException ex) {
-            MegaMek.getLogger().error(this, ex.getMessage());
+            MegaMek.getLogger().error(ex.getMessage());
         }
 
         setConfirmed(true);

@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
@@ -361,7 +362,6 @@ public class BayWeaponHandler extends WeaponHandler {
     }
 
     public boolean handleAeroSanity(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        final String METHOD_NAME = "handleAeroSanity(Phase, vPhaseReport)";
         if (!cares(phase)) {
             return true;
         }
@@ -582,8 +582,8 @@ public class BayWeaponHandler extends WeaponHandler {
                         WeaponHandler wHandler = (WeaponHandler) bayWHandler;
                         wHandler.setParentBayHandler(this);
                     } else {
-                        logError(METHOD_NAME,
-                                "bayWHandler " +  bayWHandler.getClass() + " is not a weapon handler! Cannot set parent bay handler.");
+                        MegaMek.getLogger().error("bayWHandler " +  bayWHandler.getClass() 
+                                + " is not a weapon handler! Cannot set parent bay handler.");
                         continue;
                     }
                     bayWHandler.handle(phase, vPhaseReport);

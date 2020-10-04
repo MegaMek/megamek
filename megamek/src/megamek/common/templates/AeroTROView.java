@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import megamek.MegaMek;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
@@ -30,7 +31,6 @@ import megamek.common.Messages;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 
@@ -181,8 +181,7 @@ public class AeroTROView extends TROView {
         for (final Integer eqNum : bay.getBayWeapons()) {
             final Mounted wMount = aero.getEquipment(eqNum);
             if (null == wMount) {
-                DefaultMmLogger.getInstance().error(getClass(), "createBayRow(Mounted)",
-                        "Bay " + bay.getName() + " has non-existent weapon");
+                MegaMek.getLogger().error("Bay " + bay.getName() + " has non-existent weapon");
                 continue;
             }
             final WeaponType wtype = (WeaponType) wMount.getType();

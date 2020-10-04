@@ -23,6 +23,9 @@ VERSION HISTORY:
 + PR #2283: Fixing Large Support Tank isCrippled Check
 + PR #2284: Fix soft-lock when selecting infantry units using infantry weapons
 + PR #2285: Fixing isCrippled check for Super Heavy Tanks
++ PR #2288: Fixing player name display for game connection dialog from MekHQ
++ PR #2289: Fixing Unit Selector Name Generation
++ Issue #2240: Unit Tooltip Work
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

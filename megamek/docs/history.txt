@@ -26,6 +26,7 @@ VERSION HISTORY:
 + PR #2288: Fixing player name display for game connection dialog from MekHQ
 + PR #2289: Fixing Unit Selector Name Generation
 + Issue #2240: Unit Tooltip Work
++ Issue #2214: Generic Infantry Types Data
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

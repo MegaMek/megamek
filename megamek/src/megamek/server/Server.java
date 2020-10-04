@@ -27940,10 +27940,19 @@ public class Server implements Runnable {
     }
 
     /**
+     * Explodes a piece of equipment on the unit.
+     */
+    public Vector<Report> explodeEquipment(Entity en, int loc, Mounted mounted) { 
+        return explodeEquipment(en, loc, mounted, false);
+    }
+    
+    /**
      * Makes a piece of equipment on a mech explode! POW! This expects either
      * ammo, or an explosive weapon. Returns a vector of Report objects.
+     * Possible to override 'is explosive' check
      */
-    public Vector<Report> explodeEquipment(Entity en, int loc, Mounted mounted) {
+    public Vector<Report> explodeEquipment(Entity en, int loc, Mounted mounted, boolean overrideExplosiveCheck) {
+        final String METHOD_NAME = "explodeEquipment(Entity,int,Mounted)";
         Vector<Report> vDesc = new Vector<>();
         // is this already destroyed?
         if (mounted.isDestroyed()) {
@@ -27976,68 +27985,7 @@ public class Server implements Runnable {
             }
         }
 
-        // Special case: discharged M- and B-pods shouldn't explode.
-        if (((mounted.getType() instanceof MPodWeapon) || (mounted.getType() instanceof BPodWeapon))
-                && (mounted.getLinked().getHittableShotsLeft() == 0)) {
-            return vDesc;
-        }
-
-        // special-case. RACs only explode when jammed
-        if ((mounted.getType() instanceof WeaponType)
-                && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC_ROTARY)) {
-            if (!mounted.isJammed()) {
-                return vDesc;
-            }
-        }
-
-        // special case. ACs only explode if firing incendiary ammo or rapid
-        // firing
-        if ((mounted.getType() instanceof WeaponType)
-                && !mounted.curMode().equals("Rapid")
-                && ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC)
-                        || (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_LAC)
-                        || (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC_IMP)
-                        || (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_PAC))) {
-            if (!mounted.isUsedThisRound()) {
-                return vDesc;
-            }
-            Mounted ammo = mounted.getLinked();
-            if ((ammo == null) || !(ammo.getType() instanceof AmmoType)
-                    || (((AmmoType) ammo.getType()).getMunitionType() != AmmoType.M_INCENDIARY_AC)) {
-                return vDesc;
-            }
-
-            WeaponType wtype = (WeaponType) mounted.getType();
-            if ((wtype.getAmmoType() == AmmoType.T_LRM)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO_COMBO)) {
-                return vDesc;
-            }
-        }
-
-        // special case. HVACs only explode if there's ammo left or rapid firing
-        if ((mounted.getType() instanceof HVACWeapon) && !mounted.curMode().equals("Rapid")) {
-            if (mounted.getEntity().getTotalAmmoOfType(mounted.getLinked().getType()) == 0) {
-                return vDesc;
-            }
-        }
-
-        // special case. Blue Shield Particle Field Damper only explodes when
-        // switched on
-        if ((mounted.getType() instanceof MiscType)
-            && (mounted.getType().hasFlag(MiscType.F_BLUE_SHIELD) && mounted.curMode().equals("Off"))) {
-            return vDesc;
-        }
-
-        // special case. PPC with Capacitor only explodes when charged
-        if ((mounted.getType() instanceof MiscType)
-                && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
-                && !mounted.curMode().equals("Charge")) {
-            return vDesc;
-        }
-        if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
+        if(!overrideExplosiveCheck && !mounted.getType().isExplosive(mounted, false)) {
             return vDesc;
         }
 

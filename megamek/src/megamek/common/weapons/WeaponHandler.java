@@ -428,6 +428,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         return false;
     }
+    
+    /**
+     * Carries out a check to see if the weapon in question explodes due to the 'ammo feed problem' quirk
+     * Not the case for weapons without ammo
+     */
+    protected boolean doAmmoFeedProblemCheck(Vector<Report> vPhaseReport) {
+        return false;
+    }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
@@ -1755,6 +1763,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         } else {
             roll = Compute.d6(2);
         }
+        
         nweapons = getNumberWeapons();
         nweaponsHit = 1;
         // use ammo when creating this, so it works when shooting the last shot

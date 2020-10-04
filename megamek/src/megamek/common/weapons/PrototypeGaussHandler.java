@@ -52,6 +52,10 @@ public class PrototypeGaussHandler extends GRHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+            return true;
+        }
+        
         if (roll == 2) {
             Report r = new Report(3165);
             r.subject = subjectId;

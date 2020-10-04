@@ -34,6 +34,7 @@ VERSION HISTORY:
 + Issue #2273: Address instability in BV calcs for Aeros
 + PR #2286: IS foot infantry fixes
 + PR #2295: Implement ammo feed problem quirk
++ Issue #1898: Boards of sizes xx:yyy don't load
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

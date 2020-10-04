@@ -32,6 +32,7 @@ VERSION HISTORY:
 + Data: Fix for #2154 Stoat Weight and new Protomek Sprites.
 + Issue #2253: Screwy speed on a Notos with QuadVee
 + Issue #2273: Address instability in BV calcs for Aeros
++ PR #2286 IS foot infantry fixes
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

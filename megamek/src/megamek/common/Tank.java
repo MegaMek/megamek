@@ -2704,11 +2704,12 @@ public class Tank extends Entity {
         double turretWeight = 0;
         double paWeight = getPowerAmplifierWeight();
         for (Mounted m : getWeaponList()) {
-            if (!hasNoTurret() && (m.getLocation() == getLocTurret())) {
+            if ((m.getLocation() == getLocTurret()) || (m.getLocation() == getLocTurret2())) {
                 turretWeight += m.getTonnage() / 10.0;
-            }
-            if (!hasNoDualTurret() && (m.getLocation() == getLocTurret2())) {
-                turretWeight += m.getTonnage() / 10.0;
+                if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
+                        && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                    turretWeight += m.getLinkedBy().getTonnage() / 10.0;
+                }
             }
         }
         turretWeight = RoundWeight.standard(turretWeight, this);

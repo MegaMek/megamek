@@ -829,8 +829,19 @@ public abstract class TestEntity implements TestEntityOption {
      * @return The number of heat sinks required in construction
      */
     protected int heatNeutralHSRequirement() {
+        return calcHeatNeutralHSRequirement(getEntity());
+    }
+
+    /**
+     * Computes heat sink requirement for heat-neutral units (vehicles, conventional fighters,
+     * protomechs). This is a total of energy weapons that don't use ammo and some other miscellaneous
+     * equipment.
+     *
+     * @return The number of heat sinks required in construction
+     */
+    public static int calcHeatNeutralHSRequirement(Entity entity) {
         int heat = 0;
-        for (Mounted m : getEntity().getWeaponList()) {
+        for (Mounted m : entity.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
             if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
                     || wt.hasFlag(WeaponType.F_PPC)
@@ -855,16 +866,16 @@ public abstract class TestEntity implements TestEntityOption {
                 heat += 5;
             }
         }
-        for (Mounted m : getEntity().getMisc()) {
+        for (Mounted m : entity.getMisc()) {
             // Spot welders are treated as energy weapons on units that don't have a fusion or fission engine
             if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)
-                && getEntity().hasEngine() && (getEntity().getEngine().isFusion()
-                                                || getEntity().getEngine().getEngineType() == Engine.FISSION)) {
+                && entity.hasEngine() && (entity.getEngine().isFusion()
+                                                || entity.getEngine().getEngineType() == Engine.FISSION)) {
                 continue;
             }
             heat += m.getType().getHeat();
         }
-        if (getEntity().hasStealth()) {
+        if (entity.hasStealth()) {
             heat += 10;
         }
         return heat;

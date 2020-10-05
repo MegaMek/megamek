@@ -13793,6 +13793,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION))) {
             return 0.0;
         }
+        // Small support vehicles do not need power amplifiers.
+        if (getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            return 0.0;
+        }
         // Otherwise we need to iterate over our weapons, find out which of them
         // require amplification, and keep a running weight total of those.
         double total = 0.0;

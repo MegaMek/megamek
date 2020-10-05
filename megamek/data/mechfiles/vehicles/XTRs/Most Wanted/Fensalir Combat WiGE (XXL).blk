@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -98,4 +98,3 @@ XTRO Most Wanted - Jihad
 <tonnage>
 80.0
 </tonnage>
-

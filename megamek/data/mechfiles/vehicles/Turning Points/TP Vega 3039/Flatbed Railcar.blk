@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -98,4 +98,3 @@ TP 3039 Vega - Succession Wars
 <fuel>
 0.0
 </fuel>
-

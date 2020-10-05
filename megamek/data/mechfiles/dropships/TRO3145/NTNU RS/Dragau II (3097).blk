@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -189,4 +189,3 @@ RS 3145 NTNU - Early Republic
 <escape_pod>
 2
 </escape_pod>
-

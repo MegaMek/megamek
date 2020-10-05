@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -89,4 +89,3 @@ TRO 3145 Capellan Confederation - Early Republic
 <tonnage>
 70.0
 </tonnage>
-

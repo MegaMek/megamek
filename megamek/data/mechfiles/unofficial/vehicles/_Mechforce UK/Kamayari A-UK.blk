@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -101,4 +101,3 @@ MRM 30:OMNI
 <baseChassisTurretWeight>
 3.0
 </baseChassisTurretWeight>
-

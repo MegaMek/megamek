@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -363,4 +363,3 @@ TRO3067 - Clan Invasion
 <escape_pod>
 30
 </escape_pod>
-

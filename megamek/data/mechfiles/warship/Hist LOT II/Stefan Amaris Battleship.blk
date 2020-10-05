@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -368,4 +368,3 @@ LofT Vol II - Star League
 <escape_pod>
 100
 </escape_pod>
-

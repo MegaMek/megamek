@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -78,4 +78,3 @@ cyber_imp_laser
 gas_effuser_pheromone
 gas_effuser_toxin
 </augmentation>
-

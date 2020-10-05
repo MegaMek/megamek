@@ -1062,6 +1062,8 @@ public class MiscType extends EquipmentType {
                 costValue = weaponCost * 0.1;
             } else if (hasFlag(F_LADDER)) {
                 costValue = size * 5;
+            } else if (hasFlag(F_COMMUNICATIONS)) {
+                costValue = size * 10000;
             }
             
             if (isArmored) {
@@ -8037,7 +8039,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.svslots = 1;
         misc.tankslots = 1;
-        misc.cost = 10000;
+        misc.cost = COST_VARIABLE;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_VARIABLE_SIZE).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
@@ -10865,8 +10867,8 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_VARIABLE_SIZE).or(F_BA_EQUIPMENT).or(F_BA_MISSION_EQUIPMENT)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 750;
-
+        misc.cost = 0;
+        misc.rulesRefs = "262,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(DATE_NONE, DATE_NONE, 2720)
                 .setTechRating(RATING_C).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
         return misc;

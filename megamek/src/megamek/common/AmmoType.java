@@ -21,6 +21,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.common.options.OptionsConstants;
+
 @SuppressWarnings("unchecked")
 public class AmmoType extends EquipmentType {
     
@@ -15804,5 +15806,32 @@ public class AmmoType extends EquipmentType {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Whether the given weapon can switch to the given ammo type
+     * @param weapon The weapon being considered
+     * @param otherAmmo The other ammo type being considered
+     * @return true/false - null arguments or linked ammo bin for the weapon result in false
+     */
+    public static boolean canSwitchToAmmo(Mounted weapon, AmmoType otherAmmo) {
+        if((weapon == null) ||
+                (weapon.getLinked() == null) ||
+                (otherAmmo == null)) {
+            return false;
+        }
+        
+        Mounted currentAmmoBin = weapon.getLinked();
+        
+        boolean ammoOfSameType = weapon.getLinked().getType().equals(otherAmmo);
+        
+        boolean caselessLoaded = ((AmmoType) currentAmmoBin.getType()).getMunitionType() == AmmoType.M_CASELESS;
+        boolean otherBinCaseless = otherAmmo.getMunitionType() == AmmoType.M_CASELESS;
+        boolean caselessMismatch = caselessLoaded != otherBinCaseless;
+        
+        boolean hasStaticFeed = weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED);
+        boolean staticFeedMismatch = hasStaticFeed && (((AmmoType) currentAmmoBin.getType()).getMunitionType() != otherAmmo.getMunitionType());
+        
+        return ammoOfSameType && !caselessMismatch && !staticFeedMismatch;
     }
 }

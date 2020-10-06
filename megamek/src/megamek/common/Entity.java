@@ -3764,23 +3764,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /**
      * Determine how much ammunition (of all munition types) remains which is
-     * compatible with the given ammo.
+     * compatible with the given weapon.
      *
-     * @param et - the <code>EquipmentType</code> of the ammo to be found. This
-     *           value may be <code>null</code>.
+     * @param weapon The weapon being considered
      * @return the <code>int</code> count of the amount of shots of all
-     * munitions equivalent to the given ammo type.
+     * munitions available for the given weapon.
      */
-    public int getTotalMunitionsOfType(@Nullable EquipmentType et) {
+    public int getTotalMunitionsOfType(Mounted weapon) {
         int totalShotsLeft = 0;
-
+        
         // specifically don't count caseless munitions as being of the same type as non-caseless
         for (Mounted amounted : getAmmo()) {
-            boolean amCaseless = ((AmmoType) amounted.getType()).getMunitionType() == AmmoType.M_CASELESS;
-            boolean etCaseless = (et != null) && ((AmmoType) et).getMunitionType() == AmmoType.M_CASELESS;
-            boolean caselessMismatch = amCaseless != etCaseless;
+            boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(weapon, (AmmoType) amounted.getType());
 
-            if (amounted.getType().equals(et) && !caselessMismatch && !amounted.isDumping()) {
+            if (canSwitchToAmmo && !amounted.isDumping()) {
                 totalShotsLeft += amounted.getUsableShotsLeft();
             }
         }

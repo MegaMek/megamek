@@ -51,7 +51,6 @@ import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -271,12 +270,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     shotsLeft = mounted.getLinked().getUsableShotsLeft();
                 }
 
-                EquipmentType typeUsed = null;
-                if (mounted.getLinked() != null) {
-                    typeUsed = mounted.getLinked().getType();
-                }
-
-                int totalShotsLeft = en.getTotalMunitionsOfType(typeUsed);
+                int totalShotsLeft = en.getTotalMunitionsOfType(mounted);
 
                 wn.append(" ("); //$NON-NLS-1$
                 wn.append(shotsLeft);
@@ -1934,20 +1928,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 }
 
                 boolean rightBay = true;
-                if (entity.usesWeaponBays()
-                    && !(entity instanceof FighterSquadron)) {
-                    rightBay = oldmount.ammoInBay(entity
-                                                          .getEquipmentNum(mountedAmmo));
+                if (entity.usesWeaponBays() && !(entity instanceof FighterSquadron)) {
+                    rightBay = oldmount.ammoInBay(entity.getEquipmentNum(mountedAmmo));
                 }
                 
                 // covers the situation where a weapon using non-caseless ammo should 
                 // not be able to switch to caseless on the fly and vice versa
-                boolean amCaseless = mounted.getLinked() != null && 
-                        ((AmmoType) mounted.getLinked().getType()).getMunitionType() == AmmoType.M_CASELESS;
-                boolean etCaseless = ((AmmoType) atype).getMunitionType() == AmmoType.M_CASELESS;
-                boolean caselessMismatch = amCaseless != etCaseless;                
+                boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(mounted, atype);
 
-                if (mountedAmmo.isAmmoUsable() && same && rightBay && !caselessMismatch
+                if (mountedAmmo.isAmmoUsable() && same && rightBay && canSwitchToAmmo
                     && (atype.getAmmoType() == wtype.getAmmoType())
                     && (atype.getRackSize() == wtype.getRackSize())) {
 

@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-0.47.11-SNAPSHOT
+0.47.12-SNAPSHOT 
+
+0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites
 + Issue #2144: correctly report avoidance of ASF ammo explosions due to heat
 + PR #2230: fix NPE in portrait chooser when customizing a pilot twice in a row
@@ -26,6 +28,16 @@ VERSION HISTORY:
 + PR #2288: Fixing player name display for game connection dialog from MekHQ
 + PR #2289: Fixing Unit Selector Name Generation
 + Issue #2240: Unit Tooltip Work
++ Issue #2214: Generic Infantry Types Data
++ Issue #2270: Recovered Prototype Gauss Rifle Ammuntion intro date wrong
++ Issue #2235: Primitive Prototype Weapons missing Static Tech tags.
++ Data: Fix for #2154 Stoat Weight, Protomek Sprites and Fluff for Units (Thanks Greekfire).
++ Issue #2253: Screwy speed on a Notos with QuadVee
++ Issue #2273: Address instability in BV calcs for Aeros
++ PR #2286: IS foot infantry fixes
++ PR #2295: Implement ammo feed problem quirk
++ Issue #1898: Boards of sizes xx:yyy don't load
++ PR #2298: VTOL pathfinding and movement corrections 
 
 0.47.10 (2020-09-20 2100 UTC)
 + Issue #2127 - Physical attack to-hit values incorrect

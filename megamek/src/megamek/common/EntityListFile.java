@@ -182,6 +182,7 @@ public class EntityListFile {
      */
     public static String getLocString(Entity entity, int indentLvl) {
         boolean isMech = entity instanceof Mech;
+        boolean isNonSmallCraftAero = (entity instanceof Aero) && !(entity instanceof SmallCraft);
         boolean haveSlot = false;
         StringBuffer output = new StringBuffer();
         StringBuffer thisLoc = new StringBuffer();
@@ -190,6 +191,10 @@ public class EntityListFile {
         // Walk through the locations for the entity,
         // and only record damage and ammo.
         for (int loc = 0; loc < entity.locations(); loc++) {
+            // Aero.LOC_WINGS and Aero.LOC_FUSELAGE are not "real"
+            // locations for the purpose of being destroyed or blown off,
+            // but they may contain equipment which should be used below.
+            boolean isPseudoLocation = isNonSmallCraftAero && (loc >= Aero.LOC_WINGS);
 
             // if the location is blown off, remove it so we can get the real
             // values
@@ -209,9 +214,14 @@ public class EntityListFile {
                 isDestroyed = false;
             }
 
+            if (isPseudoLocation) {
+                isDestroyed = false;
+                blownOff = false;
+            }
+
             // Record damage to armor and internal structure.
             // Destroyed locations have lost all their armor and IS.
-            if (!isDestroyed) {
+            if (!isDestroyed && !isPseudoLocation) {
                 int currentArmor;
                 if (entity instanceof BattleArmor){
                     currentArmor = entity.getArmor(loc);

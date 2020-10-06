@@ -152,3 +152,19 @@ Heat Sink
 -Empty-
 
 
+Overview: With a reputation few MechWarriors choose to test, the Atlas is a true king of the battlefield. Its design specifications were laid down by Aleksandr Kerensky himself, the massive 'Mech and its famous death's head easily able to change the tide of a battle with its sheer presence alone. The 'Mech was originally requesitioned in an attempt to maintain SLDF superiority over the House Lords, where it achieved its task admirably. The fall of the Star League saw the Successor States scramble to lay their hands on as many of the BattleMech as possible, leading to the rapid spread of the Atlas throughout the Inner Sphere and periphery.
+
+Capabilities: The Atlas is built to deal frightening amounts of damage in short amounts of time. Often used as a command vehicle, the Atlas mounts an advanced antenna and communications array, allowing it to engage in surface-to space communications in real time. The massive 19-ton hide of armor that protects the Atlas makes it a difficult foe to take down. Indeed, most MechWarriors choose to fall back rather than face one head-one, as its lumbering gait mean it can rarely catch up to other 'Mechs that choose to flee it.
+
+Deployment: Less of a unified chassis as opposed to a common series of field refits, the Atlas C mounts advanced Clan weaponry on venerable examples of the design. The design—or Atlas models following its formula—can be found scattered throughout human space. The invading Clans refit many captured Atlases to its specifications to act as garrison 'Mechs, while the defending Successor States would refit certain models with the advanced weaponry to serve in line regiments. Even certain poorer Homeworld Clans made good use of the design, with many Atlas C's serving in the Toumans of Clans too poor to field more advanced BattleMechs.
+
+systemmanufacturer:CHASSIS:Foundation
+systemmode:CHASSIS:Type 10X
+systemmanufacturer:ENGINE:Vlar
+systemmode:ENGINE:300
+systemmanufacturer:ARMOR:Durallex
+systemmode:ARMOR:Special Heavy
+systemmanufacturer:COMMUNICATIONS:Angst
+systemmode:COMMUNICATIONS:Discom
+systemmanufacturer:TARGETING:Angst
+systemmode:TARGETING:Accuracy

@@ -267,7 +267,6 @@ public class MMStaticDirectoryManager {
         return scaleAndCenter(getUnscaledPortraitImage(category, name), 72);
     }
 
-
     /**
      * Returns an Icon of the portrait given
      * by its category (aka directory) and name (aka filename).

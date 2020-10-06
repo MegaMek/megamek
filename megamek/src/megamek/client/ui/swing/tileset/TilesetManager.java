@@ -589,7 +589,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      *  Loads a preview image of the unit into the BufferedPanel.
      */
     public Image loadPreviewImage(Entity entity, Image camo, int tint, Component bp) {
-        Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity, boardview, -1);
+        Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
         EntityImage entityImage = new EntityImage(base, tint, camo, bp, entity);
         entityImage.loadFacings();
         Image preview = entityImage.getFacing(entity.getFacing());

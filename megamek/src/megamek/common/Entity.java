@@ -13790,7 +13790,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public double getPowerAmplifierWeight() {
         // If we're fusion- or fission-powered, we need no amplifiers to begin
         // with.
-        if(hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION))) {
+        if (hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION))) {
+            return 0.0;
+        }
+        // Small support vehicles do not need power amplifiers.
+        if (getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             return 0.0;
         }
         // Otherwise we need to iterate over our weapons, find out which of them
@@ -13799,16 +13803,26 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted m : getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
             if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
-                || wt.hasFlag(WeaponType.F_PPC)
-                || wt.hasFlag(WeaponType.F_PLASMA)
-                || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+                    || wt.hasFlag(WeaponType.F_PPC)
+                    || wt.hasFlag(WeaponType.F_PLASMA)
+                    || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
+                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+                total += m.getTonnage();
+            }
+            if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
+                    MiscType) && m.getLinkedBy().getType().
+                    hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                total += m.getLinkedBy().getTonnage();
+            }
+        }
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
                 total += m.getTonnage();
             }
         }
         // Finally use that total to compute and return the actual power
         // amplifier weight.
-        return Math.ceil(total / 5) / 2;
+        return RoundWeight.nextHalfTon(total);
     }
 
     public Vector<Integer> getLoadedKeepers() {

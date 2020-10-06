@@ -15810,7 +15810,8 @@ public class AmmoType extends EquipmentType {
     
     /**
      * Whether the given weapon can switch to the given ammo type
-     * @param mounted The weapon being considered
+     * @param weapon The weapon being considered
+     * @param otherAmmo The other ammo type being considered
      * @return true/false - null arguments or linked ammo bin for the weapon result in false
      */
     public static boolean canSwitchToAmmo(Mounted weapon, AmmoType otherAmmo) {

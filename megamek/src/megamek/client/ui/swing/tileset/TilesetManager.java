@@ -374,7 +374,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private @Nullable Image getGenericImage(Entity entity, int secondaryPos, MechTileset tileSet) {
         MechEntry defaultEntry = tileSet.genericFor(entity, secondaryPos);
         if (defaultEntry.getImage() == null) {
-            defaultEntry.loadImage(boardview);
+            defaultEntry.loadImage();
         }
         return defaultEntry.getImage();
     }
@@ -610,8 +610,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      * Load a single entity image
      */
     public synchronized void loadImage(Entity entity, int secondaryPos) {
-        Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity, boardview, secondaryPos);
-        Image wreck = wreckTileset.imageFor(entity, boardview, secondaryPos);
+        Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity, secondaryPos);
+        Image wreck = wreckTileset.imageFor(entity, secondaryPos);
 
         IPlayer player = entity.getOwner();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());

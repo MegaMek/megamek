@@ -2524,7 +2524,7 @@ public class FireControl {
                 continue;
             }
 
-            final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), weaponType);
+            final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon);
             // if we found preferred ammo but can't apply it to the weapon, log it and continue.
             if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
                 owner.getLogger().warning(shooter.getDisplayName() + " tried to load " 
@@ -2587,13 +2587,14 @@ public class FireControl {
 
     Mounted getPreferredAmmo(final Entity shooter,
                              final Targetable target,
-                             final WeaponType weaponType) {
-        final StringBuilder msg = new StringBuilder("Getting ammo for ").append(weaponType.getShortName())
+                             final Mounted weapon) {
+        final StringBuilder msg = new StringBuilder("Getting ammo for ").append(weapon.getType().getShortName())
                                                                         .append(" firing at ")
                                                                         .append(target.getDisplayName
                         ());
         Entity targetEntity = null;
         Mounted preferredAmmo = null;
+        WeaponType weaponType = (WeaponType) weapon.getType();
 
         try {
             boolean fireResistant = false;
@@ -2613,7 +2614,7 @@ public class FireControl {
             final List<Mounted> ammo = shooter.getAmmo();
             final List<Mounted> validAmmo = new ArrayList<>();
             for (final Mounted a : ammo) {
-                if (AmmoType.isAmmoValid(a, weaponType)) {
+                if (AmmoType.isAmmoValid(a, weaponType) && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
                     validAmmo.add(a);
                 }
             }

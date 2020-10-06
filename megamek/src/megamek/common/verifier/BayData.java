@@ -15,26 +15,7 @@ package megamek.common.verifier;
 
 import java.util.function.BiFunction;
 
-import megamek.common.ASFBay;
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.CargoBay;
-import megamek.common.DropshuttleBay;
-import megamek.common.Entity;
-import megamek.common.HeavyVehicleBay;
-import megamek.common.InfantryBay;
-import megamek.common.InsulatedCargoBay;
-import megamek.common.LightVehicleBay;
-import megamek.common.LiquidCargoBay;
-import megamek.common.LivestockCargoBay;
-import megamek.common.MechBay;
-import megamek.common.NavalRepairFacility;
-import megamek.common.ProtomechBay;
-import megamek.common.RefrigeratedCargoBay;
-import megamek.common.ReinforcedRepairFacility;
-import megamek.common.SmallCraftBay;
-import megamek.common.SuperHeavyVehicleBay;
-import megamek.common.TechAdvancement;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 
 /**
@@ -147,7 +128,8 @@ public enum BayData {
      */
     public Bay newBay(double size, int bayNum) {
         if (isCargoBay()) {
-            return init.apply(size / weight, bayNum);
+            // Remove floating point inaccuracy
+            return init.apply(RoundWeight.nearestKg(size / weight), bayNum);
         } else {
             return init.apply(size, bayNum);
         }

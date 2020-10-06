@@ -181,7 +181,7 @@ public class MechTileset {
      * @param dir_path Path to the tileset directory.
      */
     public MechTileset(File dir_path) {
-        Objects.requireNonNull(dir_path, "must provide dir_path");
+        Objects.requireNonNull(dir_path, "Must provide dir_path");
         dir = dir_path;
     }
 
@@ -193,8 +193,8 @@ public class MechTileset {
         MechEntry entry = entryFor(entity, secondaryPos);
 
         if (entry == null) {
-            MegaMek.getLogger().warning("Entry is null make sure that there is a default entry for "
-                    + entity.getShortNameRaw() + " in both mechset.txt and wreckset.txt. Default to "
+            MegaMek.getLogger().warning("Entry is null, please make sure that there is a default entry for "
+                    + entity.getShortNameRaw() + " in both mechset.txt and wreckset.txt. Defaulting to "
                     + LIGHT_STRING);
             entry = default_light;
         }

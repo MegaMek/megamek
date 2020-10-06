@@ -22,7 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
-import megamek.client.ui.swing.tileset.CamoManager;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.IPlayer;
 
 public class CamoChooserTree extends JTree {
@@ -37,11 +37,11 @@ public class CamoChooserTree extends JTree {
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(IPlayer.ROOT_CAMO);
         root.add(new DefaultMutableTreeNode(IPlayer.NO_CAMO));
-        if (CamoManager.getCamos() != null) {
-            if (CamoManager.getCamos().getItemNames("").hasNext()) { 
+        if (MMStaticDirectoryManager.getCamouflage() != null) {
+            if (MMStaticDirectoryManager.getCamouflage().getItemNames("").hasNext()) {
                 root.add(new DefaultMutableTreeNode(IPlayer.ROOT_CAMO));
             }
-            Iterator<String> catNames = CamoManager.getCamos().getCategoryNames();
+            Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
             while (catNames.hasNext()) {
                 String catName = catNames.next();
                 if ((catName != null) && !catName.equals("")) {
@@ -87,9 +87,8 @@ public class CamoChooserTree extends JTree {
         // If we didn't match, lets create nodes for each name
         if (!matched) {
             DefaultMutableTreeNode root = node;
-            for (int i = 0; i < names.length; i++) {
-                DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(
-                        names[i]);
+            for (String name : names) {
+                DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(name);
                 root.add(newNode);
                 root = newNode;
             }

@@ -9,7 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
-import megamek.client.ui.swing.tileset.PortraitManager;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.Crew;
 
 public class PortraitChooserTree extends JTree {
@@ -23,8 +23,8 @@ public class PortraitChooserTree extends JTree {
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(Crew.ROOT_PORTRAIT);
-        if (PortraitManager.getPortraits() != null) {
-            Iterator<String> catNames = PortraitManager.getPortraits().getCategoryNames();
+        if (MMStaticDirectoryManager.getPortraits() != null) {
+            Iterator<String> catNames = MMStaticDirectoryManager.getPortraits().getCategoryNames();
             while (catNames.hasNext()) {
                 String catName = catNames.next();
                 if ((catName != null) && !catName.equals("")) {

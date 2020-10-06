@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.tileset.CamoManager;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
@@ -38,7 +38,6 @@ import megamek.common.util.fileUtils.DirectoryItem;
  * @see AbstractImageChooser
  */
 public class CamoChooser extends AbstractImageChooser {
-    
     private static final long serialVersionUID = -8060324139099113292L;
 
     /** When true, camos from all subdirectories of the current selection are shown. */
@@ -84,7 +83,7 @@ public class CamoChooser extends AbstractImageChooser {
     
     /** Reloads the camo directory from disk. */
     private void refreshCamos() {
-        CamoManager.refreshDirectory();
+        MMStaticDirectoryManager.refreshCamouflageDirectory();
         refreshDirectory(new CamoChooserTree());
     }
     
@@ -113,7 +112,7 @@ public class CamoChooser extends AbstractImageChooser {
         // presented. When the includeSubDirs flag is true, all categories
         // below the selected one are also presented.
         if (includeSubDirs) {
-            for (Iterator<String> catNames = CamoManager.getCamos().getCategoryNames(); catNames.hasNext(); ) {
+            for (Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames(); catNames.hasNext(); ) {
                 String tcat = catNames.next(); 
                 if (tcat.startsWith(category)) {
                     addCategoryItems(tcat, result);
@@ -127,7 +126,6 @@ public class CamoChooser extends AbstractImageChooser {
     
     @Override
     protected ArrayList<DirectoryItem> getSearchedItems(String searched) {
-        
         // For a category that contains the search string, all its items
         // are added to the list. Additionally, all items that contain 
         // the search string are added.
@@ -135,13 +133,13 @@ public class CamoChooser extends AbstractImageChooser {
         ArrayList<DirectoryItem> result = new ArrayList<>();
         String lowerSearched = searched.toLowerCase();
         
-        for (Iterator<String> catNames = CamoManager.getCamos().getCategoryNames(); catNames.hasNext(); ) {
+        for (Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames(); catNames.hasNext(); ) {
             String tcat = catNames.next(); 
             if (tcat.toLowerCase().contains(lowerSearched)) {
                 addCategoryItems(tcat, result);
                 continue;
             }
-            for (Iterator<String> itemNames = CamoManager.getCamos().getItemNames(tcat); itemNames.hasNext(); ) {
+            for (Iterator<String> itemNames = MMStaticDirectoryManager.getCamouflage().getItemNames(tcat); itemNames.hasNext(); ) {
                 String item = itemNames.next();
                 if (item.toLowerCase().contains(lowerSearched)) {
                     result.add(new DirectoryItem(tcat, item));
@@ -157,7 +155,7 @@ public class CamoChooser extends AbstractImageChooser {
      * Assumes that the root of the path (IPlayer.ROOT_CAMO) is passed as ""! 
      * */
     private void addCategoryItems(String category, List<DirectoryItem> items) {
-        for (Iterator<String> camoNames = CamoManager.getCamos().getItemNames(category); camoNames.hasNext(); ) {
+        for (Iterator<String> camoNames = MMStaticDirectoryManager.getCamouflage().getItemNames(category); camoNames.hasNext(); ) {
             items.add(new DirectoryItem(category, camoNames.next()));
         }
     }

@@ -68,8 +68,7 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
-import megamek.client.ui.swing.tileset.CamoManager;
-import megamek.client.ui.swing.tileset.PortraitManager;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -477,7 +476,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 }
                 player.setCamoCategory(selectedItem.getCategory());
                 player.setCamoFileName(selectedItem.getItem());
-                butCamo.setIcon(CamoManager.getPlayerCamoIcon(player));
+                butCamo.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(player));
                 getPlayerSelected().sendPlayerInfo();
             }
         });
@@ -1941,7 +1940,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     private void refreshCamos() {
-        butCamo.setIcon(CamoManager.getPlayerCamoIcon(getPlayerSelected().getLocalPlayer()));
+        butCamo.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(getPlayerSelected().getLocalPlayer()));
     }
 
     /**
@@ -3539,7 +3538,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             public void setPortrait(Crew pilot) {
                 String category = pilot.getPortraitCategory(0);
                 String file = pilot.getPortraitFileName(0);
-                setImage(PortraitManager.getPreviewPortraitImage(category, file));
+                setImage(MMStaticDirectoryManager.getPreviewPortraitImage(category, file));
             }
 
         }
@@ -3553,9 +3552,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 return;
             }
             int[] rows = tableEntities.getSelectedRows();
-            Vector<Entity> entities = new Vector<Entity>();
-            for (int i = 0; i < rows.length; i++) {
-                entities.add(mekModel.getEntityAt(rows[i]));
+            Vector<Entity> entities = new Vector<>();
+            for (int row : rows) {
+                entities.add(mekModel.getEntityAt(row));
             }
             int code = e.getKeyCode();
             if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {

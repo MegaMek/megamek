@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 0.47.12-SNAPSHOT 
 + PR #2310: Implement "Static Ammo Feed" quirk 
++ PR #2315: Prevent bot freeze when bot attempts to counter-battery fire using an on-board unit vs off-board artillery
 
 0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites

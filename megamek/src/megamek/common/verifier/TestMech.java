@@ -644,12 +644,9 @@ public class TestMech extends TestEntity {
             correct = false;
         }
         if (!heatSinks.isEmpty()) {
-            int sinks = heatSinks.elements().nextElement().intValue();
-            buff.append(sinks)
-                    .append(" of ")
-                    .append(engine.integralHeatSinkCapacity(mech
-                            .hasCompactHeatSinks()))
-                    .append(" possible Internal Heat Sinks!").append("\n");
+            int sinks = heatSinks.elements().nextElement();
+            buff.append(sinks - engine.integralHeatSinkCapacity(mech
+                    .hasCompactHeatSinks())).append(" unallocated heat sinks\n");
             correct = false;
         }
         if (!checkSystemCriticals(buff)) {

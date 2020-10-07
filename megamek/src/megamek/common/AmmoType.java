@@ -12205,7 +12205,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC_PRIMITIVE;
         ammo.shots = 8;
-        ammo.bv = 21;
+        ammo.bv = 12;
         ammo.cost = 12000;
         //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
         //This to cover some of the back worlds in the Periphery.

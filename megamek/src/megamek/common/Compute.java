@@ -1115,7 +1115,9 @@ public class Compute {
         boolean targetUnderwater = false;
         boolean weaponUnderwater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET);
         if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-            && targHex.containsTerrain(Terrains.WATER) && (targBottom < 0)) {
+            && (targHex != null) && targHex.containsTerrain(Terrains.WATER) 
+            && (targBottom < 0)) {
+            
             if (targTop >= 0) {
                 targetInPartialWater = true;
             } else {
@@ -1138,8 +1140,9 @@ public class Compute {
             weaponUnderwater = true;
             weaponRanges = wtype.getWRanges();
         }
+        
         // allow ice to be cleared from below
-        if (targHex.containsTerrain(Terrains.WATER)
+        if ((targHex != null) && targHex.containsTerrain(Terrains.WATER)
             && (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             targetInPartialWater = true;
         }
@@ -2626,6 +2629,14 @@ public class Compute {
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t,
                                                      int eistatus, boolean attackerInSameBuilding,
                                                      boolean underwaterWeapon) {
+        ToHitData toHit = new ToHitData();
+
+        // no terrain mods for bombs, artillery strikes
+        if (t.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB ||
+                t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) {
+            return toHit;
+        }
+        
         Entity entityTarget = null;
         IHex hex = game.getBoard().getHex(t.getPosition());
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -2636,6 +2647,11 @@ public class Compute {
                 hex = game.getBoard().getHex(
                         game.getEntity(entityTarget.getId()).getPosition());
             }
+        }
+        
+        // if the hex doesn't exist, it's unlikely to have terrain modifiers
+        if (hex == null) {
+            return toHit;
         }
 
 
@@ -2653,12 +2669,6 @@ public class Compute {
         boolean isUnderwater = (entityTarget != null)
                                && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)
                                && (entityTarget.getElevation() < hex.surface());
-        ToHitData toHit = new ToHitData();
-
-        if (t.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {
-            // no terrain mods for aero bombing
-            return toHit;
-        }
 
         // if we have in-building combat, it's a +1
         if (attackerInSameBuilding) {

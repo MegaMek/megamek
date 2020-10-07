@@ -21,11 +21,11 @@ Clan Mechanized Wheeled Point
 </Model>
 
 <year>
-2815
+3065
 </year>
 
 <type>
-Clan Level 2
+Clan Level 5
 </type>
 
 <motion_type>
@@ -44,7 +44,7 @@ Total Warfare - Succession Wars
 </squad_size>
 
 <squadn>
-4
+3
 </squadn>
 
 <secondn>
@@ -58,4 +58,8 @@ Auto-Rifle
 <Secondary>
 LRM Launcher (FarShot)
 </Secondary>
+
+<armorKit>
+ClanKit
+</armorKit>
 

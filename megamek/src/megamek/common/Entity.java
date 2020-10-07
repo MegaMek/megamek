@@ -10746,7 +10746,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
-        if (isSupportVehicle()) {
+        // Large craft have a separate section for bays
+        if (!isLargeCraft()) {
             long seatCost = 0;
             long quartersCost = 0;
             long bayCost = 0;

@@ -1050,6 +1050,28 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         toggleKeybindsOverlay();
                     }
                 });
+        
+        // Register the action for TOGGLE_HEX_COORDS
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_HEX_COORDS.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        boolean coordsShown = GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_SHOW_COORDS);
+                        GUIPreferences.getInstance().setValue(GUIPreferences.ADVANCED_SHOW_COORDS, !coordsShown);
+                    }
+
+                });
+
     }
 
     private boolean shouldIgnoreKeyCommands() {
@@ -1106,7 +1128,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)
                 || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER)
-                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER_TEAM)
+                || e.getName().equals(GUIPreferences.TEAM_COLORING)
                 || e.getName().equals(GUIPreferences.SHOW_DAMAGE_DECAL)) {
             updateEntityLabels();
             for (Sprite s: wreckSprites) {
@@ -1118,7 +1140,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
                 || e.getName().equals(GUIPreferences.FLOATINGISO)
-                || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)) {
+                || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)
+                || e.getName().equals(GUIPreferences.ADVANCED_SHOW_COORDS)) {
             clearHexImageCache();
             repaint();
         }

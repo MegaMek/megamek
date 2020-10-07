@@ -1422,12 +1422,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Toggles the minimap window Also, toggles the minimap enabled setting
      */
     private void toggleMap() {
-        if (minimapW.isVisible()) {
-            GUIPreferences.getInstance().setMinimapEnabled(false);
-        } else {
-            GUIPreferences.getInstance().setMinimapEnabled(true);
-        }
         minimapW.setVisible(!minimapW.isVisible());
+        GUIPreferences.getInstance().setMinimapEnabled(minimapW.isVisible());
         if (minimapW.isVisible()) {
             frame.requestFocus();
         }

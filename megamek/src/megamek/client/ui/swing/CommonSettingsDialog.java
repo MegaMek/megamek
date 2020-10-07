@@ -44,7 +44,6 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -54,7 +53,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
@@ -187,7 +185,6 @@ public class CommonSettingsDialog extends ClientDialog implements
 
     private JTabbedPane panTabs;
 
-    private JCheckBox minimapEnabled;
     private JCheckBox autoEndFiring;
     private JCheckBox autoDeclareSearchlight;
     private JCheckBox nagForMASC;
@@ -228,14 +225,13 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox floatingIso;
     private JCheckBox mmSymbol;
     private JCheckBox entityOwnerColor;
-    private JRadioButton borderTeamColor;
-    private JRadioButton borderPlayerColor;
+    private JCheckBox teamColoring;
+//    private JRadioButton borderTeamColor;
+//    private JRadioButton borderPlayerColor;
     private JCheckBox useSoftCenter;
     private JCheckBox levelhighlight;
     private JCheckBox shadowMap;
     private JCheckBox hexInclines;
-    private JCheckBox mouseWheelZoom;
-    private JCheckBox mouseWheelZoomFlip;
 
     // Tactical Overlay Options
     private JCheckBox fovInsideEnabled;
@@ -416,11 +412,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
         // --------------        
 
-        minimapEnabled = new JCheckBox(Messages.getString("CommonSettingsDialog.minimapEnabled")); //$NON-NLS-1$
-        row = new ArrayList<>();
-        row.add(minimapEnabled);
-        comps.add(row);
-        
         showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(showDamageLevel);
@@ -445,24 +436,13 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(entityOwnerColor);
         comps.add(row);
         
-        borderPlayerColor = new JRadioButton(Messages.getString("CommonSettingsDialog.borderPlayerColor"));
-        borderPlayerColor.addItemListener(this);
+        teamColoring = new JCheckBox(Messages.getString("CommonSettingsDialog.teamColoring"));
+        teamColoring.setToolTipText(Messages.getString("CommonSettingsDialog.teamColoringTip"));
+        teamColoring.addItemListener(this);
         row = new ArrayList<>();
-        row.add(Box.createRigidArea(DEPENDENT_INSET));
-        row.add(borderPlayerColor);
+        row.add(teamColoring);
         comps.add(row);
         
-        borderTeamColor = new JRadioButton(Messages.getString("CommonSettingsDialog.borderTeamColor"));
-        borderTeamColor.addItemListener(this);
-        row = new ArrayList<>();
-        row.add(Box.createRigidArea(DEPENDENT_INSET));
-        row.add(borderTeamColor);
-        comps.add(row);
-        
-        ButtonGroup bg = new ButtonGroup();
-        bg.add(borderPlayerColor);
-        bg.add(borderTeamColor);
-
         useSoftCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useSoftCenter")); //$NON-NLS-1$
         useSoftCenter.setToolTipText(Messages.getString("CommonSettingsDialog.useSoftCenterTip"));
         useSoftCenter.addItemListener(this);
@@ -488,10 +468,11 @@ public class CommonSettingsDialog extends ClientDialog implements
         // Tooltip Stuff
         //
         // Show Terrain in the TT
+        // NONSENSE, cant find out bridge CFs, building CFs etc. without 
         showMapHexPopup = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapHexPopup")); //$NON-NLS-1$
-        row = new ArrayList<>();
-        row.add(showMapHexPopup);
-        comps.add(row);
+//        row = new ArrayList<>();
+//        row.add(showMapHexPopup);
+//        comps.add(row);
 
         // Popup Delay and Dismiss Delay
         tooltipDelay = new JTextField(4);
@@ -606,16 +587,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(getFocus);
         comps.add(row);
 
-        mouseWheelZoom = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoom")); //$NON-NLS-1$
-        row = new ArrayList<>();
-        row.add(mouseWheelZoom);
-        comps.add(row);
-
-        mouseWheelZoomFlip = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoomFlip")); //$NON-NLS-1$
-        row = new ArrayList<>();
-        row.add(mouseWheelZoomFlip);
-        comps.add(row);
-        
         autoEndFiring = new JCheckBox(Messages.getString("CommonSettingsDialog.autoEndFiring")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(autoEndFiring);
@@ -755,7 +726,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         GUIPreferences gs = GUIPreferences.getInstance();
         IClientPreferences cs = PreferenceManager.getClientPreferences();
 
-        minimapEnabled.setSelected(gs.getMinimapEnabled());
         autoEndFiring.setSelected(gs.getAutoEndFiring());
         autoDeclareSearchlight.setSelected(gs.getAutoDeclareSearchlight());
         nagForMASC.setSelected(gs.getNagForMASC());
@@ -774,9 +744,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         showPilotPortraitTT.setSelected(gs.getshowPilotPortraitTT());
 
         defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
-
-        mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
-        mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
 
         // Select the correct char set (give a nice default to start).
         unitStartChar.setSelectedIndex(0);
@@ -825,11 +792,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         hexInclines.setSelected(gs.getHexInclines());
         useSoftCenter.setSelected(gs.getBoolean("SOFTCENTER"));
         entityOwnerColor.setSelected(gs.getUnitLabelBorder());
-        borderPlayerColor.setSelected(!gs.getUnitLabelBorderTeam());
-        borderTeamColor.setSelected(gs.getUnitLabelBorderTeam());
-        borderPlayerColor.setEnabled(entityOwnerColor.isSelected());
-        borderTeamColor.setEnabled(entityOwnerColor.isSelected());
-
+        teamColoring.setSelected(gs.getTeamColoring());
 
         File dir = Configuration.hexesDir();
         tileSets = new ArrayList<>(Arrays.asList(dir.listFiles(new FilenameFilter() {
@@ -935,8 +898,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setShowDamageLevel(showDamageLevel.isSelected());
         gs.setShowDamageDecal(showDamageDecal.isSelected());
         gs.setUnitLabelBorder(entityOwnerColor.isSelected());
-        gs.setUnitLabelBorderTeam(borderTeamColor.isSelected());
-        gs.setMinimapEnabled(minimapEnabled.isSelected());
+        gs.setTeamColoring(teamColoring.isSelected());
         gs.setAutoEndFiring(autoEndFiring.isSelected());
         gs.setAutoDeclareSearchlight(autoDeclareSearchlight.isSelected());
         gs.setDefaultWeaponSortOrder(defaultWeaponSortOrder.getSelectedIndex());
@@ -956,9 +918,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
         cs.setUnitStartChar(((String) unitStartChar.getSelectedItem())
                 .charAt(0));
-
-        gs.setMouseWheelZoom(mouseWheelZoom.isSelected());
-        gs.setMouseWheelZoomFlip(mouseWheelZoomFlip.isSelected());
 
         cs.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
 
@@ -1261,13 +1220,15 @@ public class CommonSettingsDialog extends ClientDialog implements
                 clientgui.minimap.drawMap();
             }
 
-        } else if (source.equals(entityOwnerColor) 
-                || source.equals(borderPlayerColor)
-                || source.equals(borderTeamColor)) {
+        } else if (source.equals(teamColoring)) {
+            guip.setTeamColoring(teamColoring.isSelected());
+            if ((clientgui != null) && (clientgui.minimap != null)) {
+                clientgui.minimap.drawMap();
+            }
+
+        } else if (source.equals(entityOwnerColor)) {
             guip.setUnitLabelBorder(entityOwnerColor.isSelected());
-            guip.setUnitLabelBorderTeam(borderTeamColor.isSelected());
-            borderPlayerColor.setEnabled(entityOwnerColor.isSelected());
-            borderTeamColor.setEnabled(entityOwnerColor.isSelected());
+            
         } else if (source.equals(showDamageDecal)) {
             guip.setShowDamageDecal(showDamageDecal.isSelected());
         }

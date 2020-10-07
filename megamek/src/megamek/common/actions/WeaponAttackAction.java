@@ -4374,6 +4374,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         //Target's hex
         IHex targHex = game.getBoard().getHex(target.getPosition());
         
+        boolean targetHexContainsWater = targHex != null && targHex.containsTerrain(Terrains.WATER);
+        boolean targetHexContainsFortified = targHex != null && targHex.containsTerrain(Terrains.FORTIFIED);
+        
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
             //Some of these weapons only target valid entities
@@ -4413,7 +4416,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Fortified/Dug-In Infantry
         if ((target instanceof Infantry) && wtype != null && !wtype.hasFlag(WeaponType.F_FLAMER)) {
-            if (targHex.containsTerrain(Terrains.FORTIFIED)
+            if (targetHexContainsFortified
                     || (((Infantry) target).getDugIn() == Infantry.DUG_IN_COMPLETE)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.DugInInf"));
             }
@@ -4424,7 +4427,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
             partialWaterLevel = 2;
         }
-        if ((te != null) && targHex.containsTerrain(Terrains.WATER)
+        if ((te != null) && targetHexContainsWater
                 // target in partial water
                 && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) { 
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
@@ -4434,7 +4437,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Change hit table for partial cover, accomodate for partial
         // underwater(legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
-            if (underWater && (targHex.containsTerrain(Terrains.WATER) && (targEl == 0) 
+            if (underWater && (targetHexContainsWater && (targEl == 0) 
                     && (te != null && te.height() > 0))) {
                 // weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
@@ -4531,7 +4534,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Change hit table for surface naval vessels hit by underwater attacks
-        if (underWater && targHex.containsTerrain(Terrains.WATER) && (null != te) && te.isSurfaceNaval()) {
+        if (underWater && targetHexContainsWater && (null != te) && te.isSurfaceNaval()) {
             toHit.setHitTable(ToHitData.HIT_UNDERWATER);
         }
         

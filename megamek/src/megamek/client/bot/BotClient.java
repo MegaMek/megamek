@@ -588,8 +588,7 @@ public abstract class BotClient extends Client {
             
             return true;
         } catch (Throwable t) {
-            MegaMek.getLogger().error(t.toString());
-            
+            MegaMek.getLogger().error(t);            
             return false;
         }
     }

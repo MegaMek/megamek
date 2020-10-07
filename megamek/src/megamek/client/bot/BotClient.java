@@ -588,15 +588,7 @@ public abstract class BotClient extends Client {
             
             return true;
         } catch (Throwable t) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(t.toString()).append("\r\n");
-           
-            for (StackTraceElement traceElement : t.getStackTrace()) {
-                sb.append(traceElement.toString());
-                
-            }
-            MegaMek.getLogger().error(sb.toString());
-            
+            MegaMek.getLogger().error(t);            
             return false;
         }
     }

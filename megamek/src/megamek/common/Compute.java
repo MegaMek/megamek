@@ -1118,11 +1118,11 @@ public class Compute {
             && (targHex != null) && targHex.containsTerrain(Terrains.WATER) 
             && (targBottom < 0)) {
             
-            if (targTop >= 0) {
-                targetInPartialWater = true;
-            } else {
-                targetUnderwater = true;
-            }
+                if (targTop >= 0) {
+                    targetInPartialWater = true;
+                } else {
+                    targetUnderwater = true;
+                }
         }
 
         // allow naval units on surface to be attacked from above or below

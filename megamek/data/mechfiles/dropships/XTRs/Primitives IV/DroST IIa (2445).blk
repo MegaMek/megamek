@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -167,4 +167,3 @@ XTRO Primitives IV - Age of War
 <escape_pod>
 1
 </escape_pod>
-

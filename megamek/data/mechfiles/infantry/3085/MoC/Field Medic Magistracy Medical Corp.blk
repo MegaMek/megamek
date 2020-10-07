@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -63,4 +63,3 @@ CanopianKit
 Paramedics not coded into MegaMek. Included for completeness only.
 2 Paramedics per squad. Paramedic equipment
 </history>
-

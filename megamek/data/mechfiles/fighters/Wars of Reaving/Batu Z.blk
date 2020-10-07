@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -120,4 +120,3 @@ The Wars of Reaving (s) - Jihad
 <tonnage>
 40.0
 </tonnage>
-

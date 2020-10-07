@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -92,4 +92,3 @@ ISMML5
 ISLBXAC10
 ISERMediumLaser
 </Turret Equipment>
-

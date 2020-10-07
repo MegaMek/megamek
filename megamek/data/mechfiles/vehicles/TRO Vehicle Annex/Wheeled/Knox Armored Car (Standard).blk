@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -58,7 +58,7 @@ Wheeled
 
 <structural_tech_rating>
 3
-</structural_tech_rating> 
+</structural_tech_rating>
 
 <Body Equipment>
 IS Machine Gun Ammo - Half
@@ -93,4 +93,3 @@ TRO VAr - Succession Wars
 <tonnage>
 12.0
 </tonnage>
-

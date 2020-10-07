@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -226,4 +226,3 @@ TRO 3145 Lyran Commonwealth - Late Republic
 <escape_pod>
 5
 </escape_pod>
-

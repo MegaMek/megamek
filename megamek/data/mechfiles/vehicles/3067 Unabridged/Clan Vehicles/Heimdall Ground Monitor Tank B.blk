@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -100,4 +100,3 @@ RS 3067U
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
-

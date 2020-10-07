@@ -1073,20 +1073,24 @@ public class TestMech extends TestEntity {
         
         if (mech.isSuperHeavy()) {
             switch (mech.hasEngine()? mech.getEngine().getEngineType() : Engine.NONE) {
-            case Engine.NORMAL_ENGINE:
-            case Engine.LARGE_ENGINE:
-                break;
-            case Engine.XL_ENGINE:
-            case Engine.XXL_ENGINE:
-            case Engine.COMPACT_ENGINE:
-            case Engine.LIGHT_ENGINE:
-                if (mech.isIndustrial()) {
-                    buff.append("Superheavy industrialMechs can only use standard or large fusion engine\n");
+                case Engine.NORMAL_ENGINE:
+                case Engine.LARGE_ENGINE:
+                    break;
+                case Engine.XL_ENGINE:
+                case Engine.XXL_ENGINE:
+                case Engine.COMPACT_ENGINE:
+                case Engine.LIGHT_ENGINE:
+                    if (mech.isIndustrial()) {
+                        buff.append("Superheavy industrialMechs can only use standard or large fusion engine\n");
+                        illegal = true;
+                    }
+                    break;
+                default:
+                    buff.append("Superheavy Mechs must use some type of fusion engine\n");
                     illegal = true;
-                }
-                break;
-            default:
-                buff.append("Superheavy Mechs must use some type of fusion engine\n");
+            }
+            if (mech.getGyroType() != Mech.GYRO_SUPERHEAVY) {
+                buff.append("Superheavy Mechs must use a superheavy gyro.\n");
                 illegal = true;
             }
             
@@ -1098,6 +1102,9 @@ public class TestMech extends TestEntity {
             if (mech instanceof QuadVee) {
                 buff.append("QuadVees cannot be constructed as superheavies.\n");
             }
+        } else if (mech.getGyroType() == Mech.GYRO_SUPERHEAVY) {
+            buff.append("Only superheavy Mechs can use a superheavy gyro.\n");
+            illegal = true;
         }
         
         if (mech.isIndustrial()) {
@@ -1113,7 +1120,7 @@ public class TestMech extends TestEntity {
                 buff.append("industrial mechs can only mount standard jump jets or mechanical jump boosters\n");
                 illegal = true;
             }
-            if (mech.getGyroType() != Mech.GYRO_STANDARD) {
+            if ((mech.getGyroType() != Mech.GYRO_STANDARD) && (mech.getGyroType() != Mech.GYRO_SUPERHEAVY)) {
                 buff.append("industrial mechs can only mount standard gyros\n");
                 illegal = true;
             }

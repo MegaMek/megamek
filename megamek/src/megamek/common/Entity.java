@@ -10637,7 +10637,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getArmorType(int loc) {
-        return armorType[loc];
+        if ((loc >= 0 ) && (loc < armorType.length)) {
+            return armorType[loc];
+        } else {
+            return EquipmentType.T_ARMOR_UNKNOWN;
+        }
     }
 
     public void setArmorTechLevel(int newTL) {

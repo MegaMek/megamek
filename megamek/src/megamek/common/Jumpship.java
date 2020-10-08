@@ -2140,7 +2140,7 @@ public class Jumpship extends Aero {
         // and don't add to the cost
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if (next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
+            if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }

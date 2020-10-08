@@ -605,7 +605,7 @@ public class GunEmplacement extends Tank {
             return 1.0;
         }
         
-        return (1.0 * (occupiedStructure.getCurrentCF(getPosition()) + occupiedStructure.getArmor(getPosition())))
-                / (initialBuildingCF + initialBuildingArmor);
+        return (occupiedStructure.getCurrentCF(getPosition()) + occupiedStructure.getArmor(getPosition()))
+                / ((double) (initialBuildingCF + initialBuildingArmor));
     }
 }

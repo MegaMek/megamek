@@ -194,7 +194,6 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox animateMove;
     private JCheckBox showWrecks;
     private JCheckBox soundMute;
-    private JCheckBox showMapHexPopup;
     private JCheckBox showWpsinTT;
     private JCheckBox showArmorMiniVisTT;
     private JCheckBox showPilotPortraitTT;
@@ -226,8 +225,6 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox mmSymbol;
     private JCheckBox entityOwnerColor;
     private JCheckBox teamColoring;
-//    private JRadioButton borderTeamColor;
-//    private JRadioButton borderPlayerColor;
     private JCheckBox useSoftCenter;
     private JCheckBox levelhighlight;
     private JCheckBox shadowMap;
@@ -467,13 +464,6 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         // Tooltip Stuff
         //
-        // Show Terrain in the TT
-        // NONSENSE, cant find out bridge CFs, building CFs etc. without 
-        showMapHexPopup = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapHexPopup")); //$NON-NLS-1$
-//        row = new ArrayList<>();
-//        row.add(showMapHexPopup);
-//        comps.add(row);
-
         // Popup Delay and Dismiss Delay
         tooltipDelay = new JTextField(4);
         tooltipDelay.setMaximumSize(new Dimension(150,40));
@@ -735,7 +725,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         animateMove.setSelected(gs.getShowMoveStep());
         showWrecks.setSelected(gs.getShowWrecks());
         soundMute.setSelected(gs.getSoundMute());
-        showMapHexPopup.setSelected(gs.getShowMapHexPopup());
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
         tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
         tooltipDistSupression.setText(Integer.toString(gs.getTooltipDistSuppression()));
@@ -909,7 +898,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setShowMoveStep(animateMove.isSelected());
         gs.setShowWrecks(showWrecks.isSelected());
         gs.setSoundMute(soundMute.isSelected());
-        gs.setShowMapHexPopup(showMapHexPopup.isSelected());
         gs.setShowWpsinTT(showWpsinTT.isSelected());
         gs.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
         gs.setshowPilotPortraitTT(showPilotPortraitTT.isSelected());

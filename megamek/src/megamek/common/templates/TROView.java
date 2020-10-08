@@ -416,12 +416,14 @@ public class TROView {
             if (skipMount(m, includeAmmo)) {
                 continue;
             }
-            if (!m.getType().isHittable()) {
+            // Skip armor and structure
+            if (!m.getType().isHittable() && (m.getLocation() >= 0)) {
                 if ((structure != EquipmentType.T_STRUCTURE_UNKNOWN)
                         && (EquipmentType.getStructureType(m.getType()) == structure)) {
                     continue;
                 }
-                if (entity.getArmorType(m.getLocation()) == EquipmentType.getArmorType(m.getType())) {
+                if ((m.getLocation() >= 0)
+                        && (entity.getArmorType(m.getLocation()) == EquipmentType.getArmorType(m.getType()))) {
                     continue;
                 }
             }

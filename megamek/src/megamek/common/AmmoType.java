@@ -11488,6 +11488,7 @@ public class AmmoType extends EquipmentType {
                 ammo.rackSize = 2;
                 ammo.ammoType = AmmoType.T_SCC;
                 ammo.shots = 1;
+                ammo.tonnage = 0.5;
                 ammo.bv = 47;
                 ammo.cost = 10000;
                 ammo.ammoRatio = 2;
@@ -11548,6 +11549,7 @@ public class AmmoType extends EquipmentType {
                 ammo.rackSize = 7;
                 ammo.ammoType = AmmoType.T_SCC;
                 ammo.shots = 1;
+                ammo.tonnage = 2;
                 ammo.bv = 124;
                 ammo.cost = 25000;
                 ammo.ammoRatio = 0.5;

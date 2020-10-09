@@ -53,8 +53,7 @@ public final class Coords implements Serializable {
     }
 
     /**
-     * Returns the coordinate 1 unit in the
-     * specified direction dir.
+     * Returns the coordinate 1 unit in the specified direction dir.
      */
     public Coords translated(int dir) {
         return translated(dir, 1);
@@ -158,7 +157,7 @@ public final class Coords implements Serializable {
     }
 
     /**
-     * Tests whether the x coordinate of this coordinate is odd. This is
+     * Returns true when the x coordinate of this Coords is odd. This is
      * significant in determining where this coordinate lies in relation to
      * other coordinates.
      */
@@ -305,9 +304,7 @@ public final class Coords implements Serializable {
         return (other.getX() == x) && (other.getY() == y);
     }
 
-    /**
-     * Returns the hash code for these coords.
-     */
+    /** Returns the hash code for these coords. */
     @Override
     public int hashCode() {
         if (hash == 0) {
@@ -449,44 +446,37 @@ public final class Coords implements Serializable {
     }
 
     /**
-     * Returns a list of all adjacent 
-     * coordinates (distance = 1), regardless of whether they're on the board or not.
+     * Returns a list of all adjacent coordinates (distance = 1), 
+     * regardless of whether they're on the board or not.
      */
     public ArrayList<Coords> allAdjacent() {
         return (allAtDistance(1));
     }
     
     /**
-     * Returns a list of all coordinates 
-     * at the given distance dist, regardless of whether they're 
-     * on the board or not. Returns an empty Set for distances < 0
-     * and the calling Coords itself for dist == 0.
+     * Returns a list of all coordinates at the given distance dist, 
+     * regardless of whether they're on the board or not. Returns an 
+     * empty Set for dist < 0 and the calling Coords itself for dist == 0.
      */
     public ArrayList<Coords> allAtDistance(int dist) { 
         ArrayList<Coords> retval = new ArrayList<>();
         
-        if (dist < 0) {
-            return retval;
-        }
-
-        // algorithm outline: travel to the southwest a number of hexes equal to the radius
-        // then, "draw" the hex sides in sequence, moving north first to draw the west side, 
-        // then rotating clockwise and moving northeast to draw the northwest side and so on, 
-        // until we circle around. The length of a hex side is equivalent to the radius
-        Coords currentHex = translated(4, dist);
-        
         if (dist == 0) {
             retval.add(this);
-            return retval;
-        }
-        
-        for(int direction = 0; direction < 6; direction++) {
-            for(int translation = 0; translation < dist; translation++) {
-                currentHex = currentHex.translated(direction);
-                retval.add(currentHex);
+        } else if (dist > 0) {
+            // algorithm outline: travel to the southwest a number of hexes equal to the radius
+            // then, "draw" the hex sides in sequence, moving north first to draw the west side, 
+            // then rotating clockwise and moving northeast to draw the northwest side and so on, 
+            // until we circle around. The length of a hex side is equivalent to the radius
+            Coords currentHex = translated(4, dist);
+
+            for(int direction = 0; direction < 6; direction++) {
+                for(int translation = 0; translation < dist; translation++) {
+                    currentHex = currentHex.translated(direction);
+                    retval.add(currentHex);
+                }
             }
         }
-        
         return retval;
     }
     

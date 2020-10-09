@@ -203,9 +203,9 @@ public class TestCoords {
             }
         }
         if (iscorrect) {
-            System.out.println("AllAtDistance(1) working correctly.");
+            System.out.println("AllAtDistance(2) working correctly.");
         } else {
-            System.out.println("AllAtDistance(1) not working correctly.");
+            System.out.println("AllAtDistance(2) not working correctly.");
         }
     }
 

@@ -17,8 +17,9 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
+
 import megamek.client.bot.princess.BotGeometry.HexLine;
-import megamek.common.util.HashCodeUtil;
 
 /**
  * Coords stores x and y values. Since these are hexes, coordinates with odd x
@@ -35,7 +36,7 @@ import megamek.common.util.HashCodeUtil;
  *       3
  *      +y
  */
-public final class Coords implements Serializable {
+public class Coords implements Serializable {
 
     private static final long serialVersionUID = -4451256806040563030L;
 
@@ -308,7 +309,7 @@ public final class Coords implements Serializable {
     @Override
     public int hashCode() {
         if (hash == 0) {
-            hash = (HashCodeUtil.hash1(x + 1337) ^ HashCodeUtil.hash1(y + 97331)) & 0x7FFFFFFF;
+            hash = Objects.hash(x, y); 
         }
         return hash;
     }

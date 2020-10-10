@@ -18,7 +18,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.MegaMek;
 import megamek.common.BombType;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -34,7 +33,6 @@ import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
@@ -503,7 +501,7 @@ public class WeaponFireInfo {
                     final boolean assumeUnderFlightPath,
                     final boolean guess,
                     final int[] bombPayload) {
-        boolean debugging = false;//MegaMek.getLogger().getLogLevel() == LogLevel.DEBUG;
+        boolean debugging = false;
         
         final StringBuilder msg =
                 debugging ?

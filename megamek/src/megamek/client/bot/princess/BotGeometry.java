@@ -329,6 +329,7 @@ public class BotGeometry {
         //        HexLine[] right=new HexLine[3];
         //edge points to the previous lines in the right order
         private HexLine[] edges = new HexLine[6];
+        private Coords[] vertices = new Coords[6];
         
         ConvexBoardArea() {
         }
@@ -438,12 +439,18 @@ public class BotGeometry {
             MegaMek.getLogger().methodBegin();
 
             try {
+                if (vertices[i] != null) {
+                    return vertices[i];
+                }
+                
                 HexLine[] edges = getEdges();
                 if (edges[i] == null || edges[(i + 1) % 6] == null) {
-                    System.err.println(new IllegalStateException("Edge[" + i + "] is NULL."));
+                    MegaMek.getLogger().error("Edge[" + i + "] is NULL.");
                     return null;
                 }
-                return edges[i].getIntersection(edges[(i + 1) % 6]);
+                
+                vertices[i] = edges[i].getIntersection(edges[(i + 1) % 6]);
+                return vertices[i];
             } finally {
                 MegaMek.getLogger().methodEnd();
             }

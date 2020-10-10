@@ -18,6 +18,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.MegaMek;
 import megamek.common.BombType;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -33,6 +34,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
@@ -501,11 +503,15 @@ public class WeaponFireInfo {
                     final boolean assumeUnderFlightPath,
                     final boolean guess,
                     final int[] bombPayload) {
+        boolean debugging = false;//MegaMek.getLogger().getLogLevel() == LogLevel.DEBUG;
+        
         final StringBuilder msg =
-                new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
+                debugging ?
+                        new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
                                                              .append(" firing ").append(getWeapon().getDesc())
                                                              .append(" at ").append(getTarget().getDisplayName())
-                                                             .append(":");
+                                                             .append(":") :
+                        new StringBuilder();
 
         try {
             // Set up the attack action and calculate the chance to hit.
@@ -525,7 +531,9 @@ public class WeaponFireInfo {
             }
             // If we can't hit, set everything zero and return..
             if (12 < getToHit().getValue()) {
-                owner.getLogger().debug(msg.append("\n\tImpossible toHit: ").append(getToHit().getValue()).toString());
+                if(debugging) {
+                    owner.getLogger().debug(msg.append("\n\tImpossible toHit: ").append(getToHit().getValue()).toString());
+                }
                 setProbabilityToHit(0);
                 setMaxDamage(0);
                 setHeat(0);
@@ -535,11 +543,15 @@ public class WeaponFireInfo {
                 return;
             }
             
-            if (getShooterState().hasNaturalAptGun()) {
+            if (debugging && getShooterState().hasNaturalAptGun()) {
                 msg.append("\n\tAttacker has Natural Aptitude Gunnery");
             }
+            
             setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
-            msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
+            
+            if (debugging) {
+                msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
+            }
 
             // now that we've calculated hit odds, if we're shooting
             // a weapon capable of rapid fire, it's time to decide whether we're going to spin it up
@@ -550,11 +562,17 @@ public class WeaponFireInfo {
             }
             
             setHeat(computeHeat(weapon));
-            msg.append("\n\tHeat: ").append(getHeat());
+            
+            if(debugging) {
+                msg.append("\n\tHeat: ").append(getHeat());
+            }
 
             setExpectedDamageOnHit(computeExpectedDamage());
             setMaxDamage(getExpectedDamageOnHit());
-            msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
+            
+            if (debugging) {
+                msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
+            }
 
             final double expectedCriticalHitCount = ProbabilityCalculator.getExpectedCriticalHitCount();
 

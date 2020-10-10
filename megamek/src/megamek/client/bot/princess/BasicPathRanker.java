@@ -175,15 +175,11 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             HexLine leftBounds;
             HexLine rightBounds;
             if (path.getEntity().canChangeSecondaryFacing()) {
-                leftBounds = new HexLine(behind, (myFacing + 2) % 6,
-                                         getOwner());
-                rightBounds = new HexLine(behind, (myFacing + 4) % 6,
-                                          getOwner());
+                leftBounds = new HexLine(behind, (myFacing + 2) % 6);
+                rightBounds = new HexLine(behind, (myFacing + 4) % 6);
             } else {
-                leftBounds = new HexLine(behind, (myFacing + 1) % 6,
-                                         getOwner());
-                rightBounds = new HexLine(behind, (myFacing + 5) % 6,
-                                          getOwner());
+                leftBounds = new HexLine(behind, (myFacing + 1) % 6);
+                rightBounds = new HexLine(behind, (myFacing + 5) % 6);
             }
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {

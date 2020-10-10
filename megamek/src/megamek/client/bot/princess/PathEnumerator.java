@@ -38,7 +38,6 @@ import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.Targetable;
-import megamek.common.logging.LogLevel;
 import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder;
@@ -334,9 +333,9 @@ public class PathEnumerator {
             getUnitPaths().put(mover.getId(), paths);
 
             // calculate bounding area for move
-            ConvexBoardArea myArea = new ConvexBoardArea(owner);
+            ConvexBoardArea myArea = new ConvexBoardArea();
             myArea.addCoordFacingCombos(getUnitPotentialLocations().get(
-                    mover.getId()).iterator());
+                    mover.getId()).iterator(), owner.getBoard());
             getUnitMovableAreas().put(mover.getId(), myArea);
 
             return true;

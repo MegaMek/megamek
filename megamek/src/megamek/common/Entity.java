@@ -2547,12 +2547,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return sec_facing;
     }
 
-    /**
-     * Sets the secondary facing.
-     */
     public void setSecondaryFacing(int sec_facing) {
+        setSecondaryFacing(sec_facing, true);
+    }
+    
+    /**
+     * Sets the secondary facing. 
+     * Optionally does not fire a game change event (useful for bot evaluation)
+     */
+    public void setSecondaryFacing(int sec_facing, boolean fireEvent) {
         this.sec_facing = sec_facing;
-        if (game != null) {
+        if (fireEvent && (game != null)) {
             game.processGameEvent(new GameEntityChangeEvent(this, this));
         }
     }

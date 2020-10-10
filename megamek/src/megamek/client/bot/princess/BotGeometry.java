@@ -329,8 +329,7 @@ public class BotGeometry {
         //        HexLine[] right=new HexLine[3];
         //edge points to the previous lines in the right order
         private HexLine[] edges = new HexLine[6];
-        private final ReentrantReadWriteLock EDGES_LOCK = new ReentrantReadWriteLock();
-
+        
         ConvexBoardArea() {
         }
 
@@ -491,12 +490,7 @@ public class BotGeometry {
         }
 
         public HexLine[] getEdges() {
-            EDGES_LOCK.readLock().lock();
-            try {
-                return Arrays.copyOf(edges, edges.length);
-            } finally {
-                EDGES_LOCK.readLock().unlock();
-            }
+            return edges;
         }
 
         void setEdges(HexLine[] edges) {
@@ -507,23 +501,11 @@ public class BotGeometry {
                 throw new IllegalArgumentException("Edges must have exactly 6 members.");
             }
 
-            EDGES_LOCK.writeLock().lock();
-            try {
-                this.edges = edges;
-            } finally {
-                EDGES_LOCK.writeLock().unlock();
-            }
+            this.edges = edges;
         }
 
         void clearEdges() {
-            EDGES_LOCK.writeLock().lock();
-            try {
-                for (int i = 0; i < edges.length; i++) {
-                    edges[i] = null;
-                }
-            } finally {
-                EDGES_LOCK.writeLock().unlock();
-            }
+            setEdges(new HexLine[6]);
         }
     }
 

@@ -1865,7 +1865,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         p.add(advancedKeys);
 
         advancedValue = new JTextField(10);
-        advancedValue.setFont(new Font("LucidaSans", Font.PLAIN, 16));
+        advancedValue.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
         advancedValue.addFocusListener(this);
         p.add(advancedValue);
 

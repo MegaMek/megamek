@@ -22,17 +22,12 @@ import java.awt.Image;
 import java.util.Set;
 
 import megamek.common.Entity;
-import megamek.common.IPlayer;
 
 /**
  *
  * @author jwalt
  */
 public interface ITilesetManager {
-
-    public Image getPlayerCamo(IPlayer player);
-
-    public Image getEntityCamo(Entity entity);
 
     public Image iconFor(Entity e);
 

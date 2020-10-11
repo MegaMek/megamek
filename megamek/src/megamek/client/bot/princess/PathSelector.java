@@ -35,8 +35,7 @@ public class PathSelector {
     }
 
     public MovePath selectPath(IGame game, ArrayList<MovePath> paths) {
-        final String METHOD_NAME = "selectPath(IGame, ArrayList<MovePath>)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        owner.getLogger().methodBegin();
 
         try {
             if (paths.size() == 0) {
@@ -78,7 +77,7 @@ public class PathSelector {
                 return paths.get(0);
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            owner.getLogger().methodEnd();
         }
     }
 

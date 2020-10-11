@@ -49,8 +49,7 @@ public class DedicatedServer {
                 }
                 dedicated = new Server(password, usePort, !announceUrl.equals(""), announceUrl);
             } catch (IOException ex) {
-                MegaMek.getLogger().error(DedicatedServer.class, "start",
-                        "Error: could not start server at localhost" + ":" + usePort + " ("
+                MegaMek.getLogger().error("Error: could not start server at localhost" + ":" + usePort + " ("
                         + ex.getMessage() + ").");
                 return;
             }
@@ -58,8 +57,7 @@ public class DedicatedServer {
                 dedicated.loadGame(new File(saveGameFileName));
             }
         } catch (AbstractCommandLineParser.ParseException e) {
-            MegaMek.getLogger().error(DedicatedServer.class, "start",
-                    INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
+            MegaMek.getLogger().error(INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
                             + ARGUMENTS_DESCRIPTION_MESSAGE);
         }
     }

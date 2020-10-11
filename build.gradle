@@ -10,12 +10,13 @@ allprojects {
     
     repositories {
         jcenter()
+        maven { url 'https://jitpack.io' } // SerialKiller master branch
     }
 }
 
 subprojects {
     group = 'org.megamek'
-    version = '0.47.9-SNAPSHOT'
+    version = '0.47.12-SNAPSHOT'
 }
 
 ext {

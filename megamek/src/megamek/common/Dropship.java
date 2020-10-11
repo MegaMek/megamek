@@ -447,7 +447,7 @@ public class Dropship extends SmallCraft {
         // and don't add to the cost
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if (next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
+            if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }
@@ -1894,5 +1894,64 @@ public class Dropship extends SmallCraft {
             specialAbilities.put(BattleForceSPA.CRW, (int)Math.round(getNCrew() / 60.0));
         }
     }
-
+    
+    @Override
+    public boolean canChangeSecondaryFacing() {
+        // flying dropships can execute the "ECHO" maneuver (stratops 113), aka a torso twist, 
+        // if they have the MP for it
+        return isAirborne() && !isEvading() && (mpUsed <= getRunMP() - 2);
+    }
+    
+    /**
+     * Can this dropship "torso twist" in the given direction?
+     */
+    @Override
+    public boolean isValidSecondaryFacing(int dir) {
+        int rotate = dir - getFacing();
+        if (canChangeSecondaryFacing()) {
+            return (rotate == 0) || (rotate == 1) || (rotate == -1)
+                    || (rotate == -5) || (rotate == 5);
+        }
+        return rotate == 0;
+    }
+    
+    /**
+     * Return the nearest valid direction to "torso twist" in
+     */
+    @Override
+    public int clipSecondaryFacing(int dir) {
+        if (isValidSecondaryFacing(dir)) {
+            return dir;
+        }
+        
+        // can't twist without enough MP
+        if (!canChangeSecondaryFacing()) {
+            return getFacing();
+        }
+        
+        // otherwise, twist once in the appropriate direction
+        final int rotate = (dir + (6 - getFacing())) % 6;
+        
+        return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
+    }
+    
+    @Override
+    public void newRound(int roundNumber) {
+        super.newRound(roundNumber);
+        
+        if (getGame().useVectorMove()) {
+            setFacing(getSecondaryFacing());
+        }
+        
+        setSecondaryFacing(getFacing());
+    }
+    
+    /**
+     * Utility function that handles situations where a facing change
+     * has some kind of permanent effect on the entity.
+     */
+    @Override
+    public void postProcessFacingChange() {
+        mpUsed += 2;
+    }
 }

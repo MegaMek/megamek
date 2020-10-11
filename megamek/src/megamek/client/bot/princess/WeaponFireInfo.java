@@ -33,7 +33,6 @@ import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
@@ -169,9 +168,7 @@ public class WeaponFireInfo {
                            final boolean guess,
                            final Princess owner,
                            final int[] bombPayload) {
-        final String METHOD_NAME =
-                "WeaponFireInfo(Entity, EntityState, MovePath, Targetable, EntityState, Mounted, IGame, boolean)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        owner.getLogger().methodBegin();
         this.owner = owner;
 
         try {
@@ -183,7 +180,7 @@ public class WeaponFireInfo {
             setGame(game);
             initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            owner.getLogger().methodEnd();
         }
     }
 
@@ -504,8 +501,6 @@ public class WeaponFireInfo {
                     final boolean assumeUnderFlightPath,
                     final boolean guess,
                     final int[] bombPayload) {
-        final String METHOD_NAME = "initDamage(MovePath, boolean)";
-
         final StringBuilder msg =
                 new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
                                                              .append(" firing ").append(getWeapon().getDesc())
@@ -530,8 +525,7 @@ public class WeaponFireInfo {
             }
             // If we can't hit, set everything zero and return..
             if (12 < getToHit().getValue()) {
-                owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
-                                                                      .append(getToHit().getValue()).toString());
+                owner.getLogger().debug(msg.append("\n\tImpossible toHit: ").append(getToHit().getValue()).toString());
                 setProbabilityToHit(0);
                 setMaxDamage(0);
                 setHeat(0);
@@ -624,13 +618,12 @@ public class WeaponFireInfo {
                 }
             }
         } finally {
-            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
+            owner.getLogger().debug(msg.toString());
         }
     }
     
     WeaponAttackAction getWeaponAttackAction() {
-        final String METHOD_NAME = "getWeaponAttackAction(IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        owner.getLogger().methodBegin();
 
         try {
             if (null != getAction()) {
@@ -654,7 +647,7 @@ public class WeaponFireInfo {
                                                   getShooterState().hasNaturalAptGun()) / 100.0);
             return getAction();
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            owner.getLogger().methodEnd();
         }
     }
 

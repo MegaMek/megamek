@@ -140,8 +140,8 @@ public class TestSmallCraft extends TestAero {
         AerospaceArmor a = AerospaceArmor.getArmor(sc.getArmorType(0),
                 TechConstants.isClan(sc.getArmorTechLevel(0)));
         if (null != a) {
-            return (int)Math.floor(a.pointsPerTon(sc) * maxArmorWeight(sc))
-                    + sc.get0SI() * 4;
+            return (int) Math.floor(a.pointsPerTon(sc) * maxArmorWeight(sc)
+                    + sc.get0SI() * (sc.isPrimitive() ? 2.64 : 4));
         } else {
             return 0;
         }
@@ -172,7 +172,9 @@ public class TestSmallCraft extends TestAero {
      *           allotment
      */
     public static double[] extraSlotCost(SmallCraft sc) {
-        int arcs = sc.isSpheroid()? 7 : 5;
+        // Arcs/locations include the hull. Spheroids have two arcs in each side location;
+        // the indices for the side aft arcs are after the virtual wings location.
+        final int arcs = sc.isSpheroid() ? 8 : 5;
         int[] weaponsPerArc = new int[arcs];
         double[] weaponTonnage = new double[arcs];
         boolean hasNC3 = sc.hasWorkingMisc(MiscType.F_NAVAL_C3);
@@ -591,6 +593,7 @@ public class TestSmallCraft extends TestAero {
         correct &= !hasIllegalEquipmentCombinations(buff);
         correct &= correctHeatSinks(buff);
         correct &= correctCrew(buff);
+        correct &= correctCriticals(buff);
         
         return correct;
     }
@@ -876,7 +879,7 @@ public class TestSmallCraft extends TestAero {
                 buff.append(" requires ").append(extra[i]).append(" tons of additional fire control.\n");
             }
         }
-        return true;
+        return super.correctCriticals(buff);
     }
     
     @Override

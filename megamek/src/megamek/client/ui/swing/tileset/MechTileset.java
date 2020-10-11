@@ -1,27 +1,25 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- * MechTileset.java
- *
- * Created on April 15, 2002, 9:53 PM
- */
-
 package megamek.client.ui.swing.tileset;
 
-import java.awt.Component;
 import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,7 +28,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.HashMap;
+import java.util.Objects;
 
+import megamek.MegaMek;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Dropship;
@@ -52,7 +52,7 @@ import megamek.common.TeleMissile;
 import megamek.common.TripodMech;
 import megamek.common.Warship;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
@@ -178,45 +178,29 @@ public class MechTileset {
     /**
      * Creates new MechTileset.
      *
-     * @deprecated Use {@link MechTileset(File)} instead.
-     */
-    @Deprecated
-    public MechTileset(String dir_path)
-    {
-        if (dir_path == null) {
-            throw new IllegalArgumentException("must provide dir_path");
-        }
-        dir = new File(dir_path);
-    }
-
-    /**
-     * Creates new MechTileset.
-     *
      * @param dir_path Path to the tileset directory.
      */
-    public MechTileset(File dir_path)
-    {
-        if (dir_path == null) {
-            throw new IllegalArgumentException("must provide dir_path");
-        }
+    public MechTileset(File dir_path) {
+        Objects.requireNonNull(dir_path, "Must provide dir_path");
         dir = dir_path;
     }
 
-    public Image imageFor(Entity entity, Component comp, int secondaryPos) {
+    public Image imageFor(Entity entity) {
+        return imageFor(entity, -1);
+    }
+
+    public Image imageFor(Entity entity, int secondaryPos) {
         MechEntry entry = entryFor(entity, secondaryPos);
 
         if (entry == null) {
-            System.err
-                    .println("Entry is null make sure that there is a default entry for "
-                            + entity.getShortNameRaw()
-                            + " in both mechset.txt and wreckset.txt.  Default to "
-                            + LIGHT_STRING);
-            System.err.flush();
+            MegaMek.getLogger().warning("Entry is null, please make sure that there is a default entry for "
+                    + entity.getShortNameRaw() + " in both mechset.txt and wreckset.txt. Defaulting to "
+                    + LIGHT_STRING);
             entry = default_light;
         }
 
         if (entry.getImage() == null) {
-            entry.loadImage(comp);
+            entry.loadImage();
         }
         return entry.getImage();
     }
@@ -227,28 +211,19 @@ public class MechTileset {
     public MechEntry entryFor(Entity entity, int secondaryPos) {
         //Some entities (QuadVees, LAMs) use different sprites depending on mode.
         String mode = entity.getTilesetModeString().toUpperCase();
+
+        String addendum = (secondaryPos == -1) ? "" : "_" + secondaryPos;
+
         // first, check for exact matches
-        if (secondaryPos != -1) {
-            if (exact.containsKey(entity.getShortNameRaw().toUpperCase()+mode+"_"+secondaryPos)) {
-                return exact.get(entity.getShortNameRaw().toUpperCase()+mode+"_"+secondaryPos);
-            }
-
-            // next, chassis matches
-            if (chassis.containsKey(entity.getChassis().toUpperCase()+mode+"_"+secondaryPos)) {
-                return chassis.get(entity.getChassis().toUpperCase()+mode+"_"+secondaryPos);
-            }
-
-            // last, the generic model
-            return genericFor(entity, secondaryPos);
-        }
-        if (exact.containsKey(entity.getShortNameRaw().toUpperCase() + mode)) {
-            return exact.get(entity.getShortNameRaw().toUpperCase() + mode);
+        if (exact.containsKey(entity.getShortNameRaw().toUpperCase() + mode + addendum)) {
+            return exact.get(entity.getShortNameRaw().toUpperCase() + mode + addendum);
         }
 
-        // next, chassis matches
-        if (chassis.containsKey(entity.getChassis().toUpperCase() + mode)) {
-            return chassis.get(entity.getChassis().toUpperCase() + mode);
+        // second, check for chassis matches
+        if (chassis.containsKey(entity.getChassis().toUpperCase() + mode + addendum)) {
+            return chassis.get(entity.getChassis().toUpperCase() + mode + addendum);
         }
+
         // last, the generic model
         return genericFor(entity, secondaryPos);
     }
@@ -256,107 +231,88 @@ public class MechTileset {
     public MechEntry genericFor(Entity entity, int secondaryPos) {
         if (entity instanceof BattleArmor) {
             return default_ba;
-        }
-        if (entity instanceof Infantry) {
+        } else if (entity instanceof Infantry) {
             return default_inf;
-        }
-        if (entity instanceof Protomech) {
+        } else if (entity instanceof Protomech) {
             return default_proto;
-        }
-        // mech, by weight
-        if (entity instanceof TripodMech) {
+        } else if (entity instanceof TripodMech) {
             return default_tripod;
-        }
-        if (entity instanceof QuadVee) {
-            return entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE?
-                    default_quadvee_vehicle : default_quadvee;
-        }
-        if (entity instanceof LandAirMech) {
-            if (entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
-                return default_lam_fighter;
-            } else if (entity.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH) {
-                return default_lam_airmech;
-            } else {
-                return default_lam_mech;
+        } else if (entity instanceof QuadVee) {
+            return entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE
+                    ? default_quadvee_vehicle : default_quadvee;
+        } else if (entity instanceof LandAirMech) {
+            switch (entity.getConversionMode()) {
+                case LandAirMech.CONV_MODE_FIGHTER:
+                    return default_lam_fighter;
+                case LandAirMech.CONV_MODE_AIRMECH:
+                    return default_lam_airmech;
+                default:
+                    return default_lam_mech;
             }
-        }
-        if (entity instanceof Mech) {
+        } else if (entity instanceof Mech) {
             if (entity.getMovementMode() == EntityMovementMode.QUAD) {
                 return default_quad;
-            }
-            if (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
-                return default_light;
-            } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
-                return default_medium;
-            } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
-                return default_heavy;
-            } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
-                return default_ultra_light;
-            } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
-                return default_super_heavy_mech;
             } else {
-                return default_assault;
+                switch (entity.getWeightClass()) {
+                    case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+                        return default_ultra_light;
+                    case EntityWeightClass.WEIGHT_LIGHT:
+                        return default_light;
+                    case EntityWeightClass.WEIGHT_MEDIUM:
+                        return default_medium;
+                    case EntityWeightClass.WEIGHT_HEAVY:
+                        return default_heavy;
+                    case EntityWeightClass.WEIGHT_SUPER_HEAVY:
+                        return default_super_heavy_mech;
+                    case EntityWeightClass.WEIGHT_ASSAULT:
+                    default:
+                        return default_assault;
+                }
             }
-        }
-        if (entity.getMovementMode() == EntityMovementMode.NAVAL) {
+        } else if (entity.getMovementMode() == EntityMovementMode.NAVAL) {
             return default_naval;
-        }
-        if (entity.getMovementMode() == EntityMovementMode.SUBMARINE) {
+        } else if (entity.getMovementMode() == EntityMovementMode.SUBMARINE) {
             return default_submarine;
-        }
-        if (entity.getMovementMode() == EntityMovementMode.HYDROFOIL) {
+        } else if (entity.getMovementMode() == EntityMovementMode.HYDROFOIL) {
             return default_hydrofoil;
-        }
-        if (entity instanceof Tank) {
-            if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
-                if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
-                    return default_tracked_heavy;
-                } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
-                    return default_tracked_assault;
-                } else {
-                    return default_tracked;
-                }
-            }
-            if (entity.getMovementMode() == EntityMovementMode.WHEELED) {
-                if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
-                    return default_wheeled_heavy;
-                }
-                return default_wheeled;
-            }
-            if (entity.getMovementMode() == EntityMovementMode.HOVER) {
-                return default_hover;
-            }
-            if (entity.getMovementMode() == EntityMovementMode.VTOL) {
-                return default_vtol;
-            }
-            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                return default_wige;
-            }
-        }
-        if (entity instanceof GunEmplacement) {
+        } else if (entity instanceof GunEmplacement) {
             return default_gun_emplacement;
-        }
-
-        if (entity instanceof Aero) {
-
+        } else if (entity instanceof Tank) {
+            switch (entity.getMovementMode()) {
+                case WHEELED:
+                    if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
+                        return default_wheeled_heavy;
+                    } else {
+                        return default_wheeled;
+                    }
+                case HOVER:
+                    return default_hover;
+                case VTOL:
+                    return default_vtol;
+                case WIGE:
+                    return default_wige;
+                case TRACKED:
+                default:
+                    switch (entity.getWeightClass()) {
+                        case EntityWeightClass.WEIGHT_HEAVY:
+                            return default_tracked_heavy;
+                        case EntityWeightClass.WEIGHT_ASSAULT:
+                            return default_tracked_assault;
+                        default:
+                            return default_tracked;
+                    }
+            }
+        } else if (entity instanceof Aero) {
             if (entity instanceof SpaceStation) {
                 return default_space_station;
-            }
-
-            if (entity instanceof Warship) {
+            } else if (entity instanceof Warship) {
                 return default_warship;
-            }
-
-            if (entity instanceof Jumpship) {
+            } else if (entity instanceof Jumpship) {
                 return default_jumpship;
-            }
-
-            if (entity instanceof Dropship) {
+            } else if (entity instanceof Dropship) {
                 Dropship ds = (Dropship) entity;
                 if (ds.isSpheroid()) {
                     switch (secondaryPos) {
-                        case -1:
-                            return default_dropship_sphere;
                         case 0:
                             return default_dropship_sphere_0;
                         case 1:
@@ -371,52 +327,51 @@ public class MechTileset {
                             return default_dropship_sphere_5;
                         case 6:
                             return default_dropship_sphere_6;
+                        case -1:
+                        default:
+                            return default_dropship_sphere;
                     }
                 } else {
                     switch (secondaryPos) {
-                    case -1:
-                        return default_dropship_aero;
-                    case 0:
-                        return default_dropship_aero_0;
-                    case 1:
-                        return default_dropship_aero_1;
-                    case 2:
-                        return default_dropship_aero_2;
-                    case 3:
-                        return default_dropship_aero_3;
-                    case 4:
-                        return default_dropship_aero_4;
-                    case 5:
-                        return default_dropship_aero_5;
-                    case 6:
-                        return default_dropship_aero_6;
+                        case 0:
+                            return default_dropship_aero_0;
+                        case 1:
+                            return default_dropship_aero_1;
+                        case 2:
+                            return default_dropship_aero_2;
+                        case 3:
+                            return default_dropship_aero_3;
+                        case 4:
+                            return default_dropship_aero_4;
+                        case 5:
+                            return default_dropship_aero_5;
+                        case 6:
+                            return default_dropship_aero_6;
+                        case -1:
+                        default:
+                            return default_dropship_aero;
+                    }
                 }
-                }
-            }
-
-            if (entity instanceof FighterSquadron) {
+            } else if (entity instanceof FighterSquadron) {
                 return default_fighter_squadron;
-            }
-
-            if (entity instanceof SmallCraft) {
+            } else if (entity instanceof SmallCraft) {
                 SmallCraft sc = (SmallCraft) entity;
                 if (sc.isSpheroid()) {
                     return default_small_craft_sphere;
+                } else {
+                    return default_small_craft_aero;
                 }
-                return default_small_craft_aero;
-            }
-            if (entity instanceof TeleMissile) {
+            } else if (entity instanceof TeleMissile) {
                 return default_tele_missile;
+            } else {
+                return default_aero;
             }
-
-            return default_aero;
         }
 
         return default_unknown;
     }
 
     public void loadFromFile(String filename) throws IOException {
-        // make inpustream for board
         Reader r = new BufferedReader(new FileReader(new MegaMekFile(dir, filename).getFile()));
         // read board, looking for "size"
         StreamTokenizer st = new StreamTokenizer(r);
@@ -428,38 +383,32 @@ public class MechTileset {
             String name;
             String imageName;
             if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("include")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("include")) {
                 st.nextToken();
                 name = st.sval;
-                System.out.print("Loading more unit images from "); //$NON-NLS-1$
-                System.out.print(name);
-                System.out.println("..."); //$NON-NLS-1$
+                MegaMek.getLogger().debug("Loading more unit images from " + name + "...");
                 try {
                     loadFromFile(name);
-                    System.out.print("... finished "); //$NON-NLS-1$
-                    System.out.print(name);
-                    System.out.println("."); //$NON-NLS-1$
-                } catch (IOException ioerr) {
-                    System.out.print("... failed: "); //$NON-NLS-1$
-                    System.out.print(ioerr.getMessage());
-                    System.out.println("."); //$NON-NLS-1$
+                    MegaMek.getLogger().debug("... finished " + name + ".");
+                } catch (IOException e) {
+                    MegaMek.getLogger().debug("... failed: " + e.getMessage() + ".", e);
                 }
             } else if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("chassis")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("chassis")) {
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();
                 imageName = st.sval;
                 // add to list
-                chassis.put(name.toUpperCase(), new MechEntry(name, imageName));
+                chassis.put(name.toUpperCase(), new MechEntry(imageName));
             } else if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("exact")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("exact")) {
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();
                 imageName = st.sval;
                 // add to list
-                exact.put(name.toUpperCase(), new MechEntry(name, imageName));
+                exact.put(name.toUpperCase(), new MechEntry(imageName));
             }
         }
         r.close();
@@ -479,8 +428,7 @@ public class MechTileset {
         default_tripod = exact.get(TRIPOD_STRING.toUpperCase());
         default_tracked = exact.get(TRACKED_STRING.toUpperCase());
         default_tracked_heavy = exact.get(TRACKED_HEAVY_STRING.toUpperCase());
-        default_tracked_assault = exact.get(TRACKED_ASSAULT_STRING
-                .toUpperCase());
+        default_tracked_assault = exact.get(TRACKED_ASSAULT_STRING.toUpperCase());
         default_wheeled = exact.get(WHEELED_STRING.toUpperCase());
         default_wheeled_heavy = exact.get(WHEELED_HEAVY_STRING.toUpperCase());
         default_hover = exact.get(HOVER_STRING.toUpperCase());
@@ -491,8 +439,7 @@ public class MechTileset {
         default_inf = exact.get(INF_STRING.toUpperCase());
         default_ba = exact.get(BA_STRING.toUpperCase());
         default_proto = exact.get(PROTO_STRING.toUpperCase());
-        default_gun_emplacement = exact.get(GUN_EMPLACEMENT_STRING
-                .toUpperCase());
+        default_gun_emplacement = exact.get(GUN_EMPLACEMENT_STRING.toUpperCase());
         default_wige = exact.get(WIGE_STRING.toUpperCase());
         default_aero = exact.get(AERO_STRING.toUpperCase());
         default_small_craft_aero = exact.get(SMALL_CRAFT_AERO_STRING.toUpperCase());
@@ -529,7 +476,7 @@ public class MechTileset {
         private String imageFile;
         private Image image;
 
-        public MechEntry(String name, String imageFile) {
+        public MechEntry(String imageFile) {
             this.imageFile = imageFile;
             image = null;
         }
@@ -538,13 +485,11 @@ public class MechTileset {
             return image;
         }
 
-        public void loadImage(Component comp) {
-            // System.out.println("loading mech image...");
+        public void loadImage() {
             File fin = new MegaMekFile(dir, imageFile).getFile();
             image = ImageUtil.loadImageFromFile(fin.toString());
             if (image == null) {
-                System.out.println("Received null image from "
-                        + "ImageUtil.loadImageFromFile!  File: "
+                MegaMek.getLogger().warning("Received null image from ImageUtil.loadImageFromFile! File: "
                         + fin.toString());
             }
         }

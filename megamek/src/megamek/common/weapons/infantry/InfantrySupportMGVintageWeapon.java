@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -31,12 +31,11 @@ public class InfantrySupportMGVintageWeapon extends InfantryWeapon {
 
 	public InfantrySupportMGVintageWeapon() {
 		super();
-		;
 		name = "Machine Gun (Vintage)";
 		setInternalName(name);
 		addLookupName("InfantryVintageMachineGun");
 		addLookupName("VintageMachineGun");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 6000;
 		tonnage = .011;
 		bv = 0.0;
@@ -44,6 +43,10 @@ public class InfantrySupportMGVintageWeapon extends InfantryWeapon {
 		infantryDamage = 0.39;
 		infantryRange = 1;
 		crew = 1;
+		ammoWeight = 0.004;
+		ammoCost = 150;
+		shots = 90;
+		bursts = 9;
 		rulesRefs = "195,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

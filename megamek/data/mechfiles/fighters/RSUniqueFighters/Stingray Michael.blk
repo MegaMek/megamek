@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -103,4 +103,3 @@ RS Unique Fighters - Jihad
 <tonnage>
 60.0
 </tonnage>
-

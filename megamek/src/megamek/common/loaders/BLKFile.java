@@ -24,6 +24,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class BLKFile {
 
@@ -45,6 +46,8 @@ public class BLKFile {
     public static final int EXTERNAL = 13;
     
     private static final String COMSTAR_BAY = "c*";
+
+    static final String BLK_EXTRA_SEATS = "extra_seats";
     
     /**
      * If a vehicular grenade launcher does not have a facing provided, assign a default facing.
@@ -227,6 +230,16 @@ public class BLKFile {
                                 size = getLegacyVariableSize(equipName);
                             }
                             mount.setSize(size);
+                        } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)
+                                && size > 1) {
+                            // The ammo bin is created by Entity#addEquipment but the size has not
+                            // been set yet, so if the unit carries multiple clips the number of
+                            // shots needs to be adjusted.
+                            mount.setSize(size);
+                            assert(mount.getLinked() != null);
+                            mount.getLinked().setOriginalShots((int) size
+                                * ((InfantryWeapon) mount.getType()).getShots());
+                            mount.getLinked().setShotsLeft(mount.getLinked().getOriginalShots());
                         }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
@@ -963,6 +976,9 @@ public class BLKFile {
             if (!t.isSupportVehicle() && t.isTrailer()) {
                 blk.writeBlockData("trailer", 1);
             }
+            if (tank.getExtraCrewSeats() > 0) {
+                blk.writeBlockData(BLK_EXTRA_SEATS, tank.getExtraCrewSeats());
+            }
         }
         
         if (t instanceof SmallCraft) {
@@ -1060,7 +1076,8 @@ public class BLKFile {
             name += ":Shots" + m.getBaseShotsLeft() + "#";
         } else if (m.getEntity() instanceof Protomech && (m.getType() instanceof AmmoType)) {
             name += " (" + m.getBaseShotsLeft() + ")";
-        } else if (m.getType().isVariableSize()) {
+        } else if (m.getType().isVariableSize()
+                || (m.getEntity().isSupportVehicle() && (m.getType() instanceof InfantryWeapon))) {
             name += ":SIZE:" + m.getSize();
         }
         return name;
@@ -1081,6 +1098,10 @@ public class BLKFile {
                 transporter = transporter.toLowerCase();
             	boolean isPod = transporter.endsWith(":omni");
             	transporter = transporter.replace(":omni", "");
+            	boolean hasARTS = transporter.startsWith("arts");
+            	if (hasARTS) {
+            	    transporter = transporter.substring(4);
+                }
 
             	// TroopSpace:
                 if (transporter.startsWith("troopspace:")) {
@@ -1110,11 +1131,11 @@ public class BLKFile {
                 } else if (transporter.startsWith("asfbay:")) {
                     String numbers = transporter.substring(7);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                    e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), hasARTS), isPod);
                 } else if (transporter.startsWith("smallcraftbay:")) {
                     String numbers = transporter.substring(14);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                    e.addTransporter(new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), hasARTS), isPod);
                 } else if (transporter.startsWith("mechbay:")) {
                     String numbers = transporter.substring(8);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
@@ -1155,15 +1176,18 @@ public class BLKFile {
                 } else if (transporter.startsWith("navalrepairpressurized:")) {
                     String numbers = transporter.substring("navalrepairpressurized:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing(), true), isPod);
+                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(),
+                            pbi.getFacing(), true, hasARTS), isPod);
                 } else if (transporter.startsWith("navalrepairunpressurized:")) {
                     String numbers = transporter.substring("navalrepairunpressurized:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing(), false), isPod);
+                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(),
+                            pbi.getBayNumber(), pbi.getFacing(), false, hasARTS), isPod);
                 } else if (transporter.startsWith("reinforcedrepairfacility:")) {
                     String numbers = transporter.substring("reinforcedrepairfacility:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new ReinforcedRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()), isPod);
+                    e.addTransporter(new ReinforcedRepairFacility(pbi.getSize(), pbi.getDoors(),
+                            pbi.getBayNumber(), pbi.getFacing()), isPod);
                 } else if (transporter.startsWith("crewquarters:")) {
                     String numbers = transporter.substring(13);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);

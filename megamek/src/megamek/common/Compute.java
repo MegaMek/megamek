@@ -1115,12 +1115,14 @@ public class Compute {
         boolean targetUnderwater = false;
         boolean weaponUnderwater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET);
         if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-            && targHex.containsTerrain(Terrains.WATER) && (targBottom < 0)) {
-            if (targTop >= 0) {
-                targetInPartialWater = true;
-            } else {
-                targetUnderwater = true;
-            }
+            && (targHex != null) && targHex.containsTerrain(Terrains.WATER) 
+            && (targBottom < 0)) {
+            
+                if (targTop >= 0) {
+                    targetInPartialWater = true;
+                } else {
+                    targetUnderwater = true;
+                }
         }
 
         // allow naval units on surface to be attacked from above or below
@@ -1138,8 +1140,9 @@ public class Compute {
             weaponUnderwater = true;
             weaponRanges = wtype.getWRanges();
         }
+        
         // allow ice to be cleared from below
-        if (targHex.containsTerrain(Terrains.WATER)
+        if ((targHex != null) && targHex.containsTerrain(Terrains.WATER)
             && (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             targetInPartialWater = true;
         }
@@ -2626,6 +2629,14 @@ public class Compute {
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t,
                                                      int eistatus, boolean attackerInSameBuilding,
                                                      boolean underwaterWeapon) {
+        ToHitData toHit = new ToHitData();
+
+        // no terrain mods for bombs, artillery strikes
+        if (t.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB ||
+                t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) {
+            return toHit;
+        }
+        
         Entity entityTarget = null;
         IHex hex = game.getBoard().getHex(t.getPosition());
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -2637,20 +2648,27 @@ public class Compute {
                         game.getEntity(entityTarget.getId()).getPosition());
             }
         }
-
-
-        boolean isAboveWoodsAndSmoke = ((entityTarget != null) && (hex != null))
-                                       && ((entityTarget.relHeight() >= 2) || (entityTarget
-                                                                                       .isAirborne()));
-        boolean isUnderwater = ((entityTarget != null) && (hex != null))
-                               && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)
-                               && (entityTarget.getElevation() < hex.surface());
-        ToHitData toHit = new ToHitData();
-
-        if (t.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {
-            // no terrain mods for aero bombing
+        
+        // if the hex doesn't exist, it's unlikely to have terrain modifiers
+        if (hex == null) {
             return toHit;
         }
+
+
+        boolean hasWoods = hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE);
+        // Standard mechs (standing) report their height as 1, tanks as 0
+        // Standard mechs should not benefit from 1 level high woods
+        
+        boolean isAboveWoods = (entityTarget == null) 
+                || (entityTarget.relHeight() + 1 > hex.terrainLevel(Terrains.FOLIAGE_ELEV)) 
+                || entityTarget.isAirborne() 
+                || !hasWoods;
+        boolean isAboveSmoke = (entityTarget == null)
+                || (entityTarget.relHeight() + 1 > 2) 
+                || !hex.containsTerrain(Terrains.SMOKE);
+        boolean isUnderwater = (entityTarget != null)
+                               && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)
+                               && (entityTarget.getElevation() < hex.surface());
 
         // if we have in-building combat, it's a +1
         if (attackerInSameBuilding) {
@@ -2674,7 +2692,7 @@ public class Compute {
         }
 
         if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)
-            && !isAboveWoodsAndSmoke
+            && !isAboveWoods
             && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR)
                  || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                  || (t.getTargetType() == Targetable.TYPE_HEX_BOMB)
@@ -2690,7 +2708,7 @@ public class Compute {
                 }
             }
         }
-        if (!isAboveWoodsAndSmoke && !isUnderwater && !underwaterWeapon) {
+        if (!isAboveSmoke && !isUnderwater && !underwaterWeapon) {
             if ((hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LIGHT)
                 || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_LIGHT)
                 || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_HEAVY)
@@ -7011,7 +7029,7 @@ public class Compute {
             }
             return crew + (int) Math.ceil(crew / 6.0);
         } else if (entity instanceof Tank) {
-            return (int) Math.ceil(entity.getWeight() / 15.0);
+            return (int) Math.ceil(entity.getWeight() / 15.0) + ((Tank) entity).getExtraCrewSeats();
         } else if (entity instanceof BattleArmor) {
             int ntroopers = 0;
             for (int trooper = 1; trooper < entity.locations(); trooper++) {

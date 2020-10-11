@@ -53,7 +53,6 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
-import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -74,15 +73,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     
     public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
-        final String METHOD_NAME = "BasicPathRanker(Princess)";
         
         bestDamageByEnemies = new TreeMap<>();
         
-        getOwner().log(
-                getClass(),
-                METHOD_NAME,
-                LogLevel.DEBUG,
-                "Using " + getOwner().getBehaviorSettings().getDescription()
+        getOwner().getLogger().debug("Using " + getOwner().getBehaviorSettings().getDescription()
                         + " behavior");
     }
     
@@ -124,13 +118,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
     boolean canFlankAndKick(Entity enemy, Coords behind, Coords leftFlank,
                             Coords rightFlank, int myFacing) {
-        final String METHOD_NAME = "canFlankAndKick(Entity, Coords, Coords, " +
-                                   "Coords, int)";
         Set<CoordFacingCombo> enemyFacingSet =
                 pathEnumerator.getUnitPotentialLocations().get(enemy.getId());
         if (enemyFacingSet == null) {
-            getOwner().log(getClass(), METHOD_NAME, LogLevel.WARNING,
-                           "no facing set for " + enemy.getDisplayName());
+            getOwner().getLogger().warning("no facing set for " + enemy.getDisplayName());
             return false;
         }
         return enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, myFacing))
@@ -151,10 +142,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
                                                   boolean useExtremeRange,
                                                   boolean useLOSRange) {
-        final String METHOD_NAME =
-                "EntityEvaluationResponse evaluateUnmovedEnemy(Entity," +
-                "MovePath,IGame)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             //some preliminary calculations
@@ -224,7 +212,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             }
             return returnResponse;
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -527,10 +515,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     protected RankedPath rankPath(MovePath path, IGame game, int maxRange,
                                double fallTolerance, int distanceHome,
                                List<Entity> enemies, Coords friendsCoords) {
-        final String METHOD_NAME = "rankPath(MovePath, IGame, Targetable, int, " +
-                                   "double, int, int, List<Entity>, Coords)";
-
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder("Calculation: {");
@@ -673,7 +658,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             rankedPath.setExpectedDamage(maximumDamageDone);
             return rankedPath;
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
 
     }
@@ -692,8 +677,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      */
     @Override
     public void initUnitTurn(Entity unit, IGame game) {
-        final String METHOD_NAME = "initUnitTurn(Entity, IGame)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             bestDamageByEnemies.clear();
@@ -720,7 +704,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 bestDamageByEnemies.put(e.getId(), max_damage);
             }
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -776,8 +760,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      * @param game     IGame that we're playing
      */
     public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
-        final String METHOD_NAME = "distanceToClosestEnemy(Entity, Coords, IGame)";
-        getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             Targetable closest = findClosestEnemy(me, position, game);
@@ -786,7 +769,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             }
             return closest.getPosition().distance(position);
         } finally {
-            getOwner().methodEnd(BasicPathRanker.class, METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -794,8 +777,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      * Gives the distance to the closest edge
      */
     int distanceToClosestEdge(Coords position, IGame game) {
-        final String METHOD_NAME = "distanceToClosestEdge(Coords, IGame)";
-        getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             int width = game.getBoard().getWidth();
@@ -812,7 +794,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             }
             return minimum;
         } finally {
-            getOwner().methodEnd(BasicPathRanker.class, METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -827,8 +809,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      */
     @Override
     public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
-        final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
-        getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             String msg = "Getting distance to home edge: " + homeEdge.toString();
@@ -855,23 +836,20 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                     break;
                 }
                 default: {
-                    getOwner().log(getClass(), METHOD_NAME, LogLevel.WARNING,
-                                   "Invalid home edge.  Defaulting to NORTH.");
+                    getOwner().getLogger().warning("Invalid home edge.  Defaulting to NORTH.");
                     distance = position.getY();
                 }
             }
 
             msg += " -> " + distance;
-            getOwner().log(BasicPathRanker.class, METHOD_NAME, msg);
+            getOwner().getLogger().debug(msg);
             return distance;
         } finally {
-            getOwner().methodEnd(BasicPathRanker.class, METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
     double checkPathForHazards(MovePath path, Entity movingUnit, IGame game) {
-        final String METHOD_NAME = "checkPathForHazards(MovePath, Entity, IGame)";
-
         StringBuilder logMsg = new StringBuilder("Checking Path (")
                 .append(path.toString()).append(") for hazards.");
 
@@ -919,7 +897,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
             return totalHazard;
         } finally {
-            getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, logMsg);
+            getOwner().getLogger().debug(logMsg.toString());
         }
     }
 

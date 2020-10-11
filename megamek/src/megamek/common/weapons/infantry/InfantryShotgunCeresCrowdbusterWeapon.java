@@ -35,13 +35,15 @@ public class InfantryShotgunCeresCrowdbusterWeapon extends InfantryWeapon {
 		name = "Ceres Arms Crowdbuster";
 		setInternalName(name);
 		addLookupName("InfantryCeresCrowdbuster");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 150;
 		bv = 0.10;
 		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.11;
 		infantryRange = 0;
+		ammoWeight = 0.0003;
+		shots = 15;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3028, 3030, 3058, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)

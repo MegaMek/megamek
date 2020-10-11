@@ -94,6 +94,10 @@ public class HVACWeaponHandler extends ACWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+            return true;
+        }
+        
         if (roll == 2) {
             Report r = new Report(3162);
             r.subject = subjectId;

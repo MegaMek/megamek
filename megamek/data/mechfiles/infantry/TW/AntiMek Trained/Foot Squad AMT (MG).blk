@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,7 +13,7 @@ Infantry
 </UnitType>
 
 <Name>
-Foot Squad
+Foot Squad (Anti-'Mech)
 </Name>
 
 <Model>
@@ -66,4 +66,3 @@ Machine Gun (Portable)
 <armorKit>
 GenericKit
 </armorKit>
-

@@ -31,7 +31,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.LogLevel;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.IOption;
@@ -228,14 +227,11 @@ public class QuirksHandler {
     }
 
     private static Map<String, List<QuirkEntry>> loadQuirksFile(String path) throws IOException {
-        final String METHOD_NAME = "loadQuirksFile(String)";
-        
         Map<String, List<QuirkEntry>> quirkMap = new HashMap<>();
 
         File file = new File(path);
         if (!file.exists() || !file.isFile()) {
-            getLogger().log(QuirksHandler.class, METHOD_NAME, LogLevel.WARNING,
-                            "Could not load quirks from " + path);
+            getLogger().warning("Could not load quirks from " + path);
             return quirkMap;
         }
 
@@ -365,10 +361,10 @@ public class QuirksHandler {
             log.append("\n\tTotal number of quirk entries: ").append(quirkMap.size());
             return quirkMap;
         } catch (Exception e) {
-            getLogger().error(QuirksHandler.class, METHOD_NAME, e);
+            getLogger().error(e);
             throw new IOException(e);
         } finally {
-            getLogger().log(QuirksHandler.class, METHOD_NAME, LogLevel.INFO, log);
+            getLogger().info(log.toString());
         }
     }
 
@@ -397,8 +393,6 @@ public class QuirksHandler {
     }
     
     public static void saveCustomQuirksList() throws IOException {
-        final String METHOD_NAME = "saveCustomQuirksList()";
-        
         // If customQuirkMap wasn't initialized, no reason to save it
         if (customQuirkMap == null) {
             return;
@@ -487,8 +481,7 @@ public class QuirksHandler {
             
             output.write(CUSTOM_QUIRKS_FOOTER);
         } catch (IOException e) {
-            getLogger().log(QuirksHandler.class, METHOD_NAME, LogLevel.ERROR,
-                            "Error writting keybindings file!", e);
+            getLogger().error("Error writing CustomQuirks file!", e);
         } finally {
             if (output != null) {
                 output.close();
@@ -513,8 +506,6 @@ public class QuirksHandler {
      */
     @Nullable
     static List<QuirkEntry> getQuirks(Entity entity) {
-        final String METHOD_NAME = "getQuirks(Entity)";
-
         if (!initialized.get() || (null == canonQuirkMap)) {
             return null;
         }
@@ -575,20 +566,18 @@ public class QuirksHandler {
             return quirks.isEmpty() ? null : quirks;
         } catch (Exception e) {
             String msg = "generalId: '" + generalId + "'\nunitId: '" + unitId + "'\n";
-            getLogger().log(QuirksHandler.class, METHOD_NAME, LogLevel.ERROR, msg, e);
+            getLogger().error(msg, e);
             throw new RuntimeException(msg, e);
         }
     }
     
     public static void addCustomQuirk(Entity entity, boolean useModel) {
-        final String METHOD_NAME = "addCustomQuirk(Entity, boolean)";
-        
         // Shouldn't happen, but lets be careful
         if (customQuirkMap == null) {
             try {
                 QuirksHandler.initQuirksList();
             } catch (IOException e) {
-                getLogger().error(QuirksHandler.class, METHOD_NAME, e);
+                getLogger().error(e);
             }
         }
         
@@ -708,14 +697,12 @@ public class QuirksHandler {
      * munge its eType and write it to customQuirks.
      */
     public static void mungeQuirks(String quirkId, String newId) {
-        final String METHOD_NAME = "mungeQuirks(String, String)";
-        
         // Shouldn't happen, but lets be careful
         if (customQuirkMap == null) {
             try {
                 QuirksHandler.initQuirksList();
             } catch (IOException e) {
-                getLogger().error(QuirksHandler.class, METHOD_NAME, e);
+                getLogger().error(e);
             }
         }
 

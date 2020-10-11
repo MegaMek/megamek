@@ -37,13 +37,15 @@ public class InfantrySupportERHeavyLaserWeapon extends InfantryWeapon {
 		addLookupName("InfantryERHeavyLaser");
 		addLookupName("InfantryERMediumLaser");
 		addLookupName("Infantry ER Heavy Laser");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 80000;
 		bv = 13.88;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
 		infantryDamage = 1.05;
 		infantryRange = 6;
 		crew = 4;
+		ammoWeight = 0.003;
+		shots = 7;
 		damage = 1;
 		minimumRange = 0;
 		shortRange = 6;

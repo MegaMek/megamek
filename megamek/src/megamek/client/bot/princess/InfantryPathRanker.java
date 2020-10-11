@@ -21,10 +21,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
     @Override
     protected RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance, int distanceHome,
             List<Entity> enemies, Coords friendsCoords) {
-        final String METHOD_NAME = "rankPath(MovePath, IGame, Targetable, int, " +
-                "double, int, int, List<Entity>, Coords)";
-
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
         
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder("Calculation: {");
@@ -113,17 +110,14 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
             rankedPath.setExpectedDamage(maximumDamageDone);
             return rankedPath;
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
     
     EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, 
             boolean useExtremeRange, boolean useLOSRange) {
         
-        final String METHOD_NAME =
-                "EntityEvaluationResponse evaluateUnmovedEnemy(Entity," +
-                "MovePath,IGame)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             //some preliminary calculations
@@ -183,7 +177,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
             }
             return returnResponse;
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 }

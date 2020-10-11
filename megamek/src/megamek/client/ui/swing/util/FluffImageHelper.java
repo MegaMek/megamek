@@ -26,7 +26,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Tank;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * 

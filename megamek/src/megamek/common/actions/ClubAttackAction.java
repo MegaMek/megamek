@@ -222,7 +222,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
             return 0;
         } else if (clubType.hasSubType(MiscType.S_HATCHET)
                 || clubType.hasSubType(MiscType.S_MINING_DRILL)) {
-            return 1;
+            return -1;
         } else if (clubType.hasSubType(MiscType.S_COMBINE)
                 || clubType.hasSubType(MiscType.S_RETRACTABLE_BLADE)
                 || clubType.hasSubType(MiscType.S_SWORD)
@@ -230,11 +230,11 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 || clubType.hasSubType(MiscType.S_SHIELD_SMALL)
                 || clubType.isVibroblade()
                 || clubType.hasSubType(MiscType.S_COMBINE)) {
-            return 2;
+            return -2;
         } else if (clubType.hasSubType(MiscType.S_SHIELD_MEDIUM)) {
-            return 3;
+            return -3;
         } else if (clubType.hasSubType(MiscType.S_SHIELD_LARGE)) {
-            return 4;
+            return -4;
         } else {
             return 1;
         }

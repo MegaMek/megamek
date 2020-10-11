@@ -295,7 +295,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         super.addSystemTechAdvancement(ctl);
-        if (getCockpitTechAdvancement() != null) {
+        if (isFighter() && (getCockpitTechAdvancement() != null)) {
             ctl.addComponent(getCockpitTechAdvancement());
         }
     }
@@ -1357,8 +1357,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
         boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
 
-        for (int loc = 0; loc < (this instanceof SmallCraft ? locations() : (locations() - 1)); loc++) {
-
+        // For Aeros other than SmallCraft ignore their Wings and Fuselage for armor in BV calcs
+        for (int loc = 0; loc < (this instanceof SmallCraft ? locations() : (locations() - 2)); loc++) {
             int modularArmor = 0;
             for (Mounted mounted : getEquipment()) {
                 if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
@@ -1652,6 +1652,8 @@ public class Aero extends Entity implements IAero, IBomber {
             if ((etype instanceof WeaponType) && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_IMP)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_PRIMITIVE)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_PAC)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC))) {
                 toSubtract = 0;
             }

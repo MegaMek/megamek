@@ -73,6 +73,7 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.TripodMech;
 import megamek.common.VTOL;
+import megamek.common.Warship;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DiveBombAttack;
@@ -350,7 +351,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         boolean isAttackerInfantry = ae instanceof Infantry;
         
-        boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
+        boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY) && !ae.isSupportVehicle();
         
         boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
         // 2003-01-02 BattleArmor MG and Small Lasers have unlimited ammo.
@@ -1158,7 +1159,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Only weapons allowed to clear minefields can target a hex for minefield clearance
-        if ((target instanceof MinefieldTarget) && atype != null && !AmmoType.canClearMinefield(atype)) {
+        if ((target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) && 
+                ((atype == null) || !AmmoType.canClearMinefield(atype))) {
             return Messages.getString("WeaponAttackAction.CantClearMines");
         }
         
@@ -3748,6 +3750,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             || wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE))) {
                 toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeEvading"));
             }
+            
+            // stratops page 113: ECHO maneuvers for large craft
+            if (((aero instanceof Warship) || (aero instanceof Dropship)) &&
+                    (aero.getFacing() != aero.getSecondaryFacing())) {
+                // if we're computing this for an "attack preview", then we add 2 MP to 
+                // the mp used, as we haven't used the MP yet. If we're actually processing
+                // the attack, then the entity will be marked as 'done' and we have already added
+                // the 2 MP, so we don't need to double-count it
+                int extraMP = aero.isDone() ? 0 : 2;
+                boolean willUseRunMP = aero.mpUsed + extraMP > aero.getWalkMP();
+                int mod = willUseRunMP ? 2 : 1;
+                toHit.addModifier(mod, Messages.getString("WeaponAttackAction.LargeCraftEcho"));
+            }
 
             // check for particular kinds of weapons in weapon bays
             if (ae.usesWeaponBays() && wtype != null && weapon != null) {
@@ -4359,6 +4374,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         //Target's hex
         IHex targHex = game.getBoard().getHex(target.getPosition());
         
+        boolean targetHexContainsWater = targHex != null && targHex.containsTerrain(Terrains.WATER);
+        boolean targetHexContainsFortified = targHex != null && targHex.containsTerrain(Terrains.FORTIFIED);
+        
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
             //Some of these weapons only target valid entities
@@ -4398,7 +4416,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Fortified/Dug-In Infantry
         if ((target instanceof Infantry) && wtype != null && !wtype.hasFlag(WeaponType.F_FLAMER)) {
-            if (targHex.containsTerrain(Terrains.FORTIFIED)
+            if (targetHexContainsFortified
                     || (((Infantry) target).getDugIn() == Infantry.DUG_IN_COMPLETE)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.DugInInf"));
             }
@@ -4409,7 +4427,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
             partialWaterLevel = 2;
         }
-        if ((te != null) && targHex.containsTerrain(Terrains.WATER)
+        if ((te != null) && targetHexContainsWater
                 // target in partial water
                 && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) { 
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
@@ -4419,7 +4437,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Change hit table for partial cover, accomodate for partial
         // underwater(legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
-            if (underWater && (targHex.containsTerrain(Terrains.WATER) && (targEl == 0) 
+            if (underWater && (targetHexContainsWater && (targEl == 0) 
                     && (te != null && te.height() > 0))) {
                 // weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
@@ -4516,7 +4534,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Change hit table for surface naval vessels hit by underwater attacks
-        if (underWater && targHex.containsTerrain(Terrains.WATER) && (null != te) && te.isSurfaceNaval()) {
+        if (underWater && targetHexContainsWater && (null != te) && te.isSurfaceNaval()) {
             toHit.setHitTable(ToHitData.HIT_UNDERWATER);
         }
         

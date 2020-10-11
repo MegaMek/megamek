@@ -31,7 +31,6 @@ import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -41,7 +40,7 @@ import megamek.common.IGame;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.IPlayer;
 import megamek.common.Mounted;
 import megamek.common.OffBoardDirection;
@@ -175,16 +174,6 @@ public class OffBoardTargetOverlay implements IDisplayable {
     }
     
     @Override
-    public boolean isBeingDragged() {
-        return false;
-    }
-
-    @Override
-    public boolean isDragged(Point point, Dimension backSize) {
-        return false;
-    }
-
-    @Override
     public boolean isHit(Point point, Dimension size) {
         Point actualPoint = point;
         actualPoint.x = (int) (point.getX() + clientgui.getBoardView().getDisplayablesRect().getX());
@@ -201,11 +190,6 @@ public class OffBoardTargetOverlay implements IDisplayable {
             }
         }
                 
-        return false;
-    }
-
-    @Override
-    public boolean isMouseOver(Point point, Dimension backSize) {
         return false;
     }
 
@@ -306,20 +290,6 @@ public class OffBoardTargetOverlay implements IDisplayable {
         }
     }
 
-    @Override
-    public boolean isSliding() {
-        return false;
-    }
-
-    @Override
-    public void setIdleTime(long l, boolean b) {
-    }
-
-    @Override
-    public boolean slide() {
-        return false;
-    }
-    
     /**
      * Worker function that handles a click on a 'counterbattery fire' overlay button.
      * Possibly shows a target selection popup

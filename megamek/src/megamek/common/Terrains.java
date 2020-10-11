@@ -133,6 +133,13 @@ public class Terrains implements ITerrainFactory {
     public static final int INCLINE_HIGH_TOP = 52;
     public static final int INCLINE_HIGH_BOTTOM = 53; 
     
+    // Helper terrain that gives the elevation for foliage (woods and jungle).
+    // Allowed values are 1 for L/H/U, 2 for L/H and 3 for U foliage.
+    // This terrain is meaningless when alone but must be present in any
+    // hex that has either woods or jungle. It is added by the board loader
+    // when it's not present in the board file.
+    public static final int FOLIAGE_ELEV = 54;
+    
     /**
      * Keeps track of the different type of terrains that can have exits.
      */
@@ -144,7 +151,7 @@ public class Terrains implements ITerrainFactory {
             "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev",
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
             "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom", 
-            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom" };
+            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev" };
     
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = 
@@ -246,6 +253,8 @@ public class Terrains implements ITerrainFactory {
             } else {
                 return "Woods (unknown)";
             }
+        case (FOLIAGE_ELEV):
+            return "Woods/Jungle elevation: " + level; 
         case (ROUGH):
             if (level == 1) {
                 return "Rough";
@@ -462,15 +471,20 @@ public class Terrains implements ITerrainFactory {
     public static int getTerrainFactor(int type, int level) {
         switch (type) {
             case (WOODS):
-            case (JUNGLE):
-                if (level == 1) {
-                    return 50;
-                } else if (level == 2) {
+                if (level == 2) {
                     return 90;
+                } else if (level == 3) {
+                    return 120;
+                } else {
+                    return 50;
+                }
+            case (JUNGLE):
+                if (level == 2) {
+                    return 100;
                 } else if (level == 3) {
                     return 130;
                 } else {
-                    return 50;
+                    return 60;
                 }
             case (ROUGH):
             case (PAVEMENT):
@@ -522,8 +536,7 @@ public class Terrains implements ITerrainFactory {
         // Handle altitudes
         if (inAtmosphere) {
             switch (terrainType) {
-            case WOODS:
-            case JUNGLE:
+            case FOLIAGE_ELEV:
                 return 1;
             default:
                 return 0;
@@ -534,14 +547,8 @@ public class Terrains implements ITerrainFactory {
         case INDUSTRIAL:
         case BLDG_ELEV:
         case BRIDGE_ELEV:
+        case FOLIAGE_ELEV:
             return terrainLevel;
-        case WOODS:
-        case JUNGLE:
-            if (terrainLevel > 2) {
-                return 3;
-            } else {
-                return 2;
-            }
         case FIELDS:
             return 1;
         default:

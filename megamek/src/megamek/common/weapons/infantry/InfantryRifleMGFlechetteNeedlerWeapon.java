@@ -36,13 +36,16 @@ public class InfantryRifleMGFlechetteNeedlerWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMGFlechette");
 		addLookupName("M&G Flechette Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 200;
 		bv = 0.10;
 		tonnage = .0015;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
 		infantryDamage = 0.11;
 		infantryRange = 0;
+		ammoWeight = 0.00024;
+		ammoCost = 4;
+ 		shots = 8;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2320, 2325, 2350, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

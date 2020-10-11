@@ -45,7 +45,7 @@ import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
 
 public class UnitOverview implements IDisplayable {
@@ -218,9 +218,6 @@ public class UnitOverview implements IDisplayable {
 
     }
 
-    public void setIdleTime(long timeIdle, boolean add) {
-    }
-
     public boolean isHit(Point p, Dimension size) {
         if (!visible) {
             return false;
@@ -279,18 +276,6 @@ public class UnitOverview implements IDisplayable {
         return false;
     }
 
-    public boolean isMouseOver(Point p, Dimension size) {
-        return false;
-    }
-
-    public boolean isSliding() {
-        return false;
-    }
-
-    public boolean slide() {
-        return false;
-    }
-
     public boolean isDragged(Point p, Dimension size) {
         int x = p.x;
         int y = p.y;
@@ -303,10 +288,6 @@ public class UnitOverview implements IDisplayable {
         } else {
             return true;
         }
-    }
-
-    public boolean isBeingDragged() {
-        return false;
     }
 
     public boolean isReleased() {

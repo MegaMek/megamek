@@ -33,10 +33,10 @@ public class InfantrySupportGrenadeLauncherAutoWeapon extends InfantryWeapon {
 		super();
 
 		name = "Grenade Launcher (Auto)";
-		setInternalName(name);
-		addLookupName("InfantryAutoGL");
+		setInternalName("InfantryAutoGL");
+		addLookupName(name);
 		addLookupName("Infantry Auto Grenade Launcher");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 975;
 		bv = 4.55;
 		tonnage = .012;
@@ -44,6 +44,10 @@ public class InfantrySupportGrenadeLauncherAutoWeapon extends InfantryWeapon {
 		infantryDamage = 1.49;
 		infantryRange = 1;
 		crew = 1;
+		ammoWeight = 0.009;
+		ammoCost = 160;
+		shots = 20;
+		bursts = 4;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)

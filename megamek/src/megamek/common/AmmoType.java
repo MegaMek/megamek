@@ -21,6 +21,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.common.options.OptionsConstants;
+
 @SuppressWarnings("unchecked")
 public class AmmoType extends EquipmentType {
     
@@ -139,7 +141,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_KILLER_WHALE_T = 110;
     public static final int T_WHITE_SHARK_T = 111;
     public static final int T_BARRACUDA_T = 112;
-    public static final int NUM_TYPES = 113;  //Should always be at the end with the highest number
+    public static final int T_INFANTRY = 113;
+    public static final int NUM_TYPES = 114;  //Should always be at the end with the highest number
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -1310,6 +1313,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createHeavyMassDriverAmmo());
         EquipmentType.addType(AmmoType.createMediumMassDriverAmmo());
         EquipmentType.addType(AmmoType.createLightMassDriverAmmo());
+        EquipmentType.addType(AmmoType.createInfantryAmmo());
+        EquipmentType.addType(AmmoType.createInfantryInfernoAmmo());
 
         base = AmmoType.createISAPMortar1Ammo();
         mortarAmmos.add(base);
@@ -5187,13 +5192,16 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 40;
         ammo.cost = 20000;
         ammo.rulesRefs = "219,TM";
+        //This is going to be a rare difference between TT and MM. Removing the Extinction date on Gauss ammo.
+        //The prototype share the base ammo and rather than make a whole new ammo, just going say the IS can figure out
+        //how to make large round steel balls.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
         .setIntroLevel(false)
         .setUnofficial(false)
         .setTechRating(RATING_E)
         .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
-        .setISAdvancement(2587, 2590, 3045, 2865, 3040)
-        .setISApproximate(false, false, false,false, false)
+        .setISAdvancement(2587, 2590, 3045, DATE_NONE, 3038)
+        .setISApproximate(false, false, false,false, true)
         .setPrototypeFactions(F_TH)
         .setProductionFactions(F_TH)
         .setReintroductionFactions(F_FC,F_FW,F_DC);     
@@ -11480,6 +11488,7 @@ public class AmmoType extends EquipmentType {
                 ammo.rackSize = 2;
                 ammo.ammoType = AmmoType.T_SCC;
                 ammo.shots = 1;
+                ammo.tonnage = 0.5;
                 ammo.bv = 47;
                 ammo.cost = 10000;
                 ammo.ammoRatio = 2;
@@ -11540,6 +11549,7 @@ public class AmmoType extends EquipmentType {
                 ammo.rackSize = 7;
                 ammo.ammoType = AmmoType.T_SCC;
                 ammo.shots = 1;
+                ammo.tonnage = 2;
                 ammo.bv = 124;
                 ammo.cost = 25000;
                 ammo.ammoRatio = 0.5;
@@ -12197,7 +12207,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC_PRIMITIVE;
         ammo.shots = 8;
-        ammo.bv = 21;
+        ammo.bv = 12;
         ammo.cost = 12000;
         //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
         //This to cover some of the back worlds in the Periphery.
@@ -15124,6 +15134,33 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    // Generic infantry ammo, stats are determined by the weapon it's linked to
+    private static AmmoType createInfantryAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Standard Ammo";
+        ammo.setInternalName(EquipmentTypeLookup.INFANTRY_AMMO);
+        ammo.ammoType = AmmoType.T_INFANTRY;
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_A)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return ammo;
+    }
+
+    private static AmmoType createInfantryInfernoAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Inferno Ammo";
+        ammo.setInternalName(EquipmentTypeLookup.INFANTRY_INFERNO_AMMO);
+        ammo.ammoType = AmmoType.T_INFANTRY;
+        ammo.munitionType = M_INFERNO;
+        ammo.subMunitionLength = ammo.name.indexOf(" ");
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_A)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return ammo;
+    }
+
     @Override
     public String toString() {
         return "Ammo: " + name;
@@ -15723,7 +15760,7 @@ public class AmmoType extends EquipmentType {
             return name.substring(subMunitionBegin, subMunitionBegin
                     + subMunitionLength);
         } else {
-            return shortName.substring(subMunitionBegin, subMunitionBegin
+            return getShortName().substring(subMunitionBegin, subMunitionBegin
                     + subMunitionLength);
         }
     }
@@ -15771,5 +15808,32 @@ public class AmmoType extends EquipmentType {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Whether the given weapon can switch to the given ammo type
+     * @param weapon The weapon being considered
+     * @param otherAmmo The other ammo type being considered
+     * @return true/false - null arguments or linked ammo bin for the weapon result in false
+     */
+    public static boolean canSwitchToAmmo(Mounted weapon, AmmoType otherAmmo) {
+        if((weapon == null) ||
+                (weapon.getLinked() == null) ||
+                (otherAmmo == null)) {
+            return false;
+        }
+        
+        Mounted currentAmmoBin = weapon.getLinked();
+        
+        boolean ammoOfSameType = weapon.getLinked().getType().equals(otherAmmo);
+        
+        boolean caselessLoaded = ((AmmoType) currentAmmoBin.getType()).getMunitionType() == AmmoType.M_CASELESS;
+        boolean otherBinCaseless = otherAmmo.getMunitionType() == AmmoType.M_CASELESS;
+        boolean caselessMismatch = caselessLoaded != otherBinCaseless;
+        
+        boolean hasStaticFeed = weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED);
+        boolean staticFeedMismatch = hasStaticFeed && (((AmmoType) currentAmmoBin.getType()).getMunitionType() != otherAmmo.getMunitionType());
+        
+        return ammoOfSameType && !caselessMismatch && !staticFeedMismatch;
     }
 }

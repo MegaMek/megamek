@@ -340,8 +340,7 @@ public class GameOptions extends AbstractOptions {
                 changedOptions.add(parseOptionNode(bo, print));
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error(getClass(), "loadOptions",
-                    "Error loading XML for game options: " + e.getMessage(), e);
+            MegaMek.getLogger().error("Error loading XML for game options: " + e.getMessage(), e);
         }
 
         return changedOptions;
@@ -393,8 +392,7 @@ public class GameOptions extends AbstractOptions {
                     }
                 }
             } else {
-                MegaMek.getLogger().warning(getClass(), "parseOptionNode",
-                        "Invalid option '" + name + "' when trying to load options file.");
+                MegaMek.getLogger().warning("Invalid option '" + name + "' when trying to load options file.");
             }
         }
 

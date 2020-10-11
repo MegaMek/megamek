@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
@@ -567,8 +567,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (bay != null) {
                 return defaultRounding.round(bay.getCapacity() * 0.05, getEntity());
             }
-            DefaultMmLogger.getInstance().warning(getClass(), "getTonnage(RoundWeight)",
-                    "Found dumper not linked to a cargo bay. Using zero for the weight.");
+            MegaMek.getLogger().warning("Found dumper not linked to a cargo bay. Using zero for the weight.");
             return 0.0;
         }
         double retVal = getType().getTonnage(getEntity(), getLocation(), getSize(), defaultRounding);
@@ -1199,7 +1198,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     && curMode().equals("Powered Down")) {
                 return 0;
             }
-            if (isHotLoaded() && (getLinked().getUsableShotsLeft() > 0)) {
+            if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS))
+                    && (getLinked().getUsableShotsLeft() > 0)) {
                 Mounted link = getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();

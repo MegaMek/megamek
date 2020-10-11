@@ -25,10 +25,10 @@ import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.MegaMek;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.enums.Gender;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -48,7 +48,6 @@ public class MULParser {
 
     public static final String VERSION = "version";
 
-    public static final MMLogger logger = DefaultMmLogger.getInstance();
     /**
      * The names of the various elements recognized by this parser.
      */
@@ -163,6 +162,8 @@ public class MULParser {
     private static final String CAPACITY = "capacity";
     private static final String IS_HIT = "isHit";
     private static final String MUNITION = "munition";
+    private static final String STANDARD = "standard";
+    private static final String INFERNO = "inferno";
     private static final String DIRECTION = "direction";
     private static final String INTEGRITY = "integrity";
     private static final String SINK = "sinks";
@@ -1246,8 +1247,7 @@ public class MULParser {
                     }
                     crew.setExtraDataForCrewMember(slot, extraData);
                 } catch (Exception e) {
-                    logger.error(getClass(), "setPilotAttributes",
-                            "Error in loading MUL, issues with extraData elements!");
+                    MegaMek.getLogger().error("Error in loading MUL, issues with extraData elements!");
                 }
             }
         } // End have-required-fields
@@ -1433,6 +1433,8 @@ public class MULParser {
         String destroyed = slotTag.getAttribute(IS_DESTROYED);
         String repairable = (slotTag.getAttribute(IS_REPAIRABLE).equals("") ? "true" : slotTag.getAttribute(IS_REPAIRABLE));
         String munition = slotTag.getAttribute(MUNITION);
+        String standard = slotTag.getAttribute(STANDARD);
+        String inferno = slotTag.getAttribute(INFERNO);
         String quirks = slotTag.getAttribute(QUIRKS);
         String trooperMiss = slotTag.getAttribute(TROOPER_MISS);
         String rfmg = slotTag.getAttribute(RFMG);
@@ -1752,6 +1754,24 @@ public class MULParser {
                         warning.append("XML file expects")
                                 .append(" ammo for munition argument of")
                                 .append(" slot tag.\n");
+                    }
+                }
+                if (entity.isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)) {
+                    int clipSize = ((InfantryWeapon) mounted.getType()).getShots();
+                    for (Mounted ammo = mounted.getLinked(); ammo != null; ammo = ammo.getLinked()) {
+                        if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
+                            if (!inferno.isEmpty()) {
+                                String[] fields = inferno.split(":");
+                                ammo.setShotsLeft(Integer.parseInt(fields[0]));
+                                ammo.setOriginalShots(Integer.parseInt(fields[1]));
+                            }
+                        } else {
+                            if (!standard.isEmpty()) {
+                                String[] fields = standard.split(":");
+                                ammo.setShotsLeft(Integer.parseInt(fields[0]));
+                                ammo.setOriginalShots(Integer.parseInt(fields[1]));
+                            }
+                        }
                     }
                 }
 

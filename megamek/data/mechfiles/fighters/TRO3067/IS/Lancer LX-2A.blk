@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -98,4 +98,3 @@ TRO 3067 - Civil War
 <tonnage>
 50.0
 </tonnage>
-

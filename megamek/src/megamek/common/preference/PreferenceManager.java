@@ -40,7 +40,7 @@ import javax.xml.namespace.QName;
 
 import megamek.MegaMek;
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
 public class PreferenceManager {
@@ -119,8 +119,7 @@ public class PreferenceManager {
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error(getClass(), "load",
-                    "Error loading XML for client settings: " + e.getMessage(), e);
+            MegaMek.getLogger().error("Error loading XML for client settings: " + e.getMessage(), e);
         }
     }
 

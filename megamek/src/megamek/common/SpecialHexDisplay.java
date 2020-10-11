@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * @author dirk

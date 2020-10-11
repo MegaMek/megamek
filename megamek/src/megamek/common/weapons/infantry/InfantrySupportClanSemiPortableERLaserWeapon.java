@@ -37,13 +37,15 @@ public class InfantrySupportClanSemiPortableERLaserWeapon extends InfantryWeapon
 		addLookupName("InfantryClanERMicroLaser");
 		addLookupName("InfantryClanSemiPortableERLaser");
 		addLookupName("Infantry Clan Semi-Portable ER Laser");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 10000;
 		bv = 5.02;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
 		infantryDamage = 0.70;
 		infantryRange = 3;
 		crew = 2;
+		ammoWeight = 0.003;
+		shots = 15;
 		tonnage = .025;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3056, 3060, DATE_NONE, DATE_NONE, DATE_NONE)

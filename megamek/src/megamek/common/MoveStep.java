@@ -1134,7 +1134,7 @@ public class MoveStep implements Serializable {
 
         // Check for a stacking violation.
         final Entity violation = Compute.stackingViolation(game,
-                entity.getId(), getPosition());
+                entity, getElevation(), getPosition(), null);
         if ((violation != null) && (getType() != MoveStepType.CHARGE)
                 && (getType() != MoveStepType.DFA)) {
             setStackingViolation(true);
@@ -2015,9 +2015,11 @@ public class MoveStep implements Serializable {
             
             // spheroids in atmosphere can move a max of 1 hex on the low atmo map
             // and 8 hexes on the ground map, regardless of any other considerations
+            // unless they're out of control, in which case, well...
             if(useSpheroidAtmosphere(game, entity) && 
+            		(((IAero) entity).isOutControlTotal() ||
                     (!game.getBoard().onGround() && (this.getDistance() > 1) || 
-                            (game.getBoard().onGround() && (getDistance() > 8)))) {
+                            (game.getBoard().onGround() && (getDistance() > 8))))) {
                 return;
             }
 
@@ -3109,7 +3111,7 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // Infantry (except mechanized) pay 1 less MP to enter woods and Jungle
+        // Infantry (except mechanized) pay 1 less MP to enter woods
         if (isInfantry && !isMechanizedInfantry
                 && destHex.containsTerrain(Terrains.WOODS)
                 && !isPavementStep) {
@@ -3130,20 +3132,19 @@ public class MoveStep implements Serializable {
      * possible, just whether the <em>current</em> step is possible.
      */
     public boolean isMovementPossible(IGame game, Coords src, int srcEl, CachedEntityState cachedEntityState) {
-        final String METHOD_NAME = "isMovementPossible(IGame,Coords,int)";
         final IHex srcHex = game.getBoard().getHex(src);
         final Coords dest = getPosition();
         final IHex destHex = game.getBoard().getHex(dest);
         final Entity entity = getEntity();
 
         if (null == dest) {
-            throw getLogger().error(getClass(), METHOD_NAME, new IllegalStateException("Step has no position"));
+            throw getLogger().error(new IllegalStateException("Step has no position"));
         }
         if (src.distance(dest) > 1) {
             StringBuffer buf = new StringBuffer();
             buf.append("Coordinates ").append(src.toString()).append(" and ")
                     .append(dest.toString()).append(" are not adjacent.");
-            throw getLogger().error(getClass(), METHOD_NAME, new IllegalArgumentException(buf.toString()));
+            throw getLogger().error(new IllegalArgumentException(buf.toString()));
         }
 
         // Assault dropping units cannot move

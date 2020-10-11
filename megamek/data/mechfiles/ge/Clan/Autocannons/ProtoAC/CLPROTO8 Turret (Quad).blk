@@ -13,13 +13,13 @@ GunEmplacement
 ProtoMech AC/8 Turret
 </Name>
 <model>
-(Triple)
+(Quad)
 </model>
 <Year>
 3145
 </Year>
 <Type>
-Clan Level 2
+Clan Level 5
 </Type>
 <Turret>
 1
@@ -28,6 +28,8 @@ Clan Level 2
 CLProtoMechAC8
 CLProtoMechAC8
 CLProtoMechAC8
+CLProtoMechAC8
+CLProtoAC8Ammo
 CLProtoAC8Ammo
 CLProtoAC8Ammo
 CLProtoAC8Ammo

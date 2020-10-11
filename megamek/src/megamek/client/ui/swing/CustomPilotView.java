@@ -26,15 +26,18 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
-import megamek.client.generators.RandomCallsignGenerator;
+import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.dialog.imageChooser.PortraitChooser;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Infantry;
@@ -61,7 +64,7 @@ public class CustomPilotView extends JPanel {
 
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMechDialog.chkMissing"));
     private final JTextField fldName = new JTextField(20);
-    private final PortraitChoiceDialog portraitDialog;
+    private final PortraitChooser portraitDialog;
     private final JTextField fldNick = new JTextField(20);
     private final JTextField fldGunnery = new JTextField(3);
     private final JTextField fldGunneryL = new JTextField(3);
@@ -80,6 +83,9 @@ public class CustomPilotView extends JPanel {
     
     private final ArrayList<Entity> entityUnitNum = new ArrayList<>();
     private final JComboBox<String> choUnitNum = new JComboBox<>();
+    
+    private String portraitCategory;
+    private String portraitFilename;
 
     public CustomPilotView(CustomMechDialog parent, Entity entity, int slot, boolean editable) {
         this.entity = entity;
@@ -97,15 +103,25 @@ public class CustomPilotView extends JPanel {
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(72, 72));
         button.setText(Messages.getString("CustomMechDialog.labPortrait"));
-        button.setActionCommand("portrait"); //$NON-NLS-1$
+        button.setActionCommand("portrait"); 
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                portraitDialog.setVisible(true);
+                int result = portraitDialog.showDialog(entity.getCrew(), slot);
+                if (result == JOptionPane.OK_OPTION) {
+                    if (portraitDialog.getSelectedItem() != null) {
+                        portraitCategory = portraitDialog.getSelectedItem().getCategory();
+                        portraitFilename = portraitDialog.getSelectedItem().getItem();
+                        ((JButton) e.getSource()).setIcon(
+                                MMStaticDirectoryManager.getPortraitIcon(portraitCategory, portraitFilename));
+                    } 
+                }
             }
         });
         
-        portraitDialog = new PortraitChoiceDialog(parent.getClientGUI().getFrame(), button);
-        portraitDialog.setPilot(entity.getCrew(), slot);
+        portraitDialog = new PortraitChooser(parent);
+        portraitCategory = entity.getCrew().getPortraitCategory(slot);
+        portraitFilename = entity.getCrew().getPortraitFileName(slot);
+        button.setIcon(MMStaticDirectoryManager.getPortraitIcon(entity.getCrew(), slot));
         add(button, GBC.std().gridheight(2));
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomName"));
@@ -414,11 +430,11 @@ public class CustomPilotView extends JPanel {
     }
     
     public String getPortraitCategory() {
-        return portraitDialog.getCategory();
+        return portraitCategory;
     }
     
     public String getPortraitFilename() {
-        return portraitDialog.getFileName();
+        return portraitFilename;
     }
     
     public Entity getEntityUnitNumSwap() {

@@ -23,11 +23,11 @@ import java.awt.image.*;
 import java.io.File;
 import java.util.Iterator;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.*;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.util.DirectoryItems;
+import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.ImageUtil;
 
 /** Handles the rotated and damaged and preview images for a unit. */
@@ -76,8 +76,7 @@ public class EntityImage {
                     ImageFileFactory.getInstance());
         } catch (Exception e) {
             DecalImages = null;
-            DefaultMmLogger.getInstance().warning(EntityImage.class, "static{}", 
-                    "Failed to find the damage decal images." + e.getMessage());
+            MegaMek.getLogger().warning("Failed to find the damage decal images." + e.getMessage());
         }
         dmgEmpty = TilesetManager.LoadSpecificImage(DECAL_PATH, FILE_DAMAGEDECAL_EMPTY.toString());
     }
@@ -114,6 +113,8 @@ public class EntityImage {
     private final int pos;
     /** True for units that occupy one hex (all but some dropships). */
     private final boolean isSingleHex;
+    /** True for tanks */
+    private final boolean isTank;
 
     public EntityImage(Image base, int tint, Image camo, Component comp, Entity entity) {
         this(base, null, tint, camo, comp, entity, -1, true);
@@ -131,16 +132,48 @@ public class EntityImage {
         this.camo = camo;
         parent = comp;
         this.wreck = wreck;
-        this.dmgLevel = entity.getDamageLevel();
-        this.weight = entity.getWeight();
+        this.dmgLevel = calculateDamageLevel(entity);
+        // hack: gun emplacements are pretty beefy but have weight 0
+        this.weight = entity instanceof GunEmplacement ?
+                SMOKE_THREE + 1 : entity.getWeight();
         isInfantry = entity instanceof Infantry;
+        isTank = entity instanceof Tank;
         isPreview = preview;
-        isSlim = entity instanceof Tank || entity instanceof Aero;
+        isSlim = (isTank && !(entity instanceof GunEmplacement));
         isVerySlim = entity instanceof VTOL;
         pos = secondaryPos;
         isSingleHex = secondaryPos == -1;
         decal = getDamageDecal(entity, secondaryPos);
         smoke = getSmokeImage(entity, secondaryPos);
+    }
+    
+    /**
+     * Worker function that calculates the entity's damage level for the purposes of displaying damage 
+     * to avoid particularly dumb-looking situations
+     */
+    private int calculateDamageLevel(Entity entity) {
+        // gun emplacements don't show up as crippled when destroyed, which leads to them looking pristine
+        if((entity instanceof GunEmplacement) && entity.isDestroyed()) {
+            return Entity.DMG_CRIPPLED;
+        }
+        
+        // aerospace fighters where the pilot ejects look pretty dumb without any damage decals
+        // so let's give them at least some damage
+        if(entity.isAirborne() && entity.getCrew().isEjected()) {
+            return Math.max(Entity.DMG_HEAVY, entity.getDamageLevel(false));
+        }
+        
+        int calculatedDamageLevel = entity.getDamageLevel();
+        
+        // crippled entities may be "crippled" due to harmless weapon jams or being out of ammo but 
+        // not having taken any actual damage
+        if(calculatedDamageLevel == Entity.DMG_CRIPPLED) {
+            if(entity.getArmorRemainingPercent() >= 1.0) {
+                calculatedDamageLevel = Entity.DMG_NONE;
+            }
+        }
+        
+        return calculatedDamageLevel;
     }
 
     public Image getCamo() {
@@ -179,6 +212,16 @@ public class EntityImage {
 
         if (wreck != null) {
             wreck = applyColor(wreck);
+            
+            // Add damage scars and smoke/fire; not to Infantry
+            if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
+                wreck = applyDamageDecal(wreck);
+                // No smoke in the lobby            
+                if (!isPreview) {
+                    wreck = applyDamageSmoke(wreck);
+                }
+            }
+            
             for (int i = 0; i < 6; i++) {
                 wreckFacings[i] = rotateImage(wreck, i);
             }
@@ -221,6 +264,24 @@ public class EntityImage {
         return icon;
     }
 
+    public Image loadPreviewImage() {
+        if (base == null) {
+            return null;
+        }
+
+        base = applyColor(getBase());
+
+        // Add damage scars and smoke/fire; not to Infantry
+        if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
+            base = applyDamageDecal(getBase());
+            // No smoke in the lobby
+            if (!isPreview) {
+                base = applyDamageSmoke(getBase());
+            }
+        }
+        return getBase();
+    }
+
     /** Applies the unit individual or player color or camo to the icon. */
     private Image applyColor(Image image) {
         if (image == null) {
@@ -237,8 +298,7 @@ public class EntityImage {
                 grabImagePixels(camo, pCamo);
             }
         } catch (Exception e) {
-            DefaultMmLogger.getInstance().error(getClass(), "applyColor()", 
-                    "Failed to grab pixels for an image to apply the camo." + e.getMessage());
+            MegaMek.getLogger().error("Failed to grab pixels for an image to apply the camo." + e.getMessage());
             return image;
         }
 
@@ -293,8 +353,7 @@ public class EntityImage {
             grabImagePixels(image, pUnit);
             grabImagePixels(decal, pDmgD);
         } catch (Exception e) {
-            DefaultMmLogger.getInstance().error(getClass(), "applyDamageDecal()", 
-                    "Failed to grab pixels for an image to apply the decal. " + e.getMessage());
+            MegaMek.getLogger().error("Failed to grab pixels for an image to apply the decal. " + e.getMessage());
             return image;
         }
 
@@ -335,13 +394,12 @@ public class EntityImage {
         
         // Get the smoke image for heavier damage; is transparent for lighter damage
         if (smoke == null) {
-            DefaultMmLogger.getInstance().error(getClass(), "applyDamageSmoke()", 
-                    "Smoke decal image is null.");
+            MegaMek.getLogger().error("Smoke decal image is null.");
             return image;
         }
         
         // Overlay the smoke image
-        Image result = ImageUtil.createAcceleratedImage(base);
+        Image result = ImageUtil.createAcceleratedImage(image);
         Graphics g = result.getGraphics();
         if (isSingleHex) {
             g.drawImage(smoke, 0, 0, null);
@@ -355,11 +413,9 @@ public class EntityImage {
         return result;
     }
 
-    /** Inititates the PixelGrabber for the given image and int array. */
-    private void grabImagePixels(Image img, int[] pixels) 
-    throws InterruptedException, RuntimeException {
-        PixelGrabber pg = new PixelGrabber(img, 0, 0, IMG_WIDTH,
-                IMG_HEIGHT, pixels, 0, IMG_WIDTH);
+    /** Initiates the PixelGrabber for the given image and int array. */
+    private void grabImagePixels(Image img, int[] pixels) throws InterruptedException, RuntimeException {
+        PixelGrabber pg = new PixelGrabber(img, 0, 0, IMG_WIDTH, IMG_HEIGHT, pixels, 0, IMG_WIDTH);
         pg.grabPixels();
         if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
             throw new RuntimeException("ImageObserver aborted.");
@@ -369,7 +425,7 @@ public class EntityImage {
     /** Returns the damage decal based on damage level. */
     private Image getDamageDecal(Entity entity, int pos) {
         try {
-            switch (entity.getDamageLevel()) {
+            switch (dmgLevel) {
             case Entity.DMG_LIGHT:
                 return getIM(PATH_LIGHT, entity.getShortName(), pos);
             case Entity.DMG_MODERATE:
@@ -382,10 +438,10 @@ public class EntityImage {
                 return null;
             }
         } catch (Exception e) {
-            DefaultMmLogger.getInstance().error(getClass(), "getDamageDecal()", 
-                    "Could not load decal image.");
-            e.printStackTrace();
+            MegaMek.getLogger().error("Could not load decal image.");
+            MegaMek.getLogger().error(e);
         }
+
         return null;
     }
     
@@ -399,7 +455,7 @@ public class EntityImage {
                 return dmgEmpty;
             }
 
-            String path = "";
+            String path;
             if (pos > -1) {
                 // Multi-hex units get their own overlays
                 path = dmgLevel == Entity.DMG_HEAVY ? PATH_SMOKEMULTI : PATH_FIREMULTI;
@@ -418,8 +474,7 @@ public class EntityImage {
             // Use the same smoke image for all positions of multi-hex units (pos = 0)!
             return getIM(path, entity.getShortName(), 0); 
         } catch (Exception e) {
-            DefaultMmLogger.getInstance().error(getClass(), "getSmokeImage()", 
-                    "Could not load smoke/fire image.");
+            MegaMek.getLogger().error("Could not load smoke/fire image.");
             e.printStackTrace();
         }
         return null;
@@ -437,7 +492,7 @@ public class EntityImage {
         for (int i = 0; i <= img; i++) {
             n = iter.next();
         }
-        return (Image)DecalImages.getItem(cat, n);
+        return (Image) DecalImages.getItem(cat, n);
     }
     
     /** Returns the size of the collection of an iterator. Local helper function for DirectoryItems. */
@@ -446,6 +501,4 @@ public class EntityImage {
         for (;iter.hasNext();iter.next(), result++);
         return result;
     }
-
-
 }

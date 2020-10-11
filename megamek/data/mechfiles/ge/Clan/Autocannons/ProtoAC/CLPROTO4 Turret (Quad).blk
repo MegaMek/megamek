@@ -13,13 +13,13 @@ GunEmplacement
 ProtoMech AC/4 Turret
 </Name>
 <model>
-(Triple)
+(Quad)
 </model>
 <Year>
 3145
 </Year>
 <Type>
-Clan Level 2
+Clan Level 5
 </Type>
 <Turret>
 1
@@ -28,6 +28,7 @@ Clan Level 2
 CLProtoMechAC4
 CLProtoMechAC4
 CLProtoMechAC4
+CLProtoMechAC4
 CLProtoAC4Ammo
 CLProtoAC4Ammo
 CLProtoAC4Ammo
@@ -35,4 +36,5 @@ CLProtoAC4Ammo
 CLProtoAC4Ammo
 CLProtoAC4Ammo
 CLProtoAC4Ammo
+CLProtoMechAC4
 </Guns Equipment>

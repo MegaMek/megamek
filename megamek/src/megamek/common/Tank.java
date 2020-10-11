@@ -27,6 +27,7 @@ import java.util.Vector;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.SupportVeeStructure;
+import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
@@ -2699,33 +2700,24 @@ public class Tank extends Entity {
         }
 
         double freeHeatSinks = (hasEngine() ? getEngine().getWeightFreeEngineHeatSinks() : 0);
-        int sinks = 0;
+        int sinks = TestEntity.calcHeatNeutralHSRequirement(this);
         double turretWeight = 0;
-        double paWeight = 0;
+        double paWeight = getPowerAmplifierWeight();
         for (Mounted m : getWeaponList()) {
-            WeaponType wt = (WeaponType) m.getType();
-            if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
-                sinks += wt.getHeat();
-                paWeight += m.getTonnage() / 10.0;
-            }
-            if (!hasNoTurret() && (m.getLocation() == getLocTurret())) {
+            if ((m.getLocation() == getLocTurret()) || (m.getLocation() == getLocTurret2())) {
                 turretWeight += m.getTonnage() / 10.0;
-            }
-            if (!hasNoDualTurret() && (m.getLocation() == getLocTurret2())) {
-                turretWeight += m.getTonnage() / 10.0;
+                if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
+                        && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                    turretWeight += m.getLinkedBy().getTonnage() / 10.0;
+                }
             }
         }
-        paWeight = Math.ceil(paWeight * 2) / 2;
-        if ((hasEngine() && (getEngine().isFusion() || getEngine().getEngineType() == Engine.FISSION))
-                || getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            paWeight = 0;
-        }
-        turretWeight = Math.ceil(turretWeight * 2) / 2;
+        turretWeight = RoundWeight.standard(turretWeight, this);
         costs[i++] = 20000 * paWeight;
         costs[i++] = 2000 * Math.max(0, sinks - freeHeatSinks);
         costs[i++] = turretWeight * 5000;
 
-        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
+        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo) + getExtraCrewSeats() * 100;
 
         if (!isSupportVehicle()) {
             double diveTonnage;

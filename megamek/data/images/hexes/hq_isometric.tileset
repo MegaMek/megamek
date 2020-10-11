@@ -74,18 +74,18 @@ include "StandardIncludes/StandardLimbs.tileinc"
 
 super * "water:1" "" "transparent/anim_water_1.gif"
 
-super * "woods:1" "tropical" "isometric/trees/light_jungle1.png;isometric/trees/light_jungle2.png;isometric/trees/light_jungle3.png;isometric/trees/light_jungle4.png"
-super * "woods:2" "tropical" "isometric/trees/heavy_jungle1.png;isometric/trees/heavy_jungle2.png;isometric/trees/heavy_jungle3.png"
-super * "woods:3" "tropical" "isometric/trees/ultra_heavy_jungle1.png"
+super * "woods:1;foliage_elev:*" "tropical" "isometric/trees/light_jungle1.png;isometric/trees/light_jungle2.png;isometric/trees/light_jungle3.png;isometric/trees/light_jungle4.png"
+super * "woods:2;foliage_elev:*" "tropical" "isometric/trees/heavy_jungle1.png;isometric/trees/heavy_jungle2.png;isometric/trees/heavy_jungle3.png"
+super * "woods:3;foliage_elev:*" "tropical" "isometric/trees/ultra_heavy_jungle1.png"
 
-super * "woods:1;fluff:12" "" "boring/orchard.png"
-super * "woods:1" "" "isometric/trees/lf0.gif;isometric/trees/lf1.gif;isometric/trees/lf2.gif;isometric/trees/lf3.gif;isometric/trees/lf4.gif"
-super * "woods:2" "" "isometric/trees/hf0.gif;isometric/trees/hf1.gif;isometric/trees/hf3.gif"
-super * "woods:3" "" "isometric/trees/uhf.gif"
+super * "woods:1;foliage_elev:*;fluff:12" "" "boring/orchard.png"
+super * "woods:1;foliage_elev:*" "" "isometric/trees/lf0.gif;isometric/trees/lf1.gif;isometric/trees/lf2.gif;isometric/trees/lf3.gif;isometric/trees/lf4.gif"
+super * "woods:2;foliage_elev:*" "" "isometric/trees/hf0.gif;isometric/trees/hf1.gif;isometric/trees/hf3.gif"
+super * "woods:3;foliage_elev:*" "" "isometric/trees/uhf.gif"
 
-super * "jungle:1" "" "isometric/trees/light_jungle1.png;isometric/trees/light_jungle2.png;isometric/trees/light_jungle3.png;isometric/trees/light_jungle4.png"
-super * "jungle:2" "" "isometric/trees/heavy_jungle1.png;isometric/trees/heavy_jungle2.png;isometric/trees/heavy_jungle3.png"
-super * "jungle:3" "" "isometric/trees/ultra_heavy_jungle1.png"
+super * "jungle:1;foliage_elev:*" "" "isometric/trees/light_jungle1.png;isometric/trees/light_jungle2.png;isometric/trees/light_jungle3.png;isometric/trees/light_jungle4.png"
+super * "jungle:2;foliage_elev:*" "" "isometric/trees/heavy_jungle1.png;isometric/trees/heavy_jungle2.png;isometric/trees/heavy_jungle3.png"
+super * "jungle:3;foliage_elev:*" "" "isometric/trees/ultra_heavy_jungle1.png"
 
 super * "water:2" "" "transparent/anim_water_2.gif"
 super * "water:3" "" "transparent/anim_water_3.gif"

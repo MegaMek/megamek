@@ -49,7 +49,7 @@ public enum KeyCommandBind {
     NEXT_WEAPON("nextWeapon", false, KeyEvent.VK_E, 0), // Default: E
     PREV_WEAPON("prevWeapon", false, KeyEvent.VK_Q, 0), // Default: Q
     NEXT_UNIT("nextUnit", false, KeyEvent.VK_E, InputEvent.SHIFT_MASK), // Default: Shift-E
-    PREV_UNIT("prevUnit", false, KeyEvent.VK_Q, InputEvent.SHIFT_MASK), // Default: Shift0Q
+    PREV_UNIT("prevUnit", false, KeyEvent.VK_Q, InputEvent.SHIFT_MASK), // Default: Shift-Q
     NEXT_TARGET("nextTarget", false, KeyEvent.VK_C, 0), // Default: C
     PREV_TARGET("prevTarget", false, KeyEvent.VK_Z, 0), // Default: Z
     NEXT_TARGET_VALID("nextTargetValid", false, KeyEvent.VK_C, InputEvent.SHIFT_MASK), // Default: Shift-C
@@ -79,7 +79,8 @@ public enum KeyCommandBind {
     TOGGLE_CONVERSIONMODE("toggleConversion", false, KeyEvent.VK_M, 0), // Default: M
     PREV_MODE("prevMode", false, KeyEvent.VK_TAB, InputEvent.CTRL_MASK), // Default: Tab
     NEXT_MODE("nextMode", false, KeyEvent.VK_TAB, 0), // Default: Tab
-    TOGGLE_DRAW_LABELS("toggleDrawLabels", false, KeyEvent.VK_Y, 0); // Default: Y
+    TOGGLE_DRAW_LABELS("toggleDrawLabels", false, KeyEvent.VK_Y, 0), // Default: Y
+    TOGGLE_KEYBIND_DISPLAY("toggleKeyBindDisplay", false, KeyEvent.VK_K, InputEvent.CTRL_MASK); // Default: Ctrl-K
 
 
     /**

@@ -36,13 +36,15 @@ public class InfantryPistolMandrakeGaussPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryMandrakeGaussPistol");
 		addLookupName("IMandrake Holdout Gauss Pistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 750;
 		bv = 0.02;
 		tonnage = .0001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.02;
 		infantryRange = 0;
+		ammoWeight = 0.00001;
+		shots = 1;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3050, 3052, 3085, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)

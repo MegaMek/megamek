@@ -145,19 +145,14 @@ public class BotGeometry {
          * and 0 if the point is on the line
          */
         public int judgePoint(Coords c) {
-            MegaMek.getLogger().methodBegin();
-
-            try {
-                HexLine comparor = new HexLine(c, getDirection());
-                if (comparor.getIntercept() < getIntercept()) {
-                    return (getDirection() < 3) ? -1 : 1;
-                } else if (comparor.getIntercept() > getIntercept()) {
-                    return (getDirection() < 3) ? 1 : -1;
-                }
-                return 0;
-            } finally {
-                MegaMek.getLogger().methodEnd();
+            HexLine comparor = new HexLine(c, getDirection());
+            if (comparor.getIntercept() < getIntercept()) {
+                return (getDirection() < 3) ? -1 : 1;
+            } else if (comparor.getIntercept() > getIntercept()) {
+                return (getDirection() < 3) ? 1 : -1;
             }
+            
+            return 0;
         }
 
         /**
@@ -166,34 +161,28 @@ public class BotGeometry {
          * returns 0 if the area is divided by the line
          */
         public int judgeArea(ConvexBoardArea a) {
-            MegaMek.getLogger().methodBegin();
-
-            try {
-                boolean flip = getDirection() > 2;
-                HexLine[] edges = a.getEdges();
-                if ((edges[getDirection()] == null) || (edges[(getDirection() + 3) % 6] == null)) {
-                    System.err.println(new IllegalStateException("Detection of NULL edges in ConvexBoardArea :: " +
-                                                                 a.toString()));
-                    return 0;
-                }
-                if (edges[getDirection()].getIntercept() == getIntercept()) {
-                    return 0;
-                }
-                if (edges[(getDirection() + 3) % 6].getIntercept() == getIntercept()) {
-                    return 0;
-                }
-                boolean edgeone = (edges[getDirection()].getIntercept() < getIntercept()) ^ flip;
-                boolean edgetwo = (edges[(getDirection() + 3) % 6].getIntercept() < getIntercept()) ^ flip;
-                if (edgeone && edgetwo) {
-                    return 1;
-                }
-                if ((!edgeone) && (!edgetwo)) {
-                    return -1;
-                }
+            boolean flip = getDirection() > 2;
+            HexLine[] edges = a.getEdges();
+            if ((edges[getDirection()] == null) || (edges[(getDirection() + 3) % 6] == null)) {
+                System.err.println(new IllegalStateException("Detection of NULL edges in ConvexBoardArea :: " +
+                                                             a.toString()));
                 return 0;
-            } finally {
-                MegaMek.getLogger().methodEnd();
             }
+            if (edges[getDirection()].getIntercept() == getIntercept()) {
+                return 0;
+            }
+            if (edges[(getDirection() + 3) % 6].getIntercept() == getIntercept()) {
+                return 0;
+            }
+            boolean edgeone = (edges[getDirection()].getIntercept() < getIntercept()) ^ flip;
+            boolean edgetwo = (edges[(getDirection() + 3) % 6].getIntercept() < getIntercept()) ^ flip;
+            if (edgeone && edgetwo) {
+                return 1;
+            }
+            if ((!edgeone) && (!edgetwo)) {
+                return -1;
+            }
+            return 0;
         }
 
         /**
@@ -201,20 +190,14 @@ public class BotGeometry {
          * Note that the function getXfromY would be multvalued
          */
         public int getYfromX(int x) {
-            MegaMek.getLogger().methodBegin();
-
-            try {
-                if ((getDirection() == 0) || (getDirection() == 3)) {
-                    return 0;
-                }
-                if ((getDirection() == 1) || (getDirection() == 4)) {
-                    return getIntercept() - ((x + 1) / 2); //halfs round down
-                }
-                // direction==5||direction==2
-                return getIntercept() + ((x) / 2);     //halfs round down
-            } finally {
-                MegaMek.getLogger().methodEnd();
+            if ((getDirection() == 0) || (getDirection() == 3)) {
+                return 0;
             }
+            if ((getDirection() == 1) || (getDirection() == 4)) {
+                return getIntercept() - ((x + 1) / 2); //halfs round down
+            }
+            // direction==5||direction==2
+            return getIntercept() + ((x) / 2);     //halfs round down
         }
 
         /**
@@ -222,26 +205,20 @@ public class BotGeometry {
          * if lines are parallel (even if they are coincident) returns null
          */
         public Coords getIntersection(HexLine h) {
-            MegaMek.getLogger().methodBegin();
-
-            try {
-                if ((h.getDirection() % 3) == (getDirection() % 3)) {
-                    return null;
-                }
-                if (h.getDirection() == 0) {
-                    return h.getIntersection(this);
-                }
-                if (getDirection() == 2) {
-                    return h.getIntersection(this);
-                }
-                if (getDirection() == 0 || getDirection() == 3) {
-                    return new Coords(getIntercept(), h.getYfromX(getIntercept()));
-                }
-                //direction must be 1 here, and h.direction=2
-                return new Coords(getIntercept() - h.getIntercept(), getYfromX(getIntercept() - h.getIntercept()));
-            } finally {
-                MegaMek.getLogger().methodEnd();
+            if ((h.getDirection() % 3) == (getDirection() % 3)) {
+                return null;
             }
+            if (h.getDirection() == 0) {
+                return h.getIntersection(this);
+            }
+            if (getDirection() == 2) {
+                return h.getIntersection(this);
+            }
+            if (getDirection() == 0 || getDirection() == 3) {
+                return new Coords(getIntercept(), h.getYfromX(getIntercept()));
+            }
+            //direction must be 1 here, and h.direction=2
+            return new Coords(getIntercept() - h.getIntercept(), getYfromX(getIntercept() - h.getIntercept()));
         }
 
         /**
@@ -249,21 +226,15 @@ public class BotGeometry {
          * line to another point
          */
         public Coords getClosestPoint(Coords c) {
-            MegaMek.getLogger().methodBegin();
-
-            try {
-                if ((getDirection() == 0) || (getDirection() == 3)) { //technically two points are equidistant,
-                    // but who's counting
-                    return new Coords(getIntercept(), c.getY());
-                } else if ((getDirection() == 1) || (getDirection() == 4)) {
-                    double myx = (-2.0 / 3.0) * (getIntercept() - 0.5 - c.getY() - (2.0 * c.getX()));
-                    return new Coords((int) myx, getYfromX((int) myx));
-                }
-                double myx = (-5.0 / 3.0) * (getIntercept() - (double) c.getY() - (2.0 * c.getX()));
+            if ((getDirection() == 0) || (getDirection() == 3)) { //technically two points are equidistant,
+                // but who's counting
+                return new Coords(getIntercept(), c.getY());
+            } else if ((getDirection() == 1) || (getDirection() == 4)) {
+                double myx = (-2.0 / 3.0) * (getIntercept() - 0.5 - c.getY() - (2.0 * c.getX()));
                 return new Coords((int) myx, getYfromX((int) myx));
-            } finally {
-                MegaMek.getLogger().methodEnd();
             }
+            double myx = (-5.0 / 3.0) * (getIntercept() - (double) c.getY() - (2.0 * c.getX()));
+            return new Coords((int) myx, getYfromX((int) myx));
         }
 
         @Override
@@ -376,17 +347,11 @@ public class BotGeometry {
         }
 
         void addCoordFacingCombos(Iterator<CoordFacingCombo> cfit, IBoard board) {
-            MegaMek.getLogger().methodBegin();
-
-            try {
-                while (cfit.hasNext()) {
-                    CoordFacingCombo cf = cfit.next();
-                    if(cf != null && board.contains(cf.coords)) {
-                        expandToInclude(cf.getCoords());
-                    }
+            while (cfit.hasNext()) {
+                CoordFacingCombo cf = cfit.next();
+                if(cf != null && board.contains(cf.coords)) {
+                    expandToInclude(cf.getCoords());
                 }
-            } finally {
-                MegaMek.getLogger().methodEnd();
             }
         }
 
@@ -395,105 +360,81 @@ public class BotGeometry {
          * false if it is not
          */
         public boolean contains(Coords c) {
-            MegaMek.getLogger().methodBegin();
-
-            try {
-                HexLine[] edges = getEdges();
-                if (edges[0] == null) {
+            HexLine[] edges = getEdges();
+            if (edges[0] == null) {
+                return false;
+            }
+            for (int i = 0; i < 6; i++) {
+                if (edges[i].judgePoint(c) > 0) {
                     return false;
                 }
-                for (int i = 0; i < 6; i++) {
-                    if (edges[i].judgePoint(c) > 0) {
-                        return false;
-                    }
-                }
-                return true;
-            } finally {
-                MegaMek.getLogger().methodEnd();
             }
+            return true;
         }
 
         /**
          * expands the board area to include point onc
          */
         void expandToInclude(Coords onc) {
-            MegaMek.getLogger().methodBegin();
-
-            try {
-                HexLine[] edges = getEdges();
-                for (int i = 0; i < 6; i++) {
-                    if ((edges[i] == null) || (edges[i].judgePoint(onc) > 0)) {
-                        edges[i] = new HexLine(onc, i);
-                    }
+            HexLine[] edges = getEdges();
+            for (int i = 0; i < 6; i++) {
+                if ((edges[i] == null) || (edges[i].judgePoint(onc) > 0)) {
+                    edges[i] = new HexLine(onc, i);
                 }
-                setEdges(edges);
-            } finally {
-                MegaMek.getLogger().methodEnd();
             }
+            setEdges(edges);
         }
 
         /**
          * Returns a vertex, with zero starting at the upper left of the hex
          */
         public Coords getVertexNum(int i) {
-            MegaMek.getLogger().methodBegin();
-
-            try {
-                if (vertices[i] != null) {
-                    return vertices[i];
-                }
-                
-                HexLine[] edges = getEdges();
-                if (edges[i] == null || edges[(i + 1) % 6] == null) {
-                    MegaMek.getLogger().error("Edge[" + i + "] is NULL.");
-                    return null;
-                }
-                
-                vertices[i] = edges[i].getIntersection(edges[(i + 1) % 6]);
+            if (vertices[i] != null) {
                 return vertices[i];
-            } finally {
-                MegaMek.getLogger().methodEnd();
             }
+            
+            HexLine[] edges = getEdges();
+            if (edges[i] == null || edges[(i + 1) % 6] == null) {
+                MegaMek.getLogger().error("Edge[" + i + "] is NULL.");
+                return null;
+            }
+            
+            vertices[i] = edges[i].getIntersection(edges[(i + 1) % 6]);
+            return vertices[i];
         }
 
         /**
          * returns the closest coord in the area to the given coord
          */
         public Coords getClosestCoordsTo(Coords c) {
-            MegaMek.getLogger().methodBegin();
-
-            try {
-                Coords closest = null;
-                int closest_dist = 0;
-                HexLine[] edges = getEdges();
-                for (int i = 0; i < 6; i++) {
-                    if (edges[i] == null) {
-                        continue;
+            Coords closest = null;
+            int closest_dist = 0;
+            HexLine[] edges = getEdges();
+            for (int i = 0; i < 6; i++) {
+                if (edges[i] == null) {
+                    continue;
+                }
+                if (edges[i].judgePoint(c) > 0) {
+                    Coords vert = getVertexNum(i);
+                    int vdist = vert.distance(c);
+                    if ((closest == null) || (vdist < closest_dist)) {
+                        closest = vert;
+                        closest_dist = vdist;
                     }
-                    if (edges[i].judgePoint(c) > 0) {
-                        Coords vert = getVertexNum(i);
-                        int vdist = vert.distance(c);
-                        if ((closest == null) || (vdist < closest_dist)) {
-                            closest = vert;
-                            closest_dist = vdist;
-                        }
-                        Coords online = edges[i].getClosestPoint(c);
-                        if (contains(online)) {
-                            int ldist = online.distance(c);
-                            if (ldist < closest_dist) {
-                                closest = online;
-                                closest_dist = ldist;
-                            }
+                    Coords online = edges[i].getClosestPoint(c);
+                    if (contains(online)) {
+                        int ldist = online.distance(c);
+                        if (ldist < closest_dist) {
+                            closest = online;
+                            closest_dist = ldist;
                         }
                     }
                 }
-                if (closest == null) {
-                    return new Coords(c.getX(), c.getY());
-                }
-                return closest;
-            } finally {
-                MegaMek.getLogger().methodEnd();
             }
+            if (closest == null) {
+                return new Coords(c.getX(), c.getY());
+            }
+            return closest;
         }
 
         public HexLine[] getEdges() {
@@ -509,6 +450,7 @@ public class BotGeometry {
             }
 
             this.edges = edges;
+            vertices = new Coords[6];
         }
 
         void clearEdges() {

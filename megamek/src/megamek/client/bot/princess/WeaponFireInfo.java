@@ -168,20 +168,15 @@ public class WeaponFireInfo {
                            final boolean guess,
                            final Princess owner,
                            final int[] bombPayload) {
-        owner.getLogger().methodBegin();
         this.owner = owner;
 
-        try {
-            setShooter(shooter);
-            setShooterState(shooterState);
-            setTarget(target);
-            setTargetState(targetState);
-            setWeapon(weapon);
-            setGame(game);
-            initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
-        } finally {
-            owner.getLogger().methodEnd();
-        }
+        setShooter(shooter);
+        setShooterState(shooterState);
+        setTarget(target);
+        setTargetState(targetState);
+        setWeapon(weapon);
+        setGame(game);
+        initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
     }
 
     protected WeaponAttackAction getAction() {
@@ -634,37 +629,33 @@ public class WeaponFireInfo {
                 }
             }
         } finally {
-            owner.getLogger().debug(msg.toString());
+            if(debugging) {
+                owner.getLogger().debug(msg.toString());
+            }
         }
     }
     
     WeaponAttackAction getWeaponAttackAction() {
-        owner.getLogger().methodBegin();
-
-        try {
-            if (null != getAction()) {
-                return getAction();
-            }
-            if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || (getWeapon().getType() instanceof CapitalMissileWeapon
-                            && Compute.isGroundToGround(shooter, target)))) {
-                setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
-                        getShooter().getEquipmentNum(getWeapon())));
-            } else {
-                setAction(new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(),
-                        getTarget().getTargetId(), getShooter().getEquipmentNum(getWeapon()),
-                        getGame()));
-            }
-            if (getAction() == null) {
-                setProbabilityToHit(0);
-                return null;
-            }
-            setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue(),
-                                                  getShooterState().hasNaturalAptGun()) / 100.0);
+        if (null != getAction()) {
             return getAction();
-        } finally {
-            owner.getLogger().methodEnd();
         }
+        if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)
+                || (getWeapon().getType() instanceof CapitalMissileWeapon
+                        && Compute.isGroundToGround(shooter, target)))) {
+            setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
+                    getShooter().getEquipmentNum(getWeapon())));
+        } else {
+            setAction(new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(),
+                    getTarget().getTargetId(), getShooter().getEquipmentNum(getWeapon()),
+                    getGame()));
+        }
+        if (getAction() == null) {
+            setProbabilityToHit(0);
+            return null;
+        }
+        setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue(),
+                                              getShooterState().hasNaturalAptGun()) / 100.0);
+        return getAction();
     }
 
     String getDebugDescription() {

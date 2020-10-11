@@ -1704,19 +1704,25 @@ public class MiniMap extends JPanel {
                 initializeMap();
             } else {
                 if (x < 14) {
-                    zoomIn();
+                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
+                        zoomIn();
+                    } else {
+                        zoomOut();
+                    }
                 } else if ((x < 28) && (zoom > 2)) {
-                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0
-                            : heightDisplayMode;
+                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
                     initializeMap();
                 } else if (x > (getSize().width - 14)) {
-                    zoomOut();
+                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
+                        zoomOut();
+                    } else {
+                        zoomIn();
+                    }
                 } else {
                     // Minimize button
                     heightBufer = getSize().height;
                     setSize(getSize().width, 14);
                     m_mapImage = createImage(Math.max(1, getSize().width), 14);
-
                     minimized = true;
                     initializeMap();
                 }  
@@ -1728,8 +1734,7 @@ public class MiniMap extends JPanel {
                 return;
             }
             if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-                m_bview
-                        .checkLOS(translateCoords(x - leftMargin, y - topMargin));
+                m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
             } else {
                 m_bview.centerOnPointRel(
                         ((double)(x - leftMargin))/(double)((hexSideBySin30[zoom] + hexSide[zoom])*m_board.getWidth()),

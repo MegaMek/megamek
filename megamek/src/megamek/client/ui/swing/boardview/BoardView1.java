@@ -1141,7 +1141,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
                 || e.getName().equals(GUIPreferences.FLOATINGISO)
                 || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)
-                || e.getName().equals(GUIPreferences.ADVANCED_SHOW_COORDS)) {
+                || e.getName().equals(GUIPreferences.ADVANCED_SHOW_COORDS)
+                || e.getName().equals(GUIPreferences.FOV_DARKEN)
+                || e.getName().equals(GUIPreferences.FOV_DARKEN_ALPHA)
+                || e.getName().equals(GUIPreferences.FOV_GRAYSCALE)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_ALPHA)
+                || e.getName().equals(GUIPreferences.FOV_STRIPES)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII)
+                || e.getName().equals(GUIPreferences.SHADOWMAP)) {
             clearHexImageCache();
             repaint();
         }

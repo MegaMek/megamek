@@ -6,6 +6,7 @@ VERSION HISTORY:
 + PR #2308: Normalizes Data Files
 + Issue #2313: Some fixes for SSW -> MM BV Issues
 + Issue #2331: Laser Insulator costs (slightly) wrong
++ Data: New Sprites, new units (Rec Guides 4/5, Kaumberg, Hanseatic Crusade)
 
 0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites

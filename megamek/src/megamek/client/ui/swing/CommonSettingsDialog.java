@@ -315,6 +315,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private boolean savedTeamColoring;
     private boolean savedUnitLabelBorder;
     private boolean savedShowDamageDecal;
+    private boolean savedShowDamageLabel;
     private String savedFovHighlightRingsRadii;
     private String savedFovHighlightRingsColors;
     private int savedFovHighlightAlpha;
@@ -359,7 +360,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         settingsPane.getVerticalScrollBar().setUnitIncrement(16);
         panTabs.add("Main", settingsPane);
         
-
         JScrollPane graphicsPane = new JScrollPane(getGraphicsPanel());
         graphicsPane.getVerticalScrollBar().setUnitIncrement(16);
         panTabs.add("Graphics", graphicsPane);
@@ -427,6 +427,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         // --------------        
 
         showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel")); //$NON-NLS-1$
+        showDamageLevel.addItemListener(this);
         row = new ArrayList<>();
         row.add(showDamageLevel);
         comps.add(row);
@@ -912,6 +913,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             savedTeamColoring = gs.getTeamColoring();
             savedUnitLabelBorder = gs.getUnitLabelBorder();
             savedShowDamageDecal = gs.getShowDamageDecal();
+            savedShowDamageLabel = gs.getShowDamageLevel();
             savedFovHighlightRingsRadii = gs.getFovHighlightRingsRadii();
             savedFovHighlightRingsColors = gs.getFovHighlightRingsColorsHsb();
             savedFovHighlightAlpha = gs.getFovHighlightAlpha();
@@ -941,6 +943,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         guip.setTeamColoring(savedTeamColoring);
         guip.setUnitLabelBorder(savedUnitLabelBorder);
         guip.setShowDamageDecal(savedShowDamageDecal);
+        guip.setShowDamageLevel(savedShowDamageLabel);
         guip.setFovHighlightRingsRadii(savedFovHighlightRingsRadii);
         guip.setFovHighlightRingsColorsHsb(savedFovHighlightRingsColors);
         guip.setFovHighlightAlpha(savedFovHighlightAlpha);
@@ -1263,6 +1266,8 @@ public class CommonSettingsDialog extends ClientDialog implements
             
         } else if (source.equals(showDamageDecal)) {
             guip.setShowDamageDecal(showDamageDecal.isSelected());
+        } else if (source.equals(showDamageLevel)) {
+            guip.setShowDamageLevel(showDamageLevel.isSelected());
         }
     }
 

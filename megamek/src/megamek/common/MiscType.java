@@ -284,6 +284,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_LF_STORAGE_BATTERY = BigInteger.valueOf(1).shiftLeft(221);
     public static final BigInteger F_PROTOMECH_MELEE = BigInteger.valueOf(1).shiftLeft(222);
     public static final BigInteger F_EXTERNAL_POWER_PICKUP = BigInteger.valueOf(1).shiftLeft(223);
+    public static final BigInteger F_RAM_PLATE = BigInteger.valueOf(1).shiftLeft(224);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -892,6 +893,8 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_BA_MISSION_EQUIPMENT)) {
             // Size is weight in kg
             return RoundWeight.nearestKg(size / 1000.0);
+        } else if (hasFlag(MiscType.F_RAM_PLATE)) {
+            return RoundWeight.nextTon(entity.getWeight() / 10.0);
         }
        // okay, I'm out of ideas
         return 1.0f;
@@ -1064,6 +1067,8 @@ public class MiscType extends EquipmentType {
                 costValue = size * 5;
             } else if (hasFlag(F_COMMUNICATIONS)) {
                 costValue = size * 10000;
+            } else if (hasFlag(F_RAM_PLATE)) {
+                costValue = getTonnage(entity, loc) * 10000;
             }
             
             if (isArmored) {
@@ -1432,9 +1437,22 @@ public class MiscType extends EquipmentType {
             if (entity.hasWorkingMisc(MiscType.F_TSM)) {
                 returnBV *= 2;
             }
+        } else if (hasFlag(MiscType.F_RAM_PLATE)) {
+            // half the maximum charge damage (rounded down) * 1.1
+            int damage = ((int) (entity.getWeight() * entity.getRunMP() * 0.1)) / 2;
+            if (entity instanceof Mech) {
+                // Spikes located in a torso location increase the charge damage by 2 points
+                for (int loc = 0; loc < entity.locations(); loc++) {
+                    if (((Mech) entity).locationIsTorso(loc)
+                            && entity.hasWorkingMisc(F_SPIKES, -1, loc)) {
+                        damage++;
+                    }
+                }
+                returnBV = damage * 1.1;
+            }
         }
-
-        return returnBV;
+        // Deal with floating point precision errors
+        return Math.round(returnBV * 1000.0) / 1000.0;
     }
     
     @Override
@@ -1511,6 +1529,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISPPCCapacitor());
         EquipmentType.addType(MiscType.createRetractableBlade());
         EquipmentType.addType(MiscType.createChainWhip());
+        EquipmentType.addType(MiscType.createRamPlate());
         EquipmentType.addType(MiscType.createISApolloFCS());
         EquipmentType.addType(MiscType.createIMEjectionSeat());
         EquipmentType.addType(MiscType.createSVEjectionSeat());
@@ -10880,7 +10899,7 @@ public class MiscType extends EquipmentType {
                 .setTechRating(RATING_C).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
         return misc;
     }
-    
+
     /*
      * // TODO Warrior Augmentations - IO pg 58. A lot of these are already in game
      * as SPA's. Should be reviewed and determine if they need a piece of equipment.
@@ -11035,6 +11054,26 @@ public class MiscType extends EquipmentType {
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
             .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        return misc;
+    }
+
+    private static MiscType createRamPlate() {
+        MiscType misc = new MiscType();
+        misc.name = "Ram Plate";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 3;
+        misc.cost = COST_VARIABLE;
+        misc.bv = BV_VARIABLE;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_RAM_PLATE).or(F_MECH_EQUIPMENT);
+        misc.rulesRefs = "?";
+
+        // Not yet published
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+                .setAdvancement(2600, DATE_NONE, DATE_NONE, 2781, 3130)
+                .setTechRating(RATING_E).setAvailability(RATING_F, RATING_X, RATING_X, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

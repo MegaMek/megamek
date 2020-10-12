@@ -504,7 +504,7 @@ public class WeaponFireInfo {
                                                              .append(" firing ").append(getWeapon().getDesc())
                                                              .append(" at ").append(getTarget().getDisplayName())
                                                              .append(":") :
-                        new StringBuilder();
+                        null;
 
         // Set up the attack action and calculate the chance to hit.
         if ((null == bombPayload) || (0 == bombPayload.length)) {

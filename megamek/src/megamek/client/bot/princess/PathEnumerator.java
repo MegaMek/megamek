@@ -38,7 +38,6 @@ import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.Targetable;
-import megamek.common.logging.LogLevel;
 import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder;
@@ -94,16 +93,11 @@ public class PathEnumerator {
     }
 
     Coords getLastKnownCoords(Integer entityId) {
-        getOwner().getLogger().methodBegin();
-        try {
-            CoordFacingCombo ccr = getLastKnownLocations().get(entityId);
-            if (ccr == null) {
-                return null;
-            }
-            return ccr.getCoords();
-        } finally {
-            getOwner().getLogger().methodEnd();
+        CoordFacingCombo ccr = getLastKnownLocations().get(entityId);
+        if (ccr == null) {
+            return null;
         }
+        return ccr.getCoords();
     }
 
     /**
@@ -114,50 +108,40 @@ public class PathEnumerator {
      * @return A {@link Set} of {@link Entity} objects at the given {@link Coords}.
      */
     public Set<Integer> getEntitiesWithLocation(Coords location, boolean groundOnly) {
-        getOwner().getLogger().methodBegin();
-        try {
-            Set<Integer> returnSet = new TreeSet<>();
-            if (location == null) {
-                return returnSet;
-            }
-            for (Integer id : getUnitPotentialLocations().keySet()) {
-                if (groundOnly
-                        && getGame().getEntity(id) != null
-                        && getGame().getEntity(id).isAero()) {
-                    continue;
-                }
-
-                for (int facing = 0; facing < 5; facing++) {
-                    if (getUnitPotentialLocations().get(id).contains(CoordFacingCombo.createCoordFacingCombo
-                            (location, facing))) {
-                        returnSet.add(id);
-                        break;
-                    }
-                }
-            }
+        Set<Integer> returnSet = new TreeSet<>();
+        if (location == null) {
             return returnSet;
-        } finally {
-            getOwner().getLogger().methodEnd();
         }
+        for (Integer id : getUnitPotentialLocations().keySet()) {
+            if (groundOnly
+                    && getGame().getEntity(id) != null
+                    && getGame().getEntity(id).isAero()) {
+                continue;
+            }
+
+            for (int facing = 0; facing < 5; facing++) {
+                if (getUnitPotentialLocations().get(id).contains(CoordFacingCombo.createCoordFacingCombo
+                        (location, facing))) {
+                    returnSet.add(id);
+                    break;
+                }
+            }
+        }
+        return returnSet;
     }
 
     /**
      * From a list of potential moves, make a potential ending location chart
      */
     void updateUnitLocations(Entity entity, List<MovePath> paths) {
-        getOwner().getLogger().methodBegin();
-        try {
-            // clear previous locations for this entity
-            getUnitPotentialLocations().remove(entity.getId());
-            //
-            Set<CoordFacingCombo> toAdd = new HashSet<>();
-            for (MovePath path : paths) {
-                toAdd.add(CoordFacingCombo.createCoordFacingCombo(path));
-            }
-            getUnitPotentialLocations().put(entity.getId(), toAdd);
-        } finally {
-            getOwner().getLogger().methodEnd();
+        // clear previous locations for this entity
+        getUnitPotentialLocations().remove(entity.getId());
+        //
+        Set<CoordFacingCombo> toAdd = new HashSet<>();
+        for (MovePath path : paths) {
+            toAdd.add(CoordFacingCombo.createCoordFacingCombo(path));
         }
+        getUnitPotentialLocations().put(entity.getId(), toAdd);
     }
 
     /**
@@ -190,8 +174,6 @@ public class PathEnumerator {
      * calculates all moves for a given unit, keeping the shortest (or longest, depending) path to each facing/pair
      */
     private boolean recalculateMovesForWorker(final Entity mover) {
-        getOwner().getLogger().methodBegin();
-
         try {
     
             // Record it's current position.
@@ -334,17 +316,15 @@ public class PathEnumerator {
             getUnitPaths().put(mover.getId(), paths);
 
             // calculate bounding area for move
-            ConvexBoardArea myArea = new ConvexBoardArea(owner);
+            ConvexBoardArea myArea = new ConvexBoardArea();
             myArea.addCoordFacingCombos(getUnitPotentialLocations().get(
-                    mover.getId()).iterator());
+                    mover.getId()).iterator(), owner.getBoard());
             getUnitMovableAreas().put(mover.getId(), myArea);
 
             return true;
         } catch(Exception e) {
             MegaMek.getLogger().error(e.toString());
             return false;
-        } finally {
-            getOwner().getLogger().methodEnd();
         }
     }
     
@@ -469,37 +449,32 @@ public class PathEnumerator {
      * @return TRUE if the path is legal.
      */
     public boolean isLegalAeroMove(MovePath path) {
-        getOwner().getLogger().methodBegin();
-        try {
-            // no non-aeros allowed
-            if (!path.getEntity().isAero()) {
-                return true;
-            }
-
-            if (!path.isMoveLegal()) {
-                if (path.getLastStep() == null) {
-                    LogAeroMoveLegalityEvaluation("illegal move with null last step", path);
-                    return false;
-                }
-                if ((path.getLastStep().getType() != MoveStepType.RETURN) &&
-                    (path.getLastStep().getType() != MoveStepType.OFF)) {
-                    LogAeroMoveLegalityEvaluation("illegal move without return/off at the end", path);
-                    return false;
-                }
-            }
-
-            // we have to have used all velocity by the last step
-            if ((path.getLastStep() != null) && (path.getLastStep().getVelocityLeft() != 0)) {
-                if ((path.getLastStep().getType() != MoveStepType.RETURN) &&
-                    (path.getLastStep().getType() != MoveStepType.OFF)) {
-                    LogAeroMoveLegalityEvaluation("not all velocity used without return/off at the end", path);
-                    return false;
-                }
-            }
+        // no non-aeros allowed
+        if (!path.getEntity().isAero()) {
             return true;
-        } finally {
-            getOwner().getLogger().methodEnd();
         }
+
+        if (!path.isMoveLegal()) {
+            if (path.getLastStep() == null) {
+                LogAeroMoveLegalityEvaluation("illegal move with null last step", path);
+                return false;
+            }
+            if ((path.getLastStep().getType() != MoveStepType.RETURN) &&
+                (path.getLastStep().getType() != MoveStepType.OFF)) {
+                LogAeroMoveLegalityEvaluation("illegal move without return/off at the end", path);
+                return false;
+            }
+        }
+
+        // we have to have used all velocity by the last step
+        if ((path.getLastStep() != null) && (path.getLastStep().getVelocityLeft() != 0)) {
+            if ((path.getLastStep().getType() != MoveStepType.RETURN) &&
+                (path.getLastStep().getType() != MoveStepType.OFF)) {
+                LogAeroMoveLegalityEvaluation("not all velocity used without return/off at the end", path);
+                return false;
+            }
+        }
+        return true;
     }
     
     private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path) {

@@ -10,6 +10,7 @@ VERSION HISTORY:
 + Data: Mass/Crit slots of Prototype UAC5 Wrong.
 + PR #2332: Substantial Princess performance (turn calculation speed) improvement across the board, especially visible for fast units
 + Issue #2338: Artemis IV counting for slot space
++ PR #2336: New equipment: ram plate
 
 0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites

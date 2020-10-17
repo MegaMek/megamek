@@ -230,8 +230,8 @@ public class MMStaticDirectoryManager {
 
         // Try to get the portrait
         try {
-            // Translate the root portrait directory name and PORTRAIT_NONE
-            // This could be improved by not passing around ROOT_PORTRAIT
+            // Translate the root portrait directory name and DEFAULT_ICON_FILENAME
+            // This could be improved by not passing around ROOT_CATEGORY
             if (AbstractIcon.ROOT_CATEGORY.equals(category)) {
                 category = "";
             }
@@ -375,10 +375,10 @@ public class MMStaticDirectoryManager {
         Graphics g = result.getGraphics();
         if (image.getWidth(null) > image.getHeight(null)) {
             image = image.getScaledInstance(size, -1, Image.SCALE_SMOOTH);
-            g.drawImage(image, 0, (size-image.getHeight(null))/2, null);
+            g.drawImage(image, 0, (size - image.getHeight(null)) / 2, null);
         } else {
             image = image.getScaledInstance(-1, size, Image.SCALE_SMOOTH);
-            g.drawImage(image, (size-image.getWidth(null))/2, 0, null);
+            g.drawImage(image, (size - image.getWidth(null)) / 2, 0, null);
         }
         return result;
     }
@@ -412,7 +412,7 @@ public class MMStaticDirectoryManager {
         // Try to get the camo image
         try {
             // A color was selected
-            if (category.equals(Camouflage.NO_CAMOUFLAGE)) {
+            if (Camouflage.NO_CAMOUFLAGE.equals(category)) {
                 return colorCamoImage(PlayerColors.getColor(name));
             }
 
@@ -468,19 +468,18 @@ public class MMStaticDirectoryManager {
      * @see ImageUtil#failStandardImage()
      */
     public static Image getPlayerCamoImage(IPlayer player) {
-        String cat = player.getCamoCategory();
-        String name = player.getCamoFileName();
-        if (cat.equals(AbstractIcon.ROOT_CATEGORY)) {
-            cat = "";
-        }
+        String category = player.getCamoCategory();
 
-        // A color was selected
-        if (cat.equals(Camouflage.NO_CAMOUFLAGE)) {
+        if (Camouflage.NO_CAMOUFLAGE.equals(category)) { // Colour Camouflage
             return colorCamoImage(PlayerColors.getColor(player.getColorIndex()));
         }
 
+        if (AbstractIcon.ROOT_CATEGORY.equals(category)) {
+            category = "";
+        }
+
         // A camo was selected
-        return getCamoImage(cat, name);
+        return getCamoImage(category, player.getCamoFileName());
     }
 
     /**

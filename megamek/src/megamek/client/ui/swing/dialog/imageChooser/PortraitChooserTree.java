@@ -44,7 +44,7 @@ public class PortraitChooserTree extends JTree {
      * @param node
      * @param names
      */
-    private void addCategoryToTree(DefaultMutableTreeNode node, String[] names) {
+    private void addCategoryToTree(DefaultMutableTreeNode node, String... names) {
         // Shouldn't happen
         if (names.length == 0) {
             return;

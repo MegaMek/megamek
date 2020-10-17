@@ -49,13 +49,13 @@ public abstract class AbstractIcon implements Serializable {
         this(ROOT_CATEGORY, DEFAULT_ICON_FILENAME);
     }
 
-    protected AbstractIcon(String category, String fileName) {
-        this(category, fileName, 0, 0);
+    protected AbstractIcon(String category, String filename) {
+        this(category, filename, 0, 0);
     }
 
-    protected AbstractIcon(String category, String fileName, int width, int height) {
+    protected AbstractIcon(String category, String filename, int width, int height) {
         setCategory(category);
-        setFilename(fileName);
+        setFilename(filename);
         setWidth(width);
         setHeight(height);
     }
@@ -172,7 +172,7 @@ public abstract class AbstractIcon implements Serializable {
     public void writeToXML(PrintWriter pw1, int indent) {
         MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw1, indent, "AbstractIcon");
         MegaMekXmlUtil.writeSimpleXmlTag(pw1, indent + 1, "category", getCategory());
-        MegaMekXmlUtil.writeSimpleXmlTag(pw1, indent + 1, "fileName", getFilename());
+        MegaMekXmlUtil.writeSimpleXmlTag(pw1, indent + 1, "filename", getFilename());
         MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw1, indent, "AbstractIcon");
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractIcon implements Serializable {
 
                 if (wn2.getNodeName().equalsIgnoreCase("category")) {
                     retVal.setCategory(wn2.getTextContent().trim());
-                } else if (wn2.getNodeName().equalsIgnoreCase("fileName")) {
+                } else if (wn2.getNodeName().equalsIgnoreCase("filename")) {
                     retVal.setFilename(wn2.getTextContent().trim());
                 }
             }

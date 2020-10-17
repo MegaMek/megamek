@@ -639,7 +639,7 @@ public class ScenarioLoader {
         
         boolean validGroup = false;
 
-        if (camoGroup.equals(Camouflage.NO_CAMOUFLAGE) || camoGroup.equals(AbstractIcon.ROOT_CATEGORY)) {
+        if (Camouflage.NO_CAMOUFLAGE.equals(camoGroup) || AbstractIcon.ROOT_CATEGORY.equals(camoGroup)) {
             validGroup = true;
         } else {
             Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
@@ -658,7 +658,7 @@ public class ScenarioLoader {
         boolean validName = false;
 
         // Validate CamoName
-        if (camoGroup.equals(Camouflage.NO_CAMOUFLAGE)) {
+        if (Camouflage.NO_CAMOUFLAGE.equals(camoGroup)) {
             for (String color : IPlayer.colorNames) {
                 if (camoName.equals(color)) {
                     validName = true;
@@ -667,7 +667,7 @@ public class ScenarioLoader {
             }
         } else {
             Iterator<String> camoNames;
-            if (camoGroup.equals(AbstractIcon.ROOT_CATEGORY)) {
+            if (AbstractIcon.ROOT_CATEGORY.equals(camoGroup)) {
                 camoNames = MMStaticDirectoryManager.getCamouflage().getItemNames("");
             } else {
                 camoNames = MMStaticDirectoryManager.getCamouflage().getItemNames(camoGroup);

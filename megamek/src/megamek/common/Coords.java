@@ -18,9 +18,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.client.bot.princess.Princess;
+import javax.xml.bind.annotation.XmlElement;
+
 import megamek.client.bot.princess.BotGeometry.HexLine;
-import megamek.common.logging.LogLevel;
 import megamek.common.util.HashCodeUtil;
 
 /**
@@ -62,8 +62,13 @@ public class Coords implements Serializable {
      */
     public static final int MAX_BOARD_WIDTH = (Integer.MAX_VALUE - Coords.MAX_BOARD_HEIGHT) >> (Coords.SHIFT + 2);
 
+    @XmlElement(name="x")
     private final int x;
+    
+    @XmlElement(name="y")
     private final int y;
+    
+    @XmlElement(name="hash")
     private final int hash;
 
     /**
@@ -232,7 +237,7 @@ public class Coords implements Serializable {
         
         int direction = initialDirection;
         
-        HexLine startLine = new HexLine(this, direction, null);
+        HexLine startLine = new HexLine(this, direction);
         int directionIncrement = 0;
         int pointJudgement = startLine.judgePoint(second);
         if(pointJudgement == 0) {

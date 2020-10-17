@@ -11488,6 +11488,7 @@ public class AmmoType extends EquipmentType {
                 ammo.rackSize = 2;
                 ammo.ammoType = AmmoType.T_SCC;
                 ammo.shots = 1;
+                ammo.tonnage = 0.5;
                 ammo.bv = 47;
                 ammo.cost = 10000;
                 ammo.ammoRatio = 2;
@@ -11548,6 +11549,7 @@ public class AmmoType extends EquipmentType {
                 ammo.rackSize = 7;
                 ammo.ammoType = AmmoType.T_SCC;
                 ammo.shots = 1;
+                ammo.tonnage = 2;
                 ammo.bv = 124;
                 ammo.cost = 25000;
                 ammo.ammoRatio = 0.5;
@@ -12205,7 +12207,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC_PRIMITIVE;
         ammo.shots = 8;
-        ammo.bv = 21;
+        ammo.bv = 12;
         ammo.cost = 12000;
         //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
         //This to cover some of the back worlds in the Periphery.

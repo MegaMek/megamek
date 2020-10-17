@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -81,4 +81,3 @@ Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit
 <armordivisor>
 2.0
 </armordivisor>
-

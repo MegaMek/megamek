@@ -1652,6 +1652,8 @@ public class Aero extends Entity implements IAero, IBomber {
             if ((etype instanceof WeaponType) && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_IMP)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_PRIMITIVE)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_PAC)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC))) {
                 toSubtract = 0;
             }

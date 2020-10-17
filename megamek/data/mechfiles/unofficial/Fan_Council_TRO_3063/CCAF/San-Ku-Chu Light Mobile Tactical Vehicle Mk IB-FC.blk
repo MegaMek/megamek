@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -84,4 +84,3 @@ RS 3063 - Succession Wars
 <tonnage>
 35.0
 </tonnage>
-

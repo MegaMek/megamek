@@ -18354,6 +18354,10 @@ public class Server implements Runnable {
             damageTaken = ChargeAttackAction.getDamageTakenBy(ae, te, game
                     .getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE));
         }
+        if (ae.hasWorkingMisc(MiscType.F_RAM_PLATE)) {
+            damage = (int) Math.ceil(damage * 1.5);
+            damageTaken = (int) Math.floor(damageTaken * 0.5);
+        }
         if (glancing) {
             // Glancing Blow rule doesn't state whether damage to attacker on charge
             // or DFA is halved as well, assume yes. TODO : Check with PM

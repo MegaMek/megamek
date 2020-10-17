@@ -73,7 +73,7 @@ public class MultiTargetFireControl extends FireControl {
         facingChanges.add(0); // "no facing change"
         
         for(int currentTwist : facingChanges) {
-            shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
+            shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist), false);
             
             FiringPlan currentPlan = calculateFiringPlan(shooter, weaponList);
             currentPlan.setTwist(currentTwist);
@@ -99,7 +99,7 @@ public class MultiTargetFireControl extends FireControl {
         }
         
         // put it back as we found it
-        shooter.setSecondaryFacing(originalFacing);        
+        shooter.setSecondaryFacing(originalFacing, false);        
         
         return bestPlan;
     }

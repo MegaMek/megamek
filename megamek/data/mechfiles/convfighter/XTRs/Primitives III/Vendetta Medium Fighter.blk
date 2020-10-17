@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -128,4 +128,3 @@ XTRO Prim III - Age of War
 <tonnage>
 60.0
 </tonnage>
-

@@ -3,6 +3,14 @@ VERSION HISTORY:
 0.47.12-SNAPSHOT 
 + PR #2310: Implement "Static Ammo Feed" quirk 
 + PR #2315: Prevent bot freeze when bot attempts to counter-battery fire using an on-board unit vs off-board artillery
++ PR #2308: Normalizes Data Files
++ Issue #2313: Some fixes for SSW -> MM BV Issues
++ Issue #2331: Laser Insulator costs (slightly) wrong
++ Data: New Sprites, new units (Rec Guides 4/5, Kaumberg, Hanseatic Crusade)
++ Data: Mass/Crit slots of Prototype UAC5 Wrong.
++ PR #2332: Substantial Princess performance (turn calculation speed) improvement across the board, especially visible for fast units
++ Issue #2338: Artemis IV counting for slot space
++ PR #2336: New equipment: ram plate
 
 0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites

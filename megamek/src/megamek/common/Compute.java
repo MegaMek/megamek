@@ -2951,19 +2951,22 @@ public class Compute {
         AmmoType loaded_ammo = new AmmoType();
 
         Entity attacker = g.getEntity(waa.getEntityId());
-        Infantry inf_attacker = new Infantry();
-        BattleArmor ba_attacker = new BattleArmor();
+        Entity target = g.getEntity(waa.getTargetId());
+        
+        int baShootingStrength = attacker instanceof BattleArmor ? 
+                ((BattleArmor) attacker).getShootingStrength() : 0;
+        
+        int infShootingStrength = 0;
+        double infDamagePerTrooper = 0;
+                
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
         Mounted lnk_guide;
 
         ToHitData hitData = waa.toHit(g, allECMInfo);
 
-        if (attacker instanceof BattleArmor) {
-            ba_attacker = (BattleArmor) g.getEntity(waa.getEntityId());
-        }
-        if ((attacker instanceof Infantry)
-            && !(attacker instanceof BattleArmor)) {
-            inf_attacker = (Infantry) g.getEntity(waa.getEntityId());
+        if (attacker.isConventionalInfantry()) {
+            infShootingStrength = ((Infantry) attacker).getShootingStrength();
+            infDamagePerTrooper = ((Infantry) attacker).getDamagePerTrooper();
         }
 
         WeaponType wt = (WeaponType) weapon.getType();
@@ -3085,8 +3088,7 @@ public class Compute {
             // weapons do odd things when mounting multiples
             if (attacker instanceof BattleArmor) {
                 // The number of troopers hitting
-                fHits = expectedHitsByRackSize[ba_attacker
-                        .getShootingStrength()];
+                fHits = expectedHitsByRackSize[baShootingStrength];
                 if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                     fHits *= expectedHitsByRackSize[wt.getRackSize()];
                 }
@@ -3140,10 +3142,8 @@ public class Compute {
 
                 // Check for target with attached Narc or iNarc homing pod from
                 // friendly unit
-                if (g.getEntity(waa.getTargetId()).isNarcedBy(
-                        attacker.getOwner().getTeam())
-                        || g.getEntity(waa.getTargetId()).isINarcedBy(
-                                attacker.getOwner().getTeam())) {
+                if (target.isNarcedBy(attacker.getOwner().getTeam())
+                        || target.isINarcedBy(attacker.getOwner().getTeam())) {
                     if (((at.getAmmoType() == AmmoType.T_LRM)
                             || (at.getAmmoType() == AmmoType.T_LRM_IMP)
                             || (at.getAmmoType() == AmmoType.T_MML)
@@ -3183,7 +3183,6 @@ public class Compute {
 
             // * HAGs modify their cluster hits for range.
             if (wt instanceof HAGWeapon) {
-                Entity target = g.getEntity(waa.getTargetId());
                 int distance = attacker.getPosition().distance(
                         target.getPosition());
                 if (distance <= wt.getShortRange()) {
@@ -3206,12 +3205,11 @@ public class Compute {
             // so they don't use the missile hits table. Weapon bays also deal
             // damage in a single block
             if ((attacker.getPosition() != null)
-                && (g.getEntity(waa.getTargetId()).getPosition() != null)) {
-                // Damage may vary by range for some weapons, so let's see how
-                // far
+                && (target.getPosition() != null)) {
+                // Damage may vary by range for some weapons, so let's see how far
                 // away we actually are and then set the damage accordingly.
-                int rangeToTarget = attacker.getPosition().distance(
-                        g.getEntity(waa.getTargetId()).getPosition());
+                int rangeToTarget = attacker.getPosition().distance(target.getPosition());
+                
                 //Convert AV to fDamage for bay weapons, fighters, etc
                 if (attacker.usesWeaponBays()){
                     double av = 0;
@@ -3292,65 +3290,59 @@ public class Compute {
                 }
             }
 
-            // Infantry follow some special rules, but do fixed amounts of
-            // damage
-            // Anti-mek attacks are weapon-like in nature, so include them here
-            // as well
+            // Infantry follow some special rules, but do fixed amounts of damage
+            // Anti-mek attacks are weapon-like in nature, so include them here as well
             if (attacker instanceof Infantry) {
                 if (wt.getInternalName() == Infantry.LEG_ATTACK) {
                     fDamage = 20.0f; // Actually 5, but the chance of crits
                     // deserves a boost
-                }
-
-                if (inf_attacker.isPlatoon()) {
-                    if (wt.getInternalName() == Infantry.SWARM_MEK) {
-                        // If the target is a Mek that is not swarmed, this is a
-                        // good thing
-                        if ((g.getEntity(waa.getTargetId())
-                                .getSwarmAttackerId() == Entity.NONE)
-                                && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
-
-                            fDamage = 1.5f
-                                    * (float)inf_attacker.getDamagePerTrooper()
-                                    * inf_attacker.getShootingStrength();
-                        }
-                        // Otherwise, call it 0 damage
-                        else {
-                            fDamage = 0.0f;
+                // leg attacks are mutually exclusive with swarm attacks, 
+                } else {                
+                    boolean targetIsSwarmable = (target instanceof Mech) || (target instanceof Tank);
+    
+                    if (attacker.isConventionalInfantry()) {
+                        if (wt.getInternalName() == Infantry.SWARM_MEK) {
+                            // If the target is a Mek that is not swarmed, this is a
+                            // good thing
+                            if ((target.getSwarmAttackerId() == Entity.NONE) && targetIsSwarmable) {
+                                fDamage = 1.5f
+                                        * (float) infDamagePerTrooper
+                                        * infShootingStrength;
+                            }
+                            // Otherwise, call it 0 damage
+                            else {
+                                fDamage = 0.0f;
+                            }
+                        } else {
+                            // conventional weapons; field guns should be handled
+                            // under the standard weapons section
+                            fDamage = 0.6f
+                                    * (float) infDamagePerTrooper
+                                    * infShootingStrength;
                         }
                     } else {
-                        // conventional weapons; field guns should be handled
-                        // under the standard weapons section
-                        fDamage = 0.6f
-                                * (float)inf_attacker.getDamagePerTrooper()
-                                * inf_attacker.getShootingStrength();
-                    }
-                } else {
-                    // Battle armor units conducting swarm attack
-                    if (wt.getInternalName() == Infantry.SWARM_MEK) {
-                        // If the target is a Mek that is not swarmed, this is a
-                        // good thing
-                        if ((g.getEntity(waa.getTargetId())
-                                .getSwarmAttackerId() == Entity.NONE)
-                                && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
-                            // Overestimated, but the chance at crits and head
-                            // shots deserves a boost
-                            fDamage = 10.0f * ba_attacker.getShootingStrength();
-                        }
-                        // Otherwise, call it 0 damage
-                        else {
-                            fDamage = 0.0f;
+                        // Battle armor units conducting swarm attack
+                        if (wt.getInternalName() == Infantry.SWARM_MEK) {
+                            // If the target is a Mek that is not swarmed, this is a
+                            // good thing
+                            if ((target.getSwarmAttackerId() == Entity.NONE) && targetIsSwarmable) {
+                                // Overestimated, but the chance at crits and head
+                                // shots deserves a boost
+                                fDamage = 10.0f * baShootingStrength;
+                            }
+                            // Otherwise, call it 0 damage
+                            else {
+                                fDamage = 0.0f;
+                            }
                         }
                     }
-
                 }
             }
 
         }
 
         // Need to adjust damage if the target is infantry.
-        if ((g.getEntity(waa.getTargetId()) instanceof Infantry)
-            && !(g.getEntity(waa.getTargetId()) instanceof BattleArmor)) {
+        if (g.getEntity(waa.getTargetId()).isConventionalInfantry()) {
             fDamage = directBlowInfantryDamage(fDamage, 0,
                     wt.getInfantryDamageClass(), ((Infantry) (g.getEntity(waa
                             .getTargetId()))).isMechanized(), false);
@@ -3359,8 +3351,7 @@ public class Compute {
         fDamage *= fChance;
 
         // Conventional infantry take double damage in the open
-        if ((g.getEntity(waa.getTargetId()) instanceof Infantry)
-            && !(g.getEntity(waa.getTargetId()) instanceof BattleArmor)) {
+        if (g.getEntity(waa.getTargetId()).isConventionalInfantry()) {
             IHex e_hex = g.getBoard().getHex(
                     g.getEntity(waa.getTargetId()).getPosition().getX(),
                     g.getEntity(waa.getTargetId()).getPosition().getY());
@@ -3371,8 +3362,8 @@ public class Compute {
             }
 
             // Cap damage to prevent run-away values
-            if (inf_attacker.getShootingStrength() > 0) {
-                fDamage = Math.min(inf_attacker.getShootingStrength(), fDamage);
+            if (infShootingStrength > 0) {
+                fDamage = Math.min(infShootingStrength, fDamage);
             }
         }
         return fDamage;

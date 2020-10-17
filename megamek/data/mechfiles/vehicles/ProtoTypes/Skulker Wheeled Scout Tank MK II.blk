@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,7 +13,7 @@ Tank
 </UnitType>
 
 <Name>
-Skulker Wheeled Scout Tank Mk II 
+Skulker Wheeled Scout Tank Mk II
 </Name>
 
 <Model>
@@ -72,4 +72,3 @@ TRO:Prototype
 <tonnage>
 20.0
 </tonnage>
-

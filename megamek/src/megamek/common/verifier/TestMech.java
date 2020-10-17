@@ -644,12 +644,9 @@ public class TestMech extends TestEntity {
             correct = false;
         }
         if (!heatSinks.isEmpty()) {
-            int sinks = heatSinks.elements().nextElement().intValue();
-            buff.append(sinks)
-                    .append(" of ")
-                    .append(engine.integralHeatSinkCapacity(mech
-                            .hasCompactHeatSinks()))
-                    .append(" possible Internal Heat Sinks!").append("\n");
+            int sinks = heatSinks.elements().nextElement();
+            buff.append(sinks - engine.integralHeatSinkCapacity(mech
+                    .hasCompactHeatSinks())).append(" unallocated heat sinks\n");
             correct = false;
         }
         if (!checkSystemCriticals(buff)) {
@@ -1014,6 +1011,25 @@ public class TestMech extends TestEntity {
                 }
             }
 
+            if (misc.hasFlag(MiscType.F_RAM_PLATE)) {
+                if (!(mech instanceof QuadMech)) {
+                    buff.append(misc.getName()).append(" can only be mounted on a quad mech.\n");
+                    illegal = true;
+                }
+                if (!mech.hasReinforcedStructure()) {
+                    buff.append(misc.getName()).append(" requires reinforced structure.\n");
+                    illegal = true;
+                }
+                for (int loc = 0; loc < mech.locations(); loc++) {
+                    if (mech.locationIsTorso(loc)
+                            && countCriticalSlotsFromEquipInLocation(mech, m, loc) != 1) {
+                        illegal = true;
+                        buff.append(misc.getName()).append(" requires one critical slot in each torso location.\n");
+                        break;
+                    }
+                }
+            }
+
             if (mech.isSuperHeavy()
                     && (misc.hasFlag(MiscType.F_TSM)
                             || misc.hasFlag(MiscType.F_INDUSTRIAL_TSM)
@@ -1052,6 +1068,7 @@ public class TestMech extends TestEntity {
                         || misc.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
                         || misc.hasFlag(MiscType.F_FUEL)) {
                     buff.append("Non-industrial mech can't mount ").append(misc.getName()).append("\n");
+                    illegal = true;
                 }
             }
             

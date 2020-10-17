@@ -5514,3 +5514,20 @@ Reconquista:BRAWLER
 #Shrapnel
 Centurion CN10-J:BRAWLER
 Centurion CN10-W:SNIPER
+#tukayyid
+Adder (Puma) TC:STRIKER
+Shadow Cat TC:SCOUT
+Stormcrow (Ryoken) TC:SKIRMISHER
+Stormcrow (Ryoken) Attwater:SNIPER
+Mad Dog (Vulture) S:SKIRMISHER
+Hellbringer (Loki) M:SNIPER
+Timber Wolf (Mad Cat) TC:SKIRMISHER
+Executioner (Gladiator) TC:SKIRMISHER
+Phoenix Hawk PXH-1bC:SKIRMISHER
+Shadow Hawk SHD-2Ht:SKIRMISHER
+Rifleman RFL-5CS:SNIPER
+Archer ARC-5CS:MISSILE BOAT
+Warhammer WHM-7CS:BRAWLER
+Black Knight BLK-9-KNT:BRAWLER
+Marauder MAD-5CS:SNIPER
+

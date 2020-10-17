@@ -4524,7 +4524,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.addLookupName("GenericKit");
         misc.damageDivisor = 1.0;
-        misc.cost = 4300;
+        misc.cost = 330;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_C)

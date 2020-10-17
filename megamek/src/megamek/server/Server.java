@@ -101,6 +101,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
+import megamek.common.icons.Camouflage;
 import megamek.common.logging.MMLogger;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
@@ -1039,7 +1040,7 @@ public class Server implements Runnable {
             colorInd = 0;
         }
         newPlayer.setColorIndex(colorInd);
-        newPlayer.setCamoCategory(IPlayer.NO_CAMO);
+        newPlayer.setCamoCategory(Camouflage.NO_CAMOUFLAGE);
         newPlayer.setCamoFileName(IPlayer.colorNames[colorInd]);
         newPlayer.setTeam(Math.min(team, 5));
         game.addPlayer(connId, newPlayer);

@@ -34,6 +34,7 @@ import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import megamek.MegaMek;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.AmmoType;
@@ -69,6 +70,8 @@ import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.enums.Gender;
+import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
@@ -627,20 +630,20 @@ public class ScenarioLoader {
     private void parseAutoEject(Entity entity, String eject) {
         if (entity instanceof Mech) {
             Mech mech = (Mech) entity;
-            mech.setAutoEject(Boolean.valueOf(eject).booleanValue());
+            mech.setAutoEject(Boolean.parseBoolean(eject));
         }
     }
 
     private void parseCommander(Entity entity, String commander) {
-        entity.setCommander(Boolean.valueOf(commander).booleanValue());
+        entity.setCommander(Boolean.parseBoolean(commander));
     }
 
     private String getValidCamoGroup(String camoGroup) {
         // Translate base categories for userfriendliness.
-        if(camoGroup.equals("No Camo") || camoGroup.equals("None")) { //$NON-NLS-1$ //$NON-NLS-2$
-            camoGroup = IPlayer.NO_CAMO;
-        } else if (camoGroup.equals("General")) { //$NON-NLS-1$
-            camoGroup = IPlayer.ROOT_CAMO;
+        if (camoGroup.equals("No Camo") || camoGroup.equals("None")) {
+            camoGroup = Camouflage.NO_CAMOUFLAGE;
+        } else if (camoGroup.equals("General")) {
+            camoGroup = AbstractIcon.ROOT_CATEGORY;
         } else {
             // If CamoGroup does not have a trailing slash, add one, since all
             // subdirectories require it
@@ -651,7 +654,7 @@ public class ScenarioLoader {
         
         boolean validGroup = false;
 
-        if(camoGroup.equals(IPlayer.NO_CAMO) || camoGroup.equals(IPlayer.ROOT_CAMO)) {
+        if (camoGroup.equals(Camouflage.NO_CAMOUFLAGE) || camoGroup.equals(AbstractIcon.ROOT_CATEGORY)) {
             validGroup = true;
         } else {
             Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
@@ -670,7 +673,7 @@ public class ScenarioLoader {
         boolean validName = false;
 
         // Validate CamoName
-        if (camoGroup.equals(IPlayer.NO_CAMO)) {
+        if (camoGroup.equals(Camouflage.NO_CAMOUFLAGE)) {
             for (String color : IPlayer.colorNames) {
                 if (camoName.equals(color)) {
                     validName = true;
@@ -679,7 +682,7 @@ public class ScenarioLoader {
             }
         } else {
             Iterator<String> camoNames;
-            if (camoGroup.equals(IPlayer.ROOT_CAMO)) {
+            if (camoGroup.equals(AbstractIcon.ROOT_CATEGORY)) {
                 camoNames = MMStaticDirectoryManager.getCamouflage().getItemNames("");
             } else {
                 camoNames = MMStaticDirectoryManager.getCamouflage().getItemNames(camoGroup);
@@ -750,7 +753,7 @@ public class ScenarioLoader {
     
     private Collection<Player> createPlayers(StringMultiMap p) throws ScenarioLoaderException {
         String sFactions = p.getString(PARAM_FACTIONS);
-        if((null == sFactions) || sFactions.isEmpty()) {
+        if ((null == sFactions) || sFactions.isEmpty()) {
             throw new ScenarioLoaderException("missingFactions"); //$NON-NLS-1$
         }
         String[] factions = sFactions.split(SEPARATOR_COMMA, -1);
@@ -758,7 +761,7 @@ public class ScenarioLoader {
         
         int playerId = 0;
         int teamId = 0;
-        for(String faction : factions) {
+        for (String faction : factions) {
             Player player = new Player(playerId, faction);
             result.add(player);
             ++ playerId;
@@ -767,19 +770,19 @@ public class ScenarioLoader {
             player.setGhost(true);
             
             String loc = p.getString(getFactionParam(faction, PARAM_LOCATION));
-            if(null == loc) {
+            if (null == loc) {
                 loc = "Any"; //$NON-NLS-1$
             }
             int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, loc), 0);
             player.setStartingPos(dir);
             
             String camo = p.getString(getFactionParam(faction, PARAM_CAMO));
-            if((null != camo) && !camo.isEmpty()) {
+            if ((null != camo) && !camo.isEmpty()) {
                 parseCamo(player, camo);
             }
             
             String team = p.getString(getFactionParam(faction, PARAM_TEAM));
-            if((null != team) && !team.isEmpty()) {
+            if ((null != team) && !team.isEmpty()) {
                 try {
                     teamId = Integer.parseInt(team);
                 } catch(NumberFormatException nfex) {
@@ -791,9 +794,9 @@ public class ScenarioLoader {
             player.setTeam(Math.min(teamId, IPlayer.MAX_TEAMS - 1));
             
             String minefields = p.getString(getFactionParam(faction, PARAM_MINEFIELDS));
-            if((null != minefields) && !minefields.isEmpty()) {
+            if ((null != minefields) && !minefields.isEmpty()) {
                 String[] mines = minefields.split(SEPARATOR_COMMA, -1);
-                if(mines.length >= 3) {
+                if (mines.length >= 3) {
                     try {
                         int minesConventional = Integer.parseInt(mines[0]);
                         int minesCommand = Integer.parseInt(mines[1]);
@@ -801,9 +804,9 @@ public class ScenarioLoader {
                         player.setNbrMFConventional(minesConventional);
                         player.setNbrMFCommand(minesCommand);
                         player.setNbrMFVibra(minesVibra);
-                    } catch(NumberFormatException nfex) {
-                        System.err.println(String.format("Format error with minefields string '%s' for %s", //$NON-NLS-1$
-                            minefields, faction));
+                    } catch (NumberFormatException nfex) {
+                        MegaMek.getLogger().error(String.format("Format error with minefields string '%s' for %s",
+                                minefields, faction));
                     }
                 }
             }

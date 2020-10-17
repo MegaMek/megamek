@@ -115,6 +115,7 @@ import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.icons.Camouflage;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
@@ -1852,7 +1853,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
         Image camo = MMStaticDirectoryManager.getPlayerCamoImage(player);
-        if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
+        if ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())) {
             camo = MMStaticDirectoryManager.getEntityCamoImage(entity);
         }
         // This seems unnecessary as the CamoManager will return an image for a playercolor:
@@ -1875,22 +1876,22 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     private GameListener gameListener = new GameListenerAdapter() {
-
-
+        @Override
         public void gamePlayerChange(GamePlayerChangeEvent e){
              if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
              }
+
              if ((curPanel instanceof ReportDisplay) && !client.getLocalPlayer().isDone()) {
                  ((ReportDisplay) curPanel).resetReadyButton();
              }
         }
-        
+
         @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
             JOptionPane.showMessageDialog(frame,
-                Messages.getString("ClientGUI.Disconnected.message"), //$NON-NLS-1
-                Messages.getString("ClientGUI.Disconnected.title"), //$NON-NLS-1
+                Messages.getString("ClientGUI.Disconnected.message"),
+                Messages.getString("ClientGUI.Disconnected.title"),
                 JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             die();

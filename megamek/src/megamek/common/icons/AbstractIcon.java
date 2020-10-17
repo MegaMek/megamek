@@ -38,7 +38,7 @@ public abstract class AbstractIcon implements Serializable {
     public static final int DEFAULT_IMAGE_SCALE = 75;
 
     private String category;
-    private String fileName;
+    private String filename;
 
     private int width;
     private int height;
@@ -55,7 +55,7 @@ public abstract class AbstractIcon implements Serializable {
 
     protected AbstractIcon(String category, String fileName, int width, int height) {
         setCategory(category);
-        setFileName(fileName);
+        setFilename(fileName);
         setWidth(width);
         setHeight(height);
     }
@@ -70,12 +70,12 @@ public abstract class AbstractIcon implements Serializable {
         this.category = category;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFilename() {
+        return filename;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public int getWidth() {
@@ -94,6 +94,20 @@ public abstract class AbstractIcon implements Serializable {
         this.height = height;
     }
     //endregion Getters/Setters
+
+    //region Boolean Methods
+    public boolean isDefault() {
+        return hasDefaultCategory() && hasDefaultFilename();
+    }
+
+    public boolean hasDefaultCategory() {
+        return ROOT_CATEGORY.equals(getCategory());
+    }
+
+    public boolean hasDefaultFilename() {
+        return DEFAULT_ICON_FILENAME.equals(getFilename());
+    }
+    //endregion Boolean Methods
 
     /**
      * This is used to determine whether the created image should be scaled or not by checking the
@@ -149,11 +163,6 @@ public abstract class AbstractIcon implements Serializable {
         return blankImage;
     }
 
-    @Override
-    public String toString() {
-        return getCategory() + "/" + getFileName();
-    }
-
     //region File IO
     /**
      * This writes the AbstractIcon to XML
@@ -163,7 +172,7 @@ public abstract class AbstractIcon implements Serializable {
     public void writeToXML(PrintWriter pw1, int indent) {
         MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw1, indent, "AbstractIcon");
         MegaMekXmlUtil.writeSimpleXmlTag(pw1, indent + 1, "category", getCategory());
-        MegaMekXmlUtil.writeSimpleXmlTag(pw1, indent + 1, "fileName", getFileName());
+        MegaMekXmlUtil.writeSimpleXmlTag(pw1, indent + 1, "fileName", getFilename());
         MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw1, indent, "AbstractIcon");
     }
 
@@ -183,7 +192,7 @@ public abstract class AbstractIcon implements Serializable {
                 if (wn2.getNodeName().equalsIgnoreCase("category")) {
                     retVal.setCategory(wn2.getTextContent().trim());
                 } else if (wn2.getNodeName().equalsIgnoreCase("fileName")) {
-                    retVal.setFileName(wn2.getTextContent().trim());
+                    retVal.setFilename(wn2.getTextContent().trim());
                 }
             }
         } catch (Exception e) {
@@ -193,4 +202,26 @@ public abstract class AbstractIcon implements Serializable {
         return retVal;
     }
     //endregion File IO
+
+    @Override
+    public String toString() {
+        return getCategory() + "/" + getFilename();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        } else if (other instanceof AbstractIcon) {
+            AbstractIcon dOther = (AbstractIcon) other;
+            return dOther.getCategory().equals(getCategory()) && dOther.getFilename().equals(getFilename());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return (getCategory() + getFilename()).hashCode();
+    }
 }

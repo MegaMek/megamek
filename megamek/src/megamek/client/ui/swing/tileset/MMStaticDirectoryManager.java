@@ -27,6 +27,8 @@ import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
 import megamek.common.annotations.Nullable;
+import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Camouflage;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.DirectoryItem;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -409,13 +411,13 @@ public class MMStaticDirectoryManager {
         // Try to get the camo image
         try {
             // A color was selected
-            if (category.equals(IPlayer.NO_CAMO)) {
+            if (category.equals(Camouflage.NO_CAMOUFLAGE)) {
                 return colorCamoImage(PlayerColors.getColor(name));
             }
 
             // Translate the root camo directory name.
             // This could be improved by translating before saving it
-            if (IPlayer.ROOT_CAMO.equals(category)) {
+            if (AbstractIcon.ROOT_CATEGORY.equals(category)) {
                 category = "";
             }
 
@@ -467,12 +469,12 @@ public class MMStaticDirectoryManager {
     public static Image getPlayerCamoImage(IPlayer player) {
         String cat = player.getCamoCategory();
         String name = player.getCamoFileName();
-        if (cat.equals(IPlayer.ROOT_CAMO)) {
+        if (cat.equals(AbstractIcon.ROOT_CATEGORY)) {
             cat = "";
         }
 
         // A color was selected
-        if (cat.equals(IPlayer.NO_CAMO)) {
+        if (cat.equals(Camouflage.NO_CAMOUFLAGE)) {
             return colorCamoImage(PlayerColors.getColor(player.getColorIndex()));
         }
 
